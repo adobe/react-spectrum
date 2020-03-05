@@ -22,6 +22,7 @@ import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 
+
 export function AlertDialog(props: SpectrumAlertDialogProps) {
   let {
     variant,
@@ -30,7 +31,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
     cancelLabel,
     primaryLabel,
     autoFocusButton,
-    heading,
+    title,
     isConfirmDisabled,
     onCancel,
     onConfirm,
@@ -49,7 +50,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
 
   return (
     <Dialog {...styleProps} UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)} size="M" role="alertdialog">
-      <Header><Heading>{heading}</Heading>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
+      <Header><Heading>{title}</Heading>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
       <Divider size="M" />
       <Content>{children}</Content>
       <Footer>
