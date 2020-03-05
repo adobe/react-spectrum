@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import { useOption } from "@react-aria/listbox";
-import { useRef } from "react";
-import { Node } from "@react-stately/collections";
-import { classNames } from "@react-spectrum/utils";
+import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
+import {classNames} from '@react-spectrum/utils';
+import {FocusRing} from '@react-aria/focus';
+import {Grid} from '@react-spectrum/layout';
+import {ListState} from '@react-stately/list';
+import {Node} from '@react-stately/collections';
 import React from 'react';
-import { Grid } from "@react-spectrum/layout";
-import { Text } from "@react-spectrum/typography";
-import CheckmarkMedium from "@spectrum-icons/ui/CheckmarkMedium";
-import { FocusRing } from "@react-aria/focus";
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import { ListState } from "@react-stately/list";
+import {Text} from '@react-spectrum/typography';
+import {useOption} from '@react-aria/listbox';
+import {useRef} from 'react';
 
 interface OptionProps<T> {
   item: Node<T>,

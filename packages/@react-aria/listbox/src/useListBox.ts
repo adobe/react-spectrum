@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import { useSelectableList } from '@react-aria/selection';
-import { HTMLAttributes } from 'react';
-import { ListState } from '@react-stately/list';
+import {HTMLAttributes} from 'react';
+import {ListState} from '@react-stately/list';
+import {useSelectableList} from '@react-aria/selection';
 
 interface ListBoxAria {
   listBoxProps: HTMLAttributes<HTMLElement>

@@ -13,13 +13,13 @@
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {MenuContext} from './context';
 import {MenuItem} from './MenuItem';
+import {MenuSection} from './MenuSection';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu';
-import {useTreeState} from '@react-stately/tree'; 
-import { MenuSection } from './MenuSection';
+import {useTreeState} from '@react-stately/tree';
 
 export function Menu<T>(props: SpectrumMenuProps<T>) {
   let contextProps = useContext(MenuContext);
@@ -49,15 +49,19 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
       {[...state.collection].map(item => {
         if (item.type === 'section') {
           return (
-            <MenuSection item={item} state={state} />
+            <MenuSection 
+              key={item.key}
+              item={item}
+              state={state} />
           );
         }
 
         return (
           <MenuItem
+            key={item.key}
             item={item}
             state={state} />
-        )
+        );
       })}
     </ul>
   );

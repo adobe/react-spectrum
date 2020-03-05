@@ -10,33 +10,65 @@
  * governing permissions and limitations under the License.
  */
 
-import { KeyboardDelegate } from "@react-types/shared";
-import { Collection } from "@react-stately/collections";
-import { Key, RefObject } from "react";
+import {Collection, Node} from '@react-stately/collections';
+import {Key, RefObject} from 'react';
+import {KeyboardDelegate} from '@react-types/shared';
 
 export class ListKeyboardDelegate<T> implements KeyboardDelegate {
-  private collection: Collection<T>;
+  private collection: Collection<Node<T>>;
   private ref: RefObject<HTMLElement>;
 
-  constructor(collection: Collection<T>, ref: RefObject<HTMLElement>) {
+  constructor(collection: Collection<Node<T>>, ref: RefObject<HTMLElement>) {
     this.collection = collection;
     this.ref = ref;
   }
 
   getKeyBelow(key: Key) {
-    return this.collection.getKeyAfter(key);
+    key = this.collection.getKeyAfter(key);
+    while (key) {
+      let item = this.collection.getItem(key);
+      if (item.type === 'item' && !item.isDisabled) {
+        return key;
+      }
+
+      key = this.collection.getKeyAfter(key);
+    }
   }
 
   getKeyAbove(key: Key) {
-    return this.collection.getKeyBefore(key);
+    key = this.collection.getKeyBefore(key);
+    while (key) {
+      let item = this.collection.getItem(key);
+      if (item.type === 'item' && !item.isDisabled) {
+        return key;
+      }
+
+      key = this.collection.getKeyBefore(key);
+    }
   }
 
   getFirstKey() {
-    return this.collection.getFirstKey();
+    let key = this.collection.getFirstKey();
+    while (key) {
+      let item = this.collection.getItem(key);
+      if (item.type === 'item' && !item.isDisabled) {
+        return key;
+      }
+
+      key = this.collection.getKeyAfter(key);
+    }
   }
 
   getLastKey() {
-    return this.collection.getLastKey();
+    let key = this.collection.getLastKey();
+    while (key) {
+      let item = this.collection.getItem(key);
+      if (item.type === 'item' && !item.isDisabled) {
+        return key;
+      }
+
+      key = this.collection.getKeyBefore(key);
+    }
   }
 
   private getItem(key: Key): HTMLElement {

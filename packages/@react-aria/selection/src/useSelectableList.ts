@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import { Collection } from "@react-stately/collections";
-import { MultipleSelectionManager } from "@react-stately/selection";
-import { FocusStrategy } from "@react-types/menu";
-import { HTMLAttributes, useMemo, RefObject, useEffect } from "react";
-import { KeyboardDelegate } from "@react-types/shared";
+import {Collection, Node} from '@react-stately/collections';
+import {FocusStrategy} from '@react-types/menu';
+import {HTMLAttributes, RefObject, useEffect, useMemo} from 'react';
+import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
+import {MultipleSelectionManager} from '@react-stately/selection';
 import {useSelectableCollection} from './useSelectableCollection';
 
 interface SelectableListOptions {
   selectionManager: MultipleSelectionManager,
-  collection: Collection<unknown>,
+  collection: Collection<Node<unknown>>,
   ref?: RefObject<HTMLElement>,
   keyboardDelegate?: KeyboardDelegate,
   autoFocus?: boolean,
@@ -47,7 +47,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
-  let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(collection, ref), [keyboardDelegate, collection]);
+  let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(collection, ref), [keyboardDelegate, collection, ref]);
 
   // If not virtualized, scroll the focused element into view when the focusedKey changes.
   // When virtualized, CollectionView handles this internally.
@@ -58,7 +58,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
         element.scrollIntoView({block: 'nearest'});
       }
     }
-  }, [selectionManager.focusedKey]);
+  }, [isVirtualized, ref, selectionManager.focusedKey]);
 
   let {collectionProps} = useSelectableCollection({
     selectionManager,

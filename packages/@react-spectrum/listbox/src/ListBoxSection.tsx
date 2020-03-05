@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import { classNames } from '@react-spectrum/utils';
-import React, { Fragment, ReactNode } from 'react';
+import {classNames} from '@react-spectrum/utils';
+import {ListState} from '@react-stately/list';
+import {Node} from '@react-stately/collections';
+import React, {Fragment, ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import { useSeparator } from '@react-aria/separator';
-import { useListBoxSection } from '@react-aria/listbox';
-import { Node } from '@react-stately/collections';
-import { ListState } from '@react-stately/list';
+import {useListBoxSection} from '@react-aria/listbox';
+import {useSeparator} from '@react-aria/separator';
 
 interface ListBoxSectionProps<T> {
   item: Node<T>,

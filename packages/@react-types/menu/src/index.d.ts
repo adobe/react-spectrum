@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, Key, ReactElement, RefObject} from 'react';
-import {CollectionBase, DOMProps, Expandable, MultipleSelection, Orientation, StyleProps} from '@react-types/shared';
+import {CollectionBase, DOMProps, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
 import {Node} from '@react-stately/collections';
-import {TreeState} from '@react-stately/tree';
+import {ReactElement, RefObject} from 'react';
 
 export type FocusStrategy = 'first' | 'last';
 

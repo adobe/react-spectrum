@@ -11,8 +11,8 @@
  */
 
 import {AllHTMLAttributes, RefObject} from 'react';
-import {MenuProps} from '@react-types/menu';
 import {KeyboardDelegate} from '@react-types/shared';
+import {MenuProps} from '@react-types/menu';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 

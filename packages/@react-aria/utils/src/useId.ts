@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 
 let map: Map<string, (v: string) => void> = new Map();
 
@@ -23,6 +23,18 @@ export function useId(defaultId?: string): string {
   let res = useMemo(() => value || `react-spectrum-${randomInstanceNumber}-${++id}`, [value]);
   map.set(res, setValue);
   return res;
+}
+
+export function useSlotId(): string {
+  let id = useId();
+  useEffect(() => {
+    let setId = map.get(id);
+    if (setId && !document.getElementById(id)) {
+      setId(null);
+    }
+  }, [id]);
+
+  return id;
 }
 
 export function mergeIds(a: string, b: string): string {

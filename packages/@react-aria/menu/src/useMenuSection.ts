@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {HTMLAttributes} from 'react';
 import {useId} from '@react-aria/utils';
-import { HTMLAttributes } from 'react';
 
 interface MenuSectionAria {
   itemProps: HTMLAttributes<HTMLElement>,

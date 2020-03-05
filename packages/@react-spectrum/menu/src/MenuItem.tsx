@@ -14,13 +14,13 @@ import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
+import {Node} from '@react-stately/collections';
 import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/typography';
+import {TreeState} from '@react-stately/tree';
 import {useMenuContext} from './context';
 import {useMenuItem} from '@react-aria/menu';
-import { Node } from '@react-stately/collections';
-import { TreeState } from '@react-stately/tree';
 
 interface MenuItemProps<T> {
   item: Node<T>,
@@ -32,7 +32,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let {
     item,
     state,
-    isVirtualized,
+    isVirtualized
   } = props;
 
   let {

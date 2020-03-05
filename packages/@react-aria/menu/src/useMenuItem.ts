@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, RefObject, Key} from 'react';
+import {AllHTMLAttributes, Key, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {usePress} from '@react-aria/interactions';

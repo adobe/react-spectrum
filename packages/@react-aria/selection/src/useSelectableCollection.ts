@@ -205,6 +205,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     
       manager.setFocusedKey(focusedKey);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

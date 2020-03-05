@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {HTMLAttributes, Key, RefObject} from 'react';
+import {ListState} from '@react-stately/list';
+import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
-import { Key, RefObject, HTMLAttributes } from 'react';
-import { usePress } from '@react-aria/interactions';
-import { ListState } from '@react-stately/list';
 
 interface OptionProps {
   isDisabled?: boolean,
@@ -40,7 +40,7 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     role: 'option',
     'aria-disabled': isDisabled,
     'aria-selected': isSelected
-  }
+  };
 
   if (isVirtualized) {
     optionProps['aria-posinset'] = state.collection.getItem(key).index;

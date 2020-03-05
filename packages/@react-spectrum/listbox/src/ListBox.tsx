@@ -12,15 +12,15 @@
 
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {CollectionView} from '@react-aria/collections';
+import {ListBoxOption} from './ListBoxOption';
+import {ListBoxSection} from './ListBoxSection';
 import {ListLayout} from '@react-stately/collections';
 import React, {useMemo} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import {useListBox} from '@react-aria/listbox';
+import {useListState} from '@react-stately/list';
 import {useProvider} from '@react-spectrum/provider';
-import { ListBoxSection } from './ListBoxSection';
-import { ListBoxOption } from './ListBoxOption';
-import { useListState } from '@react-stately/list';
-import { useListBox } from '@react-aria/listbox';
 
 export function ListBox<T>(props: SpectrumMenuProps<T>) {
   let {scale} = useProvider();
@@ -60,7 +60,7 @@ export function ListBox<T>(props: SpectrumMenuProps<T>) {
         if (type === 'section') {
           return (
             <ListBoxSection item={item} state={state} />
-          )
+          );
         }
 
         return (
