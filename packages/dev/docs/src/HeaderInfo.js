@@ -23,7 +23,7 @@ export function HeaderInfo(props) {
   let {
     packageData,
     componentNames,
-    sourceData
+    sourceData = []
   } = props;
 
   return (

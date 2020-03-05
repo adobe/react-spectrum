@@ -46,10 +46,10 @@ governing permissions and limitations under the License.
 
   overflow: auto;
 
-  height: 255px;
   width: 200px;
+  max-height: inherit; /* inherit from parent popover */
 
-  > .spectrum-Menu-sectionHeading {
+  & .spectrum-Menu-sectionHeading {
     /* Support headings as LI */
     margin-block-start: var(--spectrum-menu-margin-x);
     margin-block-end: var(--spectrum-menu-margin-x);
@@ -78,15 +78,8 @@ governing permissions and limitations under the License.
 .spectrum-Menu-item {
   cursor: pointer;
   position: relative;
-  display: flex;
-  align-items: center;
 
   box-sizing: border-box;
-  
-  padding-top: var(--spectrum-selectlist-option-padding-y);
-  padding-bottom: var(--spectrum-selectlist-option-padding-y);
-  padding-inline-end: var(--spectrum-selectlist-option-padding);
-  padding-inline-start: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus));
 
   margin: 0;
 
@@ -104,19 +97,9 @@ governing permissions and limitations under the License.
   }
 
   &.is-selected {
-    /* Redundant, but included for backwards compatibility */
-    padding-inline-end: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-popover-border-size));
-
     .spectrum-Menu-checkmark {
       display: block;
     }
-  }
-
-  .spectrum-Icon,
-  .spectrum-Menu-itemIcon {
-    /* Don't get smaller, you're an icon! */
-    flex-shrink: 0;
-    align-self: flex-start;
   }
 
   .spectrum-Icon + .spectrum-Menu-itemLabel,
@@ -126,9 +109,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Menu-itemLabel {
-  flex: 1 1 auto;
-  line-height: var(--spectrum-selectlist-option-label-line-height);
-  word-break: break-all;
+  grid-area: text;
+  align-self: center;
 }
 
 .spectrum-Menu-itemLabel--wrapping {
@@ -140,13 +122,6 @@ governing permissions and limitations under the License.
 .spectrum-Menu-checkmark {
   display: none;
   align-self: flex-start;
-}
-
-.spectrum-Menu-checkmark,
-.spectrum-Menu-chevron {
-  flex-grow: 0;
-  margin-inline-start: var(--spectrum-selectlist-option-icon-padding-x);
-  margin-block-start: var(--spectrum-selectlist-option-icon-margin-top);
 }
 
 .spectrum-Menu-divider {
@@ -180,4 +155,40 @@ governing permissions and limitations under the License.
 .spectrum-Menu .spectrum-Menu {
   /* Fill parent menu when nested */
   display: block;
+}
+
+.spectrum-Menu-itemGrid {
+  display: grid;
+  grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr auto auto var(--spectrum-selectlist-option-padding);
+  grid-template-rows: var(--spectrum-selectlist-option-padding-y) 1fr auto var(--spectrum-selectlist-option-padding-y);
+  grid-template-areas:
+    ". .    .           .     .            ."
+    ". icon text        end   keyboard     ."
+    ". icon description end   keyboard     ."
+    ". .    .           .     .            .";
+}
+
+/* Added .spectrum-Menu so paddings from component styles are overriden */
+.spectrum-Menu .spectrum-Menu-end {
+  grid-area: end;
+  justify-self: end;
+  align-self: center;
+  margin-inline-end: 0px;
+  margin-inline-start: 0px;
+}
+.spectrum-Menu-icon {
+  grid-area: icon;
+  align-self: center;
+  padding-inline-end: 5px;
+}
+.spectrum-Menu-description {
+  grid-area: description;
+  align-self: center;
+  line-height: 1.3;
+  font-size: var(--spectrum-global-dimension-size-150);
+}
+.spectrum-Menu-keyboard {
+  grid-area: keyboard;
+  align-self: center;
+  padding-inline-start: var(--spectrum-global-dimension-size-125);
 }

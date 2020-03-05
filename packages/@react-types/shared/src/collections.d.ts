@@ -16,7 +16,8 @@ export interface ItemProps<T> {
   title?: ReactNode, // label?? contents?
   childItems?: Iterable<T>,
   hasChildItems?: boolean,
-  children: ReactNode // CellRenderer??
+  children: ReactNode, // CellRenderer??
+  uniqueKey?: Key
 }
 
 export type ItemElement<T> = ReactElement<ItemProps<T>>;
@@ -31,7 +32,8 @@ interface AsyncLoadable<T> {
 
 export interface SectionProps<T> extends AsyncLoadable<T> {
   title?: ReactNode,
-  children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>
+  children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>,
+  uniqueKey?: Key
 }
 
 export type SectionElement<T> = ReactElement<SectionProps<T>>;

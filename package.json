@@ -8,7 +8,7 @@
     "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "scripts": {
-    "check-types": "tsc",
+    "check-types": "tsc --skipLibCheck",
     "start": "make run",
     "build-storybook": "build-storybook -c .storybook-v3 -o dist/$(git rev-parse HEAD)/storybook",
     "test": "make test",
@@ -91,6 +91,7 @@
     "ignore-styles": "^5.0.1",
     "jest": "^24.7.1",
     "jest-dom": "^3.1.3",
+    "jest-matchmedia-mock": "^1.0.0",
     "jsdom": "^9.8.0",
     "lerna": "^3.13.2",
     "lfcdn": "^0.4.2",

@@ -104,7 +104,7 @@ governing permissions and limitations under the License.
   outline: none; /* Hide focus outline around header */
 }
 
-.spectrum-Dialog-divider {
+.spectrum-Dialog .spectrum-Dialog-divider {
   grid-area: divider;
   width: 100%;
   margin-top: var(--spectrum-dialog-rule-margin-top);
