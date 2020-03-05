@@ -68,6 +68,13 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
 
   let renderOverlay = () => {
     switch (type) {
+      case 'fullscreen':
+      case 'fullscreenTakeover':
+        return (
+          <Modal isOpen={isOpen} onClose={onClose} type={type}>
+            {content}
+          </Modal>
+        );
       case 'modal':
         return (
           <Modal isOpen={isOpen} onClose={onClose}>
@@ -157,7 +164,7 @@ function DialogTriggerBase({type, isOpen, onPress, onClose, isDismissable, dialo
       <PressResponder
         {...triggerProps}
         onPress={onPress}
-        isPressed={isOpen && type !== 'modal'}>
+        isPressed={isOpen && type !== 'modal' && type !== 'fullscreen' && type !== 'fullscreenTakeover'}>
         {trigger}
       </PressResponder>
       <DialogContext.Provider value={context}>

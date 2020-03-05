@@ -19,8 +19,8 @@ export type SpectrumDialogClose = (close: () => void) => ReactElement;
 
 export interface SpectrumDialogTriggerProps extends PositionProps {
   children: [ReactElement, SpectrumDialogClose | ReactElement],
-  type?: 'modal' | 'popover' | 'tray',
-  mobileType?: 'modal' | 'tray',
+  type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  mobileType?: 'modal' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   hideArrow?: boolean,
   targetRef?: RefObject<HTMLElement>,
   isOpen?: boolean,
