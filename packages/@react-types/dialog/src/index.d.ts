@@ -45,7 +45,7 @@ export interface SpectrumDialogProps extends DOMProps, StyleProps {
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
   variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning'
-  heading: ReactNode,
+  title: string,
   children: ReactNode,
   cancelLabel?: string,
   primaryLabel?: string,
