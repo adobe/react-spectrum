@@ -40,9 +40,25 @@ storiesOf('DialogTrigger', module)
     {chromaticProvider: {scales: ['medium'], height: 1000}}
   )
   .add(
+    'type: fullscreen',
+    () => render({type: 'fullscreen'})
+  )
+  .add(
+    'type: fullscreenTakeover',
+    () => render({type: 'fullscreenTakeover'})
+  )
+  .add(
     'type: tray',
     () => renderPopover({type: 'tray'}),
     {chromaticProvider: {scales: ['medium'], height: 1000}}
+  )
+  .add(
+    'mobileType: fullscreen',
+    () => render({type: 'modal', mobileType: 'fullscreen'})
+  )
+  .add(
+    'mobileType: fullscreenTakeover',
+    () => render({type: 'modal', mobileType: 'fullscreenTakeover'})
   )
   .add(
     'popover with mobileType: modal',

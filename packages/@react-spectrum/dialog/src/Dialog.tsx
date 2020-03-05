@@ -43,13 +43,18 @@ export function Dialog(props: SpectrumDialogProps) {
       styleProps
     ),
     {className: classNames(styles, {'spectrum-Dialog--dismissable': isDismissable})}
-    );
+  );
+  let size = type === 'popover' ? undefined : (otherProps.size || 'L');
 
   if (type === 'popover') {
-    return <BaseDialog {...allProps} size={otherProps.size}>{children}</BaseDialog>;
+    return <BaseDialog {...allProps} size={size}>{children}</BaseDialog>;
   } else {
+    if (type === 'fullscreen' || type === 'fullscreenTakeover') {
+      size = type;
+    }
+
     return (
-      <ModalDialog {...allProps} size={otherProps.size}>
+      <ModalDialog {...allProps} size={size}>
         {children}
         {isDismissable && <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} onPress={onDismiss} />}
       </ModalDialog>
@@ -70,8 +75,9 @@ let sizeMap = {
   fullscreenTakeover: 'fullscreenTakeover'
 };
 
-function BaseDialog({children, slots, size = 'L', role, ...otherProps}: SpectrumBaseDialogProps) {
+function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDialogProps) {
   let ref = useRef();
+  let sizeVariant = sizeMap[size];
   let {dialogProps} = useDialog({ref, role});
   if (!slots) {
     slots = {
@@ -94,7 +100,7 @@ function BaseDialog({children, slots, size = 'L', role, ...otherProps}: Spectrum
         className={classNames(
           styles,
           'spectrum-Dialog',
-          {[`spectrum-Dialog--${sizeMap[size]}`]: size},
+          {[`spectrum-Dialog--${sizeVariant}`]: sizeVariant},
           otherProps.className
         )}
         ref={ref}>
