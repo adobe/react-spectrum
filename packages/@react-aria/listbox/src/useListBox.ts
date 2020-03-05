@@ -28,6 +28,7 @@ export function useListBox<T>(props, state: ListState<T>): ListBoxAria {
   return {
     listBoxProps: {
       role: 'listbox',
+      'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
       ...listProps
     }
   };

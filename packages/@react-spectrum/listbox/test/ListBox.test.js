@@ -279,6 +279,7 @@ describe('ListBox', function () {
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple'});
       await waitForDomChange();
       let listbox = tree.getByRole('listbox');
+      expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
       
       // Make sure nothing is checked by default
       let checkmarks = tree.queryAllByRole('img');
@@ -311,6 +312,7 @@ describe('ListBox', function () {
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar']});
       await waitForDomChange();
       let listbox = tree.getByRole('listbox');
+      expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
       
       // Make sure two items are checked by default
       let checkmarks = tree.getAllByRole('img');
@@ -352,6 +354,7 @@ describe('ListBox', function () {
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple', selectedKeys: ['Foo', 'Bar']});
       await waitForDomChange();
       let listbox = tree.getByRole('listbox');
+      expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
       
       // Make sure two items are checked by default
       let checkmarks = tree.getAllByRole('img');
@@ -391,6 +394,7 @@ describe('ListBox', function () {
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar']});
       await waitForDomChange();
       let listbox = tree.getByRole('listbox');
+      expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
       
       // Make sure two items are checked by default
       let checkmarks = tree.getAllByRole('img');
@@ -429,6 +433,7 @@ describe('ListBox', function () {
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar'], disabledKeys: ['Baz']});
       await waitForDomChange();
       let listbox = tree.getByRole('listbox');
+      expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
 
       // Attempt to trigger disabled item
       let options = within(listbox).getAllByRole('option');
