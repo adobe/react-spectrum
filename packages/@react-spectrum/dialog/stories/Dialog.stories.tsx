@@ -210,7 +210,7 @@ storiesOf('Dialog/Alert', module)
 function render({width = 'auto', isDismissable = undefined, ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isDismissable={isDismissable} isOpen>
+      <DialogTrigger isDismissable={isDismissable} defaultOpen>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
@@ -232,7 +232,7 @@ function render({width = 'auto', isDismissable = undefined, ...props}) {
 function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isDismissable={isDismissable} isOpen>
+      <DialogTrigger isDismissable={isDismissable} defaultOpen>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
@@ -254,7 +254,7 @@ function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
 function renderAlert({width = 'auto', ...props}: SpectrumAlertDialogProps) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <AlertDialog {...props} onConfirm={chain(close, props.onConfirm)} onCancel={chain(close, props.onCancel)} />
@@ -268,7 +268,7 @@ function renderAlert({width = 'auto', ...props}: SpectrumAlertDialogProps) {
 function renderWithForm({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
@@ -315,7 +315,7 @@ let fiveParagraphs = () => (
 function renderLongContent({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
@@ -336,7 +336,7 @@ function renderLongContent({width = 'auto', ...props}) {
 function renderWithThreeButtons({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>

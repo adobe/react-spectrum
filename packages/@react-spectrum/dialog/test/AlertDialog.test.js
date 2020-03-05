@@ -36,7 +36,7 @@ describe('AlertDialog', function () {
     expect(onConfirmSpy).toHaveBeenCalledWith('primary');
   });
 
-  it('renders alert dialog with onConfirm / onCancel', function () {
+  it('renders 2 button alert dialog with onConfirm / onCancel', function () {
     let onCancelSpy = jest.fn();
     let onConfirmSpy = jest.fn();
     let {getByRole, getByText} = render(
@@ -48,14 +48,20 @@ describe('AlertDialog', function () {
     let dialog = getByRole('alertdialog');
     expect(document.activeElement).toBe(dialog);
 
-    let button = getByText('cancel');
-    triggerPress(button);
+    let cancelButton = getByText('cancel');
+    triggerPress(cancelButton);
     expect(onConfirmSpy).toHaveBeenCalledTimes(0);
     expect(onCancelSpy).toHaveBeenCalledTimes(1);
     expect(onCancelSpy).toHaveBeenCalledWith();
+
+    let confirmButton = getByText('confirm');
+    triggerPress(confirmButton);
+    expect(onConfirmSpy).toHaveBeenCalledTimes(1);
+    expect(onCancelSpy).toHaveBeenCalledTimes(1);
+    expect(onConfirmSpy).toHaveBeenCalledWith('primary');
   });
 
-  it('renders alert dialog with onConfirm / onCancel', function () {
+  it('renders a 3 button alert dialog with onConfirm / onCancel', function () {
     let onCancelSpy = jest.fn();
     let onConfirmSpy = jest.fn();
     let {getByRole, getByText} = render(
@@ -67,27 +73,23 @@ describe('AlertDialog', function () {
     let dialog = getByRole('alertdialog');
     expect(document.activeElement).toBe(dialog);
 
-    let button = getByText('secondary');
-    triggerPress(button);
+    let confirmButton = getByText('confirm');
+    let secondaryButton = getByText('secondary');
+    let cancelButton = getByText('cancel');
+    triggerPress(secondaryButton);
     expect(onConfirmSpy).toHaveBeenCalledTimes(1);
-    expect(onConfirmSpy).toHaveBeenCalledWith('secondary');
+    expect(onConfirmSpy).toHaveBeenLastCalledWith('secondary');
     expect(onCancelSpy).toHaveBeenCalledTimes(0);
-  });
 
-  it('disable its confirm button', function () {
-    let onConfirmSpy = jest.fn();
-    let {getByRole, getByText} = render(
-      <AlertDialog variant="confirmation" isConfirmDisabled title="the title" primaryLabel="confirm" onConfirm={onConfirmSpy}>
-        Content body
-      </AlertDialog>
-    );
+    triggerPress(confirmButton);
+    expect(onConfirmSpy).toHaveBeenCalledTimes(2);
+    expect(onConfirmSpy).toHaveBeenLastCalledWith('primary');
+    expect(onCancelSpy).toHaveBeenCalledTimes(0);
 
-    let dialog = getByRole('alertdialog');
-    expect(document.activeElement).toBe(dialog);
-
-    let button = getByText('confirm');
-    triggerPress(button);
-    expect(onConfirmSpy).toHaveBeenCalledTimes(0);
+    triggerPress(cancelButton);
+    expect(onConfirmSpy).toHaveBeenCalledTimes(2);
+    expect(onCancelSpy).toHaveBeenCalledTimes(1);
+    expect(onCancelSpy).toHaveBeenLastCalledWith();
   });
 
   it('disable its confirm button', function () {
