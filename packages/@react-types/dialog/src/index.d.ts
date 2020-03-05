@@ -24,8 +24,7 @@ export interface SpectrumDialogTriggerProps extends PositionProps {
   isOpen?: boolean,
   defaultOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void,
-  isDismissable?: boolean,
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
+  isDismissable?: boolean
 }
 
 export interface SpectrumBaseDialogProps extends HTMLAttributes<HTMLElement> {
