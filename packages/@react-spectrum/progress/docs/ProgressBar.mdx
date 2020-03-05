@@ -30,7 +30,7 @@ import {View} from '@react-spectrum/view';
 
 ## Value
 
-Progress Bars are controlled with the `value` prop representing current percentage (as an integer).
+ProgressBars are controlled with the `value` prop representing current percentage (as an integer).
 In this case, the minimum and maximum values default to 0 and 100, respectively.
 
 ```tsx example
@@ -53,7 +53,7 @@ Values are formatted as a percentage by default, but can be modified by using th
 ### Indeterminate
 [View guidelines](https://spectrum.adobe.com/page/bar-loader/#Determinate-or-indeterminate)
 
-By default, Progress Bars are determinate. Use a determinate Progress Bar when progress can be calculated against a specific goal.
+By default, ProgressBars are determinate. Use a determinate ProgressBar when progress can be calculated against a specific goal.
 
 ```tsx example
 <ProgressBar label="Loading…" value={50} />
@@ -76,11 +76,11 @@ Depending on the visualization being used (i.e. depending on the `showValueLabel
 </div>
 ```
 
-If using the over background variant, ensure the background offers enough contrast for the Progress Bar to be legible and meets color contrast guidelines.
+If using the over background variant, ensure the background offers enough contrast for the ProgressBar to be legible and meets color contrast guidelines.
 
 ### Internationalization
 
-To internationalize a Progress Bar, a localized string should be passed to the `label` prop, `aria-label` prop, or value of the associated `aria-labelledby` element.
+To internationalize a ProgressBar, a localized string should be passed to the `label` prop, `aria-label` prop, or value of the associated `aria-labelledby` element.
 
 For languages that are read right to left (e.g. Hebrew and Arabic), the layout is mirrored for both determinate and indeterminate options.
 
@@ -93,7 +93,7 @@ For languages that are read right to left (e.g. Hebrew and Arabic), the layout i
 ### Over background
 [View guidelines](https://spectrum.adobe.com/page/bar-loader/#Over-background)
 
-When a Progress Bar needs to be placed on top of a colored background, use the `overBackground` variant.
+When a ProgressBar needs to be placed on top of a colored background, use the `overBackground` variant.
 
 ```tsx example
 <View backgroundColor="positive" padding="25px">
