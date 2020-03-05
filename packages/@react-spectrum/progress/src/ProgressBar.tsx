@@ -43,7 +43,7 @@ function ProgressBar(props: SpectrumProgressBarProps, ref: DOMRef<HTMLDivElement
 }
 
 /**
- * Progress Bars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
+ * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
  * They can represent either determinate or indeterminate progress.
  */
 let _ProgressBar = React.forwardRef(ProgressBar);

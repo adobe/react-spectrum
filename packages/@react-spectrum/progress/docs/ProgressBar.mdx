@@ -59,7 +59,7 @@ By default, Progress Bars are determinate. Use a determinate Progress Bar when p
 <ProgressBar label="Loading…" value={50} />
 ```
 
-Use an indeterminate Progress Bars when progress is happening but the time or effort to completion can’t be determined.
+Use an indeterminate ProgressBar when thhe wait time or effort to completion can not be determined.
 
 ```tsx example
 <ProgressBar label="Loading…" isIndeterminate />
@@ -104,13 +104,29 @@ When a Progress Bar needs to be placed on top of a colored background, use the `
 ### Labels
 [View guidelines](https://spectrum.adobe.com/page/bar-loader/#Label-or-no-label)
 
-Value labels are shown by default on top, but they can also be moved to the side or hidden as needed.
+Labels and value labels are shown by default on top, but they can also be moved to the side or hidden as needed.
 
 ```tsx example
 <Flex flexDirection="column" maxWidth="250px">
   <ProgressBar label="Loading…" marginBottom="25px" value={30} />
   <ProgressBar label="Loading…" marginBottom="25px" labelPosition="side" value={30} />
   <ProgressBar label="Loading…" showValueLabel={false} value={30} />
+</Flex>
+```
+
+Value labels by default show the percentage of progress in a determinate ProgressBar. These can be customized using the following props.
+
+`showValueLabel`: Hides the value label
+
+`formatOptions`: Allows you to customize the format of the percentage
+
+`valueLabel`: Allows you to customize the value label to any string.
+
+```tsx example
+<Flex flexDirection="column" maxWidth="250px">
+  <ProgressBar label="Loading…" marginBottom="25px" showValueLabel={false} value={30} />
+  <ProgressBar label="Loading…" marginBottom="25px" valueLabel="30 of 60 dogs" value={30} />
+  <ProgressBar label="Loading…" formatOptions={{style: 'percent', minimumFractionDigits: 2}} value={30.123} />
 </Flex>
 ```
 
