@@ -96,7 +96,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
           {Array.isArray(rendered) && rendered}
           {isSelected && 
             <CheckmarkMedium 
-              slot="end" 
+              slot="checkmark" 
               UNSAFE_className={
                 classNames(
                   styles, 
