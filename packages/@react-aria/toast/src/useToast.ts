@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {HTMLAttributes, ImgHTMLAttributes} from 'react';
 import intlMessages from '../intl/*.json';
 import {PressProps} from '@react-aria/interactions';
-import {ToastProps} from '@react-types/toast';
+import {ToastProps, ToastState} from '@react-types/toast';
+import {useFocus, useHover} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-interface AriaToastProps extends ToastProps {
-  id?: string
-}
+interface ToastAriaProps extends ToastProps {}
 
 interface ToastAria {
   toastProps: HTMLAttributes<HTMLElement>,
@@ -29,14 +29,19 @@ interface ToastAria {
   closeButtonProps: DOMProps & PressProps
 }
 
-export function useToast(props: AriaToastProps): ToastAria {
+export function useToast(props: ToastAriaProps, state: ToastState): ToastAria {
   let {
     id,
+    toastKey,
     onAction,
     onClose,
     shouldCloseOnAction,
+    timer,
     variant
   } = props;
+  let {
+    onRemove
+  } = state;
   let formatMessage = useMessageFormatter(intlMessages);
 
   const handleAction = (...args) => {
@@ -44,25 +49,47 @@ export function useToast(props: AriaToastProps): ToastAria {
       onAction(...args);
     }
 
-    if (shouldCloseOnAction && onClose) {
-      onClose(...args);
+    if (shouldCloseOnAction) {
+      onClose && onClose(...args);
+      onRemove && onRemove(toastKey);
     }
   };
 
   let iconProps = variant ? {alt: formatMessage(variant)} : {};
 
+  let pauseTimer = () => {
+    timer && timer.pause();
+  };
+
+  let resumeTimer = () => {
+    timer && timer.resume();
+  };
+
+  let {hoverProps} = useHover({
+    onHover: pauseTimer,
+    onHoverEnd: resumeTimer
+  });
+
+  let {focusProps} = useFocus({
+    onFocus: pauseTimer,
+    onBlur: resumeTimer
+  });
+
   return {
     toastProps: {
+      ...hoverProps,
       id: useId(id),
       role: 'alert'
     },
     iconProps,
     actionButtonProps: {
+      ...focusProps,
       onPress: handleAction
     },
     closeButtonProps: {
       'aria-label': formatMessage('close'),
-      onPress: onClose
+      ...focusProps,
+      onPress: chain(onClose, () => onRemove(toastKey))
     }
   };
 }

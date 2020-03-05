@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
   --spectrum-dialog-warning-icon-color: var(--spectrum-semantic-notice-color-icon);
 }
 
-.spectrum-Dialog-title {
+.spectrum-Dialog-heading {
   color: var(--spectrum-dialog-title-text-color);
 }
 
