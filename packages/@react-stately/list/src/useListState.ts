@@ -3,71 +3,44 @@
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
-import {CollectionBuilder, TreeCollection, Collection, Node} from '@react-stately/collections';
-import {Key, useMemo, useState} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
-import {useControlledState} from '@react-stately/utils';
+import {Collection, Node, CollectionBuilder, TreeCollection} from '@react-stately/collections';
+import { useMemo, Key } from 'react';
+import { CollectionBase, MultipleSelection } from '@react-types/shared';
 
-export interface TreeState<T> {
+export interface ListState<T> {
   collection: Collection<Node<T>>,
-  expandedKeys: Set<Key>,
   disabledKeys: Set<Key>,
-  toggleKey: (key: Key) => void,
   selectionManager: SelectionManager
 }
 
-export function useTreeState<T>(props: CollectionBase<T> & Expandable & MultipleSelection): TreeState<T> {
-  let [expandedKeys, setExpandedKeys] = useControlledState(
-    props.expandedKeys ? new Set(props.expandedKeys) : undefined,
-    props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
-    props.onExpandedChange
-  );
-
+export function useListState<T>(props: CollectionBase<T> & MultipleSelection): ListState<T>  {
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
   let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
-  let tree = useMemo(() => {
+  let collection = useMemo(() => {
     let nodes = builder.build(props, (key) => ({
-      isExpanded: expandedKeys.has(key),
       isSelected: selectionState.selectedKeys.has(key),
       isDisabled: disabledKeys.has(key),
       isFocused: key === selectionState.focusedKey
     }));
 
     return new TreeCollection(nodes);
-  }, [builder, props, expandedKeys, selectionState.selectedKeys, selectionState.focusedKey, disabledKeys]);
-
-  let onToggle = (key: Key) => {
-    setExpandedKeys(expandedKeys => toggleKey(expandedKeys, key));
-  };
+  }, [builder, props, selectionState.selectedKeys, selectionState.focusedKey, disabledKeys]);
 
   return {
-    collection: tree,
-    expandedKeys,
+    collection,
     disabledKeys,
-    toggleKey: onToggle,
-    selectionManager: new SelectionManager(tree, selectionState)
+    selectionManager: new SelectionManager(collection, selectionState)
   };
-}
-
-function toggleKey(set: Set<Key>, key: Key): Set<Key> {
-  let res = new Set(set);
-  if (res.has(key)) {
-    res.delete(key);
-  } else {
-    res.add(key);
-  }
-
-  return res;
 }

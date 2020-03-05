@@ -42,26 +42,13 @@ export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
   closeOnSelect?: boolean
 }
 
-export interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps, StyleProps {
-  'aria-orientation'?: Orientation,
+export interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {
   autoFocus?: boolean,
   focusStrategy?: FocusStrategy,
   wrapAround?: boolean
 }
 
-export interface SpectrumMenuProps<T> extends MenuProps<T> {
-}
-
-export interface MenuItemProps<T> {
-  isDisabled?: boolean,
-  isSelected?: boolean,
-  key?: Key,
-  role?: string
-}
-
-export interface SpectrumMenuItemProps<T> extends AllHTMLAttributes<HTMLElement> {
-  item: Node<T>,
-  state: TreeState<T>
+export interface SpectrumMenuProps<T> extends MenuProps<T>, DOMProps, StyleProps {
 }
 
 export interface SpectrumMenuHeadingProps<T> {

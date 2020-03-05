@@ -10,35 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames} from '@react-spectrum/utils';
-import {FocusRing} from '@react-aria/focus';
-import {Grid} from '@react-spectrum/layout';
-import React, {useRef} from 'react';
+import { useOption } from "@react-aria/listbox";
+import { useRef } from "react";
+import { Node } from "@react-stately/collections";
+import { classNames } from "@react-spectrum/utils";
+import React from 'react';
+import { Grid } from "@react-spectrum/layout";
+import { Text } from "@react-spectrum/typography";
+import CheckmarkMedium from "@spectrum-icons/ui/CheckmarkMedium";
+import { FocusRing } from "@react-aria/focus";
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {Text} from '@react-spectrum/typography';
-import {useMenuContext} from './context';
-import {useMenuItem} from '@react-aria/menu';
-import { Node } from '@react-stately/collections';
-import { TreeState } from '@react-stately/tree';
+import { ListState } from "@react-stately/list";
 
-interface MenuItemProps<T> {
+interface OptionProps<T> {
   item: Node<T>,
-  state: TreeState<T>,
-  isVirtualized?: boolean,
+  state: ListState<T>
 }
 
-export function MenuItem<T>(props: MenuItemProps<T>) {
+export function ListBoxOption<T>(props: OptionProps<T>) {
   let {
     item,
-    state,
-    isVirtualized,
+    state
   } = props;
-
-  let {
-    onClose,
-    closeOnSelect
-  } = useMenuContext();
 
   let {
     rendered,
@@ -48,23 +41,21 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   } = item;
 
   let ref = useRef<HTMLLIElement>();
-  let {menuItemProps} = useMenuItem(
+  let {optionProps} = useOption(
     {
       isSelected,
       isDisabled,
       key,
-      onClose,
-      closeOnSelect,
       ref,
-      isVirtualized
-    }, 
+      isVirtualized: true
+    },
     state
   );
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <li
-        {...menuItemProps}
+        {...optionProps}
         ref={ref}
         className={classNames(
           styles,
@@ -83,10 +74,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
           }
           slots={{
             text: styles['spectrum-Menu-itemLabel'],
-            end: styles['spectrum-Menu-end'],
             icon: styles['spectrum-Menu-icon'],
-            description: styles['spectrum-Menu-description'],
-            keyboard: styles['spectrum-Menu-keyboard']
+            description: styles['spectrum-Menu-description']
           }}>
           {!Array.isArray(rendered) && (
             <Text>
@@ -95,8 +84,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
           )}
           {Array.isArray(rendered) && rendered}
           {isSelected && 
-            <CheckmarkMedium 
-              slot="end" 
+            <CheckmarkMedium
+              slot="checkmark"
               UNSAFE_className={
                 classNames(
                   styles, 
