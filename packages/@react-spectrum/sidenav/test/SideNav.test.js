@@ -47,10 +47,10 @@ function renderComponent(Name, Component, ComponentSection, ComponentItem, props
     case 'SideNavStatic':
       return render(
         <Component {...props} >
-          <ComponentItem>Foo</ComponentItem>
-          <ComponentItem>Bar</ComponentItem>
-          <ComponentItem>Bob</ComponentItem>
-          <ComponentItem>Alice</ComponentItem>
+          <ComponentItem uniqueKey="Foo">Foo</ComponentItem>
+          <ComponentItem uniqueKey="Bar">Bar</ComponentItem>
+          <ComponentItem uniqueKey="Bob">Bob</ComponentItem>
+          <ComponentItem uniqueKey="Alice">Alice</ComponentItem>
         </Component>
       );
     case 'SideNavWithSections':
@@ -67,12 +67,12 @@ function renderComponent(Name, Component, ComponentSection, ComponentItem, props
       return render(
         <Component {...props} >
           <ComponentSection title="Section 1">
-            <ComponentItem>Foo</ComponentItem>
-            <ComponentItem>Bar</ComponentItem>
+            <ComponentItem uniqueKey="Foo">Foo</ComponentItem>
+            <ComponentItem uniqueKey="Bar">Bar</ComponentItem>
           </ComponentSection>
           <ComponentSection title="Section 2">
-            <ComponentItem>Bob</ComponentItem>
-            <ComponentItem>Alice</ComponentItem>
+            <ComponentItem uniqueKey="Bob">Bob</ComponentItem>
+            <ComponentItem uniqueKey="Alice">Alice</ComponentItem>
           </ComponentSection>
         </Component>
       );
@@ -255,27 +255,31 @@ describe('SideNav', function () {
     ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
-  `('$Name can focus first to last/last to first item', async function ({Name, Component, ComponentSection, ComponentItem}) {
+  `('$Name can keep focus on first/last item', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let {getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem);
     
     await waitForDomChange();
 
     let items = getAllByRole('link');
-    let selectedItem = items[0];
-    selectedItem.focus();
-    expect(selectedItem).toBe(document.activeElement);
-    fireEvent.keyDown(selectedItem, {key: 'ArrowUp', code: 40, charCode: 40});
-    let nextSelectedItem = items[items.length - 1];
-    expect(nextSelectedItem).toBe(document.activeElement);
-    fireEvent.keyDown(nextSelectedItem, {key: 'ArrowDown', code: 38, charCode: 38});
-    expect(selectedItem).toBe(document.activeElement);
+    let firstItem = items[0];
+    firstItem.focus();
+    expect(firstItem).toBe(document.activeElement);
+    fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
+    let lastItem = items[items.length - 1];
+    expect(lastItem).not.toBe(document.activeElement);
+
+    lastItem.focus();
+    expect(lastItem).toBe(document.activeElement);
+    fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
+    expect(firstItem).not.toBe(document.activeElement);
   });
 
-  // TODO: add test for static collection
   it.each`
     Name                           | Component    | ComponentSection | ComponentItem
     ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name supports defaultSelectedKeys (uncontrolled)', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {defaultSelectedKeys: ['Bar']});
 
@@ -297,11 +301,12 @@ describe('SideNav', function () {
     expect(alice).toHaveAttribute('aria-current', 'page');
   });
 
-  // TODO: add test for static collection
   it.each`
     Name                           | Component    | ComponentSection | ComponentItem
     ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name supports defaultSelectedKeys (controlled)', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectedKeys: ['Bar']});
 
@@ -324,11 +329,12 @@ describe('SideNav', function () {
     expect(bar).toHaveAttribute('aria-current', 'page');
   });
 
-  // TODO: add test for static collection
   it.each`
     Name                           | Component    | ComponentSection | ComponentItem
     ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name supports disabledKeys', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let spy = jest.fn();
     let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy, disabledKeys: ['Foo', 'Bob']});
