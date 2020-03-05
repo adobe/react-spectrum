@@ -99,9 +99,7 @@ module.exports = new Transformer({
         return processExport(path.get('arguments.0'));
       }
 
-
       if (path.isFunction()) {
-        console.log("are you a func")
         if (isReactComponent(path)) {
           let props = path.node.params[0];
           let docs = getJSDocs(path);
