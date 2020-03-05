@@ -20,7 +20,7 @@ governing permissions and limitations under the License.
   --spectrum-dialog-exit-animation-delay: 0ms;
 
   /* Distance between top and bottom of dialog and edge of window for fullscreen dialog */
-  --spectrum-dialog-fullscreen-margin: 32px;
+  --spectrum-dialog-fullscreen-margin: 40px;
   --spectrum-dialog-max-height: 90vh;
 }
 

@@ -17,8 +17,8 @@ import {Slots} from '@react-types/layout';
 
 export interface SpectrumDialogTriggerProps extends PositionProps {
   children: ReactElement[],
-  type?: 'modal' | 'popover' | 'tray',
-  mobileType?: 'modal' | 'tray',
+  type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  mobileType?: 'modal' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   hideArrow?: boolean,
   targetRef?: RefObject<HTMLElement>,
   isOpen?: boolean,
@@ -45,7 +45,7 @@ export interface SpectrumDialogProps extends DOMProps, StyleProps {
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
   variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning'
-  title: ReactNode,
+  heading: ReactNode,
   children: ReactNode,
   cancelLabel?: string,
   primaryLabel?: string,
