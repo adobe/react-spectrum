@@ -16,6 +16,7 @@ import {AlertDialog, Dialog, DialogTrigger} from '../';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
+import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Image} from '@react-spectrum/image';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
@@ -80,6 +81,10 @@ storiesOf('Dialog', module)
   .add(
     'three buttons',
     () => renderWithThreeButtons({})
+  )
+  .add(
+    'cleared content',
+    () => renderWithDividerInContent({})
   );
 
 storiesOf('Dialog/Alert', module)
@@ -327,9 +332,34 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
           <Divider size="M" />
           <Content>{singleParagraph()}</Content>
           <Footer>
-            <Button variant="secondary">Whoops I named this button a long name</Button>
-            <Button variant="primary">Cancel and forget about forever</Button>
-            <Button variant="cta" autoFocus>Confirm Starscream is the worst</Button>
+            <Button variant="secondary">Secondary</Button>
+            <Button variant="primary">Primary</Button>
+            <Button variant="cta" autoFocus>CTA</Button>
+          </Footer>
+        </Dialog>
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderWithDividerInContent({width = 'auto', ...props}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger isOpen>
+        <ActionButton>Trigger</ActionButton>
+        <Dialog {...props}>
+          <Header><Text slot="title">The Title</Text></Header>
+          <Divider size="M" />
+          <Content>
+            <Flex UNSAFE_style={{padding: '10px'}}>
+              <Text flexGrow={1} flexBasis={0}>Column number one. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Text>
+              <Divider flexShrink={0} marginStart={10} marginEnd={10} orientation="vertical" size="S" />
+              <Text flexGrow={1} flexBasis={0}>Column number two. Eleifend quam adipiscing vitae proin sagittis nisl. Diam donec adipiscing tristique risus.</Text>
+            </Flex>
+          </Content>
+          <Footer>
+            <Button variant="primary">Primary</Button>
+            <Button variant="cta" autoFocus>CTA</Button>
           </Footer>
         </Dialog>
       </DialogTrigger>

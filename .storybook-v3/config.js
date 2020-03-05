@@ -14,6 +14,12 @@ configureActions({
   depth: 1
 });
 
+addParameters({
+  options: {
+    storySort: (a, b) => a[1].kind.localeCompare(b[1].kind)
+  }
+});
+
 addDecorator(withA11y);
 
 addDecorator(story => (
