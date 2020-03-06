@@ -60,7 +60,7 @@ export function useOverlay(props: OverlayProps): OverlayAria {
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: closeOnInteractOutside? onHide : null});
+  useInteractOutside({ref, onInteractOutside: closeOnInteractOutside ? onHide : null});
 
   return {
     overlayProps: {
