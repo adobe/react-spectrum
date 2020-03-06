@@ -264,7 +264,7 @@ function renderAlert({width = 'auto', ...props}) {
       <DialogTrigger {...props} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
-          <AlertDialog heading="Alert! Danger!" variant="error" primaryLabel="Accept" secondaryLabel="Whoa" cancelLabel="Cancel" onCancel={chain(close, action('cancel'))} onConfirm={chain(close, action('confirm'))}>
+          <AlertDialog title="Alert! Danger!" variant="error" primaryLabel="Accept" secondaryLabel="Whoa" cancelLabel="Cancel" onCancel={chain(close, action('cancel'))} onConfirm={chain(close, action('confirm'))}>
             <Text>Fine! No, absolutely fine. It's not like I don't have, you know, ten thousand other test subjects begging me to help them escape. You know, it's not like this place is about to EXPLODE.</Text>
           </AlertDialog>
         )}

@@ -87,7 +87,7 @@ storiesOf('Dialog/Alert', module)
     'destructive',
     () => renderAlert({
       variant: 'destructive',
-      heading: 'Warning Destructive',
+      title: 'Warning Destructive',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -99,7 +99,7 @@ storiesOf('Dialog/Alert', module)
     'confirmation',
     () => renderAlert({
       variant: 'confirmation',
-      heading: 'Confirmation Required',
+      title: 'Confirmation Required',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -111,7 +111,7 @@ storiesOf('Dialog/Alert', module)
     'information',
     () => renderAlert({
       variant: 'information',
-      heading: 'Informative Alert',
+      title: 'Informative Alert',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -123,7 +123,7 @@ storiesOf('Dialog/Alert', module)
     'error',
     () => renderAlert({
       variant: 'error',
-      heading: 'Error: Danger Will Robinson',
+      title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -135,7 +135,7 @@ storiesOf('Dialog/Alert', module)
     'warning',
     () => renderAlert({
       variant: 'warning',
-      heading: 'This is a warning',
+      title: 'This is a warning',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -147,7 +147,7 @@ storiesOf('Dialog/Alert', module)
     'primary disabled',
     () => renderAlert({
       variant: 'error',
-      heading: 'Error: Danger Will Robinson',
+      title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -160,7 +160,7 @@ storiesOf('Dialog/Alert', module)
     'autoFocus primary',
     () => renderAlert({
       variant: 'error',
-      heading: 'Error: Danger Will Robinson',
+      title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -174,7 +174,7 @@ storiesOf('Dialog/Alert', module)
     'autoFocus secondary',
     () => renderAlert({
       variant: 'error',
-      heading: 'Error: Danger Will Robinson',
+      title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
@@ -188,7 +188,7 @@ storiesOf('Dialog/Alert', module)
     'autoFocus cancel',
     () => renderAlert({
       variant: 'error',
-      heading: 'Error: Danger Will Robinson',
+      title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
       primaryLabel: 'Accept',
       cancelLabel: 'Cancel',
