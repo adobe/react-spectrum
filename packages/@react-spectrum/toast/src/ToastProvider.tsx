@@ -12,13 +12,11 @@
 
 import React, {ReactElement, ReactNode, useContext} from 'react';
 import {ToastContainer} from './';
-import {ToastOptions, ToastStateBase} from '@react-types/toast';
+import {ToastOptions} from '@react-types/toast';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useToastState} from '@react-stately/toast';
 
 interface ToastContextProps {
-  setToasts?: (any) => void,
-  toasts?: ToastStateBase[],
   positive?: (content: ReactNode, options: ToastOptions) => void,
   negative?: (content: ReactNode, options: ToastOptions) => void,
   neutral?: (content: ReactNode, options: ToastOptions) => void,
@@ -35,30 +33,35 @@ export function useToastProvider() {
   return useContext(ToastContext);
 }
 
+let keyCounter = 0;
+function generateKey(pre = 'toast') {
+  return `${pre}_${keyCounter++}`;
+}
+
 export function ToastProvider(props: ToastProviderProps): ReactElement {
-  let {onAdd, toasts} = useToastState();
+  let {onAdd, onRemove, toasts} = useToastState();
   let {
     children
   } = useProviderProps(props);
 
   let contextValue = {
     neutral: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, options);
+      onAdd(content, {...options, toastKey: generateKey()});
     },
     positive: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options, variant: 'positive'});
+      onAdd(content, {...options, toastKey: generateKey(), variant: 'positive'});
     },
     negative: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options, variant: 'negative'});
+      onAdd(content, {...options, toastKey: generateKey(), variant: 'negative'});
     },
     info: (content: ReactNode, options: ToastOptions = {}) => {
-      onAdd(content, {...options, variant: 'info'});
+      onAdd(content, {...options, toastKey: generateKey(), variant: 'info'});
     }
   };
 
   return (
     <ToastContext.Provider value={contextValue}>
-      <ToastContainer toasts={toasts} />
+      <ToastContainer toasts={toasts} onRemove={onRemove} />
       {children}
     </ToastContext.Provider>
   );
