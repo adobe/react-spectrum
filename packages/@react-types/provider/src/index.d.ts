@@ -33,7 +33,7 @@ export interface Theme {
 
 interface ContextProps {
   /**
-   * Set the placement of the toast alerts for the provider.
+   * Set the placement of the toast alerts.
    * @default "bottom"
    */
   toastPlacement?: ToastPlacement,
@@ -55,13 +55,13 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
   /** The children components to receive Provider props and context. */
   children: ReactNode,
   /**
-   * Spectrum theme scoped to this provider and its children components.
+   * Theme scoped to this provider and its children components.
    * Sets the CSS variables for scale and color scheme values.
    */
   theme?: Theme,
   /**
    * Color scheme scoped to this provider and its children components.
-   * Defaults to the color scheme set by the OS/browser.
+   * Defaults to the color scheme set by the OS.
    */
   colorScheme?: ColorScheme,
   /**
@@ -76,9 +76,9 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
    */
   scale?: Scale,
   /**
-   * Type kit ID is required and products must get their own id via
-   * https://typekit.com/account/kits. The default is only intended for
-   * prototyping work.
+   * A Typekit ID is required to use the suggested fonts.
+   * Visit https://typekit.com/account/kits to create one.
+   * The default is only intended for prototyping work.
    */
   typekitId?: string,
   /**

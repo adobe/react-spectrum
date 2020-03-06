@@ -10,9 +10,7 @@ import {Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import {TextField} from '@react-spectrum/textfield';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 ```
 
 # Provider
@@ -32,32 +30,6 @@ import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css'
 </Provider>
 ```
 
-## Children Props
-
-As a convenience, Provider supports passing common props to all components
-within it. For example, an entire group of components could be disabled by
-setting `isDisabled` in one place rather than on each individual element.
-These props are `isDisabled`, `isEmphasized`, `isQuiet`, `isReadOnly`,
-`isRequired`, and `validationState`.
-
-### Quiet
-
-```tsx example
-<Provider isQuiet>
-  <Form>
-    <div>
-      <TextField label="Email" />
-    </div>
-    <Checkbox>
-      Checkbox Label
-    </Checkbox>
-    <div>
-      <Button variant="primary">Button</Button>
-    </div>
-  </Form>
-</Provider>
-```
-
 ## Global Settings
 
 Props such as `theme`, `colorScheme`, `locale`, and `scale` are applied to all
@@ -67,7 +39,29 @@ definition of custom CSS variables for the `colorScheme` and `scale` prop values
 ### Color Scheme and Scale
 
 ```tsx example
-<Provider colorScheme="dark" scale="large" UNSAFE_style={{padding: '15px'}}>
+<Provider colorScheme="dark" scale="large">
+  <Form margin="15px">
+    <div>
+      <TextField label="Email" />
+    </div>
+    <Checkbox>
+      Checkbox Label
+    </Checkbox>
+    <div style={{'margin-bottom': '15px'}}>
+      <Button variant="primary">Button</Button>
+    </div>
+  </Form>
+</Provider>
+```
+
+### Theme
+
+The Providers theme is the CSS variables for scale and color scheme values.
+
+```tsx
+import {theme} from '@react-spectrum/theme-default';
+
+<Provider theme={theme}>
   <Form>
     <div>
       <TextField label="Email" />
@@ -82,54 +76,53 @@ definition of custom CSS variables for the `colorScheme` and `scale` prop values
 </Provider>
 ```
 
-### Theme
-
-In this example the `theme` is being changed so that the "light" `theme`'s css
-is being applied to the "dark" `colorScheme`.
-
-```tsx example
-function Example() {
-  /*
-   * These are imported elsewhere in the file and commented out in this example
-   * as a reminder of where the variables come from.
-   */
-  // import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-  // import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-
-  let theme = {
-    dark: themeLight,
-    medium: scaleMedium
-  };
-
-  return (
-    <Provider theme={theme} colorScheme="dark">
-      <Form>
-        <div>
-          <TextField label="Email" />
-        </div>
-        <Checkbox>
-          Checkbox Label
-        </Checkbox>
-        <div>
-          <Button variant="primary">Button</Button>
-        </div>
-      </Form>
-    </Provider>
-  );
-}
-
-```
-
 ### Locale
 
-The Provider can override the `locale` prop which defaults to the system/browser
-settings and changes how all children components are internationalized.
+The `locale` prop can be set to specify a locale for children of the Provider.
+The default for the locale prop is based on the system/browser settings.
 
 ```tsx example
 <Provider locale="ar-AE">
   <Form necessityIndicator="label">
     <div>
-      <TextField label="Email" />
+      <TextField label="البريد الإلكتروني" />
+    </div>
+    <div>
+      <Button variant="primary">حفظ</Button>
+    </div>
+  </Form>
+</Provider>
+```
+
+## Provider Nesting
+
+Providers can be nested. The parent Provider passes its props down to the
+children Providers.
+
+```tsx example
+<Provider isDisabled scale="large">
+  <Button variant="primary">Button</Button>
+  <Provider isQuiet>
+    <Button variant="primary">Button</Button>
+  </Provider>
+</Provider>
+```
+
+## Children Props
+
+As a convenience, Provider supports passing common props to all components
+within it. For example, an entire group of components could be disabled by
+setting `isDisabled` in one place rather than on each individual element.
+These props are `isDisabled`, `isEmphasized`, `isQuiet`, `isReadOnly`,
+`isRequired`, and `validationState`.
+
+### isEmphasized
+
+```tsx example
+<Provider isEmphasized>
+  <Form>
+    <div>
+      <TextField label="Email" placeholder="info@adobe.com" />
     </div>
     <Checkbox>
       Checkbox Label
@@ -138,21 +131,6 @@ settings and changes how all children components are internationalized.
       <Button variant="primary">Button</Button>
     </div>
   </Form>
-</Provider>
-```
-
-## Provider Nesting
-
-Providers may be nested. The parent provider passes its global settings props
-(`scale`) down to the children providers, but not its context props
-(`isDisabled`, etc.).
-
-```tsx example
-<Provider isDisabled scale="large">
-  <Button variant="primary">Button</Button>
-  <Provider isQuiet>
-    <Button variant="primary">Button</Button>
-  </Provider>
 </Provider>
 ```
 
