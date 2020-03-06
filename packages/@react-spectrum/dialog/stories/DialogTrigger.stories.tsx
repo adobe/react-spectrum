@@ -246,7 +246,7 @@ function render({width = 'auto', ...props}) {
 function renderPopover({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger {...props} defaultOpen={isChromatic()}>
+      <DialogTrigger {...props} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
         <Dialog>
           <Header><Heading>The Heading</Heading></Header>
@@ -261,7 +261,7 @@ function renderPopover({width = 'auto', ...props}) {
 function renderAlert({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger {...props} defaultOpen={isChromatic()}>
+      <DialogTrigger {...props} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <AlertDialog heading="Alert! Danger!" variant="error" primaryLabel="Accept" secondaryLabel="Whoa" cancelLabel="Cancel" onCancel={chain(close, action('cancel'))} onConfirm={chain(close, action('confirm'))}>

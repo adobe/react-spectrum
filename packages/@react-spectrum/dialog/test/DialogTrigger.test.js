@@ -13,6 +13,7 @@
 import {ActionButton, Button} from '@react-spectrum/button';
 import {cleanup, fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Dialog, DialogTrigger} from '../';
+import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
@@ -25,14 +26,17 @@ let theme = {
 };
 
 describe('DialogTrigger', function () {
-  afterEach(cleanup);
+  let matchMedia;
 
   beforeEach(() => {
+    matchMedia = new MatchMediaMock();
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterEach(() => {
+    matchMedia.clear();
     window.requestAnimationFrame.mockRestore();
+    cleanup();
   });
 
   it('should trigger a modal by default', function () {
@@ -109,14 +113,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a modal instead of a popover on mobile', function () {
-    window.matchMedia = jest.fn().mockImplementation(query => ({
-      matches: true,
-      media: query,
-      onchange: null,
-      addListener: jest.fn(),
-      removeListener: jest.fn()
-    }));
-
+    matchMedia.useMediaQuery('(max-width: 700px)');
     let {getByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover">
@@ -141,14 +138,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a tray instead of a popover on mobile if mobileType="tray"', function () {
-    window.matchMedia = jest.fn().mockImplementation(query => ({
-      matches: true,
-      media: query,
-      onchange: null,
-      addListener: jest.fn(),
-      removeListener: jest.fn()
-    }));
-
+    matchMedia.useMediaQuery('(max-width: 700px)');
     let {getByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover" mobileType="tray">
@@ -352,6 +342,91 @@ describe('DialogTrigger', function () {
 
     let closeButton = getByLabelText('dismiss');
     triggerPress(closeButton);
+    expect(dialog).toBeVisible();
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    await waitForDomChange(); // wait for animation
+
+    expect(() => {
+      getByRole('dialog');
+    }).toThrow();
+  });
+
+  it('dismissable modals can be closed by clicking outside the dialog', async function () {
+    function Test({defaultOpen, onOpenChange}) {
+      return (
+        <Provider theme={theme}>
+          <DialogTrigger type="modal" isDismissable defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog>contents</Dialog>
+          </DialogTrigger>
+        </Provider>
+      );
+    }
+
+    let onOpenChange = jest.fn();
+    let {getByRole} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeVisible();
+    await waitForDomChange(); // wait for animation
+
+    fireEvent.mouseUp(document.body);
+    expect(dialog).toBeVisible();
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    await waitForDomChange(); // wait for animation
+
+    expect(() => {
+      getByRole('dialog');
+    }).toThrow();
+  });
+
+  it('non dismissable modals cannot be closed by clicking outside the dialog', async function () {
+    function Test({defaultOpen, onOpenChange}) {
+      return (
+        <Provider theme={theme}>
+          <DialogTrigger type="modal" defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog>contents</Dialog>
+          </DialogTrigger>
+        </Provider>
+      );
+    }
+
+    let onOpenChange = jest.fn();
+    let {getByRole} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
+    
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeVisible();
+    await waitForDomChange(); // wait for animation
+
+    fireEvent.mouseUp(document.body);
+    expect(dialog).toBeVisible();
+    expect(onOpenChange).toHaveBeenCalledTimes(0);
+  });
+
+  it('non-modals can be closed by clicking outside the dialog regardless of isDismissable', async function () {
+    function Test({defaultOpen, onOpenChange}) {
+      return (
+        <Provider theme={theme}>
+          <DialogTrigger type="popover" defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog>contents</Dialog>
+          </DialogTrigger>
+        </Provider>
+      );
+    }
+
+    let onOpenChange = jest.fn();
+    let {getByRole} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeVisible();
+    await waitForDomChange(); // wait for animation
+    fireEvent.mouseUp(document.body);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);

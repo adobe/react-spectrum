@@ -41,9 +41,24 @@ describe('useOverlay', function () {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  it('should not hide the overlay when clicking outside if closeOnInteractOutside is false', function () {
+    let onClose = jest.fn();
+    render(<Example isOpen onClose={onClose} closeOnInteractOutside={false} />);
+    fireEvent.mouseUp(document.body);
+    expect(onClose).toHaveBeenCalledTimes(0);
+  });
+
   it('should hide the overlay when pressing the escape key', function () {
     let onClose = jest.fn();
     let res = render(<Example isOpen onClose={onClose} />);
+    let el = res.getByTestId('test');
+    fireEvent.keyDown(el, {key: 'Escape'});
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('should still hide the overlay when pressing the escape key if closeOnInteractOutside is false', function () {
+    let onClose = jest.fn();
+    let res = render(<Example isOpen onClose={onClose} closeOnInteractOutside={false} />);
     let el = res.getByTestId('test');
     fireEvent.keyDown(el, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
