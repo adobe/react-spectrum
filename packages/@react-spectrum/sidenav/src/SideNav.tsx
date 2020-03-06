@@ -11,18 +11,17 @@
  */
 
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {CollectionBase, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
-import {FocusRing} from '@react-aria/focus';
-import {ListLayout, Node} from '@react-stately/collections';
-import React, {AllHTMLAttributes, useMemo, useRef} from 'react';
+import {ListLayout} from '@react-stately/collections';
+import React, {useMemo} from 'react';
+import {SideNavHeading} from './SideNavHeading';
+import {SideNavItem} from './SideNavItem';
+import {SpectrumSideNavProps} from '@react-types/sidenav';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
-import {TreeState, useTreeState} from '@react-stately/tree';
-import {useSideNav, useSideNavItem} from '@react-aria/sidenav';
+import {useSideNav} from '@react-aria/sidenav';
+import {useTreeState} from '@react-stately/tree';
 
-export interface SideNavProps<T> extends CollectionBase<T>, MultipleSelection, Expandable, StyleProps {}
-
-export function SideNav<T>(props: SideNavProps<T>) {
+export function SideNav<T>(props: SpectrumSideNavProps<T>) {
   let state = useTreeState({...props, selectionMode: 'single'});
 
   let layout = useMemo(() => new ListLayout({rowHeight: 40}), []);
@@ -58,60 +57,5 @@ export function SideNav<T>(props: SideNavProps<T>) {
         }}
       </CollectionView>
     </nav>
-  );
-}
-
-interface SideNavItemProps<T> extends AllHTMLAttributes<HTMLElement>{
-  item: Node<T>,
-  state: TreeState<T>
-}
-
-function SideNavItem<T>(props: SideNavItemProps<T>) {
-  let ref = useRef<HTMLAnchorElement>();
-  let {
-    isSelected,
-    isDisabled,
-    rendered
-  } = props.item;
-
-  let className = classNames(
-    styles,
-    'spectrum-SideNav-item',
-    {
-      'is-selected': isSelected,
-      'is-disabled': isDisabled
-    }
-  );
-
-  let {listItemProps, listItemLinkProps} = useSideNavItem(props, props.state, ref);
-
-  return (
-    <div
-      {...listItemProps}
-      className={className} >
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-        <a
-          {...listItemLinkProps}
-          ref={ref}
-          className={classNames(styles, 'spectrum-SideNav-itemLink')} >
-          {rendered}
-        </a>
-      </FocusRing>
-    </div>
-  );
-}
-
-interface SideNavHeadingProps<T> extends AllHTMLAttributes<HTMLElement> {
-  item: Node<T>
-}
-
-function SideNavHeading<T>({item, ...otherProps}: SideNavHeadingProps<T>) {
-
-  return (
-    <h2
-      {...otherProps}
-      className={classNames(styles, 'spectrum-SideNav-heading')} >
-      {item.rendered}
-    </h2>
   );
 }
