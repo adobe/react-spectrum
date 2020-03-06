@@ -30,7 +30,7 @@ export interface SpectrumDialogTriggerProps extends PositionProps {
 }
 
 export interface SpectrumDialogTriggerBase {
-  type?: 'modal' | 'popover' | 'tray',
+  type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   isOpen?: boolean,
   onPress?: any,
   onClose?: () => void,

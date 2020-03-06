@@ -72,7 +72,7 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
       case 'fullscreenTakeover':
         return (
           <Modal isOpen={isOpen} onClose={onClose} type={type}>
-            {content}
+            {typeof content === 'function' ? content(onClose) : content}
           </Modal>
         );
       case 'modal':
