@@ -32,8 +32,8 @@ import {TextField} from '@react-spectrum/textfield';
 
 ## Global Settings
 
-Props such as `theme`, `colorScheme`, `locale`, and `scale` are applied to all
-children components, included nested Providers. The `theme` allows the
+Props such as `colorScheme`, `locale`, `scale`, and `theme` are applied to all
+children components, including nested Providers. The `theme` allows the
 definition of custom CSS variables for the `colorScheme` and `scale` prop values.
 
 ### Color Scheme and Scale
@@ -56,7 +56,7 @@ definition of custom CSS variables for the `colorScheme` and `scale` prop values
 
 ### Theme
 
-The Providers theme is the CSS variables for scale and color scheme values.
+The Provider's `theme` is the CSS variables for `colorScheme` and `scale` values.
 
 ```tsx
 import {theme} from '@react-spectrum/theme-default';
