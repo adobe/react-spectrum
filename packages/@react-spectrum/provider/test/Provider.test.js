@@ -13,9 +13,11 @@
 // needs to be imported first
 import MatchMediaMock from 'jest-matchmedia-mock';
 // eslint-disable-next-line rulesdir/sort-imports
+import {Button} from '@react-spectrum/button';
 import {cleanup, render} from '@testing-library/react';
 import {Provider} from '../';
 import React from 'react';
+import {triggerPress} from '@react-spectrum/test-utils';
 
 let theme = {
   global: {},
@@ -29,11 +31,13 @@ let mediaQueryDark = '(prefers-color-scheme: dark)';
 
 describe('Provider', () => {
   let matchMedia;
+  let onPressSpy = jest.fn();
   beforeEach(() => {
     matchMedia = new MatchMediaMock();
   });
   afterEach(() => {
     matchMedia.clear();
+    onPressSpy.mockClear();
     cleanup();
   });
 
@@ -108,6 +112,20 @@ describe('Provider', () => {
     let provider2 = getByTestId('testid2');
     expect(provider1.classList.contains('spectrum--dark')).toBeTruthy();
     expect(provider2.classList.contains('spectrum--light')).toBeTruthy();
+  });
+
+  it('Nested providers pass props to children', () => {
+    let {getByRole} = render(
+      <Provider theme={theme} isDisabled>
+        <Provider isQuiet>
+          <Button onPress={onPressSpy}>Hello!</Button>
+        </Provider>
+      </Provider>
+    );
+    let button = getByRole('button');
+    triggerPress(button);
+    expect(onPressSpy).not.toHaveBeenCalled();
+    expect(button.classList.contains('spectrum-Button--quiet')).toBeTruthy();
   });
 
   it('Provider will rerender if the OS preferred changes and it is on auto', () => {
