@@ -24,7 +24,7 @@ import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeProvider, ThemeSwitcher} from './ThemeSwitcher';
 
-let links = document.querySelectorAll(':not([hidden]) table a[data-link]');
+let links = document.querySelectorAll(':not([hidden]) a[data-link]');
 for (let link of links) {
   let container = document.createElement('span');
 

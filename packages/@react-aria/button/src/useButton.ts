@@ -29,6 +29,12 @@ interface ButtonAria {
   isPressed: boolean
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions, 
+ * focus behavior, and ARIA props for both native button elements and custom element types.
+ * @param props - props to be applied to the button
+ * @param ref - a ref to a DOM element for the button
+ */
 export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): ButtonAria {
   let {
     elementType = 'button',

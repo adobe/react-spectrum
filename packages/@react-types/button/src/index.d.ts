@@ -13,7 +13,7 @@
 import {DOMProps, FocusableProps, HoverEvents, MultipleSelection, PressEvents, StyleProps} from '@react-types/shared';
 import {JSXElementConstructor, ReactElement, ReactNode} from 'react';
 
-export interface ButtonProps extends DOMProps, StyleProps, PressEvents, HoverEvents, FocusableProps {
+export interface ButtonProps extends PressEvents, HoverEvents, FocusableProps {
   /** Whether the button is disabled */
   isDisabled?: boolean,
   /**
@@ -29,7 +29,7 @@ export interface ButtonProps extends DOMProps, StyleProps, PressEvents, HoverEve
   target?: string
 }
 
-export interface SpectrumButtonProps extends ButtonProps {
+export interface SpectrumButtonProps extends ButtonProps, DOMProps, StyleProps {
   /** An icon to display in the button */
   icon?: ReactElement,
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */

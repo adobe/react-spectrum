@@ -98,6 +98,10 @@
   color: var(--hljs-title-color);
 }
 
+:global(.hljs-function) {
+  color: var(--hljs-function-color);
+}
+
 :global(.hljs-emphasis) {
   font-style: italic;
 }

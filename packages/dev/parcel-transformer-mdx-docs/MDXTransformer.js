@@ -33,15 +33,18 @@ module.exports = new Transformer({
           if (node.meta === 'example') {
             let id = `example-${exampleCode.length}`;
 
+            // TODO: Parsing code with regex is bad. Replace with babel transform or something.
             let code = node.value;
-            if (code.startsWith('function ')) {
+            if (/^function (.|\n)*}\s*$/.test(code)) {
               let name = code.match(/^function (.*?)\s*\(/)[1];
               code = `(function () {
                 ${code}
                 ReactDOM.render(<ExampleProvider><${name} /></ExampleProvider>, document.getElementById("${id}"));
               })();`;
-            } else {
-              code = `ReactDOM.render(<ExampleProvider>${code}</ExampleProvider>, document.getElementById("${id}"));`;
+            } else if (/^<(.|\n)*>$/m.test(code)) {
+              code = `(function () {
+                ${code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<ExampleProvider>$1</ExampleProvider>, document.getElementById("${id}"));`)}
+              })();`
             }
 
             exampleCode.push(code);

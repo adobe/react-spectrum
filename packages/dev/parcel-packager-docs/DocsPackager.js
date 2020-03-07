@@ -106,7 +106,7 @@ module.exports = new Packager({
           let params = paramStack[paramStack.length - 1];
           if (t && t.type === 'application') {
             application = null;
-            if (t.base.type !== 'identifier') {
+            if (t.base && t.base.type !== 'identifier') {
               return t.base;
             }
           }

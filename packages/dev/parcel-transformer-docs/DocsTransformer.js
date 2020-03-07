@@ -111,7 +111,22 @@ module.exports = new Transformer({
             description: docs.description || null
           };
         } else {
-          // TODO: normal function
+          let docs = getJSDocs(path);
+          return addDocs({
+            type: 'function',
+            name: path.node.id ? path.node.id.name : null,
+            parameters: path.get('params').map(p => ({
+              type: 'parameter',
+              name: p.node.name,
+              value: processExport(p.get('typeAnnotation.typeAnnotation'))
+            })),
+            return: path.node.returnType
+              ? processExport(path.get('returnType.typeAnnotation'))
+              : {type: 'any'},
+            typeParameters: path.node.typeParameters
+              ? path.get('typeParameters.params').map(p => processExport(p))
+              : []
+          }, docs);
         }
       }
 

@@ -120,7 +120,7 @@ function Identifier({name}) {
   return <span className="token hljs-name">{name}</span>;
 }
 
-function JoinList({elements, joiner}) {
+export function JoinList({elements, joiner}) {
   return elements
     .reduce((acc, v, i) => [
       ...acc,
@@ -146,7 +146,7 @@ function TypeApplication({base, typeParameters}) {
   );
 }
 
-function TypeParameters({typeParameters}) {
+export function TypeParameters({typeParameters}) {
   if (typeParameters.length === 0) {
     return null;
   }
