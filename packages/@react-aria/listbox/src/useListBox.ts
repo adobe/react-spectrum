@@ -10,25 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, RefObject} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
-import {MenuProps} from '@react-types/menu';
-import {TreeState} from '@react-stately/tree';
+import {HTMLAttributes} from 'react';
+import {ListState} from '@react-stately/list';
 import {useSelectableList} from '@react-aria/selection';
 
-interface MenuAria {
-  menuProps: AllHTMLAttributes<HTMLElement>
+interface ListBoxAria {
+  listBoxProps: HTMLAttributes<HTMLElement>
 }
 
-interface MenuState<T> extends TreeState<T> {}
-
-interface AriaMenuProps<T> extends MenuProps<T> {
-  ref?: RefObject<HTMLElement>,
-  isVirtualized?: boolean,
-  keyboardDelegate?: KeyboardDelegate
-}
-
-export function useMenu<T>(props: AriaMenuProps<T>, state: MenuState<T>): MenuAria {
+export function useListBox<T>(props, state: ListState<T>): ListBoxAria {
   let {listProps} = useSelectableList({
     ...props,
     selectionManager: state.selectionManager,
@@ -36,8 +26,9 @@ export function useMenu<T>(props: AriaMenuProps<T>, state: MenuState<T>): MenuAr
   });
 
   return {
-    menuProps: {
-      role: 'menu',
+    listBoxProps: {
+      role: 'listbox',
+      'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
       ...listProps
     }
   };

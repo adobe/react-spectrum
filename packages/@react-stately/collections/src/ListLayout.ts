@@ -148,17 +148,37 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getKeyAbove(key: Key) {
-    return this.collectionManager.collection.getKeyBefore(key);
+    let collection = this.collectionManager.collection;
+
+    key = collection.getKeyBefore(key);
+    while (key) {
+      let item = collection.getItem(key);
+      if (item.type === 'item' && !item.isDisabled) {
+        return key;
+      }
+
+      key = collection.getKeyBefore(key);
+    }
   }
 
   getKeyBelow(key: Key) {
-    return this.collectionManager.collection.getKeyAfter(key);
+    let collection = this.collectionManager.collection;
+
+    key = collection.getKeyAfter(key);
+    while (key) {
+      let item = collection.getItem(key);
+      if (item.type === 'item' && !item.isDisabled) {
+        return key;
+      }
+
+      key = collection.getKeyAfter(key);
+    }
   }
 
   getKeyPageAbove(key: Key) {
     let layoutInfo = this.getLayoutInfo('item', key);
     let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.collectionManager.visibleRect.height);
-    while (layoutInfo.rect.y > pageY && layoutInfo) {
+    while (layoutInfo && layoutInfo.rect.y > pageY && layoutInfo) {
       let keyAbove = this.getKeyAbove(layoutInfo.key);
       layoutInfo = this.getLayoutInfo('item', keyAbove);
     }
@@ -186,11 +206,29 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getFirstKey() {
-    return this.collectionManager.collection.getFirstKey();
+    let collection = this.collectionManager.collection;
+    let key = collection.getFirstKey();
+    while (key) {
+      let item = collection.getItem(key);
+      if (item.type === 'item' && !item.isDisabled) {
+        return key;
+      }
+
+      key = collection.getKeyAfter(key);
+    }
   }
 
   getLastKey() {
-    return this.collectionManager.collection.getLastKey();
+    let collection = this.collectionManager.collection;
+    let key = collection.getLastKey();
+    while (key) {
+      let item = collection.getItem(key);
+      if (item.type === 'item' && !item.isDisabled) {
+        return key;
+      }
+
+      key = collection.getKeyBefore(key);
+    }
   }
 
   // getDragTarget(point: Point): DragTarget {
