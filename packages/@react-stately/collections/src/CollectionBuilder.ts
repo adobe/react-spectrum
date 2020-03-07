@@ -139,6 +139,7 @@ export class CollectionBuilder<T> {
       type: partialNode.type,
       key: partialNode.key,
       value: partialNode.value,
+      level: parentNode ? parentNode.level + 1 : 0,
       rendered: partialNode.rendered,
       wrapper: partialNode.wrapper,
       hasChildNodes: partialNode.hasChildNodes,

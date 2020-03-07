@@ -28,6 +28,7 @@ export interface Node<T> extends ItemStates {
   type: 'section' | 'item',
   key: Key,
   value: T,
+  level: number,
   hasChildNodes: boolean,
   childNodes: Iterable<Node<T>>,
   rendered: ReactNode,
