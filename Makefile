@@ -70,7 +70,7 @@ test:
 	yarn jest
 
 ci-test:
-	yarn jest --maxWorkers=2 --collectCoverage=true
+	yarn jest --maxWorkers=2
 
 storybook:
 	NODE_ENV=storybook yarn build-storybook

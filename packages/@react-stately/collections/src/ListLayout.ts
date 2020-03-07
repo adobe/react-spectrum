@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from './types';
+import {Collection, InvalidationContext, Node} from './types';
 import {Key} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {Layout} from './Layout';
@@ -23,9 +23,13 @@ import {Size} from './Size';
 type ListLayoutOptions<T> = {
   /** the height of a row in px. */
   rowHeight?: number,
+  estimatedRowHeight?: number,
   headingHeight?: number,
+  estimatedHeadingHeight?: number,
   indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number
 };
+
+const DEFAULT_HEIGHT = 48;
 
 /**
  * The ListLayout class is an implementation of a collection view {@link Layout}
@@ -39,10 +43,13 @@ type ListLayoutOptions<T> = {
  */
 export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   private rowHeight: number;
+  private estimatedRowHeight: number;
   private headingHeight: number;
+  private estimatedHeadingHeight: number;
   private indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number;
   private layoutInfos: {[key: string]: LayoutInfo};
   private contentHeight: number;
+  private lastCollection: Collection<Node<T>>;
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description
@@ -50,10 +57,13 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
    */
   constructor(options: ListLayoutOptions<T> = {}) {
     super();
-    this.rowHeight = options.rowHeight || 48;
-    this.headingHeight = options.headingHeight || 48;
+    this.rowHeight = options.rowHeight;
+    this.estimatedRowHeight = options.estimatedRowHeight;
+    this.headingHeight = options.headingHeight;
+    this.estimatedHeadingHeight = options.estimatedHeadingHeight;
     this.indentationForItem = options.indentationForItem;
     this.layoutInfos = {};
+    this.lastCollection = null;
     this.contentHeight = 0;
   }
 
@@ -73,27 +83,64 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return res;
   }
 
-  validate() {
+  validate(invalidationContext: InvalidationContext<any, any>) {
+    let previousLayoutInfos = this.layoutInfos;
     this.layoutInfos = {};
 
     let y = 0;
 
     let keys = this.collectionManager.collection.getKeys();
     for (let key of keys) {
-      let type = this.collectionManager.collection.getItem(key).type;
-      let rectHeight = type === 'item' ? this.rowHeight : this.headingHeight;
+      let node = this.collectionManager.collection.getItem(key);
+      let rectHeight = node.type === 'item' ? this.rowHeight : this.headingHeight;
+      let isEstimated = false;
+
+      // If no explicit height is available, use an estimated height.
+      if (rectHeight == null) {
+        // If a previous version of this layout info exists, reuse its height.
+        // Mark as estimated if the size of the overall collection view changed,
+        // or the content of the item changed.
+        let previousLayoutInfo = previousLayoutInfos[key];
+        if (previousLayoutInfo) {
+          let lastNode = this.lastCollection ? this.lastCollection.getItem(key) : null;
+          rectHeight = previousLayoutInfo.rect.height;
+          isEstimated = invalidationContext.sizeChanged || node !== lastNode || previousLayoutInfo.estimatedSize;
+        } else {
+          rectHeight = node.type === 'item' ? this.estimatedRowHeight : this.estimatedHeadingHeight;
+          isEstimated = true;
+        }
+      }
+
+      if (rectHeight == null) {
+        rectHeight = DEFAULT_HEIGHT;
+      }
+
       let x = 0;
       if (typeof this.indentationForItem === 'function') {
         x = this.indentationForItem(this.collectionManager.collection, key) || 0;
       }
 
       let rect = new Rect(x, y, this.collectionManager.visibleRect.width - x, rectHeight);
-      this.layoutInfos[key] = new LayoutInfo(type, key, rect);
+      let layoutInfo = new LayoutInfo(node.type, key, rect);
+      layoutInfo.estimatedSize = isEstimated;
+      this.layoutInfos[key] = layoutInfo;
 
       y += rectHeight;
     }
 
+    this.lastCollection = this.collectionManager.collection;
     this.contentHeight = y;
+  }
+
+  updateItemSize(key: Key, size: Size) {
+    let layoutInfo = this.layoutInfos[key];
+    layoutInfo.estimatedSize = false;
+    if (layoutInfo.rect.height !== size.height) {
+      layoutInfo.rect.height = size.height;
+      return true;
+    }
+
+    return false;
   }
 
   getContentSize() {
@@ -101,17 +148,37 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getKeyAbove(key: Key) {
-    return this.collectionManager.collection.getKeyBefore(key);
+    let collection = this.collectionManager.collection;
+
+    key = collection.getKeyBefore(key);
+    while (key) {
+      let item = collection.getItem(key);
+      if (item.type === 'item' && !item.isDisabled) {
+        return key;
+      }
+
+      key = collection.getKeyBefore(key);
+    }
   }
 
   getKeyBelow(key: Key) {
-    return this.collectionManager.collection.getKeyAfter(key);
+    let collection = this.collectionManager.collection;
+
+    key = collection.getKeyAfter(key);
+    while (key) {
+      let item = collection.getItem(key);
+      if (item.type === 'item' && !item.isDisabled) {
+        return key;
+      }
+
+      key = collection.getKeyAfter(key);
+    }
   }
 
   getKeyPageAbove(key: Key) {
     let layoutInfo = this.getLayoutInfo('item', key);
     let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.collectionManager.visibleRect.height);
-    while (layoutInfo.rect.y > pageY && layoutInfo) {
+    while (layoutInfo && layoutInfo.rect.y > pageY && layoutInfo) {
       let keyAbove = this.getKeyAbove(layoutInfo.key);
       layoutInfo = this.getLayoutInfo('item', keyAbove);
     }
@@ -139,11 +206,29 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getFirstKey() {
-    return this.collectionManager.collection.getFirstKey();
+    let collection = this.collectionManager.collection;
+    let key = collection.getFirstKey();
+    while (key) {
+      let item = collection.getItem(key);
+      if (item.type === 'item' && !item.isDisabled) {
+        return key;
+      }
+
+      key = collection.getKeyAfter(key);
+    }
   }
 
   getLastKey() {
-    return this.collectionManager.collection.getLastKey();
+    let collection = this.collectionManager.collection;
+    let key = collection.getLastKey();
+    while (key) {
+      let item = collection.getItem(key);
+      if (item.type === 'item' && !item.isDisabled) {
+        return key;
+      }
+
+      key = collection.getKeyBefore(key);
+    }
   }
 
   // getDragTarget(point: Point): DragTarget {

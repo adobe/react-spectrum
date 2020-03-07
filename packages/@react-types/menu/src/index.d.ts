@@ -1,7 +1,18 @@
-import {AllHTMLAttributes, Key, ReactElement, RefObject} from 'react';
-import {CollectionBase, DOMProps, Expandable, MultipleSelection, Orientation, StyleProps} from '@react-types/shared';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {CollectionBase, DOMProps, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
 import {Node} from '@react-stately/collections';
-import {TreeState} from '@react-stately/tree';
+import {ReactElement, RefObject} from 'react';
 
 export type FocusStrategy = 'first' | 'last';
 
@@ -30,26 +41,13 @@ export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
   closeOnSelect?: boolean
 }
 
-export interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps, StyleProps {
-  'aria-orientation'?: Orientation,
+export interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {
   autoFocus?: boolean,
   focusStrategy?: FocusStrategy,
   wrapAround?: boolean
 }
 
-export interface SpectrumMenuProps<T> extends MenuProps<T> {
-}
-
-export interface MenuItemProps<T> {
-  isDisabled?: boolean,
-  isSelected?: boolean,
-  key?: Key,
-  role?: string
-}
-
-export interface SpectrumMenuItemProps<T> extends AllHTMLAttributes<HTMLElement> {
-  item: Node<T>,
-  state: TreeState<T>
+export interface SpectrumMenuProps<T> extends MenuProps<T>, DOMProps, StyleProps {
 }
 
 export interface SpectrumMenuHeadingProps<T> {

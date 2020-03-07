@@ -30,13 +30,14 @@ export interface Node<T> extends ItemStates {
   hasChildNodes: boolean,
   childNodes: Iterable<Node<T>>,
   rendered: ReactNode,
+  index?: number,
   wrapper?: (element: ReactElement) => ReactElement,
-  level?: number,
   prevKey?: Key,
   nextKey?: Key
 }
 
-export interface Collection<T> {
+export interface Collection<T> extends Iterable<T> {
+  readonly size: number;
   getKeys(): Iterable<Key>,
   getItem(key: Key): T,
   getKeyBefore(key: Key): Key | null,
@@ -45,7 +46,7 @@ export interface Collection<T> {
   getLastKey(): Key | null
 }
 
-export interface InvalidationContext<T, V> {
+export interface InvalidationContext<T extends object, V> {
   contentChanged?: boolean,
   offsetChanged?: boolean,
   sizeChanged?: boolean,
@@ -56,7 +57,7 @@ export interface InvalidationContext<T, V> {
   transaction?: Transaction<T, V>
 }
 
-export interface CollectionManagerDelegate<T, V, W> {
+export interface CollectionManagerDelegate<T extends object, V, W> {
   setVisibleViews(views: Set<W>): void,
   setContentSize(size: Size): void,
   setVisibleRect(rect: Rect): void,

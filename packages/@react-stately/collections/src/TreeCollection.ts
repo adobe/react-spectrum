@@ -38,11 +38,8 @@ export class TreeCollection<T> implements Collection<Node<T>> {
     }
 
     let last: Node<T>;
+    let index = 0;
     for (let [key, node] of this.keyMap) {
-      if (node.type !== 'item') {
-        continue;
-      }
-      
       if (last) {
         last.nextKey = key;
         node.prevKey = last.key;
@@ -50,6 +47,10 @@ export class TreeCollection<T> implements Collection<Node<T>> {
         this.firstKey = key;
       }
 
+      if (node.type === 'item') {
+        node.index = index++;
+      }
+      
       last = node;
     }
 
@@ -58,6 +59,10 @@ export class TreeCollection<T> implements Collection<Node<T>> {
 
   *[Symbol.iterator]() {
     yield* this.iterable;
+  }
+
+  get size() {
+    return this.keyMap.size;
   }
 
   getKeys() {

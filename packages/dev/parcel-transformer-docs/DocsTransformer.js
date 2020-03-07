@@ -360,7 +360,7 @@ module.exports = new Transformer({
         path.traverse({
           ReturnStatement(path) {
             let ret = path.node.argument;
-            if (t.isJSXElement(ret) || t.isJSXFragment(ret)) {
+            if (t.isJSXElement(ret) || t.isJSXFragment(ret) || isReactCall(path.get('argument'), 'cloneElement')) {
               returnsJSX = true;
             }
           }
