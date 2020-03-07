@@ -11,11 +11,12 @@
  */
 
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {CollectionView} from '@react-aria/collections';
+import {CollectionItem, CollectionView} from '@react-aria/collections';
 import {ListBoxOption} from './ListBoxOption';
 import {ListBoxSection} from './ListBoxSection';
-import {ListLayout} from '@react-stately/collections';
-import React, {useMemo} from 'react';
+import {ListLayout, Node} from '@react-stately/collections';
+import React, {ReactElement, useMemo} from 'react';
+import {ReusableView} from '@react-stately/collections';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useListBox} from '@react-aria/listbox';
@@ -26,8 +27,8 @@ export function ListBox<T>(props: SpectrumMenuProps<T>) {
   let {scale} = useProvider();
   let layout = useMemo(() => 
     new ListLayout({
-      estimatedRowHeight: scale === 'large' ? 48 : 32,
-      estimatedHeadingHeight: scale === 'large' ? 31 : 25
+      estimatedRowHeight: scale === 'large' ? 48 : 35,
+      estimatedHeadingHeight: scale === 'large' ? 37 : 30
     })
   , [scale]);
 
@@ -39,6 +40,28 @@ export function ListBox<T>(props: SpectrumMenuProps<T>) {
   let state = useListState(completeProps);
   let {listBoxProps} = useListBox({...completeProps, keyboardDelegate: layout, isVirtualized: true}, state);
   let {styleProps} = useStyleProps(completeProps);
+
+  type View = ReusableView<Node<T>, unknown>;
+  let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
+    if (reusableView.viewType === 'section') {
+      return (
+        <ListBoxSection
+          key={reusableView.key}
+          state={state}
+          reusableView={reusableView}
+          header={children.find(c => c.viewType === 'header')}>
+          {renderChildren(children.filter(c => c.viewType === 'item'))}
+        </ListBoxSection>
+      );
+    }
+
+    return (
+      <CollectionItem 
+        key={reusableView.key}
+        reusableView={reusableView}
+        parent={parent} />
+    );
+  };
 
   return (
     <CollectionView
@@ -55,19 +78,16 @@ export function ListBox<T>(props: SpectrumMenuProps<T>) {
         )
       }
       layout={layout}
-      collection={state.collection}>
+      collection={state.collection}
+      renderWrapper={renderWrapper}>
       {(type, item) => {
-        if (type === 'section') {
+        if (type === 'item') {
           return (
-            <ListBoxSection item={item} state={state} />
+            <ListBoxOption
+              item={item}
+              state={state} />
           );
         }
-
-        return (
-          <ListBoxOption
-            item={item}
-            state={state} />
-        );
       }}
     </CollectionView>
   );
