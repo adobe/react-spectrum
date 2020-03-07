@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ItemRenderer} from '@react-types/shared';
 import {Key, ReactElement, ReactNode} from 'react';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
@@ -31,9 +32,21 @@ export interface Node<T> extends ItemStates {
   childNodes: Iterable<Node<T>>,
   rendered: ReactNode,
   index?: number,
-  wrapper?: (element: ReactElement) => ReactElement,
+  wrapper?: ((element: ReactElement) => ReactElement) | void,
   prevKey?: Key,
   nextKey?: Key
+}
+
+export interface PartialNode<T> {
+  type?: 'section' | 'item',
+  key?: Key,
+  value?: T,
+  element?: ReactElement,
+  wrapper?: ((element: ReactElement) => ReactElement) | void,
+  rendered?: ReactNode,
+  renderer?: ItemRenderer<T>,
+  hasChildNodes?: boolean,
+  childNodes?: () => IterableIterator<PartialNode<T>>
 }
 
 export interface Collection<T> extends Iterable<T> {
