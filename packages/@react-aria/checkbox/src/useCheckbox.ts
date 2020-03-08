@@ -16,6 +16,7 @@ import {ToggleState} from '@react-stately/toggle';
 import {useToggle} from '@react-aria/toggle';
 
 export interface CheckboxAria {
+  /** Props for the input element */
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 

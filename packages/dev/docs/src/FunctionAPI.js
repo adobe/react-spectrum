@@ -25,9 +25,9 @@ export function FunctionAPI({function: func, links}) {
       <code className={`${typographyStyles['spectrum-Code4']}`}>
         <span className="token hljs-function">{name}</span>
         <TypeParameters typeParameters={typeParameters} />
-        <span className="token punctuation">(</span>
-        <JoinList elements={parameters} joiner=", " />
-        <span className="token punctuation">)</span>
+        <span className="token punctuation">{parameters.length > 2 ? '(\n  ' : '('}</span>
+        <JoinList elements={parameters} joiner={parameters.length > 2 ? ',\n  ' : ', '} />
+        <span className="token punctuation">{parameters.length > 2 ? '\n)' : ')'}</span>
         <span className="token punctuation">{': '}</span>
         <Type type={returnType} />
       </code>

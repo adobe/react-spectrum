@@ -129,6 +129,14 @@ article pre {
   overflow-x: auto;
 }
 
+code {
+  white-space: pre-wrap;
+}
+
+article > code {
+  display: block;
+}
+
 .header {
   text-align: left;
   color: black;

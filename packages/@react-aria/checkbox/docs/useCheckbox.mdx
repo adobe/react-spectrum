@@ -1,0 +1,135 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/checkbox';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {useCheckbox} from '@react-aria/checkbox';
+```
+
+# useCheckbox
+
+<p>{docs.exports.useCheckbox.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useCheckbox']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#checkbox'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useCheckbox} links={docs.links} />
+
+## Anatomy
+
+A checkbox consists of a visual selection indicator and a label. Checkboxes support three
+selection states: checked, unchecked, and indeterminate. Users may click or touch a checkbox
+to toggle the selection state, or use the Tab key to navigate to it and the Space key to toggle it.
+
+`useCheckbox` returns props to be spread onto its input element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useCheckbox.return.id].properties} />
+</TypeContext.Provider>
+
+Selection state is managed by the `useToggleState` hook in `@react-stately/toggle`.
+The state object should be passed as an option to `useCheckbox`.
+
+In most cases, checkboxes should have a visual label. If the checkbox does not have a visible label,
+an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assisitive 
+technology.
+
+## Example
+
+```tsx example
+import {useToggleState} from '@react-stately/toggle';
+
+function Checkbox(props) {
+  let {children} = props;
+  let state = useToggleState(props);
+  let ref = React.useRef();
+  let {inputProps} = useCheckbox(props, state, ref);
+
+  return (
+    <label style={{display: 'block'}}>
+      <input {...inputProps} ref={ref} />
+      {children}
+    </label>
+  );
+}
+
+<Checkbox>Test</Checkbox>
+<Checkbox isIndeterminate>Test</Checkbox>
+```
+
+## Styling
+
+To build a custom styled checkbox, you can make the native input element visually hidden.
+This is possible using the `<VisuallyHidden>` utility component from `@react-aria/visually-hidden`.
+It is still in the DOM and accessible to assistive technology, but invisible. This example uses SVG
+to build the visual checkbox, which is hidden from screen readers with `aria-hidden`.
+
+```tsx example
+import {VisuallyHidden} from '@react-aria/visually-hidden';
+
+function Checkbox(props) {
+  let {children} = props;
+  let state = useToggleState(props);
+  let ref = React.useRef();
+  let {inputProps} = useCheckbox(props, state, ref);
+
+  let isChecked = inputProps.checked;
+
+  return (
+    <label style={{display: 'flex', alignItems: 'center'}}>
+      <VisuallyHidden>
+        <input {...inputProps} ref={ref} />
+      </VisuallyHidden>
+      <svg
+        width={16}
+        height={16}
+        aria-hidden="true"
+        style={{marginRight: 4}}>
+        <rect
+          x={0}
+          y={0}
+          width={16}
+          height={16}
+          fill={isChecked ? 'orange' : 'none'}
+          stroke={isChecked ? 'none' : 'gray'}
+          strokeWidth={2} />
+        {isChecked &&
+          <path
+            transform="translate(3 3)"
+            d={`M3.788 9A.999.999 0 0 1 3 8.615l-2.288-3a1 1 0 1 1 
+            1.576-1.23l1.5 1.991 3.924-4.991a1 1 0 1 1 1.576 1.23l-4.712 
+            6A.999.999 0 0 1 3.788 9z`} />
+        }
+      </svg>
+      {children}
+    </label>
+  );
+}
+
+<Checkbox>Foo</Checkbox>
+```
+
+## Internationalization
+
+### RTL
+
+In right-to-left languages, the checkbox should be mirrored. The checkbox should be placed on the right
+side of the label. Ensure that your CSS accounts for this.
