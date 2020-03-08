@@ -10,18 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
 import {clamp} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
+import {HTMLAttributes} from 'react';
 import {ProgressBarProps} from '@react-types/progress';
 import {useLabel} from '@react-aria/label';
 import {useNumberFormatter} from '@react-aria/i18n';
 
 interface ProgressBarAria {
   /** Props for the progress bar container element */
-  progressBarProps: AllHTMLAttributes<HTMLDivElement>,
-  /** Props for the progress bar's visual label element. */
-  labelProps: AllHTMLAttributes<HTMLLabelElement>
+  progressBarProps: HTMLAttributes<HTMLElement>,
+  /** Props for the progress bar's visual label element (if any) */
+  labelProps: HTMLAttributes<HTMLElement>
 }
 
 interface ProgressBarAriaProps extends ProgressBarProps, DOMProps {

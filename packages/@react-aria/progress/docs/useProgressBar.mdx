@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/progress';
-import {HeaderInfo, FunctionAPI} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
@@ -26,7 +26,7 @@ import {useProgressBar} from '@react-aria/progress';
   packageData={packageData}
   componentNames={['useProgressBar']}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.1/#progressbar'}
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#progressbar'}
   ]} />
 
 ## API
@@ -38,15 +38,16 @@ import {useProgressBar} from '@react-aria/progress';
 Progress bars consist of a track element showing the full progress of an operation, 
 a bar element showing the current progress, and a label. The track and bar elements 
 represent the progress visually, while a wrapper element represents the progress to 
-assistive technology using the [progressbar](https://www.w3.org/TR/wai-aria-1.1/#progressbar)
+assistive technology using the [progressbar](https://www.w3.org/TR/wai-aria-1.2/#progressbar)
 ARIA role.
 
 `useProgressBar` returns two sets of props that you should spread onto the appropriate element:
 
-* `progressBarProps` - props to spread onto the wrapper element
-* `labelProps` - props to spread onto the visual label (if any).
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useProgressBar.return.id].properties} />
+</TypeContext.Provider>
 
-If you have no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead 
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead 
 to identify the element to screen readers.
 
 ## Example
@@ -70,18 +71,20 @@ function ProgressBar(props) {
   let barWidth = `${Math.round(percentage * 100)}%`;
 
   return (
-    <div {...progressBarProps}>
-      {label &&
-        <span {...labelProps}>
-          {label}
-        </span>
-      }
-      {showValueLabel &&
-        <span>
-          {progressBarProps['aria-valuetext']}
-        </span>
-      }
-      <div style={{width: 200, height: 10, background: 'gray'}}>
+    <div {...progressBarProps} style={{width: 200}}>
+      <div style={{display: 'flex', justifyContent: 'space-between'}}>
+        {label &&
+          <span {...labelProps}>
+            {label}
+          </span>
+        }
+        {showValueLabel &&
+          <span>
+            {progressBarProps['aria-valuetext']}
+          </span>
+        }
+      </div>
+      <div style={{height: 10, background: 'gray'}}>
         <div style={{width: barWidth, height: 10, background: 'orange'}} />
       </div>
     </div>
@@ -111,7 +114,11 @@ function Spinner() {
   let offset = c - (1 / 4) * c;
 
   return (
-    <svg {...progressBarProps} viewBox="0 0 32 32" fill="none" strokeWidth={strokeWidth}>
+    <svg 
+      {...progressBarProps}
+      viewBox="0 0 32 32"
+      fill="none"
+      strokeWidth={strokeWidth}>
       <circle
         role="presentation"
         cx={center}
