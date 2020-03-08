@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/button';
-import {HeaderInfo, PropTable, FunctionAPI, TypeContext} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
@@ -22,7 +22,6 @@ import {useRef} from 'react';
 # useButton
 
 <p>{docs.exports.useButton.description}</p>
-<p>{console.log(docs)}</p>
 
 <HeaderInfo
   packageData={packageData}
@@ -35,12 +34,23 @@ import {useRef} from 'react';
 
 <FunctionAPI function={docs.exports.useButton} links={docs.links} />
 
+## Anatomy
+
+Buttons consist of a clickable area usually containing a textual label or an icon
+that users can click to perform an action. In addition, keyboard users may activate
+buttons using the Space or Enter keys.
+
+If a visual label is not provided (e.g. an icon only button), then an `aria-label` or
+`aria-labelledby` prop must be passed to identify the button to assistive technology.
+
 ## Example
+
+By default, `useButton` assumes that you are using it with a native `<button>` element.
 
 ```tsx example
 function Button(props) {
   let ref = useRef();
-  let {buttonProps, isPressed} = useButton(props, ref);
+  let {buttonProps} = useButton(props, ref);
   let {children} = props;
 
   return (
@@ -53,21 +63,38 @@ function Button(props) {
 <Button onPress={() => alert('Button pressed!')}>Test</Button>
 ```
 
-## Using a custom element type
+## Custom element type
 
 Sometimes you might need to use an element other than a native `<button>`. `useButton` supports
 this via the `elementType` prop. When used with an element other than a native button, `useButton`
 automatically applies the necessary ARIA roles and attributes to ensure that the element is exposed
 to assistive technology as a button.
 
+In addition, this example shows usage of the `isPressed` value returned by `useButton` to properly
+style the button's active state. You could use the CSS `:active` pseudo class for this, but `isPressed`
+properly handles when the user drags their pointer off of the button, along with keyboard support and better
+touch screen support.
+
 ```tsx example
 function Button(props) {
-  let ref = useRef();
-  let {buttonProps, isPressed} = useButton({...props, elementType: 'span'}, ref);
   let {children} = props;
+  let ref = useRef();
+  let {buttonProps, isPressed} = useButton({
+    ...props,
+    elementType: 'span'
+  }, ref);
 
   return (
-    <span {...buttonProps} ref={ref}>
+    <span 
+      {...buttonProps}
+      style={{
+        background: isPressed ? 'darkgreen' : 'green',
+        padding: 10,
+        cursor: 'pointer',
+        userSelect: 'none',
+        WebkitUserSelect: 'none'
+      }}
+      ref={ref}>
       {children}
     </span>
   );
