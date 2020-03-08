@@ -63,6 +63,7 @@ article {
 
 .propTable {
   width: 100%;
+  margin-bottom: var(--spectrum-global-dimension-size-150);
 }
 
 .propTable td:last-child {
