@@ -10,22 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes} from 'react';
+import {HTMLAttributes, InputHTMLAttributes} from 'react';
 import {RadioGroupProps} from '@react-types/radio';
 import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 
 interface RadioGroupAria {
+  /** Props for the radio group wrapper element */
   radioGroupProps: HTMLAttributes<HTMLElement>,
-  labelProps: LabelHTMLAttributes<HTMLElement>,
-  radioProps: InputHTMLAttributes<HTMLInputElement>
+  /** Props for the radio group's visible label (if any) */
+  labelProps: HTMLAttributes<HTMLElement>
 }
 
 export function useRadioGroup(props: RadioGroupProps): RadioGroupAria {
-  let defaultGroupId = `${useId()}-group`;
-  let {
-    name = defaultGroupId
-  } = props;
   let {labelProps, fieldProps} = useLabel(props);
 
   return {
@@ -33,9 +30,6 @@ export function useRadioGroup(props: RadioGroupProps): RadioGroupAria {
       role: 'radiogroup',
       ...fieldProps
     },
-    labelProps,
-    radioProps: {
-      name
-    }
+    labelProps
   };
 }

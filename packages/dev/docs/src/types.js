@@ -40,6 +40,7 @@ export function Type({type}) {
   switch (type.type) {
     case 'any':
     case 'null':
+    case 'undefined':
     case 'void':
       return <Keyword {...type} />;
     case 'identifier':
@@ -84,6 +85,8 @@ export function Type({type}) {
       return <Keyword {...type} />;
     case 'alias':
       return <code className={typographyStyles['spectrum-Code4']}><Type type={type.value} /></code>;
+    case 'array':
+      return <ArrayType {...type} />;
     default:
       console.log('UNKNOWN TYPE', type);
       return null;
@@ -299,6 +302,15 @@ function ObjectType({properties, exact}) {
         );
       })}
       {endObject}
+    </>
+  );
+}
+
+function ArrayType({elementType}) {
+  return (
+    <>
+      <Type type={elementType} />
+      <span className="token punctuation">[]</span>
     </>
   );
 }

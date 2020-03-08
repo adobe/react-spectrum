@@ -35,6 +35,11 @@ module.exports = new Transformer({
 
             // TODO: Parsing code with regex is bad. Replace with babel transform or something.
             let code = node.value;
+            code = code.replace(/import (\{.*?\}) from (['"].*?['"])/g, (m) => {
+              exampleCode.push(m);
+              return '';
+            });
+
             if (/^function (.|\n)*}\s*$/.test(code)) {
               let name = code.match(/^function (.*?)\s*\(/)[1];
               code = `(function () {

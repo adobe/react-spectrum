@@ -12,20 +12,25 @@
 
 import {RadioGroupProps} from '@react-types/radio';
 import {useControlledState} from '@react-stately/utils';
+import { useMemo } from 'react';
 
 export interface RadioGroupState {
-  selectedRadio: string | undefined,
-  setSelectedRadio: (value: string) => void
+  name: string,
+  selectedValue: string | void,
+  setSelectedValue: (value: string) => void
 }
 
-export function useRadioGroupState(props: RadioGroupProps):RadioGroupState  {
-  let [selectedRadio, setSelected] = useControlledState(props.value, props.defaultValue, props.onChange);
+let i = 0;
 
-  let setSelectedRadio = (value) => {
+export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
+  let name = useMemo(() => props.name || 'radio-group-' + (++i), [props.name]);
+  let [selectedValue, setSelected] = useControlledState(props.value, props.defaultValue, props.onChange);
+
+  let setSelectedValue = (value) => {
     if (!props.isReadOnly) {
       setSelected(value);
     }
   };
 
-  return {selectedRadio, setSelectedRadio};
+  return {name, selectedValue, setSelectedValue};
 }

@@ -289,6 +289,10 @@ module.exports = new Transformer({
         return {type: 'null'};
       }
 
+      if (path.isTSUndefinedKeyword()) {
+        return {type: 'undefined'};
+      }
+
       if (path.isTSVoidKeyword()) {
         return {type: 'void'};
       }

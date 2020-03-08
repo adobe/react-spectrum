@@ -10,19 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
+import {InputHTMLAttributes} from 'react';
 import {RadioGroupState} from '@react-stately/radio';
 import {RadioProps} from '@react-types/radio';
 import {useFocusable} from '@react-aria/focus';
 
 interface RadioAriaProps extends RadioProps {
   isRequired?: boolean,
-  isReadOnly?: boolean,
-  name?: string
+  isReadOnly?: boolean
 }
 
 interface RadioAria {
-  inputProps: AllHTMLAttributes<HTMLInputElement>
+  /** Props for the input element */
+  inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
 export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAria {
@@ -31,20 +31,14 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
     isRequired,
     isReadOnly,
     isDisabled,
-    name,
     autoFocus
   } = props;
-  let {
-    selectedRadio,
-    setSelectedRadio
-  } = state;
 
-  let checked = selectedRadio === value;
+  let checked = state.selectedValue === value;
 
   let onChange = (e) => {
     e.stopPropagation();
-
-    setSelectedRadio(value);
+    state.setSelectedValue(value);
   };
 
   let {focusableProps} = useFocusable(props);
@@ -52,7 +46,7 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
   return {
     inputProps: {
       type: 'radio',
-      name,
+      name: state.name,
       disabled: isDisabled,
       readOnly: isReadOnly,
       required: isRequired,
