@@ -44,7 +44,7 @@ export function Dialog(props: SpectrumDialogProps) {
     ),
     {className: classNames(styles, {'spectrum-Dialog--dismissable': isDismissable})}
   );
-  let size = type === 'popover' ? undefined : (otherProps.size || 'L');
+  let size = type === 'popover' ? otherProps.size : (otherProps.size || 'L');
 
   if (type === 'popover') {
     return <BaseDialog {...allProps} size={size}>{children}</BaseDialog>;

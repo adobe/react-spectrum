@@ -57,7 +57,7 @@ function LinkPopover({id}) {
   }, [breadcrumbs]);
 
   return (
-    <Dialog UNSAFE_className={highlightCss.spectrum}>
+    <Dialog UNSAFE_className={highlightCss.spectrum} size="L">
       <Header>
         <Breadcrumbs isHeading headingAriaLevel={3}>
           {breadcrumbs.map((b, i) => (
