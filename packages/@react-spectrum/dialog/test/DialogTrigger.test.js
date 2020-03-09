@@ -412,7 +412,7 @@ describe('DialogTrigger', function () {
     function Test({defaultOpen, onOpenChange}) {
       return (
         <Provider theme={theme}>
-          <DialogTrigger type="popover" defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+          <DialogTrigger type="popover" defaultOpen={defaultOpen} onOpenChange={onOpenChange} isDismissable={false}>
             <ActionButton>Trigger</ActionButton>
             <Dialog>contents</Dialog>
           </DialogTrigger>
