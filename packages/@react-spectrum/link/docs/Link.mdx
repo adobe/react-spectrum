@@ -41,7 +41,7 @@ If the content is plain text, it will be styled and exposed to assistive technol
 Events will need to be handled in JavaScript with the `onPress` prop.
 
 ```tsx example
-<Link>A label</Link>
+<Link onPress={() => alert('pressed!')}>A label</Link>
 ```
 
 If the child is a native anchor element, or a link component used with a client side router, the Link component will add spectrum styles and event handlers to that element.
