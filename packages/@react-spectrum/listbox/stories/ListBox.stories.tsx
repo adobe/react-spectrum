@@ -19,7 +19,7 @@ import Book from '@spectrum-icons/workflow/Book';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
-import {Item, Menu, Section} from '../';
+import {Item, ListBox, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/typography';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {Popover} from '@react-spectrum/overlays';
@@ -54,7 +54,7 @@ let hardModeProgrammatic = [
   ]}
 ];
 
-let flatMenu = [
+let flatOptions = [
   {name: 'Aardvark'},
   {name: 'Kangaroo'},
   {name: 'Snake'},
@@ -81,28 +81,28 @@ let withSection = [
   ]}
 ];
 
-storiesOf('Menu', module)
+storiesOf('ListBox', module)
   .add(
-    'Default Menu',
+    'Default ListBox',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} items={flatMenu} itemKey="name">
+        <ListBox onSelectionChange={action('onSelectionChange')} items={flatOptions} itemKey="name">
           {item => <Item>{item.name}</Item>}
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
   .add(
-    'Menu w/ sections',
+    'ListBox w/ sections',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+        <ListBox items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
             </Section>
           )}
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
@@ -110,11 +110,11 @@ storiesOf('Menu', module)
     'Static',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')}>
+        <ListBox onSelectionChange={action('onSelectionChange')}>
           <Item>One</Item>
           <Item>Two</Item>
           <Item>Three</Item>
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
@@ -122,7 +122,7 @@ storiesOf('Menu', module)
     'Static with sections',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')}>
+        <ListBox onSelectionChange={action('onSelectionChange')}>
           <Section title="Section 1">
             <Item>One</Item>
             <Item>Two</Item>
@@ -133,29 +133,29 @@ storiesOf('Menu', module)
             <Item>Two</Item>
             <Item>Three</Item>
           </Section>
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
   .add(
-    'with default selected menu items',
+    'with default selected options',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
+        <ListBox onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
             </Section>
           )}
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
   .add(
-    'static with default selected menu items',
+    'static with default selected options',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
+        <ListBox onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -181,29 +181,29 @@ storiesOf('Menu', module)
               Seven
             </Item>
           </Section>
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
   .add(
-    'with selected menu items (controlled)',
+    'with selected options (controlled)',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
+        <ListBox onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
             </Section>
           )}
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
   .add(
-    'static with selected menu items (controlled)',
+    'static with selected options (controlled)',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
+        <ListBox onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -229,29 +229,29 @@ storiesOf('Menu', module)
               Seven
             </Item>
           </Section>
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
   .add(
-    'with disabled menu items',
+    'with disabled options',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
+        <ListBox onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
             </Section>
           )}
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
   .add(
-    'static with disabled menu items',
+    'static with disabled options',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} disabledKeys={['3', '5']}>
+        <ListBox onSelectionChange={action('onSelectionChange')} disabledKeys={['3', '5']}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -277,29 +277,29 @@ storiesOf('Menu', module)
               Seven
             </Item>
           </Section>
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
   .add(
-    'Multiselect menu',
+    'Multiple selection',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
+        <ListBox items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
             </Section>
           )}
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
   .add(
-    'Multiselect menu, static',
+    'Multiple selection, static',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
+        <ListBox onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -322,29 +322,29 @@ storiesOf('Menu', module)
               Six
             </Item>
           </Section>
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
   .add(
-    'No selection allowed menu',
+    'No selection allowed',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="none">
+        <ListBox items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="none">
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
             </Section>
           )}
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
   .add(
-    'No selection allowed menu, static',
+    'No selection allowed, static',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} selectionMode="none">
+        <ListBox onSelectionChange={action('onSelectionChange')} selectionMode="none">
           <Section title="Section 1">
             <Item>One</Item>
             <Item>Two</Item>
@@ -355,49 +355,49 @@ storiesOf('Menu', module)
             <Item>Five</Item>
             <Item>Six</Item>
           </Section>
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
   .add(
-    'Menu with autoFocus=true',
+    'ListBox with autoFocus=true',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus>
+        <ListBox items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
             </Section>
           )}
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
   .add(
-    'Menu with autoFocus=true and focusStrategy="last"',
+    'ListBox with autoFocus=true and focusStrategy="last"',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus focusStrategy="last">
+        <ListBox items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus focusStrategy="last">
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
             </Section>
           )}
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
   .add(
-    'Menu with keyboard selection wrapping',
+    'ListBox with keyboard selection wrapping',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} wrapAround>
+        <ListBox items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} wrapAround>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
             </Section>
           )}
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
@@ -405,7 +405,7 @@ storiesOf('Menu', module)
     'with semantic elements (static)',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')}>
+        <ListBox onSelectionChange={action('onSelectionChange')}>
           <Section title="Section 1">
             <Item>
               <Copy size="S" />
@@ -443,7 +443,7 @@ storiesOf('Menu', module)
               Basic Item
             </Item>
           </Section>
-        </Menu>
+        </ListBox>
       </Popover>
     )
   )
@@ -451,18 +451,18 @@ storiesOf('Menu', module)
     'with semantic elements (generative)',
     () => (
       <Popover isOpen hideArrow> 
-        <Menu items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
+        <ListBox items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => customMenuItem(item)}
+              {item => customOption(item)}
             </Section>
           )}
-        </Menu>
+        </ListBox>
       </Popover>
     )
   );
   
-let customMenuItem = (item) => {
+let customOption = (item) => {
   let Icon = iconMap[item.icon];
   return (
     <Item childItems={item.children}>
