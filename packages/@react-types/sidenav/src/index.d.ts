@@ -16,6 +16,7 @@ import {Node} from '@react-stately/collections';
 import {TreeState} from '@react-stately/tree';
 
 export interface SideNavProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps, StyleProps {
+  wrapAround?: boolean
 }
 
 export interface SpectrumSideNavProps<T> extends SideNavProps<T> {

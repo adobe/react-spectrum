@@ -26,14 +26,16 @@ export function useSideNav<T>(props: SideNavProps<T>, state: TreeState<T>, layou
   let {
     id,
     'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabeldBy
+    'aria-labelledby': ariaLabeldBy,
+    wrapAround
   } = props;
 
   id = useId(id);
 
   let {listProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
-    keyboardDelegate: layout
+    keyboardDelegate: layout,
+    wrapAround
   });
 
   return {

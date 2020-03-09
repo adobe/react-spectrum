@@ -280,6 +280,31 @@ describe('SideNav', function () {
     ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
+  `('$Name can focus first to last/last to first item', async function ({Name, Component, ComponentSection, ComponentItem}) {
+    let {getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem, {wrapAround: true});
+    
+    await waitForDomChange();
+
+    let items = getAllByRole('link');
+    let firstItem = items[0];
+    firstItem.focus();
+    expect(firstItem).toBe(document.activeElement);
+    fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
+    let lastItem = items[items.length - 1];
+    expect(lastItem).toBe(document.activeElement);
+
+    lastItem.focus();
+    expect(lastItem).toBe(document.activeElement);
+    fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
+    expect(firstItem).toBe(document.activeElement);
+  });
+
+  it.each`
+    Name                           | Component    | ComponentSection | ComponentItem
+    ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name supports defaultSelectedKeys (uncontrolled)', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {defaultSelectedKeys: ['Bar']});
 

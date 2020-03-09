@@ -70,6 +70,14 @@ storiesOf('SideNav', module)
     )
   )
   .add(
+    'with keyboard selection wrapping',
+    () => (
+      <SideNav items={flatItems} itemKey="name" UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')} wrapAround>
+        {item => <Item>{item.name}</Item>}
+      </SideNav>
+    )
+  )
+  .add(
     'Default with sections',
     () => (
       <SideNav UNSAFE_className={snStyles['storybook-SideNav']} items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
