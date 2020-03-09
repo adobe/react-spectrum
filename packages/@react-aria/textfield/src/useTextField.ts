@@ -16,14 +16,19 @@ import {TextInputDOMProps} from '@react-types/shared';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
 
+interface TextFieldAriaProps extends TextFieldProps, TextInputDOMProps {}
 interface TextFieldAria {
+  /** Props for the input element */
+  inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>
+  /** Props for the text field's visible label element (if any) */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
-  textFieldProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>
 }
 
-export function useTextField(
-  props: TextFieldProps & TextInputDOMProps
-): TextFieldAria {
+/**
+ * Provides the behavior and accessibility implementation for a text field.
+ * @param props - props for the text field
+ */
+export function useTextField(props: TextFieldAriaProps): TextFieldAria {
   let {
     isDisabled = false,
     isRequired = false,
@@ -38,7 +43,7 @@ export function useTextField(
 
   return {
     labelProps,
-    textFieldProps: {
+    inputProps: {
       type,
       disabled: isDisabled,
       readOnly: isReadOnly,
@@ -46,6 +51,30 @@ export function useTextField(
       'aria-invalid': validationState === 'invalid' || undefined,
       onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
       autoFocus,
+      autoComplete: props.autoComplete,
+      maxLength: props.maxLength,
+      minLength: props.minLength,
+      name: props.name,
+      pattern: props.pattern,
+      placeholder: props.placeholder,
+      inputMode: props.inputMode,
+
+      // Clipboard events
+      onCopy: props.onCopy,
+      onCut: props.onCut,
+      onPaste: props.onPaste,
+
+      // Composition events
+      onCompositionEnd: props.onCompositionEnd,
+      onCompositionStart: props.onCompositionStart,
+      onCompositionUpdate: props.onCompositionUpdate,
+
+      // Selection events
+      onSelect: props.onSelect,
+
+      // Input events
+      onBeforeInput: props.onBeforeInput,
+      onInput: props.onInput,
       ...focusableProps,
       ...fieldProps
     }

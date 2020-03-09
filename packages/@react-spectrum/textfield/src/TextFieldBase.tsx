@@ -12,7 +12,7 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames, createFocusableRef, filterDOMProps, TextInputDOMPropNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames, createFocusableRef, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Label} from '@react-spectrum/label';
 import {LabelPosition} from '@react-types/shared';
@@ -69,7 +69,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   }));
   
   let {styleProps} = useStyleProps(otherProps);
-  let {labelProps, textFieldProps} = useTextField(props);
+  let {labelProps, inputProps} = useTextField(props);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
   let isInvalid = validationState === 'invalid';
 
@@ -118,8 +118,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
         <ElementType
           {...mergeProps(
-            textFieldProps,
-            filterDOMProps(otherProps, TextInputDOMPropNames)
+            inputProps,
+            filterDOMProps(otherProps)
           )}
           ref={inputRef}
           value={value}
