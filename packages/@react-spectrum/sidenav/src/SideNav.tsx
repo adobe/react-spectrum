@@ -30,6 +30,8 @@ export function SideNav<T>(props: SideNavProps<T>) {
   let {navProps, listProps} = useSideNav(props, state, layout);
   let {styleProps} = useStyleProps(props);
 
+  // This overrides collection view's renderWrapper to support heirarchy of items in sections.
+  // The header is extracted from the children so it can receive ARIA labeling properties.
   type View = ReusableView<Node<T>, unknown>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     if (reusableView.viewType === 'section') {

@@ -106,6 +106,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let previousLayoutInfos = this.layoutInfos;
     this.layoutInfos = {};
 
+    // Build the layout recursively.
     let build = (nodes: Iterable<Node<T>>, y = 0): [number, LayoutNode[]] => {
       let startY = y;
       let layoutNodes: LayoutNode[] = [];

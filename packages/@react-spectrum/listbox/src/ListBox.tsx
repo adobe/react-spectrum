@@ -41,6 +41,8 @@ export function ListBox<T>(props: SpectrumMenuProps<T>) {
   let {listBoxProps} = useListBox({...completeProps, keyboardDelegate: layout, isVirtualized: true}, state);
   let {styleProps} = useStyleProps(completeProps);
 
+  // This overrides collection view's renderWrapper to support heirarchy of items in sections.
+  // The header is extracted from the children so it can receive ARIA labeling properties.
   type View = ReusableView<Node<T>, unknown>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     if (reusableView.viewType === 'section') {
