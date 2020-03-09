@@ -16,9 +16,16 @@ import {ToggleState} from '@react-stately/toggle';
 import {useToggle} from '@react-aria/toggle';
 
 export interface SwitchAria {
+  /** Props for the input element */
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a switch component.
+ * A switch is similar to a checkbox, but represents on/off values as opposed to selection.
+ * @param props - props for the switch
+ * @param state - state for the switch, as returned by `useToggleState`
+ */
 export function useSwitch(props: SwitchProps, state: ToggleState): SwitchAria {
   let {inputProps} = useToggle(props, state);
   let {isSelected} = state;
