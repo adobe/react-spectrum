@@ -32,7 +32,7 @@ export function useSideNav<T>(props: SideNavProps<T>, state: TreeState<T>, layou
 
   id = useId(id);
 
-  let {listProps} = useSelectableCollection({
+  let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
     keyboardDelegate: layout,
     wrapAround
@@ -48,7 +48,7 @@ export function useSideNav<T>(props: SideNavProps<T>, state: TreeState<T>, layou
     listProps: {
       'aria-labelledby': ariaLabeldBy || (ariaLabel ? id : null),
       role: 'list',
-      ...listProps
+      ...collectionProps
     }
   };
 }

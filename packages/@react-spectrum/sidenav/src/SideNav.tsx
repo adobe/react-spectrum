@@ -40,7 +40,7 @@ export function SideNav<T>(props: SpectrumSideNavProps<T>) {
         focusedKey={state.selectionManager.focusedKey}
         className={classNames(styles, 'spectrum-SideNav')}
         layout={layout}
-        collection={state.tree}>
+        collection={state.collection}>
         {(type, item) => {
           if (type === 'section') {
             return (

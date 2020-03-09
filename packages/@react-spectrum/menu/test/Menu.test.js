@@ -92,6 +92,7 @@ describe('Menu', function () {
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
   });
 
   afterEach(() => {
@@ -108,25 +109,21 @@ describe('Menu', function () {
     Name        | Component | props
     ${'Menu'}   | ${Menu}   | ${{}}
     ${'V2Menu'} | ${V2Menu} | ${{}}
-  `('$Name renders properly', async function ({Component}) {
+  `('$Name renders properly', function ({Component}) {
     let tree = renderComponent(Component);
-    await waitForDomChange();
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
     if (Component === Menu) {
-      expect(menu).toHaveAttribute('aria-orientation', 'vertical');
-    }
-    
-    let headings = within(menu).getAllByRole('heading');
-    expect(headings.length).toBe(2);
+      let sections = within(menu).getAllByRole('group');
+      expect(sections.length).toBe(2);
 
-    for (let heading of headings) {
-      expect(heading).toHaveAttribute('aria-level', '3');
+      for (let section of sections) {
+        expect(section).toHaveAttribute('aria-labelledby');
+        let heading = document.getElementById(section.getAttribute('aria-labelledby'));
+        expect(heading).toBeTruthy();
+        expect(heading).toHaveAttribute('aria-hidden', 'true');
+      }
     }
-    let heading1 = within(menu).getByText('Heading 1');
-    let heading2 = within(menu).getByText('Heading 2');
-    expect(heading1).toBeTruthy();
-    expect(heading2).toBeTruthy();
 
     let dividers = within(menu).getAllByRole('separator');
     expect(dividers.length).toBe(1);
@@ -178,11 +175,8 @@ describe('Menu', function () {
   it.each`
     Name        | Component | props
     ${'Menu'}   | ${Menu}   | ${{autoFocus: true, wrapAround: true}}
-  `('$Name wraps focus from first to last/last to first item if up/down arrow is pressed if wrapAround is true', async function ({Component, props}) {
+  `('$Name wraps focus from first to last/last to first item if up/down arrow is pressed if wrapAround is true', function ({Component, props}) {
     let tree = renderComponent(Component, {}, props);
-    if (Component === V2Menu) {
-      await waitForDomChange();
-    }
     let menu = tree.getByRole('menu');
     let menuItems = within(menu).getAllByRole('menuitemradio');
     let firstItem = menuItems[0];
@@ -193,34 +187,14 @@ describe('Menu', function () {
     fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 40, charCode: 40});
     expect(firstItem).toBe(document.activeElement);
   });
-
-  it.each`
-    Name        | Component | props
-    ${'Menu'}   | ${Menu}   | ${{role: 'listbox', defaultSelectedKeys: ['Blah']}}
-  `('$Name renders with the right aria props if menu role is listbox', async function ({Component, props}) {
-    let tree = renderComponent(Component, {}, props);
-    await waitForDomChange();
-    let menu = tree.getByRole('listbox');
-    let menuItems = within(menu).getAllByRole('option');
-    expect(menuItems.length).toBe(5);
-
-    let selectedItem = menuItems[3];
-    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-
-    let nonSelectedItem = menuItems[1];
-    expect(nonSelectedItem).toHaveAttribute('aria-selected', 'false');
-  });
   
   describe('supports single selection', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, defaultSelectedKeys: ['Blah'], autoFocus: true}}
-    `('$Name supports defaultSelectedKeys (uncontrolled)', async function ({Component, props}) {
+    `('$Name supports defaultSelectedKeys (uncontrolled)', function ({Component, props}) {
       // Check that correct menu item is selected by default
       let tree = renderComponent(Component, {}, props);
-      if (Component === V2Menu) {
-        await waitForDomChange();
-      }
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
       let selectedItem = menuItems[3];
@@ -252,12 +226,9 @@ describe('Menu', function () {
     it.each`
     Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectedKeys: ['Blah'], autoFocus: true}}
-    `('$Name supports selectedKeys (controlled)', async function ({Component, props}) {
+    `('$Name supports selectedKeys (controlled)', function ({Component, props}) {
       // Check that correct menu item is selected by default
       let tree = renderComponent(Component, {}, props);
-      if (Component === V2Menu) {
-        await waitForDomChange();
-      }
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
       let selectedItem = menuItems[3];
@@ -289,9 +260,8 @@ describe('Menu', function () {
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange}}
       ${'V2Menu'} | ${V2Menu} | ${{onSelect}}
-    `('$Name supports using space key to change item selection', async function ({Component, props}) {
+    `('$Name supports using space key to change item selection', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
-      await waitForDomChange();
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
     
@@ -322,9 +292,8 @@ describe('Menu', function () {
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange}}
       ${'V2Menu'} | ${V2Menu} | ${{onSelect}}
-    `('$Name supports using click to change item selection', async function ({Component, props}) {
+    `('$Name supports using click to change item selection', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
-      await waitForDomChange();
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
     
@@ -355,9 +324,8 @@ describe('Menu', function () {
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, disabledKeys: ['Baz']}}
       ${'V2Menu'} | ${V2Menu} | ${{onSelect}}
-    `('$Name supports disabled items', async function ({Component, props}) {
+    `('$Name supports disabled items', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
-      await waitForDomChange();
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
     
@@ -384,9 +352,8 @@ describe('Menu', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'multiple'}}
-    `('$Name supports selecting multiple items', async function ({Component, props}) {
+    `('$Name supports selecting multiple items', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
-      await waitForDomChange();
       let menu = tree.getByRole('menu');
       
       // Make sure nothing is checked by default
@@ -419,9 +386,8 @@ describe('Menu', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar']}}
-    `('$Name supports multiple defaultSelectedKeys (uncontrolled)', async function ({Component, props}) {
+    `('$Name supports multiple defaultSelectedKeys (uncontrolled)', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
-      await waitForDomChange();
       let menu = tree.getByRole('menu');
       
       // Make sure two items are checked by default
@@ -463,9 +429,8 @@ describe('Menu', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'multiple', selectedKeys: ['Foo', 'Bar']}}
-    `('$Name supports multiple selectedKeys (controlled)', async function ({Component, props}) {
+    `('$Name supports multiple selectedKeys (controlled)', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
-      await waitForDomChange();
       let menu = tree.getByRole('menu');
       
       // Make sure two items are checked by default
@@ -505,9 +470,8 @@ describe('Menu', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar']}}
-    `('$Name supports deselection', async function ({Component, props}) {
+    `('$Name supports deselection', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
-      await waitForDomChange();
       let menu = tree.getByRole('menu');
       
       // Make sure two items are checked by default
@@ -546,9 +510,8 @@ describe('Menu', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar'], disabledKeys: ['Baz']}}
-    `('$Name supports disabledKeys', async function ({Component, props}) {
+    `('$Name supports disabledKeys', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
-      await waitForDomChange();
       let menu = tree.getByRole('menu');
 
       // Attempt to trigger disabled item
@@ -571,9 +534,8 @@ describe('Menu', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'none'}}
-    `('$Name prevents selection of any items', async function ({Component, props}) {
+    `('$Name prevents selection of any items', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
-      await waitForDomChange();
       let menu = tree.getByRole('menu');
       
       // Make sure nothing is checked by default

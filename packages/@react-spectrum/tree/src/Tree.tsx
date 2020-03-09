@@ -37,18 +37,18 @@ export function Tree<T>(props: CollectionBase<T> & Expandable & MultipleSelectio
     })
   , []);
 
-  let {listProps} = useSelectableCollection({
+  let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
     keyboardDelegate: layout
   });
 
   return (
     <CollectionView
-      {...listProps}
+      {...collectionProps}
       focusedKey={state.selectionManager.focusedKey}
       className={classNames(styles, 'spectrum-TreeView')}
       layout={layout}
-      collection={state.tree}>
+      collection={state.collection}>
       {(type, item) => {
         if (type === 'section') {
           return <TreeHeading item={item} />;

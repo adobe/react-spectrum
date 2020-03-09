@@ -1,16 +1,14 @@
 {
-  "name": "@react-aria/selection",
-  "version": "3.0.0-alpha.2",
-  "private": true,
+  "name": "@react-stately/list",
+  "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
+  "private": true,
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "sideEffects": false,
   "repository": {
     "type": "git",
@@ -18,10 +16,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/interactions": "^3.0.0-alpha.2",
-    "@react-stately/collections": "^3.0.0-alpha.2",
-    "@react-stately/selection": "^3.0.0-alpha.2",
-    "@react-types/shared": "^3.0.0-rc.1"
+    "@react-stately/collections": "^3.0.0-alpha.1",
+    "@react-stately/selection": "^3.0.0-alpha.1",
+    "@react-stately/utils": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"
