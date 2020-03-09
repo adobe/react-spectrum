@@ -360,39 +360,6 @@ storiesOf('Menu', module)
     )
   )
   .add(
-    'Menu with role="listbox"',
-    () => (
-      <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} role="listbox">
-          {item => (
-            <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
-            </Section>
-          )}
-        </Menu>
-      </Popover>
-    )
-  )
-  .add(
-    'Menu with role="listbox", static',
-    () => (
-      <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} role="listbox">
-          <Section title="Section 1">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
-          </Section>
-          <Section title="Section 2">
-            <Item>Four</Item>
-            <Item>Five</Item>
-            <Item>Six</Item>
-          </Section>
-        </Menu>
-      </Popover>
-    )
-  )
-  .add(
     'Menu with autoFocus=true',
     () => (
       <Popover isOpen hideArrow>

@@ -22,6 +22,14 @@ export class ButtonGroupCollection<T extends ReactElement> implements Collection
     this.keys = items.filter(item => !item.props.isDisabled).map(child => child.key);
   }
 
+  get size() {
+    return this.keys.length;
+  }
+
+  *[Symbol.iterator]() {
+    yield* this.items;
+  }
+
   getKeys() {
     return this.keys;
   }
