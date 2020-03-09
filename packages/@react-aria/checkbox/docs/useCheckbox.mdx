@@ -82,41 +82,58 @@ This is possible using the `<VisuallyHidden>` utility component from `@react-ari
 It is still in the DOM and accessible to assistive technology, but invisible. This example uses SVG
 to build the visual checkbox, which is hidden from screen readers with `aria-hidden`.
 
+For keyboard accessibility, a focus ring is important to indicate which element has keyboard focus.
+This is implemented with the `useFocusRing` hook from `@react-aria/focus`. When `isFocusVisible` is
+true, an extra SVG element is rendered to indicate focus. The focus ring is only visible when the user
+is interacting with a keyboard, not with a mouse or touch.
+
 ```tsx example
 import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useFocusRing} from '@react-aria/focus';
 
 function Checkbox(props) {
   let {children} = props;
   let state = useToggleState(props);
   let ref = React.useRef();
   let {inputProps} = useCheckbox(props, state, ref);
+  let {isFocusVisible, focusProps} = useFocusRing();
 
   let isChecked = inputProps.checked;
 
   return (
     <label style={{display: 'flex', alignItems: 'center'}}>
       <VisuallyHidden>
-        <input {...inputProps} ref={ref} />
+        <input {...inputProps} {...focusProps} ref={ref} />
       </VisuallyHidden>
       <svg
-        width={16}
-        height={16}
+        width={20}
+        height={20}
         aria-hidden="true"
         style={{marginRight: 4}}>
         <rect
-          x={0}
-          y={0}
-          width={16}
-          height={16}
+          x={isChecked ? 4 : 5}
+          y={isChecked ? 4 : 5}
+          width={isChecked ? 12 : 10}
+          height={isChecked ? 12 : 10}
           fill={isChecked ? 'orange' : 'none'}
           stroke={isChecked ? 'none' : 'gray'}
           strokeWidth={2} />
         {isChecked &&
           <path
-            transform="translate(3 3)"
+            transform="translate(5 5)"
             d={`M3.788 9A.999.999 0 0 1 3 8.615l-2.288-3a1 1 0 1 1 
             1.576-1.23l1.5 1.991 3.924-4.991a1 1 0 1 1 1.576 1.23l-4.712 
             6A.999.999 0 0 1 3.788 9z`} />
+        }
+        {isFocusVisible &&
+          <rect
+            x={1}
+            y={1}
+            width={18}
+            height={18}
+            fill="none"
+            stroke="orange"
+            strokeWidth={2} />
         }
       </svg>
       {children}

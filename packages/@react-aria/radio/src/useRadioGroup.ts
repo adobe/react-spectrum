@@ -22,6 +22,11 @@ interface RadioGroupAria {
   labelProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a radio group component.
+ * Radio groups allow users to select a single item from a list of mutually exclusive options.
+ * @param props - props for the radio group
+ */
 export function useRadioGroup(props: RadioGroupProps): RadioGroupAria {
   let {labelProps, fieldProps} = useLabel(props);
 

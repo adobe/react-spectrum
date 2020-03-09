@@ -25,6 +25,12 @@ interface RadioAria {
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for an individual 
+ * radio button in a radio group.
+ * @param props - props for the radio
+ * @param state - state for the radio group, as returned by `useRadioGroupState`
+ */
 export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAria {
   let {
     value,

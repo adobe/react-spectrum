@@ -114,8 +114,14 @@ This is possible using the `<VisuallyHidden>` utility component from `@react-ari
 It is still in the DOM and accessible to assistive technology, but invisible. This example uses SVG
 to build the visual radio button, which is hidden from screen readers with `aria-hidden`.
 
+For keyboard accessibility, a focus ring is important to indicate which element has keyboard focus.
+This is implemented with the `useFocusRing` hook from `@react-aria/focus`. When `isFocusVisible` is
+true, an extra SVG element is rendered to indicate focus. The focus ring is only visible when the user
+is interacting with a keyboard, not with a mouse or touch.
+
 ```tsx example
 import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useFocusRing} from '@react-aria/focus';
 
 // RadioGroup is the same as in the previous example
 let RadioContext = React.createContext();
@@ -139,6 +145,7 @@ function Radio(props) {
   let {children} = props;
   let state = React.useContext(RadioContext);
   let {inputProps} = useRadio(props, state);
+  let {isFocusVisible, focusProps} = useFocusRing();
 
   let isChecked = inputProps.checked;
   let strokeWidth = isChecked ? 6 : 2;
@@ -146,20 +153,29 @@ function Radio(props) {
   return (
     <label style={{display: 'flex', alignItems: 'center'}}>
       <VisuallyHidden>
-        <input {...inputProps} />
+        <input {...inputProps} {...focusProps} />
       </VisuallyHidden>
       <svg 
-        width={16}
-        height={16}
+        width={24}
+        height={24}
         aria-hidden="true"
         style={{marginRight: 4}}>
         <circle
-          cx={8}
-          cy={8}
+          cx={12}
+          cy={12}
           r={8 - strokeWidth / 2}
           fill="none"
           stroke={isChecked ? 'orange' : 'gray'}
           strokeWidth={strokeWidth} />
+        {isFocusVisible &&
+          <circle
+            cx={12}
+            cy={12}
+            r={11}
+            fill="none"
+            stroke="orange"
+            strokeWidth={2} />
+        }
       </svg>
       {children}
     </label>
