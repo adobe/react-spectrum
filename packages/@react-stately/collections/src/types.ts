@@ -31,11 +31,13 @@ export interface Node<T> extends ItemStates {
   hasChildNodes: boolean,
   childNodes: Iterable<Node<T>>,
   rendered: ReactNode,
+  index?: number,
   prevKey?: Key,
   nextKey?: Key
 }
 
-export interface Collection<T> {
+export interface Collection<T> extends Iterable<T> {
+  readonly size: number;
   getKeys(): Iterable<Key>,
   getItem(key: Key): T,
   getKeyBefore(key: Key): Key | null,
