@@ -88,10 +88,15 @@ The label should be in sentence case.
 
 ```tsx example
 <Flex flexDirection="column" maxWidth="275px">
-  <Meter label="1 of 4" marginBottom="25px" value={25} variant="warning" />
-  <Meter label="1 of 4" marginBottom="25px" labelPosition="side" value={25} variant="warning" />
-  <Meter aria-label="1 of 4" showValueLabel={false} value={25} variant="warning" />
+  <Meter label="Label" marginBottom="25px" value={25} variant="warning" />
+  <Meter label="Label" marginBottom="25px" labelPosition="side" value={25} variant="warning" />
+  <Meter aria-label="Label" showValueLabel={false} value={25} variant="warning" />
 </Flex>
+```
+
+The value label can be updated via the `valueLabel` prop.
+```tsx example
+<Meter aria-label="Progress" marginBottom="25px" value={25} valueLabel="1 of 4" variant="warning" />
 ```
 
 ### Size
@@ -109,8 +114,8 @@ The label should be in sentence case.
 
 ```tsx example
 <Flex flexDirection="column">
-  <Meter label="1 of 4" marginBottom="25px" value={25} variant="positive" />
-  <Meter label="1 of 4" marginBottom="25px" value={25} variant="critical" />
-  <Meter label="1 of 4" value={25} variant="warning" />
+  <Meter label="Label" marginBottom="25px" value={25} variant="positive" />
+  <Meter label="Label" marginBottom="25px" value={25} variant="critical" />
+  <Meter label="Label" value={25} variant="warning" />
 </Flex>
 ```
