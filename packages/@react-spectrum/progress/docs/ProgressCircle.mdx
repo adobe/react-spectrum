@@ -24,7 +24,7 @@ import {View} from '@react-spectrum/view';
 ## Example
 
 ```tsx example
-<ProgressCircle aria-label="Loading…" />
+<ProgressCircle aria-label="Loading…" value={50} />
 ```
 
 ## Value
@@ -74,7 +74,7 @@ If using the over background variant, ensure the background offers enough contra
 
 To internationalize a Progress Circle, a localized string should be passed to the `aria-label` prop (or value of the associated `aria-labelledby` element).
 
-For languages that are read right to left (e.g. Hebrew and Arabic), the fill of an both determinate and indeterminate Progress Circles continues to spin clockwise.
+For languages that are read right to left (e.g. Hebrew and Arabic), the fill of both determinate and indeterminate Progress Circles continues to spin clockwise.
 
 ## Props
 
