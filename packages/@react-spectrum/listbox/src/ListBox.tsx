@@ -11,58 +11,64 @@
  */
 
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {MenuContext} from './context';
-import {MenuItem} from './MenuItem';
-import {MenuSection} from './MenuSection';
-import {mergeProps} from '@react-aria/utils';
-import React, {useContext, useRef} from 'react';
+import {CollectionView} from '@react-aria/collections';
+import {ListBoxOption} from './ListBoxOption';
+import {ListBoxSection} from './ListBoxSection';
+import {ListLayout} from '@react-stately/collections';
+import React, {useMemo} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useMenu} from '@react-aria/menu';
-import {useTreeState} from '@react-stately/tree';
+import {useListBox} from '@react-aria/listbox';
+import {useListState} from '@react-stately/list';
+import {useProvider} from '@react-spectrum/provider';
 
-export function Menu<T>(props: SpectrumMenuProps<T>) {
-  let contextProps = useContext(MenuContext);
+export function ListBox<T>(props: SpectrumMenuProps<T>) {
+  let {scale} = useProvider();
+  let layout = useMemo(() => 
+    new ListLayout({
+      estimatedRowHeight: scale === 'large' ? 48 : 32,
+      estimatedHeadingHeight: scale === 'large' ? 31 : 25
+    })
+  , [scale]);
+
   let completeProps = {
-    ...mergeProps(contextProps, props),
+    ...props,
     selectionMode: props.selectionMode || 'single'
   };
 
-  let ref = useRef();
-  let state = useTreeState(completeProps);
-  let {menuProps} = useMenu({...completeProps, ref}, state);
+  let state = useListState(completeProps);
+  let {listBoxProps} = useListBox({...completeProps, keyboardDelegate: layout, isVirtualized: true}, state);
   let {styleProps} = useStyleProps(completeProps);
 
   return (
-    <ul
+    <CollectionView
       {...filterDOMProps(completeProps)}
-      {...menuProps}
       {...styleProps}
-      ref={ref}
+      {...listBoxProps}
+      focusedKey={state.selectionManager.focusedKey}
+      sizeToFit="height"
       className={
         classNames(
           styles, 
           'spectrum-Menu',
           styleProps.className
         )
-      }>
-      {[...state.collection].map(item => {
-        if (item.type === 'section') {
+      }
+      layout={layout}
+      collection={state.collection}>
+      {(type, item) => {
+        if (type === 'section') {
           return (
-            <MenuSection 
-              key={item.key}
-              item={item}
-              state={state} />
+            <ListBoxSection item={item} state={state} />
           );
         }
 
         return (
-          <MenuItem
-            key={item.key}
+          <ListBoxOption
             item={item}
             state={state} />
         );
-      })}
-    </ul>
+      }}
+    </CollectionView>
   );
 }
