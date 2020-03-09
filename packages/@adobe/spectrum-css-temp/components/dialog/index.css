@@ -36,6 +36,9 @@ governing permissions and limitations under the License.
 
   --spectrum-dialog-button-margin: var(--spectrum-global-dimension-size-200);
   --spectrum-dialog-content-margin-bottom: var(--spectrum-global-dimension-size-450);
+
+  /* 12px desktop (medium scale) and 8px mobile (large scale) */
+  --spectrum-dialog-close-button-padding: calc(26px - var(--spectrum-global-dimension-size-175));
 }
 
 
@@ -180,20 +183,13 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dialog-closeButton {
-  display: none;
   grid-area: closeButton;
   /* align and justify so it doesn't do the default 'stretch' and end up with forced height/width */
   align-self: start;
-  justify-self: start;
+  justify-self: end;
 
-  inset-block-start: var(--spectrum-global-dimension-size-150);
-  inset-inline-end: var(--spectrum-global-dimension-size-150);
-}
-
-.spectrum-Dialog--dismissable {
-  .spectrum-Dialog-closeButton {
-    display: block;
-  }
+  inset-block-start: var(--spectrum-dialog-close-button-padding);
+  inset-inline-end: var(--spectrum-dialog-close-button-padding);
 }
 
 /* Alert Dialog is a specific type of Dialog */
