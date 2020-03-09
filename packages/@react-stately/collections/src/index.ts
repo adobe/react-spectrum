@@ -23,6 +23,7 @@ export * from './Point';
 export * from './Rect';
 export * from './Size';
 export * from './ListLayout';
+export * from './ReusableView';
 
 export * from './useCollectionState';
 export * from './useAsyncList';

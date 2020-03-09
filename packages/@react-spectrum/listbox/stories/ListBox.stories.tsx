@@ -16,15 +16,15 @@ import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
-import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, ListBox, Section} from '../';
-import {Keyboard, Text} from '@react-spectrum/typography';
+import {Label} from '@react-spectrum/label';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {Popover} from '@react-spectrum/overlays';
-import React from 'react';
+import React, {Fragment} from 'react';
 import {storiesOf} from '@storybook/react';
+import {Text} from '@react-spectrum/typography';
 
 let iconMap = {
   AlignCenter,
@@ -39,18 +39,14 @@ let iconMap = {
 
 let hardModeProgrammatic = [
   {name: 'Section 1', children: [
-    {name: 'Copy', icon: 'Copy', shortcut: '⌘C'},
-    {name: 'Cut', icon: 'Cut', shortcut: '⌘X'},
-    {name: 'Paste', icon: 'Paste', shortcut: '⌘V'}
+    {name: 'Copy', icon: 'Copy'},
+    {name: 'Cut', icon: 'Cut'},
+    {name: 'Paste', icon: 'Paste'}
   ]},
   {name: 'Section 2', children: [
-    {name: 'Puppy', icon: 'AlignLeft', shortcut: '⌘P'},
-    {name: 'Doggo', icon: 'AlignCenter', shortcut: '⌘D'},
-    {name: 'Floof', icon: 'AlignRight', shortcut: '⌘F'},
-    {name: 'hasChildren', children: [
-      {name: 'Thailand', icon: 'Blower', shortcut: '⌘T'},
-      {name: 'Germany', icon: 'Book', shortcut: '⌘G'}
-    ]}
+    {name: 'Puppy', icon: 'AlignLeft'},
+    {name: 'Doggo', icon: 'AlignCenter'},
+    {name: 'Floof', icon: 'AlignRight'}
   ]}
 ];
 
@@ -75,18 +71,32 @@ let withSection = [
   {name: 'People', children: [
     {name: 'Danni'},
     {name: 'Devon'},
-    {name: 'Ross', children: [
-      {name: 'Tests'}
-    ]}
+    {name: 'Ross'}
   ]}
 ];
 
+let lotsOfSections: any[] = [];
+for (let i = 0; i < 50; i++) {
+  let children = [];
+  for (let j = 0; j < 50; j++) {
+    children.push({name: `Section ${i}, Item ${j}`});
+  }
+  
+  lotsOfSections.push({name: 'Section ' + i, children});
+}
+
 storiesOf('ListBox', module)
+  .addDecorator(story => (
+    <Fragment>
+      <Label id="label">Choose an item</Label>
+      {story()}
+    </Fragment>
+  ))
   .add(
     'Default ListBox',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox onSelectionChange={action('onSelectionChange')} items={flatOptions} itemKey="name">
+        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={flatOptions} itemKey="name">
           {item => <Item>{item.name}</Item>}
         </ListBox>
       </Popover>
@@ -95,11 +105,25 @@ storiesOf('ListBox', module)
   .add(
     'ListBox w/ sections',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+      <Popover isOpen hideArrow style={{maxHeight: 300}}>
+        <ListBox aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
+              {item => <Item>{item.name}</Item>}
+            </Section>
+          )}
+        </ListBox>
+      </Popover>
+    )
+  )
+  .add(
+    'ListBox w/ many sections',
+    () => (
+      <Popover isOpen hideArrow style={{maxHeight: 300}}>
+        <ListBox aria-labelledby="label" items={lotsOfSections} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+          {item => (
+            <Section items={item.children} title={item.name}>
+              {(item: any) => <Item>{item.name}</Item>}
             </Section>
           )}
         </ListBox>
@@ -110,7 +134,7 @@ storiesOf('ListBox', module)
     'Static',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox onSelectionChange={action('onSelectionChange')}>
+        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
           <Item>One</Item>
           <Item>Two</Item>
           <Item>Three</Item>
@@ -122,7 +146,7 @@ storiesOf('ListBox', module)
     'Static with sections',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox onSelectionChange={action('onSelectionChange')}>
+        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
           <Section title="Section 1">
             <Item>One</Item>
             <Item>Two</Item>
@@ -141,10 +165,10 @@ storiesOf('ListBox', module)
     'with default selected options',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
+        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
+              {item => <Item>{item.name}</Item>}
             </Section>
           )}
         </ListBox>
@@ -155,7 +179,7 @@ storiesOf('ListBox', module)
     'static with default selected options',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
+        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -189,10 +213,10 @@ storiesOf('ListBox', module)
     'with selected options (controlled)',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
+        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
+              {item => <Item>{item.name}</Item>}
             </Section>
           )}
         </ListBox>
@@ -203,7 +227,7 @@ storiesOf('ListBox', module)
     'static with selected options (controlled)',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
+        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -237,10 +261,10 @@ storiesOf('ListBox', module)
     'with disabled options',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
+        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
+              {item => <Item>{item.name}</Item>}
             </Section>
           )}
         </ListBox>
@@ -251,7 +275,7 @@ storiesOf('ListBox', module)
     'static with disabled options',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox onSelectionChange={action('onSelectionChange')} disabledKeys={['3', '5']}>
+        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} disabledKeys={['3', '5']}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -285,10 +309,10 @@ storiesOf('ListBox', module)
     'Multiple selection',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
+        <ListBox aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
+              {item => <Item>{item.name}</Item>}
             </Section>
           )}
         </ListBox>
@@ -299,7 +323,7 @@ storiesOf('ListBox', module)
     'Multiple selection, static',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
+        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -330,10 +354,10 @@ storiesOf('ListBox', module)
     'No selection allowed',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="none">
+        <ListBox aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="none">
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
+              {item => <Item>{item.name}</Item>}
             </Section>
           )}
         </ListBox>
@@ -344,7 +368,7 @@ storiesOf('ListBox', module)
     'No selection allowed, static',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox onSelectionChange={action('onSelectionChange')} selectionMode="none">
+        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectionMode="none">
           <Section title="Section 1">
             <Item>One</Item>
             <Item>Two</Item>
@@ -363,10 +387,10 @@ storiesOf('ListBox', module)
     'ListBox with autoFocus=true',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus>
+        <ListBox aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus>
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
+              {item => <Item>{item.name}</Item>}
             </Section>
           )}
         </ListBox>
@@ -377,10 +401,10 @@ storiesOf('ListBox', module)
     'ListBox with autoFocus=true and focusStrategy="last"',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus focusStrategy="last">
+        <ListBox aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus focusStrategy="last">
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
+              {item => <Item>{item.name}</Item>}
             </Section>
           )}
         </ListBox>
@@ -391,10 +415,10 @@ storiesOf('ListBox', module)
     'ListBox with keyboard selection wrapping',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} wrapAround>
+        <ListBox aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} wrapAround>
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
+              {item => <Item>{item.name}</Item>}
             </Section>
           )}
         </ListBox>
@@ -405,22 +429,19 @@ storiesOf('ListBox', module)
     'with semantic elements (static)',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox onSelectionChange={action('onSelectionChange')}>
+        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
           <Section title="Section 1">
             <Item>
               <Copy size="S" />
               <Text>Copy</Text>
-              <Keyboard>⌘C</Keyboard>
             </Item>
             <Item>
               <Cut size="S" />
               <Text>Cut</Text>
-              <Keyboard>⌘X</Keyboard>
             </Item>
             <Item>
               <Paste size="S" />
               <Text>Paste</Text>
-              <Keyboard>⌘V</Keyboard>
             </Item>
           </Section>
           <Section title="Section 2">
@@ -432,8 +453,6 @@ storiesOf('ListBox', module)
             <Item>
               <AlignCenter size="S" />
               <Text>Doggo with really really really long long long text</Text>
-              <Text slot="end">Value</Text>
-              <ChevronRightMedium slot="keyboard" />
             </Item>
             <Item>
               <AlignRight size="S" />
@@ -451,7 +470,7 @@ storiesOf('ListBox', module)
     'with semantic elements (generative)',
     () => (
       <Popover isOpen hideArrow> 
-        <ListBox items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
+        <ListBox aria-labelledby="label"items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
           {item => (
             <Section items={item.children} title={item.name}>
               {item => customOption(item)}
@@ -465,10 +484,9 @@ storiesOf('ListBox', module)
 let customOption = (item) => {
   let Icon = iconMap[item.icon];
   return (
-    <Item childItems={item.children}>
+    <Item>
       {item.icon && <Icon size="S" />}
       <Text>{item.name}</Text>
-      {item.shortcut && <Keyboard>{item.shortcut}</Keyboard>}
     </Item>
   );	
 };

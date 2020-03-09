@@ -111,8 +111,9 @@ describe('ListBox', function () {
     expect(item3).toBeTruthy();
   });
 
-  it('allows user to change menu item focus via up/down arrow keys', function () {
+  it('allows user to change menu item focus via up/down arrow keys', async function () {
     let tree = renderComponent({autoFocus: true});
+    await waitForDomChange();
     let listbox = tree.getByRole('listbox');
     let options = within(listbox).getAllByRole('option');
     let selectedItem = options[0];
@@ -124,8 +125,9 @@ describe('ListBox', function () {
     expect(document.activeElement).toBe(selectedItem);
   });
 
-  it('wraps focus from first to last/last to first item if up/down arrow is pressed if wrapAround is true', function () {
+  it('wraps focus from first to last/last to first item if up/down arrow is pressed if wrapAround is true', async function () {
     let tree = renderComponent({autoFocus: true, wrapAround: true});
+    await waitForDomChange();
     let listbox = tree.getByRole('listbox');
     let options = within(listbox).getAllByRole('option');
     let firstItem = options[0];
@@ -138,9 +140,10 @@ describe('ListBox', function () {
   });
   
   describe('supports single selection', function () {
-    it('supports defaultSelectedKeys (uncontrolled)', function () {
+    it('supports defaultSelectedKeys (uncontrolled)', async function () {
       // Check that correct menu item is selected by default
       let tree = renderComponent({onSelectionChange, defaultSelectedKeys: ['Blah'], autoFocus: true});
+      await waitForDomChange();
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       let selectedItem = options[3];
@@ -169,9 +172,10 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
     });
 
-    it('supports selectedKeys (controlled)', function () {
+    it('supports selectedKeys (controlled)', async function () {
       // Check that correct menu item is selected by default
       let tree = renderComponent({onSelectionChange, selectedKeys: ['Blah'], autoFocus: true});
+      await waitForDomChange();
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       let selectedItem = options[3];
@@ -243,8 +247,9 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
     });
     
-    it('supports disabled items', function () {
+    it('supports disabled items', async function () {
       let tree = renderComponent({onSelectionChange, disabledKeys: ['Baz'], autoFocus: true});
+      await waitForDomChange();
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
     
