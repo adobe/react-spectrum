@@ -49,7 +49,7 @@ export function useButtonGroup(props: ButtonGroupProps, state: ButtonGroupState)
   let {direction} = useLocale();
   let keyboardDelegate = useMemo(() => new ButtonGroupKeyboardDelegate(state.buttonCollection, direction, orientation), [state.buttonCollection, direction, orientation]);
 
-  let {listProps} = useSelectableCollection({
+  let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
     keyboardDelegate
   });
@@ -68,7 +68,7 @@ export function useButtonGroup(props: ButtonGroupProps, state: ButtonGroupState)
       tabIndex: isDisabled ? null : tabIndex,
       'aria-orientation': orientation,
       'aria-disabled': isDisabled,
-      ...mergeProps(focusWithinProps, listProps)
+      ...mergeProps(focusWithinProps, collectionProps)
     },
     buttonProps: {
       role: BUTTON_ROLES[selectionMode]
