@@ -32,6 +32,7 @@ export interface Node<T> extends ItemStates {
   childNodes: Iterable<Node<T>>,
   rendered: ReactNode,
   index?: number,
+  parentKey?: Key,
   prevKey?: Key,
   nextKey?: Key
 }
@@ -58,12 +59,17 @@ export interface InvalidationContext<T extends object, V> {
 }
 
 export interface CollectionManagerDelegate<T extends object, V, W> {
-  setVisibleViews(views: Set<W>): void,
+  setVisibleViews(views: W[]): void,
   setContentSize(size: Size): void,
   setVisibleRect(rect: Rect): void,
   getType?(content: T): string,
   renderView(type: string, content: T): V,
-  renderWrapper(reusableView: ReusableView<T, V>): W,
+  renderWrapper(
+    parent: ReusableView<T, V> | null,
+    reusableView: ReusableView<T, V>,
+    children: ReusableView<T, V>[],
+    renderChildren: (views: ReusableView<T, V>[]) => W[]
+  ): W,
   beginAnimations(): void,
   endAnimations(): void,
   getScrollAnchor?(rect: Rect): Key
