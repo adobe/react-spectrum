@@ -10,23 +10,44 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
+import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import React, {ReactElement} from 'react';
 import {Toast} from './';
 import toastContainerStyles from './toastContainer.css';
-import {ToastStateBase} from '@react-types/toast';
+import {ToastState} from '@react-types/toast';
+import {useProvider} from '@react-spectrum/provider';
 
-interface ToastProviderProps {
-  toasts?: ToastStateBase[],
-}
+export function ToastContainer(props: ToastState): ReactElement {
+  let {
+    onRemove,
+    toasts,
+    ...otherProps
+  } = props;
+  let providerProps = useProvider();
+  let toastPlacement = providerProps && providerProps.toastPlacement && providerProps.toastPlacement.split(' ');
+  let containerPosition = toastPlacement && toastPlacement[0];
+  let containerPlacement = toastPlacement && toastPlacement[1];
 
-export function ToastContainer(props: ToastProviderProps): ReactElement {
-  let renderToasts = () => props.toasts.map((toast) =>
-    (<Toast {...toast.props}>{toast.content}</Toast>)
+  let renderToasts = () => toasts.map((toast) =>
+    (<Toast
+      {...toast.props}
+      key={toast.props.toastKey}
+      onRemove={onRemove}
+      timer={toast.timer}>
+      {toast.content}
+    </Toast>)
   );
 
+
   return (
-    <div className={classNames(toastContainerStyles, 'react-spectrum-ToastContainer')}>
+    <div
+      {...filterDOMProps(otherProps)}
+      className={classNames(
+        toastContainerStyles,
+        'react-spectrum-ToastContainer',
+        containerPosition && `react-spectrum-ToastContainer--${containerPosition}`,
+        containerPlacement && `react-spectrum-ToastContainer--${containerPlacement}`
+      )}>
       {renderToasts()}
     </div>
   );
