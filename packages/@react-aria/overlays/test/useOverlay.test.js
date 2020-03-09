@@ -34,16 +34,16 @@ describe('useOverlay', function () {
     expect(document.activeElement).toBe(input);
   });
 
-  it('should hide the overlay when clicking outside', function () {
+  it('should hide the overlay when clicking outside if isDismissble is true', function () {
     let onClose = jest.fn();
-    render(<Example isOpen onClose={onClose} />);
+    render(<Example isOpen onClose={onClose} isDismissable />);
     fireEvent.mouseUp(document.body);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('should not hide the overlay when clicking outside if closeOnInteractOutside is false', function () {
+  it('should not hide the overlay when clicking outside if isDismissable is false', function () {
     let onClose = jest.fn();
-    render(<Example isOpen onClose={onClose} closeOnInteractOutside={false} />);
+    render(<Example isOpen onClose={onClose} isDismissable={false} />);
     fireEvent.mouseUp(document.body);
     expect(onClose).toHaveBeenCalledTimes(0);
   });
@@ -56,9 +56,9 @@ describe('useOverlay', function () {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('should still hide the overlay when pressing the escape key if closeOnInteractOutside is false', function () {
+  it('should still hide the overlay when pressing the escape key if isDismissable is false', function () {
     let onClose = jest.fn();
-    let res = render(<Example isOpen onClose={onClose} closeOnInteractOutside={false} />);
+    let res = render(<Example isOpen onClose={onClose} isDismissable={false} />);
     let el = res.getByTestId('test');
     fireEvent.keyDown(el, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -67,8 +67,8 @@ describe('useOverlay', function () {
   it('should only hide the top-most overlay', function () {
     let onCloseFirst = jest.fn();
     let onCloseSecond = jest.fn();
-    render(<Example isOpen onClose={onCloseFirst} />);
-    let second = render(<Example isOpen onClose={onCloseSecond} />);
+    render(<Example isOpen onClose={onCloseFirst} isDismissable />);
+    let second = render(<Example isOpen onClose={onCloseSecond} isDismissable />);
 
     fireEvent.mouseUp(document.body);
     expect(onCloseSecond).toHaveBeenCalledTimes(1);

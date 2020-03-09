@@ -18,7 +18,7 @@ interface OverlayProps {
   onClose?: () => void,
   isOpen?: boolean,
   // Whether to close overlay if underlay is clicked
-  closeOnInteractOutside?: boolean
+  isDismissable?: boolean
 }
 
 interface OverlayAria {
@@ -28,7 +28,7 @@ interface OverlayAria {
 const visibleOverlays: RefObject<HTMLElement>[] = [];
 
 export function useOverlay(props: OverlayProps): OverlayAria {
-  let {ref, onClose, isOpen, closeOnInteractOutside = true} = props;
+  let {ref, onClose, isOpen, isDismissable = false} = props;
   
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {
@@ -60,7 +60,7 @@ export function useOverlay(props: OverlayProps): OverlayAria {
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: closeOnInteractOutside ? onHide : null});
+  useInteractOutside({ref, onInteractOutside: isDismissable ? onHide : null});
 
   return {
     overlayProps: {

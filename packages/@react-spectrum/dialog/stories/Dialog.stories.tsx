@@ -13,7 +13,6 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
-import {chain} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
@@ -248,9 +247,7 @@ function renderAlert({width = 'auto', ...props}: SpectrumAlertDialogProps) {
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
-        {(close) => (
-          <AlertDialog {...props} onConfirm={chain(close, props.onConfirm)} onCancel={chain(close, props.onCancel)} />
-        )}
+        <AlertDialog {...props} onConfirm={props.onConfirm} onCancel={props.onCancel} />
       </DialogTrigger>
     </div>
   );

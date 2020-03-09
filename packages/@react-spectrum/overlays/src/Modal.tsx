@@ -56,7 +56,7 @@ function ModalWrapper(props: ModalWrapperProps) {
   let typeVariant = typeMap[type];
   let ref = useRef(null);
 
-  let {overlayProps} = useOverlay({ref, onClose, isOpen, closeOnInteractOutside: isDismissable});
+  let {overlayProps} = useOverlay({ref, onClose, isOpen, isDismissable});
   useModal();
 
   let wrapperClassName = classNames(
