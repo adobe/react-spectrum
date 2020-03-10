@@ -32,6 +32,11 @@ export class LayoutInfo {
   key: Key;
 
   /**
+   * The key for a parent layout info, if any.
+   */
+  parentKey: Key | null;
+
+  /**
    * The rectangle describing the size and position of this view.
    */
   rect: Rect;
@@ -65,6 +70,7 @@ export class LayoutInfo {
   constructor(type: string, key: Key, rect: Rect) {
     this.type = type;
     this.key = key;
+    this.parentKey = null;
     this.rect = rect;
     this.estimatedSize = false;
     this.opacity = 1;
