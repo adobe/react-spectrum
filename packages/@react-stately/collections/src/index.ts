@@ -11,6 +11,8 @@
  */
 
 export * from './CollectionBuilder';
+export * from './Item';
+export * from './Section';
 export * from './TreeCollection';
 export * from './types';
 

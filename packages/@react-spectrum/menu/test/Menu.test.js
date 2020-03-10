@@ -11,6 +11,7 @@
  */
 
 import {cleanup, fireEvent, render, waitForDomChange, within} from '@testing-library/react';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Item, Menu, Section} from '../';
 import {MenuContext} from '../src/context';
 import {Provider} from '@react-spectrum/provider';
@@ -559,5 +560,29 @@ describe('Menu', function () {
       expect(checkmarks.length).toBe(0);
       expect(onSelectionChange).toBeCalledTimes(0);
     });
+  });
+
+  it('supports DialogTrigger as a wrapper around items', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <Menu id={menuId} selectionMode="none">
+          <Section title="Test">
+            <DialogTrigger>
+              <Item>Hi</Item>
+              <Dialog>
+                I'm a dialog
+              </Dialog>
+            </DialogTrigger>
+          </Section>
+        </Menu>
+      </Provider>
+    );
+
+    let menu = tree.getByRole('menu');
+    let menuItem = within(menu).getByRole('menuitem');
+    triggerPress(menuItem);
+
+    let dialog = tree.getByRole('dialog');
+    expect(dialog).toBeVisible();
   });
 });

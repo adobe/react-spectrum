@@ -56,12 +56,18 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
           );
         }
 
-        return (
+        let menuItem = (
           <MenuItem
             key={item.key}
             item={item}
             state={state} />
         );
+
+        if (item.wrapper) {
+          menuItem = item.wrapper(menuItem);
+        }
+
+        return menuItem;
       })}
     </ul>
   );
