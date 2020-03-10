@@ -84,6 +84,7 @@ describe('MenuTrigger', function () {
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
   });
 
   afterEach(() => {
