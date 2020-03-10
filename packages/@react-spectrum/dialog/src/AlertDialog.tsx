@@ -12,7 +12,7 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button} from '@react-spectrum/button';
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {Divider} from '@react-spectrum/divider';
@@ -37,6 +37,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider(otherProps);
 
   let confirmVariant: SpectrumButtonProps['variant'] = 'primary';
   if (variant) {
@@ -48,9 +49,9 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
   }
 
   return (
-    <Dialog {...styleProps} UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)} size="M" role="alertdialog">
+    <Dialog {...styleProps} UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className, slotProps.className)} size="M" role="alertdialog">
       <Header><Heading>{title}</Heading>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
-      <Divider size="M" />
+      <Divider />
       <Content>{children}</Content>
       <Footer>
         {secondaryLabel && <Button variant="secondary" onPress={() => onConfirm('secondary')} autoFocus={autoFocusButton === 'secondary'}>{secondaryLabel}</Button>}

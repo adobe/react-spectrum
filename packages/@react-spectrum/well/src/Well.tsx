@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import React, {forwardRef} from 'react';
 import {SpectrumWellProps} from '@react-types/well';
@@ -23,6 +23,7 @@ function Well(props: SpectrumWellProps, ref: DOMRef<HTMLDivElement>) {
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider(otherProps);
 
   return (
     <div
@@ -32,7 +33,8 @@ function Well(props: SpectrumWellProps, ref: DOMRef<HTMLDivElement>) {
       className={classNames(
         styles,
         'spectrum-Well',
-        styleProps.className
+        styleProps.className,
+        slotProps.className
       )}>
       {children}
     </div>

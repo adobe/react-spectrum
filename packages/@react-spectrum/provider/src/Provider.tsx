@@ -13,7 +13,13 @@
 import classNames from 'classnames';
 import configureTypekit from './configureTypekit';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, shouldKeepSpectrumClassNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {
+  filterDOMProps,
+  shouldKeepSpectrumClassNames,
+  useDOMRef,
+  useSlotProvider,
+  useStyleProps
+} from '@react-spectrum/utils';
 import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/dialog';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
@@ -108,6 +114,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper({children, ...
   let {theme, colorScheme, scale} = useProvider();
   let {modalProviderProps} = useModalProvider();
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider(otherProps);
   let domRef = useDOMRef(ref);
 
   let themeKey = Object.keys(theme[colorScheme])[0];
@@ -115,6 +122,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper({children, ...
 
   let className = classNames(
     styleProps.className,
+    slotProps.className,
     styles['spectrum'],
     typographyStyles['spectrum'],
     theme[colorScheme][themeKey],

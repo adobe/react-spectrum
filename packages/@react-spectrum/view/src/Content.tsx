@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ClearSlots} from '@react-spectrum/utils';
+import {classNames, ClearSlots, useSlotProvider} from '@react-spectrum/utils';
 import {DOMProps, ViewStyleProps} from '@react-types/shared';
 import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
@@ -25,10 +25,11 @@ export const Content = React.forwardRef((props: ContentProps, ref: RefObject<HTM
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps({slot: 'content', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider({slot: 'content', ...otherProps});
 
   return (
-    <section {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
+    <section {...filterDOMProps(otherProps)} {...styleProps} className={classNames({}, styleProps.className, slotProps.className)} ref={ref}>
       <ClearSlots>
         {children}
       </ClearSlots>

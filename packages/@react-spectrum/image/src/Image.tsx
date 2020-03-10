@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import React from 'react';
 import {SpectrumImageProps} from '@react-types/image';
@@ -28,7 +28,8 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
     alt,
     ...otherProps
   } = useProviderProps(props);
-  let {styleProps} = useStyleProps({slot: 'image', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider({slot: 'image', ...otherProps});
   let domRef = useDOMRef(ref);
 
   if (decorative) {
@@ -47,6 +48,7 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
     <div
       {...filterDOMProps(props)}
       {...styleProps}
+      className={classNames({}, styleProps.className, slotProps.className)}
       style={{overflow: 'hidden'}}
       ref={domRef}>
       <img

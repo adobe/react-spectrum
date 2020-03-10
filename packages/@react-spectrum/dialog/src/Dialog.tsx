@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {FocusScope} from '@react-aria/focus';
@@ -34,11 +34,15 @@ export function Dialog(props: SpectrumDialogProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider(otherProps);
   let allProps: SpectrumBaseDialogProps = mergeProps(
     mergeProps(
       mergeProps(
-        filterDOMProps(otherProps),
-        contextProps
+        mergeProps(
+          filterDOMProps(otherProps),
+          contextProps
+        ),
+        slotProps
       ),
       styleProps
     ),
@@ -81,15 +85,15 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
   let {dialogProps} = useDialog({ref, role});
   if (!slots) {
     slots = {
-      container: styles['spectrum-Dialog-grid'],
-      hero: styles['spectrum-Dialog-hero'],
-      header: styles['spectrum-Dialog-header'],
-      heading: styles['spectrum-Dialog-heading'],
-      typeIcon: styles['spectrum-Dialog-typeIcon'],
-      divider: styles['spectrum-Dialog-divider'],
-      content: styles['spectrum-Dialog-content'],
-      footer: styles['spectrum-Dialog-footer'],
-      closeButton: styles['spectrum-Dialog-closeButton']
+      container: {className: styles['spectrum-Dialog-grid']},
+      hero: {className: styles['spectrum-Dialog-hero']},
+      header: {className: styles['spectrum-Dialog-header']},
+      heading: {className: styles['spectrum-Dialog-heading']},
+      typeIcon: {className: styles['spectrum-Dialog-typeIcon']},
+      divider: {className: styles['spectrum-Dialog-divider'], size: 'M'},
+      content: {className: styles['spectrum-Dialog-content']},
+      footer: {className: styles['spectrum-Dialog-footer']},
+      closeButton: {className: styles['spectrum-Dialog-closeButton']}
     };
   }
 

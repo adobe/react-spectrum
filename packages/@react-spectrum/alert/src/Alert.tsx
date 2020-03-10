@@ -11,7 +11,7 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import HelpMedium from '@spectrum-icons/ui/HelpMedium';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import intlMessages from '../intl';
@@ -38,6 +38,7 @@ export function Alert(props: SpectrumAlertProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider(otherProps);
 
   // let AlertIcon = ICONS[variant];
   let formatMessage = useMessageFormatter(intlMessages);
@@ -55,7 +56,8 @@ export function Alert(props: SpectrumAlertProps) {
           styles,
           'spectrum-Alert',
           `spectrum-Alert--${variant}`,
-          styleProps.className
+          styleProps.className,
+          slotProps.className
         )
       }
       role="alert">

@@ -205,7 +205,7 @@ function render({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
           <Header><Heading>The Heading</Heading></Header>
-          <Divider size="M" />
+          <Divider />
           <Content>{singleParagraph()}</Content>
           <Footer>
             <Button variant="secondary">Cancel</Button>
@@ -226,7 +226,7 @@ function renderHero({width = 'auto', ...props}) {
         <Dialog {...props}>
           <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
           <Header><Heading>The Heading</Heading></Header>
-          <Divider size="M" />
+          <Divider />
           <Content>{singleParagraph()}</Content>
           <Footer>
             <Button variant="secondary">Cancel</Button>
@@ -257,7 +257,7 @@ function renderWithForm({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
           <Header><Heading>The Heading</Heading></Header>
-          <Divider size="M" />
+          <Divider />
           <Content>
             <Form>
               <TextField label="Last Words" autoFocus />
@@ -302,7 +302,7 @@ function renderLongContent({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
           <Header><Heading>The Heading</Heading></Header>
-          <Divider size="M" />
+          <Divider />
           <Content>{fiveParagraphs()}</Content>
           <Footer>
             <Button variant="secondary">Cancel</Button>
@@ -321,7 +321,7 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
           <Header><Heading>The Heading</Heading></Header>
-          <Divider size="M" />
+          <Divider />
           <Content>{singleParagraph()}</Content>
           <Footer>
             <Button variant="secondary">Secondary</Button>
@@ -341,7 +341,7 @@ function renderWithDividerInContent({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         <Dialog {...props}>
           <Header><Heading>The Heading</Heading></Header>
-          <Divider size="M" />
+          <Divider />
           <Content>
             <Flex UNSAFE_style={{padding: '10px'}}>
               <Text flexGrow={1} flexBasis={0}>Column number one. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Text>

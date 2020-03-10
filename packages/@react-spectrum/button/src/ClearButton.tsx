@@ -11,7 +11,7 @@
  */
 
 import {ButtonProps} from '@react-types/button';
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import CrossSmall from '@spectrum-icons/ui/CrossSmall';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -35,6 +35,7 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider();
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusClassName)} autoFocus={autoFocus}>
@@ -51,7 +52,8 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
               [`spectrum-ClearButton--${variant}`]: variant,
               'is-active': isPressed
             },
-            styleProps.className
+            styleProps.className,
+            slotProps.className
           )
         }>
         {children}

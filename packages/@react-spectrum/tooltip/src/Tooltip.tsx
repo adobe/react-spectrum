@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import React, {RefObject, useRef} from 'react';
 import {SpectrumTooltipProps} from '@react-types/tooltip';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
@@ -25,6 +25,7 @@ export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefOb
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider(otherProps);
   let {tooltipProps} = useTooltip(props);
 
   return (
@@ -40,7 +41,8 @@ export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefOb
         {
           'is-open': isOpen
         },
-        styleProps.className
+        styleProps.className,
+        slotProps.className
       )}
       ref={ref}>
       {props.children && (

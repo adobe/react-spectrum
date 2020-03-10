@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
@@ -30,6 +30,7 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider(otherProps);
 
   let state = useToggleState(props);
   let {inputProps} = useSwitch(props, state);
@@ -54,7 +55,8 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
             'spectrum-ToggleSwitch--quiet': !isEmphasized,
             'is-disabled': isDisabled
           },
-          styleProps.className
+          styleProps.className,
+          slotProps.className
         )
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>

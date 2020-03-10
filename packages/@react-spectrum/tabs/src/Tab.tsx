@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
@@ -32,6 +32,7 @@ export function Tab(props: TabProps) {
   // TODO: Add in icon in the render when cloneIcon/icon v3 becomes available. Make it so icon or label must be defined.
   let {label, isDisabled, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider(otherProps);
   let {tabProps} = useTab(props);
   return (
     <div
@@ -45,7 +46,8 @@ export function Tab(props: TabProps) {
           'is-selected': tabProps['aria-selected'],
           'is-disabled': isDisabled
         },
-        styleProps.className
+        styleProps.className,
+        slotProps.className
       )}>
       {label && <span className={classNames(styles, 'spectrum-Tabs-itemLabel')}>{label}</span>}
     </div>

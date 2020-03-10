@@ -11,7 +11,7 @@
  */
 
 import {DOMProps, ViewStyleProps} from '@react-types/shared';
-import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {ReactElement, RefObject} from 'react';
 
@@ -25,10 +25,12 @@ export const Header = React.forwardRef((props: HeaderProps, ref: RefObject<HTMLE
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps({slot: 'header', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider({slot: 'header', ...otherProps});
+  console.log(slotProps);
 
   return (
-    <header {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
+    <header {...filterDOMProps(otherProps)} {...styleProps} className={classNames({}, styleProps.className, slotProps.className)} ref={ref}>
       {children}
     </header>
   );

@@ -11,7 +11,7 @@
  */
 
 import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import DashSmall from '@spectrum-icons/ui/DashSmall';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -33,6 +33,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider(otherProps);
 
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
@@ -63,7 +64,8 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
             'is-invalid': inputProps['aria-invalid'],
             'is-disabled': isDisabled
           },
-          styleProps.className
+          styleProps.className,
+          slotProps.className
         )
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>

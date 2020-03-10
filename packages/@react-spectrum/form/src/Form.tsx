@@ -11,7 +11,7 @@
  */
 
 import {Alignment, DOMRef, LabelPosition, SpectrumLabelableProps} from '@react-types/shared';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React, {useContext} from 'react';
 import {SpectrumFormProps} from '@react-types/form';
@@ -39,7 +39,8 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
     ...otherProps
   } = props;
 
-  let {styleProps} = useStyleProps({slot: 'form', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider({slot: 'form', ...otherProps});
   let domRef = useDOMRef(ref);
 
   let ctx = {
@@ -61,7 +62,8 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
             'spectrum-Form--positionSide': labelPosition === 'side',
             'spectrum-Form--positionTop': labelPosition === 'top'
           },
-          styleProps.className
+          styleProps.className,
+          slotProps.className
         )
       }>
       <FormContext.Provider value={ctx}>

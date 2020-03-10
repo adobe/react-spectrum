@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
@@ -64,7 +64,8 @@ export function Icon(props: IconProps) {
     role = 'img',
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps({slot: 'icon', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider({slot: 'icon', ...otherProps});
 
   let provider = useProvider();
   let pscale = 'M';
@@ -100,6 +101,7 @@ export function Icon(props: IconProps) {
       children.props.className,
       'spectrum-Icon',
       `spectrum-Icon--size${iconSize}`,
-      styleProps.className)
+      styleProps.className,
+      slotProps.className)
   });
 }

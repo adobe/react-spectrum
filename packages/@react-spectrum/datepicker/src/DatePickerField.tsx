@@ -12,7 +12,7 @@
 
 import Alert from '@spectrum-icons/ui/AlertMedium';
 import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, useSlotProvider} from '@react-spectrum/utils';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './index.css';
 import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
@@ -35,6 +35,7 @@ export function DatePickerField(props: SpectrumDatePickerProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider(otherProps);
   let {fieldProps, segmentProps} = useDateField(props);
   let domProps = mergeProps(
     filterDOMProps(otherProps),
@@ -51,7 +52,8 @@ export function DatePickerField(props: SpectrumDatePickerProps) {
       'spectrum-Textfield--quiet': isQuiet
     },
     classNames(datepickerStyles, 'react-spectrum-Datepicker-field'),
-    styleProps.className
+    styleProps.className,
+    slotProps.className
   );
 
   let inputClass = classNames(

@@ -11,7 +11,7 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {ProgressBarProps} from '@react-types/progress';
 import React, {CSSProperties, HTMLAttributes} from 'react';
@@ -44,6 +44,7 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider(otherProps);
 
   value = clamp(value, minValue, maxValue);
 
@@ -76,7 +77,8 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
             'spectrum-BarLoader--sideLabel': labelPosition === 'side'
           },
           barClassName,
-          styleProps.className
+          styleProps.className,
+          slotProps.className
         )
       }>
       {label &&

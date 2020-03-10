@@ -11,7 +11,7 @@
  */
 
 import {DOMProps, StyleProps} from '@react-types/shared';
-import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {ReactNode, RefObject} from 'react';
 
@@ -24,11 +24,12 @@ export const Heading = React.forwardRef((props: HeadingProps, ref: RefObject<HTM
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps({slot: 'heading', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider({slot: 'heading', ...otherProps});
 
   // h level hardcoded for the moment and no specific className at the moment, this is barebones
   return (
-    <h1 {...filterDOMProps(otherProps, {'aria-level': 1})} {...styleProps} ref={ref}>
+    <h1 {...filterDOMProps(otherProps, {'aria-level': 1})} {...styleProps} className={classNames({}, styleProps.className, slotProps.className)} ref={ref}>
       {children}
     </h1>
   );

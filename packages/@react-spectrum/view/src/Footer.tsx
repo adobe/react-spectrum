@@ -11,7 +11,7 @@
  */
 
 import {DOMProps, ViewStyleProps} from '@react-types/shared';
-import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {ReactElement, RefObject} from 'react';
 
@@ -24,10 +24,11 @@ export const Footer = React.forwardRef((props: FooterProps, ref: RefObject<HTMLE
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps({slot: 'footer', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider({slot: 'footer', ...otherProps});
 
   return (
-    <footer {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
+    <footer {...filterDOMProps(otherProps)} {...styleProps} className={classNames({}, styleProps.className, slotProps.className)} ref={ref}>
       {children}
     </footer>
   );

@@ -11,7 +11,7 @@
  */
 
 import Alert from '@spectrum-icons/workflow/Alert';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
@@ -28,6 +28,7 @@ export const Tag = ((props: SpectrumTagProps) => {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider(otherProps);
   const {
     isDisabled: isGroupDisabled,
     isRemovable: isGroupRemovable,
@@ -65,7 +66,8 @@ export const Tag = ((props: SpectrumTagProps) => {
             'spectrum-Tags-item--removable': removable,
             'is-invalid': isInvalid
           },
-          styleProps.className
+          styleProps.className,
+          slotProps.className
         )}>
         {icon && React.cloneElement(icon, {size: 'S', UNSAFE_className: classNames(styles, 'spectrum-Tags-itemIcon')})}
         <span

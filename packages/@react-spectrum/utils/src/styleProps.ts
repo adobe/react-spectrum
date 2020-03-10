@@ -191,17 +191,11 @@ export function useStyleProps(props: StyleProps, handlers: StyleHandlers = baseS
   let {
     UNSAFE_className,
     UNSAFE_style,
-    slot,
     ...otherProps
   } = props;
-  let {[slot]: slotClassName} = useSlotProvider();
-  let slotGridArea = {};
-  if (!slotClassName && slot) {
-    slotGridArea = {gridArea: slot};
-  }
   let {direction} = useLocale();
   let styles = convertStyleProps(props, handlers, direction);
-  let style = {...UNSAFE_style, ...styles, ...slotGridArea};
+  let style = {...UNSAFE_style, ...styles};
 
   // @ts-ignore
   if (otherProps.className) {
@@ -223,7 +217,7 @@ export function useStyleProps(props: StyleProps, handlers: StyleHandlers = baseS
 
   let styleProps: HTMLAttributes<HTMLElement> = {
     style,
-    className: classNames(UNSAFE_className, slotClassName)
+    className: UNSAFE_className
   };
 
   if (props.isHidden) {

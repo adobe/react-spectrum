@@ -12,7 +12,14 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames, createFocusableRef, filterDOMProps, TextInputDOMPropNames, useStyleProps} from '@react-spectrum/utils';
+import {
+  classNames,
+  createFocusableRef,
+  filterDOMProps,
+  TextInputDOMPropNames,
+  useSlotProvider,
+  useStyleProps
+} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Label} from '@react-spectrum/label';
 import {LabelPosition} from '@react-types/shared';
@@ -67,8 +74,9 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       return inputRef.current;
     }
   }));
-  
+
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider(otherProps);
   let {labelProps, textFieldProps} = useTextField(props);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
   let isInvalid = validationState === 'invalid';
@@ -82,12 +90,12 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       icon.props && icon.props.UNSAFE_className,
       'spectrum-Textfield-icon'
     );
-    
+
     icon = cloneElement(icon, {
       UNSAFE_className,
       size: 'S'
     });
-  } 
+  }
 
   let validationIcon = isInvalid ? <AlertMedium /> : <CheckmarkMedium />;
   let validation = cloneElement(validationIcon, {
@@ -134,8 +142,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
               },
               inputClassName
             )
-          } /> 
-      </FocusRing> 
+          } />
+      </FocusRing>
       {icon}
       {validationState ? validation : null}
       {wrapperChildren}
@@ -150,7 +158,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
         'spectrum-Field--positionTop': labelPosition === 'top',
         'spectrum-Field--positionSide': labelPosition === 'side'
       },
-      styleProps.className
+      styleProps.className,
+      slotProps.className
     );
 
     textField = React.cloneElement(textField, mergeProps(textField.props, {
@@ -158,7 +167,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     }));
 
     return (
-      <div 
+      <div
         {...styleProps}
         ref={domRef}
         className={labelWrapperClass}>

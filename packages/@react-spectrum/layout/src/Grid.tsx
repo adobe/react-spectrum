@@ -10,7 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, gridStyleProps, SlotContext, useStyleProps} from '@react-spectrum/utils';
+import {
+  classNames,
+  filterDOMProps,
+  gridStyleProps,
+  SlotContext,
+  useSlotProvider,
+  useStyleProps
+} from '@react-spectrum/utils';
 import {GridProps} from '@react-types/layout';
 import {HTMLElement} from 'react-dom';
 import React, {RefObject} from 'react';
@@ -23,10 +30,11 @@ export const Grid = React.forwardRef((props: GridProps, ref: RefObject<HTMLEleme
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps, gridStyleProps);
+  let slotProps = useSlotProvider(otherProps);
   styleProps.style.display = 'grid'; // inline-grid?
 
   return (
-    <div {...filterDOMProps(otherProps)} {...styleProps} ref={ref} className={classNames({}, slots && slots.container, styleProps.className)}>
+    <div {...filterDOMProps(otherProps)} {...styleProps} ref={ref} className={classNames({}, styleProps.className, slots && slots.container && slots.container.className, slotProps.className)}>
       <SlotContext.Provider value={slots}>
         {children}
       </SlotContext.Provider>

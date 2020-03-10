@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, Orientation, StyleProps} from '@react-types/shared';
 import React, {ReactElement, ReactNode, useEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
@@ -66,6 +66,7 @@ export function TabList(props: TabListProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let slotProps = useSlotProvider(otherProps);
 
   let renderTabs = () =>
     childArray.map((child) =>
@@ -89,7 +90,8 @@ export function TabList(props: TabListProps) {
         `spectrum-Tabs--${orientation}`,
         {'spectrum-Tabs--quiet': isQuiet},
         density ? `spectrum-Tabs--${density}` : '',
-        styleProps.className
+        styleProps.className,
+        slotProps.className
       )}
       {...tabListProps}>
       {renderTabs()}
