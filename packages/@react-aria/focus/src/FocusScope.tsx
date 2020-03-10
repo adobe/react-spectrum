@@ -177,7 +177,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       } else {
         if (position === 0) {
           nextElement = elements[lastPosition];
-        } else (position === lastPosition) {
+        } else if (position === lastPosition) {
           nextElement = elements[0];
         } else {
           nextElement = elements[position + 1];
