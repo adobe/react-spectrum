@@ -30,8 +30,7 @@ governing permissions and limitations under the License.
   position: relative;
 
   min-block-size: var(--spectrum-checkbox-height);
-  /* Accommodates for right padding in case width: 100% is applied to the Checkbox directly. */
-  max-inline-size: calc(100% - var(--spectrum-checkbox-cursor-hit-x) * 2);
+  max-inline-size: 100%;
 
   margin-inline-end: calc(var(--spectrum-checkbox-cursor-hit-x) * 2);
 
@@ -60,7 +59,7 @@ governing permissions and limitations under the License.
   position: absolute;
   inset-block-start: 0;
   inset-inline-start: calc(var(--spectrum-checkbox-cursor-hit-x) * -1);
-  inline-size: calc(100% + var(--spectrum-checkbox-cursor-hit-x) * 2);
+  inline-size: calc(100% + var(--spectrum-checkbox-cursor-hit-x));
   block-size: 100%;
 
   opacity: .0001;
