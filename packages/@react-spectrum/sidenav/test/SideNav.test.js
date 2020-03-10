@@ -221,10 +221,10 @@ describe('SideNav', function () {
     expect(section1).toBeTruthy();
     expect(section2).toBeTruthy();
 
-    // contains 4 link items
-    expect(getAllByRole('link').length).toBe(4);
-    // all 4 items and 2 sections have role presentation
-    expect(getAllByRole('presentation').length).toBe(6);
+    // contains 4 items
+    expect(getAllByRole('listitem').length).toBe(4);
+    // contains 2 sections
+    expect(getAllByRole('group').length).toBe(2);
   });
 
   it.each`
