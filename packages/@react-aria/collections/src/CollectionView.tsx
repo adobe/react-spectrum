@@ -11,14 +11,21 @@
  */
 
 import {chain} from '@react-aria/utils';
-import {Collection, Layout, LayoutInfo} from '@react-stately/collections';
-import React, {CSSProperties, FocusEvent, HTMLAttributes, Key, useCallback, useEffect, useRef} from 'react';
+import {Collection, Layout} from '@react-stately/collections';
+import {CollectionItem} from './CollectionItem';
+import React, {FocusEvent, HTMLAttributes, Key, ReactElement, useCallback, useEffect, useRef} from 'react';
+import {ReusableView} from '@react-stately/collections';
 import {ScrollView} from './ScrollView';
-import {useCollectionItem} from './useCollectionItem';
 import {useCollectionState} from '@react-stately/collections';
 
 interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLElement> {
   children: (type: string, content: T) => V,
+  renderWrapper?: (
+    parent: ReusableView<T, V> | null,
+    reusableView: ReusableView<T, V>,
+    children: ReusableView<T, V>[],
+    renderChildren: (views: ReusableView<T, V>[]) => ReactElement[]
+  ) => ReactElement,
   layout: Layout<T>,
   collection: Collection<T>,
   focusedKey?: Key,
@@ -26,7 +33,7 @@ interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLEl
 }
 
 export function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>) {
-  let {children: renderView, layout, collection, focusedKey, sizeToFit, ...otherProps} = props;
+  let {children: renderView, renderWrapper, layout, collection, focusedKey, sizeToFit, ...otherProps} = props;
   let {
     visibleViews,
     visibleRect,
@@ -38,11 +45,7 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
     layout,
     collection,
     renderView,
-    renderWrapper: (reusableView) => (
-      <CollectionItem key={reusableView.key} layoutInfo={reusableView.layoutInfo} collectionManager={reusableView.collectionManager}>
-        {reusableView.rendered}
-      </CollectionItem>
-    )
+    renderWrapper: renderWrapper || defaultRenderWrapper
   });
 
   let ref = useRef<HTMLDivElement>();
@@ -99,36 +102,14 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
   );
 }
 
-function CollectionItem({layoutInfo, collectionManager, children}) {
-  let ref = useRef();
-  useCollectionItem({
-    layoutInfo,
-    collectionManager,
-    ref
-  });
-
+function defaultRenderWrapper<T extends object, V>(
+  parent: ReusableView<T, V> | null,
+  reusableView: ReusableView<T, V>
+) {
   return (
-    <div role="presentation" ref={ref} style={layoutInfoToStyle(layoutInfo)}>
-      {children}
-    </div>
+    <CollectionItem
+      key={reusableView.key}
+      reusableView={reusableView}
+      parent={parent} />
   );
-}
-
-function layoutInfoToStyle(layoutInfo: LayoutInfo): CSSProperties {
-  return {
-    position: 'absolute',
-    overflow: 'hidden',
-    top: layoutInfo.rect.y,
-    left: layoutInfo.rect.x,
-    transition: 'all',
-    WebkitTransition: 'all',
-    WebkitTransitionDuration: 'inherit',
-    transitionDuration: 'inherit',
-    width: layoutInfo.rect.width + 'px',
-    height: layoutInfo.rect.height + 'px',
-    opacity: layoutInfo.opacity,
-    zIndex: layoutInfo.zIndex,
-    transform: layoutInfo.transform,
-    contain: 'size layout style paint'
-  };
 }
