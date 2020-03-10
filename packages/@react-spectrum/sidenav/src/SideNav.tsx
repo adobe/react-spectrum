@@ -11,49 +11,67 @@
  */
 
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {CollectionView} from '@react-aria/collections';
-import {ListLayout} from '@react-stately/collections';
-import React, {useMemo} from 'react';
-import {SideNavHeading} from './SideNavHeading';
+
+import {CollectionItem, CollectionView} from '@react-aria/collections';
+import {ListLayout, Node} from '@react-stately/collections';
+import React, {ReactElement, useMemo} from 'react';
+import {ReusableView} from '@react-stately/collections';
 import {SideNavItem} from './SideNavItem';
 import {SpectrumSideNavProps} from '@react-types/sidenav';
+import {SideNavSection} from './SideNavSection';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {useSideNav} from '@react-aria/sidenav';
 import {useTreeState} from '@react-stately/tree';
 
 export function SideNav<T>(props: SpectrumSideNavProps<T>) {
   let state = useTreeState({...props, selectionMode: 'single'});
-
   let layout = useMemo(() => new ListLayout({rowHeight: 40}), []);
-
   let {navProps, listProps} = useSideNav(props, state, layout);
-
   let {styleProps} = useStyleProps(props);
+
+  // This overrides collection view's renderWrapper to support heirarchy of items in sections.
+  // The header is extracted from the children so it can receive ARIA labeling properties.
+  type View = ReusableView<Node<T>, unknown>;
+  let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
+    if (reusableView.viewType === 'section') {
+      return (
+        <SideNavSection
+          key={reusableView.key}
+          reusableView={reusableView}
+          header={children.find(c => c.viewType === 'header')}>
+          {renderChildren(children.filter(c => c.viewType === 'item'))}
+        </SideNavSection>
+      );
+    }
+
+    return (
+      <CollectionItem 
+        key={reusableView.key}
+        reusableView={reusableView}
+        parent={parent} />
+    );
+  };
 
   return (
     <nav
       {...filterDOMProps(props)}
       {...navProps}
-      {...styleProps} >
+      {...styleProps}>
       <CollectionView
         {...listProps}
         focusedKey={state.selectionManager.focusedKey}
         className={classNames(styles, 'spectrum-SideNav')}
         layout={layout}
-        collection={state.collection}>
+        collection={state.collection}
+        renderWrapper={renderWrapper}>
         {(type, item) => {
-          if (type === 'section') {
+          if (type === 'item') {
             return (
-              <SideNavHeading
+              <SideNavItem
+                state={state}
                 item={item} />
             );
           }
-
-          return (
-            <SideNavItem
-              state={state}
-              item={item} />
-          );
         }}
       </CollectionView>
     </nav>
