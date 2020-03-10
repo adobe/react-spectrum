@@ -169,13 +169,15 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       let nextElement = null;
 
       if (e.shiftKey) {
-        if (position === 0) {
+        if (position === -1) {
           nextElement = elements[lastPosition];
         } else {
           nextElement = elements[position - 1];
         }
       } else {
-        if (position === lastPosition) {
+        if (position === 0) {
+          nextElement = elements[lastPosition];
+        } else (position === lastPosition) {
           nextElement = elements[0];
         } else {
           nextElement = elements[position + 1];
