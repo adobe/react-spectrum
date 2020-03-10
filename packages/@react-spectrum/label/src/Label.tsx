@@ -31,12 +31,13 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
     htmlFor,
     for: labelFor,
     elementType: ElementType = 'label',
+    slot = 'label',
     ...otherProps
   } = props;
 
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider({slot: 'label', ...otherProps});
+  let slotProps = useSlotProvider(slot);
 
   let formatMessage = useMessageFormatter(intlMessages);
   let necessityLabel = isRequired ? formatMessage('(required)') : formatMessage('(optional)');

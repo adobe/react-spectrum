@@ -32,10 +32,11 @@ export function DatePickerField(props: SpectrumDatePickerProps) {
     isRequired,
     isQuiet,
     validationState,
+    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
   let {fieldProps, segmentProps} = useDateField(props);
   let domProps = mergeProps(
     filterDOMProps(otherProps),

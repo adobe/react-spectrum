@@ -36,10 +36,11 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
     autoFocus,
     formatOptions,
     placeholderDate,
+    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
   let state = useDateRangePickerState(props);
   let {comboboxProps, buttonProps, dialogProps, startFieldProps, endFieldProps} = useDateRangePicker(props, state);
   let {value, setDate, selectDateRange, isOpen, setOpen} = state;

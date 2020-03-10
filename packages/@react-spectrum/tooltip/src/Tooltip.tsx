@@ -22,10 +22,11 @@ export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefOb
     variant = 'neutral',
     placement = 'right',
     isOpen,
+    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
   let {tooltipProps} = useTooltip(props);
 
   return (

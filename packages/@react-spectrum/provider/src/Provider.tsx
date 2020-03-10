@@ -109,12 +109,12 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
 let _Provider = React.forwardRef(Provider);
 export {_Provider as Provider};
 
-const ProviderWrapper = React.forwardRef(function ProviderWrapper({children, ...otherProps}: ProviderProps, ref: DOMRef<HTMLDivElement>) {
+const ProviderWrapper = React.forwardRef(function ProviderWrapper({children, slot, ...otherProps}: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let {locale, direction} = useLocale();
   let {theme, colorScheme, scale} = useProvider();
   let {modalProviderProps} = useModalProvider();
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
   let domRef = useDOMRef(ref);
 
   let themeKey = Object.keys(theme[colorScheme])[0];

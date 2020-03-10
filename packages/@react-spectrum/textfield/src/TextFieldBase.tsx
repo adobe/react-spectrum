@@ -57,6 +57,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     autoFocus,
     inputClassName,
     wrapperChildren,
+    slot,
     ...otherProps
   } = props;
   let domRef = useRef<HTMLDivElement>(null);
@@ -76,7 +77,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   }));
 
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
   let {labelProps, textFieldProps} = useTextField(props);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
   let isInvalid = validationState === 'invalid';

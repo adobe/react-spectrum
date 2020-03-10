@@ -30,12 +30,13 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
     focusClassName,
     variant,
     autoFocus,
+    slot,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider();
+  let slotProps = useSlotProvider(slot);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusClassName)} autoFocus={autoFocus}>

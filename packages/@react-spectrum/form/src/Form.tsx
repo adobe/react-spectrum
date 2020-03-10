@@ -36,11 +36,12 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
     isDisabled,
     isReadOnly,
     validationState,
+    slot = 'form',
     ...otherProps
   } = props;
 
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider({slot: 'form', ...otherProps});
+  let slotProps = useSlotProvider(slot);
   let domRef = useDOMRef(ref);
 
   let ctx = {

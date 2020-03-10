@@ -25,10 +25,11 @@ export const Tag = ((props: SpectrumTagProps) => {
     isDisabled,
     isRemovable,
     validationState,
+    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
   const {
     isDisabled: isGroupDisabled,
     isRemovable: isGroupRemovable,

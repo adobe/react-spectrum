@@ -37,10 +37,11 @@ export function DatePicker(props: SpectrumDatePickerProps) {
     isReadOnly,
     isRequired,
     placeholderDate,
+    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
   let state = useDatePickerState(props);
   let {comboboxProps, fieldProps, buttonProps, dialogProps} = useDatePicker(props, state);
   let {value, setValue, selectDate, isOpen, setOpen} = state;

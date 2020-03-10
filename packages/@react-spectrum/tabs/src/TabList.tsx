@@ -63,10 +63,11 @@ export function TabList(props: TabListProps) {
     isQuiet = false,
     density = '',
     isDisabled,
+    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   let renderTabs = () =>
     childArray.map((child) =>

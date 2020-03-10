@@ -32,6 +32,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
     children,
     holdAffordance,
     autoFocus,
+    slot,
     ...otherProps
   } = props;
 
@@ -42,7 +43,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
     ...otherButtonProps
   } = buttonProps;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>

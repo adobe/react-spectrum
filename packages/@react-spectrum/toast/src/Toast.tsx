@@ -37,6 +37,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
     children,
     onRemove,
     variant,
+    slot,
     ...otherProps
   } = props;
   let {
@@ -47,7 +48,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   } = useToast({...otherProps, variant}, {onRemove});
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
   let Icon = ICONS[variant];
 
   return (

@@ -19,11 +19,12 @@ import styles from '@adobe/spectrum-css-temp/components/well/vars.css';
 function Well(props: SpectrumWellProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
+    slot,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   return (
     <div

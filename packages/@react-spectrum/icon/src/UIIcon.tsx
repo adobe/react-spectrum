@@ -29,11 +29,12 @@ export function UIIcon(props: IconProps) {
     'aria-label': ariaLabel,
     'aria-hidden': ariaHidden,
     role = 'img',
+    slot = 'uiIcon',
     ...otherProps
   } = props;
 
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider({slot: 'uiIcon', ...otherProps});
+  let slotProps = useSlotProvider(slot);
   let provider = useProvider();
   let scale = 'M';
   if (provider !== null) {

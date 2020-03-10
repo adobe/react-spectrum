@@ -48,10 +48,11 @@ export function Tabs(props: TabsProps) {
   let state = useTabListState(props);
   let {
     orientation = 'horizontal' as Orientation,
+    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   let {tabPanelProps, tabsPropsArray} = useTabs(props, state);
   let children = React.Children.map(props.children, (c, i) =>

@@ -34,12 +34,13 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
     isDisabled,
     icon,
     autoFocus,
+    slot,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   let buttonVariant = variant;
   if (VARIANT_MAPPING[variant]) {

@@ -42,10 +42,11 @@ export const TagGroup = ((props: SpectrumTagGroupProps) => {
     onRemove,
     validationState,
     children,
+    slot,
     ...otherProps
   } = completeProps;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
   const {tagGroupProps} = useTagGroup(completeProps);
 
   function removeAll(tags) {

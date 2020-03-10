@@ -54,11 +54,12 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
     validationState,
     children,
     orientation = 'vertical',
+    slot,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   let {selectedRadio, setSelectedRadio} = useRadioGroupState(props);
   let {radioGroupProps, labelProps, radioProps} = useRadioGroup(props);

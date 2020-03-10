@@ -23,11 +23,12 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
     illustration,
     heading,
     description,
+    slot,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
   let {
     illustrationProps,
     headingProps

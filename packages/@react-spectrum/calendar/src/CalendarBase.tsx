@@ -36,6 +36,7 @@ export function CalendarBase(props: CalendarBaseProps) {
   let {
     state,
     aria,
+    slot,
     ...otherProps
   } = props;
   let monthDateFormatter = useDateFormatter({month: 'long', year: 'numeric'});
@@ -49,7 +50,7 @@ export function CalendarBase(props: CalendarBaseProps) {
   } = aria;
   let {direction} = useLocale();
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   return (
     <div

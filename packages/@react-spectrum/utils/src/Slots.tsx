@@ -14,10 +14,8 @@ import React, {useContext} from 'react';
 
 export let SlotContext = React.createContext(null);
 
-export function useSlotProvider({slot}) {
-  console.log(slot);
+export function useSlotProvider(slot?: string): any {
   let {[slot]: props = {}} = useContext(SlotContext) || {};
-  console.log(props);
   return props;
 }
 

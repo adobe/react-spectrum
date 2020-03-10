@@ -22,11 +22,12 @@ function StatusLight(props: SpectrumStatusLightProps, ref: DOMRef<HTMLDivElement
     variant,
     children,
     isDisabled,
+    slot,
     ...otherProps
   } = useProviderProps(props);
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   if (!props.children && !props['aria-label']) {
     console.warn('If no children are provided, an aria-label must be specified');

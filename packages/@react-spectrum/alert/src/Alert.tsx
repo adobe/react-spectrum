@@ -35,10 +35,11 @@ export function Alert(props: SpectrumAlertProps) {
     children,
     variant, // info, help, success, error, warning
     iconAlt, // alt text for image icon, default is derived from variant
+    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   // let AlertIcon = ICONS[variant];
   let formatMessage = useMessageFormatter(intlMessages);

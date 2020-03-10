@@ -62,10 +62,11 @@ export function Icon(props: IconProps) {
     'aria-label': ariaLabel,
     'aria-hidden': ariaHidden,
     role = 'img',
+    slot = 'icon',
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider({slot: 'icon', ...otherProps});
+  let slotProps = useSlotProvider(slot);
 
   let provider = useProvider();
   let pscale = 'M';

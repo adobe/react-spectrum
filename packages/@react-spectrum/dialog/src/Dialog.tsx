@@ -31,10 +31,11 @@ export function Dialog(props: SpectrumDialogProps) {
     children,
     isDismissable = contextProps.isDismissable,
     onDismiss = contextProps.onClose,
+    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
   let allProps: SpectrumBaseDialogProps = mergeProps(
     mergeProps(
       mergeProps(

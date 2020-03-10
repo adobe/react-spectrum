@@ -26,10 +26,11 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
     src,
     decorative,
     alt,
+    slot = 'image',
     ...otherProps
   } = useProviderProps(props);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider({slot: 'image', ...otherProps});
+  let slotProps = useSlotProvider(slot);
   let domRef = useDOMRef(ref);
 
   if (decorative) {

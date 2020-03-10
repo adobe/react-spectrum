@@ -40,10 +40,11 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
     isConfirmDisabled,
     onCancel = () => {},
     onConfirm = () => {},
+    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   let confirmVariant: SpectrumButtonProps['variant'] = 'primary';
   if (variant) {

@@ -28,11 +28,12 @@ function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivE
     isIndeterminate = false,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
+    slot,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   value = clamp(value, minValue, maxValue);
   let {progressBarProps} = useProgressBar({...props, value});

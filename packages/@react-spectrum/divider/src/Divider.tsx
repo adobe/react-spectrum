@@ -27,11 +27,12 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
   let {
     size = 'L',
     orientation = 'horizontal',
+    slot = 'divider',
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider({slot: 'divider', ...otherProps});
+  let slotProps = useSlotProvider(slot);
   if (slotProps.size) {
     size = slotProps.size;
   }

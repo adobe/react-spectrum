@@ -23,10 +23,11 @@ export interface ContentProps extends DOMProps, ViewStyleProps {
 export const Content = React.forwardRef((props: ContentProps, ref: RefObject<HTMLElement>) => {
   let {
     children,
+    slot = 'content',
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider({slot: 'content', ...otherProps});
+  let slotProps = useSlotProvider(slot);
 
   return (
     <section {...filterDOMProps(otherProps)} {...styleProps} className={classNames({}, styleProps.className, slotProps.className)} ref={ref}>

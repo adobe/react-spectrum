@@ -18,10 +18,11 @@ import React, {RefObject} from 'react';
 export const Flex = React.forwardRef((props: FlexProps, ref: RefObject<HTMLElement>) => {
   let {
     children,
+    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps, flexStyleProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   styleProps.style.display = 'flex'; // inline-flex?
 

@@ -35,6 +35,7 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
     showRoot,
     isDisabled,
     maxVisibleItems = MAX_VISIBLE_ITEMS,
+    slot,
     ...otherProps
   } = props;
 
@@ -48,7 +49,7 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
 
   let {breadcrumbProps} = useBreadcrumbs(props);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   useEffect(() => {
     let listItems = [...listRef.current.children];

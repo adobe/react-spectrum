@@ -27,10 +27,11 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
     isDisabled = false,
     autoFocus,
     children,
+    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   let state = useToggleState(props);
   let {inputProps} = useSwitch(props, state);

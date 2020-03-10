@@ -40,11 +40,12 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
     labelProps,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
+    slot,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(otherProps);
+  let slotProps = useSlotProvider(slot);
 
   value = clamp(value, minValue, maxValue);
 
