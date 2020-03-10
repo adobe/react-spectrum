@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render, waitForDomChange, within} from '@testing-library/react';
+import {cleanup, fireEvent, render, within} from '@testing-library/react';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Item, Menu, Section} from '../';
 import {MenuContext} from '../src/context';
@@ -94,6 +94,8 @@ describe('Menu', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -156,11 +158,8 @@ describe('Menu', function () {
     Name        | Component | props
     ${'Menu'}   | ${Menu}   | ${{autoFocus: true}}
     ${'V2Menu'} | ${V2Menu} | ${{}}
-  `('$Name allows user to change menu item focus via up/down arrow keys', async function ({Component, props}) {
+  `('$Name allows user to change menu item focus via up/down arrow keys', function ({Component, props}) {
     let tree = renderComponent(Component, {}, props);
-    if (Component === V2Menu) {
-      await waitForDomChange();
-    }
     let menu = tree.getByRole('menu');
     let menuItems = within(menu).getAllByRole('menuitemradio');
     let selectedItem = menuItems[0];
@@ -559,6 +558,65 @@ describe('Menu', function () {
       checkmarks = tree.queryAllByRole('img');
       expect(checkmarks.length).toBe(0);
       expect(onSelectionChange).toBeCalledTimes(0);
+    });
+  });
+
+  describe('supports type to select', function () {
+    it.each`
+      Name        | Component | props
+      ${'Menu'}   | ${Menu}   | ${{autoFocus: true}}
+    `('$Name supports focusing items by typing letters in rapid succession', function ({Component, props}) {
+      let tree = renderComponent(Component, {}, props);
+      let menu = tree.getByRole('menu');
+      let menuItems = within(menu).getAllByRole('menuitemradio');
+      expect(document.activeElement).toBe(menuItems[0]);
+
+      fireEvent.keyPress(menu, {charCode: 'b'.charCodeAt(0)});
+      expect(document.activeElement).toBe(menuItems[1]);
+
+      fireEvent.keyPress(menu, {charCode: 'l'.charCodeAt(0)});
+      expect(document.activeElement).toBe(menuItems[3]);
+
+      fireEvent.keyPress(menu, {charCode: 'e'.charCodeAt(0)});
+      expect(document.activeElement).toBe(menuItems[4]);
+    });
+
+    it.each`
+      Name        | Component | props
+      ${'Menu'}   | ${Menu}   | ${{autoFocus: true}}
+    `('$Name resets the search text after a timeout', function ({Component, props}) {
+      let tree = renderComponent(Component, {}, props);
+      let menu = tree.getByRole('menu');
+      let menuItems = within(menu).getAllByRole('menuitemradio');
+      expect(document.activeElement).toBe(menuItems[0]);
+
+      fireEvent.keyPress(menu, {charCode: 'b'.charCodeAt(0)});
+      expect(document.activeElement).toBe(menuItems[1]);
+
+      jest.runAllTimers();
+
+      fireEvent.keyPress(menu, {charCode: 'b'.charCodeAt(0)});
+      expect(document.activeElement).toBe(menuItems[2]);
+    });
+
+    it.each`
+      Name        | Component | props
+      ${'Menu'}   | ${Menu}   | ${{autoFocus: true}}
+    `('$Name wraps around when no items past the current one match', function ({Component, props}) {
+      let tree = renderComponent(Component, {}, props);
+      let menu = tree.getByRole('menu');
+      let menuItems = within(menu).getAllByRole('menuitemradio');
+      expect(document.activeElement).toBe(menuItems[0]);
+
+      fireEvent.keyPress(menu, {charCode: 'b'.charCodeAt(0)});
+      fireEvent.keyPress(menu, {charCode: 'l'.charCodeAt(0)});
+      fireEvent.keyPress(menu, {charCode: 'e'.charCodeAt(0)});
+      expect(document.activeElement).toBe(menuItems[4]);
+
+      jest.runAllTimers();
+
+      fireEvent.keyPress(menu, {charCode: 'b'.charCodeAt(0)});
+      expect(document.activeElement).toBe(menuItems[1]);
     });
   });
 

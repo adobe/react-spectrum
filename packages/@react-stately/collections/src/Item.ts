@@ -9,9 +9,16 @@ export function Item<T>(props: ItemProps<T>): ReactElement { // eslint-disable-l
 Item.getCollectionNode = function<T> (props: ItemProps<T>): PartialNode<T> {
   let {childItems, title, children} = props;
 
+  let rendered = props.title || props.children;
+  let textValue = props.textValue || (typeof rendered === 'string' ? rendered : '');
+  if (!textValue) {
+    console.warn('<Item> with non-plain text contents is unsupported by type to select for accessibility. Please add a `textValue` prop.');
+  }
+
   return {
     type: 'item',
-    rendered: props.title || props.children,
+    rendered,
+    textValue,
     hasChildNodes: hasChildItems(props),
     *childNodes() {
       if (childItems) {
