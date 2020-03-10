@@ -11,3 +11,5 @@
  */
 
 export * from './CollectionView';
+export * from './useCollectionItem';
+export * from './CollectionItem';

@@ -31,11 +31,14 @@ export interface Node<T> extends ItemStates {
   hasChildNodes: boolean,
   childNodes: Iterable<Node<T>>,
   rendered: ReactNode,
+  index?: number,
+  parentKey?: Key,
   prevKey?: Key,
   nextKey?: Key
 }
 
-export interface Collection<T> {
+export interface Collection<T> extends Iterable<T> {
+  readonly size: number;
   getKeys(): Iterable<Key>,
   getItem(key: Key): T,
   getKeyBefore(key: Key): Key | null,
@@ -44,7 +47,7 @@ export interface Collection<T> {
   getLastKey(): Key | null
 }
 
-export interface InvalidationContext<T, V> {
+export interface InvalidationContext<T extends object, V> {
   contentChanged?: boolean,
   offsetChanged?: boolean,
   sizeChanged?: boolean,
@@ -55,13 +58,18 @@ export interface InvalidationContext<T, V> {
   transaction?: Transaction<T, V>
 }
 
-export interface CollectionManagerDelegate<T, V, W> {
-  setVisibleViews(views: Set<W>): void,
+export interface CollectionManagerDelegate<T extends object, V, W> {
+  setVisibleViews(views: W[]): void,
   setContentSize(size: Size): void,
   setVisibleRect(rect: Rect): void,
   getType?(content: T): string,
   renderView(type: string, content: T): V,
-  renderWrapper(reusableView: ReusableView<T, V>): W,
+  renderWrapper(
+    parent: ReusableView<T, V> | null,
+    reusableView: ReusableView<T, V>,
+    children: ReusableView<T, V>[],
+    renderChildren: (views: ReusableView<T, V>[]) => W[]
+  ): W,
   beginAnimations(): void,
   endAnimations(): void,
   getScrollAnchor?(rect: Rect): Key

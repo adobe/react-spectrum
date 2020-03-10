@@ -12,106 +12,71 @@
 
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
-import {CollectionView} from '@react-aria/collections';
-import {FocusRing} from '@react-aria/focus';
+import {CollectionItem, CollectionView} from '@react-aria/collections';
 import {ListLayout, Node} from '@react-stately/collections';
-import React, {AllHTMLAttributes, useMemo, useRef} from 'react';
+import React, {ReactElement, useMemo} from 'react';
+import {ReusableView} from '@react-stately/collections';
+import {SideNavItem} from './SideNavItem';
+import {SideNavSection} from './SideNavSection';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
-import {TreeState, useTreeState} from '@react-stately/tree';
-import {useSideNav, useSideNavItem} from '@react-aria/sidenav';
+import {useSideNav} from '@react-aria/sidenav';
+import {useTreeState} from '@react-stately/tree';
 
 export interface SideNavProps<T> extends CollectionBase<T>, MultipleSelection, Expandable, StyleProps {}
 
 export function SideNav<T>(props: SideNavProps<T>) {
+
   let state = useTreeState({...props, selectionMode: 'single', disableEmptySelection: true});
 
   let layout = useMemo(() => new ListLayout({rowHeight: 40}), []);
-
   let {navProps, listProps} = useSideNav(props, state, layout);
-
   let {styleProps} = useStyleProps(props);
+
+  // This overrides collection view's renderWrapper to support heirarchy of items in sections.
+  // The header is extracted from the children so it can receive ARIA labeling properties.
+  type View = ReusableView<Node<T>, unknown>;
+  let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
+    if (reusableView.viewType === 'section') {
+      return (
+        <SideNavSection
+          key={reusableView.key}
+          reusableView={reusableView}
+          header={children.find(c => c.viewType === 'header')}>
+          {renderChildren(children.filter(c => c.viewType === 'item'))}
+        </SideNavSection>
+      );
+    }
+
+    return (
+      <CollectionItem 
+        key={reusableView.key}
+        reusableView={reusableView}
+        parent={parent} />
+    );
+  };
 
   return (
     <nav
       {...filterDOMProps(props)}
       {...navProps}
-      {...styleProps} >
+      {...styleProps}>
       <CollectionView
         {...listProps}
         focusedKey={state.selectionManager.focusedKey}
         className={classNames(styles, 'spectrum-SideNav')}
         layout={layout}
-        collection={state.tree}>
+        collection={state.collection}
+        renderWrapper={renderWrapper}>
         {(type, item) => {
-          if (type === 'section') {
+          if (type === 'item') {
             return (
-              <SideNavHeading
+              <SideNavItem
+                state={state}
                 item={item} />
             );
           }
-
-          return (
-            <SideNavItem
-              state={state}
-              item={item} />
-          );
         }}
       </CollectionView>
     </nav>
-  );
-}
-
-interface SideNavItemProps<T> extends AllHTMLAttributes<HTMLElement>{
-  item: Node<T>,
-  state: TreeState<T>
-}
-
-function SideNavItem<T>(props: SideNavItemProps<T>) {
-  let ref = useRef<HTMLAnchorElement>();
-  let {
-    isSelected,
-    isDisabled,
-    rendered
-  } = props.item;
-
-  let className = classNames(
-    styles,
-    'spectrum-SideNav-item',
-    {
-      'is-selected': isSelected,
-      'is-disabled': isDisabled
-    }
-  );
-
-  let {listItemProps, listItemLinkProps} = useSideNavItem(props, props.state, ref);
-
-  return (
-    <div
-      {...listItemProps}
-      className={className} >
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-        <a
-          {...listItemLinkProps}
-          ref={ref}
-          className={classNames(styles, 'spectrum-SideNav-itemLink')} >
-          {rendered}
-        </a>
-      </FocusRing>
-    </div>
-  );
-}
-
-interface SideNavHeadingProps<T> extends AllHTMLAttributes<HTMLElement> {
-  item: Node<T>
-}
-
-function SideNavHeading<T>({item, ...otherProps}: SideNavHeadingProps<T>) {
-
-  return (
-    <h2
-      {...otherProps}
-      className={classNames(styles, 'spectrum-SideNav-heading')} >
-      {item.rendered}
-    </h2>
   );
 }

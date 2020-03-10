@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, useState} from 'react';
+import {AllHTMLAttributes, useMemo, useState} from 'react';
 import {ButtonGroupKeyboardDelegate, ButtonGroupState} from '@react-stately/button';
 import {ButtonGroupProps} from '@react-types/button';
 import {mergeProps} from '@react-aria/utils';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
+import {useLocale} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 
 const BUTTON_GROUP_ROLES = {
@@ -45,9 +46,10 @@ export function useButtonGroup(props: ButtonGroupProps, state: ButtonGroupState)
     role
   } = props;
 
-  let keyboardDelegate = new ButtonGroupKeyboardDelegate(state.buttonCollection);
+  let {direction} = useLocale();
+  let keyboardDelegate = useMemo(() => new ButtonGroupKeyboardDelegate(state.buttonCollection, direction, orientation), [state.buttonCollection, direction, orientation]);
 
-  let {listProps} = useSelectableCollection({
+  let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
     keyboardDelegate
   });
@@ -66,7 +68,7 @@ export function useButtonGroup(props: ButtonGroupProps, state: ButtonGroupState)
       tabIndex: isDisabled ? null : tabIndex,
       'aria-orientation': orientation,
       'aria-disabled': isDisabled,
-      ...mergeProps(focusWithinProps, listProps)
+      ...mergeProps(focusWithinProps, collectionProps)
     },
     buttonProps: {
       role: BUTTON_ROLES[selectionMode]

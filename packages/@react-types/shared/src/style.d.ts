@@ -39,6 +39,7 @@ export interface StyleProps {
   flex?: string | number | boolean,
   flexGrow?: number,
   flexShrink?: number,
+  flexBasis?: number | string,
   justifySelf?: 'auto' | 'normal' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'center' | 'left' | 'right' | 'stretch', // ...
   alignSelf?: 'auto' | 'normal' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'self-start' | 'self-end' | 'center' | 'stretch', // ...
   flexOrder?: number,

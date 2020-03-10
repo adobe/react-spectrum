@@ -14,8 +14,8 @@ import {DialogContext} from './context';
 import {DOMRefValue} from '@react-types/shared';
 import {Modal, Overlay, Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, useRef} from 'react';
-import {SpectrumDialogTriggerProps} from '@react-types/dialog';
+import React, {Fragment, ReactElement, useRef} from 'react';
+import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
 import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
@@ -27,9 +27,14 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
     mobileType = type === 'popover' ? 'modal' : type,
     hideArrow,
     targetRef,
+    isDismissable,
     ...positionProps
   } = props;
-  let [trigger, content] = React.Children.toArray(children);
+  if (!Array.isArray(children) || children.length > 2) {
+    throw new Error('DialogTrigger must have exactly 2 children');
+  }
+  // if a function is passed as the second child, it won't appear in toArray
+  let [trigger, content] = children as [ReactElement, SpectrumDialogClose];
 
   // On small devices, show a modal or tray instead of a popover.
   // TODO: DNA variable?
@@ -63,16 +68,23 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
 
   let renderOverlay = () => {
     switch (type) {
+      case 'fullscreen':
+      case 'fullscreenTakeover':
+        return (
+          <Modal isOpen={isOpen} isDismissable={false} onClose={onClose} type={type}>
+            {typeof content === 'function' ? content(onClose) : content}
+          </Modal>
+        );
       case 'modal':
         return (
-          <Modal isOpen={isOpen} onClose={onClose}>
-            {content}
+          <Modal isOpen={isOpen} isDismissable={isDismissable} onClose={onClose}>
+            {typeof content === 'function' ? content(onClose) : content}
           </Modal>
         );
       case 'tray':
         return (
           <Tray isOpen={isOpen} onClose={onClose}>
-            {content}
+            {typeof content === 'function' ? content(onClose) : content}
           </Tray>
         );
     }
@@ -84,6 +96,7 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
       isOpen={isOpen}
       onPress={onPress}
       onClose={onClose}
+      isDismissable={isDismissable}
       trigger={trigger}
       overlay={renderOverlay()} />
   );
@@ -104,7 +117,7 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
     shouldFlip: props.shouldFlip,
     isOpen
   });
-  
+
   let {triggerAriaProps, overlayAriaProps} = useOverlayTrigger({
     ref: triggerRef,
     type: 'dialog',
@@ -138,10 +151,23 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
   );
 }
 
-function DialogTriggerBase({type, isOpen, onPress, onClose, dialogProps = {}, triggerProps = {}, overlay, trigger}) {
+interface SpectrumDialogTriggerBase {
+  type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  isOpen?: boolean,
+  onPress?: any,
+  onClose?: () => void,
+  isDismissable?: boolean
+  dialogProps?: SpectrumDialogProps | {},
+  triggerProps?: any,
+  overlay: ReactElement,
+  trigger: ReactElement
+}
+
+function DialogTriggerBase({type, isOpen, onPress, onClose, isDismissable, dialogProps = {}, triggerProps = {}, overlay, trigger}: SpectrumDialogTriggerBase) {
   let context = {
     type,
     onClose,
+    isDismissable,
     ...dialogProps
   };
 
@@ -150,7 +176,7 @@ function DialogTriggerBase({type, isOpen, onPress, onClose, dialogProps = {}, tr
       <PressResponder
         {...triggerProps}
         onPress={onPress}
-        isPressed={isOpen && type !== 'modal'}>
+        isPressed={isOpen && type !== 'modal' && type !== 'fullscreen' && type !== 'fullscreenTakeover'}>
         {trigger}
       </PressResponder>
       <DialogContext.Provider value={context}>

@@ -23,6 +23,9 @@ governing permissions and limitations under the License.
   /* The font-weight of the fullscreen dialog header */
   --spectrum-dialog-fullscreen-header-text-font-weight: 100;
 
+  /* Distance between top and bottom of dialog and edge of window for fullscreen dialog */
+  --spectrum-dialog-fullscreen-margin: 40px;
+
   --spectrum-dialog-small-width: 400px;
   --spectrum-dialog-medium-width: 480px;
   --spectrum-dialog-large-width: 640px;
@@ -33,6 +36,9 @@ governing permissions and limitations under the License.
 
   --spectrum-dialog-button-margin: var(--spectrum-global-dimension-size-200);
   --spectrum-dialog-content-margin-bottom: var(--spectrum-global-dimension-size-450);
+
+  /* 12px desktop (medium scale) and 8px mobile (large scale) */
+  --spectrum-dialog-close-button-padding: calc(26px - var(--spectrum-global-dimension-size-175));
 }
 
 
@@ -104,7 +110,7 @@ governing permissions and limitations under the License.
   outline: none; /* Hide focus outline around header */
 }
 
-.spectrum-Dialog-divider {
+.spectrum-Dialog .spectrum-Dialog-divider {
   grid-area: divider;
   width: 100%;
   margin-top: var(--spectrum-dialog-rule-margin-top);
@@ -164,7 +170,7 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Dialog-title {
+.spectrum-Dialog-heading {
   flex: 1 1 auto;
 
   margin: 0;
@@ -177,20 +183,13 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dialog-closeButton {
-  display: none;
   grid-area: closeButton;
   /* align and justify so it doesn't do the default 'stretch' and end up with forced height/width */
   align-self: start;
-  justify-self: start;
+  justify-self: end;
 
-  inset-block-start: var(--spectrum-global-dimension-size-150);
-  inset-inline-end: var(--spectrum-global-dimension-size-150);
-}
-
-.spectrum-Dialog--dismissable {
-  .spectrum-Dialog-closeButton {
-    display: block;
-  }
+  inset-block-start: var(--spectrum-dialog-close-button-padding);
+  inset-inline-end: var(--spectrum-dialog-close-button-padding);
 }
 
 /* Alert Dialog is a specific type of Dialog */
@@ -199,8 +198,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dialog--fullscreen {
-  width: calc(100vw - 32px);
-  height: calc(100vh - 32px);
+  width: calc(100vw - calc(2 * var(--spectrum-dialog-fullscreen-margin)));
+  height: calc(100vw - calc(2 * var(--spectrum-dialog-fullscreen-margin)));
 }
 .spectrum-Dialog--fullscreenTakeover {
   width: 100vw;
@@ -226,7 +225,7 @@ governing permissions and limitations under the License.
       ".    .       .       .";
   }
 
-  .spectrum-Dialog-title {
+  .spectrum-Dialog-heading {
     font-size: var(--spectrum-dialog-fullscreen-header-text-size);
     font-weight: var(--spectrum-dialog-fullscreen-header-text-font-weight);
   }

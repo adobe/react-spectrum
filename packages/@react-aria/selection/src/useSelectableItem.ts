@@ -18,7 +18,8 @@ import {PressProps} from '@react-aria/interactions';
 interface SelectableItemOptions {
   selectionManager: MultipleSelectionManager,
   itemKey: Key,
-  itemRef: RefObject<HTMLElement>
+  itemRef: RefObject<HTMLElement>,
+  isVirtualized?: boolean
 }
 
 interface SelectableItemAria {
@@ -29,7 +30,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let {
     selectionManager: manager,
     itemKey,
-    itemRef
+    itemRef,
+    isVirtualized
   } = options;
 
   let onPressStart = (e: PressEvent) => {
@@ -58,13 +60,19 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
   }, [itemRef, isFocused, manager.focusedKey, manager.isFocused]);
 
-  return {
-    itemProps: {
-      onPressStart,
-      tabIndex: isFocused ? 0 : -1,
-      onFocus() {
-        manager.setFocusedKey(itemKey);
-      }
+  let itemProps = {
+    onPressStart,
+    tabIndex: isFocused ? 0 : -1,
+    onFocus() {
+      manager.setFocusedKey(itemKey);
     }
+  };
+
+  if (!isVirtualized) {
+    itemProps['data-key'] = itemKey;
+  }
+
+  return {
+    itemProps
   };
 }
