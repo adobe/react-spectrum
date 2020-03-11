@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, DOMRef, filterDOMProps, useDOMRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, DOMRef, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
 import { {{~componentName}}Props} from '@react-types/${{packageName}}';
 import React from 'react';
@@ -21,8 +21,8 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function {{componentName}}(props: {{componentName}}Props, ref: DOMRef) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {styleProps} = useStyleProps(props);
-  let slotProps = useSlotProvider(props.slot);
   let state = use{{componentName}}State(props);
   let ariaProps = use{{componentName}}(props, state);
   let domRef = useDOMRef(ref);
@@ -33,7 +33,7 @@ function {{componentName}}(props: {{componentName}}Props, ref: DOMRef) {
       {...ariaProps}
       {...styleProps}
       ref={domRef}
-      className={classNames(styles, '', styleProps.className, slotProps.className)}>
+      className={classNames(styles, '', styleProps.className)}>
 
     </div>
   );
