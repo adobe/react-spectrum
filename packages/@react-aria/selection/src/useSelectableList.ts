@@ -16,6 +16,7 @@ import {HTMLAttributes, RefObject, useEffect, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {MultipleSelectionManager} from '@react-stately/selection';
+import {useCollator} from '@react-aria/i18n';
 import {useSelectableCollection} from './useSelectableCollection';
 
 interface SelectableListOptions {
@@ -47,7 +48,8 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
-  let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(collection, ref), [keyboardDelegate, collection, ref]);
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(collection, ref, collator), [keyboardDelegate, collection, ref, collator]);
 
   // If not virtualized, scroll the focused element into view when the focusedKey changes.
   // When virtualized, CollectionView handles this internally.

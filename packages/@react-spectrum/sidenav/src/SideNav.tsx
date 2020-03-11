@@ -19,6 +19,7 @@ import {ReusableView} from '@react-stately/collections';
 import {SideNavItem} from './SideNavItem';
 import {SideNavSection} from './SideNavSection';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
+import {useCollator} from '@react-aria/i18n';
 import {useSideNav} from '@react-aria/sidenav';
 import {useTreeState} from '@react-stately/tree';
 
@@ -26,7 +27,8 @@ export interface SideNavProps<T> extends CollectionBase<T>, SingleSelectionBase,
 
 export function SideNav<T>(props: SideNavProps<T>) {
   let state = useTreeState({...props, selectionMode: 'single'});
-  let layout = useMemo(() => new ListLayout({rowHeight: 40}), []);
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let layout = useMemo(() => new ListLayout({rowHeight: 40, collator}), [collator]);
   let {navProps, listProps} = useSideNav(props, state, layout);
   let {styleProps} = useStyleProps(props);
 
