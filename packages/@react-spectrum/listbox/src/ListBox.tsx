@@ -19,18 +19,21 @@ import React, {ReactElement, useMemo} from 'react';
 import {ReusableView} from '@react-stately/collections';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import {useCollator} from '@react-aria/i18n';
 import {useListBox} from '@react-aria/listbox';
 import {useListState} from '@react-stately/list';
 import {useProvider} from '@react-spectrum/provider';
 
 export function ListBox<T>(props: SpectrumMenuProps<T>) {
   let {scale} = useProvider();
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() => 
     new ListLayout({
       estimatedRowHeight: scale === 'large' ? 48 : 35,
-      estimatedHeadingHeight: scale === 'large' ? 37 : 30
+      estimatedHeadingHeight: scale === 'large' ? 37 : 30,
+      collator
     })
-  , [scale]);
+  , [collator, scale]);
 
   let completeProps = {
     ...props,
