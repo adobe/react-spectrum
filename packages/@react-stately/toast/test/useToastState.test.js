@@ -87,6 +87,7 @@ describe('useToastState', () => {
   });
 
   it('should call onRemove via onAdd', async () => {
+    jest.useFakeTimers();
     let timeoutToast = {
       content: 'Timeout Toast',
       props: {variant: 'info', timeout: 1}
@@ -97,12 +98,13 @@ describe('useToastState', () => {
     expect(result.current.toasts.length).toEqual(1);
     expect(result.current.toasts[0].timer).not.toBe(undefined);
 
-    await waitForNextUpdate();
+    act(() => jest.runAllTimers());
 
     expect(result.current.toasts.length).toEqual(0);
   });
 
   it('should not call onRemove via onAdd when there is an actionLabel', async () => {
+    jest.useFakeTimers();
     let timeoutToast = {
       content: 'Action Toast',
       props: {variant: 'info', timeout: 1, actionLabel: 'Undo'}
