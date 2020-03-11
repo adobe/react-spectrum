@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, ReactNode} from 'react';
+import {ItemRenderer} from '@react-types/shared';
+import {Key, ReactElement, ReactNode} from 'react';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
@@ -32,8 +33,22 @@ export interface Node<T> extends ItemStates {
   childNodes: Iterable<Node<T>>,
   rendered: ReactNode,
   index?: number,
+  wrapper?: ((element: ReactElement) => ReactElement) | void,
+  parentKey?: Key,
   prevKey?: Key,
   nextKey?: Key
+}
+
+export interface PartialNode<T> {
+  type?: 'section' | 'item',
+  key?: Key,
+  value?: T,
+  element?: ReactElement,
+  wrapper?: ((element: ReactElement) => ReactElement) | void,
+  rendered?: ReactNode,
+  renderer?: ItemRenderer<T>,
+  hasChildNodes?: boolean,
+  childNodes?: () => IterableIterator<PartialNode<T>>
 }
 
 export interface Collection<T> extends Iterable<T> {
@@ -58,12 +73,17 @@ export interface InvalidationContext<T extends object, V> {
 }
 
 export interface CollectionManagerDelegate<T extends object, V, W> {
-  setVisibleViews(views: Set<W>): void,
+  setVisibleViews(views: W[]): void,
   setContentSize(size: Size): void,
   setVisibleRect(rect: Rect): void,
   getType?(content: T): string,
   renderView(type: string, content: T): V,
-  renderWrapper(reusableView: ReusableView<T, V>): W,
+  renderWrapper(
+    parent: ReusableView<T, V> | null,
+    reusableView: ReusableView<T, V>,
+    children: ReusableView<T, V>[],
+    renderChildren: (views: ReusableView<T, V>[]) => W[]
+  ): W,
   beginAnimations(): void,
   endAnimations(): void,
   getScrollAnchor?(rect: Rect): Key
