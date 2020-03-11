@@ -74,5 +74,9 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
   );
 }
 
+/**
+ * Switches allow users to turn an individual option on or off.
+ * They are usually used to activate or deactivate a specific setting.
+ */
 const _Switch = forwardRef(Switch);
 export {_Switch as Switch};
