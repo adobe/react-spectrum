@@ -11,7 +11,7 @@ let theme = {
 };
 
 export function testSlotsAPI(Component) {
-  let {getByTestId, debug} = render(
+  let {getByTestId} = render(
     <Provider theme={theme}>
       <Grid data-testid="grid" slots={{dummySlot: {UNSAFE_className: 'slotClassName'}}}>
         <Component slot="dummySlot" />
@@ -19,6 +19,5 @@ export function testSlotsAPI(Component) {
     </Provider>
   );
   let root = getByTestId('grid');
-  debug();
   expect(root.firstChild).toHaveClass('slotClassName');
 }
