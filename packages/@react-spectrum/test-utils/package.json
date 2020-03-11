@@ -23,6 +23,11 @@
     "@testing-library/react": "^8.0.1",
     "react": "^16.8.0"
   },
+  "devDependencies": {
+    "@react-spectrum/layout": "^3.0.0-alpha.1",
+    "@react-spectrum/provider": "^3.0.0-rc.1",
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
+  },
   "publishConfig": {
     "access": "public"
   }

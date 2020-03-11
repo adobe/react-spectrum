@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {useContext} from 'react';
 import {mergeProps} from '@react-aria/utils';
-import styles from '@react-spectrum/layout/stories/styles.css';
+import React, {useContext} from 'react';
 
 export let SlotContext = React.createContext(null);
 
@@ -26,7 +25,7 @@ export function cssModuleToSlots(cssModule) {
   return Object.keys(cssModule).reduce((acc, slot) => {
     acc[slot] = {UNSAFE_className: cssModule[slot]};
     return acc;
-  }, {})
+  }, {});
 }
 
 export function ClearSlots(props) {
