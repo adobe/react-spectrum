@@ -67,7 +67,7 @@ describe('Shared TextField behavior', () => {
     let tree = renderComponent(Component, {'aria-label': 'mandatory label'});
     let input = tree.getByTestId(testId);
     expect(input.value).toBe('');
-    act(() => {userEvent.type(input, inputText)});
+    act(() => {userEvent.type(input, inputText);});
     expect(input.value).toBe(inputText);
     expect(input).toHaveAttribute('type', expectedType);
     expect(input.tagName).toBe(expectedTagName);
@@ -143,7 +143,7 @@ describe('Shared TextField behavior', () => {
     let input = tree.getByTestId(testId);
     fireEvent.focus(input);
     expect(onFocus).toHaveBeenCalledTimes(1);
-    act(() => {userEvent.click(input)});
+    act(() => {userEvent.click(input);});
     expect(onFocus).toHaveBeenCalledTimes(2);
   });
 
@@ -175,7 +175,7 @@ describe('Shared TextField behavior', () => {
     let newValue = 'blah';
     let tree = renderComponent(Component, {onChange, defaultValue, 'aria-label': 'mandatory label'});
     let input = tree.getByTestId(testId);
-    act(() => {userEvent.type(input, newValue)});
+    act(() => {userEvent.type(input, newValue);});
     expect(onChange).toHaveBeenCalledTimes(newValue.length);
   });
 
@@ -193,7 +193,7 @@ describe('Shared TextField behavior', () => {
     let tree = renderComponent(Component, {onChange, value, 'aria-label': 'mandatory label'});
     let input = tree.getByTestId(testId);
     expect(input.value).toBe(value);
-    act(() => {userEvent.type(input, newValue)});
+    act(() => {userEvent.type(input, newValue);});
     expect(input.value).toBe(value);
     expect(onChange).toHaveBeenCalledTimes(newValue.length);
   });
@@ -278,7 +278,7 @@ describe('Shared TextField behavior', () => {
     let tree = renderComponent(Component, props);
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('readonly');
-    act(() => {userEvent.click(input)});
+    act(() => {userEvent.click(input);});
     expect(document.activeElement).toEqual(input);
 
     // Note: simulating text input via fireEvent or "type"(userEvent library) still causes the input value to change
@@ -297,7 +297,7 @@ describe('Shared TextField behavior', () => {
     let tree = renderComponent(Component, props);
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('disabled');
-    act(() => {userEvent.click(input)});
+    act(() => {userEvent.click(input);});
     expect(document.activeElement).not.toEqual(input);
     // Note: simulating text input via fireEvent or "type"(userEvent library) still causes the input value to change
     // Seems like this is a framework issue rather than a bug with TextField so omitting the test case
