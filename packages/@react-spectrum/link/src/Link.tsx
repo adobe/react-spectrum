@@ -18,6 +18,10 @@ import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {useLink} from '@react-aria/link';
 import {useProviderProps} from '@react-spectrum/provider';
 
+/**
+ * Links allow users to navigate to a different location.
+ * They can be presented inline inside a paragraph or as standalone text.
+ */
 export function Link(props: SpectrumLinkProps) {
   props = useProviderProps(props);
   let {
