@@ -22,18 +22,19 @@ export class TreeCollection<T> implements Collection<Node<T>> {
   constructor(nodes: Iterable<Node<T>>) {
     this.iterable = nodes;
 
-    let visit = (node: Node<T>) => {
+    let visit = (node: Node<T>, parentKey: Key) => {
+      node.parentKey = parentKey;
       this.keyMap.set(node.key, node);
 
       if (node.childNodes && (node.type === 'section' || node.isExpanded)) {
         for (let child of node.childNodes) {
-          visit(child);
+          visit(child, node.key);
         }
       }
     };
 
     for (let node of nodes) {
-      visit(node);
+      visit(node, null);
     }
 
     let last: Node<T>;
@@ -49,7 +50,7 @@ export class TreeCollection<T> implements Collection<Node<T>> {
       if (node.type === 'item') {
         node.index = index++;
       }
-      
+
       last = node;
     }
 

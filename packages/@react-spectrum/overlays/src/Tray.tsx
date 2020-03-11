@@ -43,7 +43,7 @@ export function Tray(props: TrayProps) {
 
 function TrayWrapper({children, onClose, isOpen}: TrayWrapperProps) {
   let ref = useRef();
-  let {overlayProps} = useOverlay({ref, onClose, isOpen});
+  let {overlayProps} = useOverlay({ref, onClose, isOpen, isDismissable: true});
   useModal();
 
   // TODO: android back button?
