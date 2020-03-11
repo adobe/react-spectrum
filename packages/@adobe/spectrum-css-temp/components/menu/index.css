@@ -45,6 +45,7 @@ governing permissions and limitations under the License.
   list-style-type: none;
 
   overflow: auto;
+  user-select: none;
 
   width: 200px;
   max-height: inherit; /* inherit from parent popover */
