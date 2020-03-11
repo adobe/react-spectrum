@@ -123,12 +123,12 @@ This object would be expected to provide a mapping of Slot Names to an object co
 ```jsx
 export const Card = (props) => {
   let defaults = {slots: {
-      container: {className: classNames(styles, 'container')},
-      preview: {className: classNames(styles, 'preview')},
-      avatar: {className: classNames(styles, 'avatar')},
-      title: {className: classNames(styles, 'title')},
-      footer: {className: classNames(styles, 'footer')},
-      divider: {className: classNames(styles, 'divider')}
+      container: {UNSAFE_className: classNames(styles, 'container')},
+      preview: {UNSAFE_className: classNames(styles, 'preview')},
+      avatar: {UNSAFE_className: classNames(styles, 'avatar')},
+      title: {UNSAFE_className: classNames(styles, 'title')},
+      footer: {UNSAFE_className: classNames(styles, 'footer')},
+      divider: {UNSAFE_className: classNames(styles, 'divider')}
     }};
   let {slots} = {...defaults, ...props};
 
@@ -153,12 +153,12 @@ Or to make a more general container.
 ```jsx
 export const Card = (props) => {
   let defaults = {slots: {
-      container: {className: classNames(styles, 'container')},
-      preview: {className: classNames(styles, 'preview')},
-      avatar: {className: classNames(styles, 'avatar')},
-      title: {className: classNames(styles, 'title')},
-      footer: {className: classNames(styles, 'footer')},
-      divider: {className: classNames(styles, 'divider')}
+      container: {UNSAFE_className: classNames(styles, 'container')},
+      preview: {UNSAFE_className: classNames(styles, 'preview')},
+      avatar: {UNSAFE_className: classNames(styles, 'avatar')},
+      title: {UNSAFE_className: classNames(styles, 'title')},
+      footer: {UNSAFE_className: classNames(styles, 'footer')},
+      divider: {UNSAFE_className: classNames(styles, 'divider')}
     }};
   let {slots} = {...defaults, ...props};
 
