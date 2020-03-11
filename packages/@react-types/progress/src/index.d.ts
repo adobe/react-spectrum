@@ -65,8 +65,7 @@ export interface SpectrumProgressCircleProps extends ProgressCircleProps, DOMPro
    */
   size?: 'S' | 'M' | 'L',
   /** The [visual style](https://spectrum.adobe.com/page/circle-loader/#Over-background-variant) of the ProgressCircle. */
-  variant?: 'overBackground',
-  isCentered?: boolean
+  variant?: 'overBackground'
 }
 
 export interface SpectrumProgressBarBaseProps extends ProgressBarBaseProps, DOMProps, StyleProps {

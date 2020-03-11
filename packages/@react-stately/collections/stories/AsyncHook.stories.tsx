@@ -65,7 +65,7 @@ function Component(props) {
       <Tree items={items} itemKey="key">
         {({name}) => <Item>{name}</Item>}
       </Tree>
-      {isLoading && <ProgressCircle aria-label="Loading..." UNSAFE_style={{position: 'absolute'}} isIndeterminate isCentered />}
+      {isLoading && <ProgressCircle aria-label="Loading..." UNSAFE_style={{position: 'absolute'}} isIndeterminate />}
       {!isLoading && props.loadMore &&
         <ActionButton UNSAFE_style={{position: 'absolute', bottom: '0', right: '-80px'}} onPress={onLoadMore}>
           Load More
