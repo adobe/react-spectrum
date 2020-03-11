@@ -14,7 +14,6 @@ import {HTMLAttributes} from 'react';
 import {useId} from '@react-aria/utils';
 
 interface ListBoxSectionAria {
-  itemProps: HTMLAttributes<HTMLElement>,
   headingProps: HTMLAttributes<HTMLElement>,
   groupProps: HTMLAttributes<HTMLElement>
 }
@@ -23,9 +22,6 @@ export function useListBoxSection(): ListBoxSectionAria {
   let headingId = useId();
 
   return {
-    itemProps: {
-      role: 'presentation'
-    },
     headingProps: {
       // Techincally, listbox cannot contain headings according to ARIA.
       // We hide the heading from assistive technology, and only use it
