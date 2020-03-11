@@ -136,7 +136,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
 
   return (
     <div {...otherProps} style={{position: 'relative', overflow: 'auto'}} ref={ref} onScroll={onScroll}>
-      <div style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', ...innerStyle}}>
+      <div role="presentation" style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', ...innerStyle}}>
         {children}
       </div>
     </div>
