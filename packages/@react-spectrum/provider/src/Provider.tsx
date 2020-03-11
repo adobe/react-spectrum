@@ -56,7 +56,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     ...otherProps
   } = props;
 
-  // remove all the undefined props so they don't overwrite prevContext values
+  // select only the props with values so undefined props don't overwrite prevContext values
   let currentProps = {
     version,
     theme,
@@ -70,10 +70,11 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     isReadOnly,
     validationState
   };
-  Object.keys(currentProps).forEach(propKey => currentProps[propKey] === undefined && delete currentProps[propKey]);
+  let filteredProps = {};
+  Object.entries(currentProps).forEach((aProp) => aProp[1] !== undefined && (filteredProps[aProp[0]] = aProp[1]));
 
   // Merge options with parent provider
-  let context = Object.assign({}, prevContext, currentProps);
+  let context = Object.assign({}, prevContext, filteredProps);
 
   useEffect(() => {
     configureTypekit(typekitId);
