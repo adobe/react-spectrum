@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
+import {AllHTMLAttributes, ReactNode} from 'react';
 import {CollectionBase, DOMProps, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
-import {Node} from '@react-stately/collections';
+import {Node, ReusableView} from '@react-stately/collections';
 import {TreeState} from '@react-stately/tree';
 
 export interface SideNavProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps, StyleProps {
@@ -27,6 +27,8 @@ export interface SpectrumSideNavItemProps<T> extends AllHTMLAttributes<HTMLEleme
   state: TreeState<T>
 }
 
-export interface SpectrumSideNavHeadingProps<T> extends AllHTMLAttributes<HTMLElement> {
-  item: Node<T>
+interface SideNavSectionProps<T> {
+  reusableView: ReusableView<Node<T>, unknown>,
+  header: ReusableView<Node<T>, unknown>,
+  children?: ReactNode
 }
