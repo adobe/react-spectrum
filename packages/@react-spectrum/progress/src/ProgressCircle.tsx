@@ -11,7 +11,7 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {classNames, filterDOMProps, useDOMRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import React, {CSSProperties} from 'react';
 import {SpectrumProgressCircleProps} from '@react-types/progress';
@@ -19,6 +19,7 @@ import styles from '@adobe/spectrum-css-temp/components/circleloader/vars.css';
 import {useProgressBar} from '@react-aria/progress';
 
 function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
+  props = useSlotProps(props);
   let {
     value = 0,
     minValue = 0,
@@ -28,12 +29,10 @@ function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivE
     isIndeterminate = false,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
-    slot,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
 
   value = clamp(value, minValue, maxValue);
   let {progressBarProps} = useProgressBar({...props, value});
@@ -74,8 +73,7 @@ function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivE
             'spectrum-CircleLoader--large': size === 'L',
             'spectrum-CircleLoader--overBackground': variant === 'overBackground'
           },
-          styleProps.className,
-          slotProps.className
+          styleProps.className
         )
       }>
       <div className={classNames(styles, 'spectrum-CircleLoader-track')} />

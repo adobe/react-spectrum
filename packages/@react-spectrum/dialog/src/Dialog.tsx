@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {FocusScope} from '@react-aria/focus';
@@ -23,6 +23,7 @@ import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
 
 export function Dialog(props: SpectrumDialogProps) {
+  props = useSlotProps(props);
   let {
     type = 'popover',
     ...contextProps
@@ -31,19 +32,14 @@ export function Dialog(props: SpectrumDialogProps) {
     children,
     isDismissable = contextProps.isDismissable,
     onDismiss = contextProps.onClose,
-    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
   let allProps: SpectrumBaseDialogProps = mergeProps(
     mergeProps(
       mergeProps(
-        mergeProps(
-          filterDOMProps(otherProps),
-          filterDOMProps(contextProps)
-        ),
-        slotProps
+        filterDOMProps(otherProps),
+        filterDOMProps(contextProps)
       ),
       styleProps
     ),
@@ -86,15 +82,15 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
   let {dialogProps} = useDialog({ref, role});
   if (!slots) {
     slots = {
-      container: {className: styles['spectrum-Dialog-grid']},
-      hero: {className: styles['spectrum-Dialog-hero']},
-      header: {className: styles['spectrum-Dialog-header']},
-      heading: {className: styles['spectrum-Dialog-heading']},
-      typeIcon: {className: styles['spectrum-Dialog-typeIcon']},
-      divider: {className: styles['spectrum-Dialog-divider'], size: 'M'},
-      content: {className: styles['spectrum-Dialog-content']},
-      footer: {className: styles['spectrum-Dialog-footer']},
-      closeButton: {className: styles['spectrum-Dialog-closeButton']}
+      container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
+      hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
+      header: {UNSAFE_className: styles['spectrum-Dialog-header']},
+      heading: {UNSAFE_className: styles['spectrum-Dialog-heading']},
+      typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
+      divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
+      content: {UNSAFE_className: styles['spectrum-Dialog-content']},
+      footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
+      closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']}
     };
   }
 

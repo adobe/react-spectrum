@@ -12,7 +12,7 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button, ClearButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, useDOMRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
 import {DOMRef} from '@react-types/shared';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
@@ -32,12 +32,12 @@ export const ICONS = {
 };
 
 function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
+  props = useSlotProps(props);
   let {
     actionLabel,
     children,
     onRemove,
     variant,
-    slot,
     ...otherProps
   } = props;
   let {
@@ -48,7 +48,6 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   } = useToast({...otherProps, variant}, {onRemove});
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
   let Icon = ICONS[variant];
 
   return (
@@ -61,7 +60,6 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
         'spectrum-Toast',
         {['spectrum-Toast--' + variant]: variant},
         styleProps.className,
-        slotProps.className,
         classNames(
           toastContainerStyles,
           'spectrum-Toast'

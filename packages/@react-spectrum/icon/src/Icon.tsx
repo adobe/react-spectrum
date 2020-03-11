@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
@@ -53,6 +53,7 @@ interface IconProps extends DOMProps, StyleProps {
  * Spectrum icons are clear, minimal, and consistent across platforms. They follow the focused and rational principles of the design system in both metaphor and style.
  */
 export function Icon(props: IconProps) {
+  props = useSlotProps(props, 'icon');
   let {
     children,
     alt,
@@ -62,11 +63,9 @@ export function Icon(props: IconProps) {
     'aria-label': ariaLabel,
     'aria-hidden': ariaHidden,
     role = 'img',
-    slot = 'icon',
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
 
   let provider = useProvider();
   let pscale = 'M';
@@ -102,7 +101,6 @@ export function Icon(props: IconProps) {
       children.props.className,
       'spectrum-Icon',
       `spectrum-Icon--size${iconSize}`,
-      styleProps.className,
-      slotProps.className)
+      styleProps.className)
   });
 }

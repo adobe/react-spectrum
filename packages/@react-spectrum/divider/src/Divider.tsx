@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import React from 'react';
 import {SpectrumDividerProps} from '@react-types/divider';
@@ -24,18 +24,14 @@ let sizeMap = {
 };
 
 function Divider(props: SpectrumDividerProps, ref: DOMRef) {
+  props = useSlotProps(props, 'divider');
   let {
     size = 'L',
     orientation = 'horizontal',
-    slot = 'divider',
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
-  if (slotProps.size) {
-    size = slotProps.size;
-  }
   let weight = sizeMap[size];
 
   let Element = 'hr';
@@ -62,8 +58,7 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
             'spectrum-Rule--vertical': orientation === 'vertical',
             'spectrum-Rule--horizontal': orientation === 'horizontal'
           },
-          styleProps.className,
-          slotProps.className
+          styleProps.className
         )
       }
       ref={domRef}

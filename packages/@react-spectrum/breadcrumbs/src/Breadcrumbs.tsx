@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './';
-import {classNames, filterDOMProps, useDOMRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
@@ -27,6 +27,7 @@ const MAX_VISIBLE_ITEMS = 4;
 
 function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {
     size = 'M',
     children,
@@ -35,7 +36,6 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
     showRoot,
     isDisabled,
     maxVisibleItems = MAX_VISIBLE_ITEMS,
-    slot,
     ...otherProps
   } = props;
 
@@ -49,7 +49,6 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
 
   let {breadcrumbProps} = useBreadcrumbs(props);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
 
   useEffect(() => {
     let listItems = [...listRef.current.children];
@@ -134,7 +133,7 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
       {...filterDOMProps(otherProps)}
       {...styleProps}
       {...breadcrumbProps}
-      className={classNames({}, styleProps.className, slotProps.className)}
+      className={classNames({}, styleProps.className)}
       ref={domRef}>
       <ul
         ref={listRef}

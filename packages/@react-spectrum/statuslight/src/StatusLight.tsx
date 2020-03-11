@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import React, {forwardRef} from 'react';
 import {SpectrumStatusLightProps} from '@react-types/statuslight';
@@ -18,16 +18,15 @@ import styles from '@adobe/spectrum-css-temp/components/statuslight/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function StatusLight(props: SpectrumStatusLightProps, ref: DOMRef<HTMLDivElement>) {
+  props = useSlotProps(props);
   let {
     variant,
     children,
     isDisabled,
-    slot,
     ...otherProps
   } = useProviderProps(props);
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
 
   if (!props.children && !props['aria-label']) {
     console.warn('If no children are provided, an aria-label must be specified');
@@ -44,8 +43,7 @@ function StatusLight(props: SpectrumStatusLightProps, ref: DOMRef<HTMLDivElement
         {
           'is-disabled': isDisabled
         },
-        styleProps.className,
-        slotProps.className
+        styleProps.className
       )}
       ref={domRef}>
       {children}

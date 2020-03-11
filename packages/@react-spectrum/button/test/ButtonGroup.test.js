@@ -17,7 +17,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import {triggerPress} from '@react-spectrum/test-utils';
+import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 import V2ButtonGroup from '@react/react-spectrum/ButtonGroup';
 
@@ -27,7 +27,7 @@ let theme = {
 };
 
 // Describes the tabIndex values of button 1 (column 1), 2, and 3 as focus is moved forward or back.
-// e.g. button2Focused describes button 2 having tabindex=0 while all other buttons have -1 
+// e.g. button2Focused describes button 2 having tabindex=0 while all other buttons have -1
 let expectedButtonIndicies = {
   button1Focused: ['0', '-1', '-1'],
   button2Focused: ['-1', '0', '-1'],
@@ -90,7 +90,7 @@ expect.extend({
   checkButtonIndex(received, tabIndices, i) {
     let index = received.findIndex((htmlElement, i) => {
       const receivedValue = htmlElement.getAttribute('tabIndex');
-      
+
       return receivedValue !== tabIndices[i];
     });
 
@@ -98,7 +98,7 @@ expect.extend({
       return {
         message: () => `expected button index configuration "button${i + 1}Focused": (${received.map((button) => button.getAttribute('tabIndex'))}) but got ${tabIndices}`,
         pass: false
-      };  
+      };
     } else {
       return {
         pass: true
@@ -111,6 +111,10 @@ describe('ButtonGroup', function () {
   afterEach(() => {
     btnBehavior.reset();
     cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(ButtonGroup);
   });
 
   it.each`

@@ -17,7 +17,7 @@ import {
   filterDOMProps,
   shouldKeepSpectrumClassNames,
   useDOMRef,
-  useSlotProvider,
+  useSlotProps,
   useStyleProps
 } from '@react-spectrum/utils';
 import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
@@ -109,12 +109,16 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
 let _Provider = React.forwardRef(Provider);
 export {_Provider as Provider};
 
-const ProviderWrapper = React.forwardRef(function ProviderWrapper({children, slot, ...otherProps}: ProviderProps, ref: DOMRef<HTMLDivElement>) {
+const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
+  props = useSlotProps(props);
+  let {
+    children,
+    ...otherProps
+  } = props;
   let {locale, direction} = useLocale();
   let {theme, colorScheme, scale} = useProvider();
   let {modalProviderProps} = useModalProvider();
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
   let domRef = useDOMRef(ref);
 
   let themeKey = Object.keys(theme[colorScheme])[0];
@@ -122,7 +126,6 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper({children, slo
 
   let className = classNames(
     styleProps.className,
-    slotProps.className,
     styles['spectrum'],
     typographyStyles['spectrum'],
     theme[colorScheme][themeKey],

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, LabelPosition} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
@@ -42,6 +42,7 @@ export function useRadioProvider(): RadioGroupContext {
 function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
+  props = useSlotProps(props);
   let {
     isEmphasized,
     isRequired,
@@ -54,12 +55,10 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
     validationState,
     children,
     orientation = 'vertical',
-    slot,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
 
   let {selectedRadio, setSelectedRadio} = useRadioGroupState(props);
   let {radioGroupProps, labelProps, radioProps} = useRadioGroup(props);
@@ -81,8 +80,7 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
             labelStyles,
             'spectrum-Field'
           ),
-          styleProps.className,
-          slotProps.className
+          styleProps.className
         )
       }
       ref={domRef}>

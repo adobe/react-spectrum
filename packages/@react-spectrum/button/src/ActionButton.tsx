@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useFocusableRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -22,6 +22,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {
     elementType: ElementType = 'button',
     isQuiet,
@@ -32,7 +33,6 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
     children,
     holdAffordance,
     autoFocus,
-    slot,
     ...otherProps
   } = props;
 
@@ -43,7 +43,6 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
     ...otherButtonProps
   } = buttonProps;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
@@ -64,7 +63,6 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
               'is-disabled': isDisabled
             },
             styleProps.className,
-            slotProps.className,
             groupClassName
           )
         }>

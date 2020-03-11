@@ -17,7 +17,7 @@ import {
   createFocusableRef,
   filterDOMProps,
   TextInputDOMPropNames,
-  useSlotProvider,
+  useSlotProps,
   useStyleProps
 } from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
@@ -41,6 +41,7 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps {
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
   props = useFormProps(props);
+  props = useSlotProps(props);
   let {
     label,
     labelPosition = 'top' as LabelPosition,
@@ -57,7 +58,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     autoFocus,
     inputClassName,
     wrapperChildren,
-    slot,
     ...otherProps
   } = props;
   let domRef = useRef<HTMLDivElement>(null);
@@ -77,7 +77,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   }));
 
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
   let {labelProps, textFieldProps} = useTextField(props);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
   let isInvalid = validationState === 'invalid';
@@ -159,8 +158,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
         'spectrum-Field--positionTop': labelPosition === 'top',
         'spectrum-Field--positionSide': labelPosition === 'side'
       },
-      styleProps.className,
-      slotProps.className
+      styleProps.className
     );
 
     textField = React.cloneElement(textField, mergeProps(textField.props, {

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import {HTMLElement} from 'react-dom';
 import React, {ReactNode, RefObject} from 'react';
@@ -20,17 +20,16 @@ export interface HeadingProps extends DOMProps, StyleProps {
 }
 
 export const Heading = React.forwardRef((props: HeadingProps, ref: RefObject<HTMLElement>) => {
+  props = useSlotProps(props, 'heading');
   let {
     children,
-    slot = 'heading',
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
 
   // h level hardcoded for the moment and no specific className at the moment, this is barebones
   return (
-    <h1 {...filterDOMProps(otherProps, {'aria-level': 1})} {...styleProps} className={classNames({}, styleProps.className, slotProps.className)} ref={ref}>
+    <h1 {...filterDOMProps(otherProps, {'aria-level': 1})} {...styleProps} className={classNames({}, styleProps.className)} ref={ref}>
       {children}
     </h1>
   );

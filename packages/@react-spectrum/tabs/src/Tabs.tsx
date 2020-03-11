@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, Orientation, StyleProps} from '@react-types/shared';
 import React, {ReactElement, ReactNode} from 'react';
 import styles from '../style/index.css';
@@ -45,14 +45,13 @@ interface TabsProps extends DOMProps, StyleProps {
 
 export function Tabs(props: TabsProps) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let state = useTabListState(props);
   let {
     orientation = 'horizontal' as Orientation,
-    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
 
   let {tabPanelProps, tabsPropsArray} = useTabs(props, state);
   let children = React.Children.map(props.children, (c, i) =>
@@ -71,8 +70,7 @@ export function Tabs(props: TabsProps) {
         styles,
         'react-spectrum-TabPanel',
         `react-spectrum-TabPanel--${orientation}`,
-        styleProps.className,
-        slotProps.className
+        styleProps.className
       )}>
       <TabList
         {...otherProps}

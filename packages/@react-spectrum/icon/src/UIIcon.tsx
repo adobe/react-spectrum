@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
@@ -23,18 +23,17 @@ interface IconProps extends DOMProps, StyleProps {
 }
 
 export function UIIcon(props: IconProps) {
+  props = useSlotProps(props, 'uiIcon');
   let {
     alt,
     children,
     'aria-label': ariaLabel,
     'aria-hidden': ariaHidden,
     role = 'img',
-    slot = 'uiIcon',
     ...otherProps
   } = props;
 
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
   let provider = useProvider();
   let scale = 'M';
   if (provider !== null) {
@@ -60,7 +59,6 @@ export function UIIcon(props: IconProps) {
       {
         [`spectrum-UIIcon-${children.type['displayName']}`]: children.type['displayName']
       },
-      styleProps.className,
-      slotProps.className)
+      styleProps.className)
   });
 }

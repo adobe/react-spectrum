@@ -11,7 +11,7 @@
  */
 
 import {ButtonProps} from '@react-types/button';
-import {classNames, filterDOMProps, useFocusableRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
@@ -27,6 +27,7 @@ interface FieldButtonProps extends ButtonProps {
 
 // @private
 function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
+  props = useSlotProps(props);
   let {
     elementType: ElementType = 'button',
     isQuiet,
@@ -35,13 +36,11 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
     icon,
     children,
     autoFocus,
-    slot,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
@@ -58,8 +57,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
               'is-disabled': isDisabled,
               'is-invalid': validationState === 'invalid'
             },
-            styleProps.className,
-            slotProps.className
+            styleProps.className
           )
         }>
         {cloneElement(icon, {size: 'S'})}

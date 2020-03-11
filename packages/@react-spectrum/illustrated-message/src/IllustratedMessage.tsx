@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import React, {forwardRef} from 'react';
 import {SpectrumIllustratedMessageProps} from '@react-types/illustrated-message';
@@ -19,16 +19,15 @@ import typographyStyles from '@adobe/spectrum-css-temp/components/typography/var
 import {useIllustratedMessage} from '@react-aria/illustrated-message';
 
 function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
+  props = useSlotProps(props);
   let {
     illustration,
     heading,
     description,
-    slot,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
   let {
     illustrationProps,
     headingProps
@@ -40,7 +39,7 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
       {...filterDOMProps(otherProps)}
       {...styleProps}
       ref={domRef}
-      className={classNames(styles, 'spectrum-IllustratedMessage', styleProps.className, slotProps.className)}>
+      className={classNames(styles, 'spectrum-IllustratedMessage', styleProps.className)}>
       {illustration &&
         React.cloneElement(illustration, {
           ...illustrationProps,

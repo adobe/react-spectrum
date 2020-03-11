@@ -11,7 +11,7 @@
  */
 
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
-import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -28,6 +28,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 export function DateRangePicker(props: SpectrumDateRangePickerProps) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {
     isQuiet,
     isDisabled,
@@ -36,11 +37,9 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
     autoFocus,
     formatOptions,
     placeholderDate,
-    slot,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
   let state = useDateRangePickerState(props);
   let {comboboxProps, buttonProps, dialogProps, startFieldProps, endFieldProps} = useDateRangePicker(props, state);
   let {value, setDate, selectDateRange, isOpen, setOpen} = state;
@@ -56,8 +55,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
       'is-invalid': state.validationState === 'invalid',
       'is-disabled': isDisabled
     },
-    styleProps.className,
-    slotProps.className
+    styleProps.className
   );
 
   return (

@@ -13,7 +13,7 @@
 import {ButtonGroupButton, SpectrumButtonGroupProps} from '@react-types/button';
 import {ButtonGroupState, useButtonGroupState} from '@react-stately/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps} from '@react-spectrum/utils';
 import {CollectionBase, SelectionMode} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {PressResponder} from '@react-aria/interactions';
@@ -24,6 +24,7 @@ import {useButtonGroup} from '@react-aria/button';
 import {useSelectableItem} from '@react-aria/selection';
 
 export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupProps) {
+  props = useSlotProps(props);
   let {
     isEmphasized,
     isConnected, // no quiet option available in this mode

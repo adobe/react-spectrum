@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useFocusableRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
@@ -21,19 +21,18 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {
     elementType: ElementType = 'button',
     variant,
     children,
     isDisabled,
     autoFocus,
-    slot,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
@@ -51,8 +50,7 @@ function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef) {
               'is-disabled': isDisabled,
               'is-active': isPressed
             },
-            styleProps.className,
-            slotProps.className
+            styleProps.className
           )
         }>
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>

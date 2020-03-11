@@ -18,7 +18,7 @@ import {CalendarTableBody} from './CalendarTableBody';
 import {CalendarTableHeader} from './CalendarTableHeader';
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
-import {classNames, filterDOMProps, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
@@ -33,10 +33,10 @@ interface CalendarBaseProps extends CalendarPropsBase, DOMProps, StyleProps {
 
 export function CalendarBase(props: CalendarBaseProps) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {
     state,
     aria,
-    slot,
     ...otherProps
   } = props;
   let monthDateFormatter = useDateFormatter({month: 'long', year: 'numeric'});
@@ -50,7 +50,6 @@ export function CalendarBase(props: CalendarBaseProps) {
   } = aria;
   let {direction} = useLocale();
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
 
   return (
     <div
@@ -60,8 +59,7 @@ export function CalendarBase(props: CalendarBaseProps) {
       className={
         classNames(styles,
           'spectrum-Calendar',
-          styleProps.className,
-          slotProps.className
+          styleProps.className
         )
       }>
       <div className={classNames(styles, 'spectrum-Calendar-header')}>

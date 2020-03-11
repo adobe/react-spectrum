@@ -11,12 +11,22 @@
  */
 
 import React, {useContext} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import styles from '@react-spectrum/layout/stories/styles.css';
 
 export let SlotContext = React.createContext(null);
 
-export function useSlotProvider(slot?: string): any {
-  let {[slot]: props = {}} = useContext(SlotContext) || {};
-  return props;
+export function useSlotProps(props: any, defaultSlot?: string): any {
+  let slot = props.slot || defaultSlot;
+  let {[slot]: slotProps = {}} = useContext(SlotContext) || {};
+  return mergeProps(slotProps, props);
+}
+
+export function cssModuleToSlots(cssModule) {
+  return Object.keys(cssModule).reduce((acc, slot) => {
+    acc[slot] = {UNSAFE_className: cssModule[slot]};
+    return acc;
+  }, {})
 }
 
 export function ClearSlots(props) {

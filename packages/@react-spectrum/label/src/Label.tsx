@@ -11,7 +11,7 @@
  */
 
 import Asterisk from '@spectrum-icons/ui/Asterisk';
-import {classNames, filterDOMProps, useDOMRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import intlMessages from '../intl/*.json';
 import React from 'react';
@@ -22,6 +22,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   props = useProviderProps(props);
+  props = useSlotProps(props, 'label');
   let {
     children,
     labelPosition = 'top',
@@ -31,13 +32,11 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
     htmlFor,
     for: labelFor,
     elementType: ElementType = 'label',
-    slot = 'label',
     ...otherProps
   } = props;
 
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
 
   let formatMessage = useMessageFormatter(intlMessages);
   let necessityLabel = isRequired ? formatMessage('(required)') : formatMessage('(optional)');
@@ -54,8 +53,7 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
       'spectrum-FieldLabel--positionSide': labelPosition === 'side',
       'spectrum-FieldLabel--alignEnd': labelAlign === 'end'
     },
-    styleProps.className,
-    slotProps.className
+    styleProps.className
   );
 
   return (

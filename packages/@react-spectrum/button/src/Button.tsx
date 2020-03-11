@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useFocusableRef, useSlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {cloneElement} from 'react';
@@ -26,6 +26,7 @@ let VARIANT_MAPPING = {
 
 function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {
     elementType: ElementType = 'button',
     children,
@@ -34,13 +35,11 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
     isDisabled,
     icon,
     autoFocus,
-    slot,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
-  let slotProps = useSlotProvider(slot);
 
   let buttonVariant = variant;
   if (VARIANT_MAPPING[variant]) {
@@ -64,8 +63,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
               'is-disabled': isDisabled,
               'is-active': isPressed
             },
-            styleProps.className,
-            slotProps.className
+            styleProps.className
           )
         }>
         {icon && cloneElement(
