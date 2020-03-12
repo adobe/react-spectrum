@@ -141,6 +141,7 @@ export class CollectionBuilder<T> {
       value: partialNode.value,
       level: parentNode ? parentNode.level + 1 : 0,
       rendered: partialNode.rendered,
+      textValue: partialNode.textValue,
       wrapper: partialNode.wrapper,
       hasChildNodes: partialNode.hasChildNodes,
       childNodes: iterable(function *() {
