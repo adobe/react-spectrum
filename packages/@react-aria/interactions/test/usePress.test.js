@@ -25,7 +25,8 @@ function pointerEvent(type, opts) {
   Object.assign(evt, {
     ctrlKey: false,
     metaKey: false,
-    shiftKey: false
+    shiftKey: false,
+    button: opts.button || 0
   }, opts);
   return evt;
 }
@@ -302,6 +303,23 @@ describe('usePress', function () {
         }
       ]);
     });
+
+    it('should only handle left clicks', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', button: 1}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', button: 1, clientX: 0, clientY: 0}));
+      expect(events).toEqual([]);
+    });
   });
 
   describe('mouse events', function () {
@@ -518,6 +536,25 @@ describe('usePress', function () {
           shiftKey: true
         }
       ]);
+    });
+
+    it('should only handle left clicks', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.mouseDown(el, {button: 1});
+      fireEvent.mouseUp(el, {button: 1});
+      fireEvent.click(el, {button: 1});
+
+      expect(events).toEqual([]);
     });
   });
 

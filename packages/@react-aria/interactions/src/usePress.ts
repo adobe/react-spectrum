@@ -186,7 +186,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
       },
       onClick(e) {
-        if (e) {
+        if (e && e.button === 0) {
           e.stopPropagation();
           if (isDisabled) {
             e.preventDefault();
@@ -207,6 +207,11 @@ export function usePress(props: PressHookProps): PressResult {
 
     if (typeof PointerEvent !== 'undefined') {
       pressProps.onPointerDown = (e) => {
+        // Only handle left clicks
+        if (e.button !== 0) {
+          return;
+        }
+
         e.stopPropagation();
         if (!state.isPressed) {
           state.isPressed = true;
@@ -248,7 +253,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       let onPointerUp = (e: PointerEvent) => {
-        if (e.pointerId === state.activePointerId && state.isPressed) {
+        if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0) {
           let rect = state.target.getBoundingClientRect();
           if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
             triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType);
@@ -276,6 +281,11 @@ export function usePress(props: PressHookProps): PressResult {
       };
     } else {
       pressProps.onMouseDown = (e) => {
+        // Only handle left clicks
+        if (e.button !== 0) {
+          return;
+        }
+
         e.stopPropagation();
         if (state.ignoreEmulatedMouseEvents) {
           e.nativeEvent.preventDefault();
@@ -304,6 +314,11 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       let onMouseUp = (e: MouseEvent) => {
+        // Only handle left clicks
+        if (e.button !== 0) {
+          return;
+        }
+        
         state.isPressed = false;
         document.removeEventListener('mouseup', onMouseUp, false);
 
