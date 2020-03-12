@@ -40,7 +40,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     key
   } = item;
 
-  let ref = useRef<HTMLLIElement>();
+  let ref = useRef<HTMLDivElement>();
   let {optionProps} = useOption(
     {
       isSelected,
@@ -54,7 +54,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <li
+      <div
         {...optionProps}
         ref={ref}
         className={classNames(
@@ -94,7 +94,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
               } />
           }
         </Grid>  
-      </li>
+      </div>
     </FocusRing>
   );
 }

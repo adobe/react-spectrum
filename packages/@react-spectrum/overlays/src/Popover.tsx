@@ -30,7 +30,7 @@ function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
   let {style, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, ...otherProps} = props;
   let backupRef = useRef();
   let domRef = ref || backupRef;
-  let {overlayProps} = useOverlay({ref: domRef, onClose, isOpen});
+  let {overlayProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
 
   return (
     <div
