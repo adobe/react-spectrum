@@ -62,8 +62,8 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     ...otherProps
   } = props;
 
-  // Merge options with parent provider
-  let context = Object.assign({}, prevContext, {
+  // select only the props with values so undefined props don't overwrite prevContext values
+  let currentProps = {
     version,
     theme,
     colorScheme,
@@ -75,7 +75,12 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     isRequired,
     isReadOnly,
     validationState
-  });
+  };
+  let filteredProps = {};
+  Object.entries(currentProps).forEach(([key, value]) => value !== undefined && (filteredProps[key] = value));
+
+  // Merge options with parent provider
+  let context = Object.assign({}, prevContext, filteredProps);
 
   useEffect(() => {
     configureTypekit(typekitId);
