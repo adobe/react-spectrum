@@ -64,5 +64,6 @@ export interface SpectrumButtonGroupProps extends ButtonGroupProps {
 }
 
 export interface SpectrumLogicButtonProps extends ButtonProps {
+  /** The type of boolean sequence to be represented by the LogicButton. */
   variant: 'and' | 'or'
 }
