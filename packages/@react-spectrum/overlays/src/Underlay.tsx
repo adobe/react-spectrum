@@ -22,6 +22,7 @@ export function Underlay({isOpen, ...props}: UnderlayProps) {
   return (
     <div 
       {...filterDOMProps(props)}
+      tabIndex={-1}
       className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen})} />
   );
 }
