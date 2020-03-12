@@ -40,6 +40,11 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
   // TODO: DNA variable?
   let isMobile = useMediaQuery('(max-width: 700px)');
   if (isMobile) {
+    // handle cases where desktop popovers need a close button for the mobile modal view
+    if (type !== 'modal' && mobileType === 'modal') {
+      isDismissable = true;
+    }
+
     type = mobileType;
   }
 
