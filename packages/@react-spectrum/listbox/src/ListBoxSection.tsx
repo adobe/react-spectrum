@@ -11,39 +11,49 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {layoutInfoToStyle, useCollectionItem} from '@react-aria/collections';
 import {ListState} from '@react-stately/list';
 import {Node} from '@react-stately/collections';
-import React, {Fragment, ReactNode} from 'react';
+import React, {Fragment, ReactNode, useRef} from 'react';
+import {ReusableView} from '@react-stately/collections';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useListBoxSection} from '@react-aria/listbox';
 import {useSeparator} from '@react-aria/separator';
 
 interface ListBoxSectionProps<T> {
-  item: Node<T>,
+  reusableView: ReusableView<Node<T>, unknown>,
+  header: ReusableView<Node<T>, unknown>,
   state: ListState<T>,
   children?: ReactNode
 }
 
 export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
-  let {item, state, children} = props;
-  let {itemProps, headingProps, groupProps} = useListBoxSection();
+  let {state, children, reusableView, header} = props;
+  let item = reusableView.content;
+  let {headingProps, groupProps} = useListBoxSection();
   let {separatorProps} = useSeparator({
     elementType: 'li'
   });
 
+  let headerRef = useRef();
+  useCollectionItem({
+    reusableView: header,
+    ref: headerRef
+  });
+
   return (
     <Fragment>
-      {item.key !== state.collection.getFirstKey() &&
-        <li
-          {...separatorProps}
-          className={classNames(
-            styles,
-            'spectrum-Menu-divider'
-          )} />
-      }
-      <li {...itemProps}>
+      <div role="presentation" ref={headerRef} style={layoutInfoToStyle(header.layoutInfo)}>
+        {item.key !== state.collection.getFirstKey() &&
+          <div
+            {...separatorProps}
+            className={classNames(
+              styles,
+              'spectrum-Menu-divider'
+            )} />
+        }
         {item.rendered &&
-          <span
+          <div
             {...headingProps}
             className={
               classNames(
@@ -52,19 +62,20 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
               )
             }>
             {item.rendered}
-          </span>
+          </div>
         }
-        <ul
-          {...groupProps}
-          className={
-            classNames(
-              styles, 
-              'spectrum-Menu'
-            )
-          }>
-          {children}
-        </ul>
-      </li>
+      </div>
+      <div
+        {...groupProps}
+        style={layoutInfoToStyle(reusableView.layoutInfo)}
+        className={
+          classNames(
+            styles, 
+            'spectrum-Menu'
+          )
+        }>
+        {children}
+      </div>
     </Fragment>
   );
 }
