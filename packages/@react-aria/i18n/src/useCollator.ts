@@ -10,8 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './context';
-export * from './useMessageFormatter';
-export * from './useDateFormatter';
-export * from './useNumberFormatter';
-export * from './useCollator';
+import {useLocale} from './context';
+
+let cache = new Map<string, Intl.Collator>();
+export function useCollator(options?: Intl.CollatorOptions) {
+  let {locale} = useLocale();
+
+  let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
+  if (cache.has(cacheKey)) {
+    return cache.get(cacheKey);
+  }
+
+  let formatter = new Intl.Collator(locale, options);
+  cache.set(cacheKey, formatter);
+  return formatter;
+}

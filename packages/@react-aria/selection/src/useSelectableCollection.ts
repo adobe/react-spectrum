@@ -12,7 +12,9 @@
 
 import {FocusEvent, HTMLAttributes, KeyboardEvent, useEffect} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
+import {useTypeSelect} from './useTypeSelect';
 
 type FocusStrategy = 'first' | 'last';
 
@@ -208,11 +210,16 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  let {typeSelectProps} = useTypeSelect({
+    keyboardDelegate: delegate,
+    selectionManager: manager
+  });
+
   return {
-    collectionProps: {
+    collectionProps: mergeProps(typeSelectProps, {
       onKeyDown,
       onFocus,
       onBlur
-    }
+    })
   };
 }
