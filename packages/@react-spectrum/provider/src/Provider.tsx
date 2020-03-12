@@ -71,7 +71,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     validationState
   };
   let filteredProps = {};
-  Object.entries(currentProps).forEach((aProp) => aProp[1] !== undefined && (filteredProps[aProp[0]] = aProp[1]));
+  Object.entries(currentProps).forEach(([key, value]) => value !== undefined && (filteredProps[key] = value));
 
   // Merge options with parent provider
   let context = Object.assign({}, prevContext, filteredProps);
