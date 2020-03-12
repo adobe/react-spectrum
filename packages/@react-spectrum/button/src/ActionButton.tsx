@@ -85,5 +85,9 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
   );
 }
 
+/**
+ * ActionButtons allow users to perform an action or mark a selection.
+ * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
+ */
 let _ActionButton = React.forwardRef(ActionButton);
 export {_ActionButton as ActionButton};
