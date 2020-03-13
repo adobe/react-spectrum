@@ -22,31 +22,33 @@ export class TreeCollection<T> implements Collection<Node<T>> {
   constructor(nodes: Iterable<Node<T>>) {
     this.iterable = nodes;
 
-    let visit = (node: Node<T>) => {
+    let visit = (node: Node<T>, parentKey: Key) => {
+      node.parentKey = parentKey;
       this.keyMap.set(node.key, node);
 
       if (node.childNodes && (node.type === 'section' || node.isExpanded)) {
         for (let child of node.childNodes) {
-          visit(child);
+          visit(child, node.key);
         }
       }
     };
 
     for (let node of nodes) {
-      visit(node);
+      visit(node, null);
     }
 
     let last: Node<T>;
+    let index = 0;
     for (let [key, node] of this.keyMap) {
-      if (node.type !== 'item') {
-        continue;
-      }
-      
       if (last) {
         last.nextKey = key;
         node.prevKey = last.key;
       } else {
         this.firstKey = key;
+      }
+
+      if (node.type === 'item') {
+        node.index = index++;
       }
 
       last = node;
@@ -57,6 +59,10 @@ export class TreeCollection<T> implements Collection<Node<T>> {
 
   *[Symbol.iterator]() {
     yield* this.iterable;
+  }
+
+  get size() {
+    return this.keyMap.size;
   }
 
   getKeys() {

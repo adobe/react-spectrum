@@ -12,17 +12,23 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button} from '@react-spectrum/button';
+import {chain} from '@react-aria/utils';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
+import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
-import React from 'react';
+import {Heading} from '@react-spectrum/typography';
+import React, {useContext} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
-import {Text} from '@react-spectrum/typography';
 
 export function AlertDialog(props: SpectrumAlertDialogProps) {
+  let {
+    onClose = () => {}
+  } = useContext(DialogContext) || {} as DialogContextValue;
+
   let {
     variant,
     children,
@@ -32,8 +38,8 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
     autoFocusButton,
     title,
     isConfirmDisabled,
-    onCancel,
-    onConfirm,
+    onCancel = () => {},
+    onConfirm = () => {},
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -49,13 +55,13 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
 
   return (
     <Dialog {...styleProps} UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)} size="M" role="alertdialog">
-      <Header><Text slot="title">{title}</Text>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
+      <Header><Heading>{title}</Heading>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
       <Divider size="M" />
       <Content>{children}</Content>
       <Footer>
-        {secondaryLabel && <Button variant="secondary" onPress={() => onConfirm('secondary')} autoFocus={autoFocusButton === 'secondary'}>{secondaryLabel}</Button>}
-        {cancelLabel && <Button variant="secondary" onPress={onCancel} autoFocus={autoFocusButton === 'cancel'}>{cancelLabel}</Button>}
-        <Button variant={confirmVariant} onPress={() => onConfirm('primary')} isDisabled={isConfirmDisabled} autoFocus={autoFocusButton === 'primary'}>{primaryLabel}</Button>
+        {secondaryLabel && <Button variant="secondary" onPress={() => chain(onClose(), onConfirm('secondary'))} autoFocus={autoFocusButton === 'secondary'}>{secondaryLabel}</Button>}
+        {cancelLabel && <Button variant="secondary" onPress={() => chain(onClose(), onCancel())} autoFocus={autoFocusButton === 'cancel'}>{cancelLabel}</Button>}
+        <Button variant={confirmVariant} onPress={() => chain(onClose(), onConfirm('primary'))} isDisabled={isConfirmDisabled} autoFocus={autoFocusButton === 'primary'}>{primaryLabel}</Button>
       </Footer>
     </Dialog>
   );

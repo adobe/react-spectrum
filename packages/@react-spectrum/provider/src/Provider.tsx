@@ -29,17 +29,19 @@ const Context = React.createContext<ProviderContext | null>(null);
 
 function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let prevContext = useProvider();
+  let prevColorScheme = prevContext && prevContext.colorScheme;
   let {
     theme = prevContext && prevContext.theme,
-    defaultColorScheme = prevContext ? prevContext.colorScheme : 'light'
+    defaultColorScheme
   } = props;
   // Hooks must always be called.
   let autoColorScheme = useColorScheme(theme, defaultColorScheme);
   let autoScale = useScale(theme);
   let {locale: prevLocale} = useLocale();
 
+  // importance of color scheme props > parent > auto:(OS > default > omitted)
   let {
-    colorScheme = autoColorScheme,
+    colorScheme = prevColorScheme || autoColorScheme,
     scale = prevContext ? prevContext.scale : autoScale,
     typekitId,
     locale = prevContext ? prevLocale : null,
@@ -54,8 +56,8 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     ...otherProps
   } = props;
 
-  // Merge options with parent provider
-  let context = Object.assign({}, prevContext, {
+  // select only the props with values so undefined props don't overwrite prevContext values
+  let currentProps = {
     version,
     theme,
     colorScheme,
@@ -67,7 +69,12 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     isRequired,
     isReadOnly,
     validationState
-  });
+  };
+  let filteredProps = {};
+  Object.entries(currentProps).forEach(([key, value]) => value !== undefined && (filteredProps[key] = value));
+
+  // Merge options with parent provider
+  let context = Object.assign({}, prevContext, filteredProps);
 
   useEffect(() => {
     configureTypekit(typekitId);

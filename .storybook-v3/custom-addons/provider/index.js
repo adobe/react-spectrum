@@ -16,7 +16,7 @@ function ProviderUpdater(props) {
   let [localeValue, setLocale] = useState(providerValuesFromUrl.locale || undefined);
   let [themeValue, setTheme] = useState(providerValuesFromUrl.theme || undefined);
   let [scaleValue, setScale] = useState(providerValuesFromUrl.scale || undefined);
-  let [toastPositionValue, setToastPosition] = useState(providerValuesFromUrl.toastPosition || 'top');
+  let [toastPositionValue, setToastPosition] = useState(providerValuesFromUrl.toastPosition || 'bottom');
   let [storyReady, setStoryReady] = useState(window.parent === window); // reduce content flash because it takes a moment to get the provider details
   // Typically themes are provided with both light + dark, and both scales.
   // To build our selector to see all themes, we need to hack it a bit.

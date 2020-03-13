@@ -169,7 +169,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       let nextElement = null;
 
       if (e.shiftKey) {
-        if (position === 0) {
+        if (position <= 0) {
           nextElement = elements[lastPosition];
         } else {
           nextElement = elements[position - 1];

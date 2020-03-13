@@ -1,8 +1,6 @@
 version: 2.1
 orbs:
   azure-cli: circleci/azure-cli@1.1.0
-  codecov: codecov/codecov@1.0.2
-
 jobs:
   build:
     docker:
@@ -47,13 +45,6 @@ jobs:
       - run:
           name: test
           command: make ci-test
-
-      - store_artifacts:
-          path: coverage
-
-      - codecov/upload:
-          file: coverage/*
-          token: fd485295-0e96-47ad-a3fc-ef9d5ee0332b
 
   lint:
     docker:
