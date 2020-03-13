@@ -469,4 +469,45 @@ describe('DialogTrigger', function () {
       getByRole('dialog');
     }).toThrow();
   });
+
+  it('nested dialogs should get focus upon render', async function () {
+    function Test() {
+      return (
+        <Provider theme={theme}>
+          <DialogTrigger>
+            <ActionButton>Trigger1</ActionButton>
+            <Dialog data-testid="dialog1">
+              contents1
+              <DialogTrigger>
+                <ActionButton autoFocus>Trigger2</ActionButton>
+                <Dialog data-testid="dialog2">
+                  contents2
+                </Dialog>
+              </DialogTrigger>
+            </Dialog>
+          </DialogTrigger>
+        </Provider>
+      );
+    }
+
+    let tree = render(<Test />);
+    let trigger1 = tree.getByText('Trigger1');
+    triggerPress(trigger1);
+    await waitForDomChange(); // wait for animation
+
+    let dialog1 = tree.getByTestId('dialog1');
+
+    expect(dialog1).toBeVisible();
+    expect(document.activeElement).toEqual(dialog1);
+
+    let trigger2 = tree.getByText('Trigger2');
+    // trigger2.focus();
+    // fireEvent.focusIn(trigger2);
+    triggerPress(trigger2);
+
+    await waitForDomChange(); // wait for animation
+    let dialog2 = tree.getByTestId('dialog2');
+    expect(dialog2).toBeVisible();
+    expect(document.activeElement).toEqual(dialog2);
+  });
 });
