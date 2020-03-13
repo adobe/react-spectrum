@@ -13,7 +13,7 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
@@ -25,6 +25,7 @@ import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 
 export function AlertDialog(props: SpectrumAlertDialogProps) {
+  props = useSlotProps(props);
   let {
     onClose = () => {}
   } = useContext(DialogContext) || {} as DialogContextValue;
@@ -56,7 +57,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
   return (
     <Dialog {...styleProps} UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)} size="M" role="alertdialog">
       <Header><Heading>{title}</Heading>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
-      <Divider size="M" />
+      <Divider />
       <Content>{children}</Content>
       <Footer>
         {secondaryLabel && <Button variant="secondary" onPress={() => chain(onClose(), onConfirm('secondary'))} autoFocus={autoFocusButton === 'secondary'}>{secondaryLabel}</Button>}

@@ -14,5 +14,6 @@ import {ProgressBarBaseProps, SpectrumProgressBarBaseProps} from '@react-types/p
 
 export type MeterProps = ProgressBarBaseProps;
 export interface SpectrumMeterProps extends SpectrumProgressBarBaseProps {
+  /** The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter. */
   variant: 'positive' | 'warning' | 'critical'
 }

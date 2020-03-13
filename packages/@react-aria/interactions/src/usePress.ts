@@ -156,37 +156,24 @@ export function usePress(props: PressHookProps): PressResult {
         if (isValidKeyboardEvent(e.nativeEvent)) {
           e.preventDefault();
           e.stopPropagation();
-          // If the target is a link,
-          // defer triggering pressStart until onClick event handler.
-          if (isHTMLAnchorLink(e.target as HTMLElement) ||
-            (e.target as HTMLElement).getAttribute('role') === 'link') {
-            return;
-          }
-          if (!state.isPressed) {
+
+
+          // If the event is repeating, it may have started on a different element
+          // after which focus moved to the current element. Ignore these events and
+          // only handle the first key down event.
+          if (!state.isPressed && !e.repeat) {
+            state.target = e.target as HTMLElement;
             state.isPressed = true;
             triggerPressStart(e, 'keyboard');
-          }
-        }
-      },
-      onKeyUp(e) {
-        if (isValidKeyboardEvent(e.nativeEvent)) {
-          e.preventDefault();
-          e.stopPropagation();
-          // If the target is a link, trigger the click method to open the URL,
-          // but defer triggering pressEnd until onClick event handler.
-          if (isHTMLAnchorLink(e.target as HTMLElement) ||
-            (e.target as HTMLElement).getAttribute('role') === 'link') {
-            (e.target as HTMLElement).click();
-            return;
-          }
-          if (state.isPressed) {
-            state.isPressed = false;
-            triggerPressEnd(e, 'keyboard');
+
+            // Focus may move before the key up event, so register the event on the document
+            // instead of the same element where the key down event occurred.
+            document.addEventListener('keyup', onKeyUp, false);
           }
         }
       },
       onClick(e) {
-        if (e) {
+        if (e && e.button === 0) {
           e.stopPropagation();
           if (isDisabled) {
             e.preventDefault();
@@ -205,8 +192,30 @@ export function usePress(props: PressHookProps): PressResult {
       }
     };
 
+    let onKeyUp = (e: KeyboardEvent) => {
+      if (state.isPressed && isValidKeyboardEvent(e)) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        state.isPressed = false;
+        triggerPressEnd(createEvent(state.target, e), 'keyboard', e.target === state.target);
+        document.removeEventListener('keyup', onKeyUp, false);
+
+        // If the target is a link, trigger the click method to open the URL,
+        // but defer triggering pressEnd until onClick event handler.
+        if (e.target === state.target && isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link') {
+          state.target.click();
+        }
+      }
+    };
+
     if (typeof PointerEvent !== 'undefined') {
       pressProps.onPointerDown = (e) => {
+        // Only handle left clicks
+        if (e.button !== 0) {
+          return;
+        }
+
         e.stopPropagation();
         if (!state.isPressed) {
           state.isPressed = true;
@@ -248,7 +257,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       let onPointerUp = (e: PointerEvent) => {
-        if (e.pointerId === state.activePointerId && state.isPressed) {
+        if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0) {
           let rect = state.target.getBoundingClientRect();
           if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
             triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType);
@@ -276,6 +285,11 @@ export function usePress(props: PressHookProps): PressResult {
       };
     } else {
       pressProps.onMouseDown = (e) => {
+        // Only handle left clicks
+        if (e.button !== 0) {
+          return;
+        }
+
         e.stopPropagation();
         if (state.ignoreEmulatedMouseEvents) {
           e.nativeEvent.preventDefault();
@@ -304,6 +318,11 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       let onMouseUp = (e: MouseEvent) => {
+        // Only handle left clicks
+        if (e.button !== 0) {
+          return;
+        }
+        
         state.isPressed = false;
         document.removeEventListener('mouseup', onMouseUp, false);
 
