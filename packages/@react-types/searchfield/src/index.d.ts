@@ -20,4 +20,4 @@ export interface SearchFieldProps extends TextFieldProps {
   onClear?: () => void
 }
 
-interface SpectrumSearchFieldProps extends SearchFieldProps, SpectrumTextFieldProps {}
+export interface SpectrumSearchFieldProps extends SearchFieldProps, SpectrumTextFieldProps {}

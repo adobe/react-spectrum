@@ -93,7 +93,8 @@ The most commonly used handlers for events in SearchField are the:
 - `onSubmit` prop which is triggered whenever the value is submitted by the user. 
 - `onClear` prop which is triggered whenever the value is cleared by the user. 
 
-The example below uses `onChange`, `onSubmit`, and `onClear` to update a separate elements with the text entered into the SearchField.
+The example below uses `onChange`, `onSubmit`, and `onClear` to update two separate elements with the text entered into the SearchField.
+
 ```tsx example
 function Example() {
   let [currentText, setCurrentText] = React.useState();
