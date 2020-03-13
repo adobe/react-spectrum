@@ -29,7 +29,6 @@ describe('useLink', function () {
     expect(linkProps.tabIndex).toBe(0);
     expect(linkProps.id).toBeDefined();
     expect(typeof linkProps.onKeyDown).toBe('function');
-    expect(typeof linkProps.onKeyUp).toBe('function');
   });
 
   it('handles custom children', function () {
@@ -46,7 +45,6 @@ describe('useLink', function () {
     expect(linkProps.tabIndex).toBeUndefined();
     expect(linkProps.id).toBeDefined();
     expect(typeof linkProps.onKeyDown).toBe('function');
-    expect(typeof linkProps.onKeyUp).toBe('function');
   });
 
   it('handles href warning', function () {

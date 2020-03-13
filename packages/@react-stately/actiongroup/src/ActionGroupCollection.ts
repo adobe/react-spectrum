@@ -13,7 +13,7 @@
 import {Collection} from '@react-stately/collections';
 import {Key, ReactElement} from 'react';
 
-export class ButtonGroupCollection<T extends ReactElement> implements Collection<T> {
+export class ActionGroupCollection<T extends ReactElement> implements Collection<T> {
   public items: T[];
   private keys: Key[];
 
