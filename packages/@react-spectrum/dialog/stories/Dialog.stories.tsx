@@ -18,12 +18,12 @@ import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
+import {Heading, Text} from '@react-spectrum/typography';
 import {Image} from '@react-spectrum/image';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/typography';
 import {TextField} from '@react-spectrum/textfield';
 
 storiesOf('Dialog', module)
@@ -36,7 +36,7 @@ storiesOf('Dialog', module)
   )
   .add(
   'isDismissable',
-  () => render({isDismissable: true, onDismiss: action('dismissed')})
+  () => render({isDismissable: true})
   )
   .add(
     'long content',
@@ -48,7 +48,7 @@ storiesOf('Dialog', module)
   )
   .add(
     'with hero, isDimissable',
-    () => renderHero({isDismissable: true, onDismiss: action('dismissed')})
+    () => renderHero({isDismissable: true})
   )
   .add(
     'small',
@@ -63,20 +63,12 @@ storiesOf('Dialog', module)
     () => render({size: 'L'})
   )
   .add(
-    'fullscreen',
-    () => render({size: 'fullscreen'})
-  )
-  .add(
-    'fullscreenTakeover',
-    () => render({size: 'fullscreenTakeover'})
-  )
-  .add(
     'form',
     () => renderWithForm({})
   )
   .add(
     'fullscreenTakeover form',
-    () => renderWithForm({size: 'fullscreenTakeover'})
+    () => renderWithForm({type: 'fullscreenTakeover'})
   )
   .add(
     'three buttons',
@@ -206,41 +198,47 @@ storiesOf('Dialog/Alert', module)
     })
   );
 
-function render({width = 'auto', ...props}) {
+function render({width = 'auto', isDismissable = undefined, ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger isDismissable={isDismissable} defaultOpen>
         <ActionButton>Trigger</ActionButton>
-        <Dialog {...props}>
-          <Header><Text slot="title">The Title</Text></Header>
-          <Divider size="M" />
-          <Content>{singleParagraph()}</Content>
-          <Footer>
-            <Button variant="secondary">Cancel</Button>
-            <Button variant="cta">Confirm</Button>
-          </Footer>
-        </Dialog>
+        {(close) => (
+          <Dialog {...props}>
+            <Header><Heading>The Heading</Heading></Header>
+            <Divider />
+            <Content>{singleParagraph()}</Content>
+            {!isDismissable &&
+              <Footer>
+                <Button variant="secondary" onPress={close}>Cancel</Button>
+                <Button variant="cta" onPress={close}>Confirm</Button>
+              </Footer>}
+          </Dialog>
+        )}
       </DialogTrigger>
     </div>
   );
 }
 
 
-function renderHero({width = 'auto', ...props}) {
+function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger isDismissable={isDismissable} defaultOpen>
         <ActionButton>Trigger</ActionButton>
-        <Dialog {...props}>
-          <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
-          <Header><Text slot="title">The Title</Text></Header>
-          <Divider size="M" />
-          <Content>{singleParagraph()}</Content>
-          <Footer>
-            <Button variant="secondary">Cancel</Button>
-            <Button variant="cta" autoFocus>Confirm</Button>
-          </Footer>
-        </Dialog>
+        {(close) => (
+          <Dialog {...props}>
+            <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+            <Header><Heading>The Heading</Heading></Header>
+            <Divider />
+            <Content>{singleParagraph()}</Content>
+            {!isDismissable &&
+              <Footer>
+                <Button variant="secondary" onPress={close}>Cancel</Button>
+                <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+              </Footer>}
+          </Dialog>
+          )}
       </DialogTrigger>
     </div>
   );
@@ -249,9 +247,9 @@ function renderHero({width = 'auto', ...props}) {
 function renderAlert({width = 'auto', ...props}: SpectrumAlertDialogProps) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
-        <AlertDialog {...props} />
+        <AlertDialog {...props} onConfirm={props.onConfirm} onCancel={props.onCancel} />
       </DialogTrigger>
     </div>
   );
@@ -261,33 +259,35 @@ function renderAlert({width = 'auto', ...props}: SpectrumAlertDialogProps) {
 function renderWithForm({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger defaultOpen type={props.type}>
         <ActionButton>Trigger</ActionButton>
-        <Dialog {...props}>
-          <Header><Text slot="title">The Title</Text></Header>
-          <Divider size="M" />
-          <Content>
-            <Form>
-              <TextField label="Last Words" autoFocus />
-              <Checkbox>Acknowledge robot overlords</Checkbox>
-              <RadioGroup label="Preferred Job" name="jobs">
-                <Radio value="battery">Battery</Radio>
-                <Radio value="storage">Information Storage</Radio>
-                <Radio value="processor">Processor</Radio>
-                <Radio value="zoo">Zoo stock</Radio>
-                <Radio value="translator">Emotional Translator</Radio>
-                <Radio value="hunter">Bounty Hunter</Radio>
-                <Radio value="actor">Actor</Radio>
-                <Radio value="tester">Waterslide Tester</Radio>
-                <Radio value="psychiatrist">Psychiatrist</Radio>
-              </RadioGroup>
-            </Form>
-          </Content>
-          <Footer>
-            <Button variant="secondary">Cancel</Button>
-            <Button variant="cta">Confirm</Button>
-          </Footer>
-        </Dialog>
+        {(close) => (
+          <Dialog {...props}>
+            <Header><Heading>The Heading</Heading></Header>
+            <Divider />
+            <Content>
+              <Form>
+                <TextField label="Last Words" autoFocus />
+                <Checkbox>Acknowledge robot overlords</Checkbox>
+                <RadioGroup label="Preferred Job" name="jobs">
+                  <Radio value="battery">Battery</Radio>
+                  <Radio value="storage">Information Storage</Radio>
+                  <Radio value="processor">Processor</Radio>
+                  <Radio value="zoo">Zoo stock</Radio>
+                  <Radio value="translator">Emotional Translator</Radio>
+                  <Radio value="hunter">Bounty Hunter</Radio>
+                  <Radio value="actor">Actor</Radio>
+                  <Radio value="tester">Waterslide Tester</Radio>
+                  <Radio value="psychiatrist">Psychiatrist</Radio>
+                </RadioGroup>
+              </Form>
+            </Content>
+            <Footer>
+              <Button variant="secondary" onPress={close}>Cancel</Button>
+              <Button variant="cta" onPress={close}>Confirm</Button>
+            </Footer>
+          </Dialog>
+        )}
       </DialogTrigger>
     </div>
   );
@@ -306,17 +306,19 @@ let fiveParagraphs = () => (
 function renderLongContent({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
-        <Dialog {...props}>
-          <Header><Text slot="title">The Title</Text></Header>
-          <Divider size="M" />
-          <Content>{fiveParagraphs()}</Content>
-          <Footer>
-            <Button variant="secondary">Cancel</Button>
-            <Button variant="cta" autoFocus>Confirm</Button>
-          </Footer>
-        </Dialog>
+        {(close) => (
+          <Dialog {...props}>
+            <Header><Heading>The Heading</Heading></Header>
+            <Divider />
+            <Content>{fiveParagraphs()}</Content>
+            <Footer>
+              <Button variant="secondary" onPress={close}>Cancel</Button>
+              <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+            </Footer>
+          </Dialog>
+        )}
       </DialogTrigger>
     </div>
   );
@@ -325,18 +327,20 @@ function renderLongContent({width = 'auto', ...props}) {
 function renderWithThreeButtons({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
-        <Dialog {...props}>
-          <Header><Text slot="title">The Title</Text></Header>
-          <Divider size="M" />
-          <Content>{singleParagraph()}</Content>
-          <Footer>
-            <Button variant="secondary">Secondary</Button>
-            <Button variant="primary">Primary</Button>
-            <Button variant="cta" autoFocus>CTA</Button>
-          </Footer>
-        </Dialog>
+        {(close) => (
+          <Dialog {...props}>
+            <Header><Heading>The Heading</Heading></Header>
+            <Divider />
+            <Content>{singleParagraph()}</Content>
+            <Footer>
+              <Button variant="secondary" onPress={close}>Secondary</Button>
+              <Button variant="primary" onPress={close}>Primary</Button>
+              <Button variant="cta" onPress={close} autoFocus>CTA</Button>
+            </Footer>
+          </Dialog>
+        )}
       </DialogTrigger>
     </div>
   );
@@ -347,21 +351,23 @@ function renderWithDividerInContent({width = 'auto', ...props}) {
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger isOpen>
         <ActionButton>Trigger</ActionButton>
-        <Dialog {...props}>
-          <Header><Text slot="title">The Title</Text></Header>
-          <Divider size="M" />
-          <Content>
-            <Flex UNSAFE_style={{padding: '10px'}}>
-              <Text flexGrow={1} flexBasis={0}>Column number one. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Text>
-              <Divider flexShrink={0} marginStart={10} marginEnd={10} orientation="vertical" size="S" />
-              <Text flexGrow={1} flexBasis={0}>Column number two. Eleifend quam adipiscing vitae proin sagittis nisl. Diam donec adipiscing tristique risus.</Text>
-            </Flex>
-          </Content>
-          <Footer>
-            <Button variant="primary">Primary</Button>
-            <Button variant="cta" autoFocus>CTA</Button>
-          </Footer>
-        </Dialog>
+        {(close) => (
+          <Dialog {...props}>
+            <Header><Heading>The Heading</Heading></Header>
+            <Divider />
+            <Content>
+              <Flex UNSAFE_style={{padding: '10px'}}>
+                <Text flexGrow={1} flexBasis={0}>Column number one. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Text>
+                <Divider flexShrink={0} marginStart={10} marginEnd={10} orientation="vertical" size="S" />
+                <Text flexGrow={1} flexBasis={0}>Column number two. Eleifend quam adipiscing vitae proin sagittis nisl. Diam donec adipiscing tristique risus.</Text>
+              </Flex>
+            </Content>
+            <Footer>
+              <Button variant="primary" onPress={close}>Primary</Button>
+              <Button variant="cta" onPress={close} autoFocus>CTA</Button>
+            </Footer>
+          </Dialog>
+        )}
       </DialogTrigger>
     </div>
   );

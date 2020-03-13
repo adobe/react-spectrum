@@ -11,9 +11,11 @@
  */
 
 import {AllHTMLAttributes} from 'react';
+import {mergeProps} from '@react-aria/utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {RadioProps} from '@react-types/radio';
 import {useFocusable} from '@react-aria/focus';
+import {usePress} from '@react-aria/interactions';
 
 interface RadioAriaProps extends RadioProps {
   isRequired?: boolean,
@@ -47,7 +49,15 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
     setSelectedRadio(value);
   };
 
+  let {pressProps} = usePress({
+    // Safari does not focus buttons automatically when interacting with them, so do it manually
+    onPressStart: (e) => e.target.focus(),
+    onPressEnd: (e) => e.target.focus(),
+    isDisabled
+  });
+
   let {focusableProps} = useFocusable(props);
+  let interactions = mergeProps(pressProps, focusableProps);
 
   return {
     inputProps: {
@@ -60,7 +70,7 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
       'aria-checked': checked,
       onChange,
       autoFocus,
-      ...focusableProps
+      ...interactions
     }
   };
 }

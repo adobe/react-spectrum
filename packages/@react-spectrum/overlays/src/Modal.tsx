@@ -21,7 +21,9 @@ import {useModal, useOverlay} from '@react-aria/overlays';
 interface ModalProps {
   children: ReactElement,
   isOpen?: boolean,
-  onClose?: () => void
+  onClose?: () => void,
+  type?: 'fullscreen' | 'fullscreenTakeover',
+  isDismissable?: boolean
 }
 
 interface ModalWrapperProps extends ModalProps {
@@ -29,22 +31,32 @@ interface ModalWrapperProps extends ModalProps {
 }
 
 export function Modal(props: ModalProps) {
-  let {children, onClose, ...otherProps} = props;
+  let {children, onClose, type, isDismissable, ...otherProps} = props;
 
   return (
     <Overlay {...otherProps}>
       <Underlay />
-      <ModalWrapper onClose={onClose}>
+      <ModalWrapper 
+        onClose={onClose} 
+        type={type}
+        isDismissable={isDismissable}>
         {children}
       </ModalWrapper>
     </Overlay>
   );
 }
 
+let typeMap = {
+  fullscreen: 'fullscreen',
+  fullscreenTakeover: 'fullscreenTakeover'
+};
+
 function ModalWrapper(props: ModalWrapperProps) {
-  let {children, onClose, isOpen} = props;
+  let {children, onClose, isOpen, type, isDismissable = false} = props;
+  let typeVariant = typeMap[type];
   let ref = useRef(null);
-  let {overlayProps} = useOverlay({ref, onClose, isOpen});
+
+  let {overlayProps} = useOverlay({ref, onClose, isOpen, isDismissable});
   useModal();
 
   let wrapperClassName = classNames(
@@ -67,7 +79,8 @@ function ModalWrapper(props: ModalWrapperProps) {
       overrideStyles,
       'spectrum-Modal',
       'react-spectrum-Modal'
-    )
+    ),
+    {[`spectrum-Modal--${typeVariant}`]: typeVariant}
   );
 
   return (

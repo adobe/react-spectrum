@@ -11,16 +11,19 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {AlertDialog, Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
+import {Content, Header} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
+import {Divider} from '@react-spectrum/divider';
+import {Heading, Keyboard, Text} from '@react-spectrum/typography';
 import {Item, Menu, Section} from '../';
-import {Keyboard, Text} from '@react-spectrum/typography';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {Popover} from '@react-spectrum/overlays';
 import React from 'react';
@@ -132,6 +135,35 @@ storiesOf('Menu', module)
             <Item>One</Item>
             <Item>Two</Item>
             <Item>Three</Item>
+          </Section>
+        </Menu>
+      </Popover>
+    )
+  )
+  .add(
+    'Static with dialog trigger',
+    () => (
+      <Popover isOpen hideArrow>
+        <Menu onSelectionChange={action('onSelectionChange')} selectionMode="none">
+          <Section title="Actions">
+            <DialogTrigger>
+              <Item>Edit...</Item>
+              <Dialog>
+                <Header>
+                  <Heading>Edit</Heading>
+                </Header>
+                <Divider size="M" />
+                <Content>
+                  Testing
+                </Content>
+              </Dialog>
+            </DialogTrigger>
+            <DialogTrigger>
+              <Item>Delete...</Item>
+              <AlertDialog title="Delete" variant="destructive" primaryLabel="Delete" cancelLabel="Cancel">
+                Are you sure?
+              </AlertDialog>
+            </DialogTrigger>
           </Section>
         </Menu>
       </Popover>
@@ -360,39 +392,6 @@ storiesOf('Menu', module)
     )
   )
   .add(
-    'Menu with role="listbox"',
-    () => (
-      <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} role="listbox">
-          {item => (
-            <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
-            </Section>
-          )}
-        </Menu>
-      </Popover>
-    )
-  )
-  .add(
-    'Menu with role="listbox", static',
-    () => (
-      <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} role="listbox">
-          <Section title="Section 1">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
-          </Section>
-          <Section title="Section 2">
-            <Item>Four</Item>
-            <Item>Five</Item>
-            <Item>Six</Item>
-          </Section>
-        </Menu>
-      </Popover>
-    )
-  )
-  .add(
     'Menu with autoFocus=true',
     () => (
       <Popover isOpen hideArrow>
@@ -440,35 +439,35 @@ storiesOf('Menu', module)
       <Popover isOpen hideArrow>
         <Menu onSelectionChange={action('onSelectionChange')}>
           <Section title="Section 1">
-            <Item>
+            <Item textValue="Copy">
               <Copy size="S" />
               <Text>Copy</Text>
               <Keyboard>⌘C</Keyboard>
             </Item>
-            <Item>
+            <Item textValue="Cut">
               <Cut size="S" />
               <Text>Cut</Text>
               <Keyboard>⌘X</Keyboard>
             </Item>
-            <Item>
+            <Item textValue="Paste">
               <Paste size="S" />
               <Text>Paste</Text>
               <Keyboard>⌘V</Keyboard>
             </Item>
           </Section>
           <Section title="Section 2">
-            <Item>
+            <Item textValue="Puppy">
               <AlignLeft size="S" />
               <Text>Puppy</Text>
               <Text slot="description">Puppy description super long as well geez</Text>
             </Item>
-            <Item>
+            <Item textValue="Doggo with really really really long long long text">
               <AlignCenter size="S" />
               <Text>Doggo with really really really long long long text</Text>
               <Text slot="end">Value</Text>
               <ChevronRightMedium slot="keyboard" />
             </Item>
-            <Item>
+            <Item textValue="Floof">
               <AlignRight size="S" />
               <Text>Floof</Text>
             </Item>
@@ -498,7 +497,7 @@ storiesOf('Menu', module)
 let customMenuItem = (item) => {
   let Icon = iconMap[item.icon];
   return (
-    <Item childItems={item.children}>
+    <Item childItems={item.children} textValue={item.name}>
       {item.icon && <Icon size="S" />}
       <Text>{item.name}</Text>
       {item.shortcut && <Keyboard>{item.shortcut}</Keyboard>}
