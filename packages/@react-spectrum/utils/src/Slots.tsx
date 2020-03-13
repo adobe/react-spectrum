@@ -10,12 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
+import {mergeProps} from '@react-aria/utils';
 import React, {useContext} from 'react';
 
 export let SlotContext = React.createContext(null);
 
-export function useSlotProvider() {
-  return useContext(SlotContext) || {};
+export function useSlotProps(props: any, defaultSlot?: string): any {
+  let slot = props.slot || defaultSlot;
+  let {[slot]: slotProps = {}} = useContext(SlotContext) || {};
+  return mergeProps(slotProps, props);
+}
+
+export function cssModuleToSlots(cssModule) {
+  return Object.keys(cssModule).reduce((acc, slot) => {
+    acc[slot] = {UNSAFE_className: cssModule[slot]};
+    return acc;
+  }, {});
 }
 
 export function ClearSlots(props) {

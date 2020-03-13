@@ -206,7 +206,7 @@ function render({width = 'auto', isDismissable = undefined, ...props}) {
         {(close) => (
           <Dialog {...props}>
             <Header><Heading>The Heading</Heading></Header>
-            <Divider size="M" />
+            <Divider />
             <Content>{singleParagraph()}</Content>
             {!isDismissable &&
               <Footer>
@@ -230,7 +230,7 @@ function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
           <Dialog {...props}>
             <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
             <Header><Heading>The Heading</Heading></Header>
-            <Divider size="M" />
+            <Divider />
             <Content>{singleParagraph()}</Content>
             {!isDismissable &&
               <Footer>
@@ -264,7 +264,7 @@ function renderWithForm({width = 'auto', ...props}) {
         {(close) => (
           <Dialog {...props}>
             <Header><Heading>The Heading</Heading></Header>
-            <Divider size="M" />
+            <Divider />
             <Content>
               <Form>
                 <TextField label="Last Words" autoFocus />
@@ -311,7 +311,7 @@ function renderLongContent({width = 'auto', ...props}) {
         {(close) => (
           <Dialog {...props}>
             <Header><Heading>The Heading</Heading></Header>
-            <Divider size="M" />
+            <Divider />
             <Content>{fiveParagraphs()}</Content>
             <Footer>
               <Button variant="secondary" onPress={close}>Cancel</Button>
@@ -332,7 +332,7 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
         {(close) => (
           <Dialog {...props}>
             <Header><Heading>The Heading</Heading></Header>
-            <Divider size="M" />
+            <Divider />
             <Content>{singleParagraph()}</Content>
             <Footer>
               <Button variant="secondary" onPress={close}>Secondary</Button>
@@ -349,12 +349,12 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
 function renderWithDividerInContent({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
             <Header><Heading>The Heading</Heading></Header>
-            <Divider size="M" />
+            <Divider />
             <Content>
               <Flex UNSAFE_style={{padding: '10px'}}>
                 <Text flexGrow={1} flexBasis={0}>Column number one. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Text>

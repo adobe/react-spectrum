@@ -11,7 +11,7 @@
  */
 
 import Alert from '@spectrum-icons/workflow/Alert';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
@@ -21,6 +21,7 @@ import {useTag} from '@react-aria/tag';
 import {useTagGroupProvider} from './TagGroup';
 
 export const Tag = ((props: SpectrumTagProps) => {
+  props = useSlotProps(props);
   const {
     isDisabled,
     isRemovable,

@@ -11,7 +11,7 @@
  */
 
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -28,6 +28,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 export function DateRangePicker(props: SpectrumDateRangePickerProps) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {
     isQuiet,
     isDisabled,
@@ -58,13 +59,13 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
   );
 
   return (
-    <FocusRing 
+    <FocusRing
       within
       isTextInput
       focusClass={classNames(styles, 'is-focused')}
       focusRingClass={classNames(styles, 'focus-ring')}
       autoFocus={autoFocus}>
-      <div 
+      <div
         {...filterDOMProps(otherProps)}
         {...styleProps}
         {...comboboxProps}
@@ -103,7 +104,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
               )
             )} />
         </FocusScope>
-        <DialogTrigger 
+        <DialogTrigger
           type="popover"
           mobileType="tray"
           placement={direction === 'rtl' ? 'bottom right' : 'bottom left'}
@@ -138,7 +139,7 @@ function DateRangeDash() {
   };
 
   return (
-    <div 
+    <div
       role="presentation"
       data-testid="date-range-dash"
       className={classNames(styles, 'spectrum-Datepicker--rangeDash')}
