@@ -390,6 +390,7 @@ describe('MenuTrigger', function () {
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
+      fireEvent.mouseDown(document.body);
       fireEvent.mouseUp(document.body);
       await waitForDomChange();
       expect(menu).not.toBeInTheDocument();
