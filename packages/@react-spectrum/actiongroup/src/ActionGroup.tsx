@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonGroupButton, SpectrumButtonGroupProps} from '@react-types/button';
-import {ButtonGroupState, useButtonGroupState} from '@react-stately/button';
+import {ActionGroupButton, SpectrumActionGroupProps} from '@react-types/actiongroup';
+import {ActionGroupState, useActionGroupState} from '@react-stately/actiongroup';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {CollectionBase, SelectionMode} from '@react-types/shared';
@@ -20,10 +20,10 @@ import {PressResponder} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
 import React, {AllHTMLAttributes, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
-import {useButtonGroup} from '@react-aria/button';
+import {useActionGroup} from '@react-aria/actiongroup';
 import {useSelectableItem} from '@react-aria/selection';
 
-export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupProps) {
+export function ActionGroup<T>(props: CollectionBase<T> & SpectrumActionGroupProps) {
   let {
     isEmphasized,
     isConnected, // no quiet option available in this mode
@@ -35,9 +35,9 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
     ...otherProps
   } = props;
 
-  let state = useButtonGroupState({...props, selectionMode});
+  let state = useActionGroupState({...props, selectionMode});
 
-  let {buttonGroupProps, buttonProps} = useButtonGroup(props, state);
+  let {actionGroupProps, buttonProps} = useActionGroup(props, state);
 
   let isVertical = orientation === 'vertical';
 
@@ -46,7 +46,7 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
   return (
     <div
       {...filterDOMProps(otherProps)}
-      {...buttonGroupProps}
+      {...actionGroupProps}
       className={
         classNames(
           styles,
@@ -61,8 +61,8 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
       } >
       <Provider {...providerProps}>
         {
-          state.buttonCollection.items.map((item) => (
-            <ButtonGroupItem
+          state.collection.items.map((item) => (
+            <ActionGroupItem
               key={item.key}
               {...buttonProps}
               className={classNames(buttonStyles, 'spectrum-ButtonGroup-item')}
@@ -75,12 +75,12 @@ export function ButtonGroup<T>(props: CollectionBase<T> & SpectrumButtonGroupPro
   );
 }
 
-export interface ButtonGroupItemProps extends AllHTMLAttributes<HTMLButtonElement> {
-  item: ButtonGroupButton,
-  state: ButtonGroupState
+export interface ActionGroupItemProps extends AllHTMLAttributes<HTMLButtonElement> {
+  item: ActionGroupButton,
+  state: ActionGroupState
 }
 
-export function ButtonGroupItem({item, state, ...otherProps}: ButtonGroupItemProps) {
+export function ActionGroupItem({item, state, ...otherProps}: ActionGroupItemProps) {
   let ref = useRef<HTMLDivElement>();
   let {itemProps} = useSelectableItem({
     selectionManager: state && state.selectionManager,

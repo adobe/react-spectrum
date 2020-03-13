@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionGroupKeyboardDelegate, ActionGroupState} from '@react-stately/actiongroup';
+import {ActionGroupProps} from '@react-types/actiongroup';
 import {AllHTMLAttributes, useMemo, useState} from 'react';
-import {ButtonGroupKeyboardDelegate, ButtonGroupState} from '@react-stately/button';
-import {ButtonGroupProps} from '@react-types/button';
 import {mergeProps} from '@react-aria/utils';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
@@ -33,11 +33,11 @@ const BUTTON_ROLES = {
 
 type Orientation = 'horizontal' | 'vertical';
 
-export interface ButtonGroupAria {
-  buttonGroupProps: AllHTMLAttributes<HTMLElement>,
+export interface ActionGroupAria {
+  actionGroupProps: AllHTMLAttributes<HTMLElement>,
   buttonProps: AllHTMLAttributes<HTMLElement>,
 }
-export function useButtonGroup(props: ButtonGroupProps, state: ButtonGroupState): ButtonGroupAria {
+export function useActionGroup(props: ActionGroupProps, state: ActionGroupState): ActionGroupAria {
   let {
     id,
     selectionMode = 'single',
@@ -47,7 +47,7 @@ export function useButtonGroup(props: ButtonGroupProps, state: ButtonGroupState)
   } = props;
 
   let {direction} = useLocale();
-  let keyboardDelegate = useMemo(() => new ButtonGroupKeyboardDelegate(state.buttonCollection, direction, orientation), [state.buttonCollection, direction, orientation]);
+  let keyboardDelegate = useMemo(() => new ActionGroupKeyboardDelegate(state.collection, direction, orientation), [state.collection, direction, orientation]);
 
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
@@ -62,7 +62,7 @@ export function useButtonGroup(props: ButtonGroupProps, state: ButtonGroupState)
   let tabIndex = isFocusWithin ? -1 : 0;
 
   return {
-    buttonGroupProps: {
+    actionGroupProps: {
       id: useId(id),
       role: role || BUTTON_GROUP_ROLES[selectionMode],
       tabIndex: isDisabled ? null : tabIndex,

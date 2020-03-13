@@ -10,8 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Button';
-export * from './ActionButton';
-export * from './FieldButton';
-export * from './LogicButton';
-export * from './ClearButton';
+import {ActionGroupButton} from '@react-types/actiongroup';
+import {ActionGroupCollection} from './';
+import {ReactElement} from 'react';
+import {SelectionManager} from '@react-stately/selection';
+
+export interface ActionGroupStateBase {
+  children: ActionGroupButton| ActionGroupButton[]
+}
+
+export interface ActionGroupState {
+  collection: ActionGroupCollection<ReactElement>,
+  selectionManager: SelectionManager
+}
