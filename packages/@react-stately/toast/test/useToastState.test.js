@@ -87,18 +87,18 @@ describe('useToastState', () => {
   });
 
   it('should call onRemove via onAdd', async () => {
-
+    jest.useFakeTimers();
     let timeoutToast = {
       content: 'Timeout Toast',
       props: {variant: 'info', timeout: 1}
     };
-    let {result, waitForNextUpdate} = renderHook(() => useToastState());
+    let {result} = renderHook(() => useToastState());
     expect(result.current.toasts.length).toEqual(0);
     act(() => result.current.onAdd(timeoutToast.content, timeoutToast.props));
     expect(result.current.toasts.length).toEqual(1);
     expect(result.current.toasts[0].timer).not.toBe(undefined);
 
-    await waitForNextUpdate();
+    act(() => jest.runAllTimers());
 
     expect(result.current.toasts.length).toEqual(0);
   });
