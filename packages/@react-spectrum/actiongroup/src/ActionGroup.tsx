@@ -13,7 +13,7 @@
 import {ActionGroupButton, SpectrumActionGroupProps} from '@react-types/actiongroup';
 import {ActionGroupState, useActionGroupState} from '@react-stately/actiongroup';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps} from '@react-spectrum/utils';
 import {CollectionBase, SelectionMode} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {PressResponder} from '@react-aria/interactions';
@@ -24,6 +24,7 @@ import {useActionGroup} from '@react-aria/actiongroup';
 import {useSelectableItem} from '@react-aria/selection';
 
 export function ActionGroup<T>(props: CollectionBase<T> & SpectrumActionGroupProps) {
+  props = useSlotProps(props);
   let {
     isEmphasized,
     isConnected, // no quiet option available in this mode

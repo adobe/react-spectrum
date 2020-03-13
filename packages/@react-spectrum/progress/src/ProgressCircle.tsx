@@ -11,7 +11,7 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import React, {CSSProperties} from 'react';
 import {SpectrumProgressCircleProps} from '@react-types/progress';
@@ -19,6 +19,7 @@ import styles from '@adobe/spectrum-css-temp/components/circleloader/vars.css';
 import {useProgressBar} from '@react-aria/progress';
 
 function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
+  props = useSlotProps(props);
   let {
     value = 0,
     minValue = 0,
