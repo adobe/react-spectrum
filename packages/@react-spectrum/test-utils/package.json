@@ -12,6 +12,18 @@
     "dist"
   ],
   "sideEffects": false,
+  "targets": {
+    "main": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    },
+    "module": {
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe-private/react-spectrum-v3"
@@ -22,6 +34,11 @@
   "peerDependencies": {
     "@testing-library/react": "^8.0.1",
     "react": "^16.8.0"
+  },
+  "devDependencies": {
+    "@react-spectrum/layout": "^3.0.0-alpha.1",
+    "@react-spectrum/provider": "^3.0.0-rc.1",
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
   },
   "publishConfig": {
     "access": "public"

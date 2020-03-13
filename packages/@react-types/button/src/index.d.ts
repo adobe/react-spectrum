@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, FocusableProps, HoverEvents, MultipleSelection, PressEvents, StyleProps} from '@react-types/shared';
+import {DOMProps, FocusableProps, HoverEvents, PressEvents, StyleProps} from '@react-types/shared';
 import {JSXElementConstructor, ReactElement, ReactNode} from 'react';
 
 export interface ButtonProps extends DOMProps, StyleProps, PressEvents, HoverEvents, FocusableProps {
@@ -44,23 +44,6 @@ export interface SpectrumActionButtonProps extends ButtonProps {
   isSelected?: boolean,
   isEmphasized?: boolean,
   holdAffordance?: boolean
-}
-
-export type ButtonGroupButton = ReactElement<SpectrumActionButtonProps>;
-
-export interface ButtonGroupProps extends DOMProps, StyleProps, MultipleSelection {
-  orientation?: 'horizontal' | 'vertical',
-  children: ButtonGroupButton | ButtonGroupButton[],
-  isDisabled?: boolean
-}
-
-export interface SpectrumButtonGroupProps extends ButtonGroupProps {
-  isEmphasized?: boolean,
-  isConnected?: boolean
-  isJustified?: boolean,
-  isQuiet?: boolean,
-  holdAffordance?: boolean,
-  onSelectionChange?: (...args) => void
 }
 
 export interface SpectrumLogicButtonProps extends ButtonProps {
