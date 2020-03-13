@@ -25,7 +25,8 @@ function pointerEvent(type, opts) {
   Object.assign(evt, {
     ctrlKey: false,
     metaKey: false,
-    shiftKey: false
+    shiftKey: false,
+    button: opts.button || 0
   }, opts);
   return evt;
 }
@@ -302,6 +303,23 @@ describe('usePress', function () {
         }
       ]);
     });
+
+    it('should only handle left clicks', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', button: 1}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', button: 1, clientX: 0, clientY: 0}));
+      expect(events).toEqual([]);
+    });
   });
 
   describe('mouse events', function () {
@@ -518,6 +536,25 @@ describe('usePress', function () {
           shiftKey: true
         }
       ]);
+    });
+
+    it('should only handle left clicks', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.mouseDown(el, {button: 1});
+      fireEvent.mouseUp(el, {button: 1});
+      fireEvent.click(el, {button: 1});
+
+      expect(events).toEqual([]);
     });
   });
 
@@ -955,9 +992,6 @@ describe('usePress', function () {
       // Enter key should trigger press events on element with role="link"
       expect(events).toEqual([
         {
-          type: 'click'
-        },
-        {
           type: 'pressstart',
           target: el,
           pointerType: 'keyboard',
@@ -988,6 +1022,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false
+        },
+        {
+          type: 'click'
         }
       ]);
     });
@@ -1021,9 +1058,6 @@ describe('usePress', function () {
 
       expect(events).toEqual([
         {
-          type: 'click'
-        },
-        {
           type: 'pressstart',
           target: el,
           pointerType: 'keyboard',
@@ -1054,6 +1088,9 @@ describe('usePress', function () {
           ctrlKey: false,
           metaKey: false,
           shiftKey: false
+        },
+        {
+          type: 'click'
         }
       ]);
     });
@@ -1107,6 +1144,105 @@ describe('usePress', function () {
           shiftKey: false
         }
       ]);
+    });
+
+    it('should handle when focus moves between keydown and keyup', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let {getByText} = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent} />
+      );
+
+      let el = getByText('test');
+      fireEvent.keyDown(el, {key: ' '});
+      fireEvent.keyUp(document.body, {key: ' '});
+
+      fireEvent.keyDown(el, {key: ' '});
+      fireEvent.keyUp(el, {key: ' '});
+
+      expect(events).toEqual([
+        // First sequence. Ensure the key up on the body causes a press end.
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+
+        // Second sequence. Ensure `isPressed` is reset to false on key up.
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        }
+      ]);
+    });
+
+    it('should ignore repeating keyboard events', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let {getByText} = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent} />
+      );
+
+      let el = getByText('test');
+      fireEvent.keyDown(el, {key: ' ', repeat: true});
+      fireEvent.keyUp(document.body, {key: ' '});
+
+      expect(events).toEqual([]);
     });
   });
 });
