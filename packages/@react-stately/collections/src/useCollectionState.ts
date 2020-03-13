@@ -49,7 +49,10 @@ export function useCollectionState<T extends object, V, W>(opts: CollectionProps
 
   collectionManager.delegate = {
     setVisibleViews,
-    setVisibleRect,
+    setVisibleRect(rect) {
+      collectionManager.visibleRect = rect;
+      setVisibleRect(rect);
+    },
     setContentSize,
     renderView: opts.renderView,
     renderWrapper: opts.renderWrapper,
@@ -70,7 +73,10 @@ export function useCollectionState<T extends object, V, W>(opts: CollectionProps
     collectionManager,
     visibleViews,
     visibleRect,
-    setVisibleRect,
+    setVisibleRect(rect) {
+      collectionManager.visibleRect = rect;
+      setVisibleRect(rect);
+    },
     contentSize,
     isAnimating
   };

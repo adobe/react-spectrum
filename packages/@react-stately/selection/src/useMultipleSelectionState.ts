@@ -14,14 +14,16 @@ import {MultipleSelection} from '@react-types/shared';
 import {MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 import {useControlledState} from '@react-stately/utils';
-import {useRef, useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
 
 export function useMultipleSelectionState(props: MultipleSelection): MultipleSelectionState  {
   let isFocused = useRef(false);
   let [focusedKey, setFocusedKey] = useState(null);
+  let selectedKeysProp = useMemo(() => props.selectedKeys ? new Selection(props.selectedKeys) : undefined, [props.selectedKeys]);
+  let defaultSelectedKeys = useMemo(() => props.defaultSelectedKeys ? new Selection(props.defaultSelectedKeys) : new Selection(), [props.defaultSelectedKeys]);
   let [selectedKeys, setSelectedKeys] = useControlledState(
-    props.selectedKeys ? new Selection(props.selectedKeys) : undefined,
-    props.defaultSelectedKeys ? new Selection(props.defaultSelectedKeys) : new Selection(),
+    selectedKeysProp,
+    defaultSelectedKeys,
     props.onSelectionChange
   );
 
