@@ -36,6 +36,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
     if (typeof PointerEvent !== 'undefined') {
       let onPointerUp = (e) => {
         if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
+          state.isPointerDown = false;
           onInteractOutside(e);
         }
       };
@@ -52,6 +53,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;
         } else if (state.isPointerDown && onInteractOutside && isValidEvent(e, ref)) {
+          state.isPointerDown = false;
           onInteractOutside(e);
         }
       };
@@ -59,6 +61,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
       let onTouchEnd = (e) => {
         state.ignoreEmulatedMouseEvents = true;
         if (onInteractOutside && state.isPointerDown && isValidEvent(e, ref)) {
+          state.isPointerDown = false;
           onInteractOutside(e);
         }
       };
