@@ -408,6 +408,38 @@ describe('DialogTrigger', function () {
     expect(onOpenChange).toHaveBeenCalledTimes(0);
   });
 
+  it('mobile type modals should be closable by clicking outside the modal', async function () {
+    matchMedia.useMediaQuery('(max-width: 700px)');
+    function Test({defaultOpen, onOpenChange}) {
+      return (
+        <Provider theme={theme}>
+          <DialogTrigger type="popover" mobileType="modal" defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
+            <ActionButton>Trigger</ActionButton>
+            <Dialog>contents</Dialog>
+          </DialogTrigger>
+        </Provider>
+      );
+    }
+
+    let onOpenChange = jest.fn();
+    let {getByTestId} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
+    
+    let modal = getByTestId('modal');
+    expect(modal).toBeVisible();
+    await waitForDomChange(); // wait for animation
+
+    fireEvent.mouseUp(document.body);
+    expect(modal).toBeVisible();
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    await waitForDomChange(); // wait for animation
+
+    expect(() => {
+      getByTestId('modal');
+    }).toThrow();
+  });
+
   it('non-modals can be closed by clicking outside the dialog regardless of isDismissable', async function () {
     function Test({defaultOpen, onOpenChange}) {
       return (
