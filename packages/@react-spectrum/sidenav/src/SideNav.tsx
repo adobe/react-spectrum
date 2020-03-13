@@ -20,12 +20,14 @@ import {SideNavItem} from './SideNavItem';
 import {SideNavSection} from './SideNavSection';
 import {SpectrumSideNavProps} from '@react-types/sidenav';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
+import {useCollator} from '@react-aria/i18n';
 import {useSideNav} from '@react-aria/sidenav';
 import {useTreeState} from '@react-stately/tree';
 
 export function SideNav<T>(props: SpectrumSideNavProps<T>) {
   let state = useTreeState({...props, selectionMode: 'single'});
-  let layout = useMemo(() => new ListLayout({rowHeight: 40}), []);
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
+  let layout = useMemo(() => new ListLayout({rowHeight: 40, collator}), [collator]);
   let {navProps, listProps} = useSideNav(props, state, layout);
   let {styleProps} = useStyleProps(props);
 

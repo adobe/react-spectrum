@@ -1,0 +1,108 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/link';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {Link} from '@react-spectrum/link';
+import {View} from '@react-spectrum/view';
+```
+
+# Link
+
+<p>{docs.exports.Link.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Link']}
+  sourceData={[{type: 'Spectrum', url: 'https://spectrum.adobe.com/page/link/'}]} />
+
+## Example
+
+```tsx example
+<Link onPress={() => alert('pressed!')}>The missing link.</Link>
+```
+
+## Content
+
+Links accept content as children.
+If the content is plain text, it will be styled and exposed to assistive technologies as a link.
+Events will need to be handled in JavaScript with the `onPress` prop.
+
+```tsx example
+<Link onPress={() => alert('pressed!')}>A label</Link>
+```
+
+If the child is a native anchor element, or a link component used with a client side router, the Link component will add spectrum styles and event handlers to that element.
+Actual navigation will be handled by the wrapped element.
+
+```tsx example
+<Link><a href="https://www.adobe.com" target="_blank">Adobe.com</a></Link>
+```
+
+To use in [React Router](https://reacttraining.com/react-router/)
+
+```tsx
+import {Link} from '@react-spectrum/link';
+import {Link as RouterLink} from 'react-router-dom';
+
+<Link><RouterLink to="/next-page">Next Page</RouterLink></Link>
+```
+
+### Internationalization
+
+In order to internationalize a link, a localized string should be passed to the `children` prop.
+
+### Accessibility
+
+For string-typed `children`, the link component will expose the accessible role to assistive technology as a "link".
+
+```tsx example
+<Link onPress={e => alert(`clicked "${e.target.textContent}" Link`)}>
+  I forgot my password
+</Link>
+```
+
+For other children, use an element of semantic meaning, or use a [role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles) where appropriate.
+
+Be mindful of what the experience is for users navigating with screen readers. Make sure to give enough context within the link about where the link will take the user.
+
+## Props
+
+<PropTable component={docs.exports.Link} links={docs.links} />
+
+## Visual Options
+[View Guidelines](https://spectrum.adobe.com/page/link/#Options)
+
+### Primary
+```tsx example
+<p>Would you like to <Link variant="primary">learn more</Link> about this fine component?</p>
+```
+
+### Secondary
+```tsx example
+<p>Would you like to <Link variant="secondary">learn more</Link> about this fine component?</p>
+```
+
+### overBackground
+```tsx example
+<View backgroundColor="positive" padding="25px">
+  <Link variant="overBackground">Learn more here!</Link>
+</View>
+```
+
+### quiet
+```tsx example
+<p>Would you like to <Link isQuiet>learn more</Link> about this fine component?</p>
+```

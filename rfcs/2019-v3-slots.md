@@ -117,18 +117,18 @@ For the CSS, we might get something like this.
 
 ## React Example
 
-We would introduce a new component, 'Grid' (tbd name), that would accept a CSS Module for its `slots` prop.
-This module would be expected to provide a mapping of Grid CSS Area to classname that has `grid-area: area-name`.
+We would introduce a new component, 'Grid', that would accept a object for its `slots` prop.
+This object would be expected to provide a mapping of Slot Names to an object containing props `grid-area: props`.
 
 ```jsx
 export const Card = (props) => {
   let defaults = {slots: {
-      container: classNames(styles, 'container'),
-      preview: classNames(styles, 'preview'),
-      avatar: classNames(styles, 'avatar'),
-      title: classNames(styles, 'title'),
-      footer: classNames(styles, 'footer'),
-      divider: classNames(styles, 'divider')
+      container: {UNSAFE_className: classNames(styles, 'container')},
+      preview: {UNSAFE_className: classNames(styles, 'preview')},
+      avatar: {UNSAFE_className: classNames(styles, 'avatar')},
+      title: {UNSAFE_className: classNames(styles, 'title')},
+      footer: {UNSAFE_className: classNames(styles, 'footer')},
+      divider: {UNSAFE_className: classNames(styles, 'divider')}
     }};
   let {slots} = {...defaults, ...props};
 
@@ -153,12 +153,12 @@ Or to make a more general container.
 ```jsx
 export const Card = (props) => {
   let defaults = {slots: {
-      container: classNames(styles, 'container'),
-      preview: classNames(styles, 'preview'),
-      avatar: classNames(styles, 'avatar'),
-      title: classNames(styles, 'title'),
-      footer: classNames(styles, 'footer'),
-      divider: classNames(styles, 'divider')
+      container: {UNSAFE_className: classNames(styles, 'container')},
+      preview: {UNSAFE_className: classNames(styles, 'preview')},
+      avatar: {UNSAFE_className: classNames(styles, 'avatar')},
+      title: {UNSAFE_className: classNames(styles, 'title')},
+      footer: {UNSAFE_className: classNames(styles, 'footer')},
+      divider: {UNSAFE_className: classNames(styles, 'divider')}
     }};
   let {slots} = {...defaults, ...props};
 
@@ -171,6 +171,16 @@ export const Card = (props) => {
   );
 };
 ```
+
+The reason for slots passing props is because sometimes we need specific variants of components. For example, in Dialogs there can be a Divider between the header and the content.
+```jsx
+<Dialog>
+  <Header><Heading>The Heading</Heading></Header>
+  <Divider />
+  <Content>Some content</Content>
+</Dialog>
+```
+This Divider should be a 'M' medium sized Divider so that ours will just work and look right. Anyone else creating their own Divider going into that slot can choose to use/ignore the slot props with the exception of className since that includes the positioning information.
 
 ## End user example
 
@@ -294,8 +304,8 @@ We have a couple options here:
  - We could build a <Box> like component that takes a `renderAs` prop and the name of the dom element it needs to render, this `Box` component would replace the top level node of every Component we create. All components would still need to accept a 'slot' prop and pass it through to <Box>.
  
 ## What new components are needed
- - Grid (name?)
- - Flex (maybe in a different PR?)
+ - Grid
+ - Flex
  - Box?
  
 ## What components should support the slot prop?

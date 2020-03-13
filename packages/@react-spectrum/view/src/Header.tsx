@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, ViewStyleProps} from '@react-types/shared';
-import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {ReactElement, RefObject} from 'react';
 
@@ -21,14 +21,15 @@ export interface HeaderProps extends DOMProps, ViewStyleProps {
 
 
 export const Header = React.forwardRef((props: HeaderProps, ref: RefObject<HTMLElement>) => {
+  props = useSlotProps(props, 'header');
   let {
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps({slot: 'header', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <header {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
+    <header {...filterDOMProps(otherProps)} {...styleProps} className={classNames({}, styleProps.className)} ref={ref}>
       {children}
     </header>
   );

@@ -11,7 +11,8 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton, ButtonGroup} from '../';
+import {ActionButton} from '@react-spectrum/button';
+import {ActionGroup} from '../';
 import Add from '@spectrum-icons/workflow/Add';
 import Bell from '@spectrum-icons/workflow/Bell';
 import Brush from '@spectrum-icons/workflow/Brush';
@@ -24,7 +25,7 @@ import Select  from '@spectrum-icons/workflow/Select';
 import {storiesOf} from '@storybook/react';
 import Undo from '@spectrum-icons/workflow/Undo';
 
-storiesOf('ButtonGroup', module)
+storiesOf('ActionGroup', module)
   .addParameters({providerSwitcher: {status: 'negative'}})
   .add(
     'default',
@@ -135,12 +136,12 @@ const toolIconsAffordance =
 
 function render(props = {}, items: any = itemsWithIcons) {
   return (
-    <ButtonGroup onSelectionChange={action('onSelect')} {...props}>
+    <ActionGroup onSelectionChange={action('onSelect')} {...props}>
       {
         items.map((itemProps, index) => (
           <ActionButton key={index} {...itemProps} />
         ))
       }
-    </ButtonGroup>
+    </ActionGroup>
   );
 }

@@ -18,6 +18,7 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/focus": "^3.0.0-rc.1",
+    "@react-aria/interactions": "^3.0.0-rc.1",
     "@react-aria/label": "^3.0.0-rc.1",
     "@react-aria/utils": "^3.0.0-rc.1",
     "@react-stately/radio": "^3.0.0-rc.1",
