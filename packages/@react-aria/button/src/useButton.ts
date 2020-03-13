@@ -13,7 +13,7 @@
 import {ButtonProps} from '@react-types/button';
 import {chain, mergeProps} from '@react-aria/utils';
 import {RefObject} from 'react';
-import {useDOMPropsResponder, usePress} from '@react-aria/interactions';
+import {useDOMPropsResponder, usePressableInput} from '@react-aria/interactions';
 import {useFocusable} from '@react-aria/focus';
 
 interface AriaButtonProps extends ButtonProps {
@@ -61,10 +61,9 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     };
   }
 
-  let {pressProps, isPressed} = usePress({
-    // Safari does not focus buttons automatically when interacting with them, so do it manually
-    onPressStart: chain(onPressStart, (e) => e.target.focus()),
-    onPressEnd: chain(onPressEnd, (e) => e.target.focus()),
+  let {pressProps, isPressed} = usePressableInput({
+    onPressStart,
+    onPressEnd,
     onPressChange,
     onPress,
     isDisabled,

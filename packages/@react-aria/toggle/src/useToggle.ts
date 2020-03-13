@@ -16,7 +16,7 @@ import {mergeProps} from '@react-aria/utils';
 import {SwitchProps} from '@react-types/switch';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
-import {usePress} from '@react-aria/interactions';
+import {usePressableInput} from '@react-aria/interactions';
 
 export interface ToggleAria {
   inputProps: InputHTMLAttributes<HTMLInputElement>
@@ -49,10 +49,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState): To
   }
   let isInvalid = validationState === 'invalid';
 
-  let {pressProps} = usePress({
-    // Safari does not focus buttons automatically when interacting with them, so do it manually
-    onPressStart: (e) => e.target.focus(),
-    onPressEnd: (e) => e.target.focus(),
+  let {pressProps} = usePressableInput({
     isDisabled
   });
 
