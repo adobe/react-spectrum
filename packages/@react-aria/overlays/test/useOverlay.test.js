@@ -37,6 +37,7 @@ describe('useOverlay', function () {
   it('should hide the overlay when clicking outside if isDismissble is true', function () {
     let onClose = jest.fn();
     render(<Example isOpen onClose={onClose} isDismissable />);
+    fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
@@ -44,6 +45,7 @@ describe('useOverlay', function () {
   it('should not hide the overlay when clicking outside if isDismissable is false', function () {
     let onClose = jest.fn();
     render(<Example isOpen onClose={onClose} isDismissable={false} />);
+    fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
     expect(onClose).toHaveBeenCalledTimes(0);
   });
@@ -70,12 +72,14 @@ describe('useOverlay', function () {
     render(<Example isOpen onClose={onCloseFirst} isDismissable />);
     let second = render(<Example isOpen onClose={onCloseSecond} isDismissable />);
 
+    fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
     expect(onCloseSecond).toHaveBeenCalledTimes(1);
     expect(onCloseFirst).not.toHaveBeenCalled();
 
     second.unmount();
 
+    fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
     expect(onCloseFirst).toHaveBeenCalledTimes(1);
   });
