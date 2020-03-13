@@ -10,14 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, ButtonGroup} from '../';
+import {ActionButton} from '@react-spectrum/button';
+import {ActionGroup} from '../';
 import Brush from '@spectrum-icons/workflow/Brush';
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 import V2ButtonGroup from '@react/react-spectrum/ButtonGroup';
 
@@ -27,7 +28,7 @@ let theme = {
 };
 
 // Describes the tabIndex values of button 1 (column 1), 2, and 3 as focus is moved forward or back.
-// e.g. button2Focused describes button 2 having tabindex=0 while all other buttons have -1 
+// e.g. button2Focused describes button 2 having tabindex=0 while all other buttons have -1
 let expectedButtonIndicies = {
   button1Focused: ['0', '-1', '-1'],
   button2Focused: ['-1', '0', '-1'],
@@ -90,7 +91,7 @@ expect.extend({
   checkButtonIndex(received, tabIndices, i) {
     let index = received.findIndex((htmlElement, i) => {
       const receivedValue = htmlElement.getAttribute('tabIndex');
-      
+
       return receivedValue !== tabIndices[i];
     });
 
@@ -98,7 +99,7 @@ expect.extend({
       return {
         message: () => `expected button index configuration "button${i + 1}Focused": (${received.map((button) => button.getAttribute('tabIndex'))}) but got ${tabIndices}`,
         pass: false
-      };  
+      };
     } else {
       return {
         pass: true
@@ -107,15 +108,19 @@ expect.extend({
   }
 });
 
-describe('ButtonGroup', function () {
+describe('ActionGroup', function () {
   afterEach(() => {
     btnBehavior.reset();
     cleanup();
   });
 
+  it('uses slots api', () => {
+    testSlotsAPI(ActionGroup);
+  });
+
   it.each`
   Name               | ComponentGroup   | Component
-  ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton}
+  ${'ActionGroup'}   | ${ActionGroup}   | ${ActionButton}
   ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button}
   `('$Name handles defaults', function ({ComponentGroup, Component}) {
     let {getByRole, getAllByRole} = render(
@@ -131,7 +136,7 @@ describe('ButtonGroup', function () {
 
   it.each`
   Name               | ComponentGroup   | Component       | props
-  ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{selectionMode: 'multiple'}}
+  ${'ActionGroup'}   | ${ActionGroup}   | ${ActionButton} | ${{selectionMode: 'multiple'}}
   ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button}     | ${{multiple: true, role: 'toolbar'}}
   `('$Name handles multiple selection', function ({ComponentGroup, Component, props}) {
     let {getByRole, getAllByRole} = render(
@@ -149,7 +154,7 @@ describe('ButtonGroup', function () {
 
   it.each`
     Name               | ComponentGroup   | Component       | props
-    ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{orientation: 'vertical'}}
+    ${'ActionGroup'}   | ${ActionGroup}   | ${ActionButton} | ${{orientation: 'vertical'}}
     ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button}     | ${{orientation: 'vertical', role: 'toolbar'}}
   `('$Name handles vertical', function ({ComponentGroup, Component, props}) {
     let {getByTestId} = render(
@@ -165,7 +170,7 @@ describe('ButtonGroup', function () {
 
   it.each`
     Name               | ComponentGroup   | Component       | props
-    ${'ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{isDisabled: true}}
+    ${'ActionGroup'}   | ${ActionGroup}   | ${ActionButton} | ${{isDisabled: true}}
     ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button}     | ${{disabled: true}}
   `('$Name handles disabeld', function ({ComponentGroup, Component, props}) {
     let {getByRole} = render(
@@ -181,14 +186,14 @@ describe('ButtonGroup', function () {
 
   it.each`
     Name                                                   | ComponentGroup   | Component       | props                                         | orders
-    ${'(left/right arrows, ltr + horizontal) ButtonGroup'} | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'de-DE'}}                          | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(left/right arrows, rtl + horizontal) ButtonGroup'} | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'ar-AE'}}                          | ${[{action: pressArrowRight, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.forward}]}
-    ${'(up/down arrows, ltr + horizontal) ButtonGroup'}    | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'de-DE'}}                          | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(up/down arrows, rtl + horizontal) ButtonGroup'}    | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'ar-AE'}}                          | ${[{action: pressArrowDown, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.forward}]}
-    ${'(left/right arrows, ltr + vertical) ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(left/right arrows, rtl + vertical) ButtonGroup'}   | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(up/down arrows, ltr + vertical) ButtonGroup'}      | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(up/down arrows, rtl + vertical) ButtonGroup'}      | ${ButtonGroup}   | ${ActionButton} | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(left/right arrows, ltr + horizontal) ActionGroup'} | ${ActionGroup}   | ${ActionButton} | ${{locale: 'de-DE'}}                          | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(left/right arrows, rtl + horizontal) ActionGroup'} | ${ActionGroup}   | ${ActionButton} | ${{locale: 'ar-AE'}}                          | ${[{action: pressArrowRight, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.forward}]}
+    ${'(up/down arrows, ltr + horizontal) ActionGroup'}    | ${ActionGroup}   | ${ActionButton} | ${{locale: 'de-DE'}}                          | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(up/down arrows, rtl + horizontal) ActionGroup'}    | ${ActionGroup}   | ${ActionButton} | ${{locale: 'ar-AE'}}                          | ${[{action: pressArrowDown, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.forward}]}
+    ${'(left/right arrows, ltr + vertical) ActionGroup'}   | ${ActionGroup}   | ${ActionButton} | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(left/right arrows, rtl + vertical) ActionGroup'}   | ${ActionGroup}   | ${ActionButton} | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(up/down arrows, ltr + vertical) ActionGroup'}      | ${ActionGroup}   | ${ActionButton} | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(up/down arrows, rtl + vertical) ActionGroup'}      | ${ActionGroup}   | ${ActionButton} | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
   `('$Name shifts button focus in the correct direction on key press', function ({ComponentGroup, Component, props, orders}) {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
@@ -216,13 +221,13 @@ describe('ButtonGroup', function () {
     });
   });
 
-  it('ButtonGroup handles single selection', function () {
+  it('ActionGroup handles single selection', function () {
     let {getByTestId} = render(
       <Provider theme={theme} locale="de-DE">
-        <ButtonGroup >
+        <ActionGroup >
           <ActionButton data-testid="button-1">Click me</ActionButton>
           <ActionButton data-testid="button-2">Click me</ActionButton>
-        </ButtonGroup>
+        </ActionGroup>
       </Provider>
     );
 
@@ -236,13 +241,13 @@ describe('ButtonGroup', function () {
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('ButtonGroup handles multiple selection', function () {
+  it('ActionGroup handles multiple selection', function () {
     let {getByTestId} = render(
       <Provider theme={theme} locale="de-DE">
-        <ButtonGroup selectionMode="multiple">
+        <ActionGroup selectionMode="multiple">
           <ActionButton data-testid="button-1">Click me</ActionButton>
           <ActionButton data-testid="button-2">Click me</ActionButton>
-        </ButtonGroup>
+        </ActionGroup>
       </Provider>
     );
 
@@ -256,12 +261,12 @@ describe('ButtonGroup', function () {
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('ButtonGroup handles none selection', function () {
+  it('ActionGroup handles none selection', function () {
     let {getByTestId} = render(
       <Provider theme={theme} locale="de-DE">
-        <ButtonGroup selectionMode="none">
+        <ActionGroup selectionMode="none">
           <ActionButton data-testid="button-1">Click me</ActionButton>
-        </ButtonGroup>
+        </ActionGroup>
       </Provider>
     );
 
@@ -270,12 +275,12 @@ describe('ButtonGroup', function () {
     expect(button1).toHaveAttribute('aria-checked', 'false');
   });
 
-  it('ButtonGroup should pass className, role and tabIndex', function () {
+  it('ActionGroup should pass className, role and tabIndex', function () {
     let {getByTestId} = render(
       <Provider theme={theme} locale="de-DE">
-        <ButtonGroup>
+        <ActionGroup>
           <ActionButton UNSAFE_className={'test-class'} icon={<Brush />} data-testid="button-1">Click me</ActionButton>
-        </ButtonGroup>
+        </ActionGroup>
       </Provider>
     );
 

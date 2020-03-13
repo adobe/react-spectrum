@@ -1,16 +1,9 @@
 import {classNames} from '@react-spectrum/utils';
 import {layoutInfoToStyle, useCollectionItem} from '@react-aria/collections';
-import {Node} from '@react-stately/collections';
-import React, {Fragment, ReactNode, useRef} from 'react';
-import {ReusableView} from '@react-stately/collections';
+import React, {Fragment, useRef} from 'react';
+import {SideNavSectionProps} from '@react-types/sidenav';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {useListBoxSection} from '@react-aria/listbox';
-
-interface SideNavSectionProps<T> {
-  reusableView: ReusableView<Node<T>, unknown>,
-  header: ReusableView<Node<T>, unknown>,
-  children?: ReactNode
-}
 
 export function SideNavSection<T>(props: SideNavSectionProps<T>) {
   let {children, reusableView, header} = props;

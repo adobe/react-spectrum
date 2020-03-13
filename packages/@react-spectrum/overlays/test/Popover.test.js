@@ -134,6 +134,7 @@ describe('Popover', function () {
     it('hides the popover when clicking outside', function () {
       let onClose = jest.fn();
       render(<Popover isOpen onClose={onClose} />);
+      fireEvent.mouseDown(document.body);
       fireEvent.mouseUp(document.body);
       expect(onClose).toHaveBeenCalledTimes(1);
     });
