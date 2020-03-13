@@ -429,6 +429,7 @@ describe('DialogTrigger', function () {
     expect(modal).toBeVisible();
     await waitForDomChange(); // wait for animation
 
+    fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
     expect(modal).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
