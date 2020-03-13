@@ -34,7 +34,7 @@ import {LogicButton} from '@react-spectrum/button';
 
 ## Content
 
-LogicButtons must have a variant, and optionally can have a label.
+LogicButtons must have a variant and optionally can have a label.
 A visible label can be provided by passing children.
 
 ```tsx example
@@ -72,14 +72,15 @@ function Example() {
 
 ## Visual Options
 
-### Or
+### Variant
 
 ```tsx example
-<LogicButton variant="or">Test</LogicButton>
+<LogicButton variant="or" marginRight="20px">Or</LogicButton>
+<LogicButton variant="and">And</LogicButton>
 ```
 
-### And
+### Disabled
 
 ```tsx example
-<LogicButton variant="and">Test</LogicButton>
+<LogicButton variant="or" isDisabled>Test</LogicButton>
 ```
