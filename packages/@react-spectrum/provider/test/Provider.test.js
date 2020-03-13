@@ -31,13 +31,11 @@ let mediaQueryDark = '(prefers-color-scheme: dark)';
 
 describe('Provider', () => {
   let matchMedia;
-  let onPressSpy = jest.fn();
   beforeEach(() => {
     matchMedia = new MatchMediaMock();
   });
   afterEach(() => {
     matchMedia.clear();
-    onPressSpy.mockClear();
     cleanup();
   });
 
@@ -115,6 +113,7 @@ describe('Provider', () => {
   });
 
   it('Nested providers pass props to children', () => {
+    let onPressSpy = jest.fn();
     let {getByRole} = render(
       <Provider theme={theme} isDisabled>
         <Provider isQuiet>
@@ -126,6 +125,7 @@ describe('Provider', () => {
     triggerPress(button);
     expect(onPressSpy).not.toHaveBeenCalled();
     expect(button.classList.contains('spectrum-Button--quiet')).toBeTruthy();
+    onPressSpy.mockClear();
   });
 
   it('Provider will rerender if the OS preferred changes and it is on auto', () => {

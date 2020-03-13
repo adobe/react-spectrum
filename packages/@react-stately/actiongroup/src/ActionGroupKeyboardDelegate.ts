@@ -14,7 +14,7 @@ import {Collection} from '@react-stately/collections';
 import {Direction, KeyboardDelegate, Orientation} from '@react-types/shared';
 import {Key} from 'react';
 
-export class ButtonGroupKeyboardDelegate<T> implements KeyboardDelegate {
+export class ActionGroupKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: any;
   private flipDirection: boolean;
 

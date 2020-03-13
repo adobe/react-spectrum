@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {FocusScope} from '@react-aria/focus';
@@ -23,14 +23,15 @@ import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
 
 export function Dialog(props: SpectrumDialogProps) {
+  props = useSlotProps(props);
   let {
     type = 'popover',
     ...contextProps
   } = useContext(DialogContext) || {} as DialogContextValue;
   let {
     children,
-    isDismissable,
-    onDismiss,
+    isDismissable = contextProps.isDismissable,
+    onDismiss = contextProps.onClose,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -38,7 +39,7 @@ export function Dialog(props: SpectrumDialogProps) {
     mergeProps(
       mergeProps(
         filterDOMProps(otherProps),
-        contextProps
+        filterDOMProps(contextProps)
       ),
       styleProps
     ),
@@ -56,7 +57,7 @@ export function Dialog(props: SpectrumDialogProps) {
     return (
       <ModalDialog {...allProps} size={size}>
         {children}
-        {isDismissable && <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} onPress={onDismiss} />}
+        {isDismissable && <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} aria-label="dismiss" onPress={onDismiss} />}
       </ModalDialog>
     );
   }
@@ -81,21 +82,21 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
   let {dialogProps} = useDialog({ref, role});
   if (!slots) {
     slots = {
-      container: styles['spectrum-Dialog-grid'],
-      hero: styles['spectrum-Dialog-hero'],
-      header: styles['spectrum-Dialog-header'],
-      heading: styles['spectrum-Dialog-heading'],
-      typeIcon: styles['spectrum-Dialog-typeIcon'],
-      divider: styles['spectrum-Dialog-divider'],
-      content: styles['spectrum-Dialog-content'],
-      footer: styles['spectrum-Dialog-footer'],
-      closeButton: styles['spectrum-Dialog-closeButton']
+      container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
+      hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
+      header: {UNSAFE_className: styles['spectrum-Dialog-header']},
+      heading: {UNSAFE_className: styles['spectrum-Dialog-heading']},
+      typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
+      divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
+      content: {UNSAFE_className: styles['spectrum-Dialog-content']},
+      footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
+      closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']}
     };
   }
 
   return (
     <FocusScope contain restoreFocus>
-      <div
+      <section
         {...mergeProps(otherProps, dialogProps)}
         className={classNames(
           styles,
@@ -107,7 +108,7 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
         <Grid slots={slots}>
           {children}
         </Grid>
-      </div>
+      </section>
     </FocusScope>
   );
 }

@@ -13,7 +13,13 @@
 import classNames from 'classnames';
 import configureTypekit from './configureTypekit';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, shouldKeepSpectrumClassNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {
+  filterDOMProps,
+  shouldKeepSpectrumClassNames,
+  useDOMRef,
+  useSlotProps,
+  useStyleProps
+} from '@react-spectrum/utils';
 import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/dialog';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
@@ -56,7 +62,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     ...otherProps
   } = props;
 
-  // remove all the undefined props so they don't overwrite prevContext values
+  // select only the props with values so undefined props don't overwrite prevContext values
   let currentProps = {
     version,
     theme,
@@ -70,10 +76,11 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     isReadOnly,
     validationState
   };
-  Object.keys(currentProps).forEach(propKey => currentProps[propKey] === undefined && delete currentProps[propKey]);
+  let filteredProps = {};
+  Object.entries(currentProps).forEach(([key, value]) => value !== undefined && (filteredProps[key] = value));
 
   // Merge options with parent provider
-  let context = Object.assign({}, prevContext, currentProps);
+  let context = Object.assign({}, prevContext, filteredProps);
 
   useEffect(() => {
     configureTypekit(typekitId);
@@ -113,7 +120,12 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
 let _Provider = React.forwardRef(Provider);
 export {_Provider as Provider};
 
-const ProviderWrapper = React.forwardRef(function ProviderWrapper({children, ...otherProps}: ProviderProps, ref: DOMRef<HTMLDivElement>) {
+const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
+  props = useSlotProps(props);
+  let {
+    children,
+    ...otherProps
+  } = props;
   let {locale, direction} = useLocale();
   let {theme, colorScheme, scale} = useProvider();
   let {modalProviderProps} = useModalProvider();

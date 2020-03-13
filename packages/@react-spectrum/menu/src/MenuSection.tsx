@@ -62,12 +62,20 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
               'spectrum-Menu'
             )
           }>
-          {[...item.childNodes].map(node => (
-            <MenuItem
-              key={node.key}
-              item={node}
-              state={state} />
-          ))}
+          {[...item.childNodes].map(node => {
+            let item = (
+              <MenuItem
+                key={node.key}
+                item={node}
+                state={state} />
+            );
+
+            if (node.wrapper) {
+              item = node.wrapper(item);
+            }
+
+            return item;
+          })}
         </ul>
       </li>
     </Fragment>

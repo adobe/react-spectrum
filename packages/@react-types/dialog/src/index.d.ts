@@ -15,8 +15,10 @@ import {HTMLAttributes, ReactElement, ReactNode, RefObject} from 'react';
 import {PositionProps} from '@react-types/overlays';
 import {Slots} from '@react-types/layout';
 
+export type SpectrumDialogClose = (close: () => void) => ReactElement;
+
 export interface SpectrumDialogTriggerProps extends PositionProps {
-  children: ReactElement[],
+  children: [ReactElement, SpectrumDialogClose | ReactElement],
   type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   mobileType?: 'modal' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   hideArrow?: boolean,
@@ -41,7 +43,6 @@ export interface SpectrumDialogProps extends DOMProps, StyleProps {
   onDismiss?: () => void,
   role?: 'dialog' | 'alertdialog'
 }
-
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
   variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning'

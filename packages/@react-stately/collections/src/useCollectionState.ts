@@ -20,14 +20,19 @@ import {Size} from './Size';
 
 interface CollectionProps<T extends object, V, W> {
   renderView(type: string, content: T): V,
-  renderWrapper(reusableView: ReusableView<T, V>): W,
+  renderWrapper(
+    parent: ReusableView<T, V> | null,
+    reusableView: ReusableView<T, V>,
+    children: ReusableView<T, V>[],
+    renderChildren: (views: ReusableView<T, V>[]) => W[]
+  ): W,
   layout: Layout<T>,
   collection: Collection<T>,
   getScrollAnchor?(rect: Rect): Key
 }
 
 interface CollectionState<T extends object, V, W> {
-  visibleViews: Set<W>,
+  visibleViews: W[],
   visibleRect: Rect,
   setVisibleRect: (rect: Rect) => void,
   contentSize: Size,
@@ -36,7 +41,7 @@ interface CollectionState<T extends object, V, W> {
 }
 
 export function useCollectionState<T extends object, V, W>(opts: CollectionProps<T, V, W>): CollectionState<T, V, W> {
-  let [visibleViews, setVisibleViews] = useState(new Set<W>());
+  let [visibleViews, setVisibleViews] = useState<W[]>([]);
   let [visibleRect, setVisibleRect] = useState(new Rect());
   let [contentSize, setContentSize] = useState(new Size());
   let [isAnimating, setAnimating] = useState(false);

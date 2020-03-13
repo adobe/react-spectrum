@@ -13,7 +13,7 @@
 import {cleanup, render} from '@testing-library/react';
 import {ClearButton} from '../';
 import React from 'react';
-import {triggerPress} from '@react-spectrum/test-utils';
+import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 
 // NOTE: ClearButton doesn't use Button.tsx as a base and thus differs from v2 ClearButton in a couple ways
@@ -25,6 +25,10 @@ describe('ClearButton', function () {
   afterEach(() => {
     cleanup();
     onPressSpy.mockClear();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(ClearButton);
   });
 
   it.each`
