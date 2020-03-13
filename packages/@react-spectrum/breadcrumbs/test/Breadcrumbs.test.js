@@ -12,10 +12,18 @@
 
 import {Breadcrumbs} from '../';
 import {cleanup, render, within} from '@testing-library/react';
+import {Provider} from '@react-spectrum/provider';
 import {Item} from '@react-stately/collections';
 import React, {useRef} from 'react';
+import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+
 import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
 
+let theme = {
+  light: themeLight,
+  medium: scaleMedium
+};
 
 describe('Breadcrumbs', function () {
   afterEach(() => {
@@ -115,13 +123,15 @@ describe('Breadcrumbs', function () {
 
   it('Handles max visible items', () => {
     let {getByText, getByRole} = render(
-      <Breadcrumbs maxVisibleItems="3" >
-        <Item >Folder 1</Item>
-        <Item >Folder 2</Item>
-        <Item >Folder 3</Item>
-        <Item >Folder 4</Item>
-        <Item >Folder 5</Item>
-      </Breadcrumbs>
+      <Provider theme={theme}>
+        <Breadcrumbs maxVisibleItems="3" >
+          <Item >Folder 1</Item>
+          <Item >Folder 2</Item>
+          <Item >Folder 3</Item>
+          <Item >Folder 4</Item>
+          <Item >Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
     );
     let {children} = getByRole('list');
     expect(within(children[0]).getByRole('button')).toBeTruthy();
@@ -134,13 +144,15 @@ describe('Breadcrumbs', function () {
 
   it('Handles max visible items with showRoot', () => {
     let {getByText, getByRole} = render(
-      <Breadcrumbs maxVisibleItems="3" showRoot>
-        <Item >Folder 1</Item>
-        <Item >Folder 2</Item>
-        <Item >Folder 3</Item>
-        <Item >Folder 4</Item>
-        <Item >Folder 5</Item>
-      </Breadcrumbs>
+      <Provider theme={theme}>
+        <Breadcrumbs maxVisibleItems="3" showRoot>
+          <Item >Folder 1</Item>
+          <Item >Folder 2</Item>
+          <Item >Folder 3</Item>
+          <Item >Folder 4</Item>
+          <Item >Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
     );
     let {children} = getByRole('list');
     expect(getByText('Folder 1')).toBeTruthy();
@@ -168,13 +180,15 @@ describe('Breadcrumbs', function () {
 
   it('Handles max visible items auto', () => {
     let {getByText, getByRole} = render(
-      <Breadcrumbs maxVisibleItems="auto" >
-        <Item >Folder 1</Item>
-        <Item >Folder 2</Item>
-        <Item >Folder 3</Item>
-        <Item >Folder 4</Item>
-        <Item >Folder 5</Item>
-      </Breadcrumbs>
+      <Provider theme={theme}>
+        <Breadcrumbs maxVisibleItems="auto" >
+          <Item >Folder 1</Item>
+          <Item >Folder 2</Item>
+          <Item >Folder 3</Item>
+          <Item >Folder 4</Item>
+          <Item >Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
     );
 
     let {children} = getByRole('list');
@@ -188,13 +202,15 @@ describe('Breadcrumbs', function () {
 
   it('Handles max visible items auto with showRoot', () => {
     let {getByText, getByRole} = render(
-      <Breadcrumbs maxVisibleItems="auto" showRoot>
-        <Item >Folder 1</Item>
-        <Item >Folder 2</Item>
-        <Item >Folder 3</Item>
-        <Item >Folder 4</Item>
-        <Item >Folder 5</Item>
-      </Breadcrumbs>
+      <Provider theme={theme}>
+        <Breadcrumbs maxVisibleItems="auto" showRoot>
+          <Item >Folder 1</Item>
+          <Item >Folder 2</Item>
+          <Item >Folder 3</Item>
+          <Item >Folder 4</Item>
+          <Item >Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
     );
 
     let {children} = getByRole('list');
