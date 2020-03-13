@@ -208,10 +208,11 @@ function render({width = 'auto', isDismissable = undefined, ...props}) {
             <Header><Heading>The Heading</Heading></Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
-            <Footer>
-              <Button variant="secondary" onPress={close}>Cancel</Button>
-              <Button variant="cta" onPress={close}>Confirm</Button>
-            </Footer>
+            {!isDismissable &&
+              <Footer>
+                <Button variant="secondary" onPress={close}>Cancel</Button>
+                <Button variant="cta" onPress={close}>Confirm</Button>
+              </Footer>}
           </Dialog>
         )}
       </DialogTrigger>
@@ -231,10 +232,11 @@ function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
             <Header><Heading>The Heading</Heading></Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
-            <Footer>
-              <Button variant="secondary" onPress={close}>Cancel</Button>
-              <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
-            </Footer>
+            {!isDismissable &&
+              <Footer>
+                <Button variant="secondary" onPress={close}>Cancel</Button>
+                <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+              </Footer>}
           </Dialog>
           )}
       </DialogTrigger>

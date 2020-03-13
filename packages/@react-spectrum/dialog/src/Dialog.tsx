@@ -96,7 +96,7 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
 
   return (
     <FocusScope contain restoreFocus>
-      <div
+      <section
         {...mergeProps(otherProps, dialogProps)}
         className={classNames(
           styles,
@@ -108,7 +108,7 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
         <Grid slots={slots}>
           {children}
         </Grid>
-      </div>
+      </section>
     </FocusScope>
   );
 }
