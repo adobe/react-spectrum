@@ -220,7 +220,6 @@ function render({width = 'auto', isDismissable = undefined, ...props}) {
   );
 }
 
-
 function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>

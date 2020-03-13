@@ -16,7 +16,7 @@ import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {FocusScope} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useSlotId} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {SpectrumBaseDialogProps, SpectrumDialogProps} from '@react-types/dialog';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
@@ -78,6 +78,7 @@ let sizeMap = {
 
 function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDialogProps) {
   let ref = useRef();
+  let titleId = useSlotId();
   let sizeVariant = sizeMap[size];
   let {dialogProps} = useDialog({ref, role});
   if (!slots) {
@@ -85,7 +86,7 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
       container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
       hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
       header: {UNSAFE_className: styles['spectrum-Dialog-header']},
-      heading: {UNSAFE_className: styles['spectrum-Dialog-heading']},
+      heading: {UNSAFE_className: styles['spectrum-Dialog-heading'], id: titleId},
       typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
       divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
       content: {UNSAFE_className: styles['spectrum-Dialog-content']},
@@ -104,6 +105,7 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
           {[`spectrum-Dialog--${sizeVariant}`]: sizeVariant},
           otherProps.className
         )}
+        aria-labelledby={titleId}
         ref={ref}>
         <Grid slots={slots}>
           {children}

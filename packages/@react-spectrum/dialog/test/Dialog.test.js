@@ -15,6 +15,8 @@ import {Dialog} from '../';
 import {DialogContext} from '../src/context';
 import {ModalProvider} from '@react-aria/dialog';
 import React from 'react';
+import {Heading} from '@react-spectrum/typography';
+import {Header} from '@react-spectrum/view';
 
 describe('Dialog', function () {
   afterEach(cleanup);
@@ -29,6 +31,8 @@ describe('Dialog', function () {
 
     let dialog = getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
+    // if there is no heading, then we shouldn't auto label
+    expect(dialog).not.toHaveAttribute('aria-labelledby');
   });
 
   it('auto focuses the dialog itself if there is no focusable child', function () {
@@ -91,5 +95,23 @@ describe('Dialog', function () {
 
     let dialog = getByRole('dialog');
     expect(dialog).toHaveAttribute('aria-modal', 'true');
+  });
+
+  it('should be labelled by its header', function () {
+    let {getByRole} = render(
+      <ModalProvider>
+        <DialogContext.Provider value={{type: 'modal'}}>
+          <Dialog>
+            <Heading><Header>The Title</Header></Heading>
+          </Dialog>
+        </DialogContext.Provider>
+      </ModalProvider>
+    );
+
+    let dialog = getByRole('dialog');
+    let heading = getByRole('heading');
+
+    let id = heading.id;
+    expect(dialog).toHaveAttribute('aria-labelledby', id);
   });
 });
