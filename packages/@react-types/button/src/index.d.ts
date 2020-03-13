@@ -17,15 +17,15 @@ export interface ButtonProps extends DOMProps, StyleProps, PressEvents, HoverEve
   /** Whether the button is disabled */
   isDisabled?: boolean,
   /**
-   * The HTML element or React element used to render the button, e.g. "div", "a", or `RouterLink`
+   * The HTML element or React element used to render the button, e.g. "div", "a", or `RouterLink`.
    * @default "button"
    */
   elementType?: string | JSXElementConstructor<any>,
-  /** The content to display in the button */
+  /** The content to display in the button. */
   children?: ReactNode,
-  /** A URL to link to if elementType="a" */
+  /** A URL to link to if elementType="a". */
   href?: string,
-  /** The target window for the link */
+  /** The target window for the link. */
   target?: string
 }
 
@@ -34,7 +34,7 @@ export interface SpectrumButtonProps extends ButtonProps {
   icon?: ReactElement,
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
   variant: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
-  /** Whether the button should be displayed with a quiet style */
+  /** Whether the button should be displayed with a quiet style. */
   isQuiet?: boolean
 }
 
