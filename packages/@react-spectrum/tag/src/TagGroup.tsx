@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import React, {useContext} from 'react';
 import {Removable} from '@react-types/shared';
 import {SpectrumTagGroupProps} from '@react-types/tag';
@@ -34,7 +34,8 @@ export function useTagGroupProvider(): TagGroupContext {
 }
 
 export const TagGroup = ((props: SpectrumTagGroupProps) => {
-  let completeProps = useProviderProps(props);
+  props = useProviderProps(props);
+  props = useSlotProps(props);
 
   let {
     isReadOnly,
@@ -43,9 +44,9 @@ export const TagGroup = ((props: SpectrumTagGroupProps) => {
     validationState,
     children,
     ...otherProps
-  } = completeProps;
+  } = props;
   let {styleProps} = useStyleProps(otherProps);
-  const {tagGroupProps} = useTagGroup(completeProps);
+  const {tagGroupProps} = useTagGroup(props);
 
   function removeAll(tags) {
     onRemove([tags]);
