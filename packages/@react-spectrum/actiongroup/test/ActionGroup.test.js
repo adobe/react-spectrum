@@ -115,7 +115,7 @@ describe('ActionGroup', function () {
   });
 
   it('uses slots api', () => {
-    testSlotsAPI(ButtonGroup);
+    testSlotsAPI(ActionGroup);
   });
 
   it.each`
