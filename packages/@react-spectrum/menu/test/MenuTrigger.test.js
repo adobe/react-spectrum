@@ -11,7 +11,7 @@
  */
 
 import {Button} from '@react-spectrum/button';
-import {cleanup, fireEvent, render, waitForDomChange, within} from '@testing-library/react';
+import {cleanup, fireEvent, render, within} from '@testing-library/react';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -85,6 +85,8 @@ describe('MenuTrigger', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -200,7 +202,7 @@ describe('MenuTrigger', function () {
   it.each`
     Name             | Component      | props
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, isOpen: true}}
-  `('$Name supports a controlled open state ', async function ({Component, props}) {
+  `('$Name supports a controlled open state ', function ({Component, props}) {
     let tree = renderComponent(Component, props);
     expect(onOpenChange).toBeCalledTimes(0);
 
@@ -209,7 +211,7 @@ describe('MenuTrigger', function () {
 
     let triggerButton = tree.getByRole('button');
     triggerPress(triggerButton);
-    await waitForDomChange();
+    jest.runAllTimers();
 
     menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
@@ -220,7 +222,7 @@ describe('MenuTrigger', function () {
   it.each`
     Name             | Component      | props
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, defaultOpen: true}}
-  `('$Name supports a uncontrolled default open state ', async function ({Component, props}) {
+  `('$Name supports a uncontrolled default open state ', function ({Component, props}) {
     let tree = renderComponent(Component, props);
     expect(onOpenChange).toBeCalledTimes(0);
 
@@ -229,7 +231,7 @@ describe('MenuTrigger', function () {
 
     let triggerButton = tree.getByRole('button');
     triggerPress(triggerButton);
-    await waitForDomChange();
+    jest.runAllTimers();
 
     expect(menu).not.toBeInTheDocument();
     expect(onOpenChange).toBeCalledTimes(1);
@@ -238,10 +240,11 @@ describe('MenuTrigger', function () {
   it.each`
     Name             | Component      | props
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, isDisabled: true}}
-  `('$Name can be disabled', async function ({Component, props}) {
+  `('$Name can be disabled', function ({Component, props}) {
     let tree = renderComponent(Component, props);
     let button = tree.getByRole('button');
     triggerPress(button);
+    jest.runAllTimers();
     let menu = tree.queryByRole('menu');
     expect(menu).toBeNull();
     expect(onOpenChange).toBeCalledTimes(0);
@@ -251,35 +254,33 @@ describe('MenuTrigger', function () {
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
-    `('$Name autofocuses the selected item on menu open', async function ({Component, props}) {
+    `('$Name autofocuses the selected item on menu open', function ({Component, props}) {
       let tree = renderComponent(Component, props, {selectedKeys: ['Bar']});
       let button = tree.getByRole('button');
       triggerPress(button);
-      await waitForDomChange();
+      jest.runAllTimers();
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
       let menuItems = within(menu).getAllByRole('menuitemradio');
       let selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
       triggerPress(button);
+      jest.runAllTimers();
 
-      await waitForDomChange();
       expect(menu).not.toBeInTheDocument();
 
       // Opening menu via down arrow still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
-      await waitForDomChange();
       menu = tree.getByRole('menu');
       menuItems = within(menu).getAllByRole('menuitemradio');
       selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
       triggerPress(button);
-      await waitForDomChange();
+      jest.runAllTimers();
       expect(menu).not.toBeInTheDocument();
 
       // Opening menu via up arrow still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
-      await waitForDomChange();
       menu = tree.getByRole('menu');
       menuItems = within(menu).getAllByRole('menuitemradio');
       selectedItem = menuItems[1];
@@ -289,11 +290,10 @@ describe('MenuTrigger', function () {
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
-    `('$Name focuses the last item on ArrowUp if there isn\'t a selected item', async function ({Component, props}) {
+    `('$Name focuses the last item on ArrowUp if there isn\'t a selected item', function ({Component, props}) {
       let tree = renderComponent(Component, props, {});
       let button = tree.getByRole('button');
       fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
-      await waitForDomChange();
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
       let selectedItem = menuItems[menuItems.length - 1];
@@ -303,11 +303,10 @@ describe('MenuTrigger', function () {
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
-    `('$Name focuses the first item on ArrowDown if there isn\'t a selected item', async function ({Component, props}) {
+    `('$Name focuses the first item on ArrowDown if there isn\'t a selected item', function ({Component, props}) {
       let tree = renderComponent(Component, props, {});
       let button = tree.getByRole('button');
       fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
-      await waitForDomChange();
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
       let selectedItem = menuItems[0];
@@ -320,6 +319,7 @@ describe('MenuTrigger', function () {
       let tree = renderComponent(Component, triggerProps, menuProps);
       let triggerButton = tree.getByRole('button');
       triggerPress(triggerButton);
+      jest.runAllTimers();
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
@@ -346,18 +346,18 @@ describe('MenuTrigger', function () {
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
-    `('$Name closes the menu upon trigger body scroll', async function ({Component, props}) {
+    `('$Name closes the menu upon trigger body scroll', function ({Component, props}) {
       let tree = renderComponent(Component, props);
       let button = tree.getByRole('button');
       triggerPress(button);
-      await waitForDomChange();
+      jest.runAllTimers();
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
 
       let scrollable = tree.getByTestId('scrollable');
       fireEvent.scroll(scrollable);
-      await waitForDomChange();
+      jest.runAllTimers();
       expect(menu).not.toBeInTheDocument();
     });
 
@@ -365,16 +365,16 @@ describe('MenuTrigger', function () {
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
-    `('$Name closes the menu upon clicking escape key', async function ({Component, props}) {
+    `('$Name closes the menu upon clicking escape key', function ({Component, props}) {
       let tree = renderComponent(Component, props);
       let button = tree.getByRole('button');
       triggerPress(button);
-      await waitForDomChange();
+      jest.runAllTimers();
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
       fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
-      await waitForDomChange();
+      jest.runAllTimers();
       expect(menu).not.toBeInTheDocument();
     });
 
@@ -382,17 +382,17 @@ describe('MenuTrigger', function () {
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
-    `('$Name closes the menu upon clicking outside the menu', async function ({Component, props}) {
+    `('$Name closes the menu upon clicking outside the menu', function ({Component, props}) {
       let tree = renderComponent(Component, props);
       let button = tree.getByRole('button');
       triggerPress(button);
-      await waitForDomChange();
+      jest.runAllTimers();
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
       fireEvent.mouseDown(document.body);
       fireEvent.mouseUp(document.body);
-      await waitForDomChange();
+      jest.runAllTimers();
       expect(menu).not.toBeInTheDocument();
     });
 
@@ -400,12 +400,12 @@ describe('MenuTrigger', function () {
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
       ${'V2Dropdown'}  | ${V2Dropdown}  | ${{onOpen, onClose, onSelect, closeOnSelect: false}}
-    `('$Name doesn\'t close on menu item selection if closeOnSelect=false', async function ({Component, props}) {
+    `('$Name doesn\'t close on menu item selection if closeOnSelect=false', function ({Component, props}) {
       let tree = renderComponent(Component, props, {onSelectionChange});
       expect(onOpenChange).toBeCalledTimes(0);
       let button = tree.getByRole('button');
       triggerPress(button);
-      await waitForDomChange();
+      jest.runAllTimers();
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
@@ -443,12 +443,12 @@ describe('MenuTrigger', function () {
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
-    `('$Name closes menu on item selection via ENTER press even if closeOnSelect=false', async function ({Component, props}) {
+    `('$Name closes menu on item selection via ENTER press even if closeOnSelect=false', function ({Component, props}) {
       let tree = renderComponent(Component, props, {onSelectionChange});
       expect(onOpenChange).toBeCalledTimes(0);
       let button = tree.getByRole('button');
       triggerPress(button);
-      await waitForDomChange();
+      jest.runAllTimers();
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
@@ -459,8 +459,9 @@ describe('MenuTrigger', function () {
       let menuItem1 = within(menu).getByText('Foo');
       expect(menuItem1).toBeTruthy();
       fireEvent.keyDown(menuItem1, {key: 'Enter', code: 13, charCode: 13});
+      fireEvent.keyUp(menuItem1, {key: 'Enter', code: 13, charCode: 13});
+      jest.runAllTimers();
       expect(onSelectionChange).toBeCalledTimes(1);
-      await waitForDomChange();
       expect(menu).not.toBeInTheDocument();  
       expect(button).toHaveAttribute('aria-expanded', 'false');
       expect(onOpenChange).toBeCalledTimes(2);
@@ -470,10 +471,11 @@ describe('MenuTrigger', function () {
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
       ${'V2Dropdown'}  | ${V2Dropdown}  | ${{}}
-    `('$Name closes on menu item selection if toggled by mouse click', async function ({Component, props}) {
+    `('$Name closes on menu item selection if toggled by mouse click', function ({Component, props}) {
       let selectionModes = ['single', 'multiple', 'none'];
       for (let mode of selectionModes) {
         let tree = triggerMenuItem(Component, {}, {...props, selectionMode: mode}, (item) => triggerPress(item));
+        jest.runAllTimers();
         let menu = tree.queryByRole('menu');
         expect(menu).toBeNull();
         cleanup();
@@ -484,10 +486,11 @@ describe('MenuTrigger', function () {
     Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
       ${'V2Dropdown'}  | ${V2Dropdown}  | ${{}}
-    `('$Name closes on menu item selection if toggled by ENTER key', async function ({Component, props}) {
+    `('$Name closes on menu item selection if toggled by ENTER key', function ({Component, props}) {
       let selectionModes = ['single', 'multiple', 'none'];
       for (let mode of selectionModes) {
         let tree = triggerMenuItem(Component, {}, {...props, selectionMode: mode}, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13}));
+        jest.runAllTimers();
         let menu = tree.queryByRole('menu');
         expect(menu).toBeNull();
         cleanup();
@@ -498,7 +501,7 @@ describe('MenuTrigger', function () {
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
-    `('$Name doesn\'t close on menu item selection if toggled by SPACE key (all selection modes except "none")', async function ({Component, props}) {
+    `('$Name doesn\'t close on menu item selection if toggled by SPACE key (all selection modes except "none")', function ({Component, props}) {
       let selectionModes = ['single', 'multiple'];
       for (let mode of selectionModes) {
         let tree = triggerMenuItem(Component, {}, {...props, selectionMode: mode}, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
@@ -512,8 +515,9 @@ describe('MenuTrigger', function () {
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{selectionMode: 'none'}}
       ${'V2Dropdown'}  | ${V2Dropdown}  | ${{}}
-    `('$Name closes on menu item selection if toggled by SPACE key (selectionMode=none)', async function ({Component, props}) {
+    `('$Name closes on menu item selection if toggled by SPACE key (selectionMode=none)', function ({Component, props}) {
       let tree = triggerMenuItem(Component, {}, props, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
+      jest.runAllTimers();
       let menu = tree.queryByRole('menu');
       expect(menu).toBeNull();
     });
