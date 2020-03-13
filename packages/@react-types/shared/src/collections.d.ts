@@ -11,13 +11,15 @@
  * governing permissions and limitations under the License.
  */
 import {Key, ReactElement, ReactNode} from 'react';
+import {PressEvent} from '@react-types/shared';
 
 export interface ItemProps<T> {
   title?: ReactNode, // label?? contents?
   childItems?: Iterable<T>,
   hasChildItems?: boolean,
   children: ReactNode, // CellRenderer??
-  uniqueKey?: Key
+  uniqueKey?: Key,
+  onPress?: (e: PressEvent) => void
 }
 
 export type ItemElement<T> = ReactElement<ItemProps<T>>;

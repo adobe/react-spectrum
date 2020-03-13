@@ -11,7 +11,8 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {BreadcrumbItem, Breadcrumbs} from '../';
+import {Breadcrumbs} from '../';
+import {Item} from '@react-stately/collections';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -55,7 +56,7 @@ storiesOf('Breadcrumbs', module)
     'collapsed, maxVisibleItems: auto',
     () => (
       <div style={{width: '100px'}}>
-        {renderPress({maxVisibleItems: 'auto'})}
+        {renderPress({maxVisibleItems: 'auto', isDisabled: true})}
       </div>
     )
   )
@@ -87,9 +88,9 @@ storiesOf('Breadcrumbs', module)
 function render(props = {}) {
   return (
     <Breadcrumbs {...props}>
-      <BreadcrumbItem>Folder 1</BreadcrumbItem>
-      <BreadcrumbItem>Folder 2</BreadcrumbItem>
-      <BreadcrumbItem>Folder 3</BreadcrumbItem>
+      <Item>Folder 1</Item>
+      <Item>Folder 2</Item>
+      <Item>Folder 3</Item>
     </Breadcrumbs>
   );
 }
@@ -97,13 +98,13 @@ function render(props = {}) {
 function renderPress(props = {}) {
   return (
     <Breadcrumbs {...props}>
-      <BreadcrumbItem onPress={action('press Folder 1')}>Folder 1</BreadcrumbItem>
-      <BreadcrumbItem onPress={action('press Folder 2')}>Folder 2</BreadcrumbItem>
-      <BreadcrumbItem onPress={action('press Folder 3')}>Folder 3</BreadcrumbItem>
-      <BreadcrumbItem onPress={action('press Folder 4')}>Folder 4</BreadcrumbItem>
-      <BreadcrumbItem onPress={action('press Folder 5')}>Folder 5</BreadcrumbItem>
-      <BreadcrumbItem onPress={action('press Folder 6')}>Folder 6</BreadcrumbItem>
-      <BreadcrumbItem onPress={action('press Folder 7')}>Folder 7</BreadcrumbItem>
+      <Item onPress={action('press Folder 1')}>Folder 1</Item>
+      <Item onPress={action('press Folder 2')}>Folder 2</Item>
+      <Item onPress={action('press Folder 3')}>Folder 3</Item>
+      <Item onPress={action('press Folder 4')}>Folder 4</Item>
+      <Item onPress={action('press Folder 5')}>Folder 5</Item>
+      <Item onPress={action('press Folder 6')}>Folder 6</Item>
+      <Item onPress={action('press Folder 7')}>Folder 7</Item>
     </Breadcrumbs>
   );
 }

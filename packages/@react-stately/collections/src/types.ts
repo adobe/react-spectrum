@@ -36,7 +36,8 @@ export interface Node<T> extends ItemStates {
   wrapper?: ((element: ReactElement) => ReactElement) | void,
   parentKey?: Key,
   prevKey?: Key,
-  nextKey?: Key
+  nextKey?: Key,
+  props?: any
 }
 
 export interface PartialNode<T> {
@@ -48,7 +49,8 @@ export interface PartialNode<T> {
   rendered?: ReactNode,
   renderer?: ItemRenderer<T>,
   hasChildNodes?: boolean,
-  childNodes?: () => IterableIterator<PartialNode<T>>
+  childNodes?: () => IterableIterator<PartialNode<T>>,
+  props?: any
 }
 
 export interface Collection<T> extends Iterable<T> {

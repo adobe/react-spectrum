@@ -11,7 +11,8 @@
  */
 
 import {AllHTMLAttributes, Key, RefObject} from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {chain, mergeProps} from '@react-aria/utils';
+import {PressEvent} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
@@ -29,7 +30,8 @@ interface MenuItemProps {
   ref?: RefObject<HTMLElement>,
   onClose?: () => void,
   closeOnSelect?: boolean,
-  isVirtualized?: boolean
+  isVirtualized?: boolean,
+  onPress: (e: PressEvent) => void
 }
 
 export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuItemAria {
@@ -40,7 +42,8 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
     onClose,
     closeOnSelect,
     ref,
-    isVirtualized
+    isVirtualized,
+    onPress: onMenuItemPress
   } = props;
 
   let role = 'menuitem';
@@ -91,7 +94,7 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
     itemRef: ref
   });
 
-  let {pressProps} = usePress(mergeProps({onPress, onKeyDown, isDisabled}, itemProps));
+  let {pressProps} = usePress(mergeProps({onPress: chain(onMenuItemPress, onPress), onKeyDown, isDisabled}, itemProps));
   let onMouseOver = () => state.selectionManager.setFocusedKey(key);
 
   return {
