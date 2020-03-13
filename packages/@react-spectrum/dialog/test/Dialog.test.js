@@ -13,10 +13,10 @@
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import {Dialog} from '../';
 import {DialogContext} from '../src/context';
+import {Header} from '@react-spectrum/view';
+import {Heading} from '@react-spectrum/typography';
 import {ModalProvider} from '@react-aria/dialog';
 import React from 'react';
-import {Heading} from '@react-spectrum/typography';
-import {Header} from '@react-spectrum/view';
 
 describe('Dialog', function () {
   afterEach(cleanup);
