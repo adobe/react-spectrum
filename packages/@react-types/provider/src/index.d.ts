@@ -72,7 +72,6 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
   /**
    * Spectrum scale scoped to this provider and its children components.
    * By default this is selected based on touch or mouse pointer type of the OS.
-   * @default "medium"
    */
   scale?: Scale,
   /**
