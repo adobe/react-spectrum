@@ -10,29 +10,50 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-spectrum/COMPONENT_NAME';
+import docs from 'docs:@react-spectrum/dialog';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
-import {Component} from '@react-spectrum/COMPONENT_NAME';
+import {ActionButton, Button} from '@react-spectrum/button';
+import {Content, Footer, Header} from '@react-spectrum/view';
+import {Divider, DialogTrigger} from '@react-spectrum/divider';
+import {Dialog} from '@react-spectrum/dialog';
+import {Heading, Text} from '@react-spectrum/typography';
 ```
 
 # Component Name
 
-<p>{docs.exports.Component.description}</p>
+<p>{docs.exports.Dialog.description}</p>
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Component']}
+  componentNames={['Dialog']}
   sourceData={[
-    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/button/'}
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/dialog/'}
   ]} />
 
 ## Example
 
 ```tsx example
-<Button variant="cta">Button</Button>
+<div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
+<DialogTrigger>
+  <ActionButton>Trigger</ActionButton>
+  {(close) => (
+    <Dialog>
+      <Header><Heading>The Heading</Heading></Header>
+      <Divider />
+      <Content>
+        <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text>
+      </Content>
+      <Footer>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button variant="cta" onPress={close}>Confirm</Button>
+      </Footer>
+    </Dialog>
+  )}
+</DialogTrigger>
+</div>
 ```
 
 ## Content
@@ -65,7 +86,7 @@ import {Component} from '@react-spectrum/COMPONENT_NAME';
 
 ## Props
 
-<PropTable component={docs.exports.Component} links={docs.links} />
+<PropTable component={docs.exports.Dialog} links={docs.links} />
 
 ## Visual Options
 
