@@ -114,4 +114,26 @@ describe('Dialog', function () {
     let id = heading.id;
     expect(dialog).toHaveAttribute('aria-labelledby', id);
   });
+
+  it('if aria-labelledby is specified, then that takes precedence over the title', function () {
+    let {getByRole} = render(
+      <div>
+        <ModalProvider>
+          <DialogContext.Provider value={{type: 'modal'}}>
+            <Dialog aria-labelledby="batman">
+              <Heading><Header>The Title</Header></Heading>
+            </Dialog>
+          </DialogContext.Provider>
+        </ModalProvider>
+        <span id="batman">Good grammar is essential, Robin.</span>
+      </div>
+    );
+
+    let dialog = getByRole('dialog');
+    let heading = getByRole('heading');
+
+    let id = heading.id;
+    expect(dialog).not.toHaveAttribute('aria-labelledby', id);
+    expect(dialog).toHaveAttribute('aria-labelledby', 'batman');
+  });
 });

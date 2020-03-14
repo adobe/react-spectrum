@@ -105,7 +105,7 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
           {[`spectrum-Dialog--${sizeVariant}`]: sizeVariant},
           otherProps.className
         )}
-        aria-labelledby={titleId}
+        aria-labelledby={otherProps['aria-labelledby'] || titleId}
         ref={ref}>
         <Grid slots={slots}>
           {children}
