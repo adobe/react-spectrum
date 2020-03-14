@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
@@ -22,6 +22,7 @@ import {useToggleState} from '@react-stately/toggle';
 
 function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {
     isEmphasized = false,
     isDisabled = false,

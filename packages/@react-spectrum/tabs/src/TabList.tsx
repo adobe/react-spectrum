@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, Orientation, StyleProps} from '@react-types/shared';
 import React, {ReactElement, ReactNode, useEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
@@ -45,6 +45,7 @@ interface TabListProps extends DOMProps, StyleProps {
 // TODO: Implement functionality related to overflowMode
 export function TabList(props: TabListProps) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let state = useTabListState(props);
   let [tabsArray, setTabsArray] = useState([]);
   let {tabListProps} = useTabList(props);

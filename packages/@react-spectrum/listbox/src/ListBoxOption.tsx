@@ -73,9 +73,9 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
             )
           }
           slots={{
-            text: styles['spectrum-Menu-itemLabel'],
-            icon: styles['spectrum-Menu-icon'],
-            description: styles['spectrum-Menu-description']
+            text: {UNSAFE_className: styles['spectrum-Menu-itemLabel']},
+            icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
+            description: {UNSAFE_className: styles['spectrum-Menu-description']}
           }}>
           {!Array.isArray(rendered) && (
             <Text>

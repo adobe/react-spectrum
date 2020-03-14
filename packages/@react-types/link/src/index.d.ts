@@ -14,10 +14,16 @@ import {DOMProps, PressEvents, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 export interface LinkProps extends PressEvents {
+  /** The content to display in the link. */
   children: ReactNode
 }
 
 export interface SpectrumLinkProps extends LinkProps, DOMProps, StyleProps {
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/link/#Options) of the link.
+   * @default "primary"
+   */
   variant?: 'primary' | 'secondary' | 'overBackground',
+  /** Whether the link should be displayed with a quiet style. */
   isQuiet?: boolean
 }
