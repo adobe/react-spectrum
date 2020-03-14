@@ -79,6 +79,7 @@ let sizeMap = {
 function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDialogProps) {
   let ref = useRef();
   let titleId = useSlotId();
+  titleId = otherProps['aria-label'] ? undefined : titleId;
   let sizeVariant = sizeMap[size];
   let {dialogProps} = useDialog({ref, role});
   if (!slots) {
