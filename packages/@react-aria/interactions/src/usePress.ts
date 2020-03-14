@@ -40,7 +40,7 @@ interface EventBase {
   metaKey: boolean
 }
 
-interface PressResult {
+export interface PressResult {
   isPressed: boolean,
   pressProps: HTMLAttributes<HTMLElement>
 }

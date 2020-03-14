@@ -99,5 +99,9 @@ function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivE
   );
 }
 
+/**
+ * ProgressCircles show the progression of a system operation such as downloading, uploading, processing, etc. in a visual way.
+ * They can represent determinate or indeterminate progress.
+ */
 let _ProgressCircle = React.forwardRef(ProgressCircle);
 export {_ProgressCircle as ProgressCircle};
