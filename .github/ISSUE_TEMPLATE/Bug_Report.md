@@ -49,7 +49,7 @@ Search open/closed issues before submitting since someone might have asked the s
 
 ## 🧢 Your Company/Team
 
-<!--- Which product is this bug impacting? (i.e. Adobe/Photoshop) -->
+<!--- Which product team is this bug impacting? (i.e. Adobe/Photoshop) -->
 
 ## 🕷 Tracking Issue
 
