@@ -37,7 +37,7 @@ Search open/closed issues before submitting since someone might have asked the s
 
 ## 🧢 Your Company/Team
 
-<!--- Which product is this feature for? (i.e. Adobe/Photoshop) -->
+<!--- Which product team is this feature for? (i.e. Adobe/Photoshop) -->
 
 ## 🎁 Tracking Ticket
 
