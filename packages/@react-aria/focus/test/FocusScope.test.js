@@ -252,6 +252,33 @@ describe('FocusScope', function () {
       fireEvent.focusIn(outside);
       expect(document.activeElement).toBe(input2);
     });
+
+    it('should restore focus to the last focused element in the scope on focus out', function () {
+      let {getByTestId} = render(
+        <div>
+          <FocusScope contain>
+            <input data-testid="input1" />
+            <input data-testid="input2" />
+          </FocusScope>
+        </div>
+      );
+
+      let input1 = getByTestId('input1');
+      let input2 = getByTestId('input2');
+
+      input1.focus();
+      fireEvent.focusIn(input1); // jsdom doesn't fire this automatically
+      expect(document.activeElement).toBe(input1);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      fireEvent.focusIn(input2);
+      expect(document.activeElement).toBe(input2);
+
+      input2.blur();
+      expect(document.activeElement).toBe(document.body);
+      fireEvent.focusOut(input2);
+      expect(document.activeElement).toBe(input2);
+    });
   });
 
   describe('focus restoration', function () {

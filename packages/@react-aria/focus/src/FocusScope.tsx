@@ -212,11 +212,25 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       }
     };
 
+    let onBlur = (e) => {
+      let isInScope = isElementInScope(e.relatedTarget, scopeRef.current);
+      
+      if (activeScope === scopeRef && !isInScope) {
+        if (focusedNode.current) {
+          focusedNode.current.focus();
+        } else {
+          focusFirstInScope(scopeRef.current);
+        }
+      }
+    }
+
     document.addEventListener('keydown', onKeyDown, false);
     document.addEventListener('focusin', onFocus, false);
+    document.addEventListener('focusout', onBlur, false);
     return () => {
       document.removeEventListener('keydown', onKeyDown, false);
       document.removeEventListener('focusin', onFocus, false);
+      document.removeEventListener('focusout', onBlur, false);
     };
   }, [scopeRef, contain]);
 }
