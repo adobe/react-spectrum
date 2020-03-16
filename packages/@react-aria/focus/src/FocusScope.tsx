@@ -196,7 +196,6 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       // If the focused element is in the current scope, and not in the active scope,
       // update the active scope to point to this scope.
       let isInScope = isElementInScope(e.target, scopeRef.current);
-      
       if (isInScope && (!activeScope || !isElementInScope(e.target, activeScope.current))) {
         activeScope = scopeRef;
       }
