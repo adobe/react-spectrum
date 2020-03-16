@@ -95,7 +95,7 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
   }
 
   return (
-    <FocusScope contain restoreFocus setActiveScope>
+    <FocusScope contain restoreFocus isActiveScope>
       <section
         {...mergeProps(otherProps, dialogProps)}
         className={classNames(

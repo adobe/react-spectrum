@@ -285,6 +285,40 @@ describe('FocusScope', function () {
 
       expect(document.activeElement).toBe(outside);
     });
+
+    it('should not restore focus back to the previous node if a new FocusScope becomes the active scope', function () {
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="outside" />
+            <FocusScope restoreFocus contain>
+              <input data-testid="input1" />
+            </FocusScope>
+            {show &&
+              <FocusScope restoreFocus contain isActiveScope>
+                <input data-testid="input3" />
+              </FocusScope>
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+      // Set a focused node and make first FocusScope the active scope
+      let input1 = getByTestId('input1');
+      input1.focus();
+      fireEvent.focusIn(input1);
+      expect(document.activeElement).toBe(input1);
+      
+      // Rerender with a new active FocusScope
+      rerender(<Test show />);
+
+      expect(document.activeElement).toBe(input1);
+      let input3 = getByTestId('input3');
+      input3.focus();
+      fireEvent.focusIn(input3);
+      expect(document.activeElement).toBe(input3);
+    });      
   });
 
   describe('auto focus', function () {

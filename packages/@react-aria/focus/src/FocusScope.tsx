@@ -20,7 +20,7 @@ interface FocusScopeProps {
   contain?: boolean,
   restoreFocus?: boolean,
   autoFocus?: boolean,
-  setActiveScope?: boolean
+  isActiveScope?: boolean
 }
 
 interface FocusManagerOptions {
@@ -43,7 +43,7 @@ let activeScope: RefObject<HTMLElement[]> = null;
 // For now, it relies on the DOM tree order rather than the React tree order, and is probably
 // less optimized for performance.
 export function FocusScope(props: FocusScopeProps) {
-  let {children, contain, restoreFocus, autoFocus, setActiveScope} = props;
+  let {children, contain, restoreFocus, autoFocus, isActiveScope} = props;
   let startRef = useRef<HTMLSpanElement>();
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<HTMLElement[]>([]);
@@ -58,7 +58,7 @@ export function FocusScope(props: FocusScopeProps) {
     }
 
     scopeRef.current = nodes;
-    if (setActiveScope) {
+    if (isActiveScope) {
       activeScope = scopeRef;
     }
   }, [children]);
@@ -196,6 +196,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       // If the focused element is in the current scope, and not in the active scope,
       // update the active scope to point to this scope.
       let isInScope = isElementInScope(e.target, scopeRef.current);
+      
       if (isInScope && (!activeScope || !isElementInScope(e.target, activeScope.current))) {
         activeScope = scopeRef;
       }
