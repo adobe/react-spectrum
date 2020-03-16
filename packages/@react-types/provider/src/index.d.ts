@@ -32,7 +32,6 @@ export interface Theme {
 }
 
 interface ContextProps {
-  toastPlacement?: ToastPlacement,
   isQuiet?: boolean,
   isEmphasized?: boolean,
   isDisabled?: boolean,

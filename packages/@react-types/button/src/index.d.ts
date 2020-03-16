@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, FocusableProps, HoverEvents, PressEvents, StyleProps} from '@react-types/shared';
+import {DOMProps, FocusableProps, PressEvents, StyleProps} from '@react-types/shared';
 import {JSXElementConstructor, ReactElement, ReactNode} from 'react';
 
-export interface ButtonProps extends DOMProps, StyleProps, PressEvents, HoverEvents, FocusableProps {
+export interface ButtonProps extends DOMProps, StyleProps, PressEvents, FocusableProps {
   /** Whether the button is disabled */
   isDisabled?: boolean,
   /**

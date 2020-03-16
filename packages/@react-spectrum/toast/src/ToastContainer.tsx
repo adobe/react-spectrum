@@ -15,7 +15,7 @@ import React, {ReactElement} from 'react';
 import {Toast} from './';
 import toastContainerStyles from './toastContainer.css';
 import {ToastState} from '@react-types/toast';
-import {useProvider} from '@react-spectrum/provider';
+// import {useProvider} from '@react-spectrum/provider';
 
 export function ToastContainer(props: ToastState): ReactElement {
   let {
@@ -23,8 +23,8 @@ export function ToastContainer(props: ToastState): ReactElement {
     toasts,
     ...otherProps
   } = props;
-  let providerProps = useProvider();
-  let toastPlacement = providerProps && providerProps.toastPlacement && providerProps.toastPlacement.split(' ');
+  // let providerProps = useProvider();
+  let toastPlacement = 'bottom'; /* providerProps && providerProps.toastPlacement && providerProps.toastPlacement.split(' '); */
   let containerPosition = toastPlacement && toastPlacement[0];
   let containerPlacement = toastPlacement && toastPlacement[1];
 
