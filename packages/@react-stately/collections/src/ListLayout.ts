@@ -26,7 +26,8 @@ type ListLayoutOptions<T> = {
   estimatedRowHeight?: number,
   headingHeight?: number,
   estimatedHeadingHeight?: number,
-  indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number
+  indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number,
+  collator?: Intl.Collator
 };
 
 // A wrapper around LayoutInfo that supports heirarchy
@@ -58,6 +59,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   private contentHeight: number;
   private lastCollection: Collection<Node<T>>;
   private rootNodes: LayoutNode[];
+  private collator: Intl.Collator;
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description
@@ -70,6 +72,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.headingHeight = options.headingHeight;
     this.estimatedHeadingHeight = options.estimatedHeadingHeight;
     this.indentationForItem = options.indentationForItem;
+    this.collator = options.collator;
     this.layoutInfos = {};
     this.rootNodes = [];
     this.lastCollection = null;
@@ -280,6 +283,26 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
       key = collection.getKeyBefore(key);
     }
+  }
+
+  getKeyForSearch(search: string, fromKey?: Key) {
+    if (!this.collator) {
+      return null;
+    }
+
+    let collection = this.collectionManager.collection;
+    let key = fromKey ? this.getKeyBelow(fromKey) : this.getFirstKey();
+    while (key) {
+      let item = collection.getItem(key);
+      let substring = item.textValue.slice(0, search.length);
+      if (item.textValue && this.collator.compare(substring, search) === 0) {
+        return key;
+      }
+
+      key = this.getKeyBelow(key);
+    }
+
+    return null;
   }
 
   // getDragTarget(point: Point): DragTarget {

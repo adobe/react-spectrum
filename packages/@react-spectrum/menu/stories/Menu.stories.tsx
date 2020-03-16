@@ -439,35 +439,35 @@ storiesOf('Menu', module)
       <Popover isOpen hideArrow>
         <Menu onSelectionChange={action('onSelectionChange')}>
           <Section title="Section 1">
-            <Item>
+            <Item textValue="Copy">
               <Copy size="S" />
               <Text>Copy</Text>
               <Keyboard>⌘C</Keyboard>
             </Item>
-            <Item>
+            <Item textValue="Cut">
               <Cut size="S" />
               <Text>Cut</Text>
               <Keyboard>⌘X</Keyboard>
             </Item>
-            <Item>
+            <Item textValue="Paste">
               <Paste size="S" />
               <Text>Paste</Text>
               <Keyboard>⌘V</Keyboard>
             </Item>
           </Section>
           <Section title="Section 2">
-            <Item>
+            <Item textValue="Puppy">
               <AlignLeft size="S" />
               <Text>Puppy</Text>
               <Text slot="description">Puppy description super long as well geez</Text>
             </Item>
-            <Item>
+            <Item textValue="Doggo with really really really long long long text">
               <AlignCenter size="S" />
               <Text>Doggo with really really really long long long text</Text>
               <Text slot="end">Value</Text>
               <ChevronRightMedium slot="keyboard" />
             </Item>
-            <Item>
+            <Item textValue="Floof">
               <AlignRight size="S" />
               <Text>Floof</Text>
             </Item>
@@ -497,7 +497,7 @@ storiesOf('Menu', module)
 let customMenuItem = (item) => {
   let Icon = iconMap[item.icon];
   return (
-    <Item childItems={item.children}>
+    <Item childItems={item.children} textValue={item.name}>
       {item.icon && <Icon size="S" />}
       <Text>{item.name}</Text>
       {item.shortcut && <Keyboard>{item.shortcut}</Keyboard>}

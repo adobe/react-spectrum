@@ -17,7 +17,8 @@ export interface ItemProps<T> {
   title?: ReactNode, // label?? contents?
   childItems?: Iterable<T>,
   hasChildItems?: boolean,
-  children: ReactNode, // CellRenderer??
+  children: ReactNode, // CellRenderer??,
+  textValue?: string,
   uniqueKey?: Key,
   onPress?: (e: PressEvent) => void
 }
@@ -110,7 +111,10 @@ export interface KeyboardDelegate {
   getFirstKey?(): Key,
 
   /** Returns the last key, or `null` for none. */
-  getLastKey?(): Key
+  getLastKey?(): Key,
+
+  /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
+  getKeyForSearch?(search: string, fromKey?: Key): Key
 }
 
 interface AsyncListOptions<T> {

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -22,6 +22,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {
     elementType: ElementType = 'button',
     isQuiet,
@@ -66,12 +67,12 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
           )
         }>
         {icon && cloneElement(
-          icon, 
+          icon,
           {
             size: 'S',
             UNSAFE_className: classNames(
               styles,
-              'spectrum-Icon', 
+              'spectrum-Icon',
               icon.props.UNSAFE_className
             )
           }

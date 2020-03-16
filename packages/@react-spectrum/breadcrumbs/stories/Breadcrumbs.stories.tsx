@@ -56,7 +56,7 @@ storiesOf('Breadcrumbs', module)
     'collapsed, maxVisibleItems: auto',
     () => (
       <div style={{width: '100px'}}>
-        {renderPress({maxVisibleItems: 'auto', isDisabled: true})}
+        {renderPress({maxVisibleItems: 'auto'})}
       </div>
     )
   )
