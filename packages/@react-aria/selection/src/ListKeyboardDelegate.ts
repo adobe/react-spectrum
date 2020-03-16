@@ -17,10 +17,12 @@ import {KeyboardDelegate} from '@react-types/shared';
 export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<Node<T>>;
   private ref: RefObject<HTMLElement>;
+  private collator: Intl.Collator;
 
-  constructor(collection: Collection<Node<T>>, ref: RefObject<HTMLElement>) {
+  constructor(collection: Collection<Node<T>>, ref: RefObject<HTMLElement>, collator?: Intl.Collator) {
     this.collection = collection;
     this.ref = ref;
+    this.collator = collator;
   }
 
   getKeyBelow(key: Key) {
@@ -107,5 +109,25 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     return key;
+  }
+
+  getKeyForSearch(search: string, fromKey?: Key) {
+    if (!this.collator) {
+      return null;
+    }
+
+    let collection = this.collection;
+    let key = fromKey ? this.getKeyBelow(fromKey) : this.getFirstKey();
+    while (key) {
+      let item = collection.getItem(key);
+      let substring = item.textValue.slice(0, search.length);
+      if (item.textValue && this.collator.compare(substring, search) === 0) {
+        return key;
+      }
+
+      key = this.getKeyBelow(key);
+    }
+
+    return null;
   }
 }

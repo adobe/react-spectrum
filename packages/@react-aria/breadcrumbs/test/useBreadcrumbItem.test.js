@@ -30,7 +30,6 @@ describe('useBreadcrumbItem', function () {
     expect(breadcrumbItemProps.role).toBe('link');
     expect(breadcrumbItemProps['aria-disabled']).toBeUndefined();
     expect(typeof breadcrumbItemProps.onKeyDown).toBe('function');
-    expect(typeof breadcrumbItemProps.onKeyUp).toBe('function');
   });
 
   it('handles isCurrent', function () {
@@ -64,6 +63,5 @@ describe('useBreadcrumbItem', function () {
     expect(breadcrumbItemProps.role).toBeUndefined();
     expect(breadcrumbItemProps['aria-disabled']).toBeUndefined();
     expect(typeof breadcrumbItemProps.onKeyDown).toBe('function');
-    expect(typeof breadcrumbItemProps.onKeyUp).toBe('function');
   });
 });

@@ -40,6 +40,11 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
   // TODO: DNA variable?
   let isMobile = useMediaQuery('(max-width: 700px)');
   if (isMobile) {
+    // handle cases where desktop popovers need a close button for the mobile modal view
+    if (type !== 'modal' && mobileType === 'modal') {
+      isDismissable = true;
+    }
+
     type = mobileType;
   }
 
@@ -101,6 +106,20 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
       overlay={renderOverlay()} />
   );
 }
+
+// Support DialogTrigger inside components using CollectionBuilder.
+DialogTrigger.getCollectionNode = function (props: SpectrumDialogTriggerProps) {
+  let [trigger, content] = React.Children.toArray(props.children);
+  return {
+    element: trigger,
+    wrapper: (element) => (
+      <DialogTrigger key={element.key} {...props}>
+        {element}
+        {content}
+      </DialogTrigger>
+    )
+  };
+};
 
 function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, ...props}) {
   let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
