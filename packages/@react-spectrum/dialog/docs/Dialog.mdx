@@ -17,8 +17,8 @@ import packageData from '../package.json';
 ```jsx import
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Content, Footer, Header} from '@react-spectrum/view';
-import {Divider, DialogTrigger} from '@react-spectrum/divider';
-import {Dialog} from '@react-spectrum/dialog';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/typography';
 ```
 
@@ -36,7 +36,6 @@ import {Heading, Text} from '@react-spectrum/typography';
 ## Example
 
 ```tsx example
-<div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
 <DialogTrigger>
   <ActionButton>Trigger</ActionButton>
   {(close) => (
@@ -53,7 +52,6 @@ import {Heading, Text} from '@react-spectrum/typography';
     </Dialog>
   )}
 </DialogTrigger>
-</div>
 ```
 
 ## Content
