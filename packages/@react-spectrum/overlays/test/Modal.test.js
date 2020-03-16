@@ -94,6 +94,7 @@ describe('Modal', function () {
       </Provider>
     );
     await waitForDomChange(); // wait for animation
+    fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
