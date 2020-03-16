@@ -14,6 +14,7 @@ import {cleanup, render} from '@testing-library/react';
 import {IllustratedMessage} from '../';
 import React from 'react';
 import V2IllustratedMessage from '@react/react-spectrum/IllustratedMessage';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 function Image(props) {
   return (<svg {...props}><path /></svg>);
@@ -23,6 +24,10 @@ describe('IllustratedMessage', function () {
 
   afterEach(() => {
     cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(IllustratedMessage);
   });
 
   it.each`

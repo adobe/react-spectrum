@@ -22,14 +22,27 @@ let theme = {
   medium: scaleMedium
 };
 
-export function testSlotsAPI(Component) {
-  let {getByTestId} = render(
+export function testSlotsAPI(Component, {defaultSlot, props, testSlotName, targetChild= 0} = {}) {
+  let slotName = testSlotName || 'dummySlot';
+  let {getByTestId, rerender, debug} = render(
     <Provider theme={theme}>
-      <Grid data-testid="grid" slots={{dummySlot: {UNSAFE_className: 'slotClassName'}}}>
-        <Component slot="dummySlot" />
+      <Grid data-testid="grid" slots={{[slotName]: {UNSAFE_className: 'slotClassName'}}}>
+        <Component slot={testSlotName ? undefined : slotName} {...props} />
       </Grid>
     </Provider>
   );
   let root = getByTestId('grid');
-  expect(root.firstChild).toHaveClass('slotClassName');
+  expect(root.children[targetChild]).toHaveClass('slotClassName');
+
+  if (defaultSlot) {
+    rerender(
+      <Provider theme={theme}>
+        <Grid data-testid="grid" slots={{[defaultSlot]: {UNSAFE_className: 'slotClassName'}}}>
+          <Component {...props} />
+        </Grid>
+      </Provider>
+    );
+    root = getByTestId('grid');
+    expect(root.firstChild).toHaveClass('slotClassName');
+  }
 }

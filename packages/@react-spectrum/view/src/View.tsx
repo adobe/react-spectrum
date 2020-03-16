@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps, useSlotProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {HTMLAttributes, JSXElementConstructor, ReactNode, RefObject} from 'react';
 import {ViewStyleProps} from '@react-types/shared';
@@ -21,6 +21,7 @@ export interface ViewProps extends ViewStyleProps, Omit<HTMLAttributes<HTMLEleme
 }
 
 export const View = React.forwardRef((props: ViewProps, ref: RefObject<HTMLElement>) => {
+  props = useSlotProps(props);
   let {
     elementType: ElementType = 'div',
     children,

@@ -16,6 +16,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 let theme = {
   light: themeLight,
@@ -27,13 +28,17 @@ describe('Form', function () {
     cleanup();
   });
 
+  it('uses slots api', () => {
+    testSlotsAPI(Form, {defaultSlot: 'form'});
+  });
+
   it('should render a form', () => {
     let {getByRole} = render(
       <Provider theme={theme}>
         <Form />
       </Provider>
     );
-    
+
     let form = getByRole('form');
     expect(form).toBeTruthy();
   });
@@ -58,7 +63,7 @@ describe('Form', function () {
         <Form ref={ref} />
       </Provider>
     );
-    
+
     let form = getByRole('form');
     expect(form).toBe(ref.current.UNSAFE_getDOMNode());
   });

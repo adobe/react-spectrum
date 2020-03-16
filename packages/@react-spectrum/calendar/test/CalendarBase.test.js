@@ -17,7 +17,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import {triggerPress} from '@react-spectrum/test-utils';
+import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
 import V2Calendar from '@react/react-spectrum/Calendar';
 
 let theme = {
@@ -30,14 +30,13 @@ let headingFormatter = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'n
 let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40};
 
 describe('CalendarBase', () => {
-  afterEach(cleanup);
-
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterEach(() => {
     window.requestAnimationFrame.mockRestore();
+    cleanup();
   });
 
   describe('basics', () => {

@@ -14,12 +14,17 @@ import {cleanup, render} from '@testing-library/react';
 import {ProgressCircle} from '../';
 import React from 'react';
 import V2ProgressCircle from '@react/react-spectrum/Wait';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 
 describe('ProgressCircle', function () {
 
   afterEach(() => {
     cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(ProgressCircle);
   });
 
   it.each`

@@ -35,6 +35,7 @@ const Context = React.createContext<ProviderContext | null>(null);
 
 function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let prevContext = useProvider();
+  props = useSlotProps(props);
   let prevColorScheme = prevContext && prevContext.colorScheme;
   let {
     theme = prevContext && prevContext.theme,

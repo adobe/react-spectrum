@@ -12,11 +12,16 @@
 
 import {cleanup, render} from '@testing-library/react';
 import React from 'react';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 import {View} from '../';
 
 describe('View', function () {
   afterEach(() => {
     cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(View);
   });
 
   it('renders', function () {

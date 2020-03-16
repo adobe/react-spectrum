@@ -19,6 +19,7 @@ import userEvent from '@testing-library/user-event';
 import V2SearchField from '@react/react-spectrum/Search';
 import V2TextArea from '@react/react-spectrum/Textarea';
 import V2TextField from '@react/react-spectrum/Textfield';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 let testId = 'test-id';
 let inputText = 'blah';
@@ -41,6 +42,10 @@ describe('Shared TextField behavior', () => {
     onBlur.mockClear();
     onFocus.mockClear();
     cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(TextField);
   });
 
   // Omitting v3 TextField and TextArea for now since we need https://jira.corp.adobe.com/browse/RSP-1182 to compensate

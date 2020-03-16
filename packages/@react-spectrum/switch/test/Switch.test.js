@@ -15,6 +15,7 @@ import React from 'react';
 import {Switch} from '../';
 import userEvent from '@testing-library/user-event';
 import V2Switch from '@react/react-spectrum/Switch';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 
 describe('Switch', function () {
@@ -23,6 +24,10 @@ describe('Switch', function () {
   afterEach(() => {
     onChangeSpy.mockClear();
     cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(Switch);
   });
 
   it.each`

@@ -13,11 +13,15 @@
 import {AlertDialog} from '../';
 import {cleanup, render} from '@testing-library/react';
 import React from 'react';
-import {triggerPress} from '@react-spectrum/test-utils';
+import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
 
 
 describe('AlertDialog', function () {
   afterEach(cleanup);
+
+  it('uses slots api', () => {
+    testSlotsAPI(AlertDialog,{targetChild: 1});
+  });
 
   it('renders alert dialog with onConfirm', function () {
     let onConfirmSpy = jest.fn();

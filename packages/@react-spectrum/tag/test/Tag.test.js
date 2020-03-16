@@ -15,6 +15,7 @@ import {fireEvent} from '@testing-library/react';
 import React from 'react';
 import {Tag} from '../';
 import {Tag as V2Tag} from '@react/react-spectrum/TagList';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 
 describe('Tag', function () {
@@ -22,6 +23,10 @@ describe('Tag', function () {
   afterEach(() => {
     cleanup();
     onRemoveSpy.mockClear();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(Tag);
   });
 
   it.each`

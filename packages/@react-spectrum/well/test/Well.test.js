@@ -14,6 +14,7 @@ import {cleanup, render} from '@testing-library/react';
 import React, {useRef} from 'react';
 import V2Well from '@react/react-spectrum/Well';
 import {Well} from '../';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 let refExists = (ComponentToCheck, children, props) => {
   let ref;
@@ -32,6 +33,10 @@ let refExists = (ComponentToCheck, children, props) => {
 describe('Well', () => {
   afterEach(function () {
     cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(Well);
   });
 
   it.each`

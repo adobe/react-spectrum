@@ -19,6 +19,7 @@ import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css'
 import userEvent from '@testing-library/user-event';
 import V2Radio from '@react/react-spectrum/Radio';
 import V2RadioGroup from '@react/react-spectrum/RadioGroup';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 let theme = {
   light: themeLight,
@@ -42,6 +43,10 @@ describe('Radios', function () {
   afterEach(() => {
     onChangeSpy.mockClear();
     cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(RadioGroup);
   });
 
   it.each`

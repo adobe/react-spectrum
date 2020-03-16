@@ -60,7 +60,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
             styleProps.className
           )
         }>
-        {cloneElement(icon, {size: 'S'})}
+        {icon !== undefined && cloneElement(icon, {size: 'S'})}
         <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
       </ElementType>
     </FocusRing>

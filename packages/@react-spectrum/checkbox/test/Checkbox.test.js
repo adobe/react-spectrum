@@ -15,6 +15,7 @@ import {cleanup, render} from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import V2Checkbox from '@react/react-spectrum/Checkbox';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 
 describe('Checkbox', function () {
@@ -23,6 +24,10 @@ describe('Checkbox', function () {
   afterEach(() => {
     onChangeSpy.mockClear();
     cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(Checkbox);
   });
 
   it.each`

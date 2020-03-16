@@ -14,12 +14,17 @@ import {cleanup, render} from '@testing-library/react';
 import React from 'react';
 import {StatusLight} from '../';
 import V2StatusLight from '@react/react-spectrum/StatusLight';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 
 describe('StatusLight', function () {
 
   afterEach(() => {
     cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(StatusLight);
   });
 
   it.each`

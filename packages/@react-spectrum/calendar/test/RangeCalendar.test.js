@@ -16,21 +16,24 @@ import {cleanup, fireEvent, render} from '@testing-library/react';
 import {RangeCalendar} from '../';
 import React from 'react';
 import {startOfDay} from 'date-fns';
-import {triggerPress} from '@react-spectrum/test-utils';
+import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
 import V2Calendar from '@react/react-spectrum/Calendar';
 
 let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
 let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40, Escape: 27};
 
 describe('RangeCalendar', () => {
-  afterEach(cleanup);
-
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterEach(() => {
     window.requestAnimationFrame.mockRestore();
+    cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(RangeCalendar);
   });
 
   describe('basics', () => {

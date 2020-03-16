@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Button, ClearButton, LogicButton} from '../';
+import {ActionButton, Button, ClearButton, FieldButton, LogicButton} from '../';
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
@@ -31,8 +31,16 @@ describe('Button', function () {
     onPressSpy.mockClear();
   });
 
-  it('uses slots api', () => {
+  it('Button - uses slots api', () => {
     testSlotsAPI(Button);
+  });
+
+  it('FieldButton - uses slots api', () => {
+    testSlotsAPI(FieldButton);
+  });
+
+  it('LogicButton - uses slots api', () => {
+    testSlotsAPI(LogicButton);
   });
 
   it.each`

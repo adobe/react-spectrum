@@ -18,7 +18,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-import {triggerPress} from '@react-spectrum/test-utils';
+import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
 
 let theme = {
   light: themeLight,
@@ -37,6 +37,18 @@ describe('DialogTrigger', function () {
     matchMedia.clear();
     window.requestAnimationFrame.mockRestore();
     cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(DialogTrigger, {
+      props: {
+        children: [
+          <ActionButton slot="dummySlotName">Trigger</ActionButton>,
+          <Dialog>contents</Dialog>
+        ]
+      },
+      testSlotName: 'dummySlotName'
+    });
   });
 
   it('should trigger a modal by default', function () {
@@ -399,7 +411,7 @@ describe('DialogTrigger', function () {
 
     let onOpenChange = jest.fn();
     let {getByRole} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
-    
+
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
     await waitForDomChange(); // wait for animation
@@ -424,7 +436,7 @@ describe('DialogTrigger', function () {
 
     let onOpenChange = jest.fn();
     let {getByTestId} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
-    
+
     let modal = getByTestId('modal');
     expect(modal).toBeVisible();
     await waitForDomChange(); // wait for animation

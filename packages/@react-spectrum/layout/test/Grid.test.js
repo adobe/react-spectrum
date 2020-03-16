@@ -13,6 +13,7 @@
 import {cleanup} from '@testing-library/react';
 import Grid from '../';
 import React from 'react';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 // TODO: testing :)
 describe('Grid', function () {

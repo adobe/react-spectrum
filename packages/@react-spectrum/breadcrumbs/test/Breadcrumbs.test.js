@@ -14,13 +14,10 @@ import {BreadcrumbItem, Breadcrumbs} from '../';
 import {cleanup, render, within} from '@testing-library/react';
 import React, {useRef} from 'react';
 import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 
 describe('Breadcrumbs', function () {
-  afterEach(() => {
-    cleanup();
-  });
-
   beforeEach(() => {
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
       if (this.className === 'spectrum-Breadcrumbs-item') {
@@ -34,6 +31,11 @@ describe('Breadcrumbs', function () {
 
   afterEach(() => {
     HTMLElement.prototype.getBoundingClientRect.mockRestore();
+    cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(Breadcrumbs);
   });
 
   it.each`

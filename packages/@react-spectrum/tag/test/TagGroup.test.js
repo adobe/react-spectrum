@@ -15,6 +15,7 @@ import {fireEvent} from '@testing-library/react';
 import React from 'react';
 import {Tag, TagGroup} from '../src';
 import {TagList} from '@react/react-spectrum/TagList';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 describe('TagGroup', function () {
   let onRemoveSpy = jest.fn();
@@ -22,6 +23,10 @@ describe('TagGroup', function () {
   afterEach(() => {
     cleanup();
     onRemoveSpy.mockClear();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(TagGroup);
   });
 
   it('provides context for Tag component', function () {

@@ -13,12 +13,17 @@
 import {cleanup, render} from '@testing-library/react';
 import {Icon} from '../';
 import React from 'react';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 let FakeIcon = (props) => <svg {...props}><path d="M 10,150 L 70,10 L 130,150 z" /></svg>;
 
 describe('Icon', function () {
   afterEach(() => {
     cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(Icon, {props: {children: <FakeIcon />}, defaultSlot: 'icon'});
   });
 
   it.each`

@@ -26,6 +26,7 @@ import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 
 export function AlertDialog(props: SpectrumAlertDialogProps) {
   props = useSlotProps(props);
+  props = useSlotProps(props);
   let {
     onClose = () => {}
   } = useContext(DialogContext) || {} as DialogContextValue;

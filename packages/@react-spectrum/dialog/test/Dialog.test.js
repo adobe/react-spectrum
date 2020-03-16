@@ -15,9 +15,14 @@ import {Dialog} from '../';
 import {DialogContext} from '../src/context';
 import {ModalProvider} from '@react-aria/dialog';
 import React from 'react';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 describe('Dialog', function () {
   afterEach(cleanup);
+
+  it('uses slots api', () => {
+    testSlotsAPI(Dialog, {targetChild: 1});
+  });
 
   it('does not auto focus anything inside', function () {
     let {getByRole} = render(

@@ -14,11 +14,16 @@ import {cleanup, render} from '@testing-library/react';
 import {Divider} from '../';
 import React from 'react';
 import Rule from '@react/react-spectrum/Rule';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 describe('Divider', function () {
 
   afterEach(() => {
     cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(Divider, {defaultSlot: 'divider'});
   });
 
   it.each`

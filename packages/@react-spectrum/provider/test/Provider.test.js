@@ -17,7 +17,7 @@ import {Button} from '@react-spectrum/button';
 import {cleanup, render} from '@testing-library/react';
 import {Provider} from '../';
 import React from 'react';
-import {triggerPress} from '@react-spectrum/test-utils';
+import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
 
 let theme = {
   global: {},
@@ -37,6 +37,10 @@ describe('Provider', () => {
   afterEach(() => {
     matchMedia.clear();
     cleanup();
+  });
+
+  it('uses slots api', () => {
+    testSlotsAPI(Provider, {props: {colorScheme: 'light'}});
   });
 
   it('Uses OS theme by default - dark', () => {
