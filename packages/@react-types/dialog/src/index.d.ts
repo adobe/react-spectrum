@@ -46,8 +46,8 @@ export interface SpectrumDialogProps extends DOMProps, StyleProps {
   /** How wide the dialog should be or make fullscreen. */
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
   /**
-   * Whether the dialog adds a close button (AlertButton with a CrossLarge icon).
-   * Weather the dialog is dismissable by clicking on background.
+   * Whether the dialog adds a close button.
+   * Whether the dialog is dismissable by clicking on background.
    */
   isDismissable?: boolean,
   onDismiss?: () => void,
