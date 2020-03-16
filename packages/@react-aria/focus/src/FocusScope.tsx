@@ -222,7 +222,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
           focusFirstInScope(scopeRef.current);
         }
       }
-    }
+    };
 
     document.addEventListener('keydown', onKeyDown, false);
     document.addEventListener('focusin', onFocus, false);
