@@ -17,7 +17,7 @@ import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
 
 let theme = {
@@ -26,10 +26,6 @@ let theme = {
 };
 
 describe('Breadcrumbs', function () {
-  afterEach(() => {
-    cleanup();
-  });
-
   beforeEach(() => {
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
       if (this.className === 'spectrum-Breadcrumbs-item') {
@@ -38,11 +34,17 @@ describe('Breadcrumbs', function () {
       if (this.className === 'spectrum-Breadcrumbs') {
         return {width: 250};
       }
+      return {top: 0, bottom: 0, eft: 0, right: 0};
     });
+
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
   });
 
   afterEach(() => {
     HTMLElement.prototype.getBoundingClientRect.mockRestore();
+    HTMLElement.prototype.scrollIntoView.mockRestore();
+    cleanup();
   });
 
   it.each`
@@ -220,5 +222,42 @@ describe('Breadcrumbs', function () {
     expect(() => getByText('Folder 3')).toThrow();
     expect(() => getByText('Folder 4')).toThrow();
     expect(getByText('Folder 5')).toBeTruthy();
+  });
+
+
+  it('Handles max visible items auto with dialog', () => {
+    let onPress = jest.fn();
+    let {getAllByText, getByRole, getAllByRole} = render(
+      <Provider theme={theme}>
+        <Breadcrumbs maxVisibleItems="auto" showRoot>
+          <Item onPress={() => onPress('Folder 1')}>Folder 1</Item>
+          <Item >Folder 2</Item>
+          <Item >Folder 3</Item>
+          <Item >Folder 4</Item>
+          <Item >Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
+    );
+
+    let menuButton = getByRole('button');
+    triggerPress(menuButton);
+
+    let menu = getByRole('presentation');
+    expect(menu).toBeTruthy();
+    // menu contains all breadcrumb items
+    expect(getAllByRole('menuitem').length).toBe(5);
+
+    let item1 = getAllByText('Folder 1');
+    expect(item1.length).toBe(2);
+
+    // breadcrumb root item
+    expect(item1[0]).toHaveAttribute('role', 'link');
+    triggerPress(item1[0]);
+    expect(onPress).toHaveBeenCalledWith('Folder 1');
+
+    // menu item
+    expect(item1[1]).not.toHaveAttribute('role');
+    triggerPress(item1[1]);
+    expect(onPress).toHaveBeenCalledWith('Folder 1');
   });
 });
