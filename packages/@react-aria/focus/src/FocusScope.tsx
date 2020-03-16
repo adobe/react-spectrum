@@ -19,8 +19,7 @@ interface FocusScopeProps {
   children: ReactNode,
   contain?: boolean,
   restoreFocus?: boolean,
-  autoFocus?: boolean,
-  isActiveScope?: boolean
+  autoFocus?: boolean
 }
 
 interface FocusManagerOptions {
@@ -43,10 +42,11 @@ let activeScope: RefObject<HTMLElement[]> = null;
 // For now, it relies on the DOM tree order rather than the React tree order, and is probably
 // less optimized for performance.
 export function FocusScope(props: FocusScopeProps) {
-  let {children, contain, restoreFocus, autoFocus, isActiveScope} = props;
+  let {children, contain, restoreFocus, autoFocus} = props;
   let startRef = useRef<HTMLSpanElement>();
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<HTMLElement[]>([]);
+  let prevContext = useFocusManager();
 
   useEffect(() => {
     // Find all rendered nodes between the sentinels and add them to the scope.
@@ -58,10 +58,11 @@ export function FocusScope(props: FocusScopeProps) {
     }
 
     scopeRef.current = nodes;
-    if (isActiveScope) {
-      activeScope = scopeRef;
-    }
   }, [children]);
+
+  if (prevContext) {
+    activeScope = scopeRef;
+  }
 
   useFocusContainment(scopeRef, contain);
   useRestoreFocus(restoreFocus);
