@@ -349,7 +349,7 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
 function renderWithDividerInContent({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger isOpen>
+      <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
