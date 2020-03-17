@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import React, {forwardRef} from 'react';
 import {SpectrumIllustratedMessageProps} from '@react-types/illustrated-message';
@@ -19,6 +19,7 @@ import typographyStyles from '@adobe/spectrum-css-temp/components/typography/var
 import {useIllustratedMessage} from '@react-aria/illustrated-message';
 
 function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
+  props = useSlotProps(props);
   let {
     illustration,
     heading,

@@ -87,33 +87,42 @@ describe('useToastState', () => {
   });
 
   it('should call onRemove via onAdd', async () => {
+    jest.useFakeTimers();
     let timeoutToast = {
       content: 'Timeout Toast',
       props: {variant: 'info', timeout: 1}
     };
-    let {result, waitForNextUpdate} = renderHook(() => useToastState());
+    let {result} = renderHook(() => useToastState());
     expect(result.current.toasts.length).toEqual(0);
     act(() => result.current.onAdd(timeoutToast.content, timeoutToast.props));
     expect(result.current.toasts.length).toEqual(1);
     expect(result.current.toasts[0].timer).not.toBe(undefined);
 
-    await waitForNextUpdate();
+    act(() => jest.runAllTimers());
 
     expect(result.current.toasts.length).toEqual(0);
   });
 
-  it('should not call onRemove via onAdd when there is an actionLabel', async () => {
-    let timeoutToast = {
-      content: 'Action Toast',
-      props: {variant: 'info', timeout: 1, actionLabel: 'Undo'}
-    };
-    let {result} = renderHook(() => useToastState());
-    expect(result.current.toasts.length).toEqual(0);
-    act(() => result.current.onAdd(timeoutToast.content, timeoutToast.props));
+  describe('timers', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+    it('should not call onRemove via onAdd when there is an actionLabel', async () => {
+      let timeoutToast = {
+        content: 'Action Toast',
+        props: {variant: 'info', timeout: 1, actionLabel: 'Undo'}
+      };
+      let {result} = renderHook(() => useToastState());
+      expect(result.current.toasts.length).toEqual(0);
+      act(() => result.current.onAdd(timeoutToast.content, timeoutToast.props));
 
-    jest.runAllTimers();
+      jest.runAllTimers();
 
-    expect(result.current.toasts.length).toEqual(1);
-    expect(result.current.toasts[0].timer).toBe(undefined);
+      expect(result.current.toasts.length).toEqual(1);
+      expect(result.current.toasts[0].timer).toBe(undefined);
+    });
   });
 });
