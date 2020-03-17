@@ -24,13 +24,17 @@ import {useRef} from 'react';
 
 interface OptionProps<T> {
   item: Node<T>,
-  state: ListState<T>
+  state: ListState<T>,
+  selectOnPressUp?: boolean,
+  focusOnHover?: boolean
 }
 
 export function ListBoxOption<T>(props: OptionProps<T>) {
   let {
     item,
-    state
+    state,
+    selectOnPressUp,
+    focusOnHover
   } = props;
 
   let {
@@ -47,6 +51,8 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
       isDisabled,
       key,
       ref,
+      selectOnPressUp,
+      focusOnHover: focusOnHover,
       isVirtualized: true
     },
     state

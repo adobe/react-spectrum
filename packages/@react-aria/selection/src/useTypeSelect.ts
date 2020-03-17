@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, KeyboardEvent, useRef} from 'react';
+import {HTMLAttributes, Key, KeyboardEvent, useRef} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
 interface TypeSelectOptions {
   keyboardDelegate: KeyboardDelegate,
-  selectionManager: MultipleSelectionManager
+  selectionManager: MultipleSelectionManager,
+  onTypeSelect?: (key: Key) => void
 }
 
 interface TypeSelectAria {
@@ -24,14 +25,18 @@ interface TypeSelectAria {
 }
 
 export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
-  let {keyboardDelegate, selectionManager} = options;
+  let {keyboardDelegate, selectionManager, onTypeSelect} = options;
   let state = useRef({
     search: '',
     timeout: null
   }).current;
 
-  let onKeyPress = (e: KeyboardEvent) => {
-    let character = String.fromCharCode(e.charCode);
+  let onKeyDown = (e: KeyboardEvent) => {
+    let character = getStringForKey(e.key);
+    if (!character) {
+      return;
+    }
+
     state.search += character;
 
     // Use the delegate to find a key to focus.
@@ -43,6 +48,9 @@ export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
 
     if (key) {
       selectionManager.setFocusedKey(key);
+      if (onTypeSelect) {
+        onTypeSelect(key);
+      }
     }
 
     clearTimeout(state.timeout);
@@ -53,7 +61,19 @@ export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
 
   return {
     typeSelectProps: {
-      onKeyPress: keyboardDelegate.getKeyForSearch ? onKeyPress : null
+      onKeyDown: keyboardDelegate.getKeyForSearch ? onKeyDown : null
     }
   };
+}
+
+function getStringForKey(key: string) {
+  // If the key is of length 1, it is an ASCII value.
+  // Otherwise, if there are no ASCII characters in the key name,
+  // it is a Unicode character.
+  // See https://www.w3.org/TR/uievents-key/
+  if (key.length === 1 || !/^[A-Z]/i.test(key)) {
+    return key;
+  }
+
+  return '';
 }
