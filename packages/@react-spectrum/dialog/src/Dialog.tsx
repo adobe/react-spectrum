@@ -78,16 +78,14 @@ let sizeMap = {
 
 function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDialogProps) {
   let ref = useRef();
-  let titleId = useSlotId();
-  titleId = otherProps['aria-label'] ? undefined : titleId;
   let sizeVariant = sizeMap[size];
-  let {dialogProps} = useDialog({ref, role});
+  let {dialogProps, titleProps} = useDialog({ref, role});
   if (!slots) {
     slots = {
       container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
       hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
       header: {UNSAFE_className: styles['spectrum-Dialog-header']},
-      heading: {UNSAFE_className: styles['spectrum-Dialog-heading'], id: titleId},
+      heading: {UNSAFE_className: styles['spectrum-Dialog-heading'], ...titleProps},
       typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
       divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
       content: {UNSAFE_className: styles['spectrum-Dialog-content']},
@@ -106,7 +104,6 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
           {[`spectrum-Dialog--${sizeVariant}`]: sizeVariant},
           otherProps.className
         )}
-        aria-labelledby={otherProps['aria-labelledby'] || titleId}
         ref={ref}>
         <Grid slots={slots}>
           {children}
