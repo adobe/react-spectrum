@@ -16,7 +16,7 @@ import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {FocusScope} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
-import {mergeProps, useSlotId} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {SpectrumBaseDialogProps, SpectrumDialogProps} from '@react-types/dialog';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
@@ -79,7 +79,7 @@ let sizeMap = {
 function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDialogProps) {
   let ref = useRef();
   let sizeVariant = sizeMap[size];
-  let {dialogProps, titleProps} = useDialog({ref, role});
+  let {dialogProps, titleProps} = useDialog({ref, role, ...otherProps});
   if (!slots) {
     slots = {
       container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
