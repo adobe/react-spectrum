@@ -38,13 +38,8 @@ LogicButtons must have a variant and optionally can have a label.
 A visible label can be provided by passing children.
 
 ```tsx example
-<LogicButton variant="or">This or That</LogicButton>
+<LogicButton variant="or">Or</LogicButton>
 ```
-
-### Accessibility
-
-If no visible label is provided (e.g. an icon only button), an alternative text label must be provided to identify the control for accessibility.
-This should be added using the `aria-label` prop.
 
 ### Internationalization
 
@@ -52,7 +47,7 @@ In order to internationalize a LogicButton, a localized string should be passed 
 
 ## Events
 
-LogicButton support user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress` prop.
+LogicButton supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress` prop.
 
 The following example uses an `onPress` handler to update the variant.
 
@@ -82,5 +77,5 @@ function Example() {
 ### Disabled
 
 ```tsx example
-<LogicButton variant="or" isDisabled>Test</LogicButton>
+<LogicButton variant="or" isDisabled>Or</LogicButton>
 ```
