@@ -30,10 +30,18 @@ import {SearchField} from '@react-spectrum/searchfield';
 ## Example
 
 ```tsx example
-<SearchField
-  label="Search"
-  placeholder="Enter text"
-  onSubmit={text => alert(`Search for ${text}`)} />
+function Example() {
+  let [submittedText, setSubmittedText] = React.useState();
+  return (
+    <div>
+      <SearchField
+      label="Search"
+      placeholder="Enter text"
+      onSubmit={text => setSubmittedText(text)} />
+      <p>Submitted text: {submittedText}</p>
+    </div>
+  );
+}
 ```
 
 ## Value
