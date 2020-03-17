@@ -15,6 +15,7 @@ import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {Text} from '@react-spectrum/typography';
 
 storiesOf('Button', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -24,7 +25,36 @@ storiesOf('Button', module)
   )
   .add(
     'with icon',
-    () => render({icon: <Bell />, variant: 'primary'})
+    () => (
+      <div>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          variant="primary">
+          <Bell />
+          <Text>Default</Text>
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled
+          variant="primary">
+          <Bell />
+          <Text>Disabled</Text>
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isQuiet
+          variant="primary">
+          <Bell />
+          <Text>Quiet</Text>
+        </Button>
+      </div>
+    )
   )
   .add(
     'variant: overBackground',

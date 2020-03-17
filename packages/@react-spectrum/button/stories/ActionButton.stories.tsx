@@ -15,6 +15,7 @@ import {ActionButton} from '../';
 import Add from '@spectrum-icons/workflow/Add';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {Text} from '@react-spectrum/typography';
 
 storiesOf('Button/ActionButton', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -24,11 +25,45 @@ storiesOf('Button/ActionButton', module)
   )
   .add(
     'icon',
-    () => render({icon: <Add />})
+    () => (
+      <div>
+        <ActionButton
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}>
+          <Add />
+          <Text>Default</Text>
+        </ActionButton>
+        <ActionButton
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled>
+          <Add />
+          <Text>Disabled</Text>
+        </ActionButton>
+      </div>
+    )
   )
   .add(
     'icon only',
-    () => renderNoText({icon: <Add />})
+    () => (
+      <div>
+        <ActionButton
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}>
+          <Add />
+        </ActionButton>
+        <ActionButton
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled>
+          <Add />
+        </ActionButton>
+      </div>
+    )
   )
   .add(
     'holdAffordance',
@@ -81,24 +116,6 @@ function render(props = {}) {
         {...props}>
         Disabled
       </ActionButton>
-    </div>
-  );
-}
-
-function renderNoText(props = {}) {
-  return (
-    <div>
-      <ActionButton
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        {...props} />
-      <ActionButton
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        isDisabled
-        {...props} />
     </div>
   );
 }
