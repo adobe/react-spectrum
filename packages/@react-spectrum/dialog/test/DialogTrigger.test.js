@@ -372,6 +372,7 @@ describe('DialogTrigger', function () {
     expect(dialog).toBeVisible();
     await waitForDomChange(); // wait for animation
 
+    fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
@@ -428,6 +429,7 @@ describe('DialogTrigger', function () {
     expect(modal).toBeVisible();
     await waitForDomChange(); // wait for animation
 
+    fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
     expect(modal).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
@@ -458,6 +460,7 @@ describe('DialogTrigger', function () {
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
     await waitForDomChange(); // wait for animation
+    fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);

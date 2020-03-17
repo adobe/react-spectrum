@@ -82,11 +82,11 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             )
           }
           slots={{
-            text: styles['spectrum-Menu-itemLabel'],
-            end: styles['spectrum-Menu-end'],
-            icon: styles['spectrum-Menu-icon'],
-            description: styles['spectrum-Menu-description'],
-            keyboard: styles['spectrum-Menu-keyboard']
+            text: {UNSAFE_className: styles['spectrum-Menu-itemLabel']},
+            end: {UNSAFE_className: styles['spectrum-Menu-end']},
+            icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
+            description: {UNSAFE_className: styles['spectrum-Menu-description']},
+            keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard']}
           }}>
           {!Array.isArray(rendered) && (
             <Text>

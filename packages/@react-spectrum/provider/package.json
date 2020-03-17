@@ -38,7 +38,11 @@
     "classnames": "^2.2.5"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2",
+    "@react-spectrum/button": "^3.0.0-rc.1",
+    "@react-spectrum/checkbox": "^3.0.0-rc.1",
+    "@react-spectrum/form": "^3.0.0-rc.1",
+    "@react-spectrum/textfield": "^3.0.0-rc.1"
   },
   "peerDependencies": {
     "react": "^16.8.0",
