@@ -12,9 +12,9 @@
 
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 import {TextArea} from '../';
 import V2TextArea from '@react/react-spectrum/Textarea';
-import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 let testId = 'test-id';
 let mockScrollHeight = 500;

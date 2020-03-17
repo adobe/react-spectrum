@@ -14,8 +14,8 @@ import {cleanup, render} from '@testing-library/react';
 import {fireEvent} from '@testing-library/react';
 import React from 'react';
 import {Tag} from '../';
-import {Tag as V2Tag} from '@react/react-spectrum/TagList';
 import {testSlotsAPI} from '@react-spectrum/test-utils';
+import {Tag as V2Tag} from '@react/react-spectrum/TagList';
 
 
 describe('Tag', function () {

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Header} from '../';
 import {cleanup} from '@testing-library/react';
+import {Header} from '../';
 import React from 'react';
 import {testSlotsAPI} from '@react-spectrum/test-utils';
 

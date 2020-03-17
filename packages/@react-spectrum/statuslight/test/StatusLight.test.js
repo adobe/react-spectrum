@@ -13,8 +13,8 @@
 import {cleanup, render} from '@testing-library/react';
 import React from 'react';
 import {StatusLight} from '../';
-import V2StatusLight from '@react/react-spectrum/StatusLight';
 import {testSlotsAPI} from '@react-spectrum/test-utils';
+import V2StatusLight from '@react/react-spectrum/StatusLight';
 
 
 describe('StatusLight', function () {

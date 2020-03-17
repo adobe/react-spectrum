@@ -15,11 +15,11 @@ import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import userEvent from '@testing-library/user-event';
 import V2Radio from '@react/react-spectrum/Radio';
 import V2RadioGroup from '@react/react-spectrum/RadioGroup';
-import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 let theme = {
   light: themeLight,

@@ -12,8 +12,8 @@
 
 import {cleanup, render} from '@testing-library/react';
 import React from 'react';
-import {UIIcon} from '../';
 import {testSlotsAPI} from '@react-spectrum/test-utils';
+import {UIIcon} from '../';
 
 let FakeIcon = (props) => <svg {...props}><path d="M 10,150 L 70,10 L 130,150 z" /></svg>;
 

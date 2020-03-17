@@ -13,8 +13,8 @@
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import {Link} from '../';
 import React from 'react';
-import V2Link from '@react/react-spectrum/Link';
 import {testSlotsAPI} from '@react-spectrum/test-utils';
+import V2Link from '@react/react-spectrum/Link';
 
 // Triggers a "press" event on an element.
 // TODO: import from somewhere more common
@@ -33,7 +33,7 @@ describe('Link', function () {
   });
 
   it('uses slots api', () => {
-    testSlotsAPI(Link, {props: {children: "Click Me"}});
+    testSlotsAPI(Link, {props: {children: 'Click Me'}});
   });
 
   it.each`

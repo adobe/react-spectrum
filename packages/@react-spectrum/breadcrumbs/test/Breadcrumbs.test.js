@@ -13,8 +13,8 @@
 import {BreadcrumbItem, Breadcrumbs} from '../';
 import {cleanup, render, within} from '@testing-library/react';
 import React, {useRef} from 'react';
-import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
 import {testSlotsAPI} from '@react-spectrum/test-utils';
+import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
 
 
 describe('Breadcrumbs', function () {

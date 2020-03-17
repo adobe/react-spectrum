@@ -13,9 +13,9 @@
 import {cleanup, render} from '@testing-library/react';
 import React from 'react';
 import {Switch} from '../';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 import V2Switch from '@react/react-spectrum/Switch';
-import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 
 describe('Switch', function () {

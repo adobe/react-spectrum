@@ -14,12 +14,12 @@ import {act, cleanup, fireEvent, render} from '@testing-library/react';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 import {TextArea, TextField} from '../';
 import userEvent from '@testing-library/user-event';
 import V2SearchField from '@react/react-spectrum/Search';
 import V2TextArea from '@react/react-spectrum/Textarea';
 import V2TextField from '@react/react-spectrum/Textfield';
-import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 let testId = 'test-id';
 let inputText = 'blah';

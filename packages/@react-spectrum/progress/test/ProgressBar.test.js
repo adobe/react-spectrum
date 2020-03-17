@@ -13,8 +13,8 @@
 import {cleanup, render} from '@testing-library/react';
 import {ProgressBar} from '../';
 import React from 'react';
-import V2ProgressBar from '@react/react-spectrum/Progress';
 import {testSlotsAPI} from '@react-spectrum/test-utils';
+import V2ProgressBar from '@react/react-spectrum/Progress';
 
 
 describe('ProgressBar', function () {

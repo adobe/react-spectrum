@@ -17,8 +17,8 @@ import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
+import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 
 let theme = {
   light: themeLight,

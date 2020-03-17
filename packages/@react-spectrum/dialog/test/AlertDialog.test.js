@@ -20,7 +20,7 @@ describe('AlertDialog', function () {
   afterEach(cleanup);
 
   it('uses slots api', () => {
-    testSlotsAPI(AlertDialog,{targetChild: 1});
+    testSlotsAPI(AlertDialog, {targetChild: 1});
   });
 
   it('renders alert dialog with onConfirm', function () {

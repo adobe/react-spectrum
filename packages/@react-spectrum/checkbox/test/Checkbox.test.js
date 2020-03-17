@@ -13,9 +13,9 @@
 import {Checkbox} from '../';
 import {cleanup, render} from '@testing-library/react';
 import React from 'react';
+import {testSlotsAPI} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 import V2Checkbox from '@react/react-spectrum/Checkbox';
-import {testSlotsAPI} from '@react-spectrum/test-utils';
 
 
 describe('Checkbox', function () {

@@ -22,9 +22,9 @@ let theme = {
   medium: scaleMedium
 };
 
-export function testSlotsAPI(Component, {defaultSlot, props, testSlotName, targetChild= 0} = {}) {
+export function testSlotsAPI(Component, {defaultSlot, props, testSlotName, targetChild = 0} = {}) {
   let slotName = testSlotName || 'dummySlot';
-  let {getByTestId, rerender, debug} = render(
+  let {getByTestId, rerender} = render(
     <Provider theme={theme}>
       <Grid data-testid="grid" slots={{[slotName]: {UNSAFE_className: 'slotClassName'}}}>
         <Component slot={testSlotName ? undefined : slotName} {...props} />

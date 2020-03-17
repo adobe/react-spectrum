@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Text} from '../';
 import {cleanup} from '@testing-library/react';
 import React from 'react';
 import {testSlotsAPI} from '@react-spectrum/test-utils';
+import {Text} from '../';
 
 
 describe('Text', function () {
