@@ -18,7 +18,7 @@ export interface SpectrumFormProps extends DOMProps, StyleProps, SpectrumLabelab
   children: ReactElement<SpectrumLabelableProps> | ReactElement<SpectrumLabelableProps>[],
   /** Whether the form elements are displayed with their quiet style. */
   isQuiet?: boolean,
-  /** Whether the form elements are rendered with their emphasized style (blue). */
+  /** Whether the form elements are rendered with their emphasized style. */
   isEmphasized?: boolean,
   /** Whether the form elements are disabled. */
   isDisabled?: boolean,
