@@ -12,6 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {Content, Header} from '@react-spectrum/view';
+import {cssModuleToSlots} from '@react-spectrum/utils';
 import {Divider} from '@react-spectrum/divider';
 import {Flex, Grid} from '@react-spectrum/layout';
 import {GridProps} from '@react-types/layout';
@@ -27,7 +28,7 @@ storiesOf('Layout', module)
   .add(
     'Grid: card',
     () => render({
-      slots: styles,
+      slots: cssModuleToSlots(styles),
       children: null
     })
   );

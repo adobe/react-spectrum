@@ -12,9 +12,11 @@
 
 import {DOMProps} from '@react-types/shared';
 import {InputHTMLAttributes} from 'react';
+import {mergeProps} from '@react-aria/utils';
 import {SwitchProps} from '@react-types/switch';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
+import {usePressableInput} from '@react-aria/interactions';
 
 export interface ToggleAria {
   inputProps: InputHTMLAttributes<HTMLInputElement>
@@ -47,7 +49,12 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState): To
   }
   let isInvalid = validationState === 'invalid';
 
+  let {pressProps} = usePressableInput({
+    isDisabled
+  });
+
   let {focusableProps} = useFocusable(props);
+  let interactions = mergeProps(pressProps, focusableProps);
 
   return {
     inputProps: {
@@ -61,7 +68,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState): To
       name,
       type: 'checkbox',
       autoFocus,
-      ...focusableProps
+      ...interactions
     }
   };
 }

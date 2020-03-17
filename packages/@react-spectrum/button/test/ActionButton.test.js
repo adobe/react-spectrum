@@ -13,7 +13,7 @@
 import {ActionButton} from '../';
 import {cleanup, render} from '@testing-library/react';
 import React from 'react';
-import {triggerPress} from '@react-spectrum/test-utils';
+import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 
 describe('ActionButton', function () {
@@ -23,6 +23,11 @@ describe('ActionButton', function () {
     cleanup();
     onPressSpy.mockClear();
   });
+
+  it('uses slots api', () => {
+    testSlotsAPI(ActionButton);
+  });
+
   it.each`
     Component        | props
     ${ActionButton}  | ${{onPress: onPressSpy}}

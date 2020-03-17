@@ -10,27 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonGroupCollection} from './';
-import {ButtonGroupState, ButtonGroupStateBase} from './types';
+import {ActionGroupCollection} from './';
+import {ActionGroupState, ActionGroupStateBase} from './types';
 import {MultipleSelection} from '@react-types/shared';
 import React, {useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
-export function useButtonGroupState(props: ButtonGroupStateBase & MultipleSelection): ButtonGroupState {
+export function useActionGroupState(props: ActionGroupStateBase & MultipleSelection): ActionGroupState {
   let selectionState = useMultipleSelectionState(props);
 
-  let buttonCollection = useMemo(() => {
+  let collection = useMemo(() => {
     let childrenArray = React.Children.toArray(props.children);
     childrenArray = childrenArray.map(child => React.cloneElement(child, {
       isSelected: selectionState.selectedKeys.has(child.key)
     }));
 
-    return new ButtonGroupCollection(childrenArray);
+    return new ActionGroupCollection(childrenArray);
 
   }, [props, selectionState.selectedKeys]);
 
   return {
-    buttonCollection,
-    selectionManager: new SelectionManager(buttonCollection, selectionState)
+    collection,
+    selectionManager: new SelectionManager(collection, selectionState)
   };
 }

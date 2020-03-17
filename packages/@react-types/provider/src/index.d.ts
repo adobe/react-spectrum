@@ -32,22 +32,59 @@ export interface Theme {
 }
 
 interface ContextProps {
+  /**
+   * Set the placement of the toast alerts.
+   * @default "bottom"
+   */
   toastPlacement?: ToastPlacement,
+  /** Whether children components should be displayed with the quiet style. */
   isQuiet?: boolean,
+  /** Whether children components should be displayed with the emphasized style. */
   isEmphasized?: boolean,
+  /** Whether children components should be disabled. */
   isDisabled?: boolean,
+  /** Whether children components should be displayed with the required style. */
   isRequired?: boolean,
+  /** Whether children components should be read only. */
   isReadOnly?: boolean,
+  /** Whether children components should be displayed with the validation state style. */
   validationState?: ValidationState
 }
 
 export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
+  /** The children components to receive Provider props and context. */
   children: ReactNode,
+  /**
+   * Theme scoped to this provider and its children components.
+   * Sets the CSS variables for scale and color scheme values.
+   */
   theme?: Theme,
-  colorScheme?: ColorScheme, // by default, chooses based on OS setting
-  defaultColorScheme?: ColorScheme, // if no OS setting, which to choose
-  scale?: Scale, // by default, chooses based on touch/mouse
+  /**
+   * Color scheme scoped to this provider and its children components.
+   * Defaults to the color scheme set by the OS.
+   */
+  colorScheme?: ColorScheme,
+  /**
+   * If there is not an OS/browser color scheme this is the default.
+   * @default "light"
+   */
+  defaultColorScheme?: ColorScheme,
+  /**
+   * Spectrum scale scoped to this provider and its children components.
+   * By default this is selected based on touch or mouse pointer type of the OS.
+   */
+  scale?: Scale,
+  /**
+   * A Typekit ID is required to use the suggested fonts.
+   * Visit https://typekit.com/account/kits to create one.
+   * The default is only intended for prototyping work.
+   */
   typekitId?: string,
+  /**
+   * Locale (language specific format) of this provider and its children.
+   * Using the format primary-region, ex. en-US, fr-CA, ar-AE.
+   * @default "en-US"
+   */
   locale?: string
 }
 

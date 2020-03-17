@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, ViewStyleProps} from '@react-types/shared';
-import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {ReactElement, RefObject} from 'react';
 
@@ -20,14 +20,15 @@ export interface FooterProps extends DOMProps, ViewStyleProps {
 }
 
 export const Footer = React.forwardRef((props: FooterProps, ref: RefObject<HTMLElement>) => {
+  props = useSlotProps(props, 'footer');
   let {
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps({slot: 'footer', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <footer {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
+    <footer {...filterDOMProps(otherProps)} {...styleProps} className={classNames({}, styleProps.className)} ref={ref}>
       {children}
     </footer>
   );
