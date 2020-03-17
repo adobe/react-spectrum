@@ -16,7 +16,6 @@ import React from 'react';
 import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 
-let FakeIcon = (props) => <svg {...props}><path d="M 10,150 L 70,10 L 130,150 z" /></svg>;
 /**
  * Logic Button has no tests outside of this file because functionally it is identical
  * to Button right now. The only difference is the class names, and since we aren't
