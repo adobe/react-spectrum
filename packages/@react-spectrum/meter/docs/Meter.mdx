@@ -36,8 +36,8 @@ import {Meter} from '@react-spectrum/meter';
 
 ## Value
 
-Meters are controlled with the `value` prop representing current percentage (as an integer).
-In this case, the minimum and maximum values default to 0 and 100, respectively.
+Meters are controlled with the `value` prop.
+In this default case, the `value` props can be thought of as representing current percentage of progress as the minimum and maxiumum values default to 0 and 100, respectively.
 
 ```tsx example
 <Meter label="Storage space" value={25} variant="positive" />
@@ -90,13 +90,13 @@ The label should be in sentence case.
 <Flex flexDirection="column" maxWidth="275px">
   <Meter label="Label" marginBottom="25px" value={25} variant="warning" />
   <Meter label="Label" marginBottom="25px" labelPosition="side" value={25} variant="warning" />
-  <Meter aria-label="Label" showValueLabel={false} value={25} variant="warning" />
+  <Meter label="Label" showValueLabel={false} value={25} variant="warning" />
 </Flex>
 ```
 
-The value label can be updated via the `valueLabel` prop.
+The value label can be updated via the `valueLabel` prop in cases where showing a different scale makes sense.
 ```tsx example
-<Meter aria-label="Progress" marginBottom="25px" value={25} valueLabel="1 of 4" variant="warning" />
+<Meter label="Progress" marginBottom="25px" value={25} valueLabel="1 of 4" variant="warning" />
 ```
 
 ### Size
