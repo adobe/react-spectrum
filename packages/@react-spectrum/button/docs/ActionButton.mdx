@@ -1,0 +1,118 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/button';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {ActionButton} from '@react-spectrum/button';
+import Edit from '@spectrum-icons/workflow/Edit';
+```
+
+# ActionButton
+
+<p>{docs.exports.ActionButton.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ActionButton']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/action-button/'}
+  ]} />
+
+## Example
+
+```tsx example
+<ActionButton icon={<Edit />}>Edit</ActionButton>
+```
+
+## Content
+
+ActionButtons can have a label, and icon, or both. An icon is provided by passing an icon component to the `icon` prop.
+A visible label can be provided by passing children.
+
+```tsx example
+<ActionButton>Label only</ActionButton>
+<ActionButton icon={<Edit />}>Icon + Label</ActionButton>
+<ActionButton icon={<Edit />} aria-label="Icon only" />
+```
+
+### Accessibility
+
+If no visible label is provided (e.g. an icon only button),
+an alternative text label must be provided to identify the control for accessibility. This should be added using
+the `aria-label` prop.
+
+### Internationalization
+
+In order to internationalize an ActionButton, a localized string should be passed to the `children` or `aria-label` prop.
+
+## Events
+
+ActionButtons support user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress`
+prop.
+
+The following example uses an `onPress` handler to update a counter stored in React state.
+
+```tsx example
+function Example() {
+  let [count, setCount] = React.useState(0);
+
+  return (
+    <ActionButton icon={<Edit />} onPress={() => setCount(c => c + 1)}>{count} Edits</ActionButton>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.ActionButton} links={docs.links} />
+
+## Visual Options
+
+### Quiet
+[View guidelines](https://spectrum.adobe.com/page/action-button/#Quiet)
+
+```tsx example
+<ActionButton isQuiet>Action!</ActionButton>
+```
+
+### Selected
+[View guidelines](https://spectrum.adobe.com/page/action-button/#Selected)
+
+```tsx example
+<ActionButton isSelected>Action!</ActionButton>
+```
+
+### Emphasis
+[View guidelines](https://spectrum.adobe.com/page/action-button/#Emphasis)
+
+Note that the styling provided by the `isEmphasized` prop is only applied when the `isSelected` prop is true.
+
+```tsx example
+<ActionButton isEmphasized isSelected>Action!</ActionButton>
+```
+
+### Hold Affordance
+[View guidelines](https://spectrum.adobe.com/page/action-button/#Hold-icon)
+
+```tsx example
+<ActionButton holdAffordance icon={<Edit />} aria-label="Edit" />
+```
+
+### Disabled
+[View guidelines](https://spectrum.adobe.com/page/action-button/#Disabled)
+
+```tsx example
+<ActionButton isDisabled>Action!</ActionButton>
+```
