@@ -21,7 +21,6 @@ import {useButton} from '@react-aria/button';
 
 interface FieldButtonProps extends ButtonProps {
   isQuiet?: boolean,
-  icon?: ReactElement,
   validationState?: 'valid' | 'invalid'
 }
 
