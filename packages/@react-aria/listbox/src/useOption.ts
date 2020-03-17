@@ -12,7 +12,7 @@
 
 import {HTMLAttributes, Key, RefObject} from 'react';
 import {ListState} from '@react-stately/list';
-import {usePress} from '@react-aria/interactions';
+import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface OptionProps {
@@ -20,6 +20,8 @@ interface OptionProps {
   isSelected?: boolean,
   key?: Key,
   ref?: RefObject<HTMLElement>,
+  selectOnPressUp?: boolean,
+  focusOnHover?: boolean,
   isVirtualized?: boolean
 }
 
@@ -33,6 +35,8 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     isDisabled,
     key,
     ref,
+    selectOnPressUp,
+    focusOnHover,
     isVirtualized
   } = props;
 
@@ -51,15 +55,23 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     selectionManager: state.selectionManager,
     itemKey: key,
     itemRef: ref,
+    selectOnPressUp,
     isVirtualized
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled});
+  let {hoverProps} = useHover({
+    isDisabled: isDisabled || !focusOnHover,
+    onHover() {
+      state.selectionManager.setFocusedKey(key);
+    }
+  });
 
   return {
     optionProps: {
       ...optionProps,
-      ...pressProps
+      ...pressProps,
+      ...hoverProps
     }
   };
 }
