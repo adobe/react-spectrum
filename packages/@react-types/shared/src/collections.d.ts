@@ -17,7 +17,7 @@ export interface ItemProps<T> {
   title?: ReactNode, // label?? contents?
   childItems?: Iterable<T>,
   hasChildItems?: boolean,
-  children: ReactNode, // CellRenderer??,
+  children: ReactNode, // CellRenderer??
   textValue?: string,
   uniqueKey?: Key,
   onPress?: (e: PressEvent) => void
@@ -30,7 +30,7 @@ interface AsyncLoadable<T> {
   items?: Iterable<T>,
   itemKey?: string,
   isLoading?: boolean, // possibly isLoadingMore
-  onLoadMore?: () => any,
+  onLoadMore?: () => any
 }
 
 export interface SectionProps<T> extends AsyncLoadable<T> {
