@@ -44,5 +44,9 @@ function Meter(props: SpectrumMeterProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * Meters are visual representations of a quantity or an achievement.
+ * Their progress is determined by user actions, rather than system actions.
+ */
 let _Meter = React.forwardRef(Meter);
 export {_Meter as Meter};
