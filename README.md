@@ -8,7 +8,7 @@ We are currently working hard to be ready for a stable release.
   - Please try out our RC React Spectrum Components and [tell us](https://github.com/adobe-private/react-spectrum-v3/issues/new/choose) what you think!
 
 ## Overview ##
-React Spectrum is a UI Component Library leveraging Spectrum, Adobe's Design System. It will enable you to easily build apps with plug and play UI components that match Adobe's look and feel. Some features of React Spectrum include: 
+React Spectrum is a UI Component Library leveraging Spectrum, Adobe's Design System. It enables you to easily build apps with plug and play UI components that match Adobe's look and feel. Some features of React Spectrum include: 
 
 #### Built-in Accessibility and Keyboard support ⌨️:
 Save development time with out-of-the-box accessibility and keyboard support. 
