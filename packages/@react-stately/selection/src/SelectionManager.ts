@@ -28,8 +28,8 @@ export class SelectionManager implements MultipleSelectionManager {
     return this.state.selectionMode;
   }
 
-  get disableEmptySelection() {
-    return this.state.disableEmptySelection;
+  get allowsEmptySelection() {
+    return this.state.allowsEmptySelection;
   }
 
   get isFocused() {
