@@ -75,7 +75,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
           'spectrum-Menu-item',
           {
             'is-disabled': isDisabled,
-            'is-selected': isSelected
+            'is-selected': isSelected,
+            'is-selectable': state.selectionManager.selectionMode !== 'none'
           }
         )}>
         <Grid
