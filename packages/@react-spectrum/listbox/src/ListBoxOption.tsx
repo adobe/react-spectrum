@@ -45,7 +45,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
   } = item;
 
   let ref = useRef<HTMLDivElement>();
-  let {optionProps} = useOption(
+  let {optionProps, labelProps, descriptionProps} = useOption(
     {
       isSelected,
       isDisabled,
@@ -79,9 +79,9 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
             )
           }
           slots={{
-            text: {UNSAFE_className: styles['spectrum-Menu-itemLabel']},
+            text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
             icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
-            description: {UNSAFE_className: styles['spectrum-Menu-description']}
+            description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps}
           }}>
           {!Array.isArray(rendered) && (
             <Text>

@@ -10,14 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, Key, RefObject} from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {HTMLAttributes, Key, RefObject} from 'react';
+import {mergeProps, useSlotId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface MenuItemAria {
-  menuItemProps: AllHTMLAttributes<HTMLElement>
+  menuItemProps: HTMLAttributes<HTMLElement>,
+  labelProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: HTMLAttributes<HTMLElement>,
+  keyboardShortcutProps: HTMLAttributes<HTMLElement>
 }
 
 interface MenuState<T> extends TreeState<T> {}
@@ -50,9 +53,15 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
     role = 'menuitemcheckbox';
   }
 
+  let labelId = useSlotId();
+  let descriptionId = useSlotId();
+  let keyboardId = useSlotId();
+
   let ariaProps = {
     'aria-disabled': isDisabled,
-    role
+    role,
+    'aria-labelledby': labelId,
+    'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ')
   };
 
   if (state.selectionManager.selectionMode !== 'none') {
@@ -105,6 +114,15 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
       ...ariaProps,
       ...pressProps,
       ...hoverProps
+    },
+    labelProps: {
+      id: labelId
+    },
+    descriptionProps: {
+      id: descriptionId
+    },
+    keyboardShortcutProps: {
+      id: keyboardId
     }
   };
 }
