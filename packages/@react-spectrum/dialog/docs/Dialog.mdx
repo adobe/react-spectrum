@@ -58,15 +58,17 @@ import {Heading, Text} from '@react-spectrum/typography';
 
 *If the component has a children prop that accepts any type of content (e.g. `ReactNode`), include this section. Please include a note about how to internationalize the content.*
 
-### Accessibility
+Discuss slots and put the grid displaying what slots Dialog supports here
 
-*If the component has accessibility needs, include this section.*
+accessibility stuff about children order goes here
 
-### Internationalization
+same thing about autofocus for the children
+
+### Internationalization REMOVE THIS FOR DIALOG?
 
 *If this component has content, cover how to internationalize the content, include this section.*
 
-## Value
+## Value REMOVE THIS FOR DIALOG
 
 *If the component displays or allows a user to input a value, include this section.*
 
@@ -74,11 +76,24 @@ import {Heading, Text} from '@react-spectrum/typography';
 
 *If the component supports a label prop, include this section. Please include a note about how to internationalize the content.*
 
+Accessibility stuff concerning the header aria-labelledby stuff goes here. Maybe this goes into content?
+
+
 ## Events
 
 *If the component supports event props, include this section. Only cover the events that are important to the main functionality of the component.*
 
-## Validation
+Close as a function goes here, put how to chain this with their own close callback
+Press events?
+Do I put isDismissible here (does it mean you don't have to do the close as a function)
+
+Maybe isDismissable becomes its own section? Maybe place it in Visual Options? Maybe it becomes a section here?
+isDismissable is technically a DialogTrigger prop so don't go into too much detail here? Just mention how if affect close behavior
+and hides the Footer slot. Actually 
+
+
+
+## Validation REMOVE THIS FOR DIALOG
 
 *If the component supports validation props, include this section.*
 
@@ -89,6 +104,8 @@ import {Heading, Text} from '@react-spectrum/typography';
 ## Visual Options
 
 *Show examples of all variants and visual props here with links to the design website for more usage details. Examples can be grouped together for conciseness.*
+
+Talk about types here. Put a note that this is set by the context/dialog trigger
 
 ### Sample Option
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
