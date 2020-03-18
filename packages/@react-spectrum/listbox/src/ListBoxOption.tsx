@@ -58,6 +58,10 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     state
   );
 
+  let contents = typeof rendered === 'string'
+    ? <Text>{rendered}</Text>
+    : rendered;
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
@@ -83,12 +87,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
             icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
             description: {UNSAFE_className: styles['spectrum-Menu-description']}
           }}>
-          {!Array.isArray(rendered) && (
-            <Text>
-              {rendered}
-            </Text>
-          )}
-          {Array.isArray(rendered) && rendered}
+          {contents}
           {isSelected && 
             <CheckmarkMedium
               slot="checkmark"
@@ -99,7 +98,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
                 )
               } />
           }
-        </Grid>  
+        </Grid>
       </div>
     </FocusRing>
   );
