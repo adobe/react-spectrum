@@ -11,17 +11,17 @@
  */
 
 import {ButtonProps} from '@react-types/button';
-import {classNames, filterDOMProps, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {cloneElement, ReactElement} from 'react';
+import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 
 interface FieldButtonProps extends ButtonProps {
   isQuiet?: boolean,
-  icon?: ReactElement,
+  isActive?: boolean,
   validationState?: 'valid' | 'invalid'
 }
 
@@ -33,9 +33,9 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
     isQuiet,
     isDisabled,
     validationState,
-    icon,
     children,
     autoFocus,
+    isActive,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
@@ -53,15 +53,22 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
             'spectrum-FieldButton',
             {
               'spectrum-FieldButton--quiet': isQuiet,
-              'is-active': isPressed,
+              'is-active': isActive || isPressed,
               'is-disabled': isDisabled,
               'is-invalid': validationState === 'invalid'
             },
             styleProps.className
           )
         }>
-        {icon !== undefined && cloneElement(icon, {size: 'S'})}
-        <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
+        <SlotProvider
+          slots={{
+            icon: {
+              size: 'S',
+              UNSAFE_className: classNames(styles, 'spectrum-Icon')
+            }
+          }}>
+          {children}
+        </SlotProvider>
       </ElementType>
     </FocusRing>
   );

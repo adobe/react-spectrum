@@ -14,7 +14,7 @@ import {
   classNames,
   filterDOMProps,
   gridStyleProps,
-  SlotContext,
+  SlotProvider,
   useSlotProps,
   useStyleProps
 } from '@react-spectrum/utils';
@@ -38,9 +38,9 @@ export const Grid = React.forwardRef((props: GridProps, ref: RefObject<HTMLEleme
 
   return (
     <div {...filterDOMProps(otherProps)} {...styleProps} ref={ref} className={classNames({}, styleProps.className, slots && slots.container && slots.container.UNSAFE_className)}>
-      <SlotContext.Provider value={slots}>
+      <SlotProvider slots={slots}>
         {children}
-      </SlotContext.Provider>
+      </SlotProvider>
     </div>
   );
 });

@@ -30,7 +30,7 @@ export type FocusEvent = BaseEvent<ReactFocusEvent<any>>;
 export type PointerType = 'mouse' | 'pen' | 'touch' | 'keyboard';
 
 export interface PressEvent {
-  type: 'pressstart' | 'pressend' | 'press',
+  type: 'pressstart' | 'pressend' | 'pressup' | 'press',
   pointerType: PointerType,
   target: HTMLElement,
   shiftKey: boolean,
@@ -75,7 +75,8 @@ export interface PressEvents {
   onPress?: (e: PressEvent) => void,
   onPressStart?: (e: PressEvent) => void,
   onPressEnd?: (e: PressEvent) => void,
-  onPressChange?: (isPressed: boolean) => void
+  onPressChange?: (isPressed: boolean) => void,
+  onPressUp?: (e: PressEvent) => void
 }
 
 export interface FocusableProps extends FocusEvents, KeyboardEvents {

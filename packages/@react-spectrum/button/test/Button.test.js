@@ -16,7 +16,6 @@ import React from 'react';
 import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 
-let FakeIcon = (props) => <svg {...props}><path d="M 10,150 L 70,10 L 130,150 z" /></svg>;
 /**
  * Logic Button has no tests outside of this file because functionally it is identical
  * to Button right now. The only difference is the class names, and since we aren't
@@ -168,18 +167,6 @@ describe('Button', function () {
   // see https://jsfiddle.net/snowystinger/z6vmrw4d/1/
   // it's also extraneous to test with 'enter' or 'space' on a button because it'd just be testing
   // the spec https://www.w3.org/TR/WCAG20-TECHS/SCR35.html
-
-  it.each`
-    Component      | props
-    ${ActionButton}| ${{icon: <FakeIcon role="status" />}}
-    ${Button}      | ${{icon: <FakeIcon role="status" />}}
-    ${V2Button}    | ${{icon: <FakeIcon role="status" />}}
-  `('v2/3 parity accepts an icon as a prop', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
-
-    let icon = getByRole('status');
-    expect(icon).not.toBeNull();
-  });
 
   it.each`
     Name                | Component
