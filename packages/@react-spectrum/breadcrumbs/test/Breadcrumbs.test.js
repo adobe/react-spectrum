@@ -72,9 +72,9 @@ describe('Breadcrumbs', function () {
   it('Handles multiple items', () => {
     let {getByTestId} = render(
       <Breadcrumbs className="test-class">
-        <Item data-testid="item-1" >Folder 1</Item>
-        <Item data-testid="item-2" >Folder 2</Item>
-        <Item data-testid="item-3" >Folder 3</Item>
+        <Item data-testid="item-1">Folder 1</Item>
+        <Item data-testid="item-2">Folder 2</Item>
+        <Item data-testid="item-3">Folder 3</Item>
       </Breadcrumbs>
     );
     let item1 = getByTestId('item-1');
@@ -126,12 +126,12 @@ describe('Breadcrumbs', function () {
   it('Handles max visible items', () => {
     let {getByText, getByRole} = render(
       <Provider theme={theme}>
-        <Breadcrumbs maxVisibleItems="3" >
-          <Item >Folder 1</Item>
-          <Item >Folder 2</Item>
-          <Item >Folder 3</Item>
-          <Item >Folder 4</Item>
-          <Item >Folder 5</Item>
+        <Breadcrumbs maxVisibleItems="3">
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
         </Breadcrumbs>
       </Provider>
     );
@@ -148,11 +148,11 @@ describe('Breadcrumbs', function () {
     let {getByText, getByRole} = render(
       <Provider theme={theme}>
         <Breadcrumbs maxVisibleItems="3" showRoot>
-          <Item >Folder 1</Item>
-          <Item >Folder 2</Item>
-          <Item >Folder 3</Item>
-          <Item >Folder 4</Item>
-          <Item >Folder 5</Item>
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
         </Breadcrumbs>
       </Provider>
     );
@@ -168,8 +168,8 @@ describe('Breadcrumbs', function () {
   it('Handles isDisabled', () => {
     let {getByTestId} = render(
       <Breadcrumbs isDisabled>
-        <Item data-testid="item-1" >Folder 1</Item>
-        <Item data-testid="item-2" >Folder 2</Item>
+        <Item data-testid="item-1">Folder 1</Item>
+        <Item data-testid="item-2">Folder 2</Item>
       </Breadcrumbs>
     );
 
@@ -183,12 +183,12 @@ describe('Breadcrumbs', function () {
   it('Handles max visible items auto', () => {
     let {getByText, getByRole} = render(
       <Provider theme={theme}>
-        <Breadcrumbs maxVisibleItems="auto" >
-          <Item >Folder 1</Item>
-          <Item >Folder 2</Item>
-          <Item >Folder 3</Item>
-          <Item >Folder 4</Item>
-          <Item >Folder 5</Item>
+        <Breadcrumbs maxVisibleItems="auto">
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
         </Breadcrumbs>
       </Provider>
     );
@@ -206,11 +206,11 @@ describe('Breadcrumbs', function () {
     let {getByText, getByRole} = render(
       <Provider theme={theme}>
         <Breadcrumbs maxVisibleItems="auto" showRoot>
-          <Item >Folder 1</Item>
-          <Item >Folder 2</Item>
-          <Item >Folder 3</Item>
-          <Item >Folder 4</Item>
-          <Item >Folder 5</Item>
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
         </Breadcrumbs>
       </Provider>
     );
@@ -231,10 +231,10 @@ describe('Breadcrumbs', function () {
       <Provider theme={theme}>
         <Breadcrumbs maxVisibleItems="auto" showRoot>
           <Item onPress={() => onPress('Folder 1')}>Folder 1</Item>
-          <Item >Folder 2</Item>
-          <Item >Folder 3</Item>
-          <Item >Folder 4</Item>
-          <Item >Folder 5</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
         </Breadcrumbs>
       </Provider>
     );
