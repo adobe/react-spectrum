@@ -53,7 +53,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -74,6 +75,14 @@ describe('usePress', function () {
         {
           type: 'presschange',
           pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
         },
         {
           type: 'pressend',
@@ -106,7 +115,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -186,6 +196,14 @@ describe('usePress', function () {
           pressed: true
         },
         {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
           type: 'pressend',
           target: el,
           pointerType: 'mouse',
@@ -216,7 +234,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -259,7 +278,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -280,6 +300,14 @@ describe('usePress', function () {
         {
           type: 'presschange',
           pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: true,
+          metaKey: false,
+          shiftKey: false
         },
         {
           type: 'pressend',
@@ -312,7 +340,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -331,7 +360,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -351,6 +381,14 @@ describe('usePress', function () {
         {
           type: 'presschange',
           pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
         },
         {
           type: 'pressend',
@@ -383,7 +421,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -464,6 +503,14 @@ describe('usePress', function () {
           pressed: true
         },
         {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
           type: 'pressend',
           target: el,
           pointerType: 'mouse',
@@ -494,7 +541,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -514,6 +562,14 @@ describe('usePress', function () {
         {
           type: 'presschange',
           pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: true
         },
         {
           type: 'pressend',
@@ -546,7 +602,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -567,7 +624,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -586,6 +644,14 @@ describe('usePress', function () {
         {
           type: 'presschange',
           pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
         },
         {
           type: 'pressend',
@@ -618,7 +684,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -697,6 +764,14 @@ describe('usePress', function () {
           pressed: true
         },
         {
+          type: 'pressup',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
           type: 'pressend',
           target: el,
           pointerType: 'touch',
@@ -727,7 +802,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -779,6 +855,14 @@ describe('usePress', function () {
           pressed: true
         },
         {
+          type: 'pressup',
+          target: el,
+          pointerType: 'touch',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
           type: 'pressend',
           target: el,
           pointerType: 'touch',
@@ -809,7 +893,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -854,7 +939,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = getByText('test');
@@ -873,6 +959,14 @@ describe('usePress', function () {
         {
           type: 'presschange',
           pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
         },
         {
           type: 'pressend',
@@ -908,7 +1002,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = getByText('test');
@@ -944,6 +1039,14 @@ describe('usePress', function () {
           pressed: true
         },
         {
+          type: 'pressup',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
           type: 'pressend',
           target: el,
           pointerType: 'keyboard',
@@ -976,7 +1079,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = getByText('test');
@@ -1002,6 +1106,14 @@ describe('usePress', function () {
         {
           type: 'presschange',
           pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
         },
         {
           type: 'pressend',
@@ -1041,7 +1153,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = getByText('test');
@@ -1068,6 +1181,14 @@ describe('usePress', function () {
         {
           type: 'presschange',
           pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
         },
         {
           type: 'pressend',
@@ -1103,7 +1224,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -1122,6 +1244,14 @@ describe('usePress', function () {
         {
           type: 'presschange',
           pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: true,
+          metaKey: false,
+          shiftKey: false
         },
         {
           type: 'pressend',
@@ -1154,7 +1284,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = getByText('test');
@@ -1205,6 +1336,14 @@ describe('usePress', function () {
           pressed: true
         },
         {
+          type: 'pressup',
+          target: el,
+          pointerType: 'keyboard',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
           type: 'pressend',
           target: el,
           pointerType: 'keyboard',
@@ -1235,7 +1374,8 @@ describe('usePress', function () {
           onPressStart={addEvent}
           onPressEnd={addEvent}
           onPressChange={pressed => addEvent({type: 'presschange', pressed})}
-          onPress={addEvent} />
+          onPress={addEvent}
+          onPressUp={addEvent} />
       );
 
       let el = getByText('test');

@@ -37,12 +37,17 @@ export interface SpectrumButtonProps extends ButtonProps {
 }
 
 export interface SpectrumActionButtonProps extends ButtonProps {
+  /** Whether the ActionButton should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
   isQuiet?: boolean,
+  /** Whether the ActionButton should be displayed with a [selected state](https://spectrum.adobe.com/page/action-button/#Selected). */
   isSelected?: boolean,
+  /** Whether the ActionButton should be displayed with a [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
   isEmphasized?: boolean,
+  /** Whether the ActionButton should be displayed with a [hold icon](https://spectrum.adobe.com/page/action-button/#Hold-icon). */
   holdAffordance?: boolean
 }
 
 export interface SpectrumLogicButtonProps extends ButtonProps {
+  /** The type of boolean sequence to be represented by the LogicButton. */
   variant: 'and' | 'or'
 }

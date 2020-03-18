@@ -21,6 +21,7 @@ import {useButton} from '@react-aria/button';
 
 interface FieldButtonProps extends ButtonProps {
   isQuiet?: boolean,
+  isActive?: boolean,
   validationState?: 'valid' | 'invalid'
 }
 
@@ -34,6 +35,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
     validationState,
     children,
     autoFocus,
+    isActive,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
@@ -51,7 +53,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
             'spectrum-FieldButton',
             {
               'spectrum-FieldButton--quiet': isQuiet,
-              'is-active': isPressed,
+              'is-active': isActive || isPressed,
               'is-disabled': isDisabled,
               'is-invalid': validationState === 'invalid'
             },
