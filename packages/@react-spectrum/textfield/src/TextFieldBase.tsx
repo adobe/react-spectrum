@@ -77,7 +77,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   }));
 
   let {styleProps} = useStyleProps(otherProps);
-  let {labelProps, textFieldProps} = useTextField(props);
+  let {labelProps, textFieldProps} = useTextField(props, inputRef);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
   let isInvalid = validationState === 'invalid';
 

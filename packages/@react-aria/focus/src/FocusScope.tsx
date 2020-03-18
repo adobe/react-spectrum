@@ -213,9 +213,18 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     };
 
     let onBlur = (e) => {
-      let isInScope = isElementInScope(e.relatedTarget, scopeRef.current);
-      
-      if (activeScope === scopeRef && !isInScope) {
+      let isInScope = isElementInScope(e.target, scopeRef.current);
+      if (isInScope && (!activeScope || !isElementInScope(e.target, activeScope.current))) {
+        activeScope = scopeRef;
+      }
+
+      // Save the currently focused node in this scope
+      if (isInScope) {
+        focusedNode.current = e.target;
+      }
+
+      let relatedInScope = isElementInScope(e.relatedTarget, scopeRef.current);
+      if (activeScope === scopeRef && !relatedInScope) {
         if (focusedNode.current) {
           focusedNode.current.focus();
         } else {

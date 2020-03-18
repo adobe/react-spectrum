@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes} from 'react';
+import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {TextFieldProps} from '@react-types/textfield';
 import {TextInputDOMProps} from '@react-types/shared';
 import {useFocusable} from '@react-aria/focus';
@@ -22,7 +22,8 @@ interface TextFieldAria {
 }
 
 export function useTextField(
-  props: TextFieldProps & TextInputDOMProps
+  props: TextFieldProps & TextInputDOMProps,
+  ref: RefObject<HTMLElement>
 ): TextFieldAria {
   let {
     isDisabled = false,
