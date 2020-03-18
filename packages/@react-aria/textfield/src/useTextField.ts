@@ -34,7 +34,7 @@ export function useTextField(
     type = 'text',
     onChange = () => {}
   } = props;
-  let {focusableProps} = useFocusable(props);
+  let {focusableProps} = useFocusable(props, ref);
   let {labelProps, fieldProps} = useLabel(props);
 
   return {
