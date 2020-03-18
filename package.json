@@ -16,6 +16,7 @@
     "jest": "node scripts/jest.js",
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
     "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",
+    "release-audit": "babel-node --presets @babel/env ./scripts/audit.js",
     "postinstall": "make icons && patch-package",
     "plop": "plop",
     "chromatic": "CHROMATIC_APP_CODE=x8ktlved8wd chromatic test --build-script-name build-storybook",
