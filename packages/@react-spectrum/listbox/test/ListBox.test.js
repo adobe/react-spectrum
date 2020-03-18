@@ -480,13 +480,13 @@ describe('ListBox', function () {
       let options = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(options[0]);
 
-      fireEvent.keyPress(listbox, {charCode: 'b'.charCodeAt(0)});
+      fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[1]);
 
-      fireEvent.keyPress(listbox, {charCode: 'l'.charCodeAt(0)});
+      fireEvent.keyDown(listbox, {key: 'L'});
       expect(document.activeElement).toBe(options[3]);
 
-      fireEvent.keyPress(listbox, {charCode: 'e'.charCodeAt(0)});
+      fireEvent.keyDown(listbox, {key: 'E'});
       expect(document.activeElement).toBe(options[4]);
     });
 
@@ -496,12 +496,12 @@ describe('ListBox', function () {
       let options = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(options[0]);
 
-      fireEvent.keyPress(listbox, {charCode: 'b'.charCodeAt(0)});
+      fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[1]);
 
       jest.runAllTimers();
 
-      fireEvent.keyPress(listbox, {charCode: 'b'.charCodeAt(0)});
+      fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[2]);
     });
 
@@ -511,14 +511,14 @@ describe('ListBox', function () {
       let options = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(options[0]);
 
-      fireEvent.keyPress(listbox, {charCode: 'b'.charCodeAt(0)});
-      fireEvent.keyPress(listbox, {charCode: 'l'.charCodeAt(0)});
-      fireEvent.keyPress(listbox, {charCode: 'e'.charCodeAt(0)});
+      fireEvent.keyDown(listbox, {key: 'B'});
+      fireEvent.keyDown(listbox, {key: 'L'});
+      fireEvent.keyDown(listbox, {key: 'E'});
       expect(document.activeElement).toBe(options[4]);
 
       jest.runAllTimers();
 
-      fireEvent.keyPress(listbox, {charCode: 'b'.charCodeAt(0)});
+      fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[1]);
     });
   });
