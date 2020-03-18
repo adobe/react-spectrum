@@ -60,12 +60,9 @@ console.log(ourPackagesInUse);
 
 ourPackagesInUse.forEach((value, key) => {
   let pkgPath = getPathToPackage(key, allPackages);
-  let moduleFiles = glob.sync(pkgPath.match(/(.*)[\/\\]/)[1] + '/**/*.{js,ts,tsx}');
+  let moduleFiles = glob.sync(pkgPath.match(/(.*)[\/\\]/)[1] + '/**/*.{js,ts,tsx}', {ignore: ['**/node_modules/**', '**/*.test.js']});
 
   for (let file of moduleFiles) {
-    if (file.includes('Tabs.tsx')) {
-      console.log('this should have a ts-ignore');
-    }
     let contents = fs.readFileSync(file, 'utf8');
     if (/ts-ignore/.test(contents) || /eslint-disable/.test(contents)) {
       console.log('has an ignore', file);
