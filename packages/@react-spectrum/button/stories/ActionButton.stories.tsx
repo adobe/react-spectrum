@@ -39,8 +39,8 @@ storiesOf('Button/ActionButton', module)
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}
           isDisabled>
-          <Add />
           <Text>Disabled</Text>
+          <Add />
         </ActionButton>
       </div>
     )

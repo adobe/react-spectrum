@@ -41,8 +41,8 @@ storiesOf('Button', module)
           onPressEnd={action('pressend')}
           isDisabled
           variant="primary">
-          <Bell />
           <Text>Disabled</Text>
+          <Bell />
         </Button>
         <Button
           onPress={action('press')}
