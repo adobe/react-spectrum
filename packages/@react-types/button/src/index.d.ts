@@ -11,7 +11,7 @@
  */
 
 import {DOMProps, FocusableProps, HoverEvents, PressEvents, StyleProps} from '@react-types/shared';
-import {JSXElementConstructor, ReactElement, ReactNode} from 'react';
+import {JSXElementConstructor, ReactNode} from 'react';
 
 export interface ButtonProps extends DOMProps, StyleProps, PressEvents, HoverEvents, FocusableProps {
   /** Whether the button is disabled */
@@ -30,8 +30,6 @@ export interface ButtonProps extends DOMProps, StyleProps, PressEvents, HoverEve
 }
 
 export interface SpectrumButtonProps extends ButtonProps {
-  /** An icon to display in the button */
-  icon?: ReactElement,
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
   variant: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
   /** Whether the button should be displayed with a quiet style. */
@@ -39,8 +37,6 @@ export interface SpectrumButtonProps extends ButtonProps {
 }
 
 export interface SpectrumActionButtonProps extends ButtonProps {
-  /** An icon to display in the ActionButton. */
-  icon?: ReactElement,
   /** Whether the ActionButton should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
   isQuiet?: boolean,
   /** Whether the ActionButton should be displayed with a [selected state](https://spectrum.adobe.com/page/action-button/#Selected). */
