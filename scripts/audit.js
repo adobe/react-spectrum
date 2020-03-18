@@ -10,8 +10,12 @@ function isOurs(dep, ourPackages) {
   return ourPackages.some(ourDep => ourDep.includes(dep));
 }
 
+function getPathToPackage(dep, ourPackages) {
+  return ourPackages.find(ourDep => ourDep.includes(dep));
+}
+
 function traceDeps(dep, ourPackages) {
-  let nextPackage = ourPackages.find(ourDep => ourDep.includes(dep));
+  let nextPackage = getPathToPackage(dep, ourPackages);
   let contents = fs.readFileSync(nextPackage, 'utf8');
   let parsed = JSON.parse(contents);
   let name = parsed.name;
@@ -35,7 +39,10 @@ let ourPackagesInUse = new Map();
 for (let file of startingPackages) {
   let contents = fs.readFileSync(file, 'utf8');
   let parsed = JSON.parse(contents);
-  if (!parsed.private) {
+  let name = parsed.name;
+  let isPrivate = parsed.private;
+  if (!isPrivate) {
+    ourPackagesInUse.set(name, {versions: [parsed.version], isPrivate});
     let deps = parsed.dependencies;
     deps && Object.entries(deps).filter(([key]) => {
       return isOurs(key, allPackages);
@@ -50,3 +57,18 @@ for (let file of startingPackages) {
 }
 
 console.log(ourPackagesInUse);
+
+ourPackagesInUse.forEach((value, key) => {
+  let pkgPath = getPathToPackage(key, allPackages);
+  let moduleFiles = glob.sync(pkgPath.match(/(.*)[\/\\]/)[1] + '/**/*.{js,ts,tsx}');
+
+  for (let file of moduleFiles) {
+    if (file.includes('Tabs.tsx')) {
+      console.log('this should have a ts-ignore');
+    }
+    let contents = fs.readFileSync(file, 'utf8');
+    if (/ts-ignore/.test(contents) || /eslint-disable/.test(contents)) {
+      console.log('has an ignore', file);
+    }
+  }
+});
