@@ -47,7 +47,7 @@ export function FocusScope(props: FocusScopeProps) {
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<HTMLElement[]>([]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Find all rendered nodes between the sentinels and add them to the scope.
     let node = startRef.current.nextSibling;
     let nodes = [];
