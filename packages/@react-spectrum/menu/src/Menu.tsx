@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, DOMEventPropNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {MenuContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
@@ -36,7 +36,7 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
   return (
     <ul
       {...filterDOMProps(completeProps)}
-      {...menuProps}
+      {...mergeProps(menuProps, filterDOMProps(contextProps, DOMEventPropNames))}
       {...styleProps}
       ref={ref}
       className={
