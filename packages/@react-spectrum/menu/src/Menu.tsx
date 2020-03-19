@@ -36,6 +36,7 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
   return (
     <ul
       {...filterDOMProps(completeProps)}
+      // Allow DOM props to be passed from MenuTrigger via context only
       {...mergeProps(menuProps, filterDOMProps(contextProps, DOMEventPropNames))}
       {...styleProps}
       ref={ref}
