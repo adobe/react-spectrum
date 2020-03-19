@@ -254,6 +254,7 @@ function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
 function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boolean, contain: boolean) {
   // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
   useLayoutEffect(() => {
+    let scope = scopeRef.current;
     let nodeToRestore = document.activeElement as HTMLElement;
 
     // Handle the Tab key so that tabbing out of the scope goes to the next element
@@ -266,7 +267,7 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       }
 
       let focusedElement = document.activeElement as HTMLElement;
-      if (!isElementInScope(focusedElement, scopeRef.current)) {
+      if (!isElementInScope(focusedElement, scope)) {
         return;
       }
 
@@ -290,7 +291,7 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
 
       // If there is no next element, or it is outside the current scope, move focus to the
       // next element after the node to restore to instead.
-      if ((!nextElement || !isElementInScope(nextElement, scopeRef.current)) && nodeToRestore) {
+      if ((!nextElement || !isElementInScope(nextElement, scope)) && nodeToRestore) {
         walker.currentNode = nodeToRestore;
         nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
 
@@ -313,7 +314,7 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
         document.removeEventListener('keydown', onKeyDown, false);
       }
 
-      if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scopeRef.current)) {
+      if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scope)) {
         requestAnimationFrame(() => {
           if (document.body.contains(nodeToRestore)) {
             focusElement(nodeToRestore);

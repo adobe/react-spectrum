@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, useRef} from 'react';
+import {AllHTMLAttributes} from 'react';
 import {MenuTriggerProps, MenuTriggerState} from '@react-types/menu';
 import {PressProps, useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
@@ -76,7 +76,7 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
     menuTriggerProps: {
       ...triggerAriaProps,
       id: menuTriggerId,
-      onPressStart(e) {
+      onPressStart() {
         // Wait a frame to ensure target is focused prior to opening the menu so FocusScope
         // can record the correct element to restore focus to.
         requestAnimationFrame(() => {
