@@ -12,7 +12,6 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '../';
-import Brush from '@spectrum-icons/workflow/Brush';
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -279,7 +278,7 @@ describe('ActionGroup', function () {
     let {getByTestId} = render(
       <Provider theme={theme} locale="de-DE">
         <ActionGroup>
-          <ActionButton UNSAFE_className={'test-class'} icon={<Brush />} data-testid="button-1">Click me</ActionButton>
+          <ActionButton UNSAFE_className={'test-class'} data-testid="button-1">Click me</ActionButton>
         </ActionGroup>
       </Provider>
     );

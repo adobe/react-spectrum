@@ -13,7 +13,7 @@
 import {AllHTMLAttributes, Key, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
-import {usePress} from '@react-aria/interactions';
+import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface MenuItemAria {
@@ -79,7 +79,7 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
     }
   };
 
-  let onPress = (e) => {
+  let onPressUp = (e) => {
     if (e.pointerType !== 'keyboard' && closeOnSelect && onClose) {
       onClose();
     }
@@ -88,17 +88,23 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
     itemKey: key,
-    itemRef: ref
+    itemRef: ref,
+    selectOnPressUp: true
   });
 
-  let {pressProps} = usePress(mergeProps({onPress, onKeyDown, isDisabled}, itemProps));
-  let onMouseOver = () => state.selectionManager.setFocusedKey(key);
+  let {pressProps} = usePress(mergeProps({onPressUp, onKeyDown, isDisabled}, itemProps));
+  let {hoverProps} = useHover({
+    isDisabled,
+    onHover() {
+      state.selectionManager.setFocusedKey(key);
+    }
+  });
 
   return {
     menuItemProps: {
       ...ariaProps,
       ...pressProps,
-      onMouseOver
+      ...hoverProps
     }
   };
 }

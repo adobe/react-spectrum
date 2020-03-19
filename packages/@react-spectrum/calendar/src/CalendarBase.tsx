@@ -72,14 +72,16 @@ export function CalendarBase(props: CalendarBaseProps) {
           {...prevButtonProps}
           UNSAFE_className={classNames(styles, 'spectrum-Calendar-prevMonth')}
           isQuiet
-          isDisabled={props.isDisabled}
-          icon={direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />} />
+          isDisabled={props.isDisabled}>
+          {direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
+        </ActionButton>
         <ActionButton
           {...nextButtonProps}
           UNSAFE_className={classNames(styles, 'spectrum-Calendar-nextMonth')}
           isQuiet
-          isDisabled={props.isDisabled}
-          icon={direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />} />
+          isDisabled={props.isDisabled}>
+          {direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />}
+        </ActionButton>
       </div>
       <div
         {...calendarBodyProps}
