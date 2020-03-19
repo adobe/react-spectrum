@@ -36,8 +36,7 @@ interface FocusManager {
 const FocusContext = React.createContext<FocusManager>(null);
 
 let activeScope: RefObject<HTMLElement[]> = null;
-let counter = 0;
-let scopesMap: Map<number, RefObject<HTMLElement[]>> = new Map();
+let scopes: Set<RefObject<HTMLElement[]>> = new Set();
 
 // This is a hacky DOM-based implementation of a FocusScope until this RFC lands in React:
 // https://github.com/reactjs/rfcs/pull/109
@@ -48,7 +47,6 @@ export function FocusScope(props: FocusScopeProps) {
   let startRef = useRef<HTMLSpanElement>();
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<HTMLElement[]>([]);
-  let key = counter++;
 
   useEffect(() => {
     // Find all rendered nodes between the sentinels and add them to the scope.
@@ -60,11 +58,11 @@ export function FocusScope(props: FocusScopeProps) {
     }
 
     scopeRef.current = nodes;
-    scopesMap.set(key, scopeRef);
+    scopes.add(scopeRef);
     return () => {
-      scopesMap.delete(key);
+      scopes.delete(scopeRef);
     };
-  }, [children, key]);
+  }, [children]);
 
   useFocusContainment(scopeRef, contain);
   useRestoreFocus(restoreFocus);
@@ -197,14 +195,25 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     };
 
     let onFocus = (e) => {
-      e.stopPropagation();
-      activeScope = scopeRef;
-      focusedNode.current = e.target;
+      // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
+      // restore focus to the previously focused node or the first tabbable element in the active scope.
+      let isInAnyScope = isElementInAnyScope(e.target, scopes);
+      if (!isInAnyScope) {
+        if (focusedNode.current) {
+          focusedNode.current.focus();
+        } else if (activeScope) {
+          focusFirstInScope(activeScope.current);
+        } 
+      } else {
+        e.stopPropagation();
+        activeScope = scopeRef;
+        focusedNode.current = e.target;
+      }
     };
 
     let onBlur = (e) => {
       e.stopPropagation();
-      let isInAnyScope = isElementInAnyScope(e.relatedTarget, scopesMap);
+      let isInAnyScope = isElementInAnyScope(e.relatedTarget, scopes);
 
       if (!isInAnyScope) {
         activeScope = scopeRef;
@@ -214,17 +223,19 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     };
 
     document.addEventListener('keydown', onKeyDown, false);
+    document.addEventListener('focusin', onFocus, false);
     scope.forEach(element => element.addEventListener('focusin', onFocus, false));
     scope.forEach(element => element.addEventListener('focusout', onBlur, false));
     return () => {
       document.removeEventListener('keydown', onKeyDown, false);
+      document.removeEventListener('focusin', onFocus, false);
       scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
       scope.forEach(element => element.removeEventListener('focusout', onBlur, false));
     };
   }, [scopeRef, contain]);
 }
 
-function isElementInAnyScope(element: Element, scopes: Map<number, RefObject<HTMLElement[]>>) {
+function isElementInAnyScope(element: Element, scopes: Set<RefObject<HTMLElement[]>>) {
   for (let scope of scopes.values()) {
     if (isElementInScope(element, scope.current)) { 
       return true; 

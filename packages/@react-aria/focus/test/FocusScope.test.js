@@ -251,7 +251,6 @@ describe('FocusScope', function () {
       
       outside.focus();
       fireEvent.focusIn(outside);
-      fireEvent.focusOut(input2);
       expect(document.activeElement).toBe(input2);
     });
 
