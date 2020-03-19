@@ -57,7 +57,15 @@ export function Dialog(props: SpectrumDialogProps) {
     return (
       <ModalDialog {...allProps} size={size}>
         {children}
-        {isDismissable && <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} aria-label="dismiss" onPress={onDismiss} />}
+        {isDismissable && 
+          <ActionButton 
+            slot="closeButton"
+            isQuiet
+            aria-label="dismiss"
+            onPress={onDismiss}>
+            <CrossLarge size="L" />
+          </ActionButton>
+        }
       </ModalDialog>
     );
   }
