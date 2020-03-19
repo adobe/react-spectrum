@@ -132,5 +132,5 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dropdown-popover--quiet {
-  margin-left: calc(-1 * calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size)));
+  margin-left: calc(calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size)) * -1);
 }
