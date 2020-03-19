@@ -36,16 +36,16 @@ export interface SpectrumBaseDialogProps extends HTMLAttributes<HTMLElement> {
 }
 
 export interface SpectrumDialogProps extends DOMProps, StyleProps {
-  /** The contents of the dialog. */
+  /** The contents of the Dialog. */
   children: ReactNode,
   /**
    * Object containing the props that each Dialog child receives,
    * see [slots](./Slots.html).
    */
   slots?: Slots,
-  /** How wide the dialog should be or make fullscreen. */
+  /** How size of the Dialog will be determined. */
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
-  /** Whether the dialog is [dismissable](#dismissable). */
+  /** Whether the Dialog is [dismissable](#dismissable). */
   isDismissable?: boolean,
   onDismiss?: () => void,
   role?: 'dialog' | 'alertdialog'
