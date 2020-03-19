@@ -12,7 +12,7 @@
 
 import {Calendar} from '@react-spectrum/calendar';
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -29,6 +29,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 export function DatePicker(props: SpectrumDatePickerProps) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {
     autoFocus,
     formatOptions,
@@ -97,8 +98,9 @@ export function DatePicker(props: SpectrumDatePickerProps) {
             UNSAFE_className={classNames(styles, 'spectrum-FieldButton')}
             isQuiet={isQuiet}
             validationState={state.validationState}
-            icon={<CalendarIcon />}
-            isDisabled={isDisabled || isReadOnly} />
+            isDisabled={isDisabled || isReadOnly}>
+            <CalendarIcon />
+          </FieldButton>
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
             <Calendar
               autoFocus

@@ -16,7 +16,8 @@ configureActions({
 
 addParameters({
   options: {
-    storySort: (a, b) => a[1].kind.localeCompare(b[1].kind)
+    storySort: (a, b) => a[1].kind.localeCompare(b[1].kind),
+    enableShortcuts: false
   }
 });
 

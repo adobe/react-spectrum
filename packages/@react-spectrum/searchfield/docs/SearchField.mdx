@@ -1,0 +1,183 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/searchfield';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import Refresh from '@spectrum-icons/workflow/Refresh';
+import {SearchField} from '@react-spectrum/searchfield';
+```
+
+# SearchField
+
+<p>{docs.exports.SearchField.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['SearchField']} />
+
+## Example
+
+```tsx example
+function Example() {
+  let [submittedText, setSubmittedText] = React.useState();
+  return (
+    <div>
+      <SearchField
+      label="Search"
+      placeholder="Enter text"
+      onSubmit={text => setSubmittedText(text)} />
+      <p>Submitted text: {submittedText}</p>
+    </div>
+  );
+}
+```
+
+## Value
+
+A SearchFields's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+Alternatively, a controlled value can be provided using the `value` prop.
+
+```tsx example
+<SearchField defaultValue="Default text" label="Uncontrolled SearchField" marginEnd="20px" />
+<SearchField value="Default text" label="Controlled SearchField" />
+```
+
+Placeholder text that describes the expected value or formatting for the SearchField can be provided using the `placeholder` prop. 
+Placeholder text will only appear when the SearchField is empty, and should not be used as a substitute for labeling the component with a visible label.
+
+```tsx example
+<SearchField placeholder="abc@adobe.com" label="Email" />
+```
+
+## Labeling
+
+A visual label should be provided for the SearchField using the `label` prop. If the SearchField is required, the `isRequired` and 
+`necessityIndicator` props can be used to show a required state.
+
+```tsx example
+<SearchField label="Street address" marginEnd="20px" />
+<SearchField label="Street address" isRequired necessityIndicator="icon" marginEnd="20px" />
+<SearchField label="Street address" isRequired necessityIndicator="label" marginEnd="20px" />
+<SearchField label="Street address" necessityIndicator="label" />
+```
+
+### Accessibility
+
+If a visible label isn't specified, an `aria-label` must be provided to the SearchField for 
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using 
+the `id` of the labeling element instead.
+
+```tsx example
+<label id="label-1">Name</label>
+<SearchField aria-labelledby="label-1" marginStart="10px" />
+```
+
+### Internationalization
+
+In order to internationalize a SearchField, a localized string should be passed to the `label` or `aria-label` prop.
+When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
+
+```tsx example
+<SearchField label="Street address" isRequired necessityIndicator="label" marginEnd="20px" />
+<SearchField label="Street address" necessityIndicator="label" />
+```
+
+## Events
+
+The most commonly used handlers for events in SearchField are the:
+- `onChange` prop which is triggered whenever the value is edited by the user. 
+- `onSubmit` prop which is triggered whenever the value is submitted by the user. 
+- `onClear` prop which is triggered whenever the value is cleared by the user. 
+
+The example below uses `onChange`, `onSubmit`, and `onClear` to update two separate elements with the text entered into the SearchField.
+
+```tsx example
+function Example() {
+  let [currentText, setCurrentText] = React.useState();
+  let [submittedText, setSubmittedText] = React.useState();
+
+  return (
+    <div>
+      <SearchField
+        placeholder="Enter some text"
+        onClear={() => setCurrentText('')}
+        onChange={setCurrentText}
+        onSubmit={setSubmittedText}
+        label="Mirror"
+        marginEnd="20px"
+        value={currentText}
+      />
+      <div>Mirrored text: {currentText}</div>
+      <div>Submitted text: {submittedText}</div>
+    </div>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.SearchField} links={docs.links} />
+
+## Visual Options
+
+### Quiet 
+
+```tsx example
+<SearchField label="Email" placeholder="Email Address" isQuiet />
+```
+
+### Disabled
+
+```tsx example
+<SearchField label="Email" placeholder="Email Address" isDisabled />
+```
+
+### Read Only
+
+The `isReadOnly` boolean prop makes the SearchField's text content immutable. Unlike `isDisabled` the SearchField remains focusable 
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<SearchField label="Email" defaultValue="abc@adobe.com" isReadOnly />
+```
+
+### Label Alignment
+
+Labels can be aligned to the "start" or the "end" of the SearchField. For left-to-right (LTR) languages, "start" refers to the left most edge
+of the SearchField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<SearchField label="Email" labelAlign="start" marginEnd="20px" />
+<SearchField label="Email" labelAlign="end" />
+```
+
+### Label Position
+
+```tsx example
+<SearchField label="Email" labelPosition="top" marginEnd="20px" />
+<SearchField label="Email" labelPosition="side" />
+```
+
+### Custom Width
+
+```tsx example
+<SearchField label="Email" width="400px" />
+```
+
+### Custom Icon
+
+```tsx example
+<SearchField label="Refresh" icon={<Refresh />} />
+```

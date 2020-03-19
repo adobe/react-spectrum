@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, RefObject} from 'react';
-import {MenuItemProps} from '@react-types/menu';
-import {mergeProps, useId} from '@react-aria/utils';
+import {AllHTMLAttributes, Key, RefObject} from 'react';
+import {mergeProps} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
-import {usePress} from '@react-aria/interactions';
+import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface MenuItemAria {
@@ -23,67 +22,89 @@ interface MenuItemAria {
 
 interface MenuState<T> extends TreeState<T> {}
 
-export function useMenuItem<T>(props: MenuItemProps<T>, ref: RefObject<HTMLElement>, state: MenuState<T>, onClose?: () => void, closeOnSelect?: boolean): MenuItemAria {
+interface MenuItemProps {
+  isDisabled?: boolean,
+  isSelected?: boolean,
+  key?: Key,
+  ref?: RefObject<HTMLElement>,
+  onClose?: () => void,
+  closeOnSelect?: boolean,
+  isVirtualized?: boolean
+}
+
+export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuItemAria {
   let {
     isSelected,
     isDisabled,
     key,
-    role = 'menuitem'
+    onClose,
+    closeOnSelect,
+    ref,
+    isVirtualized
   } = props;
 
-  let {itemProps} = useSelectableItem({
-    selectionManager: state.selectionManager,
-    itemKey: key,
-    itemRef: ref
-  });
+  let role = 'menuitem';
+  if (state.selectionManager.selectionMode === 'single') {
+    role = 'menuitemradio';
+  } else if (state.selectionManager.selectionMode === 'multiple') {
+    role = 'menuitemcheckbox';
+  }
 
   let ariaProps = {
     'aria-disabled': isDisabled,
-    id: useId(),
     role
   };
 
-  if (role === 'option') {
-    ariaProps['aria-selected'] = isSelected ? 'true' : 'false';
-  } else if (role === 'menuitemradio' || role === 'menuitemcheckbox') {
-    ariaProps['aria-checked'] = isSelected ? 'true' : 'false';
+  if (state.selectionManager.selectionMode !== 'none') {
+    ariaProps['aria-checked'] = isSelected;
+  }
+
+  if (isVirtualized) {
+    ariaProps['aria-posinset'] = state.collection.getItem(key).index;
+    ariaProps['aria-setsize'] = state.collection.size;
   }
 
   let onKeyDown = (e) => {
     switch (e.key) {
       case ' ':
-        if (!isDisabled) {
-          if (role === 'menuitem') {
-            if (closeOnSelect) {
-              onClose && onClose();
-            }
-          }
+        if (!isDisabled && state.selectionManager.selectionMode === 'none' && closeOnSelect && onClose) {
+          onClose();
         }
         break;
       case 'Enter':
-        if (!isDisabled) {
-          onClose && onClose();
+        if (!isDisabled && onClose) {
+          onClose();
         }
         break;
     }
-  }; 
+  };
 
-  let onPress = (e) => {
-    if (e.pointerType !== 'keyboard') {
-      if (closeOnSelect) {
-        onClose && onClose();
-      }
+  let onPressUp = (e) => {
+    if (e.pointerType !== 'keyboard' && closeOnSelect && onClose) {
+      onClose();
     }
   };
 
-  let onMouseOver = () => state.selectionManager.setFocusedKey(key);
-  let {pressProps} = usePress(mergeProps({onPress, onKeyDown, isDisabled}, itemProps));
+  let {itemProps} = useSelectableItem({
+    selectionManager: state.selectionManager,
+    itemKey: key,
+    itemRef: ref,
+    selectOnPressUp: true
+  });
+
+  let {pressProps} = usePress(mergeProps({onPressUp, onKeyDown, isDisabled}, itemProps));
+  let {hoverProps} = useHover({
+    isDisabled,
+    onHover() {
+      state.selectionManager.setFocusedKey(key);
+    }
+  });
 
   return {
     menuItemProps: {
       ...ariaProps,
       ...pressProps,
-      onMouseOver
+      ...hoverProps
     }
   };
 }

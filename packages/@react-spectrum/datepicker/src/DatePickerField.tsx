@@ -12,7 +12,7 @@
 
 import Alert from '@spectrum-icons/ui/AlertMedium';
 import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, useSlotProps} from '@react-spectrum/utils';
 import {DatePickerSegment} from './DatePickerSegment';
 import datepickerStyles from './index.css';
 import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
@@ -25,6 +25,7 @@ import {useDateField} from '@react-aria/datepicker';
 import {useDatePickerFieldState} from '@react-stately/datepicker';
 
 export function DatePickerField(props: SpectrumDatePickerProps) {
+  props = useSlotProps(props);
   let state = useDatePickerFieldState(props);
   let {
     isDisabled,

@@ -11,29 +11,34 @@
  */
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
+import {Node} from '@react-stately/collections';
 import React, {useRef} from 'react';
-import {SpectrumMenuItemProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/typography';
+import {TreeState} from '@react-stately/tree';
 import {useMenuContext} from './context';
 import {useMenuItem} from '@react-aria/menu';
 
-export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
+interface MenuItemProps<T> {
+  item: Node<T>,
+  state: TreeState<T>,
+  isVirtualized?: boolean,
+}
+
+export function MenuItem<T>(props: MenuItemProps<T>) {
   let {
     item,
     state,
-    ...otherProps
+    isVirtualized
   } = props;
-
-  let menuProps = useMenuContext();
 
   let {
     onClose,
     closeOnSelect
-  } = menuProps;
+  } = useMenuContext();
 
   let {
     rendered,
@@ -42,24 +47,23 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
     key
   } = item;
 
-  let ref = useRef<HTMLDivElement>();
+  let ref = useRef<HTMLLIElement>();
   let {menuItemProps} = useMenuItem(
     {
       isSelected,
       isDisabled,
       key,
-      ...otherProps
+      onClose,
+      closeOnSelect,
+      ref,
+      isVirtualized
     }, 
-    ref, 
-    state,
-    onClose,
-    closeOnSelect
+    state
   );
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div
-        {...filterDOMProps(otherProps)}
+      <li
         {...menuItemProps}
         ref={ref}
         className={classNames(
@@ -76,13 +80,14 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
               styles,
               'spectrum-Menu-itemGrid'
             )
-          }  
+          }
           slots={{
-            text: styles['spectrum-Menu-itemLabel'],
-            end: styles['spectrum-Menu-end'],
-            icon: styles['spectrum-Menu-icon'],
-            description: styles['spectrum-Menu-description'],
-            keyboard: styles['spectrum-Menu-keyboard']}}>
+            text: {UNSAFE_className: styles['spectrum-Menu-itemLabel']},
+            end: {UNSAFE_className: styles['spectrum-Menu-end']},
+            icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
+            description: {UNSAFE_className: styles['spectrum-Menu-description']},
+            keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard']}
+          }}>
           {!Array.isArray(rendered) && (
             <Text>
               {rendered}
@@ -91,7 +96,7 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
           {Array.isArray(rendered) && rendered}
           {isSelected && 
             <CheckmarkMedium 
-              slot="end" 
+              slot="checkmark" 
               UNSAFE_className={
                 classNames(
                   styles, 
@@ -100,7 +105,7 @@ export function MenuItem<T>(props: SpectrumMenuItemProps<T>) {
               } />
           }
         </Grid>  
-      </div>
+      </li>
     </FocusRing>
   );
 }

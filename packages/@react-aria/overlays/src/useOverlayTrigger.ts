@@ -53,14 +53,21 @@ export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAri
     };
   }, [isOpen, onClose, ref]);
 
+  // Aria 1.1 supports multiple values for aria-haspopup other than just menus.
+  // https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup
+  // However, we only add it for menus for now because screen readers often 
+  // announce it as a menu even for other values.
+  let ariaHasPopup = undefined;
+  if (type === 'menu') {
+    ariaHasPopup = true;
+  } else if (type === 'listbox') {
+    ariaHasPopup = 'listbox';
+  }
+
   let overlayId = useId();
   return {
     triggerAriaProps: {
-      // Aria 1.1 supports multiple values for aria-haspopup other than just menus.
-      // https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup
-      // However, we only add it for menus for now because screen readers often 
-      // announce it as a menu even for other values.
-      'aria-haspopup': type === 'menu' ? true : undefined,
+      'aria-haspopup': ariaHasPopup,
       'aria-expanded': isOpen,
       'aria-controls': isOpen ? overlayId : null
     },

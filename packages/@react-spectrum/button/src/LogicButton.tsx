@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
@@ -21,6 +21,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {
     elementType: ElementType = 'button',
     variant,
@@ -58,5 +59,8 @@ function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef) {
   );
 }
 
+/**
+ * A LogicButton displays an operator within a boolean logic sequence.
+ */
 let _LogicButton = React.forwardRef(LogicButton);
 export {_LogicButton as LogicButton};

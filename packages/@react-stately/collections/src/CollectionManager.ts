@@ -98,7 +98,6 @@ export class CollectionManager<T extends object, V, W> {
   private _reusableViews: {[type: string]: ReusableView<T, V>[]};
   private _visibleViews: Map<Key, ReusableView<T, V>>;
   private _renderedContent: WeakMap<T, V>;
-  private _renderedViews: Map<Key, W>;
   private _children: Set<ReusableView<T, V>>;
   private _invalidationContext: InvalidationContext<T, V> | null;
   private _overscanManager: OverscanManager;
@@ -117,7 +116,6 @@ export class CollectionManager<T extends object, V, W> {
     this._reusableViews = {};
     this._visibleViews = new Map();
     this._renderedContent = new WeakMap();
-    this._renderedViews = new Map();
     this._children = new Set();
     this._invalidationContext = null;
     this._overscanManager = new OverscanManager();
@@ -345,10 +343,6 @@ export class CollectionManager<T extends object, V, W> {
     let {type, key} = reusableView.layoutInfo;
     reusableView.content = this._getViewContent(type, key);
     reusableView.rendered = this._renderContent(type, reusableView.content);
-
-    let rendered = this.delegate.renderWrapper(reusableView);
-    this._renderedViews.set(reusableView.key, rendered);
-    return rendered;
   }
 
   private _renderContent(type: string, content: T) {
@@ -358,7 +352,9 @@ export class CollectionManager<T extends object, V, W> {
     }
 
     let rendered = this.delegate.renderView(type, content);
-    this._renderedContent.set(content, rendered);
+    if (content) {
+      this._renderedContent.set(content, rendered);
+    }
     return rendered;
   }
 
@@ -860,11 +856,33 @@ export class CollectionManager<T extends object, V, W> {
   }
 
   private _flushVisibleViews() {
-    let children = new Set<W>();
-    for (let child of this._children) {
-      children.add(this._renderedViews.get(child.key));
+    // CollectionManager deals with a flattened set of LayoutInfos, but they can represent heirarchy
+    // by referencing a parentKey. Just before rendering the visible views, we rebuild this heirarchy
+    // by creating a mapping of views by parent key and recursively calling the delegate's renderWrapper
+    // method to build the final tree.
+    let viewsByParentKey = new Map([[null, []]]);
+    for (let view of this._children) {
+      if (!viewsByParentKey.has(view.layoutInfo.parentKey)) {
+        viewsByParentKey.set(view.layoutInfo.parentKey, []);
+      }
+
+      viewsByParentKey.get(view.layoutInfo.parentKey).push(view);
+      if (!viewsByParentKey.has(view.layoutInfo.key)) {
+        viewsByParentKey.set(view.layoutInfo.key, []);
+      }
     }
 
+    let buildTree = (parent: ReusableView<T, V>, views: ReusableView<T, V>[]): W[] => views.map(view => {
+      let children = viewsByParentKey.get(view.layoutInfo.key);
+      return this.delegate.renderWrapper(
+          parent,
+          view,
+          children,
+          (childViews) => buildTree(view, childViews)
+        );
+    });
+
+    let children = buildTree(null, viewsByParentKey.get(null));
     this.delegate.setVisibleViews(children);
   }
 
@@ -950,7 +968,7 @@ export class CollectionManager<T extends object, V, W> {
     // @ts-ignore
     let changed = this.layout.updateItemSize(key, size);
     if (changed) {
-      this.relayoutNow();
+      this.relayout();
     }
   }
 

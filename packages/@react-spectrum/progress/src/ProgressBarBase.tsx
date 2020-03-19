@@ -11,7 +11,7 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {ProgressBarProps} from '@react-types/progress';
 import React, {CSSProperties, HTMLAttributes} from 'react';
@@ -26,6 +26,7 @@ interface ProgressBarBaseProps extends SpectrumProgressBarBaseProps, ProgressBar
 
 // Base ProgressBar component shared with Meter.
 function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement>) {
+  props = useSlotProps(props);
   let {
     value = 0,
     minValue = 0,
@@ -53,7 +54,7 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
     barStyle.width = `${Math.round(percentage * 100)}%`;
   }
 
-  // Ideally this should be in useProgressBar, but children 
+  // Ideally this should be in useProgressBar, but children
   // are not supported in ProgressCircle which shares that hook...
   if (!label && !ariaLabel && !ariaLabelledby) {
     console.warn('If you do not provide a visible label via children, you must specify an aria-label or aria-labelledby attribute for accessibility');

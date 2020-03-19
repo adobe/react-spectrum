@@ -11,13 +11,16 @@
  */
 
 import {useLocale} from './context';
-import {useMemo} from 'react';
 
+let formatterCache = new Map<string, Intl.NumberFormat>();
 export function useNumberFormatter(options?: Intl.NumberFormatOptions) {
   let {locale} = useLocale();
-  let numberFormatter = useMemo(
-    () => new Intl.NumberFormat(locale, options),
-    [locale, options]
-  );
+  let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
+  if (formatterCache.has(cacheKey)) {
+    return formatterCache.get(cacheKey);
+  }
+
+  let numberFormatter = new Intl.NumberFormat(locale, options);
+  formatterCache.set(cacheKey, numberFormatter);
   return numberFormatter;
 }

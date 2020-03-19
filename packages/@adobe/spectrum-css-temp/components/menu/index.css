@@ -45,6 +45,7 @@ governing permissions and limitations under the License.
   list-style-type: none;
 
   overflow: auto;
+  user-select: none;
 
   width: 200px;
   max-height: inherit; /* inherit from parent popover */
@@ -121,7 +122,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Menu-checkmark {
   display: none;
-  align-self: flex-start;
+  align-self: center;
+  grid-area: checkmark;
 }
 
 .spectrum-Menu-divider {
@@ -155,17 +157,18 @@ governing permissions and limitations under the License.
 .spectrum-Menu .spectrum-Menu {
   /* Fill parent menu when nested */
   display: block;
+  margin: 0;
 }
 
 .spectrum-Menu-itemGrid {
   display: grid;
-  grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr auto auto var(--spectrum-selectlist-option-padding);
+  grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr auto auto auto var(--spectrum-selectlist-option-padding);
   grid-template-rows: var(--spectrum-selectlist-option-padding-y) 1fr auto var(--spectrum-selectlist-option-padding-y);
   grid-template-areas:
-    ". .    .           .     .            ."
-    ". icon text        end   keyboard     ."
-    ". icon description end   keyboard     ."
-    ". .    .           .     .            .";
+    ". .    .            .         .     .            ."
+    ". icon text         checkmark end   keyboard     ."
+    ". icon description  checkmark end   keyboard     ."
+    ". .    .            .         .     .            .";
 }
 
 /* Added .spectrum-Menu so paddings from component styles are overriden */
@@ -173,8 +176,6 @@ governing permissions and limitations under the License.
   grid-area: end;
   justify-self: end;
   align-self: center;
-  margin-inline-end: 0px;
-  margin-inline-start: 0px;
 }
 .spectrum-Menu-icon {
   grid-area: icon;

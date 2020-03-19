@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import React, {cloneElement} from 'react';
+import React from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
+import {Text} from '@react-spectrum/typography';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -26,13 +27,13 @@ let VARIANT_MAPPING = {
 
 function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {
     elementType: ElementType = 'button',
     children,
     variant,
     isQuiet,
     isDisabled,
-    icon,
     autoFocus,
     ...otherProps
   } = props;
@@ -65,18 +66,20 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
             styleProps.className
           )
         }>
-        {icon && cloneElement(
-          icon,
-          {
-            size: 'S',
-            UNSAFE_className: classNames(
-              styles,
-              'spectrum-Icon',
-              icon.props && icon.props.UNSAFE_className
-            )
-          }
-        )}
-        <span className={classNames(styles, 'spectrum-Button-label')}>{children}</span>
+        <SlotProvider
+          slots={{
+            icon: {
+              size: 'S',
+              UNSAFE_className: classNames(styles, 'spectrum-Icon')
+            },
+            text: {
+              UNSAFE_className: classNames(styles, 'spectrum-Button-label')
+            }
+          }}>
+          {typeof children === 'string' 
+            ? <Text>{children}</Text> 
+            : children}
+        </SlotProvider>
       </ElementType>
     </FocusRing>
   );

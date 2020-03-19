@@ -18,7 +18,7 @@ import {CalendarTableBody} from './CalendarTableBody';
 import {CalendarTableHeader} from './CalendarTableHeader';
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
@@ -33,6 +33,7 @@ interface CalendarBaseProps extends CalendarPropsBase, DOMProps, StyleProps {
 
 export function CalendarBase(props: CalendarBaseProps) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {
     state,
     aria,
@@ -71,14 +72,16 @@ export function CalendarBase(props: CalendarBaseProps) {
           {...prevButtonProps}
           UNSAFE_className={classNames(styles, 'spectrum-Calendar-prevMonth')}
           isQuiet
-          isDisabled={props.isDisabled}
-          icon={direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />} />
+          isDisabled={props.isDisabled}>
+          {direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
+        </ActionButton>
         <ActionButton
           {...nextButtonProps}
           UNSAFE_className={classNames(styles, 'spectrum-Calendar-nextMonth')}
           isQuiet
-          isDisabled={props.isDisabled}
-          icon={direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />} />
+          isDisabled={props.isDisabled}>
+          {direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />}
+        </ActionButton>
       </div>
       <table
         {...calendarBodyProps}

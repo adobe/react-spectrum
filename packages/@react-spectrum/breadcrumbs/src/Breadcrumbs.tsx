@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
@@ -27,6 +27,7 @@ const MAX_VISIBLE_ITEMS = 4;
 
 function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
   props = useProviderProps(props);
+  props = useSlotProps(props);
   let {
     size = 'M',
     children,
@@ -45,7 +46,7 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
   let listRef = useRef(null);
 
   const [visibleItems, setVisibleItems] = useState(isCollapsible ? childArray.length : maxVisibleItems);
-  
+
   let {breadcrumbProps} = useBreadcrumbs(props);
   let {styleProps} = useStyleProps(otherProps);
 
@@ -92,7 +93,7 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
       </BreadcrumbItem>
     );
     rootItems.push(menuItem);
-  
+
     let restItems = childArray.slice(-visibleItems + rootItems.length);
 
     childArray = [
@@ -132,6 +133,7 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
       {...filterDOMProps(otherProps)}
       {...styleProps}
       {...breadcrumbProps}
+      className={classNames({}, styleProps.className)}
       ref={domRef}>
       <ul
         ref={listRef}
@@ -174,9 +176,9 @@ const Menu = React.forwardRef((props: MenuProps) => {
     <DialogTrigger type="popover">
       <ActionButton
         aria-label="…"
-        icon={<FolderBreadcrumb />}
         isDisabled={isDisabled}
         isQuiet>
+        <FolderBreadcrumb />
         {label && React.cloneElement(label, {isCurrent: undefined})}
       </ActionButton>
       <Dialog>

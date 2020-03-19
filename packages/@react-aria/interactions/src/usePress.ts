@@ -40,7 +40,7 @@ interface EventBase {
   metaKey: boolean
 }
 
-interface PressResult {
+export interface PressResult {
   isPressed: boolean,
   pressProps: HTMLAttributes<HTMLElement>
 }
@@ -73,6 +73,7 @@ export function usePress(props: PressHookProps): PressResult {
     onPressChange,
     onPressStart,
     onPressEnd,
+    onPressUp,
     isDisabled,
     isPressed: isPressedProp,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -151,42 +152,51 @@ export function usePress(props: PressHookProps): PressResult {
       }
     };
 
+    let triggerPressUp = (originalEvent: EventBase, pointerType: PointerType) => {
+      if (isDisabled) {
+        return;
+      }
+
+      if (onPressUp) {
+        onPressUp({
+          type: 'pressup',
+          pointerType,
+          target: originalEvent.target as HTMLElement,
+          shiftKey: originalEvent.shiftKey,
+          metaKey: originalEvent.metaKey,
+          ctrlKey: originalEvent.ctrlKey
+        });
+      }
+    };
+
     let pressProps: HTMLAttributes<HTMLElement> = {
       onKeyDown(e) {
         if (isValidKeyboardEvent(e.nativeEvent)) {
           e.preventDefault();
           e.stopPropagation();
-          // If the target is a link,
-          // defer triggering pressStart until onClick event handler.
-          if (isHTMLAnchorLink(e.target as HTMLElement) ||
-            (e.target as HTMLElement).getAttribute('role') === 'link') {
-            return;
-          }
-          if (!state.isPressed) {
+
+
+          // If the event is repeating, it may have started on a different element
+          // after which focus moved to the current element. Ignore these events and
+          // only handle the first key down event.
+          if (!state.isPressed && !e.repeat) {
+            state.target = e.target as HTMLElement;
             state.isPressed = true;
             triggerPressStart(e, 'keyboard');
+
+            // Focus may move before the key up event, so register the event on the document
+            // instead of the same element where the key down event occurred.
+            document.addEventListener('keyup', onKeyUp, false);
           }
         }
       },
       onKeyUp(e) {
-        if (isValidKeyboardEvent(e.nativeEvent)) {
-          e.preventDefault();
-          e.stopPropagation();
-          // If the target is a link, trigger the click method to open the URL,
-          // but defer triggering pressEnd until onClick event handler.
-          if (isHTMLAnchorLink(e.target as HTMLElement) ||
-            (e.target as HTMLElement).getAttribute('role') === 'link') {
-            (e.target as HTMLElement).click();
-            return;
-          }
-          if (state.isPressed) {
-            state.isPressed = false;
-            triggerPressEnd(e, 'keyboard');
-          }
+        if (isValidKeyboardEvent(e.nativeEvent) && !e.repeat) {
+          triggerPressUp(createEvent(state.target, e), 'keyboard');
         }
       },
       onClick(e) {
-        if (e) {
+        if (e && e.button === 0) {
           e.stopPropagation();
           if (isDisabled) {
             e.preventDefault();
@@ -196,6 +206,7 @@ export function usePress(props: PressHookProps): PressResult {
           // trigger as if it were a keyboard click.
           if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && isVirtualClick(e.nativeEvent)) {
             triggerPressStart(e, 'keyboard');
+            triggerPressUp(e, 'keyboard');
             triggerPressEnd(e, 'keyboard');
           }
 
@@ -205,8 +216,30 @@ export function usePress(props: PressHookProps): PressResult {
       }
     };
 
+    let onKeyUp = (e: KeyboardEvent) => {
+      if (state.isPressed && isValidKeyboardEvent(e)) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        state.isPressed = false;
+        triggerPressEnd(createEvent(state.target, e), 'keyboard', e.target === state.target);
+        document.removeEventListener('keyup', onKeyUp, false);
+
+        // If the target is a link, trigger the click method to open the URL,
+        // but defer triggering pressEnd until onClick event handler.
+        if (e.target === state.target && isHTMLAnchorLink(state.target) || state.target.getAttribute('role') === 'link') {
+          state.target.click();
+        }
+      }
+    };
+
     if (typeof PointerEvent !== 'undefined') {
       pressProps.onPointerDown = (e) => {
+        // Only handle left clicks
+        if (e.button !== 0) {
+          return;
+        }
+
         e.stopPropagation();
         if (!state.isPressed) {
           state.isPressed = true;
@@ -225,6 +258,13 @@ export function usePress(props: PressHookProps): PressResult {
         document.removeEventListener('pointermove', onPointerMove, false);
         document.removeEventListener('pointerup', onPointerUp, false);
         document.removeEventListener('pointercancel', onPointerCancel, false);
+      };
+
+      pressProps.onPointerUp = (e) => {
+        // Only handle left clicks
+        if (e.button === 0) {
+          triggerPressUp(e, e.pointerType as PointerType);
+        }
       };
 
       // Safari on iOS < 13.2 does not implement pointerenter/pointerleave events correctly.
@@ -248,7 +288,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       let onPointerUp = (e: PointerEvent) => {
-        if (e.pointerId === state.activePointerId && state.isPressed) {
+        if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0) {
           let rect = state.target.getBoundingClientRect();
           if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
             triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType);
@@ -276,6 +316,11 @@ export function usePress(props: PressHookProps): PressResult {
       };
     } else {
       pressProps.onMouseDown = (e) => {
+        // Only handle left clicks
+        if (e.button !== 0) {
+          return;
+        }
+
         e.stopPropagation();
         if (state.ignoreEmulatedMouseEvents) {
           e.nativeEvent.preventDefault();
@@ -303,7 +348,18 @@ export function usePress(props: PressHookProps): PressResult {
         }
       };
 
+      pressProps.onMouseUp = (e) => {
+        if (!state.ignoreEmulatedMouseEvents && e.button === 0) {
+          triggerPressUp(e, 'mouse');
+        }
+      };
+
       let onMouseUp = (e: MouseEvent) => {
+        // Only handle left clicks
+        if (e.button !== 0) {
+          return;
+        }
+        
         state.isPressed = false;
         document.removeEventListener('mouseup', onMouseUp, false);
 
@@ -348,6 +404,7 @@ export function usePress(props: PressHookProps): PressResult {
         let rect = e.currentTarget.getBoundingClientRect();
         let touch = getTouchById(e.nativeEvent, state.activePointerId);
         if (touch && touch.clientX >= rect.left && touch.clientX <= rect.right && touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+          triggerPressUp(e, 'touch');
           triggerPressEnd(e, 'touch');
         } else if (state.isOverTarget) {
           triggerPressEnd(e, 'touch', false);
@@ -356,6 +413,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.isPressed = false;
         state.activePointerId = null;
         state.isOverTarget = false;
+        state.ignoreEmulatedMouseEvents = true;
       };
 
       pressProps.onTouchCancel = (e) => {
@@ -372,7 +430,7 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     return pressProps;
-  }, [onPress, onPressStart, onPressEnd, onPressChange, isDisabled]);
+  }, [onPress, onPressStart, onPressEnd, onPressChange, onPressUp, isDisabled]);
 
   return {
     isPressed: isPressedProp || isPressed,

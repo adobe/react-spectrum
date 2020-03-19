@@ -12,7 +12,9 @@
 
 import {FocusEvent, HTMLAttributes, KeyboardEvent, useEffect} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
+import {useTypeSelect} from './useTypeSelect';
 
 type FocusStrategy = 'first' | 'last';
 
@@ -29,19 +31,19 @@ function isCtrlKeyPressed(e: KeyboardEvent) {
   return e.ctrlKey;
 }
 
-interface SelectableListOptions {
+interface SelectableCollectionOptions {
   selectionManager: MultipleSelectionManager,
   keyboardDelegate: KeyboardDelegate,
   autoFocus?: boolean,
   focusStrategy?: FocusStrategy,
-  wrapAround?: boolean 
+  wrapAround?: boolean
 }
 
-interface SelectableListAria {
-  listProps: HTMLAttributes<HTMLElement>
+interface SelectableCollectionAria {
+  collectionProps: HTMLAttributes<HTMLElement>
 }
 
-export function useSelectableCollection(options: SelectableListOptions): SelectableListAria {
+export function useSelectableCollection(options: SelectableCollectionOptions): SelectableCollectionAria {
   let {
     selectionManager: manager,
     keyboardDelegate: delegate,
@@ -205,13 +207,19 @@ export function useSelectableCollection(options: SelectableListOptions): Selecta
     
       manager.setFocusedKey(focusedKey);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  let {typeSelectProps} = useTypeSelect({
+    keyboardDelegate: delegate,
+    selectionManager: manager
+  });
+
   return {
-    listProps: {
+    collectionProps: mergeProps(typeSelectProps, {
       onKeyDown,
       onFocus,
       onBlur
-    }
+    })
   };
 }
