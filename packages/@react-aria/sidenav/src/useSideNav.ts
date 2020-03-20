@@ -11,7 +11,6 @@
  */
 
 import {AllHTMLAttributes} from 'react';
-import {CollectionBase, DOMProps, Expandable, MultipleSelection} from '@react-types/shared';
 import {ListLayout} from '@react-stately/collections';
 import {SideNavProps} from '@react-types/sidenav';
 import {TreeState} from '@react-stately/tree';
