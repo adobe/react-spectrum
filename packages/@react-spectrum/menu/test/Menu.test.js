@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import Bell from '@spectrum-icons/workflow/Bell';
 import {cleanup, fireEvent, render, within} from '@testing-library/react';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Item, Menu, Section} from '../';
+import {Keyboard, Text} from '@react-spectrum/typography';
 import {MenuContext} from '../src/context';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -645,5 +647,29 @@ describe('Menu', function () {
 
     let dialog = tree.getByRole('dialog');
     expect(dialog).toBeVisible();
+  });
+
+  it('supports complex menu items with aria-labelledby and aria-describedby', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <Menu id={menuId} selectionMode="none">
+          <Item>
+            <Bell />
+            <Text>Label</Text>
+            <Text slot="description">Description</Text>
+            <Keyboard>⌘V</Keyboard>
+          </Item>
+        </Menu>
+      </Provider>
+    );
+
+    let menu = tree.getByRole('menu');
+    let menuItem = within(menu).getByRole('menuitem');
+    let label = within(menu).getByText('Label');
+    let description = within(menu).getByText('Description');
+    let keyboard = within(menu).getByText('⌘V');
+    
+    expect(menuItem).toHaveAttribute('aria-labelledby', label.id);
+    expect(menuItem).toHaveAttribute('aria-describedby', `${description.id} ${keyboard.id}`);
   });
 });
