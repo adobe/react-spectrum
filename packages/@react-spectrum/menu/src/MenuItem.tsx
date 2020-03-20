@@ -61,6 +61,10 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     state
   );
 
+  let contents = typeof rendered === 'string'
+    ? <Text>{rendered}</Text>
+    : rendered;
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <li
@@ -71,7 +75,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
           'spectrum-Menu-item',
           {
             'is-disabled': isDisabled,
-            'is-selected': isSelected
+            'is-selected': isSelected,
+            'is-selectable': state.selectionManager.selectionMode !== 'none'
           }
         )}>
         <Grid
@@ -88,12 +93,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             description: {UNSAFE_className: styles['spectrum-Menu-description']},
             keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard']}
           }}>
-          {!Array.isArray(rendered) && (
-            <Text>
-              {rendered}
-            </Text>
-          )}
-          {Array.isArray(rendered) && rendered}
+          {contents}
           {isSelected && 
             <CheckmarkMedium 
               slot="checkmark" 
@@ -104,7 +104,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                 )
               } />
           }
-        </Grid>  
+        </Grid>
       </li>
     </FocusRing>
   );
