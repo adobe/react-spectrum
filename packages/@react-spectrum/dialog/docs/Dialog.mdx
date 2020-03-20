@@ -17,9 +17,13 @@ import packageData from '../package.json';
 ```jsx import
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Content, Footer, Header} from '@react-spectrum/view';
+import {Checkbox} from '@react-spectrum/checkbox';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
+import {Form} from '@react-spectrum/form';
 import {Heading, Text} from '@react-spectrum/typography';
+import {Image} from '@react-spectrum/image';
+import {TextField} from '@react-spectrum/textfield';
 ```
 
 # Dialog
@@ -43,7 +47,9 @@ import {Heading, Text} from '@react-spectrum/typography';
       <Header><Heading>The Heading</Heading></Header>
       <Divider />
       <Content>
-        <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text>
+        <Text>
+          This is a dialog.
+        </Text>
       </Content>
       <Footer>
         <Button variant="secondary" onPress={close}>Cancel</Button>
@@ -56,46 +62,162 @@ import {Heading, Text} from '@react-spectrum/typography';
 
 ## Content
 
-*If the component has a children prop that accepts any type of content (e.g. `ReactNode`), include this section. Please include a note about how to internationalize the content.*
+The layout of a Dialog is made up of the following elements and sections, mapped to the corresponding default slot names:
 
-Discuss slots and put the grid displaying what slots Dialog supports here
+| Section/Element 	|     Slot      |
+|-------------------|---------------|
+| Container       	| container   	|
+| Cover Image     	| hero        	|
+| Header          	| header      	|
+| Heading         	| heading     	|
+| Type Icon       	| typeIcon    	|
+| Divider         	| divider     	|
+| Body            	| content     	|
+| Footer          	| footer      	|
+| Close Button    	| closeButton 	|
 
-accessibility stuff about children order goes here
+![Image of Dialog Layout](./images/dialog.png)
+INSERT PICTURE HERE, MAYBE LINK TO SPECTRUM (Contributions is a corp site)
 
-same thing about autofocus for the children
+For an explanation of what slots are and how you can use them, see the [slots page](TODO LINK THIS PAGE).
 
-### Internationalization REMOVE THIS FOR DIALOG?
+Each of these sections can be populated by providing a semantic element paired with a corresponding `slot` prop
+to the Dialog as children. Note that the order of the children provided does not affect the visual layout of the Dialog. 
 
-*If this component has content, cover how to internationalize the content, include this section.*
+The example below illustrates how a Dialog with a hero image could be rendered.
 
-## Value REMOVE THIS FOR DIALOG
+```tsx example
+<DialogTrigger>
+  <ActionButton>Upload</ActionButton>
+  {(close) => (
+    <Dialog>
+      <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+      <Header><Heading>Upload file</Heading></Header>
+      <Divider />
+      <Content>Are you sure you want to upload this file?</Content>
+      <Footer>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+      </Footer>
+    </Dialog>
+  )}
+</DialogTrigger>
+```
 
-*If the component displays or allows a user to input a value, include this section.*
+### Dismissable Dialogs
+
+A dismissable Dialog forgoes a footer section and its associated action buttons in favor
+of rendering a close button. If your Dialog is dismissable, make sure that you do not include a footer section. 
+While the Dialog will hide any elements occupying the `footer` slot, it will not remove them from the DOM, 
+resulting in possible tab order issues.
+
+### Accessibility
+
+The tab order within the Dialog follows the order of the children provided to the Dialog. 
+This can be leveraged to create a logical flow separate from the reading order on the page.
+You are also responsible for determining what component, if any, should be automatically 
+focused on Dialog render. 
+
+The example below sets initial focus to the Dialog's `Save` button and establishes 
+the following tab order: `Save` button -> `Cancel` button -> `Textfield` -> `Checkbox`.
+
+```tsx example
+<DialogTrigger>
+  <ActionButton>Set Profile</ActionButton>
+  {(close) => (
+    <Dialog>
+      <Header><Heading>Profile</Heading></Header>
+      <Divider />
+      <Footer>
+        <Button autoFocus variant="cta" onPress={close}>Save</Button>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+      </Footer>
+      <Content>
+        <Form>
+          <TextField label="Name" />
+          <Checkbox>Make private</Checkbox>
+        </Form>
+      </Content>    
+    </Dialog>
+  )}
+</DialogTrigger>
+```
 
 ## Labeling
 
-*If the component supports a label prop, include this section. Please include a note about how to internationalize the content.*
+### Accessibility
 
-Accessibility stuff concerning the header aria-labelledby stuff goes here. Maybe this goes into content?
+The title of a Dialog is typically provided via its header. By default, the Dialog sets its 
+`aria-labelledby` to match the header id, but this can be overridden by providing a `aria-labelledby` prop
+to the Dialog directly. If a visible label isn't specified, an `aria-label` must be provided instead.
 
+```tsx example
+<DialogTrigger>
+  <ActionButton>See Terms and Conditions</ActionButton>
+  {(close) => (
+    <Dialog aria-labelledby="heading-id">
+      <Text slot="header" id="heading-id">Terms and Conditions</Text> 
+      <Divider />
+      <Content>
+        <React.Fragment>
+          <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mi proin sed libero enim. Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Sed enim ut sem viverra aliquet eget sit amet tellus. Diam quis enim lobortis scelerisque fermentum dui faucibus in ornare. Diam quam nulla porttitor massa id. Eleifend mi in nulla posuere sollicitudin. Turpis nunc eget lorem dolor sed viverra ipsum nunc. Faucibus in ornare quam viverra. Risus commodo viverra maecenas accumsan lacus vel facilisis volutpat est. Nam libero justo laoreet sit amet cursus sit. Netus et malesuada fames ac. Dictum fusce ut placerat orci nulla pellentesque dignissim enim sit. Eros donec ac odio tempor orci. Ut etiam sit amet nisl purus in mollis nunc. Nisl rhoncus mattis rhoncus urna neque viverra. Convallis aenean et tortor at risus. Diam phasellus vestibulum lorem sed risus ultricies.</Text>
+          <Text>Eleifend quam adipiscing vitae proin sagittis nisl. Diam donec adipiscing tristique risus. In fermentum posuere urna nec tincidunt praesent semper. Suspendisse in est ante in. Egestas diam in arcu cursus euismod quis viverra nibh cras. Aliquam sem fringilla ut morbi tincidunt augue interdum. Lacus sed turpis tincidunt id aliquet risus feugiat. Praesent semper feugiat nibh sed pulvinar proin. In massa tempor nec feugiat nisl pretium fusce id velit. Non nisi est sit amet facilisis. Mi in nulla posuere sollicitudin aliquam ultrices. Morbi leo urna molestie at elementum. Laoreet non curabitur gravida arcu ac tortor dignissim convallis. Risus quis varius quam quisque id. Platea dictumst quisque sagittis purus. Etiam non quam lacus suspendisse faucibus interdum posuere. Semper feugiat nibh sed pulvinar proin gravida hendrerit lectus.</Text>
+          <Text>Risus ultricies tristique nulla aliquet enim tortor at. Ac placerat vestibulum lectus mauris. Sed viverra tellus in hac habitasse platea dictumst vestibulum rhoncus. Suspendisse ultrices gravida dictum fusce ut placerat orci nulla pellentesque. Sit amet nulla facilisi morbi tempus iaculis urna. Ut etiam sit amet nisl purus in. Risus at ultrices mi tempus imperdiet. Magna fermentum iaculis eu non diam phasellus. Orci sagittis eu volutpat odio. Volutpat blandit aliquam etiam erat velit scelerisque in dictum non. Amet nulla facilisi morbi tempus iaculis urna id. Iaculis eu non diam phasellus. Eu lobortis elementum nibh tellus molestie nunc. At tempor commodo ullamcorper a lacus vestibulum sed. Mi sit amet mauris commodo quis. Tellus elementum sagittis vitae et leo duis. Vel risus commodo viverra maecenas accumsan lacus.</Text>
+          <Text>Ut porttitor leo a diam sollicitudin tempor id eu nisl. Tristique senectus et netus et malesuada fames ac turpis egestas. Tellus in hac habitasse platea dictumst vestibulum rhoncus est. Integer feugiat scelerisque varius morbi enim nunc faucibus a. Tempus quam pellentesque nec nam aliquam sem et. Quam viverra orci sagittis eu volutpat odio facilisis mauris. Nunc lobortis mattis aliquam faucibus purus in massa tempor. Tincidunt dui ut ornare lectus sit amet est. Magna fermentum iaculis eu non. Posuere sollicitudin aliquam ultrices sagittis orci a scelerisque. Vitae aliquet nec ullamcorper sit amet risus nullam eget felis. Vitae proin sagittis nisl rhoncus mattis rhoncus. Nunc vel risus commodo viverra maecenas. Diam in arcu cursus euismod. Dolor morbi non arcu risus quis varius quam. Amet nisl suscipit adipiscing bibendum. Nulla pellentesque dignissim enim sit amet venenatis. Nunc congue nisi vitae suscipit tellus mauris a diam maecenas. In hac habitasse platea dictumst vestibulum rhoncus est pellentesque elit</Text>
+          <Text>Cras semper auctor neque vitae tempus quam pellentesque nec. Maecenas ultricies mi eget mauris pharetra et ultrices neque ornare. Vulputate enim nulla aliquet porttitor lacus luctus accumsan tortor posuere. Pellentesque habitant morbi tristique senectus et. Ipsum dolor sit amet consectetur adipiscing elit pellentesque. Sem et tortor consequat id porta nibh venenatis. Viverra nibh cras pulvinar mattis nunc sed blandit. Urna porttitor rhoncus dolor purus. Vivamus arcu felis bibendum ut. Cras sed felis eget velit aliquet. Sed tempus urna et pharetra pharetra. Viverra adipiscing at in tellus integer feugiat scelerisque varius morbi. Ac tortor vitae purus faucibus ornare suspendisse sed nisi lacus. Ultrices neque ornare aenean euismod elementum nisi quis eleifend quam. Vel turpis nunc eget lorem. Quisque egestas diam in arcu cursus euismod quis viverra. At tempor commodo ullamcorper a lacus vestibulum sed. Id aliquet lectus proin nibh nisl condimentum id venenatis. Quis viverra nibh cras pulvinar. Purus in mollis nunc sed.</Text>
+        </React.Fragment>
+      </Content>
+      <Footer>
+        <Button autoFocus variant="cta" onPress={close}>Acknowledge</Button>
+      </Footer>
+    </Dialog>
+  )}
+</DialogTrigger>
+```
 
 ## Events
 
-*If the component supports event props, include this section. Only cover the events that are important to the main functionality of the component.*
+For Dialogs, user defined callbacks should be chained with the DialogTrigger's `close` function in the press/click handler
+of the Dialog's action buttons. The following example alerts if the Dialog's save or cancel is clicked.
 
-Close as a function goes here, put how to chain this with their own close callback
-Press events?
-Do I put isDismissible here (does it mean you don't have to do the close as a function)
+```tsx example
+function Example() {
+  let alertSave = (cb) => {
+    cb();
+    alert('Profile saved!');
+  }
 
-Maybe isDismissable becomes its own section? Maybe place it in Visual Options? Maybe it becomes a section here?
-isDismissable is technically a DialogTrigger prop so don't go into too much detail here? Just mention how if affect close behavior
-and hides the Footer slot. Actually 
+  let alertCancel = (cb) => {
+    cb();
+    alert('Profile not saved!');
+  }
 
+  return (
+    <DialogTrigger>
+      <ActionButton>Set Profile</ActionButton>
+      {(close) => (
+        <Dialog>
+          <Header><Heading>Profile</Heading></Header>
+          <Divider />
+          <Footer>
+            <Button autoFocus variant="cta" onPress={() => alertSave(close)}>Save</Button>
+            <Button variant="secondary" onPress={() => alertCancel(close)}>Cancel</Button>
+          </Footer>
+          <Content>
+            <Form>
+              <TextField label="Name" />
+              <Checkbox>Make private</Checkbox>
+            </Form>
+          </Content>    
+        </Dialog>
+      )}
+    </DialogTrigger>
+  );
+}
+```
 
-
-## Validation REMOVE THIS FOR DIALOG
-
-*If the component supports validation props, include this section.*
+Additionally, DialogTrigger accepts an `onOpenChange` prop which is triggered whenever the Dialog is opened or closed. 
+For more information on the `onOpenChange` prop see [DialogTrigger page](TODO LINK HERE).
 
 ## Props
 
@@ -103,9 +225,70 @@ and hides the Footer slot. Actually
 
 ## Visual Options
 
-*Show examples of all variants and visual props here with links to the design website for more usage details. Examples can be grouped together for conciseness.*
+### Size
 
-Talk about types here. Put a note that this is set by the context/dialog trigger
+Only `modal` type Dialogs support a user defined size prop. Note that the `fullscreen` and `fullscreenTakeover` sizes 
+require the [DialogTrigger `type`](TODO LINK) prop to be set as `fullscreen` and `fullscreenTakeover` respectively for container sizing
+considerations.
 
-### Sample Option
-[View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
+```tsx example
+<DialogTrigger>
+  <ActionButton>Set Profile</ActionButton>
+  {(close) => (
+    <Dialog size="S">
+      <Header><Heading>Profile</Heading></Header>
+      <Divider />
+      <Footer>
+        <Button autoFocus variant="cta" onPress={close}>Save</Button>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+      </Footer>
+      <Content>
+        <Form>
+          <TextField label="Name" />
+          <Checkbox>Make private</Checkbox>
+        </Form>
+      </Content>    
+    </Dialog>
+  )}
+</DialogTrigger>
+
+<DialogTrigger>
+  <ActionButton>Set Profile</ActionButton>
+  {(close) => (
+    <Dialog size="M">
+      <Header><Heading>Profile</Heading></Header>
+      <Divider />
+      <Footer>
+        <Button autoFocus variant="cta" onPress={close}>Save</Button>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+      </Footer>
+      <Content>
+        <Form>
+          <TextField label="Name" />
+          <Checkbox>Make private</Checkbox>
+        </Form>
+      </Content>    
+    </Dialog>
+  )}
+</DialogTrigger>
+
+<DialogTrigger>
+  <ActionButton>Set Profile</ActionButton>
+  {(close) => (
+    <Dialog size="L">
+      <Header><Heading>Profile</Heading></Header>
+      <Divider />
+      <Footer>
+        <Button autoFocus variant="cta" onPress={close}>Save</Button>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+      </Footer>
+      <Content>
+        <Form>
+          <TextField label="Name" />
+          <Checkbox>Make private</Checkbox>
+        </Form>
+      </Content>    
+    </Dialog>
+  )}
+</DialogTrigger>
+```
