@@ -14,20 +14,20 @@ import {DOMProps, SpectrumLabelableProps, StyleProps, ValidationState} from '@re
 import {ReactElement} from 'react';
 
 export interface SpectrumFormProps extends DOMProps, StyleProps, SpectrumLabelableProps {
-  /** The contents of the form. */
+  /** The contents of the Form. */
   children: ReactElement<SpectrumLabelableProps> | ReactElement<SpectrumLabelableProps>[],
-  /** Whether the form elements are displayed with their quiet style. */
+  /** Whether the Form elements are displayed with their quiet style. */
   isQuiet?: boolean,
-  /** Whether the form elements are rendered with their emphasized style. */
+  /** Whether the Form elements are rendered with their emphasized style. */
   isEmphasized?: boolean,
-  /** Whether the form elements are disabled. */
+  /** Whether the Form elements are disabled. */
   isDisabled?: boolean,
-  /** Whether user input is required on each of the form elements before form submission. */
+  /** Whether user input is required on each of the Form elements before Form submission. */
   isRequired?: boolean,
-  /** Whether the form elements can be selected but not changed by the user. */
+  /** Whether the Form elements can be selected but not changed by the user. */
   isReadOnly?: boolean,
   /** 
-   * Whether the form elements should display their "valid" or "invalid" visual styling. 
+   * Whether the Form elements should display their "valid" or "invalid" visual styling. 
    * @default "valid"
    */
   validationState?: ValidationState

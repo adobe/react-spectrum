@@ -58,7 +58,8 @@ set them directly on the child instead.
 ### Accessibility
 
 As per [W3 Form guidelines](https://www.w3.org/TR/wai-aria-practices/examples/landmarks/form.html), the controls provided to the form should 
-use native host semantics (`button`, `input`, `select`, `textarea`) whenever possible.
+use native host semantics (`button`, `input`, `select`, `textarea`) whenever possible. React Spectrum components such as Button, TextField, and TextArea
+all satisfy this criteria.
 
 ## Labeling
 
@@ -87,10 +88,10 @@ the element will be identified to assistive technology as a form landmark region
 
 ## Visual Options
 
-### Label Position
+### Label Position and Label Alignment
 
 ```tsx example
-<Form width={400} marginBottom="20px" labelPosition="top">
+<Form width={400} marginBottom="20px" labelPosition="top" labelAlign="start">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
@@ -98,19 +99,7 @@ the element will be identified to assistive technology as a form landmark region
   </RadioGroup>
 </Form>
 
-<Form width={400} labelPosition="side">
-  <TextField label="Name" placeholder="John Smith" />
-  <RadioGroup label="Favorite pet" name="favorite-pet-group">
-    <Radio value="dogs">Dogs</Radio>
-    <Radio value="cats">Cats</Radio>
-  </RadioGroup>
-</Form>
-```
-
-### Label Alignment
-
-```tsx example
-<Form width={400} marginBottom="20px" labelAlign="start">
+<Form width={400} marginBottom="20px" labelPosition="top" labelAlign="end">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
@@ -118,7 +107,15 @@ the element will be identified to assistive technology as a form landmark region
   </RadioGroup>
 </Form>
 
-<Form width={400} labelAlign="end">
+<Form width={400} marginBottom="20px" labelPosition="side" labelAlign="start">
+  <TextField label="Name" placeholder="John Smith" />
+  <RadioGroup label="Favorite pet" name="favorite-pet-group">
+    <Radio value="dogs">Dogs</Radio>
+    <Radio value="cats">Cats</Radio>
+  </RadioGroup>
+</Form>
+
+<Form width={400} marginBottom="20px" labelPosition="side" labelAlign="end">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
@@ -132,10 +129,7 @@ the element will be identified to assistive technology as a form landmark region
 ```tsx example
 <Form width={400} isQuiet>
   <TextField label="Name" placeholder="John Smith" />
-  <RadioGroup label="Favorite pet" name="favorite-pet-group">
-    <Radio value="dogs">Dogs</Radio>
-    <Radio value="cats">Cats</Radio>
-  </RadioGroup>
+  <TextField label="Address" placeholder="123 Any Street" />
 </Form>
 ```
 
