@@ -48,7 +48,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   } = item;
 
   let ref = useRef<HTMLLIElement>();
-  let {menuItemProps} = useMenuItem(
+  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps} = useMenuItem(
     {
       isSelected,
       isDisabled,
@@ -61,6 +61,10 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     state
   );
 
+  let contents = typeof rendered === 'string'
+    ? <Text>{rendered}</Text>
+    : rendered;
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <li
@@ -71,7 +75,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
           'spectrum-Menu-item',
           {
             'is-disabled': isDisabled,
-            'is-selected': isSelected
+            'is-selected': isSelected,
+            'is-selectable': state.selectionManager.selectionMode !== 'none'
           }
         )}>
         <Grid
@@ -82,18 +87,13 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             )
           }
           slots={{
-            text: {UNSAFE_className: styles['spectrum-Menu-itemLabel']},
-            end: {UNSAFE_className: styles['spectrum-Menu-end']},
+            text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
+            end: {UNSAFE_className: styles['spectrum-Menu-end'], ...descriptionProps},
             icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
-            description: {UNSAFE_className: styles['spectrum-Menu-description']},
-            keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard']}
+            description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps},
+            keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps}
           }}>
-          {!Array.isArray(rendered) && (
-            <Text>
-              {rendered}
-            </Text>
-          )}
-          {Array.isArray(rendered) && rendered}
+          {contents}
           {isSelected && 
             <CheckmarkMedium 
               slot="checkmark" 
@@ -104,7 +104,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                 )
               } />
           }
-        </Grid>  
+        </Grid>
       </li>
     </FocusRing>
   );

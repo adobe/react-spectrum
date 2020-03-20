@@ -92,6 +92,10 @@ Having selection follow focus can be very helpful in some circumstances and can 
     - All options that are not selected have [`aria-selected`](https://www.w3.org/TR/wai-aria-1.1/#aria-selected) set to `false`.
 - If the complete set of available options is not present in the DOM due to dynamic loading as the user scrolls, their [`aria-setsize`](https://www.w3.org/TR/wai-aria-1.1/#aria-setsize) and [`aria-posinset`](https://www.w3.org/TR/wai-aria-1.1/#aria-posinset) attributes are set appropriately.
 - If options are arranged horizontally, the element with role `listbox` has [`aria-orientation`](https://www.w3.org/TR/wai-aria-1.1/#aria-orientation) set to `horizontal`. The default value of `aria-orientation` for `listbox` is `vertical`.
+- Options in a listbox may be divided into groups, like an [`optgroup`](https://www.w3.org/TR/html52/sec-forms.html#the-optgroup-element) in an HTML `select`:
+    - To define a labelled group, options should be contained within an element with the role of [`group`](https://www.w3.org/TR/wai-aria-1.1/#group).
+    The group element should be labelled using [`aria-label`](https://www.w3.org/TR/wai-aria-1.1/#aria-label) or with [`aria-labelledby`](https://www.w3.org/TR/wai-aria-1.1/#aria-labelledby) referencing a visible text element heading, included as a child of the group, by `id`.
+    Since a listbox does not normally expect a text node or heading as a descendant, this visible text element heading should be removed from the accessibility tree as a standalone accessibility object using [`aria-hidden`](https://www.w3.org/TR/wai-aria-1.1/#aria-hidden).
 
 ## v2 Implementation details
 In React Spectrum, `List` does not provide for dynamic item selection when `onSelect` is called on a `ListItem` instance. The `selected` state is a controlled prop on `ListItem`.  The [`SelectList`](https://react-spectrum.corp.adobe.com/components/SelectList), [`Select`](https://react-spectrum.corp.adobe.com/components/Select), and [`Menu`](https://react-spectrum.corp.adobe.com/components/Menu) components implement dynamic item selection, and are more likely to be used as standalone components.

@@ -98,8 +98,8 @@ governing permissions and limitations under the License.
 
       position: absolute;
       left: 0;
-      top: calc(-1 * var(--spectrum-accordion-item-border-size));
-      bottom: calc(-1 * var(--spectrum-accordion-item-border-size));
+      top: calc(var(--spectrum-accordion-item-border-size) * -1);
+      bottom: calc(var(--spectrum-accordion-item-border-size) * -1);
 
       width: var(--spectrum-accordion-item-border-size-key-focus);
     }
