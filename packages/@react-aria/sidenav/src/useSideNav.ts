@@ -18,8 +18,6 @@ import {TreeState} from '@react-stately/tree';
 import {useId} from '@react-aria/utils';
 import {useSelectableCollection} from '@react-aria/selection';
 
-interface SideNavAriaProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps {}
-
 interface SideNavAria {
   navProps: AllHTMLAttributes<HTMLDivElement>,
   listProps: AllHTMLAttributes<HTMLUListElement>
