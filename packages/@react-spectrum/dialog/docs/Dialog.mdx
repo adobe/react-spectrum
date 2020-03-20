@@ -65,7 +65,7 @@ import {TextField} from '@react-spectrum/textfield';
 The layout of a Dialog is made up of the following elements and sections, mapped to the corresponding default slot names:
 
 | Section/Element 	|     Slot      |
-|-------------------|---------------|
+|-------------------|--------------:|
 | Container       	| container   	|
 | Cover Image     	| hero        	|
 | Header          	| header      	|
@@ -218,6 +218,41 @@ function Example() {
 
 Additionally, DialogTrigger accepts an `onOpenChange` prop which is triggered whenever the Dialog is opened or closed. 
 For more information on the `onOpenChange` prop see [DialogTrigger page](TODO LINK HERE).
+
+### Dismissable Dialogs
+
+Dismissable Dialogs support a `onDismiss` prop which is triggered whenever the Dialog's close button is clicked.
+Similar to non-dismissable dialogs, you must chain the DialogTrigger's `close` function with whatever callback you provide as
+`onDismiss`.
+
+```tsx example
+function Example() {
+  let alertDismiss = (cb) => {
+    cb();
+    alert('Dialog dismissed.');
+  }
+
+  return (
+    <DialogTrigger isDismissable>
+      <ActionButton>Info</ActionButton>
+      {(close) => (
+        <Dialog onDismiss={() => alertDismiss(close)}>
+          <Header><Heading>Version Info</Heading></Header>
+          <Divider />
+          <Content>
+            <Text>
+              Version 1.0.0, Copyright 2020
+            </Text>
+          </Content>    
+        </Dialog>
+      )}
+    </DialogTrigger>
+  );
+}
+```
+
+Note that `onDismiss` is optional. If you don't need to add a `onDismiss` handler to your dismissable Dialog, you may omit
+the wrapping `close` function surround the Dialog.
 
 ## Props
 
