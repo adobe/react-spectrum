@@ -139,6 +139,7 @@ export class CollectionBuilder<T> {
       type: partialNode.type,
       props: partialNode.props,
       key: partialNode.key,
+      parentKey: parentNode ? parentNode.key : null,
       value: partialNode.value,
       level: parentNode ? parentNode.level + 1 : 0,
       rendered: partialNode.rendered,

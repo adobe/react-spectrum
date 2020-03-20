@@ -56,16 +56,6 @@ governing permissions and limitations under the License.
     margin-block-end: var(--spectrum-menu-margin-x);
   }
 
-  &.is-selectable {
-    .spectrum-Menu-item {
-      padding-inline-end: var(--spectrum-selectlist-option-selectable-padding-right);
-
-      &.is-selected {
-        padding-inline-end: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-popover-border-size));
-      }
-    }
-  }
-
   &:focus {
     outline: none;
   }
@@ -123,6 +113,7 @@ governing permissions and limitations under the License.
 .spectrum-Menu-checkmark {
   display: none;
   align-self: center;
+  justify-self: end;
   grid-area: checkmark;
 }
 
@@ -171,11 +162,18 @@ governing permissions and limitations under the License.
     ". .    .            .         .     .            .";
 }
 
+.spectrum-Menu-item.is-selectable {
+  .spectrum-Menu-itemGrid {
+    grid-template-columns: calc(var(--spectrum-selectlist-option-padding) - var(--spectrum-selectlist-border-size-key-focus)) auto 1fr calc(var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-selectlist-option-icon-padding-x)) auto auto var(--spectrum-selectlist-option-padding);
+  }
+}
+
 /* Added .spectrum-Menu so paddings from component styles are overriden */
 .spectrum-Menu .spectrum-Menu-end {
   grid-area: end;
   justify-self: end;
   align-self: center;
+  padding-inline-start: var(--spectrum-global-dimension-size-125);
 }
 .spectrum-Menu-icon {
   grid-area: icon;

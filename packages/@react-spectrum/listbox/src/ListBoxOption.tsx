@@ -24,13 +24,17 @@ import {useRef} from 'react';
 
 interface OptionProps<T> {
   item: Node<T>,
-  state: ListState<T>
+  state: ListState<T>,
+  selectOnPressUp?: boolean,
+  focusOnHover?: boolean
 }
 
 export function ListBoxOption<T>(props: OptionProps<T>) {
   let {
     item,
-    state
+    state,
+    selectOnPressUp,
+    focusOnHover
   } = props;
 
   let {
@@ -41,16 +45,22 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
   } = item;
 
   let ref = useRef<HTMLDivElement>();
-  let {optionProps} = useOption(
+  let {optionProps, labelProps, descriptionProps} = useOption(
     {
       isSelected,
       isDisabled,
       key,
       ref,
+      selectOnPressUp,
+      focusOnHover: focusOnHover,
       isVirtualized: true
     },
     state
   );
+
+  let contents = typeof rendered === 'string'
+    ? <Text>{rendered}</Text>
+    : rendered;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -62,7 +72,8 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
           'spectrum-Menu-item',
           {
             'is-disabled': isDisabled,
-            'is-selected': isSelected
+            'is-selected': isSelected,
+            'is-selectable': state.selectionManager.selectionMode !== 'none'
           }
         )}>
         <Grid
@@ -73,16 +84,11 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
             )
           }
           slots={{
-            text: {UNSAFE_className: styles['spectrum-Menu-itemLabel']},
+            text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
             icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
-            description: {UNSAFE_className: styles['spectrum-Menu-description']}
+            description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps}
           }}>
-          {!Array.isArray(rendered) && (
-            <Text>
-              {rendered}
-            </Text>
-          )}
-          {Array.isArray(rendered) && rendered}
+          {contents}
           {isSelected && 
             <CheckmarkMedium
               slot="checkmark"
@@ -93,7 +99,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
                 )
               } />
           }
-        </Grid>  
+        </Grid>
       </div>
     </FocusRing>
   );

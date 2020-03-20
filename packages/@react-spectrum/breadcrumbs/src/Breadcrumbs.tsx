@@ -92,8 +92,9 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
           isDisabled={isDisabled}>
           <ActionButton
             aria-label="…"
-            icon={<FolderBreadcrumb />}
-            isQuiet />
+            isQuiet>
+            <FolderBreadcrumb />
+          </ActionButton>
           <Menu
             selectionMode="none" >
             {childArray}

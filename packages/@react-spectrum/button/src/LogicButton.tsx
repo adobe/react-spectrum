@@ -59,5 +59,8 @@ function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef) {
   );
 }
 
+/**
+ * A LogicButton displays an operator within a boolean logic sequence.
+ */
 let _LogicButton = React.forwardRef(LogicButton);
 export {_LogicButton as LogicButton};

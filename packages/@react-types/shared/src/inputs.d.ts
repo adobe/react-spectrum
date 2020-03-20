@@ -21,10 +21,7 @@ export interface InputBase extends FocusableProps {
    * Often paired with the `necessityIndicator` prop to add a visual indicator to the input.
    */
   isRequired?: boolean,
-  /** 
-   * Whether the input should display its "valid" or "invalid" visual styling. 
-   * @default "valid"
-   */
+  /** Whether the input should display its "valid" or "invalid" visual styling. */
   validationState?: ValidationState,
   /** Whether the input can be selected but not changed by the user. */
   isReadOnly?: boolean
