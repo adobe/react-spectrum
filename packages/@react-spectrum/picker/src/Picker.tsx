@@ -157,13 +157,18 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
             name={name}
             value={state.selectedKey}
             onChange={e => state.setSelectedKey(e.target.value)}>
-            {[...state.collection].map(o => (
-              <option
-                key={o.key}
-                value={o.key}>
-                {o.textValue}
-              </option>
-            ))}
+            {[...state.collection.getKeys()].map(key => {
+              let item = state.collection.getItem(key);
+              if (item.type === 'item') {
+                return (
+                  <option
+                    key={item.key}
+                    value={item.key}>
+                    {item.textValue}
+                  </option>
+                );
+              }
+            })}
           </select>
         </label>
       </VisuallyHidden>
