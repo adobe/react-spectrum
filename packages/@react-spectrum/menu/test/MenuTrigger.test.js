@@ -261,7 +261,7 @@ describe('MenuTrigger', function () {
       jest.runAllTimers();
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
-      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let menuItems = within(menu).getAllByRole('menuitem');
       let selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
       triggerPress(button);
@@ -272,7 +272,7 @@ describe('MenuTrigger', function () {
       // Opening menu via down arrow still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
       menu = tree.getByRole('menu');
-      menuItems = within(menu).getAllByRole('menuitemradio');
+      menuItems = within(menu).getAllByRole('menuitem');
       selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
       triggerPress(button);
@@ -282,7 +282,7 @@ describe('MenuTrigger', function () {
       // Opening menu via up arrow still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
       menu = tree.getByRole('menu');
-      menuItems = within(menu).getAllByRole('menuitemradio');
+      menuItems = within(menu).getAllByRole('menuitem');
       selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
     });
@@ -295,7 +295,7 @@ describe('MenuTrigger', function () {
       let button = tree.getByRole('button');
       fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
       let menu = tree.getByRole('menu');
-      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let menuItems = within(menu).getAllByRole('menuitem');
       let selectedItem = menuItems[menuItems.length - 1];
       expect(selectedItem).toBe(document.activeElement);
     });
@@ -308,7 +308,7 @@ describe('MenuTrigger', function () {
       let button = tree.getByRole('button');
       fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
       let menu = tree.getByRole('menu');
-      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let menuItems = within(menu).getAllByRole('menuitem');
       let selectedItem = menuItems[0];
       expect(selectedItem).toBe(document.activeElement);
     });
@@ -401,7 +401,7 @@ describe('MenuTrigger', function () {
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
       ${'V2Dropdown'}  | ${V2Dropdown}  | ${{onOpen, onClose, onSelect, closeOnSelect: false}}
     `('$Name doesn\'t close on menu item selection if closeOnSelect=false', function ({Component, props}) {
-      let tree = renderComponent(Component, props, {onSelectionChange});
+      let tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
       expect(onOpenChange).toBeCalledTimes(0);
       let button = tree.getByRole('button');
       triggerPress(button);
@@ -444,7 +444,7 @@ describe('MenuTrigger', function () {
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
     `('$Name closes menu on item selection via ENTER press even if closeOnSelect=false', function ({Component, props}) {
-      let tree = renderComponent(Component, props, {onSelectionChange});
+      let tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
       expect(onOpenChange).toBeCalledTimes(0);
       let button = tree.getByRole('button');
       triggerPress(button);

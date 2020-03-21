@@ -25,7 +25,7 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
   let contextProps = useContext(MenuContext);
   let completeProps = {
     ...mergeProps(contextProps, props),
-    selectionMode: props.selectionMode || 'single'
+    selectionMode: props.selectionMode || 'none'
   };
 
   let ref = useRef();
@@ -52,7 +52,8 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
             <MenuSection 
               key={item.key}
               item={item}
-              state={state} />
+              state={state}
+              onAction={completeProps.onAction} />
           );
         }
 
@@ -60,7 +61,8 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
           <MenuItem
             key={item.key}
             item={item}
-            state={state} />
+            state={state}
+            onAction={completeProps.onAction} />
         );
 
         if (item.wrapper) {

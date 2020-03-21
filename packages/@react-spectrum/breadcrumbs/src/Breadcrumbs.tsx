@@ -36,6 +36,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     showRoot,
     isDisabled,
     maxVisibleItems = MAX_VISIBLE_ITEMS,
+    onAction,
     ...otherProps
   } = props;
 
@@ -88,15 +89,13 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
     let menuItem = (
       <BreadcrumbItem key="menu">
-        <MenuTrigger
-          isDisabled={isDisabled}>
+        <MenuTrigger isDisabled={isDisabled}>
           <ActionButton
             aria-label="…"
             isQuiet>
             <FolderBreadcrumb />
           </ActionButton>
-          <Menu
-            selectionMode="none" >
+          <Menu selectionMode="none" onAction={onAction}>
             {childArray}
           </Menu>
         </MenuTrigger>
@@ -115,23 +114,30 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   let lastIndex = childArray.length - 1;
   let breadcrumbItems = childArray.map((child, index) => {
     let isCurrent = index === lastIndex;
-    let breadcrumbItemProps = {
-      isCurrent,
-      isHeading: isCurrent && isHeading,
-      headingAriaLevel,
-      isDisabled,
-      ...child.props
+    let key = child.props.uniqueKey || child.key;
+    let onPress = () => {
+      if (onAction) {
+        onAction(key);
+      }
     };
+
     return (
       <li
-        key={child.key}
+        key={key}
         className={
           classNames(
             styles,
             'spectrum-Breadcrumbs-item'
           )
         }>
-        <BreadcrumbItem {...breadcrumbItemProps} />
+        <BreadcrumbItem
+          isCurrent={isCurrent}
+          isHeading={isCurrent && isHeading}
+          headingAriaLevel={headingAriaLevel}
+          isDisabled={isDisabled}
+          onPress={onPress}>
+          {child.props.children}
+        </BreadcrumbItem>
       </li>
     );
   });
