@@ -44,7 +44,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     rendered,
     isSelected,
     isDisabled,
-    key
+    key,
+    props: itemProps
   } = item;
 
   let ref = useRef<HTMLLIElement>();
@@ -56,7 +57,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       onClose,
       closeOnSelect,
       ref,
-      isVirtualized
+      isVirtualized,
+      onPress: itemProps.onPress
     }, 
     state
   );

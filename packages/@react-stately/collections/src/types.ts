@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ItemRenderer} from '@react-types/shared';
+import {ItemProps, ItemRenderer} from '@react-types/shared';
 import {Key, ReactElement, ReactNode} from 'react';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
@@ -37,7 +37,8 @@ export interface Node<T> extends ItemStates {
   wrapper?: ((element: ReactElement) => ReactElement) | void,
   parentKey?: Key,
   prevKey?: Key,
-  nextKey?: Key
+  nextKey?: Key,
+  props?: ItemProps<T>
 }
 
 export interface PartialNode<T> {
@@ -50,7 +51,8 @@ export interface PartialNode<T> {
   textValue?: string,
   renderer?: ItemRenderer<T>,
   hasChildNodes?: boolean,
-  childNodes?: () => IterableIterator<PartialNode<T>>
+  childNodes?: () => IterableIterator<PartialNode<T>>,
+  props?: ItemProps<T>
 }
 
 export interface Collection<T> extends Iterable<T> {

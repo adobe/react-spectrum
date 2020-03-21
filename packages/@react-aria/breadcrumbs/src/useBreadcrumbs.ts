@@ -21,7 +21,7 @@ interface BreadcrumbsAria {
   breadcrumbProps: AllHTMLAttributes<HTMLDivElement>
 }
 
-export function useBreadcrumbs(props: BreadcrumbsProps & DOMProps): BreadcrumbsAria {
+export function useBreadcrumbs<T>(props: BreadcrumbsProps<T> & DOMProps): BreadcrumbsAria {
   let {
     id,
     'aria-label': ariaLabel

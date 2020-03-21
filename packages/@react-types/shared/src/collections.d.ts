@@ -11,6 +11,7 @@
  */
 
 import {Key, ReactElement, ReactNode} from 'react';
+import {PressEvent} from '@react-types/shared';
 
 export interface ItemProps<T> {
   title?: ReactNode, // label?? contents?
@@ -18,7 +19,8 @@ export interface ItemProps<T> {
   hasChildItems?: boolean,
   children: ReactNode, // CellRenderer??
   textValue?: string,
-  uniqueKey?: Key
+  uniqueKey?: Key,
+  onPress?: (e: PressEvent) => void
 }
 
 export type ItemElement<T> = ReactElement<ItemProps<T>>;
@@ -28,7 +30,7 @@ interface AsyncLoadable<T> {
   items?: Iterable<T>,
   itemKey?: string,
   isLoading?: boolean, // possibly isLoadingMore
-  onLoadMore?: () => any,
+  onLoadMore?: () => any
 }
 
 export interface SectionProps<T> extends AsyncLoadable<T> {
