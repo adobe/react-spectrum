@@ -142,7 +142,7 @@ governing permissions and limitations under the License.
 
   /* this is kinda dumb, but needed for the keyboard focus rings so they don't get clipped. is there a better way to treat this */
   padding: 0 var(--spectrum-global-dimension-size-25);
-  margin: 0 calc(-1 * var(--spectrum-global-dimension-size-25));
+  margin: 0 calc(var(--spectrum-global-dimension-size-25) * -1);
 }
 
 

@@ -73,6 +73,7 @@ export function usePress(props: PressHookProps): PressResult {
     onPressChange,
     onPressStart,
     onPressEnd,
+    onPressUp,
     isDisabled,
     isPressed: isPressedProp,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -151,6 +152,23 @@ export function usePress(props: PressHookProps): PressResult {
       }
     };
 
+    let triggerPressUp = (originalEvent: EventBase, pointerType: PointerType) => {
+      if (isDisabled) {
+        return;
+      }
+
+      if (onPressUp) {
+        onPressUp({
+          type: 'pressup',
+          pointerType,
+          target: originalEvent.target as HTMLElement,
+          shiftKey: originalEvent.shiftKey,
+          metaKey: originalEvent.metaKey,
+          ctrlKey: originalEvent.ctrlKey
+        });
+      }
+    };
+
     let pressProps: HTMLAttributes<HTMLElement> = {
       onKeyDown(e) {
         if (isValidKeyboardEvent(e.nativeEvent)) {
@@ -172,6 +190,11 @@ export function usePress(props: PressHookProps): PressResult {
           }
         }
       },
+      onKeyUp(e) {
+        if (isValidKeyboardEvent(e.nativeEvent) && !e.repeat) {
+          triggerPressUp(createEvent(state.target, e), 'keyboard');
+        }
+      },
       onClick(e) {
         if (e && e.button === 0) {
           e.stopPropagation();
@@ -183,6 +206,7 @@ export function usePress(props: PressHookProps): PressResult {
           // trigger as if it were a keyboard click.
           if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && isVirtualClick(e.nativeEvent)) {
             triggerPressStart(e, 'keyboard');
+            triggerPressUp(e, 'keyboard');
             triggerPressEnd(e, 'keyboard');
           }
 
@@ -234,6 +258,13 @@ export function usePress(props: PressHookProps): PressResult {
         document.removeEventListener('pointermove', onPointerMove, false);
         document.removeEventListener('pointerup', onPointerUp, false);
         document.removeEventListener('pointercancel', onPointerCancel, false);
+      };
+
+      pressProps.onPointerUp = (e) => {
+        // Only handle left clicks
+        if (e.button === 0) {
+          triggerPressUp(e, e.pointerType as PointerType);
+        }
       };
 
       // Safari on iOS < 13.2 does not implement pointerenter/pointerleave events correctly.
@@ -317,6 +348,12 @@ export function usePress(props: PressHookProps): PressResult {
         }
       };
 
+      pressProps.onMouseUp = (e) => {
+        if (!state.ignoreEmulatedMouseEvents && e.button === 0) {
+          triggerPressUp(e, 'mouse');
+        }
+      };
+
       let onMouseUp = (e: MouseEvent) => {
         // Only handle left clicks
         if (e.button !== 0) {
@@ -367,6 +404,7 @@ export function usePress(props: PressHookProps): PressResult {
         let rect = e.currentTarget.getBoundingClientRect();
         let touch = getTouchById(e.nativeEvent, state.activePointerId);
         if (touch && touch.clientX >= rect.left && touch.clientX <= rect.right && touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+          triggerPressUp(e, 'touch');
           triggerPressEnd(e, 'touch');
         } else if (state.isOverTarget) {
           triggerPressEnd(e, 'touch', false);
@@ -375,6 +413,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.isPressed = false;
         state.activePointerId = null;
         state.isOverTarget = false;
+        state.ignoreEmulatedMouseEvents = true;
       };
 
       pressProps.onTouchCancel = (e) => {
@@ -391,7 +430,7 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     return pressProps;
-  }, [onPress, onPressStart, onPressEnd, onPressChange, isDisabled]);
+  }, [onPress, onPressStart, onPressEnd, onPressChange, onPressUp, isDisabled]);
 
   return {
     isPressed: isPressedProp || isPressed,

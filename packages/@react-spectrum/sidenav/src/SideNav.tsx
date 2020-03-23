@@ -31,6 +31,8 @@ export function SideNav<T>(props: SpectrumSideNavProps<T>) {
   let {navProps, listProps} = useSideNav(props, state, layout);
   let {styleProps} = useStyleProps(props);
 
+  layout.collection = state.collection;
+
   // This overrides collection view's renderWrapper to support heirarchy of items in sections.
   // The header is extracted from the children so it can receive ARIA labeling properties.
   type View = ReusableView<Node<T>, unknown>;

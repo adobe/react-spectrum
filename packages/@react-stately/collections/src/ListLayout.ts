@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, InvalidationContext, Node} from './types';
+import {Collection, Node} from './types';
 import {Key} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {Layout} from './Layout';
@@ -57,6 +57,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   private indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number;
   private layoutInfos: {[key: string]: LayoutInfo};
   private contentHeight: number;
+  collection: Collection<Node<T>>;
+  private lastWidth: number;
   private lastCollection: Collection<Node<T>>;
   private rootNodes: LayoutNode[];
   private collator: Intl.Collator;
@@ -75,6 +77,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.collator = options.collator;
     this.layoutInfos = {};
     this.rootNodes = [];
+    this.lastWidth = 0;
     this.lastCollection = null;
     this.contentHeight = 0;
   }
@@ -105,7 +108,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return res;
   }
 
-  validate(invalidationContext: InvalidationContext<any, any>) {
+  validate() {
+    let width = this.collectionManager.visibleRect.width;
     let previousLayoutInfos = this.layoutInfos;
     this.layoutInfos = {};
 
@@ -124,9 +128,10 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
           // or the content of the item changed.
           let previousLayoutInfo = previousLayoutInfos[node.type === 'item' ? node.key : node.key + ':header'];
           if (previousLayoutInfo) {
+            let curNode = this.collection.getItem(node.key);
             let lastNode = this.lastCollection ? this.lastCollection.getItem(node.key) : null;
             rectHeight = previousLayoutInfo.rect.height;
-            isEstimated = invalidationContext.sizeChanged || node !== lastNode || previousLayoutInfo.estimatedSize;
+            isEstimated = width !== this.lastWidth || curNode !== lastNode || previousLayoutInfo.estimatedSize;
           } else {
             rectHeight = node.type === 'item' ? this.estimatedRowHeight : this.estimatedHeadingHeight;
             isEstimated = true;
@@ -139,14 +144,14 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
         let layoutInfo: LayoutInfo;
         if (node.type === 'section') {
-          let headerRect = new Rect(0, y, this.collectionManager.visibleRect.width, rectHeight);
+          let headerRect = new Rect(0, y, width, rectHeight);
           let header = new LayoutInfo('header', node.key + ':header', headerRect);
           header.estimatedSize = isEstimated;
           header.parentKey = node.key;
           this.layoutInfos[header.key] = header;
           y += header.rect.height;
 
-          let rect = new Rect(0, y, this.collectionManager.visibleRect.width, 0);
+          let rect = new Rect(0, y, width, 0);
           layoutInfo = new LayoutInfo(node.type, node.key, rect);
           let [height, children] = build(node.childNodes, y);
           rect.height = height;
@@ -159,10 +164,10 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
         } else {
           let x = 0;
           if (typeof this.indentationForItem === 'function') {
-            x = this.indentationForItem(this.collectionManager.collection, node.key) || 0;
+            x = this.indentationForItem(this.collection, node.key) || 0;
           }
     
-          let rect = new Rect(x, y, this.collectionManager.visibleRect.width - x, rectHeight);
+          let rect = new Rect(x, y, width - x, rectHeight);
           layoutInfo = new LayoutInfo(node.type, node.key, rect);
           layoutInfo.estimatedSize = isEstimated;
           layoutNodes.push({
@@ -179,11 +184,12 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       return [y - startY, layoutNodes];
     };
 
-    let [height, nodes] = build(this.collectionManager.collection);
+    let [height, nodes] = build(this.collection);
     this.contentHeight = height;
     this.rootNodes = nodes;
 
-    this.lastCollection = this.collectionManager.collection;
+    this.lastWidth = width;
+    this.lastCollection = this.collection;
   }
 
   updateItemSize(key: Key, size: Size) {
@@ -202,7 +208,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getKeyAbove(key: Key) {
-    let collection = this.collectionManager.collection;
+    let collection = this.collection;
 
     key = collection.getKeyBefore(key);
     while (key) {
@@ -216,7 +222,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getKeyBelow(key: Key) {
-    let collection = this.collectionManager.collection;
+    let collection = this.collection;
 
     key = collection.getKeyAfter(key);
     while (key) {
@@ -260,7 +266,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getFirstKey() {
-    let collection = this.collectionManager.collection;
+    let collection = this.collection;
     let key = collection.getFirstKey();
     while (key) {
       let item = collection.getItem(key);
@@ -273,7 +279,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getLastKey() {
-    let collection = this.collectionManager.collection;
+    let collection = this.collection;
     let key = collection.getLastKey();
     while (key) {
       let item = collection.getItem(key);
@@ -290,7 +296,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       return null;
     }
 
-    let collection = this.collectionManager.collection;
+    let collection = this.collection;
     let key = fromKey ? this.getKeyBelow(fromKey) : this.getFirstKey();
     while (key) {
       let item = collection.getItem(key);

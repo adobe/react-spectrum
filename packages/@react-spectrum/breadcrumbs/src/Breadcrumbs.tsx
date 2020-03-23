@@ -13,9 +13,9 @@
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './';
 import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {DOMProps, DOMRef} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
+import {Menu, MenuTrigger} from '@react-spectrum/menu';
 import React, {useEffect, useRef, useState} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
@@ -25,7 +25,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 const MIN_VISIBLE_ITEMS = 2;
 const MAX_VISIBLE_ITEMS = 4;
 
-function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
+function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   props = useProviderProps(props);
   props = useSlotProps(props);
   let {
@@ -86,10 +86,20 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
   if (childArray.length > visibleItems) {
     let rootItems = showRoot ? [childArray[0]] : [];
 
-    // TODO: replace with menu component
     let menuItem = (
       <BreadcrumbItem key="menu">
-        <Menu isDisabled={isDisabled}>{childArray}</Menu>
+        <MenuTrigger
+          isDisabled={isDisabled}>
+          <ActionButton
+            aria-label="…"
+            isQuiet>
+            <FolderBreadcrumb />
+          </ActionButton>
+          <Menu
+            selectionMode="none" >
+            {childArray}
+          </Menu>
+        </MenuTrigger>
       </BreadcrumbItem>
     );
     rootItems.push(menuItem);
@@ -105,6 +115,13 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
   let lastIndex = childArray.length - 1;
   let breadcrumbItems = childArray.map((child, index) => {
     let isCurrent = index === lastIndex;
+    let breadcrumbItemProps = {
+      isCurrent,
+      isHeading: isCurrent && isHeading,
+      headingAriaLevel,
+      isDisabled,
+      ...child.props
+    };
     return (
       <li
         key={child.key}
@@ -114,20 +131,11 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
             'spectrum-Breadcrumbs-item'
           )
         }>
-        {React.cloneElement(
-          child,
-          {
-            isCurrent,
-            isHeading: isCurrent && isHeading,
-            headingAriaLevel,
-            isDisabled
-          }
-        )}
+        <BreadcrumbItem {...breadcrumbItemProps} />
       </li>
     );
   });
 
-  // TODO: replace menu with select
   return (
     <nav
       {...filterDOMProps(otherProps)}
@@ -157,33 +165,3 @@ function Breadcrumbs(props: SpectrumBreadcrumbsProps, ref: DOMRef) {
 
 let _Breadcrumbs = React.forwardRef(Breadcrumbs);
 export {_Breadcrumbs as Breadcrumbs};
-
-// temporary replacement for menu and select component
-interface MenuProps extends DOMProps {
-  label?: any,
-  isDisabled?: boolean,
-  children?: any
-}
-
-const Menu = React.forwardRef((props: MenuProps) => {
-  let {
-    children,
-    label = '',
-    isDisabled
-  } = props;
-
-  return (
-    <DialogTrigger type="popover">
-      <ActionButton
-        aria-label="…"
-        icon={<FolderBreadcrumb />}
-        isDisabled={isDisabled}
-        isQuiet>
-        {label && React.cloneElement(label, {isCurrent: undefined})}
-      </ActionButton>
-      <Dialog>
-        {children.map((child) => React.cloneElement(child, {isCurrent: undefined}))}
-      </Dialog>
-    </DialogTrigger>
-  );
-});

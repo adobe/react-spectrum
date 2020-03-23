@@ -11,6 +11,7 @@
  */
 
 import {DOMProps, PressEvents, StyleProps} from '@react-types/shared';
+import {ItemProps} from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
 export interface BreadcrumbItemProps extends PressEvents {
@@ -22,12 +23,12 @@ export interface BreadcrumbItemProps extends PressEvents {
   children: ReactNode
 }
 
-export interface BreadcrumbsProps {
-  children: ReactElement<BreadcrumbItemProps> | ReactElement<BreadcrumbItemProps>[],
+export interface BreadcrumbsProps<T> {
+  children: ReactElement<ItemProps<T>> | ReactElement<ItemProps<T>>[],
   maxVisibleItems?: 'auto' | number
 }
 
-export interface SpectrumBreadcrumbsProps extends BreadcrumbsProps, DOMProps, StyleProps {
+export interface SpectrumBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps, StyleProps {
   size?: 'S' | 'M' | 'L',
   isHeading?: boolean,
   headingAriaLevel?: number,
