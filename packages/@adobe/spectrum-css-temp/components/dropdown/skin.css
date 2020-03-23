@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Dropdown {
   .spectrum-Dropdown-trigger:hover {
-    .spectrum-Dropdown-icon {
+    .spectrum-Dropdown-chevron {
       color: var(--spectrum-dropdown-icon-color-hover);
     }
   }
@@ -41,7 +41,7 @@ governing permissions and limitations under the License.
   &.is-disabled {
     &,
     .spectrum-Dropdown-trigger:hover {
-      .spectrum-Dropdown-icon {
+      .spectrum-Dropdown-chevron {
         color: var(--spectrum-dropdown-icon-color-disabled);
       }
     }
@@ -53,7 +53,7 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Dropdown-icon {
+.spectrum-Dropdown-chevron {
   color: var(--spectrum-dropdown-icon-color);
 }
 
@@ -74,7 +74,7 @@ governing permissions and limitations under the License.
   .spectrum-Dropdown-label.is-placeholder {
     color: var(--spectrum-dropdown-placeholder-text-color-key-focus);
   }
-  .spectrum-Dropdown-icon {
+  .spectrum-Dropdown-chevron {
     color: var(--spectrum-dropdown-icon-color-key-focus)
   }
 }

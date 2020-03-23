@@ -75,7 +75,7 @@ governing permissions and limitations under the License.
     z-index: -1; /* make sure we don't block clicks on chevron */
 
     /* Position correctly since top is not defined */
-    margin-top: calc(-1 * var(--spectrum-treeview-item-padding-y));
+    margin-top: calc(var(--spectrum-treeview-item-padding-y) * -1);
 
     height: var(--spectrum-treeview-item-height);
 
@@ -92,9 +92,9 @@ governing permissions and limitations under the License.
   position: relative;
 
   left: var(--spectrum-global-dimension-size-125);
-  top: calc(-1 * var(--spectrum-global-dimension-size-65));
-  margin-left: calc(-1 * calc(var(--spectrum-global-dimension-size-400) + var(--spectrum-global-dimension-size-25)));
-  margin-bottom: calc(-1 * var(--spectrum-global-dimension-size-125));
+  top: calc(var(--spectrum-global-dimension-size-65) * -1);
+  margin-left: calc(calc(var(--spectrum-global-dimension-size-400) + var(--spectrum-global-dimension-size-25)) * -1);
+  margin-bottom: calc(var(--spectrum-global-dimension-size-125) * -1);
 
   padding: var(--spectrum-global-dimension-size-125);
 

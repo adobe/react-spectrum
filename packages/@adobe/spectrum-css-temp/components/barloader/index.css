@@ -102,7 +102,7 @@ governing permissions and limitations under the License.
 
 @keyframes indeterminate-loop-ltr {
   from {
-    transform: translate(calc(-1 * var(--spectrum-barloader-large-indeterminate-fill-width)));
+    transform: translate(calc(var(--spectrum-barloader-large-indeterminate-fill-width) * -1));
   }
   to {
     transform: translate(var(--spectrum-barloader-large-width));
@@ -114,6 +114,6 @@ governing permissions and limitations under the License.
     transform: translate(var(--spectrum-barloader-large-width));
   }
   to {
-    transform: translate(calc(-1 * var(--spectrum-barloader-large-width)));
+    transform: translate(calc(var(--spectrum-barloader-large-width) * -1));
   }
 }
