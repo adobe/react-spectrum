@@ -65,8 +65,8 @@ all satisfy this criteria.
 
 ### Accessibility
 
-If a label is provided to the Form by adding either the `aria-label` or `aria-labelledby` prop, 
-the element will be identified to assistive technology as a form landmark region. 
+A label should be provided to the Form by adding either the `aria-label` or `aria-labelledby` prop, so that the element will be identified to assistive
+technology as a form landmark region to which assistive technology can navigate to.
 
 ```tsx example
 <h3 id="label-3">Personal Information</h3>
@@ -91,7 +91,7 @@ the element will be identified to assistive technology as a form landmark region
 ### Label Position and Label Alignment
 
 ```tsx example
-<Form width={400} marginBottom="20px" labelPosition="top" labelAlign="start">
+<Form labelPosition="top" labelAlign="start" aria-label="Form example: label position=top, label alignment=start " width={400} marginBottom="20px">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
@@ -99,7 +99,7 @@ the element will be identified to assistive technology as a form landmark region
   </RadioGroup>
 </Form>
 
-<Form width={400} marginBottom="20px" labelPosition="top" labelAlign="end">
+<Form labelPosition="top" labelAlign="end" aria-label="Form example: label position=top, label alignment=end" width={400} marginBottom="20px">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
@@ -107,7 +107,7 @@ the element will be identified to assistive technology as a form landmark region
   </RadioGroup>
 </Form>
 
-<Form width={400} marginBottom="20px" labelPosition="side" labelAlign="start">
+<Form labelPosition="side" labelAlign="start" aria-label="Form example: label position=side, label alignment=start" width={400} marginBottom="20px">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
@@ -115,7 +115,7 @@ the element will be identified to assistive technology as a form landmark region
   </RadioGroup>
 </Form>
 
-<Form width={400} marginBottom="20px" labelPosition="side" labelAlign="end">
+<Form labelPosition="side" labelAlign="end" aria-label="Form example: label position=side, label alignment=end" width={400} marginBottom="20px">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
@@ -127,7 +127,7 @@ the element will be identified to assistive technology as a form landmark region
 ### Quiet
 
 ```tsx example
-<Form width={400} isQuiet>
+<Form isQuiet aria-label="Form example: isQuiet" width={400}>
   <TextField label="Name" placeholder="John Smith" />
   <TextField label="Address" placeholder="123 Any Street" />
 </Form>
@@ -136,7 +136,7 @@ the element will be identified to assistive technology as a form landmark region
 ### Emphasized
 
 ```tsx example
-<Form width={400} isEmphasized>
+<Form isEmphasized aria-label="Form example: isEmphasized" width={400}>
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
@@ -148,7 +148,7 @@ the element will be identified to assistive technology as a form landmark region
 ### Disabled
 
 ```tsx example
-<Form width={400} isDisabled>
+<Form isDisabled aria-label="Form example: isDisabled" width={400}>
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
@@ -160,7 +160,7 @@ the element will be identified to assistive technology as a form landmark region
 ### Required and Necessity Indicator
 
 ```tsx example
-<Form width={400} marginBottom="20px" necessityIndicator="label">
+<Form necessityIndicator="label" aria-label="Form example: optional with necessityIndicator=label" width={400} marginBottom="20px">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
@@ -168,7 +168,7 @@ the element will be identified to assistive technology as a form landmark region
   </RadioGroup>
 </Form>
 
-<Form width={400} marginBottom="20px" isRequired necessityIndicator="label">
+<Form isRequired necessityIndicator="label" aria-label="Form example: isRequired with necessityIndicator=label" width={400} marginBottom="20px">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
@@ -176,7 +176,7 @@ the element will be identified to assistive technology as a form landmark region
   </RadioGroup>
 </Form>
 
-<Form width={400} isRequired necessityIndicator="icon">
+<Form isRequired necessityIndicator="icon" aria-label="Form example: isRequired with necessityIndicator=icon" width={400} >
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
@@ -188,7 +188,7 @@ the element will be identified to assistive technology as a form landmark region
 ### Read Only
 
 ```tsx example
-<Form width={400} isReadOnly>
+<Form isReadOnly aria-label="Form example: isReadOnly" width={400}>
   <TextField label="Name" value="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
@@ -200,7 +200,7 @@ the element will be identified to assistive technology as a form landmark region
 ### Validation State
 
 ```tsx example
-<Form width={400} marginBottom="20px" validationState="invalid">
+<Form validationState="invalid" aria-label="Form example: validationState=invalid" width={400} marginBottom="20px">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
@@ -208,7 +208,7 @@ the element will be identified to assistive technology as a form landmark region
   </RadioGroup>
 </Form>
 
-<Form width={400} validationState="valid">
+<Form validationState="valid" aria-label="Form example: validationState=valid" width={400}>
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" name="favorite-pet-group">
     <Radio value="dogs">Dogs</Radio>
