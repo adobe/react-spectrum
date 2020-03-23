@@ -31,3 +31,7 @@ Search open/closed issues before submitting since someone might have posted the 
 | [Package name]   |
 | Browser          |
 | Operating System |
+
+## 🧢 Your Company/Team
+
+<!--- Which product team is requesting this feedback? (i.e. Adobe/Photoshop) -->
