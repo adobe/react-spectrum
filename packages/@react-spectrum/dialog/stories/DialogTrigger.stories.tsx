@@ -11,10 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton, Button} from '@react-spectrum/button';
+import {ActionButton, Button, ButtonGroup} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
 import {chain} from '@react-aria/utils';
-import {Content, Footer, Header} from '@react-spectrum/view';
+import {Content, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/typography';
 import isChromatic from 'storybook-chromatic/isChromatic';
@@ -236,10 +236,10 @@ function render({width = 'auto', ...props}) {
             <Divider />
             <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
             {!props.isDismissable &&
-              <Footer>
+              <ButtonGroup>
                 <Button variant="secondary" onPress={chain(close, action('cancel'))}>Cancel</Button>
                 <Button variant="cta" onPress={chain(close, action('confirm'))}>Confirm</Button>
-              </Footer>}
+              </ButtonGroup>}
           </Dialog>
         )}
       </DialogTrigger>
