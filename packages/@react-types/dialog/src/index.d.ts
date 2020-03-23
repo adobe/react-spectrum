@@ -39,8 +39,7 @@ export interface SpectrumDialogProps extends DOMProps, StyleProps {
   /** The contents of the Dialog. */
   children: ReactNode,
   /**
-   * Object containing the props that each Dialog child receives,
-   * see [slots](./Slots.html).
+   * Replaces the default slots used within Dialog.
    */
   slots?: Slots,
   /** The size of the Dialog. Only applies to "modal" type Dialogs. */
