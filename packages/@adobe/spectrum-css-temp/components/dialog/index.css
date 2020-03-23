@@ -149,7 +149,7 @@ governing permissions and limitations under the License.
 .spectrum-Dialog-footer {
   grid-area: footer;
   /* this padding isn't built into the grid because it disappears with this footer */
-  padding-top: var(--spectrum-global-dimension-static-size-500);
+  padding-block-start: var(--spectrum-global-dimension-static-size-500);
 
   display: flex;
   flex-wrap: wrap;
@@ -199,7 +199,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Dialog--fullscreen {
   width: calc(100vw - calc(2 * var(--spectrum-dialog-fullscreen-margin)));
-  height: calc(100vw - calc(2 * var(--spectrum-dialog-fullscreen-margin)));
+  height: calc(100vh - calc(2 * var(--spectrum-dialog-fullscreen-margin)));
 }
 .spectrum-Dialog--fullscreenTakeover {
   width: 100vw;
@@ -235,6 +235,29 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Dialog-footer {
-    padding-top: 0px;
+    padding-block-start: 0px;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .spectrum-Dialog--fullscreen,
+  .spectrum-Dialog--fullscreenTakeover {
+
+    &.spectrum-Dialog .spectrum-Dialog-grid {
+       display: grid;
+       grid-template-columns: var(--spectrum-dialog-padding) 1fr auto var(--spectrum-dialog-padding);
+       grid-template-rows: calc(var(--spectrum-dialog-padding) + var(--spectrum-dialog-fullscreen-padding-top)) auto auto 1fr auto var(--spectrum-dialog-padding);
+       grid-template-areas:
+         ".    .       .       ."
+         ".    header  header  ."
+         ".    divider divider ."
+         ".    content content ."
+         ".    .       footer  ."
+         ".    .       .       .";
+    }
+
+    .spectrum-Dialog-footer {
+      padding-block-start: var(--spectrum-global-dimension-static-size-500);
+    }
   }
 }
