@@ -39,8 +39,8 @@ import {View} from '@react-spectrum/view';
 
 ## Value
 
-ProgressBars are controlled with the `value` prop representing current percentage (as an integer).
-In this case, the minimum and maximum values default to 0 and 100, respectively.
+ProgressBars are controlled with the `value` prop.
+In this default case, the `value` props can be thought of as representing current percentage of progress as the minimum and maxiumum values default to 0 and 100, respectively.
 
 ```tsx example
 <ProgressBar label="Loading…" value={25} />
@@ -91,7 +91,7 @@ If using the over background variant, ensure the background offers enough contra
 
 To internationalize a ProgressBar, a localized string should be passed to the `label` prop, `aria-label` prop, or value of the associated `aria-labelledby` element.
 
-For languages that are read right to left (e.g. Hebrew and Arabic), the layout is mirrored for both determinate and indeterminate options.
+For languages that are read right to left (e.g. Hebrew and Arabic), the layout for both determinate and indeterminate options is flipped.
 
 ## Labels
 [View guidelines](https://spectrum.adobe.com/page/bar-loader/#Label-or-no-label)

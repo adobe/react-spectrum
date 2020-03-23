@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import Bell from '@spectrum-icons/workflow/Bell';
 import {cleanup, fireEvent, render, within} from '@testing-library/react';
 import {Item, ListBox, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import {Text} from '@react-spectrum/typography';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
 
@@ -480,13 +482,13 @@ describe('ListBox', function () {
       let options = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(options[0]);
 
-      fireEvent.keyPress(listbox, {charCode: 'b'.charCodeAt(0)});
+      fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[1]);
 
-      fireEvent.keyPress(listbox, {charCode: 'l'.charCodeAt(0)});
+      fireEvent.keyDown(listbox, {key: 'L'});
       expect(document.activeElement).toBe(options[3]);
 
-      fireEvent.keyPress(listbox, {charCode: 'e'.charCodeAt(0)});
+      fireEvent.keyDown(listbox, {key: 'E'});
       expect(document.activeElement).toBe(options[4]);
     });
 
@@ -496,12 +498,12 @@ describe('ListBox', function () {
       let options = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(options[0]);
 
-      fireEvent.keyPress(listbox, {charCode: 'b'.charCodeAt(0)});
+      fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[1]);
 
       jest.runAllTimers();
 
-      fireEvent.keyPress(listbox, {charCode: 'b'.charCodeAt(0)});
+      fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[2]);
     });
 
@@ -511,15 +513,37 @@ describe('ListBox', function () {
       let options = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(options[0]);
 
-      fireEvent.keyPress(listbox, {charCode: 'b'.charCodeAt(0)});
-      fireEvent.keyPress(listbox, {charCode: 'l'.charCodeAt(0)});
-      fireEvent.keyPress(listbox, {charCode: 'e'.charCodeAt(0)});
+      fireEvent.keyDown(listbox, {key: 'B'});
+      fireEvent.keyDown(listbox, {key: 'L'});
+      fireEvent.keyDown(listbox, {key: 'E'});
       expect(document.activeElement).toBe(options[4]);
 
       jest.runAllTimers();
 
-      fireEvent.keyPress(listbox, {charCode: 'b'.charCodeAt(0)});
+      fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[1]);
     });
+  });
+
+  it('supports complex options with aria-labelledby and aria-describedby', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <ListBox>
+          <Item>
+            <Bell />
+            <Text>Label</Text>
+            <Text slot="description">Description</Text>
+          </Item>
+        </ListBox>
+      </Provider>
+    );
+
+    let listbox = tree.getByRole('listbox');
+    let option = within(listbox).getByRole('option');
+    let label = within(listbox).getByText('Label');
+    let description = within(listbox).getByText('Description');
+    
+    expect(option).toHaveAttribute('aria-labelledby', label.id);
+    expect(option).toHaveAttribute('aria-describedby', description.id);
   });
 });

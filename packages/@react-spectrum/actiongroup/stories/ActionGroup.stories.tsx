@@ -23,6 +23,7 @@ import React from 'react';
 import RegionSelect  from '@spectrum-icons/workflow/RegionSelect';
 import Select  from '@spectrum-icons/workflow/Select';
 import {storiesOf} from '@storybook/react';
+import {Text} from '@react-spectrum/typography';
 import Undo from '@spectrum-icons/workflow/Undo';
 
 storiesOf('ActionGroup', module)
@@ -112,26 +113,26 @@ const items =
 
 const itemsWithIcons =
   [
-    {children: 'React', icon: <CheckmarkCircle />},
-    {children: 'Add', icon: <Add />},
-    {children: 'Delete', icon: <Delete />},
-    {children: 'Bell', icon: <Bell />},
-    {children: 'Camera', icon: <Camera />},
-    {children: 'Undo', icon: <Undo />}
+    {children: <><CheckmarkCircle /><Text>React</Text></>},
+    {children: <><Add /><Text>Add</Text></>},
+    {children: <><Delete /><Text>Delete</Text></>},
+    {children: <><Bell /><Text>Bell</Text></>},
+    {children: <><Camera /><Text>Camera</Text></>},
+    {children: <><Undo /><Text>Undo</Text></>}
   ];
 
 const toolIcons =
   [
-    {icon: <Brush />},
-    {icon: <Select />},
-    {icon: <RegionSelect />}
+    {children: <Brush />},
+    {children: <Select />},
+    {children: <RegionSelect />}
   ];
 
 const toolIconsAffordance =
   [
-    {icon: <Brush />, holdAffordance: true},
-    {icon: <Select />, holdAffordance: true},
-    {icon: <RegionSelect />, holdAffordance: true}
+    {children: <Brush />, holdAffordance: true},
+    {children: <Select />, holdAffordance: true},
+    {children: <RegionSelect />, holdAffordance: true}
   ];
 
 function render(props = {}, items: any = itemsWithIcons) {

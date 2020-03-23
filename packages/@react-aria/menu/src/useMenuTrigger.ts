@@ -24,7 +24,7 @@ interface MenuTriggerAria {
 export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState): MenuTriggerAria {
   let {
     ref,
-    type,
+    type = 'menu' as MenuTriggerProps['type'],
     isDisabled
   } = props;
 
@@ -70,7 +70,7 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
     menuTriggerProps: {
       ...triggerAriaProps,
       id: menuTriggerId,
-      onPress,
+      onPressStart: onPress,
       onKeyDown
     },
     menuProps: {
