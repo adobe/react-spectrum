@@ -78,7 +78,7 @@ governing permissions and limitations under the License.
 .spectrum-Tooltip--left {
   .spectrum-Tooltip-tip {
     top: 50%;
-    margin-top: calc(-1 * var(--spectrum-tooltip-tip-width));
+    margin-top: calc(var(--spectrum-tooltip-tip-width) * -1);
   }
 }
 
@@ -129,7 +129,7 @@ governing permissions and limitations under the License.
 .spectrum-Tooltip--top {
   .spectrum-Tooltip-tip {
     left: 50%;
-    margin-left: calc(-1 * var(--spectrum-tooltip-tip-width));
+    margin-left: calc(var(--spectrum-tooltip-tip-width) * -1);
   }
 }
 
@@ -196,7 +196,7 @@ governing permissions and limitations under the License.
 
   .spectrum-Tooltip--bottom {
     top: 100%;
-    transform: translate(-50%, calc(-1 * var(--spectrum-tooltip-tip-margin)));
+    transform: translate(-50%, calc(var(--spectrum-tooltip-tip-margin) * -1));
   }
 
   .spectrum-Tooltip--top {
@@ -221,7 +221,7 @@ governing permissions and limitations under the License.
   &:focus .spectrum-Tooltip.spectrum-Tooltip--top,
   &.is-focused .spectrum-Tooltip.spectrum-Tooltip--top,
   *:focus .spectrum-Tooltip.spectrum-Tooltip--top {
-    transform: translate(-50%, calc(-1 * var(--spectrum-tooltip-tip-margin)));
+    transform: translate(-50%, calc(var(--spectrum-tooltip-tip-margin) * -1));
   }
 
   &:hover .spectrum-Tooltip.spectrum-Tooltip--left,

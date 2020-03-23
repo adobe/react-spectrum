@@ -17,7 +17,6 @@ import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
-import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {Content, Header} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
@@ -460,12 +459,12 @@ storiesOf('Menu', module)
               <AlignLeft size="S" />
               <Text>Puppy</Text>
               <Text slot="description">Puppy description super long as well geez</Text>
+              <Keyboard>⌘P</Keyboard>
             </Item>
             <Item textValue="Doggo with really really really long long long text">
               <AlignCenter size="S" />
               <Text>Doggo with really really really long long long text</Text>
               <Text slot="end">Value</Text>
-              <ChevronRightMedium slot="keyboard" />
             </Item>
             <Item textValue="Floof">
               <AlignRight size="S" />
@@ -489,6 +488,28 @@ storiesOf('Menu', module)
               {item => customMenuItem(item)}
             </Section>
           )}
+        </Menu>
+      </Popover>
+    )
+  )
+  .add(
+    'with onPress',
+    () => (
+      <Popover isOpen hideArrow>
+        <Menu onSelectionChange={action('onSelectionChange')} items={flatMenu} itemKey="name">
+          {item => <Item onPress={action('onPress')}>{item.name}</Item>}
+        </Menu>
+      </Popover>
+    )
+  )
+  .add(
+    'static with onPress',
+    () => (
+      <Popover isOpen hideArrow>
+        <Menu onSelectionChange={action('onSelectionChange')}>
+          <Item onPress={action('onPress One')}>One</Item>
+          <Item onPress={action('onPress Two')}>Two</Item>
+          <Item onPress={action('onPress Three')}>Three</Item>
         </Menu>
       </Popover>
     )

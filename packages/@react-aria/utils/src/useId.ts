@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {useMemo, useState} from 'react';
+import {useLayoutEffect, useMemo, useState} from 'react';
 
 let map: Map<string, (v: string) => void> = new Map();
 
@@ -43,4 +43,16 @@ export function mergeIds(a: string, b: string): string {
   }
 
   return b;
+}
+
+export function useSlotId(): string {
+  let [id, setId] = useState(useId());
+  useLayoutEffect(() => {
+    let setCurr = map.get(id);
+    if (setCurr && !document.getElementById(id)) {
+      setId(null);
+    }
+  }, [id]);
+
+  return id;
 }

@@ -11,6 +11,7 @@
  */
 
 import {DOMRefValue} from '@react-types/shared';
+import {FocusScope} from '@react-aria/focus';
 import {FocusStrategy, SpectrumMenuTriggerProps} from '@react-types/menu';
 import {MenuContext} from './context';
 import {Overlay, Popover} from '@react-spectrum/overlays';
@@ -47,7 +48,6 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
       ref: menuTriggerRef,
-      type: 'menu',
       isDisabled
     },
     {
@@ -75,32 +75,20 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     autoFocus: true,
     wrapAround: true
   };
-
-  let triggerProps = {
-    ...menuTriggerProps,
-    ref: menuTriggerRef,
-    isPressed: isOpen
-  };
-
-  let popoverProps = {
-    ...overlayProps,
-    ref: menuPopoverRef,
-    placement, 
-    hideArrow: true,
-    onClose
-  };
    
   return (
     <Fragment>
       <Provider isDisabled={isDisabled}>
-        <PressResponder {...triggerProps}>
+        <PressResponder {...menuTriggerProps} ref={menuTriggerRef} isPressed={isOpen}>
           {menuTrigger}
         </PressResponder>
       </Provider>
       <MenuContext.Provider value={menuContext}>
         <Overlay isOpen={isOpen} ref={containerRef}>
-          <Popover {...popoverProps}>
-            {menu}
+          <Popover {...overlayProps} ref={menuPopoverRef} hideArrow placement={placement} onClose={onClose}>
+            <FocusScope restoreFocus>
+              {menu}
+            </FocusScope>
           </Popover>
         </Overlay>
       </MenuContext.Provider>
