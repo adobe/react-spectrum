@@ -168,8 +168,8 @@ describe('Breadcrumbs', function () {
   it('Handles isDisabled', () => {
     let {getByText} = render(
       <Breadcrumbs isDisabled>
-        <Item data-testid="item-1">Folder 1</Item>
-        <Item data-testid="item-2">Folder 2</Item>
+        <Item>Folder 1</Item>
+        <Item>Folder 2</Item>
       </Breadcrumbs>
     );
 
