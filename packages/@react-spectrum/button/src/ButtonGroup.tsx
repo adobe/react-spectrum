@@ -24,13 +24,13 @@ function ButtonGroup(props, ref) {
   let {styleProps} = useStyleProps(otherProps);
 
   return (
-      <div
-        {...filterDOMProps(otherProps)}
-        {...styleProps}
-        ref={ref}
-        className={styleProps.className}>
-        {children}
-      </div>
+    <div
+      {...filterDOMProps(otherProps)}
+      {...styleProps}
+      ref={ref}
+      className={styleProps.className}>
+      {children}
+    </div>
   );
 }
 
