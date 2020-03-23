@@ -14,6 +14,7 @@ import {HTMLAttributes, Key, RefObject} from 'react';
 import {ListState} from '@react-stately/list';
 import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
+import {useSlotId} from '@react-aria/utils';
 
 interface OptionProps {
   isDisabled?: boolean,
@@ -26,7 +27,9 @@ interface OptionProps {
 }
 
 interface OptionAria {
-  optionProps: HTMLAttributes<HTMLElement>
+  optionProps: HTMLAttributes<HTMLElement>,
+  labelProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: HTMLAttributes<HTMLElement>
 }
 
 export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAria {
@@ -40,10 +43,15 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     isVirtualized
   } = props;
 
+  let labelId = useSlotId();
+  let descriptionId = useSlotId();
+
   let optionProps = {
     role: 'option',
     'aria-disabled': isDisabled,
-    'aria-selected': isSelected
+    'aria-selected': isSelected,
+    'aria-labelledby': labelId,
+    'aria-describedby': descriptionId
   };
 
   if (isVirtualized) {
@@ -72,6 +80,12 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
       ...optionProps,
       ...pressProps,
       ...hoverProps
+    },
+    labelProps: {
+      id: labelId
+    },
+    descriptionProps: {
+      id: descriptionId
     }
   };
 }

@@ -10,14 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, Key, RefObject} from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {HTMLAttributes, Key, RefObject} from 'react';
+import {mergeProps, useSlotId} from '@react-aria/utils';
+import {PressEvent} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
 import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface MenuItemAria {
-  menuItemProps: AllHTMLAttributes<HTMLElement>
+  menuItemProps: HTMLAttributes<HTMLElement>,
+  labelProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: HTMLAttributes<HTMLElement>,
+  keyboardShortcutProps: HTMLAttributes<HTMLElement>
 }
 
 interface MenuState<T> extends TreeState<T> {}
@@ -29,7 +33,8 @@ interface MenuItemProps {
   ref?: RefObject<HTMLElement>,
   onClose?: () => void,
   closeOnSelect?: boolean,
-  isVirtualized?: boolean
+  isVirtualized?: boolean,
+  onPress: (e: PressEvent) => void
 }
 
 export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuItemAria {
@@ -40,7 +45,8 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
     onClose,
     closeOnSelect,
     ref,
-    isVirtualized
+    isVirtualized,
+    onPress
   } = props;
 
   let role = 'menuitem';
@@ -50,9 +56,15 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
     role = 'menuitemcheckbox';
   }
 
+  let labelId = useSlotId();
+  let descriptionId = useSlotId();
+  let keyboardId = useSlotId();
+
   let ariaProps = {
     'aria-disabled': isDisabled,
-    role
+    role,
+    'aria-labelledby': labelId,
+    'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ')
   };
 
   if (state.selectionManager.selectionMode !== 'none') {
@@ -92,7 +104,7 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
     selectOnPressUp: true
   });
 
-  let {pressProps} = usePress(mergeProps({onPressUp, onKeyDown, isDisabled}, itemProps));
+  let {pressProps} = usePress(mergeProps({onPressUp, onPress, onKeyDown, isDisabled}, itemProps));
   let {hoverProps} = useHover({
     isDisabled,
     onHover() {
@@ -105,6 +117,15 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
       ...ariaProps,
       ...pressProps,
       ...hoverProps
+    },
+    labelProps: {
+      id: labelId
+    },
+    descriptionProps: {
+      id: descriptionId
+    },
+    keyboardShortcutProps: {
+      id: keyboardId
     }
   };
 }

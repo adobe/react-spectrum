@@ -12,7 +12,7 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, filterDOMProps, unwrapDOMRef, useDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, SlotProvider, unwrapDOMRef, useDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusScope} from '@react-aria/focus';
@@ -25,6 +25,7 @@ import {Placement} from '@react-types/overlays';
 import React, {ReactElement, useRef} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
+import {Text} from '@react-spectrum/typography';
 import {useOverlayPosition} from '@react-aria/overlays';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSelect} from '@react-aria/select';
@@ -111,6 +112,11 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
     ? state.collection.getItem(state.selectedKey)
     : null;
 
+  let contents = selectedItem ? selectedItem.rendered : placeholder;
+  if (typeof contents === 'string') {
+    contents = <Text>{contents}</Text>;
+  }
+
   let picker = (
     <div
       className={
@@ -130,20 +136,24 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
         isDisabled={isDisabled}
         validationState={validationState}
         UNSAFE_className={classNames(styles, 'spectrum-Dropdown-trigger')}>
-        <span
-          className={
-            classNames(
-              styles,
-              'spectrum-Dropdown-label',
-              {'is-placeholder': !selectedItem}
-            )
-           }>
-          {selectedItem ? selectedItem.rendered : placeholder}
-        </span>
+        <SlotProvider
+          slots={{
+            icon: {UNSAFE_className: classNames(styles, 'spectrum-Icon'), size: 'S'},
+            text: {UNSAFE_className: classNames(
+            styles,
+            'spectrum-Dropdown-label',
+            {'is-placeholder': !selectedItem}
+          )},
+            description: {
+              isHidden: true
+            }
+          }}>
+          {contents}
+        </SlotProvider>
         {validationState === 'invalid' && 
           <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-invalidIcon')} />
         }
-        <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-icon')} />
+        <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
       </FieldButton>
       <Overlay isOpen={state.isOpen} ref={containerRef}>
         {overlay}

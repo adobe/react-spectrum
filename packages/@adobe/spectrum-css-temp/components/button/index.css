@@ -189,7 +189,7 @@ a.spectrum-ActionButton {
 }
 
 [dir='rtl'] .spectrum-ActionButton-hold {
-  transform: rotate(90deg); 
+  transform: rotate(90deg);
 }
 
 .spectrum-ActionButton-label,
@@ -360,8 +360,8 @@ a.spectrum-ActionButton {
   }
 
   &.spectrum-ActionButton + .spectrum-ActionButton {
-    margin-inline-start: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
-    margin-inline-end: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+    margin-inline-start: calc(var(--spectrum-actionbutton-border-size) * -1 / 2);
+    margin-inline-end: calc(var(--spectrum-actionbutton-border-size) * -1 / 2);
   }
 
   &.spectrum-ActionButton {
@@ -370,13 +370,13 @@ a.spectrum-ActionButton {
     &:first-child {
       border-start-start-radius: var(--spectrum-actionbutton-border-radius);
       border-end-start-radius: var(--spectrum-actionbutton-border-radius);
-      margin-inline-end: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+      margin-inline-end: calc(var(--spectrum-actionbutton-border-size) * -1 / 2);
     }
 
     &:last-child {
       border-start-end-radius: var(--spectrum-actionbutton-border-radius);
       border-end-end-radius: var(--spectrum-actionbutton-border-radius);
-      margin-inline-start: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+      margin-inline-start: calc(var(--spectrum-actionbutton-border-size) * -1 / 2);
       margin-inline-end: 0;
     }
   }
