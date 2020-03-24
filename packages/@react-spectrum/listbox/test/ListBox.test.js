@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import Bell from '@spectrum-icons/workflow/Bell';
 import {cleanup, fireEvent, render, within} from '@testing-library/react';
 import {Item, ListBox, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import {Text} from '@react-spectrum/typography';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
 
@@ -521,5 +523,27 @@ describe('ListBox', function () {
       fireEvent.keyDown(listbox, {key: 'B'});
       expect(document.activeElement).toBe(options[1]);
     });
+  });
+
+  it('supports complex options with aria-labelledby and aria-describedby', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <ListBox>
+          <Item>
+            <Bell />
+            <Text>Label</Text>
+            <Text slot="description">Description</Text>
+          </Item>
+        </ListBox>
+      </Provider>
+    );
+
+    let listbox = tree.getByRole('listbox');
+    let option = within(listbox).getByRole('option');
+    let label = within(listbox).getByText('Label');
+    let description = within(listbox).getByText('Description');
+    
+    expect(option).toHaveAttribute('aria-labelledby', label.id);
+    expect(option).toHaveAttribute('aria-describedby', description.id);
   });
 });

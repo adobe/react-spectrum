@@ -34,7 +34,7 @@ interface PressState {
 }
 
 interface EventBase {
-  target: EventTarget,
+  currentTarget: EventTarget,
   shiftKey: boolean,
   ctrlKey: boolean,
   metaKey: boolean
@@ -102,7 +102,7 @@ export function usePress(props: PressHookProps): PressResult {
         onPressStart({
           type: 'pressstart',
           pointerType,
-          target: originalEvent.target as HTMLElement,
+          target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey
@@ -127,7 +127,7 @@ export function usePress(props: PressHookProps): PressResult {
         onPressEnd({
           type: 'pressend',
           pointerType,
-          target: originalEvent.target as HTMLElement,
+          target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey
@@ -144,7 +144,7 @@ export function usePress(props: PressHookProps): PressResult {
         onPress({
           type: 'press',
           pointerType,
-          target: originalEvent.target as HTMLElement,
+          target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey
@@ -161,7 +161,7 @@ export function usePress(props: PressHookProps): PressResult {
         onPressUp({
           type: 'pressup',
           pointerType,
-          target: originalEvent.target as HTMLElement,
+          target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey
@@ -180,7 +180,7 @@ export function usePress(props: PressHookProps): PressResult {
           // after which focus moved to the current element. Ignore these events and
           // only handle the first key down event.
           if (!state.isPressed && !e.repeat) {
-            state.target = e.target as HTMLElement;
+            state.target = e.currentTarget as HTMLElement;
             state.isPressed = true;
             triggerPressStart(e, 'keyboard');
 
@@ -502,7 +502,7 @@ function getTouchById(
 
 function createEvent(target: HTMLElement, e: EventBase): EventBase {
   return {
-    target,
+    currentTarget: target,
     shiftKey: e.shiftKey,
     ctrlKey: e.ctrlKey,
     metaKey: e.metaKey
