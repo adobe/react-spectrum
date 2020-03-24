@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Button} from '@react-spectrum/button';
-import {Content, Footer, Header} from '@react-spectrum/view';
+import {ActionButton, Button, ButtonGroup} from '@react-spectrum/button';
+import {Content, Header} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/typography';
@@ -42,7 +42,7 @@ function ModalExample() {
           <Header><Heading>Title</Heading></Header>
           <Divider />
           <Content><Text>I am a dialog</Text></Content>
-          <Footer><Button variant="cta" onPress={() => setOpen(false)}>Close</Button></Footer>
+          <ButtonGroup><Button variant="cta" onPress={() => setOpen(false)}>Close</Button></ButtonGroup>
         </Dialog>
       </Modal>
     </Fragment>
@@ -67,7 +67,7 @@ function UnmountingTrigger() {
           <Header><Heading>Title</Heading></Header>
           <Divider />
           <Content><Text>I am a dialog</Text></Content>
-          <Footer><ActionButton onPress={openModal}>Open modal</ActionButton></Footer>
+          <ButtonGroup><ActionButton onPress={openModal}>Open modal</ActionButton></ButtonGroup>
         </Dialog>
       </DialogTrigger>
       <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
@@ -75,7 +75,7 @@ function UnmountingTrigger() {
           <Header><Heading>Title</Heading></Header>
           <Divider />
           <Content><Text>I am a dialog</Text></Content>
-          <Footer><Button variant="cta" onPress={() => setModalOpen(false)}>Close</Button></Footer>
+          <ButtonGroup><Button variant="cta" onPress={() => setModalOpen(false)}>Close</Button></ButtonGroup>
         </Dialog>
       </Modal>
     </Fragment>
