@@ -23,5 +23,6 @@ export interface SpectrumPickerProps<T> extends SelectProps<T>, SpectrumLabelabl
   isQuiet?: boolean,
   align?: Alignment,
   direction?: 'bottom' | 'top',
-  menuWidth?: DimensionValue
+  menuWidth?: DimensionValue,
+  name?: string
 }

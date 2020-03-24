@@ -31,6 +31,7 @@ import {useOverlayPosition} from '@react-aria/overlays';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSelect} from '@react-aria/select';
 import {useSelectState} from '@react-stately/select';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
@@ -48,7 +49,8 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
     labelAlign,
     isRequired,
     necessityIndicator,
-    menuWidth
+    menuWidth,
+    name
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -135,6 +137,51 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
     );
   }
 
+  // If used in a <form>, use a hidden input so the value can be submitted to a server.
+  // If the collection isn't too big, use a hidden <select> element for this so that browser
+  // autofill will work. Otherwise, use an <input type="hidden">.
+  let input: JSX.Element;
+  if (state.collection.size <= 300) {
+    // In Safari, the <select> cannot have `display: none` or `hidden` for autofill to work.
+    // In Firefox, there must be a <label> to identify the <select> whereas other browsers
+    // seem to identify it just by surrounding text.
+    // The solution is to use <VisuallyHidden> to hide the elements, which clips the elements to a
+    // 1px rectangle. In addition, we hide from screen readers with aria-hidden, and make the <select>
+    // non tabbable with tabIndex={-1}.
+    input = (
+      <VisuallyHidden aria-hidden="true">
+        <label>
+          {label}
+          <select
+            tabIndex={-1}
+            name={name}
+            value={state.selectedKey}
+            onChange={e => state.setSelectedKey(e.target.value)}>
+            {[...state.collection.getKeys()].map(key => {
+              let item = state.collection.getItem(key);
+              if (item.type === 'item') {
+                return (
+                  <option
+                    key={item.key}
+                    value={item.key}>
+                    {item.textValue}
+                  </option>
+                );
+              }
+            })}
+          </select>
+        </label>
+      </VisuallyHidden>
+    );
+  } else if (name) {
+    input = (
+      <input
+        type="hidden"
+        name={name}
+        value={state.selectedKey} />
+    );
+  }
+
   // Get the selected item to render in the field button
   let selectedItem = state.selectedKey
     ? state.collection.getItem(state.selectedKey)
@@ -158,6 +205,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
           }
         )
       }>
+      {input}
       <FieldButton
         {...filterDOMProps(props)}
         {...triggerProps}
@@ -170,11 +218,13 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
         <SlotProvider
           slots={{
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Icon'), size: 'S'},
-            text: {UNSAFE_className: classNames(
-            styles,
-            'spectrum-Dropdown-label',
-            {'is-placeholder': !selectedItem}
-          )},
+            text: {
+              UNSAFE_className: classNames(
+                styles,
+                'spectrum-Dropdown-label',
+                {'is-placeholder': !selectedItem}
+              )
+            },
             description: {
               isHidden: true
             }
