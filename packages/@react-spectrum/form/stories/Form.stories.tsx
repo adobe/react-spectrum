@@ -11,6 +11,7 @@
  */
 
 import {Form} from '../';
+import {Item, Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -76,6 +77,10 @@ storiesOf('Form', module)
     () => render({isQuiet: true})
   )
   .add(
+    'isQuiet, labelPosition: side',
+    () => render({isQuiet: true, labelPosition: 'side'})
+  )
+  .add(
     'isEmphasized',
     () => render({isEmphasized: true})
   )
@@ -100,6 +105,14 @@ function render(props: any = {}) {
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
+      <Picker label="Favorite color">
+        <Item>Red</Item>
+        <Item>Orange</Item>
+        <Item>Yellow</Item>
+        <Item>Green</Item>
+        <Item>Blue</Item>
+        <Item>Purple</Item>
+      </Picker>
     </Form>
   );
 }
