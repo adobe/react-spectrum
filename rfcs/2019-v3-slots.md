@@ -8,10 +8,10 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License. -->
 
 - Start Date: 2019-10-31
-- RFC PR: (leave this empty, to be filled in later)
+- RFC PR: https://github.com/adobe-private/react-spectrum-v3/pull/149 and https://github.com/adobe-private/react-spectrum-v3/pull/263
 - Authors: Rob Snow
 
-# React Spectrum v3 Slots Architecture (NAME TBD)
+# React Spectrum v3 Slots Architecture
 
 ## Summary
 
@@ -128,7 +128,8 @@ export const Card = (props) => {
       avatar: {UNSAFE_className: classNames(styles, 'avatar')},
       title: {UNSAFE_className: classNames(styles, 'title')},
       footer: {UNSAFE_className: classNames(styles, 'footer')},
-      divider: {UNSAFE_className: classNames(styles, 'divider')}
+      divider: {UNSAFE_className: classNames(styles, 'divider')},
+      buttonGroup: {UNSAFE_className: classNames(styles, 'buttonGroup')}
     }};
   let {slots} = {...defaults, ...props};
 
@@ -142,7 +143,7 @@ export const Card = (props) => {
           <Button>More</Button>
         </Flex>
         <Description slot="description">Description</Description>
-        <Footer slot="footer">Final remarks</Footer>
+        <ButtonGroup slot="footer">Final remarks</ButtonGroup>
       </Grid>
     </div>
   );
@@ -158,7 +159,8 @@ export const Card = (props) => {
       avatar: {UNSAFE_className: classNames(styles, 'avatar')},
       title: {UNSAFE_className: classNames(styles, 'title')},
       footer: {UNSAFE_className: classNames(styles, 'footer')},
-      divider: {UNSAFE_className: classNames(styles, 'divider')}
+      divider: {UNSAFE_className: classNames(styles, 'divider')},
+      buttonGroup: {UNSAFE_className: classNames(styles, 'buttonGroup')}
     }};
   let {slots} = {...defaults, ...props};
 

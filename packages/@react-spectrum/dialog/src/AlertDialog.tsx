@@ -11,10 +11,10 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {Button} from '@react-spectrum/button';
+import {Button, ButtonGroup} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {Content, Footer, Header} from '@react-spectrum/view';
+import {Content, Header} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
@@ -59,11 +59,11 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
       <Header><Heading>{title}</Heading>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
       <Divider />
       <Content>{children}</Content>
-      <Footer>
+      <ButtonGroup>
         {secondaryLabel && <Button variant="secondary" onPress={() => chain(onClose(), onConfirm('secondary'))} autoFocus={autoFocusButton === 'secondary'}>{secondaryLabel}</Button>}
         {cancelLabel && <Button variant="secondary" onPress={() => chain(onClose(), onCancel())} autoFocus={autoFocusButton === 'cancel'}>{cancelLabel}</Button>}
         <Button variant={confirmVariant} onPress={() => chain(onClose(), onConfirm('primary'))} isDisabled={isConfirmDisabled} autoFocus={autoFocusButton === 'primary'}>{primaryLabel}</Button>
-      </Footer>
+      </ButtonGroup>
     </Dialog>
   );
 }
