@@ -11,8 +11,8 @@
  */
 
 import {CollectionBase, DOMProps, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
+import {Key, ReactElement, RefObject} from 'react';
 import {Node} from '@react-stately/collections';
-import {ReactElement, RefObject} from 'react';
 
 export type FocusStrategy = 'first' | 'last';
 
@@ -44,7 +44,8 @@ export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
 export interface MenuProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {
   autoFocus?: boolean,
   focusStrategy?: FocusStrategy,
-  wrapAround?: boolean
+  wrapAround?: boolean,
+  onAction?: (key: Key) => void
 }
 
 export interface SpectrumMenuProps<T> extends MenuProps<T>, DOMProps, StyleProps {
