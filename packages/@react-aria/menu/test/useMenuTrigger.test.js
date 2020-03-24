@@ -21,6 +21,7 @@ describe('useMenuTrigger', function () {
 
   let renderMenuTriggerHook = (menuTriggerProps, menuTriggerState) => {
     let {result} = renderHook(() => useMenuTrigger(menuTriggerProps, menuTriggerState));
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     return result.current;
   };
 
@@ -40,7 +41,7 @@ describe('useMenuTrigger', function () {
     let {menuTriggerProps, menuProps} = renderMenuTriggerHook({}, state);
     expect(menuTriggerProps['aria-controls']).toBeFalsy();
     expect(menuTriggerProps['aria-expanded']).toBeFalsy();
-    expect(menuTriggerProps['aria-haspopup']).toBeFalsy();
+    expect(menuTriggerProps['aria-haspopup']).toBeTruthy();
     expect(menuProps['aria-labelledby']).toBe(menuTriggerProps.id);
     expect(menuProps.id).toBeTruthy();
   });
@@ -71,8 +72,8 @@ describe('useMenuTrigger', function () {
     };
 
     let {menuTriggerProps} = renderMenuTriggerHook(props, state);
-    expect(typeof menuTriggerProps.onPress).toBe('function');
-    menuTriggerProps.onPress();
+    expect(typeof menuTriggerProps.onPressStart).toBe('function');
+    menuTriggerProps.onPressStart();
     expect(setOpen).toHaveBeenCalledTimes(1);
     expect(setOpen).toHaveBeenCalledWith(!state.isOpen);
     expect(setFocusStrategy).toHaveBeenCalledTimes(1);

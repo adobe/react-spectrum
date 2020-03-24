@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -10,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {Key, ReactElement, ReactNode} from 'react';
 
 export interface ItemProps<T> {
@@ -28,7 +28,7 @@ interface AsyncLoadable<T> {
   items?: Iterable<T>,
   itemKey?: string,
   isLoading?: boolean, // possibly isLoadingMore
-  onLoadMore?: () => any,
+  onLoadMore?: () => any
 }
 
 export interface SectionProps<T> extends AsyncLoadable<T> {

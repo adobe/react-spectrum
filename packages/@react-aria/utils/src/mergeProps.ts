@@ -29,6 +29,9 @@ export function mergeProps<T extends Props, U extends Props>(a: T, b: U): T & U 
     } else if (key === 'className' && typeof a.className === 'string' && typeof b.className === 'string') {
       res[key] = classNames(a.className, b.className);
 
+    } else if (key === 'UNSAFE_className' && typeof a.UNSAFE_className === 'string' && typeof b.UNSAFE_className === 'string') {
+      res[key] = classNames(a.UNSAFE_className, b.UNSAFE_className);
+
     } else if (key === 'id' && a.id && b.id) {
       res.id = mergeIds(a.id, b.id);
 

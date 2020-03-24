@@ -61,7 +61,15 @@ export function Dialog(props: SpectrumDialogProps) {
     return (
       <ModalDialog {...allProps} size={size}>
         {children}
-        {isDismissable && <ActionButton slot="closeButton" isQuiet icon={<CrossLarge size="L" />} aria-label="dismiss" onPress={onDismiss} />}
+        {isDismissable &&
+          <ActionButton
+            slot="closeButton"
+            isQuiet
+            aria-label="dismiss"
+            onPress={onDismiss}>
+            <CrossLarge size="L" />
+          </ActionButton>
+        }
       </ModalDialog>
     );
   }
@@ -94,7 +102,8 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
       divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
       content: {UNSAFE_className: styles['spectrum-Dialog-content']},
       footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
-      closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']}
+      closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']},
+      buttonGroup: {UNSAFE_className: styles['spectrum-Dialog-buttonGroup']}
     };
   }
 

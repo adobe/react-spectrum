@@ -227,7 +227,6 @@ module.exports = {
         roles: ['alertdialog', 'dialog', 'tabpanel']
       }
     ],
-    'jsx-a11y/no-onchange': ERROR,
     'jsx-a11y/no-redundant-roles': ERROR,
     'jsx-a11y/no-static-element-interactions': [
       ERROR,

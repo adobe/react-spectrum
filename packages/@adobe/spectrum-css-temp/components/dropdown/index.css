@@ -39,7 +39,7 @@ governing permissions and limitations under the License.
       background-color: transparent;
     }
 
-    & + .spectrum-Dropdown-icon {
+    & + .spectrum-Dropdown-chevron {
       position: absolute;
       right: var(--spectrum-dropdown-padding-x);
       top: 50%;
@@ -79,7 +79,7 @@ governing permissions and limitations under the License.
 }
 
 /* Only apply margin to the icon if there's a label */
-.spectrum-Dropdown-label + .spectrum-Dropdown-icon {
+.spectrum-Dropdown-label + .spectrum-Dropdown-chevron {
   margin-left: var(--spectrum-dropdown-icon-margin-left);
 }
 
@@ -88,15 +88,16 @@ governing permissions and limitations under the License.
 }
 
 /* Only apply margin if there's a label */
-.spectrum-Dropdown-label ~ .spectrum-Dropdown-icon {
+.spectrum-Dropdown-label ~ .spectrum-Dropdown-chevron {
   margin-left: var(--spectrum-dropdown-icon-margin-left);
 }
 
-.spectrum-Dropdown-icon {
+.spectrum-Dropdown-chevron {
   display: inline-block;
   position: relative;
   vertical-align: top;
   transition: color var(--spectrum-global-animation-duration-100) ease-out;
+  flex-shrink: 0;
 
   /* Fix Safari 10 bug where align-items is ignored inside of buttons */
   margin-top: calc(calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2) - var(--spectrum-icon-chevron-down-medium-height)) / 2);
@@ -107,18 +108,18 @@ governing permissions and limitations under the License.
 
 /* Error icons */
 .spectrum-Dropdown-trigger {
-  .spectrum-Icon:not(.spectrum-Dropdown-icon) {
+  .spectrum-Dropdown-invalidIcon {
     /* Fix Safari 10 bug where align-items is ignored inside of buttons */
-  margin-top: calc(calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2) - var(--spectrum-dropdown-icon-size)) / 2);
+    margin-top: calc(calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2) - var(--spectrum-dropdown-icon-size)) / 2);
     margin-bottom: calc(calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2) - var(--spectrum-dropdown-icon-size)) / 2);
   }
 
-  .spectrum-Dropdown-label + .spectrum-Icon:not(.spectrum-Dropdown-icon) {
+  .spectrum-Dropdown-label + .spectrum-Dropdown-invalidIcon {
     margin-left: var(--spectrum-dropdown-icon-margin-left);
   }
 }
 
-.spectrum-Icon + .spectrum-Dropdown-icon {
+.spectrum-Icon + .spectrum-Dropdown-chevron {
   margin-left: var(--spectrum-dropdown-icon-gap);
 }
 
@@ -127,10 +128,25 @@ governing permissions and limitations under the License.
   min-width: var(--spectrum-dropdown-quiet-min-width);
 }
 
-.spectrum-Dropdown-popover {
-  max-width: var(--spectrum-dropdown-popover-max-width);
+.spectrum-Dropdown-popover--quiet {
+  width: var(--spectrum-dropdown-width);
+
+  /* Define this var so it can be read from JS */
+  --spectrum-dropdown-quiet-offset: calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size));
+  margin-left: calc(var(--spectrum-dropdown-quiet-offset) * -1);
 }
 
-.spectrum-Dropdown-popover--quiet {
-  margin-left: calc(-1 * calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size)));
+/* When used with a label or inside a Form, we need to override some things from .spectrum-Field
+ * so quiet dropdowns still collapse properly. */
+.spectrum-Field.spectrum-Dropdown-fieldWrapper--quiet {
+  width: auto;
+
+  .spectrum-Dropdown--quiet {
+    width: auto;
+    min-width: var(--spectrum-dropdown-quiet-min-width);
+
+    .spectrum-Dropdown-trigger {
+      width: auto;
+    }
+  }
 }

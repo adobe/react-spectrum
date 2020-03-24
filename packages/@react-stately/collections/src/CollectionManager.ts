@@ -1007,12 +1007,12 @@ export class CollectionManager<T extends object, V, W> {
     let maxX = x + this.visibleRect.width;
     let maxY = y + this.visibleRect.height;
 
-    if (offsetX <= x) {
+    if (offsetX <= x || maxX === 0) {
       x = offsetX;
     } else if (offsetX + layoutInfo.rect.width > maxX) {
       x += offsetX + layoutInfo.rect.width - maxX;
     }
-    if (offsetY <= y) {
+    if (offsetY <= y || maxY === 0) {
       y = offsetY;
     } else if (offsetY + layoutInfo.rect.height > maxY) {
       y += offsetY + layoutInfo.rect.height - maxY;
