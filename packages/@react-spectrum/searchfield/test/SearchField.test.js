@@ -275,7 +275,7 @@ describe('Search', () => {
   });
 
   it('SearchField doesn\'t show clear button if isReadOnly is true', () => {
-    let tree = render(<SearchField isReadOnly={true} value="puppy" />);
+    let tree = render(<SearchField isReadOnly value="puppy" />);
     let clearButton = tree.queryByLabelText('Clear search');
     expect(clearButton).toBe(null);
 
