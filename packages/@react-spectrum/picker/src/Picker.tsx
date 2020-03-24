@@ -65,7 +65,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   // so that the layout information can be cached even while the listbox is not mounted.
   // We also use the layout as the keyboard delegate for type to select.
   let layout = useListBoxLayout(state);
-  let {labelProps, triggerProps, menuProps} = useSelect({
+  let {labelProps, triggerProps, valueProps, menuProps} = useSelect({
     ...props,
     triggerRef: unwrapDOMRef(triggerRef),
     keyboardDelegate: layout
@@ -234,6 +234,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
           slots={{
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Icon'), size: 'S'},
             text: {
+              ...valueProps,
               UNSAFE_className: classNames(
                 styles,
                 'spectrum-Dropdown-label',
