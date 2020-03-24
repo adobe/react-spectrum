@@ -21,6 +21,7 @@ describe('useMenuTrigger', function () {
 
   let renderMenuTriggerHook = (menuTriggerProps, menuTriggerState) => {
     let {result} = renderHook(() => useMenuTrigger(menuTriggerProps, menuTriggerState));
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     return result.current;
   };
 

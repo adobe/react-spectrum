@@ -204,6 +204,32 @@ storiesOf('MenuTrigger', module)
     )
   )
   .add(
+    'menu closes on blur',
+    () => (
+      <>
+        <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+          <input placeholder="Shift tab here" />
+          <MenuTrigger onOpenChange={action('onOpenChange')}>
+            <ActionButton
+              onPress={action('press')}
+              onPressStart={action('pressstart')}
+              onPressEnd={action('pressend')}>
+                Menu Button
+            </ActionButton>
+            <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} disabledKeys={['Snake', 'Ross']}>
+              {item => (
+                <Section items={item.children} title={item.name}>
+                  {item => <Item childItems={item.children}>{item.name}</Item>}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+          <input placeholder="Tab here" />
+        </div>
+      </>
+    )
+  )
+  .add(
     'more than 2 children (split button)',
     () => (
       <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>

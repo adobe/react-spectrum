@@ -85,16 +85,16 @@ governing permissions and limitations under the License.
 
 .spectrum-Dialog .spectrum-Dialog-grid {
   display: grid;
-  grid-template-columns: var(--spectrum-dialog-padding) auto var(--spectrum-dialog-padding);
+  grid-template-columns: var(--spectrum-dialog-padding) 1fr auto var(--spectrum-dialog-padding);
   grid-template-rows: auto var(--spectrum-dialog-padding) auto auto 1fr auto var(--spectrum-dialog-padding);
   grid-template-areas:
-    "hero hero    hero"
-    ".    .       closeButton"
-    ".    header  ."
-    ".    divider ."
-    ".    content ."
-    ".    footer  ."
-    ".    .       .";
+    "hero hero    hero        hero"
+    ".    .       .           closeButton"
+    ".    header  header      ."
+    ".    divider divider     ."
+    ".    content content     ."
+    ".    footer  buttonGroup ."
+    ".    .       .           .";
   width: 100%;
 }
 
@@ -149,11 +149,10 @@ governing permissions and limitations under the License.
 .spectrum-Dialog-footer {
   grid-area: footer;
   /* this padding isn't built into the grid because it disappears with this footer */
-  padding-top: var(--spectrum-global-dimension-static-size-500);
+  padding-block-start: var(--spectrum-global-dimension-static-size-500);
 
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
 
   outline: none; /* Hide focus outline */
 
@@ -162,6 +161,12 @@ governing permissions and limitations under the License.
   > .spectrum-Button + .spectrum-Button {
     margin-bottom: 0;
   }
+}
+
+.spectrum-Dialog-buttonGroup {
+  grid-area: buttonGroup;
+  /* this padding isn't built into the grid because it disappears with this buttonGroup */
+  padding-block-start: var(--spectrum-global-dimension-static-size-500);
 }
 
 .spectrum-Dialog--dismissable {
@@ -199,7 +204,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Dialog--fullscreen {
   width: calc(100vw - calc(2 * var(--spectrum-dialog-fullscreen-margin)));
-  height: calc(100vw - calc(2 * var(--spectrum-dialog-fullscreen-margin)));
+  height: calc(100vh - calc(2 * var(--spectrum-dialog-fullscreen-margin)));
 }
 .spectrum-Dialog--fullscreenTakeover {
   width: 100vw;
@@ -215,14 +220,14 @@ governing permissions and limitations under the License.
 
   &.spectrum-Dialog .spectrum-Dialog-grid {
     display: grid;
-    grid-template-columns: var(--spectrum-dialog-padding) 1fr auto var(--spectrum-dialog-padding);
+    grid-template-columns: var(--spectrum-dialog-padding) 1fr auto auto var(--spectrum-dialog-padding);
     grid-template-rows: calc(var(--spectrum-dialog-padding) + var(--spectrum-dialog-fullscreen-padding-top)) auto auto 1fr var(--spectrum-dialog-padding);
     grid-template-areas:
-      ".    .       .       ."
-      ".    header  footer  ."
-      ".    divider divider ."
-      ".    content content ."
-      ".    .       .       .";
+      ".    .       .       .            ."
+      ".    header  header  buttonGroup  ."
+      ".    divider divider divider      ."
+      ".    content content content      ."
+      ".    .       .       .            .";
   }
 
   .spectrum-Dialog-heading {
@@ -234,7 +239,35 @@ governing permissions and limitations under the License.
     max-height: none;
   }
 
+  .spectrum-Dialog-footer,
+  .spectrum-Dialog-buttonGroup {
+    padding-block-start: 0px;
+  }
+
   .spectrum-Dialog-footer {
-    padding-top: 0px;
+    display: none;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .spectrum-Dialog--fullscreen,
+  .spectrum-Dialog--fullscreenTakeover {
+
+    &.spectrum-Dialog .spectrum-Dialog-grid {
+       display: grid;
+       grid-template-columns: var(--spectrum-dialog-padding) 1fr auto auto var(--spectrum-dialog-padding);
+       grid-template-rows: calc(var(--spectrum-dialog-padding) + var(--spectrum-dialog-fullscreen-padding-top)) auto auto 1fr auto var(--spectrum-dialog-padding);
+       grid-template-areas:
+         ".    .       .            ."
+         ".    header  header       ."
+         ".    divider divider      ."
+         ".    content content      ."
+         ".    .       buttonGroup  ."
+         ".    .       .            .";
+    }
+
+    .spectrum-Dialog-buttonGroup {
+      padding-block-start: var(--spectrum-global-dimension-static-size-500);
+    }
   }
 }
