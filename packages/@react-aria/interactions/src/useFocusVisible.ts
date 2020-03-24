@@ -13,7 +13,7 @@
 import {useEffect, useState} from 'react';
 
 type Modality = 'keyboard' | 'pointer';
-type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent;
+type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent;
 type Handler = (modality: Modality, e: HandlerEvent) => void;
 interface FocusVisibleProps {
   isTextInput?: boolean,
@@ -27,6 +27,7 @@ interface FocusVisibleResult {
 let isGlobalFocusVisible = true;
 let changeHandlers = new Set<Handler>();
 let hasSetupGlobalListeners = false;
+let hasEventBeforeFocus = false;
 
 const isMac =
   typeof window !== 'undefined' && window.navigator != null
@@ -51,6 +52,7 @@ function isValidKey(e: KeyboardEvent) {
 }
 
 function handleKeyboardEvent(e: KeyboardEvent) {
+  hasEventBeforeFocus = true;
   if (isValidKey(e)) {
     isGlobalFocusVisible = true;
     triggerChangeHandlers('keyboard', e);
@@ -60,8 +62,20 @@ function handleKeyboardEvent(e: KeyboardEvent) {
 function handlePointerEvent(e: PointerEvent | MouseEvent) {
   isGlobalFocusVisible = false;
   if (e.type === 'mousedown' || e.type === 'pointerdown') {
+    hasEventBeforeFocus = true;
     triggerChangeHandlers('pointer', e);
   }
+}
+
+function handleFocusEvent(e: FocusEvent) {
+  // If a focus event occurs without a preceding keyboard or pointer event, switch to keyboard modality.
+  // This occurs, for example, when navigating a form with the next/previous buttons on iOS.
+  if (!hasEventBeforeFocus) {
+    isGlobalFocusVisible = true;
+    triggerChangeHandlers('keyboard', e);
+  }
+
+  hasEventBeforeFocus = false;
 }
 
 // Setup global event listeners to control when keyboard focus style should be visible
@@ -82,6 +96,8 @@ function setupGlobalFocusEvents() {
     document.addEventListener('mousemove', handlePointerEvent, true);
     document.addEventListener('mouseup', handlePointerEvent, true);
   }
+
+  document.addEventListener('focusin', handleFocusEvent, false);
 
   hasSetupGlobalListeners = true;
 }
