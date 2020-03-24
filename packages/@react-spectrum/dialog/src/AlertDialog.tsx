@@ -24,6 +24,10 @@ import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 
+/**
+ * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge. 
+ */
+
 export function AlertDialog(props: SpectrumAlertDialogProps) {
   props = useSlotProps(props);
   let {
