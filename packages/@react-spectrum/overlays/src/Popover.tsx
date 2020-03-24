@@ -27,7 +27,7 @@ interface PopoverProps extends HTMLAttributes<HTMLElement> {
 }
 
 function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
-  let {style, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, ...otherProps} = props;
+  let {style, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, className, ...otherProps} = props;
   let backupRef = useRef();
   let domRef = ref || backupRef;
   let {overlayProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
@@ -50,7 +50,8 @@ function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
             overrideStyles,
             'spectrum-Popover',
             'react-spectrum-Popover'
-          )
+          ),
+          className
         )
       }
       role="presentation"
