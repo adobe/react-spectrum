@@ -29,6 +29,7 @@ Item.getCollectionNode = function<T> (props: ItemProps<T>): PartialNode<T> {
 
   return {
     type: 'item',
+    props: props,
     rendered,
     textValue,
     hasChildNodes: hasChildItems(props),

@@ -137,6 +137,7 @@ export class CollectionBuilder<T> {
     let builder = this;
     let node: Node<T> = {
       type: partialNode.type,
+      props: partialNode.props,
       key: partialNode.key,
       parentKey: parentNode ? parentNode.key : null,
       value: partialNode.value,
