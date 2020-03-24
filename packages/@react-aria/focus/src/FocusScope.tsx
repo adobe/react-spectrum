@@ -280,6 +280,8 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
             if ((node as HTMLElement).matches(TABBABLE_ELEMENT_SELECTOR)) {
               return NodeFilter.FILTER_ACCEPT;
             }
+
+            return NodeFilter.FILTER_SKIP;
           }
         },
         false
