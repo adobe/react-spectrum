@@ -47,7 +47,7 @@ export function FocusScope(props: FocusScopeProps) {
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<HTMLElement[]>([]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Find all rendered nodes between the sentinels and add them to the scope.
     let node = startRef.current.nextSibling;
     let nodes = [];
@@ -60,7 +60,7 @@ export function FocusScope(props: FocusScopeProps) {
   }, [children]);
 
   useFocusContainment(scopeRef, contain);
-  useRestoreFocus(restoreFocus);
+  useRestoreFocus(scopeRef, restoreFocus, contain);
   useAutoFocus(scopeRef, autoFocus);
 
   let focusManager = createFocusManager(scopeRef);
@@ -251,12 +251,72 @@ function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
   }, [scopeRef, autoFocus]);
 }
 
-function useRestoreFocus(restoreFocus: boolean) {
+function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boolean, contain: boolean) {
   // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
   useLayoutEffect(() => {
+    let scope = scopeRef.current;
     let nodeToRestore = document.activeElement as HTMLElement;
+
+    // Handle the Tab key so that tabbing out of the scope goes to the next element
+    // after the node that had focus when the scope mounted. This is important when
+    // using portals for overlays, so that focus goes to the expected element when
+    // tabbing out of the overlay.
+    let onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey) {
+        return;
+      }
+
+      let focusedElement = document.activeElement as HTMLElement;
+      if (!isElementInScope(focusedElement, scope)) {
+        return;
+      }
+
+      // Create a DOM tree walker that matches all tabbable elements
+      let walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_ELEMENT,
+        {
+          acceptNode(node) {
+            if ((node as HTMLElement).matches(TABBABLE_ELEMENT_SELECTOR)) {
+              return NodeFilter.FILTER_ACCEPT;
+            }
+
+            return NodeFilter.FILTER_SKIP;
+          }
+        },
+        false
+      );
+
+      // Find the next tabbable element after the currently focused element
+      walker.currentNode = focusedElement;
+      let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
+
+      // If there is no next element, or it is outside the current scope, move focus to the
+      // next element after the node to restore to instead.
+      if ((!nextElement || !isElementInScope(nextElement, scope)) && nodeToRestore) {
+        walker.currentNode = nodeToRestore;
+        nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
+
+        e.preventDefault();
+        if (nextElement) {
+          nextElement.focus();
+        } else {
+          // If there is no next element, blur the focused element to move focus to the body.
+          focusedElement.blur();
+        }
+      }
+    };
+
+    if (!contain) {
+      document.addEventListener('keydown', onKeyDown, false);
+    }
+
     return () => {
-      if (restoreFocus && nodeToRestore) {
+      if (!contain) {
+        document.removeEventListener('keydown', onKeyDown, false);
+      }
+
+      if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scope)) {
         requestAnimationFrame(() => {
           if (document.body.contains(nodeToRestore)) {
             focusElement(nodeToRestore);
@@ -264,5 +324,5 @@ function useRestoreFocus(restoreFocus: boolean) {
         });
       }
     };
-  }, [restoreFocus]);
+  }, [scopeRef, restoreFocus, contain]);
 }

@@ -285,6 +285,73 @@ describe('FocusScope', function () {
 
       expect(document.activeElement).toBe(outside);
     });
+
+    it('should move focus to the next element after the previously focused node on Tab', function () {
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="before" />
+            <button data-testid="trigger" />
+            <input data-testid="after" />
+            {show &&
+              <FocusScope restoreFocus autoFocus>
+                <input data-testid="input1" />
+                <input data-testid="input2" />
+                <input data-testid="input3" />
+              </FocusScope>
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let trigger = getByTestId('trigger');
+      trigger.focus();
+      
+      rerender(<Test show />);
+
+      let input1 = getByTestId('input1');
+      expect(document.activeElement).toBe(input1);
+
+      let input3 = getByTestId('input3');
+      input3.focus();
+
+      fireEvent.keyDown(input3, {key: 'Tab'});
+      expect(document.activeElement).toBe(getByTestId('after'));
+    });
+
+    it('should move focus to the previous element after the previously focused node on Shift+Tab', function () {
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="before" />
+            <button data-testid="trigger" />
+            <input data-testid="after" />
+            {show &&
+              <FocusScope restoreFocus autoFocus>
+                <input data-testid="input1" />
+                <input data-testid="input2" />
+                <input data-testid="input3" />
+              </FocusScope>
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let trigger = getByTestId('trigger');
+      trigger.focus();
+      
+      rerender(<Test show />);
+
+      let input1 = getByTestId('input1');
+      expect(document.activeElement).toBe(input1);
+
+      fireEvent.keyDown(input1, {key: 'Tab', shiftKey: true});
+      expect(document.activeElement).toBe(getByTestId('before'));
+    });
   });
 
   describe('auto focus', function () {
