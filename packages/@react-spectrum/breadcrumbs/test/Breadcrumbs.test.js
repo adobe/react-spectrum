@@ -10,17 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {BreadcrumbItem, Breadcrumbs} from '../';
+import {Breadcrumbs} from '../';
 import {cleanup, render, within} from '@testing-library/react';
+import {Item} from '@react-stately/collections';
+import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
+import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
 
+let theme = {
+  light: themeLight,
+  medium: scaleMedium
+};
 
 describe('Breadcrumbs', function () {
-  afterEach(() => {
-    cleanup();
-  });
-
   beforeEach(() => {
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
       if (this.className === 'spectrum-Breadcrumbs-item') {
@@ -29,11 +34,17 @@ describe('Breadcrumbs', function () {
       if (this.className === 'spectrum-Breadcrumbs') {
         return {width: 250};
       }
+      return {top: 0, bottom: 0, eft: 0, right: 0};
     });
+
+    window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterEach(() => {
     HTMLElement.prototype.getBoundingClientRect.mockRestore();
+    HTMLElement.prototype.scrollIntoView.mockRestore();
+    cleanup();
   });
 
   it.each`
@@ -51,7 +62,7 @@ describe('Breadcrumbs', function () {
   it('Handles UNSAFE_className', () => {
     let {getByRole} = render(
       <Breadcrumbs UNSAFE_className="test-class">
-        <BreadcrumbItem>Folder 1</BreadcrumbItem>
+        <Item>Folder 1</Item>
       </Breadcrumbs>
     );
     let breadcrumbs = getByRole('list');
@@ -61,9 +72,9 @@ describe('Breadcrumbs', function () {
   it('Handles multiple items', () => {
     let {getByTestId} = render(
       <Breadcrumbs className="test-class">
-        <BreadcrumbItem data-testid="item-1" >Folder 1</BreadcrumbItem>
-        <BreadcrumbItem data-testid="item-2" >Folder 2</BreadcrumbItem>
-        <BreadcrumbItem data-testid="item-3" >Folder 3</BreadcrumbItem>
+        <Item data-testid="item-1">Folder 1</Item>
+        <Item data-testid="item-2">Folder 2</Item>
+        <Item data-testid="item-3">Folder 3</Item>
       </Breadcrumbs>
     );
     let item1 = getByTestId('item-1');
@@ -83,7 +94,7 @@ describe('Breadcrumbs', function () {
       ref = useRef();
       return (
         <Breadcrumbs ref={ref} aria-label="breadcrumbs-test">
-          <BreadcrumbItem>Folder 1</BreadcrumbItem>
+          <Item>Folder 1</Item>
         </Breadcrumbs>
       );
     };
@@ -95,7 +106,7 @@ describe('Breadcrumbs', function () {
   it('Handles size="L"', () => {
     let {getByRole} = render(
       <Breadcrumbs size="L">
-        <BreadcrumbItem>Folder 1</BreadcrumbItem>
+        <Item>Folder 1</Item>
       </Breadcrumbs>
     );
     let breadcrumbs = getByRole('list');
@@ -105,7 +116,7 @@ describe('Breadcrumbs', function () {
   it('Handles isHeading and headingAriaLevel', () => {
     let {getByRole} = render(
       <Breadcrumbs headingAriaLevel={2} isHeading>
-        <BreadcrumbItem>Folder 1</BreadcrumbItem>
+        <Item>Folder 1</Item>
       </Breadcrumbs>
     );
     let heading = getByRole('heading');
@@ -114,13 +125,15 @@ describe('Breadcrumbs', function () {
 
   it('Handles max visible items', () => {
     let {getByText, getByRole} = render(
-      <Breadcrumbs maxVisibleItems="3" >
-        <BreadcrumbItem >Folder 1</BreadcrumbItem>
-        <BreadcrumbItem >Folder 2</BreadcrumbItem>
-        <BreadcrumbItem >Folder 3</BreadcrumbItem>
-        <BreadcrumbItem >Folder 4</BreadcrumbItem>
-        <BreadcrumbItem >Folder 5</BreadcrumbItem>
-      </Breadcrumbs>
+      <Provider theme={theme}>
+        <Breadcrumbs maxVisibleItems="3">
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
     );
     let {children} = getByRole('list');
     expect(within(children[0]).getByRole('button')).toBeTruthy();
@@ -133,13 +146,15 @@ describe('Breadcrumbs', function () {
 
   it('Handles max visible items with showRoot', () => {
     let {getByText, getByRole} = render(
-      <Breadcrumbs maxVisibleItems="3" showRoot>
-        <BreadcrumbItem >Folder 1</BreadcrumbItem>
-        <BreadcrumbItem >Folder 2</BreadcrumbItem>
-        <BreadcrumbItem >Folder 3</BreadcrumbItem>
-        <BreadcrumbItem >Folder 4</BreadcrumbItem>
-        <BreadcrumbItem >Folder 5</BreadcrumbItem>
-      </Breadcrumbs>
+      <Provider theme={theme}>
+        <Breadcrumbs maxVisibleItems="3" showRoot>
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
     );
     let {children} = getByRole('list');
     expect(getByText('Folder 1')).toBeTruthy();
@@ -153,8 +168,8 @@ describe('Breadcrumbs', function () {
   it('Handles isDisabled', () => {
     let {getByTestId} = render(
       <Breadcrumbs isDisabled>
-        <BreadcrumbItem data-testid="item-1" >Folder 1</BreadcrumbItem>
-        <BreadcrumbItem data-testid="item-2" >Folder 2</BreadcrumbItem>
+        <Item data-testid="item-1">Folder 1</Item>
+        <Item data-testid="item-2">Folder 2</Item>
       </Breadcrumbs>
     );
 
@@ -167,13 +182,15 @@ describe('Breadcrumbs', function () {
 
   it('Handles max visible items auto', () => {
     let {getByText, getByRole} = render(
-      <Breadcrumbs maxVisibleItems="auto" >
-        <BreadcrumbItem >Folder 1</BreadcrumbItem>
-        <BreadcrumbItem >Folder 2</BreadcrumbItem>
-        <BreadcrumbItem >Folder 3</BreadcrumbItem>
-        <BreadcrumbItem >Folder 4</BreadcrumbItem>
-        <BreadcrumbItem >Folder 5</BreadcrumbItem>
-      </Breadcrumbs>
+      <Provider theme={theme}>
+        <Breadcrumbs maxVisibleItems="auto">
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
     );
 
     let {children} = getByRole('list');
@@ -187,13 +204,15 @@ describe('Breadcrumbs', function () {
 
   it('Handles max visible items auto with showRoot', () => {
     let {getByText, getByRole} = render(
-      <Breadcrumbs maxVisibleItems="auto" showRoot>
-        <BreadcrumbItem >Folder 1</BreadcrumbItem>
-        <BreadcrumbItem >Folder 2</BreadcrumbItem>
-        <BreadcrumbItem >Folder 3</BreadcrumbItem>
-        <BreadcrumbItem >Folder 4</BreadcrumbItem>
-        <BreadcrumbItem >Folder 5</BreadcrumbItem>
-      </Breadcrumbs>
+      <Provider theme={theme}>
+        <Breadcrumbs maxVisibleItems="auto" showRoot>
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
     );
 
     let {children} = getByRole('list');
@@ -203,5 +222,42 @@ describe('Breadcrumbs', function () {
     expect(() => getByText('Folder 3')).toThrow();
     expect(() => getByText('Folder 4')).toThrow();
     expect(getByText('Folder 5')).toBeTruthy();
+  });
+
+
+  it('Handles max visible items auto with dialog', () => {
+    let onPress = jest.fn();
+    let {getAllByText, getByRole, getAllByRole} = render(
+      <Provider theme={theme}>
+        <Breadcrumbs maxVisibleItems="auto" showRoot>
+          <Item onPress={() => onPress('Folder 1')}>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
+    );
+
+    let menuButton = getByRole('button');
+    triggerPress(menuButton);
+
+    let menu = getByRole('presentation');
+    expect(menu).toBeTruthy();
+    // menu contains all breadcrumb items
+    expect(getAllByRole('menuitem').length).toBe(5);
+
+    let item1 = getAllByText('Folder 1');
+    expect(item1.length).toBe(2);
+
+    // breadcrumb root item
+    expect(item1[0]).toHaveAttribute('role', 'link');
+    triggerPress(item1[0]);
+    expect(onPress).toHaveBeenCalledWith('Folder 1');
+
+    // menu item
+    expect(item1[1]).not.toHaveAttribute('role');
+    triggerPress(item1[1]);
+    expect(onPress).toHaveBeenCalledWith('Folder 1');
   });
 });

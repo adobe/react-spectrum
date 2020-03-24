@@ -491,6 +491,28 @@ storiesOf('Menu', module)
         </Menu>
       </Popover>
     )
+  )
+  .add(
+    'with onPress',
+    () => (
+      <Popover isOpen hideArrow>
+        <Menu onSelectionChange={action('onSelectionChange')} items={flatMenu} itemKey="name">
+          {item => <Item onPress={action('onPress')}>{item.name}</Item>}
+        </Menu>
+      </Popover>
+    )
+  )
+  .add(
+    'static with onPress',
+    () => (
+      <Popover isOpen hideArrow>
+        <Menu onSelectionChange={action('onSelectionChange')}>
+          <Item onPress={action('onPress One')}>One</Item>
+          <Item onPress={action('onPress Two')}>Two</Item>
+          <Item onPress={action('onPress Three')}>Three</Item>
+        </Menu>
+      </Popover>
+    )
   );
   
 let customMenuItem = (item) => {

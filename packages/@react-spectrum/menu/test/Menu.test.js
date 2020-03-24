@@ -649,6 +649,85 @@ describe('Menu', function () {
     expect(dialog).toBeVisible();
   });
 
+  describe('supports onPress', function () {
+    it('Menu with static list supports onPress', function () {
+      let onPress = jest.fn();
+      let onSelectionChange = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <Menu onSelectionChange={onSelectionChange}>
+            <Item onPress={() => onPress('One')}>One</Item>
+            <Item onPress={() => onPress('Two')}>Two</Item>
+            <Item onPress={() => onPress('Three')}>Three</Item>
+          </Menu>
+        </Provider>
+      );
+
+      let menu = tree.getByRole('menu');
+
+      let [item1, item2, item3] = [
+        within(menu).getByText('One'),
+        within(menu).getByText('Two'),
+        within(menu).getByText('Three')
+      ];
+
+      triggerPress(item1);
+      expect(onPress).toHaveBeenCalledWith('One');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+
+      triggerPress(item2);
+      expect(onPress).toHaveBeenCalledWith('Two');
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+
+
+      triggerPress(item3);
+      expect(onPress).toHaveBeenCalledWith('Three');
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+    });
+
+    it('Menu with generative list supports onPress', function () {
+      let onPress = jest.fn();
+      let onSelectionChange = jest.fn();
+      let flatItems = [
+        {name: 'One'},
+        {name: 'Two'},
+        {name: 'Three'}
+      ];
+      let tree = render(
+        <Provider theme={theme}>
+          <Menu onSelectionChange={onSelectionChange} items={flatItems} itemKey="name">
+            {item => <Item onPress={() => onPress(item.name)}>{item.name}</Item>}
+          </Menu>
+        </Provider>
+      );
+
+      jest.runAllTimers();
+
+      let menu = tree.getByRole('menu');
+
+      let [item1, item2, item3] = [
+        within(menu).getByText('One'),
+        within(menu).getByText('Two'),
+        within(menu).getByText('Three')
+      ];
+
+      triggerPress(item1);
+      expect(onPress).toHaveBeenCalledWith('One');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+
+      triggerPress(item2);
+      expect(onPress).toHaveBeenCalledWith('Two');
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+
+
+      triggerPress(item3);
+      expect(onPress).toHaveBeenCalledWith('Three');
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+    });
+  });
+
   it('supports complex menu items with aria-labelledby and aria-describedby', function () {
     let tree = render(
       <Provider theme={theme}>

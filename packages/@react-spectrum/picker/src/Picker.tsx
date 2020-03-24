@@ -85,7 +85,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   let listbox = (
     <FocusScope restoreFocus>
       <ListBoxBase
-        {...menuProps}
+        domProps={menuProps}
         autoFocus
         wrapAround
         selectOnPressUp
