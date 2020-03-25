@@ -85,16 +85,16 @@ governing permissions and limitations under the License.
 
 .spectrum-Dialog .spectrum-Dialog-grid {
   display: grid;
-  grid-template-columns: var(--spectrum-dialog-padding) auto 1fr var(--spectrum-dialog-padding);
+  grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto var(--spectrum-dialog-padding);
   grid-template-rows: auto var(--spectrum-dialog-padding) auto auto 1fr auto var(--spectrum-dialog-padding);
   grid-template-areas:
-    "hero hero    hero        hero"
-    ".    .       .           closeButton"
-    ".    heading header      ."
-    ".    divider divider     ."
-    ".    content content     ."
-    ".    footer  buttonGroup ."
-    ".    .       .           .";
+    "hero hero    hero    hero        hero"
+    ".    .       .       .           closeButton"
+    ".    heading header  header      ."
+    ".    divider divider divider     ."
+    ".    content content content     ."
+    ".    footer  footer  buttonGroup ."
+    ".    .       .       .           .";
   width: 100%;
 }
 
@@ -185,6 +185,10 @@ governing permissions and limitations under the License.
   padding-block-start: var(--spectrum-global-dimension-static-size-500);
   display: flex;
   justify-content: flex-end;
+
+  &.spectrum-Dialog-buttonGroup--noFooter {
+    grid-area: footer-start / footer-start / buttonGroup-end / buttonGroup-end;
+  }
 }
 
 .spectrum-Dialog--dismissable {
@@ -252,6 +256,10 @@ governing permissions and limitations under the License.
 
   .spectrum-Dialog-footer {
     display: none;
+  }
+
+  .spectrum-Dialog-buttonGroup {
+    grid-area: buttonGroup;
   }
 }
 

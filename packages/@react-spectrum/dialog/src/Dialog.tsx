@@ -107,6 +107,20 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
     }
   }, [isHeader, ref]);
 
+  // Probably would want to pull this out into some kind of useHas until https://developer.mozilla.org/en-US/docs/Web/CSS/:has
+  let [isFooter, setIsFooter] = useState(true);
+  useLayoutEffect(() => {
+    let ignore = !slots;
+    if (ignore) {
+      return () => {};
+    }
+    if (ref.current && ref.current.getElementsByClassName(styles['spectrum-Dialog-footer']).length === 0) {
+      setIsFooter(false);
+    } else {
+      setIsFooter(true);
+    }
+  }, [isHeader, ref]);
+
   if (!slots) {
     slots = {
       container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
@@ -118,7 +132,7 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
       content: {UNSAFE_className: styles['spectrum-Dialog-content']},
       footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
       closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']},
-      buttonGroup: {UNSAFE_className: styles['spectrum-Dialog-buttonGroup']}
+      buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !isHeader})}
     };
   }
 
