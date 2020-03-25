@@ -20,6 +20,20 @@ html, body {
   background: var(--spectrum-global-color-gray-50) !important;
 }
 
+.exampleTable {
+  margin-inline-start: auto;
+  margin-inline-end: auto;
+  margin-bottom: 12px;
+  &, th, td {
+    border: 1px solid #dee2e6;
+    border-collapse: collapse;
+  }
+
+  & th, & td {
+    padding: .75rem
+  }
+}
+
 .nav {
   position: fixed;
   top: 0;
