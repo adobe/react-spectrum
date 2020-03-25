@@ -160,6 +160,18 @@ function TypeParameters({typeParameters}) {
   );
 }
 
+function IndexSignature({type}) {
+  return (
+    <>
+      <span className="token punctuation">[</span>
+      <span>{type.name[0].name}</span>
+      <span className="token punctuation">:</span>
+      <Type type={type} />
+      <span className="token punctuation">]</span>
+    </>
+  );
+}
+
 function FunctionType({parameters, return: returnType, typeParameters}) {
   return (
     <>
@@ -227,7 +239,7 @@ export function InterfaceType({properties, showRequired, showDefault}) {
           <tr key={index} className={tableStyles['spectrum-Table-row']}>
             <td className={tableStyles['spectrum-Table-cell']} data-column="Name">
               <code className={`${typographyStyles['spectrum-Code4']}`}>
-                <span className="token hljs-attr">{prop.name}</span>
+                <span className="token hljs-attr">{prop.type !== 'indexSignature' ? prop.name : <IndexSignature type={prop.value} />}</span>
               </code>
               {!prop.optional && showRequired
                 ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} alt="Required" />

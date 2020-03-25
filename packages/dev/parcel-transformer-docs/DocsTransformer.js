@@ -16,6 +16,8 @@ const traverse = require('@babel/traverse').default;
 const t = require('@babel/types');
 const doctrine = require('doctrine');
 
+// helpful for navigating this file https://ts-ast-viewer.com/
+
 module.exports = new Transformer({
   async transform({asset, options}) {
     if (asset.type === 'json') {
@@ -83,9 +85,22 @@ module.exports = new Transformer({
       }
     });
 
-    function processExport(path) {
+    function conditionalyLog(message, shouldLog) {
+      if (shouldLog) {
+        console.log('\n');
+        console.log(asset.filePath);
+        console.log(message);
+        console.log('\n');
+      }
+    }
+
+    function processExport(path, shouldLog = false) {
+      conditionalyLog('processing Export', shouldLog);
+      conditionalyLog(path, shouldLog);
       if (path.isVariableDeclarator()) {
+        conditionalyLog('isVariableDeclarator', shouldLog);
         if (!path.node.init) {
+          conditionalyLog('no path.node.init', shouldLog);
           return;
         }
 
@@ -96,11 +111,14 @@ module.exports = new Transformer({
       }
 
       if (isReactForwardRef(path)) {
+        conditionalyLog('isReactForwardRef', shouldLog);
         return processExport(path.get('arguments.0'));
       }
 
       if (path.isFunction()) {
+        conditionalyLog('isFunction', shouldLog);
         if (isReactComponent(path)) {
+          conditionalyLog('isReactComponent', shouldLog);
           let props = path.node.params[0];
           let docs = getJSDocs(path);
           return {
@@ -111,12 +129,15 @@ module.exports = new Transformer({
             description: docs.description || null
           };
         } else {
+          conditionalyLog('TODO: normal function', shouldLog);
           // TODO: normal function
         }
       }
 
       if (path.isTSTypeReference()) {
+        conditionalyLog('isTSTypeReference', shouldLog);
         if (path.node.typeParameters) {
+          conditionalyLog('path.node.typeParameters', shouldLog);
           return {
             type: 'application',
             base: processExport(path.get('typeName')),
@@ -128,6 +149,7 @@ module.exports = new Transformer({
       }
 
       if (path.isImportSpecifier()) {
+        conditionalyLog('isImportSpecifier', shouldLog);
         asset.addDependency({
           moduleSpecifier: path.parent.source.value,
           symbols: new Map([[path.node.imported.name, path.node.local.name]]),
@@ -143,6 +165,7 @@ module.exports = new Transformer({
       }
 
       if (path.isTSTypeAliasDeclaration()) {
+        conditionalyLog('isTSTypeAliasDeclaration', shouldLog);
         let docs = getJSDocs(path);
         return {
           type: 'alias',
@@ -156,12 +179,14 @@ module.exports = new Transformer({
       }
 
       if (path.isTSInterfaceDeclaration()) {
+        conditionalyLog('isTSInterfaceDeclaration', shouldLog);
         let properties = {};
         for (let propertyPath of path.get('body.body')) {
           let property = processExport(propertyPath);
           if (property) {
             properties[property.name] = property;
           } else {
+            processExport(propertyPath, true);
             console.log('UNKNOWN PROPERTY', propertyPath.node);
           }
         }
@@ -180,12 +205,14 @@ module.exports = new Transformer({
       }
 
       if (path.isTSTypeLiteral()) {
+        conditionalyLog('isTSTypeLiteral', shouldLog);
         let properties = {};
         for (let member of path.get('members')) {
           let property = processExport(member);
           if (property) {
             properties[property.name] = property;
           } else {
+            processExport(member, true);
             console.log('UNKNOWN PROPERTY', member.node);
           }
         }
@@ -197,6 +224,7 @@ module.exports = new Transformer({
       }
 
       if (path.isTSPropertySignature()) {
+        conditionalyLog('isTSPropertySignature', shouldLog);
         let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
         return addDocs({
@@ -208,6 +236,7 @@ module.exports = new Transformer({
       }
 
       if (path.isTSMethodSignature()) {
+        conditionalyLog('isTSPropertySignature', shouldLog);
         let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
         return addDocs({
@@ -230,8 +259,28 @@ module.exports = new Transformer({
         }, docs);
       }
 
+      if (path.isTSIndexSignature()) {
+        console.log(path);
+        console.log('\n');
+        console.log(path.node.parameters);
+        console.log('path.node.typeAnnotation ? processExport(path.get(\'typeAnnotation.typeAnnotation\')) : {type: \'any\'}');
+        console.log(path.node.typeAnnotation ? processExport(path.get('typeAnnotation.typeAnnotation')) : {type: 'any'});
+        console.log('path.node.parameters.map');
+        console.log(path.get('parameters').map(p => processExport(p)));
+        let docs = getJSDocs(path);
+        return addDocs({
+          type: 'indexSignature',
+          value: {
+            type: (path.node.typeAnnotation ? processExport(path.get('typeAnnotation.typeAnnotation')) : {type: 'any'}).type,
+            name: path.get('parameters').map(p => processExport(p))
+          }
+        }, docs);
+      }
+
       if (path.isTSExpressionWithTypeArguments()) {
+        conditionalyLog('isTSExpressionWithTypeArguments', shouldLog);
         if (path.node.typeParameters) {
+          conditionalyLog('path.node.typeParameters', shouldLog);
           return {
             type: 'application',
             base: processExport(path.get('expression')),
@@ -243,8 +292,10 @@ module.exports = new Transformer({
       }
 
       if (path.isIdentifier()) {
+        conditionalyLog('isIdentifier', shouldLog);
         let binding = path.scope.getBinding(path.node.name);
         if (!binding) {
+          conditionalyLog('no binding', shouldLog);
           return {
             type: 'identifier',
             name: path.node.name
@@ -331,6 +382,7 @@ module.exports = new Transformer({
         };
       }
 
+      conditionalyLog('welp, made it here', shouldLog);
       console.log('UNKNOWN TYPE', path.node.type);
     }
 
