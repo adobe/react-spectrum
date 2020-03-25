@@ -17,7 +17,7 @@ import {DialogContext, DialogContextValue} from './context';
 import {FocusScope} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {mergeProps} from '@react-aria/utils';
-import React, {useContext, useRef} from 'react';
+import React, {useContext, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumBaseDialogProps, SpectrumDialogProps} from '@react-types/dialog';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
@@ -92,12 +92,27 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
   let ref = useRef();
   let sizeVariant = sizeMap[size];
   let {dialogProps, titleProps} = useDialog({ref, role, ...otherProps});
+
+  // Probably would want to pull this out into some kind of useHas until https://developer.mozilla.org/en-US/docs/Web/CSS/:has
+  let [isHeader, setIsHeader] = useState(true);
+  useLayoutEffect(() => {
+    let ignore = !slots;
+    if (ignore) {
+      return () => {};
+    }
+    if (ref.current && ref.current.getElementsByClassName(styles['spectrum-Dialog-header']).length === 0) {
+      setIsHeader(false);
+    } else {
+      setIsHeader(true);
+    }
+  }, [isHeader, ref]);
+
   if (!slots) {
     slots = {
       container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
       hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
       header: {UNSAFE_className: styles['spectrum-Dialog-header']},
-      heading: {UNSAFE_className: styles['spectrum-Dialog-heading'], ...titleProps},
+      heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !isHeader}), ...titleProps},
       typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
       divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
       content: {UNSAFE_className: styles['spectrum-Dialog-content']},
