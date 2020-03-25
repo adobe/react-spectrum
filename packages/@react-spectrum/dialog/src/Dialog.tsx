@@ -23,8 +23,8 @@ import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
 
 /**
- * Dialogs display important information that users need to acknowledge.
- * They appear over the interface and block further interactions.
+ * Dialogs are windows that appear over the interface and block further interactions.
+ * Contextual information, tasks, or workflows are typically contained within.
  */
 export function Dialog(props: SpectrumDialogProps) {
   props = useSlotProps(props);
