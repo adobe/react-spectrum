@@ -25,14 +25,29 @@ export interface BreadcrumbItemProps extends PressEvents {
 
 export interface BreadcrumbsProps<T> {
   children: ReactElement<ItemProps<T>> | ReactElement<ItemProps<T>>[],
+  /**
+   * Current number of visible items before collapse.
+   * @default "auto"
+   */
   maxVisibleItems?: 'auto' | number,
   onAction?: (key: Key) => void
 }
 
 export interface SpectrumBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps, StyleProps {
+  /**
+   * What the Breadcrumbs's size should be.
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L',
+  /** Whether the last item should have role of "heading". */
   isHeading?: boolean,
+  /**
+   * Sets the aria-level attribute of the last item, but only if `isHeading` is true.
+   * @default 1
+   */
   headingAriaLevel?: number,
+  /** Whether to always show the root item if the items are collapsed. */
   showRoot?: boolean,
+  /** Whether the Breadcrumbs are disabled. */
   isDisabled?: boolean
 }
