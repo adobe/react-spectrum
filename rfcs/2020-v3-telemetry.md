@@ -109,20 +109,22 @@ Alternatively, a separate and new provider component (following a similar patter
 It is imagined that the `useTelemetry` hook could be expanded in the future (but this is outside the scope of this particular RFC).
 
 ```jsx
-async function Component(props) {
+function Component(props) {
   let {event, timer} = useTelemetry(Component.displayName);
 
   if (props.myDeprecatedProp) {
     event.create('warn', 'myDeprecatedProp is used and is deprecated...');
   }
+  
+  useEffect(async () => {
+    let t = timer.create('log if slow');
+    await props.getData();
+    t.end();
 
-  let t = timer.create('log if slow');
-  await props.getData();
-  t.end();
-
-  if (t.timeElapsed > 900) {
-    event.create('warn', 'slow `getData` call');
-  }
+    if (t.timeElapsed > 900) {
+      event.create('warn', 'slow `getData` call');
+    }
+  }, [props.propA]);
   ...
 }
 ```
