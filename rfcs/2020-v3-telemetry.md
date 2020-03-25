@@ -15,11 +15,15 @@ governing permissions and limitations under the License. -->
 
 ## Summary
 
-React Spectrum should provide a way to compile usage data of which components are being used in an application. It will allow consumers to optionally provide their own collector of this information and will not collect anything by default, nor will it contain a default API. The initial version will only provide information of which components are used.
+React Spectrum should provide a way to compile usage data of which components are being used in an application. It should allow consumers a way to optionally provide their own collector of this information. It will not collect, store, or log anything by default. The initial version is scoped to only provide the ability to glean  which components are used at a certain time in the application.
 
 ## Motivation
 
-Large companies have many teams who buld UI. These teams often have source code in many locations -- often many of which are not able to be discovered without large amounts of effort. Knowing what versions of React Spectrum applications are using as well as which components allows the core team to make responsible decisions and prioritize efforts. It can make migrations easier and it helps provides a baseline of the "usefulness" of certain components.
+Tracking what components are used in a particular application is quite useful and can tie into other existing telementry systems. Having the start of a system in place sets the team up to provide additional functionality in this area going forward, specifically with a focus around performance of the components themselves (think slow renders, logging warnings about improper usage).
+
+For usage specifically at Adobe (or other large enterprises), knowing what versions of React Spectrum v3 are being used by applications as well specifically which components allows the core team to make responsible decisions and prioritize efforts. It can make migrations easier and it helps provides a baseline of the "usefulness" of certain components.
+
+So, this system isn't about user tracking -- nor does it intend to go that direction.
 
 ## Detailed Design
 
@@ -43,18 +47,21 @@ function Component({text}) {
 }
 ```
 
-As the initial version of the spec is quite limited, the implementation is quite simple:
+As the initial version of the spec is quite limited, the implementation can be quite simple:
 
 ```tsx
+import {useEffect}, React from 'react';
 import {useProvider} from '@react-spectrum/provider';
 
 function useTelemetry(name: string): void {
-  let provider = useProvider();
-  if (provider.telemetry) {
-      provider.telemetry.track(name);
-  } else if ('rspTelemetry' in global) {
-      global.rspTelemetry.track(name);
-  }
+  useEffect(() => {
+    let provider = useProvider();
+    if (provider.telemetry) {
+        provider.telemetry.track(name);
+    } else if ('rspComponentTelemetry' in global) {
+        global.rspComponentTelemetry.track(name);
+    }
+  }, []);
 }
 ```
 
@@ -78,7 +85,7 @@ import {myInternalTelemetry} from './telemetry';
 
 let telemetry = {
   track: (name, ...args) {
-    myInternalTelemetry.track(name, args);
+    myInternalTelemetry.track({name, source: 'react-spectrum'}, args);
   }
 }
 
@@ -103,14 +110,19 @@ It is imagined that the `useTelemetry` hook could be expanded in the future (but
 
 ```jsx
 async function Component(props) {
-  const {event, timer} = useTelemetry(Component.displayName);
+  let {event, timer} = useTelemetry(Component.displayName);
 
-  useEffect(async () => {
-    timer.start('myTimer');
-    await useEffect()
-    timer.end('myTimer');
-  }, []);
+  if (props.myDeprecatedProp) {
+    event.create('warn', 'myDeprecatedProp is used and is deprecated...');
+  }
 
+  let t = timer.create('log if slow');
+  await props.getData();
+  t.end();
+
+  if (t.timeElapsed > 900) {
+    event.create('warn', 'slow `getData` call');
+  }
   ...
 }
 ```
@@ -133,7 +145,7 @@ Additionally, this proposal does not enable this feature by default nor gives an
 
 This adds additional bytes to each component. It will mostly be eaten up by compression, but it will still add size.
 
-We can (and should) mitigate this extra weight by using environmental variables to skip and remove the extra weight of the telemetry code from components. For instance, we can do something like:
+We can (and should) mitigate this extra weight by using environmental variables to skip and remove the extra weight of the telemetry code from components:
 
 ```jsx
 function Component(props) {
@@ -144,7 +156,7 @@ function Component(props) {
 }
 ```
 
-which any reasonable bundler + minifier would compile away in the case that `RSP_EXCLUDE_TELEMETRY` was set.
+Any reasonable bundler + minifier would thus compile this away in the case that `RSP_EXCLUDE_TELEMETRY` was set.
 
 ## Backwards Compatibility Analysis
 
@@ -174,6 +186,7 @@ Because our scope is initially small, it is worth keeping in mind that the code 
 
 - Will function names be collapsed / re-written at build time? So, would there need to be additional attributes for reach function. Is this a good use case for a Babel plugin?
 - Do versions matter? Components are individually versioned now, so this would include much more information. Additionally, should this be included anyways? It would be useful for debugging.
+- Should this be expanded to be a general purpose telemetry system eventually? (i hope not, but we should discuss).
 
 ## Help Needed
 
