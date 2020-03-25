@@ -20,28 +20,37 @@ governing permissions and limitations under the License.
 
 .spectrum-IllustratedMessage {
   height: 100%;
+  .spectrum-IllustratedMessage-container {
+    height: 100%;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-  text-align: center;
+    text-align: center;
 
-  .spectrum-IllustratedMessage-illustration {
-    margin-bottom: var(--spectrum-illustrated-message-illustration-margin-bottom);
-  }
+    .spectrum-IllustratedMessage-illustration {
+      order: 1;
+      margin-bottom: var(--spectrum-illustrated-message-illustration-margin-bottom);
+    }
 
-  .spectrum-IllustratedMessage-heading {
-    max-width: var(--spectrum-illustrated-message-heading-max-width);
-    margin: var(--spectrum-illustrated-message-heading-margin);
-  }
+    .spectrum-IllustratedMessage-header {
+      order: 2;
 
-  .spectrum-IllustratedMessage-description {
-    max-width: var(--spectrum-illustrated-message-description-max-width);
-    margin: var(--spectrum-illustrated-message-description-margin);
+      .spectrum-IllustratedMessage-heading {
+        max-width: var(--spectrum-illustrated-message-heading-max-width);
+        margin: var(--spectrum-illustrated-message-heading-margin);
+      }
+    }
 
-    font-style: italic;
+    .spectrum-IllustratedMessage-description {
+      order: 3;
+      max-width: var(--spectrum-illustrated-message-description-max-width);
+      margin: var(--spectrum-illustrated-message-description-margin);
+
+      font-style: italic;
+    }
   }
 }
 

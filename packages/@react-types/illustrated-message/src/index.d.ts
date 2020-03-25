@@ -12,10 +12,10 @@
 
 import {DOMProps, StyleProps} from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
+import {Slots} from '@react-types/layout';
 
 export interface SpectrumIllustratedMessageProps extends DOMProps, StyleProps {
-  heading?: string,
-  description?: ReactNode,
-  illustration?: ReactElement,
-  ariaLevel?: number
+  ariaLevel?: number,
+  children: [ReactElement],
+  slots?: Slots
 }
