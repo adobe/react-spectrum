@@ -132,7 +132,7 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
       content: {UNSAFE_className: styles['spectrum-Dialog-content']},
       footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
       closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']},
-      buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !isHeader})}
+      buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !isFooter})}
     };
   }
 
