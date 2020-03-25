@@ -83,9 +83,8 @@ A typical Dialog with a title, contents, and action buttons can be created like 
 
 A dismissable Dialog forgoes a footer section and its associated action buttons in favor
 of rendering a close button. If your Dialog is dismissable, make sure that you do not include a footer section or
-a ButtonGroup. While the Dialog will hide any elements occupying the `footer` slot, it will not remove them from the DOM, 
-resulting in possible tab order issues. In the example below, note that the dismissable Dialog does not need
-to be wrapped in a `close` function unlike the non-dismissable example before.
+a ButtonGroup. While the Dialog will hide any elements occupying the footer section, it will not remove them from the DOM, 
+resulting in possible tab order issues.
 
 ```tsx example
 <DialogTrigger isDismissable>
