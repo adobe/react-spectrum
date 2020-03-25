@@ -15,7 +15,7 @@ import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
-import {ActionButton, Button} from '@react-spectrum/button';
+import {ActionButton, Button, ButtonGroup} from '@react-spectrum/button';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -51,10 +51,10 @@ import {TextField} from '@react-spectrum/textfield';
           This is a dialog.
         </Text>
       </Content>
-      <Footer>
+      <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
         <Button variant="cta" onPress={close}>Confirm</Button>
-      </Footer>
+      </ButtonGroup>
     </Dialog>
   )}
 </DialogTrigger>
@@ -62,54 +62,74 @@ import {TextField} from '@react-spectrum/textfield';
 
 ## Content
 
-The layout of a Dialog is made up of the following elements and sections, mapped to the corresponding default slot names:
-
-| Section/Element 	|     Slot      |
-|-------------------|--------------:|
-| Container       	| container   	|
-| Cover Image     	| hero        	|
-| Header          	| header      	|
-| Heading         	| heading     	|
-| Type Icon       	| typeIcon    	|
-| Divider         	| divider     	|
-| Body            	| content     	|
-| Footer          	| footer      	|
-| Close Button    	| closeButton 	|
-
-![Image of Dialog Layout](./images/dialog.png)
-INSERT PICTURE HERE, MAYBE LINK TO SPECTRUM (Contributions is a corp site)
-
-For an explanation of what slots are and how you can use them, see the [slots page](TODO LINK THIS PAGE).
-
-Each of these sections can be populated by providing a semantic element paired with a corresponding `slot` prop
-to the Dialog as children. Note that the order of the children provided does not affect the visual layout of the Dialog. 
-
-The example below illustrates how a Dialog with a hero image could be rendered.
+A typical Dialog with a title, contents, and action buttons can be created like so:
 
 ```tsx example
 <DialogTrigger>
-  <ActionButton>Upload</ActionButton>
+  <ActionButton>Publish</ActionButton>
   {(close) => (
     <Dialog>
-      <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
-      <Header><Heading>Upload file</Heading></Header>
+      <Header><Heading>Publish 3 pages</Heading></Header>
       <Divider />
-      <Content>Are you sure you want to upload this file?</Content>
-      <Footer>
+      <Content>Confirm publish?</Content>
+      <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
         <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
-      </Footer>
+      </ButtonGroup>
     </Dialog>
   )}
 </DialogTrigger>
 ```
 
-### Dismissable Dialogs
-
 A dismissable Dialog forgoes a footer section and its associated action buttons in favor
-of rendering a close button. If your Dialog is dismissable, make sure that you do not include a footer section. 
-While the Dialog will hide any elements occupying the `footer` slot, it will not remove them from the DOM, 
-resulting in possible tab order issues.
+of rendering a close button. If your Dialog is dismissable, make sure that you do not include a footer section or
+a ButtonGroup. While the Dialog will hide any elements occupying the `footer` slot, it will not remove them from the DOM, 
+resulting in possible tab order issues. In the example below, note that the dismissable Dialog does not need
+to be wrapped in a `close` function unlike the non-dismissable example before.
+
+```tsx example
+<DialogTrigger isDismissable>
+  <ActionButton>Status</ActionButton> 
+  <Dialog>
+    <Header><Heading>Status</Heading></Header>
+    <Divider />
+    <Content>Printer Status: Connected</Content>
+  </Dialog>
+</DialogTrigger>
+```
+
+It is important to note that the `Heading`, `Content`, and `Footer` content elements accept any renderable 
+node, not just strings. This allows you to create Dialogs for more complex workflows, such as including a form
+for the user to fill out or adding confirmation checkboxes.
+
+```tsx example
+<DialogTrigger>
+  <ActionButton>Register</ActionButton> 
+  {(close) => (
+    <Dialog>
+      <Header><Heading>Register for newsletter</Heading></Header>
+      <Divider />
+      <Content>
+        <Form>
+          <TextField label="First Name" placeholder="John" autoFocus />
+          <TextField label="Last Name" placeholder="Smith" />
+          <TextField label="Street Address" placeholder="123 Any Street" />
+          <TextField label="City" placeholder="San Francisco" />
+        </Form>
+      </Content>
+      <Footer>
+        <Checkbox>
+          I want to receive updates for exclusive offers in my area.
+        </Checkbox>
+      </Footer> 
+      <ButtonGroup>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button variant="cta" onPress={close}>Register</Button>
+      </ButtonGroup>
+    </Dialog>
+  )}
+</DialogTrigger>
+```
 
 ### Accessibility
 
@@ -128,16 +148,62 @@ the following tab order: `Save` button -> `Cancel` button -> `Textfield` -> `Che
     <Dialog>
       <Header><Heading>Profile</Heading></Header>
       <Divider />
-      <Footer>
+      <ButtonGroup>
         <Button autoFocus variant="cta" onPress={close}>Save</Button>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-      </Footer>
+      </ButtonGroup>
       <Content>
         <Form>
           <TextField label="Name" />
           <Checkbox>Make private</Checkbox>
         </Form>
       </Content>    
+    </Dialog>
+  )}
+</DialogTrigger>
+```
+
+### Advanced Usage
+
+The grid layout of a Dialog is made up of the following elements and sections, mapped to the corresponding default slot names:
+
+| Section/Element 	|     Slot      |
+|-------------------|--------------:|
+| Container       	| container   	|
+| Cover Image     	| hero        	|
+| Header          	| header      	|
+| Heading         	| heading     	|
+| Type Icon       	| typeIcon    	|
+| Divider         	| divider     	|
+| Body            	| content     	|
+| Footer          	| footer      	|
+| Button Group      | buttonGroup   |
+| Close Button    	| closeButton 	|
+
+![Image of Dialog Layout](./images/dialog.png)
+INSERT PICTURE HERE, MAYBE LINK TO SPECTRUM (Contributions is a corp site)
+
+For an explanation of what slots are and how you can use them, see the [slots page](TODO LINK THIS PAGE).
+
+Each of these sections can be populated by providing a content element paired with a corresponding `slot` prop
+to the Dialog as children. Content elements like `Footer`, `Divider`, and `Header` map directly to their named `slot`,
+but this can be overridden via the `slot` prop.
+
+The example below illustrates how a Dialog with a hero image could be rendered via the `hero` slot:
+
+```tsx example
+<DialogTrigger>
+  <ActionButton>Upload</ActionButton>
+  {(close) => (
+    <Dialog>
+      <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+      <Header><Heading>Upload file</Heading></Header>
+      <Divider />
+      <Content>Are you sure you want to upload this file?</Content>
+      <ButtonGroup>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+      </ButtonGroup>
     </Dialog>
   )}
 </DialogTrigger>
@@ -167,9 +233,9 @@ to the Dialog directly. If a visible label isn't specified, an `aria-label` must
           <Text>Cras semper auctor neque vitae tempus quam pellentesque nec. Maecenas ultricies mi eget mauris pharetra et ultrices neque ornare. Vulputate enim nulla aliquet porttitor lacus luctus accumsan tortor posuere. Pellentesque habitant morbi tristique senectus et. Ipsum dolor sit amet consectetur adipiscing elit pellentesque. Sem et tortor consequat id porta nibh venenatis. Viverra nibh cras pulvinar mattis nunc sed blandit. Urna porttitor rhoncus dolor purus. Vivamus arcu felis bibendum ut. Cras sed felis eget velit aliquet. Sed tempus urna et pharetra pharetra. Viverra adipiscing at in tellus integer feugiat scelerisque varius morbi. Ac tortor vitae purus faucibus ornare suspendisse sed nisi lacus. Ultrices neque ornare aenean euismod elementum nisi quis eleifend quam. Vel turpis nunc eget lorem. Quisque egestas diam in arcu cursus euismod quis viverra. At tempor commodo ullamcorper a lacus vestibulum sed. Id aliquet lectus proin nibh nisl condimentum id venenatis. Quis viverra nibh cras pulvinar. Purus in mollis nunc sed.</Text>
         </React.Fragment>
       </Content>
-      <Footer>
+      <ButtonGroup>
         <Button autoFocus variant="cta" onPress={close}>Acknowledge</Button>
-      </Footer>
+      </ButtonGroup>
     </Dialog>
   )}
 </DialogTrigger>
@@ -199,10 +265,10 @@ function Example() {
         <Dialog>
           <Header><Heading>Profile</Heading></Header>
           <Divider />
-          <Footer>
+          <ButtonGroup>
             <Button autoFocus variant="cta" onPress={() => alertSave(close)}>Save</Button>
             <Button variant="secondary" onPress={() => alertCancel(close)}>Cancel</Button>
-          </Footer>
+          </ButtonGroup>
           <Content>
             <Form>
               <TextField label="Name" />
@@ -273,10 +339,10 @@ considerations.
     <Dialog size="S">
       <Header><Heading>Profile</Heading></Header>
       <Divider />
-      <Footer>
+      <ButtonGroup>
         <Button autoFocus variant="cta" onPress={close}>Save</Button>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-      </Footer>
+      </ButtonGroup>
       <Content>
         <Form>
           <TextField label="Name" />
@@ -293,10 +359,10 @@ considerations.
     <Dialog size="M">
       <Header><Heading>Profile</Heading></Header>
       <Divider />
-      <Footer>
+      <ButtonGroup>
         <Button autoFocus variant="cta" onPress={close}>Save</Button>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-      </Footer>
+      </ButtonGroup>
       <Content>
         <Form>
           <TextField label="Name" />
@@ -313,10 +379,10 @@ considerations.
     <Dialog size="L">
       <Header><Heading>Profile</Heading></Header>
       <Divider />
-      <Footer>
+      <ButtonGroup>
         <Button autoFocus variant="cta" onPress={close}>Save</Button>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-      </Footer>
+      </ButtonGroup>
       <Content>
         <Form>
           <TextField label="Name" />
