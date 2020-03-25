@@ -42,7 +42,7 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
       ref={ref}
       className={
         classNames(
-          styles, 
+          styles,
           'spectrum-Menu',
           styleProps.className
         )
@@ -50,7 +50,7 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
       {[...state.collection].map(item => {
         if (item.type === 'section') {
           return (
-            <MenuSection 
+            <MenuSection
               key={item.key}
               item={item}
               state={state}
