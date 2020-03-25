@@ -38,7 +38,7 @@ describe('Breadcrumbs', function () {
     });
 
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterEach(() => {
@@ -70,20 +70,20 @@ describe('Breadcrumbs', function () {
   });
 
   it('Handles multiple items', () => {
-    let {getByTestId} = render(
+    let {getByText} = render(
       <Breadcrumbs className="test-class">
-        <Item data-testid="item-1">Folder 1</Item>
-        <Item data-testid="item-2">Folder 2</Item>
-        <Item data-testid="item-3">Folder 3</Item>
+        <Item>Folder 1</Item>
+        <Item>Folder 2</Item>
+        <Item>Folder 3</Item>
       </Breadcrumbs>
     );
-    let item1 = getByTestId('item-1');
+    let item1 = getByText('Folder 1');
     expect(item1.tabIndex).toBe(0);
     expect(item1).not.toHaveAttribute('aria-current');
-    let item2 = getByTestId('item-2');
+    let item2 = getByText('Folder 2');
     expect(item2.tabIndex).toBe(0);
     expect(item2).not.toHaveAttribute('aria-current');
-    let item3 = getByTestId('item-3');
+    let item3 = getByText('Folder 3');
     expect(item3.tabIndex).toBe(-1);
     expect(item3).toHaveAttribute('aria-current', 'page');
   });
@@ -166,16 +166,16 @@ describe('Breadcrumbs', function () {
   });
 
   it('Handles isDisabled', () => {
-    let {getByTestId} = render(
+    let {getByText} = render(
       <Breadcrumbs isDisabled>
-        <Item data-testid="item-1">Folder 1</Item>
-        <Item data-testid="item-2">Folder 2</Item>
+        <Item>Folder 1</Item>
+        <Item>Folder 2</Item>
       </Breadcrumbs>
     );
 
-    let item1 = getByTestId('item-1');
+    let item1 = getByText('Folder 1');
     expect(item1).toHaveAttribute('aria-disabled', 'true');
-    let item2 = getByTestId('item-2');
+    let item2 = getByText('Folder 2');
     expect(item2).toHaveAttribute('aria-disabled', 'true');
   });
 
@@ -226,11 +226,11 @@ describe('Breadcrumbs', function () {
 
 
   it('Handles max visible items auto with dialog', () => {
-    let onPress = jest.fn();
+    let onAction = jest.fn();
     let {getAllByText, getByRole, getAllByRole} = render(
       <Provider theme={theme}>
-        <Breadcrumbs maxVisibleItems="auto" showRoot>
-          <Item onPress={() => onPress('Folder 1')}>Folder 1</Item>
+        <Breadcrumbs maxVisibleItems="auto" showRoot onAction={onAction}>
+          <Item uniqueKey="Folder 1">Folder 1</Item>
           <Item>Folder 2</Item>
           <Item>Folder 3</Item>
           <Item>Folder 4</Item>
@@ -253,11 +253,11 @@ describe('Breadcrumbs', function () {
     // breadcrumb root item
     expect(item1[0]).toHaveAttribute('role', 'link');
     triggerPress(item1[0]);
-    expect(onPress).toHaveBeenCalledWith('Folder 1');
+    expect(onAction).toHaveBeenCalledWith('Folder 1');
 
     // menu item
     expect(item1[1]).not.toHaveAttribute('role');
     triggerPress(item1[1]);
-    expect(onPress).toHaveBeenCalledWith('Folder 1');
+    expect(onAction).toHaveBeenCalledWith('Folder 1');
   });
 });

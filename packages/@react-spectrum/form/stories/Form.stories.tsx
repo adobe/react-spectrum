@@ -10,7 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {countries, states} from './data';
+import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
+import {Item, Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -46,12 +49,18 @@ storiesOf('Form', module)
     'fields next to each other',
     () => (
       <Form>
-        <div style={{display: 'flex'}}>
-          <TextField label="First Name" placeholder="John" marginEnd="size-100" />
-          <TextField label="Last Name" placeholder="Smith" />
-        </div>
+        <Flex>
+          <TextField label="First Name" placeholder="John" marginEnd="size-100" flex={1} />
+          <TextField label="Last Name" placeholder="Smith" flex={1} />
+        </Flex>
         <TextField label="Street Address" placeholder="123 Any Street" />
-        <TextField label="Zip code" placeholder="12345" />
+        <Flex>
+          <TextField label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} />
+          <Picker label="State" placeholder="Select a state" items={states} itemKey="abbr" marginEnd="size-100" flex={1}>
+            {item => <Item>{item.name}</Item>}
+          </Picker>
+          <TextField label="Zip code" placeholder="12345" flex={1} />
+        </Flex>
       </Form>
     )
   )
@@ -76,6 +85,10 @@ storiesOf('Form', module)
     () => render({isQuiet: true})
   )
   .add(
+    'isQuiet, labelPosition: side',
+    () => render({isQuiet: true, labelPosition: 'side'})
+  )
+  .add(
     'isEmphasized',
     () => render({isEmphasized: true})
   )
@@ -94,12 +107,27 @@ function render(props: any = {}) {
       <TextField label="First Name" placeholder="John" />
       <TextField label="Last Name" placeholder="Smith" />
       <TextField label="Street Address" placeholder="123 Any Street" />
+      <TextField label="City" placeholder="San Francisco" />
+      <Picker label="State" placeholder="Select a state" items={states} itemKey="abbr">
+        {item => <Item>{item.name}</Item>}
+      </Picker>
       <TextField label="Zip code" placeholder="12345" />
+      <Picker label="Country" placeholder="Select a country" items={countries} itemKey="name">
+        {item => <Item>{item.name}</Item>}
+      </Picker>
       <RadioGroup label="Favorite pet" name="favorite-pet-group">
         <Radio value="dogs">Dogs</Radio>
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
+      <Picker label="Favorite color">
+        <Item>Red</Item>
+        <Item>Orange</Item>
+        <Item>Yellow</Item>
+        <Item>Green</Item>
+        <Item>Blue</Item>
+        <Item>Purple</Item>
+      </Picker>
     </Form>
   );
 }

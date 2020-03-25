@@ -15,7 +15,7 @@ import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {Node} from '@react-stately/collections';
-import React, {useRef} from 'react';
+import React, {Key, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/typography';
 import {TreeState} from '@react-stately/tree';
@@ -26,13 +26,15 @@ interface MenuItemProps<T> {
   item: Node<T>,
   state: TreeState<T>,
   isVirtualized?: boolean,
+  onAction?: (key: Key) => void
 }
 
 export function MenuItem<T>(props: MenuItemProps<T>) {
   let {
     item,
     state,
-    isVirtualized
+    isVirtualized,
+    onAction
   } = props;
 
   let {
@@ -44,8 +46,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     rendered,
     isSelected,
     isDisabled,
-    key,
-    props: itemProps
+    key
   } = item;
 
   let ref = useRef<HTMLLIElement>();
@@ -58,7 +59,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       closeOnSelect,
       ref,
       isVirtualized,
-      onPress: itemProps.onPress
+      onAction
     }, 
     state
   );

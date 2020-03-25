@@ -15,6 +15,7 @@ import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
+import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '../';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
@@ -106,16 +107,6 @@ storiesOf('Picker', module)
     )
   )
   .add(
-    'isQuiet',
-    () => (
-      <Picker isQuiet label="Test">
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
-      </Picker>
-    )
-  )
-  .add(
     'labelAlign: end',
     () => (
       <Picker label="Test" labelAlign="end">
@@ -176,6 +167,86 @@ storiesOf('Picker', module)
     )
   )
   .add(
+    'isQuiet',
+    () => (
+      <Picker isQuiet label="Test">
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'isQuiet, isDisabled',
+    () => (
+      <Picker label="Test" isQuiet isDisabled>
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'isQuiet, labelAlign: end',
+    () => (
+      <Picker label="Test" isQuiet labelAlign="end">
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'isQuiet, labelPosition: side',
+    () => (
+      <Picker label="Test" isQuiet labelPosition="side">
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'isQuiet, isRequired',
+    () => (
+      <Picker label="Test" isQuiet isRequired>
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'isQuiet, isRequired, necessityIndicator: label',
+    () => (
+      <Picker label="Test" isQuiet isRequired necessityIndicator="label">
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'isQuiet, optional, necessityIndicator: label',
+    () => (
+      <Picker label="Test" isQuiet necessityIndicator="label">
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'isQuiet, validationState: invalid',
+    () => (
+      <Picker label="Test" isQuiet validationState="invalid">
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
     'complex items',
     () => (
       <Picker label="Test">
@@ -208,6 +279,114 @@ storiesOf('Picker', module)
             <Text>Floof</Text>
           </Item>
         </Section>
+      </Picker>
+    )
+  )
+  .add(
+    'no visible label',
+    () => (
+      <Picker aria-label="Test">
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'isQuiet, no visible label',
+    () => (
+      <Picker aria-label="Test" isQuiet>
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'isQuiet, align: end',
+    () => (
+      <Picker aria-label="Test" isQuiet align="end">
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'custom widths',
+    () => (
+      <Flex flexDirection="column">
+        <Picker label="Test" width="size-1200">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Picker>
+        <Picker label="Test" width="size-6000">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Picker>
+      </Flex>
+    )
+  )
+  .add(
+    'custom widths, labelPosition: side',
+    () => (
+      <Flex flexDirection="column">
+        <Picker label="Test" width="size-1200" labelPosition="side">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Picker>
+        <Picker label="Test" width="size-6000" labelPosition="side">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Picker>
+      </Flex>
+    )
+  )
+  .add(
+    'custom menu widths',
+    () => (
+      <Flex flexDirection="column">
+        <Picker label="Test" menuWidth="size-1000">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Picker>
+        <Picker label="Test" menuWidth="size-6000">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Picker>
+      </Flex>
+    )
+  )
+  .add(
+    'custom menu widths, isQuiet',
+    () => (
+      <Flex flexDirection="column">
+        <Picker label="Test" menuWidth="size-400" isQuiet>
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Picker>
+        <Picker label="Test" menuWidth="size-6000" isQuiet>
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Picker>
+      </Flex>
+    )
+  )
+  .add(
+    'custom menu width, align: end',
+    () => (
+      <Picker label="Test" menuWidth="size-6000" align="end">
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
       </Picker>
     )
   );

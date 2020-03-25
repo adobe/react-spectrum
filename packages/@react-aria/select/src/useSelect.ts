@@ -12,7 +12,7 @@
 
 import {HTMLAttributes, RefObject} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria/utils';
 import {PressProps} from '@react-aria/interactions';
 import {SelectState} from '@react-stately/select';
 import {useLabel} from '@react-aria/label';
@@ -28,6 +28,7 @@ interface SelectProps {
 interface SelectAria {
   labelProps: HTMLAttributes<HTMLElement>,
   triggerProps: HTMLAttributes<HTMLElement> & PressProps,
+  valueProps: HTMLAttributes<HTMLElement>,
   menuProps: HTMLAttributes<HTMLElement>
 }
 
@@ -61,13 +62,27 @@ export function useSelect<T>(props: SelectProps, state: SelectState<T>): SelectA
   });
 
   let triggerProps = mergeProps(mergeProps(menuTriggerProps, fieldProps), typeSelectProps);
-  triggerProps['aria-labelledby'] = `${triggerProps['aria-labelledby']} ${triggerProps.id}`;
-
-  menuProps['aria-labelledby'] = fieldProps['aria-labelledby'];
+  let valueId = useId();
 
   return {
     labelProps,
-    triggerProps,
-    menuProps
+    triggerProps: {
+      ...triggerProps,
+      'aria-labelledby': [
+        triggerProps['aria-labelledby'],
+        triggerProps['aria-label'] ? triggerProps.id : null,
+        valueId
+      ].filter(Boolean).join(' ')
+    },
+    valueProps: {
+      id: valueId
+    },
+    menuProps: {
+      ...menuProps,
+      'aria-labelledby': [
+        fieldProps['aria-labelledby'],
+        triggerProps['aria-label'] ? triggerProps.id : null
+      ].filter(Boolean).join(' ')
+    }
   };
 }

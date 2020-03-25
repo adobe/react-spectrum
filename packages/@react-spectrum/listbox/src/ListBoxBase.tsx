@@ -18,7 +18,8 @@ import {ListBoxOption} from './ListBoxOption';
 import {ListBoxSection} from './ListBoxSection';
 import {ListLayout, Node} from '@react-stately/collections';
 import {ListState} from '@react-stately/list';
-import React, {ReactElement, useMemo} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React, {HTMLAttributes, ReactElement, useMemo} from 'react';
 import {ReusableView} from '@react-stately/collections';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useCollator} from '@react-aria/i18n';
@@ -32,7 +33,8 @@ interface ListBoxBaseProps<T> extends DOMProps, StyleProps {
   focusStrategy?: FocusStrategy,
   wrapAround?: boolean,
   selectOnPressUp?: boolean,
-  focusOnPointerEnter?: boolean
+  focusOnPointerEnter?: boolean,
+  domProps?: HTMLAttributes<HTMLElement>
 }
 
 export function useListBoxLayout<T>(state: ListState<T>) {
@@ -51,9 +53,10 @@ export function useListBoxLayout<T>(state: ListState<T>) {
 }
 
 export function ListBoxBase<T>(props: ListBoxBaseProps<T>) {
-  let {layout, state, selectOnPressUp, focusOnPointerEnter} = props;
+  let {layout, state, selectOnPressUp, focusOnPointerEnter, domProps = {}} = props;
   let {listBoxProps} = useListBox({
     ...props,
+    ...domProps,
     keyboardDelegate: layout,
     isVirtualized: true
   }, state);
@@ -87,7 +90,7 @@ export function ListBoxBase<T>(props: ListBoxBaseProps<T>) {
     <CollectionView
       {...filterDOMProps(props)}
       {...styleProps}
-      {...listBoxProps}
+      {...mergeProps(listBoxProps, domProps)}
       focusedKey={state.selectionManager.focusedKey}
       sizeToFit="height"
       className={
