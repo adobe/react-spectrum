@@ -69,7 +69,7 @@ From an implementation standpoint, the `useTelemetry` hook would internally rely
 
 #### Provider Update
 
-The [Provider Component](/packages/%40react-spectrum/provider/src/Provider.tsx) would need to be updated to except a new object:
+The [Provider Component](/packages/%40react-spectrum/provider/src/Provider.tsx) would need to be updated to accept a new object:
 
 ```tsx
 interface Telemetry {
@@ -77,7 +77,7 @@ interface Telemetry {
 }
 ```
 
-This telemetry object only has one method at the moment. A use would do the following to get the components on the page:
+This telemetry object only has one method at the moment. A user would do the following to get the components on the page:
 
 ```jsx
 import {Provider} from '@react-spectrum/provider`;
@@ -176,11 +176,11 @@ Drawbacks include the fact that applications now would have even more providers 
 
 ### Use an existing 3rd party
 
-We do not want to build a general purpose telemetry system for React (yet). That rules out [some](https://github.com/nytimes/react-tracking) projects. 
+We do not want to build a general purpose telemetry system for React. That rules out [some](https://github.com/nytimes/react-tracking) projects. 
 
 We do not want to build to a propertatry backend, such as Google Analytics or Adobe Analytics. That rules out [others](https://github.com/react-ga/react-ga).
 
-Because our scope is initially small, it is worth keeping in mind that the code will not initially be much. It is not expected to be exposed externally, as and as such, the API will be able to be interated on as more is learned.
+Because our scope is initially small, it is worth keeping in mind that the code will be small. It is not expected to be exposed externally, as and as such, the API will be iterated on as more is learned.
 
 ## Open Questions
 
