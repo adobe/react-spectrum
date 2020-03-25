@@ -99,6 +99,18 @@ storiesOf('ActionGroup', module)
   .add(
     'icons only, orientation: vertical, isQuiet',
     () => render({orientation: 'vertical', isQuiet: true}, toolIcons)
+  )
+  .add(
+    'defaultSelectedKeys',
+    () => render({defaultSelectedKeys: ['Add', 'Delete'], selectionMode: 'multiple'})
+  )
+  .add(
+    'selectedKeys (controlled)',
+    () => render({selectedKeys: ['Add', 'Delete'], selectionMode: 'multiple'})
+  )
+  .add(
+    'disabledKeys',
+    () => render({disabledKeys: ['Add', 'Delete'], selectionMode: 'multiple'})
   );
 
 const items =
