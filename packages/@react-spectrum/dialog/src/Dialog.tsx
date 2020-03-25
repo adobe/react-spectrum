@@ -11,13 +11,13 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useHasChild, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {FocusScope} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {mergeProps} from '@react-aria/utils';
-import React, {useContext, useLayoutEffect, useRef, useState} from 'react';
+import React, {useContext, useRef} from 'react';
 import {SpectrumBaseDialogProps, SpectrumDialogProps} from '@react-types/dialog';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
@@ -90,49 +90,25 @@ let sizeMap = {
 
 function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDialogProps) {
   let ref = useRef();
+  let gridRef = useRef();
   let sizeVariant = sizeMap[size];
   let {dialogProps, titleProps} = useDialog({ref, role, ...otherProps});
 
-  // Probably would want to pull this out into some kind of useHas until https://developer.mozilla.org/en-US/docs/Web/CSS/:has
-  let [isHeader, setIsHeader] = useState(true);
-  useLayoutEffect(() => {
-    let ignore = !slots;
-    if (ignore) {
-      return () => {};
-    }
-    if (ref.current && ref.current.getElementsByClassName(styles['spectrum-Dialog-header']).length === 0) {
-      setIsHeader(false);
-    } else {
-      setIsHeader(true);
-    }
-  }, [isHeader, ref]);
-
-  // Probably would want to pull this out into some kind of useHas until https://developer.mozilla.org/en-US/docs/Web/CSS/:has
-  let [isFooter, setIsFooter] = useState(true);
-  useLayoutEffect(() => {
-    let ignore = !slots;
-    if (ignore) {
-      return () => {};
-    }
-    if (ref.current && ref.current.getElementsByClassName(styles['spectrum-Dialog-footer']).length === 0) {
-      setIsFooter(false);
-    } else {
-      setIsFooter(true);
-    }
-  }, [isHeader, ref]);
+  let hasHeader = useHasChild(`:scope > .${styles['spectrum-Dialog-header']}`, gridRef);
+  let hasFooter = useHasChild(`:scope > .${styles['spectrum-Dialog-footer']}`, gridRef);
 
   if (!slots) {
     slots = {
       container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
       hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
       header: {UNSAFE_className: styles['spectrum-Dialog-header']},
-      heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !isHeader}), ...titleProps},
+      heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader}), ...titleProps},
       typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
       divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
       content: {UNSAFE_className: styles['spectrum-Dialog-content']},
       footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
       closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']},
-      buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !isFooter})}
+      buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !hasFooter})}
     };
   }
 
@@ -147,7 +123,7 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
           otherProps.className
         )}
         ref={ref}>
-        <Grid slots={slots}>
+        <Grid slots={slots} ref={gridRef}>
           {children}
         </Grid>
       </section>

@@ -264,6 +264,19 @@ governing permissions and limitations under the License.
 }
 
 @media screen and (max-width: 700px) {
+  .spectrum-Dialog .spectrum-Dialog-grid {
+    grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto var(--spectrum-dialog-padding);
+    grid-template-rows: auto var(--spectrum-dialog-padding) auto auto auto 1fr auto var(--spectrum-dialog-padding);
+    grid-template-areas:
+      "hero hero    hero    hero        hero"
+      ".    .       .       .           closeButton"
+      ".    heading heading heading     ."
+      ".    header  header  header      ."
+      ".    divider divider divider     ."
+      ".    content content content     ."
+      ".    footer  footer  buttonGroup ."
+      ".    .       .       .           .";
+  }
   .spectrum-Dialog--fullscreen,
   .spectrum-Dialog--fullscreenTakeover {
 

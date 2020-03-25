@@ -10,11 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './classNames';
-export * from './getWrappedElement';
-export * from './filterDOMProps';
-export * from './useMediaQuery';
-export * from './useDOMRef';
-export * from './styleProps';
-export * from './Slots';
-export * from './useHasChild';
+import {RefObject, useLayoutEffect, useState} from 'react';
+
+export function useHasChild(query: string, ref: RefObject<HTMLElement>) {
+  let [hasChild, setHasChild] = useState(true);
+  useLayoutEffect(() => {
+    console.log(ref.current && ref.current.querySelector(query));
+    if (ref.current && ref.current.querySelector(query)) {
+      setHasChild(true);
+    } else {
+      setHasChild(false);
+    }
+  }, [setHasChild, query, ref]);
+  return hasChild;
+}
