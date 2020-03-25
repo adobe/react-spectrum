@@ -107,6 +107,17 @@ expect.extend({
   }
 });
 
+function renderComponent(props) {
+  return render(
+    <Provider theme={theme} locale="de-DE">
+      <ActionGroup {...props}>
+        <Item uniqueKey="1">Click me 1</Item>
+        <Item uniqueKey="2">Click me 2</Item>
+      </ActionGroup>
+    </Provider>
+  );
+}
+
 describe('ActionGroup', function () {
   afterEach(() => {
     btnBehavior.reset();
@@ -218,14 +229,7 @@ describe('ActionGroup', function () {
   });
 
   it('ActionGroup handles single selection', function () {
-    let {getAllByRole} = render(
-      <Provider theme={theme} locale="de-DE">
-        <ActionGroup >
-          <Item>Click me 1</Item>
-          <Item>Click me 2</Item>
-        </ActionGroup>
-      </Provider>
-    );
+    let {getAllByRole} = renderComponent({});
 
     let [button1, button2] = getAllByRole('radio');
     triggerPress(button1);
@@ -237,14 +241,7 @@ describe('ActionGroup', function () {
   });
 
   it('ActionGroup handles multiple selection', function () {
-    let {getAllByRole} = render(
-      <Provider theme={theme} locale="de-DE">
-        <ActionGroup selectionMode="multiple">
-          <Item>Click me 1</Item>
-          <Item>Click me 2</Item>
-        </ActionGroup>
-      </Provider>
-    );
+    let {getAllByRole} = renderComponent({selectionMode: 'multiple'});
 
     let [button1, button2] = getAllByRole('checkbox');
     triggerPress(button1);
@@ -285,5 +282,44 @@ describe('ActionGroup', function () {
     expect(button1).toHaveAttribute('class', expect.stringContaining('-item'));
     expect(button1).toHaveAttribute('role', 'radio');
     expect(button1).toHaveAttribute('tabIndex', '-1');
+  });
+
+  it('ActionGroup handles disabledKeys', function () {
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = renderComponent({disabledKeys: ['1'], onSelectionChange});
+
+    let [button1, button2] = getAllByRole('radio');
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('disabled');
+    expect(onSelectionChange).toBeCalledTimes(0);
+    triggerPress(button2);
+    expect(button2).not.toHaveAttribute('disabled');
+    expect(onSelectionChange).toBeCalledTimes(1);
+  });
+
+  it('ActionGroup handles selectedKeys (controlled)', function () {
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = renderComponent({selectedKeys: ['1'], onSelectionChange});
+
+    let [button1, button2] = getAllByRole('radio');
+    expect(button1).toHaveAttribute('aria-checked', 'true');
+    expect(button2).toHaveAttribute('aria-checked', 'false');
+    triggerPress(button2);
+    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(button1).toHaveAttribute('aria-checked', 'true');
+    expect(button2).toHaveAttribute('aria-checked', 'false');
+  });
+
+  it('ActionGroup handles selectedKeys (controlled)', function () {
+    let onSelectionChange = jest.fn();
+    let {getAllByRole} = renderComponent({defaultSelectedKeys: ['1'], onSelectionChange});
+
+    let [button1, button2] = getAllByRole('radio');
+    expect(button1).toHaveAttribute('aria-checked', 'true');
+    expect(button2).toHaveAttribute('aria-checked', 'false');
+    triggerPress(button2);
+    expect(onSelectionChange).toBeCalledTimes(1);
+    expect(button1).toHaveAttribute('aria-checked', 'false');
+    expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 });
