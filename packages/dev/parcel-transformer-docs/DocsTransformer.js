@@ -85,7 +85,7 @@ module.exports = new Transformer({
       }
     });
 
-    function processExport(path, shouldLog = false) {
+    function processExport(path) {
       if (path.isVariableDeclarator()) {
         if (!path.node.init) {
           return;
@@ -164,7 +164,6 @@ module.exports = new Transformer({
           if (property) {
             properties[property.name] = property;
           } else {
-            processExport(propertyPath, true);
             console.log('UNKNOWN PROPERTY', propertyPath.node);
           }
         }
@@ -189,7 +188,6 @@ module.exports = new Transformer({
           if (property) {
             properties[property.name] = property;
           } else {
-            processExport(member, true);
             console.log('UNKNOWN PROPERTY', member.node);
           }
         }
