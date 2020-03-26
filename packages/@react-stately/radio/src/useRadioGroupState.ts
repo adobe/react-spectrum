@@ -11,14 +11,16 @@
  */
 
 import {RadioGroupProps} from '@react-types/radio';
+import React from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 export interface RadioGroupState {
   selectedRadio: string | undefined,
-  setSelectedRadio: (value: string) => void
+  setSelectedRadio: (value: string) => void,
+  focusableRadio?: string | undefined
 }
 
-export function useRadioGroupState(props: RadioGroupProps):RadioGroupState  {
+export function useRadioGroupState(props: RadioGroupProps): RadioGroupState {
   let [selectedRadio, setSelected] = useControlledState(props.value, props.defaultValue, props.onChange);
 
   let setSelectedRadio = (value) => {
@@ -27,5 +29,9 @@ export function useRadioGroupState(props: RadioGroupProps):RadioGroupState  {
     }
   };
 
-  return {selectedRadio, setSelectedRadio};
+  let activeChildren = React.Children.toArray(props.children).filter(child => !child.props.isDisabled);
+  let focusableRadio = selectedRadio || activeChildren[0] && activeChildren[0].props.value;
+
+
+  return {selectedRadio, setSelectedRadio, focusableRadio};
 }

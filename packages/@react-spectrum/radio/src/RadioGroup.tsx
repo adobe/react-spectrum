@@ -30,7 +30,8 @@ interface RadioGroupContext {
   name?: string,
   validationState?: 'valid' | 'invalid',
   selectedRadio?: string,
-  setSelectedRadio?: (value: string) => void
+  setSelectedRadio?: (value: string) => void,
+  focusableRadio? : string | undefined
 }
 
 const RadioContext = React.createContext<RadioGroupContext | null>(null);
@@ -60,7 +61,7 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
-  let {selectedRadio, setSelectedRadio} = useRadioGroupState(props);
+  let {selectedRadio, setSelectedRadio, focusableRadio} = useRadioGroupState(props);
   let {radioGroupProps, labelProps, radioProps} = useRadioGroup(props);
 
   return (
@@ -114,7 +115,8 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
             validationState,
             name: radioProps.name,
             selectedRadio,
-            setSelectedRadio
+            setSelectedRadio,
+            focusableRadio
           }}>
           {children}
         </RadioContext.Provider>

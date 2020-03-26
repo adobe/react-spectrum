@@ -20,7 +20,8 @@ import {usePressableInput} from '@react-aria/interactions';
 interface RadioAriaProps extends RadioProps {
   isRequired?: boolean,
   isReadOnly?: boolean,
-  name?: string
+  name?: string,
+  focusableRadio?: string | undefined
 }
 
 interface RadioAria {
@@ -34,7 +35,8 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
     isReadOnly,
     isDisabled,
     name,
-    autoFocus
+    autoFocus,
+    focusableRadio
   } = props;
   let {
     selectedRadio,
@@ -60,6 +62,7 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
     inputProps: {
       type: 'radio',
       name,
+      tabIndex: focusableRadio === value ? 0 : -1,
       disabled: isDisabled,
       readOnly: isReadOnly,
       required: isRequired,
