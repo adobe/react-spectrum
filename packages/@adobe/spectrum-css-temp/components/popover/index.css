@@ -21,10 +21,14 @@ governing permissions and limitations under the License.
   --spectrum-popover-min-width: var(--spectrum-global-dimension-size-400);
   --spectrum-popover-min-height: var(--spectrum-global-dimension-size-400);
 
+  /* this conditionally gives me .5px for medium and 1px for large */
+  --spectrum-popover-halfpixel-conditional: calc(0.5 * calc(var(--spectrum-global-dimension-size-125) - var(--spectrum-global-dimension-size-115)));
   /* Popover tip positioning for left/right oriented popovers (-16px/-19px) */
-  --spectrum-popover-tip-horizontal-offset: calc(-6px - var(--spectrum-global-dimension-size-125));
+  --spectrum-popover-tip-horizontal-offset: calc(-5.5px - var(--spectrum-popover-halfpixel-conditional) - var(--spectrum-global-dimension-size-125));
   /* Popover tip positioning for top/bottom oriented popovers (-11px/-13px) */
   --spectrum-popover-tip-vertical-offset: calc(-5px - var(--spectrum-global-dimension-size-75));
+
+  --spectrum-popover-tip-triangle-top-offset: calc(var(--spectrum-global-dimension-size-225) * -1);
 }
 
 .spectrum-Popover {
@@ -60,13 +64,13 @@ governing permissions and limitations under the License.
 
   &::after {
     content: '';
-    width: calc(var(--spectrum-popover-tip-width) + .5px);
+    width: calc(var(--spectrum-popover-tip-width));
     height: var(--spectrum-popover-tip-width);
     border-width: var(--spectrum-popover-border-size);
     border-style: solid;
     position: absolute;
     transform: rotate(45deg);
-    top: -18px;
+    top: var(--spectrum-popover-tip-triangle-top-offset);
     left: -1px;
   }
 }
@@ -122,7 +126,7 @@ governing permissions and limitations under the License.
     @inherit: %spectrum-overlay--bottom--open;
   }
   .spectrum-Popover-tip {
-    top: var(--spectrum-popover-tip-vertical-offset); 
+    top: var(--spectrum-popover-tip-vertical-offset);
     transform: rotate(180deg);
   }
 }
@@ -136,7 +140,7 @@ governing permissions and limitations under the License.
     @inherit: %spectrum-overlay--top--open;
   }
   .spectrum-Popover-tip {
-    bottom: var(--spectrum-popover-tip-vertical-offset); 
+    bottom: var(--spectrum-popover-tip-vertical-offset);
   }
 }
 
