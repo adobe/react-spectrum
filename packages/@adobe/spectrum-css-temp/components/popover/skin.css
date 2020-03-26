@@ -16,6 +16,7 @@ governing permissions and limitations under the License.
   /*
     box-shadow offset/blur is hardcoded here as it cannot be adjusted when scale changes,
     and we'd rather it be able to change when color stops change
+    use filter instead so it includes the triangle
   */
   filter: drop-shadow(var(--spectrum-popover-shadow-color) 0 1px 4px);
 
