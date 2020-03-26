@@ -16,7 +16,7 @@ import {mergeProps} from '@react-aria/utils';
 import {SwitchProps} from '@react-types/switch';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
-import {usePressableInput} from '@react-aria/interactions';
+import {usePress} from '@react-aria/interactions';
 
 export interface ToggleAria {
   inputProps: InputHTMLAttributes<HTMLInputElement>
@@ -49,7 +49,8 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState): To
   }
   let isInvalid = validationState === 'invalid';
 
-  let {pressProps} = usePressableInput({
+  // This handles focusing the input on pointer down, which Safari does not do by default.
+  let {pressProps} = usePress({
     isDisabled
   });
 
