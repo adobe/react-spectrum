@@ -23,7 +23,7 @@ governing permissions and limitations under the License.
 
   /* this conditionally gives me .5px for medium and 1px for large */
   --spectrum-popover-halfpixel-conditional: calc(0.5 * calc(var(--spectrum-global-dimension-size-125) - var(--spectrum-global-dimension-size-115)));
-  /* Popover tip positioning for left/right oriented popovers (-16px/-19px) */
+  /* Popover tip positioning for left/right oriented popovers (-16px/-19.5px) */
   --spectrum-popover-tip-horizontal-offset: calc(-5.5px - var(--spectrum-popover-halfpixel-conditional) - var(--spectrum-global-dimension-size-125));
   /* Popover tip positioning for top/bottom oriented popovers (-11px/-13px) */
   --spectrum-popover-tip-vertical-offset: calc(-5px - var(--spectrum-global-dimension-size-75));

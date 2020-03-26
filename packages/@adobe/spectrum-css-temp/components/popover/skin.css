@@ -17,7 +17,7 @@ governing permissions and limitations under the License.
     box-shadow offset/blur is hardcoded here as it cannot be adjusted when scale changes,
     and we'd rather it be able to change when color stops change
   */
-  box-shadow: 0 1px 4px var(--spectrum-popover-shadow-color);
+  filter: drop-shadow(var(--spectrum-popover-shadow-color) 0 1px 4px);
 
   .spectrum-Dialog-header,
   .spectrum-Dialog-footer,
@@ -28,7 +28,5 @@ governing permissions and limitations under the License.
   .spectrum-Popover-tip::after {
     background-color: var(--spectrum-popover-background-color);
     border-color: var(--spectrum-popover-border-color);
-    /* The math is weird here since the tip is rotated 45°... Technically it should be different for each tip position */
-    box-shadow: -1px -1px 4px var(--spectrum-popover-shadow-color);
   }
 }
