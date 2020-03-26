@@ -344,7 +344,7 @@ module.exports = new Transformer({
         };
       }
 
-      /*if (path.isTSTupleType()) {
+      /* if (path.isTSTupleType()) {
         // fill me in
         return {
           type: 'tuple',
@@ -352,7 +352,7 @@ module.exports = new Transformer({
         };
       }*/
 
-      /*if (path.node.type === 'FunctionDeclaration') {
+      /* if (path.node.type === 'FunctionDeclaration') {
         // this one seems a bug, all the rest have .isTSBlah. Might belong in TODO: normal function
         return {
           type: 'function',
@@ -374,7 +374,7 @@ module.exports = new Transformer({
         };
       }
 
-      /*if (path.isTSEnumDeclaration()) {
+      /* if (path.isTSEnumDeclaration()) {
         // fill me in
       }*/
 

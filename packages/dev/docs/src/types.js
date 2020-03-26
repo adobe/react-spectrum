@@ -62,7 +62,7 @@ export function Type({type}) {
       }
 
       return <Keyword {...type} />;
-    /*case 'array': // TODO
+    /* case 'array': // TODO
       return <span>{JSON.stringify(type)}</span>;*/
     case 'union':
       return <UnionType {...type} />;
