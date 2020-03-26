@@ -42,7 +42,7 @@ import {Item} from '@react-stately/collections';
 
 Breadcrumbs accept as list of `children`, each with a `uniqueKey` prop.
 
-It is highly suggested the `children` are Item components from the `@react-stately/collections` library.
+It is required the `children` are Item components from the `@react-stately/collections` library.
 
 ```tsx example
 function Example() {
@@ -58,22 +58,6 @@ function Example() {
 
 In order to identify children when a user takes an action on a item,
 each child needs to have a `uniqueKey` prop. See [Events](#events) for more information.
-
-It is possible (but not suggested) to use alternative components as children,
-as long as those components have a `uniqueKey` prop and render children.
-
-```tsx example
-function Example() {
-  let ExampleItem = ({children}) => <span>{children}</span>;
-  return (
-    <Breadcrumbs>
-      <ExampleItem uniqueKey="Folder 1">Folder 1</ExampleItem>
-      <ExampleItem uniqueKey="Folder 2">Folder 2</ExampleItem>
-      <ExampleItem uniqueKey="Folder 3">Folder 3</ExampleItem>
-    </Breadcrumbs>
-  );
-}
-```
 
 ### Internationalization
 
@@ -152,10 +136,10 @@ If a change to the aria-level is required, use the `headingAriaLevel` prop.
 
 ### Visible Items
 
-Breadcrumbs truncate by default when there is not enough room to display all items.
+Breadcrumbs truncate by default to a maximum of 4 items visible.
 
-Truncation of breadcrumb items begins when either there is not enough room to display all items,
-or if there are 5 or more breadcrumbs to display.
+If using `maxVisibleItems="auto"`, truncation of breadcrumb items begins when there is not enough room to display all items
+in the parent container.
 
 In order to manually control the truncation, use the `maxVisibleItems` prop.
 
@@ -173,8 +157,8 @@ Some applications find that displaying the root item is useful for orienting use
 This variation keeps the root visible when other items are truncated into the menu.
 
 ```tsx example
-<Flex width="300px">
-  <Breadcrumbs showRoot>
+<Flex width="200px">
+  <Breadcrumbs showRoot maxVisibleItems="auto">
     <Item uniqueKey="Folder 1">Folder 1</Item>
     <Item uniqueKey="Folder 2">Folder 2</Item>
     <Item uniqueKey="Folder 3">Folder 3</Item>

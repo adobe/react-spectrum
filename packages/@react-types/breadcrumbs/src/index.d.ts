@@ -26,10 +26,11 @@ export interface BreadcrumbItemProps extends PressEvents {
 export interface BreadcrumbsProps<T> {
   children: ReactElement<ItemProps<T>> | ReactElement<ItemProps<T>>[],
   /**
-   * Current number of visible items before collapse.
-   * @default "auto"
+   * The current number of visible items before items are collapsed.
+   * @default 4
    */
   maxVisibleItems?: 'auto' | number,
+  /** Called when a */
   onAction?: (key: Key) => void
 }
 
