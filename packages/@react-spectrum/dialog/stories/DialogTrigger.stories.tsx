@@ -20,8 +20,8 @@ import {Heading, Text} from '@react-spectrum/typography';
 import isChromatic from 'storybook-chromatic/isChromatic';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
-import {StatusLight} from "@react-spectrum/statuslight";
 
 storiesOf('DialogTrigger', module)
   // DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.

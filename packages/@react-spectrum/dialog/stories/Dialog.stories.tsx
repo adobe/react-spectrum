@@ -23,9 +23,9 @@ import {Image} from '@react-spectrum/image';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
+import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
-import {StatusLight} from "@react-spectrum/statuslight";
 
 storiesOf('Dialog', module)
 // DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
