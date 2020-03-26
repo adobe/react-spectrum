@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {focusWithoutScrolling} from '@react-aria/utils';
 import React, {ReactNode, RefObject, useContext, useEffect, useLayoutEffect, useRef} from 'react';
 
 // import {FocusScope, useFocusScope} from 'react-events/focus-scope';
@@ -251,7 +252,7 @@ function isElementInScope(element: Element, scope: HTMLElement[]) {
 function focusElement(element: HTMLElement | null) {
   if (element != null) {
     try {
-      element.focus({preventScroll: true});
+      focusWithoutScrolling(element);
     } catch (err) {
       // ignore
     }
