@@ -16,8 +16,8 @@ import packageData from '../package.json';
 
 ```jsx import
 import {Breadcrumbs} from '@react-spectrum/breadcrumbs';
-import {Flex} from '@react-spectrum/layout';
 import {Item} from '@react-stately/collections';
+import {View} from '@react-spectrum/view';
 ```
 
 # Breadcrumbs
@@ -157,7 +157,7 @@ Some applications find that displaying the root item is useful for orienting use
 This variation keeps the root visible when other items are truncated into the menu.
 
 ```tsx example
-<Flex width="200px">
+<View overflow="hidden" width="200px">
   <Breadcrumbs showRoot maxVisibleItems="auto">
     <Item uniqueKey="Folder 1">Folder 1</Item>
     <Item uniqueKey="Folder 2">Folder 2</Item>
@@ -165,7 +165,7 @@ This variation keeps the root visible when other items are truncated into the me
     <Item uniqueKey="Folder 4">Folder 4</Item>
     <Item uniqueKey="Folder 5">Folder 5</Item>
   </Breadcrumbs>
-</Flex>
+</View>
 ```
 
 ### Disabled
