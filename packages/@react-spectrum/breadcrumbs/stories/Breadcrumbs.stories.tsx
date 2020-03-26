@@ -37,36 +37,32 @@ storiesOf('Breadcrumbs', module)
     () => render({size: 'L'})
   )
   .add(
-    'onPress',
-    () => renderPress({})
-  )
-  .add(
     'maxVisibleItems: 4',
-    () => renderPress({})
+    () => renderMany({})
   )
   .add(
     'maxVisibleItems: 4, showRoot: true',
-    () => renderPress({showRoot: true})
+    () => renderMany({showRoot: true})
   )
   .add(
     'maxVisibleItems: auto',
-    () => renderPress({maxVisibleItems: 'auto'})
+    () => renderMany({maxVisibleItems: 'auto'})
   )
   .add(
     'collapsed, maxVisibleItems: auto',
     () => (
       <div style={{width: '100px'}}>
-        {renderPress({maxVisibleItems: 'auto'})}
+        {renderMany({maxVisibleItems: 'auto'})}
       </div>
     )
   )
   .add(
     'maxVisibleItems: auto, showRoot: true',
-    () => renderPress({maxVisibleItems: 'auto', showRoot: true})
+    () => renderMany({maxVisibleItems: 'auto', showRoot: true})
   )
   .add(
     'maxVisibleItems: auto, size: L',
-    () => renderPress({maxVisibleItems: 'auto', size: 'L'})
+    () => renderMany({maxVisibleItems: 'auto', size: 'L'})
   )
   .add(
     'isDisabled: true',
@@ -87,24 +83,24 @@ storiesOf('Breadcrumbs', module)
 
 function render(props = {}) {
   return (
-    <Breadcrumbs {...props}>
-      <Item>Folder 1</Item>
-      <Item>Folder 2</Item>
-      <Item>Folder 3</Item>
+    <Breadcrumbs {...props} onAction={action('onAction')}>
+      <Item uniqueKey="Folder 1">Folder 1</Item>
+      <Item uniqueKey="Folder 2">Folder 2</Item>
+      <Item uniqueKey="Folder 3">Folder 3</Item>
     </Breadcrumbs>
   );
 }
 
-function renderPress(props = {}) {
+function renderMany(props = {}) {
   return (
-    <Breadcrumbs {...props}>
-      <Item onPress={action('press Folder 1')}>Folder 1</Item>
-      <Item onPress={action('press Folder 2')}>Folder 2</Item>
-      <Item onPress={action('press Folder 3')}>Folder 3</Item>
-      <Item onPress={action('press Folder 4')}>Folder 4</Item>
-      <Item onPress={action('press Folder 5')}>Folder 5</Item>
-      <Item onPress={action('press Folder 6')}>Folder 6</Item>
-      <Item onPress={action('press Folder 7')}>Folder 7</Item>
+    <Breadcrumbs {...props} onAction={action('onAction')}>
+      <Item uniqueKey="Folder 1">Folder 1</Item>
+      <Item uniqueKey="Folder 2">Folder 2</Item>
+      <Item uniqueKey="Folder 3">Folder 3</Item>
+      <Item uniqueKey="Folder 4">Folder 4</Item>
+      <Item uniqueKey="Folder 5">Folder 5</Item>
+      <Item uniqueKey="Folder 6">Folder 6</Item>
+      <Item uniqueKey="Folder 7">Folder 7</Item>
     </Breadcrumbs>
   );
 }

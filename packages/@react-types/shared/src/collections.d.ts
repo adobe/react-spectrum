@@ -11,7 +11,6 @@
  */
 
 import {Key, ReactElement, ReactNode} from 'react';
-import {PressEvent} from '@react-types/shared';
 
 export interface ItemProps<T> {
   title?: ReactNode, // label?? contents?
@@ -19,8 +18,7 @@ export interface ItemProps<T> {
   hasChildItems?: boolean,
   children: ReactNode, // CellRenderer??
   textValue?: string,
-  uniqueKey?: Key,
-  onPress?: (e: PressEvent) => void
+  uniqueKey?: Key
 }
 
 export type ItemElement<T> = ReactElement<ItemProps<T>>;

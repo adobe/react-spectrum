@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton, Button} from '@react-spectrum/button';
+import {ActionButton, Button, ButtonGroup} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header} from '@react-spectrum/view';
@@ -49,6 +49,10 @@ storiesOf('Dialog', module)
   .add(
     'with hero, isDimissable',
     () => renderHero({isDismissable: true})
+  )
+  .add(
+    'with footer, isDimissable',
+    () => renderFooter({})
   )
   .add(
     'small',
@@ -209,10 +213,10 @@ function render({width = 'auto', isDismissable = undefined, ...props}) {
             <Divider />
             <Content>{singleParagraph()}</Content>
             {!isDismissable &&
-              <Footer>
+              <ButtonGroup>
                 <Button variant="secondary" onPress={close}>Cancel</Button>
                 <Button variant="cta" onPress={close}>Confirm</Button>
-              </Footer>}
+              </ButtonGroup>}
           </Dialog>
         )}
       </DialogTrigger>
@@ -232,12 +236,35 @@ function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
             <Divider />
             <Content>{singleParagraph()}</Content>
             {!isDismissable &&
-              <Footer>
+              <ButtonGroup>
                 <Button variant="secondary" onPress={close}>Cancel</Button>
                 <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
-              </Footer>}
+              </ButtonGroup>}
           </Dialog>
           )}
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderFooter({width = 'auto', isDismissable = undefined, ...props}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger isDismissable={isDismissable} defaultOpen>
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog {...props}>
+            <Header><Heading>The Heading</Heading></Header>
+            <Divider />
+            <Content>{singleParagraph()}</Content>
+            <Footer><Checkbox>I accept</Checkbox></Footer>
+            {!isDismissable &&
+            <ButtonGroup>
+              <Button variant="secondary" onPress={close}>Cancel</Button>
+              <Button variant="cta" onPress={close}>Confirm</Button>
+            </ButtonGroup>}
+          </Dialog>
+        )}
       </DialogTrigger>
     </div>
   );
@@ -281,10 +308,10 @@ function renderWithForm({width = 'auto', ...props}) {
                 </RadioGroup>
               </Form>
             </Content>
-            <Footer>
+            <ButtonGroup>
               <Button variant="secondary" onPress={close}>Cancel</Button>
               <Button variant="cta" onPress={close}>Confirm</Button>
-            </Footer>
+            </ButtonGroup>
           </Dialog>
         )}
       </DialogTrigger>
@@ -312,10 +339,10 @@ function renderLongContent({width = 'auto', ...props}) {
             <Header><Heading>The Heading</Heading></Header>
             <Divider />
             <Content>{fiveParagraphs()}</Content>
-            <Footer>
+            <ButtonGroup>
               <Button variant="secondary" onPress={close}>Cancel</Button>
               <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
-            </Footer>
+            </ButtonGroup>
           </Dialog>
         )}
       </DialogTrigger>
@@ -333,11 +360,11 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
             <Header><Heading>The Heading</Heading></Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
-            <Footer>
+            <ButtonGroup>
               <Button variant="secondary" onPress={close}>Secondary</Button>
               <Button variant="primary" onPress={close}>Primary</Button>
               <Button variant="cta" onPress={close} autoFocus>CTA</Button>
-            </Footer>
+            </ButtonGroup>
           </Dialog>
         )}
       </DialogTrigger>
@@ -361,10 +388,10 @@ function renderWithDividerInContent({width = 'auto', ...props}) {
                 <Text flexGrow={1} flexBasis={0}>Column number two. Eleifend quam adipiscing vitae proin sagittis nisl. Diam donec adipiscing tristique risus.</Text>
               </Flex>
             </Content>
-            <Footer>
+            <ButtonGroup>
               <Button variant="primary" onPress={close}>Primary</Button>
               <Button variant="cta" onPress={close} autoFocus>CTA</Button>
-            </Footer>
+            </ButtonGroup>
           </Dialog>
         )}
       </DialogTrigger>

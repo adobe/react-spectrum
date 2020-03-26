@@ -30,11 +30,12 @@ interface PressState {
   ignoreClickAfterPress: boolean,
   activePointerId: any,
   target: HTMLElement | null,
-  isOverTarget: boolean
+  isOverTarget: boolean,
+  userSelect?: string
 }
 
 interface EventBase {
-  target: EventTarget,
+  currentTarget: EventTarget,
   shiftKey: boolean,
   ctrlKey: boolean,
   metaKey: boolean
@@ -102,7 +103,7 @@ export function usePress(props: PressHookProps): PressResult {
         onPressStart({
           type: 'pressstart',
           pointerType,
-          target: originalEvent.target as HTMLElement,
+          target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey
@@ -127,7 +128,7 @@ export function usePress(props: PressHookProps): PressResult {
         onPressEnd({
           type: 'pressend',
           pointerType,
-          target: originalEvent.target as HTMLElement,
+          target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey
@@ -144,7 +145,7 @@ export function usePress(props: PressHookProps): PressResult {
         onPress({
           type: 'press',
           pointerType,
-          target: originalEvent.target as HTMLElement,
+          target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey
@@ -161,7 +162,7 @@ export function usePress(props: PressHookProps): PressResult {
         onPressUp({
           type: 'pressup',
           pointerType,
-          target: originalEvent.target as HTMLElement,
+          target: originalEvent.currentTarget as HTMLElement,
           shiftKey: originalEvent.shiftKey,
           metaKey: originalEvent.metaKey,
           ctrlKey: originalEvent.ctrlKey
@@ -180,7 +181,7 @@ export function usePress(props: PressHookProps): PressResult {
           // after which focus moved to the current element. Ignore these events and
           // only handle the first key down event.
           if (!state.isPressed && !e.repeat) {
-            state.target = e.target as HTMLElement;
+            state.target = e.currentTarget as HTMLElement;
             state.isPressed = true;
             triggerPressStart(e, 'keyboard');
 
@@ -233,6 +234,27 @@ export function usePress(props: PressHookProps): PressResult {
       }
     };
 
+    // Safari on iOS starts selecting text on long press. The only way to avoid this, it seems,
+    // is to add user-select: none to the entire page. Adding it to the pressable element prevents
+    // that element from being selected, but nearby elements may still receive selection. We add
+    // user-select: none on touch start, and remove it again on touch end to prevent this.
+    let disableTextSelection = () => {
+      state.userSelect = document.documentElement.style.webkitUserSelect;
+      document.documentElement.style.webkitUserSelect = 'none';
+    };
+
+    let restoreTextSelection = () => {
+      // There appears to be a delay on iOS where selection still might occur 
+      // after pointer up, so wait a bit before removing user-select.
+      setTimeout(() => {
+        // Avoid race conditions
+        if (!state.isPressed && document.documentElement.style.webkitUserSelect === 'none') {
+          document.documentElement.style.webkitUserSelect = state.userSelect || '';
+          state.userSelect = null;
+        }
+      }, 300);
+    };
+
     if (typeof PointerEvent !== 'undefined') {
       pressProps.onPointerDown = (e) => {
         // Only handle left clicks
@@ -246,6 +268,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.isOverTarget = true;
           state.activePointerId = e.pointerId;
           state.target = e.currentTarget;
+          disableTextSelection();
           triggerPressStart(e, e.pointerType);
 
           document.addEventListener('pointermove', onPointerMove, false);
@@ -300,6 +323,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.isOverTarget = false;
           state.activePointerId = null;
           unbindEvents();
+          restoreTextSelection();
         }
       };
 
@@ -312,6 +336,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.isOverTarget = false;
           state.activePointerId = null;
           unbindEvents();
+          restoreTextSelection();
         }
       };
     } else {
@@ -381,6 +406,8 @@ export function usePress(props: PressHookProps): PressResult {
         state.ignoreEmulatedMouseEvents = true;
         state.isOverTarget = true;
         state.isPressed = true;
+
+        disableTextSelection();
         triggerPressStart(e, 'touch');
       };
 
@@ -414,6 +441,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.activePointerId = null;
         state.isOverTarget = false;
         state.ignoreEmulatedMouseEvents = true;
+        restoreTextSelection();
       };
 
       pressProps.onTouchCancel = (e) => {
@@ -425,6 +453,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.isPressed = false;
           state.activePointerId = null;
           state.isOverTarget = false;
+          restoreTextSelection();
         }
       };
     }
@@ -502,7 +531,7 @@ function getTouchById(
 
 function createEvent(target: HTMLElement, e: EventBase): EventBase {
   return {
-    target,
+    currentTarget: target,
     shiftKey: e.shiftKey,
     ctrlKey: e.ctrlKey,
     metaKey: e.metaKey
