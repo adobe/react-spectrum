@@ -128,7 +128,7 @@ storiesOf('MenuTrigger', module)
             onPressEnd={action('pressend')}>
               Menu Button
           </ActionButton>
-          <Menu onSelectionChange={action('onSelectionChange')}>
+          <Menu onAction={action('action')}>
             <Section title="Section 1">
               <Item>
                 <Copy size="S" />
@@ -185,7 +185,7 @@ storiesOf('MenuTrigger', module)
                 onPressEnd={action('pressend')}>
                   Menu Button
               </ActionButton>
-              <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+              <Menu items={withSection} itemKey="name" onAction={action('action')}>
                 {item => (
                   <Section items={item.children} title={item.name}>
                     {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -216,7 +216,7 @@ storiesOf('MenuTrigger', module)
               onPressEnd={action('pressend')}>
                 Menu Button
             </ActionButton>
-            <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} disabledKeys={['Snake', 'Ross']}>
+            <Menu items={withSection} itemKey="name" onAction={action('action')} disabledKeys={['Snake', 'Ross']}>
               {item => (
                 <Section items={item.children} title={item.name}>
                   {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -256,7 +256,7 @@ storiesOf('MenuTrigger', module)
             )}>
             <ChevronDownMedium />
           </Button>
-          <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+          <Menu items={withSection} itemKey="name" onAction={action('action')}>
             {item => (
               <Section items={item.children} title={item.name}>
                 {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -278,7 +278,7 @@ function render(props = {}, menuProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </ActionButton>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} disabledKeys={['Snake', 'Ross']} {...menuProps}>
+        <Menu items={withSection} itemKey="name" onAction={action('action')} disabledKeys={['Snake', 'Ross']} {...menuProps}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
