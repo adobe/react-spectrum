@@ -20,6 +20,7 @@ governing permissions and limitations under the License.
 .spectrum-Dropdown {
   position: relative;
   display: inline-block;
+  user-select: none;
 
   /* Truncate if menu options make us too wide */
   max-width: 100%;
