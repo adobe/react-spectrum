@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {focusWithoutScrolling} from '@react-aria/utils';
 import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressEvent} from '@react-types/shared';
@@ -58,7 +59,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let isFocused = itemKey === manager.focusedKey;
   useEffect(() => {
     if (isFocused && manager.isFocused && document.activeElement !== itemRef.current) {
-      itemRef.current.focus({preventScroll: true});
+      focusWithoutScrolling(itemRef.current);
     }
   }, [itemRef, isFocused, manager.focusedKey, manager.isFocused]);
 

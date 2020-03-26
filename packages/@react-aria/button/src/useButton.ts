@@ -13,7 +13,7 @@
 import {ButtonProps} from '@react-types/button';
 import {mergeProps} from '@react-aria/utils';
 import {RefObject} from 'react';
-import {useDOMPropsResponder, usePressableInput} from '@react-aria/interactions';
+import {useDOMPropsResponder, usePress} from '@react-aria/interactions';
 import {useFocusable} from '@react-aria/focus';
 
 interface AriaButtonProps extends ButtonProps {
@@ -61,7 +61,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     };
   }
 
-  let {pressProps, isPressed} = usePressableInput({
+  let {pressProps, isPressed} = usePress({
     onPressStart,
     onPressEnd,
     onPressChange,
