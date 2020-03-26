@@ -62,6 +62,8 @@ export function Type({type}) {
       }
 
       return <Keyword {...type} />;
+    /*case 'array': // TODO
+      return <span>{JSON.stringify(type)}</span>;*/
     case 'union':
       return <UnionType {...type} />;
     case 'intersection':
@@ -84,10 +86,16 @@ export function Type({type}) {
       return <Keyword {...type} />;
     case 'alias':
       return <code className={typographyStyles['spectrum-Code4']}><Type type={type.value} /></code>;
+    case 'qualifiedName':
+      return <QualifiedName {...type} />;
     default:
       console.log('UNKNOWN TYPE', type);
       return null;
   }
+}
+
+function QualifiedName({left, right}) {
+  return <span><Type type={left} /><span className="token punctuation">.</span><Type type={right} /></span>;
 }
 
 function StringLiteral({value}) {
