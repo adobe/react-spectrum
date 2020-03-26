@@ -83,8 +83,10 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
           onClose();
         }
         break;
+      // Enter should close the Menu even if closeOnSelect=false
+      // https://github.com/adobe-private/react-spectrum-v3/pull/171#issuecomment-580917542
       case 'Enter':
-        if (!isDisabled && closeOnSelect && onClose) {
+        if (!isDisabled && onClose) {
           onClose();
         }
         break;
