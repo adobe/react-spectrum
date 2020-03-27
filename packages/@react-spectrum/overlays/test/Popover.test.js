@@ -138,5 +138,14 @@ describe('Popover', function () {
       fireEvent.mouseUp(document.body);
       expect(onClose).toHaveBeenCalledTimes(1);
     });
+
+    it('should have a hidden dismiss button for screen readers', function () {
+      let onClose = jest.fn();
+      let {getByRole} = render(<Popover isOpen onClose={onClose} />);      
+      let button = getByRole('button');
+      expect(button).toHaveAttribute('aria-label', 'Dismiss');
+      fireEvent.click(button);
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
   });
 });

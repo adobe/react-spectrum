@@ -19,10 +19,12 @@ import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
 import {Heading} from '@react-spectrum/typography';
+import intlMessages from '../intl/*.json';
 import React, {useContext} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 export function AlertDialog(props: SpectrumAlertDialogProps) {
   props = useSlotProps(props);
@@ -44,6 +46,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let formatMessage = useMessageFormatter(intlMessages);
 
   let confirmVariant: SpectrumButtonProps['variant'] = 'primary';
   if (variant) {
@@ -56,7 +59,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
 
   return (
     <Dialog {...styleProps} UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)} size="M" role="alertdialog">
-      <Header><Heading>{title}</Heading>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
+      <Header><Heading>{title}</Heading>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label={formatMessage('alert')} />}</Header>
       <Divider />
       <Content>{children}</Content>
       <ButtonGroup>

@@ -16,11 +16,13 @@ import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {FocusScope} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
+import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
 import {SpectrumBaseDialogProps, SpectrumDialogProps} from '@react-types/dialog';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 /**
  * Dialogs display important information that users need to acknowledge.
@@ -38,6 +40,7 @@ export function Dialog(props: SpectrumDialogProps) {
     onDismiss = contextProps.onClose,
     ...otherProps
   } = props;
+  let formatMessage = useMessageFormatter(intlMessages);
   let {styleProps} = useStyleProps(otherProps);
   let allProps: SpectrumBaseDialogProps = mergeProps(
     mergeProps(
@@ -65,7 +68,7 @@ export function Dialog(props: SpectrumDialogProps) {
           <ActionButton
             slot="closeButton"
             isQuiet
-            aria-label="dismiss"
+            aria-label={formatMessage('dismiss')}
             onPress={onDismiss}>
             <CrossLarge size="L" />
           </ActionButton>
