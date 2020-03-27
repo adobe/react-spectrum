@@ -28,7 +28,7 @@ interface SelectableListOptions {
   focusStrategy?: FocusStrategy,
   wrapAround?: boolean,
   isVirtualized?: boolean,
-  escapeClearsSelection?: boolean
+  disallowEmptySelection?: boolean
 }
 
 interface SelectableListAria {
@@ -45,7 +45,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     focusStrategy,
     wrapAround,
     isVirtualized,
-    escapeClearsSelection = false
+    disallowEmptySelection = false
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -70,7 +70,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     autoFocus,
     focusStrategy,
     wrapAround,
-    escapeClearsSelection
+    disallowEmptySelection
   });
 
   return {

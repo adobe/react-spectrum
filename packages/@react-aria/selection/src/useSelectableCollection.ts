@@ -37,7 +37,7 @@ interface SelectableCollectionOptions {
   autoFocus?: boolean,
   focusStrategy?: FocusStrategy,
   wrapAround?: boolean,
-  escapeClearsSelection?: boolean
+  disallowEmptySelection?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -51,7 +51,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     autoFocus = false,
     focusStrategy,
     wrapAround = false,
-    escapeClearsSelection = true
+    disallowEmptySelection = true
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -164,7 +164,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       case 'Escape':
         e.preventDefault();
-        if (escapeClearsSelection) {
+        if (disallowEmptySelection) {
           manager.clearSelection();
         }
         break;
