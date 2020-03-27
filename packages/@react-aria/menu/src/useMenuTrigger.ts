@@ -76,12 +76,16 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
     menuTriggerProps: {
       ...triggerAriaProps,
       id: menuTriggerId,
-      onPressStart() {
-        // Wait a frame to ensure target is focused prior to opening the menu so FocusScope
-        // can record the correct element to restore focus to.
-        requestAnimationFrame(() => {
+      onPressStart(e) {
+        // For consistency with native, open the menu on mouse/key down, but touch up.
+        if (e.pointerType !== 'touch') {
           onPress();
-        });
+        }
+      },
+      onPress(e) {
+        if (e.pointerType === 'touch') {
+          onPress();
+        }
       },
       onKeyDown
     },
