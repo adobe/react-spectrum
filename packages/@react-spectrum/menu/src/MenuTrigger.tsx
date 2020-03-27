@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {FocusStrategy, SpectrumMenuTriggerProps} from '@react-types/menu';
 import {MenuContext} from './context';
@@ -19,14 +18,13 @@ import {Placement, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
 import React, {Fragment, useRef, useState} from 'react';
-import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
 import {useMenuTrigger} from '@react-aria/menu';
 
 export function MenuTrigger(props: SpectrumMenuTriggerProps) {
-  let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let menuPopoverRef = useRef<HTMLDivElement>();
   let menuTriggerRef = useRef<HTMLElement>();
+  let menuRef = useRef<HTMLUListElement>();
   let {
     children,
     onOpenChange,
@@ -59,9 +57,9 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   );
 
   let {overlayProps, placement} = useOverlayPosition({
-    containerRef: unwrapDOMRef(containerRef),
     targetRef: menuTriggerRef,
     overlayRef: menuPopoverRef,
+    scrollRef: menuRef,
     placement: `${direction} ${align}` as Placement,
     shouldFlip: shouldFlip,
     isOpen
@@ -69,6 +67,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
 
   let menuContext = {
     ...menuProps,
+    ref: menuRef,
     focusStrategy,
     onClose,
     closeOnSelect,
@@ -84,7 +83,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
         </PressResponder>
       </Provider>
       <MenuContext.Provider value={menuContext}>
-        <Overlay isOpen={isOpen} ref={containerRef}>
+        <Overlay isOpen={isOpen}>
           <Popover {...overlayProps} ref={menuPopoverRef} hideArrow placement={placement} onClose={onClose}>
             <FocusScope restoreFocus>
               {menu}

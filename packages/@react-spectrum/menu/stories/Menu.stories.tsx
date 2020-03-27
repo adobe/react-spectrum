@@ -145,7 +145,7 @@ storiesOf('Menu', module)
       <Popover isOpen hideArrow>
         <Menu>
           <Section title="Actions">
-            <DialogTrigger>
+            <DialogTrigger isDismissable>
               <Item>Edit...</Item>
               <Dialog>
                 <Header>

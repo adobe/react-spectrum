@@ -12,14 +12,14 @@
 
 import {classNames} from '@react-spectrum/utils';
 import overrideStyles from './overlays.css';
-import {Placement} from '@react-types/overlays';
+import {PlacementAxis} from '@react-types/overlays';
 import React, {HTMLAttributes, ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {useOverlay} from '@react-aria/overlays';
 
 interface PopoverProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
-  placement?: Placement,
+  placement?: PlacementAxis,
   arrowProps?: HTMLAttributes<HTMLElement>,
   hideArrow?: boolean,
   isOpen?: boolean,
@@ -41,7 +41,7 @@ function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
         classNames(
           styles,
           'spectrum-Popover',
-          `spectrum-Popover--${placement.split(' ')[0]}`,
+          `spectrum-Popover--${placement}`,
           {
             'spectrum-Popover--withTip': !hideArrow,
             'is-open': isOpen

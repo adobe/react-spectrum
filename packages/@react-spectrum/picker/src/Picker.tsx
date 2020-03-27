@@ -60,6 +60,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let popoverRef = useRef<HTMLDivElement>();
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
+  let listboxRef = useRef();
 
   // We create the listbox layout in Picker and pass it to ListBoxBase below
   // so that the layout information can be cached even while the listbox is not mounted.
@@ -72,9 +73,9 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   }, state);
 
   let {overlayProps, placement} = useOverlayPosition({
-    containerRef: unwrapDOMRef(containerRef),
     targetRef: unwrapDOMRef(triggerRef),
     overlayRef: popoverRef,
+    scrollRef: listboxRef,
     placement: `${direction} ${align}` as Placement,
     shouldFlip: shouldFlip,
     isOpen: state.isOpen
@@ -85,6 +86,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   let listbox = (
     <FocusScope restoreFocus>
       <ListBoxBase
+        ref={listboxRef}
         domProps={menuProps}
         autoFocus
         wrapAround
