@@ -14,13 +14,13 @@ import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from
 import {DOMRef, LabelPosition} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import {RadioGroupState, useRadioGroupState} from '@react-stately/radio';
 import React, {useContext} from 'react';
 import {SpectrumRadioGroupProps} from '@react-types/radio';
 import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useRadioGroup} from '@react-aria/radio';
-import {useRadioGroupState} from '@react-stately/radio';
 
 interface RadioGroupContext {
   isDisabled?: boolean,
@@ -29,9 +29,7 @@ interface RadioGroupContext {
   isEmphasized?: boolean,
   name?: string,
   validationState?: 'valid' | 'invalid',
-  selectedRadio?: string,
-  setSelectedRadio?: (value: string) => void,
-  focusableRadio? : string | undefined
+  state: RadioGroupState
 }
 
 const RadioContext = React.createContext<RadioGroupContext | null>(null);
@@ -61,7 +59,8 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
-  let {selectedRadio, setSelectedRadio, focusableRadio} = useRadioGroupState(props);
+  let state = useRadioGroupState(props);
+
   let {radioGroupProps, labelProps, radioProps} = useRadioGroup(props);
 
   return (
@@ -114,9 +113,7 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
             isDisabled,
             validationState,
             name: radioProps.name,
-            selectedRadio,
-            setSelectedRadio,
-            focusableRadio
+            state
           }}>
           {children}
         </RadioContext.Provider>

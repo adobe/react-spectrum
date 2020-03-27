@@ -14,14 +14,14 @@ import {AllHTMLAttributes} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {RadioProps} from '@react-types/radio';
+import {useEffect} from 'react';
 import {useFocusable} from '@react-aria/focus';
 import {usePressableInput} from '@react-aria/interactions';
 
 interface RadioAriaProps extends RadioProps {
   isRequired?: boolean,
   isReadOnly?: boolean,
-  name?: string,
-  focusableRadio?: string | undefined
+  name?: string
 }
 
 interface RadioAria {
@@ -35,12 +35,13 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
     isReadOnly,
     isDisabled,
     name,
-    autoFocus,
-    focusableRadio
+    autoFocus
   } = props;
   let {
     selectedRadio,
-    setSelectedRadio
+    setSelectedRadio,
+    focusableRadio,
+    setFocusableRadio
   } = state;
 
   let checked = selectedRadio === value;
@@ -54,6 +55,12 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
   let {pressProps} = usePressableInput({
     isDisabled
   });
+
+  useEffect(() => {
+    if (autoFocus) {
+      setFocusableRadio(value);
+    }
+  }, [autoFocus, setFocusableRadio, value]);
 
   let {focusableProps} = useFocusable(props);
   let interactions = mergeProps(pressProps, focusableProps);
