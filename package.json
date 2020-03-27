@@ -101,7 +101,7 @@
     "parcel": "^2.0.0-nightly.90",
     "patch-package": "^6.2.0",
     "plop": "^2.4.0",
-    "postcss-calc": "^7.0.1",
+    "postcss-calc": "^6.0.0",
     "postcss-custom-properties": "6.3.1",
     "postcss-dir-pseudo-class": "^5.0.0",
     "postcss-focus-ring": "^1.0.0",
