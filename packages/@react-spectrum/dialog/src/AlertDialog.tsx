@@ -18,12 +18,12 @@ import {Content, Header} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
+import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/typography';
 import React, {useContext} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
-import {Flex} from "@react-spectrum/layout";
 
 export function AlertDialog(props: SpectrumAlertDialogProps) {
   props = useSlotProps(props);
