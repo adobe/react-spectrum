@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection} from '@react-stately/collections';
-import {Key, ReactElement} from 'react';
+import {Collection, Node} from '@react-stately/collections';
+import {Key} from 'react';
 
-export class ActionGroupCollection<T extends ReactElement> implements Collection<T> {
-  public items: T[];
+export class ActionGroupCollection<T> implements Collection<Node<T>> {
+  private iterable: Iterable<Node<T>>;
   private keys: Key[];
 
-  constructor(items: T[]) {
-    this.items = items;
-    this.keys = items.filter(item => !item.props.isDisabled).map(child => child.key);
+  constructor(nodes: Iterable<Node<T>>) {
+    this.iterable = nodes;
+    this.keys = [...this.iterable].filter(item => !item.isDisabled).map(item => item.key);
   }
 
   get size() {
@@ -27,7 +27,7 @@ export class ActionGroupCollection<T extends ReactElement> implements Collection
   }
 
   *[Symbol.iterator]() {
-    yield* this.items;
+    yield* this.iterable;
   }
 
   getKeys() {
@@ -55,6 +55,6 @@ export class ActionGroupCollection<T extends ReactElement> implements Collection
   }
   
   getItem(key: Key) {
-    return this.items.find(child => child.key === key);
+    return [...this.iterable].find(child => child.key === key);
   }
 }
