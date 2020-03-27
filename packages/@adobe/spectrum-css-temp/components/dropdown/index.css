@@ -20,6 +20,7 @@ governing permissions and limitations under the License.
 .spectrum-Dropdown {
   position: relative;
   display: inline-block;
+  user-select: none;
 
   /* Truncate if menu options make us too wide */
   max-width: 100%;
@@ -128,10 +129,25 @@ governing permissions and limitations under the License.
   min-width: var(--spectrum-dropdown-quiet-min-width);
 }
 
-.spectrum-Dropdown-popover {
-  max-width: var(--spectrum-dropdown-popover-max-width);
+.spectrum-Dropdown-popover--quiet {
+  width: var(--spectrum-dropdown-width);
+
+  /* Define this var so it can be read from JS */
+  --spectrum-dropdown-quiet-offset: calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size));
+  margin-left: calc(var(--spectrum-dropdown-quiet-offset) * -1);
 }
 
-.spectrum-Dropdown-popover--quiet {
-  margin-left: calc(calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size)) * -1);
+/* When used with a label or inside a Form, we need to override some things from .spectrum-Field
+ * so quiet dropdowns still collapse properly. */
+.spectrum-Field.spectrum-Dropdown-fieldWrapper--quiet {
+  width: auto;
+
+  .spectrum-Dropdown--quiet {
+    width: auto;
+    min-width: var(--spectrum-dropdown-quiet-min-width);
+
+    .spectrum-Dropdown-trigger {
+      width: auto;
+    }
+  }
 }

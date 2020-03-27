@@ -21,6 +21,7 @@ describe('useMenuTrigger', function () {
 
   let renderMenuTriggerHook = (menuTriggerProps, menuTriggerState) => {
     let {result} = renderHook(() => useMenuTrigger(menuTriggerProps, menuTriggerState));
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     return result.current;
   };
 
@@ -72,7 +73,7 @@ describe('useMenuTrigger', function () {
 
     let {menuTriggerProps} = renderMenuTriggerHook(props, state);
     expect(typeof menuTriggerProps.onPressStart).toBe('function');
-    menuTriggerProps.onPressStart();
+    menuTriggerProps.onPressStart({pointerType: 'mouse'});
     expect(setOpen).toHaveBeenCalledTimes(1);
     expect(setOpen).toHaveBeenCalledWith(!state.isOpen);
     expect(setFocusStrategy).toHaveBeenCalledTimes(1);

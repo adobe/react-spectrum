@@ -22,6 +22,10 @@ import {SpectrumBaseDialogProps, SpectrumDialogProps} from '@react-types/dialog'
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
 
+/**
+ * Dialogs display important information that users need to acknowledge.
+ * They appear over the interface and block further interactions.
+ */
 export function Dialog(props: SpectrumDialogProps) {
   props = useSlotProps(props);
   let {
@@ -57,8 +61,8 @@ export function Dialog(props: SpectrumDialogProps) {
     return (
       <ModalDialog {...allProps} size={size}>
         {children}
-        {isDismissable && 
-          <ActionButton 
+        {isDismissable &&
+          <ActionButton
             slot="closeButton"
             isQuiet
             aria-label="dismiss"
@@ -98,7 +102,8 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
       divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
       content: {UNSAFE_className: styles['spectrum-Dialog-content']},
       footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
-      closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']}
+      closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']},
+      buttonGroup: {UNSAFE_className: styles['spectrum-Dialog-buttonGroup']}
     };
   }
 

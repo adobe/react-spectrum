@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {focusWithoutScrolling} from '@react-aria/utils';
 import React, {ReactNode, RefObject, useContext, useEffect, useLayoutEffect, useRef} from 'react';
 
 // import {FocusScope, useFocusScope} from 'react-events/focus-scope';
@@ -36,6 +37,7 @@ interface FocusManager {
 const FocusContext = React.createContext<FocusManager>(null);
 
 let activeScope: RefObject<HTMLElement[]> = null;
+let scopes: Set<RefObject<HTMLElement[]>> = new Set();
 
 // This is a hacky DOM-based implementation of a FocusScope until this RFC lands in React:
 // https://github.com/reactjs/rfcs/pull/109
@@ -47,7 +49,7 @@ export function FocusScope(props: FocusScopeProps) {
   let endRef = useRef<HTMLSpanElement>();
   let scopeRef = useRef<HTMLElement[]>([]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Find all rendered nodes between the sentinels and add them to the scope.
     let node = startRef.current.nextSibling;
     let nodes = [];
@@ -57,10 +59,14 @@ export function FocusScope(props: FocusScopeProps) {
     }
 
     scopeRef.current = nodes;
+    scopes.add(scopeRef);
+    return () => {
+      scopes.delete(scopeRef);
+    };
   }, [children]);
 
   useFocusContainment(scopeRef, contain);
-  useRestoreFocus(restoreFocus);
+  useRestoreFocus(scopeRef, restoreFocus, contain);
   useAutoFocus(scopeRef, autoFocus);
 
   let focusManager = createFocusManager(scopeRef);
@@ -148,6 +154,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
   let focusedNode = useRef<HTMLElement>();
 
   useEffect(() => {
+    let scope = scopeRef.current;
     if (!contain) {
       return;
     }
@@ -159,11 +166,11 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       }
 
       let focusedElement = document.activeElement as HTMLElement;
-      if (!isElementInScope(focusedElement, scopeRef.current)) {
+      if (!isElementInScope(focusedElement, scope)) {
         return;
       }
 
-      let elements = getFocusableElementsInScope(scopeRef.current, {tabbable: true});
+      let elements = getFocusableElementsInScope(scope, {tabbable: true});
       let position = elements.indexOf(focusedElement);
       let lastPosition = elements.length - 1;
       let nextElement = null;
@@ -189,36 +196,53 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     };
 
     let onFocus = (e) => {
-      // If the focused element is in the current scope, and not in the active scope,
-      // update the active scope to point to this scope.
-      let isInScope = isElementInScope(e.target, scopeRef.current);
-      if (isInScope && (!activeScope || !isElementInScope(e.target, activeScope.current))) {
-        activeScope = scopeRef;
-      }
-
-      // Save the currently focused node in this scope
-      if (isInScope) {
-        focusedNode.current = e.target;
-      }
-
       // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
-      // restore focus to the previously focused node or the first tabbable element if none.
-      if (activeScope === scopeRef && !isInScope) {
+      // restore focus to the previously focused node or the first tabbable element in the active scope.
+      let isInAnyScope = isElementInAnyScope(e.target, scopes);
+      if (!isInAnyScope) {
         if (focusedNode.current) {
           focusedNode.current.focus();
-        } else {
-          focusFirstInScope(scopeRef.current);
-        }
+        } else if (activeScope) {
+          focusFirstInScope(activeScope.current);
+        } 
+      } else {
+        e.stopPropagation();
+        activeScope = scopeRef;
+        focusedNode.current = e.target;
+      }
+    };
+
+    let onBlur = (e) => {
+      e.stopPropagation();
+      let isInAnyScope = isElementInAnyScope(e.relatedTarget, scopes);
+
+      if (!isInAnyScope) {
+        activeScope = scopeRef;
+        focusedNode.current = e.target;
+        focusedNode.current.focus();
       }
     };
 
     document.addEventListener('keydown', onKeyDown, false);
     document.addEventListener('focusin', onFocus, false);
+    scope.forEach(element => element.addEventListener('focusin', onFocus, false));
+    scope.forEach(element => element.addEventListener('focusout', onBlur, false));
     return () => {
       document.removeEventListener('keydown', onKeyDown, false);
       document.removeEventListener('focusin', onFocus, false);
+      scope.forEach(element => element.removeEventListener('focusin', onFocus, false));
+      scope.forEach(element => element.removeEventListener('focusout', onBlur, false));
     };
   }, [scopeRef, contain]);
+}
+
+function isElementInAnyScope(element: Element, scopes: Set<RefObject<HTMLElement[]>>) {
+  for (let scope of scopes.values()) {
+    if (isElementInScope(element, scope.current)) { 
+      return true; 
+    }
+  }  
+  return false;
 }
 
 function isElementInScope(element: Element, scope: HTMLElement[]) {
@@ -228,7 +252,7 @@ function isElementInScope(element: Element, scope: HTMLElement[]) {
 function focusElement(element: HTMLElement | null) {
   if (element != null) {
     try {
-      element.focus({preventScroll: true});
+      focusWithoutScrolling(element);
     } catch (err) {
       // ignore
     }
@@ -251,12 +275,72 @@ function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
   }, [scopeRef, autoFocus]);
 }
 
-function useRestoreFocus(restoreFocus: boolean) {
+function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boolean, contain: boolean) {
   // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
   useLayoutEffect(() => {
+    let scope = scopeRef.current;
     let nodeToRestore = document.activeElement as HTMLElement;
+
+    // Handle the Tab key so that tabbing out of the scope goes to the next element
+    // after the node that had focus when the scope mounted. This is important when
+    // using portals for overlays, so that focus goes to the expected element when
+    // tabbing out of the overlay.
+    let onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey) {
+        return;
+      }
+
+      let focusedElement = document.activeElement as HTMLElement;
+      if (!isElementInScope(focusedElement, scope)) {
+        return;
+      }
+
+      // Create a DOM tree walker that matches all tabbable elements
+      let walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_ELEMENT,
+        {
+          acceptNode(node) {
+            if ((node as HTMLElement).matches(TABBABLE_ELEMENT_SELECTOR)) {
+              return NodeFilter.FILTER_ACCEPT;
+            }
+
+            return NodeFilter.FILTER_SKIP;
+          }
+        },
+        false
+      );
+
+      // Find the next tabbable element after the currently focused element
+      walker.currentNode = focusedElement;
+      let nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
+
+      // If there is no next element, or it is outside the current scope, move focus to the
+      // next element after the node to restore to instead.
+      if ((!nextElement || !isElementInScope(nextElement, scope)) && nodeToRestore) {
+        walker.currentNode = nodeToRestore;
+        nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
+
+        e.preventDefault();
+        if (nextElement) {
+          nextElement.focus();
+        } else {
+          // If there is no next element, blur the focused element to move focus to the body.
+          focusedElement.blur();
+        }
+      }
+    };
+
+    if (!contain) {
+      document.addEventListener('keydown', onKeyDown, false);
+    }
+
     return () => {
-      if (restoreFocus && nodeToRestore) {
+      if (!contain) {
+        document.removeEventListener('keydown', onKeyDown, false);
+      }
+
+      if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scope)) {
         requestAnimationFrame(() => {
           if (document.body.contains(nodeToRestore)) {
             focusElement(nodeToRestore);
@@ -264,5 +348,5 @@ function useRestoreFocus(restoreFocus: boolean) {
         });
       }
     };
-  }, [restoreFocus]);
+  }, [scopeRef, restoreFocus, contain]);
 }
