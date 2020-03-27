@@ -52,7 +52,7 @@ storiesOf('Dialog', module)
     () => renderHero({isDismissable: true})
   )
   .add(
-    'with footer, isDimissable',
+    'with footer',
     () => renderFooter({})
   )
   .add(

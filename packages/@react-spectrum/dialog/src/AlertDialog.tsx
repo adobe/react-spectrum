@@ -23,6 +23,7 @@ import React, {useContext} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
+import {Flex} from "@react-spectrum/layout";
 
 export function AlertDialog(props: SpectrumAlertDialogProps) {
   props = useSlotProps(props);
@@ -56,7 +57,8 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
 
   return (
     <Dialog {...styleProps} UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)} size="M" role="alertdialog">
-      <Header><Heading>{title}</Heading>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
+      <Heading>{title}</Heading>
+      <Header><Flex justifyContent="flex-end" width="100%">{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Flex></Header>
       <Divider />
       <Content>{children}</Content>
       <ButtonGroup>

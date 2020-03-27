@@ -39,6 +39,8 @@ governing permissions and limitations under the License.
 
   /* 12px desktop (medium scale) and 8px mobile (large scale) */
   --spectrum-dialog-close-button-padding: calc(26px - var(--spectrum-global-dimension-size-175));
+
+  --spectrum-dialog-gap-size: var(--spectrum-global-dimension-size-200);
 }
 
 
@@ -109,8 +111,11 @@ governing permissions and limitations under the License.
 
   outline: none; /* Hide focus outline */
 
+  padding-inline-end: var(--spectrum-dialog-gap-size);
+
   &.spectrum-Dialog-heading--noHeader {
     grid-area: heading-start / heading-start / header-end / header-end;
+    padding-inline-end: 0;
   }
 }
 
@@ -185,6 +190,8 @@ governing permissions and limitations under the License.
   padding-block-start: var(--spectrum-global-dimension-static-size-500);
   display: flex;
   justify-content: flex-end;
+  /* this padding should be safe as button group is always end aligned */
+  padding-inline-start: var(--spectrum-dialog-gap-size);
 
   &.spectrum-Dialog-buttonGroup--noFooter {
     grid-area: footer-start / footer-start / buttonGroup-end / buttonGroup-end;
@@ -192,8 +199,11 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dialog--dismissable {
-  .spectrum-Dialog-footer {
+  .spectrum-Dialog-buttonGroup {
     display: none;
+  }
+  .spectrum-Dialog-footer {
+    grid-area: footer / footer/ buttonGroup / buttonGroup;
   }
 }
 
@@ -240,11 +250,6 @@ governing permissions and limitations under the License.
       ".    .       .       .            .";
   }
 
-  .spectrum-Dialog-heading {
-    font-size: var(--spectrum-dialog-fullscreen-header-text-size);
-    font-weight: var(--spectrum-dialog-fullscreen-header-text-font-weight);
-  }
-
   .spectrum-Dialog-content {
     max-height: none;
   }
@@ -282,20 +287,16 @@ governing permissions and limitations under the License.
 
     &.spectrum-Dialog .spectrum-Dialog-grid {
        display: grid;
-       grid-template-columns: var(--spectrum-dialog-padding) 1fr auto auto var(--spectrum-dialog-padding);
-       grid-template-rows: calc(var(--spectrum-dialog-padding) + var(--spectrum-dialog-fullscreen-padding-top)) auto auto 1fr auto var(--spectrum-dialog-padding);
+       grid-template-columns: var(--spectrum-dialog-padding) 1fr var(--spectrum-dialog-padding);
+       grid-template-rows: calc(var(--spectrum-dialog-padding) + var(--spectrum-dialog-fullscreen-padding-top)) auto auto auto 1fr auto var(--spectrum-dialog-padding);
        grid-template-areas:
-         ".    .       .            ."
-         ".    heading header       ."
-         ".    divider divider      ."
-         ".    content content      ."
-         ".    .       buttonGroup  ."
-         ".    .       .            .";
-    }
-
-    .spectrum-Dialog-heading {
-      font-size: var(--spectrum-dialog-title-text-size);
-      font-weight: var(--spectrum-dialog-title-text-font-weight);
+         ".    .            ."
+         ".    heading      ."
+         ".    header       ."
+         ".    divider      ."
+         ".    content      ."
+         ".    buttonGroup  ."
+         ".    .            .";
     }
 
     .spectrum-Dialog-buttonGroup {
