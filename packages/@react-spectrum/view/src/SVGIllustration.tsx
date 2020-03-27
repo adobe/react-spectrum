@@ -13,7 +13,7 @@
 import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, SVGProps, ViewStyleProps} from '@react-types/shared';
 import {HTMLElement} from 'react-dom';
-import React, {ReactElement, ReactSVGElement, RefObject} from 'react';
+import React, {ReactElement, RefObject} from 'react';
 
 export interface IllustrationProps extends DOMProps, SVGProps, ViewStyleProps {
   children: ReactElement | ReactElement[]
@@ -21,7 +21,6 @@ export interface IllustrationProps extends DOMProps, SVGProps, ViewStyleProps {
 
 export const SVGIllustration = React.forwardRef((props: IllustrationProps, ref: RefObject<HTMLElement>) => {
   props = useSlotProps(props, 'illustration');
-  console.log('props', props);
   let {
     children,
     ...otherProps
