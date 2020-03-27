@@ -11,7 +11,7 @@
  */
 
 import {AllHTMLAttributes, RefObject, useEffect} from 'react';
-import {useSlotId} from '@react-aria/utils';
+import {focusWithoutScrolling, useSlotId} from '@react-aria/utils';
 
 export interface DialogProps {
   ref: RefObject<HTMLElement | null>,
@@ -31,7 +31,7 @@ export function useDialog(props: DialogProps): DialogAria {
   // Focus the dialog itself on mount, unless a child element is already focused.
   useEffect(() => {
     if (ref.current && !ref.current.contains(document.activeElement)) {
-      ref.current.focus({preventScroll: true});
+      focusWithoutScrolling(ref.current);
     }
   }, [ref]);
 
