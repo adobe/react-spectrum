@@ -31,20 +31,16 @@ export interface SpectrumDialogTriggerProps extends PositionProps {
 
 export interface SpectrumBaseDialogProps extends HTMLAttributes<HTMLElement> {
   slots?: Slots,
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
+  size?: 'S' | 'M' | 'L',
+  type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   role?: 'dialog' | 'alertdialog'
 }
 
 export interface SpectrumDialogProps extends DOMProps, StyleProps {
   /** The contents of the Dialog. */
   children: ReactNode,
-  /**
-   * Replaces the default slots used within Dialog,
-   * see [slots](./Slots.html).
-   */
-  slots?: Slots,
   /** The size of the Dialog. Only applies to "modal" type Dialogs. */
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
+  size?: 'S' | 'M' | 'L',
   /** Whether the Dialog is [dismissable](#dismissable). */
   isDismissable?: boolean,
   /** Handler that is called when the 'x' button of a dismissable dialog is clicked. */

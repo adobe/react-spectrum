@@ -22,6 +22,8 @@ import {SpectrumBaseDialogProps, SpectrumDialogProps} from '@react-types/dialog'
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
 
+type DialogType = 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover';
+
 /**
  * Dialogs are windows that appear over the interface and block further interactions.
  * Contextual information, tasks, or workflows are typically contained within.
@@ -29,7 +31,7 @@ import {useDialog, useModalDialog} from '@react-aria/dialog';
 export function Dialog(props: SpectrumDialogProps) {
   props = useSlotProps(props);
   let {
-    type = 'popover',
+    type = 'popover' as DialogType,
     ...contextProps
   } = useContext(DialogContext) || {} as DialogContextValue;
   let {
@@ -54,12 +56,9 @@ export function Dialog(props: SpectrumDialogProps) {
   if (type === 'popover') {
     return <BaseDialog {...allProps} size={size}>{children}</BaseDialog>;
   } else {
-    if (type === 'fullscreen' || type === 'fullscreenTakeover') {
-      size = type;
-    }
 
     return (
-      <ModalDialog {...allProps} size={size}>
+      <ModalDialog {...allProps} size={size} type={type}>
         {children}
         {isDismissable &&
           <ActionButton
@@ -88,9 +87,9 @@ let sizeMap = {
   fullscreenTakeover: 'fullscreenTakeover'
 };
 
-function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDialogProps) {
+function BaseDialog({children, slots, size, role, type, ...otherProps}: SpectrumBaseDialogProps) {
   let ref = useRef();
-  let sizeVariant = sizeMap[size];
+  let sizeVariant = sizeMap[type] || sizeMap[size];
   let {dialogProps, titleProps} = useDialog({ref, role, ...otherProps});
   if (!slots) {
     slots = {
