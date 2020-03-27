@@ -147,8 +147,8 @@
     "@spectrum-css/component-builder": "^1.0.0"
   },
   "resolutions": {
-    "@babel/core": "7.8.0",
-    "@babel/runtime": "7.8.3",
+    "@babel/core": "7.9.0",
+    "@babel/runtime": "7.9.0",
     "postcss-calc": "7.0.1"
   }
 }
