@@ -42,7 +42,8 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
     primaryLabel,
     autoFocusButton,
     title,
-    isConfirmDisabled,
+    isPrimaryActionDisabled,
+    isSecondaryActionDisabled,
     onCancel = () => {},
     onConfirm = () => {},
     ...otherProps
@@ -64,9 +65,9 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
       <Divider />
       <Content>{children}</Content>
       <Footer>
-        {secondaryLabel && <Button variant="secondary" onPress={() => chain(onClose(), onConfirm('secondary'))} autoFocus={autoFocusButton === 'secondary'}>{secondaryLabel}</Button>}
+        {secondaryLabel && <Button variant="secondary" onPress={() => chain(onClose(), onConfirm('secondary'))} isDisabled={isSecondaryActionDisabled} autoFocus={autoFocusButton === 'secondary'}>{secondaryLabel}</Button>}
         {cancelLabel && <Button variant="secondary" onPress={() => chain(onClose(), onCancel())} autoFocus={autoFocusButton === 'cancel'}>{cancelLabel}</Button>}
-        <Button variant={confirmVariant} onPress={() => chain(onClose(), onConfirm('primary'))} isDisabled={isConfirmDisabled} autoFocus={autoFocusButton === 'primary'}>{primaryLabel}</Button>
+        <Button variant={confirmVariant} onPress={() => chain(onClose(), onConfirm('primary'))} isDisabled={isPrimaryActionDisabled} autoFocus={autoFocusButton === 'primary'}>{primaryLabel}</Button>
       </Footer>
     </Dialog>
   );

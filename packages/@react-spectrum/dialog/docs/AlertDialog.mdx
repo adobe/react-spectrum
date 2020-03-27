@@ -43,11 +43,10 @@ import {AlertDialog, DialogTrigger} from '@react-spectrum/dialog';
 
 ## Content
 
-Unlike Dialog, `slots` are not supported in AlertDialog since its layout is very deliberate.
-The body of an AlertDialog can be provided by passing children to the component. The AlertDialog also 
-supports three optional buttons in its footer: a confirmation button, a secondary button, and a cancel button.
-Each button can be rendered by providing a string to the `primaryLabel`, `secondaryLabel`, and `cancelLabel` 
-respectively.
+Unlike Dialog, the layout in AlertDialog is very deliberate. The body of an AlertDialog can be provided by passing 
+children to the component. The AlertDialog also supports having up to three buttons in its footer: a primary button,
+a secondary button, and a cancel button. Each button can be rendered by providing a string to the `primaryLabel`, `secondaryLabel`,
+and `cancelLabel` respectively. Be sure to localize any strings provided to the AlertDialog and to the button labels as well. 
 
 ```tsx example
 <DialogTrigger>
@@ -71,17 +70,10 @@ If any of the buttons in the ActionDialog's footer should be focused on render, 
 </DialogTrigger>
 ```
 
-### Internationalization
-
-Be sure to localize any strings provided to the AlertDialog and to the button labels.  
-
 ## Labeling
 
-ActionDialogs should always have a visible title, specified by passing a string as the `title` prop.
-
-### Internationalization
-
-In order to internationalize a AlertDialog, a localized string should be passed to the `title` prop.
+ActionDialogs should always have a visible title, specified by passing a string as the `title` prop. This string should be localized
+so that the ActionDialog is properly internationalized.
 
 ## Events
 
@@ -162,14 +154,27 @@ function Example() {
 </DialogTrigger>
 ```
 
-### isConfirmDisabled
+### isPrimaryActionDisabled
 
-Disables the primary confirm button.
+Disables the primary button.
 
 ```tsx example
 <DialogTrigger>
   <ActionButton>Upgrade</ActionButton>
-  <AlertDialog isConfirmDisabled variant="confirmation" title="Upgrade subscription" primaryLabel="Upgrade" cancelLabel="Cancel">
+  <AlertDialog isPrimaryActionDisabled variant="confirmation" title="Upgrade subscription" primaryLabel="Upgrade" cancelLabel="Cancel">
+    Upgrade subscription for an additional $14.99 a month?
+  </AlertDialog>
+</DialogTrigger>
+```
+
+### isSecondaryActionDisabled
+
+Disables the secondary button.
+
+```tsx example
+<DialogTrigger>
+  <ActionButton>Upgrade</ActionButton>
+  <AlertDialog isSecondaryActionDisabled variant="confirmation" title="Upgrade subscription" primaryLabel="Upgrade" secondaryLabel="Apply Coupon" cancelLabel="Cancel">
     Upgrade subscription for an additional $14.99 a month?
   </AlertDialog>
 </DialogTrigger>
