@@ -95,7 +95,7 @@ describe('AlertDialog', function () {
   it('disable its confirm button', function () {
     let onConfirmSpy = jest.fn();
     let {getByRole, getByText} = render(
-      <AlertDialog variant="confirmation" isConfirmDisabled title="the title" primaryLabel="confirm" onConfirm={onConfirmSpy}>
+      <AlertDialog variant="confirmation" isPrimaryActionDisabled title="the title" primaryLabel="confirm" onConfirm={onConfirmSpy}>
         Content body
       </AlertDialog>
     );
@@ -128,6 +128,22 @@ describe('AlertDialog', function () {
 
     let button = getByText('cancel').closest('button');
     expect(document.activeElement).toBe(button);
+  });
+
+  it('disable its secondary button', function () {
+    let onConfirmSpy = jest.fn();
+    let {getByRole, getByText} = render(
+      <AlertDialog variant="confirmation" isSecondaryActionDisabled title="the title" primaryLabel="confirm" secondaryLabel="secondary" onConfirm={onConfirmSpy}>
+        Content body
+      </AlertDialog>
+    );
+
+    let dialog = getByRole('alertdialog');
+    expect(document.activeElement).toBe(dialog);
+
+    let button = getByText('secondary');
+    triggerPress(button);
+    expect(onConfirmSpy).toHaveBeenCalledTimes(0);
   });
 
   it('autofocus its secondary button', function () {
