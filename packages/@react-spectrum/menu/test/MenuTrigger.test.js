@@ -455,7 +455,7 @@ describe('MenuTrigger', function () {
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
-    `('$Name closes menu on item selection via ENTER press even if closeOnSelect=false', function ({Component, props}) {
+    `('$Name doesn\'t closes menu on item selection via ENTER press if closeOnSelect=false', function ({Component, props}) {
       let tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
       expect(onOpenChange).toBeCalledTimes(0);
       let button = tree.getByRole('button');
@@ -474,9 +474,9 @@ describe('MenuTrigger', function () {
       fireEvent.keyUp(menuItem1, {key: 'Enter', code: 13, charCode: 13});
       jest.runAllTimers();
       expect(onSelectionChange).toBeCalledTimes(1);
-      expect(menu).not.toBeInTheDocument();  
-      expect(button).toHaveAttribute('aria-expanded', 'false');
-      expect(onOpenChange).toBeCalledTimes(2);
+      expect(menu).toBeInTheDocument();  
+      expect(button).toHaveAttribute('aria-expanded', 'true');
+      expect(onOpenChange).toBeCalledTimes(1);
     });
 
     it.each`
