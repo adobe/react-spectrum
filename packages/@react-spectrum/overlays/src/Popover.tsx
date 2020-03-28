@@ -15,7 +15,7 @@ import overrideStyles from './overlays.css';
 import {Placement} from '@react-types/overlays';
 import React, {HTMLAttributes, ReactNode, RefObject, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
-import {useOverlay} from '@react-aria/overlays';
+import {useModal, useOverlay} from '@react-aria/overlays';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface PopoverProps extends HTMLAttributes<HTMLElement> {
@@ -32,6 +32,7 @@ function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
   let backupRef = useRef();
   let domRef = ref || backupRef;
   let {overlayProps, dismissButtonProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
+  useModal();
 
   return (
     <div

@@ -16,7 +16,7 @@ import overrideStyles from './overlays.css';
 import React, {ReactElement, useRef} from 'react';
 import trayStyles from '@adobe/spectrum-css-temp/components/tray/vars.css';
 import {Underlay} from './Underlay';
-import {useModal, useOverlay} from '@react-aria/overlays';
+import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface TrayProps {
@@ -45,6 +45,7 @@ export function Tray(props: TrayProps) {
 function TrayWrapper({children, onClose, isOpen}: TrayWrapperProps) {
   let ref = useRef();
   let {overlayProps, dismissButtonProps} = useOverlay({ref, onClose, isOpen, isDismissable: true});
+  usePreventScroll();
   useModal();
 
   // TODO: android back button?
