@@ -16,7 +16,7 @@ import {HTMLElement} from 'react-dom';
 import React, {ReactElement, RefObject} from 'react';
 
 export interface IllustrationProps extends DOMProps, SVGProps, ViewStyleProps {
-  children: ReactElement | ReactElement[]
+  children: ReactElement
 }
 
 export const SVGIllustration = React.forwardRef((props: IllustrationProps, ref: RefObject<HTMLElement>) => {
@@ -27,9 +27,10 @@ export const SVGIllustration = React.forwardRef((props: IllustrationProps, ref: 
   } = props;
   let {styleProps} = useStyleProps(otherProps);
 
-  return (
-    <svg {...filterDOMProps(otherProps)} {...styleProps} className={classNames({}, styleProps.className)} ref={ref}>
-      {children}
-    </svg>
-  );
+  return React.cloneElement(children, {
+    ...filterDOMProps(otherProps),
+    ...styleProps,
+    className: classNames({}, styleProps.className),
+    ref
+  });
 });

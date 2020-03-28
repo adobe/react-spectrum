@@ -45,7 +45,6 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
 
   if (!slots) {
     slots = {
-      container: {UNSAFE_className: styles['spectrum-IllustratedMessage-container']},
       illustration: {UNSAFE_className: styles['spectrum-IllustratedMessage-illustration'], ...illustrationProps},
       header: {UNSAFE_className: styles['spectrum-IllustratedMessage-header']},
       heading: {UNSAFE_className: headingClassName, ...headingProps},
@@ -54,19 +53,18 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
   }
 
   return (
-    <section
+    <Flex
       {...filterDOMProps(otherProps)}
       {...styleProps}
-      className={classNames(
+      UNSAFE_className={classNames(
         styles,
         'spectrum-IllustratedMessage',
         styleProps.className
       )}
+      slots={slots}
       ref={domRef}>
-      <Flex slots={slots}>
-        {children}
-      </Flex>
-    </section>
+      {children}
+    </Flex>
   );
 }
 
