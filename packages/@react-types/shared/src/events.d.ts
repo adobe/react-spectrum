@@ -27,7 +27,7 @@ export type BaseEvent<T extends SyntheticEvent> = T & {
 export type KeyboardEvent = BaseEvent<ReactKeyboardEvent<any>>;
 export type FocusEvent = BaseEvent<ReactFocusEvent<any>>;
 
-export type PointerType = 'mouse' | 'pen' | 'touch' | 'keyboard';
+export type PointerType = 'mouse' | 'pen' | 'touch' | 'keyboard' | 'virtual';
 
 export interface PressEvent {
   type: 'pressstart' | 'pressend' | 'pressup' | 'press',
