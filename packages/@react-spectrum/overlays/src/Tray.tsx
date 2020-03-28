@@ -69,6 +69,9 @@ function TrayWrapper({children, onClose, isOpen}: TrayWrapperProps) {
 
   return (
     <div className={wrapperClassName}>
+      <VisuallyHidden>
+        <button {...dismissButtonProps} />
+      </VisuallyHidden>
       <div className={className} ref={ref} {...overlayProps} data-testid="tray">
         {children}
       </div>

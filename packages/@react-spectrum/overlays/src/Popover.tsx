@@ -58,6 +58,9 @@ function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
       role="presentation"
       data-testid="popover"
       {...overlayProps}>
+      <VisuallyHidden>
+        <button {...dismissButtonProps} />
+      </VisuallyHidden>
       {children}
       {hideArrow ? null : <div className={classNames(styles, 'spectrum-Popover-tip')} {...arrowProps} data-testid="tip" />}
       <VisuallyHidden>
