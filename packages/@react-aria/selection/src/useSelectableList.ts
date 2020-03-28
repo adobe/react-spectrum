@@ -45,7 +45,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     focusStrategy,
     wrapAround,
     isVirtualized,
-    disallowEmptySelection = false
+    disallowEmptySelection
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).

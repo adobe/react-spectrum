@@ -51,7 +51,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     autoFocus = false,
     focusStrategy,
     wrapAround = false,
-    disallowEmptySelection = true
+    disallowEmptySelection = false
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -164,7 +164,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       case 'Escape':
         e.preventDefault();
-        if (disallowEmptySelection) {
+        if (!disallowEmptySelection) {
           manager.clearSelection();
         }
         break;

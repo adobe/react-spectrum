@@ -34,13 +34,14 @@ interface ListBoxBaseProps<T> extends DOMProps, StyleProps {
   wrapAround?: boolean,
   selectOnPressUp?: boolean,
   focusOnPointerEnter?: boolean,
-  domProps?: HTMLAttributes<HTMLElement>
+  domProps?: HTMLAttributes<HTMLElement>,
+  disallowEmptySelection?: boolean
 }
 
 export function useListBoxLayout<T>(state: ListState<T>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let layout = useMemo(() => 
+  let layout = useMemo(() =>
     new ListLayout({
       estimatedRowHeight: scale === 'large' ? 48 : 35,
       estimatedHeadingHeight: scale === 'large' ? 37 : 30,
@@ -79,7 +80,7 @@ export function ListBoxBase<T>(props: ListBoxBaseProps<T>) {
     }
 
     return (
-      <CollectionItem 
+      <CollectionItem
         key={reusableView.key}
         reusableView={reusableView}
         parent={parent} />
@@ -95,7 +96,7 @@ export function ListBoxBase<T>(props: ListBoxBaseProps<T>) {
       sizeToFit="height"
       className={
         classNames(
-          styles, 
+          styles,
           'spectrum-Menu',
           styleProps.className
         )
