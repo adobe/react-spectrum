@@ -206,9 +206,9 @@ export function usePress(props: PressHookProps): PressResult {
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.
           if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && isVirtualClick(e.nativeEvent)) {
-            triggerPressStart(e, 'keyboard');
-            triggerPressUp(e, 'keyboard');
-            triggerPressEnd(e, 'keyboard');
+            triggerPressStart(e, 'virtual');
+            triggerPressUp(e, 'virtual');
+            triggerPressEnd(e, 'virtual');
           }
 
           state.ignoreEmulatedMouseEvents = false;

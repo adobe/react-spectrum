@@ -157,7 +157,7 @@ storiesOf('Dialog/Alert', module)
       cancelLabel: 'Cancel',
       onConfirm: action('confirm'),
       onCancel: action('cancel'),
-      isConfirmDisabled: true
+      isPrimaryActionDisabled: true
     })
   )
   .add(
@@ -172,6 +172,20 @@ storiesOf('Dialog/Alert', module)
       onConfirm: action('confirm'),
       onCancel: action('cancel'),
       autoFocusButton: 'primary'
+    })
+  )
+  .add(
+    'secondary disabled',
+    () => renderAlert({
+      variant: 'error',
+      title: 'Error: Danger Will Robinson',
+      children: singleParagraph(),
+      primaryLabel: 'Accept',
+      secondaryLabel: 'Secondary button',
+      cancelLabel: 'Cancel',
+      onConfirm: action('confirm'),
+      onCancel: action('cancel'),
+      isSecondaryActionDisabled: true
     })
   )
   .add(
