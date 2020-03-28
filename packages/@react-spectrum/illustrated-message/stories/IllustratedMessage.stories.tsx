@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Content, Header, SVGIllustration} from '@react-spectrum/view';
+import {Content, SVGIllustration} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/typography';
 import {IllustratedMessage} from '../';
 import React from 'react';

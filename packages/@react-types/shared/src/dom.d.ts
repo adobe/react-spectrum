@@ -90,8 +90,3 @@ export interface TextInputDOMProps extends DOMProps {
   onBeforeInput?: FormEventHandler<HTMLInputElement>,
   onInput?: FormEventHandler<HTMLInputElement>
 }
-
-// A set of props allowed on SVG components
-export interface SVGProps {
-  viewBox?: string
-}

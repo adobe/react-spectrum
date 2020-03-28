@@ -12,7 +12,7 @@
 
 import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {Flex} from '@react-spectrum/layout'
+import {Flex} from '@react-spectrum/layout';
 import React, {forwardRef} from 'react';
 import {SpectrumIllustratedMessageProps} from '@react-types/illustrated-message';
 import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.css';
