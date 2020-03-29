@@ -20,7 +20,9 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   onVisibleRectChange: (rect: Rect) => void,
   children: ReactNode,
   innerStyle: CSSProperties,
-  sizeToFit: 'width' | 'height'
+  sizeToFit: 'width' | 'height',
+  onScrollStart?: () => void,
+  onScrollEnd?: () => void
 }
 
 function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
@@ -31,6 +33,8 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     children, 
     innerStyle,
     sizeToFit,
+    onScrollStart,
+    onScrollEnd,
     ...otherProps
   } = props;
 
@@ -54,6 +58,10 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
 
       if (!isScrolling) {
         setScrolling(true);
+
+        if (onScrollStart) {
+          onScrollStart();
+        }
       }
 
       // So we don't constantly call clearTimeout and setTimeout,
@@ -67,6 +75,10 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
         state.scrollTimeout = setTimeout(() => {
           setScrolling(false);
           state.scrollTimeout = null;
+
+          if (onScrollEnd) {
+            onScrollEnd();
+          }
         }, 300);
       }
     });
