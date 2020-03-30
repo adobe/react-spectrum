@@ -17,7 +17,6 @@ import React, {forwardRef} from 'react';
 import {SpectrumIllustratedMessageProps} from '@react-types/illustrated-message';
 import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
-import {useIllustratedMessage} from '@react-aria/illustrated-message';
 
 function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props);
@@ -28,10 +27,6 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
-  let {
-    illustrationProps,
-    headingProps
-  } = useIllustratedMessage(props);
   let headingClassName = classNames(
     {},
     classNames(typographyStyles, 'spectrum-Heading', 'spectrum-Heading--pageTitle'),
@@ -45,9 +40,7 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
 
   if (!slots) {
     slots = {
-      illustration: {UNSAFE_className: styles['spectrum-IllustratedMessage-illustration'], ...illustrationProps},
-      header: {UNSAFE_className: styles['spectrum-IllustratedMessage-header']},
-      heading: {UNSAFE_className: headingClassName, ...headingProps},
+      heading: {UNSAFE_className: headingClassName},
       content: {UNSAFE_className: contentClassName}
     };
   }

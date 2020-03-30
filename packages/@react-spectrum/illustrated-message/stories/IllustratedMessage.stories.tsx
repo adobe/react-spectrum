@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Content, SVGIllustration} from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/typography';
 import {IllustratedMessage} from '../';
 import React from 'react';
@@ -43,9 +43,9 @@ function render(props: any = {}) {
   } = props;
   return (
     <IllustratedMessage {...otherProps}>
-      {illustration && <SVGIllustration>{illustration}</SVGIllustration>}
-      {heading && <Heading>{heading}</Heading>}
       {description && <Content>{description}</Content>}
+      {heading && <Heading>{heading}</Heading>}
+      {illustration}
     </IllustratedMessage>
   );
 }
