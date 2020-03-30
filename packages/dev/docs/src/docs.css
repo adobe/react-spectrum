@@ -20,17 +20,13 @@ html, body {
   background: var(--spectrum-global-color-gray-50) !important;
 }
 
-.exampleTable {
-  margin-inline-start: auto;
-  margin-inline-end: auto;
-  margin-bottom: 12px;
-  &, th, td {
-    border: 1px solid #dee2e6;
-    border-collapse: collapse;
-  }
-
-  & th, & td {
-    padding: .75rem
+.exampleImage {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 12px;
+  svg {
+    width: auto;
+    height: auto;
   }
 }
 
