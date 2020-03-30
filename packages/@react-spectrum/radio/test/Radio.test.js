@@ -38,13 +38,8 @@ function renderRadioGroup(ComponentGroup, Component, groupProps, radioProps) {
 
 describe('Radios', function () {
   let onChangeSpy = jest.fn();
-  beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    jest.useFakeTimers();
-  });
 
   afterEach(() => {
-    window.requestAnimationFrame.mockRestore();
     onChangeSpy.mockClear();
     cleanup();
   });
