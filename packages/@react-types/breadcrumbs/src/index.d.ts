@@ -30,7 +30,7 @@ export interface BreadcrumbsProps<T> {
    * @default 4
    */
   maxVisibleItems?: 'auto' | number,
-  /** Called when a */
+  /** Called when an item is acted upon (usually selection via press). */
   onAction?: (key: Key) => void
 }
 
