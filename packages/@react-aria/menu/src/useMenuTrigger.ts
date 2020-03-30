@@ -12,7 +12,7 @@
 
 import {AllHTMLAttributes} from 'react';
 import {MenuTriggerProps, MenuTriggerState} from '@react-types/menu';
-import {PressProps} from '@react-aria/interactions';
+import {PressProps, useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
@@ -37,9 +37,9 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
   });
 
   let onPress = () => {
-    if (!isDisabled) {
+    if (!isDisabled && !state.isOpen) {
       state.setFocusStrategy('first');
-      state.setOpen(!state.isOpen);
+      state.setOpen(true);
     }
   };
 
@@ -66,16 +66,39 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
     }
   };
 
+  let {focusWithinProps} = useFocusWithin({
+    onBlurWithin: () => {
+      state.setOpen(false);
+    }
+  });
+
   return {
     menuTriggerProps: {
       ...triggerAriaProps,
       id: menuTriggerId,
-      onPressStart: onPress,
+      onPressStart(e) {
+        // For consistency with native, open the menu on mouse/key down, but touch up.
+        if (e.pointerType !== 'touch') {
+          onPress();
+        }
+      },
+      onPress(e) {
+        if (e.pointerType === 'touch') {
+          onPress();
+        }
+      },
       onKeyDown
     },
     menuProps: {
       ...overlayAriaProps,
-      'aria-labelledby': menuTriggerId
+      ...focusWithinProps,
+      'aria-labelledby': menuTriggerId,
+      onMouseDown(e) {
+        // Safari blurs the focused item on mousedown on the scrollbar, when the menu is inside an iframe,
+        // which casues the menu to close (see onBlurWithin above).
+        // Preventing default on the event solves this.
+        e.preventDefault();
+      }
     }
   };
 }

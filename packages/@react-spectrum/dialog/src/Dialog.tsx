@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useHasChild, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {FocusScope} from '@react-aria/focus';
@@ -22,6 +22,10 @@ import {SpectrumBaseDialogProps, SpectrumDialogProps} from '@react-types/dialog'
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useDialog, useModalDialog} from '@react-aria/dialog';
 
+/**
+ * Dialogs display important information that users need to acknowledge.
+ * They appear over the interface and block further interactions.
+ */
 export function Dialog(props: SpectrumDialogProps) {
   props = useSlotProps(props);
   let {
@@ -57,8 +61,8 @@ export function Dialog(props: SpectrumDialogProps) {
     return (
       <ModalDialog {...allProps} size={size}>
         {children}
-        {isDismissable && 
-          <ActionButton 
+        {isDismissable &&
+          <ActionButton
             slot="closeButton"
             isQuiet
             aria-label="dismiss"
@@ -86,19 +90,25 @@ let sizeMap = {
 
 function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDialogProps) {
   let ref = useRef();
+  let gridRef = useRef();
   let sizeVariant = sizeMap[size];
   let {dialogProps, titleProps} = useDialog({ref, role, ...otherProps});
+
+  let hasHeader = useHasChild(`:scope > .${styles['spectrum-Dialog-header']}`, gridRef);
+  let hasFooter = useHasChild(`:scope > .${styles['spectrum-Dialog-footer']}`, gridRef);
+
   if (!slots) {
     slots = {
       container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
       hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
       header: {UNSAFE_className: styles['spectrum-Dialog-header']},
-      heading: {UNSAFE_className: styles['spectrum-Dialog-heading'], ...titleProps},
+      heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader}), ...titleProps},
       typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
       divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
       content: {UNSAFE_className: styles['spectrum-Dialog-content']},
       footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
-      closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']}
+      closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']},
+      buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !hasFooter})}
     };
   }
 
@@ -113,7 +123,7 @@ function BaseDialog({children, slots, size, role, ...otherProps}: SpectrumBaseDi
           otherProps.className
         )}
         ref={ref}>
-        <Grid slots={slots}>
+        <Grid slots={slots} ref={gridRef}>
           {children}
         </Grid>
       </section>

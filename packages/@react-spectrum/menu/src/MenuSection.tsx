@@ -13,7 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import {MenuItem} from './MenuItem';
 import {Node} from '@react-stately/collections';
-import React, {Fragment} from 'react';
+import React, {Fragment, Key} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState} from '@react-stately/tree';
 import {useMenuSection} from '@react-aria/menu';
@@ -21,11 +21,12 @@ import {useSeparator} from '@react-aria/separator';
 
 interface MenuSectionProps<T> {
   item: Node<T>,
-  state: TreeState<T>
+  state: TreeState<T>,
+  onAction?: (key: Key) => void
 }
 
 export function MenuSection<T>(props: MenuSectionProps<T>) {
-  let {item, state} = props;
+  let {item, state, onAction} = props;
   let {itemProps, headingProps, groupProps} = useMenuSection();
   let {separatorProps} = useSeparator({
     elementType: 'li'
@@ -67,7 +68,8 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
               <MenuItem
                 key={node.key}
                 item={node}
-                state={state} />
+                state={state}
+                onAction={onAction} />
             );
 
             if (node.wrapper) {

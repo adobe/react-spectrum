@@ -20,11 +20,12 @@ governing permissions and limitations under the License.
 .spectrum-Dropdown {
   position: relative;
   display: inline-block;
+  user-select: none;
 
   /* Truncate if menu options make us too wide */
-  max-width: 100%;
-  width: var(--spectrum-dropdown-width);
-  min-width: var(--spectrum-dropdown-min-width);
+  max-inline-size: 100%;
+  inline-size: var(--spectrum-dropdown-width);
+  min-inline-size: var(--spectrum-dropdown-min-width);
 
   /* Hack to enable select-powered Dropdowns */
   select {
@@ -41,16 +42,16 @@ governing permissions and limitations under the License.
 
     & + .spectrum-Dropdown-chevron {
       position: absolute;
-      right: var(--spectrum-dropdown-padding-x);
-      top: 50%;
-      margin-top: calc(var(--spectrum-icon-chevron-down-medium-height) / -2);
+      inset-inline-end: var(--spectrum-dropdown-padding-x);
+      inset-block-start: 50%;
+      margin-block-start: calc(var(--spectrum-icon-chevron-down-medium-height) / -2);
     }
   }
 }
 
 .spectrum-Dropdown-trigger {
   position: relative;
-  width: 100%;
+  inline-size: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -63,13 +64,13 @@ governing permissions and limitations under the License.
   white-space: nowrap;
   overflow: hidden;
 
-  height: calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2));
+  block-size: calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2));
   line-height: calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2));
 
   font-size: var(--spectrum-dropdown-text-size);
 
   text-overflow: ellipsis;
-  text-align: left;
+  text-align: start;
 
   &.is-placeholder {
     font-weight: var(--spectrum-dropdown-placeholder-text-font-weight);
@@ -80,16 +81,16 @@ governing permissions and limitations under the License.
 
 /* Only apply margin to the icon if there's a label */
 .spectrum-Dropdown-label + .spectrum-Dropdown-chevron {
-  margin-left: var(--spectrum-dropdown-icon-margin-left);
+  margin-inline-start: var(--spectrum-dropdown-icon-margin-left);
 }
 
 .spectrum-Icon + .spectrum-Dropdown-label {
-  margin-left: var(--spectrum-selectlist-thumbnail-image-padding-x);
+  margin-inline-start: var(--spectrum-selectlist-thumbnail-image-padding-x);
 }
 
 /* Only apply margin if there's a label */
 .spectrum-Dropdown-label ~ .spectrum-Dropdown-chevron {
-  margin-left: var(--spectrum-dropdown-icon-margin-left);
+  margin-inline-start: var(--spectrum-dropdown-icon-margin-left);
 }
 
 .spectrum-Dropdown-chevron {
@@ -110,28 +111,43 @@ governing permissions and limitations under the License.
 .spectrum-Dropdown-trigger {
   .spectrum-Dropdown-invalidIcon {
     /* Fix Safari 10 bug where align-items is ignored inside of buttons */
-    margin-top: calc(calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2) - var(--spectrum-dropdown-icon-size)) / 2);
-    margin-bottom: calc(calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2) - var(--spectrum-dropdown-icon-size)) / 2);
+    margin-block-start: calc(calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2) - var(--spectrum-dropdown-icon-size)) / 2);
+    margin-block-end: calc(calc(var(--spectrum-dropdown-height) - calc(var(--spectrum-dropdown-border-size) * 2) - var(--spectrum-dropdown-icon-size)) / 2);
   }
 
   .spectrum-Dropdown-label + .spectrum-Dropdown-invalidIcon {
-    margin-left: var(--spectrum-dropdown-icon-margin-left);
+    margin-inline-start: var(--spectrum-dropdown-icon-margin-left);
   }
 }
 
 .spectrum-Icon + .spectrum-Dropdown-chevron {
-  margin-left: var(--spectrum-dropdown-icon-gap);
+  margin-inline-start: var(--spectrum-dropdown-icon-gap);
 }
 
 .spectrum-Dropdown--quiet {
-  width: auto;
-  min-width: var(--spectrum-dropdown-quiet-min-width);
-}
-
-.spectrum-Dropdown-popover {
-  max-width: var(--spectrum-dropdown-popover-max-width);
+  inline-size: auto;
+  min-inline-size: var(--spectrum-dropdown-quiet-min-width);
 }
 
 .spectrum-Dropdown-popover--quiet {
-  margin-left: calc(calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size)) * -1);
+  inline-size: var(--spectrum-dropdown-width);
+
+  /* Define this var so it can be read from JS */
+  --spectrum-dropdown-quiet-offset: calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size));
+  min-inline-size: calc(var(--spectrum-dropdown-quiet-offset) * -1);
+}
+
+/* When used with a label or inside a Form, we need to override some things from .spectrum-Field
+ * so quiet dropdowns still collapse properly. */
+.spectrum-Field.spectrum-Dropdown-fieldWrapper--quiet {
+  inline-size: auto;
+
+  .spectrum-Dropdown--quiet {
+    inline-size: auto;
+    min-inline-size: var(--spectrum-dropdown-quiet-min-width);
+
+    .spectrum-Dropdown-trigger {
+      inline-size: auto;
+    }
+  }
 }

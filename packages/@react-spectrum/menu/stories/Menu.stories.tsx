@@ -88,7 +88,7 @@ storiesOf('Menu', module)
     'Default Menu',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} items={flatMenu} itemKey="name">
+        <Menu items={flatMenu} itemKey="name" onAction={action('onAction')}>
           {item => <Item>{item.name}</Item>}
         </Menu>
       </Popover>
@@ -98,10 +98,10 @@ storiesOf('Menu', module)
     'Menu w/ sections',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+        <Menu items={withSection} itemKey="name" onAction={action('onAction')}>
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
+              {item => <Item>{item.name}</Item>}
             </Section>
           )}
         </Menu>
@@ -112,7 +112,7 @@ storiesOf('Menu', module)
     'Static',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')}>
+        <Menu onAction={action('onAction')}>
           <Item>One</Item>
           <Item>Two</Item>
           <Item>Three</Item>
@@ -124,7 +124,7 @@ storiesOf('Menu', module)
     'Static with sections',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')}>
+        <Menu onAction={action('onAction')}>
           <Section title="Section 1">
             <Item>One</Item>
             <Item>Two</Item>
@@ -143,7 +143,7 @@ storiesOf('Menu', module)
     'Static with dialog trigger',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} selectionMode="none">
+        <Menu>
           <Section title="Actions">
             <DialogTrigger>
               <Item>Edit...</Item>
@@ -169,10 +169,24 @@ storiesOf('Menu', module)
     )
   )
   .add(
+    'with single selection',
+    () => (
+      <Popover isOpen hideArrow>
+        <Menu selectionMode="single" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name">
+          {item => (
+            <Section items={item.children} title={item.name}>
+              {item => <Item childItems={item.children}>{item.name}</Item>}
+            </Section>
+          )}
+        </Menu>
+      </Popover>
+    )
+  )
+  .add(
     'with default selected menu items',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
+        <Menu selectionMode="single" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -186,7 +200,7 @@ storiesOf('Menu', module)
     'static with default selected menu items',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
+        <Menu selectionMode="single" onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -220,7 +234,7 @@ storiesOf('Menu', module)
     'with selected menu items (controlled)',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
+        <Menu selectionMode="single" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -234,7 +248,7 @@ storiesOf('Menu', module)
     'static with selected menu items (controlled)',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
+        <Menu selectionMode="single" onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -268,10 +282,10 @@ storiesOf('Menu', module)
     'with disabled menu items',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
+        <Menu items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']} onAction={action('onAction')}>
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
+              {item => <Item>{item.name}</Item>}
             </Section>
           )}
         </Menu>
@@ -282,7 +296,7 @@ storiesOf('Menu', module)
     'static with disabled menu items',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} disabledKeys={['3', '5']}>
+        <Menu disabledKeys={['3', '5']} onAction={action('onAction')}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -358,46 +372,13 @@ storiesOf('Menu', module)
     )
   )
   .add(
-    'No selection allowed menu',
-    () => (
-      <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="none">
-          {item => (
-            <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
-            </Section>
-          )}
-        </Menu>
-      </Popover>
-    )
-  )
-  .add(
-    'No selection allowed menu, static',
-    () => (
-      <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} selectionMode="none">
-          <Section title="Section 1">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
-          </Section>
-          <Section title="Section 2">
-            <Item>Four</Item>
-            <Item>Five</Item>
-            <Item>Six</Item>
-          </Section>
-        </Menu>
-      </Popover>
-    )
-  )
-  .add(
     'Menu with autoFocus=true',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus>
+        <Menu items={withSection} itemKey="name" autoFocus onAction={action('onAction')}>
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
+              {item => <Item>{item.name}</Item>}
             </Section>
           )}
         </Menu>
@@ -408,10 +389,10 @@ storiesOf('Menu', module)
     'Menu with autoFocus=true and focusStrategy="last"',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus focusStrategy="last">
+        <Menu items={withSection} itemKey="name" autoFocus focusStrategy="last" onAction={action('onAction')}>
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
+              {item => <Item>{item.name}</Item>}
             </Section>
           )}
         </Menu>
@@ -422,10 +403,10 @@ storiesOf('Menu', module)
     'Menu with keyboard selection wrapping',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} wrapAround>
+        <Menu items={withSection} itemKey="name" wrapAround onAction={action('onAction')}>
           {item => (
             <Section items={item.children} title={item.name}>
-              {item => <Item childItems={item.children}>{item.name}</Item>}
+              {item => <Item>{item.name}</Item>}
             </Section>
           )}
         </Menu>
@@ -436,7 +417,7 @@ storiesOf('Menu', module)
     'with semantic elements (static)',
     () => (
       <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')}>
+        <Menu onAction={action('onAction')}>
           <Section title="Section 1">
             <Item textValue="Copy">
               <Copy size="S" />
@@ -482,34 +463,12 @@ storiesOf('Menu', module)
     'with semantic elements (generative)',
     () => (
       <Popover isOpen hideArrow> 
-        <Menu items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
+        <Menu items={hardModeProgrammatic} itemKey="name" onAction={action('onAction')}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => customMenuItem(item)}
             </Section>
           )}
-        </Menu>
-      </Popover>
-    )
-  )
-  .add(
-    'with onPress',
-    () => (
-      <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')} items={flatMenu} itemKey="name">
-          {item => <Item onPress={action('onPress')}>{item.name}</Item>}
-        </Menu>
-      </Popover>
-    )
-  )
-  .add(
-    'static with onPress',
-    () => (
-      <Popover isOpen hideArrow>
-        <Menu onSelectionChange={action('onSelectionChange')}>
-          <Item onPress={action('onPress One')}>One</Item>
-          <Item onPress={action('onPress Two')}>Two</Item>
-          <Item onPress={action('onPress Three')}>Three</Item>
         </Menu>
       </Popover>
     )
