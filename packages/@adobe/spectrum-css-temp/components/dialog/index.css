@@ -241,7 +241,7 @@ governing permissions and limitations under the License.
   &.spectrum-Dialog .spectrum-Dialog-grid {
     display: grid;
     grid-template-columns: var(--spectrum-dialog-padding) 1fr auto auto var(--spectrum-dialog-padding);
-    grid-template-rows: calc(var(--spectrum-dialog-padding) + var(--spectrum-dialog-fullscreen-padding-top)) auto auto 1fr var(--spectrum-dialog-padding);
+    grid-template-rows: var(--spectrum-dialog-padding) auto auto 1fr var(--spectrum-dialog-padding);
     grid-template-areas:
       ".    .       .       .            ."
       ".    heading header  buttonGroup  ."
@@ -288,7 +288,7 @@ governing permissions and limitations under the License.
     &.spectrum-Dialog .spectrum-Dialog-grid {
        display: grid;
        grid-template-columns: var(--spectrum-dialog-padding) 1fr var(--spectrum-dialog-padding);
-       grid-template-rows: calc(var(--spectrum-dialog-padding) + var(--spectrum-dialog-fullscreen-padding-top)) auto auto auto 1fr auto var(--spectrum-dialog-padding);
+       grid-template-rows: var(--spectrum-dialog-padding) auto auto auto 1fr auto var(--spectrum-dialog-padding);
        grid-template-areas:
          ".    .            ."
          ".    heading      ."
