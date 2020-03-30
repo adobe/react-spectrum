@@ -18,6 +18,7 @@ import {Content, Header} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
+import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/typography';
 import React, {useContext} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
@@ -61,7 +62,8 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
 
   return (
     <Dialog {...styleProps} UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)} size="M" role="alertdialog">
-      <Header><Heading>{title}</Heading>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
+      <Heading>{title}</Heading>
+      <Header><Flex justifyContent="flex-end" width="100%">{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Flex></Header>
       <Divider />
       <Content>{children}</Content>
       <ButtonGroup>
