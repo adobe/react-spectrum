@@ -24,7 +24,7 @@ html, body {
   display: flex;
   justify-content: center;
   padding-bottom: 12px;
-  svg {
+  svg, img {
     width: auto;
     height: auto;
   }

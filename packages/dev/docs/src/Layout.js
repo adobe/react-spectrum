@@ -51,8 +51,7 @@ const mdxComponents = {
   p: ({children, ...props}) => <p {...props} className={typographyStyles['spectrum-Body3']}>{children}</p>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
-  a: ({children, ...props}) => <a {...props} className={linkStyle['spectrum-Link']} target={getTarget(props.href)}>{children}</a>,
-  svg: ({children, ...props}) => <div className={docStyles['exampleImage']}><svg {...props}>{children}</svg></div>
+  a: ({children, ...props}) => <a {...props} className={linkStyle['spectrum-Link']} target={getTarget(props.href)}>{children}</a>
 };
 
 function getTarget(href) {

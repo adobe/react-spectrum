@@ -10,8 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './ExampleImage';
-export * from './Layout';
-export * from './PropTable';
-export * from './HeaderInfo';
-export * from './ResourceCard';
+import docStyles from './docs.css';
+import React from 'react';
+
+export function ExampleImage({children, ...props}) {
+  return (
+    <div className={docStyles['exampleImage']}>
+      {children}
+    </div>
+  );
+}
