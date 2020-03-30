@@ -10,20 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionGroupButton, SpectrumActionGroupProps} from '@react-types/actiongroup';
+import {ActionButton} from '@react-spectrum/button';
 import {ActionGroupState, useActionGroupState} from '@react-stately/actiongroup';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, filterDOMProps, useSlotProps} from '@react-spectrum/utils';
 import {CollectionBase, SelectionMode} from '@react-types/shared';
+import {DOMProps, StyleProps} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import {PressResponder} from '@react-aria/interactions';
+import {Node} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
-import React, {AllHTMLAttributes, useRef} from 'react';
+import React, {useRef} from 'react';
+import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useActionGroup} from '@react-aria/actiongroup';
 import {useSelectableItem} from '@react-aria/selection';
 
-export function ActionGroup<T>(props: CollectionBase<T> & SpectrumActionGroupProps) {
+export function ActionGroup<T>(props: CollectionBase<T> & SpectrumActionGroupProps<T>) {
   props = useSlotProps(props);
   let {
     isEmphasized,
@@ -62,11 +64,11 @@ export function ActionGroup<T>(props: CollectionBase<T> & SpectrumActionGroupPro
       } >
       <Provider {...providerProps}>
         {
-          state.collection.items.map((item) => (
+          [...state.collection].map((item) => (
             <ActionGroupItem
               key={item.key}
               {...buttonProps}
-              className={classNames(buttonStyles, 'spectrum-ButtonGroup-item')}
+              UNSAFE_className={classNames(buttonStyles, 'spectrum-ButtonGroup-item')}
               item={item}
               state={state} />
           ))
@@ -76,25 +78,23 @@ export function ActionGroup<T>(props: CollectionBase<T> & SpectrumActionGroupPro
   );
 }
 
-export interface ActionGroupItemProps extends AllHTMLAttributes<HTMLButtonElement> {
-  item: ActionGroupButton,
-  state: ActionGroupState
+export interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
+  item: Node<T>,
+  state: ActionGroupState<T>
 }
 
-export function ActionGroupItem({item, state, ...otherProps}: ActionGroupItemProps) {
-  let ref = useRef<HTMLDivElement>();
+export function ActionGroupItem<T>({item, state, ...otherProps}: ActionGroupItemProps<T>) {
+  let ref = useRef();
   let {itemProps} = useSelectableItem({
     selectionManager: state && state.selectionManager,
     itemKey: item && item.key,
     itemRef: ref
   });
 
-  let buttonProps = mergeProps(itemProps, otherProps);
+  let ariaProps = mergeProps(itemProps, item);
+  let buttonProps = mergeProps(ariaProps, otherProps);
 
   return (
-    <PressResponder ref={ref} {...buttonProps} >
-      {item}
-    </PressResponder>
+    <ActionButton ref={ref} {...buttonProps}>{item.rendered}</ActionButton>
   );
-
 }

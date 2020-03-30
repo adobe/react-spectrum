@@ -11,8 +11,8 @@
  */
 
 import {DOMProps, PointerType, PressEvents} from '@react-types/shared';
+import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {mergeProps} from '@react-aria/utils';
 import {PressResponderContext} from './context';
 
 export interface PressProps extends PressEvents {
@@ -30,7 +30,8 @@ interface PressState {
   ignoreClickAfterPress: boolean,
   activePointerId: any,
   target: HTMLElement | null,
-  isOverTarget: boolean
+  isOverTarget: boolean,
+  userSelect?: string
 }
 
 interface EventBase {
@@ -205,9 +206,9 @@ export function usePress(props: PressHookProps): PressResult {
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.
           if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && isVirtualClick(e.nativeEvent)) {
-            triggerPressStart(e, 'keyboard');
-            triggerPressUp(e, 'keyboard');
-            triggerPressEnd(e, 'keyboard');
+            triggerPressStart(e, 'virtual');
+            triggerPressUp(e, 'virtual');
+            triggerPressEnd(e, 'virtual');
           }
 
           state.ignoreEmulatedMouseEvents = false;
@@ -233,6 +234,27 @@ export function usePress(props: PressHookProps): PressResult {
       }
     };
 
+    // Safari on iOS starts selecting text on long press. The only way to avoid this, it seems,
+    // is to add user-select: none to the entire page. Adding it to the pressable element prevents
+    // that element from being selected, but nearby elements may still receive selection. We add
+    // user-select: none on touch start, and remove it again on touch end to prevent this.
+    let disableTextSelection = () => {
+      state.userSelect = document.documentElement.style.webkitUserSelect;
+      document.documentElement.style.webkitUserSelect = 'none';
+    };
+
+    let restoreTextSelection = () => {
+      // There appears to be a delay on iOS where selection still might occur 
+      // after pointer up, so wait a bit before removing user-select.
+      setTimeout(() => {
+        // Avoid race conditions
+        if (!state.isPressed && document.documentElement.style.webkitUserSelect === 'none') {
+          document.documentElement.style.webkitUserSelect = state.userSelect || '';
+          state.userSelect = null;
+        }
+      }, 300);
+    };
+
     if (typeof PointerEvent !== 'undefined') {
       pressProps.onPointerDown = (e) => {
         // Only handle left clicks
@@ -240,12 +262,21 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
+        // Due to browser inconsistencies, especially on mobile browsers, we prevent
+        // default on pointer down and handle focusing the pressable element ourselves.
+        e.preventDefault();
         e.stopPropagation();
         if (!state.isPressed) {
           state.isPressed = true;
           state.isOverTarget = true;
           state.activePointerId = e.pointerId;
           state.target = e.currentTarget;
+
+          if (!isDisabled) {
+            focusWithoutScrolling(e.currentTarget);
+          }
+
+          disableTextSelection();
           triggerPressStart(e, e.pointerType);
 
           document.addEventListener('pointermove', onPointerMove, false);
@@ -300,6 +331,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.isOverTarget = false;
           state.activePointerId = null;
           unbindEvents();
+          restoreTextSelection();
         }
       };
 
@@ -312,6 +344,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.isOverTarget = false;
           state.activePointerId = null;
           unbindEvents();
+          restoreTextSelection();
         }
       };
     } else {
@@ -321,14 +354,21 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
+        // Due to browser inconsistencies, especially on mobile browsers, we prevent
+        // default on mouse down and handle focusing the pressable element ourselves.
+        e.preventDefault();
         e.stopPropagation();
         if (state.ignoreEmulatedMouseEvents) {
-          e.nativeEvent.preventDefault();
           return;
         }
 
         state.isPressed = true;
         state.target = e.currentTarget;
+
+        if (!isDisabled) {
+          focusWithoutScrolling(e.currentTarget);
+        }
+
         triggerPressStart(e, 'mouse');
 
         document.addEventListener('mouseup', onMouseUp, false);
@@ -381,6 +421,14 @@ export function usePress(props: PressHookProps): PressResult {
         state.ignoreEmulatedMouseEvents = true;
         state.isOverTarget = true;
         state.isPressed = true;
+
+        // Due to browser inconsistencies, especially on mobile browsers, we prevent default
+        // on the emulated mouse event and handle focusing the pressable element ourselves.
+        if (!isDisabled) {
+          focusWithoutScrolling(e.currentTarget);
+        }
+
+        disableTextSelection();
         triggerPressStart(e, 'touch');
       };
 
@@ -414,6 +462,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.activePointerId = null;
         state.isOverTarget = false;
         state.ignoreEmulatedMouseEvents = true;
+        restoreTextSelection();
       };
 
       pressProps.onTouchCancel = (e) => {
@@ -425,6 +474,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.isPressed = false;
           state.activePointerId = null;
           state.isOverTarget = false;
+          restoreTextSelection();
         }
       };
     }
