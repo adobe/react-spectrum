@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useHasChild, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {FocusScope} from '@react-aria/focus';
@@ -89,20 +89,25 @@ let sizeMap = {
 
 function BaseDialog({children, slots, size, role, type, ...otherProps}: SpectrumBaseDialogProps) {
   let ref = useRef();
+  let gridRef = useRef();
   let sizeVariant = sizeMap[type] || sizeMap[size];
   let {dialogProps, titleProps} = useDialog({ref, role, ...otherProps});
+
+  let hasHeader = useHasChild(`:scope > .${styles['spectrum-Dialog-header']}`, gridRef);
+  let hasFooter = useHasChild(`:scope > .${styles['spectrum-Dialog-footer']}`, gridRef);
+
   if (!slots) {
     slots = {
       container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
       hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
       header: {UNSAFE_className: styles['spectrum-Dialog-header']},
-      heading: {UNSAFE_className: styles['spectrum-Dialog-heading'], ...titleProps},
+      heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader}), ...titleProps},
       typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
       divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
       content: {UNSAFE_className: styles['spectrum-Dialog-content']},
       footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
       closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']},
-      buttonGroup: {UNSAFE_className: styles['spectrum-Dialog-buttonGroup']}
+      buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !hasFooter})}
     };
   }
 
@@ -117,7 +122,7 @@ function BaseDialog({children, slots, size, role, type, ...otherProps}: Spectrum
           otherProps.className
         )}
         ref={ref}>
-        <Grid slots={slots}>
+        <Grid slots={slots} ref={gridRef}>
           {children}
         </Grid>
       </section>
