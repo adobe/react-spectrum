@@ -12,7 +12,7 @@
 
 import {DOMProps, PressEvents, StyleProps} from '@react-types/shared';
 import {ItemProps} from '@react-types/shared';
-import {ReactElement, ReactNode} from 'react';
+import {Key, ReactElement, ReactNode} from 'react';
 
 export interface BreadcrumbItemProps extends PressEvents {
   isCurrent?: boolean,
@@ -25,7 +25,8 @@ export interface BreadcrumbItemProps extends PressEvents {
 
 export interface BreadcrumbsProps<T> {
   children: ReactElement<ItemProps<T>> | ReactElement<ItemProps<T>>[],
-  maxVisibleItems?: 'auto' | number
+  maxVisibleItems?: 'auto' | number,
+  onAction?: (key: Key) => void
 }
 
 export interface SpectrumBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps, StyleProps {

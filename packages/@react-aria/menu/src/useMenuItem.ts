@@ -34,7 +34,7 @@ interface MenuItemProps {
   onClose?: () => void,
   closeOnSelect?: boolean,
   isVirtualized?: boolean,
-  onPress: (e: PressEvent) => void
+  onAction?: (key: Key) => void
 }
 
 export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuItemAria {
@@ -46,7 +46,7 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
     closeOnSelect,
     ref,
     isVirtualized,
-    onPress
+    onAction
   } = props;
 
   let role = 'menuitem';
@@ -84,16 +84,28 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
         }
         break;
       case 'Enter':
-        if (!isDisabled && onClose) {
+        if (!isDisabled && closeOnSelect && onClose) {
           onClose();
         }
         break;
     }
   };
 
-  let onPressUp = (e) => {
-    if (e.pointerType !== 'keyboard' && closeOnSelect && onClose) {
-      onClose();
+  let onPressStart = (e: PressEvent) => {
+    if (e.pointerType === 'keyboard' && onAction) {
+      onAction(key);
+    }
+  };
+
+  let onPressUp = (e: PressEvent) => {
+    if (e.pointerType !== 'keyboard') {
+      if (onAction) {
+        onAction(key);
+      }
+
+      if (closeOnSelect && onClose) {
+        onClose();
+      }
     }
   };
 
@@ -104,7 +116,7 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
     selectOnPressUp: true
   });
 
-  let {pressProps} = usePress(mergeProps({onPressUp, onPress, onKeyDown, isDisabled}, itemProps));
+  let {pressProps} = usePress(mergeProps({onPressStart, onPressUp, onKeyDown, isDisabled}, itemProps));
   let {hoverProps} = useHover({
     isDisabled,
     onHover() {

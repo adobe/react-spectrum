@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, DOMEventPropNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {MenuContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
@@ -25,7 +25,7 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
   let contextProps = useContext(MenuContext);
   let completeProps = {
     ...mergeProps(contextProps, props),
-    selectionMode: props.selectionMode || 'single'
+    selectionMode: props.selectionMode || 'none'
   };
 
   let ref = useRef();
@@ -36,7 +36,8 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
   return (
     <ul
       {...filterDOMProps(completeProps)}
-      {...menuProps}
+      // Allow DOM props to be passed from MenuTrigger via context only
+      {...mergeProps(menuProps, filterDOMProps(contextProps, DOMEventPropNames))}
       {...styleProps}
       ref={ref}
       className={
@@ -52,7 +53,8 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
             <MenuSection 
               key={item.key}
               item={item}
-              state={state} />
+              state={state}
+              onAction={completeProps.onAction} />
           );
         }
 
@@ -60,7 +62,8 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
           <MenuItem
             key={item.key}
             item={item}
-            state={state} />
+            state={state}
+            onAction={completeProps.onAction} />
         );
 
         if (item.wrapper) {
