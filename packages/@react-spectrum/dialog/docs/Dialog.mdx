@@ -24,6 +24,7 @@ import {Divider} from '@react-spectrum/divider';
 import {Form} from '@react-spectrum/form';
 import {Heading, Text} from '@react-spectrum/typography';
 import {Image} from '@react-spectrum/image';
+import {StatusLight} from '@react-spectrum/statuslight';
 import {TextField} from '@react-spectrum/textfield';
 ```
 
@@ -42,14 +43,19 @@ import {TextField} from '@react-spectrum/textfield';
 
 ```tsx example
 <DialogTrigger>
-  <ActionButton>Trigger</ActionButton>
+  <ActionButton>Check connectivity</ActionButton>
   {(close) => (
     <Dialog>
-      <Header><Heading>The Heading</Heading></Header>
+      <Heading>Internet Speed Test</Heading>
+      <Header>
+        <StatusLight variant="positive">
+          Connection status
+        </StatusLight>
+      </Header>
       <Divider />
       <Content>
         <Text>
-          This is a dialog.
+          Start speed test?
         </Text>
       </Content>
       <ButtonGroup>
@@ -70,7 +76,7 @@ A standard Dialog has the following anatomy:
 </ExampleImage>
 
 Each of these sections can be populated by providing the following components to your Dialog as children:
-`Header`, `Heading`, `Divider`, `Content` (for body), `ButtonGroup`, and `Footer`.
+`Header`, `Heading` (title), `Divider`, `Content` (body), `ButtonGroup`, and `Footer`.
 
 
 ### Examples
@@ -81,7 +87,7 @@ A typical Dialog with a title, contents, and action buttons can be created like 
   <ActionButton>Publish</ActionButton>
   {(close) => (
     <Dialog>
-      <Header><Heading>Publish 3 pages</Heading></Header>
+      <Heading>Publish 3 pages</Heading>
       <Divider />
       <Content>Confirm publish?</Content>
       <ButtonGroup>
@@ -102,14 +108,14 @@ resulting in possible tab order issues.
 <DialogTrigger isDismissable>
   <ActionButton>Status</ActionButton> 
   <Dialog>
-    <Header><Heading>Status</Heading></Header>
+    <Heading>Status</Heading>
     <Divider />
     <Content>Printer Status: Connected</Content>
   </Dialog>
 </DialogTrigger>
 ```
 
-It is important to note that the `Heading`, `Content`, and `Footer` content elements accept any renderable 
+It is important to note that the `Heading`, `Header`, `Content`, and `Footer` content elements accept any renderable 
 node, not just strings. This allows you to create Dialogs for more complex workflows, such as including a form
 for the user to fill out or adding confirmation checkboxes.
 
@@ -118,7 +124,12 @@ for the user to fill out or adding confirmation checkboxes.
   <ActionButton>Register</ActionButton> 
   {(close) => (
     <Dialog>
-      <Header><Heading>Register for newsletter</Heading></Header>
+      <Heading>Register for newsletter</Heading>
+      <Header>
+        <StatusLight variant="negative">
+          Registration Status
+        </StatusLight>
+      </Header>
       <Divider />
       <Content>
         <Form>
@@ -150,7 +161,7 @@ The example below illustrates how a Dialog with a hero image could be rendered v
   {(close) => (
     <Dialog>
       <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
-      <Header><Heading>Upload file</Heading></Header>
+      <Heading>Upload file</Heading>
       <Divider />
       <Content>Are you sure you want to upload this file?</Content>
       <ButtonGroup>
@@ -216,7 +227,7 @@ function Example() {
       <ActionButton>Set Profile</ActionButton>
       {(close) => (
         <Dialog>
-          <Header><Heading>Profile</Heading></Header>
+          <Heading>Profile</Heading>
           <Divider />
           <ButtonGroup>
             <Button autoFocus variant="cta" onPress={() => alertSave(close)}>Save</Button>
@@ -256,7 +267,7 @@ function Example() {
       <ActionButton>Info</ActionButton>
       {(close) => (
         <Dialog onDismiss={() => alertDismiss(close)}>
-          <Header><Heading>Version Info</Heading></Header>
+          <Heading>Version Info</Heading>
           <Divider />
           <Content>
             <Text>
@@ -290,7 +301,7 @@ considerations.
   <ActionButton>Set Profile</ActionButton>
   {(close) => (
     <Dialog size="S">
-      <Header><Heading>Profile</Heading></Header>
+      <Heading>Profile</Heading>
       <Divider />
       <ButtonGroup>
         <Button autoFocus variant="cta" onPress={close}>Save</Button>
@@ -310,7 +321,7 @@ considerations.
   <ActionButton>Set Profile</ActionButton>
   {(close) => (
     <Dialog size="M">
-      <Header><Heading>Profile</Heading></Header>
+      <Heading>Profile</Heading>
       <Divider />
       <ButtonGroup>
         <Button autoFocus variant="cta" onPress={close}>Save</Button>
@@ -330,7 +341,7 @@ considerations.
   <ActionButton>Set Profile</ActionButton>
   {(close) => (
     <Dialog size="L">
-      <Header><Heading>Profile</Heading></Header>
+      <Heading>Profile</Heading>
       <Divider />
       <ButtonGroup>
         <Button autoFocus variant="cta" onPress={close}>Save</Button>
