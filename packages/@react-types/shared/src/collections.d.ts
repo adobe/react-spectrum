@@ -28,7 +28,7 @@ interface AsyncLoadable<T> {
   items?: Iterable<T>,
   itemKey?: string,
   isLoading?: boolean, // possibly isLoadingMore
-  onLoadMore?: () => any,
+  onLoadMore?: () => any
 }
 
 export interface SectionProps<T> extends AsyncLoadable<T> {
