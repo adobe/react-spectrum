@@ -11,7 +11,8 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton, Button, ButtonGroup} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header} from '@react-spectrum/view';

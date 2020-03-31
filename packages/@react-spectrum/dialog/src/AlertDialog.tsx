@@ -11,7 +11,8 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {Button, ButtonGroup} from '@react-spectrum/button';
+import {Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {Content, Header} from '@react-spectrum/view';

@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Button, ButtonGroup} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content, Header} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';

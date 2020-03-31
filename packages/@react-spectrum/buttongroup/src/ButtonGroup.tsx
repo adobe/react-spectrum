@@ -10,24 +10,37 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import React from 'react';
+import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import React, {ReactNode} from 'react';
 import {useProviderProps} from '@react-spectrum/provider';
+import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 
-function ButtonGroup(props, ref) {
+import {DOMProps, DOMRef, Orientation, StyleProps} from '@react-types/shared';
+
+interface ButtonGroupProps extends DOMProps, StyleProps {
+  isDisabled?: boolean,
+  // default: horizontal
+  orientation?: Orientation,
+  children: ReactNode
+}
+
+function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLFormElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'buttonGroup');
   let {
     children,
+    orientation = 'horizontal',
+    isDisabled,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let domRef = useDOMRef(ref);
 
   return (
     <div
       {...filterDOMProps(otherProps)}
       {...styleProps}
-      ref={ref}
+      ref={domRef}
       className={styleProps.className}>
       {children}
     </div>
