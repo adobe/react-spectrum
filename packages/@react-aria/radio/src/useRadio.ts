@@ -14,9 +14,8 @@ import {AllHTMLAttributes} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {RadioProps} from '@react-types/radio';
-import {useEffect} from 'react';
 import {useFocusable} from '@react-aria/focus';
-import {usePress} from '@react-aria/interactions';
+import {usePressableInput} from '@react-aria/interactions';
 
 interface RadioAriaProps extends RadioProps {
   isRequired?: boolean,
@@ -52,25 +51,21 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
     setSelectedRadio(value);
   };
 
-  // This handles focusing the input on pointer down, which Safari does not do by default.
-  let {pressProps} = usePress({
+  let {pressProps} = usePressableInput({
     isDisabled
   });
 
-  useEffect(() => {
-    if (autoFocus) {
-      setFocusableRadio(value);
-    }
-  }, [autoFocus, setFocusableRadio, value]);
-
-  let {focusableProps} = useFocusable(props);
+  let {focusableProps} = useFocusable({
+    ...props,
+    onFocus: () => setFocusableRadio(value)
+  });
   let interactions = mergeProps(pressProps, focusableProps);
 
   return {
     inputProps: {
       type: 'radio',
       name,
-      tabIndex: focusableRadio === value ? 0 : -1,
+      tabIndex: focusableRadio === value || focusableRadio == null ? 0 : -1,
       disabled: isDisabled,
       readOnly: isReadOnly,
       required: isRequired,
