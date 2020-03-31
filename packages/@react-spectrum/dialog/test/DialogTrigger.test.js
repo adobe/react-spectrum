@@ -340,7 +340,7 @@ describe('DialogTrigger', function () {
     expect(dialog).toBeVisible();
     await waitForDomChange(); // wait for animation
 
-    let closeButton = getByLabelText('dismiss');
+    let closeButton = getByLabelText('Dismiss');
     triggerPress(closeButton);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);

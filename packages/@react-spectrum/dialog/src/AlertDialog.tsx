@@ -20,10 +20,12 @@ import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/typography';
+import intlMessages from '../intl/*.json';
 import React, {useContext} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
+import {useMessageFormatter} from '@react-aria/i18n';
 
 /**
  * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge. 
@@ -50,6 +52,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let formatMessage = useMessageFormatter(intlMessages);
 
   let confirmVariant: SpectrumButtonProps['variant'] = 'primary';
   if (variant) {
@@ -63,7 +66,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
   return (
     <Dialog {...styleProps} UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)} size="M" role="alertdialog">
       <Heading>{title}</Heading>
-      <Header><Flex justifyContent="flex-end" width="100%">{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Flex></Header>
+      <Header><Flex justifyContent="flex-end" width="100%">{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label={formatMessage('alert')} />}</Flex></Header>
       <Divider />
       <Content>{children}</Content>
       <ButtonGroup>
