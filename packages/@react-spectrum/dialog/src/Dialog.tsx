@@ -16,11 +16,21 @@ import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {FocusScope} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
+import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
-import {SpectrumBaseDialogProps, SpectrumDialogProps} from '@react-types/dialog';
+import {SpectrumDialogProps} from '@react-types/dialog';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
-import {useDialog, useModalDialog} from '@react-aria/dialog';
+import {useDialog} from '@react-aria/dialog';
+import {useMessageFormatter} from '@react-aria/i18n';
+
+let sizeMap = {
+  S: 'small',
+  M: 'medium',
+  L: 'large',
+  fullscreen: 'fullscreen',
+  fullscreenTakeover: 'fullscreenTakeover'
+};
 
 type DialogType = 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover';
 
@@ -38,56 +48,19 @@ export function Dialog(props: SpectrumDialogProps) {
     children,
     isDismissable = contextProps.isDismissable,
     onDismiss = contextProps.onClose,
+    role,
+    slots,
+    size,
     ...otherProps
   } = props;
+  let formatMessage = useMessageFormatter(intlMessages);
   let {styleProps} = useStyleProps(otherProps);
-  let allProps: SpectrumBaseDialogProps = mergeProps(
-    mergeProps(
-      mergeProps(
-        filterDOMProps(otherProps),
-        filterDOMProps(contextProps)
-      ),
-      styleProps
-    ),
-    {className: classNames(styles, {'spectrum-Dialog--dismissable': isDismissable})}
-  );
-  let size = type === 'popover' ? undefined : (otherProps.size || 'L');
 
-  if (type === 'popover') {
-    return <BaseDialog {...allProps} size={size}>{children}</BaseDialog>;
-  } else {
-
-    return (
-      <ModalDialog {...allProps} size={size} type={type}>
-        {children}
-        {isDismissable &&
-          <ActionButton
-            slot="closeButton"
-            isQuiet
-            aria-label="dismiss"
-            onPress={onDismiss}>
-            <CrossLarge size="L" />
-          </ActionButton>
-        }
-      </ModalDialog>
-    );
+  size = type === 'popover' ? undefined : (size || 'L');
+  if (type === 'fullscreen' || type === 'fullscreenTakeover') {
+    size = type;
   }
-}
 
-function ModalDialog(props: SpectrumBaseDialogProps) {
-  let {modalProps} = useModalDialog();
-  return <BaseDialog {...mergeProps(props, modalProps)} />;
-}
-
-let sizeMap = {
-  S: 'small',
-  M: 'medium',
-  L: 'large',
-  fullscreen: 'fullscreen',
-  fullscreenTakeover: 'fullscreenTakeover'
-};
-
-function BaseDialog({children, slots, size, role, type, ...otherProps}: SpectrumBaseDialogProps) {
   let ref = useRef();
   let gridRef = useRef();
   let sizeVariant = sizeMap[type] || sizeMap[size];
@@ -114,16 +87,37 @@ function BaseDialog({children, slots, size, role, type, ...otherProps}: Spectrum
   return (
     <FocusScope contain restoreFocus>
       <section
-        {...mergeProps(otherProps, dialogProps)}
+        {...mergeProps(
+          mergeProps(
+            mergeProps(
+              filterDOMProps(otherProps),
+              filterDOMProps(contextProps)
+            ),
+            styleProps
+          ),
+          dialogProps
+        )}
         className={classNames(
           styles,
           'spectrum-Dialog',
-          {[`spectrum-Dialog--${sizeVariant}`]: sizeVariant},
-          otherProps.className
+          {
+            [`spectrum-Dialog--${sizeVariant}`]: sizeVariant,
+            'spectrum-Dialog--dismissable': isDismissable
+          },
+          styleProps.className
         )}
         ref={ref}>
         <Grid slots={slots} ref={gridRef}>
           {children}
+          {isDismissable &&
+            <ActionButton
+              slot="closeButton"
+              isQuiet
+              aria-label={formatMessage('dismiss')}
+              onPress={onDismiss}>
+              <CrossLarge size="L" />
+            </ActionButton>
+          }
         </Grid>
       </section>
     </FocusScope>

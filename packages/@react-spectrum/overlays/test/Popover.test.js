@@ -13,7 +13,9 @@
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import {Dialog} from '@react-spectrum/dialog';
 import {Popover} from '../';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {theme} from '@react-spectrum/theme-default';
 import V2Popover from '@react/react-spectrum/Popover';
 
 function PopoverWithDialog({children}) {
@@ -41,7 +43,11 @@ describe('Popover', function () {
       ${'v3'}   | ${PopoverWithDialog} | ${{}}                | ${'-1'}
       ${'v2'}   | ${V2Popover}         | ${{role: 'dialog'}}  | ${'1'}
     `('$Name has a tabIndex set', function ({Component, props, expectedTabIndex}) {
-      let {getByRole} = render(<Component {...props} />);
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Component {...props} />
+        </Provider>
+      );
 
       let dialog = getByRole('dialog');
       expect(dialog).toHaveAttribute('tabIndex', expectedTabIndex);
@@ -53,10 +59,12 @@ describe('Popover', function () {
       ${'v2'}   | ${V2Popover}         | ${{role: 'dialog'}}
     `('$Name auto focuses the first tabbable element by default', function ({Name, Component, props}) {
       let {getByRole, getByTestId} = render(
-        <Component {...props}>
-          <input data-testid="input1" />
-          <input data-testid="input2" />
-        </Component>
+        <Provider theme={theme}>
+          <Component {...props}>
+            <input data-testid="input1" />
+            <input data-testid="input2" />
+          </Component>
+        </Provider>
       );
 
       if (Name === 'v2') {
@@ -73,7 +81,11 @@ describe('Popover', function () {
       ${'v3'}   | ${PopoverWithDialog} | ${{isOpen: true}}
       ${'v2'}   | ${V2Popover}         | ${{role: 'dialog'}}
     `('$Name auto focuses the dialog itself if there is no focusable child', function ({Component, props}) {
-      let {getByRole} = render(<Component {...props} />);
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Component {...props} />
+        </Provider>
+      );
 
       let dialog = getByRole('dialog');
       expect(document.activeElement).toBe(dialog);
@@ -85,10 +97,12 @@ describe('Popover', function () {
       ${'v2'}   | ${V2Popover}         | ${{role: 'dialog'}}
     `('$Name allows autofocus prop on a child element to work as expected', function ({Component, props}) {
       let {getByTestId} = render(
-        <Component {...props}>
-          <input data-testid="input1" />
-          <input data-testid="input2" autoFocus />
-        </Component>
+        <Provider theme={theme}>
+          <Component {...props}>
+            <input data-testid="input1" />
+            <input data-testid="input2" autoFocus />
+          </Component>
+        </Provider>
       );
 
       let input2 = getByTestId('input2');
@@ -100,10 +114,12 @@ describe('Popover', function () {
       ${'v3'}   | ${PopoverWithDialog} | ${{}}
     `('$Name contains focus within the popover', function ({Name, Component, props}) {
       let {getByRole, getByTestId} = render(
-        <Component {...props}>
-          <input data-testid="input1" />
-          <input data-testid="input2" />
-        </Component>
+        <Provider theme={theme}>
+          <Component {...props}>
+            <input data-testid="input1" />
+            <input data-testid="input2" />
+          </Component>
+        </Provider>
       );
 
       let dialog = getByRole('dialog');
@@ -125,7 +141,11 @@ describe('Popover', function () {
   describe('v3', function () {
     it('hides the popover when pressing the escape key', function () {
       let onClose = jest.fn();
-      let {getByTestId} = render(<Popover isOpen onClose={onClose} />);
+      let {getByTestId} = render(
+        <Provider theme={theme}>
+          <Popover isOpen onClose={onClose} />
+        </Provider>
+      );
       let popover = getByTestId('popover');
       fireEvent.keyDown(popover, {key: 'Escape'});
       expect(onClose).toHaveBeenCalledTimes(1);
@@ -133,10 +153,35 @@ describe('Popover', function () {
 
     it('hides the popover when clicking outside', function () {
       let onClose = jest.fn();
-      render(<Popover isOpen onClose={onClose} />);
+      render(
+        <Provider theme={theme}>
+          <Popover isOpen onClose={onClose} />
+        </Provider>
+      );
+
       fireEvent.mouseDown(document.body);
       fireEvent.mouseUp(document.body);
       expect(onClose).toHaveBeenCalledTimes(1);
+    });
+
+    it('should have a hidden dismiss button for screen readers', function () {
+      let onClose = jest.fn();
+      let {getAllByRole} = render(
+        <Provider theme={theme}>
+          <Popover isOpen onClose={onClose} />
+        </Provider>
+      );      
+      
+      let buttons = getAllByRole('button');
+      expect(buttons.length).toBe(2);
+      expect(buttons[0]).toHaveAttribute('aria-label', 'Dismiss');
+      expect(buttons[1]).toHaveAttribute('aria-label', 'Dismiss');
+
+      fireEvent.click(buttons[0]);
+      expect(onClose).toHaveBeenCalledTimes(1);
+
+      fireEvent.click(buttons[1]);
+      expect(onClose).toHaveBeenCalledTimes(2);
     });
   });
 });
