@@ -11,13 +11,9 @@
  */
 
 import {filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
 import {HTMLElement} from 'react-dom';
+import {HeadingProps} from '@react-types/typography';
 import React, {ReactNode, RefObject} from 'react';
-
-export interface HeadingProps extends DOMProps, StyleProps {
-  children: ReactNode
-}
 
 export const Heading = React.forwardRef((props: HeadingProps, ref: RefObject<HTMLElement>) => {
   props = useSlotProps(props, 'heading');
