@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {BreadcrumbItem} from './';
+import {BreadcrumbItem} from './BreadcrumbItem';
 import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
@@ -48,7 +48,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   const [visibleItems, setVisibleItems] = useState(isCollapsible ? childArray.length : maxVisibleItems);
 
-  let {breadcrumbProps} = useBreadcrumbs(props);
+  let {breadcrumbsProps} = useBreadcrumbs(props);
   let {styleProps} = useStyleProps(otherProps);
 
   useEffect(() => {
@@ -146,7 +146,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     <nav
       {...filterDOMProps(otherProps)}
       {...styleProps}
-      {...breadcrumbProps}
+      {...breadcrumbsProps}
       className={classNames({}, styleProps.className)}
       ref={domRef}>
       <ul
