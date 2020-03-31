@@ -15,7 +15,7 @@ import {Direction, KeyboardDelegate, Orientation} from '@react-types/shared';
 import {Key} from 'react';
 
 export class ActionGroupKeyboardDelegate<T> implements KeyboardDelegate {
-  private collection: any;
+  private collection: Collection<T>;
   private flipDirection: boolean;
 
   constructor(collection: Collection<T>, direction: Direction, orientation: Orientation) {
