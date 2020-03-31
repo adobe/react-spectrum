@@ -28,6 +28,10 @@ governing permissions and limitations under the License.
 
   text-align: center;
 
+  > * {
+    order: 4;
+  }
+
   > svg {
     order: 1;
     margin-bottom: var(--spectrum-illustrated-message-illustration-margin-bottom);
