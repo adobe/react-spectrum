@@ -12,8 +12,8 @@
 
 import {ActionGroupKeyboardDelegate, ActionGroupState} from '@react-stately/actiongroup';
 import {ActionGroupProps} from '@react-types/actiongroup';
-import {HTMLAttributes, useMemo, useState} from 'react';
 import {FocusEvent} from '@react-types/shared';
+import {HTMLAttributes, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';

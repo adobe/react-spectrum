@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes} from 'react';
 import {clamp} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
+import {HTMLAttributes} from 'react';
 import {ProgressBarProps} from '@react-types/progress';
 import {useLabel} from '@react-aria/label';
 import {useNumberFormatter} from '@react-aria/i18n';

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, MutableRefObject, useRef} from 'react';
 import {getOffset} from './getOffset';
+import {HTMLAttributes, MutableRefObject, useRef} from 'react';
 import {Orientation} from '@react-types/shared';
 
 interface UseDrag1DProps {

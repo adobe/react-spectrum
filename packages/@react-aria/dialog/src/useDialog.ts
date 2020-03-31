@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {focusWithoutScrolling, useSlotId} from '@react-aria/utils';
+import {HTMLAttributes, RefObject, useEffect} from 'react';
 
 export interface DialogProps {
   ref: RefObject<HTMLElement | null>,

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, useContext} from 'react';
 import {DOMProps} from '@react-types/shared';
 import {DOMPropsResponderContext} from '@react-aria/interactions';
+import {HTMLAttributes, useContext} from 'react';
 import {useId} from '@react-aria/utils';
 
 interface TooltipProps extends DOMProps {

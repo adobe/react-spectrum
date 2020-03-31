@@ -11,7 +11,7 @@
  */
 
 import {Orientation} from '@react-types/shared';
-import React, {HTMLAttributes, HTMLAttributes, ReactElement} from 'react';
+import React, {HTMLAttributes, ReactElement} from 'react';
 import {useId} from '@react-aria/utils';
 
 interface AriaTabListProps {

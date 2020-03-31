@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, ReactElement, ReactNode, SVGAttributes} from 'react';
 import {DOMProps} from '@react-types/shared';
+import {HTMLAttributes, ReactElement, ReactNode, SVGAttributes} from 'react';
 
 interface IllustratedMessageAriaProps extends DOMProps {
   heading?: string,

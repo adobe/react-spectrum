@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes} from 'react';
 import {DOMProps} from '@react-types/shared';
+import {HTMLAttributes} from 'react';
 import {ProgressBarBaseProps} from '@react-types/progress';
 import {useProgressBar} from '@react-aria/progress';
 

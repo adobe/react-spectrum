@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, RefObject, SyntheticEvent} from 'react';
 import {DOMProps, PressEvent} from '@react-types/shared';
+import {HTMLAttributes, RefObject, SyntheticEvent} from 'react';
 import {LinkProps} from '@react-types/link';
 import {useId} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';

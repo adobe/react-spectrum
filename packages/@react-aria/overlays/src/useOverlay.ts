@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, ButtonHTMLAttributes, RefObject, useEffect} from 'react';
+import {ButtonHTMLAttributes, HTMLAttributes, RefObject, useEffect} from 'react';
 import intlMessages from '../intl/*.json';
 import {useInteractOutside} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';

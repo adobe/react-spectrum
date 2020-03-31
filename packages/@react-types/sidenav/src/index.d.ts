@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, ReactNode} from 'react';
 import {CollectionBase, DOMProps, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
+import {HTMLAttributes, ReactNode} from 'react';
 import {Node, ReusableView} from '@react-stately/collections';
 import {TreeState} from '@react-stately/tree';
 

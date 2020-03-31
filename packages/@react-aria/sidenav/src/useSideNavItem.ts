@@ -19,7 +19,9 @@ import {useSelectableItem} from '@react-aria/selection';
 
 interface SideNavItemAria {
   listItemProps: HTMLAttributes<HTMLDivElement>,
-  listItemLinkProps: HTMLAttributes<HTMLAnchorElement>
+  listItemLinkProps: HTMLAttributes<HTMLAnchorElement> & {
+    target?: string
+  }
 }
 
 export function useSideNavItem<T>(props: SpectrumSideNavItemProps<T>, state: TreeState<T>, ref: RefObject<HTMLAnchorElement | null>): SideNavItemAria {

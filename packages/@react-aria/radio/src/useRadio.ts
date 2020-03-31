@@ -24,7 +24,15 @@ interface RadioAriaProps extends RadioProps {
 }
 
 interface RadioAria {
-  inputProps: HTMLAttributes<HTMLInputElement>
+  inputProps: HTMLAttributes<HTMLElement> & {
+    autoFocus: boolean,
+    checked: boolean,
+    disabled?: boolean,
+    name?: string,
+    readOnly?: boolean,
+    required?: boolean,
+    type?: 'radio'
+  }
 }
 
 export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAria {
