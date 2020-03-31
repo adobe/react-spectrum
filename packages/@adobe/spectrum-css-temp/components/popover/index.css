@@ -70,7 +70,7 @@ governing permissions and limitations under the License.
   .svg-triangle path {
     stroke-linecap: round;
     stroke-linejoin: miter;
-    stroke-width: var(--spectrum-popover-border-size);
+    stroke-width: calc(var(--spectrum-popover-border-size) + 0.5px);
   }
 }
 
