@@ -33,7 +33,6 @@ export function useBreadcrumbItem(props: BreadcrumbItemProps & DOMProps): Breadc
   } = props;
 
   let ref = useRef();
-
   let {linkProps} = useLink({children, isDisabled, ...otherProps, ref});
 
   let itemProps: AllHTMLAttributes<HTMLDivElement> = isCurrent
