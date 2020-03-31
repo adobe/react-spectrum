@@ -68,7 +68,6 @@ governing permissions and limitations under the License.
   max-width: 90vw;
 
   border-radius: var(--spectrum-dialog-border-radius);
-  overflow: hidden;
   outline: none; /* Firefox shows outline */
   pointer-events: auto;
 
