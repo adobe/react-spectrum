@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ClearSlots, useSlotProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {ClearSlots, useDOMRef, useSlotProps} from '@react-spectrum/utils';
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import React, {ReactNode, RefObject} from 'react';
@@ -20,13 +20,14 @@ export interface ContentProps extends DOMProps, StyleProps {
   children: ReactNode
 }
 
-export const Content = React.forwardRef((props: ContentProps, ref: RefObject<HTMLElement>) => {
+export const Content = React.forwardRef((props: ContentProps, ref: DOMRef<HTMLElement>) => {
   props = useSlotProps(props, 'content');
   let {
     children,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let domRef = useDOMRef(ref);
 
   return (
     <section {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
