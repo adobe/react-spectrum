@@ -86,11 +86,9 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
     <FocusScope restoreFocus>
       <ListBoxBase
         domProps={menuProps}
-        autoFocus
-        wrapAround
+        autoFocus={state.focusStrategy}
         selectOnPressUp
         focusOnPointerEnter
-        focusStrategy={state.focusStrategy}
         layout={layout}
         state={state}
         width={isMobile ? '100%' : undefined} />

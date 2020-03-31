@@ -29,9 +29,8 @@ import {useProvider} from '@react-spectrum/provider';
 interface ListBoxBaseProps<T> extends DOMProps, StyleProps {
   layout: ListLayout<T>,
   state: ListState<T>,
-  autoFocus?: boolean,
-  focusStrategy?: FocusStrategy,
-  wrapAround?: boolean,
+  autoFocus?: boolean | FocusStrategy,
+  shouldFocusWrap?: boolean,
   selectOnPressUp?: boolean,
   focusOnPointerEnter?: boolean,
   domProps?: HTMLAttributes<HTMLElement>

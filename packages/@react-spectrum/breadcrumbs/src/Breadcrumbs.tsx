@@ -89,10 +89,11 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
     let menuItem = (
       <BreadcrumbItem key="menu">
-        <MenuTrigger isDisabled={isDisabled}>
+        <MenuTrigger>
           <ActionButton
             aria-label="…"
-            isQuiet>
+            isQuiet
+            isDisabled={isDisabled}>
             <FolderBreadcrumb />
           </ActionButton>
           <Menu selectionMode="none" onAction={onAction}>

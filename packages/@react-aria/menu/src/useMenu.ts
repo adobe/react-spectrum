@@ -29,10 +29,16 @@ interface AriaMenuProps<T> extends MenuProps<T> {
 }
 
 export function useMenu<T>(props: AriaMenuProps<T>, state: MenuState<T>): MenuAria {
+  let {
+    shouldFocusWrap = true,
+    ...otherProps
+  } = props;
+
   let {listProps} = useSelectableList({
-    ...props,
+    ...otherProps,
     selectionManager: state.selectionManager,
-    collection: state.collection
+    collection: state.collection,
+    shouldFocusWrap
   });
 
   return {
