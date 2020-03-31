@@ -32,6 +32,10 @@ export interface SpectrumDialogTriggerProps extends PositionProps {
 export interface SpectrumDialogProps extends DOMProps, StyleProps {
   /** The contents of the Dialog. */
   children: ReactNode,
+  /**
+   * Replaces the default slots used within Dialog.
+   */
+  slots?: Slots,
   /** The size of the Dialog. Only applies to "modal" type Dialogs. */
   size?: 'S' | 'M' | 'L',
   /** Whether the Dialog is [dismissable](#dismissable). */

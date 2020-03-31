@@ -57,9 +57,6 @@ export function Dialog(props: SpectrumDialogProps) {
   let {styleProps} = useStyleProps(otherProps);
 
   size = type === 'popover' ? undefined : (size || 'L');
-  if (type === 'fullscreen' || type === 'fullscreenTakeover') {
-    size = type;
-  }
 
   let ref = useRef();
   let gridRef = useRef();
