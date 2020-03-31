@@ -10,16 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy, MenuTriggerProps} from '@react-types/menu';
+import {FocusStrategy, MenuTriggerProps, MenuTriggerState} from '@react-types/menu';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
-
-export interface MenuTriggerState {
-  isOpen: boolean,
-  setOpen: (value: boolean) => void,
-  focusStrategy: FocusStrategy,
-  setFocusStrategy: (value: FocusStrategy) => void
-}
 
 export function useMenuTriggerState(props: MenuTriggerProps):MenuTriggerState  {
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
