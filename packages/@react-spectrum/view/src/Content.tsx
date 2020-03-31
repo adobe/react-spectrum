@@ -11,14 +11,11 @@
  */
 
 import {ClearSlots, useDOMRef, useSlotProps} from '@react-spectrum/utils';
-import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
+import {ContentProps} from '@react-types/view';
+import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
-import React, {ReactNode, RefObject} from 'react';
-
-export interface ContentProps extends DOMProps, StyleProps {
-  children: ReactNode
-}
+import React from 'react';
 
 export const Content = React.forwardRef((props: ContentProps, ref: DOMRef<HTMLElement>) => {
   props = useSlotProps(props, 'content');

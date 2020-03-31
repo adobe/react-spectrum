@@ -11,13 +11,9 @@
  */
 
 import {filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {HeaderProps} from '@react-types/view';
 import {HTMLElement} from 'react-dom';
-import React, {ReactNode, RefObject} from 'react';
-
-export interface HeaderProps extends DOMProps, StyleProps {
-  children: ReactNode
-}
+import React, {RefObject} from 'react';
 
 export const Header = React.forwardRef((props: HeaderProps, ref: RefObject<HTMLElement>) => {
   props = useSlotProps(props, 'header');

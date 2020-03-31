@@ -11,13 +11,9 @@
  */
 
 import {filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {FooterProps} from '@react-types/view';
 import {HTMLElement} from 'react-dom';
-import React, {ReactNode, RefObject} from 'react';
-
-export interface FooterProps extends DOMProps, StyleProps {
-  children: ReactNode
-}
+import React, {RefObject} from 'react';
 
 export const Footer = React.forwardRef((props: FooterProps, ref: RefObject<HTMLElement>) => {
   props = useSlotProps(props, 'footer');
