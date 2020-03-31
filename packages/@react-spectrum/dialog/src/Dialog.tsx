@@ -47,7 +47,6 @@ export function Dialog(props: SpectrumDialogProps) {
     isDismissable = contextProps.isDismissable,
     onDismiss = contextProps.onClose,
     role,
-    slots,
     size,
     ...otherProps
   } = props;
@@ -67,20 +66,18 @@ export function Dialog(props: SpectrumDialogProps) {
   let hasHeader = useHasChild(`:scope > .${styles['spectrum-Dialog-header']}`, gridRef);
   let hasFooter = useHasChild(`:scope > .${styles['spectrum-Dialog-footer']}`, gridRef);
 
-  if (!slots) {
-    slots = {
-      container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
-      hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
-      header: {UNSAFE_className: styles['spectrum-Dialog-header']},
-      heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader}), ...titleProps},
-      typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
-      divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
-      content: {UNSAFE_className: styles['spectrum-Dialog-content']},
-      footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
-      closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']},
-      buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !hasFooter})}
-    };
-  }
+  let slots = {
+    container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
+    hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
+    header: {UNSAFE_className: styles['spectrum-Dialog-header']},
+    heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader}), ...titleProps},
+    typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
+    divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
+    content: {UNSAFE_className: styles['spectrum-Dialog-content']},
+    footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
+    closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']},
+    buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !hasFooter})}
+  };
 
   return (
     <FocusScope contain restoreFocus>
