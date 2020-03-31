@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import {KeyboardProps} from '@react-types/typography';
 import React, {RefObject} from 'react';
-
 
 export const Keyboard = React.forwardRef((props: KeyboardProps, ref: RefObject<HTMLElement>) => {
   props = useSlotProps(props, 'keyboard');
@@ -25,7 +24,7 @@ export const Keyboard = React.forwardRef((props: KeyboardProps, ref: RefObject<H
   let {styleProps} = useStyleProps(otherProps);
 
   return (
-    <kbd {...filterDOMProps(otherProps)} {...styleProps} className={classNames({}, styleProps.className)} ref={ref}>
+    <kbd {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
       {children}
     </kbd>
   );
