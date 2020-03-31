@@ -22,9 +22,10 @@ governing permissions and limitations under the License.
   --spectrum-popover-min-height: var(--spectrum-global-dimension-size-400);
 
   /* Popover tip positioning for left/right oriented popovers (-16px/-19px) */
-  --spectrum-popover-tip-horizontal-offset: calc(-6px - var(--spectrum-global-dimension-size-125));
+  /* 125 - 115 gives 2 in large and 1 in medium, dividing by 2 means i have 1px in large and .5px in medium*/
+  --spectrum-popover-tip-horizontal-offset: calc(-1px + calc(calc(var(--spectrum-global-dimension-size-125) - var(--spectrum-global-dimension-size-115)) / 2) - var(--spectrum-global-dimension-size-125));
   /* Popover tip positioning for top/bottom oriented popovers (-11px/-13px) */
-  --spectrum-popover-tip-vertical-offset: calc(-5px - var(--spectrum-global-dimension-size-75));
+  --spectrum-popover-tip-vertical-offset: calc(-4px - calc(calc(var(--spectrum-global-dimension-size-125) - var(--spectrum-global-dimension-size-115)) / 2) - var(--spectrum-global-dimension-size-75));
 
   --spectrum-popover-tip-triangle-top-offset: calc(var(--spectrum-global-dimension-size-225) * -1);
 }
@@ -55,21 +56,21 @@ governing permissions and limitations under the License.
 
 .spectrum-Popover-tip {
   position: absolute;
-  /* This hides half of the tooltip, but it also crops the shadow slightly, which is undesirable */
-  overflow: hidden;
-  width: calc(var(--spectrum-popover-tip-width) + 1px);
-  height: calc((var(--spectrum-popover-tip-width)/2)+(var(--spectrum-popover-border-size)));
+  transform: rotate(-135deg);
+  width: var(--spectrum-popover-tip-width);
+  height: var(--spectrum-popover-tip-width);
 
-  &::after {
-    content: '';
-    width: var(--spectrum-popover-tip-width); /* why did this have an extra half px??? */
+  .svg-triangle {
+    margin: 0 auto;
+    width: var(--spectrum-popover-tip-width);
     height: var(--spectrum-popover-tip-width);
-    border-width: var(--spectrum-popover-border-size);
-    border-style: solid;
-    position: absolute;
-    transform: rotate(45deg);
-    top: var(--spectrum-popover-tip-triangle-top-offset);
-    left: -1px;
+    shape-rendering: geometricPrecision;
+  }
+
+  .svg-triangle path {
+    stroke-linecap: round;
+    stroke-linejoin: miter;
+    stroke-width: var(--spectrum-popover-border-size);
   }
 }
 
@@ -88,7 +89,7 @@ governing permissions and limitations under the License.
   }
   .spectrum-Popover-tip {
     right: var(--spectrum-popover-tip-horizontal-offset);
-    transform: rotate(-90deg);
+    transform: rotate(135deg);
   }
 }
 
@@ -102,7 +103,7 @@ governing permissions and limitations under the License.
   }
   .spectrum-Popover-tip {
     left: var(--spectrum-popover-tip-horizontal-offset);
-    transform: rotate(90deg);
+    transform: rotate(-45deg);
   }
 }
 
@@ -125,7 +126,7 @@ governing permissions and limitations under the License.
   }
   .spectrum-Popover-tip {
     top: var(--spectrum-popover-tip-vertical-offset);
-    transform: rotate(180deg);
+    transform: rotate(45deg);
   }
 }
 

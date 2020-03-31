@@ -58,7 +58,14 @@ function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
       data-testid="popover"
       {...overlayProps}>
       {children}
-      {hideArrow ? null : <div className={classNames(styles, 'spectrum-Popover-tip')} {...arrowProps} data-testid="tip" />}
+      {hideArrow ? null : (
+        <div className={classNames(styles, 'spectrum-Popover-tip')} {...arrowProps} data-testid="tip">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" className={classNames(styles, 'svg-triangle')}>
+            <polygon points="0 0, 22 0, 0 22" />
+            <path d="M 20 0, L 0 0, L 0 20" />
+          </svg>
+        </div>
+      )}
     </div>
   );
 }

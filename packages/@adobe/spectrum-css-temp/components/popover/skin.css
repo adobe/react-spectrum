@@ -26,8 +26,14 @@ governing permissions and limitations under the License.
     background-color: transparent;
   }
 
-  .spectrum-Popover-tip::after {
-    background-color: var(--spectrum-popover-background-color);
-    border-color: var(--spectrum-popover-border-color);
+  .spectrum-Popover-tip {
+
+    .svg-triangle {
+      fill: var(--spectrum-popover-background-color);
+    }
+    .svg-triangle path {
+      fill: none;
+      stroke: var(--spectrum-popover-border-color);
+    }
   }
 }
