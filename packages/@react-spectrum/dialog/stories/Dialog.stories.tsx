@@ -23,6 +23,7 @@ import {Image} from '@react-spectrum/image';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
+import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 
@@ -51,7 +52,7 @@ storiesOf('Dialog', module)
     () => renderHero({isDismissable: true})
   )
   .add(
-    'with footer, isDimissable',
+    'with footer',
     () => renderFooter({})
   )
   .add(
@@ -223,7 +224,8 @@ function render({width = 'auto', isDismissable = undefined, ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading</Heading>
+            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
             {!isDismissable &&
@@ -246,7 +248,8 @@ function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
         {(close) => (
           <Dialog {...props}>
             <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading</Heading>
+            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
             {!isDismissable &&
@@ -268,7 +271,8 @@ function renderFooter({width = 'auto', isDismissable = undefined, ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading</Heading>
+            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
             <Footer><Checkbox>I accept</Checkbox></Footer>
@@ -303,7 +307,8 @@ function renderWithForm({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading</Heading>
+            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
             <Divider />
             <Content>
               <Form>
@@ -350,7 +355,7 @@ function renderLongContent({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading is also very long and demonstrates what happens if there is no Header</Heading>
             <Divider />
             <Content>{fiveParagraphs()}</Content>
             <ButtonGroup>
@@ -371,7 +376,8 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading</Heading>
+            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
             <ButtonGroup>
@@ -393,7 +399,8 @@ function renderWithDividerInContent({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading</Heading>
+            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
             <Divider />
             <Content>
               <Flex UNSAFE_style={{padding: '10px'}}>
