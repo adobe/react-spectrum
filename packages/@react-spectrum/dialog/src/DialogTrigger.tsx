@@ -17,7 +17,7 @@ import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
-import {useControlledState} from '@react-stately/utils';
+import {useDialogTriggerState} from '@react-stately/dialog';
 import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 
 export function DialogTrigger(props: SpectrumDialogTriggerProps) {
@@ -48,7 +48,8 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
     type = mobileType;
   }
 
-  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
+  let {isOpen, setOpen} = useDialogTriggerState(props);
+
   let onPress = () => {
     setOpen(!isOpen);
   };
