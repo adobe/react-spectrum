@@ -125,7 +125,7 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
   let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
-  let {overlayProps, placement, arrowProps} = useOverlayPosition({
+  let {overlayProps: popoverProps, placement, arrowProps} = useOverlayPosition({
     containerRef: unwrapDOMRef(containerRef),
     targetRef: targetRef || triggerRef,
     overlayRef,
@@ -137,7 +137,7 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
     isOpen
   });
 
-  let {triggerAriaProps, overlayAriaProps} = useOverlayTrigger({
+  let {triggerProps, overlayProps} = useOverlayTrigger({
     ref: triggerRef,
     type: 'dialog',
     onClose,
@@ -145,13 +145,13 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
   });
 
   let triggerPropsWithRef = {
-    ...triggerAriaProps,
+    ...triggerProps,
     ref: targetRef ? undefined : triggerRef
   };
 
   let overlay = (
     <Overlay isOpen={isOpen} ref={containerRef}>
-      <Popover {...overlayProps} ref={overlayRef} onClose={onClose} placement={placement} arrowProps={arrowProps} hideArrow={hideArrow}>
+      <Popover {...popoverProps} ref={overlayRef} onClose={onClose} placement={placement} arrowProps={arrowProps} hideArrow={hideArrow}>
         {content}
       </Popover>
     </Overlay>
@@ -164,7 +164,7 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
       onPress={onPress}
       onClose={onClose}
       triggerProps={triggerPropsWithRef}
-      dialogProps={overlayAriaProps}
+      dialogProps={overlayProps}
       trigger={trigger}
       overlay={overlay} />
   );

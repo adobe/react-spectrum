@@ -29,7 +29,7 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
   } = props;
 
   let menuTriggerId = useId();
-  let {triggerAriaProps, overlayAriaProps} = useOverlayTrigger({
+  let {triggerProps, overlayProps} = useOverlayTrigger({
     ref,
     type,
     onClose: () => state.setOpen(false),
@@ -74,7 +74,7 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
 
   return {
     menuTriggerProps: {
-      ...triggerAriaProps,
+      ...triggerProps,
       id: menuTriggerId,
       onPressStart(e) {
         // For consistency with native, open the menu on mouse/key down, but touch up.
@@ -90,7 +90,7 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
       onKeyDown
     },
     menuProps: {
-      ...overlayAriaProps,
+      ...overlayProps,
       ...focusWithinProps,
       'aria-labelledby': menuTriggerId,
       onMouseDown(e) {
