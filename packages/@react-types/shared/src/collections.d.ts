@@ -51,7 +51,7 @@ export interface CollectionBase<T> extends AsyncLoadable<T> {
 }
 
 export interface SingleSelection {
-  allowsEmptySelection?: boolean,
+  disallowEmptySelection?: boolean,
   selectedKey?: Key,
   defaultSelectedKey?: Key,
   onSelectionChange?: (key: Key) => any
@@ -60,7 +60,7 @@ export interface SingleSelection {
 export type SelectionMode = 'none' | 'single' | 'multiple';
 export interface MultipleSelection {
   selectionMode?: SelectionMode,
-  allowsEmptySelection?: boolean,
+  disallowEmptySelection?: boolean,
   selectedKeys?: Iterable<Key>,
   defaultSelectedKeys?: Iterable<Key>,
   onSelectionChange?: (keys: Set<Key>) => any

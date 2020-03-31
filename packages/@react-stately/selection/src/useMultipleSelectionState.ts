@@ -19,7 +19,7 @@ import {useMemo, useRef, useState} from 'react';
 export function useMultipleSelectionState(props: MultipleSelection): MultipleSelectionState {
   let {
     selectionMode = 'multiple' as SelectionMode,
-    allowsEmptySelection = true
+    disallowEmptySelection
   } = props;
   let isFocused = useRef(false);
   let [focusedKey, setFocusedKey] = useState(null);
@@ -33,7 +33,7 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
 
   return {
     selectionMode,
-    allowsEmptySelection,
+    disallowEmptySelection,
     get isFocused() {
       return isFocused.current;
     },

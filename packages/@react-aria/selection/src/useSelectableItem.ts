@@ -42,7 +42,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
 
     if (manager.selectionMode === 'single') {
-      if (manager.selectedKeys.has(itemKey) && manager.allowsEmptySelection) {
+      if (manager.selectedKeys.has(itemKey) && !manager.disallowEmptySelection) {
         manager.toggleSelection(itemKey);
       } else {
         manager.replaceSelection(itemKey);
