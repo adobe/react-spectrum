@@ -15,9 +15,9 @@ import {ContentProps} from '@react-types/view';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
-import React from 'react';
+import React, {forwardRef} from 'react';
 
-export const Content = React.forwardRef((props: ContentProps, ref: DOMRef<HTMLElement>) => {
+function Content(props: ContentProps, ref: DOMRef) {
   props = useSlotProps(props, 'content');
   let {
     children,
@@ -27,10 +27,13 @@ export const Content = React.forwardRef((props: ContentProps, ref: DOMRef<HTMLEl
   let domRef = useDOMRef(ref);
 
   return (
-    <section {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
+    <section {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       <ClearSlots>
         {children}
       </ClearSlots>
     </section>
   );
 });
+
+const _Content = forwardRef(Content);
+export {_Content as Content};
