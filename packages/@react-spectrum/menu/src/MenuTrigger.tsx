@@ -45,7 +45,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     setOpen(false);
   };
 
-  let {menuTriggerProps, menuProps} = useMenuTrigger(
+  let {menuTriggerProps, overlayProps, menuProps} = useMenuTrigger(
     {
       ref: menuTriggerRef,
       isDisabled
@@ -58,7 +58,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     }
   );
 
-  let {overlayProps, placement} = useOverlayPosition({
+  let {overlayProps: positionProps, placement} = useOverlayPosition({
     containerRef: unwrapDOMRef(containerRef),
     targetRef: menuTriggerRef,
     overlayRef: menuPopoverRef,
@@ -85,7 +85,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
       </Provider>
       <MenuContext.Provider value={menuContext}>
         <Overlay isOpen={isOpen} ref={containerRef}>
-          <Popover {...overlayProps} ref={menuPopoverRef} hideArrow placement={placement} onClose={onClose}>
+          <Popover {...positionProps} {...overlayProps} ref={menuPopoverRef} hideArrow placement={placement} onClose={onClose}>
             <FocusScope restoreFocus>
               {menu}
             </FocusScope>

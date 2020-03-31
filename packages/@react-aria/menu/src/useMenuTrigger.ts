@@ -89,9 +89,11 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
       },
       onKeyDown
     },
+    overlayProps: {
+      ...focusWithinProps
+    },
     menuProps: {
       ...overlayAriaProps,
-      ...focusWithinProps,
       'aria-labelledby': menuTriggerId,
       onMouseDown(e) {
         // Safari blurs the focused item on mousedown on the scrollbar, when the menu is inside an iframe,
