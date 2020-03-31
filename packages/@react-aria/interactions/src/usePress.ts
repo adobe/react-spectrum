@@ -11,8 +11,8 @@
  */
 
 import {DOMProps, PointerType, PressEvents} from '@react-types/shared';
+import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {mergeProps} from '@react-aria/utils';
 import {PressResponderContext} from './context';
 
 export interface PressProps extends PressEvents {
@@ -206,9 +206,14 @@ export function usePress(props: PressHookProps): PressResult {
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.
           if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && isVirtualClick(e.nativeEvent)) {
-            triggerPressStart(e, 'keyboard');
-            triggerPressUp(e, 'keyboard');
-            triggerPressEnd(e, 'keyboard');
+            // Ensure the element receives focus (VoiceOver on iOS does not do this)
+            if (!isDisabled) {
+              focusWithoutScrolling(e.currentTarget);
+            }
+
+            triggerPressStart(e, 'virtual');
+            triggerPressUp(e, 'virtual');
+            triggerPressEnd(e, 'virtual');
           }
 
           state.ignoreEmulatedMouseEvents = false;
@@ -262,12 +267,20 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
+        // Due to browser inconsistencies, especially on mobile browsers, we prevent
+        // default on pointer down and handle focusing the pressable element ourselves.
+        e.preventDefault();
         e.stopPropagation();
         if (!state.isPressed) {
           state.isPressed = true;
           state.isOverTarget = true;
           state.activePointerId = e.pointerId;
           state.target = e.currentTarget;
+
+          if (!isDisabled) {
+            focusWithoutScrolling(e.currentTarget);
+          }
+
           disableTextSelection();
           triggerPressStart(e, e.pointerType);
 
@@ -346,14 +359,21 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
+        // Due to browser inconsistencies, especially on mobile browsers, we prevent
+        // default on mouse down and handle focusing the pressable element ourselves.
+        e.preventDefault();
         e.stopPropagation();
         if (state.ignoreEmulatedMouseEvents) {
-          e.nativeEvent.preventDefault();
           return;
         }
 
         state.isPressed = true;
         state.target = e.currentTarget;
+
+        if (!isDisabled) {
+          focusWithoutScrolling(e.currentTarget);
+        }
+
         triggerPressStart(e, 'mouse');
 
         document.addEventListener('mouseup', onMouseUp, false);
@@ -406,6 +426,12 @@ export function usePress(props: PressHookProps): PressResult {
         state.ignoreEmulatedMouseEvents = true;
         state.isOverTarget = true;
         state.isPressed = true;
+
+        // Due to browser inconsistencies, especially on mobile browsers, we prevent default
+        // on the emulated mouse event and handle focusing the pressable element ourselves.
+        if (!isDisabled) {
+          focusWithoutScrolling(e.currentTarget);
+        }
 
         disableTextSelection();
         triggerPressStart(e, 'touch');

@@ -23,6 +23,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
+  
   props = useSlotProps(props);
   let {
     elementType: ElementType = 'button',
@@ -38,10 +39,6 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
 
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
-  let {
-    className: groupClassName,
-    ...otherButtonProps
-  } = buttonProps;
   let {styleProps} = useStyleProps(otherProps);
 
   return (
@@ -49,7 +46,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
       <ElementType
         {...filterDOMProps(otherProps)}
         {...styleProps}
-        {...otherButtonProps}
+        {...buttonProps}
         ref={domRef}
         className={
           classNames(
@@ -62,8 +59,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
               'is-selected': isSelected,
               'is-disabled': isDisabled
             },
-            styleProps.className,
-            groupClassName
+            styleProps.className
           )
         }>
         <SlotProvider

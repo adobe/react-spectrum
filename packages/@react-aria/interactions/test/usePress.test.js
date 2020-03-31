@@ -1029,7 +1029,7 @@ describe('usePress', function () {
         {
           type: 'pressstart',
           target: el,
-          pointerType: 'keyboard',
+          pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false
@@ -1041,7 +1041,7 @@ describe('usePress', function () {
         {
           type: 'pressup',
           target: el,
-          pointerType: 'keyboard',
+          pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false
@@ -1049,7 +1049,7 @@ describe('usePress', function () {
         {
           type: 'pressend',
           target: el,
-          pointerType: 'keyboard',
+          pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false
@@ -1061,7 +1061,7 @@ describe('usePress', function () {
         {
           type: 'press',
           target: el,
-          pointerType: 'keyboard',
+          pointerType: 'virtual',
           ctrlKey: false,
           metaKey: false,
           shiftKey: false
@@ -1383,6 +1383,67 @@ describe('usePress', function () {
       fireEvent.keyUp(document.body, {key: ' '});
 
       expect(events).toEqual([]);
+    });
+  });
+
+  describe('virtual click events', function () {
+    it('should fire press events events for virtual click events from screen readers', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let {getByText} = render(
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent} />
+      );
+
+      let el = getByText('test');
+      fireEvent.click(el);
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false
+        }
+      ]);
     });
   });
 });
