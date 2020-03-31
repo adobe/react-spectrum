@@ -31,11 +31,12 @@ interface ListBoxBaseProps<T> extends DOMProps, StyleProps {
   state: ListState<T>,
   autoFocus?: boolean | FocusStrategy,
   shouldFocusWrap?: boolean,
-  selectOnPressUp?: boolean,
+  shouldSelectOnPressUp?: boolean,
   focusOnPointerEnter?: boolean,
   domProps?: HTMLAttributes<HTMLElement>
 }
 
+/** @private */
 export function useListBoxLayout<T>(state: ListState<T>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
@@ -51,8 +52,9 @@ export function useListBoxLayout<T>(state: ListState<T>) {
   return layout;
 }
 
+/** @private */
 export function ListBoxBase<T>(props: ListBoxBaseProps<T>) {
-  let {layout, state, selectOnPressUp, focusOnPointerEnter, domProps = {}} = props;
+  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, domProps = {}} = props;
   let {listBoxProps} = useListBox({
     ...props,
     ...domProps,
@@ -108,8 +110,8 @@ export function ListBoxBase<T>(props: ListBoxBaseProps<T>) {
             <ListBoxOption
               item={item}
               state={state}
-              selectOnPressUp={selectOnPressUp}
-              focusOnHover={focusOnPointerEnter} />
+              shouldSelectOnPressUp={shouldSelectOnPressUp}
+              shouldFocusOnHover={focusOnPointerEnter} />
           );
         }
       }}
