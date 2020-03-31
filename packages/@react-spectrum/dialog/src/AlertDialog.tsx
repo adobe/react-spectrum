@@ -30,7 +30,6 @@ import {useMessageFormatter} from '@react-aria/i18n';
 /**
  * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge. 
  */
-
 export function AlertDialog(props: SpectrumAlertDialogProps) {
   props = useSlotProps(props);
   let {
