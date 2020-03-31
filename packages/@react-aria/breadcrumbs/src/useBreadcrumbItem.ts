@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, useRef} from 'react';
+import {HTMLAttributes, useRef} from 'react';
 import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
 import {DOMProps} from '@react-types/shared';
 import {useId} from '@react-aria/utils';
 import {useLink} from '@react-aria/link';
 
 interface BreadcrumbItemAria {
-  breadcrumbItemProps: AllHTMLAttributes<HTMLDivElement>
+  breadcrumbItemProps: HTMLAttributes<HTMLDivElement>
 }
 
 export function useBreadcrumbItem(props: BreadcrumbItemProps & DOMProps): BreadcrumbItemAria {
@@ -36,7 +36,7 @@ export function useBreadcrumbItem(props: BreadcrumbItemProps & DOMProps): Breadc
 
   let {linkProps} = useLink({children, isDisabled, ...otherProps, ref});
 
-  let itemProps: AllHTMLAttributes<HTMLDivElement> = isCurrent
+  let itemProps: HTMLAttributes<HTMLDivElement> = isCurrent
     ? {'aria-current': ariaCurrent || 'page', role: linkProps.role}
     : {...linkProps};
 

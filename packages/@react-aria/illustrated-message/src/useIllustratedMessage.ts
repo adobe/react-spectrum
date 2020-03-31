@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, ReactElement, ReactNode, SVGAttributes} from 'react';
+import {HTMLAttributes, ReactElement, ReactNode, SVGAttributes} from 'react';
 import {DOMProps} from '@react-types/shared';
 
 interface IllustratedMessageAriaProps extends DOMProps {
@@ -22,7 +22,7 @@ interface IllustratedMessageAriaProps extends DOMProps {
 
 interface IllustratedMessageAria {
   illustrationProps: SVGAttributes<SVGElement>,
-  headingProps: AllHTMLAttributes<HTMLHeadingElement>
+  headingProps: HTMLAttributes<HTMLHeadingElement>
 }
 
 export function useIllustratedMessage(props: IllustratedMessageAriaProps): IllustratedMessageAria {

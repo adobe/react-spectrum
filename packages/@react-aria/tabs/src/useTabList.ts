@@ -11,7 +11,7 @@
  */
 
 import {Orientation} from '@react-types/shared';
-import React, {AllHTMLAttributes, HTMLAttributes, ReactElement} from 'react';
+import React, {HTMLAttributes, HTMLAttributes, ReactElement} from 'react';
 import {useId} from '@react-aria/utils';
 
 interface AriaTabListProps {
@@ -30,16 +30,16 @@ interface AriaTabsProps extends HTMLAttributes<HTMLElement>{
 }
 
 interface TabListAria {
-  tabListProps: AllHTMLAttributes<HTMLElement>
+  tabListProps: HTMLAttributes<HTMLElement>
 }
 
 interface TabAria {
-  tabProps: AllHTMLAttributes<HTMLElement>
+  tabProps: HTMLAttributes<HTMLElement>
 }
 
 interface TabsAria {
-  tabPanelProps: AllHTMLAttributes<HTMLElement>,
-  tabsPropsArray: Array<AllHTMLAttributes<HTMLElement>>
+  tabPanelProps: HTMLAttributes<HTMLElement>,
+  tabsPropsArray: Array<HTMLAttributes<HTMLElement>>
 }
 
 export function useTabList(props: AriaTabListProps): TabListAria {

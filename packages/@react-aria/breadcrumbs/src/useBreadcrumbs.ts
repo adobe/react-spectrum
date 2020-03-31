@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
+import {HTMLAttributes} from 'react';
 import {BreadcrumbsProps} from '@react-types/breadcrumbs';
 import {DOMProps} from '@react-types/shared';
 import intlMessages from '../intl/*.json';
@@ -18,7 +18,7 @@ import {useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface BreadcrumbsAria {
-  breadcrumbProps: AllHTMLAttributes<HTMLDivElement>
+  breadcrumbProps: HTMLAttributes<HTMLDivElement>
 }
 
 export function useBreadcrumbs<T>(props: BreadcrumbsProps<T> & DOMProps): BreadcrumbsAria {
