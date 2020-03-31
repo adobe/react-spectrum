@@ -11,8 +11,8 @@
  */
 
 import {RadioGroupProps} from '@react-types/radio';
-import {useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
+import {useState} from 'react';
 
 export interface RadioGroupState {
   selectedRadio: string | undefined,
