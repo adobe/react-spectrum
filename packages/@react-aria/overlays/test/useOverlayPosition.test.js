@@ -70,11 +70,11 @@ describe('useOverlayPosition', function () {
 
     expect(overlay).toHaveStyle(`
       left: 8px;
-      top: 100px;
-      max-height: 660px;
+      top: 500px;
+      max-height: 260px;
     `);
 
-    expect(overlay).toHaveTextContent('placement: top');
+    expect(overlay).toHaveTextContent('placement: bottom');
 
     let innerHeight = window.innerHeight;
     window.innerHeight = 1000;
@@ -105,7 +105,7 @@ describe('useOverlayPosition', function () {
     expect(overlay).toHaveStyle(`
       left: 8px;
       top: 370px;
-      max-height: 390px;
+      max-height: 370px;
     `);
   });
 });

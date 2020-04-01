@@ -11,12 +11,36 @@
  */
 
 import {cleanup, render} from '@testing-library/react';
+import {Content} from '@react-spectrum/view';
+import {Heading} from '@react-spectrum/typography';
 import {IllustratedMessage} from '../';
 import React from 'react';
 import V2IllustratedMessage from '@react/react-spectrum/IllustratedMessage';
 
+let dataTestId = 'IMsvg1';
+
 function Image(props) {
-  return (<svg {...props}><path /></svg>);
+  return (<svg {...props} data-testid={dataTestId}><path /></svg>);
+}
+
+function renderIllustratedMessage(Component, props) {
+  let {
+    heading,
+    description,
+    illustration,
+    ...otherProps
+  } = props;
+  if (Component === IllustratedMessage) {
+    return render(
+      <Component {...otherProps}>
+        {description && <Content>{description}</Content>}
+        {heading && <Heading>{heading}</Heading>}
+        {illustration}
+      </Component>
+    );
+  } else {
+    return render(<Component {...props} />);
+  }
 }
 
 describe('IllustratedMessage', function () {
@@ -29,58 +53,35 @@ describe('IllustratedMessage', function () {
     Name                       | Component               | props
     ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar', illustration: <Image />}}
     ${'V2IllustratedMessage'}  | ${V2IllustratedMessage} | ${{heading: 'foo', description: 'bar', illustration: <Image />}}
-  `('$Name should treat the illustration as decorative by default', function ({Component, props}) {
-    let {getByRole, getByText, container} = render(<Component {...props} />);
+  `('$Name should render all parts of an IllustratedMessage', function ({Component, props}) {
+    let {getByTestId, getByText} = renderIllustratedMessage(Component, props);
 
-    let illustration;
-    if (Component === IllustratedMessage) {
-      illustration = getByRole('presentation');
-    } else {
-      illustration = container.querySelector('svg');
-    }
-    expect(illustration).toHaveAttribute('aria-hidden', 'true');
+    getByTestId(dataTestId);
     getByText('foo');
     getByText('bar');
   });
 
   it.each`
     Name                       | Component               | props
-    ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar', illustration: <Image aria-label="baz" />}}
-    ${'V2IllustratedMessage'}  | ${V2IllustratedMessage} | ${{heading: 'foo', description: 'bar', illustration: <Image aria-label="baz" />}}
-  `('$Name should not be decorative if the svg is labelled', function ({Component, props}) {
-    let {getByLabelText} = render(<Component {...props} />);
+    ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{illustration: <Image />}}
+    ${'V2IllustratedMessage'}  | ${V2IllustratedMessage} | ${{illustration: <Image />}}
+  `('$Name should render only an svg', function ({Component, props}) {
+    let {queryAllByText, getByTestId} = renderIllustratedMessage(Component, props);
 
-    let illustration = getByLabelText('baz');
-    expect(illustration).not.toHaveAttribute('aria-hidden');
-    if (Component === IllustratedMessage) {
-      expect(illustration).toHaveAttribute('role', 'img');
-    }
+    getByTestId(dataTestId);
+    expect(queryAllByText('foo').length).toBe(0);
+    expect(queryAllByText('bar').length).toBe(0);
   });
 
   it.each`
     Name                       | Component               | props
-    ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar', illustration: <Image aria-hidden aria-label="its hidden" />}}
-    ${'V2IllustratedMessage'}  | ${V2IllustratedMessage} | ${{heading: 'foo', description: 'bar', illustration: <Image aria-hidden aria-label="its hidden" />}}
-  `('$Name should be hidden if aria-hidden is specifically set on the illustration', function ({Component, props}) {
-    let {getByRole, container} = render(<Component {...props} />);
+    ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar'}}
+    ${'V2IllustratedMessage'}  | ${V2IllustratedMessage} | ${{heading: 'foo', description: 'bar'}}
+  `('$Name should render heading and description without an svg', function ({Component, props}) {
+    let {queryAllByTestId, getByText} = renderIllustratedMessage(Component, props);
 
-    let illustration;
-    if (Component === IllustratedMessage) {
-      illustration = getByRole('presentation');
-    } else {
-      illustration = container.querySelector('svg');
-    }
-    expect(illustration).toHaveAttribute('aria-hidden', 'true');
-  });
-
-  it.each`
-    Name                       | Component               | props
-    ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar', illustration: <Image />, 'ariaLevel': 3}}
-    ${'V2IllustratedMessage'}  | ${V2IllustratedMessage} | ${{heading: 'foo', description: 'bar', illustration: <Image />, 'ariaLevel': 3}}
-  `('$Name should support aria-level on the header', function ({Component, props}) {
-    let {getByText} = render(<Component {...props} />);
-
-    let header = getByText('foo');
-    expect(header).toHaveAttribute('aria-level', '3');
+    expect(queryAllByTestId(dataTestId).length).toBe(0);
+    getByText('foo');
+    getByText('bar');
   });
 });
