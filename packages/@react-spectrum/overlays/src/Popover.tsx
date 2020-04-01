@@ -15,7 +15,8 @@ import overrideStyles from './overlays.css';
 import {Placement} from '@react-types/overlays';
 import React, {HTMLAttributes, ReactNode, RefObject, useLayoutEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
-import {useOverlay} from '@react-aria/overlays';
+import {useModal, useOverlay} from '@react-aria/overlays';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface PopoverProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
@@ -37,7 +38,8 @@ function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
   let {style, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, className, ...otherProps} = props;
   let backupRef = useRef();
   let domRef = ref || backupRef;
-  let {overlayProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
+  let {overlayProps, dismissButtonProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
+  useModal();
 
   return (
     <div
@@ -64,10 +66,16 @@ function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
       role="presentation"
       data-testid="popover"
       {...overlayProps}>
+      <VisuallyHidden>
+        <button {...dismissButtonProps} />
+      </VisuallyHidden>
       {children}
       {hideArrow ? null : (
         <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement.split(' ')[0]]} borderWidth={1} size={10} className={classNames(styles, 'svg-triangle')} />
       )}
+      <VisuallyHidden>
+        <button {...dismissButtonProps} />
+      </VisuallyHidden>
     </div>
   );
 }
