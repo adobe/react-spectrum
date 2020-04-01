@@ -12,19 +12,24 @@
 
 import {HTMLAttributes, Key, RefObject} from 'react';
 import {ListState} from '@react-stately/list';
-import {usePress} from '@react-aria/interactions';
+import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
+import {useSlotId} from '@react-aria/utils';
 
 interface OptionProps {
   isDisabled?: boolean,
   isSelected?: boolean,
   key?: Key,
   ref?: RefObject<HTMLElement>,
+  selectOnPressUp?: boolean,
+  focusOnHover?: boolean,
   isVirtualized?: boolean
 }
 
 interface OptionAria {
-  optionProps: HTMLAttributes<HTMLElement>
+  optionProps: HTMLAttributes<HTMLElement>,
+  labelProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: HTMLAttributes<HTMLElement>
 }
 
 export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAria {
@@ -33,13 +38,20 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     isDisabled,
     key,
     ref,
+    selectOnPressUp,
+    focusOnHover,
     isVirtualized
   } = props;
+
+  let labelId = useSlotId();
+  let descriptionId = useSlotId();
 
   let optionProps = {
     role: 'option',
     'aria-disabled': isDisabled,
-    'aria-selected': isSelected
+    'aria-selected': isSelected,
+    'aria-labelledby': labelId,
+    'aria-describedby': descriptionId
   };
 
   if (isVirtualized) {
@@ -51,15 +63,29 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     selectionManager: state.selectionManager,
     itemKey: key,
     itemRef: ref,
+    selectOnPressUp,
     isVirtualized
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled});
+  let {hoverProps} = useHover({
+    isDisabled: isDisabled || !focusOnHover,
+    onHover() {
+      state.selectionManager.setFocusedKey(key);
+    }
+  });
 
   return {
     optionProps: {
       ...optionProps,
-      ...pressProps
+      ...pressProps,
+      ...hoverProps
+    },
+    labelProps: {
+      id: labelId
+    },
+    descriptionProps: {
+      id: descriptionId
     }
   };
 }

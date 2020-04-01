@@ -10,8 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton, Button} from '@react-spectrum/button';
+import {ActionButton, Button, ButtonGroup} from '@react-spectrum/button';
+import {Content, Header} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Divider} from '@react-spectrum/divider';
+import {Heading, Text} from '@react-spectrum/typography';
 import {Modal} from '../';
 import React, {Fragment, useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -36,8 +39,10 @@ function ModalExample() {
       <ActionButton onPress={() => setOpen(true)}>Open modal</ActionButton>
       <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
         <Dialog>
-          <p>I am a dialog</p>
-          <Button variant="cta" onPress={() => setOpen(false)}>Close</Button>
+          <Header><Heading>Title</Heading></Header>
+          <Divider />
+          <Content><Text>I am a dialog</Text></Content>
+          <ButtonGroup><Button variant="cta" onPress={() => setOpen(false)}>Close</Button></ButtonGroup>
         </Dialog>
       </Modal>
     </Fragment>
@@ -59,13 +64,18 @@ function UnmountingTrigger() {
       <DialogTrigger type="popover" isOpen={isPopoverOpen} onOpenChange={setPopoverOpen}>
         <ActionButton>Open popover</ActionButton>
         <Dialog>
-          <ActionButton onPress={openModal}>Open modal</ActionButton>
+          <Header><Heading>Title</Heading></Header>
+          <Divider />
+          <Content><Text>I am a dialog</Text></Content>
+          <ButtonGroup><ActionButton onPress={openModal}>Open modal</ActionButton></ButtonGroup>
         </Dialog>
       </DialogTrigger>
       <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
         <Dialog>
-          <p>I am a dialog</p>
-          <Button variant="cta" onPress={() => setModalOpen(false)}>Close</Button>
+          <Header><Heading>Title</Heading></Header>
+          <Divider />
+          <Content><Text>I am a dialog</Text></Content>
+          <ButtonGroup><Button variant="cta" onPress={() => setModalOpen(false)}>Close</Button></ButtonGroup>
         </Dialog>
       </Modal>
     </Fragment>

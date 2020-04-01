@@ -11,7 +11,6 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton} from '@react-spectrum/button';
 import {ActionGroup} from '../';
 import Add from '@spectrum-icons/workflow/Add';
 import Bell from '@spectrum-icons/workflow/Bell';
@@ -19,10 +18,12 @@ import Brush from '@spectrum-icons/workflow/Brush';
 import Camera from '@spectrum-icons/workflow/Camera';
 import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
 import Delete from '@spectrum-icons/workflow/Delete';
+import {Item} from '@react-stately/collections';
 import React from 'react';
 import RegionSelect  from '@spectrum-icons/workflow/RegionSelect';
 import Select  from '@spectrum-icons/workflow/Select';
 import {storiesOf} from '@storybook/react';
+import {Text} from '@react-spectrum/typography';
 import Undo from '@spectrum-icons/workflow/Undo';
 
 storiesOf('ActionGroup', module)
@@ -98,40 +99,52 @@ storiesOf('ActionGroup', module)
   .add(
     'icons only, orientation: vertical, isQuiet',
     () => render({orientation: 'vertical', isQuiet: true}, toolIcons)
+  )
+  .add(
+    'defaultSelectedKeys',
+    () => render({defaultSelectedKeys: ['Add', 'Delete'], selectionMode: 'multiple'})
+  )
+  .add(
+    'selectedKeys (controlled)',
+    () => render({selectedKeys: ['Add', 'Delete'], selectionMode: 'multiple'})
+  )
+  .add(
+    'disabledKeys',
+    () => render({disabledKeys: ['Add', 'Delete'], selectionMode: 'multiple'})
   );
 
 const items =
   [
-    {children: 'React'},
-    {children: 'Add'},
-    {children: 'Delete'},
-    {children: 'Bell'},
-    {children: 'Camera'},
-    {children: 'Undo'}
+    {children: 'React', name: 'React'},
+    {children: 'Add', name: 'Add'},
+    {children: 'Delete', name: 'Delete'},
+    {children: 'Bell', name: 'Bell'},
+    {children: 'Camera', name: 'Camera'},
+    {children: 'Undo', name: 'Undo'}
   ];
 
 const itemsWithIcons =
   [
-    {children: 'React', icon: <CheckmarkCircle />},
-    {children: 'Add', icon: <Add />},
-    {children: 'Delete', icon: <Delete />},
-    {children: 'Bell', icon: <Bell />},
-    {children: 'Camera', icon: <Camera />},
-    {children: 'Undo', icon: <Undo />}
+    {children: <><CheckmarkCircle /><Text>React</Text></>, name: 'React'},
+    {children: <><Add /><Text>Add</Text></>, name: 'Add'},
+    {children: <><Delete /><Text>Delete</Text></>, name: 'Delete'},
+    {children: <><Bell /><Text>Bell</Text></>, name: 'Bell'},
+    {children: <><Camera /><Text>Camera</Text></>, name: 'Camera'},
+    {children: <><Undo /><Text>Undo</Text></>, name: 'Undo'}
   ];
 
 const toolIcons =
   [
-    {icon: <Brush />},
-    {icon: <Select />},
-    {icon: <RegionSelect />}
+    {children: <Brush />, name: 'Brush'},
+    {children: <Select />, name: 'Select'},
+    {children: <RegionSelect />, name: 'RegionSelect'}
   ];
 
 const toolIconsAffordance =
   [
-    {icon: <Brush />, holdAffordance: true},
-    {icon: <Select />, holdAffordance: true},
-    {icon: <RegionSelect />, holdAffordance: true}
+    {children: <Brush />, holdAffordance: true, name: 'Brush'},
+    {children: <Select />, holdAffordance: true, name: 'Select'},
+    {children: <RegionSelect />, holdAffordance: true, name: 'RegionSelect'}
   ];
 
 function render(props = {}, items: any = itemsWithIcons) {
@@ -139,7 +152,7 @@ function render(props = {}, items: any = itemsWithIcons) {
     <ActionGroup onSelectionChange={action('onSelect')} {...props}>
       {
         items.map((itemProps, index) => (
-          <ActionButton key={index} {...itemProps} />
+          <Item uniqueKey={itemProps.name} key={index} textValue={itemProps.name} {...itemProps} />
         ))
       }
     </ActionGroup>

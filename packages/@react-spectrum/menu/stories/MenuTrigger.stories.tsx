@@ -51,11 +51,11 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'single selected key (controlled)',
-    () => render({}, {selectedKeys: ['Kangaroo']})
+    () => render({}, {selectedKeys: ['Kangaroo'], selectionMode: 'single'})
   )
   .add(
     'single default selected key (uncontrolled)',
-    () => render({}, {defaultSelectedKeys: ['Kangaroo']})
+    () => render({}, {defaultSelectedKeys: ['Kangaroo'], selectionMode: 'single'})
   )
   .add(
     'multiple selected key (controlled)',
@@ -64,10 +64,6 @@ storiesOf('MenuTrigger', module)
   .add(
     'multiple default selected key (uncontrolled)',
     () => render({}, {defaultSelectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
-  )
-  .add(
-    'autofocus=false',
-    () => render({}, {defaultSelectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple', autoFocus: false})
   )
   .add(
     'align="end"',
@@ -128,7 +124,7 @@ storiesOf('MenuTrigger', module)
             onPressEnd={action('pressend')}>
               Menu Button
           </ActionButton>
-          <Menu onSelectionChange={action('onSelectionChange')}>
+          <Menu onAction={action('action')}>
             <Section title="Section 1">
               <Item>
                 <Copy size="S" />
@@ -185,7 +181,7 @@ storiesOf('MenuTrigger', module)
                 onPressEnd={action('pressend')}>
                   Menu Button
               </ActionButton>
-              <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+              <Menu items={withSection} itemKey="name" onAction={action('action')}>
                 {item => (
                   <Section items={item.children} title={item.name}>
                     {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -201,6 +197,32 @@ storiesOf('MenuTrigger', module)
           </div>
         </div>
       </div>
+    )
+  )
+  .add(
+    'menu closes on blur',
+    () => (
+      <>
+        <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+          <input placeholder="Shift tab here" />
+          <MenuTrigger onOpenChange={action('onOpenChange')}>
+            <ActionButton
+              onPress={action('press')}
+              onPressStart={action('pressstart')}
+              onPressEnd={action('pressend')}>
+                Menu Button
+            </ActionButton>
+            <Menu items={withSection} itemKey="name" onAction={action('action')} disabledKeys={['Snake', 'Ross']}>
+              {item => (
+                <Section items={item.children} title={item.name}>
+                  {item => <Item childItems={item.children}>{item.name}</Item>}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+          <input placeholder="Tab here" />
+        </div>
+      </>
     )
   )
   .add(
@@ -230,7 +252,7 @@ storiesOf('MenuTrigger', module)
             )}>
             <ChevronDownMedium />
           </Button>
-          <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+          <Menu items={withSection} itemKey="name" onAction={action('action')}>
             {item => (
               <Section items={item.children} title={item.name}>
                 {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -252,7 +274,7 @@ function render(props = {}, menuProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </ActionButton>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} disabledKeys={['Snake', 'Ross']} {...menuProps}>
+        <Menu items={withSection} itemKey="name" onAction={action('action')} disabledKeys={['Snake', 'Ross']} {...menuProps}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}

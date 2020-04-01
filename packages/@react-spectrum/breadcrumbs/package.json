@@ -34,7 +34,7 @@
     "@react-aria/focus": "^3.0.0-alpha.2",
     "@react-aria/i18n": "^3.0.0-alpha.2",
     "@react-spectrum/button": "^3.0.0-alpha.2",
-    "@react-spectrum/dialog": "^3.0.0-alpha.2",
+    "@react-spectrum/menu": "^3.0.0-alpha.2",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
     "@react-types/breadcrumbs": "^3.0.0-alpha.2",
     "@react-types/shared": "^3.0.0-rc.1",

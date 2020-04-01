@@ -10,22 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRefValue} from '@react-types/shared';
+import {FocusScope} from '@react-aria/focus';
 import {FocusStrategy, SpectrumMenuTriggerProps} from '@react-types/menu';
 import {MenuContext} from './context';
-import {Overlay, Popover} from '@react-spectrum/overlays';
+import {Overlay, Popover, Tray} from '@react-spectrum/overlays';
 import {Placement, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
 import React, {Fragment, useRef, useState} from 'react';
-import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
+import {useMediaQuery} from '@react-spectrum/utils';
 import {useMenuTrigger} from '@react-aria/menu';
 
 export function MenuTrigger(props: SpectrumMenuTriggerProps) {
-  let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let menuPopoverRef = useRef<HTMLDivElement>();
   let menuTriggerRef = useRef<HTMLElement>();
+  let menuRef = useRef<HTMLUListElement>();
   let {
     children,
     onOpenChange,
@@ -47,7 +47,6 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
       ref: menuTriggerRef,
-      type: 'menu',
       isDisabled
     },
     {
@@ -59,49 +58,63 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   );
 
   let {overlayProps, placement} = useOverlayPosition({
-    containerRef: unwrapDOMRef(containerRef),
     targetRef: menuTriggerRef,
     overlayRef: menuPopoverRef,
+    scrollRef: menuRef,
     placement: `${direction} ${align}` as Placement,
     shouldFlip: shouldFlip,
     isOpen
   });
 
+  let isMobile = useMediaQuery('(max-width: 700px)');
   let menuContext = {
     ...menuProps,
+    ref: menuRef,
     focusStrategy,
     onClose,
     closeOnSelect,
     autoFocus: true,
-    wrapAround: true
+    wrapAround: true,
+    UNSAFE_style: {
+      width: isMobile ? '100%' : undefined
+    }
   };
 
-  let triggerProps = {
-    ...menuTriggerProps,
-    ref: menuTriggerRef,
-    isPressed: isOpen
-  };
-
-  let popoverProps = {
-    ...overlayProps,
-    ref: menuPopoverRef,
-    placement, 
-    hideArrow: true,
-    onClose
-  };
+  // On small screen devices, the menu is rendered in a tray, otherwise a popover.
+  let overlay;
+  if (isMobile) {
+    overlay = (
+      <Tray isOpen={isOpen} onClose={onClose}>
+        <FocusScope restoreFocus>
+          {menu}
+        </FocusScope>
+      </Tray>
+    );
+  } else {
+    overlay = (
+      <Popover 
+        {...overlayProps}
+        ref={menuPopoverRef}
+        placement={placement}
+        hideArrow
+        onClose={onClose}>
+        <FocusScope restoreFocus>
+          {menu}
+        </FocusScope>
+      </Popover>
+    );
+  }
    
   return (
     <Fragment>
       <Provider isDisabled={isDisabled}>
-        <PressResponder {...triggerProps}>
+        <PressResponder {...menuTriggerProps} ref={menuTriggerRef} isPressed={isOpen}>
           {menuTrigger}
         </PressResponder>
       </Provider>
       <MenuContext.Provider value={menuContext}>
-        <Overlay isOpen={isOpen} ref={containerRef}>
-          <Popover {...popoverProps}>
-            {menu}
-          </Popover>
+        <Overlay isOpen={isOpen}>
+          {overlay}
         </Overlay>
       </MenuContext.Provider>
     </Fragment>

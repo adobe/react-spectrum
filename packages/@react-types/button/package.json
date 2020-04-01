@@ -2,6 +2,7 @@
   "name": "@react-types/button",
   "version": "3.0.0-rc.1",
   "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
   "types": "src/index.d.ts",
   "repository": {
     "type": "git",
@@ -12,5 +13,8 @@
   },
   "peerDependencies": {
     "react": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

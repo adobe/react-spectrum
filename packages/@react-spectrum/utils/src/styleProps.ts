@@ -47,6 +47,7 @@ export const baseStyleProps: StyleHandlers = {
   end: [rtl('right', 'left'), dimensionValue],
   left: ['left', dimensionValue],
   right: ['right', dimensionValue],
+  flex: ['flex', passthroughStyle],
   flexGrow: ['flexGrow', passthroughStyle],
   flexShrink: ['flexShrink', passthroughStyle],
   flexBasis: ['flexBasis', passthroughStyle]

@@ -95,7 +95,9 @@ function Hamburger() {
   }, []);
 
   return (
-    <ActionButton icon={<ShowMenu />} onPress={onPress} />
+    <ActionButton onPress={onPress}>
+      <ShowMenu />
+    </ActionButton>
   );
 }
 

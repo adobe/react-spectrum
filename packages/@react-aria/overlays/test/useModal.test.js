@@ -11,43 +11,99 @@
  */
 
 import {cleanup, render} from '@testing-library/react';
+import {ModalProvider, useModal, useModalProvider} from '..';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {useModal} from '../';
+
+function ProviderExample(props) {
+  let {modalProviderProps} = useModalProvider();
+  return <div {...modalProviderProps} data-testid={props['data-testid']}>{props.children}</div>;
+}
+
+function ModalDOM(props) {
+  useModal();
+  return <div data-testid={props.modalId || 'modal'}>{props.children}</div>;
+}
+
+function Portal(props) {
+  return ReactDOM.createPortal(props.children, document.body);
+}
+
+function Modal(props) {
+  return (
+    <Portal>
+      <ModalProvider>
+        <ProviderExample data-testid={props.providerId || 'modal-provider'}>
+          <ModalDOM modalId={props.modalId}>{props.children}</ModalDOM>
+        </ProviderExample>
+      </ModalProvider>
+    </Portal>
+  );
+}
 
 function Example(props) {
-  useModal();
   return (
-    <div />
+    <ModalProvider>
+      <ProviderExample data-testid="root-provider">
+        This is the root provider.
+        {props.showModal &&
+          <Modal>{props.children}</Modal>
+        }
+      </ProviderExample>
+    </ModalProvider>
   );
 }
 
 describe('useModal', function () {
   afterEach(cleanup);
 
-  it('should set overflow: hidden on the body on mount and remove on unmount', function () {
-    expect(document.body).not.toHaveStyle('overflow: hidden');
-
+  it('should set aria-hidden on parent providers on mount and remove on unmount', function () {
     let res = render(<Example />);
-    expect(document.body).toHaveStyle('overflow: hidden');
+    let rootProvider = res.getByTestId('root-provider');
 
-    res.unmount();
-    expect(document.body).not.toHaveStyle('overflow: hidden');
+    expect(rootProvider).not.toHaveAttribute('aria-hidden');
+
+    res.rerender(<Example showModal />);
+
+    let modalProvider = res.getByTestId('modal-provider');
+
+    expect(rootProvider).toHaveAttribute('aria-hidden', 'true');
+    expect(modalProvider).not.toHaveAttribute('aria-hidden');
+
+    res.rerender(<Example />);
+    expect(rootProvider).not.toHaveAttribute('aria-hidden');
   });
 
   it('should work with nested modals', function () {
-    expect(document.body).not.toHaveStyle('overflow: hidden');
+    let res = render(<Example />);
+    let rootProvider = res.getByTestId('root-provider');
 
-    let one = render(<Example />);
-    expect(document.body).toHaveStyle('overflow: hidden');
+    expect(rootProvider).not.toHaveAttribute('aria-hidden');
 
-    let two = render(<Example />);
-    expect(document.body).toHaveStyle('overflow: hidden');
+    res.rerender(<Example showModal />);
 
-    two.unmount();
-    expect(document.body).toHaveStyle('overflow: hidden');
+    let modalProvider = res.getByTestId('modal-provider');
 
-    one.unmount();
-    expect(document.body).not.toHaveStyle('overflow: hidden');
+    expect(rootProvider).toHaveAttribute('aria-hidden', 'true');
+    expect(modalProvider).not.toHaveAttribute('aria-hidden');
+
+    res.rerender(
+      <Example showModal>
+        <Modal providerId="inner-modal-provider" modalId="inner-modal" />
+      </Example>
+    );
+
+    let innerModalProvider = res.getByTestId('inner-modal-provider');
+
+    expect(rootProvider).toHaveAttribute('aria-hidden', 'true');
+    expect(modalProvider).toHaveAttribute('aria-hidden');
+    expect(innerModalProvider).not.toHaveAttribute('aria-hidden');
+
+    res.rerender(<Example showModal />);
+    expect(rootProvider).toHaveAttribute('aria-hidden', 'true');
+    expect(modalProvider).not.toHaveAttribute('aria-hidden');
+
+    res.rerender(<Example />);
+    expect(rootProvider).not.toHaveAttribute('aria-hidden');
   });
 });

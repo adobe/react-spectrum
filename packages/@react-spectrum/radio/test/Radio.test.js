@@ -25,7 +25,6 @@ let theme = {
   medium: scaleMedium
 };
 
-
 function renderRadioGroup(ComponentGroup, Component, groupProps, radioProps) {
   return render(
     <ComponentGroup {...groupProps}>
@@ -276,5 +275,32 @@ describe('Radios', function () {
     expect(labelId).toBeDefined();
     let label = document.getElementById(labelId);
     expect(label).toHaveTextContent('Favorite Pet');
+  });
+
+  describe('V3 Radio group supports roving tabIndex ', function () {
+    it('v3 RadioGroup deafult roving tabIndex', async () => {
+      let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {}, {});
+      let radios = getAllByRole('radio');
+      expect(radios[0]).toHaveAttribute('tabIndex', '0');
+      expect(radios[1]).toHaveAttribute('tabIndex', '0');
+      expect(radios[2]).toHaveAttribute('tabIndex', '0');
+
+      radios[0].focus();
+      expect(document.activeElement).toBe(radios[0]);
+
+      userEvent.click(radios[1]);
+      expect(document.activeElement).toBe(radios[1]);
+      expect(radios[0]).toHaveAttribute('tabIndex', '-1');
+      expect(radios[1]).toHaveAttribute('tabIndex', '0');
+      expect(radios[2]).toHaveAttribute('tabIndex', '-1');
+    });
+
+    it('v3 RadioGroup roving tabIndex for autoFocus', async () => {
+      let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {}, [{}, {autoFocus: true}, {}]);
+      let radios = getAllByRole('radio');
+      expect(radios[0]).toHaveAttribute('tabIndex', '-1');
+      expect(radios[1]).toHaveAttribute('tabIndex', '0');
+      expect(radios[2]).toHaveAttribute('tabIndex', '-1');
+    });
   });
 });

@@ -13,8 +13,11 @@
 import {SpectrumTextFieldProps, TextFieldProps} from '@react-types/textfield';
 
 export interface SearchFieldProps extends TextFieldProps {
+  /** Handler that is called when the SearchField is submitted. */
   onSubmit?: (value: string) => void,
+
+  /** Handler that is called when the clear button is pressed. */
   onClear?: () => void
 }
 
-interface SpectrumSearchFieldProps extends SearchFieldProps, SpectrumTextFieldProps {}
+export interface SpectrumSearchFieldProps extends SearchFieldProps, SpectrumTextFieldProps {}

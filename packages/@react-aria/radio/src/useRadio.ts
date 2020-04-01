@@ -15,7 +15,7 @@ import {mergeProps} from '@react-aria/utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {RadioProps} from '@react-types/radio';
 import {useFocusable} from '@react-aria/focus';
-import {usePressableInput} from '@react-aria/interactions';
+import {usePress} from '@react-aria/interactions';
 
 interface RadioAriaProps extends RadioProps {
   isRequired?: boolean,
@@ -38,7 +38,9 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
   } = props;
   let {
     selectedRadio,
-    setSelectedRadio
+    setSelectedRadio,
+    focusableRadio,
+    setFocusableRadio
   } = state;
 
   let checked = selectedRadio === value;
@@ -49,17 +51,20 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
     setSelectedRadio(value);
   };
 
-  let {pressProps} = usePressableInput({
+  let {pressProps} = usePress({
     isDisabled
   });
 
-  let {focusableProps} = useFocusable(props);
+  let {focusableProps} = useFocusable(mergeProps(props, {
+    onFocus: () => setFocusableRadio(value)
+  }));
   let interactions = mergeProps(pressProps, focusableProps);
 
   return {
     inputProps: {
       type: 'radio',
       name,
+      tabIndex: focusableRadio === value || focusableRadio == null ? 0 : -1,
       disabled: isDisabled,
       readOnly: isReadOnly,
       required: isRequired,

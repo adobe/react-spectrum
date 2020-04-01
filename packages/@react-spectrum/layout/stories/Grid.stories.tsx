@@ -41,7 +41,7 @@ function render(props:GridProps) {
       <Header slot="title">
         <Flex justifyContent="space-between" alignItems="center">
           <Heading>Thor Odinson</Heading>
-          <ActionButton isQuiet icon={<More />} />
+          <ActionButton isQuiet><More /></ActionButton>
         </Flex>
       </Header>
       <Divider size="S" />

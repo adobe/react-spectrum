@@ -96,7 +96,7 @@ storiesOf('ListBox', module)
     'Default ListBox',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={flatOptions} itemKey="name">
+        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={flatOptions} itemKey="name">
           {item => <Item>{item.name}</Item>}
         </ListBox>
       </Popover>
@@ -106,7 +106,7 @@ storiesOf('ListBox', module)
     'ListBox w/ sections',
     () => (
       <Popover isOpen hideArrow style={{maxHeight: 300}}>
-        <ListBox aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item>{item.name}</Item>}
@@ -120,7 +120,7 @@ storiesOf('ListBox', module)
     'ListBox w/ many sections',
     () => (
       <Popover isOpen hideArrow style={{maxHeight: 300}}>
-        <ListBox aria-labelledby="label" items={lotsOfSections} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+        <ListBox width={200} aria-labelledby="label" items={lotsOfSections} itemKey="name" onSelectionChange={action('onSelectionChange')}>
           {item => (
             <Section items={item.children} title={item.name}>
               {(item: any) => <Item>{item.name}</Item>}
@@ -134,7 +134,7 @@ storiesOf('ListBox', module)
     'Static',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
+        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
           <Item>One</Item>
           <Item>Two</Item>
           <Item>Three</Item>
@@ -146,7 +146,7 @@ storiesOf('ListBox', module)
     'Static with sections',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
+        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
           <Section title="Section 1">
             <Item>One</Item>
             <Item>Two</Item>
@@ -165,7 +165,7 @@ storiesOf('ListBox', module)
     'with default selected options',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
+        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item>{item.name}</Item>}
@@ -179,7 +179,7 @@ storiesOf('ListBox', module)
     'static with default selected options',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
+        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -213,7 +213,7 @@ storiesOf('ListBox', module)
     'with selected options (controlled)',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
+        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item>{item.name}</Item>}
@@ -227,7 +227,7 @@ storiesOf('ListBox', module)
     'static with selected options (controlled)',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
+        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -261,7 +261,7 @@ storiesOf('ListBox', module)
     'with disabled options',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
+        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item>{item.name}</Item>}
@@ -275,7 +275,7 @@ storiesOf('ListBox', module)
     'static with disabled options',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} disabledKeys={['3', '5']}>
+        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} disabledKeys={['3', '5']}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -309,7 +309,7 @@ storiesOf('ListBox', module)
     'Multiple selection',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
+        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item>{item.name}</Item>}
@@ -323,7 +323,7 @@ storiesOf('ListBox', module)
     'Multiple selection, static',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
+        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
           <Section title="Section 1">
             <Item uniqueKey="1">
               One
@@ -354,7 +354,7 @@ storiesOf('ListBox', module)
     'No selection allowed',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="none">
+        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="none">
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item>{item.name}</Item>}
@@ -368,7 +368,7 @@ storiesOf('ListBox', module)
     'No selection allowed, static',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectionMode="none">
+        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectionMode="none">
           <Section title="Section 1">
             <Item>One</Item>
             <Item>Two</Item>
@@ -387,7 +387,7 @@ storiesOf('ListBox', module)
     'ListBox with autoFocus=true',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus>
+        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item>{item.name}</Item>}
@@ -401,7 +401,7 @@ storiesOf('ListBox', module)
     'ListBox with autoFocus=true and focusStrategy="last"',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus focusStrategy="last">
+        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus focusStrategy="last">
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item>{item.name}</Item>}
@@ -415,7 +415,7 @@ storiesOf('ListBox', module)
     'ListBox with keyboard selection wrapping',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} wrapAround>
+        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} wrapAround>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item>{item.name}</Item>}
@@ -429,7 +429,7 @@ storiesOf('ListBox', module)
     'with semantic elements (static)',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
+        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
           <Section title="Section 1">
             <Item textValue="Copy">
               <Copy size="S" />
@@ -470,7 +470,7 @@ storiesOf('ListBox', module)
     'with semantic elements (generative)',
     () => (
       <Popover isOpen hideArrow> 
-        <ListBox aria-labelledby="label"items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
+        <ListBox width={200} aria-labelledby="label"items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
           {item => (
             <Section items={item.children} title={item.name}>
               {item => customOption(item)}

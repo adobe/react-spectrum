@@ -10,35 +10,47 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, DOMEventPropNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import {MenuContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
 import {mergeProps} from '@react-aria/utils';
-import React, {useContext, useRef} from 'react';
+import React, {ReactElement, useContext, useEffect} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
-export function Menu<T>(props: SpectrumMenuProps<T>) {
+function Menu<T>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
   let contextProps = useContext(MenuContext);
   let completeProps = {
     ...mergeProps(contextProps, props),
-    selectionMode: props.selectionMode || 'single'
+    selectionMode: props.selectionMode || 'none'
   };
 
-  let ref = useRef();
+  let domRef = useDOMRef(ref);
   let state = useTreeState(completeProps);
-  let {menuProps} = useMenu({...completeProps, ref}, state);
+  let {menuProps} = useMenu({...completeProps, ref: domRef}, state);
   let {styleProps} = useStyleProps(completeProps);
+
+  // Sync ref from <MenuTrigger> context with DOM ref.
+  useEffect(() => {
+    if (contextProps && contextProps.ref) {
+      contextProps.ref.current = domRef.current;
+      return () => {
+        contextProps.ref.current = null;
+      };
+    }
+  }, [contextProps, domRef]);
 
   return (
     <ul
       {...filterDOMProps(completeProps)}
-      {...menuProps}
+      // Allow DOM props to be passed from MenuTrigger via context only
+      {...mergeProps(menuProps, filterDOMProps(contextProps, DOMEventPropNames))}
       {...styleProps}
-      ref={ref}
+      ref={domRef}
       className={
         classNames(
           styles, 
@@ -52,7 +64,8 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
             <MenuSection 
               key={item.key}
               item={item}
-              state={state} />
+              state={state}
+              onAction={completeProps.onAction} />
           );
         }
 
@@ -60,7 +73,8 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
           <MenuItem
             key={item.key}
             item={item}
-            state={state} />
+            state={state}
+            onAction={completeProps.onAction} />
         );
 
         if (item.wrapper) {
@@ -72,3 +86,8 @@ export function Menu<T>(props: SpectrumMenuProps<T>) {
     </ul>
   );
 }
+
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+const _Menu = React.forwardRef(Menu) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLUListElement>}) => ReactElement;
+export {_Menu as Menu};

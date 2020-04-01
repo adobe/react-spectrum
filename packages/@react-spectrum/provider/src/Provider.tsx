@@ -21,7 +21,7 @@ import {
   useStyleProps
 } from '@react-spectrum/utils';
 import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
-import {ModalProvider, useModalProvider} from '@react-aria/dialog';
+import {ModalProvider, useModalProvider} from '@react-aria/overlays';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
@@ -87,7 +87,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let contents = children;
   let domProps = filterDOMProps(otherProps);
   let {styleProps} = useStyleProps(otherProps);
-  if (!prevContext || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
+  if (!prevContext || props.locale || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
     contents = (
       <ProviderWrapper {...props} ref={ref}>
         {contents}
@@ -106,6 +106,12 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * Provider is the containing component that all other React Spectrum components
+ * are the children of. Used to set locale, theme, scale, toast position and
+ * provider, modal provider, and common props for children components. Providers
+ * can be nested.
+ */
 let _Provider = React.forwardRef(Provider);
 export {_Provider as Provider};
 

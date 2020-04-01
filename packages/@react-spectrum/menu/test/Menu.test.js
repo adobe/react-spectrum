@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import Bell from '@spectrum-icons/workflow/Bell';
 import {cleanup, fireEvent, render, within} from '@testing-library/react';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Item, Menu, Section} from '../';
+import {Keyboard, Text} from '@react-spectrum/typography';
 import {MenuContext} from '../src/context';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -40,30 +42,31 @@ let withSection = [
   ]}
 ];
 
-function renderComponent(Component, contextProps = {}, props) {
+function renderComponent(Component, contextProps = {}, props = {}) {
   if (Component === V2Menu) {
+    let role = props.onSelect ? 'menuitemradio' : 'menuitem';
     return render(
       <V2Menu id={menuId} {...props}>
         <V2MenuHeading>
           Heading 1
         </V2MenuHeading>
-        <V2MenuItem role="menuitemradio" value="foo">
+        <V2MenuItem role={role} value="foo">
           Foo
         </V2MenuItem>
-        <V2MenuItem role="menuitemradio" value="bar">
+        <V2MenuItem role={role} value="bar">
           Bar
         </V2MenuItem>
-        <V2MenuItem role="menuitemradio" value="baz" disabled>
+        <V2MenuItem role={role} value="baz" disabled>
           Baz
         </V2MenuItem>
         <V2MenuDivider />
         <V2MenuHeading>
           Heading 2
         </V2MenuHeading>
-        <V2MenuItem role="menuitemradio" value="blah">
+        <V2MenuItem role={role} value="blah">
           Blah
         </V2MenuItem>
-        <V2MenuItem role="menuitemradio" value="bleh">
+        <V2MenuItem role={role} value="bleh">
           Bleh
         </V2MenuItem>
       </V2Menu>
@@ -131,12 +134,11 @@ describe('Menu', function () {
     let dividers = within(menu).getAllByRole('separator');
     expect(dividers.length).toBe(1);
 
-    let items = within(menu).getAllByRole('menuitemradio');
+    let items = within(menu).getAllByRole('menuitem');
     expect(items.length).toBe(5);
     for (let item of items) {
       if (Component === Menu) {
         expect(item).toHaveAttribute('tabindex');
-        expect(item).toHaveAttribute('aria-checked');
         expect(item).toHaveAttribute('aria-disabled');
       }
     }
@@ -161,7 +163,7 @@ describe('Menu', function () {
   `('$Name allows user to change menu item focus via up/down arrow keys', function ({Component, props}) {
     let tree = renderComponent(Component, {}, props);
     let menu = tree.getByRole('menu');
-    let menuItems = within(menu).getAllByRole('menuitemradio');
+    let menuItems = within(menu).getAllByRole('menuitem');
     let selectedItem = menuItems[0];
     expect(selectedItem).toBe(document.activeElement);
     fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
@@ -178,7 +180,7 @@ describe('Menu', function () {
   `('$Name wraps focus from first to last/last to first item if up/down arrow is pressed if wrapAround is true', function ({Component, props}) {
     let tree = renderComponent(Component, {}, props);
     let menu = tree.getByRole('menu');
-    let menuItems = within(menu).getAllByRole('menuitemradio');
+    let menuItems = within(menu).getAllByRole('menuitem');
     let firstItem = menuItems[0];
     expect(firstItem).toBe(document.activeElement);
     fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 38, charCode: 38});
@@ -191,7 +193,7 @@ describe('Menu', function () {
   describe('supports single selection', function () {
     it.each`
       Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{onSelectionChange, defaultSelectedKeys: ['Blah'], autoFocus: true}}
+      ${'Menu'}   | ${Menu}   | ${{selectionMode: 'single', onSelectionChange, defaultSelectedKeys: ['Blah'], autoFocus: true}}
     `('$Name supports defaultSelectedKeys (uncontrolled)', function ({Component, props}) {
       // Check that correct menu item is selected by default
       let tree = renderComponent(Component, {}, props);
@@ -209,6 +211,7 @@ describe('Menu', function () {
       // Select a different menu item via enter
       let nextSelectedItem = menuItems[4];
       fireEvent.keyDown(nextSelectedItem, {key: 'Enter', code: 13, charCode: 13});
+      fireEvent.keyUp(nextSelectedItem, {key: 'Enter', code: 13, charCode: 13});
       expect(nextSelectedItem).toHaveAttribute('aria-checked', 'true');
       itemText = within(nextSelectedItem).getByText('Bleh');
       expect(itemText).toBeTruthy();
@@ -225,7 +228,7 @@ describe('Menu', function () {
 
     it.each`
     Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectedKeys: ['Blah'], autoFocus: true}}
+      ${'Menu'}   | ${Menu}   | ${{selectionMode: 'single', onSelectionChange, selectedKeys: ['Blah'], autoFocus: true}}
     `('$Name supports selectedKeys (controlled)', function ({Component, props}) {
       // Check that correct menu item is selected by default
       let tree = renderComponent(Component, {}, props);
@@ -243,6 +246,7 @@ describe('Menu', function () {
       // Select a different menu item via enter
       let nextSelectedItem = menuItems[4];
       fireEvent.keyDown(nextSelectedItem, {key: 'Enter', code: 13, charCode: 13});
+      fireEvent.keyUp(nextSelectedItem, {key: 'Enter', code: 13, charCode: 13});
       expect(nextSelectedItem).toHaveAttribute('aria-checked', 'false');
       expect(selectedItem).toHaveAttribute('aria-checked', 'true');
       checkmark = within(selectedItem).getByRole('img');
@@ -258,7 +262,7 @@ describe('Menu', function () {
 
     it.each`
       Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{onSelectionChange}}
+      ${'Menu'}   | ${Menu}   | ${{selectionMode: 'single', onSelectionChange}}
       ${'V2Menu'} | ${V2Menu} | ${{onSelect}}
     `('$Name supports using space key to change item selection', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
@@ -268,6 +272,7 @@ describe('Menu', function () {
       // Trigger a menu item via space
       let item = menuItems[4];
       fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32});
+      fireEvent.keyUp(item, {key: ' ', code: 32, charCode: 32});
       if (Component === Menu) {
         expect(item).toHaveAttribute('aria-checked', 'true');
         let checkmark = within(item).getByRole('img');
@@ -290,7 +295,7 @@ describe('Menu', function () {
 
     it.each`
       Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{onSelectionChange}}
+      ${'Menu'}   | ${Menu}   | ${{selectionMode: 'single', onSelectionChange}}
       ${'V2Menu'} | ${V2Menu} | ${{onSelect}}
     `('$Name supports using click to change item selection', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
@@ -322,7 +327,7 @@ describe('Menu', function () {
     
     it.each`
       Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{onSelectionChange, disabledKeys: ['Baz']}}
+      ${'Menu'}   | ${Menu}   | ${{selectionMode: 'single', onSelectionChange, disabledKeys: ['Baz']}}
       ${'V2Menu'} | ${V2Menu} | ${{onSelect}}
     `('$Name supports disabled items', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
@@ -568,16 +573,16 @@ describe('Menu', function () {
     `('$Name supports focusing items by typing letters in rapid succession', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let menuItems = within(menu).getAllByRole('menuitem');
       expect(document.activeElement).toBe(menuItems[0]);
 
-      fireEvent.keyPress(menu, {charCode: 'b'.charCodeAt(0)});
+      fireEvent.keyDown(menu, {key: 'B'});
       expect(document.activeElement).toBe(menuItems[1]);
 
-      fireEvent.keyPress(menu, {charCode: 'l'.charCodeAt(0)});
+      fireEvent.keyDown(menu, {key: 'L'});
       expect(document.activeElement).toBe(menuItems[3]);
 
-      fireEvent.keyPress(menu, {charCode: 'e'.charCodeAt(0)});
+      fireEvent.keyDown(menu, {key: 'E'});
       expect(document.activeElement).toBe(menuItems[4]);
     });
 
@@ -587,15 +592,15 @@ describe('Menu', function () {
     `('$Name resets the search text after a timeout', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let menuItems = within(menu).getAllByRole('menuitem');
       expect(document.activeElement).toBe(menuItems[0]);
 
-      fireEvent.keyPress(menu, {charCode: 'b'.charCodeAt(0)});
+      fireEvent.keyDown(menu, {key: 'B'});
       expect(document.activeElement).toBe(menuItems[1]);
 
       jest.runAllTimers();
 
-      fireEvent.keyPress(menu, {charCode: 'b'.charCodeAt(0)});
+      fireEvent.keyDown(menu, {key: 'B'});
       expect(document.activeElement).toBe(menuItems[2]);
     });
 
@@ -605,17 +610,17 @@ describe('Menu', function () {
     `('$Name wraps around when no items past the current one match', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let menuItems = within(menu).getAllByRole('menuitem');
       expect(document.activeElement).toBe(menuItems[0]);
 
-      fireEvent.keyPress(menu, {charCode: 'b'.charCodeAt(0)});
-      fireEvent.keyPress(menu, {charCode: 'l'.charCodeAt(0)});
-      fireEvent.keyPress(menu, {charCode: 'e'.charCodeAt(0)});
+      fireEvent.keyDown(menu, {key: 'B'});
+      fireEvent.keyDown(menu, {key: 'L'});
+      fireEvent.keyDown(menu, {key: 'E'});
       expect(document.activeElement).toBe(menuItems[4]);
 
       jest.runAllTimers();
 
-      fireEvent.keyPress(menu, {charCode: 'b'.charCodeAt(0)});
+      fireEvent.keyDown(menu, {key: 'B'});
       expect(document.activeElement).toBe(menuItems[1]);
     });
   });
@@ -642,5 +647,108 @@ describe('Menu', function () {
 
     let dialog = tree.getByRole('dialog');
     expect(dialog).toBeVisible();
+  });
+
+  describe('supports onAction', function () {
+    it('Menu with static list supports onAction', function () {
+      let onAction = jest.fn();
+      let onSelectionChange = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <Menu onSelectionChange={onSelectionChange} onAction={onAction}>
+            <Item uniqueKey="One">One</Item>
+            <Item uniqueKey="Two">Two</Item>
+            <Item uniqueKey="Three">Three</Item>
+          </Menu>
+        </Provider>
+      );
+
+      let menu = tree.getByRole('menu');
+
+      let [item1, item2, item3] = [
+        within(menu).getByText('One'),
+        within(menu).getByText('Two'),
+        within(menu).getByText('Three')
+      ];
+
+      triggerPress(item1);
+      expect(onAction).toHaveBeenCalledWith('One');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+
+
+      triggerPress(item2);
+      expect(onAction).toHaveBeenCalledWith('Two');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+
+
+      triggerPress(item3);
+      expect(onAction).toHaveBeenCalledWith('Three');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+    });
+
+    it('Menu with generative list supports onAction', function () {
+      let onAction = jest.fn();
+      let onSelectionChange = jest.fn();
+      let flatItems = [
+        {name: 'One'},
+        {name: 'Two'},
+        {name: 'Three'}
+      ];
+      let tree = render(
+        <Provider theme={theme}>
+          <Menu onSelectionChange={onSelectionChange} items={flatItems} itemKey="name" onAction={onAction}>
+            {item => <Item>{item.name}</Item>}
+          </Menu>
+        </Provider>
+      );
+
+      jest.runAllTimers();
+
+      let menu = tree.getByRole('menu');
+
+      let [item1, item2, item3] = [
+        within(menu).getByText('One'),
+        within(menu).getByText('Two'),
+        within(menu).getByText('Three')
+      ];
+
+      triggerPress(item1);
+      expect(onAction).toHaveBeenCalledWith('One');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+
+
+      triggerPress(item2);
+      expect(onAction).toHaveBeenCalledWith('Two');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+
+
+      triggerPress(item3);
+      expect(onAction).toHaveBeenCalledWith('Three');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  it('supports complex menu items with aria-labelledby and aria-describedby', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <Menu id={menuId} selectionMode="none">
+          <Item textValue="Label">
+            <Bell />
+            <Text>Label</Text>
+            <Text slot="description">Description</Text>
+            <Keyboard>⌘V</Keyboard>
+          </Item>
+        </Menu>
+      </Provider>
+    );
+
+    let menu = tree.getByRole('menu');
+    let menuItem = within(menu).getByRole('menuitem');
+    let label = within(menu).getByText('Label');
+    let description = within(menu).getByText('Description');
+    let keyboard = within(menu).getByText('⌘V');
+    
+    expect(menuItem).toHaveAttribute('aria-labelledby', label.id);
+    expect(menuItem).toHaveAttribute('aria-describedby', `${description.id} ${keyboard.id}`);
   });
 });

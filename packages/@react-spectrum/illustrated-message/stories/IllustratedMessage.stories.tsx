@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Content} from '@react-spectrum/view';
+import {Heading} from '@react-spectrum/typography';
 import {IllustratedMessage} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -29,11 +31,21 @@ storiesOf('IllustratedMessage', module)
   )
   .add(
     'heading, description',
-    () => render({heading: 'No Results', description: 'Try another search', illustration: noResultsImg(), ariaLevel: 3})
+    () => render({heading: 'No Results', description: 'Try another search', illustration: noResultsImg()})
   );
 
 function render(props: any = {}) {
+  let {
+    illustration,
+    heading,
+    description,
+    ...otherProps
+  } = props;
   return (
-    <IllustratedMessage {...props} />
+    <IllustratedMessage {...otherProps}>
+      {description && <Content>{description}</Content>}
+      {heading && <Heading>{heading}</Heading>}
+      {illustration}
+    </IllustratedMessage>
   );
 }

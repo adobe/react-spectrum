@@ -37,7 +37,9 @@ interface CollectionState<T extends object, V, W> {
   setVisibleRect: (rect: Rect) => void,
   contentSize: Size,
   isAnimating: boolean,
-  collectionManager: CollectionManager<T, V, W>
+  collectionManager: CollectionManager<T, V, W>,
+  startScrolling: () => void,
+  endScrolling: () => void
 }
 
 export function useCollectionState<T extends object, V, W>(opts: CollectionProps<T, V, W>): CollectionState<T, V, W> {
@@ -49,7 +51,10 @@ export function useCollectionState<T extends object, V, W>(opts: CollectionProps
 
   collectionManager.delegate = {
     setVisibleViews,
-    setVisibleRect,
+    setVisibleRect(rect) {
+      collectionManager.visibleRect = rect;
+      setVisibleRect(rect);
+    },
     setContentSize,
     renderView: opts.renderView,
     renderWrapper: opts.renderWrapper,
@@ -70,8 +75,17 @@ export function useCollectionState<T extends object, V, W>(opts: CollectionProps
     collectionManager,
     visibleViews,
     visibleRect,
-    setVisibleRect,
+    setVisibleRect(rect) {
+      collectionManager.visibleRect = rect;
+      setVisibleRect(rect);
+    },
     contentSize,
-    isAnimating
+    isAnimating,
+    startScrolling() {
+      collectionManager.startScrolling();
+    },
+    endScrolling() {
+      collectionManager.endScrolling();
+    }
   };
 }

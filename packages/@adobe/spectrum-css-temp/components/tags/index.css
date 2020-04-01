@@ -47,7 +47,7 @@ governing permissions and limitations under the License.
 
   > .spectrum-Tags-itemIcon {
     margin-inline-end: var(--spectrum-tag-icon-padding-x);
-    margin-inline-start: calc(-1 * var(--spectrum-tag-deletable-border-size-key-focus));
+    margin-inline-start: calc(var(--spectrum-tag-deletable-border-size-key-focus) * -1);
   }
 
   .spectrum-Tags-itemClearButton {
