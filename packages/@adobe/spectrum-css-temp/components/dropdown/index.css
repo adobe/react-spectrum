@@ -130,6 +130,7 @@ governing permissions and limitations under the License.
 .spectrum-Dropdown--quiet {
   inline-size: auto;
   min-inline-size: var(--spectrum-dropdown-quiet-min-width);
+  contain: none;
 }
 
 .spectrum-Dropdown-popover--quiet {
