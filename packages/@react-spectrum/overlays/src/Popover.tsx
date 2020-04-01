@@ -77,9 +77,10 @@ let ROOT_2 = Math.sqrt(2);
 function Arrow(props) {
   let [size, setTipWidth] = useState(20);
   let ref = useRef();
+  // get the css value for the tip size and divide it by 2 for this arrow implementation
   useLayoutEffect(() => {
     let measuredTipWidth = getComputedStyle(ref.current)
-      .getPropertyValue('--spectrum-popover-tip-size'); // i don't think this is how i'm supposed to get this
+      .getPropertyValue('--spectrum-popover-tip-size');
     setTipWidth(parseInt(measuredTipWidth, 10) / 2);
   }, [ref]);
 
