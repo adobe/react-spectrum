@@ -54,7 +54,7 @@ function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
   }
 
   let contents = (
-    <Provider ref={ref} UNSAFE_style={{position: 'absolute', zIndex: 100000, top: 0, left: 0}}>
+    <Provider ref={ref} UNSAFE_style={{background: 'transparent'}}>
       <OpenTransition
         in={isOpen}
         appear
