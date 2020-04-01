@@ -19,10 +19,10 @@ import {triggerPress} from '@react-spectrum/test-utils';
 describe('AlertDialog', function () {
   afterEach(cleanup);
 
-  it('renders alert dialog with onConfirm', function () {
-    let onConfirmSpy = jest.fn();
+  it('renders alert dialog with onPrimaryAction', function () {
+    let onPrimaryAction = jest.fn();
     let {getByRole} = render(
-      <AlertDialog variant="confirmation" title="the title" primaryLabel="confirm" onConfirm={onConfirmSpy}>
+      <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" onPrimaryAction={onPrimaryAction}>
         Content body
       </AlertDialog>
     );
@@ -32,15 +32,15 @@ describe('AlertDialog', function () {
 
     let button = getByRole('button');
     triggerPress(button);
-    expect(onConfirmSpy).toHaveBeenCalledTimes(1);
-    expect(onConfirmSpy).toHaveBeenCalledWith('primary');
+    expect(onPrimaryAction).toHaveBeenCalledTimes(1);
+    expect(onPrimaryAction).toHaveBeenCalledWith();
   });
 
-  it('renders 2 button alert dialog with onConfirm / onCancel', function () {
+  it('renders 2 button alert dialog with onPrimaryAction / onCancel', function () {
     let onCancelSpy = jest.fn();
-    let onConfirmSpy = jest.fn();
+    let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
-      <AlertDialog variant="confirmation" title="the title" primaryLabel="confirm" cancelLabel="cancel" onConfirm={onConfirmSpy} onCancel={onCancelSpy}>
+      <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" cancelLabel="cancel" onPrimaryAction={onPrimaryAction} onCancel={onCancelSpy}>
         Content body
       </AlertDialog>
     );
@@ -50,22 +50,23 @@ describe('AlertDialog', function () {
 
     let cancelButton = getByText('cancel');
     triggerPress(cancelButton);
-    expect(onConfirmSpy).toHaveBeenCalledTimes(0);
+    expect(onPrimaryAction).toHaveBeenCalledTimes(0);
     expect(onCancelSpy).toHaveBeenCalledTimes(1);
     expect(onCancelSpy).toHaveBeenCalledWith();
 
     let confirmButton = getByText('confirm');
     triggerPress(confirmButton);
-    expect(onConfirmSpy).toHaveBeenCalledTimes(1);
+    expect(onPrimaryAction).toHaveBeenCalledTimes(1);
     expect(onCancelSpy).toHaveBeenCalledTimes(1);
-    expect(onConfirmSpy).toHaveBeenCalledWith('primary');
+    expect(onPrimaryAction).toHaveBeenCalledWith();
   });
 
-  it('renders a 3 button alert dialog with onConfirm / onCancel', function () {
+  it('renders a 3 button alert dialog with onPrimaryAction / onCancel', function () {
     let onCancelSpy = jest.fn();
-    let onConfirmSpy = jest.fn();
+    let onPrimaryAction = jest.fn();
+    let onSecondaryAction = jest.fn();
     let {getByRole, getByText} = render(
-      <AlertDialog variant="confirmation" title="the title" primaryLabel="confirm" cancelLabel="cancel" secondaryLabel="secondary" onConfirm={onConfirmSpy} onCancel={onCancelSpy}>
+      <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" cancelLabel="cancel" secondaryActionLabel="secondary" onPrimaryAction={onPrimaryAction} onSecondaryAction={onSecondaryAction} onCancel={onCancelSpy}>
         Content body
       </AlertDialog>
     );
@@ -77,25 +78,25 @@ describe('AlertDialog', function () {
     let secondaryButton = getByText('secondary');
     let cancelButton = getByText('cancel');
     triggerPress(secondaryButton);
-    expect(onConfirmSpy).toHaveBeenCalledTimes(1);
-    expect(onConfirmSpy).toHaveBeenLastCalledWith('secondary');
+    expect(onSecondaryAction).toHaveBeenCalledTimes(1);
+    expect(onSecondaryAction).toHaveBeenLastCalledWith();
     expect(onCancelSpy).toHaveBeenCalledTimes(0);
 
     triggerPress(confirmButton);
-    expect(onConfirmSpy).toHaveBeenCalledTimes(2);
-    expect(onConfirmSpy).toHaveBeenLastCalledWith('primary');
+    expect(onPrimaryAction).toHaveBeenCalledTimes(1);
+    expect(onPrimaryAction).toHaveBeenLastCalledWith();
     expect(onCancelSpy).toHaveBeenCalledTimes(0);
 
     triggerPress(cancelButton);
-    expect(onConfirmSpy).toHaveBeenCalledTimes(2);
+    expect(onPrimaryAction).toHaveBeenCalledTimes(1);
     expect(onCancelSpy).toHaveBeenCalledTimes(1);
     expect(onCancelSpy).toHaveBeenLastCalledWith();
   });
 
   it('disable its confirm button', function () {
-    let onConfirmSpy = jest.fn();
+    let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
-      <AlertDialog variant="confirmation" isPrimaryActionDisabled title="the title" primaryLabel="confirm" onConfirm={onConfirmSpy}>
+      <AlertDialog variant="confirmation" isPrimaryActionDisabled title="the title" primaryActionLabel="confirm" onPrimaryAction={onPrimaryAction}>
         Content body
       </AlertDialog>
     );
@@ -105,12 +106,12 @@ describe('AlertDialog', function () {
 
     let button = getByText('confirm');
     triggerPress(button);
-    expect(onConfirmSpy).toHaveBeenCalledTimes(0);
+    expect(onPrimaryAction).toHaveBeenCalledTimes(0);
   });
 
   it('autofocus its confirm button', function () {
     let {getByText} = render(
-      <AlertDialog variant="confirmation" title="the title" primaryLabel="confirm" autoFocusButton="primary">
+      <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" autoFocusButton="primary">
         Content body
       </AlertDialog>
     );
@@ -121,7 +122,7 @@ describe('AlertDialog', function () {
 
   it('autofocus its cancel button', function () {
     let {getByText} = render(
-      <AlertDialog variant="confirmation" title="the title" primaryLabel="confirm" cancelLabel="cancel" autoFocusButton="cancel" >
+      <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" cancelLabel="cancel" autoFocusButton="cancel" >
         Content body
       </AlertDialog>
     );
@@ -131,9 +132,9 @@ describe('AlertDialog', function () {
   });
 
   it('disable its secondary button', function () {
-    let onConfirmSpy = jest.fn();
+    let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
-      <AlertDialog variant="confirmation" isSecondaryActionDisabled title="the title" primaryLabel="confirm" secondaryLabel="secondary" onConfirm={onConfirmSpy}>
+      <AlertDialog variant="confirmation" isSecondaryActionDisabled title="the title" primaryActionLabel="confirm" secondaryActionLabel="secondary" onPrimaryAction={onPrimaryAction}>
         Content body
       </AlertDialog>
     );
@@ -143,12 +144,12 @@ describe('AlertDialog', function () {
 
     let button = getByText('secondary');
     triggerPress(button);
-    expect(onConfirmSpy).toHaveBeenCalledTimes(0);
+    expect(onPrimaryAction).toHaveBeenCalledTimes(0);
   });
 
   it('autofocus its secondary button', function () {
     let {getByText} = render(
-      <AlertDialog variant="confirmation" title="the title" primaryLabel="confirm" secondaryLabel="secondary" autoFocusButton="secondary">
+      <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" secondaryActionLabel="secondary" autoFocusButton="secondary">
         Content body
       </AlertDialog>
     );
