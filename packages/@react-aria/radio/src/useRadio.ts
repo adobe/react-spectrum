@@ -38,7 +38,9 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
   } = props;
   let {
     selectedRadio,
-    setSelectedRadio
+    setSelectedRadio,
+    focusableRadio,
+    setFocusableRadio
   } = state;
 
   let checked = selectedRadio === value;
@@ -49,18 +51,20 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
     setSelectedRadio(value);
   };
 
-  // This handles focusing the input on pointer down, which Safari does not do by default.
   let {pressProps} = usePress({
     isDisabled
   });
 
-  let {focusableProps} = useFocusable(props);
+  let {focusableProps} = useFocusable(mergeProps(props, {
+    onFocus: () => setFocusableRadio(value)
+  }));
   let interactions = mergeProps(pressProps, focusableProps);
 
   return {
     inputProps: {
       type: 'radio',
       name,
+      tabIndex: focusableRadio === value || focusableRadio == null ? 0 : -1,
       disabled: isDisabled,
       readOnly: isReadOnly,
       required: isRequired,
