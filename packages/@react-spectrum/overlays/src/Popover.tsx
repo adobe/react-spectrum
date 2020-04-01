@@ -13,7 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import overrideStyles from './overlays.css';
 import {Placement} from '@react-types/overlays';
-import React, {HTMLAttributes, ReactNode, RefObject, useRef} from 'react';
+import React, {HTMLAttributes, ReactNode, RefObject, useRef, useLayoutEffect, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {useOverlay} from '@react-aria/overlays';
 
@@ -24,6 +24,13 @@ interface PopoverProps extends HTMLAttributes<HTMLElement> {
   hideArrow?: boolean,
   isOpen?: boolean,
   onClose?: () => void
+}
+
+let arrowPlacement = {
+  left: 'right',
+  right: 'left',
+  top: 'bottom',
+  bottom: 'top'
 }
 
 function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
@@ -59,13 +66,70 @@ function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
       {...overlayProps}>
       {children}
       {hideArrow ? null : (
-        <div className={classNames(styles, 'spectrum-Popover-tip')} {...arrowProps} data-testid="tip">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" className={classNames(styles, 'svg-triangle')}>
-            <polygon points="0 0, 22 0, 0 22" />
-            <path d="M 20 0, L 0 0, L 0 20" />
-          </svg>
-        </div>
+        <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement.split(' ')[0]]} borderWidth={1} size={10} className={classNames(styles, 'svg-triangle')} />
       )}
+    </div>
+  );
+}
+
+let ROOT_2 = Math.sqrt(2);
+
+function Arrow(props) {
+  let [size, setTipWidth] = useState(20);
+  let ref = useRef();
+  useLayoutEffect(() => {
+    let measuredTipWidth = getComputedStyle(ref.current)
+      .getPropertyValue('--spectrum-popover-tip-size'); // i don't think this is how i'm supposed to get this
+    setTipWidth(parseInt(measuredTipWidth, 10) / 2);
+  }, [ref]);
+
+  let landscape = props.direction === 'top' || props.direction === 'bottom';
+  let mirror = props.direction === 'left' || props.direction === 'top';
+
+  let borderDiagonal = props.borderWidth * ROOT_2;
+  let halfBorderDiagonal = borderDiagonal / 2;
+
+  let secondary = 2 * size + 2 * borderDiagonal;
+  let primary = size + borderDiagonal;
+
+  let primaryStart = mirror ? primary : 0;
+  let primaryEnd = mirror ? halfBorderDiagonal : primary - halfBorderDiagonal;
+
+  let secondaryStart = halfBorderDiagonal;
+  let secondaryMiddle = secondary / 2;
+  let secondaryEnd = secondary - halfBorderDiagonal;
+
+  let pathData = landscape ? [
+    'M', secondaryStart, primaryStart,
+    'L', secondaryMiddle, primaryEnd,
+    'L', secondaryEnd, primaryStart
+  ] : [
+    'M', primaryStart, secondaryStart,
+    'L', primaryEnd, secondaryMiddle,
+    'L', primaryStart, secondaryEnd
+  ];
+  let arrowProps = props.arrowProps;
+
+  return (
+    <div
+      ref={ref}
+      className={classNames(styles, 'spectrum-Popover-tip')}
+      {...arrowProps}
+      data-testid="tip">
+      {
+        React.createElement('svg',
+          {
+            xmlns: 'http://www.w3.org/svg/2000',
+            width: landscape ? secondary : primary,
+            height: landscape ? primary : secondary,
+            style: props.style,
+            className: props.className
+          },
+          React.createElement('path', {
+            d: pathData.join(' ')
+          })
+        )
+      }
     </div>
   );
 }
