@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMRef, ViewStyleProps} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, useDOMRef, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
-import {HTMLElement} from 'react-dom';
 import React, {forwardRef} from 'react';
 import {ViewProps} from '@react-types/view';
 
@@ -35,5 +34,5 @@ function View(props: ViewProps, ref: DOMRef) {
   );
 });
 
-const _ViewProps = forwardRef(ViewProps);
+const _ViewProps = forwardRef(View);
 export {_ViewProps as ViewProps};
