@@ -15,7 +15,7 @@ import {Dialog} from '../';
 import {DialogContext} from '../src/context';
 import {Header} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/typography';
-import {ModalProvider} from '@react-aria/dialog';
+import {ModalProvider} from '@react-aria/overlays';
 import React from 'react';
 
 describe('Dialog', function () {
