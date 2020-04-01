@@ -16,7 +16,7 @@ import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
 import React, {ReactElement, useRef} from 'react';
 import {Underlay} from './Underlay';
-import {useModal, useOverlay} from '@react-aria/overlays';
+import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
 
 interface ModalProps {
   children: ReactElement,
@@ -57,6 +57,7 @@ function ModalWrapper(props: ModalWrapperProps) {
   let ref = useRef(null);
 
   let {overlayProps} = useOverlay({ref, onClose, isOpen, isDismissable});
+  usePreventScroll();
   useModal();
 
   let wrapperClassName = classNames(

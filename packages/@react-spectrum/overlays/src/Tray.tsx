@@ -16,7 +16,8 @@ import overrideStyles from './overlays.css';
 import React, {ReactElement, useRef} from 'react';
 import trayStyles from '@adobe/spectrum-css-temp/components/tray/vars.css';
 import {Underlay} from './Underlay';
-import {useModal, useOverlay} from '@react-aria/overlays';
+import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface TrayProps {
   children: ReactElement,
@@ -43,7 +44,8 @@ export function Tray(props: TrayProps) {
 
 function TrayWrapper({children, onClose, isOpen}: TrayWrapperProps) {
   let ref = useRef();
-  let {overlayProps} = useOverlay({ref, onClose, isOpen, isDismissable: true});
+  let {overlayProps, dismissButtonProps} = useOverlay({ref, onClose, isOpen, isDismissable: true});
+  usePreventScroll();
   useModal();
 
   // TODO: android back button?
@@ -68,9 +70,15 @@ function TrayWrapper({children, onClose, isOpen}: TrayWrapperProps) {
 
   return (
     <div className={wrapperClassName}>
+      <VisuallyHidden>
+        <button {...dismissButtonProps} />
+      </VisuallyHidden>
       <div className={className} ref={ref} {...overlayProps} data-testid="tray">
         {children}
       </div>
+      <VisuallyHidden>
+        <button {...dismissButtonProps} />
+      </VisuallyHidden>
     </div>
   );
 }
