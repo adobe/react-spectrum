@@ -61,7 +61,7 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
 
   let state = useRadioGroupState(props);
 
-  let {radioGroupProps, labelProps, radioProps} = useRadioGroup(props);
+  let {radioGroupProps, labelProps, radioProps} = useRadioGroup(props, state);
 
   return (
     <div
@@ -112,7 +112,7 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
             isReadOnly,
             isDisabled,
             validationState,
-            name: radioProps.name,
+            ...radioProps,
             state
           }}>
           {children}
