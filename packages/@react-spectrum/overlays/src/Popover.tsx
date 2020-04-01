@@ -13,7 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import overrideStyles from './overlays.css';
 import {Placement} from '@react-types/overlays';
-import React, {HTMLAttributes, ReactNode, RefObject, useRef, useLayoutEffect, useState} from 'react';
+import React, {HTMLAttributes, ReactNode, RefObject, useLayoutEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {useOverlay} from '@react-aria/overlays';
 
@@ -31,7 +31,7 @@ let arrowPlacement = {
   right: 'left',
   top: 'bottom',
   bottom: 'top'
-}
+};
 
 function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
   let {style, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, className, ...otherProps} = props;
