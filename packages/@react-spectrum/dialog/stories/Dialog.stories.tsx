@@ -80,6 +80,10 @@ storiesOf('Dialog', module)
     () => renderWithThreeButtons({})
   )
   .add(
+    'three buttons, vertical orientation',
+    () => renderWithThreeButtonsVertical({})
+  )
+  .add(
     'cleared content',
     () => renderWithDividerInContent({})
   );
@@ -362,6 +366,28 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
             <Divider />
             <Content>{singleParagraph()}</Content>
             <ButtonGroup>
+              <Button variant="secondary" onPress={close}>Secondary</Button>
+              <Button variant="primary" onPress={close}>Primary</Button>
+              <Button variant="cta" onPress={close} autoFocus>CTA</Button>
+            </ButtonGroup>
+          </Dialog>
+        )}
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderWithThreeButtonsVertical({width = 'auto', ...props}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger defaultOpen>
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog {...props}>
+            <Header><Heading>The Heading</Heading></Header>
+            <Divider />
+            <Content>{singleParagraph()}</Content>
+            <ButtonGroup orientation="vertical">
               <Button variant="secondary" onPress={close}>Secondary</Button>
               <Button variant="primary" onPress={close}>Primary</Button>
               <Button variant="cta" onPress={close} autoFocus>CTA</Button>

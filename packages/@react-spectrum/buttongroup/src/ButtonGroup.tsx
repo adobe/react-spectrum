@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import React, {ReactNode} from 'react';
+import {classNames, filterDOMProps, SlotProvider, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import React, {ReactNode, useEffect} from 'react';
 import {useProviderProps} from '@react-spectrum/provider';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 
+// TODO move to types package
 import {DOMProps, DOMRef, Orientation, StyleProps} from '@react-types/shared';
 
 interface ButtonGroupProps extends DOMProps, StyleProps {
@@ -24,7 +25,7 @@ interface ButtonGroupProps extends DOMProps, StyleProps {
   children: ReactNode
 }
 
-function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLFormElement>) {
+function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'buttonGroup');
   let {
@@ -36,13 +37,45 @@ function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLFormElement>) {
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
+  // might need to set orientation as a ref or a state so that the useEffect can properly cause a rerender by changing it
+  // const [orientation, setOrientation] = useState(props.orientation)
+
+  // Fire this effect on childArray.length change, orientationChange
+  useEffect(() => {
+    // make onResize that does the following
+      // measure buttongroup container
+      // calculate total width of all buttons
+      // if total width > buttongroup container width, change orientation to vertical
+
+    // add window event listener
+    // call onResize
+    //Remove onResize from window on unmount
+  })
+
   return (
     <div
       {...filterDOMProps(otherProps)}
       {...styleProps}
       ref={domRef}
-      className={styleProps.className}>
-      {children}
+      className={
+        classNames(
+          styles,
+          'spectrum-ButtonGroup',
+          {
+            'spectrum-ButtonGroup--vertical': orientation === 'vertical'
+          },
+          styleProps.className
+        )  
+      }>
+      <SlotProvider
+        slots={{
+          button: {
+            isDisabled,
+            UNSAFE_className: classNames(styles, 'spectrum-Button')
+          }
+        }}>
+        {children}
+      </SlotProvider>
     </div>
   );
 }
