@@ -17,7 +17,6 @@ import {HTMLAttributes, KeyboardEvent} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId, useLabels} from '@react-aria/utils';
-import {SpectrumBaseDialogProps} from '@react-types/dialog';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 
@@ -25,7 +24,7 @@ interface DatePickerAria {
   comboboxProps: HTMLAttributes<HTMLElement>,
   fieldProps: DOMProps,
   buttonProps: HTMLAttributes<HTMLElement>,
-  dialogProps: SpectrumBaseDialogProps
+  dialogProps: HTMLAttributes<HTMLElement> & {role?: 'dialog' | 'alertdialog'}
 }
 
 type DatePickerAriaProps = (DatePickerProps | DateRangePickerProps) & DOMProps;

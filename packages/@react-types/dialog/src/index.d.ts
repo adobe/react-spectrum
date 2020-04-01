@@ -11,8 +11,8 @@
  */
 
 import {DOMProps, StyleProps} from '@react-types/shared';
-import {HTMLAttributes, ReactElement, ReactNode, RefObject} from 'react';
 import {PositionProps} from '@react-types/overlays';
+import {ReactElement, ReactNode, RefObject} from 'react';
 import {Slots} from '@react-types/layout';
 
 export type SpectrumDialogClose = (close: () => void) => ReactElement;
@@ -27,12 +27,6 @@ export interface SpectrumDialogTriggerProps extends PositionProps {
   defaultOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void,
   isDismissable?: boolean
-}
-
-export interface SpectrumBaseDialogProps extends HTMLAttributes<HTMLElement> {
-  slots?: Slots,
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
-  role?: 'dialog' | 'alertdialog'
 }
 
 export interface SpectrumDialogProps extends DOMProps, StyleProps {
@@ -51,16 +45,28 @@ export interface SpectrumDialogProps extends DOMProps, StyleProps {
 }
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
+  /** The [visual style](https://spectrum.adobe.com/page/dialog/#Options) of the AlertDialog.  */
   variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning'
+  /** The title of the AlertDialog. */
   title: string,
+  /** The contents of the AlertDialog. */
   children: ReactNode,
+  /** The label to display within the cancel button. */
   cancelLabel?: string,
-  primaryLabel?: string,
+  /** The label to display within the confirm button. */
+  primaryLabel: string,
+  /** The label to display within the secondary button. */
   secondaryLabel?: string,
-  isConfirmDisabled?: boolean,
+  /** Whether the primary button is disabled. */
+  isPrimaryActionDisabled?: boolean,
+  /** Whether the secondary button is disabled. */
+  isSecondaryActionDisabled?: boolean,
+  /** Handler that is called when the cancel button is pressed. */
   onCancel?: () => void,
+  /** Handler that is called when the confirm button is pressed. */
   onConfirm?: (button: 'primary' | 'secondary') => void,
+  /** Button to focus by default upon render. */
   autoFocusButton?: 'cancel' | 'primary' | 'secondary',
-  allowsKeyboardConfirmation?: boolean, // triggers primary action
-  isKeyboardCancelDisabled?: boolean // needed?
+  // allowsKeyboardConfirmation?: boolean, // triggers primary action
+  // isKeyboardCancelDisabled?: boolean // needed?
 }
