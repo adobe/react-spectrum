@@ -10,24 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps, flexStyleProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {filterDOMProps, flexStyleProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FlexProps} from '@react-types/layout';
 import {HTMLElement} from 'react-dom';
-import React, {RefObject} from 'react';
+import React, {forwardRef, RefObject} from 'react';
 
-export const Flex = React.forwardRef((props: FlexProps, ref: RefObject<HTMLElement>) => {
+function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props);
   let {
     children,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps, flexStyleProps);
-
   styleProps.style.display = 'flex'; // inline-flex?
+  let domRef = useDOMRef(ref);
 
   return (
-    <div {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
+    <div {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       {children}
     </div>
   );
-});
+};
+
+const _Flex = forwardRef(Flex);
+export {_Flex as Flex};

@@ -10,22 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {HeaderProps} from '@react-types/view';
 import {HTMLElement} from 'react-dom';
-import React, {RefObject} from 'react';
+import React, {forwardRef, RefObject} from 'react';
 
-export const Header = React.forwardRef((props: HeaderProps, ref: RefObject<HTMLElement>) => {
+function Header(props: HeaderProps, ref: DOMRef) {
   props = useSlotProps(props, 'header');
   let {
     children,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let domRef = useDOMRef(ref);
 
   return (
-    <header {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
+    <header {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       {children}
     </header>
   );
-});
+};
+
+const _Header = forwardRef(Header);
+export {_Header as Header};
