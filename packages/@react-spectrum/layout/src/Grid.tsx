@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from 'classnames';
+import classNames from 'classnames';
 import {DOMRef} from '@react-types/shared';
 import {
   filterDOMProps,
