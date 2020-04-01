@@ -37,7 +37,9 @@ interface CollectionState<T extends object, V, W> {
   setVisibleRect: (rect: Rect) => void,
   contentSize: Size,
   isAnimating: boolean,
-  collectionManager: CollectionManager<T, V, W>
+  collectionManager: CollectionManager<T, V, W>,
+  startScrolling: () => void,
+  endScrolling: () => void
 }
 
 export function useCollectionState<T extends object, V, W>(opts: CollectionProps<T, V, W>): CollectionState<T, V, W> {
@@ -78,6 +80,12 @@ export function useCollectionState<T extends object, V, W>(opts: CollectionProps
       setVisibleRect(rect);
     },
     contentSize,
-    isAnimating
+    isAnimating,
+    startScrolling() {
+      collectionManager.startScrolling();
+    },
+    endScrolling() {
+      collectionManager.endScrolling();
+    }
   };
 }
