@@ -10,25 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
+import {DOMRef, ViewStyleProps} from '@react-types/shared';
+import {filterDOMProps, useDOMRef, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
-import React, {RefObject} from 'react';
+import React, {forwardRef} from 'react';
 import {ViewProps} from '@react-types/view';
 
-export const View = React.forwardRef((props: ViewProps, ref: RefObject<HTMLElement>) => {
+function View(props: ViewProps, ref: DOMRef) {
   let {
     elementType: ElementType = 'div',
     children,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(props, viewStyleProps);
+  let domRef = useDOMRef(ref);
 
   return (
     <ElementType
       {...filterDOMProps(otherProps)}
       {...styleProps}
-      ref={ref}>
+      ref={domRef}>
       {children}
     </ElementType>
   );
 });
+
+const _ViewProps = forwardRef(ViewProps);
+export {_ViewProps as ViewProps};
