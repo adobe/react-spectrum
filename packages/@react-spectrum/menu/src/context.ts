@@ -11,14 +11,15 @@
  */
 
 import {FocusStrategy} from '@react-types/menu';
-import React, {HTMLAttributes, useContext} from 'react';
+import React, {HTMLAttributes, MutableRefObject, useContext} from 'react';
 
 export interface MenuContextValue extends HTMLAttributes<HTMLElement> {
   onClose?: () => void,
   closeOnSelect?: boolean,
   focusStrategy?: FocusStrategy,
   wrapAround?: boolean,
-  autoFocus?: boolean
+  autoFocus?: boolean,
+  ref?: MutableRefObject<HTMLUListElement>
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
