@@ -33,7 +33,7 @@ function Content(props: ContentProps, ref: DOMRef) {
       </ClearSlots>
     </section>
   );
-});
+};
 
 const _Content = forwardRef(Content);
 export {_Content as Content};

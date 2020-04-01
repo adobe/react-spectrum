@@ -10,23 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {HTMLElement} from 'react-dom';
 import {HeadingProps} from '@react-types/typography';
-import React, {RefObject} from 'react';
+import React, {forwardRef, RefObject} from 'react';
 
-export const Heading = React.forwardRef((props: HeadingProps, ref: RefObject<HTMLElement>) => {
+function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   props = useSlotProps(props, 'heading');
   let {
     children,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let domRef = useDOMRef(ref);
 
-  // h level hardcoded for the moment and no specific className at the moment, this is barebones
   return (
-    <h1 {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
+    <h1 {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       {children}
     </h1>
   );
-});
+};
+
+const _Heading = forwardRef(Heading);
+export {_Heading as Heading};
