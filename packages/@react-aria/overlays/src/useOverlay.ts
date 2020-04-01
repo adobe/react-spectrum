@@ -10,10 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, ButtonHTMLAttributes, RefObject, useEffect} from 'react';
-import intlMessages from '../intl/*.json';
+import {AllHTMLAttributes, RefObject, useEffect} from 'react';
 import {useInteractOutside} from '@react-aria/interactions';
-import {useMessageFormatter} from '@react-aria/i18n';
 
 interface OverlayProps {
   ref: RefObject<HTMLElement | null>,
@@ -24,8 +22,7 @@ interface OverlayProps {
 }
 
 interface OverlayAria {
-  overlayProps: AllHTMLAttributes<HTMLElement>,
-  dismissButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
+  overlayProps: AllHTMLAttributes<HTMLElement>
 }
 
 const visibleOverlays: RefObject<HTMLElement>[] = [];
@@ -65,18 +62,9 @@ export function useOverlay(props: OverlayProps): OverlayAria {
   // Handle clicking outside the overlay to close it
   useInteractOutside({ref, onInteractOutside: isDismissable ? onHide : null});
 
-  let formatMessage = useMessageFormatter(intlMessages);
-
   return {
     overlayProps: {
       onKeyDown
-    },
-    dismissButtonProps: isDismissable ? {
-      tabIndex: -1,
-      'aria-label': formatMessage('dismiss'),
-      onClick() {
-        onHide();
-      }
-    } : {}
+    }
   };
 }

@@ -153,4 +153,42 @@ describe('Dialog', function () {
     expect(dialog).not.toHaveAttribute('aria-labelledby');
     expect(dialog).toHaveAttribute('aria-label', 'robin');
   });
+
+  it('should have a hidden dismiss button for screen readers when displayed in a popover', function () {
+    let onClose = jest.fn();
+    let {getByRole} = render(
+      <ModalProvider>
+        <DialogContext.Provider value={{type: 'popover', onClose}}>
+          <Dialog aria-label="robin">
+            <Heading><Header>The Title</Header></Heading>
+          </Dialog>
+        </DialogContext.Provider>
+      </ModalProvider>
+    );      
+    
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'Dismiss');
+
+    fireEvent.click(button);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('should have a hidden dismiss button for screen readers when displayed in a tray', function () {
+    let onClose = jest.fn();
+    let {getByRole} = render(
+      <ModalProvider>
+        <DialogContext.Provider value={{type: 'tray', onClose}}>
+          <Dialog aria-label="robin">
+            <Heading><Header>The Title</Header></Heading>
+          </Dialog>
+        </DialogContext.Provider>
+      </ModalProvider>
+    );      
+    
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'Dismiss');
+
+    fireEvent.click(button);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 });

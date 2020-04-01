@@ -51,10 +51,10 @@ export function useDialog(props: DialogProps): DialogAria {
 
   return {
     dialogProps: {
-      'aria-modal': true,
       role,
       tabIndex: -1,
-      'aria-labelledby': props['aria-labelledby'] || titleId
+      'aria-labelledby': props['aria-labelledby'] || titleId,
+      'aria-modal': true
     },
     titleProps: {
       id: titleId

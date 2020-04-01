@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {DismissButton, Placement, useOverlayPosition} from '@react-aria/overlays';
 import {FocusScope} from '@react-aria/focus';
 import {FocusStrategy, SpectrumMenuTriggerProps} from '@react-types/menu';
 import {MenuContext} from './context';
 import {Overlay, Popover, Tray} from '@react-spectrum/overlays';
-import {Placement, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
 import React, {Fragment, useRef, useState} from 'react';
@@ -80,14 +80,20 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     }
   };
 
+  let contents = (
+    <FocusScope restoreFocus>
+      <DismissButton onDismiss={onClose} />
+      {menu}
+      <DismissButton onDismiss={onClose} />
+    </FocusScope>
+  );
+
   // On small screen devices, the menu is rendered in a tray, otherwise a popover.
   let overlay;
   if (isMobile) {
     overlay = (
       <Tray isOpen={isOpen} onClose={onClose}>
-        <FocusScope restoreFocus>
-          {menu}
-        </FocusScope>
+        {contents}
       </Tray>
     );
   } else {
@@ -99,9 +105,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
         placement={placement}
         hideArrow
         onClose={onClose}>
-        <FocusScope restoreFocus>
-          {menu}
-        </FocusScope>
+        {contents}
       </Popover>
     );
   }
