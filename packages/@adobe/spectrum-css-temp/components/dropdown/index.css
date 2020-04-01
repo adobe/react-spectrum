@@ -27,6 +27,9 @@ governing permissions and limitations under the License.
   inline-size: var(--spectrum-dropdown-width);
   min-inline-size: var(--spectrum-dropdown-min-width);
 
+  /* Ensure that changing the selected item doesn't affect the size of the dropdown and its parents */
+  contain: size;
+
   /* Hack to enable select-powered Dropdowns */
   select {
     appearance: none;

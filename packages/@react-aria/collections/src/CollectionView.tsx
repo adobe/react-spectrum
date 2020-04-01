@@ -40,7 +40,9 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
     setVisibleRect,
     contentSize,
     isAnimating,
-    collectionManager
+    collectionManager,
+    startScrolling,
+    endScrolling
   } = useCollectionState({
     layout,
     collection,
@@ -96,6 +98,8 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
       contentSize={contentSize}
       visibleRect={visibleRect}
       onVisibleRectChange={setVisibleRect}
+      onScrollStart={startScrolling}
+      onScrollEnd={endScrolling}
       sizeToFit={sizeToFit}>
       {visibleViews}
     </ScrollView>
