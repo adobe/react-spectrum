@@ -55,10 +55,9 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
     isDisabled
   });
 
-  let {focusableProps} = useFocusable({
-    ...props,
+  let {focusableProps} = useFocusable(mergeProps(props, {
     onFocus: () => setFocusableRadio(value)
-  });
+  }));
   let interactions = mergeProps(pressProps, focusableProps);
 
   return {
