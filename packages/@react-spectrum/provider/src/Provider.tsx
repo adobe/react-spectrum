@@ -21,7 +21,7 @@ import {
   useStyleProps
 } from '@react-spectrum/utils';
 import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
-import {ModalProvider, useModalProvider} from '@react-aria/dialog';
+import {ModalProvider, useModalProvider} from '@react-aria/overlays';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
