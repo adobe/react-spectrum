@@ -10,4 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './src';
+import {useEffect} from 'react';
+
+export function usePreventScroll() {
+  // Add overflow: hidden to the body on mount, and restore on unmount.
+  useEffect(() => {
+    let overflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = overflow;
+    };
+  }, []);
+}

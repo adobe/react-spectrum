@@ -73,11 +73,7 @@ export function useModalProvider(): ModalProviderAria {
   };
 }
 
-interface ModalDialogAria {
-  modalProps: AriaAttributes
-}
-
-export function useModalDialog(): ModalDialogAria {
+export function useModal() {
   // Add aria-hidden to all parent providers on mount, and restore on unmount.
   let context = useContext(Context);
   if (!context) {
@@ -98,10 +94,4 @@ export function useModalDialog(): ModalDialogAria {
       }
     };
   }, [context, context.parent]);
-
-  return {
-    modalProps: {
-      'aria-modal': true
-    }
-  };
 }

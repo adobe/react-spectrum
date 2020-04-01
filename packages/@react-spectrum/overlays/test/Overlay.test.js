@@ -56,6 +56,5 @@ describe('Overlay', function () {
     let overlayNode = overlayRef.current.UNSAFE_getDOMNode();
     expect(overlayNode).not.toBe(providerRef.current);
     expect(overlayNode.parentNode).toBe(document.body);
-    expect(overlayNode).toHaveStyle('position: absolute; z-index: 100000');
   });
 });

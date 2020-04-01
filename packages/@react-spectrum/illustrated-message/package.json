@@ -30,8 +30,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/illustrated-message": "^3.0.0-alpha.2",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
+    "@react-spectrum/layout": "^3.0.0-alpha.1",
     "@react-types/illustrated-message": "^3.0.0-alpha.2",
     "@react-types/shared": "^3.0.0-rc.1"
   },
