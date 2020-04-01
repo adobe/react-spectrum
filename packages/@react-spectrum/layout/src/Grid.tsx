@@ -11,18 +11,20 @@
  */
 
 import {classNames} from 'classnames';
+import {DOMRef} from '@react-types/shared';
 import {
   filterDOMProps,
   gridStyleProps,
   SlotProvider,
+  useDOMRef,
   useSlotProps,
   useStyleProps
 } from '@react-spectrum/utils';
 import {GridProps} from '@react-types/layout';
 import {HTMLElement} from 'react-dom';
-import React, {RefObject} from 'react';
+import React, {forwardRef, RefObject} from 'react';
 
-export const Grid = React.forwardRef((props: GridProps, ref: RefObject<HTMLElement>) => {
+function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props);
   let {
     children,
@@ -31,12 +33,16 @@ export const Grid = React.forwardRef((props: GridProps, ref: RefObject<HTMLEleme
   } = props;
   let {styleProps} = useStyleProps(otherProps, gridStyleProps);
   styleProps.style.display = 'grid'; // inline-grid?
+  let domRef = useDOMRef(ref);
 
   return (
-    <div {...filterDOMProps(otherProps)} {...styleProps} ref={ref} className={classNames(styleProps.className, slots && slots.container && slots.container.UNSAFE_className)}>
+    <div {...filterDOMProps(otherProps)} {...styleProps} ref={domRef} className={classNames(styleProps.className, slots && slots.container && slots.container.UNSAFE_className)}>
       <SlotProvider slots={slots}>
         {children}
       </SlotProvider>
     </div>
   );
-});
+};
+
+const _Grid = forwardRef(Grid);
+export {_Grid as Grid};
