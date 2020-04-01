@@ -54,7 +54,7 @@ export function Dialog(props: SpectrumDialogProps) {
   let formatMessage = useMessageFormatter(intlMessages);
   let {styleProps} = useStyleProps(otherProps);
 
-  size = type === 'popover' ? undefined : (size || 'L');
+  size = type === 'popover' ? 'S' : (size || 'L');
   if (type === 'fullscreen' || type === 'fullscreenTakeover') {
     size = type;
   }
