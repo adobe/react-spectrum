@@ -56,8 +56,9 @@ governing permissions and limitations under the License.
 .spectrum-Popover-tip {
   position: absolute;
   --spectrum-popover-tip-size: var(--spectrum-popover-tip-width);
+  --spectrum-popover-tip-borderWidth: var(--spectrum-popover-border-size);
 
-  .svg-triangle path {
+  path {
     stroke-linecap: square;
     stroke-linejoin: miter;
     stroke-width: var(--spectrum-popover-border-size);

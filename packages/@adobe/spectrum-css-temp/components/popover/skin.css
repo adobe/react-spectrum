@@ -27,7 +27,7 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Popover-tip {
-    .svg-triangle path {
+    path {
       fill: var(--spectrum-popover-background-color);
       stroke: var(--spectrum-popover-border-color);
     }

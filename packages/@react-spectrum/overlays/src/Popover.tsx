@@ -71,7 +71,7 @@ function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
       </VisuallyHidden>
       {children}
       {hideArrow ? null : (
-        <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement.split(' ')[0]]} borderWidth={1} size={10} className={classNames(styles, 'svg-triangle')} />
+        <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement.split(' ')[0]]} />
       )}
       <VisuallyHidden>
         <button {...dismissButtonProps} />
@@ -83,19 +83,24 @@ function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
 let ROOT_2 = Math.sqrt(2);
 
 function Arrow(props) {
-  let [size, setTipWidth] = useState(20);
+  let [size, setSize] = useState(20);
+  let [borderWidth, setBorderWidth] = useState(1);
   let ref = useRef();
   // get the css value for the tip size and divide it by 2 for this arrow implementation
   useLayoutEffect(() => {
-    let measuredTipWidth = getComputedStyle(ref.current)
+    let spectrumTipWidth = getComputedStyle(ref.current)
       .getPropertyValue('--spectrum-popover-tip-size');
-    setTipWidth(parseInt(measuredTipWidth, 10) / 2);
+    setSize(parseInt(spectrumTipWidth, 10) / 2);
+
+    let spectrumBorderWidth = getComputedStyle(ref.current)
+      .getPropertyValue('--spectrum-popover-tip-borderWidth');
+    setBorderWidth(parseInt(spectrumBorderWidth, 10));
   }, [ref]);
 
   let landscape = props.direction === 'top' || props.direction === 'bottom';
   let mirror = props.direction === 'left' || props.direction === 'top';
 
-  let borderDiagonal = props.borderWidth * ROOT_2;
+  let borderDiagonal = borderWidth * ROOT_2;
   let halfBorderDiagonal = borderDiagonal / 2;
 
   let secondary = 2 * size + 2 * borderDiagonal;
