@@ -137,7 +137,7 @@ governing permissions and limitations under the License.
 
   /* Define this var so it can be read from JS */
   --spectrum-dropdown-quiet-offset: calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size));
-  min-inline-size: calc(var(--spectrum-dropdown-quiet-offset) * -1);
+  margin-inline-start: calc(var(--spectrum-dropdown-quiet-offset) * -1);
 }
 
 /* When used with a label or inside a Form, we need to override some things from .spectrum-Field
