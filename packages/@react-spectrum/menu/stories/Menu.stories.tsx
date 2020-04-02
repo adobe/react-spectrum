@@ -84,6 +84,9 @@ let withSection = [
 ];
 
 storiesOf('Menu', module)
+  .addDecorator(story => (
+    React.cloneElement(story(), {style: {position: 'static', maxHeight: 300}} as any)
+  ))
   .add(
     'Default Menu',
     () => (

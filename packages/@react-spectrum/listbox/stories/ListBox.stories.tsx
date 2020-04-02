@@ -87,10 +87,10 @@ for (let i = 0; i < 50; i++) {
 
 storiesOf('ListBox', module)
   .addDecorator(story => (
-    <Fragment>
+    <div style={{display: 'flex', flexDirection: 'column'}}>
       <Label id="label">Choose an item</Label>
-      {story()}
-    </Fragment>
+      {React.cloneElement(story(), {style: {position: 'static', maxHeight: 300}} as any)}
+    </div>
   ))
   .add(
     'Default ListBox',
@@ -105,7 +105,7 @@ storiesOf('ListBox', module)
   .add(
     'ListBox w/ sections',
     () => (
-      <Popover isOpen hideArrow style={{maxHeight: 300}}>
+      <Popover isOpen hideArrow>
         <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
           {item => (
             <Section items={item.children} title={item.name}>
@@ -119,7 +119,7 @@ storiesOf('ListBox', module)
   .add(
     'ListBox w/ many sections',
     () => (
-      <Popover isOpen hideArrow style={{maxHeight: 300}}>
+      <Popover isOpen hideArrow>
         <ListBox width={200} aria-labelledby="label" items={lotsOfSections} itemKey="name" onSelectionChange={action('onSelectionChange')}>
           {item => (
             <Section items={item.children} title={item.name}>
