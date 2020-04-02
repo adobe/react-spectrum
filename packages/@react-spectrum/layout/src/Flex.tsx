@@ -11,7 +11,7 @@
  */
 
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, flexStyleProps, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps, useDOMRef, flexStyleProps, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FlexProps} from '@react-types/layout';
 import {HTMLElement} from 'react-dom';
 import React, {forwardRef, RefObject} from 'react';
