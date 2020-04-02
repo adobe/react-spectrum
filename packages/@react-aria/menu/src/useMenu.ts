@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes, RefObject} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {MenuProps} from '@react-types/menu';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 
 interface MenuAria {
-  menuProps: AllHTMLAttributes<HTMLElement>
+  menuProps: HTMLAttributes<HTMLElement>
 }
 
 interface MenuState<T> extends TreeState<T> {}
