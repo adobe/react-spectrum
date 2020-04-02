@@ -28,7 +28,7 @@ import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/typography';
 import {useFormProps} from '@react-spectrum/form';
 import {useOverlayPosition} from '@react-aria/overlays';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useProviderProps, useProvider} from '@react-spectrum/provider';
 import {useSelect} from '@react-aria/select';
 import {useSelectState} from '@react-stately/select';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
@@ -100,12 +100,13 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
 
   // Measure the width of the button to inform the width of the menu (below).
   let [buttonWidth, setButtonWidth] = useState(null);
+  let {scale} = useProvider();
   useLayoutEffect(() => {
     if (!isMobile) {
       let width = triggerRef.current.UNSAFE_getDOMNode().offsetWidth;
       setButtonWidth(width);
     }
-  }, [isMobile, triggerRef, state.selectedKey]);
+  }, [scale, isMobile, triggerRef, state.selectedKey]);
 
   let overlay;
   if (isMobile) {
