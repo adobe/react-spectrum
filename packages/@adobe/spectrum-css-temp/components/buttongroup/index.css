@@ -15,6 +15,8 @@ governing permissions and limitations under the License.
 
 .spectrum-ButtonGroup {
   display: inline-flex;
+  /* Added this so it would wrap */
+  flex-wrap: wrap;
 
   .spectrum-Button,
   .spectrum-ActionButton,

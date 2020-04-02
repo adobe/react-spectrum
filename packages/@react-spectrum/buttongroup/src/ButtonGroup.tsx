@@ -11,8 +11,8 @@
  */
 
 import {classNames, filterDOMProps, SlotProvider, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import React, {ReactNode, useEffect} from 'react';
-import {useProviderProps} from '@react-spectrum/provider';
+import React, {ReactNode, useEffect, useLayoutEffect, useState} from 'react';
+import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 
 // TODO move to types package
@@ -26,31 +26,67 @@ interface ButtonGroupProps extends DOMProps, StyleProps {
 }
 
 function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
+  let {scale} = useProvider(); 
   props = useProviderProps(props);
   props = useSlotProps(props, 'buttonGroup');
+
   let {
     children,
     orientation = 'horizontal',
     isDisabled,
     ...otherProps
   } = props;
+
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
+  let [orientationState, setOrientation] = useState(orientation);
 
-  // might need to set orientation as a ref or a state so that the useEffect can properly cause a rerender by changing it
-  // const [orientation, setOrientation] = useState(props.orientation)
+  // useEffect(() => {
+  //   let buttonGroupChildren = Array.from(domRef.current.children);
+  //   if (orientation === 'horizontal') {
+  //     setOrientation('horizontal');
+  //     return;
+  //   }
 
-  // Fire this effect on childArray.length change, orientationChange
-  useEffect(() => {
-    // make onResize that does the following
-      // measure buttongroup container
-      // calculate total width of all buttons
-      // if total width > buttongroup container width, change orientation to vertical
+  //   let childrenY = buttonGroupChildren.map(child => child.getBoundingClientRect().top);
+  //   console.log('in resize', childrenY, orientationState);
+  //   // If any button's top is different from the others, overflow is happening
+  //   if (!childrenY.every(itemY => itemY === childrenY[0])) {
+  //     console.log('setting orientation vertical 1');
+  //     setOrientation('vertical');
+  //   }
+  // }, [scale, orientationState])
 
-    // add window event listener
-    // call onResize
-    //Remove onResize from window on unmount
-  })
+  // should this be useLayoutEffect
+  useLayoutEffect(() => {
+    let buttonGroupChildren = Array.from(domRef.current.children);
+    let childrenF = buttonGroupChildren.map(child => child.getBoundingClientRect().top);
+    console.log('in useeffect', childrenF);
+
+    // If orientation of ButtonGroup is horizontal, stack buttons vertically if overflow occurs
+    // Reset to horizontal orientation if it doesn't cause overflow anymore
+    let onResize = () => {
+      if (domRef.current && orientation === 'horizontal') {
+        if (orientationState === 'vertical') {
+          setOrientation('horizontal');
+        }
+      
+        let childrenY = buttonGroupChildren.map(child => child.getBoundingClientRect().top);
+        console.log('in resize', childrenY)
+        // If any button's top is different from the others, overflow is happening
+        if (!childrenY.every(itemY => itemY === childrenY[0])) {
+          console.log('setting orientation vertical 2')
+          setOrientation('vertical');
+        }
+      }
+    }
+
+    window.addEventListener('resize', onResize);
+    onResize();
+    return () => {
+      window.removeEventListener('resize', onResize);
+    };
+  }, [domRef, orientation, children, orientationState, scale])
 
   return (
     <div
@@ -62,7 +98,7 @@ function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
           styles,
           'spectrum-ButtonGroup',
           {
-            'spectrum-ButtonGroup--vertical': orientation === 'vertical'
+            'spectrum-ButtonGroup--vertical': orientationState === 'vertical'
           },
           styleProps.className
         )  
