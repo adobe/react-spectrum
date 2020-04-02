@@ -11,11 +11,9 @@
  */
 
 import {DOMPropsResponder, PressResponder} from '@react-aria/interactions';
-import {DOMRefValue} from '@react-types/shared';
 import {Overlay} from '@react-spectrum/overlays';
 import React, {Fragment, useRef} from 'react';
 import {TooltipTriggerProps} from '@react-types/tooltip';
-import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useOverlayPosition} from '@react-aria/overlays';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
@@ -33,7 +31,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let state = useTooltipTriggerState(props);
 
-  let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
@@ -50,16 +47,13 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let {overlayProps, placement, arrowProps} = useOverlayPosition({
     placement: props.placement,
-    containerRef: unwrapDOMRef(containerRef),
     targetRef: targetRef || triggerRef,
     overlayRef,
     isOpen
   });
 
-  delete overlayProps.style.position;
-
   let overlay = (
-    <Overlay isOpen={state.open} ref={containerRef}>
+    <Overlay isOpen={state.open}>
       {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, UNSAFE_style: overlayProps.style, isOpen: open, ...tooltipProps})}
     </Overlay>
   );

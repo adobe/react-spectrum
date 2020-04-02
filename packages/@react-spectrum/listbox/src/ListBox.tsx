@@ -10,22 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMRef} from '@react-types/shared';
 import {ListBoxBase, useListBoxLayout} from './ListBoxBase';
-import React from 'react';
+import React, {ReactElement} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
+import {useDOMRef} from '@react-spectrum/utils';
 import {useListState} from '@react-stately/list';
 
-export function ListBox<T>(props: SpectrumMenuProps<T>) {
+function ListBox<T>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   let state = useListState({
     ...props,
     selectionMode: props.selectionMode || 'single'
   });
   let layout = useListBoxLayout(state);
+  let domRef = useDOMRef(ref);
 
   return (
     <ListBoxBase
       {...props}
+      ref={domRef}
       state={state}
       layout={layout} />
   );
 }
+
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+const _ListBox = React.forwardRef(ListBox) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+export {_ListBox as ListBox};
