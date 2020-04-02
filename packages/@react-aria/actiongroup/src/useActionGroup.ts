@@ -12,8 +12,8 @@
 
 import {ActionGroupKeyboardDelegate, ActionGroupState} from '@react-stately/actiongroup';
 import {ActionGroupProps} from '@react-types/actiongroup';
-import {AllHTMLAttributes, useMemo, useState} from 'react';
 import {FocusEvent} from '@react-types/shared';
+import {HTMLAttributes, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
@@ -35,8 +35,8 @@ const BUTTON_ROLES = {
 type Orientation = 'horizontal' | 'vertical';
 
 export interface ActionGroupAria {
-  actionGroupProps: AllHTMLAttributes<HTMLElement>,
-  buttonProps: AllHTMLAttributes<HTMLElement>,
+  actionGroupProps: HTMLAttributes<HTMLElement>,
+  buttonProps: HTMLAttributes<HTMLElement>,
 }
 export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroupState<T>): ActionGroupAria {
   let {

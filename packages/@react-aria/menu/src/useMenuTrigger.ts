@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
+import {HTMLAttributes} from 'react';
 import {MenuTriggerProps, MenuTriggerState} from '@react-types/menu';
 import {PressProps, useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
 interface MenuTriggerAria {
-  menuTriggerProps: AllHTMLAttributes<HTMLElement> & PressProps,
-  menuProps: AllHTMLAttributes<HTMLElement>
+  menuTriggerProps: HTMLAttributes<HTMLElement> & PressProps,
+  menuProps: HTMLAttributes<HTMLElement>
 }
 
 export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState): MenuTriggerAria {
