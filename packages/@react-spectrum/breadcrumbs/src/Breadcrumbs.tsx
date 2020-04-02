@@ -16,7 +16,7 @@ import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState, Key} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
@@ -86,6 +86,14 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   if (childArray.length > visibleItems) {
     let rootItems = showRoot ? [childArray[0]] : [];
+    let selectedItem = childArray[childArray.length - 1];
+    let selectedKey = selectedItem.props.uniqueKey || selectedItem.key;
+    let onMenuAction = (key: Key) => {
+      // Don't fire onAction when clicking on the last item
+      if (key !== selectedKey) {
+        onAction(key);
+      }
+    };
 
     let menuItem = (
       <BreadcrumbItem key="menu">
@@ -96,7 +104,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
             isDisabled={isDisabled}>
             <FolderBreadcrumb />
           </ActionButton>
-          <Menu selectionMode="none" onAction={onAction}>
+          <Menu selectionMode="single" selectedKeys={[selectedKey]} onAction={onMenuAction}>
             {childArray}
           </Menu>
         </MenuTrigger>

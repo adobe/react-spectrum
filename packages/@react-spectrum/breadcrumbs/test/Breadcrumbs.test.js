@@ -225,7 +225,7 @@ describe('Breadcrumbs', function () {
   });
 
 
-  it('Handles max visible items auto with dialog', () => {
+  it('Handles max visible items auto with menu', () => {
     let onAction = jest.fn();
     let {getAllByText, getByRole, getAllByRole} = render(
       <Provider theme={theme}>
@@ -242,10 +242,10 @@ describe('Breadcrumbs', function () {
     let menuButton = getByRole('button');
     triggerPress(menuButton);
 
-    let menu = getByRole('presentation');
+    let menu = getByRole('menu');
     expect(menu).toBeTruthy();
     // menu contains all breadcrumb items
-    expect(getAllByRole('menuitem').length).toBe(5);
+    expect(getAllByRole('menuitemradio').length).toBe(5);
 
     let item1 = getAllByText('Folder 1');
     expect(item1.length).toBe(2);
@@ -259,5 +259,35 @@ describe('Breadcrumbs', function () {
     expect(item1[1]).not.toHaveAttribute('role');
     triggerPress(item1[1]);
     expect(onAction).toHaveBeenCalledWith('Folder 1');
+  });
+
+  it('clicking on current folder does not trigger onAction', () => {
+    let onAction = jest.fn();
+    let {getAllByText, getByRole, getAllByRole} = render(
+      <Provider theme={theme}>
+        <Breadcrumbs maxVisibleItems="auto" showRoot onAction={onAction}>
+          <Item uniqueKey="Folder 1">Folder 1</Item>
+          <Item uniqueKey="Folder 2">Folder 2</Item>
+          <Item uniqueKey="Folder 3">Folder 3</Item>
+          <Item uniqueKey="Folder 4">Folder 4</Item>
+          <Item uniqueKey="Folder 5">Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
+    );
+
+    let menuButton = getByRole('button');
+    triggerPress(menuButton);
+
+    let menu = getByRole('menu');
+    expect(menu).toBeTruthy();
+
+    let menuItems = getAllByRole('menuitemradio');
+    // menu contains all breadcrumb items
+    expect(menuItems.length).toBe(5);
+
+    let item = menuItems[4];
+    expect(item).toHaveAttribute('aria-checked', 'true');
+    triggerPress(item);
+    expect(onAction).not.toHaveBeenCalled();
   });
 });
