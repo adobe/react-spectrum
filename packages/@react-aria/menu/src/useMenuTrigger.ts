@@ -18,7 +18,7 @@ import {useOverlayTrigger} from '@react-aria/overlays';
 
 interface MenuTriggerAriaProps {
   type?: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
-  ref?: RefObject<HTMLElement | null>,
+  ref?: RefObject<HTMLElement | null>
 }
 
 interface MenuTriggerAria {
@@ -29,7 +29,7 @@ interface MenuTriggerAria {
 export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerState): MenuTriggerAria {
   let {
     ref,
-    type = 'menu'
+    type = 'menu' as MenuTriggerAriaProps['type']
   } = props;
 
   let menuTriggerId = useId();
