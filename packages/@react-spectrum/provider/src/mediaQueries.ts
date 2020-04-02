@@ -48,7 +48,16 @@ export function useColorScheme(theme: Theme, defaultColorScheme: ColorScheme): C
 }
 
 export function useScale(theme: Theme): Scale {
+  // iOS safari doesn't match any-pointer: course or any-pointer: fine :/
+  // Desktop matches any-pointer: fine though, so look for that.
   let matchesFine = useMediaQuery('(any-pointer: fine)');
+
+  // Edge on a Surface Go reports fine pointer support even without a mouse attached.
+  // Check navigator.maxTouchPoints, and switch to large scale when touch is supported.
+  if (navigator.maxTouchPoints > 0) {
+    return 'large';
+  }
+
   if (matchesFine && theme.medium) {
     return 'medium';
   }
