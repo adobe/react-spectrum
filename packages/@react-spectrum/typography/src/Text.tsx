@@ -12,8 +12,7 @@
 
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {HTMLElement} from 'react-dom';
-import React, {forwardRef, RefObject} from 'react';
+import React, {forwardRef} from 'react';
 import {TextProps} from '@react-types/typography';
 
 function Text(props: TextProps, ref: DOMRef) {

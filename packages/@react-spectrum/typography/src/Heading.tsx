@@ -13,8 +13,7 @@
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {HeadingProps} from '@react-types/typography';
-import {HTMLElement} from 'react-dom';
-import React, {forwardRef, RefObject} from 'react';
+import React, {forwardRef} from 'react';
 
 function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   props = useSlotProps(props, 'heading');

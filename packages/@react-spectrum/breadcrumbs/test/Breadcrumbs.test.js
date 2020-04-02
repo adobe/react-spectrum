@@ -263,7 +263,7 @@ describe('Breadcrumbs', function () {
 
   it('clicking on current folder does not trigger onAction', () => {
     let onAction = jest.fn();
-    let {getAllByText, getByRole, getAllByRole} = render(
+    let {getByRole, getAllByRole} = render(
       <Provider theme={theme}>
         <Breadcrumbs maxVisibleItems="auto" showRoot onAction={onAction}>
           <Item uniqueKey="Folder 1">Folder 1</Item>

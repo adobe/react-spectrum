@@ -12,9 +12,8 @@
 
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {HTMLElement} from 'react-dom';
 import {KeyboardProps} from '@react-types/typography';
-import React, {forwardRef, RefObject} from 'react';
+import React, {forwardRef} from 'react';
 
 function Keyboard(props: KeyboardProps, ref: DOMRef) {
   props = useSlotProps(props, 'keyboard');
