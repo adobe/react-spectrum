@@ -10,15 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, DOMProps, MultipleSelection, StyleProps, Alignment} from '@react-types/shared';
-import {Key, ReactElement} from 'react';
+import {CollectionBase, DOMProps, MultipleSelection, StyleProps} from '@react-types/shared';
 
 type FocusStrategy = 'first' | 'last';
 
 export interface ListBoxProps<T> extends CollectionBase<T>, MultipleSelection {
   autoFocus?: boolean | FocusStrategy,
-  shouldFocusWrap?: boolean,
-  onAction?: (key: Key) => void
+  shouldFocusWrap?: boolean
 }
 
 export interface SpectrumListBoxProps<T> extends ListBoxProps<T>, DOMProps, StyleProps {
