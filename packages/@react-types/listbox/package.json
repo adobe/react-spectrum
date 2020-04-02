@@ -1,6 +1,6 @@
 {
-  "name": "@react-types/menu",
-  "version": "3.0.0-alpha.2",
+  "name": "@react-types/listbox",
+  "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",

@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes} from 'react';
+import {HTMLAttributes, RefObject} from 'react';
+import {KeyboardDelegate} from '@react-types/shared';
+import {ListBoxProps} from '@react-types/listbox';
 import {ListState} from '@react-stately/list';
 import {useSelectableList} from '@react-aria/selection';
 
@@ -18,7 +20,13 @@ interface ListBoxAria {
   listBoxProps: HTMLAttributes<HTMLElement>
 }
 
-export function useListBox<T>(props, state: ListState<T>): ListBoxAria {
+interface ListBoxAriaProps<T> extends ListBoxProps<T> {
+  ref?: RefObject<HTMLElement>,
+  isVirtualized?: boolean,
+  keyboardDelegate?: KeyboardDelegate
+}
+
+export function useListBox<T>(props: ListBoxAriaProps<T>, state: ListState<T>): ListBoxAria {
   let {listProps} = useSelectableList({
     ...props,
     selectionManager: state.selectionManager,
