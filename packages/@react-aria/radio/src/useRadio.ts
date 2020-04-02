@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes} from 'react';
+import {InputHTMLAttributes} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {RadioProps} from '@react-types/radio';
@@ -24,15 +24,7 @@ interface RadioAriaProps extends RadioProps {
 }
 
 interface RadioAria {
-  inputProps: HTMLAttributes<HTMLElement> & {
-    autoFocus: boolean,
-    checked: boolean,
-    disabled?: boolean,
-    name?: string,
-    readOnly?: boolean,
-    required?: boolean,
-    type?: 'radio'
-  }
+  inputProps: InputHTMLAttributes<HTMLElement>
 }
 
 export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAria {
