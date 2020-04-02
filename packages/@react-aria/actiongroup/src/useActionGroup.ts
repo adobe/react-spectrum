@@ -42,7 +42,7 @@ export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroup
     selectionMode = 'single',
     isDisabled,
     orientation = 'horizontal' as Orientation,
-    role
+    role = BUTTON_GROUP_ROLES[selectionMode]
   } = props;
 
   let {direction} = useLocale();
@@ -63,9 +63,9 @@ export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroup
   return {
     actionGroupProps: {
       id: useId(id),
-      role: role || BUTTON_GROUP_ROLES[selectionMode],
+      role,
       tabIndex: isDisabled ? null : tabIndex,
-      'aria-orientation': orientation,
+      'aria-orientation': role === 'toolbar' ? orientation : null,
       'aria-disabled': isDisabled,
       ...mergeProps(focusWithinProps, collectionProps)
     },

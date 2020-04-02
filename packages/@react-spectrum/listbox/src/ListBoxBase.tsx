@@ -54,11 +54,12 @@ export function useListBoxLayout<T>(state: ListState<T>) {
 }
 
 /** @private */
-export function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
+function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
   let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, domProps = {}} = props;
   let {listBoxProps} = useListBox({
     ...props,
     ...domProps,
+    ref,
     keyboardDelegate: layout,
     isVirtualized: true
   }, state);
