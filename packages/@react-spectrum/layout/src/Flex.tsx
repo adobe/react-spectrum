@@ -13,8 +13,7 @@
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, flexStyleProps, SlotProvider, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FlexProps} from '@react-types/layout';
-import {HTMLElement} from 'react-dom';
-import React, {forwardRef, RefObject} from 'react';
+import React, {forwardRef} from 'react';
 
 function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props);

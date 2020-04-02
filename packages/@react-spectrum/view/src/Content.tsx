@@ -14,7 +14,6 @@ import {ClearSlots, useDOMRef, useSlotProps} from '@react-spectrum/utils';
 import {ContentProps} from '@react-types/view';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {HTMLElement} from 'react-dom';
 import React, {forwardRef} from 'react';
 
 function Content(props: ContentProps, ref: DOMRef) {
