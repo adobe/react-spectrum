@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, useDOMRef, useHasChild, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, unwrapDOMRef, useDOMRef, useHasChild, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DOMRef} from '@react-types/shared';
 import {DialogContext, DialogContextValue} from './context';
@@ -37,7 +37,7 @@ let sizeMap = {
  * Dialogs display important information that users need to acknowledge.
  * They appear over the interface and block further interactions.
  */
-export function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
+function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   props = useSlotProps(props);
   let {
     type = 'popover',
@@ -64,8 +64,8 @@ export function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   let sizeVariant = sizeMap[size];
   let {dialogProps, titleProps} = useDialog({ref: domRef, role, ...otherProps});
 
-  let hasHeader = useHasChild(`.${styles['spectrum-Dialog-header']}`, gridRef);
-  let hasFooter = useHasChild(`.${styles['spectrum-Dialog-footer']}`, gridRef);
+  let hasHeader = useHasChild(`.${styles['spectrum-Dialog-header']}`, unwrapDOMRef(gridRef));
+  let hasFooter = useHasChild(`.${styles['spectrum-Dialog-footer']}`, unwrapDOMRef(gridRef));
 
   let slots = {
     container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
@@ -119,3 +119,6 @@ export function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     </FocusScope>
   );
 }
+
+let _Dialog = React.forwardRef(Dialog);
+export {_Dialog as Dialog};
