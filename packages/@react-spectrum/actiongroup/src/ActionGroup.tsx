@@ -86,10 +86,15 @@ export function ActionGroupItem<T>({item, state, ...otherProps}: ActionGroupItem
     itemRef: ref
   });
 
-  let ariaProps = mergeProps(itemProps, item);
-  let buttonProps = mergeProps(ariaProps, otherProps);
+  let buttonProps = mergeProps(itemProps, otherProps);
 
   return (
-    <ActionButton ref={ref} {...buttonProps}>{item.rendered}</ActionButton>
+    <ActionButton 
+      {...buttonProps}
+      ref={ref}
+      isSelected={state.selectionManager.selectionMode !== 'none' ? item.isSelected : null}
+      isDisabled={item.isDisabled}>
+      {item.rendered}
+    </ActionButton>
   );
 }
