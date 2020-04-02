@@ -25,6 +25,9 @@ import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useActionGroup} from '@react-aria/actiongroup';
 import {useSelectableItem} from '@react-aria/selection';
 
+/**
+ * An ActionGroup is a grouping of ActionButtons that are related to one another.
+ */
 export function ActionGroup<T>(props: CollectionBase<T> & SpectrumActionGroupProps<T>) {
   props = useSlotProps(props);
   let {

@@ -13,16 +13,30 @@
 import {DOMProps, ItemElement, ItemRenderer, MultipleSelection, StyleProps} from '@react-types/shared';
 
 export interface ActionGroupProps<T> extends DOMProps, StyleProps, MultipleSelection {
+  /**
+   * The axis the ActionGroup should align with.
+   * @default 'horizontal'
+   */
   orientation?: 'horizontal' | 'vertical',
   children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>,
+  /**
+   * Whether the ActionGroup is disabled or not.
+   * Shows that a selection exists, but is not available in that circumstance.
+   */
   isDisabled?: boolean
 }
 
 export interface SpectrumActionGroupProps<T> extends ActionGroupProps<T> {
+  /** Whether the ActionButtons should be displayed with a [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
   isEmphasized?: boolean,
+  /** Whether the ActionButtons should be connected together, without default space between. */
   isConnected?: boolean
+  /** Whether the ActionButtons should be justified in their container. */
   isJustified?: boolean,
+  /** Whether ActionButtons should use the [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
   isQuiet?: boolean,
+  /** Whether the ActionButtons should be displayed with a [hold icon](https://spectrum.adobe.com/page/action-button/#Hold-icon). */
   holdAffordance?: boolean,
+   /** Called when an item is acted upon (usually selection via press). */
   onSelectionChange?: (...args) => void
 }

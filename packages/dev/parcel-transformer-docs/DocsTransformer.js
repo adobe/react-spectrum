@@ -28,10 +28,11 @@ module.exports = new Transformer({
       allowReturnOutsideFunction: true,
       strictMode: false,
       sourceType: 'module',
-      plugins: ['exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx']
+      plugins: ['classProperties', 'exportDefaultFrom', 'exportNamespaceFrom', 'dynamicImport', 'typescript', 'jsx']
     });
 
     let exports = {};
+    let visitedTypes = new Set();
 
     traverse(ast, {
       ExportNamedDeclaration(path) {
@@ -116,11 +117,15 @@ module.exports = new Transformer({
       }
 
       if (path.isTSTypeReference()) {
+        visitedTypes.add(path.node);
         if (path.node.typeParameters) {
+          // This is a hack to work around circular type references.
           return {
             type: 'application',
             base: processExport(path.get('typeName')),
-            typeParameters: path.get('typeParameters.params').map(p => processExport(p))
+            typeParameters: path.get('typeParameters.params')
+              .filter(p => !visitedTypes.has(p.node))
+              .map(p => processExport(p))
           };
         }
 
