@@ -3,7 +3,7 @@
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
@@ -60,6 +60,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let popoverRef = useRef<HTMLDivElement>();
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
+  let listboxRef = useRef();
 
   // We create the listbox layout in Picker and pass it to ListBoxBase below
   // so that the layout information can be cached even while the listbox is not mounted.
@@ -72,9 +73,9 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   }, state);
 
   let {overlayProps, placement} = useOverlayPosition({
-    containerRef: unwrapDOMRef(containerRef),
     targetRef: unwrapDOMRef(triggerRef),
     overlayRef: popoverRef,
+    scrollRef: listboxRef,
     placement: `${direction} ${align}` as Placement,
     shouldFlip: shouldFlip,
     isOpen: state.isOpen
@@ -85,7 +86,9 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   let listbox = (
     <FocusScope restoreFocus>
       <ListBoxBase
+        ref={listboxRef}
         domProps={menuProps}
+        disallowEmptySelection
         autoFocus={state.focusStrategy}
         shouldSelectOnPressUp
         focusOnPointerEnter
@@ -122,7 +125,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
     };
 
     overlay = (
-      <Popover 
+      <Popover
         {...overlayProps}
         style={style}
         className={classNames(styles, 'spectrum-Dropdown-popover', {'spectrum-Dropdown-popover--quiet': isQuiet})}
@@ -150,11 +153,11 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
     // non tabbable with tabIndex={-1}.
     //
     // In mobile browsers, there are next/previous buttons above the software keyboard for navigating
-    // between fields in a form. These only support native form inputs that are tabbable. In order to 
+    // between fields in a form. These only support native form inputs that are tabbable. In order to
     // support those, an additional hidden input is used to marshall focus to the button. It is tabbable
     // except when the button is focused, so that shift tab works properly to go to the actual previous
-    // input in the form. Using the <select> for this also works, but Safari on iOS briefly flashes 
-    // the native menu on focus, so this isn't ideal. A font-size of 16px or greater is required to 
+    // input in the form. Using the <select> for this also works, but Safari on iOS briefly flashes
+    // the native menu on focus, so this isn't ideal. A font-size of 16px or greater is required to
     // prevent Safari from zooming in on the input when it is focused.
     input = (
       <VisuallyHidden aria-hidden="true">
@@ -245,7 +248,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
           }}>
           {contents}
         </SlotProvider>
-        {validationState === 'invalid' && 
+        {validationState === 'invalid' &&
           <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-invalidIcon')} />
         }
         <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
@@ -277,7 +280,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
     }));
 
     return (
-      <div 
+      <div
         {...styleProps}
         ref={domRef}
         className={labelWrapperClass}>

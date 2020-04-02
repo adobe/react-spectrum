@@ -35,7 +35,8 @@ interface SelectableCollectionOptions {
   selectionManager: MultipleSelectionManager,
   keyboardDelegate: KeyboardDelegate,
   autoFocus?: boolean | FocusStrategy,
-  shouldFocusWrap?: boolean
+  shouldFocusWrap?: boolean,
+  disallowEmptySelection?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -47,7 +48,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     selectionManager: manager,
     keyboardDelegate: delegate,
     autoFocus = false,
-    shouldFocusWrap = false
+    shouldFocusWrap = false,
+    disallowEmptySelection = false
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -160,14 +162,16 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         break;
       case 'Escape':
         e.preventDefault();
-        manager.clearSelection();
+        if (!disallowEmptySelection) {
+          manager.clearSelection();
+        }
         break;
     }
   };
 
   let onFocus = (e: FocusEvent) => {
     manager.setFocused(true);
-    
+
     if (manager.focusedKey == null && e.target === e.currentTarget) {
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
       // Attempt to detect whether the user is tabbing forward or backward into the collection
@@ -202,7 +206,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       if (selectedKeys.size) {
         focusedKey = selectedKeys.values().next().value;
       }
-    
+
       manager.setFocusedKey(focusedKey);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

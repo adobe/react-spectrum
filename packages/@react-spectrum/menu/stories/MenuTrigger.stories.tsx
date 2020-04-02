@@ -51,11 +51,11 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'single selected key (controlled)',
-    () => render({}, {selectedKeys: ['Kangaroo']})
+    () => render({}, {selectedKeys: ['Kangaroo'], selectionMode: 'single'})
   )
   .add(
     'single default selected key (uncontrolled)',
-    () => render({}, {defaultSelectedKeys: ['Kangaroo']})
+    () => render({}, {defaultSelectedKeys: ['Kangaroo'], selectionMode: 'single'})
   )
   .add(
     'multiple selected key (controlled)',
@@ -64,10 +64,6 @@ storiesOf('MenuTrigger', module)
   .add(
     'multiple default selected key (uncontrolled)',
     () => render({}, {defaultSelectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
-  )
-  .add(
-    'autofocus=false',
-    () => render({}, {defaultSelectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple', autoFocus: false})
   )
   .add(
     'align="end"',

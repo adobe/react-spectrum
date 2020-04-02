@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps, flexStyleProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps, flexStyleProps, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FlexProps} from '@react-types/layout';
 import {HTMLElement} from 'react-dom';
 import React, {RefObject} from 'react';
@@ -19,6 +19,7 @@ export const Flex = React.forwardRef((props: FlexProps, ref: RefObject<HTMLEleme
   props = useSlotProps(props);
   let {
     children,
+    slots,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps, flexStyleProps);
@@ -27,7 +28,9 @@ export const Flex = React.forwardRef((props: FlexProps, ref: RefObject<HTMLEleme
 
   return (
     <div {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
-      {children}
+      <SlotProvider slots={slots}>
+        {children}
+      </SlotProvider>
     </div>
   );
 });
