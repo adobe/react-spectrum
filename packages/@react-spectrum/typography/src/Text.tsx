@@ -30,7 +30,7 @@ function Text(props: TextProps, ref: DOMRef) {
       {children}
     </span>
   );
-};
+}
 
 const _Text = forwardRef(Text);
 export {_Text as Text};

@@ -30,7 +30,7 @@ function Keyboard(props: KeyboardProps, ref: DOMRef) {
       {children}
     </kbd>
   );
-};
+}
 
 const _Keyboard = forwardRef(Keyboard);
 export {_Keyboard as Keyboard};

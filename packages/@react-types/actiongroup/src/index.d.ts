@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, ItemElement, ItemRenderer, MultipleSelection, StyleProps, Orientation} from '@react-types/shared';
-import { Key } from 'react';
+import {DOMProps, ItemElement, ItemRenderer, MultipleSelection, Orientation, StyleProps} from '@react-types/shared';
+import {Key} from 'react';
 
 // Not extending CollectionBase to avoid async loading props
 export interface ActionGroupProps<T> extends DOMProps, StyleProps, MultipleSelection {

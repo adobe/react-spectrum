@@ -13,8 +13,8 @@
 import {ActionButton} from '@react-spectrum/button';
 import {classNames, filterDOMProps, unwrapDOMRef, useDOMRef, useHasChild, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
-import {DOMRef} from '@react-types/shared';
 import {DialogContext, DialogContextValue} from './context';
+import {DOMRef} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import intlMessages from '../intl/*.json';

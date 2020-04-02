@@ -42,7 +42,7 @@ function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
       </SlotProvider>
     </div>
   );
-};
+}
 
 const _Grid = forwardRef(Grid);
 export {_Grid as Grid};

@@ -30,7 +30,7 @@ function Footer(props: FooterProps, ref: DOMRef) {
       {children}
     </footer>
   );
-};
+}
 
 const _Footer = forwardRef(Footer);
 export {_Footer as Footer};

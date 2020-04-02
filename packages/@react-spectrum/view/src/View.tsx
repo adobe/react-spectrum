@@ -32,7 +32,7 @@ function View(props: ViewProps, ref: DOMRef) {
       {children}
     </ElementType>
   );
-};
+}
 
 const _View = forwardRef(View);
 export {_View as View};

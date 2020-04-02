@@ -16,7 +16,7 @@ import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {useEffect, useRef, useState, Key} from 'react';
+import React, {Key, useEffect, useRef, useState} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';

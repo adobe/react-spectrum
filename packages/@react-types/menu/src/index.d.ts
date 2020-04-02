@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, DOMProps, MultipleSelection, StyleProps, Alignment} from '@react-types/shared';
+import {Alignment, CollectionBase, DOMProps, MultipleSelection, StyleProps} from '@react-types/shared';
 import {Key, ReactElement} from 'react';
 
 export type FocusStrategy = 'first' | 'last';

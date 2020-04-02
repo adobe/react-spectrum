@@ -11,8 +11,8 @@
  */
 
 import {FocusStrategy} from '@react-types/listbox';
-import {KeyboardDelegate} from '@react-types/shared';
 import {HTMLAttributes, RefObject} from 'react';
+import {KeyboardDelegate} from '@react-types/shared';
 import {ListState} from '@react-stately/list';
 import {useSelectableList} from '@react-aria/selection';
 

@@ -12,8 +12,8 @@
 
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {HTMLElement} from 'react-dom';
 import {HeadingProps} from '@react-types/typography';
+import {HTMLElement} from 'react-dom';
 import React, {forwardRef, RefObject} from 'react';
 
 function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
@@ -30,7 +30,7 @@ function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
       {children}
     </h1>
   );
-};
+}
 
 const _Heading = forwardRef(Heading);
 export {_Heading as Heading};

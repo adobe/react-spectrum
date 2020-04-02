@@ -30,7 +30,7 @@ function Header(props: HeaderProps, ref: DOMRef) {
       {children}
     </header>
   );
-};
+}
 
 const _Header = forwardRef(Header);
 export {_Header as Header};

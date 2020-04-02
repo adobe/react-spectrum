@@ -28,7 +28,7 @@ import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/typography';
 import {useFormProps} from '@react-spectrum/form';
 import {useOverlayPosition} from '@react-aria/overlays';
-import {useProviderProps, useProvider} from '@react-spectrum/provider';
+import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSelect} from '@react-aria/select';
 import {useSelectState} from '@react-stately/select';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
