@@ -219,7 +219,7 @@ function getMaxHeight(
   margins: Position,
   padding: number
 ) {
-  return position.top != null 
+  return position.top != null
     ? Math.max(0, boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top + containerOffsetWithBoundary.top - position.top - margins.top - margins.bottom - padding)
     : Math.max(0, childOffset.top - boundaryDimensions.top - boundaryDimensions.scroll.top - containerOffsetWithBoundary.top - margins.top - margins.bottom - padding);
 }

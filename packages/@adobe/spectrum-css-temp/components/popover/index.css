@@ -47,6 +47,7 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-popover-border-radius);
 
   outline: none; /* Hide focus outline */
+  box-sizing: border-box;
 
   &.is-open {
     @inherit: %spectrum-overlay--open;
@@ -57,8 +58,11 @@ governing permissions and limitations under the License.
   position: absolute;
   --spectrum-popover-tip-size: var(--spectrum-popover-tip-width);
   --spectrum-popover-tip-borderWidth: var(--spectrum-popover-border-size);
+  /* https://stackoverflow.com/questions/44170229/how-to-prevent-half-pixel-svg-shift-on-high-pixel-ratio-devices-retina */
+  transform: translate(0, 0);
+  -webkit-transform: translate(0, 0);
 
-  path {
+  .spectrum-Popover-tip-triangle {
     stroke-linecap: square;
     stroke-linejoin: miter;
     stroke-width: var(--spectrum-popover-border-size);
@@ -93,6 +97,7 @@ governing permissions and limitations under the License.
   }
   .spectrum-Popover-tip {
     right: 100%;
+    transform: scaleX(-1);
   }
 }
 
@@ -114,7 +119,8 @@ governing permissions and limitations under the License.
     @inherit: %spectrum-overlay--bottom--open;
   }
   .spectrum-Popover-tip {
-    bottom: calc(100% - var(--spectrum-global-dimension-size-65));
+    bottom: 100%;
+    transform: scaleY(-1);
   }
 }
 
@@ -127,7 +133,7 @@ governing permissions and limitations under the License.
     @inherit: %spectrum-overlay--top--open;
   }
   .spectrum-Popover-tip {
-    top: calc(100% - var(--spectrum-global-dimension-size-50));
+    top: 100%;
   }
 }
 

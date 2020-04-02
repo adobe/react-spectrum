@@ -27,11 +27,18 @@ interface PopoverProps extends HTMLAttributes<HTMLElement> {
   onClose?: () => void
 }
 
+/**
+ * Arrow placement can be done pointing right or down because those paths start at 0, x or y. Because the
+ * other two don't, they start at a fractional pixel value, it introduces rounding differences between browsers and
+ * between display types (retina with subpixels vs not retina). By flipping them with CSS we can ensure that
+ * the path always starts at 0 so that it perfectly overlaps the popover's border.
+ * see bottom of file for more explanation.
+ */
 let arrowPlacement = {
   left: 'right',
-  right: 'left',
+  right: 'right',
   top: 'bottom',
-  bottom: 'top'
+  bottom: 'bottom'
 };
 
 function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
@@ -88,13 +95,15 @@ function Arrow(props) {
   let ref = useRef();
   // get the css value for the tip size and divide it by 2 for this arrow implementation
   useLayoutEffect(() => {
-    let spectrumTipWidth = getComputedStyle(ref.current)
-      .getPropertyValue('--spectrum-popover-tip-size');
-    setSize(parseInt(spectrumTipWidth, 10) / 2);
+    if (ref.current) {
+      let spectrumTipWidth = window.getComputedStyle(ref.current)
+        .getPropertyValue('--spectrum-popover-tip-size');
+      setSize(parseInt(spectrumTipWidth, 10) / 2);
 
-    let spectrumBorderWidth = getComputedStyle(ref.current)
-      .getPropertyValue('--spectrum-popover-tip-borderWidth');
-    setBorderWidth(parseInt(spectrumBorderWidth, 10));
+      let spectrumBorderWidth = window.getComputedStyle(ref.current)
+        .getPropertyValue('--spectrum-popover-tip-borderWidth');
+      setBorderWidth(parseInt(spectrumBorderWidth, 10));
+    }
   }, [ref]);
 
   let landscape = props.direction === 'top' || props.direction === 'bottom';
@@ -125,28 +134,30 @@ function Arrow(props) {
   let arrowProps = props.arrowProps;
 
   return (
-    <div
-      ref={ref}
+    <svg
+      xmlns="http://www.w3.org/svg/2000"
+      width={landscape ? secondary : primary}
+      height={landscape ? primary : secondary}
+      style={props.style}
       className={classNames(styles, 'spectrum-Popover-tip')}
-      {...arrowProps}
-      data-testid="tip">
-      {
-        React.createElement('svg',
-          {
-            xmlns: 'http://www.w3.org/svg/2000',
-            width: landscape ? secondary : primary,
-            height: landscape ? primary : secondary,
-            style: props.style,
-            className: props.className
-          },
-          React.createElement('path', {
-            d: pathData.join(' ')
-          })
-        )
-      }
-    </div>
+      ref={ref}
+      {...arrowProps}>
+      <path className={classNames(styles, 'spectrum-Popover-tip-triangle')} d={pathData.join(' ')} />
+    </svg>
   );
 }
 
 let _Popover = React.forwardRef(Popover);
 export {_Popover as Popover};
+
+/**
+ * More explanation on popover tips.
+ * - I tried changing the calculation of the popover placement in an effort to get it squarely onto the pixel grid.
+ * This did not work because the problem was in the svg partial pixel end of the path in the popover right and popover bottom.
+ * - I tried creating an extra 'bandaid' path that matched the background color and would overlap the popover border.
+ * This didn't work because the border on the svg triangle didn't extend all the way to match nicely with the popover border.
+ * - I tried getting the client bounding box and setting the svg to that partial pixel value
+ * This didn't work because again the issue was inside the svg
+ * - I didn't try drawing the svg backwards
+ * This could still be tried
+ */
