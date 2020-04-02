@@ -11,22 +11,14 @@
  */
 
 import {classNames, filterDOMProps, SlotProvider, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import React, {ReactNode, useEffect, useLayoutEffect, useState} from 'react';
-import {useProvider, useProviderProps} from '@react-spectrum/provider';
+import {DOMRef} from '@react-types/shared';
+import React, {useEffect, useState} from 'react';
+import {SpectrumButtonGroupProps} from '@react-types/buttongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
+import {useProviderProps} from '@react-spectrum/provider';
 
-// TODO move to types package
-import {DOMProps, DOMRef, Orientation, StyleProps} from '@react-types/shared';
-
-interface ButtonGroupProps extends DOMProps, StyleProps {
-  isDisabled?: boolean,
-  // default: horizontal
-  orientation?: Orientation,
-  children: ReactNode
-}
-
-function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
-  let {scale} = useProvider(); 
+function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
+  // let {scale} = useProvider(); 
   props = useProviderProps(props);
   props = useSlotProps(props, 'buttonGroup');
 
@@ -41,52 +33,47 @@ function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   let [orientationState, setOrientation] = useState(orientation);
 
+  // Figure out for later
   // useEffect(() => {
-  //   let buttonGroupChildren = Array.from(domRef.current.children);
-  //   if (orientation === 'horizontal') {
-  //     setOrientation('horizontal');
-  //     return;
+  //   if (domRef.current && orientation === 'horizontal') {
+  //     console.log('agwegawe', orientationState)
+  //     if (orientationState === 'vertical') {
+  //       setOrientation('horizontal');
+  //       return;
+  //     }
+      
+  //     let buttonGroupChildren = Array.from(domRef.current.children);
+  //     let childrenY = buttonGroupChildren.map(child => child.getBoundingClientRect().top);
+  //     console.log('childrenY', childrenY)
+  //     // If any button's top is different from the others, overflow is happening
+  //     if (orientationState === 'horizontal' && !childrenY.every(itemY => itemY === childrenY[0])) {
+  //       setOrientation('vertical');
+  //     }
   //   }
-
-  //   let childrenY = buttonGroupChildren.map(child => child.getBoundingClientRect().top);
-  //   console.log('in resize', childrenY, orientationState);
-  //   // If any button's top is different from the others, overflow is happening
-  //   if (!childrenY.every(itemY => itemY === childrenY[0])) {
-  //     console.log('setting orientation vertical 1');
-  //     setOrientation('vertical');
-  //   }
-  // }, [scale, orientationState])
+  // }, [scale, domRef])
 
   // should this be useLayoutEffect
-  useLayoutEffect(() => {
-    let buttonGroupChildren = Array.from(domRef.current.children);
-    let childrenF = buttonGroupChildren.map(child => child.getBoundingClientRect().top);
-    console.log('in useeffect', childrenF);
-
+  useEffect(() => {
     // If orientation of ButtonGroup is horizontal, stack buttons vertically if overflow occurs
     // Reset to horizontal orientation if it doesn't cause overflow anymore
     let onResize = () => {
       if (domRef.current && orientation === 'horizontal') {
-        if (orientationState === 'vertical') {
-          setOrientation('horizontal');
-        }
-      
+        setOrientation('horizontal');
+        let buttonGroupChildren = Array.from(domRef.current.children);
         let childrenY = buttonGroupChildren.map(child => child.getBoundingClientRect().top);
-        console.log('in resize', childrenY)
         // If any button's top is different from the others, overflow is happening
         if (!childrenY.every(itemY => itemY === childrenY[0])) {
-          console.log('setting orientation vertical 2')
           setOrientation('vertical');
         }
       }
-    }
+    };
 
     window.addEventListener('resize', onResize);
     onResize();
     return () => {
       window.removeEventListener('resize', onResize);
     };
-  }, [domRef, orientation, children, orientationState, scale])
+  }, [domRef, orientation, children]);
 
   return (
     <div

@@ -29,18 +29,16 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/button": "^3.0.0-rc.1",
-    "@react-aria/focus": "^3.0.0-rc.1",
-    "@react-aria/utils": "^3.0.0-rc.1",
-    "@react-spectrum/typography": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-rc.1",
-    "@react-types/button": "^3.0.0-rc.1",
-    "@react-types/shared": "^3.0.0-rc.1",
-    "@spectrum-icons/ui": "^3.0.0-rc.1"
+    "@react-types/buttongroup": "^3.0.0-rc.1",
+    "@react-types/shared": "^3.0.0-rc.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.2",
-    "@react-spectrum/test-utils": "^3.0.0-alpha.2"
+    "@react-spectrum/button": "^3.0.0-rc.1",
+    "@react-spectrum/test-utils": "^3.0.0-alpha.2",
+    "@react-spectrum/typography": "^3.0.0-alpha.1",
+    "@spectrum-icons/workflow": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
     "react": "^16.8.0",

@@ -12,7 +12,7 @@
 
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '@react-spectrum/button';
-import {ButtonGroup} from '../'
+import {ButtonGroup} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/typography';
@@ -33,7 +33,7 @@ storiesOf('ButtonGroup', module)
   .add(
     'isDisabled, orientation: vertical',
     () => render({isDisabled: true, orientation: 'vertical'})
-  )
+  );
 
 function render(props) {
   return (
@@ -47,5 +47,5 @@ function render(props) {
         <Text>With icon</Text>
       </Button>
     </ButtonGroup>
-  )
+  );
 } 
