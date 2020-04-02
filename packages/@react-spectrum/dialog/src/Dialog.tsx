@@ -64,8 +64,8 @@ export function Dialog(props: SpectrumDialogProps) {
   let sizeVariant = sizeMap[size];
   let {dialogProps, titleProps} = useDialog({ref, role, ...otherProps});
 
-  let hasHeader = useHasChild(`:scope > .${styles['spectrum-Dialog-header']}`, gridRef);
-  let hasFooter = useHasChild(`:scope > .${styles['spectrum-Dialog-footer']}`, gridRef);
+  let hasHeader = useHasChild(`.${styles['spectrum-Dialog-header']}`, gridRef);
+  let hasFooter = useHasChild(`.${styles['spectrum-Dialog-footer']}`, gridRef);
 
   if (!slots) {
     slots = {
