@@ -18,7 +18,7 @@ governing permissions and limitations under the License.
   display: inline-flex;
   /* Added this so it would wrap */
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: flex-start;
 
   .spectrum-ButtonGroup-Button {
     flex-shrink: 0;
@@ -37,4 +37,8 @@ governing permissions and limitations under the License.
     margin-block-start: var(--spectrum-buttongroup-button-gap-y);
     margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
   }
+}
+
+.spectrum-ButtonGroup--alignEnd {
+  align-items: flex-end;
 }

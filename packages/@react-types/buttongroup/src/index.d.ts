@@ -11,7 +11,7 @@
  */
 
 
-import {DOMProps, Orientation, StyleProps} from '@react-types/shared';
+import {Alignment, DOMProps, Orientation, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 export interface SpectrumButtonGroupProps extends DOMProps, StyleProps {
@@ -24,5 +24,10 @@ export interface SpectrumButtonGroupProps extends DOMProps, StyleProps {
    */
   orientation?: Orientation,
   /** The buttons contained within the ButtonGroup. */
-  children: ReactNode
+  children: ReactNode,
+  /**
+   * The alignment of the buttons within the ButtonGroup. Only applicable to "vertical" orientation.  
+   * @default "start"
+   */
+  align?: Alignment
 }

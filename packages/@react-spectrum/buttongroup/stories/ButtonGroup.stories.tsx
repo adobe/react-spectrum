@@ -14,7 +14,7 @@ import {action} from '@storybook/addon-actions';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '../';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/typography';
 
@@ -32,21 +32,27 @@ storiesOf('ButtonGroup', module)
     () => render({orientation: 'vertical'})
   )
   .add(
+    'orientation: vertical, align: end',
+    () => render({orientation: 'vertical', align: 'end'})
+  )
+  .add(
     'isDisabled, orientation: vertical',
     () => render({isDisabled: true, orientation: 'vertical'})
   );
 
 function render(props) {
+  let [show, setShow] = useState(false);
   return (
     <ButtonGroup {...props}>
       <Button variant="primary" onPress={action('press')}>Button 1</Button>
       <Button variant="negative" onPress={action('press')}>Button long long long name</Button>
       <Button variant="cta" isQuiet onPress={action('press')}>Quiet button</Button>
       <Button variant="primary" isDisabled onPress={action('press')}>Disabled button</Button>
-      <Button variant="secondary" onPress={action('press')}>
+      <Button variant="secondary" onPress={() => setShow(show => !show)}>
         <Bell />
         <Text>With icon</Text>
       </Button>
+      {show && <Button variant="primary">agwegawegkawehgkuwaehg</Button>}
     </ButtonGroup>
   );
 }

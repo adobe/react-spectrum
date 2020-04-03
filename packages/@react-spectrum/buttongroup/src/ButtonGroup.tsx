@@ -28,6 +28,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
     children,
     orientation = 'horizontal',
     isDisabled,
+    align = 'start',
     ...otherProps
   } = props;
 
@@ -45,7 +46,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
         setHasOverflow(true);
       }
     }
-  }, [domRef, orientation]);
+  }, [domRef, orientation, children]);
 
   useEffect(() => {
     if (orientation !== 'vertical') {
@@ -82,7 +83,8 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
           styles,
           'spectrum-ButtonGroup',
           {
-            'spectrum-ButtonGroup--vertical': hasOverflow || orientation === 'vertical'
+            'spectrum-ButtonGroup--vertical': hasOverflow || orientation === 'vertical',
+            'spectrum-ButtonGroup--alignEnd': align === 'end'
           },
           styleProps.className
         )
@@ -91,7 +93,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
         slots={{
           button: {
             isDisabled,
-            UNSAFE_className: classNames(styles, '.spectrum-ButtonGroup-Button')
+            UNSAFE_className: classNames(styles, 'spectrum-ButtonGroup-Button')
           }
         }}>
         {children}
