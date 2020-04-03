@@ -50,7 +50,8 @@ export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroup
 
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
-    keyboardDelegate
+    keyboardDelegate,
+    disallowSelectAll: true
   });
 
   let [isFocusWithin, setFocusWithin] = useState(false);

@@ -202,10 +202,11 @@ function computePosition(
     position[crossAxis] = Math.max(positionForPositiveSideOverflow, childOffset[crossAxis] - overlaySize[crossSize] + childOffset[crossSize]);
   }
 
+  // Floor these so the position isn't placed on a partial pixel, only whole pixels. Shouldn't matter if it was floored or ceiled, so chose one.
   if (placement === axis) {
-    position[FLIPPED_DIRECTION[axis]] = boundaryDimensions[size] - childOffset[axis] - offset;
+    position[FLIPPED_DIRECTION[axis]] = Math.floor(boundaryDimensions[size] - childOffset[axis] - offset);
   } else {
-    position[axis] = childOffset[axis] + childOffset[size] + offset;
+    position[axis] = Math.floor(childOffset[axis] + childOffset[size] + offset);
   }
 
   return position;
@@ -219,7 +220,7 @@ function getMaxHeight(
   margins: Position,
   padding: number
 ) {
-  return position.top != null 
+  return position.top != null
     ? Math.max(0, boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top + containerOffsetWithBoundary.top - position.top - margins.top - margins.bottom - padding)
     : Math.max(0, childOffset.top - boundaryDimensions.top - boundaryDimensions.scroll.top - containerOffsetWithBoundary.top - margins.top - margins.bottom - padding);
 }

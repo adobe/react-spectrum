@@ -84,9 +84,20 @@ function setupGlobalFocusEvents() {
     return;
   }
 
+  // Programmatic focus() calls shouldn't affect the current input modality.
+  // However, we need to detect other cases when a focus event occurs without
+  // a preceding user event (e.g. screen reader focus). Overriding the focus
+  // method on HTMLElement.prototype is a bit hacky, but works.
+  let focus = HTMLElement.prototype.focus;
+  HTMLElement.prototype.focus = function () {
+    hasEventBeforeFocus = true;
+    focus.apply(this, arguments);
+  };
+
   document.addEventListener('keydown', handleKeyboardEvent, true);
   document.addEventListener('keyup', handleKeyboardEvent, true);
-
+  document.addEventListener('focus', handleFocusEvent, true);
+  
   if (typeof PointerEvent !== 'undefined') {
     document.addEventListener('pointerdown', handlePointerEvent, true);
     document.addEventListener('pointermove', handlePointerEvent, true);
@@ -96,8 +107,6 @@ function setupGlobalFocusEvents() {
     document.addEventListener('mousemove', handlePointerEvent, true);
     document.addEventListener('mouseup', handlePointerEvent, true);
   }
-
-  document.addEventListener('focusin', handleFocusEvent, false);
 
   hasSetupGlobalListeners = true;
 }

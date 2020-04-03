@@ -36,7 +36,8 @@ interface SelectableCollectionOptions {
   keyboardDelegate: KeyboardDelegate,
   autoFocus?: boolean | FocusStrategy,
   shouldFocusWrap?: boolean,
-  disallowEmptySelection?: boolean
+  disallowEmptySelection?: boolean,
+  disallowSelectAll?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -49,7 +50,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     keyboardDelegate: delegate,
     autoFocus = false,
     shouldFocusWrap = false,
-    disallowEmptySelection = false
+    disallowEmptySelection = false,
+    disallowSelectAll = false
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -155,7 +157,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'a':
-        if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple') {
+        if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true) {
           e.preventDefault();
           manager.selectAll();
         }
@@ -196,7 +198,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       // By default, select first item for focus target
       let focusedKey = delegate.getFirstKey();
       let selectedKeys = manager.selectedKeys;
-    
+
       // Set the last item as the new focus target if autoFocus is 'last' (i.e. ArrowUp opening the menu)
       if (autoFocus === 'last') {
         focusedKey = delegate.getLastKey();
