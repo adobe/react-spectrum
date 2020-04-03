@@ -50,6 +50,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     {
       isSelected,
       isDisabled,
+      'aria-label': item['aria-label'],
       key,
       ref,
       shouldSelectOnPressUp,

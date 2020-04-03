@@ -22,7 +22,7 @@ Item.getCollectionNode = function<T> (props: ItemProps<T>): PartialNode<T> {
   let {childItems, title, children} = props;
 
   let rendered = props.title || props.children;
-  let textValue = props.textValue || (typeof rendered === 'string' ? rendered : '');
+  let textValue = props.textValue || (typeof rendered === 'string' ? rendered : '') || props['aria-label'] || '';
   if (!textValue) {
     console.warn('<Item> with non-plain text contents is unsupported by type to select for accessibility. Please add a `textValue` prop.');
   }
@@ -32,6 +32,7 @@ Item.getCollectionNode = function<T> (props: ItemProps<T>): PartialNode<T> {
     props: props,
     rendered,
     textValue,
+    'aria-label': props['aria-label'],
     hasChildNodes: hasChildItems(props),
     *childNodes() {
       if (childItems) {
