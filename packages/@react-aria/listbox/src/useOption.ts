@@ -21,8 +21,8 @@ interface OptionProps {
   isSelected?: boolean,
   key?: Key,
   ref?: RefObject<HTMLElement>,
-  selectOnPressUp?: boolean,
-  focusOnHover?: boolean,
+  shouldSelectOnPressUp?: boolean,
+  shouldFocusOnHover?: boolean,
   isVirtualized?: boolean
 }
 
@@ -38,8 +38,8 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     isDisabled,
     key,
     ref,
-    selectOnPressUp,
-    focusOnHover,
+    shouldSelectOnPressUp,
+    shouldFocusOnHover,
     isVirtualized
   } = props;
 
@@ -63,13 +63,13 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     selectionManager: state.selectionManager,
     itemKey: key,
     itemRef: ref,
-    selectOnPressUp,
+    shouldSelectOnPressUp,
     isVirtualized
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled});
   let {hoverProps} = useHover({
-    isDisabled: isDisabled || !focusOnHover,
+    isDisabled: isDisabled || !shouldFocusOnHover,
     onHover() {
       state.selectionManager.setFocusedKey(key);
     }

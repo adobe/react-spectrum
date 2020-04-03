@@ -13,7 +13,6 @@
 import {DOMProps, StyleProps} from '@react-types/shared';
 import {PositionProps} from '@react-types/overlays';
 import {ReactElement, ReactNode, RefObject} from 'react';
-import {Slots} from '@react-types/layout';
 
 export type SpectrumDialogClose = (close: () => void) => ReactElement;
 
@@ -32,10 +31,6 @@ export interface SpectrumDialogTriggerProps extends PositionProps {
 export interface SpectrumDialogProps extends DOMProps, StyleProps {
   /** The contents of the Dialog. */
   children: ReactNode,
-  /**
-   * Replaces the default slots used within Dialog.
-   */
-  slots?: Slots,
   /** The size of the Dialog. Only applies to "modal" type Dialogs. */
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
   /** Whether the Dialog is [dismissable](#dismissable). */

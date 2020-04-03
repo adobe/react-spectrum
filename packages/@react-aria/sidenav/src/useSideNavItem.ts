@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, RefObject} from 'react';
+import {AnchorHTMLAttributes, HTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {SpectrumSideNavItemProps} from '@react-types/sidenav';
 import {TreeState} from '@react-stately/tree';
@@ -18,8 +18,8 @@ import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface SideNavItemAria {
-  listItemProps: AllHTMLAttributes<HTMLDivElement>,
-  listItemLinkProps: AllHTMLAttributes<HTMLAnchorElement>
+  listItemProps: HTMLAttributes<HTMLDivElement>,
+  listItemLinkProps: AnchorHTMLAttributes<HTMLAnchorElement>
 }
 
 export function useSideNavItem<T>(props: SpectrumSideNavItemProps<T>, state: TreeState<T>, ref: RefObject<HTMLAnchorElement | null>): SideNavItemAria {

@@ -113,7 +113,7 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
     selectionManager: state.selectionManager,
     itemKey: key,
     itemRef: ref,
-    selectOnPressUp: true
+    shouldSelectOnPressUp: true
   });
 
   let {pressProps} = usePress(mergeProps({onPressStart, onPressUp, onKeyDown, isDisabled}, itemProps));
