@@ -11,14 +11,13 @@
  */
 
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, flexStyleProps, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps, flexStyleProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {FlexProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 
 function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
-    slots,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps, flexStyleProps);
@@ -27,9 +26,7 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
 
   return (
     <div {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
-      <SlotProvider slots={slots}>
-        {children}
-      </SlotProvider>
+      {children}
     </div>
   );
 }

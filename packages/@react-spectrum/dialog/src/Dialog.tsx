@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, unwrapDOMRef, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, SlotProvider, unwrapDOMRef, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {DOMRef} from '@react-types/shared';
@@ -64,7 +64,6 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   let hasFooter = useHasChild(`.${styles['spectrum-Dialog-footer']}`, unwrapDOMRef(gridRef));
 
   let slots = {
-    container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
     hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
     header: {UNSAFE_className: styles['spectrum-Dialog-header']},
     heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader}), ...titleProps},
@@ -98,8 +97,10 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
           styleProps.className
         )}
         ref={domRef}>
-        <Grid slots={slots} ref={gridRef}>
-          {children}
+        <Grid ref={gridRef} UNSAFE_className={styles['spectrum-Dialog-grid']}>
+          <SlotProvider slots={slots}>
+            {children}
+          </SlotProvider>
           {isDismissable &&
             <ActionButton
               UNSAFE_className={styles['spectrum-Dialog-closeButton']}

@@ -11,7 +11,7 @@
  */
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {Node} from '@react-stately/collections';
@@ -90,25 +90,27 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
               styles,
               'spectrum-Menu-itemGrid'
             )
-          }
-          slots={{
-            text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
-            end: {UNSAFE_className: styles['spectrum-Menu-end'], ...descriptionProps},
-            icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
-            description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps},
-            keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps}
-          }}>
-          {contents}
-          {isSelected && 
-            <CheckmarkMedium 
-              slot="checkmark" 
-              UNSAFE_className={
-                classNames(
-                  styles, 
-                  'spectrum-Menu-checkmark'
-                )
-              } />
-          }
+          }>
+          <SlotProvider
+            slots={{
+              text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
+              end: {UNSAFE_className: styles['spectrum-Menu-end'], ...descriptionProps},
+              icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
+              description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps},
+              keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps}
+            }}>
+            {contents}
+            {isSelected && 
+              <CheckmarkMedium 
+                slot="checkmark" 
+                UNSAFE_className={
+                      classNames(
+                        styles, 
+                        'spectrum-Menu-checkmark'
+                      )
+                    } />
+                }
+          </SlotProvider>
         </Grid>
       </li>
     </FocusRing>

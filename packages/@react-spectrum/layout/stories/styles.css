@@ -22,7 +22,7 @@
   margin: 0;
 }
 
-.container {
+.spectrum-Card {
   display: grid;
   grid-template-columns: 14px 48px 1fr 1fr 14px;
   grid-template-rows: minmax(auto, 168px) 32px 16px auto auto auto;

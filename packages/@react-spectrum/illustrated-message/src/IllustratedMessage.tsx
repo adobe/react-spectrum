@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {Flex} from '@react-spectrum/layout';
 import React, {forwardRef} from 'react';
@@ -53,9 +53,10 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
         'spectrum-IllustratedMessage',
         styleProps.className
       )}
-      slots={slots}
       ref={ref}>
-      {children}
+      <SlotProvider slots={slots}>
+        {children}
+      </SlotProvider>
     </Flex>
   );
 }
