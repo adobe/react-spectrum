@@ -18,7 +18,7 @@ import {Placement, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
-import {unwrapDOMRef,useMediaQuery} from '@react-spectrum/utils';
+import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 
