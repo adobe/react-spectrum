@@ -18,13 +18,13 @@ import {DOMProps, DOMRef, SelectionMode, StyleProps} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
-import React, {useRef} from 'react';
+import React, {forwardRef, useRef} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useActionGroup} from '@react-aria/actiongroup';
 import {useSelectableItem} from '@react-aria/selection';
 
-export function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props);
   let {
     isEmphasized,
@@ -73,6 +73,9 @@ export function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<H
     </div>
   );
 }
+
+let _ActionGroup = forwardRef(ActionGroup);
+export {_ActionGroup as ActionGroup};
 
 export interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
   item: Node<T>,

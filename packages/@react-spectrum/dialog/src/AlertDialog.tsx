@@ -21,16 +21,13 @@ import {Divider} from '@react-spectrum/divider';
 import {DOMRef} from '@react-types/shared';
 import {Heading} from '@react-spectrum/typography';
 import intlMessages from '../intl/*.json';
-import React, {useContext} from 'react';
+import React, {forwardRef, useContext} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-/**
- * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
- */
-export function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
+function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
   props = useSlotProps(props);
   let {
     onClose = () => {}
@@ -107,3 +104,9 @@ export function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
     </Dialog>
   );
 }
+
+/**
+ * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
+ */
+ let _AlertDialog = forwardRef(AlertDialog);
+ export {_AlertDialog as AlertDialog};

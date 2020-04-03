@@ -15,7 +15,7 @@ import {DOMRef} from '@react-types/shared';
 import modalStyles from '@adobe/spectrum-css-temp/components/modal/vars.css';
 import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
-import React, {ReactElement, useRef} from 'react';
+import React, {forwardRef, ReactElement, useRef} from 'react';
 import {Underlay} from './Underlay';
 import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
 
@@ -31,7 +31,7 @@ interface ModalWrapperProps extends ModalProps {
   isOpen?: boolean
 }
 
-export function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
+function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   let {children, onClose, type, isDismissable, ...otherProps} = props;
 
   return (
@@ -97,3 +97,6 @@ function ModalWrapper(props: ModalWrapperProps) {
     </div>
   );
 }
+
+let _Modal = forwardRef(Modal);
+export {_Modal as Modal};
