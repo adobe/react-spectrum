@@ -28,6 +28,10 @@ describe('useMenuTrigger', function () {
   beforeEach(() => {
     state.isOpen = false;
     state.setOpen = setOpen;
+    state.toggle = (focusStrategy) => {
+      state.setFocusStrategy(focusStrategy);
+      state.setOpen(!state.isOpen);
+    };
     state.focusStrategy = 'first';
     state.setFocusStrategy = setFocusStrategy;
   });

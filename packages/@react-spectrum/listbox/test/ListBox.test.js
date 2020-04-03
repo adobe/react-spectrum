@@ -56,8 +56,8 @@ describe('ListBox', function () {
   let onSelectionChange = jest.fn();
 
   beforeAll(function () {
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
+    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     jest.useFakeTimers();
   });
@@ -545,5 +545,25 @@ describe('ListBox', function () {
     
     expect(option).toHaveAttribute('aria-labelledby', label.id);
     expect(option).toHaveAttribute('aria-describedby', description.id);
+  });
+
+  it('supports aria-label on sections and items', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <ListBox>
+          <Section aria-label="Section">
+            <Item aria-label="Item"><Bell /></Item>
+          </Section>
+        </ListBox>
+      </Provider>
+    );
+
+    let listbox = tree.getByRole('listbox');
+    let group = within(listbox).getByRole('group');
+    expect(group).toHaveAttribute('aria-label', 'Section');
+    let option = within(listbox).getByRole('option');
+    expect(option).toHaveAttribute('aria-label', 'Item');
+    expect(option).not.toHaveAttribute('aria-labelledby');
+    expect(option).not.toHaveAttribute('aria-describedby');
   });
 });

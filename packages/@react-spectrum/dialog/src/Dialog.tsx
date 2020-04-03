@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, unwrapDOMRef, useDOMRef, useHasChild, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, SlotProvider, unwrapDOMRef, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {DismissButton} from '@react-aria/overlays';
@@ -35,12 +35,7 @@ let sizeMap = {
   fullscreenTakeover: 'fullscreenTakeover'
 };
 
-/**
- * Dialogs display important information that users need to acknowledge.
- * They appear over the interface and block further interactions.
- */
 function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
-  props = useSlotProps(props);
   let {
     type = 'modal',
     ...contextProps
@@ -70,7 +65,6 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   let hasFooter = useHasChild(`.${styles['spectrum-Dialog-footer']}`, unwrapDOMRef(gridRef));
 
   let slots = {
-    container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
     hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
     header: {UNSAFE_className: styles['spectrum-Dialog-header']},
     heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader}), ...titleProps},
@@ -78,7 +72,6 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
     content: {UNSAFE_className: styles['spectrum-Dialog-content']},
     footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
-    closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']},
     buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !hasFooter})}
   };
 
@@ -112,11 +105,13 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
           styleProps.className
         )}
         ref={domRef}>
-        <Grid slots={slots} ref={gridRef}>
-          {children}
+        <Grid ref={gridRef} UNSAFE_className={styles['spectrum-Dialog-grid']}>
+          <SlotProvider slots={slots}>
+            {children}
+          </SlotProvider>
           {isDismissable &&
             <ActionButton
-              slot="closeButton"
+              UNSAFE_className={styles['spectrum-Dialog-closeButton']}
               isQuiet
               aria-label={formatMessage('dismiss')}
               onPress={onDismiss}>
@@ -130,5 +125,9 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   );
 }
 
+/**
+ * Dialogs display important information that users need to acknowledge.
+ * They appear over the interface and block further interactions.
+ */
 let _Dialog = React.forwardRef(Dialog);
 export {_Dialog as Dialog};

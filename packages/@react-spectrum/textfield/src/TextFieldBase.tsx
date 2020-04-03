@@ -17,7 +17,6 @@ import {
   createFocusableRef,
   filterDOMProps,
   TextInputDOMPropNames,
-  useSlotProps,
   useStyleProps
 } from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
@@ -41,7 +40,6 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps {
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
   props = useFormProps(props);
-  props = useSlotProps(props);
   let {
     label,
     labelPosition = 'top' as LabelPosition,

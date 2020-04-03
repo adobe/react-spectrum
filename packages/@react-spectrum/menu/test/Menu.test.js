@@ -751,4 +751,24 @@ describe('Menu', function () {
     expect(menuItem).toHaveAttribute('aria-labelledby', label.id);
     expect(menuItem).toHaveAttribute('aria-describedby', `${description.id} ${keyboard.id}`);
   });
+
+  it('supports aria-label on sections and items', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <Menu>
+          <Section aria-label="Section">
+            <Item aria-label="Item"><Bell /></Item>
+          </Section>
+        </Menu>
+      </Provider>
+    );
+
+    let menu = tree.getByRole('menu');
+    let group = within(menu).getByRole('group');
+    expect(group).toHaveAttribute('aria-label', 'Section');
+    let menuItem = within(menu).getByRole('menuitem');
+    expect(menuItem).toHaveAttribute('aria-label', 'Item');
+    expect(menuItem).not.toHaveAttribute('aria-labelledby');
+    expect(menuItem).not.toHaveAttribute('aria-describedby');
+  });
 });

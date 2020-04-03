@@ -11,7 +11,7 @@
  */
 
 import {HTMLAttributes, RefObject} from 'react';
-import {MenuTriggerState} from '@react-types/menu';
+import {MenuTriggerState} from '@react-stately/menu';
 import {PressProps, useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
@@ -37,13 +37,12 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
   let {triggerProps, overlayProps} = useOverlayTrigger({
     ref,
     type,
-    onClose: () => state.setOpen(false),
+    onClose: state.close,
     isOpen: state.isOpen
   });
 
   let onPress = () => {
-    state.setFocusStrategy('first');
-    state.setOpen(!state.isOpen);
+    state.toggle('first');
   };
 
   let onKeyDown = (e) => {
@@ -71,7 +70,7 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
 
   let {focusWithinProps} = useFocusWithin({
     onBlurWithin: () => {
-      state.setOpen(false);
+      state.close();
     }
   });
 

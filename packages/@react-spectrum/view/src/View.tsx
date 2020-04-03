@@ -11,11 +11,12 @@
  */
 
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useDOMRef, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
 import React, {forwardRef} from 'react';
 import {ViewProps} from '@react-types/view';
 
 function View(props: ViewProps, ref: DOMRef) {
+  props = useSlotProps(props);
   let {
     elementType: ElementType = 'div',
     children,

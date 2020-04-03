@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMProps, StyleProps} from '@react-types/shared';
+import {HTMLAttributes, ReactElement, ReactNode} from 'react';
+
 export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
     'top' | 'top left' | 'top right' | 'top start' | 'top end' |
     'left' | 'left top' | 'left bottom' | 'start' | 'start top' | 'start bottom' |
@@ -18,7 +21,7 @@ export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom star
 export type Axis = 'top' | 'bottom' | 'left' | 'right';
 export type SizeAxis = 'width' | 'height';
 export type PlacementAxis = Axis | 'center';
-    
+
 export interface PositionProps {
   placement?: Placement,
   containerPadding?: number,
@@ -27,4 +30,33 @@ export interface PositionProps {
   shouldFlip?: boolean,
   boundaryElement?: Element,
   isOpen?: boolean
+}
+
+export interface ModalProps extends DOMProps, StyleProps {
+  children: ReactElement,
+  isOpen?: boolean,
+  onClose?: () => void,
+  type?: 'fullscreen' | 'fullscreenTakeover',
+  isDismissable?: boolean
+}
+
+export interface OverlayProps {
+  children: ReactNode,
+  isOpen?: boolean,
+  container?: Element,
+  onEnter?: () => void,
+  onEntering?: () => void,
+  onEntered?: () => void,
+  onExit?: () => void,
+  onExiting?: () => void,
+  onExited?: () => void
+}
+
+export interface PopoverProps extends DOMProps, StyleProps {
+  children: ReactNode,
+  placement?: PlacementAxis,
+  arrowProps?: HTMLAttributes<HTMLElement>,
+  hideArrow?: boolean,
+  isOpen?: boolean,
+  onClose?: () => void
 }

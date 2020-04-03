@@ -84,6 +84,9 @@ let withSection = [
 ];
 
 storiesOf('Menu', module)
+  .addDecorator(story => (
+    React.cloneElement(story(), {style: {position: 'static', maxHeight: 300}} as any)
+  ))
   .add(
     'Default Menu',
     () => (
@@ -101,6 +104,20 @@ storiesOf('Menu', module)
         <Menu items={withSection} itemKey="name" onAction={action('onAction')}>
           {item => (
             <Section items={item.children} title={item.name}>
+              {item => <Item>{item.name}</Item>}
+            </Section>
+          )}
+        </Menu>
+      </Popover>
+    )
+  )
+  .add(
+    'Menu w/ sections and no title',
+    () => (
+      <Popover isOpen hideArrow>
+        <Menu items={withSection} itemKey="name" onAction={action('onAction')}>
+          {item => (
+            <Section items={item.children} aria-label={item.name}>
               {item => <Item>{item.name}</Item>}
             </Section>
           )}
@@ -131,6 +148,25 @@ storiesOf('Menu', module)
             <Item>Three</Item>
           </Section>
           <Section title="Section 2">
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Section>
+        </Menu>
+      </Popover>
+    )
+  )
+  .add(
+    'Static with sections and no title',
+    () => (
+      <Popover isOpen hideArrow>
+        <Menu onAction={action('onAction')}>
+          <Section aria-label="Section 1">
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Section>
+          <Section aria-label="Section 2">
             <Item>One</Item>
             <Item>Two</Item>
             <Item>Three</Item>

@@ -11,7 +11,7 @@
  */
 
 import {ButtonProps} from '@react-types/button';
-import {classNames, filterDOMProps, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
@@ -27,7 +27,6 @@ interface FieldButtonProps extends ButtonProps {
 
 // @private
 function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
-  props = useSlotProps(props);
   let {
     elementType: ElementType = 'button',
     isQuiet,

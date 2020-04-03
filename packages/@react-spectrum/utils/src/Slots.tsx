@@ -13,10 +13,14 @@
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useMemo} from 'react';
 
+interface SlotProps {
+  slot?: string
+}
+
 let SlotContext = React.createContext(null);
 
-export function useSlotProps(props: any, defaultSlot?: string): any {
-  let slot = props.slot || defaultSlot;
+export function useSlotProps<T>(props: T, defaultSlot?: string): T {
+  let slot = (props as SlotProps).slot || defaultSlot;
   let {[slot]: slotProps = {}} = useContext(SlotContext) || {};
   return mergeProps(slotProps, props);
 }

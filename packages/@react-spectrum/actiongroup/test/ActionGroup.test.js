@@ -16,8 +16,8 @@ import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 import V2ButtonGroup from '@react/react-spectrum/ButtonGroup';
 
@@ -122,10 +122,6 @@ describe('ActionGroup', function () {
   afterEach(() => {
     btnBehavior.reset();
     cleanup();
-  });
-
-  it('uses slots api', () => {
-    testSlotsAPI(ActionGroup);
   });
 
   it.each`
@@ -360,5 +356,18 @@ describe('ActionGroup', function () {
     expect(onSelectionChange).toBeCalledTimes(1);
     expect(button1).toHaveAttribute('aria-checked', 'false');
     expect(button2).toHaveAttribute('aria-checked', 'true');
+  });
+  
+  it('ActionGroup allow aria-label on Item', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup>
+          <Item aria-label="Test">Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radio');
+    expect(button1).toHaveAttribute('aria-label', 'Test');
   });
 });

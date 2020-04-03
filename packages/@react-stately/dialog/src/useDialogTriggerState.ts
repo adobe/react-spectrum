@@ -16,13 +16,25 @@ import {useControlledState} from '@react-stately/utils';
 export interface DialogTriggerState {
   isOpen: boolean,
   setOpen: (value: boolean) => void,
+  open(): void,
+  close(): void,
+  toggle(): void
 }
 
-export function useDialogTriggerState(props: DialogTriggerProps):DialogTriggerState  {
+export function useDialogTriggerState(props: DialogTriggerProps): DialogTriggerState  {
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
 
   return {
     isOpen, 
-    setOpen
+    setOpen,
+    open() {
+      setOpen(true);
+    },
+    close() {
+      setOpen(false);
+    },
+    toggle() {
+      setOpen(!isOpen);
+    }
   };
 }
