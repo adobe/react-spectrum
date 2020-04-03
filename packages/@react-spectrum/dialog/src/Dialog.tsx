@@ -14,6 +14,7 @@ import {ActionButton} from '@react-spectrum/button';
 import {classNames, filterDOMProps, SlotProvider, unwrapDOMRef, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
+import {DismissButton} from '@react-aria/overlays';
 import {DOMRef} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
@@ -36,7 +37,7 @@ let sizeMap = {
 
 function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   let {
-    type = 'popover',
+    type = 'modal',
     ...contextProps
   } = useContext(DialogContext) || {} as DialogContextValue;
   let {
@@ -73,6 +74,13 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
     buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !hasFooter}), align: 'end'}
   };
+
+  // If rendered in a popover or tray there won't be a visible dismiss button,
+  // so we render a hidden one for screen readers.
+  let dismissButton: JSX.Element;
+  if (type === 'popover' || type === 'tray') {
+    dismissButton = <DismissButton onDismiss={onDismiss} />;
+  }
 
   return (
     <FocusScope contain restoreFocus>
@@ -111,6 +119,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
             </ActionButton>
           }
         </Grid>
+        {dismissButton}
       </section>
     </FocusScope>
   );

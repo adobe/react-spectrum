@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {MenuContext} from './context';
@@ -21,7 +22,6 @@ import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
-import {useOverlayPosition} from '@react-aria/overlays';
 
 export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let menuPopoverRef = useRef<DOMRefValue<HTMLDivElement>>();
@@ -45,7 +45,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     state
   );
 
-  let {overlayProps, placement} = useOverlayPosition({
+  let {overlayProps: positionProps, placement} = useOverlayPosition({
     targetRef: menuTriggerRef,
     overlayRef: unwrapDOMRef(menuPopoverRef),
     scrollRef: menuRef,
@@ -66,28 +66,33 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     }
   };
 
+  let contents = (
+    <FocusScope restoreFocus>
+      <DismissButton onDismiss={state.close} />
+      {menu}
+      <DismissButton onDismiss={state.close} />
+    </FocusScope>
+  );
+
   // On small screen devices, the menu is rendered in a tray, otherwise a popover.
   let overlay;
   if (isMobile) {
     overlay = (
       <Tray isOpen={state.isOpen} onClose={state.close}>
-        <FocusScope restoreFocus>
-          {menu}
-        </FocusScope>
+        {contents}
       </Tray>
     );
   } else {
     overlay = (
       <Overlay isOpen={state.isOpen}>
         <Popover
-          UNSAFE_style={overlayProps.style}
+          UNSAFE_style={positionProps.style}
           ref={menuPopoverRef}
           placement={placement}
           hideArrow
-          onClose={state.close}>
-          <FocusScope restoreFocus>
-            {menu}
-          </FocusScope>
+          onClose={state.close}
+          shouldCloseOnBlur>
+          {contents}
         </Popover>
       </Overlay>
     );
