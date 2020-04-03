@@ -12,21 +12,10 @@
 
 import {DOMRef} from '@react-types/shared';
 import {OpenTransition} from './OpenTransition';
+import {OverlayProps} from '@react-types/overlays';
 import {Provider} from '@react-spectrum/provider';
-import React, {ReactNode, useCallback, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import ReactDOM from 'react-dom';
-
-interface OverlayProps {
-  children: ReactNode,
-  isOpen?: boolean,
-  container?: Element,
-  onEnter?: () => void,
-  onEntering?: () => void,
-  onEntered?: () => void,
-  onExit?: () => void,
-  onExiting?: () => void,
-  onExited?: () => void
-}
 
 function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isOpen, container, onEnter, onEntering, onEntered, onExit, onExiting, onExited} = props;
