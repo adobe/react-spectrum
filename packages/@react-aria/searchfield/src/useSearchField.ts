@@ -12,6 +12,7 @@
 
 import {ButtonHTMLAttributes, InputHTMLAttributes, RefObject} from 'react';
 import {chain} from '@react-aria/utils';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {PressProps} from '@react-aria/interactions';
 import {SearchFieldProps} from '@react-types/searchfield';

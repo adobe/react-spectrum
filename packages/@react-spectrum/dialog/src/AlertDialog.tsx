@@ -20,6 +20,7 @@ import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
 import {DOMRef} from '@react-types/shared';
 import {Heading} from '@react-spectrum/typography';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {forwardRef, useContext} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
