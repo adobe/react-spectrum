@@ -27,6 +27,7 @@ interface ListBoxSectionProps<T> {
   children?: ReactNode
 }
 
+/** @private */
 export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
   let {state, children, reusableView, header} = props;
   let item = reusableView.content;

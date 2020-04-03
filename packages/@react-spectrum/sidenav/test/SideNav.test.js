@@ -281,7 +281,7 @@ describe('SideNav', function () {
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name can focus first to last/last to first item', async function ({Name, Component, ComponentSection, ComponentItem}) {
-    let {getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem, {wrapAround: true});
+    let {getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem, {shouldFocusWrap: true});
     
     await waitForDomChange();
 

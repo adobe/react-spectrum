@@ -20,7 +20,9 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   onVisibleRectChange: (rect: Rect) => void,
   children: ReactNode,
   innerStyle: CSSProperties,
-  sizeToFit: 'width' | 'height'
+  sizeToFit: 'width' | 'height',
+  onScrollStart?: () => void,
+  onScrollEnd?: () => void
 }
 
 function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
@@ -31,6 +33,8 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     children, 
     innerStyle,
     sizeToFit,
+    onScrollStart,
+    onScrollEnd,
     ...otherProps
   } = props;
 
@@ -48,12 +52,20 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   let [isScrolling, setScrolling] = useState(false);
   let onScroll = useCallback((e) => {
     flushSync(() => {
-      state.scrollTop = e.currentTarget.scrollTop;
-      state.scrollLeft = e.currentTarget.scrollLeft;
+      let {scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth} = e.currentTarget;
+
+      // Prevent rubber band scrolling from shaking when scrolling out of bounds
+      state.scrollTop = Math.max(0, Math.min(scrollTop, scrollHeight - clientHeight));
+      state.scrollLeft = Math.max(0, Math.min(scrollLeft, scrollWidth - clientWidth));
+
       onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, state.width, state.height));
 
       if (!isScrolling) {
         setScrolling(true);
+
+        if (onScrollStart) {
+          onScrollStart();
+        }
       }
 
       // So we don't constantly call clearTimeout and setTimeout,
@@ -67,10 +79,14 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
         state.scrollTimeout = setTimeout(() => {
           setScrolling(false);
           state.scrollTimeout = null;
+
+          if (onScrollEnd) {
+            onScrollEnd();
+          }
         }, 300);
       }
     });
-  }, [isScrolling, onVisibleRectChange, state.height, state.scrollEndTime, state.scrollLeft, state.scrollTimeout, state.scrollTop, state.width]);
+  }, [isScrolling, onScrollEnd, onScrollStart, onVisibleRectChange, state.height, state.scrollEndTime, state.scrollLeft, state.scrollTimeout, state.scrollTop, state.width]);
 
   useEffect(() => {
     // TODO: resize observer

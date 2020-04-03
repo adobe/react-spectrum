@@ -36,7 +36,7 @@ let withSection = [
   ]}
 ];
 
-function renderComponent(Component, triggerProps = {}, menuProps = {}) {
+function renderComponent(Component, triggerProps = {}, menuProps = {}, buttonProps = {}) {
   if (Component === V2Dropdown) {
     return render(
       <Component {...triggerProps}>
@@ -56,7 +56,7 @@ function renderComponent(Component, triggerProps = {}, menuProps = {}) {
       <Provider theme={theme}>
         <div data-testid="scrollable">
           <Component {...triggerProps}>
-            <Button>
+            <Button {...buttonProps}>
               {triggerText}
             </Button>
             <Menu items={withSection} itemKey="name" {...menuProps}>
@@ -221,13 +221,13 @@ describe('MenuTrigger', function () {
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
 
-    let triggerButton = tree.getByRole('button');
+    let triggerButton = tree.getByText('Menu Button');
     triggerPress(triggerButton);
     jest.runAllTimers();
 
     menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
-    expect(onOpenChange).toBeCalledTimes(1);
+    expect(onOpenChange).toBeCalledTimes(2); // once for press, once for blur :/
   });
 
   // New functionality in v3
@@ -241,7 +241,7 @@ describe('MenuTrigger', function () {
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
 
-    let triggerButton = tree.getByRole('button');
+    let triggerButton = tree.getByText('Menu Button');
     triggerPress(triggerButton);
     jest.runAllTimers();
 
@@ -251,9 +251,9 @@ describe('MenuTrigger', function () {
 
   it.each`
     Name             | Component      | props
-    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, isDisabled: true}}
-  `('$Name can be disabled', function ({Component, props}) {
-    let tree = renderComponent(Component, props);
+    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+  `('$Name does not trigger on disabled button', function ({Component, props}) {
+    let tree = renderComponent(Component, props, {}, {isDisabled: true});
     let button = tree.getByRole('button');
     triggerPress(button);
     jest.runAllTimers();
@@ -455,7 +455,7 @@ describe('MenuTrigger', function () {
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
-    `('$Name closes menu on item selection via ENTER press even if closeOnSelect=false', function ({Component, props}) {
+    `('$Name doesn\'t closes menu on item selection via ENTER press if closeOnSelect=false', function ({Component, props}) {
       let tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
       expect(onOpenChange).toBeCalledTimes(0);
       let button = tree.getByRole('button');
@@ -474,9 +474,9 @@ describe('MenuTrigger', function () {
       fireEvent.keyUp(menuItem1, {key: 'Enter', code: 13, charCode: 13});
       jest.runAllTimers();
       expect(onSelectionChange).toBeCalledTimes(1);
-      expect(menu).not.toBeInTheDocument();  
-      expect(button).toHaveAttribute('aria-expanded', 'false');
-      expect(onOpenChange).toBeCalledTimes(2);
+      expect(menu).toBeInTheDocument();  
+      expect(button).toHaveAttribute('aria-expanded', 'true');
+      expect(onOpenChange).toBeCalledTimes(1);
     });
 
     it.each`

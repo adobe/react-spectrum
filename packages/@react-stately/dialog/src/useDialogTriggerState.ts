@@ -10,4 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useIllustratedMessage';
+import {DialogTriggerProps} from '@react-types/dialog';
+import {useControlledState} from '@react-stately/utils';
+
+export interface DialogTriggerState {
+  isOpen: boolean,
+  setOpen: (value: boolean) => void,
+}
+
+export function useDialogTriggerState(props: DialogTriggerProps):DialogTriggerState  {
+  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
+
+  return {
+    isOpen, 
+    setOpen
+  };
+}

@@ -12,7 +12,8 @@
 
 import {ActionGroupKeyboardDelegate, ActionGroupState} from '@react-stately/actiongroup';
 import {ActionGroupProps} from '@react-types/actiongroup';
-import {AllHTMLAttributes, useMemo, useState} from 'react';
+import {FocusEvent, Orientation} from '@react-types/shared';
+import {HTMLAttributes, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
@@ -31,19 +32,17 @@ const BUTTON_ROLES = {
   'multiple': 'checkbox'
 };
 
-type Orientation = 'horizontal' | 'vertical';
-
 export interface ActionGroupAria {
-  actionGroupProps: AllHTMLAttributes<HTMLElement>,
-  buttonProps: AllHTMLAttributes<HTMLElement>,
+  actionGroupProps: HTMLAttributes<HTMLElement>,
+  buttonProps: HTMLAttributes<HTMLElement>,
 }
-export function useActionGroup(props: ActionGroupProps, state: ActionGroupState): ActionGroupAria {
+export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroupState<T>): ActionGroupAria {
   let {
     id,
     selectionMode = 'single',
     isDisabled,
     orientation = 'horizontal' as Orientation,
-    role
+    role = BUTTON_GROUP_ROLES[selectionMode]
   } = props;
 
   let {direction} = useLocale();
@@ -51,7 +50,8 @@ export function useActionGroup(props: ActionGroupProps, state: ActionGroupState)
 
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
-    keyboardDelegate
+    keyboardDelegate,
+    disallowSelectAll: true
   });
 
   let [isFocusWithin, setFocusWithin] = useState(false);
@@ -64,14 +64,15 @@ export function useActionGroup(props: ActionGroupProps, state: ActionGroupState)
   return {
     actionGroupProps: {
       id: useId(id),
-      role: role || BUTTON_GROUP_ROLES[selectionMode],
+      role,
       tabIndex: isDisabled ? null : tabIndex,
-      'aria-orientation': orientation,
+      'aria-orientation': role === 'toolbar' ? orientation : null,
       'aria-disabled': isDisabled,
       ...mergeProps(focusWithinProps, collectionProps)
     },
     buttonProps: {
-      role: BUTTON_ROLES[selectionMode]
+      role: BUTTON_ROLES[selectionMode],
+      onFocus: (e: FocusEvent) => {e.continuePropagation();}
     }
   };
 }

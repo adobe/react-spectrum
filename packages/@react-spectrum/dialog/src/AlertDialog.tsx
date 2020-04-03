@@ -19,12 +19,18 @@ import {Content, Header} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
+import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/typography';
+import intlMessages from '../intl/*.json';
 import React, {useContext} from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
+import {useMessageFormatter} from '@react-aria/i18n';
 
+/**
+ * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge. 
+ */
 export function AlertDialog(props: SpectrumAlertDialogProps) {
   props = useSlotProps(props);
   let {
@@ -34,17 +40,20 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
   let {
     variant,
     children,
-    secondaryLabel,
+    primaryActionLabel,
+    secondaryActionLabel,
     cancelLabel,
-    primaryLabel,
     autoFocusButton,
     title,
-    isConfirmDisabled,
+    isPrimaryActionDisabled,
+    isSecondaryActionDisabled,
     onCancel = () => {},
-    onConfirm = () => {},
+    onPrimaryAction = () => {},
+    onSecondaryAction = () => {},
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let formatMessage = useMessageFormatter(intlMessages);
 
   let confirmVariant: SpectrumButtonProps['variant'] = 'primary';
   if (variant) {
@@ -56,14 +65,50 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
   }
 
   return (
-    <Dialog {...styleProps} UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)} size="M" role="alertdialog">
-      <Header><Heading>{title}</Heading>{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label="alert" />}</Header>
+    <Dialog
+      {...styleProps}
+      UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)}
+      size="M"
+      role="alertdialog">
+      <Heading>{title}</Heading>
+      <Header>
+        <Flex
+          justifyContent="flex-end"
+          width="100%">
+          {(variant === 'error' || variant === 'warning') &&
+            <AlertMedium
+              slot="typeIcon"
+              aria-label={formatMessage('alert')} />
+          }
+        </Flex>
+      </Header>
       <Divider />
       <Content>{children}</Content>
       <ButtonGroup>
-        {secondaryLabel && <Button variant="secondary" onPress={() => chain(onClose(), onConfirm('secondary'))} autoFocus={autoFocusButton === 'secondary'}>{secondaryLabel}</Button>}
-        {cancelLabel && <Button variant="secondary" onPress={() => chain(onClose(), onCancel())} autoFocus={autoFocusButton === 'cancel'}>{cancelLabel}</Button>}
-        <Button variant={confirmVariant} onPress={() => chain(onClose(), onConfirm('primary'))} isDisabled={isConfirmDisabled} autoFocus={autoFocusButton === 'primary'}>{primaryLabel}</Button>
+        {secondaryActionLabel &&
+          <Button
+            variant="secondary"
+            onPress={() => chain(onClose(), onSecondaryAction())}
+            isDisabled={isSecondaryActionDisabled}
+            autoFocus={autoFocusButton === 'secondary'}>
+            {secondaryActionLabel}
+          </Button>
+        }
+        {cancelLabel &&
+          <Button
+            variant="secondary"
+            onPress={() => chain(onClose(), onCancel())}
+            autoFocus={autoFocusButton === 'cancel'}>
+            {cancelLabel}
+          </Button>
+        }
+        <Button
+          variant={confirmVariant}
+          onPress={() => chain(onClose(), onPrimaryAction())}
+          isDisabled={isPrimaryActionDisabled}
+          autoFocus={autoFocusButton === 'primary'}>
+          {primaryActionLabel}
+        </Button>
       </ButtonGroup>
     </Dialog>
   );

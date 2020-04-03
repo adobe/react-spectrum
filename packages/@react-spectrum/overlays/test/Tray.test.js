@@ -83,4 +83,27 @@ describe('Tray', function () {
     fireEvent.mouseUp(document.body);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
+
+  it('should have a hidden dismiss button for screen readers', async function () {
+    let onClose = jest.fn();
+    let {getAllByRole} = render(
+      <Provider theme={theme}>
+        <Tray isOpen onClose={onClose}>
+          <div role="dialog">contents</div>
+        </Tray>
+      </Provider>
+    );
+    await waitForDomChange(); // wait for animation
+    
+    let buttons = getAllByRole('button');
+    expect(buttons.length).toBe(2);
+    expect(buttons[0]).toHaveAttribute('aria-label', 'Dismiss');
+    expect(buttons[1]).toHaveAttribute('aria-label', 'Dismiss');
+
+    fireEvent.click(buttons[0]);
+    expect(onClose).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(buttons[1]);
+    expect(onClose).toHaveBeenCalledTimes(2);
+  });
 });

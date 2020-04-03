@@ -12,25 +12,41 @@
 
 import {classNames} from '@react-spectrum/utils';
 import overrideStyles from './overlays.css';
-import {Placement} from '@react-types/overlays';
-import React, {HTMLAttributes, ReactNode, RefObject, useRef} from 'react';
+import {PlacementAxis} from '@react-types/overlays';
+import React, {HTMLAttributes, ReactNode, RefObject, useLayoutEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
-import {useOverlay} from '@react-aria/overlays';
+import {useModal, useOverlay} from '@react-aria/overlays';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface PopoverProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
-  placement?: Placement,
+  placement?: PlacementAxis,
   arrowProps?: HTMLAttributes<HTMLElement>,
   hideArrow?: boolean,
   isOpen?: boolean,
   onClose?: () => void
 }
 
+/**
+ * Arrow placement can be done pointing right or down because those paths start at 0, x or y. Because the
+ * other two don't, they start at a fractional pixel value, it introduces rounding differences between browsers and
+ * between display types (retina with subpixels vs not retina). By flipping them with CSS we can ensure that
+ * the path always starts at 0 so that it perfectly overlaps the popover's border.
+ * see bottom of file for more explanation.
+ */
+let arrowPlacement = {
+  left: 'right',
+  right: 'right',
+  top: 'bottom',
+  bottom: 'bottom'
+};
+
 function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
   let {style, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, className, ...otherProps} = props;
   let backupRef = useRef();
   let domRef = ref || backupRef;
-  let {overlayProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
+  let {overlayProps, dismissButtonProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
+  useModal();
 
   return (
     <div
@@ -41,7 +57,7 @@ function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
         classNames(
           styles,
           'spectrum-Popover',
-          `spectrum-Popover--${placement.split(' ')[0]}`,
+          `spectrum-Popover--${placement}`,
           {
             'spectrum-Popover--withTip': !hideArrow,
             'is-open': isOpen
@@ -57,11 +73,94 @@ function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
       role="presentation"
       data-testid="popover"
       {...overlayProps}>
+      <VisuallyHidden>
+        <button {...dismissButtonProps} />
+      </VisuallyHidden>
       {children}
-      {hideArrow ? null : <div className={classNames(styles, 'spectrum-Popover-tip')} {...arrowProps} data-testid="tip" />}
+      {hideArrow ? null : (
+        <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement.split(' ')[0]]} />
+      )}
+      <VisuallyHidden>
+        <button {...dismissButtonProps} />
+      </VisuallyHidden>
     </div>
+  );
+}
+
+let ROOT_2 = Math.sqrt(2);
+
+function Arrow(props) {
+  let [size, setSize] = useState(20);
+  let [borderWidth, setBorderWidth] = useState(1);
+  let ref = useRef();
+  // get the css value for the tip size and divide it by 2 for this arrow implementation
+  useLayoutEffect(() => {
+    if (ref.current) {
+      let spectrumTipWidth = window.getComputedStyle(ref.current)
+        .getPropertyValue('--spectrum-popover-tip-size');
+      setSize(parseInt(spectrumTipWidth, 10) / 2);
+
+      let spectrumBorderWidth = window.getComputedStyle(ref.current)
+        .getPropertyValue('--spectrum-popover-tip-borderWidth');
+      setBorderWidth(parseInt(spectrumBorderWidth, 10));
+    }
+  }, [ref]);
+
+  let landscape = props.direction === 'top' || props.direction === 'bottom';
+  let mirror = props.direction === 'left' || props.direction === 'top';
+
+  let borderDiagonal = borderWidth * ROOT_2;
+  let halfBorderDiagonal = borderDiagonal / 2;
+
+  let secondary = 2 * size + 2 * borderDiagonal;
+  let primary = size + borderDiagonal;
+
+  let primaryStart = mirror ? primary : 0;
+  let primaryEnd = mirror ? halfBorderDiagonal : primary - halfBorderDiagonal;
+
+  let secondaryStart = halfBorderDiagonal;
+  let secondaryMiddle = secondary / 2;
+  let secondaryEnd = secondary - halfBorderDiagonal;
+
+  let pathData = landscape ? [
+    'M', secondaryStart, primaryStart,
+    'L', secondaryMiddle, primaryEnd,
+    'L', secondaryEnd, primaryStart
+  ] : [
+    'M', primaryStart, secondaryStart,
+    'L', primaryEnd, secondaryMiddle,
+    'L', primaryStart, secondaryEnd
+  ];
+  let arrowProps = props.arrowProps;
+
+  /* use ceil because the svg needs to always accomodate the path inside it */
+  return (
+    <svg
+      xmlns="http://www.w3.org/svg/2000"
+      width={Math.ceil(landscape ? secondary : primary)}
+      height={Math.ceil(landscape ? primary : secondary)}
+      style={props.style}
+      className={classNames(styles, 'spectrum-Popover-tip')}
+      ref={ref}
+      {...arrowProps}>
+      <path className={classNames(styles, 'spectrum-Popover-tip-triangle')} d={pathData.join(' ')} />
+    </svg>
   );
 }
 
 let _Popover = React.forwardRef(Popover);
 export {_Popover as Popover};
+
+/**
+ * More explanation on popover tips.
+ * - I tried changing the calculation of the popover placement in an effort to get it squarely onto the pixel grid.
+ * This did not work because the problem was in the svg partial pixel end of the path in the popover right and popover bottom.
+ * - I tried creating an extra 'bandaid' path that matched the background color and would overlap the popover border.
+ * This didn't work because the border on the svg triangle didn't extend all the way to match nicely with the popover border.
+ * - I tried getting the client bounding box and setting the svg to that partial pixel value
+ * This didn't work because again the issue was inside the svg
+ * - I didn't try drawing the svg backwards
+ * This could still be tried
+ * - I tried changing the calculation of the popover placement AND the svg height/width so that they were all rounded
+ * This seems to have done the trick
+ */

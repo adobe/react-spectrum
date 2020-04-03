@@ -206,9 +206,14 @@ export function usePress(props: PressHookProps): PressResult {
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.
           if (!state.ignoreClickAfterPress && !state.ignoreEmulatedMouseEvents && isVirtualClick(e.nativeEvent)) {
-            triggerPressStart(e, 'keyboard');
-            triggerPressUp(e, 'keyboard');
-            triggerPressEnd(e, 'keyboard');
+            // Ensure the element receives focus (VoiceOver on iOS does not do this)
+            if (!isDisabled) {
+              focusWithoutScrolling(e.currentTarget);
+            }
+
+            triggerPressStart(e, 'virtual');
+            triggerPressUp(e, 'virtual');
+            triggerPressEnd(e, 'virtual');
           }
 
           state.ignoreEmulatedMouseEvents = false;
@@ -293,7 +298,9 @@ export function usePress(props: PressHookProps): PressResult {
 
       pressProps.onPointerUp = (e) => {
         // Only handle left clicks
-        if (e.button === 0) {
+        // Safari on iOS sometimes fires pointerup events, even
+        // when the touch isn't over the target, so double check.
+        if (e.button === 0 && isOverTarget(e, e.currentTarget)) {
           triggerPressUp(e, e.pointerType as PointerType);
         }
       };
@@ -306,8 +313,7 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        let rect = state.target.getBoundingClientRect();
-        if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+        if (isOverTarget(e, state.target)) {
           if (!state.isOverTarget) {
             state.isOverTarget = true;
             triggerPressStart(createEvent(state.target, e), e.pointerType as PointerType);
@@ -320,8 +326,7 @@ export function usePress(props: PressHookProps): PressResult {
 
       let onPointerUp = (e: PointerEvent) => {
         if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0) {
-          let rect = state.target.getBoundingClientRect();
-          if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+          if (isOverTarget(e, state.target)) {
             triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType);
           } else if (state.isOverTarget) {
             triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType, false);
@@ -421,6 +426,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.ignoreEmulatedMouseEvents = true;
         state.isOverTarget = true;
         state.isPressed = true;
+        state.target = e.currentTarget;
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent default
         // on the emulated mouse event and handle focusing the pressable element ourselves.
@@ -430,13 +436,18 @@ export function usePress(props: PressHookProps): PressResult {
 
         disableTextSelection();
         triggerPressStart(e, 'touch');
+
+        window.addEventListener('scroll', onScroll, true);
       };
 
       pressProps.onTouchMove = (e) => {
         e.stopPropagation();
-        let rect = e.currentTarget.getBoundingClientRect();
+        if (!state.isPressed) {
+          return;
+        }
+
         let touch = getTouchById(e.nativeEvent, state.activePointerId);
-        if (touch && touch.clientX >= rect.left && touch.clientX <= rect.right && touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+        if (touch && isOverTarget(touch, e.currentTarget)) {
           if (!state.isOverTarget) {
             state.isOverTarget = true;
             triggerPressStart(e, 'touch');
@@ -449,9 +460,12 @@ export function usePress(props: PressHookProps): PressResult {
 
       pressProps.onTouchEnd = (e) => {
         e.stopPropagation();
-        let rect = e.currentTarget.getBoundingClientRect();
+        if (!state.isPressed) {
+          return;
+        }
+
         let touch = getTouchById(e.nativeEvent, state.activePointerId);
-        if (touch && touch.clientX >= rect.left && touch.clientX <= rect.right && touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+        if (touch && isOverTarget(touch, e.currentTarget)) {
           triggerPressUp(e, 'touch');
           triggerPressEnd(e, 'touch');
         } else if (state.isOverTarget) {
@@ -463,19 +477,37 @@ export function usePress(props: PressHookProps): PressResult {
         state.isOverTarget = false;
         state.ignoreEmulatedMouseEvents = true;
         restoreTextSelection();
+        window.removeEventListener('scroll', onScroll, true);
       };
 
       pressProps.onTouchCancel = (e) => {
         e.stopPropagation();
         if (state.isPressed) {
-          if (state.isOverTarget) {
-            triggerPressEnd(e, 'touch', false);
-          }
-          state.isPressed = false;
-          state.activePointerId = null;
-          state.isOverTarget = false;
-          restoreTextSelection();
+          cancelTouchEvent(e, 'touch');
         }
+      };
+
+      let onScroll = (e: Event) => {
+        if (state.isPressed && (e.target as HTMLElement).contains(state.target)) {
+          cancelTouchEvent({
+            currentTarget: state.target,
+            shiftKey: false,
+            ctrlKey: false,
+            metaKey: false
+          }, 'touch');
+        }
+      };
+
+      let cancelTouchEvent = (e: EventBase, pointerType: PointerType) => {
+        if (state.isOverTarget) {
+          triggerPressEnd(e, pointerType, false);
+        }
+
+        state.isPressed = false;
+        state.activePointerId = null;
+        state.isOverTarget = false;
+        restoreTextSelection();
+        window.removeEventListener('scroll', onScroll, true);
       };
     }
 
@@ -557,4 +589,17 @@ function createEvent(target: HTMLElement, e: EventBase): EventBase {
     ctrlKey: e.ctrlKey,
     metaKey: e.metaKey
   };
+}
+
+interface EventPoint {
+  clientX: number,
+  clientY: number
+}
+
+function isOverTarget(point: EventPoint, target: HTMLElement) {
+  let rect = target.getBoundingClientRect();
+  return point.clientX >= rect.left && 
+    point.clientX <= rect.right && 
+    point.clientY >= rect.top && 
+    point.clientY <= rect.bottom;
 }

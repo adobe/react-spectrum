@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
+import {InputHTMLAttributes} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {RadioProps} from '@react-types/radio';
@@ -24,7 +24,7 @@ interface RadioAriaProps extends RadioProps {
 }
 
 interface RadioAria {
-  inputProps: AllHTMLAttributes<HTMLInputElement>
+  inputProps: InputHTMLAttributes<HTMLElement>
 }
 
 export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAria {
@@ -38,7 +38,9 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
   } = props;
   let {
     selectedRadio,
-    setSelectedRadio
+    setSelectedRadio,
+    focusableRadio,
+    setFocusableRadio
   } = state;
 
   let checked = selectedRadio === value;
@@ -49,18 +51,20 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
     setSelectedRadio(value);
   };
 
-  // This handles focusing the input on pointer down, which Safari does not do by default.
   let {pressProps} = usePress({
     isDisabled
   });
 
-  let {focusableProps} = useFocusable(props);
+  let {focusableProps} = useFocusable(mergeProps(props, {
+    onFocus: () => setFocusableRadio(value)
+  }));
   let interactions = mergeProps(pressProps, focusableProps);
 
   return {
     inputProps: {
       type: 'radio',
       name,
+      tabIndex: focusableRadio === value || focusableRadio == null ? 0 : -1,
       disabled: isDisabled,
       readOnly: isReadOnly,
       required: isRequired,

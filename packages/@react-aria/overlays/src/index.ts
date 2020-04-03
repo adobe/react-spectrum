@@ -13,4 +13,5 @@
 export * from './useOverlayPosition';
 export * from './useOverlay';
 export * from './useOverlayTrigger';
+export * from './usePreventScroll';
 export * from './useModal';
