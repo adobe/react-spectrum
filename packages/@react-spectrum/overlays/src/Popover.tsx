@@ -12,11 +12,23 @@
 
 import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
+import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
-import {PopoverProps} from '@react-types/overlays';
-import React, {useLayoutEffect, useRef, useState} from 'react';
+import {PlacementAxis, PopoverProps} from '@react-types/overlays';
+import React, {forwardRef, HTMLAttributes, ReactNode, RefObject, useLayoutEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {useModal, useOverlay} from '@react-aria/overlays';
+
+interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
+  children: ReactNode,
+  placement?: PlacementAxis,
+  arrowProps?: HTMLAttributes<HTMLElement>,
+  hideArrow?: boolean,
+  isOpen?: boolean,
+  onClose?: () => void,
+  shouldCloseOnBlur?: boolean
+}
 
 /**
  * Arrow placement can be done pointing right or down because those paths start at 0, x or y. Because the
@@ -33,17 +45,36 @@ let arrowPlacement = {
 };
 
 function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, placement = 'bottom', arrowProps, isOpen, onClose, shouldCloseOnBlur, hideArrow, ...otherProps} = props;
+  let {children, placement, arrowProps, onClose, shouldCloseOnBlur, hideArrow, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
-  let {overlayProps} = useOverlay({ref: domRef, onClose, shouldCloseOnBlur, isOpen, isDismissable: true});
+
+  return (
+    <Overlay {...otherProps}>
+      <PopoverWrapper
+        {...filterDOMProps(otherProps)}
+        {...styleProps}
+        ref={domRef}
+        placement={placement}
+        arrowProps={arrowProps}
+        onClose={onClose}
+        shouldCloseOnBlur={shouldCloseOnBlur}
+        hideArrow={hideArrow}>
+        {children}
+      </PopoverWrapper>
+    </Overlay>
+  );
+}
+
+const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
+  let {children, placement = 'bottom', arrowProps, isOpen, onClose, shouldCloseOnBlur, hideArrow, ...otherProps} = props;
+  let {overlayProps} = useOverlay({ref, onClose, shouldCloseOnBlur, isOpen, isDismissable: true});
   useModal();
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
-      {...styleProps}
-      ref={domRef}
+      {...mergeProps(otherProps, overlayProps)}
+      ref={ref}
       className={
         classNames(
           styles,
@@ -58,19 +89,18 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
             'spectrum-Popover',
             'react-spectrum-Popover'
           ),
-          styleProps.className
+          otherProps.className
         )
       }
       role="presentation"
-      data-testid="popover"
-      {...overlayProps}>
+      data-testid="popover">
       {children}
       {hideArrow ? null : (
-        <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement.split(' ')[0]]} />
+        <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement]} />
       )}
     </div>
   );
-}
+});
 
 let ROOT_2 = Math.sqrt(2);
 
@@ -133,7 +163,7 @@ function Arrow(props) {
   );
 }
 
-let _Popover = React.forwardRef(Popover);
+let _Popover = forwardRef(Popover);
 export {_Popover as Popover};
 
 /**

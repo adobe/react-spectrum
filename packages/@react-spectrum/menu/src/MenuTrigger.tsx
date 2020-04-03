@@ -14,8 +14,8 @@ import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {MenuContext} from './context';
-import {Overlay, Popover, Tray} from '@react-spectrum/overlays';
 import {Placement} from '@react-types/overlays';
+import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
@@ -84,17 +84,16 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     );
   } else {
     overlay = (
-      <Overlay isOpen={state.isOpen}>
-        <Popover
-          UNSAFE_style={positionProps.style}
-          ref={menuPopoverRef}
-          placement={placement}
-          hideArrow
-          onClose={state.close}
-          shouldCloseOnBlur>
-          {contents}
-        </Popover>
-      </Overlay>
+      <Popover
+        isOpen={state.isOpen}
+        UNSAFE_style={positionProps.style}
+        ref={menuPopoverRef}
+        placement={placement}
+        hideArrow
+        onClose={state.close}
+        shouldCloseOnBlur>
+        {contents}
+      </Popover>
     );
   }
 

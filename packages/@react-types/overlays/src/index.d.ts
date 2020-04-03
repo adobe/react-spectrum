@@ -32,14 +32,6 @@ export interface PositionProps {
   isOpen?: boolean
 }
 
-export interface ModalProps extends DOMProps, StyleProps {
-  children: ReactElement,
-  isOpen?: boolean,
-  onClose?: () => void,
-  type?: 'fullscreen' | 'fullscreenTakeover',
-  isDismissable?: boolean
-}
-
 export interface OverlayProps {
   children: ReactNode,
   isOpen?: boolean,
@@ -52,7 +44,15 @@ export interface OverlayProps {
   onExited?: () => void
 }
 
-export interface PopoverProps extends DOMProps, StyleProps {
+export interface ModalProps extends DOMProps, StyleProps, OverlayProps {
+  children: ReactElement,
+  isOpen?: boolean,
+  onClose?: () => void,
+  type?: 'fullscreen' | 'fullscreenTakeover',
+  isDismissable?: boolean
+}
+
+export interface PopoverProps extends DOMProps, StyleProps, OverlayProps {
   children: ReactNode,
   placement?: PlacementAxis,
   arrowProps?: HTMLAttributes<HTMLElement>,
@@ -62,7 +62,7 @@ export interface PopoverProps extends DOMProps, StyleProps {
   shouldCloseOnBlur?: boolean
 }
 
-export interface TrayProps extends DOMProps, StyleProps {
+export interface TrayProps extends DOMProps, StyleProps, OverlayProps {
   children: ReactElement,
   isOpen?: boolean,
   onClose?: () => void

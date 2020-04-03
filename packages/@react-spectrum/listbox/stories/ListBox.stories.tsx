@@ -21,7 +21,6 @@ import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, ListBox, Section} from '../';
 import {Label} from '@react-spectrum/label';
 import Paste from '@spectrum-icons/workflow/Paste';
-import {Popover} from '@react-spectrum/overlays';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/typography';
@@ -89,428 +88,386 @@ storiesOf('ListBox', module)
   .addDecorator(story => (
     <div style={{display: 'flex', flexDirection: 'column'}}>
       <Label id="label">Choose an item</Label>
-      {React.cloneElement(story(), {style: {position: 'static', maxHeight: 300}} as any)}
+      <div style={{display: 'flex', background: 'white', border: '1px solid lightgray', maxHeight: 300}}>
+        {story()}
+      </div>
     </div>
   ))
   .add(
     'Default ListBox',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={flatOptions} itemKey="name">
-          {item => <Item>{item.name}</Item>}
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={flatOptions} itemKey="name">
+        {item => <Item>{item.name}</Item>}
+      </ListBox>
     )
   )
   .add(
     'ListBox w/ sections',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
-          {item => (
-            <Section items={item.children} title={item.name}>
-              {item => <Item>{item.name}</Item>}
-            </Section>
-          )}
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
     )
   )
   .add(
     'ListBox w/ many sections',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" items={lotsOfSections} itemKey="name" onSelectionChange={action('onSelectionChange')}>
-          {item => (
-            <Section items={item.children} title={item.name}>
-              {(item: any) => <Item>{item.name}</Item>}
-            </Section>
-          )}
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" items={lotsOfSections} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {(item: any) => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
     )
   )
   .add(
     'ListBox w/ sections and no title',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
-          {item => (
-            <Section items={item.children} aria-label={item.name}>
-              {item => <Item>{item.name}</Item>}
-            </Section>
-          )}
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+        {item => (
+          <Section items={item.children} aria-label={item.name}>
+            {item => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
     )
   )
   .add(
     'Static',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
-          <Item>One</Item>
-          <Item>Two</Item>
-          <Item>Three</Item>
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </ListBox>
     )
   )
   .add(
     'Static with sections',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
-          <Section title="Section 1">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
-          </Section>
-          <Section title="Section 2">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
-          </Section>
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
+        <Section title="Section 1">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+        <Section title="Section 2">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+      </ListBox>
     )
   )
   .add(
     'Static with sections and no title',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
-          <Section aria-label="Section 1">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
-          </Section>
-          <Section aria-label="Section 2">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
-          </Section>
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
+        <Section aria-label="Section 1">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+        <Section aria-label="Section 2">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+      </ListBox>
     )
   )
   .add(
     'with default selected options',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
-          {item => (
-            <Section items={item.children} title={item.name}>
-              {item => <Item>{item.name}</Item>}
-            </Section>
-          )}
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
     )
   )
   .add(
     'static with default selected options',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
-          <Section title="Section 1">
-            <Item uniqueKey="1">
-              One
-            </Item>
-            <Item uniqueKey="2">
-              Two
-            </Item>
-            <Item uniqueKey="3">
-              Three
-            </Item>
-          </Section>
-          <Section title="Section 2">
-            <Item uniqueKey="4">
-              Four
-            </Item>
-            <Item uniqueKey="5">
-              Five
-            </Item>
-            <Item uniqueKey="6">
-              Six
-            </Item>
-            <Item uniqueKey="7">
-              Seven
-            </Item>
-          </Section>
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
+        <Section title="Section 1">
+          <Item uniqueKey="1">
+            One
+          </Item>
+          <Item uniqueKey="2">
+            Two
+          </Item>
+          <Item uniqueKey="3">
+            Three
+          </Item>
+        </Section>
+        <Section title="Section 2">
+          <Item uniqueKey="4">
+            Four
+          </Item>
+          <Item uniqueKey="5">
+            Five
+          </Item>
+          <Item uniqueKey="6">
+            Six
+          </Item>
+          <Item uniqueKey="7">
+            Seven
+          </Item>
+        </Section>
+      </ListBox>
     )
   )
   .add(
     'with selected options (controlled)',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
-          {item => (
-            <Section items={item.children} title={item.name}>
-              {item => <Item>{item.name}</Item>}
-            </Section>
-          )}
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
     )
   )
   .add(
     'static with selected options (controlled)',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
-          <Section title="Section 1">
-            <Item uniqueKey="1">
-              One
-            </Item>
-            <Item uniqueKey="2">
-              Two
-            </Item>
-            <Item uniqueKey="3">
-              Three
-            </Item>
-          </Section>
-          <Section title="Section 2">
-            <Item uniqueKey="4">
-              Four
-            </Item>
-            <Item uniqueKey="5">
-              Five
-            </Item>
-            <Item uniqueKey="6">
-              Six
-            </Item>
-            <Item uniqueKey="7">
-              Seven
-            </Item>
-          </Section>
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
+        <Section title="Section 1">
+          <Item uniqueKey="1">
+            One
+          </Item>
+          <Item uniqueKey="2">
+            Two
+          </Item>
+          <Item uniqueKey="3">
+            Three
+          </Item>
+        </Section>
+        <Section title="Section 2">
+          <Item uniqueKey="4">
+            Four
+          </Item>
+          <Item uniqueKey="5">
+            Five
+          </Item>
+          <Item uniqueKey="6">
+            Six
+          </Item>
+          <Item uniqueKey="7">
+            Seven
+          </Item>
+        </Section>
+      </ListBox>
     )
   )
   .add(
     'with disabled options',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
-          {item => (
-            <Section items={item.children} title={item.name}>
-              {item => <Item>{item.name}</Item>}
-            </Section>
-          )}
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
     )
   )
   .add(
     'static with disabled options',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} disabledKeys={['3', '5']}>
-          <Section title="Section 1">
-            <Item uniqueKey="1">
-              One
-            </Item>
-            <Item uniqueKey="2">
-              Two
-            </Item>
-            <Item uniqueKey="3">
-              Three
-            </Item>
-          </Section>
-          <Section title="Section 2">
-            <Item uniqueKey="4">
-              Four
-            </Item>
-            <Item uniqueKey="5">
-              Five
-            </Item>
-            <Item uniqueKey="6">
-              Six
-            </Item>
-            <Item uniqueKey="7">
-              Seven
-            </Item>
-          </Section>
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} disabledKeys={['3', '5']}>
+        <Section title="Section 1">
+          <Item uniqueKey="1">
+            One
+          </Item>
+          <Item uniqueKey="2">
+            Two
+          </Item>
+          <Item uniqueKey="3">
+            Three
+          </Item>
+        </Section>
+        <Section title="Section 2">
+          <Item uniqueKey="4">
+            Four
+          </Item>
+          <Item uniqueKey="5">
+            Five
+          </Item>
+          <Item uniqueKey="6">
+            Six
+          </Item>
+          <Item uniqueKey="7">
+            Seven
+          </Item>
+        </Section>
+      </ListBox>
     )
   )
   .add(
     'Multiple selection',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
-          {item => (
-            <Section items={item.children} title={item.name}>
-              {item => <Item>{item.name}</Item>}
-            </Section>
-          )}
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
     )
   )
   .add(
     'Multiple selection, static',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
-          <Section title="Section 1">
-            <Item uniqueKey="1">
-              One
-            </Item>
-            <Item uniqueKey="2">
-              Two
-            </Item>
-            <Item uniqueKey="3">
-              Three
-            </Item>
-          </Section>
-          <Section title="Section 2">
-            <Item uniqueKey="4">
-              Four
-            </Item>
-            <Item uniqueKey="5">
-              Five
-            </Item>
-            <Item uniqueKey="6">
-              Six
-            </Item>
-          </Section>
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
+        <Section title="Section 1">
+          <Item uniqueKey="1">
+            One
+          </Item>
+          <Item uniqueKey="2">
+            Two
+          </Item>
+          <Item uniqueKey="3">
+            Three
+          </Item>
+        </Section>
+        <Section title="Section 2">
+          <Item uniqueKey="4">
+            Four
+          </Item>
+          <Item uniqueKey="5">
+            Five
+          </Item>
+          <Item uniqueKey="6">
+            Six
+          </Item>
+        </Section>
+      </ListBox>
     )
   )
   .add(
     'No selection allowed',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="none">
-          {item => (
-            <Section items={item.children} title={item.name}>
-              {item => <Item>{item.name}</Item>}
-            </Section>
-          )}
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="none">
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
     )
   )
   .add(
     'No selection allowed, static',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectionMode="none">
-          <Section title="Section 1">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
-          </Section>
-          <Section title="Section 2">
-            <Item>Four</Item>
-            <Item>Five</Item>
-            <Item>Six</Item>
-          </Section>
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectionMode="none">
+        <Section title="Section 1">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+        <Section title="Section 2">
+          <Item>Four</Item>
+          <Item>Five</Item>
+          <Item>Six</Item>
+        </Section>
+      </ListBox>
     )
   )
   .add(
     'ListBox with autoFocus=true',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus>
-          {item => (
-            <Section items={item.children} title={item.name}>
-              {item => <Item>{item.name}</Item>}
-            </Section>
-          )}
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
     )
   )
   .add(
     'ListBox with autoFocus="last"',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus="last">
-          {item => (
-            <Section items={item.children} title={item.name}>
-              {item => <Item>{item.name}</Item>}
-            </Section>
-          )}
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus="last">
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
     )
   )
   .add(
     'ListBox with keyboard selection wrapping',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} shouldFocusWrap>
-          {item => (
-            <Section items={item.children} title={item.name}>
-              {item => <Item>{item.name}</Item>}
-            </Section>
-          )}
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} shouldFocusWrap>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
     )
   )
   .add(
     'with semantic elements (static)',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
-          <Section title="Section 1">
-            <Item textValue="Copy">
-              <Copy size="S" />
-              <Text>Copy</Text>
-            </Item>
-            <Item textValue="Cut">
-              <Cut size="S" />
-              <Text>Cut</Text>
-            </Item>
-            <Item textValue="Paste">
-              <Paste size="S" />
-              <Text>Paste</Text>
-            </Item>
-          </Section>
-          <Section title="Section 2">
-            <Item textValue="Puppy">
-              <AlignLeft size="S" />
-              <Text>Puppy</Text>
-              <Text slot="description">Puppy description super long as well geez</Text>
-            </Item>
-            <Item textValue="Doggo with really really really long long long text">
-              <AlignCenter size="S" />
-              <Text>Doggo with really really really long long long text</Text>
-            </Item>
-            <Item textValue="Floof">
-              <AlignRight size="S" />
-              <Text>Floof</Text>
-            </Item>
-            <Item>
-              Basic Item
-            </Item>
-          </Section>
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
+        <Section title="Section 1">
+          <Item textValue="Copy">
+            <Copy size="S" />
+            <Text>Copy</Text>
+          </Item>
+          <Item textValue="Cut">
+            <Cut size="S" />
+            <Text>Cut</Text>
+          </Item>
+          <Item textValue="Paste">
+            <Paste size="S" />
+            <Text>Paste</Text>
+          </Item>
+        </Section>
+        <Section title="Section 2">
+          <Item textValue="Puppy">
+            <AlignLeft size="S" />
+            <Text>Puppy</Text>
+            <Text slot="description">Puppy description super long as well geez</Text>
+          </Item>
+          <Item textValue="Doggo with really really really long long long text">
+            <AlignCenter size="S" />
+            <Text>Doggo with really really really long long long text</Text>
+          </Item>
+          <Item textValue="Floof">
+            <AlignRight size="S" />
+            <Text>Floof</Text>
+          </Item>
+          <Item>
+            Basic Item
+          </Item>
+        </Section>
+      </ListBox>
     )
   )
   .add(
     'with semantic elements (generative)',
     () => (
-      <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label"items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
-          {item => (
-            <Section items={item.children} title={item.name}>
-              {item => customOption(item)}
-            </Section>
-          )}
-        </ListBox>
-      </Popover>
+      <ListBox width={200} aria-labelledby="label"items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => customOption(item)}
+          </Section>
+        )}
+      </ListBox>
     )
   );
 

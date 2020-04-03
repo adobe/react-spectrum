@@ -12,7 +12,7 @@
 
 import {DialogContext} from './context';
 import {DOMRefValue} from '@react-types/shared';
-import {Modal, Overlay, Popover, Tray} from '@react-spectrum/overlays';
+import {Modal, Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
@@ -142,11 +142,16 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
   };
 
   let overlay = (
-    <Overlay isOpen={isOpen}>
-      <Popover UNSAFE_style={popoverProps.style} ref={overlayRef} onClose={onClose} placement={placement} arrowProps={arrowProps} hideArrow={hideArrow}>
-        {content}
-      </Popover>
-    </Overlay>
+    <Popover
+      isOpen={isOpen}
+      UNSAFE_style={popoverProps.style}
+      ref={overlayRef}
+      onClose={onClose}
+      placement={placement}
+      arrowProps={arrowProps}
+      hideArrow={hideArrow}>
+      {content}
+    </Popover>
   );
 
   return (
