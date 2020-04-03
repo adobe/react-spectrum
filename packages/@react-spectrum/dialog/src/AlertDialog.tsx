@@ -39,15 +39,16 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
   let {
     variant,
     children,
-    secondaryLabel,
+    primaryActionLabel,
+    secondaryActionLabel,
     cancelLabel,
-    primaryLabel,
     autoFocusButton,
     title,
     isPrimaryActionDisabled,
     isSecondaryActionDisabled,
     onCancel = () => {},
-    onConfirm = () => {},
+    onPrimaryAction = () => {},
+    onSecondaryAction = () => {},
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -63,7 +64,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
   }
 
   return (
-    <Dialog 
+    <Dialog
       {...styleProps}
       UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)}
       size="M"
@@ -83,16 +84,16 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
       <Divider />
       <Content>{children}</Content>
       <ButtonGroup>
-        {secondaryLabel && 
-          <Button 
+        {secondaryActionLabel &&
+          <Button
             variant="secondary"
-            onPress={() => chain(onClose(), onConfirm('secondary'))}
+            onPress={() => chain(onClose(), onSecondaryAction())}
             isDisabled={isSecondaryActionDisabled}
             autoFocus={autoFocusButton === 'secondary'}>
-            {secondaryLabel}
+            {secondaryActionLabel}
           </Button>
         }
-        {cancelLabel && 
+        {cancelLabel &&
           <Button
             variant="secondary"
             onPress={() => chain(onClose(), onCancel())}
@@ -100,12 +101,12 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
             {cancelLabel}
           </Button>
         }
-        <Button 
+        <Button
           variant={confirmVariant}
-          onPress={() => chain(onClose(), onConfirm('primary'))}
+          onPress={() => chain(onClose(), onPrimaryAction())}
           isDisabled={isPrimaryActionDisabled}
           autoFocus={autoFocusButton === 'primary'}>
-          {primaryLabel}
+          {primaryActionLabel}
         </Button>
       </ButtonGroup>
     </Dialog>
