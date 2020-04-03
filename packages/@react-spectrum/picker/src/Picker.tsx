@@ -111,7 +111,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray isOpen={state.isOpen} onClose={() => state.setOpen(false)}>
+      <Tray isOpen={state.isOpen} onClose={state.close}>
         {listbox}
       </Tray>
     );
@@ -133,7 +133,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
         ref={popoverRef}
         placement={placement}
         hideArrow
-        onClose={() => state.setOpen(false)}>
+        onClose={state.close}>
         {listbox}
       </Popover>
     );

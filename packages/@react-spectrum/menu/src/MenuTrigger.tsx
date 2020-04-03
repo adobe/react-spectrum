@@ -36,10 +36,6 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let [menuTrigger, menu] = React.Children.toArray(children);
   let state = useMenuTriggerState(props);
 
-  let onClose = () => {
-    state.setOpen(false);
-  };
-
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
       ref: menuTriggerRef
@@ -60,7 +56,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let menuContext = {
     ...menuProps,
     ref: menuRef,
-    onClose,
+    onClose: state.close,
     closeOnSelect,
     autoFocus: state.focusStrategy,
     UNSAFE_style: {
@@ -72,7 +68,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray isOpen={state.isOpen} onClose={onClose}>
+      <Tray isOpen={state.isOpen} onClose={state.close}>
         <FocusScope restoreFocus>
           {menu}
         </FocusScope>
@@ -85,7 +81,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
         ref={menuPopoverRef}
         placement={placement}
         hideArrow
-        onClose={onClose}>
+        onClose={state.close}>
         <FocusScope restoreFocus>
           {menu}
         </FocusScope>
