@@ -22,7 +22,7 @@ import {Item, ListBox, Section} from '../';
 import {Label} from '@react-spectrum/label';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {Popover} from '@react-spectrum/overlays';
-import React, {Fragment} from 'react';
+import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/typography';
 
