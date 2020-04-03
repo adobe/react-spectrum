@@ -19,7 +19,7 @@ function Example({triggerTop = 250, ...props}) {
   let containerRef = useRef();
   let overlayRef = useRef();
   let {overlayProps, placement, arrowProps} = useOverlayPosition({targetRef, containerRef, overlayRef, ...props});
-  let style = {width: 300, height: 200, ...overlayProps.style};
+  let style = {width: 300, height: 200, ...overlayProps.UNSAFE_style};
   return (
     <React.Fragment>
       <div ref={targetRef} data-testid="trigger" style={{left: 10, top: triggerTop, width: 100, height: 100}}>Trigger</div>

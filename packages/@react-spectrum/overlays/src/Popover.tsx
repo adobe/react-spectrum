@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import overrideStyles from './overlays.css';
 import {PopoverProps} from '@react-types/overlays';
-import React, {useLayoutEffect, useRef, useState} from 'react';
+import React, {RefObject, useLayoutEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {useModal, useOverlay} from '@react-aria/overlays';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
@@ -26,9 +25,10 @@ let arrowPlacement = {
   bottom: 'top'
 };
 
-function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
+function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
   let {children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, ...otherProps} = props;
-  let domRef = useDOMRef(ref);
+  let backupRef = useRef();
+  let domRef = ref || backupRef;
   let {styleProps} = useStyleProps(props);
   let {overlayProps, dismissButtonProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
   useModal();

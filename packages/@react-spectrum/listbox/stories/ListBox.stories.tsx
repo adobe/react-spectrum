@@ -81,7 +81,7 @@ for (let i = 0; i < 50; i++) {
   for (let j = 0; j < 50; j++) {
     children.push({name: `Section ${i}, Item ${j}`});
   }
-  
+
   lotsOfSections.push({name: 'Section ' + i, children});
 }
 
@@ -105,7 +105,7 @@ storiesOf('ListBox', module)
   .add(
     'ListBox w/ sections',
     () => (
-      <Popover isOpen hideArrow style={{maxHeight: 300}}>
+      <Popover isOpen hideArrow maxHeight="300">
         <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
           {item => (
             <Section items={item.children} title={item.name}>
@@ -119,7 +119,7 @@ storiesOf('ListBox', module)
   .add(
     'ListBox w/ many sections',
     () => (
-      <Popover isOpen hideArrow style={{maxHeight: 300}}>
+      <Popover isOpen hideArrow maxHeight="300">
         <ListBox width={200} aria-labelledby="label" items={lotsOfSections} itemKey="name" onSelectionChange={action('onSelectionChange')}>
           {item => (
             <Section items={item.children} title={item.name}>
@@ -469,7 +469,7 @@ storiesOf('ListBox', module)
   .add(
     'with semantic elements (generative)',
     () => (
-      <Popover isOpen hideArrow> 
+      <Popover isOpen hideArrow>
         <ListBox width={200} aria-labelledby="label"items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
           {item => (
             <Section items={item.children} title={item.name}>
@@ -480,7 +480,7 @@ storiesOf('ListBox', module)
       </Popover>
     )
   );
-  
+
 let customOption = (item) => {
   let Icon = iconMap[item.icon];
   return (
@@ -488,5 +488,5 @@ let customOption = (item) => {
       {item.icon && <Icon size="S" />}
       <Text>{item.name}</Text>
     </Item>
-  );	
+  );
 };

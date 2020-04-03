@@ -11,7 +11,7 @@
  */
 
 import {calculatePosition, PositionResult} from './calculatePosition';
-import {HTMLAttributes, RefObject, useEffect, useState} from 'react';
+import {CSSProperties, HTMLAttributes, RefObject, useEffect, useState} from 'react';
 import {PlacementAxis} from '@react-types/overlays';
 import {useLocale} from '@react-aria/i18n';
 
@@ -38,7 +38,9 @@ interface AriaPositionProps extends PositionProps {
 }
 
 interface PositionAria {
-  overlayProps: HTMLAttributes<Element>,
+  overlayProps: HTMLAttributes<Element> & {
+    UNSAFE_style?: CSSProperties
+  },
   arrowProps: HTMLAttributes<Element>,
   placement: PlacementAxis
 }
@@ -109,7 +111,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
   return {
     overlayProps: {
-      style: {
+      'UNSAFE_style': {
         position: 'absolute',
         zIndex: 100000, // should match the z-index in ModalTrigger
         ...position.position,
