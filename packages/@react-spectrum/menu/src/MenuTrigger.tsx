@@ -14,13 +14,14 @@ import {DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {MenuContext} from './context';
 import {Overlay, Popover, Tray} from '@react-spectrum/overlays';
-import {Placement, useOverlayPosition} from '@react-aria/overlays';
+import {Placement} from '@react-types/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
+import {useOverlayPosition} from '@react-aria/overlays';
 
 export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let menuPopoverRef = useRef<DOMRefValue<HTMLDivElement>>();
