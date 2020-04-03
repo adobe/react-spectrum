@@ -13,8 +13,9 @@
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroupState, useActionGroupState} from '@react-stately/actiongroup';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {classNames, filterDOMProps, useSlotProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
+import {DOMRef} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
@@ -23,10 +24,13 @@ import {SelectionMode} from '@react-types/shared';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useActionGroup} from '@react-aria/actiongroup';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useSelectableItem} from '@react-aria/selection';
 
-export function ActionGroup<T>(props: SpectrumActionGroupProps<T>) {
+function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+  props = useProviderProps(props);
   props = useSlotProps(props);
+
   let {
     isEmphasized,
     isConnected, // no quiet option available in this mode
@@ -38,15 +42,19 @@ export function ActionGroup<T>(props: SpectrumActionGroupProps<T>) {
     ...otherProps
   } = props;
 
+  let domRef = useDOMRef(ref);
   let state = useActionGroupState({...props, selectionMode});
   let {actionGroupProps, buttonProps} = useActionGroup(props, state);
   let isVertical = orientation === 'vertical';
   let providerProps = {isEmphasized, isDisabled, isQuiet};
+  let {styleProps} = useStyleProps(props);
 
   return (
     <div
       {...filterDOMProps(otherProps)}
       {...actionGroupProps}
+      {...styleProps}
+      ref={domRef}
       className={
         classNames(
           styles,
@@ -72,6 +80,9 @@ export function ActionGroup<T>(props: SpectrumActionGroupProps<T>) {
     </div>
   );
 }
+
+let _ActionGroup = React.forwardRef(ActionGroup);
+export {_ActionGroup as ActionGroup};
 
 export interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
   item: Node<T>,
