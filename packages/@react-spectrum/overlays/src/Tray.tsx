@@ -81,9 +81,9 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   return (
     <div className={wrapperClassName}>
       <div
+        {...mergeProps(otherProps, overlayProps)}
         className={className}
         ref={ref}
-        {...mergeProps(otherProps, overlayProps)}
         data-testid="tray">
         {children}
       </div>
