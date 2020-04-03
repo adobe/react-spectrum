@@ -108,5 +108,5 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
 /**
  * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
  */
- let _AlertDialog = forwardRef(AlertDialog);
- export {_AlertDialog as AlertDialog};
+let _AlertDialog = forwardRef(AlertDialog);
+export {_AlertDialog as AlertDialog};
