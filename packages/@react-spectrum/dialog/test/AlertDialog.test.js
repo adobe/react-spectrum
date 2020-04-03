@@ -12,9 +12,16 @@
 
 import {AlertDialog} from '../';
 import {cleanup, render} from '@testing-library/react';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
 
+let theme = {
+  light: themeLight,
+  medium: scaleMedium
+};
 
 describe('AlertDialog', function () {
   afterEach(cleanup);
@@ -22,9 +29,11 @@ describe('AlertDialog', function () {
   it('renders alert dialog with onPrimaryAction', function () {
     let onPrimaryAction = jest.fn();
     let {getByRole} = render(
-      <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" onPrimaryAction={onPrimaryAction}>
-        Content body
-      </AlertDialog>
+      <Provider theme={theme}>
+        <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" onPrimaryAction={onPrimaryAction}>
+          Content body
+        </AlertDialog>
+      </Provider>
     );
 
     let dialog = getByRole('alertdialog');
@@ -40,9 +49,11 @@ describe('AlertDialog', function () {
     let onCancelSpy = jest.fn();
     let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
-      <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" cancelLabel="cancel" onPrimaryAction={onPrimaryAction} onCancel={onCancelSpy}>
-        Content body
-      </AlertDialog>
+      <Provider theme={theme}>
+        <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" cancelLabel="cancel" onPrimaryAction={onPrimaryAction} onCancel={onCancelSpy}>
+          Content body
+        </AlertDialog>
+      </Provider>
     );
 
     let dialog = getByRole('alertdialog');
@@ -66,9 +77,11 @@ describe('AlertDialog', function () {
     let onPrimaryAction = jest.fn();
     let onSecondaryAction = jest.fn();
     let {getByRole, getByText} = render(
-      <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" cancelLabel="cancel" secondaryActionLabel="secondary" onPrimaryAction={onPrimaryAction} onSecondaryAction={onSecondaryAction} onCancel={onCancelSpy}>
-        Content body
-      </AlertDialog>
+      <Provider theme={theme}>
+        <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" cancelLabel="cancel" secondaryActionLabel="secondary" onPrimaryAction={onPrimaryAction} onSecondaryAction={onSecondaryAction} onCancel={onCancelSpy}>
+          Content body
+        </AlertDialog>
+      </Provider>
     );
 
     let dialog = getByRole('alertdialog');
@@ -96,9 +109,11 @@ describe('AlertDialog', function () {
   it('disable its confirm button', function () {
     let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
-      <AlertDialog variant="confirmation" isPrimaryActionDisabled title="the title" primaryActionLabel="confirm" onPrimaryAction={onPrimaryAction}>
-        Content body
-      </AlertDialog>
+      <Provider theme={theme}>
+        <AlertDialog variant="confirmation" isPrimaryActionDisabled title="the title" primaryActionLabel="confirm" onPrimaryAction={onPrimaryAction}>
+          Content body
+        </AlertDialog>
+      </Provider>
     );
 
     let dialog = getByRole('alertdialog');
@@ -111,9 +126,11 @@ describe('AlertDialog', function () {
 
   it('autofocus its confirm button', function () {
     let {getByText} = render(
-      <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" autoFocusButton="primary">
-        Content body
-      </AlertDialog>
+      <Provider theme={theme}>
+        <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" autoFocusButton="primary">
+          Content body
+        </AlertDialog>
+      </Provider>
     );
 
     let button = getByText('confirm').closest('button');
@@ -122,9 +139,11 @@ describe('AlertDialog', function () {
 
   it('autofocus its cancel button', function () {
     let {getByText} = render(
-      <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" cancelLabel="cancel" autoFocusButton="cancel" >
-        Content body
-      </AlertDialog>
+      <Provider theme={theme}>
+        <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" cancelLabel="cancel" autoFocusButton="cancel" >
+          Content body
+        </AlertDialog>
+      </Provider>
     );
 
     let button = getByText('cancel').closest('button');
@@ -134,9 +153,11 @@ describe('AlertDialog', function () {
   it('disable its secondary button', function () {
     let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
-      <AlertDialog variant="confirmation" isSecondaryActionDisabled title="the title" primaryActionLabel="confirm" secondaryActionLabel="secondary" onPrimaryAction={onPrimaryAction}>
-        Content body
-      </AlertDialog>
+      <Provider theme={theme}>
+        <AlertDialog variant="confirmation" isSecondaryActionDisabled title="the title" primaryActionLabel="confirm" secondaryActionLabel="secondary" onPrimaryAction={onPrimaryAction}>
+          Content body
+        </AlertDialog>
+      </Provider>
     );
 
     let dialog = getByRole('alertdialog');
@@ -149,9 +170,11 @@ describe('AlertDialog', function () {
 
   it('autofocus its secondary button', function () {
     let {getByText} = render(
-      <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" secondaryActionLabel="secondary" autoFocusButton="secondary">
-        Content body
-      </AlertDialog>
+      <Provider theme={theme}>
+        <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" secondaryActionLabel="secondary" autoFocusButton="secondary">
+          Content body
+        </AlertDialog>
+      </Provider>
     );
 
     let button = getByText('secondary').closest('button');
