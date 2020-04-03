@@ -49,17 +49,19 @@ export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
   /** The label to display within the cancel button. */
   cancelLabel?: string,
   /** The label to display within the confirm button. */
-  primaryLabel: string,
+  primaryActionLabel: string,
   /** The label to display within the secondary button. */
-  secondaryLabel?: string,
+  secondaryActionLabel?: string,
   /** Whether the primary button is disabled. */
   isPrimaryActionDisabled?: boolean,
   /** Whether the secondary button is disabled. */
   isSecondaryActionDisabled?: boolean,
   /** Handler that is called when the cancel button is pressed. */
   onCancel?: () => void,
-  /** Handler that is called when the confirm button is pressed. */
-  onConfirm?: (button: 'primary' | 'secondary') => void,
+  /** Handler that is called when the primary button is pressed. */
+  onPrimaryAction?: () => void,
+  /** Handler that is called when the secondary button is pressed. */
+  onSecondaryAction?: () => void,
   /** Button to focus by default upon render. */
   autoFocusButton?: 'cancel' | 'primary' | 'secondary',
   // allowsKeyboardConfirmation?: boolean, // triggers primary action
