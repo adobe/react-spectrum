@@ -10,47 +10,50 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
 import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
-import React, {forwardRef} from 'react';
+import React, {forwardRef, HTMLAttributes, ReactNode, RefObject} from 'react';
 import {TrayProps} from '@react-types/overlays';
 import trayStyles from '@adobe/spectrum-css-temp/components/tray/vars.css';
 import {Underlay} from './Underlay';
 import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
 
-interface TrayWrapperProps extends DOMProps, StyleProps, TrayProps {
-  isOpen?: boolean
+interface TrayWrapperProps extends HTMLAttributes<HTMLElement> {
+  children: ReactNode,
+  isOpen?: boolean,
+  onClose?: () => void
 }
 
 function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
   let {children, onClose, ...otherProps} = props;
+  let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
 
   return (
-    <Overlay {...otherProps} >
+    <Overlay {...otherProps}>
       <Underlay />
       <TrayWrapper
+        {...filterDOMProps(otherProps)}
         {...styleProps}
         onClose={onClose}
-        ref={ref}>
+        ref={domRef}>
         {children}
       </TrayWrapper>
     </Overlay>
   );
 }
 
-let TrayWrapper = React.forwardRef(function (props: TrayWrapperProps, ref: DOMRef<HTMLDivElement>) {
+let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<HTMLDivElement>) {
   let {
     children,
     onClose,
-    isOpen
+    isOpen,
+    ...otherProps
   } = props;
-  let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(props);
-  let {overlayProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
-
+  let {overlayProps} = useOverlay({ref, onClose, isOpen, isDismissable: true});
   usePreventScroll();
   useModal();
 
@@ -71,16 +74,16 @@ let TrayWrapper = React.forwardRef(function (props: TrayWrapperProps, ref: DOMRe
       overrideStyles,
       'spectrum-Tray',
       'react-spectrum-Tray'
-    )
+    ),
+    otherProps.className
   );
 
   return (
     <div className={wrapperClassName}>
       <div
-        {...styleProps}
         className={className}
-        ref={domRef}
-        {...overlayProps}
+        ref={ref}
+        {...mergeProps(otherProps, overlayProps)}
         data-testid="tray">
         {children}
       </div>

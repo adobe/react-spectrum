@@ -23,7 +23,7 @@ import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps} from '@react-aria/utils';
-import {Overlay, Popover, Tray} from '@react-spectrum/overlays';
+import {Popover, Tray} from '@react-spectrum/overlays';
 import {Placement} from '@react-types/overlays';
 import React, {ReactElement, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
@@ -128,19 +128,18 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
     let minWidth = isQuiet ? `calc(${buttonWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : buttonWidth;
 
     overlay = (
-      <Overlay isOpen={state.isOpen}>
-        <Popover
-          UNSAFE_style={overlayProps.style}
-          minWidth={minWidth}
-          width={width}
-          UNSAFE_className={classNames(styles, 'spectrum-Dropdown-popover', {'spectrum-Dropdown-popover--quiet': isQuiet})}
-          ref={popoverRef}
-          placement={placement}
-          hideArrow
-          onClose={state.close}>
-          {listbox}
-        </Popover>
-      </Overlay>
+      <Popover
+        isOpen={state.isOpen}
+        UNSAFE_style={overlayProps.style}
+        minWidth={minWidth}
+        width={width}
+        UNSAFE_className={classNames(styles, 'spectrum-Dropdown-popover', {'spectrum-Dropdown-popover--quiet': isQuiet})}
+        ref={popoverRef}
+        placement={placement}
+        hideArrow
+        onClose={state.close}>
+        {listbox}
+      </Popover>
     );
   }
 
