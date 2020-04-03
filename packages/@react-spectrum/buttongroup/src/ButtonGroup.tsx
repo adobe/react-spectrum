@@ -12,13 +12,15 @@
 
 import {classNames, filterDOMProps, SlotProvider, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {SpectrumButtonGroupProps} from '@react-types/buttongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useProvider, useProviderProps} from '@react-spectrum/provider';
+
+let lastScale;
 
 function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
-  // let {scale} = useProvider(); 
+  let {scale} = useProvider();
   props = useProviderProps(props);
   props = useSlotProps(props, 'buttonGroup');
 
@@ -31,49 +33,44 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
 
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
-  let [orientationState, setOrientation] = useState(orientation);
+  let [hasOverflow, setHasOverflow] = useState(false);
 
-  // Figure out for later
-  // useEffect(() => {
-  //   if (domRef.current && orientation === 'horizontal') {
-  //     console.log('agwegawe', orientationState)
-  //     if (orientationState === 'vertical') {
-  //       setOrientation('horizontal');
-  //       return;
-  //     }
-      
-  //     let buttonGroupChildren = Array.from(domRef.current.children);
-  //     let childrenY = buttonGroupChildren.map(child => child.getBoundingClientRect().top);
-  //     console.log('childrenY', childrenY)
-  //     // If any button's top is different from the others, overflow is happening
-  //     if (orientationState === 'horizontal' && !childrenY.every(itemY => itemY === childrenY[0])) {
-  //       setOrientation('vertical');
-  //     }
-  //   }
-  // }, [scale, domRef])
+  let checkForOverflow = useCallback(() => {
+    if (domRef.current && orientation === 'horizontal') {
+      setHasOverflow(false);
+      let buttonGroupChildren = Array.from(domRef.current.children);
+      let childrenY = buttonGroupChildren.map(child => child.getBoundingClientRect().top);
+      // If any button's top is different from the others, overflow is happening
+      if (!childrenY.every(itemY => itemY === childrenY[0])) {
+        setHasOverflow(true);
+      }
+    }
+  }, [domRef, orientation]);
 
-  // should this be useLayoutEffect
   useEffect(() => {
-    // If orientation of ButtonGroup is horizontal, stack buttons vertically if overflow occurs
-    // Reset to horizontal orientation if it doesn't cause overflow anymore
-    let onResize = () => {
-      if (domRef.current && orientation === 'horizontal') {
-        setOrientation('horizontal');
-        let buttonGroupChildren = Array.from(domRef.current.children);
-        let childrenY = buttonGroupChildren.map(child => child.getBoundingClientRect().top);
-        // If any button's top is different from the others, overflow is happening
-        if (!childrenY.every(itemY => itemY === childrenY[0])) {
-          setOrientation('vertical');
+    if (orientation !== 'vertical') {
+      if (scale !== lastScale) {
+        if (lastScale === 'large' && scale === 'medium') {
+          setHasOverflow(false);
+        } else {
+          checkForOverflow();
         }
       }
-    };
+      lastScale = scale;
+    }
+  }, [setHasOverflow, checkForOverflow, scale, orientation]);
 
-    window.addEventListener('resize', onResize);
-    onResize();
-    return () => {
-      window.removeEventListener('resize', onResize);
-    };
-  }, [domRef, orientation, children]);
+  useEffect(() => {
+    if (orientation !== 'vertical') {
+      // I think performance could be optimized here by creating a global, debounced hook for listening to resize
+      // events rather than creating an event-listener per component.
+      window.addEventListener('resize', checkForOverflow);
+      checkForOverflow();
+      return () => {
+        window.removeEventListener('resize', checkForOverflow);
+      };
+    }
+  }, [checkForOverflow, orientation]);
 
   return (
     <div
@@ -85,10 +82,10 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
           styles,
           'spectrum-ButtonGroup',
           {
-            'spectrum-ButtonGroup--vertical': orientationState === 'vertical'
+            'spectrum-ButtonGroup--vertical': hasOverflow || orientation === 'vertical'
           },
           styleProps.className
-        )  
+        )
       }>
       <SlotProvider
         slots={{

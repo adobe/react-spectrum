@@ -13,10 +13,18 @@
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '../';
 import {cleanup, render, within} from '@testing-library/react';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 import V2ButtonGroup from '@react/react-spectrum/ButtonGroup';
+
+let theme = {
+  light: themeLight,
+  medium: scaleMedium
+};
 
 let buttonGroupId = 'button-group';
 let onPressSpy1 = jest.fn();
@@ -26,31 +34,35 @@ let onPressSpy3 = jest.fn();
 function renderComponent(Component, props = {}) {
   if (Component === V2ButtonGroup) {
     return render(
-      <V2ButtonGroup data-testid={buttonGroupId} {...props}>
-        <V2Button>
-          Button1
-        </V2Button>
-        <V2Button>
-          Button2
-        </V2Button>
-        <V2Button>
-          Button3
-        </V2Button>
-      </V2ButtonGroup>
+      <Provider theme={theme}>
+        <V2ButtonGroup data-testid={buttonGroupId} {...props}>
+          <V2Button>
+            Button1
+          </V2Button>
+          <V2Button>
+            Button2
+          </V2Button>
+          <V2Button>
+            Button3
+          </V2Button>
+        </V2ButtonGroup>
+      </Provider>
     );
   } else {
     return render(
-      <ButtonGroup data-testid={buttonGroupId} {...props}>
-        <Button onPress={onPressSpy1}>
-          Button1
-        </Button>
-        <Button onPress={onPressSpy2}>
-          Button2
-        </Button>
-        <Button onPress={onPressSpy3}>
-          Button3
-        </Button>
-      </ButtonGroup>
+      <Provider theme={theme}>
+        <ButtonGroup data-testid={buttonGroupId} {...props}>
+          <Button onPress={onPressSpy1} variant="primary">
+            Button1
+          </Button>
+          <Button onPress={onPressSpy2} variant="primary">
+            Button2
+          </Button>
+          <Button onPress={onPressSpy3} variant="primary">
+            Button3
+          </Button>
+        </ButtonGroup>
+      </Provider>
     );
   }
 }

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '../';
@@ -38,14 +39,14 @@ storiesOf('ButtonGroup', module)
 function render(props) {
   return (
     <ButtonGroup {...props}>
-      <Button variant="primary">Button 1</Button>
-      <Button variant="negative">Button long long long name</Button>
-      <Button variant="cta" isQuiet>Quiet button</Button>
-      <Button variant="primary" isDisabled>Disabled button</Button>
-      <Button variant="secondary">
+      <Button variant="primary" onPress={action('press')}>Button 1</Button>
+      <Button variant="negative" onPress={action('press')}>Button long long long name</Button>
+      <Button variant="cta" isQuiet onPress={action('press')}>Quiet button</Button>
+      <Button variant="primary" isDisabled onPress={action('press')}>Disabled button</Button>
+      <Button variant="secondary" onPress={action('press')}>
         <Bell />
         <Text>With icon</Text>
       </Button>
     </ButtonGroup>
   );
-} 
+}
