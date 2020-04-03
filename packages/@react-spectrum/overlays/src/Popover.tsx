@@ -14,7 +14,7 @@ import {classNames, useDOMRef} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import overrideStyles from './overlays.css';
 import {PlacementAxis} from '@react-types/overlays';
-import React, {HTMLAttributes, ReactNode, RefObject, useLayoutEffect, useRef, useState} from 'react';
+import React, {HTMLAttributes, ReactNode, useLayoutEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {useModal, useOverlay} from '@react-aria/overlays';
 import {VisuallyHidden} from '@react-aria/visually-hidden';

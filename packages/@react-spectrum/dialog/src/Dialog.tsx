@@ -33,10 +33,6 @@ let sizeMap = {
   fullscreenTakeover: 'fullscreenTakeover'
 };
 
-/**
- * Dialogs display important information that users need to acknowledge.
- * They appear over the interface and block further interactions.
- */
 function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   props = useSlotProps(props);
   let {
@@ -120,5 +116,9 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   );
 }
 
+/**
+ * Dialogs display important information that users need to acknowledge.
+ * They appear over the interface and block further interactions.
+ */
 let _Dialog = React.forwardRef(Dialog);
 export {_Dialog as Dialog};

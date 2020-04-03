@@ -58,7 +58,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
 
   let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
-  let popoverRef = useRef<HTMLDivElement>();
+  let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
   let listboxRef = useRef();
 
@@ -74,7 +74,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
 
   let {overlayProps, placement} = useOverlayPosition({
     targetRef: unwrapDOMRef(triggerRef),
-    overlayRef: popoverRef,
+    overlayRef: unwrapDOMRef(popoverRef),
     scrollRef: listboxRef,
     placement: `${direction} ${align}` as Placement,
     shouldFlip: shouldFlip,

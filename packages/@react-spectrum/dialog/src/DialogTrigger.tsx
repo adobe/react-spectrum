@@ -11,12 +11,13 @@
  */
 
 import {DialogContext} from './context';
+import {DOMRefValue} from '@react-types/shared';
 import {Modal, Overlay, Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
+import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
-import {useMediaQuery} from '@react-spectrum/utils';
 import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 
 export function DialogTrigger(props: SpectrumDialogTriggerProps) {
@@ -122,12 +123,11 @@ DialogTrigger.getCollectionNode = function (props: SpectrumDialogTriggerProps) {
 
 function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, ...props}) {
   let triggerRef = useRef<HTMLElement>();
-  // use unwrap dom ref
 
   let overlayRef = useRef<DOMRefValue<HTMLDivElement>>();
   let {overlayProps: popoverProps, placement, arrowProps} = useOverlayPosition({
     targetRef: targetRef || triggerRef,
-    overlayRef: unwrapDOMRef(overlayRef), // update to use
+    overlayRef: unwrapDOMRef(overlayRef),
     placement: props.placement,
     containerPadding: props.containerPadding,
     offset: props.offset,

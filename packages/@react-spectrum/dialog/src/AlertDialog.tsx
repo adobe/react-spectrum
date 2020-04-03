@@ -18,7 +18,6 @@ import {Content, Header} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
-import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/typography';
 import intlMessages from '../intl/*.json';
 import React, {useContext} from 'react';
@@ -28,7 +27,7 @@ import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 /**
- * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge. 
+ * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
  */
 export function AlertDialog(props: SpectrumAlertDialogProps) {
   props = useSlotProps(props);
@@ -63,7 +62,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
   }
 
   return (
-    <Dialog 
+    <Dialog
       {...styleProps}
       UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)}
       size="M"
@@ -77,8 +76,8 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
       <Divider />
       <Content>{children}</Content>
       <ButtonGroup>
-        {secondaryLabel && 
-          <Button 
+        {secondaryLabel &&
+          <Button
             variant="secondary"
             onPress={() => chain(onClose(), onConfirm('secondary'))}
             isDisabled={isSecondaryActionDisabled}
@@ -86,7 +85,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
             {secondaryLabel}
           </Button>
         }
-        {cancelLabel && 
+        {cancelLabel &&
           <Button
             variant="secondary"
             onPress={() => chain(onClose(), onCancel())}
@@ -94,7 +93,7 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
             {cancelLabel}
           </Button>
         }
-        <Button 
+        <Button
           variant={confirmVariant}
           onPress={() => chain(onClose(), onConfirm('primary'))}
           isDisabled={isPrimaryActionDisabled}

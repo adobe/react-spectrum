@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {FocusStrategy, SpectrumMenuTriggerProps} from '@react-types/menu';
 import {MenuContext} from './context';
@@ -17,12 +18,12 @@ import {Overlay, Popover, Tray} from '@react-spectrum/overlays';
 import {Placement, useOverlayPosition} from '@react-aria/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, useRef, useState} from 'react';
+import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useControlledState} from '@react-stately/utils';
-import {useMediaQuery} from '@react-spectrum/utils';
 import {useMenuTrigger} from '@react-aria/menu';
 
 export function MenuTrigger(props: SpectrumMenuTriggerProps) {
-  let menuPopoverRef = useRef<HTMLDivElement>();
+  let menuPopoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let menuTriggerRef = useRef<HTMLElement>();
   let menuRef = useRef<HTMLUListElement>();
   let {
@@ -47,7 +48,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
       ref: menuTriggerRef
     },
     {
-      isOpen, 
+      isOpen,
       setOpen,
       focusStrategy,
       setFocusStrategy
@@ -56,7 +57,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
 
   let {overlayProps, placement} = useOverlayPosition({
     targetRef: menuTriggerRef,
-    overlayRef: menuPopoverRef,
+    overlayRef: unwrapDOMRef(menuPopoverRef),
     scrollRef: menuRef,
     placement: `${direction} ${align}` as Placement,
     shouldFlip: shouldFlip,
@@ -87,7 +88,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     );
   } else {
     overlay = (
-      <Popover 
+      <Popover
         {...overlayProps}
         ref={menuPopoverRef}
         placement={placement}
@@ -99,7 +100,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
       </Popover>
     );
   }
-   
+
   return (
     <Fragment>
       <PressResponder {...menuTriggerProps} ref={menuTriggerRef} isPressed={isOpen}>
