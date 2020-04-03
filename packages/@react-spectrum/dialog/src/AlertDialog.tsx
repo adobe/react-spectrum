@@ -79,6 +79,14 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
       <Divider />
       <Content>{children}</Content>
       <ButtonGroup>
+        {cancelLabel &&
+          <Button
+            variant="secondary"
+            onPress={() => chain(onClose(), onCancel())}
+            autoFocus={autoFocusButton === 'cancel'}>
+            {cancelLabel}
+          </Button>
+        }
         {secondaryActionLabel &&
           <Button
             variant="secondary"
@@ -86,14 +94,6 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
             isDisabled={isSecondaryActionDisabled}
             autoFocus={autoFocusButton === 'secondary'}>
             {secondaryActionLabel}
-          </Button>
-        }
-        {cancelLabel &&
-          <Button
-            variant="secondary"
-            onPress={() => chain(onClose(), onCancel())}
-            autoFocus={autoFocusButton === 'cancel'}>
-            {cancelLabel}
           </Button>
         }
         <Button

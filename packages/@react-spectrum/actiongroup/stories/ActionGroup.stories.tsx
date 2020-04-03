@@ -26,6 +26,16 @@ import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/typography';
 import Undo from '@spectrum-icons/workflow/Undo';
 
+const items =
+  [
+    {children: 'React', name: 'React'},
+    {children: 'Add', name: 'Add'},
+    {children: 'Delete', name: 'Delete'},
+    {children: 'Bell', name: 'Bell'},
+    {children: 'Camera', name: 'Camera'},
+    {children: 'Undo', name: 'Undo'}
+  ];
+
 storiesOf('ActionGroup', module)
   .addParameters({providerSwitcher: {status: 'negative'}})
   .add(
@@ -107,17 +117,15 @@ storiesOf('ActionGroup', module)
   .add(
     'disabledKeys',
     () => render({disabledKeys: ['Add', 'Delete'], selectionMode: 'multiple'})
+  )
+  .add(
+    'dynamic',
+    () => (
+      <ActionGroup onSelectionChange={action('onSelect')} items={items} itemKey="name">
+        {item => <Item textValue={item.name}>{item.children}</Item>}
+      </ActionGroup>
+    )
   );
-
-const items =
-  [
-    {children: 'React', name: 'React'},
-    {children: 'Add', name: 'Add'},
-    {children: 'Delete', name: 'Delete'},
-    {children: 'Bell', name: 'Bell'},
-    {children: 'Camera', name: 'Camera'},
-    {children: 'Undo', name: 'Undo'}
-  ];
 
 const itemsWithIcons =
   [
