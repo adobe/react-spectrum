@@ -57,9 +57,9 @@ function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivE
           styles,
           'spectrum-ActionButtonGroup',
           classNames(buttonStyles, {
-            'spectrum-ActionButtonGroup--vertical': isVertical,
-            'spectrum-ActionButtonGroup--connected': isConnected && !isQuiet,
-            'spectrum-ActionButtonGroup--justified': isJustified
+            'spectrum-ButtonGroup--vertical': isVertical,
+            'spectrum-ButtonGroup--connected': isConnected && !isQuiet,
+            'spectrum-ButtonGroup--justified': isJustified
           }),
           otherProps.UNSAFE_className
         )
