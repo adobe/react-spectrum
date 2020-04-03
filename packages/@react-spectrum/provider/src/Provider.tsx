@@ -42,10 +42,12 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let autoColorScheme = useColorScheme(theme, defaultColorScheme);
   let autoScale = useScale(theme);
   let {locale: prevLocale} = useLocale();
+  // if the new theme doesn't support the prevColorScheme, we must resort to the auto
+  let usePrevColorScheme = !!theme[prevColorScheme];
 
   // importance of color scheme props > parent > auto:(OS > default > omitted)
   let {
-    colorScheme = prevColorScheme || autoColorScheme,
+    colorScheme = usePrevColorScheme ? prevColorScheme : autoColorScheme,
     scale = prevContext ? prevContext.scale : autoScale,
     typekitId,
     locale = prevContext ? prevLocale : null,
