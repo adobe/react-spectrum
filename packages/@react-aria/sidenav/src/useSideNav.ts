@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
+import {HTMLAttributes} from 'react';
 import {ListLayout} from '@react-stately/collections';
 import {SideNavProps} from '@react-types/sidenav';
 import {TreeState} from '@react-stately/tree';
@@ -18,8 +18,8 @@ import {useId} from '@react-aria/utils';
 import {useSelectableCollection} from '@react-aria/selection';
 
 interface SideNavAria {
-  navProps: AllHTMLAttributes<HTMLDivElement>,
-  listProps: AllHTMLAttributes<HTMLUListElement>
+  navProps: HTMLAttributes<HTMLDivElement>,
+  listProps: HTMLAttributes<HTMLUListElement>
 }
 
 export function useSideNav<T>(props: SideNavProps<T>, state: TreeState<T>, layout: ListLayout<T>): SideNavAria {
@@ -27,7 +27,7 @@ export function useSideNav<T>(props: SideNavProps<T>, state: TreeState<T>, layou
     id,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabeldBy,
-    wrapAround
+    shouldFocusWrap
   } = props;
 
   id = useId(id);
@@ -35,7 +35,7 @@ export function useSideNav<T>(props: SideNavProps<T>, state: TreeState<T>, layou
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
     keyboardDelegate: layout,
-    wrapAround
+    shouldFocusWrap
   });
 
   return {

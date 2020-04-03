@@ -24,9 +24,8 @@ interface SelectableListOptions {
   collection: Collection<Node<unknown>>,
   ref?: RefObject<HTMLElement>,
   keyboardDelegate?: KeyboardDelegate,
-  autoFocus?: boolean,
-  focusStrategy?: FocusStrategy,
-  wrapAround?: boolean,
+  autoFocus?: boolean | FocusStrategy,
+  shouldFocusWrap?: boolean,
   isVirtualized?: boolean,
   disallowEmptySelection?: boolean
 }
@@ -42,8 +41,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     ref,
     keyboardDelegate,
     autoFocus,
-    focusStrategy,
-    wrapAround,
+    shouldFocusWrap,
     isVirtualized,
     disallowEmptySelection
   } = props;
@@ -68,8 +66,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     selectionManager,
     keyboardDelegate: delegate,
     autoFocus,
-    focusStrategy,
-    wrapAround,
+    shouldFocusWrap,
     disallowEmptySelection
   });
 
