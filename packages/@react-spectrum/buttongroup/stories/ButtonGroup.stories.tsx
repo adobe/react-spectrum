@@ -41,6 +41,10 @@ storiesOf('ButtonGroup', module)
   );
 
 function render(props) {
+  return <Component {...props} />;
+}
+
+let Component = (props) => {
   let [show, setShow] = useState(false);
   return (
     <ButtonGroup {...props}>
@@ -55,4 +59,4 @@ function render(props) {
       </Button>
     </ButtonGroup>
   );
-}
+};

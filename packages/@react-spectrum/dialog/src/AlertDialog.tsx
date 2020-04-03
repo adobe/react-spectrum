@@ -79,7 +79,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
       }
       <Divider />
       <Content>{children}</Content>
-      <ButtonGroup align='end'>
+      <ButtonGroup align="end">
         {secondaryActionLabel &&
           <Button
             variant="secondary"
