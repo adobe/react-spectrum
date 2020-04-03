@@ -11,7 +11,7 @@
  */
 
 import {HTMLAttributes, RefObject} from 'react';
-import {MenuTriggerProps, MenuTriggerState} from '@react-types/menu';
+import {MenuTriggerState} from '@react-types/menu';
 import {PressProps, useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';

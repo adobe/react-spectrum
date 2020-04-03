@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import React from 'react';
 import {useMessageFormatter} from '@react-aria/i18n';

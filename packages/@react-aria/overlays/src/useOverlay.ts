@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonHTMLAttributes, HTMLAttributes, RefObject, useEffect} from 'react';
+import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useInteractOutside} from '@react-aria/interactions';
 
 interface OverlayProps {
