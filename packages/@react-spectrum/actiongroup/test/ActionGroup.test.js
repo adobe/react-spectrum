@@ -28,7 +28,7 @@ let theme = {
 
 // Describes the tabIndex values of button 1 (column 1), 2, and 3 as focus is moved forward or back.
 // e.g. button2Focused describes button 2 having tabindex=0 while all other buttons have -1
-let expectedButtonIndicies = {
+let expectedButtonIndices = {
   button1Focused: ['0', '-1', '-1'],
   button2Focused: ['-1', '0', '-1'],
   button3Focused: ['-1', '-1', '0']
@@ -38,7 +38,7 @@ let expectedButtonIndicies = {
 class BtnBehavior {
   constructor() {
     this.index = 0;
-    this.buttons = expectedButtonIndicies;
+    this.buttons = expectedButtonIndices;
     this.forward = this.forward.bind(this);
     this.backward = this.backward.bind(this);
   }
@@ -220,7 +220,7 @@ describe('ActionGroup', function () {
     buttonGroup.focus();
     fireEvent.keyDown(document.activeElement, {key: 'Tab'});
 
-    verifyResult(buttons, expectedButtonIndicies.button1Focused);
+    verifyResult(buttons, expectedButtonIndices.button1Focused);
 
     orders.forEach(({action, result}, index) => {
       action(document.activeElement);
@@ -252,7 +252,20 @@ describe('ActionGroup', function () {
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('ActionGroup suports shift + arrow keys to extend selection', function () {
+  it('ActionGroup should not allow selecting all items with cmd + a', function () {
+    let {getAllByRole} = renderComponent({selectionMode: 'multiple'});
+
+    let [button1, button2] = getAllByRole('checkbox');
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('aria-checked', 'true');
+    expect(button2).toHaveAttribute('aria-checked', 'false');
+
+    fireEvent.keyDown(button1, {key: 'a', ctrlKey: true});
+    expect(button1).toHaveAttribute('aria-checked', 'true');
+    expect(button2).toHaveAttribute('aria-checked', 'false');
+  });
+
+  it('ActionGroup supports shift + arrow keys to extend selection', function () {
     let {getAllByRole} = renderComponent({selectionMode: 'multiple'});
 
     let [button1, button2] = getAllByRole('checkbox');
