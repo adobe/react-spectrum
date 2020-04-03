@@ -14,7 +14,7 @@ import {ActionButton} from '@react-spectrum/button';
 import {ActionGroupState, useActionGroupState} from '@react-stately/actiongroup';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, DOMProps, StyleProps } from '@react-types/shared';
+import {DOMRef, DOMProps, SelectionMode, StyleProps} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
