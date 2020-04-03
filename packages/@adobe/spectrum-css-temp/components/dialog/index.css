@@ -290,6 +290,11 @@ governing permissions and limitations under the License.
       ".    footer  footer  buttonGroup buttonGroup ."
       ".    .       .       .           .           .";
   }
+
+  .spectrum-Dialog .spectrum-Dialog-header {
+    justify-content: flex-start;
+  }
+
   .spectrum-Dialog--fullscreen,
   .spectrum-Dialog--fullscreenTakeover {
 
@@ -313,10 +318,6 @@ governing permissions and limitations under the License.
 
     .spectrum-Dialog-heading {
       font-size: var(--spectrum-dialog-title-text-size);
-    }
-
-    .spectrum-Dialog-header {
-      justify-content: flex-start;
     }
   }
 }
