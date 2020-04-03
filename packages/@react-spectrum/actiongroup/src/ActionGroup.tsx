@@ -20,7 +20,7 @@ import {Node} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React, {forwardRef, ReactElement, useRef} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
-import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
+import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {useActionGroup} from '@react-aria/actiongroup';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSelectableItem} from '@react-aria/selection';
@@ -55,11 +55,11 @@ function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivE
       className={
         classNames(
           styles,
-          'spectrum-ButtonGroup',
+          'spectrum-ActionButtonGroup',
           classNames(buttonStyles, {
-            'spectrum-ButtonGroup--vertical': isVertical,
-            'spectrum-ButtonGroup--connected': isConnected && !isQuiet,
-            'spectrum-ButtonGroup--justified': isJustified
+            'spectrum-ActionButtonGroup--vertical': isVertical,
+            'spectrum-ActionButtonGroup--connected': isConnected && !isQuiet,
+            'spectrum-ActionButtonGroup--justified': isJustified
           }),
           otherProps.UNSAFE_className
         )
