@@ -10,22 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import overrideStyles from './overlays.css';
-import {PlacementAxis} from '@react-types/overlays';
-import React, {HTMLAttributes, ReactNode, RefObject, useLayoutEffect, useRef, useState} from 'react';
+import {PopoverProps} from '@react-types/overlays';
+import React, {useLayoutEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {useModal, useOverlay} from '@react-aria/overlays';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
-
-interface PopoverProps extends HTMLAttributes<HTMLElement> {
-  children: ReactNode,
-  placement?: PlacementAxis,
-  arrowProps?: HTMLAttributes<HTMLElement>,
-  hideArrow?: boolean,
-  isOpen?: boolean,
-  onClose?: () => void
-}
 
 /**
  * Arrow placement can be done pointing right or down because those paths start at 0, x or y. Because the
@@ -41,17 +33,17 @@ let arrowPlacement = {
   bottom: 'bottom'
 };
 
-function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
-  let {style, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, className, ...otherProps} = props;
-  let backupRef = useRef();
-  let domRef = ref || backupRef;
+function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
+  let {children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, ...otherProps} = props;
+  let domRef = useDOMRef(ref);
+  let {styleProps} = useStyleProps(props);
   let {overlayProps, dismissButtonProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
   useModal();
 
   return (
     <div
-      {...otherProps}
-      style={style}
+      {...filterDOMProps(otherProps)}
+      {...styleProps}
       ref={domRef}
       className={
         classNames(
@@ -67,7 +59,7 @@ function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
             'spectrum-Popover',
             'react-spectrum-Popover'
           ),
-          className
+          styleProps.className
         )
       }
       role="presentation"

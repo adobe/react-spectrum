@@ -24,6 +24,7 @@ Section.getCollectionNode = function<T> (props: SectionProps<T>): PartialNode<T>
     type: 'section',
     hasChildNodes: true,
     rendered: title,
+    'aria-label': props['aria-label'],
     *childNodes() {
       if (typeof children === 'function') {
         if (!items) {

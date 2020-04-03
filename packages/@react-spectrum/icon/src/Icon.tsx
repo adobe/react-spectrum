@@ -40,7 +40,8 @@ interface IconProps extends DOMProps, StyleProps {
    */
   color?: string,
   /**
-   * TODO
+   * A slot to place the icon in.
+   * @default "icon"
    */
   slot?: string,
   /**

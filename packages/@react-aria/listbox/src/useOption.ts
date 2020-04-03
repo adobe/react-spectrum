@@ -19,6 +19,7 @@ import {useSlotId} from '@react-aria/utils';
 interface OptionProps {
   isDisabled?: boolean,
   isSelected?: boolean,
+  'aria-label'?: string,
   key?: Key,
   ref?: RefObject<HTMLElement>,
   shouldSelectOnPressUp?: boolean,
@@ -50,6 +51,7 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     role: 'option',
     'aria-disabled': isDisabled,
     'aria-selected': isSelected,
+    'aria-label': props['aria-label'],
     'aria-labelledby': labelId,
     'aria-describedby': descriptionId
   };

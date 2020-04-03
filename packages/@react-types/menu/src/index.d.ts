@@ -15,13 +15,6 @@ import {Key, ReactElement} from 'react';
 
 export type FocusStrategy = 'first' | 'last';
 
-export interface MenuTriggerState {
-  isOpen: boolean,
-  setOpen: (value: boolean) => void,
-  focusStrategy: FocusStrategy,
-  setFocusStrategy: (value: FocusStrategy) => void
-}
-
 export interface MenuTriggerProps {
   // trigger?: 'press' | 'longPress',
   align?: Alignment,

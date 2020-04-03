@@ -14,13 +14,11 @@ import {ActionButton} from '@react-spectrum/button';
 import {ActionGroupState, useActionGroupState} from '@react-stately/actiongroup';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, DOMProps, StyleProps } from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
-import React, {useRef} from 'react';
-import {SelectionMode} from '@react-types/shared';
+import React, {forwardRef, useRef} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useActionGroup} from '@react-aria/actiongroup';
@@ -42,12 +40,12 @@ function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivE
     ...otherProps
   } = props;
 
-  let domRef = useDOMRef(ref);
   let state = useActionGroupState({...props, selectionMode});
   let {actionGroupProps, buttonProps} = useActionGroup(props, state);
   let isVertical = orientation === 'vertical';
   let providerProps = {isEmphasized, isDisabled, isQuiet};
   let {styleProps} = useStyleProps(props);
+  let domRef = useDOMRef(ref);
 
   return (
     <div
@@ -81,7 +79,7 @@ function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivE
   );
 }
 
-let _ActionGroup = React.forwardRef(ActionGroup);
+let _ActionGroup = forwardRef(ActionGroup);
 export {_ActionGroup as ActionGroup};
 
 export interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
@@ -100,11 +98,12 @@ export function ActionGroupItem<T>({item, state, ...otherProps}: ActionGroupItem
   let buttonProps = mergeProps(itemProps, otherProps);
 
   return (
-    <ActionButton 
+    <ActionButton
       {...buttonProps}
       ref={ref}
       isSelected={state.selectionManager.selectionMode !== 'none' ? item.isSelected : null}
-      isDisabled={item.isDisabled}>
+      isDisabled={item.isDisabled}
+      aria-label={item['aria-label']}>
       {item.rendered}
     </ActionButton>
   );
