@@ -59,7 +59,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
     if (!dirty) {
       setDirty(true);
     }
-  }, [children, scale, dirty]);
+  }, [children, scale]);
 
   // Check for overflow on window resize
   useEffect(() => {
