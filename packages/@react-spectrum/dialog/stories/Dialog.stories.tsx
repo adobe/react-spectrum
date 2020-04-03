@@ -93,9 +93,10 @@ storiesOf('Dialog/Alert', module)
       variant: 'destructive',
       title: 'Warning Destructive',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      onConfirm: action('confirm'),
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel')
     })
   )
@@ -105,9 +106,10 @@ storiesOf('Dialog/Alert', module)
       variant: 'confirmation',
       title: 'Confirmation Required',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      onConfirm: action('confirm'),
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel')
     })
   )
@@ -117,9 +119,10 @@ storiesOf('Dialog/Alert', module)
       variant: 'information',
       title: 'Informative Alert',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      onConfirm: action('confirm'),
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel')
     })
   )
@@ -129,9 +132,10 @@ storiesOf('Dialog/Alert', module)
       variant: 'error',
       title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      onConfirm: action('confirm'),
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel')
     })
   )
@@ -141,9 +145,10 @@ storiesOf('Dialog/Alert', module)
       variant: 'warning',
       title: 'This is a warning',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      onConfirm: action('confirm'),
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel')
     })
   )
@@ -153,9 +158,10 @@ storiesOf('Dialog/Alert', module)
       variant: 'error',
       title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      onConfirm: action('confirm'),
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel'),
       isPrimaryActionDisabled: true
     })
@@ -166,10 +172,11 @@ storiesOf('Dialog/Alert', module)
       variant: 'error',
       title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      secondaryLabel: 'Secondary button',
-      onConfirm: action('confirm'),
+      secondaryActionLabel: 'Secondary button',
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel'),
       autoFocusButton: 'primary'
     })
@@ -180,10 +187,11 @@ storiesOf('Dialog/Alert', module)
       variant: 'error',
       title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
-      secondaryLabel: 'Secondary button',
+      primaryActionLabel: 'Accept',
+      secondaryActionLabel: 'Secondary button',
       cancelLabel: 'Cancel',
-      onConfirm: action('confirm'),
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel'),
       isSecondaryActionDisabled: true
     })
@@ -194,10 +202,11 @@ storiesOf('Dialog/Alert', module)
       variant: 'error',
       title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      secondaryLabel: 'Secondary button',
-      onConfirm: action('confirm'),
+      secondaryActionLabel: 'Secondary button',
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel'),
       autoFocusButton: 'secondary'
     })
@@ -208,10 +217,11 @@ storiesOf('Dialog/Alert', module)
       variant: 'error',
       title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      secondaryLabel: 'Secondary button',
-      onConfirm: action('confirm'),
+      secondaryActionLabel: 'Secondary button',
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel'),
       autoFocusButton: 'cancel'
     })
@@ -293,7 +303,7 @@ function renderAlert({width = 'auto', ...props}: SpectrumAlertDialogProps) {
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
-        <AlertDialog {...props} onConfirm={props.onConfirm} onCancel={props.onCancel} />
+        <AlertDialog {...props} onPrimaryAction={action('primary')} onSecondaryAction={action('secondary')} onCancel={props.onCancel} />
       </DialogTrigger>
     </div>
   );

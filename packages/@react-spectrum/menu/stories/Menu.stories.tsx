@@ -159,7 +159,7 @@ storiesOf('Menu', module)
             </DialogTrigger>
             <DialogTrigger>
               <Item>Delete...</Item>
-              <AlertDialog title="Delete" variant="destructive" primaryLabel="Delete" cancelLabel="Cancel">
+              <AlertDialog title="Delete" variant="destructive" primaryActionLabel="Delete" cancelLabel="Cancel">
                 Are you sure?
               </AlertDialog>
             </DialogTrigger>

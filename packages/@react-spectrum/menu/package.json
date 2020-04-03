@@ -45,6 +45,7 @@
     "@react-spectrum/typography": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-rc.1",
     "@react-stately/collections": "^3.0.0-alpha.2",
+    "@react-stately/menu": "^3.0.0-alpha.1",
     "@react-stately/tree": "^3.0.0-alpha.2",
     "@react-stately/utils": "^3.0.0-rc.1",
     "@react-types/menu": "^3.0.0-alpha.2",

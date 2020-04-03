@@ -10,11 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
-import {ReactElement} from 'react';
-import {Slots} from '@react-types/layout';
+import {FocusStrategy, MenuTriggerProps, MenuTriggerState} from '@react-types/menu';
+import {useControlledState} from '@react-stately/utils';
+import {useState} from 'react';
 
-export interface SpectrumIllustratedMessageProps extends DOMProps, StyleProps {
-  children: [ReactElement],
-  slots?: Slots
+export function useMenuTriggerState(props: MenuTriggerProps):MenuTriggerState  {
+  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
+  let [focusStrategy, setFocusStrategy] = useState('first' as FocusStrategy);
+
+  return {
+    isOpen, 
+    setOpen, 
+    focusStrategy, 
+    setFocusStrategy
+  };
 }
