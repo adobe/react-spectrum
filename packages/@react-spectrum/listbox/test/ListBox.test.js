@@ -127,8 +127,8 @@ describe('ListBox', function () {
     expect(document.activeElement).toBe(selectedItem);
   });
 
-  it('wraps focus from first to last/last to first item if up/down arrow is pressed if wrapAround is true', function () {
-    let tree = renderComponent({autoFocus: true, wrapAround: true});
+  it('wraps focus from first to last/last to first item if up/down arrow is pressed if shouldFocusWrap is true', function () {
+    let tree = renderComponent({autoFocus: true, shouldFocusWrap: true});
     let listbox = tree.getByRole('listbox');
     let options = within(listbox).getAllByRole('option');
     let firstItem = options[0];

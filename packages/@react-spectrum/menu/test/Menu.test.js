@@ -176,8 +176,8 @@ describe('Menu', function () {
   // V3 only behavior
   it.each`
     Name        | Component | props
-    ${'Menu'}   | ${Menu}   | ${{autoFocus: true, wrapAround: true}}
-  `('$Name wraps focus from first to last/last to first item if up/down arrow is pressed if wrapAround is true', function ({Component, props}) {
+    ${'Menu'}   | ${Menu}   | ${{autoFocus: true, shouldFocusWrap: true}}
+  `('$Name wraps focus from first to last/last to first item if up/down arrow is pressed if shouldFocusWrap is true', function ({Component, props}) {
     let tree = renderComponent(Component, {}, props);
     let menu = tree.getByRole('menu');
     let menuItems = within(menu).getAllByRole('menuitem');

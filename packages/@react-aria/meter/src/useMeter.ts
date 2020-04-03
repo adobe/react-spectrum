@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
 import {DOMProps} from '@react-types/shared';
+import {HTMLAttributes} from 'react';
 import {ProgressBarBaseProps} from '@react-types/progress';
 import {useProgressBar} from '@react-aria/progress';
 
 interface MeterAria {
-  meterProps: AllHTMLAttributes<HTMLDivElement>,
-  labelProps: AllHTMLAttributes<HTMLLabelElement>
+  meterProps: HTMLAttributes<HTMLDivElement>,
+  labelProps: HTMLAttributes<HTMLLabelElement>
 }
 
 interface MeterAriaProps extends ProgressBarBaseProps, DOMProps {
