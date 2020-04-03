@@ -69,17 +69,11 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
       size="M"
       role="alertdialog">
       <Heading>{title}</Heading>
-      <Header>
-        <Flex
-          justifyContent="flex-end"
-          width="100%">
-          {(variant === 'error' || variant === 'warning') &&
-            <AlertMedium
-              slot="typeIcon"
-              aria-label={formatMessage('alert')} />
-          }
-        </Flex>
-      </Header>
+      {(variant === 'error' || variant === 'warning') &&
+        <AlertMedium
+          slot="typeIcon"
+          aria-label={formatMessage('alert')} />
+      }
       <Divider />
       <Content>{children}</Content>
       <ButtonGroup>
