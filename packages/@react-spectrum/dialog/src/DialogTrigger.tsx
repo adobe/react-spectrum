@@ -17,7 +17,7 @@ import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
-import {useControlledState} from '@react-stately/utils';
+import {useDialogTriggerState} from '@react-stately/dialog';
 import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 
 export function DialogTrigger(props: SpectrumDialogTriggerProps) {
@@ -48,22 +48,15 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
     type = mobileType;
   }
 
-  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
-  let onPress = () => {
-    setOpen(!isOpen);
-  };
-
-  let onClose = () => {
-    setOpen(false);
-  };
+  let state = useDialogTriggerState(props);
 
   if (type === 'popover') {
     return (
       <PopoverTrigger
         {...positionProps}
-        isOpen={isOpen}
-        onPress={onPress}
-        onClose={onClose}
+        isOpen={state.isOpen}
+        onPress={state.toggle}
+        onClose={state.close}
         targetRef={targetRef}
         trigger={trigger}
         content={content}
@@ -76,20 +69,20 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
       case 'fullscreen':
       case 'fullscreenTakeover':
         return (
-          <Modal isOpen={isOpen} isDismissable={false} onClose={onClose} type={type}>
-            {typeof content === 'function' ? content(onClose) : content}
+          <Modal isOpen={state.isOpen} isDismissable={false} onClose={state.close} type={type}>
+            {typeof content === 'function' ? content(state.close) : content}
           </Modal>
         );
       case 'modal':
         return (
-          <Modal isOpen={isOpen} isDismissable={isDismissable} onClose={onClose}>
-            {typeof content === 'function' ? content(onClose) : content}
+          <Modal isOpen={state.isOpen} isDismissable={isDismissable} onClose={state.close}>
+            {typeof content === 'function' ? content(state.close) : content}
           </Modal>
         );
       case 'tray':
         return (
-          <Tray isOpen={isOpen} onClose={onClose}>
-            {typeof content === 'function' ? content(onClose) : content}
+          <Tray isOpen={state.isOpen} onClose={state.close}>
+            {typeof content === 'function' ? content(state.close) : content}
           </Tray>
         );
     }
@@ -98,9 +91,9 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
   return (
     <DialogTriggerBase
       type={type}
-      isOpen={isOpen}
-      onPress={onPress}
-      onClose={onClose}
+      isOpen={state.isOpen}
+      onPress={state.toggle}
+      onClose={state.close}
       isDismissable={isDismissable}
       trigger={trigger}
       overlay={renderOverlay()} />

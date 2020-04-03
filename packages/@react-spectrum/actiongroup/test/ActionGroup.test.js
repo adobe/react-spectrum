@@ -252,7 +252,7 @@ describe('ActionGroup', function () {
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
-  it('ActionGroup suports shift + arrow keys to extend selecption', function () {
+  it('ActionGroup suports shift + arrow keys to extend selection', function () {
     let {getAllByRole} = renderComponent({selectionMode: 'multiple'});
 
     let [button1, button2] = getAllByRole('checkbox');

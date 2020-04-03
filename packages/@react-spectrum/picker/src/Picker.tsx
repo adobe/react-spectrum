@@ -16,6 +16,8 @@ import {classNames, dimensionValue, filterDOMProps, SlotProvider, unwrapDOMRef, 
 import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusScope} from '@react-aria/focus';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
@@ -27,6 +29,7 @@ import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/typography';
 import {useFormProps} from '@react-spectrum/form';
+import {useMessageFormatter} from '@react-aria/i18n';
 import {useOverlayPosition} from '@react-aria/overlays';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSelect} from '@react-aria/select';
@@ -36,12 +39,13 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
+  let formatMessage = useMessageFormatter(intlMessages);
   let {
     isDisabled,
     direction = 'bottom',
     align = 'start',
     shouldFlip = true,
-    placeholder = 'Select an item',
+    placeholder = formatMessage('placeholder'),
     validationState,
     isQuiet,
     label,
@@ -111,7 +115,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray isOpen={state.isOpen} onClose={() => state.setOpen(false)}>
+      <Tray isOpen={state.isOpen} onClose={state.close}>
         {listbox}
       </Tray>
     );
@@ -133,7 +137,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
         ref={popoverRef}
         placement={placement}
         hideArrow
-        onClose={() => state.setOpen(false)}>
+        onClose={state.close}>
         {listbox}
       </Popover>
     );
