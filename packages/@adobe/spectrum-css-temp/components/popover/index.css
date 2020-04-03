@@ -59,7 +59,6 @@ governing permissions and limitations under the License.
   --spectrum-popover-tip-size: var(--spectrum-popover-tip-width);
   --spectrum-popover-tip-borderWidth: var(--spectrum-popover-border-size);
   /* https://stackoverflow.com/questions/44170229/how-to-prevent-half-pixel-svg-shift-on-high-pixel-ratio-devices-retina */
-  transform: translate(0, 0);
   -webkit-transform: translate(0, 0);
 
   .spectrum-Popover-tip-triangle {
@@ -106,7 +105,7 @@ governing permissions and limitations under the License.
 .spectrum-Popover--right {
   .spectrum-Popover-tip {
     top: 50%;
-    margin-top: -12px;
+    margin-top: calc(var(--spectrum-global-dimension-size-150) * -1);
   }
 }
 
@@ -142,6 +141,6 @@ governing permissions and limitations under the License.
 .spectrum-Popover--top {
   .spectrum-Popover-tip {
     left: 50%;
-    margin-left: -12px;
+    margin-left: calc(var(--spectrum-global-dimension-size-150) * -1);
   }
 }

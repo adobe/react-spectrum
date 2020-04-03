@@ -133,11 +133,12 @@ function Arrow(props) {
   ];
   let arrowProps = props.arrowProps;
 
+  /* use ceil because the svg needs to always accomodate the path inside it */
   return (
     <svg
       xmlns="http://www.w3.org/svg/2000"
-      width={landscape ? secondary : primary}
-      height={landscape ? primary : secondary}
+      width={Math.ceil(landscape ? secondary : primary)}
+      height={Math.ceil(landscape ? primary : secondary)}
       style={props.style}
       className={classNames(styles, 'spectrum-Popover-tip')}
       ref={ref}
@@ -160,4 +161,6 @@ export {_Popover as Popover};
  * This didn't work because again the issue was inside the svg
  * - I didn't try drawing the svg backwards
  * This could still be tried
+ * - I tried changing the calculation of the popover placement AND the svg height/width so that they were all rounded
+ * This seems to have done the trick
  */
