@@ -10,4 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
+export * from './ActionGroupKeyboardDelegate';
 export * from './useActionGroup';

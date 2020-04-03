@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionGroupKeyboardDelegate, ActionGroupState} from '@react-stately/actiongroup';
+import {ActionGroupKeyboardDelegate} from '../src';
 import {ActionGroupProps} from '@react-types/actiongroup';
+import {ActionGroupState} from '@react-stately/actiongroup';
 import {FocusEvent, Orientation} from '@react-types/shared';
 import {HTMLAttributes, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
