@@ -11,9 +11,10 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
-import React, {ReactElement, useRef} from 'react';
+import React, {forwardRef, ReactElement, useRef} from 'react';
 import trayStyles from '@adobe/spectrum-css-temp/components/tray/vars.css';
 import {Underlay} from './Underlay';
 import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
@@ -29,11 +30,11 @@ interface TrayWrapperProps extends TrayProps {
   isOpen?: boolean
 }
 
-export function Tray(props: TrayProps) {
+function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
   let {children, onClose, ...otherProps} = props;
 
   return (
-    <Overlay {...otherProps}>
+    <Overlay {...otherProps} ref={ref}>
       <Underlay />
       <TrayWrapper onClose={onClose}>
         {children}
@@ -82,3 +83,6 @@ function TrayWrapper({children, onClose, isOpen}: TrayWrapperProps) {
     </div>
   );
 }
+
+let _Tray = forwardRef(Tray);
+export {_Tray as Tray};

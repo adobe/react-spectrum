@@ -390,4 +390,44 @@ storiesOf('Picker', module)
         <Item>Three</Item>
       </Picker>
     )
+  )
+  .add(
+    'isOpen (controlled)',
+    () => (
+      <Picker label="Test" isOpen onOpenChange={action('onOpenChange')} onSelectionChange={action('selectionChange')}>
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'defaultOpen (uncontrolled)',
+    () => (
+      <Picker label="Test" defaultOpen onOpenChange={action('onOpenChange')} onSelectionChange={action('selectionChange')}>
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'selectedKey (controlled)',
+    () => (
+      <Picker label="Test" selectedKey="One" onSelectionChange={action('selectionChange')}>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'defaultSelectedKey (uncontrolled)',
+    () => (
+      <Picker label="Test" defaultSelectedKey="One" onSelectionChange={action('selectionChange')}>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
+      </Picker>
+    )
   );

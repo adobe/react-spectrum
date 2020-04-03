@@ -11,6 +11,7 @@
  */
 
 import {HTMLAttributes, useEffect} from 'react';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';

@@ -11,7 +11,7 @@
  */
 
 import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
-import {classNames, filterDOMProps, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import DashSmall from '@spectrum-icons/ui/DashSmall';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -24,7 +24,6 @@ import {useToggleState} from '@react-stately/toggle';
 
 function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   props = useProviderProps(props);
-  props = useSlotProps(props);
   let {
     isIndeterminate = false,
     isEmphasized = false,

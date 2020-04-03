@@ -22,7 +22,7 @@ import {Item, ListBox, Section} from '../';
 import {Label} from '@react-spectrum/label';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {Popover} from '@react-spectrum/overlays';
-import React, {Fragment} from 'react';
+import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/typography';
 
@@ -81,16 +81,16 @@ for (let i = 0; i < 50; i++) {
   for (let j = 0; j < 50; j++) {
     children.push({name: `Section ${i}, Item ${j}`});
   }
-  
+
   lotsOfSections.push({name: 'Section ' + i, children});
 }
 
 storiesOf('ListBox', module)
   .addDecorator(story => (
-    <Fragment>
+    <div style={{display: 'flex', flexDirection: 'column'}}>
       <Label id="label">Choose an item</Label>
-      {story()}
-    </Fragment>
+      {React.cloneElement(story(), {style: {position: 'static', maxHeight: 300}} as any)}
+    </div>
   ))
   .add(
     'Default ListBox',
@@ -105,7 +105,7 @@ storiesOf('ListBox', module)
   .add(
     'ListBox w/ sections',
     () => (
-      <Popover isOpen hideArrow style={{maxHeight: 300}}>
+      <Popover isOpen hideArrow>
         <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
           {item => (
             <Section items={item.children} title={item.name}>
@@ -119,11 +119,25 @@ storiesOf('ListBox', module)
   .add(
     'ListBox w/ many sections',
     () => (
-      <Popover isOpen hideArrow style={{maxHeight: 300}}>
+      <Popover isOpen hideArrow>
         <ListBox width={200} aria-labelledby="label" items={lotsOfSections} itemKey="name" onSelectionChange={action('onSelectionChange')}>
           {item => (
             <Section items={item.children} title={item.name}>
               {(item: any) => <Item>{item.name}</Item>}
+            </Section>
+          )}
+        </ListBox>
+      </Popover>
+    )
+  )
+  .add(
+    'ListBox w/ sections and no title',
+    () => (
+      <Popover isOpen hideArrow>
+        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+          {item => (
+            <Section items={item.children} aria-label={item.name}>
+              {item => <Item>{item.name}</Item>}
             </Section>
           )}
         </ListBox>
@@ -153,6 +167,25 @@ storiesOf('ListBox', module)
             <Item>Three</Item>
           </Section>
           <Section title="Section 2">
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Section>
+        </ListBox>
+      </Popover>
+    )
+  )
+  .add(
+    'Static with sections and no title',
+    () => (
+      <Popover isOpen hideArrow>
+        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
+          <Section aria-label="Section 1">
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Section>
+          <Section aria-label="Section 2">
             <Item>One</Item>
             <Item>Two</Item>
             <Item>Three</Item>
@@ -469,7 +502,7 @@ storiesOf('ListBox', module)
   .add(
     'with semantic elements (generative)',
     () => (
-      <Popover isOpen hideArrow> 
+      <Popover isOpen hideArrow>
         <ListBox width={200} aria-labelledby="label"items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
           {item => (
             <Section items={item.children} title={item.name}>
@@ -480,7 +513,7 @@ storiesOf('ListBox', module)
       </Popover>
     )
   );
-  
+
 let customOption = (item) => {
   let Icon = iconMap[item.icon];
   return (
@@ -488,5 +521,5 @@ let customOption = (item) => {
       {item.icon && <Icon size="S" />}
       <Text>{item.name}</Text>
     </Item>
-  );	
+  );
 };

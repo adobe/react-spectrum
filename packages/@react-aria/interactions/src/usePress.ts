@@ -290,6 +290,15 @@ export function usePress(props: PressHookProps): PressResult {
         }
       };
 
+      pressProps.onMouseDown = (e) => {
+        if (e.button === 0) {
+          // Chrome and Firefox on touch Windows devices require mouse down events
+          // to be canceled in addition to pointer events, or an extra asynchronous
+          // focus event will be fired.
+          e.preventDefault();
+        }
+      };
+
       let unbindEvents = () => {
         document.removeEventListener('pointermove', onPointerMove, false);
         document.removeEventListener('pointerup', onPointerUp, false);

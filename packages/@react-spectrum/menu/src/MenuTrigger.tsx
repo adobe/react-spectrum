@@ -10,19 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {MenuContext} from './context';
 import {Overlay, Popover, Tray} from '@react-spectrum/overlays';
-import {Placement, useOverlayPosition} from '@react-aria/overlays';
+import {Placement} from '@react-types/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
-import {useMediaQuery} from '@react-spectrum/utils';
+import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
+import {useOverlayPosition} from '@react-aria/overlays';
 
 export function MenuTrigger(props: SpectrumMenuTriggerProps) {
-  let menuPopoverRef = useRef<HTMLDivElement>();
+  let menuPopoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let menuTriggerRef = useRef<HTMLElement>();
   let menuRef = useRef<HTMLUListElement>();
   let {
@@ -36,10 +38,6 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let [menuTrigger, menu] = React.Children.toArray(children);
   let state = useMenuTriggerState(props);
 
-  let onClose = () => {
-    state.setOpen(false);
-  };
-
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
       ref: menuTriggerRef
@@ -49,7 +47,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
 
   let {overlayProps, placement} = useOverlayPosition({
     targetRef: menuTriggerRef,
-    overlayRef: menuPopoverRef,
+    overlayRef: unwrapDOMRef(menuPopoverRef),
     scrollRef: menuRef,
     placement: `${direction} ${align}` as Placement,
     shouldFlip: shouldFlip,
@@ -60,7 +58,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let menuContext = {
     ...menuProps,
     ref: menuRef,
-    onClose,
+    onClose: state.close,
     closeOnSelect,
     autoFocus: state.focusStrategy,
     UNSAFE_style: {
@@ -72,7 +70,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray isOpen={state.isOpen} onClose={onClose}>
+      <Tray isOpen={state.isOpen} onClose={state.close}>
         <FocusScope restoreFocus>
           {menu}
         </FocusScope>
@@ -80,28 +78,28 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     );
   } else {
     overlay = (
-      <Popover 
-        {...overlayProps}
-        ref={menuPopoverRef}
-        placement={placement}
-        hideArrow
-        onClose={onClose}>
-        <FocusScope restoreFocus>
-          {menu}
-        </FocusScope>
-      </Popover>
+      <Overlay isOpen={state.isOpen}>
+        <Popover
+          UNSAFE_style={overlayProps.style}
+          ref={menuPopoverRef}
+          placement={placement}
+          hideArrow
+          onClose={state.close}>
+          <FocusScope restoreFocus>
+            {menu}
+          </FocusScope>
+        </Popover>
+      </Overlay>
     );
   }
-   
+
   return (
     <Fragment>
       <PressResponder {...menuTriggerProps} ref={menuTriggerRef} isPressed={state.isOpen}>
         {menuTrigger}
       </PressResponder>
       <MenuContext.Provider value={menuContext}>
-        <Overlay isOpen={state.isOpen}>
-          {overlay}
-        </Overlay>
+        {overlay}
       </MenuContext.Provider>
     </Fragment>
   );
