@@ -15,7 +15,6 @@ import {ReactElement} from 'react';
 import {Slots} from '@react-types/layout';
 
 export interface SpectrumIllustratedMessageProps extends DOMProps, StyleProps {
-  ariaLevel?: number,
   children: [ReactElement],
   slots?: Slots
 }

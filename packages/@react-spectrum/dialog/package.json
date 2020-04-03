@@ -43,6 +43,7 @@
     "@react-spectrum/typography": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
     "@react-spectrum/view": "^3.0.0-alpha.1",
+    "@react-stately/dialog": "^3.0.0-alpha.1",
     "@react-stately/utils": "^3.0.0-alpha.2",
     "@react-types/dialog": "^3.0.0-alpha.2",
     "@react-types/shared": "^3.0.0-alpha.2",

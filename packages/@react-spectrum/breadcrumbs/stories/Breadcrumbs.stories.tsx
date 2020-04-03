@@ -73,6 +73,10 @@ storiesOf('Breadcrumbs', module)
     () => render({isDisabled: true, size: 'L'})
   )
   .add(
+    'isDisabled: true, maxVisibleItems: 4',
+    () => renderMany({isDisabled: true})
+  )
+  .add(
     'isHeading: true',
     () => render({isHeading: true})
   )

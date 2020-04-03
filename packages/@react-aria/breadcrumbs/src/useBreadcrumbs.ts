@@ -18,7 +18,7 @@ import {useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface BreadcrumbsAria {
-  breadcrumbProps: HTMLAttributes<HTMLDivElement>
+  breadcrumbsProps: HTMLAttributes<HTMLDivElement>
 }
 
 export function useBreadcrumbs<T>(props: BreadcrumbsProps<T> & DOMProps): BreadcrumbsAria {
@@ -29,7 +29,7 @@ export function useBreadcrumbs<T>(props: BreadcrumbsProps<T> & DOMProps): Breadc
 
   let formatMessage = useMessageFormatter(intlMessages);
   return {
-    breadcrumbProps: {
+    breadcrumbsProps: {
       id: useId(id),
       'aria-label': ariaLabel || formatMessage('breadcrumbs')
     }
