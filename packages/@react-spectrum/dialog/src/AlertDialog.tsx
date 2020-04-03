@@ -11,7 +11,8 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {Button, ButtonGroup} from '@react-spectrum/button';
+import {Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
@@ -78,7 +79,7 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
       }
       <Divider />
       <Content>{children}</Content>
-      <ButtonGroup>
+      <ButtonGroup align="end">
         {cancelLabel &&
           <Button
             variant="secondary"

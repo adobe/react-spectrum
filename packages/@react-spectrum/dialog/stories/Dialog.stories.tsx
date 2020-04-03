@@ -11,8 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton, Button, ButtonGroup} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
@@ -78,6 +79,10 @@ storiesOf('Dialog', module)
   .add(
     'three buttons',
     () => renderWithThreeButtons({})
+  )
+  .add(
+    'three buttons, vertical orientation',
+    () => renderWithThreeButtonsVertical({})
   )
   .add(
     'cleared content',
@@ -391,6 +396,28 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
             <Divider />
             <Content>{singleParagraph()}</Content>
             <ButtonGroup>
+              <Button variant="secondary" onPress={close}>Secondary</Button>
+              <Button variant="primary" onPress={close}>Primary</Button>
+              <Button variant="cta" onPress={close} autoFocus>CTA</Button>
+            </ButtonGroup>
+          </Dialog>
+        )}
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderWithThreeButtonsVertical({width = 'auto', ...props}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger defaultOpen>
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog {...props}>
+            <Header><Heading>The Heading</Heading></Header>
+            <Divider />
+            <Content>{singleParagraph()}</Content>
+            <ButtonGroup orientation="vertical">
               <Button variant="secondary" onPress={close}>Secondary</Button>
               <Button variant="primary" onPress={close}>Primary</Button>
               <Button variant="cta" onPress={close} autoFocus>CTA</Button>
