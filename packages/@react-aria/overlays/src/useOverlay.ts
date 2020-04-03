@@ -11,6 +11,7 @@
  */
 
 import {ButtonHTMLAttributes, HTMLAttributes, RefObject, useEffect} from 'react';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useInteractOutside} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';

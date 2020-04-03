@@ -13,6 +13,7 @@
 import Asterisk from '@spectrum-icons/ui/Asterisk';
 import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import React from 'react';
 import {SpectrumLabelProps} from '@react-types/label';
