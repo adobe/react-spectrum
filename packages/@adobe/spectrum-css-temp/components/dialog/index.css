@@ -192,7 +192,13 @@ governing permissions and limitations under the License.
   justify-content: flex-end;
   /* this padding should be safe as button group is always end aligned */
   padding-inline-start: var(--spectrum-dialog-gap-size);
+
+  &.spectrum-Dialog-buttonGroup--noFooter {
+    grid-area: footer-start / footer-start / buttonGroup-end / buttonGroup-end;
+  }
 }
+
+
 
 .spectrum-Dialog--dismissable {
   .spectrum-Dialog-buttonGroup {
