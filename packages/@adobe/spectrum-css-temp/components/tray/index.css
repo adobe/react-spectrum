@@ -50,7 +50,6 @@
   max-height: calc(100% - var(--spectrum-tray-margin-top));
   position: absolute;
   bottom: 0;
-  overflow: auto;
   outline: none;
 
   border-radius: var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-border-radius) var(--spectrum-tray-border-radius);
