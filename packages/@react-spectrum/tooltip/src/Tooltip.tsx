@@ -10,14 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import React, {RefObject, useRef} from 'react';
 import {SpectrumTooltipProps} from '@react-types/tooltip';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
 import {useTooltip} from '@react-aria/tooltip';
 
 export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefObject<HTMLDivElement>) => {
-  props = useSlotProps(props);
   ref = ref || useRef();
   let {
     variant = 'neutral',

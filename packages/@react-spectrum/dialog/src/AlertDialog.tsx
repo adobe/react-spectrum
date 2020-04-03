@@ -13,7 +13,7 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button, ButtonGroup} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
-import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
@@ -28,8 +28,10 @@ import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/dialog/vars.css';
 import {useMessageFormatter} from '@react-aria/i18n';
 
+/**
+ * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
+ */
 function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
-  props = useSlotProps(props);
   let {
     onClose = () => {}
   } = useContext(DialogContext) || {} as DialogContextValue;

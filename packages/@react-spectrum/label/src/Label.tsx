@@ -11,7 +11,7 @@
  */
 
 import Asterisk from '@spectrum-icons/ui/Asterisk';
-import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -23,7 +23,6 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   props = useProviderProps(props);
-  props = useSlotProps(props, 'label');
   let {
     children,
     labelPosition = 'top',

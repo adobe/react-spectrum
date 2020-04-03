@@ -17,14 +17,12 @@ import {
   gridStyleProps,
   SlotProvider,
   useDOMRef,
-  useSlotProps,
   useStyleProps
 } from '@react-spectrum/utils';
 import {GridProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 
 function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
-  props = useSlotProps(props);
   let {
     children,
     slots,

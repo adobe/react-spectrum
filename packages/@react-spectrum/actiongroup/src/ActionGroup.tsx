@@ -13,7 +13,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroupState, useActionGroupState} from '@react-stately/actiongroup';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {classNames, filterDOMProps, useDOMRef, useSlotProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
 import {DOMProps, DOMRef, SelectionMode, StyleProps} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-stately/collections';
@@ -25,7 +25,6 @@ import {useActionGroup} from '@react-aria/actiongroup';
 import {useSelectableItem} from '@react-aria/selection';
 
 function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
-  props = useSlotProps(props);
   let {
     isEmphasized,
     isConnected, // no quiet option available in this mode
