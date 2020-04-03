@@ -131,9 +131,9 @@ const itemsWithIcons =
 
 const toolIcons =
   [
-    {children: <Brush />, name: 'Brush'},
-    {children: <Select />, name: 'Select'},
-    {children: <RegionSelect />, name: 'RegionSelect'}
+    {children: <Brush />, 'aria-label': 'Brush'},
+    {children: <Select />, 'aria-label': 'Select'},
+    {children: <RegionSelect />, 'aria-label': 'RegionSelect'}
   ];
 
 function render(props = {}, items: any = itemsWithIcons) {

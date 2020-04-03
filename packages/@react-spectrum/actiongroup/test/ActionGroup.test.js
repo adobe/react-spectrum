@@ -361,4 +361,17 @@ describe('ActionGroup', function () {
     expect(button1).toHaveAttribute('aria-checked', 'false');
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
+  
+  it('ActionGroup allow aria-label on Item', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup>
+          <Item aria-label="Test">Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radio');
+    expect(button1).toHaveAttribute('aria-label', 'Test');
+  });
 });

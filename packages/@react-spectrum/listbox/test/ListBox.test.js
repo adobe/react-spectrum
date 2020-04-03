@@ -546,4 +546,24 @@ describe('ListBox', function () {
     expect(option).toHaveAttribute('aria-labelledby', label.id);
     expect(option).toHaveAttribute('aria-describedby', description.id);
   });
+
+  it('supports aria-label on sections and items', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <ListBox>
+          <Section aria-label="Section">
+            <Item aria-label="Item"><Bell /></Item>
+          </Section>
+        </ListBox>
+      </Provider>
+    );
+
+    let listbox = tree.getByRole('listbox');
+    let group = within(listbox).getByRole('group');
+    expect(group).toHaveAttribute('aria-label', 'Section');
+    let option = within(listbox).getByRole('option');
+    expect(option).toHaveAttribute('aria-label', 'Item');
+    expect(option).not.toHaveAttribute('aria-labelledby');
+    expect(option).not.toHaveAttribute('aria-describedby');
+  });
 });

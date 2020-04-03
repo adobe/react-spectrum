@@ -133,7 +133,11 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
             rectHeight = previousLayoutInfo.rect.height;
             isEstimated = width !== this.lastWidth || curNode !== lastNode || previousLayoutInfo.estimatedSize;
           } else {
-            rectHeight = node.type === 'item' ? this.estimatedRowHeight : this.estimatedHeadingHeight;
+            if (node.type === 'item') {
+              rectHeight = this.estimatedRowHeight;
+            } else {
+              rectHeight = (node.rendered ? this.estimatedHeadingHeight : 0);
+            }
             isEstimated = true;
           }
         }

@@ -131,6 +131,20 @@ storiesOf('ListBox', module)
     )
   )
   .add(
+    'ListBox w/ sections and no title',
+    () => (
+      <Popover isOpen hideArrow>
+        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+          {item => (
+            <Section items={item.children} aria-label={item.name}>
+              {item => <Item>{item.name}</Item>}
+            </Section>
+          )}
+        </ListBox>
+      </Popover>
+    )
+  )
+  .add(
     'Static',
     () => (
       <Popover isOpen hideArrow>
@@ -153,6 +167,25 @@ storiesOf('ListBox', module)
             <Item>Three</Item>
           </Section>
           <Section title="Section 2">
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Section>
+        </ListBox>
+      </Popover>
+    )
+  )
+  .add(
+    'Static with sections and no title',
+    () => (
+      <Popover isOpen hideArrow>
+        <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')}>
+          <Section aria-label="Section 1">
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Section>
+          <Section aria-label="Section 2">
             <Item>One</Item>
             <Item>Two</Item>
             <Item>Three</Item>

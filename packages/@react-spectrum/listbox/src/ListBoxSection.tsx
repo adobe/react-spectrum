@@ -31,7 +31,11 @@ interface ListBoxSectionProps<T> {
 export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
   let {state, children, reusableView, header} = props;
   let item = reusableView.content;
-  let {headingProps, groupProps} = useListBoxSection();
+  let {headingProps, groupProps} = useListBoxSection({
+    heading: item.rendered,
+    'aria-label': item['aria-label']
+  });
+
   let {separatorProps} = useSeparator({
     elementType: 'li'
   });

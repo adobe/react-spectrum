@@ -93,7 +93,8 @@ export function ActionGroupItem<T>({item, state, ...otherProps}: ActionGroupItem
       {...buttonProps}
       ref={ref}
       isSelected={state.selectionManager.selectionMode !== 'none' ? item.isSelected : null}
-      isDisabled={item.isDisabled}>
+      isDisabled={item.isDisabled}
+      aria-label={item['aria-label']}>
       {item.rendered}
     </ActionButton>
   );
