@@ -90,14 +90,6 @@ storiesOf('MenuTrigger', module)
     () => render({isDisabled: true})
   )
   .add(
-    'trigger="longPress" TODO out of scope',
-    () => render()
-  )
-  .add(
-    'menu+submenus TODO out of scope',
-    () => render()
-  )
-  .add(
     'menu with role=listbox',
     () => render({}, {role: 'listbox'})
   )

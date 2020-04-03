@@ -55,6 +55,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     {
       isSelected,
       isDisabled,
+      'aria-label': item['aria-label'],
       key,
       onClose,
       closeOnSelect,

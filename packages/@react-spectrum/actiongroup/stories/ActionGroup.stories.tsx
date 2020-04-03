@@ -89,10 +89,6 @@ storiesOf('ActionGroup', module)
     () => render({isQuiet: true}, toolIcons)
   )
   .add(
-    'icons only, holdAffordance',
-    () => render({}, toolIconsAffordance)
-  )
-  .add(
     'icons only, orientation: vertical',
     () => render({orientation: 'vertical'}, toolIcons)
   )
@@ -135,16 +131,9 @@ const itemsWithIcons =
 
 const toolIcons =
   [
-    {children: <Brush />, name: 'Brush'},
-    {children: <Select />, name: 'Select'},
-    {children: <RegionSelect />, name: 'RegionSelect'}
-  ];
-
-const toolIconsAffordance =
-  [
-    {children: <Brush />, holdAffordance: true, name: 'Brush'},
-    {children: <Select />, holdAffordance: true, name: 'Select'},
-    {children: <RegionSelect />, holdAffordance: true, name: 'RegionSelect'}
+    {children: <Brush />, 'aria-label': 'Brush'},
+    {children: <Select />, 'aria-label': 'Select'},
+    {children: <RegionSelect />, 'aria-label': 'RegionSelect'}
   ];
 
 function render(props = {}, items: any = itemsWithIcons) {
