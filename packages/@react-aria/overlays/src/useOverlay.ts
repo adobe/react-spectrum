@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, RefObject, useEffect} from 'react';
+import {ButtonHTMLAttributes, HTMLAttributes, RefObject, useEffect} from 'react';
 import {useInteractOutside} from '@react-aria/interactions';
 
 interface OverlayProps {
@@ -22,14 +22,14 @@ interface OverlayProps {
 }
 
 interface OverlayAria {
-  overlayProps: AllHTMLAttributes<HTMLElement>
+  overlayProps: HTMLAttributes<HTMLElement>
 }
 
 const visibleOverlays: RefObject<HTMLElement>[] = [];
 
 export function useOverlay(props: OverlayProps): OverlayAria {
   let {ref, onClose, isOpen, isDismissable = false} = props;
-  
+
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {
     if (isOpen) {

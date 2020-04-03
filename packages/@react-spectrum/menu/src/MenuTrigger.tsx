@@ -16,7 +16,6 @@ import {FocusStrategy, SpectrumMenuTriggerProps} from '@react-types/menu';
 import {MenuContext} from './context';
 import {Overlay, Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import {Provider} from '@react-spectrum/provider';
 import React, {Fragment, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
 import {useMediaQuery} from '@react-spectrum/utils';
@@ -30,9 +29,8 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     children,
     onOpenChange,
     align = 'start',
-    shouldFlip = false,
+    shouldFlip = true,
     direction = 'bottom',
-    isDisabled,
     closeOnSelect = true
   } = props;
 
@@ -46,8 +44,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
 
   let {menuTriggerProps, overlayProps, menuProps} = useMenuTrigger(
     {
-      ref: menuTriggerRef,
-      isDisabled
+      ref: menuTriggerRef
     },
     {
       isOpen, 
@@ -70,11 +67,9 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let menuContext = {
     ...menuProps,
     ref: menuRef,
-    focusStrategy,
     onClose,
     closeOnSelect,
-    autoFocus: true,
-    wrapAround: true,
+    autoFocus: focusStrategy,
     UNSAFE_style: {
       width: isMobile ? '100%' : undefined
     }
@@ -112,11 +107,9 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
    
   return (
     <Fragment>
-      <Provider isDisabled={isDisabled}>
-        <PressResponder {...menuTriggerProps} ref={menuTriggerRef} isPressed={isOpen}>
-          {menuTrigger}
-        </PressResponder>
-      </Provider>
+      <PressResponder {...menuTriggerProps} ref={menuTriggerRef} isPressed={isOpen}>
+        {menuTrigger}
+      </PressResponder>
       <MenuContext.Provider value={menuContext}>
         <Overlay isOpen={isOpen}>
           {overlay}

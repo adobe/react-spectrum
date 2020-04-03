@@ -29,6 +29,7 @@ interface MenuItemProps<T> {
   onAction?: (key: Key) => void
 }
 
+/** @private */
 export function MenuItem<T>(props: MenuItemProps<T>) {
   let {
     item,

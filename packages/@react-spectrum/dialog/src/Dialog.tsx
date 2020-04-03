@@ -11,10 +11,11 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, useHasChild, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, unwrapDOMRef, useDOMRef, useHasChild, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {DismissButton} from '@react-aria/overlays';
+import {DOMRef} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import intlMessages from '../intl/*.json';
@@ -37,7 +38,7 @@ let sizeMap = {
  * Dialogs display important information that users need to acknowledge.
  * They appear over the interface and block further interactions.
  */
-export function Dialog(props: SpectrumDialogProps) {
+function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   props = useSlotProps(props);
   let {
     type = 'modal',
@@ -48,7 +49,6 @@ export function Dialog(props: SpectrumDialogProps) {
     isDismissable = contextProps.isDismissable,
     onDismiss = contextProps.onClose,
     role,
-    slots,
     size,
     ...otherProps
   } = props;
@@ -60,28 +60,26 @@ export function Dialog(props: SpectrumDialogProps) {
     size = type;
   }
 
-  let ref = useRef();
+  let domRef = useDOMRef(ref);
   let gridRef = useRef();
   let sizeVariant = sizeMap[size];
-  let {dialogProps, titleProps} = useDialog({ref, role, ...otherProps});
+  let {dialogProps, titleProps} = useDialog({ref: domRef, role, ...otherProps});
 
-  let hasHeader = useHasChild(`:scope > .${styles['spectrum-Dialog-header']}`, gridRef);
-  let hasFooter = useHasChild(`:scope > .${styles['spectrum-Dialog-footer']}`, gridRef);
+  let hasHeader = useHasChild(`.${styles['spectrum-Dialog-header']}`, unwrapDOMRef(gridRef));
+  let hasFooter = useHasChild(`.${styles['spectrum-Dialog-footer']}`, unwrapDOMRef(gridRef));
 
-  if (!slots) {
-    slots = {
-      container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
-      hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
-      header: {UNSAFE_className: styles['spectrum-Dialog-header']},
-      heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader}), ...titleProps},
-      typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
-      divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
-      content: {UNSAFE_className: styles['spectrum-Dialog-content']},
-      footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
-      closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']},
-      buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !hasFooter})}
-    };
-  }
+  let slots = {
+    container: {UNSAFE_className: styles['spectrum-Dialog-grid']},
+    hero: {UNSAFE_className: styles['spectrum-Dialog-hero']},
+    header: {UNSAFE_className: styles['spectrum-Dialog-header']},
+    heading: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-heading', {'spectrum-Dialog-heading--noHeader': !hasHeader}), ...titleProps},
+    typeIcon: {UNSAFE_className: styles['spectrum-Dialog-typeIcon']},
+    divider: {UNSAFE_className: styles['spectrum-Dialog-divider'], size: 'M'},
+    content: {UNSAFE_className: styles['spectrum-Dialog-content']},
+    footer: {UNSAFE_className: styles['spectrum-Dialog-footer']},
+    closeButton: {UNSAFE_className: styles['spectrum-Dialog-closeButton']},
+    buttonGroup: {UNSAFE_className: classNames(styles, 'spectrum-Dialog-buttonGroup', {'spectrum-Dialog-buttonGroup--noFooter': !hasFooter})}
+  };
 
   // If rendered in a popover or tray there won't be a visible dismiss button,
   // so we render a hidden one for screen readers.
@@ -112,7 +110,7 @@ export function Dialog(props: SpectrumDialogProps) {
           },
           styleProps.className
         )}
-        ref={ref}>
+        ref={domRef}>
         <Grid slots={slots} ref={gridRef}>
           {children}
           {isDismissable &&
@@ -130,3 +128,6 @@ export function Dialog(props: SpectrumDialogProps) {
     </FocusScope>
   );
 }
+
+let _Dialog = React.forwardRef(Dialog);
+export {_Dialog as Dialog};
