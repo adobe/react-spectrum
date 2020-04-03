@@ -9,8 +9,6 @@
     "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "dependencies": {
-    "@react-stately/collections": "^3.0.0-alpha.2",
-    "@react-stately/tree": "^3.0.0-alpha.2",
     "@react-types/shared": "^3.0.0-alpha.2"
   },
   "peerDependencies": {

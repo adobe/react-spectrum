@@ -36,7 +36,7 @@ let withSection = [
   ]}
 ];
 
-function renderComponent(Component, triggerProps = {}, menuProps = {}) {
+function renderComponent(Component, triggerProps = {}, menuProps = {}, buttonProps = {}) {
   if (Component === V2Dropdown) {
     return render(
       <Component {...triggerProps}>
@@ -56,7 +56,7 @@ function renderComponent(Component, triggerProps = {}, menuProps = {}) {
       <Provider theme={theme}>
         <div data-testid="scrollable">
           <Component {...triggerProps}>
-            <Button>
+            <Button {...buttonProps}>
               {triggerText}
             </Button>
             <Menu items={withSection} itemKey="name" {...menuProps}>
@@ -251,9 +251,9 @@ describe('MenuTrigger', function () {
 
   it.each`
     Name             | Component      | props
-    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, isDisabled: true}}
-  `('$Name can be disabled', function ({Component, props}) {
-    let tree = renderComponent(Component, props);
+    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+  `('$Name does not trigger on disabled button', function ({Component, props}) {
+    let tree = renderComponent(Component, props, {}, {isDisabled: true});
     let button = tree.getByRole('button');
     triggerPress(button);
     jest.runAllTimers();

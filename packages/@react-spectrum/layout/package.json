@@ -32,7 +32,8 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/utils": "^3.0.0-rc.1",
     "@react-spectrum/utils": "^3.0.0-rc.1",
-    "@react-types/layout": "^3.0.0-alpha.1"
+    "@react-types/layout": "^3.0.0-alpha.1",
+    "classnames": "^2.2.6"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.2",

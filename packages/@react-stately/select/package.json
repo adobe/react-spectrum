@@ -18,6 +18,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-stately/collections": "^3.0.0-alpha.1",
     "@react-stately/list": "^3.0.0-alpha.1",
+    "@react-stately/menu": "^3.0.0-alpha.1",
     "@react-stately/selection": "^3.0.0-alpha.1",
     "@react-stately/utils": "^3.0.0-alpha.1"
   },

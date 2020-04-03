@@ -50,7 +50,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     overlayRef,
     scrollRef = overlayRef,
     placement = 'bottom' as Placement,
-    containerPadding = 8,
+    containerPadding = 12,
     shouldFlip = true,
     boundaryElement = document.body,
     offset = 0,

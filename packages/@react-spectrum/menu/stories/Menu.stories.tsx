@@ -159,7 +159,7 @@ storiesOf('Menu', module)
             </DialogTrigger>
             <DialogTrigger>
               <Item>Delete...</Item>
-              <AlertDialog title="Delete" variant="destructive" primaryLabel="Delete" cancelLabel="Cancel">
+              <AlertDialog title="Delete" variant="destructive" primaryActionLabel="Delete" cancelLabel="Cancel">
                 Are you sure?
               </AlertDialog>
             </DialogTrigger>
@@ -386,10 +386,10 @@ storiesOf('Menu', module)
     )
   )
   .add(
-    'Menu with autoFocus=true and focusStrategy="last"',
+    'Menu with autoFocus="last"',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" autoFocus focusStrategy="last" onAction={action('onAction')}>
+        <Menu items={withSection} itemKey="name" autoFocus="last" onAction={action('onAction')}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item>{item.name}</Item>}
@@ -403,7 +403,7 @@ storiesOf('Menu', module)
     'Menu with keyboard selection wrapping',
     () => (
       <Popover isOpen hideArrow>
-        <Menu items={withSection} itemKey="name" wrapAround onAction={action('onAction')}>
+        <Menu items={withSection} itemKey="name" shouldFocusWrap onAction={action('onAction')}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item>{item.name}</Item>}

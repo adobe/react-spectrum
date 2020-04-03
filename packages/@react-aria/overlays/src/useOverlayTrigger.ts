@@ -21,8 +21,8 @@ interface OverlayTriggerProps {
 }
 
 interface OverlayTriggerAria {
-  triggerAriaProps: HTMLAttributes<HTMLElement>,
-  overlayAriaProps: HTMLAttributes<HTMLElement>
+  triggerProps: HTMLAttributes<HTMLElement>,
+  overlayProps: HTMLAttributes<HTMLElement>
 }
 
 export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAria {
@@ -66,12 +66,12 @@ export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAri
 
   let overlayId = useId();
   return {
-    triggerAriaProps: {
+    triggerProps: {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': isOpen,
       'aria-controls': isOpen ? overlayId : null
     },
-    overlayAriaProps: {
+    overlayProps: {
       id: overlayId
     }
   };

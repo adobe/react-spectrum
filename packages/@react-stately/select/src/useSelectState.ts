@@ -12,11 +12,12 @@
 
 import {Collection, Node} from '@react-stately/collections';
 import {FocusStrategy} from '@react-types/menu';
-import {Key, useMemo, useState} from 'react';
+import {Key, useMemo} from 'react';
 import {SelectionManager} from '@react-stately/selection';
 import {SelectProps} from '@react-types/select';
 import {useControlledState} from '@react-stately/utils';
 import {useListState} from '@react-stately/list'; // TODO: move
+import {useMenuTriggerState} from '@react-stately/menu';
 
 export interface SelectState<T> {
   collection: Collection<Node<T>>,
@@ -44,9 +45,7 @@ export function useSelectState<T>(props: SelectProps<T>): SelectState<T>  {
     }
   });
 
-  // TODO: move to useMenuTriggerState
-  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
-  let [focusStrategy, setFocusStrategy] = useState('first' as FocusStrategy);
+  let {isOpen, setOpen, focusStrategy, setFocusStrategy} = useMenuTriggerState(props);
 
   return {
     collection,
@@ -60,7 +59,7 @@ export function useSelectState<T>(props: SelectProps<T>): SelectState<T>  {
     setFocusStrategy,
     toggle(focusStrategy = 'first') {
       setFocusStrategy(focusStrategy);
-      setOpen(isOpen => !isOpen);
+      setOpen(!isOpen);
     }
   };
 }

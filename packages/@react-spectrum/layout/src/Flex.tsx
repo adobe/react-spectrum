@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, flexStyleProps, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {filterDOMProps, flexStyleProps, SlotProvider, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FlexProps} from '@react-types/layout';
-import {HTMLElement} from 'react-dom';
-import React, {RefObject} from 'react';
+import React, {forwardRef} from 'react';
 
-export const Flex = React.forwardRef((props: FlexProps, ref: RefObject<HTMLElement>) => {
+function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props);
   let {
     children,
@@ -23,18 +23,17 @@ export const Flex = React.forwardRef((props: FlexProps, ref: RefObject<HTMLEleme
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps, flexStyleProps);
-
   styleProps.style.display = 'flex'; // inline-flex?
+  let domRef = useDOMRef(ref);
 
   return (
-    <div
-      {...filterDOMProps(otherProps)}
-      {...styleProps}
-      className={classNames({}, styleProps.className, slots && slots.container && slots.container.UNSAFE_className)}
-      ref={ref}>
+    <div {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       <SlotProvider slots={slots}>
         {children}
       </SlotProvider>
     </div>
   );
-});
+}
+
+const _Flex = forwardRef(Flex);
+export {_Flex as Flex};

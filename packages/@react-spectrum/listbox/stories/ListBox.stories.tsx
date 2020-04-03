@@ -398,10 +398,10 @@ storiesOf('ListBox', module)
     )
   )
   .add(
-    'ListBox with autoFocus=true and focusStrategy="last"',
+    'ListBox with autoFocus="last"',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus focusStrategy="last">
+        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus="last">
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item>{item.name}</Item>}
@@ -415,7 +415,7 @@ storiesOf('ListBox', module)
     'ListBox with keyboard selection wrapping',
     () => (
       <Popover isOpen hideArrow>
-        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} wrapAround>
+        <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} shouldFocusWrap>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item>{item.name}</Item>}

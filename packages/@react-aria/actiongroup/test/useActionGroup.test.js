@@ -14,7 +14,7 @@ import React from 'react';
 import {renderHook} from 'react-hooks-testing-library';
 import {useActionGroup} from '../';
 
-describe('useButton tests', function () {
+describe('useActionGroup', function () {
   let state = {};
   let renderActionGroupHook = (props) => {
     let {result} = renderHook(() => useActionGroup(props, state));
@@ -24,13 +24,12 @@ describe('useButton tests', function () {
   it('handles defaults', function () {
     let {actionGroupProps, buttonProps} = renderActionGroupHook({});
     expect(actionGroupProps.role).toBe('radiogroup');
-    expect(actionGroupProps['aria-orientation']).toBe('horizontal');
     expect(actionGroupProps.id).toBeDefined();
     expect(buttonProps.role).toBe('radio');
   });
 
   it('handles vertical orientation', function () {
-    let {actionGroupProps} = renderActionGroupHook({orientation: 'vertical'});
+    let {actionGroupProps} = renderActionGroupHook({orientation: 'vertical', selectionMode: 'none'});
     expect(actionGroupProps['aria-orientation']).toBe('vertical');
   });
 
@@ -39,6 +38,7 @@ describe('useButton tests', function () {
     expect(actionGroupProps.role).toBe('toolbar');
     expect(actionGroupProps.id).toBeDefined();
     expect(buttonProps.role).toBeNull();
+    expect(actionGroupProps['aria-orientation']).toBe('horizontal');
   });
 
   it('handles selection mode single', function () {
@@ -53,6 +53,7 @@ describe('useButton tests', function () {
     expect(actionGroupProps.role).toBe('toolbar');
     expect(actionGroupProps.id).toBeDefined();
     expect(buttonProps.role).toBe('checkbox');
+    expect(actionGroupProps['aria-orientation']).toBe('horizontal');
   });
 
   it('handles custom role', function () {

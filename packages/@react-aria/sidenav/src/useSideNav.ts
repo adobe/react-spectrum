@@ -27,7 +27,7 @@ export function useSideNav<T>(props: SideNavProps<T>, state: TreeState<T>, layou
     id,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabeldBy,
-    wrapAround
+    shouldFocusWrap
   } = props;
 
   id = useId(id);
@@ -35,7 +35,7 @@ export function useSideNav<T>(props: SideNavProps<T>, state: TreeState<T>, layou
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
     keyboardDelegate: layout,
-    wrapAround
+    shouldFocusWrap
   });
 
   return {
