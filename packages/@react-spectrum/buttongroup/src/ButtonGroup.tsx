@@ -91,7 +91,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
         slots={{
           button: {
             isDisabled,
-            UNSAFE_className: classNames(styles, 'spectrum-Button')
+            UNSAFE_className: classNames(styles, '.spectrum-ButtonGroup-Button')
           }
         }}>
         {children}

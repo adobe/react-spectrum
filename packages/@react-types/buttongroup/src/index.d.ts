@@ -18,7 +18,8 @@ export interface SpectrumButtonGroupProps extends DOMProps, StyleProps {
   /** Whether the ButtonGroup is disabled. */
   isDisabled?: boolean,
   /**
-   * The axis the ButtonGroup should align with.
+   * The axis the ButtonGroup should align with. See the docs[LINK TODO] for additional information
+   * regarding overflow behavior.
    * @default "horizontal"
    */
   orientation?: Orientation,
