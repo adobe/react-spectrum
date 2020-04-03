@@ -13,6 +13,7 @@
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, dimensionValue, filterDOMProps, SlotProvider, unwrapDOMRef, useDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
+import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusScope} from '@react-aria/focus';
@@ -30,7 +31,6 @@ import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/typography';
 import {useFormProps} from '@react-spectrum/form';
 import {useMessageFormatter} from '@react-aria/i18n';
-import {useOverlayPosition} from '@react-aria/overlays';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSelect} from '@react-aria/select';
 import {useSelectState} from '@react-stately/select';
@@ -88,6 +88,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   let isMobile = useMediaQuery('(max-width: 700px)');
   let listbox = (
     <FocusScope restoreFocus>
+      <DismissButton onDismiss={() => state.setOpen(false)} />
       <ListBoxBase
         ref={listboxRef}
         domProps={menuProps}
@@ -98,6 +99,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
         layout={layout}
         state={state}
         width={isMobile ? '100%' : undefined} />
+      <DismissButton onDismiss={() => state.setOpen(false)} />
     </FocusScope>
   );
 
