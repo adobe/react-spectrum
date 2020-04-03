@@ -11,6 +11,5 @@
  */
 
 export * from './ActionGroupCollection';
-export * from './ActionGroupKeyboardDelegate';
 export * from './types';
 export * from './useActionGroupState';

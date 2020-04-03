@@ -20,6 +20,7 @@
   "peerDependencies": {
     "react": "^16.8.0",
     "@react-stately/actiongroup": "^3.0.0-alpha.1",
+    "@react-stately/collections": "^3.0.0-alpha.2",
     "@react-aria/utils": "^3.0.0-alpha.2",
     "@react-aria/interactions": "^3.0.0-alpha.2",
     "@react-aria/i18n": "^3.0.0-alpha.2",

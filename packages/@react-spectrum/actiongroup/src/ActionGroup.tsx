@@ -13,18 +13,21 @@
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroupState, useActionGroupState} from '@react-stately/actiongroup';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {classNames, filterDOMProps, useDOMRef} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, DOMRef, SelectionMode, StyleProps} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
-import React, {forwardRef, useRef} from 'react';
+import React, {forwardRef, ReactElement, useRef} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useActionGroup} from '@react-aria/actiongroup';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useSelectableItem} from '@react-aria/selection';
 
 function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+  props = useProviderProps(props);
+
   let {
     isEmphasized,
     isConnected, // no quiet option available in this mode
@@ -40,12 +43,14 @@ function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivE
   let {actionGroupProps, buttonProps} = useActionGroup(props, state);
   let isVertical = orientation === 'vertical';
   let providerProps = {isEmphasized, isDisabled, isQuiet};
+  let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
 
   return (
     <div
       {...filterDOMProps(otherProps)}
       {...actionGroupProps}
+      {...styleProps}
       ref={domRef}
       className={
         classNames(
@@ -73,7 +78,7 @@ function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivE
   );
 }
 
-let _ActionGroup = forwardRef(ActionGroup);
+const _ActionGroup = forwardRef(ActionGroup) as <T>(props: SpectrumActionGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ActionGroup as ActionGroup};
 
 export interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
