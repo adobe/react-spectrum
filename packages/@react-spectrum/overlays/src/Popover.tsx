@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
+import {classNames, useDOMRef} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import overrideStyles from './overlays.css';
 import {PlacementAxis} from '@react-types/overlays';
 import React, {HTMLAttributes, ReactNode, RefObject, useLayoutEffect, useRef, useState} from 'react';
@@ -34,10 +35,9 @@ let arrowPlacement = {
   bottom: 'top'
 };
 
-function Popover(props: PopoverProps, ref: RefObject<HTMLDivElement>) {
+function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {style, children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, className, ...otherProps} = props;
-  let backupRef = useRef();
-  let domRef = ref || backupRef;
+  let domRef = useDOMRef(ref);
   let {overlayProps, dismissButtonProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
   useModal();
 

@@ -122,10 +122,12 @@ DialogTrigger.getCollectionNode = function (props: SpectrumDialogTriggerProps) {
 
 function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, ...props}) {
   let triggerRef = useRef<HTMLElement>();
-  let overlayRef = useRef<HTMLDivElement>();
+  // use unwrap dom ref
+
+  let overlayRef = useRef<DOMRefValue<HTMLDivElement>>();
   let {overlayProps: popoverProps, placement, arrowProps} = useOverlayPosition({
     targetRef: targetRef || triggerRef,
-    overlayRef,
+    overlayRef: unwrapDOMRef(overlayRef), // update to use
     placement: props.placement,
     containerPadding: props.containerPadding,
     offset: props.offset,
