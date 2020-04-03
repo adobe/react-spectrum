@@ -11,7 +11,7 @@
  */
 
 import {ActionButton, Button, ButtonGroup} from '@react-spectrum/button';
-import {Content, Header} from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/typography';
@@ -39,7 +39,7 @@ function ModalExample() {
       <ActionButton onPress={() => setOpen(true)}>Open modal</ActionButton>
       <Modal isOpen={isOpen} onClose={() => setOpen(false)}>
         <Dialog>
-          <Header><Heading>Title</Heading></Header>
+          <Heading>Title</Heading>
           <Divider />
           <Content><Text>I am a dialog</Text></Content>
           <ButtonGroup><Button variant="cta" onPress={() => setOpen(false)}>Close</Button></ButtonGroup>
@@ -64,7 +64,7 @@ function UnmountingTrigger() {
       <DialogTrigger type="popover" isOpen={isPopoverOpen} onOpenChange={setPopoverOpen}>
         <ActionButton>Open popover</ActionButton>
         <Dialog>
-          <Header><Heading>Title</Heading></Header>
+          <Heading>Title</Heading>
           <Divider />
           <Content><Text>I am a dialog</Text></Content>
           <ButtonGroup><ActionButton onPress={openModal}>Open modal</ActionButton></ButtonGroup>
@@ -72,7 +72,7 @@ function UnmountingTrigger() {
       </DialogTrigger>
       <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)}>
         <Dialog>
-          <Header><Heading>Title</Heading></Header>
+          <Heading>Title</Heading>
           <Divider />
           <Content><Text>I am a dialog</Text></Content>
           <ButtonGroup><Button variant="cta" onPress={() => setModalOpen(false)}>Close</Button></ButtonGroup>

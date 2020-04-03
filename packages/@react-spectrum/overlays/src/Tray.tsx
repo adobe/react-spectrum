@@ -10,42 +10,47 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
-import React, {forwardRef, ReactElement, useRef} from 'react';
+import React, {forwardRef} from 'react';
+import {TrayProps} from '@react-types/overlays';
 import trayStyles from '@adobe/spectrum-css-temp/components/tray/vars.css';
 import {Underlay} from './Underlay';
 import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-interface TrayProps {
-  children: ReactElement,
-  isOpen?: boolean,
-  onClose?: () => void
-}
-
-interface TrayWrapperProps extends TrayProps {
+interface TrayWrapperProps extends DOMProps, StyleProps, TrayProps {
   isOpen?: boolean
 }
 
 function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
   let {children, onClose, ...otherProps} = props;
+  let {styleProps} = useStyleProps(props);
 
   return (
-    <Overlay {...otherProps} ref={ref}>
+    <Overlay {...otherProps} >
       <Underlay />
-      <TrayWrapper onClose={onClose}>
+      <TrayWrapper
+        {...styleProps}
+        onClose={onClose}
+        ref={ref}>
         {children}
       </TrayWrapper>
     </Overlay>
   );
 }
 
-function TrayWrapper({children, onClose, isOpen}: TrayWrapperProps) {
-  let ref = useRef();
-  let {overlayProps, dismissButtonProps} = useOverlay({ref, onClose, isOpen, isDismissable: true});
+let TrayWrapper = React.forwardRef(function (props: TrayWrapperProps, ref: DOMRef<HTMLDivElement>) {
+  let {
+    children,
+    onClose,
+    isOpen
+  } = props;
+  let domRef = useDOMRef(ref);
+  let {styleProps} = useStyleProps(props);
+  let {overlayProps, dismissButtonProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
   usePreventScroll();
   useModal();
 
@@ -74,7 +79,12 @@ function TrayWrapper({children, onClose, isOpen}: TrayWrapperProps) {
       <VisuallyHidden>
         <button {...dismissButtonProps} />
       </VisuallyHidden>
-      <div className={className} ref={ref} {...overlayProps} data-testid="tray">
+      <div
+        {...styleProps}
+        className={className}
+        ref={domRef}
+        {...overlayProps}
+        data-testid="tray">
         {children}
       </div>
       <VisuallyHidden>
@@ -82,7 +92,7 @@ function TrayWrapper({children, onClose, isOpen}: TrayWrapperProps) {
       </VisuallyHidden>
     </div>
   );
-}
+});
 
 let _Tray = forwardRef(Tray);
 export {_Tray as Tray};
