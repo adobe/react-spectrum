@@ -11,6 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import modalStyles from '@adobe/spectrum-css-temp/components/modal/vars.css';
 import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
@@ -30,14 +31,14 @@ interface ModalWrapperProps extends ModalProps {
   isOpen?: boolean
 }
 
-export function Modal(props: ModalProps) {
+export function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   let {children, onClose, type, isDismissable, ...otherProps} = props;
 
   return (
-    <Overlay {...otherProps}>
+    <Overlay {...otherProps} ref={ref}>
       <Underlay />
-      <ModalWrapper 
-        onClose={onClose} 
+      <ModalWrapper
+        onClose={onClose}
         type={type}
         isDismissable={isDismissable}>
         {children}
