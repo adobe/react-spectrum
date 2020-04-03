@@ -78,16 +78,18 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     );
   } else {
     overlay = (
-      <Popover
-        {...overlayProps}
-        ref={menuPopoverRef}
-        placement={placement}
-        hideArrow
-        onClose={state.close}>
-        <FocusScope restoreFocus>
-          {menu}
-        </FocusScope>
-      </Popover>
+      <Overlay isOpen={state.isOpen}>
+        <Popover
+          UNSAFE_style={overlayProps.style}
+          ref={menuPopoverRef}
+          placement={placement}
+          hideArrow
+          onClose={state.close}>
+          <FocusScope restoreFocus>
+            {menu}
+          </FocusScope>
+        </Popover>
+      </Overlay>
     );
   }
 
@@ -97,9 +99,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
         {menuTrigger}
       </PressResponder>
       <MenuContext.Provider value={menuContext}>
-        <Overlay isOpen={state.isOpen}>
-          {overlay}
-        </Overlay>
+        {overlay}
       </MenuContext.Provider>
     </Fragment>
   );

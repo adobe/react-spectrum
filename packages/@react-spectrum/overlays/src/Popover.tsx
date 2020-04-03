@@ -37,7 +37,6 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
-  console.log(styleProps);
   let {overlayProps, dismissButtonProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
   useModal();
 

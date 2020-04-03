@@ -143,7 +143,7 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
 
   let overlay = (
     <Overlay isOpen={isOpen}>
-      <Popover {...popoverProps} ref={overlayRef} onClose={onClose} placement={placement} arrowProps={arrowProps} hideArrow={hideArrow}>
+      <Popover UNSAFE_style={popoverProps.style} ref={overlayRef} onClose={onClose} placement={placement} arrowProps={arrowProps} hideArrow={hideArrow}>
         {content}
       </Popover>
     </Overlay>

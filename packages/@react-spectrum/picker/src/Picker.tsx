@@ -61,7 +61,6 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   let state = useSelectState(props);
   let domRef = useDOMRef(ref);
 
-  let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
   let listboxRef = useRef();
@@ -127,18 +126,19 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
     let minWidth = isQuiet ? `calc(${buttonWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : buttonWidth;
 
     overlay = (
-      <Popover
-        {...overlayProps}
-        UNSAFE_style={overlayProps.style}
-        minWidth={minWidth}
-        width={width}
-        UNSAFE_className={classNames(styles, 'spectrum-Dropdown-popover', {'spectrum-Dropdown-popover--quiet': isQuiet})}
-        ref={popoverRef}
-        placement={placement}
-        hideArrow
-        onClose={state.close}>
-        {listbox}
-      </Popover>
+      <Overlay isOpen={state.isOpen}>
+        <Popover
+          UNSAFE_style={overlayProps.style}
+          minWidth={minWidth}
+          width={width}
+          UNSAFE_className={classNames(styles, 'spectrum-Dropdown-popover', {'spectrum-Dropdown-popover--quiet': isQuiet})}
+          ref={popoverRef}
+          placement={placement}
+          hideArrow
+          onClose={state.close}>
+          {listbox}
+        </Popover>
+      </Overlay>
     );
   }
 
@@ -257,9 +257,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
         }
         <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
       </FieldButton>
-      <Overlay isOpen={state.isOpen} ref={containerRef}>
-        {overlay}
-      </Overlay>
+      {overlay}
     </div>
   );
 
