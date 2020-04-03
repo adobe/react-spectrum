@@ -18,6 +18,7 @@ import {DismissButton} from '@react-aria/overlays';
 import {DOMRef} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import React, {useContext, useRef} from 'react';
