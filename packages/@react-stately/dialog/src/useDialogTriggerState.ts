@@ -10,11 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
-import {ReactElement} from 'react';
-import {Slots} from '@react-types/layout';
+import {DialogTriggerProps} from '@react-types/dialog';
+import {useControlledState} from '@react-stately/utils';
 
-export interface SpectrumIllustratedMessageProps extends DOMProps, StyleProps {
-  children: [ReactElement],
-  slots?: Slots
+export interface DialogTriggerState {
+  isOpen: boolean,
+  setOpen: (value: boolean) => void,
+}
+
+export function useDialogTriggerState(props: DialogTriggerProps):DialogTriggerState  {
+  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
+
+  return {
+    isOpen, 
+    setOpen
+  };
 }
