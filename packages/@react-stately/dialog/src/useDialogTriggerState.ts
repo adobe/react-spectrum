@@ -34,7 +34,7 @@ export function useDialogTriggerState(props: DialogTriggerProps): DialogTriggerS
       setOpen(false);
     },
     toggle() {
-      setOpen(isOpen => !isOpen);
+      setOpen(!isOpen);
     }
   };
 }
