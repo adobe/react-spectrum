@@ -14,11 +14,11 @@ import {ActionButton} from '@react-spectrum/button';
 import {ActionGroupState, useActionGroupState} from '@react-stately/actiongroup';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, DOMProps, SelectionMode, StyleProps} from '@react-types/shared';
+import {DOMProps, DOMRef, SelectionMode, StyleProps} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
-import React, {forwardRef, useRef} from 'react';
+import React, {forwardRef, ReactElement, useRef} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useActionGroup} from '@react-aria/actiongroup';
@@ -79,7 +79,7 @@ function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivE
   );
 }
 
-let _ActionGroup = forwardRef(ActionGroup);
+const _ActionGroup = forwardRef(ActionGroup) as <T>(props: SpectrumActionGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ActionGroup as ActionGroup};
 
 export interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
