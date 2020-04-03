@@ -163,5 +163,22 @@ describe('Popover', function () {
       fireEvent.mouseUp(document.body);
       expect(onClose).toHaveBeenCalledTimes(1);
     });
+
+    it('hides the popover on blur when shouldCloseOnBlur is true', function () {
+      let onClose = jest.fn();
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Popover isOpen onClose={onClose} shouldCloseOnBlur>
+            <Dialog>Dialog</Dialog>
+          </Popover>
+        </Provider>
+      );
+
+      let dialog = getByRole('dialog');
+      expect(document.activeElement).toBe(dialog);
+
+      dialog.blur();
+      expect(onClose).toHaveBeenCalledTimes(1);
+    });
   });
 });

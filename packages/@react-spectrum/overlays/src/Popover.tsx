@@ -33,10 +33,10 @@ let arrowPlacement = {
 };
 
 function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, ...otherProps} = props;
+  let {children, placement = 'bottom', arrowProps, isOpen, onClose, shouldCloseOnBlur, hideArrow, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
-  let {overlayProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
+  let {overlayProps} = useOverlay({ref: domRef, onClose, shouldCloseOnBlur, isOpen, isDismissable: true});
   useModal();
 
   return (

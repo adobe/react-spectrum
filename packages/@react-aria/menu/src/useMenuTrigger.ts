@@ -12,7 +12,7 @@
 
 import {HTMLAttributes, RefObject} from 'react';
 import {MenuTriggerState} from '@react-stately/menu';
-import {PressProps, useFocusWithin} from '@react-aria/interactions';
+import {PressProps} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
@@ -23,7 +23,6 @@ interface MenuTriggerAriaProps {
 
 interface MenuTriggerAria {
   menuTriggerProps: HTMLAttributes<HTMLElement> & PressProps,
-  overlayProps: HTMLAttributes<HTMLElement>,
   menuProps: HTMLAttributes<HTMLElement>
 }
 
@@ -68,12 +67,6 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
     }
   };
 
-  let {focusWithinProps} = useFocusWithin({
-    onBlurWithin: () => {
-      state.close();
-    }
-  });
-
   return {
     menuTriggerProps: {
       ...triggerProps,
@@ -90,9 +83,6 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
         }
       },
       onKeyDown
-    },
-    overlayProps: {
-      ...focusWithinProps
     },
     menuProps: {
       ...overlayProps,

@@ -22,7 +22,6 @@ import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
-import {useOverlayPosition} from '@react-aria/overlays';
 
 export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let menuPopoverRef = useRef<DOMRefValue<HTMLDivElement>>();
@@ -39,7 +38,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let [menuTrigger, menu] = React.Children.toArray(children);
   let state = useMenuTriggerState(props);
 
-  let {menuTriggerProps, overlayProps, menuProps} = useMenuTrigger(
+  let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
       ref: menuTriggerRef
     },
@@ -69,9 +68,9 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
 
   let contents = (
     <FocusScope restoreFocus>
-      <DismissButton onDismiss={onClose} />
+      <DismissButton onDismiss={state.close} />
       {menu}
-      <DismissButton onDismiss={onClose} />
+      <DismissButton onDismiss={state.close} />
     </FocusScope>
   );
 
@@ -91,7 +90,8 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
           ref={menuPopoverRef}
           placement={placement}
           hideArrow
-          onClose={state.close}>
+          onClose={state.close}
+          shouldCloseOnBlur>
           {contents}
         </Popover>
       </Overlay>

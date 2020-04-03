@@ -58,5 +58,6 @@ export interface PopoverProps extends DOMProps, StyleProps {
   arrowProps?: HTMLAttributes<HTMLElement>,
   hideArrow?: boolean,
   isOpen?: boolean,
-  onClose?: () => void
+  onClose?: () => void,
+  shouldCloseOnBlur?: boolean
 }
