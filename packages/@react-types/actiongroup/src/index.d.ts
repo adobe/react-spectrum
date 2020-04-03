@@ -10,11 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, ItemElement, ItemRenderer, MultipleSelection, StyleProps} from '@react-types/shared';
+import {DOMProps, ItemElement, ItemRenderer, MultipleSelection, Orientation, StyleProps} from '@react-types/shared';
+import {Key} from 'react';
 
+// Not extending CollectionBase to avoid async loading props
 export interface ActionGroupProps<T> extends DOMProps, StyleProps, MultipleSelection {
-  orientation?: 'horizontal' | 'vertical',
+  orientation?: Orientation,
   children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>,
+  items?: Iterable<T>,
+  itemKey?: string,
+  disabledKeys?: Iterable<Key>,
   isDisabled?: boolean
 }
 
@@ -23,6 +28,5 @@ export interface SpectrumActionGroupProps<T> extends ActionGroupProps<T> {
   isConnected?: boolean
   isJustified?: boolean,
   isQuiet?: boolean,
-  holdAffordance?: boolean,
-  onSelectionChange?: (...args) => void
+  holdAffordance?: boolean
 }

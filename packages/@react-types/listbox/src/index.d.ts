@@ -10,19 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy} from '@react-types/menu';
-import React, {HTMLAttributes, MutableRefObject, useContext} from 'react';
+import {CollectionBase, DOMProps, MultipleSelection, StyleProps} from '@react-types/shared';
 
-export interface MenuContextValue extends HTMLAttributes<HTMLElement> {
-  onClose?: () => void,
-  closeOnSelect?: boolean,
-  shouldFocusWrap?: boolean,
+type FocusStrategy = 'first' | 'last';
+
+export interface ListBoxProps<T> extends CollectionBase<T>, MultipleSelection {
   autoFocus?: boolean | FocusStrategy,
-  ref?: MutableRefObject<HTMLUListElement>
+  shouldFocusWrap?: boolean
 }
 
-export const MenuContext = React.createContext<MenuContextValue>({});
-
-export function useMenuContext(): MenuContextValue {
-  return useContext(MenuContext);
+export interface SpectrumListBoxProps<T> extends ListBoxProps<T>, DOMProps, StyleProps {
 }

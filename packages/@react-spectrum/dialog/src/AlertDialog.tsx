@@ -63,15 +63,50 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
   }
 
   return (
-    <Dialog {...styleProps} UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)} size="M" role="alertdialog">
+    <Dialog 
+      {...styleProps}
+      UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)}
+      size="M"
+      role="alertdialog">
       <Heading>{title}</Heading>
-      <Header><Flex justifyContent="flex-end" width="100%">{(variant === 'error' || variant === 'warning') && <AlertMedium slot="typeIcon" aria-label={formatMessage('alert')} />}</Flex></Header>
+      <Header>
+        <Flex
+          justifyContent="flex-end"
+          width="100%">
+          {(variant === 'error' || variant === 'warning') &&
+            <AlertMedium
+              slot="typeIcon"
+              aria-label={formatMessage('alert')} />
+          }
+        </Flex>
+      </Header>
       <Divider />
       <Content>{children}</Content>
       <ButtonGroup>
-        {secondaryLabel && <Button variant="secondary" onPress={() => chain(onClose(), onConfirm('secondary'))} isDisabled={isSecondaryActionDisabled} autoFocus={autoFocusButton === 'secondary'}>{secondaryLabel}</Button>}
-        {cancelLabel && <Button variant="secondary" onPress={() => chain(onClose(), onCancel())} autoFocus={autoFocusButton === 'cancel'}>{cancelLabel}</Button>}
-        <Button variant={confirmVariant} onPress={() => chain(onClose(), onConfirm('primary'))} isDisabled={isPrimaryActionDisabled} autoFocus={autoFocusButton === 'primary'}>{primaryLabel}</Button>
+        {secondaryLabel && 
+          <Button 
+            variant="secondary"
+            onPress={() => chain(onClose(), onConfirm('secondary'))}
+            isDisabled={isSecondaryActionDisabled}
+            autoFocus={autoFocusButton === 'secondary'}>
+            {secondaryLabel}
+          </Button>
+        }
+        {cancelLabel && 
+          <Button
+            variant="secondary"
+            onPress={() => chain(onClose(), onCancel())}
+            autoFocus={autoFocusButton === 'cancel'}>
+            {cancelLabel}
+          </Button>
+        }
+        <Button 
+          variant={confirmVariant}
+          onPress={() => chain(onClose(), onConfirm('primary'))}
+          isDisabled={isPrimaryActionDisabled}
+          autoFocus={autoFocusButton === 'primary'}>
+          {primaryLabel}
+        </Button>
       </ButtonGroup>
     </Dialog>
   );

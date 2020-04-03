@@ -15,7 +15,7 @@ import {Direction, KeyboardDelegate, Orientation} from '@react-types/shared';
 import {Key} from 'react';
 
 export class ActionGroupKeyboardDelegate<T> implements KeyboardDelegate {
-  private collection: any;
+  private collection: Collection<T>;
   private flipDirection: boolean;
 
   constructor(collection: Collection<T>, direction: Direction, orientation: Orientation) {
@@ -24,19 +24,23 @@ export class ActionGroupKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   getKeyLeftOf(key: Key) {
-    return this.flipDirection ? this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
+    return this.flipDirection 
+      ? this.collection.getKeyAfter(key) || this.getFirstKey() 
+      : this.collection.getKeyBefore(key) || this.getLastKey();
   }
 
   getKeyRightOf(key: Key) {
-    return this.flipDirection ? this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
+    return this.flipDirection 
+      ? this.collection.getKeyBefore(key) || this.getLastKey() 
+      : this.collection.getKeyAfter(key) || this.getFirstKey();
   }
 
   getKeyAbove(key: Key) {
-    return this.flipDirection ? this.collection.getKeyAfter(key) : this.collection.getKeyBefore(key);
+    return this.collection.getKeyBefore(key) || this.getLastKey();
   }
 
   getKeyBelow(key: Key) {
-    return this.flipDirection ? this.collection.getKeyBefore(key) : this.collection.getKeyAfter(key);
+    return this.collection.getKeyAfter(key) || this.getFirstKey();
   }
 
   getFirstKey() {

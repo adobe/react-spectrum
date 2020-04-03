@@ -86,7 +86,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
         }, 300);
       }
     });
-  }, [isScrolling, onVisibleRectChange, state.height, state.scrollEndTime, state.scrollLeft, state.scrollTimeout, state.scrollTop, state.width]);
+  }, [isScrolling, onScrollEnd, onScrollStart, onVisibleRectChange, state.height, state.scrollEndTime, state.scrollLeft, state.scrollTimeout, state.scrollTop, state.width]);
 
   useEffect(() => {
     // TODO: resize observer
