@@ -10,24 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import classNames from 'classnames';
 import {DOMRef} from '@react-types/shared';
 import {
   filterDOMProps,
   gridStyleProps,
-  SlotProvider,
   useDOMRef,
-  useSlotProps,
   useStyleProps
 } from '@react-spectrum/utils';
 import {GridProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 
 function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
-  props = useSlotProps(props);
   let {
     children,
-    slots,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps, gridStyleProps);
@@ -35,10 +30,8 @@ function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
 
   return (
-    <div {...filterDOMProps(otherProps)} {...styleProps} ref={domRef} className={classNames(styleProps.className, slots && slots.container && slots.container.UNSAFE_className)}>
-      <SlotProvider slots={slots}>
-        {children}
-      </SlotProvider>
+    <div {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+      {children}
     </div>
   );
 }

@@ -14,5 +14,13 @@ import {DOMProps, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 export interface HeadingProps extends DOMProps, StyleProps {
-  children: ReactNode
+  /**
+   * Heading content
+   */
+  children: ReactNode,
+  /**
+   * A slot to place the heading in.
+   * @default "heading"
+   */
+  slot?: string
 }
