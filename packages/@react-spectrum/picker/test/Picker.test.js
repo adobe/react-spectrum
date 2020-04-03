@@ -130,4 +130,40 @@ describe('Picker', function () {
     expect(onOpenChangeSpy).toHaveBeenCalledTimes(4);
     expect(getAllByRole('listbox').length).toBe(1);
   });
+
+  it('should have a hidden dismiss button for screen readers', function () {
+    let onOpenChange = jest.fn();
+    let {getByRole, getAllByRole} = render(
+      <Provider theme={theme}>
+        <Picker label="Test" onSelectionChange={onSelectionChange} onOpenChange={onOpenChange}>
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Picker>
+      </Provider>
+    );
+
+    let picker = getByRole('button');
+    act(() => triggerPress(picker));
+    act(() => jest.runAllTimers());
+
+    let listbox = getAllByRole('listbox')[1]; // ignore the one in the background for now
+    expect(listbox).toBeTruthy();
+    expect(onOpenChange).toBeCalledTimes(1);
+    expect(picker).toHaveAttribute('aria-expanded', 'true');
+    
+    let buttons = getAllByRole('button');
+    expect(buttons.length).toBe(3);
+    expect(buttons[1]).toHaveAttribute('aria-label', 'Dismiss');
+    expect(buttons[2]).toHaveAttribute('aria-label', 'Dismiss');
+
+    fireEvent.click(buttons[1]);
+    expect(onOpenChange).toHaveBeenCalledTimes(2);
+    act(() => jest.runAllTimers());
+
+    expect(listbox).not.toBeInTheDocument();
+    expect(picker).not.toHaveAttribute('aria-expanded');
+    expect(onOpenChange).toBeCalledTimes(2);
+    expect(document.activeElement).toBe(picker);
+  });
 });

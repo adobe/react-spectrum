@@ -17,7 +17,6 @@ import {PopoverProps} from '@react-types/overlays';
 import React, {useLayoutEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {useModal, useOverlay} from '@react-aria/overlays';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 /**
  * Arrow placement can be done pointing right or down because those paths start at 0, x or y. Because the
@@ -34,10 +33,10 @@ let arrowPlacement = {
 };
 
 function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, placement = 'bottom', arrowProps, isOpen, onClose, hideArrow, ...otherProps} = props;
+  let {children, placement = 'bottom', arrowProps, isOpen, onClose, shouldCloseOnBlur, hideArrow, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
-  let {overlayProps, dismissButtonProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
+  let {overlayProps} = useOverlay({ref: domRef, onClose, shouldCloseOnBlur, isOpen, isDismissable: true});
   useModal();
 
   return (
@@ -65,16 +64,10 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
       role="presentation"
       data-testid="popover"
       {...overlayProps}>
-      <VisuallyHidden>
-        <button {...dismissButtonProps} />
-      </VisuallyHidden>
       {children}
       {hideArrow ? null : (
         <Arrow arrowProps={arrowProps} direction={arrowPlacement[placement.split(' ')[0]]} />
       )}
-      <VisuallyHidden>
-        <button {...dismissButtonProps} />
-      </VisuallyHidden>
     </div>
   );
 }

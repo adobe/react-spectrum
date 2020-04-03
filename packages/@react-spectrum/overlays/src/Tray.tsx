@@ -19,7 +19,6 @@ import {TrayProps} from '@react-types/overlays';
 import trayStyles from '@adobe/spectrum-css-temp/components/tray/vars.css';
 import {Underlay} from './Underlay';
 import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface TrayWrapperProps extends DOMProps, StyleProps, TrayProps {
   isOpen?: boolean
@@ -50,7 +49,8 @@ let TrayWrapper = React.forwardRef(function (props: TrayWrapperProps, ref: DOMRe
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
-  let {overlayProps, dismissButtonProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
+  let {overlayProps} = useOverlay({ref: domRef, onClose, isOpen, isDismissable: true});
+
   usePreventScroll();
   useModal();
 
@@ -76,9 +76,6 @@ let TrayWrapper = React.forwardRef(function (props: TrayWrapperProps, ref: DOMRe
 
   return (
     <div className={wrapperClassName}>
-      <VisuallyHidden>
-        <button {...dismissButtonProps} />
-      </VisuallyHidden>
       <div
         {...styleProps}
         className={className}
@@ -87,9 +84,6 @@ let TrayWrapper = React.forwardRef(function (props: TrayWrapperProps, ref: DOMRe
         data-testid="tray">
         {children}
       </div>
-      <VisuallyHidden>
-        <button {...dismissButtonProps} />
-      </VisuallyHidden>
     </div>
   );
 });
