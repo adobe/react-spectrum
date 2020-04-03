@@ -60,6 +60,9 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
             styleProps.className
           )
         }>
+        {holdAffordance &&
+          <CornerTriangle UNSAFE_className={classNames(styles, 'spectrum-ActionButton-hold')} />
+        }
         <SlotProvider
           slots={{
             icon: {
@@ -74,9 +77,6 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
             ? <Text>{children}</Text> 
             : children}
         </SlotProvider>
-        {holdAffordance &&
-          <CornerTriangle UNSAFE_className={classNames(styles, 'spectrum-ActionButton-hold')} />
-        }
       </ElementType>
     </FocusRing>
   );
