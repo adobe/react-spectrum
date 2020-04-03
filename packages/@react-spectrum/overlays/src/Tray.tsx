@@ -11,6 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
 import React, {ReactElement, useRef} from 'react';
@@ -29,11 +30,11 @@ interface TrayWrapperProps extends TrayProps {
   isOpen?: boolean
 }
 
-export function Tray(props: TrayProps) {
+export function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
   let {children, onClose, ...otherProps} = props;
 
   return (
-    <Overlay {...otherProps}>
+    <Overlay {...otherProps} ref={ref}>
       <Underlay />
       <TrayWrapper onClose={onClose}>
         {children}

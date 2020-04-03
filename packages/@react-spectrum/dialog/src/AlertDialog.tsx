@@ -18,6 +18,7 @@ import {Content} from '@react-spectrum/view';
 import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
+import {DOMRef} from '@react-types/shared';
 import {Heading} from '@react-spectrum/typography';
 import intlMessages from '../intl/*.json';
 import React, {useContext} from 'react';
@@ -29,7 +30,7 @@ import {useMessageFormatter} from '@react-aria/i18n';
 /**
  * AlertDialogs are a specific type of Dialog. They display important information that users need to acknowledge.
  */
-export function AlertDialog(props: SpectrumAlertDialogProps) {
+export function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
   props = useSlotProps(props);
   let {
     onClose = () => {}
@@ -67,7 +68,8 @@ export function AlertDialog(props: SpectrumAlertDialogProps) {
       {...styleProps}
       UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)}
       size="M"
-      role="alertdialog">
+      role="alertdialog"
+      ref={ref}>
       <Heading>{title}</Heading>
       {(variant === 'error' || variant === 'warning') &&
         <AlertMedium
