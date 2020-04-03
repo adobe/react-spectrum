@@ -50,9 +50,9 @@ function render(props) {
       <Button variant="primary" isDisabled onPress={action('press')}>Disabled button</Button>
       <Button variant="secondary" onPress={() => setShow(show => !show)}>
         <Bell />
-        <Text>With icon</Text>
+        <Text>Click me to make Button larger</Text>
+        {show && <Text>to test overflow resizing :D</Text>}
       </Button>
-      {show && <Button variant="primary">agwegawegkawehgkuwaehg</Button>}
     </ButtonGroup>
   );
 }

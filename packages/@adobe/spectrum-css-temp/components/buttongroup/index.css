@@ -33,12 +33,12 @@ governing permissions and limitations under the License.
   display: inline-flex;
   flex-direction: column;
 
+  &.spectrum-ButtonGroup--alignEnd {
+    align-items: flex-end;
+  }
+
   .spectrum-ButtonGroup-Button + .spectrum-ButtonGroup-Button {
     margin-block-start: var(--spectrum-buttongroup-button-gap-y);
     margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
   }
-}
-
-.spectrum-ButtonGroup--alignEnd {
-  align-items: flex-end;
 }
