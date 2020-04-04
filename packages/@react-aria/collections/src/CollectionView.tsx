@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from '@react-aria/utils';
+import {chain, focusWithoutScrolling} from '@react-aria/utils';
 import {Collection, Layout} from '@react-stately/collections';
 import {CollectionItem} from './CollectionItem';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
@@ -84,7 +84,7 @@ function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, r
   let focusedView = collectionManager.getItemView(focusedKey);
   useEffect(() => {
     if (focusedKey && !focusedView && isFocusWithin.current && document.activeElement !== ref.current) {
-      ref.current.focus();
+      focusWithoutScrolling(ref.current);
     }
   });
   
