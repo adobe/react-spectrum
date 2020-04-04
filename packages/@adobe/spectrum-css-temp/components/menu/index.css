@@ -35,12 +35,12 @@ governing permissions and limitations under the License.
 
 .spectrum-Menu {
   text-align: start;
-  display: inline-block;
+  display: block;
 
   box-sizing: border-box;
 
-  margin: var(--spectrum-popover-padding-y) 0;
-  padding: 0;
+  padding: var(--spectrum-popover-padding-y) 0;
+  margin: 0;
 
   list-style-type: none;
 

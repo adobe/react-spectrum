@@ -26,6 +26,7 @@ type ListLayoutOptions<T> = {
   estimatedRowHeight?: number,
   headingHeight?: number,
   estimatedHeadingHeight?: number,
+  padding?: number,
   indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number,
   collator?: Intl.Collator
 };
@@ -54,6 +55,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   private estimatedRowHeight: number;
   private headingHeight: number;
   private estimatedHeadingHeight: number;
+  private padding: number;
   private indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number;
   private layoutInfos: {[key: string]: LayoutInfo};
   private contentHeight: number;
@@ -73,6 +75,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     this.estimatedRowHeight = options.estimatedRowHeight;
     this.headingHeight = options.headingHeight;
     this.estimatedHeadingHeight = options.estimatedHeadingHeight;
+    this.padding = options.padding || 0;
     this.indentationForItem = options.indentationForItem;
     this.collator = options.collator;
     this.layoutInfos = {};
@@ -188,8 +191,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       return [y - startY, layoutNodes];
     };
 
-    let [height, nodes] = build(this.collection);
-    this.contentHeight = height;
+    let [height, nodes] = build(this.collection, this.padding);
+    this.contentHeight = height + this.padding * 2;
     this.rootNodes = nodes;
 
     this.lastWidth = width;
