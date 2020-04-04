@@ -216,44 +216,6 @@ storiesOf('MenuTrigger', module)
         </div>
       </>
     )
-  )
-  .add(
-    'more than 2 children (split button)',
-    () => (
-      <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
-        <Button
-          variant="primary"
-          onPress={action('press 1')}
-          onPressStart={action('pressstart 1')}
-          onPressEnd={action('pressend 1')}
-          UNSAFE_className={classNames(
-            styles,
-            'spectrum-SplitButton-action'
-          )}>
-          Hi
-        </Button>
-        <MenuTrigger onOpenChange={action('onOpenChange')}>
-          <Button
-            variant="primary"
-            onPress={action('press 2')}
-            onPressStart={action('pressstart 2')}
-            onPressEnd={action('pressend 2')}
-            UNSAFE_className={classNames(
-              styles,
-              'spectrum-SplitButton-trigger'
-            )}>
-            <ChevronDownMedium />
-          </Button>
-          <Menu items={withSection} itemKey="name" onAction={action('action')}>
-            {item => (
-              <Section items={item.children} title={item.name}>
-                {item => <Item childItems={item.children}>{item.name}</Item>}
-              </Section>
-            )}
-          </Menu>
-        </MenuTrigger>
-      </div>
-    )
   );
 
 function render({isDisabled, ...props}: any = {}, menuProps = {}) {
