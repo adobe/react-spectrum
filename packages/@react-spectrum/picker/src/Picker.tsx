@@ -123,6 +123,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   } else {
     // If quiet, use the default width, otherwise match the width of the button. This can be overridden by the menuWidth prop.
     // Always have a minimum width of the button width. When quiet, there is an extra offset to add.
+    // Not using style props for this because they don't support `calc`.
     let width = isQuiet ? null : buttonWidth;
     let style = {
       ...overlayProps.style,
