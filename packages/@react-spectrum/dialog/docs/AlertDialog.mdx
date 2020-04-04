@@ -35,7 +35,7 @@ import {AlertDialog, DialogTrigger} from '@react-spectrum/dialog';
 ```tsx example
 <DialogTrigger>
   <ActionButton>Save</ActionButton>
-  <AlertDialog title="Low Disk Space" variant="warning" primaryLabel="Confirm">
+  <AlertDialog title="Low Disk Space" variant="warning" primaryActionLabel="Confirm">
     You are running low on disk space. Delete unnecessary files to free up space.
   </AlertDialog>
 </DialogTrigger>
@@ -45,13 +45,13 @@ import {AlertDialog, DialogTrigger} from '@react-spectrum/dialog';
 
 Unlike Dialog, the layout in AlertDialog is very deliberate. The body of an AlertDialog can be provided by passing 
 children to the component. The AlertDialog also supports having up to three buttons in its footer: a primary button,
-a secondary button, and a cancel button. Each button can be rendered by providing a string to the `primaryLabel`, `secondaryLabel`,
+a secondary button, and a cancel button. Each button can be rendered by providing a string to the `primaryActionLabel`, `secondaryActionLabel`,
 and `cancelLabel` respectively. Be sure to localize any strings provided to the AlertDialog and to the button labels as well. 
 
 ```tsx example
 <DialogTrigger>
   <ActionButton>Exit</ActionButton>
-  <AlertDialog variant="information" title="Register profile" primaryLabel="Register" secondaryLabel="Remind me later" cancelLabel="Cancel">
+  <AlertDialog variant="information" title="Register profile" primaryActionLabel="Register" secondaryActionLabel="Remind me later" cancelLabel="Cancel">
     You have not saved your profile information for this account. Would you like to register now?
   </AlertDialog>
 </DialogTrigger>
@@ -64,7 +64,7 @@ If any of the buttons in the ActionDialog's footer should be focused on render, 
 ```tsx example
 <DialogTrigger>
   <ActionButton>Save</ActionButton>
-  <AlertDialog variant="confirmation" title="Save file" primaryLabel="Save" cancelLabel="Cancel" autoFocusButton="primary">
+  <AlertDialog variant="confirmation" title="Save file" primaryActionLabel="Save" cancelLabel="Cancel" autoFocusButton="primary">
     A file with the same name already exists. Overwrite?
   </AlertDialog>
 </DialogTrigger>
@@ -77,15 +77,14 @@ so that the ActionDialog is properly internationalized.
 
 ## Events
 
-AlertDialog accepts an `onConfirm` and `onCancel` prop, triggered when the AlertDialog's confirm or cancel buttons are clicked respectively. 
-To distinguish between whether the primary button or the secondary button was clicked, the `onConfirm` handler is called with a "primary" or "secondary"
-argument. 
+AlertDialog accepts an `onPrimaryAction`, `onSecondaryAction` and `onCancel` prop, triggered when the AlertDialog's confirm or cancel buttons are clicked respectively.
 
-The example below uses `onConfirm` and `onCancel` to tell the user which button was clicked to close the AlertDialog.
+The example below uses `onPrimaryAction`, `onSecondaryAction` and `onCancel` to tell the user which button was clicked to close the AlertDialog.
 
 ```tsx example
 function Example() {
-  let alertConfirm = (button) => alert(`${button} button clicked.`);
+  let onPrimaryAction = () => alert('Primary button clicked.');
+  let onSecondaryAction = () => alert('Secondary button clicked.');
   let alertCancel = () => alert('Cancel button clicked.');
 
   return (
@@ -93,14 +92,15 @@ function Example() {
       <ActionButton>
         Publish
       </ActionButton>
-      <AlertDialog 
+      <AlertDialog
         variant="confirmation" 
         title="Confirm Publish" 
-        primaryLabel="Publish" 
-        secondaryLabel="Save as draft" 
+        primaryActionLabel="Publish" 
+        secondaryActionLabel="Save as draft" 
         cancelLabel="Cancel"
         onCancel={alertCancel}
-        onConfirm={alertConfirm}>
+        onPrimaryAction={onPrimaryAction}
+        onSecondaryAction={onSecondaryAction}>
         Are you sure you want to publish this document?
       </AlertDialog>
     </DialogTrigger>
@@ -120,35 +120,35 @@ function Example() {
 ```tsx example
 <DialogTrigger marginEnd="20px">
   <ActionButton>Exit</ActionButton>
-  <AlertDialog variant="confirmation" title="Exit instance?" primaryLabel="Confirm" cancelLabel="Cancel">
+  <AlertDialog variant="confirmation" title="Exit instance?" primaryActionLabel="Confirm" cancelLabel="Cancel">
     Exit dungeon instance and return to main hub?
   </AlertDialog>
 </DialogTrigger>
 
 <DialogTrigger marginEnd="20px">
   <ActionButton>New file</ActionButton>
-  <AlertDialog variant="information" title="Connect your account" primaryLabel="Continue" cancelLabel="Cancel">
+  <AlertDialog variant="information" title="Connect your account" primaryActionLabel="Continue" cancelLabel="Cancel">
     Please connect an existing account to sync any new files.
   </AlertDialog>
 </DialogTrigger>
 
 <DialogTrigger marginEnd="20px">
   <ActionButton>Delete</ActionButton>
-  <AlertDialog variant="destructive" title="Delete file" primaryLabel="Delete" cancelLabel="Cancel">
+  <AlertDialog variant="destructive" title="Delete file" primaryActionLabel="Delete" cancelLabel="Cancel">
     This will permanently delete the selected file. Continue?
   </AlertDialog>
 </DialogTrigger>
 
 <DialogTrigger marginEnd="20px">
   <ActionButton>Login</ActionButton>
-  <AlertDialog variant="error" title="Unable to connect" primaryLabel="Retry" cancelLabel="Cancel">
+  <AlertDialog variant="error" title="Unable to connect" primaryActionLabel="Retry" cancelLabel="Cancel">
     Something went wrong while connecting to the server. Please try again in a couple minutes.
   </AlertDialog>
 </DialogTrigger>
 
 <DialogTrigger>
   <ActionButton>Enter</ActionButton>
-  <AlertDialog variant="warning" title="Raid instance" primaryLabel="Confirm" cancelLabel="Cancel">
+  <AlertDialog variant="warning" title="Raid instance" primaryActionLabel="Confirm" cancelLabel="Cancel">
     The following encounter meant for parties of 4 or more. Enter anyways?
   </AlertDialog>
 </DialogTrigger>
@@ -161,7 +161,7 @@ Disables the primary button.
 ```tsx example
 <DialogTrigger>
   <ActionButton>Upgrade</ActionButton>
-  <AlertDialog isPrimaryActionDisabled variant="confirmation" title="Upgrade subscription" primaryLabel="Upgrade" cancelLabel="Cancel">
+  <AlertDialog isPrimaryActionDisabled variant="confirmation" title="Upgrade subscription" primaryActionLabel="Upgrade" cancelLabel="Cancel">
     Upgrade subscription for an additional $14.99 a month?
   </AlertDialog>
 </DialogTrigger>
@@ -174,7 +174,7 @@ Disables the secondary button.
 ```tsx example
 <DialogTrigger>
   <ActionButton>Upgrade</ActionButton>
-  <AlertDialog isSecondaryActionDisabled variant="confirmation" title="Upgrade subscription" primaryLabel="Upgrade" secondaryLabel="Apply Coupon" cancelLabel="Cancel">
+  <AlertDialog isSecondaryActionDisabled variant="confirmation" title="Upgrade subscription" primaryActionLabel="Upgrade" secondaryActionLabel="Apply Coupon" cancelLabel="Cancel">
     Upgrade subscription for an additional $14.99 a month?
   </AlertDialog>
 </DialogTrigger>

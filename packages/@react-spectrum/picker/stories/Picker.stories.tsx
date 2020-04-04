@@ -171,8 +171,8 @@ storiesOf('Picker', module)
     'isQuiet',
     () => (
       <Picker isQuiet label="Test" onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
+        <Item>One hundred</Item>
+        <Item>Two thousand and twelve</Item>
         <Item>Three</Item>
       </Picker>
     )
@@ -182,7 +182,7 @@ storiesOf('Picker', module)
     () => (
       <Picker label="Test" isQuiet isDisabled onSelectionChange={action('selectionChange')}>
         <Item>One</Item>
-        <Item>Two</Item>
+        <Item>Two million</Item>
         <Item>Three</Item>
       </Picker>
     )
@@ -192,7 +192,7 @@ storiesOf('Picker', module)
     () => (
       <Picker label="Test" isQuiet labelAlign="end" onSelectionChange={action('selectionChange')}>
         <Item>One</Item>
-        <Item>Two</Item>
+        <Item>Two dollary-doos</Item>
         <Item>Three</Item>
       </Picker>
     )
@@ -388,6 +388,46 @@ storiesOf('Picker', module)
         <Item>One</Item>
         <Item>Two</Item>
         <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'isOpen (controlled)',
+    () => (
+      <Picker label="Test" isOpen onOpenChange={action('onOpenChange')} onSelectionChange={action('selectionChange')}>
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'defaultOpen (uncontrolled)',
+    () => (
+      <Picker label="Test" defaultOpen onOpenChange={action('onOpenChange')} onSelectionChange={action('selectionChange')}>
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'selectedKey (controlled)',
+    () => (
+      <Picker label="Test" selectedKey="One" onSelectionChange={action('selectionChange')}>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
+      </Picker>
+    )
+  )
+  .add(
+    'defaultSelectedKey (uncontrolled)',
+    () => (
+      <Picker label="Test" defaultSelectedKey="One" onSelectionChange={action('selectionChange')}>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   );

@@ -72,14 +72,6 @@ describe('useTextField hook', () => {
       expect(props['aria-invalid']).toBeUndefined();
     });
 
-    it('with appropriate props if autoFocus is defined', () => {
-      let props = renderTextFieldHook({autoFocus: true, 'aria-label': 'mandatory label'});
-      expect(props.autoFocus).toBeTruthy();
-
-      props = renderTextFieldHook({autoFocus: false, 'aria-label': 'mandatory label'});
-      expect(props.autoFocus).toBeFalsy();
-    });
-
     it('with an onChange that calls user specified onChange with appropriate values', () => {
       let onChange = jest.fn();
       let props = renderTextFieldHook({onChange, 'aria-label': 'mandatory label'});

@@ -27,9 +27,6 @@ governing permissions and limitations under the License.
   inline-size: var(--spectrum-dropdown-width);
   min-inline-size: var(--spectrum-dropdown-min-width);
 
-  /* Ensure that changing the selected item doesn't affect the size of the dropdown and its parents */
-  contain: size;
-
   /* Hack to enable select-powered Dropdowns */
   select {
     appearance: none;
@@ -58,6 +55,9 @@ governing permissions and limitations under the License.
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  /* Ensure that changing the selected item doesn't affect the size of the dropdown and its parents */
+  contain: size;
 }
 
 .spectrum-Dropdown-label {
@@ -130,6 +130,10 @@ governing permissions and limitations under the License.
 .spectrum-Dropdown--quiet {
   inline-size: auto;
   min-inline-size: var(--spectrum-dropdown-quiet-min-width);
+
+  .spectrum-Dropdown-trigger {
+    contain: none;
+  }
 }
 
 .spectrum-Dropdown-popover--quiet {
@@ -137,12 +141,14 @@ governing permissions and limitations under the License.
 
   /* Define this var so it can be read from JS */
   --spectrum-dropdown-quiet-offset: calc(var(--spectrum-dropdown-quiet-popover-offset-x) + var(--spectrum-popover-border-size));
-  min-inline-size: calc(var(--spectrum-dropdown-quiet-offset) * -1);
+  margin-inline-start: calc(var(--spectrum-dropdown-quiet-offset) * -1);
 }
 
 /* When used with a label or inside a Form, we need to override some things from .spectrum-Field
  * so quiet dropdowns still collapse properly. */
 .spectrum-Field.spectrum-Dropdown-fieldWrapper--quiet {
+  display: inline-flex;
+  flex-direction: column;
   inline-size: auto;
 
   .spectrum-Dropdown--quiet {

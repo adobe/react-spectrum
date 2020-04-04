@@ -34,10 +34,10 @@ function isCtrlKeyPressed(e: KeyboardEvent) {
 interface SelectableCollectionOptions {
   selectionManager: MultipleSelectionManager,
   keyboardDelegate: KeyboardDelegate,
-  autoFocus?: boolean,
-  focusStrategy?: FocusStrategy,
-  wrapAround?: boolean,
-  disallowEmptySelection?: boolean
+  autoFocus?: boolean | FocusStrategy,
+  shouldFocusWrap?: boolean,
+  disallowEmptySelection?: boolean,
+  disallowSelectAll?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -49,9 +49,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     selectionManager: manager,
     keyboardDelegate: delegate,
     autoFocus = false,
-    focusStrategy,
-    wrapAround = false,
-    disallowEmptySelection = false
+    shouldFocusWrap = false,
+    disallowEmptySelection = false,
+    disallowSelectAll = false
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -62,7 +62,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           let nextKey = delegate.getKeyBelow(manager.focusedKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
-          } else if (wrapAround) {
+          } else if (shouldFocusWrap) {
             manager.setFocusedKey(delegate.getFirstKey());
           }
           if (e.shiftKey && manager.selectionMode === 'multiple') {
@@ -77,7 +77,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           let nextKey = delegate.getKeyAbove(manager.focusedKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
-          } else if (wrapAround) {
+          } else if (shouldFocusWrap) {
             manager.setFocusedKey(delegate.getLastKey());
           }
           if (e.shiftKey && manager.selectionMode === 'multiple') {
@@ -157,7 +157,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'a':
-        if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple') {
+        if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true) {
           e.preventDefault();
           manager.selectAll();
         }
@@ -199,8 +199,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       let focusedKey = delegate.getFirstKey();
       let selectedKeys = manager.selectedKeys;
 
-      // Set the last item as the new focus target if focusStrategy is 'last' (i.e. ArrowUp opening the menu)
-      if (focusStrategy && focusStrategy === 'last') {
+      // Set the last item as the new focus target if autoFocus is 'last' (i.e. ArrowUp opening the menu)
+      if (autoFocus === 'last') {
         focusedKey = delegate.getLastKey();
       }
 

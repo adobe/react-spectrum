@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
@@ -23,7 +23,6 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   if (!props.children && !props['aria-label']) {
     console.warn('If no children are provided, an aria-label must be specified');
   }
-  props = useSlotProps(props);
 
   let {
     isDisabled,
@@ -32,6 +31,9 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+
+  let inputRef = useRef<HTMLInputElement>(null);
+  let domRef = useFocusableRef(ref, inputRef);
 
   let radioGroupProps = useRadioProvider();
   let {
@@ -45,10 +47,7 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
     ...props,
     ...radioGroupProps,
     isDisabled: isDisabled || isGroupDisabled
-  }, state);
-
-  let inputRef = useRef<HTMLInputElement>(null);
-  let domRef = useFocusableRef(ref, inputRef);
+  }, state, inputRef);
 
   return (
     <label

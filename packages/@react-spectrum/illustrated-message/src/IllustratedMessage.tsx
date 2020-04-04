@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {Flex} from '@react-spectrum/layout';
 import React, {forwardRef} from 'react';
@@ -19,13 +19,12 @@ import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
-  props = useSlotProps(props);
   let {
     children,
     slots,
     ...otherProps
   } = props;
-  let domRef = useDOMRef(ref);
+
   let {styleProps} = useStyleProps(otherProps);
   let headingClassName = classNames(
     {},
@@ -54,9 +53,10 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
         'spectrum-IllustratedMessage',
         styleProps.className
       )}
-      slots={slots}
-      ref={domRef}>
-      {children}
+      ref={ref}>
+      <SlotProvider slots={slots}>
+        {children}
+      </SlotProvider>
     </Flex>
   );
 }

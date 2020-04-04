@@ -19,10 +19,11 @@ import {useSlotId} from '@react-aria/utils';
 interface OptionProps {
   isDisabled?: boolean,
   isSelected?: boolean,
+  'aria-label'?: string,
   key?: Key,
   ref?: RefObject<HTMLElement>,
-  selectOnPressUp?: boolean,
-  focusOnHover?: boolean,
+  shouldSelectOnPressUp?: boolean,
+  shouldFocusOnHover?: boolean,
   isVirtualized?: boolean
 }
 
@@ -38,8 +39,8 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     isDisabled,
     key,
     ref,
-    selectOnPressUp,
-    focusOnHover,
+    shouldSelectOnPressUp,
+    shouldFocusOnHover,
     isVirtualized
   } = props;
 
@@ -50,6 +51,7 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     role: 'option',
     'aria-disabled': isDisabled,
     'aria-selected': isSelected,
+    'aria-label': props['aria-label'],
     'aria-labelledby': labelId,
     'aria-describedby': descriptionId
   };
@@ -63,13 +65,13 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     selectionManager: state.selectionManager,
     itemKey: key,
     itemRef: ref,
-    selectOnPressUp,
+    shouldSelectOnPressUp,
     isVirtualized
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled});
   let {hoverProps} = useHover({
-    isDisabled: isDisabled || !focusOnHover,
+    isDisabled: isDisabled || !shouldFocusOnHover,
     onHover() {
       state.selectionManager.setFocusedKey(key);
     }

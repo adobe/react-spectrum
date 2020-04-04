@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, RefObject, useEffect} from 'react';
 import {focusWithoutScrolling, useSlotId} from '@react-aria/utils';
+import {HTMLAttributes, RefObject, useEffect} from 'react';
 
 export interface DialogProps {
   ref: RefObject<HTMLElement | null>,
@@ -19,8 +19,8 @@ export interface DialogProps {
 }
 
 interface DialogAria {
-  dialogProps: AllHTMLAttributes<HTMLElement>
-  titleProps: AllHTMLAttributes<HTMLElement>
+  dialogProps: HTMLAttributes<HTMLElement>
+  titleProps: HTMLAttributes<HTMLElement>
 }
 
 export function useDialog(props: DialogProps): DialogAria {
@@ -51,10 +51,10 @@ export function useDialog(props: DialogProps): DialogAria {
 
   return {
     dialogProps: {
-      'aria-modal': true,
       role,
       tabIndex: -1,
-      'aria-labelledby': props['aria-labelledby'] || titleId
+      'aria-labelledby': props['aria-labelledby'] || titleId,
+      'aria-modal': true
     },
     titleProps: {
       id: titleId

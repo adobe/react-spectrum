@@ -12,13 +12,13 @@
 
 import {calculatePosition, PositionResult} from './calculatePosition';
 import {HTMLAttributes, RefObject, useEffect, useState} from 'react';
-import {PlacementAxis} from '@react-types/overlays';
+import {Placement, PlacementAxis} from '@react-types/overlays';
 import {useLocale} from '@react-aria/i18n';
 
-export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
-    'top' | 'top left' | 'top right' | 'top start' | 'top end' |
-    'left' | 'left top' | 'left bottom' | 'start' | 'start top' | 'start bottom' |
-    'right' | 'right top' | 'right bottom' | 'end' | 'end top' | 'end bottom';
+// export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
+//     'top' | 'top left' | 'top right' | 'top start' | 'top end' |
+//     'left' | 'left top' | 'left bottom' | 'start' | 'start top' | 'start bottom' |
+//     'right' | 'right top' | 'right bottom' | 'end' | 'end top' | 'end bottom';
 
 export interface PositionProps {
   placement?: Placement,
@@ -50,7 +50,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     overlayRef,
     scrollRef = overlayRef,
     placement = 'bottom' as Placement,
-    containerPadding = 8,
+    containerPadding = 12,
     shouldFlip = true,
     boundaryElement = document.body,
     offset = 0,

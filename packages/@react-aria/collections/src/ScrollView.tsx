@@ -86,7 +86,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
         }, 300);
       }
     });
-  }, [isScrolling, onVisibleRectChange, state.height, state.scrollEndTime, state.scrollLeft, state.scrollTimeout, state.scrollTop, state.width]);
+  }, [isScrolling, onScrollEnd, onScrollStart, onVisibleRectChange, state.height, state.scrollEndTime, state.scrollLeft, state.scrollTimeout, state.scrollTop, state.width]);
 
   useEffect(() => {
     // TODO: resize observer
@@ -97,8 +97,8 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
         return;
       }
 
-      let w = dom.offsetWidth;
-      let h = dom.offsetHeight;
+      let w = dom.clientWidth;
+      let h = dom.clientHeight;
       if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
         let style = window.getComputedStyle(dom);
 

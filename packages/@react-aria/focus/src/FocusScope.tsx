@@ -219,7 +219,10 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       if (!isInAnyScope) {
         activeScope = scopeRef;
         focusedNode.current = e.target;
-        focusedNode.current.focus();
+        // Firefox doesn't shift focus back to the Dialog properly without this 
+        requestAnimationFrame(() => {
+          focusedNode.current.focus();
+        });
       }
     };
 

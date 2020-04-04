@@ -144,6 +144,7 @@ export class CollectionBuilder<T> {
       level: parentNode ? parentNode.level + 1 : 0,
       rendered: partialNode.rendered,
       textValue: partialNode.textValue,
+      'aria-label': partialNode['aria-label'],
       wrapper: partialNode.wrapper,
       hasChildNodes: partialNode.hasChildNodes,
       childNodes: iterable(function *() {

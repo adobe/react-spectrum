@@ -37,13 +37,13 @@ export class ActionGroupCollection<T> implements Collection<Node<T>> {
   getKeyBefore(key: Key) {
     let index = this.keys.indexOf(key);
     let itemBefore = this.keys[--index];
-    return itemBefore || this.getLastKey();
+    return itemBefore;
   }
 
   getKeyAfter(key: Key) {
     let index = this.keys.indexOf(key);
     let itemAfter = this.keys[++index];
-    return itemAfter || this.getFirstKey();
+    return itemAfter;
   }
 
   getFirstKey() {

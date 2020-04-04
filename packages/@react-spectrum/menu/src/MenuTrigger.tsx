@@ -10,112 +10,100 @@
  * governing permissions and limitations under the License.
  */
 
+import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
+import {DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
-import {FocusStrategy, SpectrumMenuTriggerProps} from '@react-types/menu';
 import {MenuContext} from './context';
-import {Overlay, Popover, Tray} from '@react-spectrum/overlays';
-import {Placement, useOverlayPosition} from '@react-aria/overlays';
+import {Placement} from '@react-types/overlays';
+import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import {Provider} from '@react-spectrum/provider';
-import React, {Fragment, useRef, useState} from 'react';
-import {useControlledState} from '@react-stately/utils';
-import {useMediaQuery} from '@react-spectrum/utils';
+import React, {Fragment, useRef} from 'react';
+import {SpectrumMenuTriggerProps} from '@react-types/menu';
+import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useMenuTrigger} from '@react-aria/menu';
+import {useMenuTriggerState} from '@react-stately/menu';
 
 export function MenuTrigger(props: SpectrumMenuTriggerProps) {
-  let menuPopoverRef = useRef<HTMLDivElement>();
+  let menuPopoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let menuTriggerRef = useRef<HTMLElement>();
   let menuRef = useRef<HTMLUListElement>();
   let {
     children,
-    onOpenChange,
     align = 'start',
-    shouldFlip = false,
+    shouldFlip = true,
     direction = 'bottom',
-    isDisabled,
     closeOnSelect = true
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, onOpenChange);
-  let [focusStrategy, setFocusStrategy] = useState('first' as FocusStrategy);
-
-  let onClose = () => {
-    setOpen(false);
-  };
+  let state = useMenuTriggerState(props);
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      ref: menuTriggerRef,
-      isDisabled
+      ref: menuTriggerRef
     },
-    {
-      isOpen, 
-      setOpen,
-      focusStrategy,
-      setFocusStrategy
-    }
+    state
   );
 
-  let {overlayProps, placement} = useOverlayPosition({
+  let {overlayProps: positionProps, placement} = useOverlayPosition({
     targetRef: menuTriggerRef,
-    overlayRef: menuPopoverRef,
+    overlayRef: unwrapDOMRef(menuPopoverRef),
     scrollRef: menuRef,
     placement: `${direction} ${align}` as Placement,
     shouldFlip: shouldFlip,
-    isOpen
+    isOpen: state.isOpen
   });
 
   let isMobile = useMediaQuery('(max-width: 700px)');
   let menuContext = {
     ...menuProps,
     ref: menuRef,
-    focusStrategy,
-    onClose,
+    onClose: state.close,
     closeOnSelect,
-    autoFocus: true,
-    wrapAround: true,
+    autoFocus: state.focusStrategy,
     UNSAFE_style: {
       width: isMobile ? '100%' : undefined
     }
   };
 
+  let contents = (
+    <FocusScope restoreFocus>
+      <DismissButton onDismiss={state.close} />
+      {menu}
+      <DismissButton onDismiss={state.close} />
+    </FocusScope>
+  );
+
   // On small screen devices, the menu is rendered in a tray, otherwise a popover.
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray isOpen={isOpen} onClose={onClose}>
-        <FocusScope restoreFocus>
-          {menu}
-        </FocusScope>
+      <Tray isOpen={state.isOpen} onClose={state.close}>
+        {contents}
       </Tray>
     );
   } else {
     overlay = (
-      <Popover 
-        {...overlayProps}
+      <Popover
+        isOpen={state.isOpen}
+        UNSAFE_style={positionProps.style}
         ref={menuPopoverRef}
         placement={placement}
         hideArrow
-        onClose={onClose}>
-        <FocusScope restoreFocus>
-          {menu}
-        </FocusScope>
+        onClose={state.close}
+        shouldCloseOnBlur>
+        {contents}
       </Popover>
     );
   }
-   
+
   return (
     <Fragment>
-      <Provider isDisabled={isDisabled}>
-        <PressResponder {...menuTriggerProps} ref={menuTriggerRef} isPressed={isOpen}>
-          {menuTrigger}
-        </PressResponder>
-      </Provider>
+      <PressResponder {...menuTriggerProps} ref={menuTriggerRef} isPressed={state.isOpen}>
+        {menuTrigger}
+      </PressResponder>
       <MenuContext.Provider value={menuContext}>
-        <Overlay isOpen={isOpen}>
-          {overlay}
-        </Overlay>
+        {overlay}
       </MenuContext.Provider>
     </Fragment>
   );

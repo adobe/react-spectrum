@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
@@ -27,7 +27,6 @@ interface TabProps extends DOMProps, StyleProps {
 }
 
 export function Tab(props: TabProps) {
-  props = useSlotProps(props);
   // v3 come up with rule for how to handle props and dom props issue
   // v3 Always use classNames even when only one class because of modules and "turnonclassname" option
   // TODO: Add in icon in the render when cloneIcon/icon v3 becomes available. Make it so icon or label must be defined.

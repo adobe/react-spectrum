@@ -13,12 +13,11 @@
 import {ActionGroupCollection} from './';
 import {ActionGroupProps} from '@react-types/actiongroup';
 import {ActionGroupState} from './types';
-import {CollectionBase, MultipleSelection} from '@react-types/shared';
 import {CollectionBuilder} from '@react-stately/collections';
 import {Key, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
-export function useActionGroupState<T>(props: ActionGroupProps<T> & MultipleSelection & CollectionBase<T>): ActionGroupState<T> {
+export function useActionGroupState<T>(props: ActionGroupProps<T>): ActionGroupState<T> {
   let selectionState = useMultipleSelectionState(props);
 
   let disabledKeys = useMemo(() =>
