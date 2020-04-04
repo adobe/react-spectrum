@@ -105,7 +105,7 @@ describe('useOverlayPosition', function () {
     expect(overlay).toHaveStyle(`
       left: 12px;
       top: 370px;
-      max-height: 366px;
+      max-height: 386px;
     `);
   });
 });
