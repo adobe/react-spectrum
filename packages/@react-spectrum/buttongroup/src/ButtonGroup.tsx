@@ -38,7 +38,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
   let checkForOverflow = useCallback(() => {
     if (domRef.current && orientation === 'horizontal') {
       setHasOverflow(false);
-      let buttonGroupChildren = Array.from(domRef.current.children);
+      let buttonGroupChildren = Array.from(domRef.current.children) as HTMLElement[];
       let maxX = domRef.current.offsetWidth + 1; // + 1 to account for rounding errors
 
       // If any buttons have negative X positions (align="end") or extend beyond
