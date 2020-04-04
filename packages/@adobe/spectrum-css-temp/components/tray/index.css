@@ -16,7 +16,6 @@
 :root {
   /* Bug: this must be 0ms, not 0 */
   --spectrum-dialog-exit-animation-delay: 0ms;
-  --spectrum-tray-margin-top: 64px;
 }
 
 .spectrum-Tray-wrapper {
@@ -43,6 +42,9 @@
 
 .spectrum-Tray {
   @inherit: %spectrum-overlay;
+
+  /* defined here so it can be accessed from JS */
+  --spectrum-tray-margin-top: 64px;
 
   width: var(--spectrum-tray-width);
   max-width: var(--spectrum-tray-max-width);
