@@ -31,10 +31,11 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
   } = props;
   let {styleProps} = useStyleProps(otherProps);
 
-  let state = useToggleState(props);
-  let {inputProps} = useSwitch(props, state);
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
+  let state = useToggleState(props);
+  let {inputProps} = useSwitch(props, state, inputRef);
+
 
   return (
     <label

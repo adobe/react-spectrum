@@ -20,7 +20,7 @@ export interface CheckboxAria {
 }
 
 export function useCheckbox(props: CheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
-  let {inputProps} = useToggle(props, state);
+  let {inputProps} = useToggle(props, state, inputRef);
   let {isSelected} = state;
 
   let {isIndeterminate} = props;
