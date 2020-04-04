@@ -84,7 +84,7 @@ let withSection = [
 
 storiesOf('Menu', module)
   .addDecorator(story => (
-    <div style={{display: 'flex', background: 'white', border: '1px solid lightgray', maxHeight: 300}}>
+    <div style={{display: 'flex', background: 'var(--spectrum-global-color-gray-50)', border: '1px solid lightgray', maxHeight: 500}}>
       {story()}
     </div>
   ))
