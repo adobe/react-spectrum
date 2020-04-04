@@ -88,7 +88,7 @@ storiesOf('ListBox', module)
   .addDecorator(story => (
     <div style={{display: 'flex', flexDirection: 'column'}}>
       <Label id="label">Choose an item</Label>
-      <div style={{display: 'flex', background: 'white', border: '1px solid lightgray', maxHeight: 300}}>
+      <div style={{display: 'flex', background: 'var(--spectrum-global-color-gray-50)', border: '1px solid lightgray', maxHeight: 300}}>
         {story()}
       </div>
     </div>
