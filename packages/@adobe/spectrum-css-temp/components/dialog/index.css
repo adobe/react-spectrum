@@ -226,8 +226,11 @@ governing permissions and limitations under the License.
 .spectrum-Dialog-closeButton {
   grid-area: closeButton;
   /* align and justify so it doesn't do the default 'stretch' and end up with forced height/width */
-  align-self: center;
-  justify-self: center;
+  align-self: start;
+  justify-self: end;
+
+  margin-inline-end: var(--spectrum-dialog-close-button-padding);
+  margin-block-start: var(--spectrum-dialog-close-button-padding);
 }
 
 /* Alert Dialog is a specific type of Dialog */
