@@ -32,6 +32,9 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   } = props;
   let {styleProps} = useStyleProps(otherProps);
 
+  let inputRef = useRef<HTMLInputElement>(null);
+  let domRef = useFocusableRef(ref, inputRef);
+
   let radioGroupProps = useRadioProvider();
   let {
     isEmphasized,
@@ -44,10 +47,7 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
     ...props,
     ...radioGroupProps,
     isDisabled: isDisabled || isGroupDisabled
-  }, state);
-
-  let inputRef = useRef<HTMLInputElement>(null);
-  let domRef = useFocusableRef(ref, inputRef);
+  }, state, inputRef);
 
   return (
     <label
