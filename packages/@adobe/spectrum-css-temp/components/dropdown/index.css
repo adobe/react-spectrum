@@ -147,6 +147,8 @@ governing permissions and limitations under the License.
 /* When used with a label or inside a Form, we need to override some things from .spectrum-Field
  * so quiet dropdowns still collapse properly. */
 .spectrum-Field.spectrum-Dropdown-fieldWrapper--quiet {
+  display: inline-flex;
+  flex-direction: column;
   inline-size: auto;
 
   .spectrum-Dropdown--quiet {
