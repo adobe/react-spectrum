@@ -47,7 +47,7 @@ function render(props) {
 let Component = (props) => {
   let [show, setShow] = useState(false);
   return (
-    <ButtonGroup {...props}>
+    <ButtonGroup maxWidth="100vw" {...props}>
       <Button variant="primary" onPress={action('press')}>Button 1</Button>
       <Button variant="negative" onPress={action('press')}>Button long long long name</Button>
       <Button variant="cta" isQuiet onPress={action('press')}>Quiet button</Button>
