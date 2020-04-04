@@ -89,7 +89,7 @@ governing permissions and limitations under the License.
 .spectrum-Dialog .spectrum-Dialog-grid {
   display: grid;
   grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding);
-  grid-template-rows: auto minmax(var(--spectrum-dialog-padding), var(--spectrum-dialog-close-button-size)) auto auto 1fr auto var(--spectrum-dialog-padding);
+  grid-template-rows: auto var(--spectrum-dialog-padding) auto auto 1fr auto var(--spectrum-dialog-padding);
   grid-template-areas:
     "hero hero    hero    hero        hero        hero"
     ".    .       .       .           .           ."
@@ -205,7 +205,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Dialog.spectrum-Dialog--dismissable .spectrum-Dialog-grid {
   grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) minmax(0, var(--spectrum-dialog-close-button-size)) var(--spectrum-dialog-padding);
-  grid-template-rows: auto minmax(var(--spectrum-dialog-padding), var(--spectrum-dialog-close-button-size)) auto auto 1fr auto var(--spectrum-dialog-padding);
+  grid-template-rows: auto var(--spectrum-dialog-padding) auto auto 1fr auto var(--spectrum-dialog-padding);
   grid-template-areas:
     "hero hero    hero    hero        hero        hero        hero"
     ".    .       .       .           .           closeButton closeButton"
@@ -292,7 +292,7 @@ governing permissions and limitations under the License.
 
   .spectrum-Dialog .spectrum-Dialog-grid {
     grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding);
-    grid-template-rows: auto minmax(var(--spectrum-dialog-padding), var(--spectrum-dialog-close-button-size)) auto auto auto 1fr auto var(--spectrum-dialog-padding);
+    grid-template-rows: auto var(--spectrum-dialog-padding) auto auto auto 1fr auto var(--spectrum-dialog-padding);
     grid-template-areas:
       "hero hero    hero    hero        hero        hero"
       ".    .       .       .           .           ."
@@ -306,7 +306,7 @@ governing permissions and limitations under the License.
 
   .spectrum-Dialog.spectrum-Dialog--dismissable .spectrum-Dialog-grid {
     grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) minmax(0, var(--spectrum-dialog-close-button-size)) var(--spectrum-dialog-padding);
-    grid-template-rows: auto minmax(var(--spectrum-dialog-padding), var(--spectrum-dialog-close-button-size)) auto auto auto 1fr auto var(--spectrum-dialog-padding);
+    grid-template-rows: auto var(--spectrum-dialog-padding) auto auto auto 1fr auto var(--spectrum-dialog-padding);
     grid-template-areas:
       "hero hero    hero    hero        hero        hero        hero"
       ".    .       .       .           .           closeButton closeButton"
