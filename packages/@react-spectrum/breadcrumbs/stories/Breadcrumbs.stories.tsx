@@ -9,18 +9,18 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-​
+
 import {action} from '@storybook/addon-actions';
 import {Breadcrumbs} from '../';
 import {Item} from '@react-stately/collections';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-​
+
 let styles = {
   width: '50vw'
 };
 const CenterDecorator = storyFn => <div style={styles}><div>{storyFn()}</div></div>;
-​
+
 storiesOf('Breadcrumbs', module)
   .addDecorator(CenterDecorator)
   .addParameters({providerSwitcher: {status: 'negative'}})
@@ -88,7 +88,7 @@ storiesOf('Breadcrumbs', module)
     'isHeading: true, size: L',
     () => render({isHeading: true, size: 'L'})
   );
-​
+
 function render(props = {}) {
   return (
     <Breadcrumbs {...props} onAction={action('onAction')}>
@@ -98,7 +98,7 @@ function render(props = {}) {
     </Breadcrumbs>
   );
 }
-​
+
 function renderMany(props = {}) {
   return (
     <Breadcrumbs {...props} onAction={action('onAction')}>
