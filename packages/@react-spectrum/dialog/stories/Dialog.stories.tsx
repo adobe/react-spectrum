@@ -414,7 +414,7 @@ function renderWithThreeButtonsVertical({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading</Heading>
             <Divider />
             <Content>{singleParagraph()}</Content>
             <ButtonGroup orientation="vertical">
