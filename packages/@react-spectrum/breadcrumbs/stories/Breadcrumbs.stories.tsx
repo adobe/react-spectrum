@@ -9,18 +9,18 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+​
 import {action} from '@storybook/addon-actions';
 import {Breadcrumbs} from '../';
 import {Item} from '@react-stately/collections';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-
+​
 let styles = {
   width: '50vw'
 };
 const CenterDecorator = storyFn => <div style={styles}><div>{storyFn()}</div></div>;
-
+​
 storiesOf('Breadcrumbs', module)
   .addDecorator(CenterDecorator)
   .addParameters({providerSwitcher: {status: 'negative'}})
@@ -65,6 +65,10 @@ storiesOf('Breadcrumbs', module)
     () => renderMany({maxVisibleItems: 'auto', size: 'L'})
   )
   .add(
+    'maxVisibleItems: auto, size: L, showRoot: true',
+    () => renderMany({maxVisibleItems: 'auto', size: 'L', showRoot: true})
+  )
+  .add(
     'isDisabled: true',
     () => render({isDisabled: true})
   )
@@ -84,27 +88,27 @@ storiesOf('Breadcrumbs', module)
     'isHeading: true, size: L',
     () => render({isHeading: true, size: 'L'})
   );
-
+​
 function render(props = {}) {
   return (
     <Breadcrumbs {...props} onAction={action('onAction')}>
-      <Item uniqueKey="Folder 1">Folder 1</Item>
-      <Item uniqueKey="Folder 2">Folder 2</Item>
-      <Item uniqueKey="Folder 3">Folder 3</Item>
+      <Item uniqueKey="Folder 1">Vestibulum bibendum odio non</Item>
+      <Item uniqueKey="Folder 2">Cras aliquet</Item>
+      <Item uniqueKey="Folder 3">Quisque ut turpis</Item>
     </Breadcrumbs>
   );
 }
-
+​
 function renderMany(props = {}) {
   return (
     <Breadcrumbs {...props} onAction={action('onAction')}>
-      <Item uniqueKey="Folder 1">Folder 1</Item>
-      <Item uniqueKey="Folder 2">Folder 2</Item>
-      <Item uniqueKey="Folder 3">Folder 3</Item>
-      <Item uniqueKey="Folder 4">Folder 4</Item>
-      <Item uniqueKey="Folder 5">Folder 5</Item>
-      <Item uniqueKey="Folder 6">Folder 6</Item>
-      <Item uniqueKey="Folder 7">Folder 7</Item>
+      <Item uniqueKey="Folder 1">Vestibulum bibendum odio non</Item>
+      <Item uniqueKey="Folder 2">Cras aliquet</Item>
+      <Item uniqueKey="Folder 3">Quisque ut turpis</Item>
+      <Item uniqueKey="Folder 4">Curabitur convallis</Item>
+      <Item uniqueKey="Folder 5">Curabitur quis</Item>
+      <Item uniqueKey="Folder 6">Cras fringilla</Item>
+      <Item uniqueKey="Folder 7">Etiam ut</Item>
     </Breadcrumbs>
   );
 }
