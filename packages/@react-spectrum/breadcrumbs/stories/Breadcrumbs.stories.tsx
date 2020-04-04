@@ -17,7 +17,7 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 let styles = {
-  width: '50vw'
+  width: '100vw'
 };
 const CenterDecorator = storyFn => <div style={styles}><div>{storyFn()}</div></div>;
 
@@ -25,8 +25,12 @@ storiesOf('Breadcrumbs', module)
   .addDecorator(CenterDecorator)
   .addParameters({providerSwitcher: {status: 'negative'}})
   .add(
-    'Default',
-    () => render({})
+    'Default (with 3 items)',
+    () => render()
+  )
+  .add(
+    'Default (with 7 items)',
+    () => renderMany({})
   )
   .add(
     'size: S',
@@ -38,11 +42,11 @@ storiesOf('Breadcrumbs', module)
   )
   .add(
     'maxVisibleItems: 4',
-    () => renderMany({})
+    () => renderMany({maxVisibleItems: 4})
   )
   .add(
     'maxVisibleItems: 4, showRoot: true',
-    () => renderMany({showRoot: true})
+    () => renderMany({maxVisibleItems: 4, showRoot: true})
   )
   .add(
     'maxVisibleItems: auto',
@@ -53,6 +57,14 @@ storiesOf('Breadcrumbs', module)
     () => (
       <div style={{width: '100px'}}>
         {renderMany({maxVisibleItems: 'auto'})}
+      </div>
+    )
+  )
+  .add(
+    'collapsed, maxVisibleItems: auto, size: L',
+    () => (
+      <div style={{width: '100px'}}>
+        {renderMany({maxVisibleItems: 'auto', size: 'L'})}
       </div>
     )
   )
@@ -78,7 +90,7 @@ storiesOf('Breadcrumbs', module)
   )
   .add(
     'isDisabled: true, maxVisibleItems: 4',
-    () => renderMany({isDisabled: true})
+    () => renderMany({isDisabled: true, maxVisibleItems: 4})
   )
   .add(
     'isHeading: true',
@@ -92,9 +104,9 @@ storiesOf('Breadcrumbs', module)
 function render(props = {}) {
   return (
     <Breadcrumbs {...props} onAction={action('onAction')}>
-      <Item uniqueKey="Folder 1">Vestibulum bibendum odio non</Item>
-      <Item uniqueKey="Folder 2">Cras aliquet</Item>
-      <Item uniqueKey="Folder 3">Quisque ut turpis</Item>
+      <Item uniqueKey="Folder 1">The quick brown fox jumps over</Item>
+      <Item uniqueKey="Folder 2">My Documents</Item>
+      <Item uniqueKey="Folder 3">Kangaroos jump high</Item>
     </Breadcrumbs>
   );
 }
@@ -102,13 +114,13 @@ function render(props = {}) {
 function renderMany(props = {}) {
   return (
     <Breadcrumbs {...props} onAction={action('onAction')}>
-      <Item uniqueKey="Folder 1">Vestibulum bibendum odio non</Item>
-      <Item uniqueKey="Folder 2">Cras aliquet</Item>
-      <Item uniqueKey="Folder 3">Quisque ut turpis</Item>
-      <Item uniqueKey="Folder 4">Curabitur convallis</Item>
-      <Item uniqueKey="Folder 5">Curabitur quis</Item>
-      <Item uniqueKey="Folder 6">Cras fringilla</Item>
-      <Item uniqueKey="Folder 7">Etiam ut</Item>
+      <Item uniqueKey="Folder 1">The quick brown fox jumps over</Item>
+      <Item uniqueKey="Folder 2">My Documents</Item>
+      <Item uniqueKey="Folder 3">Kangaroos jump high</Item>
+      <Item uniqueKey="Folder 4">Koalas are very cute</Item>
+      <Item uniqueKey="Folder 5">Wombat's noses</Item>
+      <Item uniqueKey="Folder 6">Wattle trees</Item>
+      <Item uniqueKey="Folder 7">April 7</Item>
     </Breadcrumbs>
   );
 }
