@@ -24,11 +24,12 @@ import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
 interface TrayWrapperProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
   isOpen?: boolean,
-  onClose?: () => void
+  onClose?: () => void,
+  shouldCloseOnBlur?: boolean
 }
 
 function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, onClose, ...otherProps} = props;
+  let {children, onClose, shouldCloseOnBlur, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
 
@@ -39,6 +40,7 @@ function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
         {...filterDOMProps(otherProps)}
         {...styleProps}
         onClose={onClose}
+        shouldCloseOnBlur={shouldCloseOnBlur}
         ref={domRef}>
         {children}
       </TrayWrapper>
@@ -50,10 +52,11 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   let {
     children,
     onClose,
+    shouldCloseOnBlur,
     isOpen,
     ...otherProps
   } = props;
-  let {overlayProps} = useOverlay({ref, onClose, isOpen, isDismissable: true});
+  let {overlayProps} = useOverlay({ref, onClose, shouldCloseOnBlur, isOpen, isDismissable: true});
   usePreventScroll();
   useModal();
 

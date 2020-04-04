@@ -65,5 +65,6 @@ export interface PopoverProps extends DOMProps, StyleProps, OverlayProps {
 export interface TrayProps extends DOMProps, StyleProps, OverlayProps {
   children: ReactElement,
   isOpen?: boolean,
-  onClose?: () => void
+  onClose?: () => void,
+  shouldCloseOnBlur?: boolean
 }

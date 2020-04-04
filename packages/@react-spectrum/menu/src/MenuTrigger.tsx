@@ -78,7 +78,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray isOpen={state.isOpen} onClose={state.close}>
+      <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur>
         {contents}
       </Tray>
     );
