@@ -29,11 +29,12 @@ interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLEl
   layout: Layout<T>,
   collection: Collection<T>,
   focusedKey?: Key,
-  sizeToFit?: 'width' | 'height'
+  sizeToFit?: 'width' | 'height',
+  scrollDirection?: 'horizontal' | 'vertical' | 'both'
 }
 
 function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, ref: RefObject<HTMLDivElement>) {
-  let {children: renderView, renderWrapper, layout, collection, focusedKey, sizeToFit, ...otherProps} = props;
+  let {children: renderView, renderWrapper, layout, collection, focusedKey, sizeToFit, scrollDirection, ...otherProps} = props;
   let {
     visibleViews,
     visibleRect,
@@ -101,7 +102,8 @@ function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, r
       onVisibleRectChange={setVisibleRect}
       onScrollStart={startScrolling}
       onScrollEnd={endScrolling}
-      sizeToFit={sizeToFit}>
+      sizeToFit={sizeToFit}
+      scrollDirection={scrollDirection}>
       {visibleViews}
     </ScrollView>
   );

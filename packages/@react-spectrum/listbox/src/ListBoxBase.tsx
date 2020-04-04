@@ -98,6 +98,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
       ref={ref}
       focusedKey={state.selectionManager.focusedKey}
       sizeToFit="height"
+      scrollDirection="vertical"
       className={
         classNames(
           styles,

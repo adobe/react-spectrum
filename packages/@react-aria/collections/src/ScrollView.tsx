@@ -22,7 +22,8 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   innerStyle: CSSProperties,
   sizeToFit: 'width' | 'height',
   onScrollStart?: () => void,
-  onScrollEnd?: () => void
+  onScrollEnd?: () => void,
+  scrollDirection?: 'horizontal' | 'vertical' | 'both'
 }
 
 function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
@@ -35,6 +36,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     sizeToFit,
     onScrollStart,
     onScrollEnd,
+    scrollDirection = 'both',
     ...otherProps
   } = props;
 
@@ -150,8 +152,25 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     }
   }, [ref, state.scrollLeft, state.scrollTop, visibleRect.x, visibleRect.y]);
 
+  let style: React.CSSProperties = {
+    ...otherProps.style,
+    position: 'relative',
+    // Reset padding so that relative positioning works correctly. Padding will be done in JS layout.
+    padding: 0
+  };
+
+  if (scrollDirection === 'horizontal') {
+    style.overflowX = 'auto';
+    style.overflowY = 'hidden';
+  } else if (scrollDirection === 'vertical') {
+    style.overflowY = 'auto';
+    style.overflowX = 'hidden';
+  } else {
+    style.overflow = 'auto';
+  }
+
   return (
-    <div {...otherProps} style={{position: 'relative', overflow: 'auto', ...otherProps.style}} ref={ref} onScroll={onScroll}>
+    <div {...otherProps} style={style} ref={ref} onScroll={onScroll}>
       <div role="presentation" style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', ...innerStyle}}>
         {children}
       </div>
