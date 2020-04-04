@@ -39,6 +39,7 @@ governing permissions and limitations under the License.
 
   /* 12px desktop (medium scale) and 8px mobile (large scale) */
   --spectrum-dialog-close-button-padding: calc(26px - var(--spectrum-global-dimension-size-175));
+  --spectrum-dialog-close-button-size: var(--spectrum-global-dimension-size-400);
 
   --spectrum-dialog-gap-size: var(--spectrum-global-dimension-size-200);
 }
@@ -87,8 +88,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Dialog .spectrum-Dialog-grid {
   display: grid;
-  grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding);
-  grid-template-rows: auto var(--spectrum-dialog-padding) auto auto 1fr auto var(--spectrum-dialog-padding);
+  grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) minmax(var(--spectrum-dialog-padding), var(--spectrum-dialog-close-button-size));
+  grid-template-rows: auto minmax(var(--spectrum-dialog-padding), var(--spectrum-dialog-close-button-size)) auto auto 1fr auto var(--spectrum-dialog-padding);
   grid-template-areas:
     "hero hero    hero    hero        hero        hero"
     ".    .       .       .           .           closeButton"
@@ -214,11 +215,8 @@ governing permissions and limitations under the License.
 .spectrum-Dialog-closeButton {
   grid-area: closeButton;
   /* align and justify so it doesn't do the default 'stretch' and end up with forced height/width */
-  align-self: start;
-  justify-self: end;
-
-  inset-block-start: var(--spectrum-dialog-close-button-padding);
-  inset-inline-end: var(--spectrum-dialog-close-button-padding);
+  align-self: end;
+  justify-self: start;
 }
 
 /* Alert Dialog is a specific type of Dialog */
@@ -278,8 +276,8 @@ governing permissions and limitations under the License.
 
 @media screen and (max-width: 700px) {
   .spectrum-Dialog .spectrum-Dialog-grid {
-    grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto auto var(--spectrum-dialog-padding);
-    grid-template-rows: auto var(--spectrum-dialog-padding) auto auto auto 1fr auto var(--spectrum-dialog-padding);
+    grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto auto minmax(var(--spectrum-dialog-padding), var(--spectrum-dialog-close-button-size));
+    grid-template-rows: auto minmax(var(--spectrum-dialog-padding), var(--spectrum-dialog-close-button-size)) auto auto auto 1fr auto var(--spectrum-dialog-padding);
     grid-template-areas:
       "hero hero    hero    hero        hero        hero"
       ".    .       .       .           .           closeButton"
