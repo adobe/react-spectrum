@@ -297,7 +297,7 @@ export function calculatePositionInternal(
     containerOffsetWithBoundary,
     childOffset,
     margins,
-    padding + (axis === 'top' ? offset : 0)
+    padding
   );
 
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
