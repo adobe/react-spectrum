@@ -255,7 +255,7 @@ export function calculatePositionInternal(
   crossOffset: number
 ): PositionResult {
   let placementInfo = parsePlacement(placementInput);
-  let {axis, size, crossAxis, crossSize, placement, crossPlacement} = placementInfo;
+  let {size, crossAxis, crossSize, placement, crossPlacement} = placementInfo;
   let position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, offset, crossOffset);
   let normalizedOffset = offset;
   let space = getAvailableSpace(
@@ -297,7 +297,7 @@ export function calculatePositionInternal(
     containerOffsetWithBoundary,
     childOffset,
     margins,
-    padding + (axis === 'top' ? offset : 0)
+    padding
   );
 
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
