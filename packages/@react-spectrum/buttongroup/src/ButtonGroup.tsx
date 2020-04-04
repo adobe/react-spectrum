@@ -38,10 +38,12 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
   let checkForOverflow = useCallback(() => {
     if (domRef.current && orientation === 'horizontal') {
       setHasOverflow(false);
-      let buttonGroupChildren = Array.from(domRef.current.children);
-      let childrenY = buttonGroupChildren.map(child => child.getBoundingClientRect().top);
-      // If any button's top is different from the others, overflow is happening
-      if (!childrenY.every(itemY => itemY === childrenY[0])) {
+      let buttonGroupChildren = Array.from(domRef.current.children) as HTMLElement[];
+      let maxX = domRef.current.offsetWidth + 1; // + 1 to account for rounding errors
+
+      // If any buttons have negative X positions (align="end") or extend beyond
+      // the width of the button group (align="start"), then switch to vertical.
+      if (buttonGroupChildren.some(child => child.offsetLeft < 0 || child.offsetLeft + child.offsetWidth > maxX)) {
         setHasOverflow(true);
       }
     }
