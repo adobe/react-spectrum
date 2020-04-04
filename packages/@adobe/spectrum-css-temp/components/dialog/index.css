@@ -88,11 +88,11 @@ governing permissions and limitations under the License.
 
 .spectrum-Dialog .spectrum-Dialog-grid {
   display: grid;
-  grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) minmax(var(--spectrum-dialog-padding), var(--spectrum-dialog-close-button-size));
+  grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding);
   grid-template-rows: auto minmax(var(--spectrum-dialog-padding), var(--spectrum-dialog-close-button-size)) auto auto 1fr auto var(--spectrum-dialog-padding);
   grid-template-areas:
     "hero hero    hero    hero        hero        hero"
-    ".    .       .       .           .           closeButton"
+    ".    .       .       .           .           ."
     ".    heading header  header      typeIcon    ."
     ".    divider divider divider     divider     ."
     ".    content content content     content     ."
@@ -203,7 +203,18 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Dialog--dismissable {
+.spectrum-Dialog.spectrum-Dialog--dismissable .spectrum-Dialog-grid {
+  grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) minmax(0, var(--spectrum-dialog-close-button-size)) var(--spectrum-dialog-padding);
+  grid-template-rows: auto minmax(var(--spectrum-dialog-padding), var(--spectrum-dialog-close-button-size)) auto auto 1fr auto var(--spectrum-dialog-padding);
+  grid-template-areas:
+    "hero hero    hero    hero        hero        hero        hero"
+    ".    .       .       .           .           closeButton closeButton"
+    ".    heading header  header      typeIcon    closeButton closeButton"
+    ".    divider divider divider     divider     divider     ."
+    ".    content content content     content     content     ."
+    ".    footer  footer  buttonGroup buttonGroup buttonGroup ."
+    ".    .       .       .           .           .           .";
+
   .spectrum-Dialog-buttonGroup {
     display: none;
   }
@@ -215,8 +226,11 @@ governing permissions and limitations under the License.
 .spectrum-Dialog-closeButton {
   grid-area: closeButton;
   /* align and justify so it doesn't do the default 'stretch' and end up with forced height/width */
-  align-self: end;
-  justify-self: start;
+  align-self: start;
+  justify-self: end;
+
+  margin-inline-end: var(--spectrum-dialog-close-button-padding);
+  margin-block-start: var(--spectrum-dialog-close-button-padding);
 }
 
 /* Alert Dialog is a specific type of Dialog */
@@ -275,18 +289,33 @@ governing permissions and limitations under the License.
 }
 
 @media screen and (max-width: 700px) {
+
   .spectrum-Dialog .spectrum-Dialog-grid {
-    grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto auto minmax(var(--spectrum-dialog-padding), var(--spectrum-dialog-close-button-size));
+    grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding);
     grid-template-rows: auto minmax(var(--spectrum-dialog-padding), var(--spectrum-dialog-close-button-size)) auto auto auto 1fr auto var(--spectrum-dialog-padding);
     grid-template-areas:
       "hero hero    hero    hero        hero        hero"
-      ".    .       .       .           .           closeButton"
+      ".    .       .       .           .           ."
       ".    heading heading heading     typeIcon    ."
       ".    header  header  header      header      ."
       ".    divider divider divider     divider     ."
       ".    content content content     content     ."
       ".    footer  footer  buttonGroup buttonGroup ."
       ".    .       .       .           .           .";
+  }
+
+  .spectrum-Dialog.spectrum-Dialog--dismissable .spectrum-Dialog-grid {
+    grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) minmax(0, var(--spectrum-dialog-close-button-size)) var(--spectrum-dialog-padding);
+    grid-template-rows: auto minmax(var(--spectrum-dialog-padding), var(--spectrum-dialog-close-button-size)) auto auto auto 1fr auto var(--spectrum-dialog-padding);
+    grid-template-areas:
+      "hero hero    hero    hero        hero        hero        hero"
+      ".    .       .       .           .           closeButton closeButton"
+      ".    heading heading heading     typeIcon    closeButton closeButton"
+      ".    header  header  header      header      header      ."
+      ".    divider divider divider     divider     divider     ."
+      ".    content content content     content     content     ."
+      ".    footer  footer  buttonGroup buttonGroup buttonGroup ."
+      ".    .       .       .           .           .           .";
   }
 
   .spectrum-Dialog .spectrum-Dialog-header {
