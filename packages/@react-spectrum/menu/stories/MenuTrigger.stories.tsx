@@ -11,13 +11,11 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton, Button} from '@react-spectrum/button';
+import {ActionButton} from '@react-spectrum/button';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
-import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {classNames} from '@react-spectrum/utils';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Menu, MenuTrigger, Section} from '../';
@@ -25,7 +23,6 @@ import {Keyboard, Text} from '@react-spectrum/typography';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import styles from '@adobe/spectrum-css-temp/components/splitbutton/vars.css';
 
 let withSection = [
   {name: 'Animals', children: [
