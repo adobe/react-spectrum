@@ -116,7 +116,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray isOpen={state.isOpen} onClose={state.close}>
+      <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur>
         {listbox}
       </Tray>
     );

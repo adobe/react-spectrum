@@ -428,7 +428,7 @@ describe('usePress', function () {
       let el = res.getByText('test');
       fireEvent.mouseDown(el);
       fireEvent.mouseLeave(el);
-      fireEvent.mouseUp(document.body);
+      fireEvent.mouseUp(document.body, {clientX: 100, clientY: 100});
       fireEvent.mouseEnter(el);
 
       expect(events).toEqual([

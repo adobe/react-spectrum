@@ -45,6 +45,7 @@ export function useListBoxLayout<T>(state: ListState<T>) {
     new ListLayout({
       estimatedRowHeight: scale === 'large' ? 48 : 35,
       estimatedHeadingHeight: scale === 'large' ? 37 : 30,
+      padding: scale === 'large' ? 5 : 4, // TODO: get from DNA
       collator
     })
   , [collator, scale]);
@@ -97,6 +98,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
       ref={ref}
       focusedKey={state.selectionManager.focusedKey}
       sizeToFit="height"
+      scrollDirection="vertical"
       className={
         classNames(
           styles,

@@ -377,6 +377,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         state.isPressed = true;
+        state.isOverTarget = true;
         state.target = e.currentTarget;
 
         if (!isDisabled) {
@@ -391,6 +392,7 @@ export function usePress(props: PressHookProps): PressResult {
       pressProps.onMouseEnter = (e) => {
         e.stopPropagation();
         if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
+          state.isOverTarget = true;
           triggerPressStart(e, 'mouse');
         }
       };
@@ -398,6 +400,7 @@ export function usePress(props: PressHookProps): PressResult {
       pressProps.onMouseLeave = (e) => {
         e.stopPropagation();
         if (state.isPressed && !state.ignoreEmulatedMouseEvents) {
+          state.isOverTarget = false;
           triggerPressEnd(e, 'mouse', false);
         }
       };
@@ -417,12 +420,18 @@ export function usePress(props: PressHookProps): PressResult {
         state.isPressed = false;
         document.removeEventListener('mouseup', onMouseUp, false);
 
-        if (state.ignoreEmulatedMouseEvents || !state.target || !state.target.contains(e.target as HTMLElement)) {
+        if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;
           return;
         }
 
-        triggerPressEnd(createEvent(state.target, e), 'mouse');
+        if (isOverTarget(e, state.target)) {
+          triggerPressEnd(createEvent(state.target, e), 'mouse');
+        } else if (state.isOverTarget) {
+          triggerPressEnd(createEvent(state.target, e), 'mouse', false);
+        }
+
+        state.isOverTarget = false;
       };
 
       pressProps.onTouchStart = (e) => {
@@ -607,8 +616,8 @@ interface EventPoint {
 
 function isOverTarget(point: EventPoint, target: HTMLElement) {
   let rect = target.getBoundingClientRect();
-  return point.clientX >= rect.left && 
-    point.clientX <= rect.right && 
-    point.clientY >= rect.top && 
-    point.clientY <= rect.bottom;
+  return (point.clientX || 0) >= (rect.left || 0) && 
+    (point.clientX || 0) <= (rect.right || 0) && 
+    (point.clientY || 0) >= (rect.top || 0) && 
+    (point.clientY || 0) <= (rect.bottom || 0);
 }
