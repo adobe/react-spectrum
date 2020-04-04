@@ -123,16 +123,18 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   } else {
     // If quiet, use the default width, otherwise match the width of the button. This can be overridden by the menuWidth prop.
     // Always have a minimum width of the button width. When quiet, there is an extra offset to add.
-    let btnWidth = isQuiet ? null : buttonWidth;
-    let width = menuWidth ? dimensionValue(menuWidth) : btnWidth;
-    let minWidth = isQuiet ? `calc(${buttonWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : buttonWidth;
+    // Not using style props for this because they don't support `calc`.
+    let width = isQuiet ? null : buttonWidth;
+    let style = {
+      ...overlayProps.style,
+      width: menuWidth ? dimensionValue(menuWidth) : width,
+      minWidth: isQuiet ? `calc(${buttonWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : buttonWidth
+    };
 
     overlay = (
       <Popover
         isOpen={state.isOpen}
-        UNSAFE_style={overlayProps.style}
-        minWidth={minWidth}
-        width={width}
+        UNSAFE_style={style}
         UNSAFE_className={classNames(styles, 'spectrum-Dropdown-popover', {'spectrum-Dropdown-popover--quiet': isQuiet})}
         ref={popoverRef}
         placement={placement}
