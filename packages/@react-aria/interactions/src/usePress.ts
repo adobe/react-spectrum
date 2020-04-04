@@ -616,8 +616,8 @@ interface EventPoint {
 
 function isOverTarget(point: EventPoint, target: HTMLElement) {
   let rect = target.getBoundingClientRect();
-  return point.clientX >= rect.left && 
-    point.clientX <= rect.right && 
-    point.clientY >= rect.top && 
-    point.clientY <= rect.bottom;
+  return (point.clientX || 0) >= (rect.left || 0) && 
+    (point.clientX || 0) <= (rect.right || 0) && 
+    (point.clientY || 0) >= (rect.top || 0) && 
+    (point.clientY || 0) <= (rect.bottom || 0);
 }
