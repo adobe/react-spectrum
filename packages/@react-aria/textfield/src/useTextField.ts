@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes} from 'react';
+import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {TextFieldProps} from '@react-types/textfield';
 import {TextInputDOMProps} from '@react-types/shared';
 import {useFocusable} from '@react-aria/focus';
@@ -27,18 +27,21 @@ interface TextFieldAria {
 /**
  * Provides the behavior and accessibility implementation for a text field.
  * @param props - props for the text field
+ * @param ref - ref to the HTML input element
  */
-export function useTextField(props: TextFieldAriaProps): TextFieldAria {
+export function useTextField(
+  props: TextFieldAriaProps,
+  ref: RefObject<HTMLInputElement>
+): TextFieldAria {
   let {
     isDisabled = false,
     isRequired = false,
     isReadOnly = false,
-    autoFocus = false,
     validationState,
     type = 'text',
     onChange = () => {}
   } = props;
-  let {focusableProps} = useFocusable(props);
+  let {focusableProps} = useFocusable(props, ref);
   let {labelProps, fieldProps} = useLabel(props);
 
   return {
@@ -50,7 +53,6 @@ export function useTextField(props: TextFieldAriaProps): TextFieldAria {
       'aria-required': isRequired || undefined,
       'aria-invalid': validationState === 'invalid' || undefined,
       onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
-      autoFocus,
       autoComplete: props.autoComplete,
       maxLength: props.maxLength,
       minLength: props.minLength,

@@ -70,7 +70,7 @@ describe('Modal', function () {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('hides the modal when clicking outside', async function () {
+  it('doesn\'t hide the modal when clicking outside by default', async function () {
     let onClose = jest.fn();
     render(
       <Provider theme={theme}>
@@ -80,6 +80,21 @@ describe('Modal', function () {
       </Provider>
     );
     await waitForDomChange(); // wait for animation
+    fireEvent.mouseUp(document.body);
+    expect(onClose).toHaveBeenCalledTimes(0);
+  });
+
+  it('hides the modal when clicking outside if isDismissible is true', async function () {
+    let onClose = jest.fn();
+    render(
+      <Provider theme={theme}>
+        <Modal isOpen onClose={onClose} isDismissable>
+          <div role="dialog">contents</div>
+        </Modal>
+      </Provider>
+    );
+    await waitForDomChange(); // wait for animation
+    fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
     expect(onClose).toHaveBeenCalledTimes(1);
   });

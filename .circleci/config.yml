@@ -5,6 +5,7 @@ jobs:
   build:
     docker:
       - image: circleci/node:12.10
+    resource_class: large
 
     working_directory: ~/react-spectrum-v3
     steps:
@@ -62,6 +63,7 @@ jobs:
   storybook:
     docker:
       - image: circleci/node:12.10
+    resource_class: large
 
     working_directory: ~/react-spectrum-v3
     steps:
@@ -79,6 +81,7 @@ jobs:
   docs:
     docker:
       - image: circleci/node:12.10
+    resource_class: large
 
     working_directory: ~/react-spectrum-v3
     steps:

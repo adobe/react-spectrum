@@ -10,22 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {HTMLElement} from 'react-dom';
-import React, {RefObject} from 'react';
+import {DOMRef} from '@react-types/shared';
+import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import React, {forwardRef} from 'react';
 import {TextProps} from '@react-types/typography';
 
-
-export const Text = React.forwardRef((props: TextProps, ref: RefObject<HTMLElement>) => {
+function Text(props: TextProps, ref: DOMRef) {
+  props = useSlotProps(props, 'text');
   let {
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps({slot: 'text', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
+  let domRef = useDOMRef(ref);
 
   return (
-    <span {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
+    <span {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       {children}
     </span>
   );
-});
+}
+
+const _Text = forwardRef(Text);
+export {_Text as Text};

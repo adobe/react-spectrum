@@ -98,7 +98,7 @@ governing permissions and limitations under the License.
     /* half of (height + vertical border - handle width) * -1 (for negative opposite) */
     top: calc(((var(--spectrum-rail-gripper-width) + (2 * var(--spectrum-rail-gripper-border-width-horizontal)) - var(--spectrum-rail-handle-width)) / 2) * -1);
 
-    transform: translate(calc(-1 * var(--spectrum-splitview-vertical-gripper-width)), 0);
+    transform: translate(calc(var(--spectrum-splitview-vertical-gripper-width) * -1), 0);
     left: var(--spectrum-splitview-vertical-gripper-width);
     width: var(--spectrum-rail-gripper-height); /* same as default height */
     height: var(--spectrum-rail-gripper-width); /* same as default width */

@@ -13,7 +13,7 @@
 import classNames from 'classnames';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement} from 'react';
-import { useFocusRing } from './useFocusRing';
+import {useFocusRing} from './useFocusRing';
 
 interface FocusRingProps {
   children?: ReactElement,
@@ -25,7 +25,7 @@ interface FocusRingProps {
 }
 
 export function FocusRing(props: FocusRingProps) {
-  let {children, focusClass, focusRingClass, within} = props;
+  let {children, focusClass, focusRingClass} = props;
   let {isFocused, isFocusVisible, focusProps} = useFocusRing(props);
   let child = React.Children.only(children);
 

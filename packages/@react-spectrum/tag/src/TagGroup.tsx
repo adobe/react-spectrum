@@ -34,7 +34,7 @@ export function useTagGroupProvider(): TagGroupContext {
 }
 
 export const TagGroup = ((props: SpectrumTagGroupProps) => {
-  let completeProps = useProviderProps(props);
+  props = useProviderProps(props);
 
   let {
     isReadOnly,
@@ -43,9 +43,9 @@ export const TagGroup = ((props: SpectrumTagGroupProps) => {
     validationState,
     children,
     ...otherProps
-  } = completeProps;
+  } = props;
   let {styleProps} = useStyleProps(otherProps);
-  const {tagGroupProps} = useTagGroup(completeProps);
+  const {tagGroupProps} = useTagGroup(props);
 
   function removeAll(tags) {
     onRemove([tags]);

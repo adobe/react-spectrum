@@ -13,7 +13,9 @@
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import {Dialog} from '../';
 import {DialogContext} from '../src/context';
-import {ModalProvider} from '@react-aria/dialog';
+import {Header} from '@react-spectrum/view';
+import {Heading} from '@react-spectrum/typography';
+import {ModalProvider} from '@react-aria/overlays';
 import React from 'react';
 
 describe('Dialog', function () {
@@ -29,6 +31,8 @@ describe('Dialog', function () {
 
     let dialog = getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
+    // if there is no heading, then we shouldn't auto label
+    expect(dialog).not.toHaveAttribute('aria-labelledby');
   });
 
   it('auto focuses the dialog itself if there is no focusable child', function () {
@@ -91,5 +95,100 @@ describe('Dialog', function () {
 
     let dialog = getByRole('dialog');
     expect(dialog).toHaveAttribute('aria-modal', 'true');
+  });
+
+  it('should be labelled by its header', function () {
+    let {getByRole} = render(
+      <ModalProvider>
+        <DialogContext.Provider value={{type: 'modal'}}>
+          <Dialog>
+            <Heading><Header>The Title</Header></Heading>
+          </Dialog>
+        </DialogContext.Provider>
+      </ModalProvider>
+    );
+
+    let dialog = getByRole('dialog');
+    let heading = getByRole('heading');
+
+    let id = heading.id;
+    expect(dialog).toHaveAttribute('aria-labelledby', id);
+  });
+
+  it('if aria-labelledby is specified, then that takes precedence over the title', function () {
+    let {getByRole} = render(
+      <div>
+        <ModalProvider>
+          <DialogContext.Provider value={{type: 'modal'}}>
+            <Dialog aria-labelledby="batman">
+              <Heading><Header>The Title</Header></Heading>
+            </Dialog>
+          </DialogContext.Provider>
+        </ModalProvider>
+        <span id="batman">Good grammar is essential, Robin.</span>
+      </div>
+    );
+
+    let dialog = getByRole('dialog');
+    let heading = getByRole('heading');
+
+    let id = heading.id;
+    expect(dialog).not.toHaveAttribute('aria-labelledby', id);
+    expect(dialog).toHaveAttribute('aria-labelledby', 'batman');
+  });
+
+  it('if aria-label is specified, then that takes precedence over the title', function () {
+    let {getByRole} = render(
+      <ModalProvider>
+        <DialogContext.Provider value={{type: 'modal'}}>
+          <Dialog aria-label="robin">
+            <Heading><Header>The Title</Header></Heading>
+          </Dialog>
+        </DialogContext.Provider>
+      </ModalProvider>
+    );
+
+    let dialog = getByRole('dialog');
+
+    expect(dialog).not.toHaveAttribute('aria-labelledby');
+    expect(dialog).toHaveAttribute('aria-label', 'robin');
+  });
+
+  it('should have a hidden dismiss button for screen readers when displayed in a popover', function () {
+    let onClose = jest.fn();
+    let {getByRole} = render(
+      <ModalProvider>
+        <DialogContext.Provider value={{type: 'popover', onClose}}>
+          <Dialog aria-label="robin">
+            <Heading><Header>The Title</Header></Heading>
+          </Dialog>
+        </DialogContext.Provider>
+      </ModalProvider>
+    );      
+    
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'Dismiss');
+
+    fireEvent.click(button);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('should have a hidden dismiss button for screen readers when displayed in a tray', function () {
+    let onClose = jest.fn();
+    let {getByRole} = render(
+      <ModalProvider>
+        <DialogContext.Provider value={{type: 'tray', onClose}}>
+          <Dialog aria-label="robin">
+            <Heading><Header>The Title</Header></Heading>
+          </Dialog>
+        </DialogContext.Provider>
+      </ModalProvider>
+    );      
+    
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'Dismiss');
+
+    fireEvent.click(button);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

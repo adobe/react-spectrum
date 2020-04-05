@@ -25,8 +25,8 @@ import {useSearchFieldState} from '@react-stately/searchfield';
 function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
   let defaultIcon = (
-    <Magnifier 
-      data-testid="searchicon" 
+    <Magnifier
+      data-testid="searchicon"
       UNSAFE_className={
         classNames(
           styles,
@@ -86,10 +86,13 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
       icon={icon}
       onChange={state.setValue}
       value={state.value}
-      wrapperChildren={state.value !== '' && clearButton} />
+      wrapperChildren={(state.value !== '' && !props.isReadOnly) && clearButton} />
   );
 }
 
+/**
+ * SearchFields are decorated text inputs that allow users to submit text.
+ */
 let _SearchField = forwardRef(SearchField);
 export {_SearchField as SearchField};
 

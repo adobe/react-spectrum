@@ -19,8 +19,6 @@ export interface StyleProps {
   UNSAFE_className?: string,
   UNSAFE_style?: CSSProperties,
 
-  slot?: string,
-
   margin?: DimensionValue,
   marginStart?: DimensionValue,
   marginEnd?: DimensionValue,
@@ -118,6 +116,8 @@ type AlignContentType = 'center'| 'start'| 'end'| 'flex-start' | 'flex-end' | 'n
 type AlignItemsType = 'normal'| 'stretch'| 'center'| 'start' | 'end' | 'flex-start' | 'flex-end' | 'baseline' | 'first baseline' | 'last baseline' | 'safe center' | 'unsafe center' | GlobalVals;
 
 export interface FlexStyleProps extends StyleProps {
+  flexDirection?: 'row' | 'column' | 'row-reverse' | 'column-reverse',
+  flexWrap?: 'wrap' | 'nowrap' | 'wrap-reverse',
   justifyContent?: JustifyContentType,
   justifyItems?: JustifyItemsType,
   alignContent?: AlignContentType,

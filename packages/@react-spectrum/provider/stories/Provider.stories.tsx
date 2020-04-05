@@ -52,6 +52,17 @@ storiesOf('Provider', module)
     )
   )
   .add(
+    'nested props',
+    () => (
+      <Provider isDisabled>
+        <Button variant="primary">I am disabled</Button>
+        <Provider isQuiet>
+          <Button variant="primary">I am disabled and quiet</Button>
+        </Provider>
+      </Provider>
+    )
+  )
+  .add(
     'locale: cs-CZ',
     () => render({locale: 'cs-CZ'})
   )

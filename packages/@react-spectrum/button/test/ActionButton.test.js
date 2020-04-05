@@ -23,6 +23,7 @@ describe('ActionButton', function () {
     cleanup();
     onPressSpy.mockClear();
   });
+
   it.each`
     Component        | props
     ${ActionButton}  | ${{onPress: onPressSpy}}

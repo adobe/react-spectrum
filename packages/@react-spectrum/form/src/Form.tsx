@@ -39,7 +39,7 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
     ...otherProps
   } = props;
 
-  let {styleProps} = useStyleProps({slot: 'form', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
   let ctx = {

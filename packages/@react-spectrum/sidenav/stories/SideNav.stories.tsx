@@ -40,13 +40,45 @@ storiesOf('SideNav', module)
   .add(
     'Default',
     () => (
-      <SideNav UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')} items={flatItems} itemKey="name">
+      <SideNav items={flatItems} itemKey="name" UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
         {item => <Item>{item.name}</Item>}
       </SideNav>
     )
   )
   .add(
-    'With sections',
+    'with default selected item',
+    () => (
+      <SideNav defaultSelectedKeys={['Kangaroo']} items={flatItems} itemKey="name" UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
+        {item => <Item>{item.name}</Item>}
+      </SideNav>
+    )
+  )
+  .add(
+    'with selected item (controlled)',
+    () => (
+      <SideNav selectedKeys={['Kangaroo']} items={flatItems} itemKey="name" UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
+        {item => <Item>{item.name}</Item>}
+      </SideNav>
+    )
+  )
+  .add(
+    'with disabled items',
+    () => (
+      <SideNav disabledKeys={['Kangaroo']} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')} items={flatItems} itemKey="name">
+        {item => <Item>{item.name}</Item>}
+      </SideNav>
+    )
+  )
+  .add(
+    'with keyboard selection wrapping',
+    () => (
+      <SideNav items={flatItems} itemKey="name" UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')} shouldFocusWrap>
+        {item => <Item>{item.name}</Item>}
+      </SideNav>
+    )
+  )
+  .add(
+    'Default with sections',
     () => (
       <SideNav UNSAFE_className={snStyles['storybook-SideNav']} items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
         {item => (

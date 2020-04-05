@@ -11,6 +11,7 @@
  */
 
 import {cleanup, fireEvent, render, waitForDomChange} from '@testing-library/react';
+import {Dialog} from '@react-spectrum/dialog';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
@@ -79,7 +80,27 @@ describe('Tray', function () {
       </Provider>
     );
     await waitForDomChange(); // wait for animation
+    fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('hides the tray on blur when shouldCloseOnBlur is true', async function () {
+    let onClose = jest.fn();
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <Tray isOpen onClose={onClose} shouldCloseOnBlur>
+          <Dialog>contents</Dialog>
+        </Tray>
+      </Provider>
+    );
+
+    await waitForDomChange(); // wait for animation
+
+    let dialog = getByRole('dialog');
+    expect(document.activeElement).toBe(dialog);
+
+    dialog.blur();
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

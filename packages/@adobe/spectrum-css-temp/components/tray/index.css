@@ -16,7 +16,6 @@
 :root {
   /* Bug: this must be 0ms, not 0 */
   --spectrum-dialog-exit-animation-delay: 0ms;
-  --spectrum-tray-margin-top: 64px;
 }
 
 .spectrum-Tray-wrapper {
@@ -29,6 +28,14 @@
   justify-content: center;
   width: 100%;
 
+  /* On mobile browsers, vh units are fixed based on the maximum height of the screen.
+   * However, when you scroll, the toolbar and address bar shrink, making the viewport resize.
+   * We use the fill-available value to counteract this where supported. */
+  height: 100vh;
+  height: -moz-available;
+  height: -webkit-fill-available;
+  height: fill-available;
+
   /* Appear above underlay */
   z-index: 2;
 }
@@ -36,22 +43,24 @@
 .spectrum-Tray {
   @inherit: %spectrum-overlay;
 
+  /* defined here so it can be accessed from JS */
+  --spectrum-tray-margin-top: 64px;
+
   width: var(--spectrum-tray-width);
   max-width: var(--spectrum-tray-max-width);
   min-height: var(--spectrum-tray-min-height);
-  max-height: calc(100vh - var(--spectrum-tray-margin-top));
-  overflow: auto;
+  max-height: calc(100% - var(--spectrum-tray-margin-top));
+  position: absolute;
+  bottom: 0;
   outline: none;
 
   border-radius: var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-border-radius) var(--spectrum-tray-border-radius);
-  padding: var(--spectrum-tray-padding-y) var(--spectrum-tray-padding-x);
 
   /* Start offset by the animation distance */
   transform: translateY(100%);
 
   /* Exit animations */
   transition: opacity var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay),
-    visibility 0ms linear calc(var(--spectrum-dialog-exit-animation-delay) + var(--spectrum-dialog-exit-animation-duration)),
     transform var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay);
 
   &.is-open {

@@ -49,7 +49,7 @@ module.exports = new Transformer({
             } else if (/^<(.|\n)*>$/m.test(code)) {
               code = `(function () {
                 ${code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<ExampleProvider>$1</ExampleProvider>, document.getElementById("${id}"));`)}
-              })();`
+              })();`;
             }
 
             exampleCode.push(code);

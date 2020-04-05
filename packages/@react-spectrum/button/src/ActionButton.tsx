@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import React, {cloneElement} from 'react';
+import React from 'react';
 import {SpectrumActionButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
+import {Text} from '@react-spectrum/typography';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -28,7 +29,6 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
     isSelected,
     isDisabled,
     isEmphasized,
-    icon,
     children,
     holdAffordance,
     autoFocus,
@@ -37,10 +37,6 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
 
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
-  let {
-    className: groupClassName,
-    ...otherButtonProps
-  } = buttonProps;
   let {styleProps} = useStyleProps(otherProps);
 
   return (
@@ -48,7 +44,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
       <ElementType
         {...filterDOMProps(otherProps)}
         {...styleProps}
-        {...otherButtonProps}
+        {...buttonProps}
         ref={domRef}
         className={
           classNames(
@@ -61,29 +57,34 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
               'is-selected': isSelected,
               'is-disabled': isDisabled
             },
-            styleProps.className,
-            groupClassName
+            styleProps.className
           )
         }>
-        {icon && cloneElement(
-          icon, 
-          {
-            size: 'S',
-            UNSAFE_className: classNames(
-              styles,
-              'spectrum-Icon', 
-              icon.props.UNSAFE_className
-            )
-          }
-        )}
-        <span className={classNames(styles, 'spectrum-ActionButton-label')}>{children}</span>
         {holdAffordance &&
           <CornerTriangle UNSAFE_className={classNames(styles, 'spectrum-ActionButton-hold')} />
         }
+        <SlotProvider
+          slots={{
+            icon: {
+              size: 'S',
+              UNSAFE_className: classNames(styles, 'spectrum-Icon')
+            },
+            text: {
+              UNSAFE_className: classNames(styles, 'spectrum-ActionButton-label')
+            }
+          }}>
+          {typeof children === 'string' 
+            ? <Text>{children}</Text> 
+            : children}
+        </SlotProvider>
       </ElementType>
     </FocusRing>
   );
 }
 
+/**
+ * ActionButtons allow users to perform an action or mark a selection.
+ * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
+ */
 let _ActionButton = React.forwardRef(ActionButton);
 export {_ActionButton as ActionButton};

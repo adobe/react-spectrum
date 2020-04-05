@@ -42,9 +42,16 @@ Buttons can have a label, and icon, or both. An icon is provided by passing an i
 A visible label can be provided by passing children.
 
 ```tsx example
+import {Text} from '@react-spectrum/typography';
+
 <Button variant="primary">Label only</Button>
-<Button variant="primary" icon={<Bell />}>Icon + Label</Button>
-<Button variant="primary" icon={<Bell />} aria-label="Icon only" />
+<Button variant="primary">
+  <Bell />
+  <Text>Icon + Label</Text>
+</Button>
+<Button variant="primary" aria-label="Icon only">
+  <Bell />
+</Button>
 ```
 
 ### Accessibility

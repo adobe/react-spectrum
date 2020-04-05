@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render, waitForDomChange, within} from '@testing-library/react';
+import Bell from '@spectrum-icons/workflow/Bell';
+import {cleanup, fireEvent, render, within} from '@testing-library/react';
 import {Item, ListBox, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
+import {Text} from '@react-spectrum/typography';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
 
@@ -54,8 +56,10 @@ describe('ListBox', function () {
   let onSelectionChange = jest.fn();
 
   beforeAll(function () {
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
+    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -68,9 +72,8 @@ describe('ListBox', function () {
     offsetHeight.mockReset();
   });
   
-  it('renders properly', async function () {
+  it('renders properly', function () {
     let tree = renderComponent();
-    await waitForDomChange();
     let listbox = tree.getByRole('listbox');
     expect(listbox).toBeTruthy();
     
@@ -124,8 +127,8 @@ describe('ListBox', function () {
     expect(document.activeElement).toBe(selectedItem);
   });
 
-  it('wraps focus from first to last/last to first item if up/down arrow is pressed if wrapAround is true', function () {
-    let tree = renderComponent({autoFocus: true, wrapAround: true});
+  it('wraps focus from first to last/last to first item if up/down arrow is pressed if shouldFocusWrap is true', function () {
+    let tree = renderComponent({autoFocus: true, shouldFocusWrap: true});
     let listbox = tree.getByRole('listbox');
     let options = within(listbox).getAllByRole('option');
     let firstItem = options[0];
@@ -199,9 +202,8 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
     });
 
-    it('supports using space key to change item selection', async function () {
+    it('supports using space key to change item selection', function () {
       let tree = renderComponent({onSelectionChange});
-      await waitForDomChange();
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
     
@@ -221,9 +223,8 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
     });
 
-    it('supports using click to change item selection', async function () {
+    it('supports using click to change item selection', function () {
       let tree = renderComponent({onSelectionChange});
-      await waitForDomChange();
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
     
@@ -275,9 +276,8 @@ describe('ListBox', function () {
   });
 
   describe('supports multi selection', function () {
-    it('supports selecting multiple items', async function () {
+    it('supports selecting multiple items', function () {
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple'});
-      await waitForDomChange();
       let listbox = tree.getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
       
@@ -308,9 +308,8 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[1][0].has('Bar')).toBeTruthy();
     });
 
-    it('supports multiple defaultSelectedKeys (uncontrolled)', async function () {
+    it('supports multiple defaultSelectedKeys (uncontrolled)', function () {
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar']});
-      await waitForDomChange();
       let listbox = tree.getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
       
@@ -350,9 +349,8 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[0][0].has('Bar')).toBeTruthy();
     });
 
-    it('supports multiple selectedKeys (controlled)', async function () {
+    it('supports multiple selectedKeys (controlled)', function () {
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple', selectedKeys: ['Foo', 'Bar']});
-      await waitForDomChange();
       let listbox = tree.getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
       
@@ -390,9 +388,8 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[0][0].has('Bleh')).toBeTruthy();
     });
 
-    it('supports deselection', async function () {
+    it('supports deselection', function () {
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar']});
-      await waitForDomChange();
       let listbox = tree.getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
       
@@ -429,9 +426,8 @@ describe('ListBox', function () {
       expect(onSelectionChange.mock.calls[0][0].has('Bar')).toBeTruthy();
     });
 
-    it('supports disabledKeys', async function () {
+    it('supports disabledKeys', function () {
       let tree = renderComponent({onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar'], disabledKeys: ['Baz']});
-      await waitForDomChange();
       let listbox = tree.getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-multiselectable', 'true');
 
@@ -452,9 +448,8 @@ describe('ListBox', function () {
   });
 
   describe('supports no selection', function () {
-    it('prevents selection of any items', async function () {
+    it('prevents selection of any items', function () {
       let tree = renderComponent({onSelectionChange, selectionMode: 'none'});
-      await waitForDomChange();
       let listbox = tree.getByRole('listbox');
       
       // Make sure nothing is checked by default
@@ -478,5 +473,97 @@ describe('ListBox', function () {
       expect(checkmarks.length).toBe(0);
       expect(onSelectionChange).toBeCalledTimes(0);
     });
+  });
+
+  describe('supports type to select', function () {
+    it('supports focusing items by typing letters in rapid succession', function () {
+      let tree = renderComponent({autoFocus: true});
+      let listbox = tree.getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+      expect(document.activeElement).toBe(options[0]);
+
+      fireEvent.keyDown(listbox, {key: 'B'});
+      expect(document.activeElement).toBe(options[1]);
+
+      fireEvent.keyDown(listbox, {key: 'L'});
+      expect(document.activeElement).toBe(options[3]);
+
+      fireEvent.keyDown(listbox, {key: 'E'});
+      expect(document.activeElement).toBe(options[4]);
+    });
+
+    it('resets the search text after a timeout', function () {
+      let tree = renderComponent({autoFocus: true});
+      let listbox = tree.getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+      expect(document.activeElement).toBe(options[0]);
+
+      fireEvent.keyDown(listbox, {key: 'B'});
+      expect(document.activeElement).toBe(options[1]);
+
+      jest.runAllTimers();
+
+      fireEvent.keyDown(listbox, {key: 'B'});
+      expect(document.activeElement).toBe(options[2]);
+    });
+
+    it('wraps around when no items past the current one match', function () {
+      let tree = renderComponent({autoFocus: true});
+      let listbox = tree.getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+      expect(document.activeElement).toBe(options[0]);
+
+      fireEvent.keyDown(listbox, {key: 'B'});
+      fireEvent.keyDown(listbox, {key: 'L'});
+      fireEvent.keyDown(listbox, {key: 'E'});
+      expect(document.activeElement).toBe(options[4]);
+
+      jest.runAllTimers();
+
+      fireEvent.keyDown(listbox, {key: 'B'});
+      expect(document.activeElement).toBe(options[1]);
+    });
+  });
+
+  it('supports complex options with aria-labelledby and aria-describedby', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <ListBox>
+          <Item>
+            <Bell />
+            <Text>Label</Text>
+            <Text slot="description">Description</Text>
+          </Item>
+        </ListBox>
+      </Provider>
+    );
+
+    let listbox = tree.getByRole('listbox');
+    let option = within(listbox).getByRole('option');
+    let label = within(listbox).getByText('Label');
+    let description = within(listbox).getByText('Description');
+    
+    expect(option).toHaveAttribute('aria-labelledby', label.id);
+    expect(option).toHaveAttribute('aria-describedby', description.id);
+  });
+
+  it('supports aria-label on sections and items', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <ListBox>
+          <Section aria-label="Section">
+            <Item aria-label="Item"><Bell /></Item>
+          </Section>
+        </ListBox>
+      </Provider>
+    );
+
+    let listbox = tree.getByRole('listbox');
+    let group = within(listbox).getByRole('group');
+    expect(group).toHaveAttribute('aria-label', 'Section');
+    let option = within(listbox).getByRole('option');
+    expect(option).toHaveAttribute('aria-label', 'Item');
+    expect(option).not.toHaveAttribute('aria-labelledby');
+    expect(option).not.toHaveAttribute('aria-describedby');
   });
 });

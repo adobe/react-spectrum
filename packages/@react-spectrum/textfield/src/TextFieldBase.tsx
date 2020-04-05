@@ -12,7 +12,12 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames, createFocusableRef, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {
+  classNames,
+  createFocusableRef,
+  filterDOMProps,
+  useStyleProps
+} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Label} from '@react-spectrum/label';
 import {LabelPosition} from '@react-types/shared';
@@ -67,9 +72,9 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       return inputRef.current;
     }
   }));
-  
+
   let {styleProps} = useStyleProps(otherProps);
-  let {labelProps, inputProps} = useTextField(props);
+  let {labelProps, inputProps} = useTextField(props, inputRef);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
   let isInvalid = validationState === 'invalid';
 
@@ -82,12 +87,12 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       icon.props && icon.props.UNSAFE_className,
       'spectrum-Textfield-icon'
     );
-    
+
     icon = cloneElement(icon, {
       UNSAFE_className,
       size: 'S'
     });
-  } 
+  }
 
   let validationIcon = isInvalid ? <AlertMedium /> : <CheckmarkMedium />;
   let validation = cloneElement(validationIcon, {
@@ -134,8 +139,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
               },
               inputClassName
             )
-          } /> 
-      </FocusRing> 
+          } />
+      </FocusRing>
       {icon}
       {validationState ? validation : null}
       {wrapperChildren}
@@ -158,7 +163,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     }));
 
     return (
-      <div 
+      <div
         {...styleProps}
         ref={domRef}
         className={labelWrapperClass}>

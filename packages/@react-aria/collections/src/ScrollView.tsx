@@ -20,7 +20,10 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   onVisibleRectChange: (rect: Rect) => void,
   children: ReactNode,
   innerStyle: CSSProperties,
-  sizeToFit: 'width' | 'height'
+  sizeToFit: 'width' | 'height',
+  onScrollStart?: () => void,
+  onScrollEnd?: () => void,
+  scrollDirection?: 'horizontal' | 'vertical' | 'both'
 }
 
 function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
@@ -31,6 +34,9 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     children, 
     innerStyle,
     sizeToFit,
+    onScrollStart,
+    onScrollEnd,
+    scrollDirection = 'both',
     ...otherProps
   } = props;
 
@@ -48,12 +54,20 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   let [isScrolling, setScrolling] = useState(false);
   let onScroll = useCallback((e) => {
     flushSync(() => {
-      state.scrollTop = e.currentTarget.scrollTop;
-      state.scrollLeft = e.currentTarget.scrollLeft;
+      let {scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth} = e.currentTarget;
+
+      // Prevent rubber band scrolling from shaking when scrolling out of bounds
+      state.scrollTop = Math.max(0, Math.min(scrollTop, scrollHeight - clientHeight));
+      state.scrollLeft = Math.max(0, Math.min(scrollLeft, scrollWidth - clientWidth));
+
       onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, state.width, state.height));
 
       if (!isScrolling) {
         setScrolling(true);
+
+        if (onScrollStart) {
+          onScrollStart();
+        }
       }
 
       // So we don't constantly call clearTimeout and setTimeout,
@@ -67,10 +81,14 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
         state.scrollTimeout = setTimeout(() => {
           setScrolling(false);
           state.scrollTimeout = null;
+
+          if (onScrollEnd) {
+            onScrollEnd();
+          }
         }, 300);
       }
     });
-  }, [isScrolling, onVisibleRectChange, state.height, state.scrollEndTime, state.scrollLeft, state.scrollTimeout, state.scrollTop, state.width]);
+  }, [isScrolling, onScrollEnd, onScrollStart, onVisibleRectChange, state.height, state.scrollEndTime, state.scrollLeft, state.scrollTimeout, state.scrollTop, state.width]);
 
   useEffect(() => {
     // TODO: resize observer
@@ -81,8 +99,8 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
         return;
       }
 
-      let w = dom.offsetWidth;
-      let h = dom.offsetHeight;
+      let w = dom.clientWidth;
+      let h = dom.clientHeight;
       if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
         let style = window.getComputedStyle(dom);
 
@@ -134,9 +152,26 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     }
   }, [ref, state.scrollLeft, state.scrollTop, visibleRect.x, visibleRect.y]);
 
+  let style: React.CSSProperties = {
+    ...otherProps.style,
+    position: 'relative',
+    // Reset padding so that relative positioning works correctly. Padding will be done in JS layout.
+    padding: 0
+  };
+
+  if (scrollDirection === 'horizontal') {
+    style.overflowX = 'auto';
+    style.overflowY = 'hidden';
+  } else if (scrollDirection === 'vertical') {
+    style.overflowY = 'auto';
+    style.overflowX = 'hidden';
+  } else {
+    style.overflow = 'auto';
+  }
+
   return (
-    <div {...otherProps} style={{position: 'relative', overflow: 'auto'}} ref={ref} onScroll={onScroll}>
-      <div style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', ...innerStyle}}>
+    <div {...otherProps} style={style} ref={ref} onScroll={onScroll}>
+      <div role="presentation" style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', ...innerStyle}}>
         {children}
       </div>
     </div>

@@ -14,15 +14,13 @@ export function walk(obj, fn, k = null) {
   let recurse = (obj) => {
     if (Array.isArray(obj)) {
       return obj.map((item, i) => walk(item, fn, k));
-    }
-    else if (obj && typeof obj === 'object') {
+    } else if (obj && typeof obj === 'object') {
       let res = {};
       for (let key in obj) {
         res[key] = walk(obj[key], fn, key);
       }
       return res;
-    }
-    else {
+    } else {
       return obj;
     }
   };

@@ -13,6 +13,7 @@
 import Asterisk from '@spectrum-icons/ui/Asterisk';
 import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import React from 'react';
 import {SpectrumLabelProps} from '@react-types/label';
@@ -35,7 +36,7 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   } = props;
 
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps({slot: 'label', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
 
   let formatMessage = useMessageFormatter(intlMessages);
   let necessityLabel = isRequired ? formatMessage('(required)') : formatMessage('(optional)');

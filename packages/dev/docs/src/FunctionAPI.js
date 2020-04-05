@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {getUsedLinks} from './utils';
+import {JoinList, Type, TypeContext, TypeParameters} from './types';
 import React from 'react';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
-import {TypeContext, TypeParameters, JoinList, Type} from './types';
-import {getUsedLinks} from './utils';
 
 export function FunctionAPI({function: func, links}) {
   let {name, parameters, return: returnType, typeParameters} = func;

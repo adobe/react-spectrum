@@ -11,7 +11,7 @@
  */
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {ListState} from '@react-stately/list';
@@ -24,13 +24,18 @@ import {useRef} from 'react';
 
 interface OptionProps<T> {
   item: Node<T>,
-  state: ListState<T>
+  state: ListState<T>,
+  shouldSelectOnPressUp?: boolean,
+  shouldFocusOnHover?: boolean
 }
 
+/** @private */
 export function ListBoxOption<T>(props: OptionProps<T>) {
   let {
     item,
-    state
+    state,
+    shouldSelectOnPressUp,
+    shouldFocusOnHover
   } = props;
 
   let {
@@ -40,21 +45,28 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     key
   } = item;
 
-  let ref = useRef<HTMLLIElement>();
-  let {optionProps} = useOption(
+  let ref = useRef<HTMLDivElement>();
+  let {optionProps, labelProps, descriptionProps} = useOption(
     {
       isSelected,
       isDisabled,
+      'aria-label': item['aria-label'],
       key,
       ref,
+      shouldSelectOnPressUp,
+      shouldFocusOnHover,
       isVirtualized: true
     },
     state
   );
 
+  let contents = typeof rendered === 'string'
+    ? <Text>{rendered}</Text>
+    : rendered;
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <li
+      <div
         {...optionProps}
         ref={ref}
         className={classNames(
@@ -62,7 +74,8 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
           'spectrum-Menu-item',
           {
             'is-disabled': isDisabled,
-            'is-selected': isSelected
+            'is-selected': isSelected,
+            'is-selectable': state.selectionManager.selectionMode !== 'none'
           }
         )}>
         <Grid
@@ -71,30 +84,27 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
               styles,
               'spectrum-Menu-itemGrid'
             )
-          }
-          slots={{
-            text: styles['spectrum-Menu-itemLabel'],
-            icon: styles['spectrum-Menu-icon'],
-            description: styles['spectrum-Menu-description']
-          }}>
-          {!Array.isArray(rendered) && (
-            <Text>
-              {rendered}
-            </Text>
-          )}
-          {Array.isArray(rendered) && rendered}
-          {isSelected && 
-            <CheckmarkMedium
-              slot="checkmark"
-              UNSAFE_className={
-                classNames(
-                  styles, 
-                  'spectrum-Menu-checkmark'
-                )
-              } />
-          }
-        </Grid>  
-      </li>
+          }>
+          <SlotProvider
+            slots={{
+              text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
+              icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
+              description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps}
+            }}>
+            {contents}
+            {isSelected && 
+              <CheckmarkMedium
+                slot="checkmark"
+                UNSAFE_className={
+                      classNames(
+                        styles, 
+                        'spectrum-Menu-checkmark'
+                      )
+                    } />
+                }
+          </SlotProvider>
+        </Grid>
+      </div>
     </FocusRing>
   );
 }

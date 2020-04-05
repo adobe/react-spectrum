@@ -10,12 +10,46 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {useContext} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React, {useContext, useMemo} from 'react';
 
-export let SlotContext = React.createContext(null);
+interface SlotProps {
+  slot?: string
+}
 
-export function useSlotProvider() {
-  return useContext(SlotContext) || {};
+let SlotContext = React.createContext(null);
+
+export function useSlotProps<T>(props: T, defaultSlot?: string): T {
+  let slot = (props as SlotProps).slot || defaultSlot;
+  let {[slot]: slotProps = {}} = useContext(SlotContext) || {};
+  return mergeProps(slotProps, props);
+}
+
+export function cssModuleToSlots(cssModule) {
+  return Object.keys(cssModule).reduce((acc, slot) => {
+    acc[slot] = {UNSAFE_className: cssModule[slot]};
+    return acc;
+  }, {});
+}
+
+export function SlotProvider(props) {
+  let parentSlots = useContext(SlotContext) || {};
+  let {slots = {}, children} = props;
+
+  // Merge props for each slot from parent context and props
+  let value = useMemo(() => 
+    Object.keys(parentSlots)
+      .concat(Object.keys(slots))
+      .reduce((o, p) => ({
+        ...o,
+        [p]: mergeProps(parentSlots[p] || {}, slots[p] || {})}), {})
+      , [parentSlots, slots]);
+
+  return (
+    <SlotContext.Provider value={value}>
+      {children}
+    </SlotContext.Provider>
+  );
 }
 
 export function ClearSlots(props) {

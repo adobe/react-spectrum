@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {InputHTMLAttributes} from 'react';
+import {InputHTMLAttributes, RefObject} from 'react';
+import {mergeProps} from '@react-aria/utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {RadioProps} from '@react-types/radio';
 import {useFocusable} from '@react-aria/focus';
+import {usePress} from '@react-aria/interactions';
 
 interface RadioAriaProps extends RadioProps {
   isRequired?: boolean,
@@ -22,7 +24,7 @@ interface RadioAriaProps extends RadioProps {
 
 interface RadioAria {
   /** Props for the input element */
-  inputProps: InputHTMLAttributes<HTMLInputElement>
+  inputProps: InputHTMLAttributes<HTMLElement>
 }
 
 /**
@@ -30,14 +32,14 @@ interface RadioAria {
  * radio button in a radio group.
  * @param props - props for the radio
  * @param state - state for the radio group, as returned by `useRadioGroupState`
+ * @param ref - ref to the HTML input element
  */
-export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAria {
+export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: RefObject<HTMLElement>): RadioAria {
   let {
     value,
     isRequired,
     isReadOnly,
-    isDisabled,
-    autoFocus
+    isDisabled
   } = props;
 
   let checked = state.selectedValue === value;
@@ -47,20 +49,27 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
     state.setSelectedValue(value);
   };
 
-  let {focusableProps} = useFocusable(props);
+  let {pressProps} = usePress({
+    isDisabled
+  });
+
+  let {focusableProps} = useFocusable(mergeProps(props, {
+    onFocus: () => state.setFocusableRadio(value)
+  }), ref);
+  let interactions = mergeProps(pressProps, focusableProps);
 
   return {
     inputProps: {
       type: 'radio',
       name: state.name,
+      tabIndex: state.focusableRadio === value || state.focusableRadio == null ? 0 : -1,
       disabled: isDisabled,
       readOnly: isReadOnly,
       required: isRequired,
       checked,
       'aria-checked': checked,
       onChange,
-      autoFocus,
-      ...focusableProps
+      ...interactions
     }
   };
 }

@@ -21,7 +21,7 @@
     "chromatic": "CHROMATIC_APP_CODE=x8ktlved8wd chromatic test --build-script-name build-storybook",
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
     "start:docs": "PARCEL_WORKER_BACKEND=process parcel 'packages/@react-{spectrum,aria}/*/docs/*.mdx' 'packages/dev/docs/pages/*.mdx'",
-    "build:docs": "PARCEL_WORKER_BACKEND=process parcel build 'packages/@react-{spectrum,aria}/*/docs/*.mdx' 'packages/dev/docs/pages/*.mdx'"
+    "build:docs": "PARCEL_WORKER_BACKEND=process parcel build 'packages/@react-{spectrum,aria}/*/docs/*.mdx' 'packages/dev/docs/pages/*.mdx' --no-scope-hoist"
   },
   "workspaces": [
     "packages/*/*"
@@ -57,6 +57,7 @@
     "@storybook/addon-knobs": "^5.2.1",
     "@storybook/addon-links": "^5.2.1",
     "@storybook/react": "^5.2.1",
+    "@testing-library/jest-dom": "^5.1.1",
     "@testing-library/react": "^8.0.1",
     "@testing-library/user-event": "^4.1.0",
     "@types/react": "^16.8.0",
@@ -90,7 +91,6 @@
     "identity-obj-proxy": "^3.0.0",
     "ignore-styles": "^5.0.1",
     "jest": "^24.7.1",
-    "jest-dom": "^3.1.3",
     "jest-matchmedia-mock": "^1.0.0",
     "jsdom": "^9.8.0",
     "lerna": "^3.13.2",
@@ -147,8 +147,8 @@
     "@spectrum-css/component-builder": "^1.0.0"
   },
   "resolutions": {
-    "@babel/core": "7.8.4",
-    "@babel/runtime": "7.6.3",
+    "@babel/core": "7.9.0",
+    "@babel/runtime": "7.9.0",
     "postcss-calc": "7.0.1"
   }
 }

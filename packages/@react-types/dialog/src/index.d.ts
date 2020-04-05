@@ -11,49 +11,62 @@
  */
 
 import {DOMProps, StyleProps} from '@react-types/shared';
-import {HTMLAttributes, ReactElement, ReactNode, RefObject} from 'react';
 import {PositionProps} from '@react-types/overlays';
-import {Slots} from '@react-types/layout';
+import {ReactElement, ReactNode, RefObject} from 'react';
 
-export interface SpectrumDialogTriggerProps extends PositionProps {
-  children: ReactElement[],
+export type SpectrumDialogClose = (close: () => void) => ReactElement;
+
+export interface DialogTriggerProps {
+  isOpen?: boolean,
+  defaultOpen?: boolean,
+  onOpenChange?: (isOpen: boolean) => void
+}
+
+export interface SpectrumDialogTriggerProps extends PositionProps, DialogTriggerProps {
+  children: [ReactElement, SpectrumDialogClose | ReactElement],
   type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   mobileType?: 'modal' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   hideArrow?: boolean,
   targetRef?: RefObject<HTMLElement>,
-  isOpen?: boolean,
-  defaultOpen?: boolean,
-  onOpenChange?: (isOpen: boolean) => void,
   isDismissable?: boolean
 }
 
-export interface SpectrumBaseDialogProps extends HTMLAttributes<HTMLElement> {
-  slots?: Slots,
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
-  role?: 'dialog' | 'alertdialog'
-}
-
 export interface SpectrumDialogProps extends DOMProps, StyleProps {
+  /** The contents of the Dialog. */
   children: ReactNode,
-  slots?: Slots,
+  /** The size of the Dialog. Only applies to "modal" type Dialogs. */
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover',
-  isDismissable?: boolean, // adds close button and enables clicking on background
+  /** Whether the Dialog is [dismissable](#dismissable). */
+  isDismissable?: boolean,
   onDismiss?: () => void,
   role?: 'dialog' | 'alertdialog'
 }
 
-
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
+  /** The [visual style](https://spectrum.adobe.com/page/dialog/#Options) of the AlertDialog.  */
   variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning'
+  /** The title of the AlertDialog. */
   title: string,
+  /** The contents of the AlertDialog. */
   children: ReactNode,
+  /** The label to display within the cancel button. */
   cancelLabel?: string,
-  primaryLabel?: string,
-  secondaryLabel?: string,
-  isConfirmDisabled?: boolean,
+  /** The label to display within the confirm button. */
+  primaryActionLabel: string,
+  /** The label to display within the secondary button. */
+  secondaryActionLabel?: string,
+  /** Whether the primary button is disabled. */
+  isPrimaryActionDisabled?: boolean,
+  /** Whether the secondary button is disabled. */
+  isSecondaryActionDisabled?: boolean,
+  /** Handler that is called when the cancel button is pressed. */
   onCancel?: () => void,
-  onConfirm?: (button: 'primary' | 'secondary') => void,
+  /** Handler that is called when the primary button is pressed. */
+  onPrimaryAction?: () => void,
+  /** Handler that is called when the secondary button is pressed. */
+  onSecondaryAction?: () => void,
+  /** Button to focus by default upon render. */
   autoFocusButton?: 'cancel' | 'primary' | 'secondary',
-  allowsKeyboardConfirmation?: boolean, // triggers primary action
-  isKeyboardCancelDisabled?: boolean // needed?
+  // allowsKeyboardConfirmation?: boolean, // triggers primary action
+  // isKeyboardCancelDisabled?: boolean // needed?
 }

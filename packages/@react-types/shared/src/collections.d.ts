@@ -1,4 +1,3 @@
-
 /*
  * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
@@ -10,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {Key, ReactElement, ReactNode} from 'react';
 
 export interface ItemProps<T> {
@@ -17,6 +17,8 @@ export interface ItemProps<T> {
   childItems?: Iterable<T>,
   hasChildItems?: boolean,
   children: ReactNode, // CellRenderer??
+  textValue?: string,
+  'aria-label'?: string,
   uniqueKey?: Key
 }
 
@@ -27,11 +29,12 @@ interface AsyncLoadable<T> {
   items?: Iterable<T>,
   itemKey?: string,
   isLoading?: boolean, // possibly isLoadingMore
-  onLoadMore?: () => any,
+  onLoadMore?: () => any
 }
 
 export interface SectionProps<T> extends AsyncLoadable<T> {
   title?: ReactNode,
+  'aria-label'?: string,
   children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>,
   uniqueKey?: Key
 }
@@ -108,7 +111,10 @@ export interface KeyboardDelegate {
   getFirstKey?(): Key,
 
   /** Returns the last key, or `null` for none. */
-  getLastKey?(): Key
+  getLastKey?(): Key,
+
+  /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
+  getKeyForSearch?(search: string, fromKey?: Key): Key
 }
 
 interface AsyncListOptions<T> {

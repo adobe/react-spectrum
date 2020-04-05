@@ -31,10 +31,11 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
   } = props;
   let {styleProps} = useStyleProps(otherProps);
 
-  let state = useToggleState(props);
-  let {inputProps} = useSwitch(props, state);
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
+  let state = useToggleState(props);
+  let {inputProps} = useSwitch(props, state, inputRef);
+
 
   return (
     <label
@@ -73,5 +74,9 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
   );
 }
 
+/**
+ * Switches allow users to turn an individual option on or off.
+ * They are usually used to activate or deactivate a specific setting.
+ */
 const _Switch = forwardRef(Switch);
 export {_Switch as Switch};

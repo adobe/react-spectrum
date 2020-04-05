@@ -419,7 +419,7 @@ governing permissions and limitations under the License.
   }
   &::after {
     left: calc(var(--spectrum-slider-tick-mark-width) * -1);
-    transform: rotate(calc(-1 * var(--spectrum-dial-min-max-tick-angles)));
+    transform: rotate(calc(var(--spectrum-dial-min-max-tick-angles) * -1));
   }
 }
 
@@ -435,7 +435,7 @@ governing permissions and limitations under the License.
   right: var(--spectrum-dial-handle-position);
   bottom: var(--spectrum-dial-handle-position);
   border-radius: var(--spectrum-dial-border-radius);
-  transform: rotate(calc(-1 * var(--spectrum-dial-min-max-tick-angles)));
+  transform: rotate(calc(var(--spectrum-dial-min-max-tick-angles) * -1));
   cursor: pointer;
   cursor: grab;
 

@@ -3,11 +3,24 @@
 
 ## ⚠️ Under Construction  ⚠️
 We are currently working hard to be ready for a stable release.
+  - Please *don't share* this repo until we make our public announcement!
+  - If you are not already part of our Beta program and would like to join, please make a [request here](https://github.com/adobe-private/react-spectrum-v3/issues/new?template=Feedback.md).
+  - Please try out our RC React Spectrum Components and [tell us](https://github.com/adobe-private/react-spectrum-v3/issues/new/choose) what you think!
 
-  - Please *don't share* this repo until we make our announcement!
-  - Please try out our rc components and tell us what you think!
+## Overview ##
+React Spectrum is a UI Component Library leveraging Spectrum, Adobe's Design System. It enables you to easily build apps with plug and play UI components that match Adobe's look and feel. Some features of React Spectrum include: 
 
-If you have feedback or would like to join our beta program, please create a [feedback issue](https://github.com/adobe-private/react-spectrum-v3/issues/new?template=Feedback.md) and let us know.
+#### Built-in Accessibility and Keyboard support ⌨️:
+Save development time with out-of-the-box accessibility and keyboard support. 
+
+#### Custom Theme support, including Dark Mode 🌘:
+Provide a custom theme that can be applied to all components. 
+
+#### Mobile/Cross Platform support 📱:
+Components are responsive and work across all browsers and devices. 
+
+#### Internationalization support 💬:
+Translations for 31 languages are provided, including reconfigured components for Right-to-Left languages. 
 
 ## Using react-spectrum in your project
 
@@ -50,7 +63,7 @@ We use [Storybooks](https://storybooks.js.org) for local development. Run `yarn 
 
 ### File Layout
 
-React Spectrum v3 is organized into many npm packages in a monorepo, managed by [Lerna](http://lerna.js.org). Our architecture splits each component into three parts: @react-stately (state management), @react-aria (behavior + accessibility), and @react-spectrum (spectrum themed components).
+React Spectrum is organized into many npm packages in a monorepo, managed by [Lerna](http://lerna.js.org). Our architecture splits each component into three parts: @react-stately (state management), @react-aria (behavior + accessibility), and @react-spectrum (spectrum themed components).
 
 ### Testing
 
@@ -77,7 +90,7 @@ yarn jest --coverage
 
 ### TypeScript
 
-The code for React Spectrum v3 is written in [TypeScript](https://www.typescriptlang.org/). The type checker will usually run in your editor, but also runs when you run `make lint`.
+The code for React Spectrum is written in [TypeScript](https://www.typescriptlang.org/). The type checker will usually run in your editor, but also runs when you run `make lint`.
 
 ### Linting
 

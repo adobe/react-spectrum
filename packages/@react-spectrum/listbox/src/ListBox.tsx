@@ -10,65 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {CollectionView} from '@react-aria/collections';
-import {ListBoxOption} from './ListBoxOption';
-import {ListBoxSection} from './ListBoxSection';
-import {ListLayout} from '@react-stately/collections';
-import React, {useMemo} from 'react';
-import {SpectrumMenuProps} from '@react-types/menu';
-import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useListBox} from '@react-aria/listbox';
+import {DOMRef} from '@react-types/shared';
+import {ListBoxBase, useListBoxLayout} from './ListBoxBase';
+import React, {ReactElement} from 'react';
+import {SpectrumListBoxProps} from '@react-types/listbox';
+import {useDOMRef} from '@react-spectrum/utils';
 import {useListState} from '@react-stately/list';
-import {useProvider} from '@react-spectrum/provider';
 
-export function ListBox<T>(props: SpectrumMenuProps<T>) {
-  let {scale} = useProvider();
-  let layout = useMemo(() => 
-    new ListLayout({
-      estimatedRowHeight: scale === 'large' ? 48 : 32,
-      estimatedHeadingHeight: scale === 'large' ? 31 : 25
-    })
-  , [scale]);
-
-  let completeProps = {
+function ListBox<T>(props: SpectrumListBoxProps<T>, ref: DOMRef<HTMLDivElement>) {
+  let state = useListState({
     ...props,
     selectionMode: props.selectionMode || 'single'
-  };
-
-  let state = useListState(completeProps);
-  let {listBoxProps} = useListBox({...completeProps, keyboardDelegate: layout, isVirtualized: true}, state);
-  let {styleProps} = useStyleProps(completeProps);
+  });
+  let layout = useListBoxLayout(state);
+  let domRef = useDOMRef(ref);
 
   return (
-    <CollectionView
-      {...filterDOMProps(completeProps)}
-      {...styleProps}
-      {...listBoxProps}
-      focusedKey={state.selectionManager.focusedKey}
-      sizeToFit="height"
-      className={
-        classNames(
-          styles, 
-          'spectrum-Menu',
-          styleProps.className
-        )
-      }
-      layout={layout}
-      collection={state.collection}>
-      {(type, item) => {
-        if (type === 'section') {
-          return (
-            <ListBoxSection item={item} state={state} />
-          );
-        }
-
-        return (
-          <ListBoxOption
-            item={item}
-            state={state} />
-        );
-      }}
-    </CollectionView>
+    <ListBoxBase
+      {...props}
+      ref={domRef}
+      state={state}
+      layout={layout} />
   );
 }
+
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+const _ListBox = React.forwardRef(ListBox) as <T>(props: SpectrumListBoxProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+export {_ListBox as ListBox};

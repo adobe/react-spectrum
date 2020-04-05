@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {InputHTMLAttributes} from 'react';
+import {InputHTMLAttributes, RefObject} from 'react';
 import {SwitchProps} from '@react-types/switch';
 import {ToggleState} from '@react-stately/toggle';
 import {useToggle} from '@react-aria/toggle';
@@ -25,9 +25,10 @@ export interface SwitchAria {
  * A switch is similar to a checkbox, but represents on/off values as opposed to selection.
  * @param props - props for the switch
  * @param state - state for the switch, as returned by `useToggleState`
+ * @param ref - ref to the HTML input element
  */
-export function useSwitch(props: SwitchProps, state: ToggleState): SwitchAria {
-  let {inputProps} = useToggle(props, state);
+export function useSwitch(props: SwitchProps, state: ToggleState, ref: RefObject<HTMLInputElement>): SwitchAria {
+  let {inputProps} = useToggle(props, state, ref);
   let {isSelected} = state;
 
   return {

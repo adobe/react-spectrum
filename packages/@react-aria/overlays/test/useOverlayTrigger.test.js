@@ -50,11 +50,11 @@ describe('useOverlayTrigger', function () {
     expect(onClose).not.toHaveBeenCalled();
   });
 
-  it('should not close the overlay when the body scrolls', function () {
+  it('should close the overlay when the body scrolls', function () {
     let onClose = jest.fn();
     render(<Example isOpen onClose={onClose} />);
 
     fireEvent.scroll(document.body);
-    expect(onClose).not.toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

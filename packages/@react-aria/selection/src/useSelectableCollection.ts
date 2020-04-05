@@ -12,7 +12,9 @@
 
 import {FocusEvent, HTMLAttributes, KeyboardEvent, useEffect} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
+import {useTypeSelect} from './useTypeSelect';
 
 type FocusStrategy = 'first' | 'last';
 
@@ -32,9 +34,10 @@ function isCtrlKeyPressed(e: KeyboardEvent) {
 interface SelectableCollectionOptions {
   selectionManager: MultipleSelectionManager,
   keyboardDelegate: KeyboardDelegate,
-  autoFocus?: boolean,
-  focusStrategy?: FocusStrategy,
-  wrapAround?: boolean
+  autoFocus?: boolean | FocusStrategy,
+  shouldFocusWrap?: boolean,
+  disallowEmptySelection?: boolean,
+  disallowSelectAll?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -46,8 +49,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     selectionManager: manager,
     keyboardDelegate: delegate,
     autoFocus = false,
-    focusStrategy,
-    wrapAround = false
+    shouldFocusWrap = false,
+    disallowEmptySelection = false,
+    disallowSelectAll = false
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -58,7 +62,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           let nextKey = delegate.getKeyBelow(manager.focusedKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
-          } else if (wrapAround) {
+          } else if (shouldFocusWrap) {
             manager.setFocusedKey(delegate.getFirstKey());
           }
           if (e.shiftKey && manager.selectionMode === 'multiple') {
@@ -73,7 +77,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           let nextKey = delegate.getKeyAbove(manager.focusedKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
-          } else if (wrapAround) {
+          } else if (shouldFocusWrap) {
             manager.setFocusedKey(delegate.getLastKey());
           }
           if (e.shiftKey && manager.selectionMode === 'multiple') {
@@ -153,21 +157,23 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         }
         break;
       case 'a':
-        if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple') {
+        if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true) {
           e.preventDefault();
           manager.selectAll();
         }
         break;
       case 'Escape':
         e.preventDefault();
-        manager.clearSelection();
+        if (!disallowEmptySelection) {
+          manager.clearSelection();
+        }
         break;
     }
   };
 
   let onFocus = (e: FocusEvent) => {
     manager.setFocused(true);
-    
+
     if (manager.focusedKey == null && e.target === e.currentTarget) {
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
       // Attempt to detect whether the user is tabbing forward or backward into the collection
@@ -192,9 +198,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       // By default, select first item for focus target
       let focusedKey = delegate.getFirstKey();
       let selectedKeys = manager.selectedKeys;
-    
-      // Set the last item as the new focus target if focusStrategy is 'last' (i.e. ArrowUp opening the menu)
-      if (focusStrategy && focusStrategy === 'last') {
+
+      // Set the last item as the new focus target if autoFocus is 'last' (i.e. ArrowUp opening the menu)
+      if (autoFocus === 'last') {
         focusedKey = delegate.getLastKey();
       }
 
@@ -202,17 +208,22 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       if (selectedKeys.size) {
         focusedKey = selectedKeys.values().next().value;
       }
-    
+
       manager.setFocusedKey(focusedKey);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  let {typeSelectProps} = useTypeSelect({
+    keyboardDelegate: delegate,
+    selectionManager: manager
+  });
+
   return {
-    collectionProps: {
+    collectionProps: mergeProps(typeSelectProps, {
       onKeyDown,
       onFocus,
       onBlur
-    }
+    })
   };
 }

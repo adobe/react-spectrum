@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Dropdown {
   .spectrum-Dropdown-trigger:hover {
-    .spectrum-Dropdown-icon {
+    .spectrum-Dropdown-chevron {
       color: var(--spectrum-dropdown-icon-color-hover);
     }
   }
@@ -26,13 +26,13 @@ governing permissions and limitations under the License.
   }
 
   &.is-invalid {
-    .spectrum-Icon:not(.spectrum-Dropdown-icon):not(.spectrum-Menu-checkmark) {
+    .spectrum-Dropdown-invalidIcon {
       color: var(--spectrum-dropdown-validation-icon-color-error);
     }
 
     &.is-disabled {
       .spectrum-Icon,
-      .spectrum-Icon:not(.spectrum-Dropdown-icon):not(.spectrum-Menu-checkmark) {
+      .spectrum-Dropdown-invalidIcon {
         color: var(--spectrum-dropdown-icon-color-disabled);
       }
     }
@@ -41,7 +41,7 @@ governing permissions and limitations under the License.
   &.is-disabled {
     &,
     .spectrum-Dropdown-trigger:hover {
-      .spectrum-Dropdown-icon {
+      .spectrum-Dropdown-chevron {
         color: var(--spectrum-dropdown-icon-color-disabled);
       }
     }
@@ -53,28 +53,31 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Dropdown-icon {
+.spectrum-Dropdown-chevron {
   color: var(--spectrum-dropdown-icon-color);
 }
 
 .spectrum-Dropdown-label {
   &.is-placeholder {
     color: var(--spectrum-dropdown-placeholder-text-color);
-
-    &:hover {
-      color: var(--spectrum-dropdown-placeholder-text-color-hover);
-    }
-
-    &:active {
-      color: var(--spectrum-dropdown-placeholder-text-color-mouse-focus);
-    }
   }
 }
+
+.spectrum-Dropdown-trigger {
+  &:hover .spectrum-Dropdown-label {
+    color: var(--spectrum-dropdown-placeholder-text-color-hover);
+  }
+
+  &:active .spectrum-Dropdown-label {
+    color: var(--spectrum-dropdown-placeholder-text-color-mouse-focus);
+  }
+}
+
 .spectrum-Dropdown-trigger.focus-ring {
   .spectrum-Dropdown-label.is-placeholder {
     color: var(--spectrum-dropdown-placeholder-text-color-key-focus);
   }
-  .spectrum-Dropdown-icon {
+  .spectrum-Dropdown-chevron {
     color: var(--spectrum-dropdown-icon-color-key-focus)
   }
 }

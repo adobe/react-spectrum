@@ -16,15 +16,16 @@ configureActions({
 
 addParameters({
   options: {
-    storySort: (a, b) => a[1].kind.localeCompare(b[1].kind)
+    storySort: (a, b) => a[1].kind.localeCompare(b[1].kind),
+    enableShortcuts: false
   }
 });
 
 addDecorator(withA11y);
 
 addDecorator(story => (
-  <VerticalCenter style={{textAlign: 'left', padding: '50px', minHeight: isChromatic() ? null : '100vh', boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
-    <div style={{maxWidth: '100%'}}>{story()}</div>
+  <VerticalCenter style={{textAlign: 'left', alignItems: 'center', minHeight: isChromatic() ? null : '100vh', boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
+    {story()}
   </VerticalCenter>
 ));
 

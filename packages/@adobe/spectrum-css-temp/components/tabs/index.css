@@ -78,8 +78,8 @@ governing permissions and limitations under the License.
 
     height: var(--spectrum-tabs-focus-ring-height);
     margin-top: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2) + calc(var(--spectrum-tabs-rule-height) / 2));
-    left: calc(-1 * var(--spectrum-tabs-focus-ring-padding-x));
-    right: calc(-1 * var(--spectrum-tabs-focus-ring-padding-x));
+    left: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
+    right: calc(var(--spectrum-tabs-focus-ring-padding-x) * -1);
     border: var(--spectrum-tabs-focus-ring-size) solid transparent;
     border-radius: var(--spectrum-tabs-focus-ring-border-radius);
 
@@ -145,7 +145,7 @@ governing permissions and limitations under the License.
     bottom: 0;
     height: var(--spectrum-tabs-rule-height);
 
-    bottom: calc(-1 * var(--spectrum-tabs-rule-height));
+    bottom: calc(var(--spectrum-tabs-rule-height) * -1);
   }
 
 
@@ -177,8 +177,8 @@ governing permissions and limitations under the License.
 
     &::before {
       /* padding is included in click area of tab items, so only need to offset by the size of the focus ring's border */
-      left: calc(-1 * var(--spectrum-tabs-focus-ring-size));
-      right: calc(-1 * var(--spectrum-tabs-focus-ring-size));
+      left: calc(var(--spectrum-tabs-focus-ring-size) * -1);
+      right: calc(var(--spectrum-tabs-focus-ring-size) * -1);
       margin-top: calc(calc(var(--spectrum-tabs-focus-ring-height) / -2));
     }
   }
@@ -201,6 +201,6 @@ governing permissions and limitations under the License.
     left: 0px;
     width: var(--spectrum-tabs-vertical-rule-width);
 
-    left: calc(-1 * var(--spectrum-tabs-vertical-rule-width));
+    left: calc(var(--spectrum-tabs-vertical-rule-width) * -1);
   }
 }

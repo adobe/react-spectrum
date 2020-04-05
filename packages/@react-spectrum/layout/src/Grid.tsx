@@ -10,26 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, gridStyleProps, SlotContext, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {
+  filterDOMProps,
+  gridStyleProps,
+  useDOMRef,
+  useStyleProps
+} from '@react-spectrum/utils';
 import {GridProps} from '@react-types/layout';
-import {HTMLElement} from 'react-dom';
-import React, {RefObject} from 'react';
+import React, {forwardRef} from 'react';
 
-
-export const Grid = React.forwardRef((props: GridProps, ref: RefObject<HTMLElement>) => {
+function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
-    slots,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps, gridStyleProps);
   styleProps.style.display = 'grid'; // inline-grid?
+  let domRef = useDOMRef(ref);
 
   return (
-    <div {...filterDOMProps(otherProps)} {...styleProps} ref={ref} className={classNames({}, slots && slots.container, styleProps.className)}>
-      <SlotContext.Provider value={slots}>
-        {children}
-      </SlotContext.Provider>
+    <div {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+      {children}
     </div>
   );
-});
+}
+
+const _Grid = forwardRef(Grid);
+export {_Grid as Grid};

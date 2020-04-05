@@ -49,7 +49,7 @@ export class TreeCollection<T> implements Collection<Node<T>> {
       if (node.type === 'item') {
         node.index = index++;
       }
-      
+
       last = node;
     }
 

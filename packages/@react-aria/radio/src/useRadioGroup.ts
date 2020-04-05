@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, InputHTMLAttributes} from 'react';
+import {HTMLAttributes} from 'react';
 import {RadioGroupProps} from '@react-types/radio';
-import {useId} from '@react-aria/utils';
+import {RadioGroupState} from '@react-stately/radio';
+import {useFocusWithin} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 
 interface RadioGroupAria {
@@ -26,14 +27,27 @@ interface RadioGroupAria {
  * Provides the behavior and accessibility implementation for a radio group component.
  * Radio groups allow users to select a single item from a list of mutually exclusive options.
  * @param props - props for the radio group
+ * @param state - state for the radio group, as returned by `useRadioGroupState`
  */
-export function useRadioGroup(props: RadioGroupProps): RadioGroupAria {
+export function useRadioGroup(props: RadioGroupProps, state: RadioGroupState): RadioGroupAria {
   let {labelProps, fieldProps} = useLabel(props);
+
+  // When the radio group loses focus, reset the focusable radio to null if
+  // there is no selection. This allows tabbing into the group from either
+  // direction to go to the first or last radio.
+  let {focusWithinProps} = useFocusWithin({
+    onBlurWithin() {
+      if (!state.selectedValue) {
+        state.setFocusableRadio(null);
+      }
+    }
+  });
 
   return {
     radioGroupProps: {
       role: 'radiogroup',
-      ...fieldProps
+      ...fieldProps,
+      ...focusWithinProps
     },
     labelProps
   };

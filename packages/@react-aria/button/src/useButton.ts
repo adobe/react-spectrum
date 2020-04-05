@@ -11,7 +11,7 @@
  */
 
 import {ButtonProps} from '@react-types/button';
-import {chain, mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import {RefObject} from 'react';
 import {useDOMPropsResponder, usePress} from '@react-aria/interactions';
 import {useFocusable} from '@react-aria/focus';
@@ -21,7 +21,8 @@ interface AriaButtonProps extends ButtonProps {
   validationState?: 'valid' | 'invalid', // used by FieldButton (e.g. DatePicker, ComboBox)
   'aria-expanded'?: boolean | 'false' | 'true',
   'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
-  type?: 'button' | 'submit'
+  type?: 'button' | 'submit',
+  tabIndex?: number
 }
 
 interface ButtonAria {
@@ -70,9 +71,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   }
 
   let {pressProps, isPressed} = usePress({
-    // Safari does not focus buttons automatically when interacting with them, so do it manually
-    onPressStart: chain(onPressStart, (e) => e.target.focus()),
-    onPressEnd: chain(onPressEnd, (e) => e.target.focus()),
+    onPressStart,
+    onPressEnd,
     onPressChange,
     onPress,
     isDisabled,

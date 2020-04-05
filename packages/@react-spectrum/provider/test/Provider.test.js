@@ -13,9 +13,11 @@
 // needs to be imported first
 import MatchMediaMock from 'jest-matchmedia-mock';
 // eslint-disable-next-line rulesdir/sort-imports
+import {Button} from '@react-spectrum/button';
 import {cleanup, render} from '@testing-library/react';
 import {Provider} from '../';
 import React from 'react';
+import {triggerPress} from '@react-spectrum/test-utils';
 
 let theme = {
   global: {},
@@ -101,6 +103,44 @@ describe('Provider', () => {
       <Provider theme={theme} colorScheme="dark" data-testid="testid1">
         <Provider colorScheme="light" data-testid="testid2">
           <div>hello</div>
+        </Provider>
+      </Provider>
+    );
+    let provider1 = getByTestId('testid1');
+    let provider2 = getByTestId('testid2');
+    expect(provider1.classList.contains('spectrum--dark')).toBeTruthy();
+    expect(provider2.classList.contains('spectrum--light')).toBeTruthy();
+  });
+
+  it('Nested providers pass props to children', () => {
+    let onPressSpy = jest.fn();
+    let {getByRole} = render(
+      <Provider theme={theme} isDisabled>
+        <Provider isQuiet>
+          <Button onPress={onPressSpy}>Hello!</Button>
+        </Provider>
+      </Provider>
+    );
+    let button = getByRole('button');
+    triggerPress(button);
+    expect(onPressSpy).not.toHaveBeenCalled();
+    expect(button.classList.contains('spectrum-Button--quiet')).toBeTruthy();
+    onPressSpy.mockClear();
+  });
+
+  it('will render an available color scheme automatically if the previous does not exist on the new theme', () => {
+    matchMedia.useMediaQuery(mediaQueryDark);
+    let {getByTestId} = render(
+      <Provider theme={theme} data-testid="testid1">
+        <Provider
+          theme={{
+            global: {},
+            light: {'spectrum--light': 'spectrum--light'},
+            medium: {'spectrum--medium': 'spectrum--medium'},
+            large: {'spectrum--large': 'spectrum--large'}
+          }}
+          data-testid="testid2">
+          <Button>Hello!</Button>
         </Provider>
       </Provider>
     );

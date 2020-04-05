@@ -12,19 +12,25 @@
 
 import {HTMLAttributes, Key, RefObject} from 'react';
 import {ListState} from '@react-stately/list';
-import {usePress} from '@react-aria/interactions';
+import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
+import {useSlotId} from '@react-aria/utils';
 
 interface OptionProps {
   isDisabled?: boolean,
   isSelected?: boolean,
+  'aria-label'?: string,
   key?: Key,
   ref?: RefObject<HTMLElement>,
+  shouldSelectOnPressUp?: boolean,
+  shouldFocusOnHover?: boolean,
   isVirtualized?: boolean
 }
 
 interface OptionAria {
-  optionProps: HTMLAttributes<HTMLElement>
+  optionProps: HTMLAttributes<HTMLElement>,
+  labelProps: HTMLAttributes<HTMLElement>,
+  descriptionProps: HTMLAttributes<HTMLElement>
 }
 
 export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAria {
@@ -33,13 +39,21 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     isDisabled,
     key,
     ref,
+    shouldSelectOnPressUp,
+    shouldFocusOnHover,
     isVirtualized
   } = props;
+
+  let labelId = useSlotId();
+  let descriptionId = useSlotId();
 
   let optionProps = {
     role: 'option',
     'aria-disabled': isDisabled,
-    'aria-selected': isSelected
+    'aria-selected': isSelected,
+    'aria-label': props['aria-label'],
+    'aria-labelledby': labelId,
+    'aria-describedby': descriptionId
   };
 
   if (isVirtualized) {
@@ -51,15 +65,29 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     selectionManager: state.selectionManager,
     itemKey: key,
     itemRef: ref,
+    shouldSelectOnPressUp,
     isVirtualized
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled});
+  let {hoverProps} = useHover({
+    isDisabled: isDisabled || !shouldFocusOnHover,
+    onHover() {
+      state.selectionManager.setFocusedKey(key);
+    }
+  });
 
   return {
     optionProps: {
       ...optionProps,
-      ...pressProps
+      ...pressProps,
+      ...hoverProps
+    },
+    labelProps: {
+      id: labelId
+    },
+    descriptionProps: {
+      id: descriptionId
     }
   };
 }

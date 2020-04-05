@@ -13,13 +13,17 @@
 import classNames from 'classnames';
 import configureTypekit from './configureTypekit';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, shouldKeepSpectrumClassNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {
+  filterDOMProps,
+  shouldKeepSpectrumClassNames,
+  useDOMRef,
+  useStyleProps
+} from '@react-spectrum/utils';
 import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
-import {ModalProvider, useModalProvider} from '@react-aria/dialog';
+import {ModalProvider, useModalProvider} from '@react-aria/overlays';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
-import {ToastProvider} from '@react-spectrum/toast';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/index.css';
 import {useColorScheme, useScale} from './mediaQueries';
 // @ts-ignore
@@ -38,15 +42,16 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let autoColorScheme = useColorScheme(theme, defaultColorScheme);
   let autoScale = useScale(theme);
   let {locale: prevLocale} = useLocale();
+  // if the new theme doesn't support the prevColorScheme, we must resort to the auto
+  let usePrevColorScheme = !!theme[prevColorScheme];
 
   // importance of color scheme props > parent > auto:(OS > default > omitted)
   let {
-    colorScheme = prevColorScheme || autoColorScheme,
+    colorScheme = usePrevColorScheme ? prevColorScheme : autoColorScheme,
     scale = prevContext ? prevContext.scale : autoScale,
     typekitId,
     locale = prevContext ? prevLocale : null,
     children,
-    toastPlacement,
     isQuiet,
     isEmphasized,
     isDisabled,
@@ -56,20 +61,24 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     ...otherProps
   } = props;
 
-  // Merge options with parent provider
-  let context = Object.assign({}, prevContext, {
+  // select only the props with values so undefined props don't overwrite prevContext values
+  let currentProps = {
     version,
     theme,
     colorScheme,
     scale,
-    toastPlacement,
     isQuiet,
     isEmphasized,
     isDisabled,
     isRequired,
     isReadOnly,
     validationState
-  });
+  };
+  let filteredProps = {};
+  Object.entries(currentProps).forEach(([key, value]) => value !== undefined && (filteredProps[key] = value));
+
+  // Merge options with parent provider
+  let context = Object.assign({}, prevContext, filteredProps);
 
   useEffect(() => {
     configureTypekit(typekitId);
@@ -79,12 +88,10 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let contents = children;
   let domProps = filterDOMProps(otherProps);
   let {styleProps} = useStyleProps(otherProps);
-  if (!prevContext || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
+  if (!prevContext || props.locale || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
     contents = (
       <ProviderWrapper {...props} ref={ref}>
-        <ToastProvider>
-          {contents}
-        </ToastProvider>
+        {contents}
       </ProviderWrapper>
     );
   }
@@ -100,10 +107,20 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * Provider is the containing component that all other React Spectrum components
+ * are the children of. Used to set locale, theme, scale, toast position and
+ * provider, modal provider, and common props for children components. Providers
+ * can be nested.
+ */
 let _Provider = React.forwardRef(Provider);
 export {_Provider as Provider};
 
-const ProviderWrapper = React.forwardRef(function ProviderWrapper({children, ...otherProps}: ProviderProps, ref: DOMRef<HTMLDivElement>) {
+const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
+  let {
+    children,
+    ...otherProps
+  } = props;
   let {locale, direction} = useLocale();
   let {theme, colorScheme, scale} = useProvider();
   let {modalProviderProps} = useModalProvider();

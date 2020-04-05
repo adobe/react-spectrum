@@ -11,10 +11,8 @@
  */
 
 import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, Direction, StyleProps, ViewStyleProps} from '@react-types/shared';
-import classNames from 'classnames';
 import {CSSProperties, HTMLAttributes} from 'react';
 import {useLocale} from '@react-aria/i18n';
-import {useSlotProvider} from './Slots';
 
 type StyleName = string | string[] | ((dir: Direction) => string);
 type StyleHandler = (value: any) => string;
@@ -49,6 +47,7 @@ export const baseStyleProps: StyleHandlers = {
   end: [rtl('right', 'left'), dimensionValue],
   left: ['left', dimensionValue],
   right: ['right', dimensionValue],
+  flex: ['flex', passthroughStyle],
   flexGrow: ['flexGrow', passthroughStyle],
   flexShrink: ['flexShrink', passthroughStyle],
   flexBasis: ['flexBasis', passthroughStyle]
@@ -114,7 +113,7 @@ export function dimensionValue(value: DimensionValue) {
     return value + 'px';
   }
 
-  if (/(%|px|em|rem)$/.test(value)) {
+  if (/(%|px|em|rem|vw)$/.test(value)) {
     return value;
   }
 
@@ -191,17 +190,11 @@ export function useStyleProps(props: StyleProps, handlers: StyleHandlers = baseS
   let {
     UNSAFE_className,
     UNSAFE_style,
-    slot,
     ...otherProps
   } = props;
-  let {[slot]: slotClassName} = useSlotProvider();
-  let slotGridArea = {};
-  if (!slotClassName && slot) {
-    slotGridArea = {gridArea: slot};
-  }
   let {direction} = useLocale();
   let styles = convertStyleProps(props, handlers, direction);
-  let style = {...UNSAFE_style, ...styles, ...slotGridArea};
+  let style = {...UNSAFE_style, ...styles};
 
   // @ts-ignore
   if (otherProps.className) {
@@ -223,7 +216,7 @@ export function useStyleProps(props: StyleProps, handlers: StyleHandlers = baseS
 
   let styleProps: HTMLAttributes<HTMLElement> = {
     style,
-    className: classNames(UNSAFE_className, slotClassName)
+    className: UNSAFE_className
   };
 
   if (props.isHidden) {

@@ -11,10 +11,10 @@
  */
 
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {getUsedLinks} from './utils';
 import {InterfaceType, Type, TypeContext} from './types';
 import React from 'react';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
-import {getUsedLinks} from './utils';
 
 const GROUPS = {
   Events: [

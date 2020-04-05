@@ -97,8 +97,9 @@ export function DatePicker(props: SpectrumDatePickerProps) {
             UNSAFE_className={classNames(styles, 'spectrum-FieldButton')}
             isQuiet={isQuiet}
             validationState={state.validationState}
-            icon={<CalendarIcon />}
-            isDisabled={isDisabled || isReadOnly} />
+            isDisabled={isDisabled || isReadOnly}>
+            <CalendarIcon />
+          </FieldButton>
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
             <Calendar
               autoFocus
