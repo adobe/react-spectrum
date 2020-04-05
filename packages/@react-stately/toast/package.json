@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-types/toast": "^3.0.0-aplha.1"
+    "@react-types/toast": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"
