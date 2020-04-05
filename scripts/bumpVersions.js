@@ -28,7 +28,7 @@ let publicPackages = {
   '@react-spectrum/divider': 'rc',
   '@react-spectrum/form': 'rc',
   '@react-spectrum/icon': 'rc',
-  '@react-spectrum/illustrated-message': 'alpha',
+  '@react-spectrum/illustratedmessage': 'alpha',
   '@react-spectrum/image': 'alpha',
   '@react-spectrum/label': 'rc',
   '@react-spectrum/layout': 'alpha',

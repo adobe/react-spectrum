@@ -94,10 +94,14 @@ for (let pkg of packages) {
   softAssert.deepEqual(json.repository, {type: 'git', url: 'https://github.com/adobe-private/react-spectrum-v3'}, `${pkg} has incorrect or missing repository url`);
 }
 
+
 for (let pkg of packages) {
   let json = JSON.parse(fs.readFileSync(pkg));
-
   let [scope, basename] = json.name.split('/');
+
+  if (basename.includes('utils')) {
+    continue;
+  }
   if (scope === '@react-spectrum') {
     let aria = `@react-aria/${basename}`;
     let stately = `@react-stately/${basename}`;
