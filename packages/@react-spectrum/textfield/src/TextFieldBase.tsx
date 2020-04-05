@@ -23,17 +23,19 @@ import {Label} from '@react-spectrum/label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
-import React, {cloneElement, forwardRef, ReactElement, Ref, useImperativeHandle, useRef} from 'react';
+import React, {cloneElement, forwardRef, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useTextField} from '@react-aria/textfield';
 
 interface TextFieldBaseProps extends SpectrumTextFieldProps {
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
-  multiLine?: boolean
+  multiLine?: boolean,
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>,
+  inputRef?: RefObject<HTMLInputElement & HTMLTextAreaElement>
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
@@ -50,15 +52,17 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     isQuiet = false,
     multiLine,
     isDisabled = false,
-    value,
-    defaultValue,
     autoFocus,
     inputClassName,
     wrapperChildren,
+    labelProps,
+    inputProps,
+    inputRef,
     ...otherProps
   } = props;
   let domRef = useRef<HTMLDivElement>(null);
-  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
+  let defaultInputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
+  inputRef = inputRef || defaultInputRef;
 
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
@@ -74,7 +78,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   }));
 
   let {styleProps} = useStyleProps(otherProps);
-  let {labelProps, inputProps} = useTextField(props, inputRef);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
   let isInvalid = validationState === 'invalid';
 
@@ -127,8 +130,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
             filterDOMProps(otherProps)
           )}
           ref={inputRef}
-          value={value}
-          defaultValue={defaultValue}
           rows={multiLine ? 1 : undefined}
           className={
             classNames(

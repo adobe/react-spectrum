@@ -142,7 +142,9 @@
   padding: 0;
 }
 
-:global(.storage.type) {
+:global(.storage.type),
+:global(.constant.color),
+:global(.support.property-value.css) {
   color: var(--hljs-keyword-color);
 }
 

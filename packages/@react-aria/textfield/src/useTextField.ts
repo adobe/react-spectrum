@@ -52,6 +52,8 @@ export function useTextField(
       readOnly: isReadOnly,
       'aria-required': isRequired || undefined,
       'aria-invalid': validationState === 'invalid' || undefined,
+      value: props.value,
+      defaultValue: props.defaultValue,
       onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
       autoComplete: props.autoComplete,
       maxLength: props.maxLength,

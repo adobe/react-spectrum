@@ -62,6 +62,16 @@ module.exports = new Transformer({
               }
             ];
           }
+
+          if (node.lang === 'css') {
+            return [
+              node,
+              {
+                type: 'jsx',
+                value: '<style>{`' + node.value + '`}</style>'
+              }
+            ];
+          }
         }
 
         return [node];
@@ -113,7 +123,22 @@ module.exports = new Transformer({
     };
 
     const compiled = await mdx(await asset.getCode(), {
-      remarkPlugins: [slug, extractToc, extractExamples, fragmentWrap, [treeSitter, {grammarPackages: ['@atom-languages/language-typescript']}], fragmentUnWrap]
+      remarkPlugins: [
+        slug,
+        extractToc,
+        extractExamples,
+        fragmentWrap,
+        [
+          treeSitter,
+          {
+            grammarPackages: [
+              '@atom-languages/language-typescript',
+              '@atom-languages/language-css'
+            ]
+          }
+        ],
+        fragmentUnWrap
+      ]
     });
 
     let exampleBundle = exampleCode.length === 0
