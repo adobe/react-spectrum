@@ -1,5 +1,5 @@
 {
-  "name": "@react-spectrum/illustrated-message",
+  "name": "@react-spectrum/illustratedmessage",
   "version": "3.0.0-alpha.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
@@ -31,7 +31,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-spectrum/utils": "^3.0.0-alpha.2",
     "@react-spectrum/layout": "^3.0.0-alpha.1",
-    "@react-types/illustrated-message": "^3.0.0-alpha.2",
+    "@react-types/illustratedmessage": "^3.0.0-alpha.2",
     "@react-types/shared": "^3.0.0-rc.1"
   },
   "devDependencies": {
