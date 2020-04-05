@@ -1,14 +1,15 @@
 {
   "name": "@react-aria/actiongroup",
   "version": "3.0.0-alpha.1",
-  "private": true,
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "repository": {
     "type": "git",
@@ -24,7 +25,8 @@
     "@react-aria/utils": "^3.0.0-alpha.2",
     "@react-aria/interactions": "^3.0.0-alpha.2",
     "@react-aria/i18n": "^3.0.0-alpha.2",
-    "@react-aria/selection": "^3.0.0-alpha.2"
+    "@react-aria/selection": "^3.0.0-alpha.2",
+    "@react-types/actiongroup": "^3.0.0-alpha.1"
   },
   "publishConfig": {
     "access": "public"

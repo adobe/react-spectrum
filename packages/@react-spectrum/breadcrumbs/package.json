@@ -1,7 +1,6 @@
 {
   "name": "@react-spectrum/breadcrumbs",
   "version": "3.0.0-alpha.2",
-  "private": true,
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",

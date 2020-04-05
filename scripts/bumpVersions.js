@@ -18,35 +18,47 @@ const fs = require('fs');
 let version = '3.0.0-rc.1';
 
 // Packages to release
-let publicPackages = [
-  '@react-spectrum/provider',
-  '@react-spectrum/icon',
-  '@react-spectrum/button',
-  '@react-spectrum/textfield',
-  '@react-spectrum/radio',
-  '@react-spectrum/switch',
-  '@react-spectrum/checkbox',
-  '@react-spectrum/label',
-  '@react-spectrum/progress',
-  '@react-spectrum/divider',
-  '@react-spectrum/statuslight',
-  '@react-spectrum/well',
-  '@react-spectrum/form',
-  '@react-spectrum/searchfield',
-  '@react-spectrum/meter',
-  '@react-spectrum/theme-default',
-  '@spectrum-icons/color',
-  '@spectrum-icons/workflow'
-];
+let publicPackages = {
+  '@react-spectrum/actiongroup': 'alpha',
+  '@react-spectrum/breadcrumbs' : 'alpha',
+  '@react-spectrum/button': 'rc',
+  '@react-spectrum/buttongroup': 'alpha',
+  '@react-spectrum/checkbox': 'rc',
+  '@react-spectrum/dialog': 'alpha',
+  '@react-spectrum/divider': 'rc',
+  '@react-spectrum/form': 'rc',
+  '@react-spectrum/icon': 'rc',
+  '@react-spectrum/illustrated-message': 'alpha',
+  '@react-spectrum/image': 'alpha',
+  '@react-spectrum/label': 'rc',
+  '@react-spectrum/layout': 'alpha',
+  '@react-spectrum/link': 'alpha',
+  '@react-spectrum/listbox': 'alpha',
+  '@react-spectrum/menu': 'alpha',
+  '@react-spectrum/meter': 'rc',
+  '@react-spectrum/overlays': 'alpha',
+  '@react-spectrum/picker': 'alpha',
+  '@react-spectrum/progress': 'rc',
+  '@react-spectrum/provider': 'rc',
+  '@react-spectrum/radio': 'rc',
+  '@react-spectrum/searchfield': 'rc',
+  '@react-spectrum/statuslight': 'rc',
+  '@react-spectrum/switch': 'rc',
+  '@react-spectrum/textfield': 'rc',
+  '@react-spectrum/theme-default': 'rc',
+  '@react-spectrum/typography': 'alpha',
+  '@react-spectrum/utils': 'rc',
+  '@react-spectrum/view': 'alpha',
+  '@react-spectrum/well': 'rc',
+  '@spectrum-icons/color': 'rc',
+  '@spectrum-icons/workflow': 'rc'
+};
 
 // Packages never to release
 let blackList = new Set([
   '@adobe/spectrum-css-temp',
   '@react-spectrum/test-utils',
-  '@spectrum-icons/build-tools',
-
-  // Keep as alpha for now even though it's a dep of provider
-  '@react-aria/dialog'
+  '@spectrum-icons/build-tools'
 ]);
 
 // Get dependency tree from yarn workspaces, and build full list of packages to release
@@ -54,7 +66,7 @@ let blackList = new Set([
 let info = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
 let releasedPackages = new Map();
 
-for (let pkg of publicPackages) {
+for (let pkg in publicPackages) {
   addPackage(pkg);
 }
 
@@ -76,7 +88,7 @@ console.log('Released packages:', releasedPackages.keys());
 for (let [name, location] of releasedPackages) {
   let filePath = location + '/package.json';
   let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  pkg.version = version;
+  // pkg.version = version;
 
   if (pkg.private) {
     console.warn(`${name} changed from private to public`);
@@ -85,7 +97,7 @@ for (let [name, location] of releasedPackages) {
 
   for (let dep in pkg.dependencies) {
     if (releasedPackages.has(dep)) {
-      pkg.dependencies[dep] = '^' + version;
+      // pkg.dependencies[dep] = '^' + version;
     }
   }
 
