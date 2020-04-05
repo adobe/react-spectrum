@@ -46,8 +46,11 @@ softAssert.equal = function (val, val2, message) {
   }
 }
 
+let pkgNames = {};
 for (let pkg of packages) {
   let json = JSON.parse(fs.readFileSync(pkg));
+  pkgNames[json.name] = true;
+
   if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons')) {
     softAssert(json.main, `${pkg} did not have "main"`);
     softAssert(json.main.endsWith('.js'), `${pkg}#main should be a .js file but got "${json.main}"`);
@@ -89,6 +92,31 @@ for (let pkg of packages) {
   softAssert(json.publishConfig && json.publishConfig.access === 'public', `${pkg} has missing or incorrect publishConfig`);
   softAssert.equal(json.license, 'Apache-2.0', `${pkg} has an incorrect license`);
   softAssert.deepEqual(json.repository, {type: 'git', url: 'https://github.com/adobe-private/react-spectrum-v3'}, `${pkg} has incorrect or missing repository url`);
+}
+
+for (let pkg of packages) {
+  let json = JSON.parse(fs.readFileSync(pkg));
+
+  let [scope, basename] = json.name.split('/');
+  if (scope === '@react-spectrum') {
+    let aria = `@react-aria/${basename}`;
+    let stately = `@react-stately/${basename}`;
+    let types = `@react-types/${basename}`;
+
+    softAssert(!pkgNames[aria] || json.dependencies[aria], `${pkg} is missing a dependency on ${aria}`);
+    softAssert(!pkgNames[stately] || json.dependencies[stately], `${pkg} is missing a dependency on ${stately}`);
+    softAssert(!pkgNames[types] || json.dependencies[types], `${pkg} is missing a dependency on ${types}`);
+  } else if (scope === '@react-aria') {
+    let stately = `@react-stately/${basename}`;
+    let types = `@react-types/${basename}`;
+
+    softAssert(!pkgNames[stately] || json.dependencies[stately], `${pkg} is missing a dependency on ${stately}`);
+    softAssert(!pkgNames[types] || json.dependencies[types], `${pkg} is missing a dependency on ${types}`);
+  } else if (scope === '@react-stately') {
+    let types = `@react-types/${basename}`;
+
+    softAssert(!pkgNames[types] || json.dependencies[types], `${pkg} is missing a dependency on ${types}`);
+  }
 }
 
 if (errors) {
