@@ -23,8 +23,7 @@
     "@react-types/pagination": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0"
+    "react": "^16.8.0"
   },
   "publishConfig": {
     "access": "public"

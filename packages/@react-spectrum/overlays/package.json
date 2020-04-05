@@ -37,11 +37,7 @@
     "react-transition-group": "^2.2.0"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2",
-    "@react-spectrum/buttongroup": "^3.0.0-alpha.1",
-    "@react-spectrum/divider": "^3.0.0-rc.1",
-    "@react-spectrum/view": "^3.0.0-alpha.1",
-    "@react-spectrum/typography": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
   },
   "peerDependencies": {
     "react": "^16.8.0",
