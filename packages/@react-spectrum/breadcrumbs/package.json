@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/breadcrumbs",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -29,18 +29,18 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/breadcrumbs": "^3.0.0-alpha.2",
-    "@react-aria/focus": "^3.0.0-alpha.2",
-    "@react-aria/i18n": "^3.0.0-alpha.2",
-    "@react-spectrum/button": "^3.0.0-alpha.2",
-    "@react-spectrum/menu": "^3.0.0-alpha.2",
-    "@react-spectrum/utils": "^3.0.0-alpha.2",
-    "@react-types/breadcrumbs": "^3.0.0-alpha.2",
+    "@react-aria/breadcrumbs": "^3.0.0-alpha.1",
+    "@react-aria/focus": "^3.0.0-alpha.1",
+    "@react-aria/i18n": "^3.0.0-alpha.1",
+    "@react-spectrum/button": "^3.0.0-alpha.1",
+    "@react-spectrum/menu": "^3.0.0-alpha.1",
+    "@react-spectrum/utils": "^3.0.0-alpha.1",
+    "@react-types/breadcrumbs": "^3.0.0-alpha.1",
     "@react-types/shared": "^3.0.0-rc.1",
-    "@spectrum-icons/ui": "^3.0.0-alpha.2"
+    "@spectrum-icons/ui": "^3.0.0-alpha.1"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0",

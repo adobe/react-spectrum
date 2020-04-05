@@ -35,7 +35,7 @@
     "classnames": "^2.2.6"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "^3.0.0-rc.1",
