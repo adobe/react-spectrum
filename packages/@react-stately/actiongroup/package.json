@@ -20,6 +20,7 @@
     "@react-stately/utils": "^3.0.0-alpha.2",
     "@react-stately/collections": "^3.0.0-alpha.2",
     "@react-stately/selection": "^3.0.0-alpha.2",
+    "@react-types/actiongroup": "^3.0.0-alpha.1",
     "@react-types/button": "^3.0.0-alpha.2",
     "@react-types/shared": "^3.0.0-alpha.2"
   },

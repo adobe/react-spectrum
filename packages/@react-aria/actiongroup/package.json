@@ -16,17 +16,17 @@
     "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2"
+    "@babel/runtime": "^7.6.2",
+    "@react-stately/actiongroup": "^3.0.0-alpha.1",
+    "@react-stately/collections": "^3.0.0-alpha.1",
+    "@react-aria/utils": "^3.0.0-alpha.1",
+    "@react-aria/interactions": "^3.0.0-alpha.1",
+    "@react-aria/i18n": "^3.0.0-alpha.1",
+    "@react-aria/selection": "^3.0.0-alpha.1",
+    "@react-types/actiongroup": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
-    "react": "^16.8.0",
-    "@react-stately/actiongroup": "^3.0.0-alpha.1",
-    "@react-stately/collections": "^3.0.0-alpha.2",
-    "@react-aria/utils": "^3.0.0-alpha.2",
-    "@react-aria/interactions": "^3.0.0-alpha.2",
-    "@react-aria/i18n": "^3.0.0-alpha.2",
-    "@react-aria/selection": "^3.0.0-alpha.2",
-    "@react-types/actiongroup": "^3.0.0-alpha.1"
+    "react": "^16.8.0"
   },
   "publishConfig": {
     "access": "public"
