@@ -20,7 +20,7 @@
     },
     "test": {
       "plugins": [
-        "@babel/plugin-transform-runtime"
+        "@parcel/babel-plugin-transform-runtime"
       ],
       "presets": [
         "@babel/preset-typescript",
@@ -50,9 +50,8 @@
           }
         ],
         [
-          "@babel/plugin-transform-runtime",
+          "@parcel/babel-plugin-transform-runtime",
           {
-            "useESModules": true,
             "version": "^7.6.2"
           }
         ]
