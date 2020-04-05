@@ -18,12 +18,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-stately/utils": "^3.0.0-alpha.2"
+    "@react-stately/utils": "^3.0.0-alpha.2",
+    "@react-types/pagination": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
-  },
-  "devDependencies": {
     "react": "^16.8.0"
   },
   "publishConfig": {

@@ -22,7 +22,8 @@
     "@react-aria/menu": "^3.0.0-alpha.1",
     "@react-aria/selection": "^3.0.0-alpha.1",
     "@react-aria/utils": "^3.0.0-rc.1",
-    "@react-stately/select": "^3.0.0-alpha.1"
+    "@react-stately/select": "^3.0.0-alpha.1",
+    "@react-types/select": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"
