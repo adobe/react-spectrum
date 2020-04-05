@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "dependencies": {
-    "@react-types/shared": "^3.0.0-alpha.2"
+    "@react-types/shared": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.12.0"
