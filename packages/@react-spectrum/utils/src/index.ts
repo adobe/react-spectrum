@@ -18,3 +18,4 @@ export * from './useDOMRef';
 export * from './styleProps';
 export * from './Slots';
 export * from './useHasChild';
+export * from './useWindowWidth';

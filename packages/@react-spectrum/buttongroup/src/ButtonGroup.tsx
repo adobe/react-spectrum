@@ -12,13 +12,13 @@
 
 import {classNames, filterDOMProps, SlotProvider, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
+import React from 'react';
 import {SpectrumButtonGroupProps} from '@react-types/buttongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
-import {useProvider, useProviderProps} from '@react-spectrum/provider';
+import {useHasOverflow} from './useHasOverflow';
+import {useProviderProps} from '@react-spectrum/provider';
 
 function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
-  let {scale} = useProvider();
   props = useProviderProps(props);
   props = useSlotProps(props, 'buttonGroup');
 
@@ -32,49 +32,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
 
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
-  let [hasOverflow, setHasOverflow] = useState(false);
-  let [dirty, setDirty] = useState(false);
-
-  let checkForOverflow = useCallback(() => {
-    if (domRef.current && orientation === 'horizontal') {
-      setHasOverflow(false);
-      let buttonGroupChildren = Array.from(domRef.current.children) as HTMLElement[];
-      let maxX = domRef.current.offsetWidth + 1; // + 1 to account for rounding errors
-
-      // If any buttons have negative X positions (align="end") or extend beyond
-      // the width of the button group (align="start"), then switch to vertical.
-      if (buttonGroupChildren.some(child => child.offsetLeft < 0 || child.offsetLeft + child.offsetWidth > maxX)) {
-        setHasOverflow(true);
-      }
-    }
-  }, [domRef, orientation]);
-
-  // On scale or children change, remove vertical orientation class via dirty = true and check for overflow
-  useLayoutEffect(() => {
-    if (dirty) {
-      checkForOverflow();
-      setDirty(false);
-    }
-  }, [dirty, checkForOverflow]);
-
-  useEffect(() => {
-    if (!dirty) {
-      setDirty(true);
-    }
-  }, [children, scale]);
-
-  // Check for overflow on window resize
-  useEffect(() => {
-    if (orientation !== 'vertical') {
-      // I think performance could be optimized here by creating a global, debounced hook for listening to resize
-      // events rather than creating an event-listener per component.
-      window.addEventListener('resize', checkForOverflow);
-      checkForOverflow();
-      return () => {
-        window.removeEventListener('resize', checkForOverflow);
-      };
-    }
-  }, [checkForOverflow, orientation]);
+  let hasOverflow = useHasOverflow(domRef, {skip: orientation === 'vertical'});
 
   return (
     <div
@@ -86,7 +44,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
           styles,
           'spectrum-ButtonGroup',
           {
-            'spectrum-ButtonGroup--vertical': orientation === 'vertical' || (!dirty && hasOverflow),
+            'spectrum-ButtonGroup--vertical': orientation === 'vertical' || hasOverflow,
             'spectrum-ButtonGroup--alignEnd': align === 'end'
           },
           styleProps.className

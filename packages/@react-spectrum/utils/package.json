@@ -20,7 +20,8 @@
     "@react-aria/i18n": "^3.0.0-rc.1",
     "@react-aria/utils": "^3.0.0-rc.1",
     "@react-types/shared": "^3.0.0-rc.1",
-    "classnames": "^2.2.5"
+    "classnames": "^2.2.5",
+    "lodash.debounce": "^4.0.8"
   },
   "peerDependencies": {
     "react": "^16.8.0"

@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps, useWindowWidth} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
@@ -63,6 +63,8 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   let {breadcrumbsProps} = useBreadcrumbs(props);
   let {styleProps} = useStyleProps(otherProps);
+  let windowWidth = useWindowWidth();
+  let [childrenWidths, setChildrenWidths] = useState([]);
 
   useEffect(() => {
     // Only run the resize logic if the menu is collapsible to avoid the risk of performance problems.
@@ -70,50 +72,46 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
       let listItems = [...listRef.current.children];
       // Ignore the last item when the size is large because it wraps onto a new line and doesn't take up horizontal space.
       let listItemsToMeasure = size === 'L' ? listItems.slice(0, listItems.length - 1) : listItems;
-      let childrenWidths = listItemsToMeasure.map((item) => item.getBoundingClientRect().width);
-
-      let onResize = () => {
-        let containerWidth = listRef.current.getBoundingClientRect().width;
-        let [rootBreadcrumbWidth, ...otherBreadcrumbWidths] = childrenWidths;
-        let calculatedWidth = 0;
-
-        // Make sure we account for the root breadcrumb if it's enabled.
-        if (showRoot) {
-          calculatedWidth += rootBreadcrumbWidth;
-        }
-
-        let otherVisibleItemsCount = 0;
-
-        // See how many other breadcrumbs we can fit (starting from the right).
-        otherBreadcrumbWidths.reverse().forEach(breadcrumbWidth => {
-          calculatedWidth += breadcrumbWidth;
-          if (calculatedWidth < containerWidth) {
-            otherVisibleItemsCount++;
-          }
-        });
-
-        let minVisibleItems = showRoot ? MIN_VISIBLE_ITEMS + 1 : MIN_VISIBLE_ITEMS;
-
-        if (otherVisibleItemsCount < minVisibleItems) {
-          otherVisibleItemsCount = MIN_VISIBLE_ITEMS;
-        }
-
-        let maxVisibleOtherItems = showRoot ? MAX_VISIBLE_ITEMS - 1 : MAX_VISIBLE_ITEMS;
-
-        if (isCollapsible && otherVisibleItemsCount > maxVisibleOtherItems) {
-          otherVisibleItemsCount = maxVisibleOtherItems;
-        }
-
-        setVisibleItems(otherVisibleItemsCount);
-      };
-
-      window.addEventListener('resize', onResize);
-      onResize();
-      return () => {
-        window.removeEventListener('resize', onResize);
-      };
+      setChildrenWidths(listItemsToMeasure.map((item) => item.getBoundingClientRect().width));
     }
   }, [isCollapsible, childArray.length, listRef, showRoot, size]);
+
+  useEffect(() => {
+    if (isCollapsible && listRef.current) {
+      let containerWidth = listRef.current.getBoundingClientRect().width;
+      let [rootBreadcrumbWidth, ...otherBreadcrumbWidths] = childrenWidths;
+      let calculatedWidth = 0;
+
+      // Make sure we account for the root breadcrumb if it's enabled.
+      if (showRoot) {
+        calculatedWidth += rootBreadcrumbWidth;
+      }
+
+      let otherVisibleItemsCount = 0;
+
+      // See how many other breadcrumbs we can fit (starting from the right).
+      otherBreadcrumbWidths.reverse().forEach(breadcrumbWidth => {
+        calculatedWidth += breadcrumbWidth;
+        if (calculatedWidth < containerWidth) {
+          otherVisibleItemsCount++;
+        }
+      });
+
+      let minVisibleItems = showRoot ? MIN_VISIBLE_ITEMS + 1 : MIN_VISIBLE_ITEMS;
+
+      if (otherVisibleItemsCount < minVisibleItems) {
+        otherVisibleItemsCount = MIN_VISIBLE_ITEMS;
+      }
+
+      let maxVisibleOtherItems = showRoot ? MAX_VISIBLE_ITEMS - 1 : MAX_VISIBLE_ITEMS;
+
+      if (isCollapsible && otherVisibleItemsCount > maxVisibleOtherItems) {
+        otherVisibleItemsCount = maxVisibleOtherItems;
+      }
+
+      setVisibleItems(otherVisibleItemsCount);
+    }
+  }, [isCollapsible, showRoot, windowWidth, childrenWidths, listRef]);
 
   if (childArray.length > visibleItems) {
     let selectedItem = childArray[childArray.length - 1];
