@@ -21,7 +21,7 @@
     "@react-stately/list": "^3.0.0-alpha.1",
     "@react-stately/menu": "^3.0.0-alpha.1",
     "@react-stately/selection": "^3.0.0-alpha.1",
-    "@react-stately/utils": "^3.0.0-alpha.1",
+    "@react-stately/utils": "^3.0.0-rc.2",
     "@react-types/select": "^3.0.0-alpha.1"
   },
   "peerDependencies": {

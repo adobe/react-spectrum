@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@react-types/overlays": "^3.0.0-alpha.1",
-    "@react-types/shared": "^3.0.0-alpha.1"
+    "@react-types/shared": "^3.0.0-rc.2"
   },
   "peerDependencies": {
     "react": "^16.12.0"

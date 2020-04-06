@@ -30,14 +30,14 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/breadcrumbs": "^3.0.0-alpha.1",
-    "@react-aria/focus": "^3.0.0-alpha.1",
-    "@react-aria/i18n": "^3.0.0-alpha.1",
-    "@react-spectrum/button": "^3.0.0-alpha.1",
+    "@react-aria/focus": "^3.0.0-rc.2",
+    "@react-aria/i18n": "^3.0.0-rc.2",
+    "@react-spectrum/button": "^3.0.0-rc.2",
     "@react-spectrum/menu": "^3.0.0-alpha.1",
-    "@react-spectrum/utils": "^3.0.0-alpha.1",
+    "@react-spectrum/utils": "^3.0.0-rc.2",
     "@react-types/breadcrumbs": "^3.0.0-alpha.1",
-    "@react-types/shared": "^3.0.0-rc.1",
-    "@spectrum-icons/ui": "^3.0.0-alpha.1"
+    "@react-types/shared": "^3.0.0-rc.2",
+    "@spectrum-icons/ui": "^3.0.0-rc.2"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"

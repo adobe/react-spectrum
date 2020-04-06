@@ -29,9 +29,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/focus": "^3.0.0-alpha.1",
+    "@react-aria/focus": "^3.0.0-rc.2",
     "@react-aria/link": "^3.0.0-alpha.1",
-    "@react-spectrum/utils": "^3.0.0-alpha.1",
+    "@react-spectrum/utils": "^3.0.0-rc.2",
     "@react-types/link": "^3.0.0-alpha.1"
   },
   "devDependencies": {

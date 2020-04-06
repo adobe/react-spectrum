@@ -19,8 +19,8 @@
     "@babel/runtime": "^7.6.2",
     "@react-stately/collections": "^3.0.0-alpha.1",
     "@react-stately/selection": "^3.0.0-alpha.1",
-    "@react-stately/utils": "^3.0.0-alpha.1",
-    "@react-types/shared": "^3.0.0-alpha.1"
+    "@react-stately/utils": "^3.0.0-rc.2",
+    "@react-types/shared": "^3.0.0-rc.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"

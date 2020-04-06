@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/searchfield",
-  "version": "3.0.0-rc.1",
+  "version": "3.0.0-rc.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -17,12 +17,12 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/i18n": "^3.0.0-rc.1",
-    "@react-aria/interactions": "^3.0.0-rc.1",
-    "@react-aria/utils": "^3.0.0-rc.1",
-    "@react-stately/searchfield": "^3.0.0-rc.1",
-    "@react-types/searchfield": "^3.0.0-rc.1",
-    "@react-types/shared": "^3.0.0-rc.1"
+    "@react-aria/i18n": "^3.0.0-rc.2",
+    "@react-aria/interactions": "^3.0.0-rc.2",
+    "@react-aria/utils": "^3.0.0-rc.2",
+    "@react-stately/searchfield": "^3.0.0-rc.2",
+    "@react-types/searchfield": "^3.0.0-rc.2",
+    "@react-types/shared": "^3.0.0-rc.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"

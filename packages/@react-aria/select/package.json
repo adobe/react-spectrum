@@ -17,11 +17,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/interactions": "^3.0.0-rc.1",
-    "@react-aria/label": "^3.0.0-rc.1",
+    "@react-aria/interactions": "^3.0.0-rc.2",
+    "@react-aria/label": "^3.0.0-rc.2",
     "@react-aria/menu": "^3.0.0-alpha.1",
     "@react-aria/selection": "^3.0.0-alpha.1",
-    "@react-aria/utils": "^3.0.0-rc.1",
+    "@react-aria/utils": "^3.0.0-rc.2",
     "@react-stately/select": "^3.0.0-alpha.1",
     "@react-types/select": "^3.0.0-alpha.1"
   },
