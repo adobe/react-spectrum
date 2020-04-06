@@ -1,6 +1,6 @@
 {
   "name": "@react-types/menu",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "dependencies": {
-    "@react-types/shared": "^3.0.0-alpha.2"
+    "@react-types/shared": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.12.0"

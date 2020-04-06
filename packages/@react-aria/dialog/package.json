@@ -20,7 +20,9 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/utils": "^3.0.0-rc.1"
+    "@react-aria/utils": "^3.0.0-rc.1",
+    "@react-stately/dialog": "^3.0.0-alpha.1",
+    "@react-types/dialog": "^3.0.0-alpha.1"
   },
   "publishConfig": {
     "access": "public"

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionGroupKeyboardDelegate} from '../src';
+import {ActionGroupKeyboardDelegate} from './ActionGroupKeyboardDelegate';
 import {ActionGroupProps} from '@react-types/actiongroup';
 import {ActionGroupState} from '@react-stately/actiongroup';
 import {FocusEvent, Orientation} from '@react-types/shared';

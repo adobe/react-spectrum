@@ -11,3 +11,4 @@
  */
 
 export * from './Breadcrumbs';
+export {Item} from '@react-stately/collections';

@@ -3,12 +3,13 @@
   "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
-  "private": true,
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
   "repository": {
     "type": "git",
@@ -20,7 +21,8 @@
     "@react-stately/list": "^3.0.0-alpha.1",
     "@react-stately/menu": "^3.0.0-alpha.1",
     "@react-stately/selection": "^3.0.0-alpha.1",
-    "@react-stately/utils": "^3.0.0-alpha.1"
+    "@react-stately/utils": "^3.0.0-alpha.1",
+    "@react-types/select": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"
