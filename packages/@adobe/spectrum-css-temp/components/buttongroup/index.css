@@ -15,23 +15,17 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-ButtonGroup {
-  display: flex;
+  display: inline-flex;
+  align-items: flex-start;
+  /* necessary so that offsetLeft on button children is correct */
+  position: relative;
 
-  .spectrum-Button,
-  .spectrum-ActionButton {
+  .spectrum-ButtonGroup-Button {
     flex-shrink: 0;
   }
 
-  .spectrum-Button + .spectrum-Button {
-    margin-left: var(--spectrum-buttongroup-button-gap-x);
-  }
-
-  .spectrum-ActionButton + .spectrum-ActionButton {
-    margin-left: var(--spectrum-actionbuttongroup-text-button-gap-x);
-  }
-
-  &:focus {
-    outline: none;
+  .spectrum-ButtonGroup-Button + .spectrum-ButtonGroup-Button {
+    margin-inline-start: var(--spectrum-buttongroup-button-gap-x);
   }
 }
 
@@ -39,18 +33,12 @@ governing permissions and limitations under the License.
   display: inline-flex;
   flex-direction: column;
 
-  .spectrum-ActionButton-label {
-    flex-grow: 1;
-    text-align: left;
+  &.spectrum-ButtonGroup--alignEnd {
+    align-items: flex-end;
   }
 
-  .spectrum-Button + .spectrum-Button {
-    margin-top: var(--spectrum-buttongroup-button-gap-y);
-    margin-left: var(--spectrum-buttongroup-button-gap-reset);
-  }
-
-  .spectrum-ActionButton + .spectrum-ActionButton {
-    margin-top: var(--spectrum-actionbuttongroup-text-button-gap-y);
-    margin-left: var(--spectrum-buttongroup-button-gap-reset);
+  .spectrum-ButtonGroup-Button + .spectrum-ButtonGroup-Button {
+    margin-block-start: var(--spectrum-buttongroup-button-gap-y);
+    margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
   }
 }

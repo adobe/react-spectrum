@@ -16,8 +16,8 @@ import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 import V2ButtonGroup from '@react/react-spectrum/ButtonGroup';
 
@@ -28,7 +28,7 @@ let theme = {
 
 // Describes the tabIndex values of button 1 (column 1), 2, and 3 as focus is moved forward or back.
 // e.g. button2Focused describes button 2 having tabindex=0 while all other buttons have -1
-let expectedButtonIndicies = {
+let expectedButtonIndices = {
   button1Focused: ['0', '-1', '-1'],
   button2Focused: ['-1', '0', '-1'],
   button3Focused: ['-1', '-1', '0']
@@ -38,7 +38,7 @@ let expectedButtonIndicies = {
 class BtnBehavior {
   constructor() {
     this.index = 0;
-    this.buttons = expectedButtonIndicies;
+    this.buttons = expectedButtonIndices;
     this.forward = this.forward.bind(this);
     this.backward = this.backward.bind(this);
   }
@@ -96,7 +96,7 @@ expect.extend({
 
     if (index !== -1) {
       return {
-        message: () => `expected button index configuration "button${i + 1}Focused": (${received.map((button) => button.getAttribute('tabIndex'))}) but got ${tabIndices}`,
+        message: () => `expected button index configuration "button${i + 1}Focused": got (${received.map((button) => button.getAttribute('tabIndex'))}) but expected ${tabIndices}`,
         pass: false
       };
     } else {
@@ -122,10 +122,6 @@ describe('ActionGroup', function () {
   afterEach(() => {
     btnBehavior.reset();
     cleanup();
-  });
-
-  it('uses slots api', () => {
-    testSlotsAPI(ActionGroup);
   });
 
   it.each`
@@ -164,7 +160,7 @@ describe('ActionGroup', function () {
 
   it.each`
     Name               | ComponentGroup   | Component   | props
-    ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{orientation: 'vertical'}}
+    ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{orientation: 'vertical', selectionMode: 'none'}}
     ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button} | ${{orientation: 'vertical', role: 'toolbar'}}
   `('$Name handles vertical', function ({ComponentGroup, Component, props}) {
     let {getByTestId} = render(
@@ -199,12 +195,12 @@ describe('ActionGroup', function () {
     ${'(left/right arrows, ltr + horizontal) ActionGroup'} | ${ActionGroup}   | ${Item}   | ${{locale: 'de-DE'}}                          | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
     ${'(left/right arrows, rtl + horizontal) ActionGroup'} | ${ActionGroup}   | ${Item}   | ${{locale: 'ar-AE'}}                          | ${[{action: pressArrowRight, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.forward}]}
     ${'(up/down arrows, ltr + horizontal) ActionGroup'}    | ${ActionGroup}   | ${Item}   | ${{locale: 'de-DE'}}                          | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(up/down arrows, rtl + horizontal) ActionGroup'}    | ${ActionGroup}   | ${Item}   | ${{locale: 'ar-AE'}}                          | ${[{action: pressArrowDown, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.forward}]}
+    ${'(up/down arrows, rtl + horizontal) ActionGroup'}    | ${ActionGroup}   | ${Item}   | ${{locale: 'ar-AE'}}                          | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
     ${'(left/right arrows, ltr + vertical) ActionGroup'}   | ${ActionGroup}   | ${Item}   | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
     ${'(left/right arrows, rtl + vertical) ActionGroup'}   | ${ActionGroup}   | ${Item}   | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
     ${'(up/down arrows, ltr + vertical) ActionGroup'}      | ${ActionGroup}   | ${Item}   | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
     ${'(up/down arrows, rtl + vertical) ActionGroup'}      | ${ActionGroup}   | ${Item}   | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-  `('$Name shifts button focus in the correct direction on key press', function ({ComponentGroup, Component, props, orders}) {
+  `('$Name shifts button focus in the correct direction on key press', function ({Name, ComponentGroup, Component, props, orders}) {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
         <ComponentGroup orientation={props.orientation} >
@@ -220,7 +216,7 @@ describe('ActionGroup', function () {
     buttonGroup.focus();
     fireEvent.keyDown(document.activeElement, {key: 'Tab'});
 
-    verifyResult(buttons, expectedButtonIndicies.button1Focused);
+    verifyResult(buttons, expectedButtonIndices.button1Focused);
 
     orders.forEach(({action, result}, index) => {
       action(document.activeElement);
@@ -252,6 +248,45 @@ describe('ActionGroup', function () {
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
+  it('ActionGroup should not allow selecting all items with cmd + a', function () {
+    let {getAllByRole} = renderComponent({selectionMode: 'multiple'});
+
+    let [button1, button2] = getAllByRole('checkbox');
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('aria-checked', 'true');
+    expect(button2).toHaveAttribute('aria-checked', 'false');
+
+    fireEvent.keyDown(button1, {key: 'a', ctrlKey: true});
+    expect(button1).toHaveAttribute('aria-checked', 'true');
+    expect(button2).toHaveAttribute('aria-checked', 'false');
+  });
+
+  it('ActionGroup supports shift + arrow keys to extend selection', function () {
+    let {getAllByRole} = renderComponent({selectionMode: 'multiple'});
+
+    let [button1, button2] = getAllByRole('checkbox');
+    triggerPress(button1);
+    expect(button1).toHaveAttribute('aria-checked', 'true');
+    expect(button2).toHaveAttribute('aria-checked', 'false');
+
+    fireEvent.keyDown(button1, {key: 'ArrowRight', shiftKey: true});
+    expect(button1).toHaveAttribute('aria-checked', 'true');
+    expect(button2).toHaveAttribute('aria-checked', 'true');
+
+    fireEvent.keyDown(button1, {key: 'ArrowLeft', shiftKey: true});
+    expect(button1).toHaveAttribute('aria-checked', 'true');
+    expect(button2).toHaveAttribute('aria-checked', 'false');
+
+    triggerPress(button1);
+    triggerPress(button2);
+    expect(button1).toHaveAttribute('aria-checked', 'false');
+    expect(button2).toHaveAttribute('aria-checked', 'true');
+
+    fireEvent.keyDown(button2, {key: 'ArrowLeft', shiftKey: true});
+    expect(button1).toHaveAttribute('aria-checked', 'true');
+    expect(button2).toHaveAttribute('aria-checked', 'true');
+  });
+
   it('ActionGroup handles none selection', function () {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
@@ -263,7 +298,7 @@ describe('ActionGroup', function () {
 
     let button1 = getByRole('button');
     triggerPress(button1);
-    expect(button1).toHaveAttribute('aria-checked', 'false');
+    expect(button1).not.toHaveAttribute('aria-checked');
   });
 
   it('ActionGroup should pass className, role and tabIndex', function () {
@@ -321,5 +356,18 @@ describe('ActionGroup', function () {
     expect(onSelectionChange).toBeCalledTimes(1);
     expect(button1).toHaveAttribute('aria-checked', 'false');
     expect(button2).toHaveAttribute('aria-checked', 'true');
+  });
+  
+  it('ActionGroup allow aria-label on Item', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup>
+          <Item aria-label="Test">Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radio');
+    expect(button1).toHaveAttribute('aria-label', 'Test');
   });
 });

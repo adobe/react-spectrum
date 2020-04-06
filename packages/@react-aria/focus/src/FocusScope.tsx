@@ -133,10 +133,10 @@ const focusableElements = [
   '[contenteditable]'
 ];
 
-export const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(',') + ',[tabindex]';
+const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(',') + ',[tabindex]';
 
 focusableElements.push('[tabindex]:not([tabindex="-1"])');
-export const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([tabindex="-1"]),');
+const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([tabindex="-1"]),');
 
 function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOptions): HTMLElement[] {
   let res = [];
@@ -219,7 +219,10 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       if (!isInAnyScope) {
         activeScope = scopeRef;
         focusedNode.current = e.target;
-        focusedNode.current.focus();
+        // Firefox doesn't shift focus back to the Dialog properly without this 
+        requestAnimationFrame(() => {
+          focusedNode.current.focus();
+        });
       }
     };
 

@@ -11,12 +11,12 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {BreadcrumbItem} from './';
-import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {BreadcrumbItem} from './BreadcrumbItem';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {Key, useEffect, useRef, useState} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
@@ -27,7 +27,6 @@ const MAX_VISIBLE_ITEMS = 4;
 
 function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   props = useProviderProps(props);
-  props = useSlotProps(props);
   let {
     size = 'M',
     children,
@@ -48,7 +47,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   const [visibleItems, setVisibleItems] = useState(isCollapsible ? childArray.length : maxVisibleItems);
 
-  let {breadcrumbProps} = useBreadcrumbs(props);
+  let {breadcrumbsProps} = useBreadcrumbs(props);
   let {styleProps} = useStyleProps(otherProps);
 
   useEffect(() => {
@@ -86,16 +85,25 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   if (childArray.length > visibleItems) {
     let rootItems = showRoot ? [childArray[0]] : [];
+    let selectedItem = childArray[childArray.length - 1];
+    let selectedKey = selectedItem.props.uniqueKey || selectedItem.key;
+    let onMenuAction = (key: Key) => {
+      // Don't fire onAction when clicking on the last item
+      if (key !== selectedKey) {
+        onAction(key);
+      }
+    };
 
     let menuItem = (
       <BreadcrumbItem key="menu">
-        <MenuTrigger isDisabled={isDisabled}>
+        <MenuTrigger>
           <ActionButton
             aria-label="…"
-            isQuiet>
+            isQuiet
+            isDisabled={isDisabled}>
             <FolderBreadcrumb />
           </ActionButton>
-          <Menu selectionMode="none" onAction={onAction}>
+          <Menu selectionMode="single" selectedKeys={[selectedKey]} onAction={onMenuAction}>
             {childArray}
           </Menu>
         </MenuTrigger>
@@ -146,7 +154,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     <nav
       {...filterDOMProps(otherProps)}
       {...styleProps}
-      {...breadcrumbProps}
+      {...breadcrumbsProps}
       className={classNames({}, styleProps.className)}
       ref={domRef}>
       <ul

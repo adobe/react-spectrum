@@ -10,8 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes} from 'react';
+import {HTMLAttributes, ReactNode} from 'react';
 import {useId} from '@react-aria/utils';
+
+interface MenuSectionProps {
+  heading?: ReactNode,
+  'aria-label'?: string
+}
 
 interface MenuSectionAria {
   itemProps: HTMLAttributes<HTMLElement>,
@@ -19,23 +24,25 @@ interface MenuSectionAria {
   groupProps: HTMLAttributes<HTMLElement>
 }
 
-export function useMenuSection(): MenuSectionAria {
+export function useMenuSection(props: MenuSectionProps): MenuSectionAria {
+  let {heading, 'aria-label': ariaLabel} = props;
   let headingId = useId();
 
   return {
     itemProps: {
       role: 'presentation'
     },
-    headingProps: {
+    headingProps: heading ? {
       // Techincally, menus cannot contain headings according to ARIA.
       // We hide the heading from assistive technology, and only use it
       // as a label for the nested group.
       id: headingId,
       'aria-hidden': true
-    },
+    } : {},
     groupProps: {
       role: 'group',
-      'aria-labelledby': headingId
+      'aria-label': ariaLabel,
+      'aria-labelledby': heading ? headingId : undefined
     }
   };
 }

@@ -13,6 +13,7 @@
 import {chain} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {HTMLAttributes, ImgHTMLAttributes} from 'react';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {PressProps} from '@react-aria/interactions';
 import {ToastProps, ToastState} from '@react-types/toast';

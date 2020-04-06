@@ -176,8 +176,8 @@ describe('Menu', function () {
   // V3 only behavior
   it.each`
     Name        | Component | props
-    ${'Menu'}   | ${Menu}   | ${{autoFocus: true, wrapAround: true}}
-  `('$Name wraps focus from first to last/last to first item if up/down arrow is pressed if wrapAround is true', function ({Component, props}) {
+    ${'Menu'}   | ${Menu}   | ${{autoFocus: true, shouldFocusWrap: true}}
+  `('$Name wraps focus from first to last/last to first item if up/down arrow is pressed if shouldFocusWrap is true', function ({Component, props}) {
     let tree = renderComponent(Component, {}, props);
     let menu = tree.getByRole('menu');
     let menuItems = within(menu).getAllByRole('menuitem');
@@ -750,5 +750,25 @@ describe('Menu', function () {
     
     expect(menuItem).toHaveAttribute('aria-labelledby', label.id);
     expect(menuItem).toHaveAttribute('aria-describedby', `${description.id} ${keyboard.id}`);
+  });
+
+  it('supports aria-label on sections and items', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <Menu>
+          <Section aria-label="Section">
+            <Item aria-label="Item"><Bell /></Item>
+          </Section>
+        </Menu>
+      </Provider>
+    );
+
+    let menu = tree.getByRole('menu');
+    let group = within(menu).getByRole('group');
+    expect(group).toHaveAttribute('aria-label', 'Section');
+    let menuItem = within(menu).getByRole('menuitem');
+    expect(menuItem).toHaveAttribute('aria-label', 'Item');
+    expect(menuItem).not.toHaveAttribute('aria-labelledby');
+    expect(menuItem).not.toHaveAttribute('aria-describedby');
   });
 });

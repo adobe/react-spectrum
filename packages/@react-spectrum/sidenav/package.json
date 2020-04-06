@@ -32,7 +32,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/collections": "^3.0.0-alpha.1",
     "@react-aria/focus": "^3.0.0-alpha.1",
-    "@react-aria/i18n": "3.0.0-rc.1",
+    "@react-aria/i18n": "^3.0.0-rc.1",
     "@react-aria/interactions": "^3.0.0-alpha.1",
     "@react-aria/listbox": "^3.0.0-alpha.1",
     "@react-aria/sidenav": "^3.0.0-alpha.1",
@@ -49,7 +49,7 @@
   },
   "peerDependencies": {
     "react": "^16.8.0",
-    "react-dom": "^16.8.0"
+    "@react-spectrum/provider": "^3.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

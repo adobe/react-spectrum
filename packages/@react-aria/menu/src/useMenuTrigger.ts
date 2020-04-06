@@ -10,41 +10,42 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
-import {MenuTriggerProps, MenuTriggerState} from '@react-types/menu';
-import {PressProps, useFocusWithin} from '@react-aria/interactions';
+import {HTMLAttributes, RefObject} from 'react';
+import {MenuTriggerState} from '@react-stately/menu';
+import {PressProps} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
-interface MenuTriggerAria {
-  menuTriggerProps: AllHTMLAttributes<HTMLElement> & PressProps,
-  menuProps: AllHTMLAttributes<HTMLElement>
+interface MenuTriggerAriaProps {
+  type?: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
+  ref?: RefObject<HTMLElement | null>
 }
 
-export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState): MenuTriggerAria {
+interface MenuTriggerAria {
+  menuTriggerProps: HTMLAttributes<HTMLElement> & PressProps,
+  menuProps: HTMLAttributes<HTMLElement>
+}
+
+export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerState): MenuTriggerAria {
   let {
     ref,
-    type = 'menu' as MenuTriggerProps['type'],
-    isDisabled
+    type = 'menu' as MenuTriggerAriaProps['type']
   } = props;
 
   let menuTriggerId = useId();
-  let {triggerAriaProps, overlayAriaProps} = useOverlayTrigger({
+  let {triggerProps, overlayProps} = useOverlayTrigger({
     ref,
     type,
-    onClose: () => state.setOpen(false),
+    onClose: state.close,
     isOpen: state.isOpen
   });
 
   let onPress = () => {
-    if (!isDisabled && !state.isOpen) {
-      state.setFocusStrategy('first');
-      state.setOpen(true);
-    }
+    state.toggle('first');
   };
 
   let onKeyDown = (e) => {
-    if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented || isDisabled) {
+    if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {
       return;
     }
 
@@ -66,15 +67,9 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
     }
   };
 
-  let {focusWithinProps} = useFocusWithin({
-    onBlurWithin: () => {
-      state.setOpen(false);
-    }
-  });
-
   return {
     menuTriggerProps: {
-      ...triggerAriaProps,
+      ...triggerProps,
       id: menuTriggerId,
       onPressStart(e) {
         // For consistency with native, open the menu on mouse/key down, but touch up.
@@ -90,8 +85,7 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
       onKeyDown
     },
     menuProps: {
-      ...overlayAriaProps,
-      ...focusWithinProps,
+      ...overlayProps,
       'aria-labelledby': menuTriggerId,
       onMouseDown(e) {
         // Safari blurs the focused item on mousedown on the scrollbar, when the menu is inside an iframe,

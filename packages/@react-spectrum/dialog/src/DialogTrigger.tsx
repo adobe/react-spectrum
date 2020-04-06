@@ -12,15 +12,15 @@
 
 import {DialogContext} from './context';
 import {DOMRefValue} from '@react-types/shared';
-import {Modal, Overlay, Popover, Tray} from '@react-spectrum/overlays';
+import {Modal, Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
-import {useControlledState} from '@react-stately/utils';
+import {useDialogTriggerState} from '@react-stately/dialog';
 import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 
-export function DialogTrigger(props: SpectrumDialogTriggerProps) {
+function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let {
     children,
     type = 'modal',
@@ -48,22 +48,15 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
     type = mobileType;
   }
 
-  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
-  let onPress = () => {
-    setOpen(!isOpen);
-  };
-
-  let onClose = () => {
-    setOpen(false);
-  };
+  let state = useDialogTriggerState(props);
 
   if (type === 'popover') {
     return (
       <PopoverTrigger
         {...positionProps}
-        isOpen={isOpen}
-        onPress={onPress}
-        onClose={onClose}
+        isOpen={state.isOpen}
+        onPress={state.toggle}
+        onClose={state.close}
         targetRef={targetRef}
         trigger={trigger}
         content={content}
@@ -76,20 +69,20 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
       case 'fullscreen':
       case 'fullscreenTakeover':
         return (
-          <Modal isOpen={isOpen} isDismissable={false} onClose={onClose} type={type}>
-            {typeof content === 'function' ? content(onClose) : content}
+          <Modal isOpen={state.isOpen} isDismissable={false} onClose={state.close} type={type}>
+            {typeof content === 'function' ? content(state.close) : content}
           </Modal>
         );
       case 'modal':
         return (
-          <Modal isOpen={isOpen} isDismissable={isDismissable} onClose={onClose}>
-            {typeof content === 'function' ? content(onClose) : content}
+          <Modal isOpen={state.isOpen} isDismissable={isDismissable} onClose={state.close}>
+            {typeof content === 'function' ? content(state.close) : content}
           </Modal>
         );
       case 'tray':
         return (
-          <Tray isOpen={isOpen} onClose={onClose}>
-            {typeof content === 'function' ? content(onClose) : content}
+          <Tray isOpen={state.isOpen} onClose={state.close}>
+            {typeof content === 'function' ? content(state.close) : content}
           </Tray>
         );
     }
@@ -98,9 +91,9 @@ export function DialogTrigger(props: SpectrumDialogTriggerProps) {
   return (
     <DialogTriggerBase
       type={type}
-      isOpen={isOpen}
-      onPress={onPress}
-      onClose={onClose}
+      isOpen={state.isOpen}
+      onPress={state.toggle}
+      onClose={state.close}
       isDismissable={isDismissable}
       trigger={trigger}
       overlay={renderOverlay()} />
@@ -121,14 +114,17 @@ DialogTrigger.getCollectionNode = function (props: SpectrumDialogTriggerProps) {
   };
 };
 
+// We don't want getCollectionNode to show up in the type definition
+let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => JSX.Element;
+export {_DialogTrigger as DialogTrigger};
+
 function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, ...props}) {
-  let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<HTMLElement>();
-  let overlayRef = useRef<HTMLDivElement>();
-  let {overlayProps, placement, arrowProps} = useOverlayPosition({
-    containerRef: unwrapDOMRef(containerRef),
+
+  let overlayRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let {overlayProps: popoverProps, placement, arrowProps} = useOverlayPosition({
     targetRef: targetRef || triggerRef,
-    overlayRef,
+    overlayRef: unwrapDOMRef(overlayRef),
     placement: props.placement,
     containerPadding: props.containerPadding,
     offset: props.offset,
@@ -137,7 +133,7 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
     isOpen
   });
 
-  let {triggerAriaProps, overlayAriaProps} = useOverlayTrigger({
+  let {triggerProps, overlayProps} = useOverlayTrigger({
     ref: triggerRef,
     type: 'dialog',
     onClose,
@@ -145,16 +141,21 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
   });
 
   let triggerPropsWithRef = {
-    ...triggerAriaProps,
+    ...triggerProps,
     ref: targetRef ? undefined : triggerRef
   };
 
   let overlay = (
-    <Overlay isOpen={isOpen} ref={containerRef}>
-      <Popover {...overlayProps} ref={overlayRef} onClose={onClose} placement={placement} arrowProps={arrowProps} hideArrow={hideArrow}>
-        {content}
-      </Popover>
-    </Overlay>
+    <Popover
+      isOpen={isOpen}
+      UNSAFE_style={popoverProps.style}
+      ref={overlayRef}
+      onClose={onClose}
+      placement={placement}
+      arrowProps={arrowProps}
+      hideArrow={hideArrow}>
+      {content}
+    </Popover>
   );
 
   return (
@@ -164,7 +165,7 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
       onPress={onPress}
       onClose={onClose}
       triggerProps={triggerPropsWithRef}
-      dialogProps={overlayAriaProps}
+      dialogProps={overlayProps}
       trigger={trigger}
       overlay={overlay} />
   );

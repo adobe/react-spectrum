@@ -10,26 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, RefObject, useEffect} from 'react';
-import {useInteractOutside} from '@react-aria/interactions';
+import {HTMLAttributes, RefObject, useEffect} from 'react';
+import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
 interface OverlayProps {
   ref: RefObject<HTMLElement | null>,
   onClose?: () => void,
   isOpen?: boolean,
   // Whether to close overlay if underlay is clicked
-  isDismissable?: boolean
+  isDismissable?: boolean,
+  shouldCloseOnBlur?: boolean
 }
 
 interface OverlayAria {
-  overlayProps: AllHTMLAttributes<HTMLElement>
+  overlayProps: HTMLAttributes<HTMLElement>
 }
 
 const visibleOverlays: RefObject<HTMLElement>[] = [];
 
 export function useOverlay(props: OverlayProps): OverlayAria {
-  let {ref, onClose, isOpen, isDismissable = false} = props;
-  
+  let {ref, onClose, shouldCloseOnBlur, isOpen, isDismissable = false} = props;
+
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {
     if (isOpen) {
@@ -62,9 +63,17 @@ export function useOverlay(props: OverlayProps): OverlayAria {
   // Handle clicking outside the overlay to close it
   useInteractOutside({ref, onInteractOutside: isDismissable ? onHide : null});
 
+  let {focusWithinProps} = useFocusWithin({
+    isDisabled: !shouldCloseOnBlur,
+    onBlurWithin: () => {
+      onClose();
+    }
+  });
+
   return {
     overlayProps: {
-      onKeyDown
+      onKeyDown,
+      ...focusWithinProps
     }
   };
 }

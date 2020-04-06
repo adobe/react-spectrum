@@ -1,0 +1,47 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+:root {
+  --spectrum-buttongroup-button-gap-reset: 0;
+}
+
+.spectrum-ActionButtonGroup {
+  display: flex;
+
+
+  .spectrum-ActionButton {
+    flex-shrink: 0;
+  }
+
+  .spectrum-ActionButton + .spectrum-ActionButton {
+    margin-left: var(--spectrum-actionbuttongroup-text-button-gap-x);
+  }
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.spectrum-ActionButtonGroup--vertical {
+  display: inline-flex;
+  flex-direction: column;
+
+  .spectrum-ActionButton-label {
+    flex-grow: 1;
+    text-align: left;
+  }
+
+  .spectrum-ActionButton + .spectrum-ActionButton {
+    margin-top: var(--spectrum-actionbuttongroup-text-button-gap-y);
+    margin-left: var(--spectrum-buttongroup-button-gap-reset);
+  }
+}
