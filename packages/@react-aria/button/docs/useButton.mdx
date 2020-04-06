@@ -34,6 +34,18 @@ import {useRef} from 'react';
 
 <FunctionAPI function={docs.exports.useButton} links={docs.links} />
 
+## Features
+
+On the surface, building a custom styled button seems simple. However, there are many
+cross browser inconsistencies in interactions and accessibility features to consider.
+`useButton` handles all of these interactions for you, so you can focus on the styling.
+
+* Native HTML `<button>` support
+* `<a>` and custom element type support via ARIA
+* Mouse and touch event handling, and press state management
+* Keyboard focus management and cross browser normalization
+* Keyboard event support for Space and Enter keys
+
 ## Anatomy
 
 Buttons consist of a clickable area usually containing a textual label or an icon

@@ -33,6 +33,18 @@ import {useProgressBar} from '@react-aria/progress';
 
 <FunctionAPI function={docs.exports.useProgressBar} links={docs.links} />
 
+## Features
+
+The [&lt;progress&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/progress)
+HTML element can be used to build a progress bar, however it is
+very difficult to style cross browser. `useProgressBar` helps achieve accessible 
+progress bars and spinners that can be styled as needed.
+
+* Exposed to assistive technology as a progress bar via ARIA
+* Labeling support for accessibility
+* Internationalized number formatting as a percentage or value
+* Determinate and indeterminate progress support
+
 ## Anatomy
 
 Progress bars consist of a track element showing the full progress of an operation, 

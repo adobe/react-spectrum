@@ -34,6 +34,21 @@ import {useRadioGroup, useRadio} from '@react-aria/radio';
 <FunctionAPI function={docs.exports.useRadioGroup} links={docs.links} />
 <FunctionAPI function={docs.exports.useRadio} links={docs.links} />
 
+## Features
+
+Radio groups can be built in HTML with the 
+[&lt;fieldset&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/fieldset) 
+and [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) elements,
+however these can be difficult to style. `useRadioGroup` and `useRadio` help achieve accessible
+radio groups that can be styled as needed.
+
+* Radio groups are exposed to assistive technology via ARIA
+* Each radio is built with a native HTML `<input>` element, which can be optionally visually 
+  hidden to allow custom styling
+* Full support for browser features like form autofill
+* Keyboard focus management and cross browser normalization
+* Group and radio labeling support for assistive technology
+
 ## Anatomy
 
 A radio group consists of a set of radio buttons, and a label. Each radio 

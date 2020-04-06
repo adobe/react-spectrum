@@ -33,6 +33,19 @@ import {useSwitch} from '@react-aria/switch';
 
 <FunctionAPI function={docs.exports.useSwitch} links={docs.links} />
 
+## Features
+
+There is no native HTML element with switch styling. `<input type="checkbox">`
+is the closest semantically, but isn't styled or exposed to assistive technology
+as a switch. `useSwitch` helps achieve accessible switches that can be styled as needed.
+
+* Built with a native HTML `<input>` element, which can be optionally visually 
+  hidden to allow custom styling
+* Full support for browser features like form autofill
+* Keyboard focus management and cross browser normalization
+* Labeling support for screen readers
+* Exposed as a switch to assistive technology via ARIA
+
 ## Anatomy
 
 A switch consists of a visual selection indicator and a label. Users may click or touch a switch

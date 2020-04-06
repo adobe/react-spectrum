@@ -33,6 +33,19 @@ import {useTextField} from '@react-aria/textfield';
 
 <FunctionAPI function={docs.exports.useTextField} links={docs.links} />
 
+## Features
+
+Text fields can be built with [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)
+and [&lt;label&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label) elements,
+but you must manually ensure that they are semantically connected via ids for accessibility.
+`useTextField` helps automate this, and handle other accessibility features while
+allowing for custom styling.
+
+* Built with a native `<input` element
+* Visual and ARIA labeling support
+* Change, clipboard, composition, selection, and input event support
+* Required and invalid states exposed to assistive technology via ARIA
+
 ## Anatomy
 
 Text fields consist of an input element and a label. `useTextField` automatically manages
@@ -53,12 +66,13 @@ to identify the element to screen readers.
 ```tsx example
 function TextField(props) {
   let {label} = props;
-  let {labelProps, inputProps} = useTextField(props);
+  let ref = React.useRef();
+  let {labelProps, inputProps} = useTextField(props, ref);
 
   return (
     <div style={{display: 'flex', flexDirection: 'column', width: 200}}>
       <label {...labelProps}>{label}</label>
-      <input {...inputProps} />
+      <input {...inputProps} ref={ref} />
     </div>
   );
 }

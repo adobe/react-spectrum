@@ -33,6 +33,20 @@ import {useMeter} from '@react-aria/meter';
 
 <FunctionAPI function={docs.exports.useMeter} links={docs.links} />
 
+## Features
+
+The [&lt;meter&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meter)
+HTML element can be used to build a meter, however it is
+very difficult to style cross browser. `useMeter` helps achieve accessible 
+meters that can be styled as needed.
+
+Meters are similar to progress bars, but represent a quantity as opposed to progress over time.
+See the [useProgressBar](useProgressBar.html) hook for more details about progress bars.
+
+* Exposed to assistive technology as a `meter` via ARIA, with fallback to `progressbar` where unsupported
+* Labeling support for accessibility
+* Internationalized number formatting as a percentage or value
+
 ## Anatomy
 
 Meters consist of a track element showing the full value in a range, 
@@ -40,9 +54,6 @@ a bar element showing the current value, and a label. The track and bar elements
 represent the value visually, while a wrapper element represents the meter to 
 assistive technology using the [meter](https://www.w3.org/TR/wai-aria-1.2/#meter)
 ARIA role.
-
-Meters are similar to progress bars, but represent a quantity as opposed to progress over time.
-See the [useProgressBar](useProgressBar.html) hook for more details about progress bars.
 
 `useMeter` returns two sets of props that you should spread onto the appropriate element:
 

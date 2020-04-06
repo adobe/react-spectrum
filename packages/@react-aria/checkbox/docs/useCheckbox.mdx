@@ -33,6 +33,19 @@ import {useCheckbox} from '@react-aria/checkbox';
 
 <FunctionAPI function={docs.exports.useCheckbox} links={docs.links} />
 
+## Features
+
+Checkboxes can be built with the [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)
+HTML element, but this can be difficult to style. `useCheckbox` helps achieve accessible checkboxes 
+that can be styled as needed.
+
+* Built with a native HTML `<input>` element, which can be optionally visually 
+  hidden to allow custom styling
+* Full support for browser features like form autofill
+* Keyboard focus management and cross browser normalization
+* Labeling support for assistive technology
+* Indeterminate state support
+
 ## Anatomy
 
 A checkbox consists of a visual selection indicator and a label. Checkboxes support three

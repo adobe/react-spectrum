@@ -33,6 +33,18 @@ import {useSearchField} from '@react-aria/searchfield';
 
 <FunctionAPI function={docs.exports.useSearchField} links={docs.links} />
 
+## Features
+
+Search fields can be built with `<input type="search">`, but these can be hard to
+style consistently cross browser. `useSearchField` helps achieve accessible 
+search fields that can be styled as needed.
+
+* Built with a native `<input type="search">` element
+* Visual and ARIA labeling support
+* Keyboard submit handling via the Enter key
+* Keyboard support for clearing the search field with the Escape key
+* Custom clear button support with internationalized label for accessibility
+
 ## Anatomy
 
 Search fields consist of an input element, a label, and an optional clear button. 
