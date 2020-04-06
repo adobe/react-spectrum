@@ -10,14 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import React, {forwardRef} from 'react';
 import {SpectrumWellProps} from '@react-types/well';
 import styles from '@adobe/spectrum-css-temp/components/well/vars.css';
 
 function Well(props: SpectrumWellProps, ref: DOMRef<HTMLDivElement>) {
-  props = useSlotProps(props);
   let {
     children,
     ...otherProps

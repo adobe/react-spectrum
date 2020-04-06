@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {focusWithoutScrolling} from '@react-aria/utils';
 import React, {ReactNode, RefObject, useContext, useEffect, useLayoutEffect, useRef} from 'react';
 
 // import {FocusScope, useFocusScope} from 'react-events/focus-scope';
@@ -132,10 +133,10 @@ const focusableElements = [
   '[contenteditable]'
 ];
 
-export const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(',') + ',[tabindex]';
+const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(',') + ',[tabindex]';
 
 focusableElements.push('[tabindex]:not([tabindex="-1"])');
-export const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([tabindex="-1"]),');
+const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([tabindex="-1"]),');
 
 function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOptions): HTMLElement[] {
   let res = [];
@@ -218,7 +219,10 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       if (!isInAnyScope) {
         activeScope = scopeRef;
         focusedNode.current = e.target;
-        focusedNode.current.focus();
+        // Firefox doesn't shift focus back to the Dialog properly without this 
+        requestAnimationFrame(() => {
+          focusedNode.current.focus();
+        });
       }
     };
 
@@ -251,7 +255,7 @@ function isElementInScope(element: Element, scope: HTMLElement[]) {
 function focusElement(element: HTMLElement | null) {
   if (element != null) {
     try {
-      element.focus({preventScroll: true});
+      focusWithoutScrolling(element);
     } catch (err) {
       // ignore
     }

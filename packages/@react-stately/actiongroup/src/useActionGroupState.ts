@@ -10,24 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionGroupCollection} from './';
-import {ActionGroupState, ActionGroupStateBase} from './types';
-import {MultipleSelection} from '@react-types/shared';
-import React, {useMemo} from 'react';
+import {ActionGroupCollection} from './ActionGroupCollection';
+import {ActionGroupProps} from '@react-types/actiongroup';
+import {ActionGroupState} from './types';
+import {CollectionBuilder} from '@react-stately/collections';
+import {Key, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
-export function useActionGroupState(props: ActionGroupStateBase & MultipleSelection): ActionGroupState {
+export function useActionGroupState<T>(props: ActionGroupProps<T>): ActionGroupState<T> {
   let selectionState = useMultipleSelectionState(props);
 
+  let disabledKeys = useMemo(() =>
+    props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
+  , [props.disabledKeys]);
+
+  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
   let collection = useMemo(() => {
-    let childrenArray = React.Children.toArray(props.children);
-    childrenArray = childrenArray.map(child => React.cloneElement(child, {
-      isSelected: selectionState.selectedKeys.has(child.key)
+    let nodes = builder.build(props, (key) => ({
+      isSelected: selectionState.selectedKeys.has(key),
+      isDisabled: disabledKeys.has(key) || props.isDisabled
     }));
 
-    return new ActionGroupCollection(childrenArray);
-
-  }, [props, selectionState.selectedKeys]);
+    return new ActionGroupCollection(nodes);
+  }, [builder, props, selectionState.selectedKeys, disabledKeys]);
 
   return {
     collection,

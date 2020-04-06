@@ -39,6 +39,9 @@ governing permissions and limitations under the License.
 
   /* 12px desktop (medium scale) and 8px mobile (large scale) */
   --spectrum-dialog-close-button-padding: calc(26px - var(--spectrum-global-dimension-size-175));
+  --spectrum-dialog-close-button-size: var(--spectrum-global-dimension-size-400);
+
+  --spectrum-dialog-gap-size: var(--spectrum-global-dimension-size-200);
 }
 
 
@@ -85,17 +88,36 @@ governing permissions and limitations under the License.
 
 .spectrum-Dialog .spectrum-Dialog-grid {
   display: grid;
-  grid-template-columns: var(--spectrum-dialog-padding) 1fr auto var(--spectrum-dialog-padding);
+  grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding);
   grid-template-rows: auto var(--spectrum-dialog-padding) auto auto 1fr auto var(--spectrum-dialog-padding);
   grid-template-areas:
-    "hero hero    hero        hero"
-    ".    .       .           closeButton"
-    ".    header  header      ."
-    ".    divider divider     ."
-    ".    content content     ."
-    ".    footer  buttonGroup ."
-    ".    .       .           .";
+    "hero hero    hero    hero        hero        hero"
+    ".    .       .       .           .           ."
+    ".    heading header  header      typeIcon    ."
+    ".    divider divider divider     divider     ."
+    ".    content content content     content     ."
+    ".    footer  footer  buttonGroup buttonGroup ."
+    ".    .       .       .           .           .";
   width: 100%;
+}
+
+.spectrum-Dialog-heading {
+  grid-area: heading;
+
+  margin: 0;
+
+  font-size: var(--spectrum-dialog-title-text-size);
+  font-weight: var(--spectrum-dialog-title-text-font-weight);
+  line-height: var(--spectrum-dialog-title-text-line-height);
+
+  outline: none; /* Hide focus outline */
+
+  padding-inline-end: var(--spectrum-dialog-gap-size);
+
+  &.spectrum-Dialog-heading--noHeader {
+    grid-area: heading-start / heading-start / header-end / header-end;
+    padding-inline-end: 0;
+  }
 }
 
 .spectrum-Dialog-header {
@@ -103,11 +125,15 @@ governing permissions and limitations under the License.
   display: flex;
   /* Without this, buttons will be stretched */
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
 
   box-sizing: border-box;
 
   outline: none; /* Hide focus outline around header */
+}
+
+.spectrum-Dialog-typeIcon {
+  grid-area: typeIcon;
 }
 
 .spectrum-Dialog .spectrum-Dialog-divider {
@@ -167,24 +193,34 @@ governing permissions and limitations under the License.
   grid-area: buttonGroup;
   /* this padding isn't built into the grid because it disappears with this buttonGroup */
   padding-block-start: var(--spectrum-global-dimension-static-size-500);
-}
+  display: flex;
+  justify-content: flex-end;
+  /* this padding should be safe as button group is always end aligned */
+  padding-inline-start: var(--spectrum-dialog-gap-size);
 
-.spectrum-Dialog--dismissable {
-  .spectrum-Dialog-footer {
-    display: none;
+  &.spectrum-Dialog-buttonGroup--noFooter {
+    grid-area: footer-start / footer-start / buttonGroup-end / buttonGroup-end;
   }
 }
 
-.spectrum-Dialog-heading {
-  flex: 1 1 auto;
+.spectrum-Dialog.spectrum-Dialog--dismissable .spectrum-Dialog-grid {
+  grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) minmax(0, var(--spectrum-dialog-close-button-size)) var(--spectrum-dialog-padding);
+  grid-template-rows: auto var(--spectrum-dialog-padding) auto auto 1fr auto var(--spectrum-dialog-padding);
+  grid-template-areas:
+    "hero hero    hero    hero        hero        hero        hero"
+    ".    .       .       .           .           closeButton closeButton"
+    ".    heading header  header      typeIcon    closeButton closeButton"
+    ".    divider divider divider     divider     divider     ."
+    ".    content content content     content     content     ."
+    ".    footer  footer  buttonGroup buttonGroup buttonGroup ."
+    ".    .       .       .           .           .           .";
 
-  margin: 0;
-
-  font-size: var(--spectrum-dialog-title-text-size);
-  font-weight: var(--spectrum-dialog-title-text-font-weight);
-  line-height: var(--spectrum-dialog-title-text-line-height);
-
-  outline: none; /* Hide focus outline */
+  .spectrum-Dialog-buttonGroup {
+    display: none;
+  }
+  .spectrum-Dialog-footer {
+    grid-area: footer / footer/ buttonGroup / buttonGroup;
+  }
 }
 
 .spectrum-Dialog-closeButton {
@@ -193,8 +229,8 @@ governing permissions and limitations under the License.
   align-self: start;
   justify-self: end;
 
-  inset-block-start: var(--spectrum-dialog-close-button-padding);
-  inset-inline-end: var(--spectrum-dialog-close-button-padding);
+  margin-inline-end: var(--spectrum-dialog-close-button-padding);
+  margin-block-start: var(--spectrum-dialog-close-button-padding);
 }
 
 /* Alert Dialog is a specific type of Dialog */
@@ -221,10 +257,10 @@ governing permissions and limitations under the License.
   &.spectrum-Dialog .spectrum-Dialog-grid {
     display: grid;
     grid-template-columns: var(--spectrum-dialog-padding) 1fr auto auto var(--spectrum-dialog-padding);
-    grid-template-rows: calc(var(--spectrum-dialog-padding) + var(--spectrum-dialog-fullscreen-padding-top)) auto auto 1fr var(--spectrum-dialog-padding);
+    grid-template-rows: var(--spectrum-dialog-padding) auto auto 1fr var(--spectrum-dialog-padding);
     grid-template-areas:
       ".    .       .       .            ."
-      ".    header  header  buttonGroup  ."
+      ".    heading header  buttonGroup  ."
       ".    divider divider divider      ."
       ".    content content content      ."
       ".    .       .       .            .";
@@ -232,7 +268,6 @@ governing permissions and limitations under the License.
 
   .spectrum-Dialog-heading {
     font-size: var(--spectrum-dialog-fullscreen-header-text-size);
-    font-weight: var(--spectrum-dialog-fullscreen-header-text-font-weight);
   }
 
   .spectrum-Dialog-content {
@@ -247,27 +282,69 @@ governing permissions and limitations under the License.
   .spectrum-Dialog-footer {
     display: none;
   }
+
+  .spectrum-Dialog-buttonGroup {
+    grid-area: buttonGroup;
+  }
 }
 
 @media screen and (max-width: 700px) {
+
+  .spectrum-Dialog .spectrum-Dialog-grid {
+    grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding);
+    grid-template-rows: auto var(--spectrum-dialog-padding) auto auto auto 1fr auto var(--spectrum-dialog-padding);
+    grid-template-areas:
+      "hero hero    hero    hero        hero        hero"
+      ".    .       .       .           .           ."
+      ".    heading heading heading     typeIcon    ."
+      ".    header  header  header      header      ."
+      ".    divider divider divider     divider     ."
+      ".    content content content     content     ."
+      ".    footer  footer  buttonGroup buttonGroup ."
+      ".    .       .       .           .           .";
+  }
+
+  .spectrum-Dialog.spectrum-Dialog--dismissable .spectrum-Dialog-grid {
+    grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) minmax(0, var(--spectrum-dialog-close-button-size)) var(--spectrum-dialog-padding);
+    grid-template-rows: auto var(--spectrum-dialog-padding) auto auto auto 1fr auto var(--spectrum-dialog-padding);
+    grid-template-areas:
+      "hero hero    hero    hero        hero        hero        hero"
+      ".    .       .       .           .           closeButton closeButton"
+      ".    heading heading heading     typeIcon    closeButton closeButton"
+      ".    header  header  header      header      header      ."
+      ".    divider divider divider     divider     divider     ."
+      ".    content content content     content     content     ."
+      ".    footer  footer  buttonGroup buttonGroup buttonGroup ."
+      ".    .       .       .           .           .           .";
+  }
+
+  .spectrum-Dialog .spectrum-Dialog-header {
+    justify-content: flex-start;
+  }
+
   .spectrum-Dialog--fullscreen,
   .spectrum-Dialog--fullscreenTakeover {
 
     &.spectrum-Dialog .spectrum-Dialog-grid {
        display: grid;
-       grid-template-columns: var(--spectrum-dialog-padding) 1fr auto auto var(--spectrum-dialog-padding);
-       grid-template-rows: calc(var(--spectrum-dialog-padding) + var(--spectrum-dialog-fullscreen-padding-top)) auto auto 1fr auto var(--spectrum-dialog-padding);
+       grid-template-columns: var(--spectrum-dialog-padding) 1fr var(--spectrum-dialog-padding);
+       grid-template-rows: var(--spectrum-dialog-padding) auto auto auto 1fr auto var(--spectrum-dialog-padding);
        grid-template-areas:
-         ".    .       .            ."
-         ".    header  header       ."
-         ".    divider divider      ."
-         ".    content content      ."
-         ".    .       buttonGroup  ."
-         ".    .       .            .";
+         ".    .            ."
+         ".    heading      ."
+         ".    header       ."
+         ".    divider      ."
+         ".    content      ."
+         ".    buttonGroup  ."
+         ".    .            .";
     }
 
     .spectrum-Dialog-buttonGroup {
       padding-block-start: var(--spectrum-global-dimension-static-size-500);
+    }
+
+    .spectrum-Dialog-heading {
+      font-size: var(--spectrum-dialog-title-text-size);
     }
   }
 }

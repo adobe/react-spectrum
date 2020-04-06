@@ -11,8 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton, Button, ButtonGroup} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {Content, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
@@ -20,6 +21,7 @@ import {Heading, Text} from '@react-spectrum/typography';
 import isChromatic from 'storybook-chromatic/isChromatic';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('DialogTrigger', module)
@@ -232,7 +234,8 @@ function render({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog>
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading</Heading>
+            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
             <Divider />
             <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
             {!props.isDismissable &&
@@ -253,7 +256,8 @@ function renderPopover({width = 'auto', ...props}) {
       <DialogTrigger {...props} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
         <Dialog>
-          <Header><Heading>The Heading</Heading></Header>
+          <Heading>The Heading</Heading>
+          <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
           <Divider />
           <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
         </Dialog>
@@ -268,7 +272,7 @@ function renderAlert({width = 'auto', ...props}) {
       <DialogTrigger {...props} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
-          <AlertDialog title="Alert! Danger!" variant="error" primaryLabel="Accept" secondaryLabel="Whoa" cancelLabel="Cancel" onCancel={chain(close, action('cancel'))} onConfirm={chain(close, action('confirm'))}>
+          <AlertDialog title="Alert! Danger!" variant="error" primaryActionLabel="Accept" secondaryActionLabel="Whoa" cancelLabel="Cancel" onCancel={chain(close, action('cancel'))} onPrimaryAction={chain(close, action('primary'))} onSecondaryAction={chain(close, action('secondary'))}>
             <Text>Fine! No, absolutely fine. It's not like I don't have, you know, ten thousand other test subjects begging me to help them escape. You know, it's not like this place is about to EXPLODE.</Text>
           </AlertDialog>
         )}

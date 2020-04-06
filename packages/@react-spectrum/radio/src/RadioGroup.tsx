@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, LabelPosition} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import React, {useContext} from 'react';
+import {RadioContext} from './context';
+import React from 'react';
 import {SpectrumRadioGroupProps} from '@react-types/radio';
 import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
 import {useFormProps} from '@react-spectrum/form';
@@ -22,27 +23,9 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useRadioGroup} from '@react-aria/radio';
 import {useRadioGroupState} from '@react-stately/radio';
 
-interface RadioGroupContext {
-  isDisabled?: boolean,
-  isRequired?: boolean,
-  isReadOnly?: boolean,
-  isEmphasized?: boolean,
-  name?: string,
-  validationState?: 'valid' | 'invalid',
-  selectedRadio?: string,
-  setSelectedRadio?: (value: string) => void
-}
-
-const RadioContext = React.createContext<RadioGroupContext | null>(null);
-
-export function useRadioProvider(): RadioGroupContext {
-  return useContext(RadioContext);
-}
-
 function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
-  props = useSlotProps(props);
   let {
     isEmphasized,
     isRequired,
@@ -60,8 +43,9 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
-  let {selectedRadio, setSelectedRadio} = useRadioGroupState(props);
-  let {radioGroupProps, labelProps, radioProps} = useRadioGroup(props);
+  let state = useRadioGroupState(props);
+
+  let {radioGroupProps, labelProps, radioProps} = useRadioGroup(props, state);
 
   return (
     <div
@@ -112,9 +96,8 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
             isReadOnly,
             isDisabled,
             validationState,
-            name: radioProps.name,
-            selectedRadio,
-            setSelectedRadio
+            ...radioProps,
+            state
           }}>
           {children}
         </RadioContext.Provider>

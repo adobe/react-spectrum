@@ -28,6 +28,10 @@ describe('useMenuTrigger', function () {
   beforeEach(() => {
     state.isOpen = false;
     state.setOpen = setOpen;
+    state.toggle = (focusStrategy) => {
+      state.setFocusStrategy(focusStrategy);
+      state.setOpen(!state.isOpen);
+    };
     state.focusStrategy = 'first';
     state.setFocusStrategy = setFocusStrategy;
   });
@@ -73,7 +77,7 @@ describe('useMenuTrigger', function () {
 
     let {menuTriggerProps} = renderMenuTriggerHook(props, state);
     expect(typeof menuTriggerProps.onPressStart).toBe('function');
-    menuTriggerProps.onPressStart();
+    menuTriggerProps.onPressStart({pointerType: 'mouse'});
     expect(setOpen).toHaveBeenCalledTimes(1);
     expect(setOpen).toHaveBeenCalledWith(!state.isOpen);
     expect(setFocusStrategy).toHaveBeenCalledTimes(1);

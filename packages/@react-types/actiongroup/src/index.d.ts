@@ -10,23 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, MultipleSelection, StyleProps} from '@react-types/shared';
-import {ReactElement} from 'react';
-import {SpectrumActionButtonProps} from '@react-types/button';
+import {DOMProps, ItemElement, ItemRenderer, MultipleSelection, Orientation, StyleProps} from '@react-types/shared';
+import {Key} from 'react';
 
-export type ActionGroupButton = ReactElement<SpectrumActionButtonProps>;
-
-export interface ActionGroupProps extends DOMProps, StyleProps, MultipleSelection {
-  orientation?: 'horizontal' | 'vertical',
-  children: ActionGroupButton | ActionGroupButton[],
+// Not extending CollectionBase to avoid async loading props
+export interface ActionGroupProps<T> extends DOMProps, StyleProps, MultipleSelection {
+  orientation?: Orientation,
+  children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>,
+  items?: Iterable<T>,
+  itemKey?: string,
+  disabledKeys?: Iterable<Key>,
   isDisabled?: boolean
 }
 
-export interface SpectrumActionGroupProps extends ActionGroupProps {
+export interface SpectrumActionGroupProps<T> extends ActionGroupProps<T> {
   isEmphasized?: boolean,
   isConnected?: boolean
   isJustified?: boolean,
   isQuiet?: boolean,
-  holdAffordance?: boolean,
-  onSelectionChange?: (...args) => void
+  holdAffordance?: boolean
 }

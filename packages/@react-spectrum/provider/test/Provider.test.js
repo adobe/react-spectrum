@@ -128,6 +128,28 @@ describe('Provider', () => {
     onPressSpy.mockClear();
   });
 
+  it('will render an available color scheme automatically if the previous does not exist on the new theme', () => {
+    matchMedia.useMediaQuery(mediaQueryDark);
+    let {getByTestId} = render(
+      <Provider theme={theme} data-testid="testid1">
+        <Provider
+          theme={{
+            global: {},
+            light: {'spectrum--light': 'spectrum--light'},
+            medium: {'spectrum--medium': 'spectrum--medium'},
+            large: {'spectrum--large': 'spectrum--large'}
+          }}
+          data-testid="testid2">
+          <Button>Hello!</Button>
+        </Provider>
+      </Provider>
+    );
+    let provider1 = getByTestId('testid1');
+    let provider2 = getByTestId('testid2');
+    expect(provider1.classList.contains('spectrum--dark')).toBeTruthy();
+    expect(provider2.classList.contains('spectrum--light')).toBeTruthy();
+  });
+
   it('Provider will rerender if the OS preferred changes and it is on auto', () => {
     matchMedia.useMediaQuery(mediaQueryLight);
     let {getByTestId} = render(

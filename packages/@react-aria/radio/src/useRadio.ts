@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
+import {InputHTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {RadioProps} from '@react-types/radio';
 import {useFocusable} from '@react-aria/focus';
-import {usePressableInput} from '@react-aria/interactions';
+import {usePress} from '@react-aria/interactions';
 
 interface RadioAriaProps extends RadioProps {
   isRequired?: boolean,
@@ -24,21 +24,22 @@ interface RadioAriaProps extends RadioProps {
 }
 
 interface RadioAria {
-  inputProps: AllHTMLAttributes<HTMLInputElement>
+  inputProps: InputHTMLAttributes<HTMLElement>
 }
 
-export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAria {
+export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: RefObject<HTMLElement>): RadioAria {
   let {
     value,
     isRequired,
     isReadOnly,
     isDisabled,
-    name,
-    autoFocus
+    name
   } = props;
   let {
     selectedRadio,
-    setSelectedRadio
+    setSelectedRadio,
+    focusableRadio,
+    setFocusableRadio
   } = state;
 
   let checked = selectedRadio === value;
@@ -49,24 +50,26 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState): RadioAr
     setSelectedRadio(value);
   };
 
-  let {pressProps} = usePressableInput({
+  let {pressProps} = usePress({
     isDisabled
   });
 
-  let {focusableProps} = useFocusable(props);
+  let {focusableProps} = useFocusable(mergeProps(props, {
+    onFocus: () => setFocusableRadio(value)
+  }), ref);
   let interactions = mergeProps(pressProps, focusableProps);
 
   return {
     inputProps: {
       type: 'radio',
       name,
+      tabIndex: focusableRadio === value || focusableRadio == null ? 0 : -1,
       disabled: isDisabled,
       readOnly: isReadOnly,
       required: isRequired,
       checked,
       'aria-checked': checked,
       onChange,
-      autoFocus,
       ...interactions
     }
   };

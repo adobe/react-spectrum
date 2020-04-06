@@ -22,5 +22,9 @@ export interface ImageProps {
 }
 
 export interface SpectrumImageProps extends ImageProps, DOMProps, StyleProps {
-
+  /**
+   * A slot to place the image in.
+   * @default "image"
+   */
+  slot?: string
 }

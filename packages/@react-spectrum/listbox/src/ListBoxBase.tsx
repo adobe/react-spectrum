@@ -19,7 +19,7 @@ import {ListBoxSection} from './ListBoxSection';
 import {ListLayout, Node} from '@react-stately/collections';
 import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
-import React, {HTMLAttributes, ReactElement, useMemo} from 'react';
+import React, {HTMLAttributes, ReactElement, RefObject, useMemo} from 'react';
 import {ReusableView} from '@react-stately/collections';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useCollator} from '@react-aria/i18n';
@@ -29,21 +29,23 @@ import {useProvider} from '@react-spectrum/provider';
 interface ListBoxBaseProps<T> extends DOMProps, StyleProps {
   layout: ListLayout<T>,
   state: ListState<T>,
-  autoFocus?: boolean,
-  focusStrategy?: FocusStrategy,
-  wrapAround?: boolean,
-  selectOnPressUp?: boolean,
+  autoFocus?: boolean | FocusStrategy,
+  shouldFocusWrap?: boolean,
+  shouldSelectOnPressUp?: boolean,
   focusOnPointerEnter?: boolean,
-  domProps?: HTMLAttributes<HTMLElement>
+  domProps?: HTMLAttributes<HTMLElement>,
+  disallowEmptySelection?: boolean
 }
 
+/** @private */
 export function useListBoxLayout<T>(state: ListState<T>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
-  let layout = useMemo(() => 
-    new ListLayout({
+  let layout = useMemo(() =>
+    new ListLayout<T>({
       estimatedRowHeight: scale === 'large' ? 48 : 35,
       estimatedHeadingHeight: scale === 'large' ? 37 : 30,
+      padding: scale === 'large' ? 5 : 4, // TODO: get from DNA
       collator
     })
   , [collator, scale]);
@@ -52,11 +54,13 @@ export function useListBoxLayout<T>(state: ListState<T>) {
   return layout;
 }
 
-export function ListBoxBase<T>(props: ListBoxBaseProps<T>) {
-  let {layout, state, selectOnPressUp, focusOnPointerEnter, domProps = {}} = props;
+/** @private */
+function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
+  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, domProps = {}} = props;
   let {listBoxProps} = useListBox({
     ...props,
     ...domProps,
+    ref,
     keyboardDelegate: layout,
     isVirtualized: true
   }, state);
@@ -79,7 +83,7 @@ export function ListBoxBase<T>(props: ListBoxBaseProps<T>) {
     }
 
     return (
-      <CollectionItem 
+      <CollectionItem
         key={reusableView.key}
         reusableView={reusableView}
         parent={parent} />
@@ -91,11 +95,13 @@ export function ListBoxBase<T>(props: ListBoxBaseProps<T>) {
       {...filterDOMProps(props)}
       {...styleProps}
       {...mergeProps(listBoxProps, domProps)}
+      ref={ref}
       focusedKey={state.selectionManager.focusedKey}
       sizeToFit="height"
+      scrollDirection="vertical"
       className={
         classNames(
-          styles, 
+          styles,
           'spectrum-Menu',
           styleProps.className
         )
@@ -109,11 +115,16 @@ export function ListBoxBase<T>(props: ListBoxBaseProps<T>) {
             <ListBoxOption
               item={item}
               state={state}
-              selectOnPressUp={selectOnPressUp}
-              focusOnHover={focusOnPointerEnter} />
+              shouldSelectOnPressUp={shouldSelectOnPressUp}
+              shouldFocusOnHover={focusOnPointerEnter} />
           );
         }
       }}
     </CollectionView>
   );
 }
+
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+const _ListBoxBase = React.forwardRef(ListBoxBase) as <T>(props: ListBoxBaseProps<T> & {ref?: RefObject<HTMLDivElement>}) => ReactElement;
+export {_ListBoxBase as ListBoxBase};

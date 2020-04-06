@@ -29,6 +29,7 @@ interface MenuState<T> extends TreeState<T> {}
 interface MenuItemProps {
   isDisabled?: boolean,
   isSelected?: boolean,
+  'aria-label'?: string,
   key?: Key,
   ref?: RefObject<HTMLElement>,
   onClose?: () => void,
@@ -63,8 +64,9 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
   let ariaProps = {
     'aria-disabled': isDisabled,
     role,
+    'aria-label': props['aria-label'],
     'aria-labelledby': labelId,
-    'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ')
+    'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ') || undefined
   };
 
   if (state.selectionManager.selectionMode !== 'none') {
@@ -84,7 +86,7 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
         }
         break;
       case 'Enter':
-        if (!isDisabled && onClose) {
+        if (!isDisabled && closeOnSelect && onClose) {
           onClose();
         }
         break;
@@ -113,7 +115,7 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
     selectionManager: state.selectionManager,
     itemKey: key,
     itemRef: ref,
-    selectOnPressUp: true
+    shouldSelectOnPressUp: true
   });
 
   let {pressProps} = usePress(mergeProps({onPressStart, onPressUp, onKeyDown, isDisabled}, itemProps));

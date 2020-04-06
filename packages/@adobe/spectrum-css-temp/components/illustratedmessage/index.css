@@ -28,16 +28,23 @@ governing permissions and limitations under the License.
 
   text-align: center;
 
-  .spectrum-IllustratedMessage-illustration {
+  > * {
+    order: 4;
+  }
+
+  > svg {
+    order: 1;
     margin-bottom: var(--spectrum-illustrated-message-illustration-margin-bottom);
   }
 
   .spectrum-IllustratedMessage-heading {
+    order: 2;
     max-width: var(--spectrum-illustrated-message-heading-max-width);
     margin: var(--spectrum-illustrated-message-heading-margin);
   }
 
   .spectrum-IllustratedMessage-description {
+    order: 3;
     max-width: var(--spectrum-illustrated-message-description-max-width);
     margin: var(--spectrum-illustrated-message-description-margin);
 

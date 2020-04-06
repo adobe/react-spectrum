@@ -10,16 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionGroupButton} from '@react-types/actiongroup';
-import {ActionGroupCollection} from './';
-import {ReactElement} from 'react';
+import {Collection, Node} from '@react-stately/collections';
 import {SelectionManager} from '@react-stately/selection';
 
-export interface ActionGroupStateBase {
-  children: ActionGroupButton| ActionGroupButton[]
-}
-
-export interface ActionGroupState {
-  collection: ActionGroupCollection<ReactElement>,
+export interface ActionGroupState<T> {
+  collection: Collection<Node<T>>,
   selectionManager: SelectionManager
 }

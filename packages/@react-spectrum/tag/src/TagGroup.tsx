@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import React, {useContext} from 'react';
 import {Removable} from '@react-types/shared';
 import {SpectrumTagGroupProps} from '@react-types/tag';
@@ -35,7 +35,6 @@ export function useTagGroupProvider(): TagGroupContext {
 
 export const TagGroup = ((props: SpectrumTagGroupProps) => {
   props = useProviderProps(props);
-  props = useSlotProps(props);
 
   let {
     isReadOnly,

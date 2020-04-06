@@ -18,6 +18,7 @@ export interface ItemProps<T> {
   hasChildItems?: boolean,
   children: ReactNode, // CellRenderer??
   textValue?: string,
+  'aria-label'?: string,
   uniqueKey?: Key
 }
 
@@ -33,6 +34,7 @@ interface AsyncLoadable<T> {
 
 export interface SectionProps<T> extends AsyncLoadable<T> {
   title?: ReactNode,
+  'aria-label'?: string,
   children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>,
   uniqueKey?: Key
 }

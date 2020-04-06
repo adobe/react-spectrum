@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -23,7 +23,6 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
-  props = useSlotProps(props);
   let {
     elementType: ElementType = 'button',
     isQuiet,
@@ -38,10 +37,6 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
 
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
-  let {
-    className: groupClassName,
-    ...otherButtonProps
-  } = buttonProps;
   let {styleProps} = useStyleProps(otherProps);
 
   return (
@@ -49,7 +44,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
       <ElementType
         {...filterDOMProps(otherProps)}
         {...styleProps}
-        {...otherButtonProps}
+        {...buttonProps}
         ref={domRef}
         className={
           classNames(
@@ -62,10 +57,12 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
               'is-selected': isSelected,
               'is-disabled': isDisabled
             },
-            styleProps.className,
-            groupClassName
+            styleProps.className
           )
         }>
+        {holdAffordance &&
+          <CornerTriangle UNSAFE_className={classNames(styles, 'spectrum-ActionButton-hold')} />
+        }
         <SlotProvider
           slots={{
             icon: {
@@ -80,9 +77,6 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
             ? <Text>{children}</Text> 
             : children}
         </SlotProvider>
-        {holdAffordance &&
-          <CornerTriangle UNSAFE_className={classNames(styles, 'spectrum-ActionButton-hold')} />
-        }
       </ElementType>
     </FocusRing>
   );

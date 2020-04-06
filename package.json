@@ -48,6 +48,7 @@
     "@babel/register": "^7.0.0",
     "@babel/runtime": "^7.6.2",
     "@octokit/rest": "*",
+    "@parcel/babel-plugin-transform-runtime": "^2.0.0-nightly.1823",
     "@parcel/babel-preset-env": "^2.0.0-nightly.92",
     "@parcel/transformer-inline": "^2.0.0-nightly.92",
     "@spectrum-css/vars": "^2.0.0",
@@ -147,8 +148,8 @@
     "@spectrum-css/component-builder": "^1.0.0"
   },
   "resolutions": {
-    "@babel/core": "7.8.4",
-    "@babel/runtime": "7.6.3",
-    "postcss-calc": "7.0.1"
+    "@babel/core": "7.9.0",
+    "@babel/runtime": "7.9.0",
+    "postcss-calc": "6.0.2"
   }
 }

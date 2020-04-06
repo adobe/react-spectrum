@@ -14,7 +14,7 @@ import {PartialNode} from './types';
 import React, {ReactElement} from 'react';
 import {SectionProps} from '@react-types/shared';
 
-export function Section<T>(props: SectionProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
+function Section<T>(props: SectionProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 
@@ -24,6 +24,7 @@ Section.getCollectionNode = function<T> (props: SectionProps<T>): PartialNode<T>
     type: 'section',
     hasChildNodes: true,
     rendered: title,
+    'aria-label': props['aria-label'],
     *childNodes() {
       if (typeof children === 'function') {
         if (!items) {
@@ -49,3 +50,7 @@ Section.getCollectionNode = function<T> (props: SectionProps<T>): PartialNode<T>
     }
   };
 };
+
+// We don't want getCollectionNode to show up in the type definition
+let _Section = Section as <T>(props: SectionProps<T>) => JSX.Element;
+export {_Section as Section};

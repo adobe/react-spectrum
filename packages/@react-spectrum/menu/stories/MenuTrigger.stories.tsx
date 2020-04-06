@@ -11,13 +11,11 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionButton, Button} from '@react-spectrum/button';
+import {ActionButton} from '@react-spectrum/button';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
-import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {classNames} from '@react-spectrum/utils';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Menu, MenuTrigger, Section} from '../';
@@ -25,7 +23,6 @@ import {Keyboard, Text} from '@react-spectrum/typography';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import styles from '@adobe/spectrum-css-temp/components/splitbutton/vars.css';
 
 let withSection = [
   {name: 'Animals', children: [
@@ -51,11 +48,11 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'single selected key (controlled)',
-    () => render({}, {selectedKeys: ['Kangaroo']})
+    () => render({}, {selectedKeys: ['Kangaroo'], selectionMode: 'single'})
   )
   .add(
     'single default selected key (uncontrolled)',
-    () => render({}, {defaultSelectedKeys: ['Kangaroo']})
+    () => render({}, {defaultSelectedKeys: ['Kangaroo'], selectionMode: 'single'})
   )
   .add(
     'multiple selected key (controlled)',
@@ -64,10 +61,6 @@ storiesOf('MenuTrigger', module)
   .add(
     'multiple default selected key (uncontrolled)',
     () => render({}, {defaultSelectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
-  )
-  .add(
-    'autofocus=false',
-    () => render({}, {defaultSelectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple', autoFocus: false})
   )
   .add(
     'align="end"',
@@ -90,16 +83,8 @@ storiesOf('MenuTrigger', module)
     () => render({defaultOpen: true})
   )
   .add(
-    'isDisabled',
+    'disabled button',
     () => render({isDisabled: true})
-  )
-  .add(
-    'trigger="longPress" TODO out of scope',
-    () => render()
-  )
-  .add(
-    'menu+submenus TODO out of scope',
-    () => render()
   )
   .add(
     'menu with role=listbox',
@@ -128,7 +113,7 @@ storiesOf('MenuTrigger', module)
             onPressEnd={action('pressend')}>
               Menu Button
           </ActionButton>
-          <Menu onSelectionChange={action('onSelectionChange')}>
+          <Menu onAction={action('action')}>
             <Section title="Section 1">
               <Item>
                 <Copy size="S" />
@@ -185,7 +170,7 @@ storiesOf('MenuTrigger', module)
                 onPressEnd={action('pressend')}>
                   Menu Button
               </ActionButton>
-              <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+              <Menu items={withSection} itemKey="name" onAction={action('action')}>
                 {item => (
                   <Section items={item.children} title={item.name}>
                     {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -216,7 +201,7 @@ storiesOf('MenuTrigger', module)
               onPressEnd={action('pressend')}>
                 Menu Button
             </ActionButton>
-            <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} disabledKeys={['Snake', 'Ross']}>
+            <Menu items={withSection} itemKey="name" onAction={action('action')} disabledKeys={['Snake', 'Ross']}>
               {item => (
                 <Section items={item.children} title={item.name}>
                   {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -228,57 +213,20 @@ storiesOf('MenuTrigger', module)
         </div>
       </>
     )
-  )
-  .add(
-    'more than 2 children (split button)',
-    () => (
-      <div style={{display: 'flex', width: 'auto', margin: '100px 0'}}>
-        <Button
-          variant="primary"
-          onPress={action('press 1')}
-          onPressStart={action('pressstart 1')}
-          onPressEnd={action('pressend 1')}
-          UNSAFE_className={classNames(
-            styles,
-            'spectrum-SplitButton-action'
-          )}>
-          Hi
-        </Button>
-        <MenuTrigger onOpenChange={action('onOpenChange')}>
-          <Button
-            variant="primary"
-            onPress={action('press 2')}
-            onPressStart={action('pressstart 2')}
-            onPressEnd={action('pressend 2')}
-            UNSAFE_className={classNames(
-              styles,
-              'spectrum-SplitButton-trigger'
-            )}>
-            <ChevronDownMedium />
-          </Button>
-          <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
-            {item => (
-              <Section items={item.children} title={item.name}>
-                {item => <Item childItems={item.children}>{item.name}</Item>}
-              </Section>
-            )}
-          </Menu>
-        </MenuTrigger>
-      </div>
-    )
   );
 
-function render(props = {}, menuProps = {}) {
+function render({isDisabled, ...props}: any = {}, menuProps = {}) {
   return (
     <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
       <MenuTrigger onOpenChange={action('onOpenChange')} {...props}>
         <ActionButton
+          isDisabled={isDisabled}
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}>
             Menu Button
         </ActionButton>
-        <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} disabledKeys={['Snake', 'Ross']} {...menuProps}>
+        <Menu items={withSection} itemKey="name" onAction={action('action')} disabledKeys={['Snake', 'Ross']} {...menuProps}>
           {item => (
             <Section items={item.children} title={item.name}>
               {item => <Item childItems={item.children}>{item.name}</Item>}

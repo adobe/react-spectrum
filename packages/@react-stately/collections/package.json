@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/collections",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-types/shared": "^3.0.0-alpha.2",
+    "@react-types/shared": "^3.0.0-rc.2",
     "react": "^16.8.0"
   },
   "publishConfig": {

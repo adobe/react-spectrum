@@ -35,15 +35,13 @@ interface SelectAria {
 export function useSelect<T>(props: SelectProps, state: SelectState<T>): SelectAria {
   let {
     triggerRef,
-    isDisabled,
     keyboardDelegate
   } = props;
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
       ref: triggerRef,
-      type: 'listbox',
-      isDisabled
+      type: 'listbox'
     },
     state
   );

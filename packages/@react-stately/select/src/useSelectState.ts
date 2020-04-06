@@ -11,56 +11,41 @@
  */
 
 import {Collection, Node} from '@react-stately/collections';
-import {FocusStrategy} from '@react-types/menu';
-import {Key, useMemo, useState} from 'react';
+import {Key, useMemo} from 'react';
+import {MenuTriggerState, useMenuTriggerState} from '@react-stately/menu';
 import {SelectionManager} from '@react-stately/selection';
 import {SelectProps} from '@react-types/select';
 import {useControlledState} from '@react-stately/utils';
 import {useListState} from '@react-stately/list'; // TODO: move
 
-export interface SelectState<T> {
+export interface SelectState<T> extends MenuTriggerState {
   collection: Collection<Node<T>>,
   disabledKeys: Set<Key>,
   selectionManager: SelectionManager,
   selectedKey: Key,
   setSelectedKey: (key: Key) => void,
-  isOpen: boolean,
-  setOpen: (isOpen: boolean) => void,
-  toggle(focusStrategy?: FocusStrategy): void,
-  focusStrategy: FocusStrategy,
-  setFocusStrategy: (focusStrategy: FocusStrategy) => void
 }
 
 export function useSelectState<T>(props: SelectProps<T>): SelectState<T>  {
   let [selectedKey, setSelectedKey] = useControlledState(props.selectedKey, props.defaultSelectedKey, props.onSelectionChange);
   let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
+  let triggerState = useMenuTriggerState(props);
   let {collection, disabledKeys, selectionManager} = useListState({
     ...props,
     selectionMode: 'single',
     selectedKeys,
     onSelectionChange: (keys) => {
       setSelectedKey(keys.values().next().value);
-      setOpen(false);
+      triggerState.setOpen(false);
     }
   });
 
-  // TODO: move to useMenuTriggerState
-  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
-  let [focusStrategy, setFocusStrategy] = useState('first' as FocusStrategy);
-
   return {
+    ...triggerState,
     collection,
     disabledKeys,
     selectionManager,
     selectedKey,
-    setSelectedKey,
-    isOpen,
-    setOpen,
-    focusStrategy,
-    setFocusStrategy,
-    toggle(focusStrategy = 'first') {
-      setFocusStrategy(focusStrategy);
-      setOpen(isOpen => !isOpen);
-    }
+    setSelectedKey
   };
 }

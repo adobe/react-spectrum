@@ -27,7 +27,7 @@ let VARIANT_MAPPING = {
 
 function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
-  props = useSlotProps(props);
+  props = useSlotProps(props, 'button');
   let {
     elementType: ElementType = 'button',
     children,

@@ -11,7 +11,7 @@
  */
 
 import {ActionButton, Button} from '@react-spectrum/button';
-import {cleanup, fireEvent, render, waitForDomChange} from '@testing-library/react';
+import {cleanup, fireEvent, render, waitForDomChange, within} from '@testing-library/react';
 import {Dialog, DialogTrigger} from '../';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
@@ -185,6 +185,30 @@ describe('DialogTrigger', function () {
     expect(document.activeElement).toBe(button);
   });
 
+  it('should restore focus to the trigger when the dialog is closed from a hidden dismiss button', async function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <DialogTrigger type="popover">
+          <ActionButton>Trigger</ActionButton>
+          <Dialog>contents</Dialog>
+        </DialogTrigger>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    let dialog = getByRole('dialog');
+    await waitForDomChange(); // wait for animation
+    expect(document.activeElement).toBe(dialog);
+
+    let dismiss = within(dialog).getByRole('button');
+    fireEvent.click(dismiss);
+    await waitForDomChange(); // wait for animation
+    expect(dialog).not.toBeInTheDocument();
+    expect(document.activeElement).toBe(button);
+  });
+
   it('should set aria-hidden on parent providers on mount and remove on unmount', async function () {
     let rootProviderRef = React.createRef();
     let {getByRole} = render(
@@ -340,7 +364,7 @@ describe('DialogTrigger', function () {
     expect(dialog).toBeVisible();
     await waitForDomChange(); // wait for animation
 
-    let closeButton = getByLabelText('dismiss');
+    let closeButton = getByLabelText('Dismiss');
     triggerPress(closeButton);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
