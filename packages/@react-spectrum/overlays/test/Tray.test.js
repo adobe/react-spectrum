@@ -11,6 +11,7 @@
  */
 
 import {cleanup, fireEvent, render, waitForDomChange} from '@testing-library/react';
+import {Dialog} from '@react-spectrum/dialog';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
@@ -84,26 +85,22 @@ describe('Tray', function () {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('should have a hidden dismiss button for screen readers', async function () {
+  it('hides the tray on blur when shouldCloseOnBlur is true', async function () {
     let onClose = jest.fn();
-    let {getAllByRole} = render(
+    let {getByRole} = render(
       <Provider theme={theme}>
-        <Tray isOpen onClose={onClose}>
-          <div role="dialog">contents</div>
+        <Tray isOpen onClose={onClose} shouldCloseOnBlur>
+          <Dialog>contents</Dialog>
         </Tray>
       </Provider>
     );
+
     await waitForDomChange(); // wait for animation
-    
-    let buttons = getAllByRole('button');
-    expect(buttons.length).toBe(2);
-    expect(buttons[0]).toHaveAttribute('aria-label', 'Dismiss');
-    expect(buttons[1]).toHaveAttribute('aria-label', 'Dismiss');
 
-    fireEvent.click(buttons[0]);
+    let dialog = getByRole('dialog');
+    expect(document.activeElement).toBe(dialog);
+
+    dialog.blur();
     expect(onClose).toHaveBeenCalledTimes(1);
-
-    fireEvent.click(buttons[1]);
-    expect(onClose).toHaveBeenCalledTimes(2);
   });
 });

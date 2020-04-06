@@ -25,9 +25,14 @@ interface MenuSectionProps<T> {
   onAction?: (key: Key) => void
 }
 
+/** @private */
 export function MenuSection<T>(props: MenuSectionProps<T>) {
   let {item, state, onAction} = props;
-  let {itemProps, headingProps, groupProps} = useMenuSection();
+  let {itemProps, headingProps, groupProps} = useMenuSection({
+    heading: item.rendered,
+    'aria-label': item['aria-label']
+  });
+  
   let {separatorProps} = useSeparator({
     elementType: 'li'
   });

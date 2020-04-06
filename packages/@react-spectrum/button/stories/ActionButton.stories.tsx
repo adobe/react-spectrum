@@ -70,6 +70,52 @@ storiesOf('Button/ActionButton', module)
     () => render({holdAffordance: true})
   )
   .add(
+    'icon, holdAffordance',
+    () => (
+      <div>
+        <ActionButton
+          holdAffordance
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}>
+          <Add />
+          <Text>Default</Text>
+        </ActionButton>
+        <ActionButton
+          holdAffordance
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled>
+          <Text>Disabled</Text>
+          <Add />
+        </ActionButton>
+      </div>
+    )
+  )
+  .add(
+    'icon only, holdAffordance',
+    () => (
+      <div>
+        <ActionButton
+          holdAffordance
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}>
+          <Add />
+        </ActionButton>
+        <ActionButton
+          holdAffordance
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled>
+          <Add />
+        </ActionButton>
+      </div>
+    )
+  )
+  .add(
     'selected',
     () => render({isSelected: true})
   )

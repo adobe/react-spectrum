@@ -11,6 +11,7 @@
  */
 
 import {cleanup} from '@testing-library/react';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

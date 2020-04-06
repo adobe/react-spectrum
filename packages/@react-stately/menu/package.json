@@ -1,0 +1,29 @@
+{
+  "name": "@react-stately/menu",
+  "version": "3.0.0-alpha.1",
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe-private/react-spectrum-v3"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.6.2",
+    "@react-stately/utils": "^3.0.0-rc.2",
+    "@react-types/menu": "^3.0.0-alpha.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

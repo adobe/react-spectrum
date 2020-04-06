@@ -23,5 +23,11 @@ export interface SpectrumDividerProps extends DOMProps, StyleProps {
    * The axis the Divider should align with.
    * @default 'horizontal'
    */
-  orientation?: Orientation
+  orientation?: Orientation,
+
+  /**
+   * A slot to place the divider in.
+   * @default "divider"
+   */
+  slot?: string
 }

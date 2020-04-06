@@ -86,8 +86,8 @@ describe('SideNav', function () {
 
   let stub1, stub2;
   beforeAll(function () {
-    stub1 = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 200);
-    stub2 = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 400);
+    stub1 = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 200);
+    stub2 = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 400);
   });
   afterAll(function () {
     stub1.mockReset();
@@ -281,7 +281,7 @@ describe('SideNav', function () {
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name can focus first to last/last to first item', async function ({Name, Component, ComponentSection, ComponentItem}) {
-    let {getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem, {wrapAround: true});
+    let {getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem, {shouldFocusWrap: true});
     
     await waitForDomChange();
 

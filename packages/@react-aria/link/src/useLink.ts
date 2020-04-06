@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, RefObject, SyntheticEvent} from 'react';
 import {DOMProps, PressEvent} from '@react-types/shared';
+import {HTMLAttributes, RefObject, SyntheticEvent} from 'react';
 import {LinkProps} from '@react-types/link';
 import {useId} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
@@ -26,7 +26,7 @@ export interface AriaLinkProps extends LinkProps, DOMProps {
 }
 
 export interface LinkAria {
-  linkProps: AllHTMLAttributes<HTMLDivElement>
+  linkProps: HTMLAttributes<HTMLDivElement>
 }
 
 export function useLink(props: AriaLinkProps): LinkAria {
@@ -43,7 +43,7 @@ export function useLink(props: AriaLinkProps): LinkAria {
     ref
   } = props;
 
-  let linkProps: AllHTMLAttributes<HTMLDivElement>;
+  let linkProps: HTMLAttributes<HTMLDivElement>;
   if (typeof children === 'string') {
     linkProps = {
       role: 'link',

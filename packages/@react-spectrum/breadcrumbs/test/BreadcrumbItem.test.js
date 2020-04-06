@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {BreadcrumbItem} from '../';
+import {BreadcrumbItem} from '../src/BreadcrumbItem';
 import {cleanup, render} from '@testing-library/react';
 import React from 'react';
 import {triggerPress} from '@react-spectrum/test-utils'; 
 
 // v3 component
-describe('Breadcrumbs', function () {
+describe('BreadcrumbItem', function () {
 
   afterEach(() => {
     cleanup();

@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from '@react-aria/utils';
+import {chain, focusWithoutScrolling} from '@react-aria/utils';
 import {Collection, Layout} from '@react-stately/collections';
 import {CollectionItem} from './CollectionItem';
-import React, {FocusEvent, HTMLAttributes, Key, ReactElement, useCallback, useEffect, useRef} from 'react';
+import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
 import {ReusableView} from '@react-stately/collections';
 import {ScrollView} from './ScrollView';
 import {useCollectionState} from '@react-stately/collections';
@@ -29,18 +29,21 @@ interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLEl
   layout: Layout<T>,
   collection: Collection<T>,
   focusedKey?: Key,
-  sizeToFit?: 'width' | 'height'
+  sizeToFit?: 'width' | 'height',
+  scrollDirection?: 'horizontal' | 'vertical' | 'both'
 }
 
-export function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>) {
-  let {children: renderView, renderWrapper, layout, collection, focusedKey, sizeToFit, ...otherProps} = props;
+function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, ref: RefObject<HTMLDivElement>) {
+  let {children: renderView, renderWrapper, layout, collection, focusedKey, sizeToFit, scrollDirection, ...otherProps} = props;
   let {
     visibleViews,
     visibleRect,
     setVisibleRect,
     contentSize,
     isAnimating,
-    collectionManager
+    collectionManager,
+    startScrolling,
+    endScrolling
   } = useCollectionState({
     layout,
     collection,
@@ -48,7 +51,8 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
     renderWrapper: renderWrapper || defaultRenderWrapper
   });
 
-  let ref = useRef<HTMLDivElement>();
+  let fallbackRef = useRef<HTMLDivElement>();
+  ref = ref || fallbackRef;
 
   // Scroll to the focusedKey when it changes. Actually focusing the focusedKey
   // is up to the implementation using CollectionView since we don't have refs
@@ -70,18 +74,18 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
     }
 
     isFocusWithin.current = e.target !== ref.current;
-  }, [focusedKey, collectionManager]);
+  }, [ref, collectionManager, focusedKey]);
 
   let onBlur = useCallback((e: FocusEvent) => {
     isFocusWithin.current = ref.current.contains(e.relatedTarget as Element);
-  }, []);
+  }, [ref]);
 
   // When the focused item is scrolled out of view and is removed from the DOM, 
   // move focus to the collection view as a whole if focus was within before.
   let focusedView = collectionManager.getItemView(focusedKey);
   useEffect(() => {
     if (focusedKey && !focusedView && isFocusWithin.current && document.activeElement !== ref.current) {
-      ref.current.focus();
+      focusWithoutScrolling(ref.current);
     }
   });
   
@@ -96,11 +100,19 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
       contentSize={contentSize}
       visibleRect={visibleRect}
       onVisibleRectChange={setVisibleRect}
-      sizeToFit={sizeToFit}>
+      onScrollStart={startScrolling}
+      onScrollEnd={endScrolling}
+      sizeToFit={sizeToFit}
+      scrollDirection={scrollDirection}>
       {visibleViews}
     </ScrollView>
   );
 }
+
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+const _CollectionView = React.forwardRef(CollectionView) as <T extends object, V>(props: CollectionViewProps<T, V> & {ref?: RefObject<HTMLDivElement>}) => ReactElement;
+export {_CollectionView as CollectionView};
 
 function defaultRenderWrapper<T extends object, V>(
   parent: ReusableView<T, V> | null,

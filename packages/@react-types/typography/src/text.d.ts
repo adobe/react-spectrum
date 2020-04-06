@@ -11,8 +11,16 @@
  */
 
 import {DOMProps, StyleProps} from '@react-types/shared';
-import {ReactElement, ReactNode} from 'react';
+import {ReactNode} from 'react';
 
 export interface TextProps extends DOMProps, StyleProps {
-  children: ReactElement | ReactNode
+  /**
+   * Text content
+   */
+  children: ReactNode,
+  /**
+   * A slot to place the text in.
+   * @default "text"
+   */
+  slot?: string
 }

@@ -13,7 +13,7 @@
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
-import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 
 /**
@@ -28,10 +28,6 @@ describe('Button', function () {
   afterEach(() => {
     cleanup();
     onPressSpy.mockClear();
-  });
-
-  it('uses slots api', () => {
-    testSlotsAPI(Button);
   });
 
   it.each`

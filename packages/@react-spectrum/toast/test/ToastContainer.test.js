@@ -37,7 +37,7 @@ function renderComponent(contents) {
   </ToastProvider>);
 }
 
-describe('Toast Provider and Container', function () {
+describe.skip('Toast Provider and Container', function () {
   afterEach(() => {
     cleanup();
   });

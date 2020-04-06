@@ -21,8 +21,8 @@ interface OverlayTriggerProps {
 }
 
 interface OverlayTriggerAria {
-  triggerAriaProps: HTMLAttributes<HTMLElement>,
-  overlayAriaProps: HTMLAttributes<HTMLElement>
+  triggerProps: HTMLAttributes<HTMLElement>,
+  overlayProps: HTMLAttributes<HTMLElement>
 }
 
 export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAria {
@@ -38,7 +38,7 @@ export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAri
     let onScroll = (e: MouseEvent) => {
       // Ignore if scrolling an scrollable region outside the trigger's tree.
       let target = e.target as HTMLElement;
-      if (target === document.body || !ref.current || !target.contains(ref.current)) {
+      if (!ref.current || !target.contains(ref.current)) {
         return;
       }
 
@@ -47,9 +47,9 @@ export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAri
       }
     };
 
-    document.body.addEventListener('scroll', onScroll, true);
+    window.addEventListener('scroll', onScroll, true);
     return () => {
-      document.body.removeEventListener('scroll', onScroll, true);
+      window.removeEventListener('scroll', onScroll, true);
     };
   }, [isOpen, onClose, ref]);
 
@@ -66,12 +66,12 @@ export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAri
 
   let overlayId = useId();
   return {
-    triggerAriaProps: {
+    triggerProps: {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': isOpen,
       'aria-controls': isOpen ? overlayId : null
     },
-    overlayAriaProps: {
+    overlayProps: {
       id: overlayId
     }
   };

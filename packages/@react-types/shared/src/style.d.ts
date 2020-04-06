@@ -19,8 +19,6 @@ export interface StyleProps {
   UNSAFE_className?: string,
   UNSAFE_style?: CSSProperties,
 
-  slot?: string,
-
   margin?: DimensionValue,
   marginStart?: DimensionValue,
   marginEnd?: DimensionValue,

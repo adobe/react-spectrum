@@ -11,8 +11,16 @@
  */
 
 import {DOMProps, StyleProps} from '@react-types/shared';
-import {ReactElement, ReactNode} from 'react';
+import {ReactNode} from 'react';
 
 export interface KeyboardProps extends DOMProps, StyleProps {
-  children: ReactElement | ReactNode
+  /**
+   * Keyboard shortcut text
+   */
+  children: ReactNode,
+  /**
+   * A slot to place the keyboard shortcut in.
+   * @default "keyboard"
+   */
+  slot?: string
 }

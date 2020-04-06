@@ -17,7 +17,6 @@ import {
   filterDOMProps,
   shouldKeepSpectrumClassNames,
   useDOMRef,
-  useSlotProps,
   useStyleProps
 } from '@react-spectrum/utils';
 import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
@@ -25,7 +24,6 @@ import {ModalProvider, useModalProvider} from '@react-aria/overlays';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/page/vars.css';
-import {ToastProvider} from '@react-spectrum/toast';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/index.css';
 import {useColorScheme, useScale} from './mediaQueries';
 // @ts-ignore
@@ -44,15 +42,16 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let autoColorScheme = useColorScheme(theme, defaultColorScheme);
   let autoScale = useScale(theme);
   let {locale: prevLocale} = useLocale();
+  // if the new theme doesn't support the prevColorScheme, we must resort to the auto
+  let usePrevColorScheme = !!theme[prevColorScheme];
 
   // importance of color scheme props > parent > auto:(OS > default > omitted)
   let {
-    colorScheme = prevColorScheme || autoColorScheme,
+    colorScheme = usePrevColorScheme ? prevColorScheme : autoColorScheme,
     scale = prevContext ? prevContext.scale : autoScale,
     typekitId,
     locale = prevContext ? prevLocale : null,
     children,
-    toastPlacement,
     isQuiet,
     isEmphasized,
     isDisabled,
@@ -68,7 +67,6 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     theme,
     colorScheme,
     scale,
-    toastPlacement,
     isQuiet,
     isEmphasized,
     isDisabled,
@@ -93,9 +91,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   if (!prevContext || props.locale || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
     contents = (
       <ProviderWrapper {...props} ref={ref}>
-        <ToastProvider>
-          {contents}
-        </ToastProvider>
+        {contents}
       </ProviderWrapper>
     );
   }
@@ -121,7 +117,6 @@ let _Provider = React.forwardRef(Provider);
 export {_Provider as Provider};
 
 const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
-  props = useSlotProps(props);
   let {
     children,
     ...otherProps

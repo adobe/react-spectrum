@@ -53,14 +53,14 @@ describe('useOverlayPosition', function () {
     expect(overlay).toHaveStyle(`
       position: absolute;
       z-index: 100000;
-      left: 8px;
+      left: 12px;
       top: 350px;
-      max-height: 410px;
+      max-height: 406px;
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
     expect(arrow).toHaveStyle(`
-      left: 52px;
+      left: 48px;
     `);
   });
 
@@ -69,21 +69,21 @@ describe('useOverlayPosition', function () {
     let overlay = res.getByTestId('overlay');
 
     expect(overlay).toHaveStyle(`
-      left: 8px;
-      top: 100px;
-      max-height: 660px;
+      left: 12px;
+      top: 500px;
+      max-height: 256px;
     `);
 
-    expect(overlay).toHaveTextContent('placement: top');
+    expect(overlay).toHaveTextContent('placement: bottom');
 
     let innerHeight = window.innerHeight;
     window.innerHeight = 1000;
     fireEvent(window, new Event('resize'));
 
     expect(overlay).toHaveStyle(`
-      left: 8px;
+      left: 12px;
       top: 500px;
-      max-height: 492px;
+      max-height: 488px;
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
@@ -95,17 +95,17 @@ describe('useOverlayPosition', function () {
     let overlay = res.getByTestId('overlay');
 
     expect(overlay).toHaveStyle(`
-      left: 8px;
+      left: 12px;
       top: 350px;
-      max-height: 410px;
+      max-height: 406px;
     `);
 
     res.rerender(<Example offset={20} />);
 
     expect(overlay).toHaveStyle(`
-      left: 8px;
+      left: 12px;
       top: 370px;
-      max-height: 390px;
+      max-height: 386px;
     `);
   });
 });
