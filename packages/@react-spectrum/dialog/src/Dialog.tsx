@@ -52,13 +52,10 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   let {styleProps} = useStyleProps(otherProps);
 
   size = type === 'popover' ? 'S' : (size || 'L');
-  if (type === 'fullscreen' || type === 'fullscreenTakeover') {
-    size = type;
-  }
 
   let domRef = useDOMRef(ref);
   let gridRef = useRef();
-  let sizeVariant = sizeMap[size];
+  let sizeVariant = sizeMap[type] || sizeMap[size];
   let {dialogProps, titleProps} = useDialog({ref: domRef, role, ...otherProps});
 
   let hasHeader = useHasChild(`.${styles['spectrum-Dialog-header']}`, unwrapDOMRef(gridRef));

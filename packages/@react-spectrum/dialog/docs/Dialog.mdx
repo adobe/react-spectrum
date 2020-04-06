@@ -16,7 +16,8 @@ import {ExampleImage, HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
-import {ActionButton, Button, ButtonGroup} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -183,8 +184,8 @@ focused on Dialog render.
 
 ### Accessibility
 
-The title of a Dialog is typically provided via its header. By default, the Dialog sets its 
-`aria-labelledby` to match the header id, but this can be overridden by providing a `aria-labelledby` prop
+The title of a Dialog is typically provided via its heading. By default, the Dialog sets its 
+`aria-labelledby` to match the heading id, but this can be overridden by providing an `aria-labelledby` prop
 to the Dialog directly. If a visible label isn't specified, an `aria-label` must be provided instead.
 
 ```tsx example
@@ -282,7 +283,7 @@ function Example() {
 ```
 
 Note that `onDismiss` is optional. If you don't need to add a `onDismiss` handler to your dismissable Dialog, you may omit
-the wrapping `close` function surround the Dialog.
+the wrapping `close` function surrounding the Dialog.
 
 ## Props
 
