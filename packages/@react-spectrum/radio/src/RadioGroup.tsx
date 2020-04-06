@@ -14,28 +14,14 @@ import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spect
 import {DOMRef, LabelPosition} from '@react-types/shared';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
-import {RadioGroupState, useRadioGroupState} from '@react-stately/radio';
-import React, {useContext} from 'react';
+import {RadioContext} from './context';
+import React from 'react';
 import {SpectrumRadioGroupProps} from '@react-types/radio';
 import styles from '@adobe/spectrum-css-temp/components/fieldgroup/vars.css';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useRadioGroup} from '@react-aria/radio';
-
-interface RadioGroupContext {
-  isDisabled?: boolean,
-  isRequired?: boolean,
-  isReadOnly?: boolean,
-  isEmphasized?: boolean,
-  validationState?: 'valid' | 'invalid',
-  state: RadioGroupState
-}
-
-const RadioContext = React.createContext<RadioGroupContext | null>(null);
-
-export function useRadioProvider(): RadioGroupContext {
-  return useContext(RadioContext);
-}
+import {useRadioGroupState} from '@react-stately/radio';
 
 function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);

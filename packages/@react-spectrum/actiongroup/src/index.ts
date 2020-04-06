@@ -11,3 +11,4 @@
  */
 
 export * from './ActionGroup';
+export {Item} from '@react-stately/collections';

@@ -133,10 +133,10 @@ const focusableElements = [
   '[contenteditable]'
 ];
 
-export const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(',') + ',[tabindex]';
+const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(',') + ',[tabindex]';
 
 focusableElements.push('[tabindex]:not([tabindex="-1"])');
-export const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([tabindex="-1"]),');
+const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([tabindex="-1"]),');
 
 function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOptions): HTMLElement[] {
   let res = [];

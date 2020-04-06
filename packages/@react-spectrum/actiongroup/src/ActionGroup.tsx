@@ -81,12 +81,12 @@ function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivE
 const _ActionGroup = forwardRef(ActionGroup) as <T>(props: SpectrumActionGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ActionGroup as ActionGroup};
 
-export interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
+interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
   item: Node<T>,
   state: ActionGroupState<T>
 }
 
-export function ActionGroupItem<T>({item, state, ...otherProps}: ActionGroupItemProps<T>) {
+function ActionGroupItem<T>({item, state, ...otherProps}: ActionGroupItemProps<T>) {
   let ref = useRef();
   let {itemProps} = useSelectableItem({
     selectionManager: state && state.selectionManager,

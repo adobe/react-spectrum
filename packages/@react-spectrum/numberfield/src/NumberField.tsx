@@ -15,7 +15,6 @@ import ChevronDownSmall from '@spectrum-icons/ui/ChevronDownSmall';
 import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall';
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import {HTMLElement} from 'react-dom';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import React, {RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
@@ -25,7 +24,7 @@ import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, ref: RefObject<HTMLElement>) => {
+export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElement>) => {
   props = useProviderProps(props);
   let {
     // formatOptions,

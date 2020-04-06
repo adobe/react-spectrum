@@ -14,7 +14,7 @@ import {classNames, filterDOMProps, SlotProvider, useStyleProps} from '@react-sp
 import {DOMRef} from '@react-types/shared';
 import {Flex} from '@react-spectrum/layout';
 import React, {forwardRef} from 'react';
-import {SpectrumIllustratedMessageProps} from '@react-types/illustrated-message';
+import {SpectrumIllustratedMessageProps} from '@react-types/illustratedmessage';
 import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
