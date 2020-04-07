@@ -16,13 +16,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 describe('FocusScope', function () {
+  let offsetParent;
   afterEach(cleanup);
 
   beforeEach(() => {
+    offsetParent = jest.spyOn(window.HTMLElement.prototype, 'offsetParent', 'get').mockImplementation(() => this.parentNode);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
   
   afterEach(() => {
+    offsetParent.mockReset();
     window.requestAnimationFrame.mockRestore();
   });
 

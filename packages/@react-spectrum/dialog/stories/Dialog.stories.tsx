@@ -243,11 +243,10 @@ function render({width = 'auto', isDismissable = undefined, ...props}) {
             <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
-            {!isDismissable &&
-              <ButtonGroup>
-                <Button variant="secondary" onPress={close}>Cancel</Button>
-                <Button variant="cta" onPress={close}>Confirm</Button>
-              </ButtonGroup>}
+            <ButtonGroup>
+              <Button variant="secondary" onPress={close}>Cancel</Button>
+              <Button variant="cta" onPress={close}>Confirm</Button>
+            </ButtonGroup>
           </Dialog>
         )}
       </DialogTrigger>
@@ -267,11 +266,10 @@ function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
             <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
-            {!isDismissable &&
-              <ButtonGroup>
-                <Button variant="secondary" onPress={close}>Cancel</Button>
-                <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
-              </ButtonGroup>}
+            <ButtonGroup>
+              <Button variant="secondary" onPress={close}>Cancel</Button>
+              <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+            </ButtonGroup>
           </Dialog>
           )}
       </DialogTrigger>
@@ -291,11 +289,10 @@ function renderFooter({width = 'auto', isDismissable = undefined, ...props}) {
             <Divider />
             <Content>{singleParagraph()}</Content>
             <Footer><Checkbox>I accept</Checkbox></Footer>
-            {!isDismissable &&
             <ButtonGroup>
               <Button variant="secondary" onPress={close}>Cancel</Button>
               <Button variant="cta" onPress={close}>Confirm</Button>
-            </ButtonGroup>}
+            </ButtonGroup>
           </Dialog>
         )}
       </DialogTrigger>

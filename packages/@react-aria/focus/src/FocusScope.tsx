@@ -147,7 +147,8 @@ function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOpt
     }
     res.push(...Array.from(node.querySelectorAll(selector)));
   }
-  return res;
+
+  return res.filter(node => node.offsetParent !== null);
 }
 
 function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean) {
