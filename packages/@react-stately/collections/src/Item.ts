@@ -10,20 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {ItemElement, ItemProps} from '@react-types/shared';
+import {ItemElement, ItemProps, CellElement} from '@react-types/shared';
 import {PartialNode} from './types';
 import React, {ReactElement} from 'react';
+import { CollectionBuilder } from './CollectionBuilder';
 
 function Item<T>(props: ItemProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 
-Item.getCollectionNode = function<T> (props: ItemProps<T>): PartialNode<T> {
+Item.getCollectionNode = function<T> (props: ItemProps<T>, builder: CollectionBuilder<T>): PartialNode<T> {
   let {childItems, title, children} = props;
 
   let rendered = props.title || props.children;
   let textValue = props.textValue || (typeof rendered === 'string' ? rendered : '') || props['aria-label'] || '';
-  if (!textValue) {
+  if (!textValue && !builder.columns) {
     console.warn('<Item> with non-plain text contents is unsupported by type to select for accessibility. Please add a `textValue` prop.');
   }
 
@@ -33,8 +34,31 @@ Item.getCollectionNode = function<T> (props: ItemProps<T>): PartialNode<T> {
     rendered,
     textValue,
     'aria-label': props['aria-label'],
-    hasChildNodes: hasChildItems(props),
+    hasChildNodes: hasChildItems(props) || !!builder.columns,
     *childNodes() {
+      // If the CollectionBuilder has columns, then the item may have cells inside it
+      if (builder.columns) {
+        let index = 0;
+        if (typeof children === 'function') {
+          for (let column of builder.columns) {
+            yield {
+              type: 'cell',
+              element: children(column),
+              index: index++
+            };
+          }
+        } else {
+          let cells = React.Children.toArray(children) as CellElement[];
+          for (let cell of cells) {
+            yield {
+              type: 'cell',
+              element: cell,
+              index: index++
+            };
+          }  
+        }
+      }
+
       if (childItems) {
         for (let child of childItems) {
           yield {
@@ -42,7 +66,7 @@ Item.getCollectionNode = function<T> (props: ItemProps<T>): PartialNode<T> {
             value: child
           };
         }
-      } else if (title) {
+      } else if (title && !builder.columns) {
         let items = React.Children.toArray(children) as ItemElement<T>[];
         for (let item of items) {
           yield {

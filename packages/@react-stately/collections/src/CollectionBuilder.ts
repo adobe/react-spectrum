@@ -10,17 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, CollectionElement, ItemRenderer} from '@react-types/shared';
+import {CollectionBase, CollectionElement, ItemRenderer, Column} from '@react-types/shared';
 import {ItemStates, Node, PartialNode} from './types';
 import React, {Key, ReactElement} from 'react';
 
 export class CollectionBuilder<T> {
+  columns: Column[] | null;
   private itemKey: string;
   private cache: Map<T, Node<T>> = new Map();
   private getItemStates: (key: Key) => ItemStates;
 
-  constructor(itemKey: string) {
+  constructor(itemKey: string, columns: Column[]) {
     this.itemKey = itemKey;
+    this.columns = columns;
   }
 
   build(props: CollectionBase<T>, getItemStates?: (key: Key) => ItemStates) {
@@ -111,10 +113,11 @@ export class CollectionBuilder<T> {
         throw new Error(`Unknown element <${name}> in collection.`);
       }
 
-      let childNode = type.getCollectionNode(element.props) as PartialNode<T>;
+      let childNode = type.getCollectionNode(element.props, this) as PartialNode<T>;
       let node = this.getFullNode({
         ...childNode,
         key: childNode.element ? null : this.getKey(element, partialNode.value, parentKey),
+        index: partialNode.index,
         wrapper: compose(partialNode.wrapper, childNode.wrapper)
       }, childNode.renderer || renderer, parentKey ? `${parentKey}${element.key}` : element.key, parentNode);
 
@@ -142,12 +145,17 @@ export class CollectionBuilder<T> {
       parentKey: parentNode ? parentNode.key : null,
       value: partialNode.value,
       level: parentNode ? parentNode.level + 1 : 0,
+      index: partialNode.index,
       rendered: partialNode.rendered,
       textValue: partialNode.textValue,
       'aria-label': partialNode['aria-label'],
       wrapper: partialNode.wrapper,
       hasChildNodes: partialNode.hasChildNodes,
       childNodes: iterable(function *() {
+        if (!partialNode.hasChildNodes) {
+          return;
+        }
+
         for (let child of partialNode.childNodes()) {
           yield builder.getFullNode(child, child.renderer || renderer, parentKey, node);
         }

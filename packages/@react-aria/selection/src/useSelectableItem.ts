@@ -65,7 +65,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   let itemProps: SelectableItemAria['itemProps'] = {
     tabIndex: isFocused ? 0 : -1,
-    onFocus() {
+    onFocus(e) {
+      // Prevent parent items from handling focus event
+      e.stopPropagation();
+      manager.setFocused(true);
       manager.setFocusedKey(itemKey);
     }
   };
