@@ -17,7 +17,7 @@ import React, {forwardRef, useRef} from 'react';
 import {SpectrumRadioProps} from '@react-types/radio';
 import styles from '@adobe/spectrum-css-temp/components/radio/vars.css';
 import {useRadio} from '@react-aria/radio';
-import {useRadioProvider} from './RadioGroup';
+import {useRadioProvider} from './context';
 
 function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
   if (!props.children && !props['aria-label']) {

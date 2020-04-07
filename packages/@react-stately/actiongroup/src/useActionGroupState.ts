@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionGroupCollection} from './';
+import {ActionGroupCollection} from './ActionGroupCollection';
 import {ActionGroupProps} from '@react-types/actiongroup';
 import {ActionGroupState} from './types';
 import {CollectionBuilder} from '@react-stately/collections';

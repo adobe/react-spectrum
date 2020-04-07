@@ -42,7 +42,7 @@ export function useListBoxLayout<T>(state: ListState<T>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() =>
-    new ListLayout({
+    new ListLayout<T>({
       estimatedRowHeight: scale === 'large' ? 48 : 35,
       estimatedHeadingHeight: scale === 'large' ? 37 : 30,
       padding: scale === 'large' ? 5 : 4, // TODO: get from DNA

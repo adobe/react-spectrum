@@ -20,7 +20,7 @@ import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useDialogTriggerState} from '@react-stately/dialog';
 import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 
-export function DialogTrigger(props: SpectrumDialogTriggerProps) {
+function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let {
     children,
     type = 'modal',
@@ -113,6 +113,10 @@ DialogTrigger.getCollectionNode = function (props: SpectrumDialogTriggerProps) {
     )
   };
 };
+
+// We don't want getCollectionNode to show up in the type definition
+let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => JSX.Element;
+export {_DialogTrigger as DialogTrigger};
 
 function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, ...props}) {
   let triggerRef = useRef<HTMLElement>();

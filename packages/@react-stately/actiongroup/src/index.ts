@@ -10,6 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './ActionGroupCollection';
 export * from './types';
 export * from './useActionGroupState';

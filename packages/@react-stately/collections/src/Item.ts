@@ -14,7 +14,7 @@ import {ItemElement, ItemProps} from '@react-types/shared';
 import {PartialNode} from './types';
 import React, {ReactElement} from 'react';
 
-export function Item<T>(props: ItemProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
+function Item<T>(props: ItemProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 
@@ -70,3 +70,7 @@ function hasChildItems<T>(props: ItemProps<T>) {
 
   return false;
 }
+
+// We don't want getCollectionNode to show up in the type definition
+let _Item = Item as <T>(props: ItemProps<T>) => JSX.Element;
+export {_Item as Item};
