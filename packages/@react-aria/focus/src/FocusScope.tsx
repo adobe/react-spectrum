@@ -147,7 +147,7 @@ function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOpt
     }
     res.push(...Array.from(node.querySelectorAll(selector)));
   }
-
+  // Filter out elements that have display: none or whose parents have display: none. https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent
   return res.filter(node => node.offsetParent !== null);
 }
 
