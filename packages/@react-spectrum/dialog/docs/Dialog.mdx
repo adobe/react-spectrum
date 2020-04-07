@@ -17,11 +17,13 @@ import packageData from '../package.json';
 
 ```jsx import
 import {ActionButton, Button} from '@react-spectrum/button';
+import Book from '@spectrum-icons/workflow/Book';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
+import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Heading, Text} from '@react-spectrum/typography';
 import {Image} from '@react-spectrum/image';
@@ -77,8 +79,8 @@ A standard Dialog has the following anatomy:
 </ExampleImage>
 
 Each of these sections can be populated by providing the following components to your Dialog as children:
-`Header`, `Heading` (title), `Divider`, `Content` (body), `ButtonGroup`, and `Footer`.
-
+`Header`, `Heading` (title), `Divider`, `Content` (body), `ButtonGroup`, and `Footer`. Each of these components are
+required in a Spectrum compliant Dialog except for `Header` and `Footer` so be sure to design your Dialog accordingly.
 
 ### Examples
 A typical Dialog with a title, contents, and action buttons can be created like so:
@@ -100,9 +102,9 @@ A typical Dialog with a title, contents, and action buttons can be created like 
 </DialogTrigger>
 ```
 
-A dismissable Dialog forgoes a footer section and its associated action buttons in favor
-of rendering a close button. If your Dialog is dismissable, make sure that you do not include a footer section or
-a ButtonGroup. While the Dialog will hide any elements occupying the footer section, it will not remove them from the DOM, 
+A dismissable Dialog forgoes its ButtonGroup in favor of rendering a close button at the top right of the Dialog. 
+If your Dialog is dismissable, make sure that you do not include a ButtonGroup in the render. 
+While the Dialog will hide any elements occupying the ButtonGroup section, it will not remove them from the DOM, 
 resulting in possible tab order issues.
 
 ```tsx example
@@ -125,7 +127,14 @@ for the user to fill out or adding confirmation checkboxes.
   <ActionButton>Register</ActionButton> 
   {(close) => (
     <Dialog>
-      <Heading>Register for newsletter</Heading>
+      <Heading>
+        <Flex alignItems="center">
+          <Book size="S" />
+          <Text>
+            Register for newsletter
+          </Text>
+        </Flex>
+      </Heading>
       <Header>
         <StatusLight variant="negative">
           Registration Status
@@ -178,7 +187,9 @@ The example below illustrates how a Dialog with a hero image could be rendered v
 
 The tab order within the Dialog follows the order of the children provided to the Dialog so keep this in mind
 when creating your Dialog. You are also responsible for determining what component, if any, should be automatically
-focused on Dialog render. 
+focused on Dialog render.
+
+Additional information about the slots and their effect on tab order behavior can be found in the [Slots documentation](TODO LINK).
 
 ## Labeling
 
@@ -283,7 +294,7 @@ function Example() {
 ```
 
 Note that `onDismiss` is optional. If you don't need to add a `onDismiss` handler to your dismissable Dialog, you may omit
-the wrapping `close` function surrounding the Dialog.
+the wrapping `close` function surrounding the Dialog. An example of this can be found in the Examples section [above](#examples).
 
 ## Props
 
@@ -296,8 +307,21 @@ the wrapping `close` function surrounding the Dialog.
 Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger docs](TODO link) for more information.
 
 ```tsx example
+<DialogTrigger type="modal">
+  <ActionButton>Trigger Modal</ActionButton>
+  <Dialog>
+    <Heading>Modal</Heading>
+    <Divider />
+    <Content>
+      <Text>
+        This is a modal.
+      </Text>
+    </Content>    
+  </Dialog>
+</DialogTrigger>
+
 <DialogTrigger type="popover">
-  <ActionButton>Trigger</ActionButton>
+  <ActionButton>Trigger Popover</ActionButton>
   <Dialog>
     <Heading>Popover</Heading>
     <Divider />
@@ -310,7 +334,7 @@ Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger do
 </DialogTrigger>
 
 <DialogTrigger type="tray">
-  <ActionButton>More Info</ActionButton>
+  <ActionButton>Trigger Tray</ActionButton>
   <Dialog>
     <Heading>Tray</Heading>
     <Divider />
