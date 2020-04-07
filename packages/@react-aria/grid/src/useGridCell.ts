@@ -14,6 +14,7 @@ import {GridState} from '@react-stately/grid';
 import {KeyboardDelegate} from '@react-types/shared';
 import {RefObject, HTMLAttributes, Key} from 'react';
 import { useSelectableItem } from '@react-aria/selection';
+import { usePress } from '@react-aria/interactions';
 
 interface GridCellProps {
   ref: RefObject<HTMLElement>,
@@ -39,9 +40,13 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
     isVirtualized
   });
 
+  // TODO: move into useSelectableItem?
+  let {pressProps} = usePress(itemProps);
+
   let gridCellProps: HTMLAttributes<HTMLElement> = {
     role: 'gridcell',
-    ...itemProps
+    ...itemProps,
+    ...pressProps
   };
 
   if (isVirtualized) {

@@ -10,18 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection} from '@react-stately/collections';
+import {Collection, Node} from '@react-stately/collections';
 import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 
-export class SelectionManager implements MultipleSelectionManager {
-  private collection: Collection<unknown>;
-  private state: MultipleSelectionState;
+interface SelectionManagerOptions {
+  allowsCellSelection?: boolean
+}
 
-  constructor(collection: Collection<unknown>, state: MultipleSelectionState) {
+export class SelectionManager<T> implements MultipleSelectionManager {
+  private collection: Collection<Node<T>>;
+  private state: MultipleSelectionState;
+  private allowsCellSelection: boolean;
+
+  constructor(collection: Collection<Node<T>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
     this.collection = collection;
     this.state = state;
+    this.allowsCellSelection = options?.allowsCellSelection ?? false;
   }
 
   get selectionMode() {
@@ -76,7 +82,11 @@ export class SelectionManager implements MultipleSelectionManager {
     let keys: Key[] = [];
     let key = from;
     while (key) {
-      keys.push(key);
+      let item = this.collection.getItem(key);
+      if (item && item.type === 'item' || (item.type === 'cell' && this.allowsCellSelection)) {
+        keys.push(key);
+      }
+
       if (key === to) {
         return keys;
       }
@@ -87,7 +97,22 @@ export class SelectionManager implements MultipleSelectionManager {
     return null;
   }
 
+  private getKey(key: Key) {
+    let item = this.collection.getItem(key);
+    if (!item) {
+      // ¯\_(ツ)_/¯
+      return key;
+    }
+
+    if (!this.allowsCellSelection && item.type === 'cell') {
+      key = item.parentKey;
+    }
+
+    return key;
+  }
+
   toggleSelection(key: Key) {
+    key = this.getKey(key);
     this.state.setSelectedKeys(selectedKeys => {
       let keys = new Selection(selectedKeys);
       if (keys.has(key)) {
@@ -105,11 +130,21 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   replaceSelection(key: Key) {
+    key = this.getKey(key);
     this.state.setSelectedKeys(new Selection([key], key, key));
   }
 
   selectAll() {
-    let keys = [...this.collection.getKeys()];
+    let keys = [...this.collection.getKeys()].filter(key => {
+      let item = this.collection.getItem(key);
+      if (!item) {
+        return false;
+      }
+      
+      return item.type === 'item' ||
+        (item.type === 'cell' && this.allowsCellSelection);
+    });
+
     this.state.setSelectedKeys(new Selection(keys, keys[0], keys[keys.length - 1]));
   }
 

@@ -14,6 +14,7 @@ import {GridState} from '@react-stately/grid';
 import {KeyboardDelegate} from '@react-types/shared';
 import {RefObject, HTMLAttributes, Key} from 'react';
 import { useSelectableItem } from '@react-aria/selection';
+import { usePress } from '@react-aria/interactions';
 
 interface RowProps {
   ref?: RefObject<HTMLElement>,
@@ -41,11 +42,15 @@ export function useRow<T>(props: RowProps, state: GridState<T>): RowAria {
     isVirtualized
   });
 
+  // TODO: move into useSelectableItem?
+  let {pressProps} = usePress(itemProps);
+
   let rowProps: HTMLAttributes<HTMLElement> = {
     role: 'row',
     'aria-selected': isSelected,
     // aria-labelledby = all the column headers
-    ...itemProps
+    ...itemProps,
+    ...pressProps
   };
 
   if (isVirtualized) {

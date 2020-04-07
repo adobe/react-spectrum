@@ -28,9 +28,10 @@ storiesOf('Table', module)
     () => render({})
   );
 
+let onSelectionChange = action('onSelectionChange');
 function render(props:TableProps = {}) {
   return (
-    <Table {...props} columns={columns}>
+    <Table {...props} columns={columns} onSelectionChange={s => onSelectionChange([...s])}>
       <Item>
         <Cell>One</Cell>
         <Cell>Two</Cell>

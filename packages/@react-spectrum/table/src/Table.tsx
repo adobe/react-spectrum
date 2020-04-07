@@ -100,7 +100,7 @@ function TableRow({item}) {
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <tr {...rowProps} ref={ref} className={classNames(styles, 'spectrum-Table-row')}>
+      <tr {...rowProps} ref={ref} className={classNames(styles, 'spectrum-Table-row', {'is-selected': item.isSelected})}>
         {[...item.childNodes].map(cell =>
           <TableCell key={cell.key} cell={cell} />
         )}
