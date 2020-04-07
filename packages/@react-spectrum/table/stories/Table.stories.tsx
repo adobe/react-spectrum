@@ -17,15 +17,45 @@ import {storiesOf} from '@storybook/react';
 import {Item, Cell} from '@react-stately/collections';
 
 let columns = [
-  {name: 'Foo'},
-  {name: 'Bar'},
-  {name: 'Baz'}
+  {name: 'Foo', key: 'foo'},
+  {name: 'Bar', key: 'bar'},
+  {name: 'Baz', key: 'baz'}
+];
+
+let items = [
+  {foo: 'Foo 1', bar: 'Bar 1', baz: 'Baz 1'},
+  {foo: 'Foo 2', bar: 'Bar 2', baz: 'Baz 2'},
 ];
 
 storiesOf('Table', module)
   .add(
-    'name me',
-    () => render({})
+    'static',
+    () => (
+      <Table columns={columns} onSelectionChange={s => onSelectionChange([...s])}>
+        <Item>
+          <Cell>One</Cell>
+          <Cell>Two</Cell>
+          <Cell>Three</Cell>
+        </Item>
+        <Item>
+          <Cell>One</Cell>
+          <Cell>Two</Cell>
+          <Cell>Three</Cell>
+        </Item>
+      </Table>
+    )
+  )
+  .add(
+    'dynamic',
+    () => (
+      <Table items={items} itemKey="foo" columns={columns} onSelectionChange={s => onSelectionChange([...s])}>
+        {item =>
+          <Item>
+            {column => <Cell>{item[column.key]}</Cell>}
+          </Item>
+        }
+      </Table>
+    )
   );
 
 let onSelectionChange = action('onSelectionChange');

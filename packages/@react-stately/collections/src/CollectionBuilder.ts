@@ -53,7 +53,7 @@ export class CollectionBuilder<T> {
     }
   }
 
-  getKey(item: CollectionElement<T>, value: T, parentKey?: Key): Key {
+  getKey(item: CollectionElement<T>, partialNode: PartialNode<T>, parentKey?: Key): Key {
     if (item.props.uniqueKey) {
       return item.props.uniqueKey;
     }
@@ -62,11 +62,15 @@ export class CollectionBuilder<T> {
       return parentKey ? `${parentKey}${item.key}` : item.key;
     }
 
-    if (this.itemKey && value[this.itemKey]) {
-      return value[this.itemKey];
+    if (partialNode.type === 'cell' && partialNode.key) {
+      return `${parentKey}${partialNode.key}`;
+    }
+
+    if (this.itemKey && partialNode.value[this.itemKey]) {
+      return partialNode.value[this.itemKey];
     }
   
-    let v = value as any;
+    let v = partialNode.value as any;
     let key = v.key || v.id;
     if (key == null) {
       throw new Error('No key found for item');
@@ -116,7 +120,7 @@ export class CollectionBuilder<T> {
       let childNode = type.getCollectionNode(element.props, this) as PartialNode<T>;
       let node = this.getFullNode({
         ...childNode,
-        key: childNode.element ? null : this.getKey(element, partialNode.value, parentKey),
+        key: childNode.element ? null : this.getKey(element, partialNode, parentKey),
         index: partialNode.index,
         wrapper: compose(partialNode.wrapper, childNode.wrapper)
       }, childNode.renderer || renderer, parentKey ? `${parentKey}${element.key}` : element.key, parentNode);
@@ -157,7 +161,7 @@ export class CollectionBuilder<T> {
         }
 
         for (let child of partialNode.childNodes()) {
-          yield builder.getFullNode(child, child.renderer || renderer, parentKey, node);
+          yield builder.getFullNode(child, child.renderer || renderer, node.key, node);
         }
       })
     };

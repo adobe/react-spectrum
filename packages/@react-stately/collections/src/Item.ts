@@ -44,6 +44,7 @@ Item.getCollectionNode = function<T> (props: ItemProps<T>, builder: CollectionBu
             yield {
               type: 'cell',
               element: children(column),
+              key: column.key,
               index: index++
             };
           }
