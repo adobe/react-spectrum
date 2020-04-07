@@ -19,14 +19,14 @@ describe('FocusScope', function () {
   let offsetParent;
   afterEach(cleanup);
 
-  beforeEach(() => {
-    offsetParent = jest.spyOn(window.HTMLElement.prototype, 'offsetParent', 'get').mockImplementation(() => this.parentNode);
+  beforeAll(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    offsetParent = jest.spyOn(window.HTMLElement.prototype, 'offsetParent', 'get').mockImplementation(() => this.parentNode);
   });
   
-  afterEach(() => {
-    offsetParent.mockReset();
+  afterAll(() => {
     window.requestAnimationFrame.mockRestore();
+    offsetParent.mockReset();
   });
 
   describe('focus containment', function () {

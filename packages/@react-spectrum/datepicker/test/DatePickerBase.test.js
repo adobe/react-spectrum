@@ -24,7 +24,16 @@ let theme = {
 };
 
 describe('DatePickerBase', function () {
+  let offsetParent;
   afterEach(cleanup);
+
+  beforeAll(() => {
+    offsetParent = jest.spyOn(window.HTMLElement.prototype, 'offsetParent', 'get').mockImplementation(() => this.parentNode);
+  });
+  
+  afterAll(() => {
+    offsetParent.mockReset();
+  });
 
   describe('basics', function () {
     it.each`

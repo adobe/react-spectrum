@@ -27,14 +27,17 @@ function PopoverWithDialog({children}) {
 }
 
 describe('Popover', function () {
+  let offsetParent;
   afterEach(cleanup);
 
-  beforeEach(() => {
+  beforeAll(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    offsetParent = jest.spyOn(window.HTMLElement.prototype, 'offsetParent', 'get').mockImplementation(() => this.parentNode);
   });
-
-  afterEach(() => {
+  
+  afterAll(() => {
     window.requestAnimationFrame.mockRestore();
+    offsetParent.mockReset();
   });
 
   describe('parity', function () {

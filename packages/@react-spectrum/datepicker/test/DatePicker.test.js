@@ -24,7 +24,16 @@ let theme = {
 };
 
 describe('DatePicker', function () {
+  let offsetParent;
   afterEach(cleanup);
+
+  beforeAll(() => {
+    offsetParent = jest.spyOn(window.HTMLElement.prototype, 'offsetParent', 'get').mockImplementation(() => this.parentNode);
+  });
+  
+  afterAll(() => {
+    offsetParent.mockReset();
+  });
 
   describe('basics', function () {
     it('should render a datepicker with a specified date', function () {
