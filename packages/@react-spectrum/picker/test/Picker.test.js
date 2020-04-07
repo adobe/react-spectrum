@@ -103,7 +103,7 @@ describe('Picker', function () {
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
 
-      expect(document.activeElement).toBe(items[0]);
+      expect(document.activeElement).toBe(listbox);
     });
 
     it('can be opened on touch up', function () {
@@ -144,7 +144,7 @@ describe('Picker', function () {
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
 
-      expect(document.activeElement).toBe(items[0]);
+      expect(document.activeElement).toBe(listbox);
     });
 
     it('can be opened on Space key down', function () {
@@ -313,7 +313,7 @@ describe('Picker', function () {
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
 
-      expect(document.activeElement).toBe(items[0]);
+      expect(document.activeElement).toBe(listbox);
     });
 
     it('supports default open state', function () {
@@ -346,7 +346,7 @@ describe('Picker', function () {
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
 
-      expect(document.activeElement).toBe(items[0]);
+      expect(document.activeElement).toBe(listbox);
     });
   });
 
@@ -850,7 +850,7 @@ describe('Picker', function () {
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
 
-      expect(document.activeElement).toBe(items[0]);
+      expect(document.activeElement).toBe(listbox);
 
       act(() => triggerPress(items[2]));
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -885,6 +885,9 @@ describe('Picker', function () {
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
 
+      expect(document.activeElement).toBe(listbox);
+
+      act(() => {fireEvent.keyDown(listbox, {key: 'ArrowDown'});});
       expect(document.activeElement).toBe(items[0]);
 
       act(() => {fireEvent.keyDown(listbox, {key: 'ArrowDown'});});
@@ -963,7 +966,7 @@ describe('Picker', function () {
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
 
-      expect(document.activeElement).toBe(items[0]);
+      expect(document.activeElement).toBe(listbox);
 
       act(() => {fireEvent.mouseEnter(items[1]);});
       expect(document.activeElement).toBe(items[1]);
@@ -1142,6 +1145,9 @@ describe('Picker', function () {
       expect(items[1]).toHaveTextContent('Two');
       expect(items[2]).toHaveTextContent('Three');
 
+      expect(document.activeElement).toBe(listbox);
+
+      act(() => {fireEvent.keyDown(listbox, {key: 'ArrowDown'});});
       expect(document.activeElement).toBe(items[0]);
       expect(items[1]).toHaveAttribute('aria-disabled', 'true');
 
@@ -1226,6 +1232,9 @@ describe('Picker', function () {
       expect(groups[1]).toHaveAttribute('aria-labelledby', getByText('Section 2').id);
       expect(getByText('Section 2')).toHaveAttribute('aria-hidden', 'true');
 
+      expect(document.activeElement).toBe(listbox);
+
+      act(() => {fireEvent.keyDown(listbox, {key: 'ArrowDown'});});
       expect(document.activeElement).toBe(items[0]);
 
       act(() => {fireEvent.keyDown(listbox, {key: 'ArrowDown'});});
@@ -1283,8 +1292,9 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
+      picker.focus();
       expect(picker).toHaveTextContent('Select an option…');
-      act(() => triggerPress(picker));
+      act(() => {fireEvent.keyDown(picker, {key: 'ArrowDown'});});
       act(() => jest.runAllTimers());
 
       let listbox = getAllByRole('listbox')[1]; // ignore the one in the background for now

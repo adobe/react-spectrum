@@ -389,6 +389,18 @@ storiesOf('Menu', module)
     )
   )
   .add(
+    'Menu with autoFocus="first"',
+    () => (
+      <Menu items={withSection} itemKey="name" autoFocus="first" onAction={action('onAction')}>
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </Menu>
+    )
+  )
+  .add(
     'Menu with autoFocus="last"',
     () => (
       <Menu items={withSection} itemKey="name" autoFocus="last" onAction={action('onAction')}>

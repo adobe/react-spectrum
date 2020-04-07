@@ -93,7 +93,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
         ref={listboxRef}
         domProps={menuProps}
         disallowEmptySelection
-        autoFocus={state.focusStrategy}
+        autoFocus={state.focusStrategy || true}
         shouldSelectOnPressUp
         focusOnPointerEnter
         layout={layout}

@@ -40,10 +40,6 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
     isOpen: state.isOpen
   });
 
-  let onPress = () => {
-    state.toggle('first');
-  };
-
   let onKeyDown = (e) => {
     if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {
       return;
@@ -53,13 +49,11 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
       switch (e.key) {
         case 'ArrowDown':
           e.preventDefault();
-          onPress();
+          state.toggle('first');
           break;
         case 'ArrowUp':
           e.preventDefault();
-          onPress();
-          // If no menu item is selected, focus last item when opening menu with ArrowDown
-          state.setFocusStrategy('last');
+          state.toggle('last');
           break;
       }
     }
@@ -72,12 +66,14 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
       onPressStart(e) {
         // For consistency with native, open the menu on mouse/key down, but touch up.
         if (e.pointerType !== 'touch') {
-          onPress();
+          // If opened with the keyboard, auto focus the first item.
+          // Otherwise, the menu itself will be focused.
+          state.toggle(e.pointerType === 'keyboard' ? 'first' : null);
         }
       },
       onPress(e) {
         if (e.pointerType === 'touch') {
-          onPress();
+          state.toggle();
         }
       },
       onKeyDown
