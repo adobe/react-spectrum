@@ -36,7 +36,7 @@ export interface SpectrumDialogProps extends DOMProps, StyleProps {
   children: ReactNode,
   /** The size of the Dialog. Only applies to "modal" type Dialogs. */
   size?: 'S' | 'M' | 'L',
-  /** Whether the Dialog is [dismissable](#dismissable). */
+  /** Whether the Dialog is dismissable. See the [examples](#examples) for more details. */
   isDismissable?: boolean,
   /** Handler that is called when the 'x' button of a dismissable dialog is clicked. */
   onDismiss?: () => void,

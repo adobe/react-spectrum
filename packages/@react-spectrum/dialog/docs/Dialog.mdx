@@ -291,6 +291,38 @@ the wrapping `close` function surrounding the Dialog.
 
 ## Visual Options
 
+### Dialog Variants
+
+Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger docs](TODO link) for more information.
+
+```tsx example
+<DialogTrigger type="popover">
+  <ActionButton>Trigger</ActionButton>
+  <Dialog>
+    <Heading>Popover</Heading>
+    <Divider />
+    <Content>
+      <Text>
+        This is a popover.
+      </Text>
+    </Content>    
+  </Dialog>
+</DialogTrigger>
+
+<DialogTrigger type="tray">
+  <ActionButton>More Info</ActionButton>
+  <Dialog>
+    <Heading>Tray</Heading>
+    <Divider />
+    <Content>
+      <Text>
+        This is a tray.
+      </Text>
+    </Content>    
+  </Dialog>
+</DialogTrigger>
+```
+
 ### Size
 
 Only `modal` type Dialogs support a user defined size prop. Note that the `fullscreen` and `fullscreenTakeover` sizes 
