@@ -87,7 +87,7 @@ describe('Picker', function () {
       expect(getAllByRole('listbox')).toHaveLength(1);
 
       let picker = getByRole('button');
-      act(() => {fireEvent.mouseDown(picker);});
+      act(() => {fireEvent.mouseDown(picker, {detail: 1});});
       act(() => jest.runAllTimers());
 
       let listbox = getAllByRole('listbox')[1]; // ignore the one in the background for now
