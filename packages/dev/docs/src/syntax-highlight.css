@@ -1,0 +1,184 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+
+.spectrum {
+  --hljs-color: var(--spectrum-global-color-gray-800);
+  --hljs-background: var(--spectrum-global-color-gray-75);
+  --hljs-keyword-color: var(--spectrum-global-color-fuchsia-600);
+  --hljs-section-color: var(--spectrum-global-color-red-600);
+  --hljs-string-color: var(--spectrum-global-color-celery-600);
+  --hljs-literal-color: var(--spectrum-global-color-orange-600);
+  --hljs-attribute-color: var(--spectrum-global-color-orange-600);
+  --hljs-class-color: var(--spectrum-global-color-yellow-600);
+  --hljs-function-color: var(--spectrum-global-color-blue-600);
+  --hljs-variable-color: var(--spectrum-global-color-yellow-600);
+  --hljs-title-color: var(--spectrum-global-color-indigo-600);
+}
+
+/** for now keep syntax highlighting different from prop table. we can join them later if need be,
+ *  though since they don't really represent the same things,
+ *  i think the prop table should get renames and new classes
+ */
+
+:global(.hljs) {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: var(--hljs-color);
+  background: var(--hljs-background);
+}
+
+:global(.hljs-comment),
+:global(.hljs-quote) {
+  color: #a0a1a7;
+  font-style: italic;
+}
+
+:global(.hljs-doctag),
+:global(.hljs-formula),
+:global(.hljs-keyword) {
+  color: var(--hljs-keyword-color);
+}
+
+:global(.hljs-deletion),
+:global(.hljs-name),
+:global(.hljs-section),
+:global(.hljs-selector-tag),
+:global(.hljs-subst) {
+  color: var(--hljs-section-color);
+}
+
+:global(.hljs-literal),
+:global(.hljs-number) {
+  color: var(--hljs-literal-color);
+}
+
+:global(.hljs-string) {
+  color: var(--hljs-string-color);
+}
+
+:global(.hljs-attr),
+:global(.hljs-addition),
+:global(.hljs-attribute),
+:global(.hljs-meta-string),
+:global(.hljs-regexp) {
+  color: var(--hljs-attribute-color);
+}
+
+:global(.hljs-built_in),
+:global(.hljs-class) :global(.hljs-title) {
+  color: var(--hljs-class-color);
+}
+
+:global(.hljs-selector-attr),
+:global(.hljs-selector-class),
+:global(.hljs-selector-pseudo),
+:global(.hljs-template-variable),
+:global(.hljs-type),
+:global(.hljs-variable) {
+  color: var(--hljs-variable-color);
+}
+
+:global(.hljs-bullet),
+:global(.hljs-link),
+:global(.hljs-meta),
+:global(.hljs-selector-id),
+:global(.hljs-symbol),
+:global(.hljs-title) {
+  color: var(--hljs-title-color);
+}
+
+:global(.hljs-emphasis) {
+  font-style: italic;
+}
+
+:global(.hljs-strong) {
+  font-weight: bold;
+}
+
+:global(.hljs-link) {
+  text-decoration: underline;
+}
+
+:global(.source) {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: var(--hljs-color);
+  background: var(--hljs-background);
+
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+:global(.embedded.source) {
+  display: inline;
+  padding: 0;
+}
+
+:global(.storage.type) {
+  color: var(--hljs-keyword-color);
+}
+
+:global(.entity.function) {
+  color: var(--hljs-function-color);
+}
+
+:global(.keyword.control) {
+  color: var(--hljs-keyword-color);
+}
+
+:global(.class-name) {
+  color: var(--hljs-section-color);
+}
+
+:global(.entity.attribute-name) {
+  color: var(--hljs-attribute-color);
+}
+:global(.entity.name.tag),
+:global(.support.type) {
+  color: var(--hljs-section-color);
+}
+
+:global(.punctuation.section) {
+  color: var(--hljs-title-color);
+}
+
+:global(.constant.numeric) {
+  color: var(--hljs-literal-color);
+}
+
+:global(.variable.other.object.property) {
+  color: var(--hljs-variable-color);
+}
+
+:global(.string.quoted) {
+  color: var(--hljs-string-color);
+}
+
+:global(.comment) {
+  color: #a0a1a7;
+  font-style: italic;
+}

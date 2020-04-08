@@ -1,0 +1,66 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+.resourceCard {
+  width: 224px;
+  margin: 2px 16px 2px 2px;
+  box-shadow: 0 0 0 1px var(--spectrum-global-color-gray-300);
+  transition: 125ms ease-in-out;
+  height: 64px;
+  display: flex;
+  flex-direction: row;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    box-shadow: 0 0 0 1px var(--spectrum-global-color-gray-400);
+    transition: 125ms ease-in-out;
+  }
+  @media screen and (max-width: 960px) {
+    margin-bottom: 16px;
+  }
+
+  .npmImage {
+    background: rgba(203, 56, 55, 0.1);
+  }
+
+  .gitImage, .spectrumImage {
+    background-color: var(--spectrum-global-color-gray-200);
+    fill: black;
+  }
+
+  .cardContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding-left: 16px;
+    margin-bottom: 0 !important;
+  }
+
+  .cardTitle {
+    font-weight: 700;
+  }
+
+  .cardType {
+    color: var(--spectrum-global-color-gray-700);
+    font-size: 12px;
+
+  }
+}
+
+.resourceCard img, svg {
+  width: 64px;
+  height: 64px;
+}

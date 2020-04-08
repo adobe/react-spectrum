@@ -388,16 +388,6 @@ governing permissions and limitations under the License.
       color: var(--spectrum-actionbutton-icon-color-selected);
     }
 
-    &:focus-ring {
-      background-color: var(--spectrum-actionbutton-background-color-selected-key-focus);
-      border-color: var(--spectrum-actionbutton-border-color-selected-key-focus);
-      color: var(--spectrum-actionbutton-text-color-selected-key-focus);
-
-      .spectrum-Icon {
-        color: var(--spectrum-actionbutton-icon-color-selected-key-focus);
-      }
-    }
-
     &:hover {
       background-color: var(--spectrum-actionbutton-background-color-selected-hover);
       border-color: var(--spectrum-actionbutton-border-color-selected-hover);
@@ -405,6 +395,16 @@ governing permissions and limitations under the License.
 
       .spectrum-Icon {
         color: var(--spectrum-actionbutton-icon-color-selected-hover);
+      }
+    }
+
+    &:focus-ring {
+      background-color: var(--spectrum-actionbutton-background-color-selected-key-focus);
+      border-color: var(--spectrum-actionbutton-border-color-selected-key-focus);
+      color: var(--spectrum-actionbutton-text-color-selected-key-focus);
+
+      .spectrum-Icon {
+        color: var(--spectrum-actionbutton-icon-color-selected-key-focus);
       }
     }
 
@@ -469,16 +469,16 @@ governing permissions and limitations under the License.
     border-color: var(--spectrum-actionbutton-quiet-border-color-selected);
     color: var(--spectrum-actionbutton-quiet-text-color-selected);
 
-    &:focus-ring {
-      background-color: var(--spectrum-actionbutton-quiet-background-color-selected-key-focus);
-      border-color: var(--spectrum-actionbutton-quiet-border-color-selected-key-focus);
-      color: var(--spectrum-actionbutton-quiet-text-color-selected-key-focus);
-    }
-
     &:hover {
       background-color: var(--spectrum-actionbutton-quiet-background-color-selected-hover);
       border-color: var(--spectrum-actionbutton-quiet-border-color-selected-hover);
       color: var(--spectrum-actionbutton-quiet-text-color-selected-hover);
+    }
+
+    &:focus-ring {
+      background-color: var(--spectrum-actionbutton-quiet-background-color-selected-key-focus);
+      border-color: var(--spectrum-actionbutton-quiet-border-color-selected-key-focus);
+      color: var(--spectrum-actionbutton-quiet-text-color-selected-key-focus);
     }
 
     &.is-active {

@@ -1,4 +1,17 @@
-import {AllHTMLAttributes, useEffect} from 'react';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {HTMLAttributes, useEffect} from 'react';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
@@ -11,10 +24,10 @@ interface NumberFieldProps extends SpinButtonProps {
 }
 
 interface NumberFieldAria {
-  inputFieldProps: AllHTMLAttributes<HTMLInputElement>,
-  numberFieldProps: AllHTMLAttributes<HTMLDivElement>,
-  incrementButtonProps: AllHTMLAttributes<HTMLButtonElement>,
-  decrementButtonProps: AllHTMLAttributes<HTMLButtonElement>
+  inputFieldProps: HTMLAttributes<HTMLInputElement>,
+  numberFieldProps: HTMLAttributes<HTMLDivElement>,
+  incrementButtonProps: HTMLAttributes<HTMLButtonElement>,
+  decrementButtonProps: HTMLAttributes<HTMLButtonElement>
 }
 
 export function useNumberField(props: NumberFieldProps, state: NumberFieldState): NumberFieldAria {

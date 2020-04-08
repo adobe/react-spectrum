@@ -1,5 +1,17 @@
-import {AllHTMLAttributes, MutableRefObject, useRef} from 'react';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {getOffset} from './getOffset';
+import {HTMLAttributes, MutableRefObject, useRef} from 'react';
 import {Orientation} from '@react-types/shared';
 
 interface UseDrag1DProps {
@@ -21,7 +33,7 @@ interface UseDrag1DProps {
 // It can also take a 'reverse' param to say if we should measure from the right/bottom instead of the top/left
 // It can also handle either a vertical or horizontal movement, but not both at the same time
 
-export function useDrag1D(props: UseDrag1DProps): AllHTMLAttributes<HTMLElement> {
+export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
   let {containerRef, reverse, orientation, onHover, onDrag, onPositionChange, onIncrement, onDecrement, onIncrementToMax, onDecrementToMin, onCollapseToggle} = props;
   let getPosition = (e) => orientation === 'horizontal' ? e.clientX : e.clientY;
   let getNextOffset = (e) => {

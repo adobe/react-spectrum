@@ -1,5 +1,17 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {ButtonProps} from '@react-types/button';
-import {chain, mergeProps} from '@react-aria/utils';
+import {mergeProps} from '@react-aria/utils';
 import {RefObject} from 'react';
 import {useDOMPropsResponder, usePress} from '@react-aria/interactions';
 import {useFocusable} from '@react-aria/focus';
@@ -50,9 +62,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   }
 
   let {pressProps, isPressed} = usePress({
-    // Safari does not focus buttons automatically when interacting with them, so do it manually
-    onPressStart: chain(onPressStart, (e) => e.target.focus()),
-    onPressEnd: chain(onPressEnd, (e) => e.target.focus()),
+    onPressStart,
+    onPressEnd,
     onPressChange,
     onPress,
     isDisabled,

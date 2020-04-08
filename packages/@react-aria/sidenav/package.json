@@ -1,0 +1,36 @@
+{
+  "name": "@react-aria/sidenav",
+  "version": "3.0.0-alpha.1",
+  "private": true,
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe-private/react-spectrum-v3"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.6.2",
+    "@react-aria/interactions": "^3.0.0-alpha.1",
+    "@react-aria/selection": "^3.0.0-alpha.1",
+    "@react-aria/utils": "^3.0.0-alpha.1",
+    "@react-spectrum/utils": "^3.0.0-alpha.1",
+    "@react-stately/collections": "^3.0.0-alpha.1",
+    "@react-stately/tree": "^3.0.0-alpha.1",
+    "@react-types/shared": "^3.0.0-alpha.1",
+    "@react-types/sidenav": "^3.0.0-alpha.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

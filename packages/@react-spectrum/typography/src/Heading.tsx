@@ -1,23 +1,35 @@
-import {DOMProps, StyleProps} from '@react-types/shared';
-import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {HTMLElement} from 'react-dom';
-import React, {ReactElement, RefObject} from 'react';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 
-export interface HeadingProps extends DOMProps, StyleProps {
-  children: ReactElement | string
-}
+import {DOMRef} from '@react-types/shared';
+import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {HeadingProps} from '@react-types/typography';
+import React, {forwardRef} from 'react';
 
-export const Heading = React.forwardRef((props: HeadingProps, ref: RefObject<HTMLElement>) => {
+function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
+  props = useSlotProps(props, 'heading');
   let {
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps({slot: 'heading', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
+  let domRef = useDOMRef(ref);
 
-  // h level hardcoded for the moment and no specific className at the moment, this is barebones
   return (
-    <h1 {...filterDOMProps(otherProps)} {...styleProps} ref={ref}>
+    <h1 {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       {children}
     </h1>
   );
-});
+}
+
+const _Heading = forwardRef(Heading);
+export {_Heading as Heading};

@@ -1,40 +1,38 @@
-# react-spectrum v3
+#  react-spectrum
+[Spectrum](http://spectrum.adobe.com) UI components in React.
 
-[Spectrum](http://spectrum.corp.adobe.com) UI components in React.
+## ⚠️ Under Construction  ⚠️
+We are currently working hard to be ready for a stable release.
+  - Please *don't share* this repo until we make our public announcement!
+  - If you are not already part of our Beta program and would like to join, please make a [request here](https://github.com/adobe-private/react-spectrum-v3/issues/new?template=Feedback.md).
+  - Please try out our RC React Spectrum Components and [tell us](https://github.com/adobe-private/react-spectrum-v3/issues/new/choose) what you think!
+
+## Overview ##
+React Spectrum is a UI Component Library leveraging Spectrum, Adobe's Design System. It enables you to easily build apps with plug and play UI components that match Adobe's look and feel. Some features of React Spectrum include: 
+
+#### Built-in Accessibility and Keyboard support ⌨️:
+Save development time with out-of-the-box accessibility and keyboard support. 
+
+#### Custom Theme support, including Dark Mode 🌘:
+Provide a custom theme that can be applied to all components. 
+
+#### Mobile/Cross Platform support 📱:
+Components are responsive and work across all browsers and devices. 
+
+#### Internationalization support 💬:
+Translations for 31 languages are provided, including reconfigured components for Right-to-Left languages. 
 
 ## Using react-spectrum in your project
 
-react-spectrum is usable with a module bundler like [Parcel](https://parceljs.org) or [Webpack](https://webpack.js.org).
-Components are then `require`able as in the following example. The styles for each component you import will be bundled
+react-spectrum is usable with a module bundler like [Parcel](https://parceljs.org).
+Components are then usable as in the following example. The styles for each component you import will be bundled
 along-side the JavaScript (more on configuring this below). Each component should be imported independently -
 this way only the components you use will be included in the output JavaScript and CSS files.
 
 ### Installation
-#### Node
-We recommend that you use [NVM](https://github.com/creationix/nvm#installation) to manage your node version.
-NVM has a section in their documentation to handle using the right version automatically when cd'ing into a project with a `.nvmrc` file [documentation](https://github.com/creationix/nvm#nvmrc)
-If you are manually managing your version of Node, then refer to `.nvmrc` for the version you should run with.
-
-#### NPM
-Add the following to your `~/.npmrc`:
 
 ```
-@react-aria:registry=https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/
-@react-spectrum:registry=https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/
-@react-stately:registry=https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/
-@react-types:registry=https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/
-@spectrum-icons:registry=https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/
-//artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/:_password=YOUR_PASSWORD_HERE
-//artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/:username=YOUR_USERNAME_HERE
-//artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/:email=YOUR_USERNAME_HERE@adobe.com
-//artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-rsp-tmp-release/:always-auth=true
-```
-
-Then you should be able to install with npm:
-Eventually we'll support a single package with all of them, but for now you must install individual ones
-
-```
-npm install @react-spectrum/provider @react-spectrum/theme-default @react-spectrum/button --save
+yarn add @react-spectrum/provider @react-spectrum/theme-default @react-spectrum/button
 ```
 
 ### Example
@@ -55,33 +53,7 @@ ReactDOM.render(
 , dom);
 ```
 
-### Webpack
-
-To use react-spectrum, you'll need [css-loader](https://github.com/webpack-contrib/css-loader) and either
-[style-loader](https://github.com/webpack-contrib/style-loader) to inject the styles
-directly into the DOM, or [extract-text-webpack-plugin](https://github.com/webpack-contrib/extract-text-webpack-plugin)
-to extract the CSS to a single separate file.
-
-```javascript
-module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.css/,
-        loaders: ['style-loader', 'css-loader']
-      }
-    ]
-  }
-}
-```
-
-### Parcel
-
-No additional configuration is needed to use react-spectrum with Parcel. 😇
-
 ## Development
-
-### Local Development
 
 #### General
 We use Yarn, please run `yarn install` instead of `npm install` to get started. If you do not have yarn, you can follow these [instructions](https://yarnpkg.com/lang/en/docs/install/#mac-stable)
@@ -91,7 +63,7 @@ We use [Storybooks](https://storybooks.js.org) for local development. Run `yarn 
 
 ### File Layout
 
-React Spectrum v3 is organized into many npm packages in a monorepo, managed by [Lerna](http://lerna.js.org). Our architecture splits each component into three parts: @react-stately (state management), @react-aria (behavior + accessibility), and @react-spectrum (spectrum themed components).
+React Spectrum is organized into many npm packages in a monorepo, managed by [Lerna](http://lerna.js.org). Our architecture splits each component into three parts: @react-stately (state management), @react-aria (behavior + accessibility), and @react-spectrum (spectrum themed components).
 
 ### Testing
 
@@ -118,7 +90,7 @@ yarn jest --coverage
 
 ### TypeScript
 
-The code for React Spectrum v3 is written in [TypeScript](https://www.typescriptlang.org/). The type checker will usually run in your editor, but also runs when you run `make lint`.
+The code for React Spectrum is written in [TypeScript](https://www.typescriptlang.org/). The type checker will usually run in your editor, but also runs when you run `make lint`.
 
 ### Linting
 

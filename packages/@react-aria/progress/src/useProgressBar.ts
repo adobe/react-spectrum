@@ -1,13 +1,25 @@
-import {AllHTMLAttributes} from 'react';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {clamp} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
+import {HTMLAttributes} from 'react';
 import {ProgressBarProps} from '@react-types/progress';
 import {useLabel} from '@react-aria/label';
 import {useNumberFormatter} from '@react-aria/i18n';
 
 interface ProgressBarAria {
-  progressBarProps: AllHTMLAttributes<HTMLDivElement>,
-  labelProps: AllHTMLAttributes<HTMLLabelElement>
+  progressBarProps: HTMLAttributes<HTMLDivElement>,
+  labelProps: HTMLAttributes<HTMLLabelElement>
 }
 
 interface ProgressBarAriaProps extends ProgressBarProps, DOMProps {
@@ -28,7 +40,7 @@ export function useProgressBar(props: ProgressBarAriaProps): ProgressBarAria {
 
   let {labelProps, fieldProps} = useLabel({
     ...props,
-    // Progress bar is not an HTML input element so it 
+    // Progress bar is not an HTML input element so it
     // shouldn't be labeled by a <label> element.
     labelElementType: 'span'
   });

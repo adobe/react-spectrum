@@ -1,3 +1,15 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {ActionButton} from '@react-spectrum/button';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -47,17 +59,17 @@ storiesOf('Tooltip', module)
     'triggered by click, placement: right',
     () => renderWithTrigger('This is a tooltip.', {placement: 'end', type: 'click'})
   ).add(
-    'triggered by hover, placement: top',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'top', type: 'hover'})
+    'triggered by hover and focus, placement: top',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'top', type: ['hover', 'focus']})
   ).add(
-    'triggered by hover, placement: bottom',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: 'hover'})
+    'triggered by hover and focus, placement: bottom',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: ['hover', 'focus']})
   ).add(
     'supports disable prop: click',
     () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click', isDisabled: true})
   ).add(
-    'supports disable prop: hover',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'hover', isDisabled: true})
+    'supports disable prop: hover and focus',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: ['hover', 'focus'], isDisabled: true})
   ).add(
      'single tooltip: hover',
      () => renderMultipleTriggers('This is a tooltip.', {placement: 'left', type: 'hover'})

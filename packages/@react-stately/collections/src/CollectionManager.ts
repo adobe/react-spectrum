@@ -1,3 +1,15 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {CancelablePromise, easeOut, tween} from './tween';
 import {Collection, CollectionManagerDelegate, InvalidationContext} from './types';
 import {concatIterators, difference} from './utils';
@@ -83,16 +95,17 @@ export class CollectionManager<T extends object, V, W> {
   private _layout: Layout<T>;
   private _contentSize: Size;
   private _visibleRect: Rect;
+  private _visibleLayoutInfos: Map<Key, LayoutInfo>;
   private _reusableViews: {[type: string]: ReusableView<T, V>[]};
   private _visibleViews: Map<Key, ReusableView<T, V>>;
   private _renderedContent: WeakMap<T, V>;
-  private _renderedViews: Map<Key, W>;
   private _children: Set<ReusableView<T, V>>;
   private _invalidationContext: InvalidationContext<T, V> | null;
   private _overscanManager: OverscanManager;
   private _relayoutRaf: number | null;
   private _scrollAnimation: CancelablePromise<void> | null;
-  private _sizeUpdateQueue: Set<Key>;
+  private _isScrolling: boolean;
+  private _sizeUpdateQueue: Map<Key, Size>;
   private _animatedContentOffset: Point;
   private _transaction: Transaction<T, V> | null;
   private _nextTransaction: Transaction<T, V> | null;
@@ -103,15 +116,16 @@ export class CollectionManager<T extends object, V, W> {
     this._visibleRect = new Rect;
 
     this._reusableViews = {};
+    this._visibleLayoutInfos = new Map();
     this._visibleViews = new Map();
     this._renderedContent = new WeakMap();
-    this._renderedViews = new Map();
     this._children = new Set();
     this._invalidationContext = null;
     this._overscanManager = new OverscanManager();
 
     this._scrollAnimation = null;
-    this._sizeUpdateQueue = new Set();
+    this._isScrolling = false;
+    this._sizeUpdateQueue = new Map();
     this._animatedContentOffset = new Point(0, 0);
 
     this._transaction = null;
@@ -185,7 +199,6 @@ export class CollectionManager<T extends object, V, W> {
       });
     } else {
       this.updateSubviews(forceUpdate);
-      this.correctItemOrder();
     }
   }
 
@@ -301,7 +314,7 @@ export class CollectionManager<T extends object, V, W> {
     let reusable = this._reusableViews[reuseType];
     let view = reusable.length > 0
       ? reusable.pop()
-      : new ReusableView<T, V>();
+      : new ReusableView<T, V>(this);
 
     view.viewType = reuseType;
 
@@ -333,10 +346,6 @@ export class CollectionManager<T extends object, V, W> {
     let {type, key} = reusableView.layoutInfo;
     reusableView.content = this._getViewContent(type, key);
     reusableView.rendered = this._renderContent(type, reusableView.content);
-
-    let rendered = this.delegate.renderWrapper(reusableView);
-    this._renderedViews.set(reusableView.key, rendered);
-    return rendered;
   }
 
   private _renderContent(type: string, content: T) {
@@ -346,7 +355,9 @@ export class CollectionManager<T extends object, V, W> {
     }
 
     let rendered = this.delegate.renderView(type, content);
-    this._renderedContent.set(content, rendered);
+    if (content) {
+      this._renderedContent.set(content, rendered);
+    }
     return rendered;
   }
 
@@ -562,9 +573,6 @@ export class CollectionManager<T extends object, V, W> {
           let {x, y} = this.getVisibleRect();
           this._resetAnimatedContentOffset();
           this._setContentOffset(new Point(x, y));
-        } else {
-          // Make sure items are rendered in correct DOM order for accessibility
-          this.correctItemOrder();
         }
 
         if (typeof context.afterAnimation === 'function') {
@@ -577,37 +585,22 @@ export class CollectionManager<T extends object, V, W> {
     } else if (typeof context.afterAnimation === 'function') {
       context.afterAnimation();
     }
-
-    // Make sure items are rendered in correct DOM order for accessibility
-    this.correctItemOrder();
   }
 
   /**
    * Corrects DOM order of visible views to match item order of collection
    */
-  private correctItemOrder() {
-    // if (this._scrolling) {
-    //   return;
-    // }
+  private _correctItemOrder() {
+    // Defer until after scrolling and animated transactions are complete
+    if (this._isScrolling || this._transaction) {
+      return;
+    }
 
-    // TODO
-    // let current = Array.from(this.children) as ReusableView[];
-    // let keys = this._getKeyArray();
-
-    // // no need to reparent if visibleViews order matches sortedVisibleViews order
-    // if (sortedVisibleViews.every((view, index) => view === current[index])) {
-    //   return;
-    // }
-
-    // for (let view of sortedVisibleViews) {
-    //   this.removeChild(view);
-    //   this.addChild(view);
-    // }
-
-    // // Flush updates if not in a transaction, otherwise that will happen at the end.
-    // if (!this._transaction) {
-    //   this.flushUpdates();
-    // }
+    for (let key of this._visibleLayoutInfos.keys()) {
+      let view = this._visibleViews.get(key);
+      this._children.delete(view);
+      this._children.add(view);
+    }
   }
 
   private _enableTransitions() {
@@ -690,7 +683,8 @@ export class CollectionManager<T extends object, V, W> {
 
   getVisibleLayoutInfos() {
     let rect = this.shouldOverscan ? this._overscanManager.getOverscannedRect() : this.getVisibleRect();
-    return this._getLayoutInfoMap(rect);
+    this._visibleLayoutInfos = this._getLayoutInfoMap(rect);
+    return this._visibleLayoutInfos;
   }
 
   private _getViewKey(type: string, key: Key) {
@@ -783,17 +777,9 @@ export class CollectionManager<T extends object, V, W> {
       }
     }
 
-    let needsSizeUpdate = false;
-
     for (let key of toAdd.keys()) {
       let layoutInfo = visibleLayoutInfos.get(key);
       let view: ReusableView<T, V> | void;
-
-      // We need to recompute view sizes if we only
-      // have an estimated size for this row.
-      if (layoutInfo.estimatedSize) {
-        needsSizeUpdate = true;
-      }
 
       // If we're in a transaction, and a layout change happens
       // during the animations such that a view that was going
@@ -837,19 +823,14 @@ export class CollectionManager<T extends object, V, W> {
       this.removeViews(removed);
     }
 
+    this._correctItemOrder();
     this._flushVisibleViews();
-    if (this._transaction || needsSizeUpdate) {
+    if (this._transaction) {
       requestAnimationFrame(() => {
         // If we're in a transaction, apply animations to visible views
         // and "to be removed" views, which animate off screen.
         if (this._transaction) {
           requestAnimationFrame(() => this._applyLayoutInfos());
-        }
-
-        // If we need a height update, wait until the next frame
-        // so that the browser has time to do layout.
-        if (needsSizeUpdate) {
-          this.relayout();
         }
       });
     }
@@ -862,11 +843,33 @@ export class CollectionManager<T extends object, V, W> {
   }
 
   private _flushVisibleViews() {
-    let children = new Set<W>();
-    for (let child of this._children) {
-      children.add(this._renderedViews.get(child.key));
+    // CollectionManager deals with a flattened set of LayoutInfos, but they can represent heirarchy
+    // by referencing a parentKey. Just before rendering the visible views, we rebuild this heirarchy
+    // by creating a mapping of views by parent key and recursively calling the delegate's renderWrapper
+    // method to build the final tree.
+    let viewsByParentKey = new Map([[null, []]]);
+    for (let view of this._children) {
+      if (!viewsByParentKey.has(view.layoutInfo.parentKey)) {
+        viewsByParentKey.set(view.layoutInfo.parentKey, []);
+      }
+
+      viewsByParentKey.get(view.layoutInfo.parentKey).push(view);
+      if (!viewsByParentKey.has(view.layoutInfo.key)) {
+        viewsByParentKey.set(view.layoutInfo.key, []);
+      }
     }
 
+    let buildTree = (parent: ReusableView<T, V>, views: ReusableView<T, V>[]): W[] => views.map(view => {
+      let children = viewsByParentKey.get(view.layoutInfo.key);
+      return this.delegate.renderWrapper(
+        parent,
+        view,
+        children,
+        (childViews) => buildTree(view, childViews)
+      );
+    });
+
+    let children = buildTree(null, viewsByParentKey.get(null));
     this.delegate.setVisibleViews(children);
   }
 
@@ -935,7 +938,7 @@ export class CollectionManager<T extends object, V, W> {
     }
   }
 
-  updateItemSize(key: Key) {
+  updateItemSize(key: Key, size: Size) {
     // TODO: we should be able to invalidate a single index path
     // @ts-ignore
     if (!this.layout.updateItemSize) {
@@ -945,21 +948,26 @@ export class CollectionManager<T extends object, V, W> {
     // If the scroll position is currently animating, add the update
     // to a queue to be processed after the animation is complete.
     if (this._scrollAnimation) {
-      this._sizeUpdateQueue.add(key);
+      this._sizeUpdateQueue.set(key, size);
       return;
     }
 
     // @ts-ignore
-    let changed = this.layout.updateItemSize(key);
+    let changed = this.layout.updateItemSize(key, size);
     if (changed) {
       this.relayout();
     }
   }
 
-  // scrollEnded() {
-  //   super.scrollEnded();
-  //   this.correctItemOrder();
-  // }
+  startScrolling() {
+    this._isScrolling = true;
+  }
+
+  endScrolling() {
+    this._isScrolling = false;
+    this._correctItemOrder();
+    this._flushVisibleViews();
+  }
 
   private _resetAnimatedContentOffset() {
     // Reset the animated content offset of subviews. See comment in relayoutNow for details.
@@ -991,12 +999,12 @@ export class CollectionManager<T extends object, V, W> {
     let maxX = x + this.visibleRect.width;
     let maxY = y + this.visibleRect.height;
 
-    if (offsetX <= x) {
+    if (offsetX <= x || maxX === 0) {
       x = offsetX;
     } else if (offsetX + layoutInfo.rect.width > maxX) {
       x += offsetX + layoutInfo.rect.width - maxX;
     }
-    if (offsetY <= y) {
+    if (offsetY <= y || maxY === 0) {
       y = offsetY;
     } else if (offsetY + layoutInfo.rect.height > maxY) {
       y += offsetY + layoutInfo.rect.height - maxY;
@@ -1024,19 +1032,22 @@ export class CollectionManager<T extends object, V, W> {
       return Promise.resolve();
     }
 
+    this.startScrolling();
+
     this._scrollAnimation = tween(this.visibleRect, offset, duration, easeOut, offset => {this._setContentOffset(offset);});
     this._scrollAnimation.then(() => {
       this._scrollAnimation = null;
 
       // Process view size updates that occurred during the animation.
       // Only views that are still visible will be actually updated.
-      for (let key of this._sizeUpdateQueue) {
-        this.updateItemSize(key);
+      for (let [key, size] of this._sizeUpdateQueue) {
+        this.updateItemSize(key, size);
       }
 
       this._sizeUpdateQueue.clear();
       this.relayout();
       this._processTransactionQueue();
+      this.endScrolling();
     });
 
     return this._scrollAnimation;
@@ -1145,9 +1156,11 @@ export class CollectionManager<T extends object, V, W> {
             this._children.delete(view);
             this.reuseView(view);
           }
-
-          this._flushVisibleViews();
         }
+
+        // Ensure DOM order is correct for accessibility after animations are complete
+        this._correctItemOrder();
+        this._flushVisibleViews();
 
         this._transaction = null;
         this._processTransactionQueue();

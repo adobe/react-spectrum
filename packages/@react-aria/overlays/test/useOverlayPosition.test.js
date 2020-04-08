@@ -1,3 +1,15 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import React, {useRef} from 'react';
 import {useOverlayPosition} from '../';
@@ -41,14 +53,14 @@ describe('useOverlayPosition', function () {
     expect(overlay).toHaveStyle(`
       position: absolute;
       z-index: 100000;
-      left: 8px;
+      left: 12px;
       top: 350px;
-      max-height: 410px;
+      max-height: 406px;
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
     expect(arrow).toHaveStyle(`
-      left: 52px;
+      left: 48px;
     `);
   });
 
@@ -57,21 +69,21 @@ describe('useOverlayPosition', function () {
     let overlay = res.getByTestId('overlay');
 
     expect(overlay).toHaveStyle(`
-      left: 8px;
-      top: 100px;
-      max-height: 660px;
+      left: 12px;
+      top: 500px;
+      max-height: 256px;
     `);
 
-    expect(overlay).toHaveTextContent('placement: top');
+    expect(overlay).toHaveTextContent('placement: bottom');
 
     let innerHeight = window.innerHeight;
     window.innerHeight = 1000;
     fireEvent(window, new Event('resize'));
 
     expect(overlay).toHaveStyle(`
-      left: 8px;
+      left: 12px;
       top: 500px;
-      max-height: 492px;
+      max-height: 488px;
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
@@ -83,17 +95,17 @@ describe('useOverlayPosition', function () {
     let overlay = res.getByTestId('overlay');
 
     expect(overlay).toHaveStyle(`
-      left: 8px;
+      left: 12px;
       top: 350px;
-      max-height: 410px;
+      max-height: 406px;
     `);
 
     res.rerender(<Example offset={20} />);
 
     expect(overlay).toHaveStyle(`
-      left: 8px;
+      left: 12px;
       top: 370px;
-      max-height: 390px;
+      max-height: 386px;
     `);
   });
 });

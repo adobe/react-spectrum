@@ -1,5 +1,17 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {chain, useId} from '@react-aria/utils';
-import {DOMProps} from '@react-types/shared';
+import {DOMProps, FocusEvents} from '@react-types/shared';
 import {HoverProps, PressProps} from '@react-aria/interactions';
 import {HTMLAttributes, RefObject} from 'react';
 import {TooltipProps} from '@react-types/tooltip';
@@ -20,7 +32,7 @@ interface TooltipTriggerProps {
 }
 
 interface TooltipTriggerAria {
-  triggerProps: HTMLAttributes<HTMLElement> & PressProps & HoverProps,
+  triggerProps: HTMLAttributes<HTMLElement> & PressProps & HoverProps & FocusEvents,
   tooltipProps: HTMLAttributes<HTMLElement>
 }
 
@@ -91,7 +103,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
       'aria-describedby': tooltipId,
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
       onPress: triggerType === 'click' ? onPress : undefined,
-      ...(triggerType === 'hover' && hoverProps)
+      ...(triggerType.includes('hover') && hoverProps),
+      onFocus: (triggerType.includes('focus') || triggerType.includes('hover')) ? handleDelayedShow : undefined,
+      onBlur: (triggerType.includes('focus') || triggerType.includes('hover')) ? handleDelayedHide : undefined
     },
     tooltipProps: {
       ...overlayProps,

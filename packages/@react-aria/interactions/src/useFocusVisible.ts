@@ -1,7 +1,19 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {useEffect, useState} from 'react';
 
 type Modality = 'keyboard' | 'pointer';
-type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent;
+type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent;
 type Handler = (modality: Modality, e: HandlerEvent) => void;
 interface FocusVisibleProps {
   isTextInput?: boolean,
@@ -15,6 +27,7 @@ interface FocusVisibleResult {
 let isGlobalFocusVisible = true;
 let changeHandlers = new Set<Handler>();
 let hasSetupGlobalListeners = false;
+let hasEventBeforeFocus = false;
 
 const isMac =
   typeof window !== 'undefined' && window.navigator != null
@@ -39,6 +52,7 @@ function isValidKey(e: KeyboardEvent) {
 }
 
 function handleKeyboardEvent(e: KeyboardEvent) {
+  hasEventBeforeFocus = true;
   if (isValidKey(e)) {
     isGlobalFocusVisible = true;
     triggerChangeHandlers('keyboard', e);
@@ -48,8 +62,20 @@ function handleKeyboardEvent(e: KeyboardEvent) {
 function handlePointerEvent(e: PointerEvent | MouseEvent) {
   isGlobalFocusVisible = false;
   if (e.type === 'mousedown' || e.type === 'pointerdown') {
+    hasEventBeforeFocus = true;
     triggerChangeHandlers('pointer', e);
   }
+}
+
+function handleFocusEvent(e: FocusEvent) {
+  // If a focus event occurs without a preceding keyboard or pointer event, switch to keyboard modality.
+  // This occurs, for example, when navigating a form with the next/previous buttons on iOS.
+  if (!hasEventBeforeFocus) {
+    isGlobalFocusVisible = true;
+    triggerChangeHandlers('keyboard', e);
+  }
+
+  hasEventBeforeFocus = false;
 }
 
 // Setup global event listeners to control when keyboard focus style should be visible
@@ -58,9 +84,20 @@ function setupGlobalFocusEvents() {
     return;
   }
 
+  // Programmatic focus() calls shouldn't affect the current input modality.
+  // However, we need to detect other cases when a focus event occurs without
+  // a preceding user event (e.g. screen reader focus). Overriding the focus
+  // method on HTMLElement.prototype is a bit hacky, but works.
+  let focus = HTMLElement.prototype.focus;
+  HTMLElement.prototype.focus = function () {
+    hasEventBeforeFocus = true;
+    focus.apply(this, arguments);
+  };
+
   document.addEventListener('keydown', handleKeyboardEvent, true);
   document.addEventListener('keyup', handleKeyboardEvent, true);
-
+  document.addEventListener('focus', handleFocusEvent, true);
+  
   if (typeof PointerEvent !== 'undefined') {
     document.addEventListener('pointerdown', handlePointerEvent, true);
     document.addEventListener('pointermove', handlePointerEvent, true);

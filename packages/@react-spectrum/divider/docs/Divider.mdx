@@ -1,0 +1,57 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/divider';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {Divider} from '@react-spectrum/divider';
+import {Flex} from '@react-spectrum/layout';
+```
+
+# Divider
+
+<p>{docs.exports.Divider.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Divider']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/rule/'}
+  ]} />
+
+## Example
+
+### Horizontal
+
+Horizontal Dividers can be used as is because of how CSS Layout works. They may also be used in Flex and Grid containers.
+```tsx example
+Content above
+<Divider marginTop="10px" marginBottom="10px" />
+Content below
+```
+
+### Vertical
+
+It is recommended to only use vertical Dividers in Flex or Grid containers. CSS Layout otherwise makes displaying a vertical Divider very difficult.
+```tsx example
+<Flex>
+  Content left
+  <Divider orientation="vertical" marginLeft="10px" marginRight="10px" />
+  Content right
+</Flex>
+```
+
+## Props
+
+<PropTable component={docs.exports.Divider} links={docs.links} />

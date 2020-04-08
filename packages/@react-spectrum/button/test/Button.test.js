@@ -1,10 +1,21 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 
-let FakeIcon = (props) => <svg {...props}><path d="M 10,150 L 70,10 L 130,150 z" /></svg>;
 /**
  * Logic Button has no tests outside of this file because functionally it is identical
  * to Button right now. The only difference is the class names, and since we aren't
@@ -144,18 +155,6 @@ describe('Button', function () {
   // see https://jsfiddle.net/snowystinger/z6vmrw4d/1/
   // it's also extraneous to test with 'enter' or 'space' on a button because it'd just be testing
   // the spec https://www.w3.org/TR/WCAG20-TECHS/SCR35.html
-
-  it.each`
-    Component      | props
-    ${ActionButton}| ${{icon: <FakeIcon role="status" />}}
-    ${Button}      | ${{icon: <FakeIcon role="status" />}}
-    ${V2Button}    | ${{icon: <FakeIcon role="status" />}}
-  `('v2/3 parity accepts an icon as a prop', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} />);
-
-    let icon = getByRole('status');
-    expect(icon).not.toBeNull();
-  });
 
   it.each`
     Name                | Component

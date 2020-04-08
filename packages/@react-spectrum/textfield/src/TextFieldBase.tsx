@@ -1,6 +1,24 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames, createFocusableRef, filterDOMProps, TextInputDOMPropNames, useStyleProps} from '@react-spectrum/utils';
+import {
+  classNames,
+  createFocusableRef,
+  filterDOMProps,
+  TextInputDOMPropNames,
+  useStyleProps
+} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Label} from '@react-spectrum/label';
 import {LabelPosition} from '@react-types/shared';
@@ -55,9 +73,9 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       return inputRef.current;
     }
   }));
-  
+
   let {styleProps} = useStyleProps(otherProps);
-  let {labelProps, textFieldProps} = useTextField(props);
+  let {labelProps, textFieldProps} = useTextField(props, inputRef);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
   let isInvalid = validationState === 'invalid';
 
@@ -70,12 +88,12 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       icon.props && icon.props.UNSAFE_className,
       'spectrum-Textfield-icon'
     );
-    
+
     icon = cloneElement(icon, {
       UNSAFE_className,
       size: 'S'
     });
-  } 
+  }
 
   let validationIcon = isInvalid ? <AlertMedium /> : <CheckmarkMedium />;
   let validation = cloneElement(validationIcon, {
@@ -122,8 +140,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
               },
               inputClassName
             )
-          } /> 
-      </FocusRing> 
+          } />
+      </FocusRing>
       {icon}
       {validationState ? validation : null}
       {wrapperChildren}
@@ -146,7 +164,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     }));
 
     return (
-      <div 
+      <div
         {...styleProps}
         ref={domRef}
         className={labelWrapperClass}>

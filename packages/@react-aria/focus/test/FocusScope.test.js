@@ -1,6 +1,19 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {cleanup, fireEvent, render} from '@testing-library/react';
 import {FocusScope, useFocusManager} from '../';
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 describe('FocusScope', function () {
   afterEach(cleanup);
@@ -240,6 +253,33 @@ describe('FocusScope', function () {
       fireEvent.focusIn(outside);
       expect(document.activeElement).toBe(input2);
     });
+
+    it('should restore focus to the last focused element in the scope on focus out', function () {
+      let {getByTestId} = render(
+        <div>
+          <FocusScope contain>
+            <input data-testid="input1" />
+            <input data-testid="input2" />
+          </FocusScope>
+        </div>
+      );
+
+      let input1 = getByTestId('input1');
+      let input2 = getByTestId('input2');
+
+      input1.focus();
+      fireEvent.focusIn(input1); // jsdom doesn't fire this automatically
+      expect(document.activeElement).toBe(input1);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      fireEvent.focusIn(input2);
+      expect(document.activeElement).toBe(input2);
+
+      input2.blur();
+      expect(document.activeElement).toBe(document.body);
+      fireEvent.focusOut(input2);
+      expect(document.activeElement).toBe(input2);
+    });
   });
 
   describe('focus restoration', function () {
@@ -272,6 +312,73 @@ describe('FocusScope', function () {
       rerender(<Test />);
 
       expect(document.activeElement).toBe(outside);
+    });
+
+    it('should move focus to the next element after the previously focused node on Tab', function () {
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="before" />
+            <button data-testid="trigger" />
+            <input data-testid="after" />
+            {show &&
+              <FocusScope restoreFocus autoFocus>
+                <input data-testid="input1" />
+                <input data-testid="input2" />
+                <input data-testid="input3" />
+              </FocusScope>
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let trigger = getByTestId('trigger');
+      trigger.focus();
+      
+      rerender(<Test show />);
+
+      let input1 = getByTestId('input1');
+      expect(document.activeElement).toBe(input1);
+
+      let input3 = getByTestId('input3');
+      input3.focus();
+
+      fireEvent.keyDown(input3, {key: 'Tab'});
+      expect(document.activeElement).toBe(getByTestId('after'));
+    });
+
+    it('should move focus to the previous element after the previously focused node on Shift+Tab', function () {
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="before" />
+            <button data-testid="trigger" />
+            <input data-testid="after" />
+            {show &&
+              <FocusScope restoreFocus autoFocus>
+                <input data-testid="input1" />
+                <input data-testid="input2" />
+                <input data-testid="input3" />
+              </FocusScope>
+            }
+          </div>
+        );
+      }
+
+      let {getByTestId, rerender} = render(<Test />);
+
+      let trigger = getByTestId('trigger');
+      trigger.focus();
+      
+      rerender(<Test show />);
+
+      let input1 = getByTestId('input1');
+      expect(document.activeElement).toBe(input1);
+
+      fireEvent.keyDown(input1, {key: 'Tab', shiftKey: true});
+      expect(document.activeElement).toBe(getByTestId('before'));
     });
   });
 
@@ -513,5 +620,44 @@ describe('FocusScope', function () {
       fireEvent.click(item3);
       expect(document.activeElement).toBe(item1);
     });
+  });
+  describe('nested focus scopes', function () {
+    it('should make child FocusScopes the active scope regardless of DOM structure', function () {
+      function ChildComponent(props) {
+        return ReactDOM.createPortal(props.children, document.body);
+      }
+      
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="outside" />
+            <FocusScope restoreFocus contain>
+              <input data-testid="input1" />
+              {show &&
+                <ChildComponent>
+                  <FocusScope restoreFocus contain>
+                    <input data-testid="input3" />
+                  </FocusScope>
+                </ChildComponent>
+              }
+            </FocusScope>
+          </div>
+        );
+      }
+      
+      let {getByTestId, rerender} = render(<Test />);
+      // Set a focused node and make first FocusScope the active scope
+      let input1 = getByTestId('input1');
+      input1.focus();
+      fireEvent.focusIn(input1);
+      expect(document.activeElement).toBe(input1);
+
+      rerender(<Test show />);
+      expect(document.activeElement).toBe(input1);
+      let input3 = getByTestId('input3');
+      input3.focus();
+      fireEvent.focusIn(input3);
+      expect(document.activeElement).toBe(input3);
+    }); 
   });
 });

@@ -10,7 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/* https://git.corp.adobe.com/Spectrum/spectrum-origins/pull/60 */
 :root {
   --spectrum-accordion-icon-width: 6px;
   --spectrum-accordion-icon-height: 10px;
@@ -99,8 +98,8 @@ governing permissions and limitations under the License.
 
       position: absolute;
       left: 0;
-      top: calc(-1 * var(--spectrum-accordion-item-border-size));
-      bottom: calc(-1 * var(--spectrum-accordion-item-border-size));
+      top: calc(var(--spectrum-accordion-item-border-size) * -1);
+      bottom: calc(var(--spectrum-accordion-item-border-size) * -1);
 
       width: var(--spectrum-accordion-item-border-size-key-focus);
     }

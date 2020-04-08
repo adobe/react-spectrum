@@ -20,7 +20,7 @@ governing permissions and limitations under the License.
   --spectrum-dialog-exit-animation-delay: 0ms;
 
   /* Distance between top and bottom of dialog and edge of window for fullscreen dialog */
-  --spectrum-dialog-fullscreen-margin: 32px;
+  --spectrum-dialog-fullscreen-margin: 40px;
   --spectrum-dialog-max-height: 90vh;
 }
 
@@ -65,9 +65,9 @@ governing permissions and limitations under the License.
 
   /* Don't be bigger than the screen */
   max-height: var(--spectrum-dialog-max-height);
+  max-width: 90vw;
 
   border-radius: var(--spectrum-dialog-border-radius);
-  overflow: hidden;
   outline: none; /* Firefox shows outline */
   pointer-events: auto;
 

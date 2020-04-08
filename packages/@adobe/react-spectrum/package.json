@@ -1,11 +1,11 @@
 {
   "name": "@adobe/react-spectrum",
-  "version": "3.0.0-alpha.2",
+  "version": "3.0.0-alpha.1",
   "private": true,
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
-    "url": "https://git.corp.adobe.com.com/React/react-spectrum"
+    "url": "https://github.com/adobe-private/react-spectrum"
   },
   "peerDependencies": {
     "react": "^16.8.0",

@@ -1,3 +1,15 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {cleanup, render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../';
@@ -12,7 +24,6 @@ let theme = {
   light: themeLight,
   medium: scaleMedium
 };
-
 
 function renderRadioGroup(ComponentGroup, Component, groupProps, radioProps) {
   return render(
@@ -264,5 +275,32 @@ describe('Radios', function () {
     expect(labelId).toBeDefined();
     let label = document.getElementById(labelId);
     expect(label).toHaveTextContent('Favorite Pet');
+  });
+
+  describe('V3 Radio group supports roving tabIndex ', function () {
+    it('v3 RadioGroup deafult roving tabIndex', async () => {
+      let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {}, {});
+      let radios = getAllByRole('radio');
+      expect(radios[0]).toHaveAttribute('tabIndex', '0');
+      expect(radios[1]).toHaveAttribute('tabIndex', '0');
+      expect(radios[2]).toHaveAttribute('tabIndex', '0');
+
+      radios[0].focus();
+      expect(document.activeElement).toBe(radios[0]);
+
+      userEvent.click(radios[1]);
+      expect(document.activeElement).toBe(radios[1]);
+      expect(radios[0]).toHaveAttribute('tabIndex', '-1');
+      expect(radios[1]).toHaveAttribute('tabIndex', '0');
+      expect(radios[2]).toHaveAttribute('tabIndex', '-1');
+    });
+
+    it('v3 RadioGroup roving tabIndex for autoFocus', async () => {
+      let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {}, [{}, {autoFocus: true}, {}]);
+      let radios = getAllByRole('radio');
+      expect(radios[0]).toHaveAttribute('tabIndex', '-1');
+      expect(radios[1]).toHaveAttribute('tabIndex', '0');
+      expect(radios[2]).toHaveAttribute('tabIndex', '-1');
+    });
   });
 });

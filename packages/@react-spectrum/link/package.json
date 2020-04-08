@@ -1,8 +1,8 @@
 {
   "name": "@react-spectrum/link",
-  "version": "3.0.0-alpha.2",
-  "private": true,
+  "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
@@ -25,21 +25,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe/react-spectrum"
+    "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/focus": "^3.0.0-alpha.2",
-    "@react-aria/link": "^3.0.0-alpha.2",
-    "@react-spectrum/utils": "^3.0.0-alpha.2",
-    "@react-types/link": "^3.0.0-alpha.2"
+    "@react-aria/focus": "^3.0.0-rc.2",
+    "@react-aria/link": "^3.0.0-alpha.1",
+    "@react-spectrum/utils": "^3.0.0-rc.2",
+    "@react-types/link": "^3.0.0-alpha.1"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0",
-    "react-dom": "^16.8.0",
     "@react-spectrum/provider": "^3.0.0-rc.1"
   },
   "publishConfig": {

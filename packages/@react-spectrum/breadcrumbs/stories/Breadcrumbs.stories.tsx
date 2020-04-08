@@ -1,5 +1,18 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {action} from '@storybook/addon-actions';
-import {BreadcrumbItem, Breadcrumbs} from '../';
+import {Breadcrumbs} from '../';
+import {Item} from '@react-stately/collections';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -10,6 +23,7 @@ const CenterDecorator = storyFn => <div style={styles}><div>{storyFn()}</div></d
 
 storiesOf('Breadcrumbs', module)
   .addDecorator(CenterDecorator)
+  .addParameters({providerSwitcher: {status: 'negative'}})
   .add(
     'Default',
     () => render({})
@@ -23,36 +37,32 @@ storiesOf('Breadcrumbs', module)
     () => render({size: 'L'})
   )
   .add(
-    'onPress',
-    () => renderPress({})
-  )
-  .add(
     'maxVisibleItems: 4',
-    () => renderPress({})
+    () => renderMany({})
   )
   .add(
     'maxVisibleItems: 4, showRoot: true',
-    () => renderPress({showRoot: true})
+    () => renderMany({showRoot: true})
   )
   .add(
     'maxVisibleItems: auto',
-    () => renderPress({maxVisibleItems: 'auto'})
+    () => renderMany({maxVisibleItems: 'auto'})
   )
   .add(
     'collapsed, maxVisibleItems: auto',
     () => (
       <div style={{width: '100px'}}>
-        {renderPress({maxVisibleItems: 'auto'})}
+        {renderMany({maxVisibleItems: 'auto'})}
       </div>
     )
   )
   .add(
     'maxVisibleItems: auto, showRoot: true',
-    () => renderPress({maxVisibleItems: 'auto', showRoot: true})
+    () => renderMany({maxVisibleItems: 'auto', showRoot: true})
   )
   .add(
     'maxVisibleItems: auto, size: L',
-    () => renderPress({maxVisibleItems: 'auto', size: 'L'})
+    () => renderMany({maxVisibleItems: 'auto', size: 'L'})
   )
   .add(
     'isDisabled: true',
@@ -61,6 +71,10 @@ storiesOf('Breadcrumbs', module)
   .add(
     'isDisabled: true, size: L',
     () => render({isDisabled: true, size: 'L'})
+  )
+  .add(
+    'isDisabled: true, maxVisibleItems: 4',
+    () => renderMany({isDisabled: true})
   )
   .add(
     'isHeading: true',
@@ -73,24 +87,24 @@ storiesOf('Breadcrumbs', module)
 
 function render(props = {}) {
   return (
-    <Breadcrumbs {...props}>
-      <BreadcrumbItem>Folder 1</BreadcrumbItem>
-      <BreadcrumbItem>Folder 2</BreadcrumbItem>
-      <BreadcrumbItem>Folder 3</BreadcrumbItem>
+    <Breadcrumbs {...props} onAction={action('onAction')}>
+      <Item uniqueKey="Folder 1">Folder 1</Item>
+      <Item uniqueKey="Folder 2">Folder 2</Item>
+      <Item uniqueKey="Folder 3">Folder 3</Item>
     </Breadcrumbs>
   );
 }
 
-function renderPress(props = {}) {
+function renderMany(props = {}) {
   return (
-    <Breadcrumbs {...props}>
-      <BreadcrumbItem onPress={action('press Folder 1')}>Folder 1</BreadcrumbItem>
-      <BreadcrumbItem onPress={action('press Folder 2')}>Folder 2</BreadcrumbItem>
-      <BreadcrumbItem onPress={action('press Folder 3')}>Folder 3</BreadcrumbItem>
-      <BreadcrumbItem onPress={action('press Folder 4')}>Folder 4</BreadcrumbItem>
-      <BreadcrumbItem onPress={action('press Folder 5')}>Folder 5</BreadcrumbItem>
-      <BreadcrumbItem onPress={action('press Folder 6')}>Folder 6</BreadcrumbItem>
-      <BreadcrumbItem onPress={action('press Folder 7')}>Folder 7</BreadcrumbItem>
+    <Breadcrumbs {...props} onAction={action('onAction')}>
+      <Item uniqueKey="Folder 1">Folder 1</Item>
+      <Item uniqueKey="Folder 2">Folder 2</Item>
+      <Item uniqueKey="Folder 3">Folder 3</Item>
+      <Item uniqueKey="Folder 4">Folder 4</Item>
+      <Item uniqueKey="Folder 5">Folder 5</Item>
+      <Item uniqueKey="Folder 6">Folder 6</Item>
+      <Item uniqueKey="Folder 7">Folder 7</Item>
     </Breadcrumbs>
   );
 }

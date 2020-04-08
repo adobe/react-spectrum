@@ -1,37 +1,58 @@
-import {chain} from '@react-aria/utils';
-import {Collection, Layout, LayoutInfo} from '@react-stately/collections';
-import React, {CSSProperties, FocusEvent, HTMLAttributes, Key, useCallback, useEffect, useRef} from 'react';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {chain, focusWithoutScrolling} from '@react-aria/utils';
+import {Collection, Layout} from '@react-stately/collections';
+import {CollectionItem} from './CollectionItem';
+import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
+import {ReusableView} from '@react-stately/collections';
 import {ScrollView} from './ScrollView';
 import {useCollectionState} from '@react-stately/collections';
 
 interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLElement> {
   children: (type: string, content: T) => V,
+  renderWrapper?: (
+    parent: ReusableView<T, V> | null,
+    reusableView: ReusableView<T, V>,
+    children: ReusableView<T, V>[],
+    renderChildren: (views: ReusableView<T, V>[]) => ReactElement[]
+  ) => ReactElement,
   layout: Layout<T>,
   collection: Collection<T>,
-  focusedKey?: Key
+  focusedKey?: Key,
+  sizeToFit?: 'width' | 'height',
+  scrollDirection?: 'horizontal' | 'vertical' | 'both'
 }
 
-export function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>) {
-  let {children: renderView, layout, collection, focusedKey, ...otherProps} = props;
+function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, ref: RefObject<HTMLDivElement>) {
+  let {children: renderView, renderWrapper, layout, collection, focusedKey, sizeToFit, scrollDirection, ...otherProps} = props;
   let {
     visibleViews,
     visibleRect,
     setVisibleRect,
     contentSize,
     isAnimating,
-    collectionManager
+    collectionManager,
+    startScrolling,
+    endScrolling
   } = useCollectionState({
     layout,
     collection,
     renderView,
-    renderWrapper: (reusableView) => (
-      <div key={reusableView.key} role="presentation" style={layoutInfoToStyle(reusableView.layoutInfo)}>
-        {reusableView.rendered}
-      </div>
-    )
+    renderWrapper: renderWrapper || defaultRenderWrapper
   });
 
-  let ref = useRef<HTMLDivElement>();
+  let fallbackRef = useRef<HTMLDivElement>();
+  ref = ref || fallbackRef;
 
   // Scroll to the focusedKey when it changes. Actually focusing the focusedKey
   // is up to the implementation using CollectionView since we don't have refs
@@ -53,18 +74,18 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
     }
 
     isFocusWithin.current = e.target !== ref.current;
-  }, [focusedKey, collectionManager]);
+  }, [ref, collectionManager, focusedKey]);
 
   let onBlur = useCallback((e: FocusEvent) => {
     isFocusWithin.current = ref.current.contains(e.relatedTarget as Element);
-  }, []);
+  }, [ref]);
 
   // When the focused item is scrolled out of view and is removed from the DOM, 
   // move focus to the collection view as a whole if focus was within before.
   let focusedView = collectionManager.getItemView(focusedKey);
   useEffect(() => {
     if (focusedKey && !focusedView && isFocusWithin.current && document.activeElement !== ref.current) {
-      ref.current.focus();
+      focusWithoutScrolling(ref.current);
     }
   });
   
@@ -78,27 +99,29 @@ export function CollectionView<T extends object, V>(props: CollectionViewProps<T
       innerStyle={isAnimating ? {transition: `none ${collectionManager.transitionDuration}ms`} : undefined}
       contentSize={contentSize}
       visibleRect={visibleRect}
-      onVisibleRectChange={setVisibleRect}>
+      onVisibleRectChange={setVisibleRect}
+      onScrollStart={startScrolling}
+      onScrollEnd={endScrolling}
+      sizeToFit={sizeToFit}
+      scrollDirection={scrollDirection}>
       {visibleViews}
     </ScrollView>
   );
 }
 
-function layoutInfoToStyle(layoutInfo: LayoutInfo): CSSProperties {
-  return {
-    position: 'absolute',
-    overflow: 'hidden',
-    top: layoutInfo.rect.y,
-    left: layoutInfo.rect.x,
-    transition: 'all',
-    WebkitTransition: 'all',
-    WebkitTransitionDuration: 'inherit',
-    transitionDuration: 'inherit',
-    width: layoutInfo.rect.width + 'px',
-    height: layoutInfo.rect.height + 'px',
-    opacity: layoutInfo.opacity,
-    zIndex: layoutInfo.zIndex,
-    transform: layoutInfo.transform,
-    contain: 'size layout style paint'
-  };
+// forwardRef doesn't support generic parameters, so cast the result to the correct type
+// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+const _CollectionView = React.forwardRef(CollectionView) as <T extends object, V>(props: CollectionViewProps<T, V> & {ref?: RefObject<HTMLDivElement>}) => ReactElement;
+export {_CollectionView as CollectionView};
+
+function defaultRenderWrapper<T extends object, V>(
+  parent: ReusableView<T, V> | null,
+  reusableView: ReusableView<T, V>
+) {
+  return (
+    <CollectionItem
+      key={reusableView.key}
+      reusableView={reusableView}
+      parent={parent} />
+  );
 }

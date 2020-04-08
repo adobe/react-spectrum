@@ -1,3 +1,15 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {classNames} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
@@ -13,8 +25,8 @@ import {useSearchFieldState} from '@react-stately/searchfield';
 function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
   let defaultIcon = (
-    <Magnifier 
-      data-testid="searchicon" 
+    <Magnifier
+      data-testid="searchicon"
       UNSAFE_className={
         classNames(
           styles,
@@ -74,10 +86,13 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
       icon={icon}
       onChange={state.setValue}
       value={state.value}
-      wrapperChildren={state.value !== '' && clearButton} />
+      wrapperChildren={(state.value !== '' && !props.isReadOnly) && clearButton} />
   );
 }
 
+/**
+ * SearchFields are decorated text inputs that allow users to submit text.
+ */
 let _SearchField = forwardRef(SearchField);
 export {_SearchField as SearchField};
 

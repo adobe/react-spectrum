@@ -1,4 +1,16 @@
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
@@ -7,15 +19,42 @@ import {useProvider} from '@react-spectrum/provider';
 type Scale = 'M' | 'L'
 
 interface IconProps extends DOMProps, StyleProps {
+  /**
+   * Alternate text for assistive technologies
+   */
   alt?: string,
+  /**
+   * The content to display. Should be an SVG
+   */
   children: ReactElement,
+  /**
+   * Size of Icon (changes based on scale)
+   */
   size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL',
+  /**
+   * TODO
+   */
   scale?: Scale,
+  /**
+   * TODO
+   */
   color?: string,
-  slot?: string
+  /**
+   * A slot to place the icon in.
+   * @default "icon"
+   */
+  slot?: string,
+  /**
+   * @default 'img'
+   */
+  role?: string
 }
 
+/**
+ * Spectrum icons are clear, minimal, and consistent across platforms. They follow the focused and rational principles of the design system in both metaphor and style.
+ */
 export function Icon(props: IconProps) {
+  props = useSlotProps(props, 'icon');
   let {
     children,
     alt,
@@ -27,7 +66,7 @@ export function Icon(props: IconProps) {
     role = 'img',
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps({slot: 'icon', ...otherProps});
+  let {styleProps} = useStyleProps(otherProps);
 
   let provider = useProvider();
   let pscale = 'M';

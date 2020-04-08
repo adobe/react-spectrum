@@ -1,0 +1,124 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/checkbox';
+import packageData from '../package.json';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+
+```jsx import
+ import {Checkbox} from '@react-spectrum/checkbox';
+ ```
+
+# Checkbox
+
+<p>{docs.exports.Checkbox.description}</p>
+
+<HeaderInfo
+ packageData={packageData}
+ componentNames={['Checkbox']}
+ sourceData={[
+ {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/checkbox/'}
+ ]} />
+
+## Example
+
+```tsx example
+<Checkbox>Checkbox Label</Checkbox>
+```
+
+## Content
+
+Checkboxes accept children, which are rendered as the label.
+
+### Accessibility
+
+In certain cases a visible label isn't needed. For example, a checkbox used to select a table row.
+If a visible label isn't specified, an `aria-label` must be provided to the Checkbox for accessibility.
+If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+### Internationalization
+
+To internationalize a Checkbox, a localized label should be passed to the `children` or `aria-label` prop.
+
+## Value
+
+Checkboxes are not selected by default. The `defaultSelected` prop can be used to set the default state (uncontrolled).
+Alternatively, the `isSelected` prop can be used to make the selected state controlled.
+
+```tsx example
+<Checkbox defaultSelected>Uncontrolled</Checkbox>
+<Checkbox isSelected>Controlled</Checkbox>
+```
+
+### Indeterminate
+[View guidelines](https://spectrum.adobe.com/page/checkbox/#Mixed-value)
+
+A Checkbox can be in an indeterminate state, controlled using the `isIndeterminate` prop.
+This overrides the selection state, whether controlled or uncontrolled.
+The Checkbox will remain in an indeterminate state until the `isIndeterminate` prop is set to false, regardless of user interaction.
+
+```tsx example
+<Checkbox isIndeterminate>Checkbox Label</Checkbox>
+```
+
+## Events
+
+Checkboxes accept a user defined `onChange` prop, triggered whenever the Checkbox is clicked.
+The example below uses `onChange` to alert the user to changes in the checkbox's state.
+
+```tsx example
+function Example() {
+  let [selected, setSelection] = React.useState('false');
+
+  let toggle = (value) => {
+    value ? setSelection('true') : setSelection('false');
+  }
+
+  return (
+    <div>
+      <div> The Checkbox is checked: {selected} </div>
+      <Checkbox onChange={toggle}>
+        Checkbox Label
+      </Checkbox>
+    </div>
+  );
+ }
+```
+
+## Validation
+
+Checkboxes can display a validation state to communicate to the user if the current value is invalid.
+Implement your own validation logic in your app and pass `"invalid"` to the Checkbox via the `validationState` prop.
+
+```tsx example
+<Checkbox validationState="invalid">Checkbox Label</Checkbox>
+```
+
+## Props
+
+<PropTable component={docs.exports.Checkbox} links={docs.links} />
+
+## Visual Options
+
+### isDisabled
+[View guidelines](https://spectrum.adobe.com/page/checkbox/#Disabled)
+
+```tsx example
+<Checkbox isDisabled>Checkbox Label</Checkbox>
+```
+
+### isEmphasized
+[View guidelines](https://spectrum.adobe.com/page/checkbox/#Emphasized-or-not?)
+
+```tsx example
+<Checkbox isEmphasized>Checkbox Label</Checkbox>
+```
