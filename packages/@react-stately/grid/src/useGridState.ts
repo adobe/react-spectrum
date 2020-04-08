@@ -14,10 +14,11 @@ import {Collection, CollectionBuilder, Node, TreeCollection} from '@react-statel
 import {CollectionBase, MultipleSelection, Column} from '@react-types/shared';
 import {Key, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {GridCollection} from './GridCollection';
 
 export interface GridState<T> {
-  collection: Collection<Node<T>>,
-  selectionManager: SelectionManager
+  collection: GridCollection<Node<T>>,
+  selectionManager: SelectionManager<T>
 }
 
 interface GridStateProps<T> extends CollectionBase<T>, MultipleSelection {
@@ -30,7 +31,7 @@ export function useGridState<T>(props: GridStateProps<T>): GridState<T>  {
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey, props.columns), [props.itemKey]);
+  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey, true), [props.itemKey]);
   let tree = useMemo(() => {
     let nodes = builder.build(props, (key) => ({
       isSelected: selectionState.selectedKeys.has(key),
@@ -38,7 +39,7 @@ export function useGridState<T>(props: GridStateProps<T>): GridState<T>  {
       isFocused: key === selectionState.focusedKey
     }));
 
-    return new TreeCollection(nodes);
+    return new GridCollection(nodes);
   }, [builder, props, selectionState.selectedKeys, selectionState.focusedKey, disabledKeys]);
 
   return {

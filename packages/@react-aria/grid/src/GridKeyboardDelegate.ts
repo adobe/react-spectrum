@@ -10,17 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-stately/collections';
 import {Key, RefObject} from 'react';
 import {KeyboardDelegate, Direction} from '@react-types/shared';
+import {GridCollection} from '@react-stately/grid';
+import {Node} from '@react-stately/collections';
 
 export class GridKeyboardDelegate<T> implements KeyboardDelegate {
-  private collection: Collection<Node<T>>;
+  private collection: GridCollection<T>;
   private ref: RefObject<HTMLElement>;
   private direction: Direction;
   private collator: Intl.Collator;
 
-  constructor(collection: Collection<Node<T>>, ref: RefObject<HTMLElement>, direction: Direction, collator?: Intl.Collator) {
+  constructor(collection: GridCollection<T>, ref: RefObject<HTMLElement>, direction: Direction, collator?: Intl.Collator) {
     this.collection = collection;
     this.ref = ref;
     this.direction = direction;
@@ -30,6 +31,25 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
   getKeyBelow(key: Key) {
     let startItem = this.collection.getItem(key);
     if (!startItem) {
+      return;
+    }
+
+    if (startItem.type === 'column') {
+      let child = [...startItem.childNodes][0];
+      if (child) {
+        return child.key;
+      }
+
+      let key = this.collection.getFirstKey();
+      while (key) {
+        let item = this.collection.getItem(key);
+        if (item.type === 'cell' && item.index === startItem.index) {
+          return key;
+        }
+
+        key = this.collection.getKeyAfter(key);
+      }
+
       return;
     }
 
@@ -61,6 +81,15 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
       return;
     }
 
+    if (startItem.type === 'column') {
+      let parent = this.collection.getItem(startItem.parentKey);
+      if (parent && parent.type === 'column') {
+        return parent.key;
+      }
+
+      return;
+    }
+
     // If focus is on a cell, start searching from the parent row
     if (startItem.type === 'cell') {
       key = startItem.parentKey;
@@ -81,12 +110,26 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
 
       key = this.collection.getKeyBefore(key);
     }
+
+    if (startItem.type === 'cell') {
+      return this.collection.headerRows[this.collection.headerRows.length - 1][startItem.index].key;
+    }
   }
 
   getKeyRightOf(key: Key) {
     let item = this.collection.getItem(key);
     if (!item) {
       return;
+    }
+
+    if (item.type === 'column') {
+      let row = this.collection.headerRows[item.level];
+      let next = row[item.index + 1];
+      if (next) {
+        return next.key;
+      }
+
+      return row[0].key;
     }
 
     // If focus is on a row, focus the first child cell.
@@ -120,6 +163,16 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
       return;
     }
 
+    if (item.type === 'column') {
+      let row = this.collection.headerRows[item.level];
+      let next = row[item.index - 1];
+      if (next) {
+        return next.key;
+      }
+
+      return row[row.length - 1].key;
+    }
+
     // If focus is on a row, focus the last child cell.
     if (item.type === 'item') {
       let children = [...item.childNodes];
@@ -145,17 +198,20 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     }
   }
 
-  getFirstKey(key: Key, global?: boolean) {
-    let item = this.collection.getItem(key);
-    if (!item) {
-      return;
-    }
+  getFirstKey(key?: Key, global?: boolean) {
+    let item: Node<T>;
+    if (key != null) {
+      item = this.collection.getItem(key);
+      if (!item) {
+        return;
+      }
 
-    // If global flag is not set, and a cell is currently focused,
-    // move focus to the first cell in the parent row.
-    if (item.type === 'cell' && !global) {
-      let parent = this.collection.getItem(item.parentKey);
-      return [...parent.childNodes][0].key;
+      // If global flag is not set, and a cell is currently focused,
+      // move focus to the first cell in the parent row.
+      if (item.type === 'cell' && !global) {
+        let parent = this.collection.getItem(item.parentKey);
+        return [...parent.childNodes][0].key;
+      }
     }
 
     // Find the first enabled row
@@ -170,7 +226,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     // If global flag is set, focus the first cell in the first row.
-    if (key && item.type === 'cell' && global) {
+    if (key && item && item.type === 'cell' && global) {
       let item = this.collection.getItem(key);
       key = [...item.childNodes][0].key;
     }
@@ -179,18 +235,21 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     return key;
   }
 
-  getLastKey(key: Key, global?: boolean) {
-    let item = this.collection.getItem(key);
-    if (!item) {
-      return;
-    }
+  getLastKey(key?: Key, global?: boolean) {
+    let item: Node<T>;
+    if (key != null) {
+      item = this.collection.getItem(key);
+      if (!item) {
+        return;
+      }
 
-    // If global flag is not set, and a cell is currently focused,
-    // move focus to the last cell in the parent row.
-    if (item.type === 'cell' && !global) {
-      let parent = this.collection.getItem(item.parentKey);
-      let children = [...parent.childNodes];
-      return children[children.length - 1].key;
+      // If global flag is not set, and a cell is currently focused,
+      // move focus to the last cell in the parent row.
+      if (item.type === 'cell' && !global) {
+        let parent = this.collection.getItem(item.parentKey);
+        let children = [...parent.childNodes];
+        return children[children.length - 1].key;
+      }
     }
 
     // Find the last enabled row
@@ -205,7 +264,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     // If global flag is set, focus the last cell in the last row.
-    if (key && item.type === 'cell' && global) {
+    if (key && item && item.type === 'cell' && global) {
       let item = this.collection.getItem(key);
       let children = [...item.childNodes];
       key = children[children.length - 1].key;

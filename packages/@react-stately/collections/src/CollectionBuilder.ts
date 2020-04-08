@@ -14,15 +14,18 @@ import {CollectionBase, CollectionElement, ItemRenderer, Column} from '@react-ty
 import {ItemStates, Node, PartialNode} from './types';
 import React, {Key, ReactElement} from 'react';
 
+interface CollectionBuilderState {
+  renderer?: (value: any) => ReactElement,
+  childKey?: string
+}
+
 export class CollectionBuilder<T> {
-  columns: Column[] | null;
   private itemKey: string;
   private cache: Map<T, Node<T>> = new Map();
   private getItemStates: (key: Key) => ItemStates;
 
-  constructor(itemKey: string, columns: Column[]) {
+  constructor(itemKey: string) {
     this.itemKey = itemKey;
-    this.columns = columns;
   }
 
   build(props: CollectionBase<T>, getItemStates?: (key: Key) => ItemStates) {
@@ -39,21 +42,21 @@ export class CollectionBuilder<T> {
       }
 
       for (let item of props.items) {
-        yield this.getFullNode({
+        yield* this.getFullNode({
           value: item
-        }, children);
+        }, {renderer: children, childKey: this.itemKey});
       }
     } else {
       let items = React.Children.toArray(children);
       for (let item of items) {
-        yield this.getFullNode({
+        yield* this.getFullNode({
           element: item
-        });
+        }, {childKey: this.itemKey});
       }
     }
   }
 
-  getKey(item: CollectionElement<T>, partialNode: PartialNode<T>, parentKey?: Key): Key {
+  getKey(item: CollectionElement<T>, partialNode: PartialNode<T>, state: CollectionBuilderState, parentKey?: Key): Key {
     if (item.props.uniqueKey) {
       return item.props.uniqueKey;
     }
@@ -66,8 +69,8 @@ export class CollectionBuilder<T> {
       return `${parentKey}${partialNode.key}`;
     }
 
-    if (this.itemKey && partialNode.value[this.itemKey]) {
-      return partialNode.value[this.itemKey];
+    if (state.childKey && partialNode.value[state.childKey]) {
+      return partialNode.value[state.childKey];
     }
   
     let v = partialNode.value as any;
@@ -95,17 +98,25 @@ export class CollectionBuilder<T> {
     }
   }
 
-  getFullNode(partialNode: PartialNode<T>, renderer?: ItemRenderer<T>, parentKey?: Key, parentNode?: Node<T>): Node<T> {
+  getChildState(state: CollectionBuilderState, partialNode: PartialNode<T>) {
+    return {
+      renderer: partialNode.renderer || state.renderer,
+      childKey: partialNode.childKey || state.childKey
+    };
+  }
+
+  *getFullNode(partialNode: PartialNode<T>, state: CollectionBuilderState, parentKey?: Key, parentNode?: Node<T>): Generator<Node<T>> {
     // If there's a value instead of an element on the node, and a parent renderer function is available,
     // use it to render an element for the value.
     let element = partialNode.element;
-    if (!element && partialNode.value && renderer) {
+    if (!element && partialNode.value && state && state.renderer) {
       let cached = this.getCached(partialNode.value);
       if (cached) {
-        return cached;
+        yield cached;
+        return;
       }
 
-      element = renderer(partialNode.value);
+      element = state.renderer(partialNode.value);
     }
 
     // If there's an element with a getCollectionNode function on its type, then it's a supported component.
@@ -117,27 +128,32 @@ export class CollectionBuilder<T> {
         throw new Error(`Unknown element <${name}> in collection.`);
       }
 
-      let childNode = type.getCollectionNode(element.props, this) as PartialNode<T>;
-      let node = this.getFullNode({
-        ...childNode,
-        key: childNode.element ? null : this.getKey(element, partialNode, parentKey),
-        index: partialNode.index,
-        wrapper: compose(partialNode.wrapper, childNode.wrapper)
-      }, childNode.renderer || renderer, parentKey ? `${parentKey}${element.key}` : element.key, parentNode);
+      for (let childNode of type.getCollectionNode(element.props, this) as Iterable<PartialNode<T>>) {
+        let nodes = this.getFullNode({
+          ...childNode,
+          key: childNode.element ? null : this.getKey(element, partialNode, state, parentKey),
+          index: partialNode.index,
+          wrapper: compose(partialNode.wrapper, childNode.wrapper)
+        }, this.getChildState(state, childNode), parentKey ? `${parentKey}${element.key}` : element.key, parentNode);
 
-      // Cache the node based on its value
-      node.value = childNode.value || partialNode.value;
-      if (node.value) {
-        this.cache.set(node.value, node);
+        for (let node of nodes) {
+          // Cache the node based on its value
+          node.value = childNode.value || partialNode.value;
+          if (node.value) {
+            this.cache.set(node.value, node);
+          }
+
+          // The partial node may have specified a type for the child in order to specify a constraint.
+          // Verify that the full node that was built recursively matches this type.
+          if (partialNode.type && node.type !== partialNode.type) {
+            throw new Error(`Unsupported type <${capitalize(node.type)}> in <${capitalize(parentNode.type)}>. Only <${capitalize(partialNode.type)}> is supported.`);
+          }
+
+          yield node;
+        }
       }
 
-      // The partial node may have specified a type for the child in order to specify a constraint.
-      // Verify that the full node that was built recursively matches this type.
-      if (partialNode.type && node.type !== partialNode.type) {
-        throw new Error(`Unsupported type <${capitalize(node.type)}> in <${capitalize(parentNode.type)}>. Only <${capitalize(partialNode.type)}> is supported.`);
-      }
-
-      return node;
+      return;
     }
 
     // Create full node
@@ -161,7 +177,7 @@ export class CollectionBuilder<T> {
         }
 
         for (let child of partialNode.childNodes()) {
-          yield builder.getFullNode(child, child.renderer || renderer, node.key, node);
+          yield* builder.getFullNode(child, builder.getChildState(state, child), node.key, node);
         }
       })
     };
@@ -171,7 +187,7 @@ export class CollectionBuilder<T> {
       Object.assign(node, this.getItemStates(node.key));
     }
 
-    return node;
+    yield node;
   }
 }
 

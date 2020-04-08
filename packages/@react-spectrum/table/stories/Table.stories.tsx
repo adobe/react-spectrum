@@ -11,10 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Table, TableProps} from '../';
+import {Table, TableHeader, TableBody, Column, Row, Cell} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Item, Cell} from '@react-stately/collections';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -22,56 +21,71 @@ let columns = [
   {name: 'Baz', key: 'baz'}
 ];
 
+let nestedColumns = [
+  {name: 'Tiered One Header', children: [
+    {name: 'Tier Two Header A', children: [
+      {name: 'Foo'},
+      {name: 'Bar'}
+    ]},
+    {name: 'Tier Two Header B', children: [
+      {name: 'Baz'}
+    ]}
+  ]}
+];
+
 let items = [
   {foo: 'Foo 1', bar: 'Bar 1', baz: 'Baz 1'},
   {foo: 'Foo 2', bar: 'Bar 2', baz: 'Baz 2'},
 ];
 
+let onSelectionChange = action('onSelectionChange');
 storiesOf('Table', module)
   .add(
     'static',
     () => (
-      <Table columns={columns} onSelectionChange={s => onSelectionChange([...s])}>
-        <Item>
-          <Cell>One</Cell>
-          <Cell>Two</Cell>
-          <Cell>Three</Cell>
-        </Item>
-        <Item>
-          <Cell>One</Cell>
-          <Cell>Two</Cell>
-          <Cell>Three</Cell>
-        </Item>
+      <Table onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column title="Group 1">
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
+          </Column>
+          <Column title="Group 2">
+            <Column key="baz">Baz</Column>
+          </Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+        </TableBody>
       </Table>
     )
   )
   .add(
     'dynamic',
     () => (
-      <Table items={items} itemKey="foo" columns={columns} onSelectionChange={s => onSelectionChange([...s])}>
-        {item =>
-          <Item>
-            {column => <Cell>{item[column.key]}</Cell>}
-          </Item>
-        }
+      <Table onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={nestedColumns} columnKey="name">
+          {column =>
+            <Column childColumns={column.children}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={items} itemKey="foo">
+          {item =>
+            <Row>
+              <Cell>{item.foo}</Cell>
+              <Cell>{item.bar}</Cell>
+              <Cell>{item.baz}</Cell>
+            </Row>
+          }
+        </TableBody>
       </Table>
     )
   );
-
-let onSelectionChange = action('onSelectionChange');
-function render(props:TableProps = {}) {
-  return (
-    <Table {...props} columns={columns} onSelectionChange={s => onSelectionChange([...s])}>
-      <Item>
-        <Cell>One</Cell>
-        <Cell>Two</Cell>
-        <Cell>Three</Cell>
-      </Item>
-      <Item>
-        <Cell>One</Cell>
-        <Cell>Two</Cell>
-        <Cell>Three</Cell>
-      </Item>
-    </Table>
-  );
-}

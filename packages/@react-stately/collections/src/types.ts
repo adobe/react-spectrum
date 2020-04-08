@@ -25,7 +25,7 @@ export interface ItemStates {
 }
 
 export interface Node<T> extends ItemStates {
-  type: 'section' | 'item' | 'cell',
+  type: 'section' | 'item' | 'column' | 'cell',
   key: Key,
   value: T,
   level: number,
@@ -43,7 +43,7 @@ export interface Node<T> extends ItemStates {
 }
 
 export interface PartialNode<T> {
-  type?: 'section' | 'item' | 'cell',
+  type?: 'section' | 'item' | 'column' | 'cell',
   key?: Key,
   value?: T,
   element?: ReactElement,
@@ -53,6 +53,7 @@ export interface PartialNode<T> {
   'aria-label'?: string,
   index?: number,
   renderer?: ItemRenderer<T>,
+  childKey?: string,
   hasChildNodes?: boolean,
   childNodes?: () => IterableIterator<PartialNode<T>>,
   props?: ItemProps<T>

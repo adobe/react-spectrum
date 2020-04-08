@@ -13,7 +13,6 @@
 export * from './CollectionBuilder';
 export * from './Item';
 export * from './Section';
-export * from './Cell';
 export * from './TreeCollection';
 export * from './types';
 

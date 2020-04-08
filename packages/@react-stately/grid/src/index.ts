@@ -11,3 +11,10 @@
  */
 
 export * from './useGridState';
+export * from './TableHeader';
+export * from './TableBody';
+export * from './Column';
+export * from './Row';
+export * from './Cell';
+export {Section} from '@react-stately/collections';
+export * from './GridCollection';

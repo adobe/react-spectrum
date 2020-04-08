@@ -12,7 +12,7 @@
 
 import {classNames, DOMRef, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
-// import {TableProps} from '@react-types/g';
+import {TableProps} from '@react-types/table';
 import React, { useRef, useContext } from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useGrid, useRow, useRowGroup, useColumnHeader, useGridCell} from '@react-aria/grid';
@@ -25,11 +25,10 @@ function useTableContext() {
   return useContext(TableContext);
 }
 
-function Table(props: TableProps, ref: DOMRef) {
+function Table<T>(props: TableProps<T>, ref: DOMRef) {
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let state = useGridState(props);
-  console.log(state)
   let domRef = useDOMRef(ref);
   let {gridProps} = useGrid({
     ...props,
@@ -44,36 +43,50 @@ function Table(props: TableProps, ref: DOMRef) {
       ref={domRef}
       className={classNames(styles, 'spectrum-Table', styleProps.className)}>
       <TableContext.Provider value={state}>
-        <TableHeader columns={props.columns} />
-        <TableRowGroup items={[...state.collection]} />
+        <TableHeader />
+        <TableRowGroup items={state.collection.body} />
       </TableContext.Provider>
     </table>
   );
 }
 
-function TableHeader({columns}) {
+function TableHeader() {
   let {rowGroupProps} = useRowGroup();
+  let state = useTableContext();
 
   return (
     <thead {...rowGroupProps} className={classNames(styles, 'spectrum-Table-head')}>
-      <tr>
-        {columns.map(column => 
-         <TableColumnHeader key={column.name} column={column} />
-        )}
-      </tr>
+      {state.collection.headerRows.map(columns => 
+        <tr>
+          {columns.map(column => 
+            <TableColumnHeader key={column.key} column={column} />
+          )}
+        </tr>
+      )}
     </thead>
   );
 }
 
 function TableColumnHeader({column}) {
-  let {columnHeaderProps} = useColumnHeader();
+  let ref = useRef();
+  let state = useTableContext();
+  let {columnHeaderProps} = useColumnHeader({
+    key: column.key,
+    ref,
+    colspan: column.colspan
+  }, state);
 
   return (
-    <th 
-      {...columnHeaderProps}
-      className={classNames(styles, 'spectrum-Table-headCell')}>
-      {column.name}
-    </th>
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <th 
+        {...columnHeaderProps}
+        ref={ref}
+        className={classNames(styles, 'spectrum-Table-headCell')}
+        colSpan={column.colspan}
+        style={{textAlign: column.colspan > 1 ? 'center' : 'left'}}>
+        {column.rendered}
+      </th>
+    </FocusRing>
   );
 }
 

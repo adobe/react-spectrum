@@ -13,15 +13,33 @@
 import {GridState} from '@react-stately/grid';
 import {KeyboardDelegate} from '@react-types/shared';
 import {RefObject, HTMLAttributes, Key} from 'react';
+import { useSelectableItem } from '@react-aria/selection';
+
+interface ColumnHeaderProps {
+  key: Key,
+  ref: RefObject<HTMLElement>,
+  isVirtualized?: boolean,
+  colspan?: number
+}
 
 interface ColumnHeaderAria {
   columnHeaderProps: HTMLAttributes<HTMLElement>
 }
 
-export function useColumnHeader(): ColumnHeaderAria {
+export function useColumnHeader<T>(props: ColumnHeaderProps, state: GridState<T>): ColumnHeaderAria {
+  let {key, ref, isVirtualized, colspan} = props;
+  let {itemProps} = useSelectableItem({
+    selectionManager: state.selectionManager,
+    itemKey: key,
+    itemRef: ref,
+    isVirtualized
+  });
+
   return {
     columnHeaderProps: {
       role: 'columnheader',
+      'aria-colspan': colspan && colspan > 1 ? colspan : null,
+      ...itemProps
       // 'aria-sort'
       // 'aria-colindex'
     }

@@ -19,47 +19,23 @@ function Item<T>(props: ItemProps<T>): ReactElement { // eslint-disable-line @ty
   return null;
 }
 
-Item.getCollectionNode = function<T> (props: ItemProps<T>, builder: CollectionBuilder<T>): PartialNode<T> {
+Item.getCollectionNode = function* <T>(props: ItemProps<T>): Generator<PartialNode<T>> {
   let {childItems, title, children} = props;
 
   let rendered = props.title || props.children;
   let textValue = props.textValue || (typeof rendered === 'string' ? rendered : '') || props['aria-label'] || '';
-  if (!textValue && !builder.columns) {
+  if (!textValue) {
     console.warn('<Item> with non-plain text contents is unsupported by type to select for accessibility. Please add a `textValue` prop.');
   }
 
-  return {
+  yield {
     type: 'item',
     props: props,
     rendered,
     textValue,
     'aria-label': props['aria-label'],
-    hasChildNodes: hasChildItems(props) || !!builder.columns,
+    hasChildNodes: hasChildItems(props),
     *childNodes() {
-      // If the CollectionBuilder has columns, then the item may have cells inside it
-      if (builder.columns) {
-        let index = 0;
-        if (typeof children === 'function') {
-          for (let column of builder.columns) {
-            yield {
-              type: 'cell',
-              element: children(column),
-              key: column.key,
-              index: index++
-            };
-          }
-        } else {
-          let cells = React.Children.toArray(children) as CellElement[];
-          for (let cell of cells) {
-            yield {
-              type: 'cell',
-              element: cell,
-              index: index++
-            };
-          }  
-        }
-      }
-
       if (childItems) {
         for (let child of childItems) {
           yield {
@@ -67,7 +43,7 @@ Item.getCollectionNode = function<T> (props: ItemProps<T>, builder: CollectionBu
             value: child
           };
         }
-      } else if (title && !builder.columns) {
+      } else if (title) {
         let items = React.Children.toArray(children) as ItemElement<T>[];
         for (let item of items) {
           yield {

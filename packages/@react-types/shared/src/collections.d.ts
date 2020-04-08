@@ -16,7 +16,7 @@ export interface ItemProps<T> {
   title?: ReactNode, // label?? contents?
   childItems?: Iterable<T>,
   hasChildItems?: boolean,
-  children: ReactNode | CellElement | CellElement[] | CellRenderer,
+  children: ReactNode,
   textValue?: string,
   'aria-label'?: string,
   uniqueKey?: Key
@@ -40,20 +40,6 @@ export interface SectionProps<T> extends AsyncLoadable<T> {
 }
 
 export type SectionElement<T> = ReactElement<SectionProps<T>>;
-
-export interface CellProps {
-  children: ReactNode,
-  textValue?: string,
-  'aria-label'?: string
-}
-
-export interface Column {
-  key: Key,
-  title: string
-}
-
-export type CellElement = ReactElement<CellProps>;
-export type CellRenderer = (column: Column) => CellElement;
 
 export type CollectionElement<T> = SectionElement<T> | ItemElement<T>;
 export type CollectionChildren<T> = CollectionElement<T> | CollectionElement<T>[] | ((item: T) => CollectionElement<T>);
@@ -118,10 +104,10 @@ export interface KeyboardDelegate {
   getKeyPageAbove?(key: Key): Key,
   
   /** Returns the first key, or `null` for none. */
-  getFirstKey?(key: Key, global?: boolean): Key,
+  getFirstKey?(key?: Key, global?: boolean): Key,
 
   /** Returns the last key, or `null` for none. */
-  getLastKey?(key: Key, global?: boolean): Key,
+  getLastKey?(key?: Key, global?: boolean): Key,
 
   /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
   getKeyForSearch?(search: string, fromKey?: Key): Key

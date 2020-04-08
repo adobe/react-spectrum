@@ -11,3 +11,11 @@
  */
 
 export * from './Table';
+export {
+  TableHeader,
+  Column,
+  TableBody,
+  Section,
+  Row,
+  Cell
+} from '@react-stately/grid';

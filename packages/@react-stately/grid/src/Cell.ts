@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {CellProps} from '@react-types/shared';
-import {PartialNode} from './types';
+import {CellProps} from '@react-types/table';
+import {PartialNode} from '@react-stately/collections';
 import {ReactElement} from 'react';
 
 function Cell(props: CellProps): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 
-Cell.getCollectionNode = function<T> (props: CellProps): PartialNode<T> {
+Cell.getCollectionNode = function* <T>(props: CellProps): Generator<PartialNode<T>> {
   let {children} = props;
 
   let textValue = props.textValue || (typeof children === 'string' ? children : '') || props['aria-label'] || '';
@@ -26,7 +26,7 @@ Cell.getCollectionNode = function<T> (props: CellProps): PartialNode<T> {
     console.warn('<Cell> with non-plain text contents is unsupported by type to select for accessibility. Please add a `textValue` prop.');
   }
 
-  return {
+  yield {
     type: 'cell',
     props: props,
     rendered: children,
@@ -37,5 +37,5 @@ Cell.getCollectionNode = function<T> (props: CellProps): PartialNode<T> {
 };
 
 // We don't want getCollectionNode to show up in the type definition
-let _Cell = Cell as <T>(props: CellProps) => JSX.Element;
+let _Cell = Cell as (props: CellProps) => JSX.Element;
 export {_Cell as Cell};
