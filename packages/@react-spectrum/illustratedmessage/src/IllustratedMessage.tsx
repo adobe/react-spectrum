@@ -21,7 +21,6 @@ import typographyStyles from '@adobe/spectrum-css-temp/components/typography/var
 function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
-    slots,
     ...otherProps
   } = props;
 
@@ -37,12 +36,10 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
     classNames(styles, 'spectrum-IllustratedMessage-description')
   );
 
-  if (!slots) {
-    slots = {
-      heading: {UNSAFE_className: headingClassName},
-      content: {UNSAFE_className: contentClassName}
-    };
-  }
+  let slots = {
+    heading: {UNSAFE_className: headingClassName},
+    content: {UNSAFE_className: contentClassName}
+  };
 
   return (
     <Flex
@@ -61,5 +58,9 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
   );
 }
 
+/**
+ * An IllustratedMessage displays an illustration and a message, usually
+ * for an empty state or an error page.
+ */
 let _IllustratedMessage = forwardRef(IllustratedMessage);
 export {_IllustratedMessage as IllustratedMessage};
