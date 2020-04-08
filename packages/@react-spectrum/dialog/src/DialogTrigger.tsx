@@ -114,8 +114,14 @@ DialogTrigger.getCollectionNode = function (props: SpectrumDialogTriggerProps) {
   };
 };
 
+/**
+ * The DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's 
+ * open state with the trigger's press state. Additionally, it allows you to customize the type and 
+ * positioning of the Dialog.
+ */
+
 // We don't want getCollectionNode to show up in the type definition
-let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => JSX.Element;
+let _DialogTrigger = DialogTrigger;
 export {_DialogTrigger as DialogTrigger};
 
 function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, ...props}) {

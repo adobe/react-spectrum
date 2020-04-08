@@ -23,12 +23,36 @@ export type SizeAxis = 'width' | 'height';
 export type PlacementAxis = Axis | 'center';
 
 export interface PositionProps {
+  /** The placement of the element with respect to its anchor element. */
   placement?: Placement,
+  /** 
+   * The placement padding that should be applied between the element and its 
+   * surrounding container. 
+   */
   containerPadding?: number,
+  /** 
+   * The additional offset that should be applied between the element and its 
+   * anchor element. Offset is applied in the same direction in which the element 
+   * is rendered.
+   */
   offset?: number,
+  /**
+   * The additional offset that should be applied between the element and its
+   * anchor element. Offset is applied perpendicular to the direction in which the element
+   * is rendered. 
+   */
   crossOffset?: number,
+  /** 
+   * Whether the element should flip its orientation (e.g. top to bottom or left to right) when 
+   * there is insufficient room for it to render completely.
+   */
   shouldFlip?: boolean,
+  /**
+   * The element that should be used as the bounding container when calculating container offset
+   * or whether it should flip.
+   */
   boundaryElement?: Element,
+  /** Whether the element is rendered. */
   isOpen?: boolean
 }
 

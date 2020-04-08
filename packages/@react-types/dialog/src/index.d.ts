@@ -17,17 +17,26 @@ import {ReactElement, ReactNode, RefObject} from 'react';
 export type SpectrumDialogClose = (close: () => void) => ReactElement;
 
 export interface DialogTriggerProps {
+  /** Whether the Dialog is open by default (controlled). */
   isOpen?: boolean,
+  /** Whether the Dialog is open by default (uncontrolled). */
   defaultOpen?: boolean,
+  /** Handler that is called when the Dialog's open state changes. */
   onOpenChange?: (isOpen: boolean) => void
 }
 
-export interface SpectrumDialogTriggerProps extends PositionProps, DialogTriggerProps {
+export interface SpectrumDialogTriggerProps extends DialogTriggerProps, PositionProps {
+  /** The Dialog and its trigger element. See [the docs](TODO link) for more information on what to provide as children. */
   children: [ReactElement, SpectrumDialogClose | ReactElement],
+  /** The type of Dialog that should be rendered. See [TODO section](TODO link) for an explaination on each. */
   type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  /** The type of Dialog that should be rendered when on a mobile device. See [TODO section](TODO link) for an explaination on each. */
   mobileType?: 'modal' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  /** Whether a popover type Dialog's arrow should be hidden. */
   hideArrow?: boolean,
+  /** The ref of the element the Dialog should visually attach itself to. Defaults to the trigger button if not defined. */
   targetRef?: RefObject<HTMLElement>,
+  /** Whether a modal type Dialog should be dismissable. */
   isDismissable?: boolean
 }
 

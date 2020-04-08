@@ -220,7 +220,11 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'containerPadding',
-    () => renderPopover({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 20})
+    () => renderPopover({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 10})
+  )
+  .add(
+    'targetRef',
+    () => renderTargetRef({type: 'popover', width: 'calc(100vh - 100px)'})
   )
   .add(
     'alert dialog',
@@ -264,6 +268,24 @@ function renderPopover({width = 'auto', ...props}) {
       </DialogTrigger>
     </div>
   );
+}
+
+function renderTargetRef({width = 'auto', ...props}) {
+  let ref = React.useRef();
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger {...props} targetRef={ref} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
+        <ActionButton>Trigger</ActionButton>
+        <Dialog>
+          <Heading>The Heading</Heading>
+          <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+          <Divider />
+          <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
+        </Dialog>
+      </DialogTrigger>
+      <div ref={ref} style={{marginInlineStart: '200px'}}>Popover appears over here</div>
+    </div>
+  )
 }
 
 function renderAlert({width = 'auto', ...props}) {

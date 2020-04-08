@@ -1,0 +1,133 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import DialogAnatomy from '../images/DialogAnatomy.svg';
+import docs from 'docs:@react-spectrum/dialog';
+import {ExampleImage, HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {ActionButton, Button} from '@react-spectrum/button';
+import Book from '@spectrum-icons/workflow/Book';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {Content, Footer, Header} from '@react-spectrum/view';
+import {Checkbox} from '@react-spectrum/checkbox';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Divider} from '@react-spectrum/divider';
+import {Flex} from '@react-spectrum/layout';
+import {Form} from '@react-spectrum/form';
+import {Heading, Text} from '@react-spectrum/typography';
+import {Image} from '@react-spectrum/image';
+import {StatusLight} from '@react-spectrum/statuslight';
+import {TextField} from '@react-spectrum/textfield';
+```
+
+# DialogTrigger
+
+<p>{docs.exports.DialogTrigger.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Dialog']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/dialog/'}
+  ]} />
+
+## Example
+
+```tsx example
+<DialogTrigger>
+  <ActionButton>Check connectivity</ActionButton>
+  {(close) => (
+    <Dialog>
+      <Heading>Internet Speed Test</Heading>
+      <Header>
+        <StatusLight variant="positive">
+          Connection status
+        </StatusLight>
+      </Header>
+      <Divider />
+      <Content>
+        <Text>
+          Start speed test?
+        </Text>
+      </Content>
+      <ButtonGroup>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button variant="cta" onPress={close}>Confirm</Button>
+      </ButtonGroup>
+    </Dialog>
+  )}
+</DialogTrigger>
+```
+
+UPDATE DIALOG DOCS TO LINK TO DIALOG TRIGGER DOCS, NEE
+
+## Content
+
+// DISCUSS HOW IT ACCEPTS A BUTTON AND A DIALOGS
+// TALK ABOUT THE CLOSE FUNCTION
+*If the component has a children prop that accepts any type of content (e.g. `ReactNode`), include this section. Please include a note about how to internationalize the content.*
+
+## Dialog Types
+
+### Modal
+
+### Popover
+
+### Tray
+
+### Fullscreen
+
+### Fullscreen Takeover
+
+### Mobile Type
+// DO A SUBSECTION OR FULL SECTION ON TYPES OF DIALOGS AND THEIR DIFFERENCES
+// For the modal dialog, talk about isDismissable and link to dialog docs for details for additional stuff to consider (children)
+// Use these links for each type: https://spectrum.adobe.com/page/trays/, https://spectrum.adobe.com/page/popovers/, https://spectrum.adobe.com/page/dialog/
+// DISCUSS MOBILETYPE AS A SUBSECTION HERE
+
+## Dialog Placement
+
+### Dialog Anchor
+// aka targetRef
+### Placement
+// aka placement
+
+### Offset
+// aka offset
+### Cross Offset
+// aka crossOffset
+
+### Container Padding
+// aka containerPadding
+### Flipping
+// aka shouldFlip
+### Boundary Element 
+// aka boundary
+## Events
+
+// TALK ABOUT onOpenCHange
+*If the component supports event props, include this section. Only cover the events that are important to the main functionality of the component.*
+
+## Props
+
+<PropTable component={docs.exports.DialogTrigger} links={docs.links} />
+
+## Visual Options
+
+*Show examples of all variants and visual props here with links to the design website for more usage details. Examples can be grouped together for conciseness.*
+
+// hideArrow, isOpen
+
+### Sample Option
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
