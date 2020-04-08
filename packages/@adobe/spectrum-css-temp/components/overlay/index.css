@@ -10,10 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
-  --spectrum-overlay-animation-distance: var(--spectrum-dropdown-flyout-menu-offset-y);
-}
-
 %spectrum-overlay {
   visibility: hidden;
 
@@ -37,17 +33,17 @@ governing permissions and limitations under the License.
 }
 
 %spectrum-overlay--bottom--open {
-  transform: translateY(var(--spectrum-overlay-animation-distance));
+  transform: translateY(var(--spectrum-overlay-positive-transform-distance));
 }
 
 %spectrum-overlay--top--open {
-  transform: translateY(calc(var(--spectrum-overlay-animation-distance) * -1));
+  transform: translateY(var(--spectrum-overlay-negative-transform-distance));
 }
 
 %spectrum-overlay--right--open {
-  transform: translateX(var(--spectrum-overlay-animation-distance));
+  transform: translateX(var(--spectrum-overlay-positive-transform-distance));
 }
 
 %spectrum-overlay--left--open {
-  transform: translateX(calc(var(--spectrum-overlay-animation-distance) * -1));
+  transform: translateX(var(--spectrum-overlay-negative-transform-distance));
 }
