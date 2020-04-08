@@ -32,8 +32,7 @@ export interface CheckboxProps extends CheckboxBase {
 
 export interface SpectrumCheckboxProps extends CheckboxProps, DOMProps, StyleProps {
   /**
-   * By default, checkboxes are not emphasized (gray).
-   * This prop sets the emphasized style (blue) which provides visual prominence.
+   * This prop sets the emphasized style which provides visual prominence.
    */
   isEmphasized?: boolean
 }
