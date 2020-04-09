@@ -224,7 +224,7 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'targetRef',
-    () => renderTargetRef({type: 'popover', width: 'calc(100vh - 100px)'})
+    () => (<TriggerWithRef type="popover" />)
   )
   .add(
     'alert dialog',
@@ -270,10 +270,10 @@ function renderPopover({width = 'auto', ...props}) {
   );
 }
 
-function renderTargetRef({width = 'auto', ...props}) {
+let TriggerWithRef = (props) => {
   let ref = React.useRef();
   return (
-    <div style={{display: 'flex', width, margin: '100px 0'}}>
+    <div style={{display: 'flex'}}>
       <DialogTrigger {...props} targetRef={ref} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
         <ActionButton>Trigger</ActionButton>
         <Dialog>
@@ -283,10 +283,11 @@ function renderTargetRef({width = 'auto', ...props}) {
           <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
         </Dialog>
       </DialogTrigger>
-      <div ref={ref} style={{marginInlineStart: '200px'}}>Popover appears over here</div>
+      <span ref={ref} style={{marginInlineStart: '200px'}}>Popover appears over here</span>
     </div>
-  )
-}
+  );
+};
+
 
 function renderAlert({width = 'auto', ...props}) {
   return (
