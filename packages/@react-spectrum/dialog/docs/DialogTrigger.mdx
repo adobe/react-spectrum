@@ -10,24 +10,19 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import DialogAnatomy from '../images/DialogAnatomy.svg';
 import docs from 'docs:@react-spectrum/dialog';
 import {ExampleImage, HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
 import {ActionButton, Button} from '@react-spectrum/button';
-import Book from '@spectrum-icons/workflow/Book';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
-import {Content, Footer, Header} from '@react-spectrum/view';
 import {Checkbox} from '@react-spectrum/checkbox';
+import {Content, Footer, Header} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
-import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Heading, Text} from '@react-spectrum/typography';
-import {Image} from '@react-spectrum/image';
-import {StatusLight} from '@react-spectrum/statuslight';
 import {TextField} from '@react-spectrum/textfield';
 ```
 
@@ -37,87 +32,415 @@ import {TextField} from '@react-spectrum/textfield';
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Dialog']}
-  sourceData={[
-    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/dialog/'}
-  ]} />
+  componentNames={['DialogTrigger']} />
 
 ## Example
 
 ```tsx example
+<DialogTrigger type="popover">
+  <ActionButton>Disk Status</ActionButton>
+  <Dialog>
+    <Heading>C://</Heading>
+    <Divider />
+    <Content>
+      <Text>
+        50% disk space remaining.
+      </Text>
+    </Content>
+  </Dialog>
+</DialogTrigger>
+```
+
+## Content
+
+The DialogTrigger accepts exactly two children: the element which triggers the opening
+of the Dialog and the Dialog itself. The trigger must be the first child 
+passed into the DialogTrigger and should be an element that supports press events.
+
+If your Dialog has buttons within it that should close the Dialog when pressed,
+you must wrap the Dialog in a function in order to properly propagate the DialogTrigger's
+`close` state setter to the Dialog's children. Dialogs that do not contain such interactive
+elements can simply provide the Dialog component as is to the DialogTrigger as its second child.  
+
+The example below demonstrates how to pass the DialogTrigger's `close` state setter to the Dialog's buttons. 
+
+```tsx example
 <DialogTrigger>
-  <ActionButton>Check connectivity</ActionButton>
-  {(close) => (
+  <ActionButton>Checkout</ActionButton>
+  {(close) => ( 
     <Dialog>
-      <Heading>Internet Speed Test</Heading>
-      <Header>
-        <StatusLight variant="positive">
-          Connection status
-        </StatusLight>
-      </Header>
+      <Heading>Confirm checkout?</Heading>
       <Divider />
       <Content>
         <Text>
-          Start speed test?
+          You have 5 items in your cart. Proceed to checkout?
         </Text>
       </Content>
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
-        <Button variant="cta" onPress={close}>Confirm</Button>
+        <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
       </ButtonGroup>
     </Dialog>
   )}
 </DialogTrigger>
 ```
 
-UPDATE DIALOG DOCS TO LINK TO DIALOG TRIGGER DOCS, NEE
-
-## Content
-
-// DISCUSS HOW IT ACCEPTS A BUTTON AND A DIALOGS
-// TALK ABOUT THE CLOSE FUNCTION
-*If the component has a children prop that accepts any type of content (e.g. `ReactNode`), include this section. Please include a note about how to internationalize the content.*
-
 ## Dialog Types
+
+By providing a `type` prop, you can specify the type of Dialog that is rendered
+by your DialogTrigger. 
 
 ### Modal
 
+Modal Dialogs create an underlay that blocks access to the underlying user interface
+until the Dialog is closed. Sizing options can be found in the [Dialog page](./Dialog.html#size).
+
+```tsx example
+<DialogTrigger type="modal">
+  <ActionButton>Unlink</ActionButton>
+  {(close) => ( 
+    <Dialog>
+      <Heading>Unlinking email</Heading>
+      <Divider />
+      <Content>
+        <Text>
+          This will unlink your email from your profile "TestUser". Are you sure?
+        </Text>
+      </Content>
+      <ButtonGroup>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+      </ButtonGroup>    
+    </Dialog>
+  )}
+</DialogTrigger>
+```
+
 ### Popover
+
+If you want a Dialog that doesn't block access to the user interface, consider
+using a Popover Dialog. See the [docs below](#dialog-placement) for how you can
+customize the positioning.
+
+```tsx example
+<DialogTrigger type="popover">
+  <ActionButton>Info</ActionButton>
+  <Dialog>
+    <Heading>Version Info</Heading>
+    <Divider />
+    <Content>
+      <Text>
+        Version 1.0.0, Copyright 2020
+      </Text>
+    </Content>    
+  </Dialog>
+</DialogTrigger>
+```
 
 ### Tray
 
+Tray Dialogs are useful on mobile device or smaller screens.
+
+```tsx example
+<DialogTrigger type="tray">
+  <ActionButton>Info</ActionButton>
+  <Dialog>
+    <Heading>Version Info</Heading>
+    <Divider />
+    <Content>
+      <Text>
+        Version 1.0.0, Copyright 2020
+      </Text>
+    </Content>    
+  </Dialog>
+</DialogTrigger>
+```
+
 ### Fullscreen
+
+Fullscreen Dialogs are a fullscreen variant of the Modal Dialog, only revealing a small 
+portion of the page behind the underlay. 
+
+```tsx example
+<DialogTrigger type="fullscreen">
+  <ActionButton>See Details</ActionButton>
+  {(close) => ( 
+    <Dialog>
+      <Heading>Package details</Heading>
+      <Divider />
+      <Content>
+        <Text>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.
+        </Text>
+      </Content>
+      <ButtonGroup>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button variant="cta" onPress={close} autoFocus>Buy</Button>
+      </ButtonGroup>    
+    </Dialog>
+  )}
+</DialogTrigger>
+```
 
 ### Fullscreen Takeover
 
-### Mobile Type
-// DO A SUBSECTION OR FULL SECTION ON TYPES OF DIALOGS AND THEIR DIFFERENCES
-// For the modal dialog, talk about isDismissable and link to dialog docs for details for additional stuff to consider (children)
-// Use these links for each type: https://spectrum.adobe.com/page/trays/, https://spectrum.adobe.com/page/popovers/, https://spectrum.adobe.com/page/dialog/
-// DISCUSS MOBILETYPE AS A SUBSECTION HERE
+Fullscreen takeover Dialogs are similar to the fullscreen variant except that the 
+background covers the entire screen. The page behind the dialog is not visible. This variant
+should be reserved for workflows where displaying a second dialog on top of the first one is 
+to be expected.
+
+```tsx example
+<DialogTrigger type="fullscreenTakeover">
+  <ActionButton>Register</ActionButton>
+  {(close) => ( 
+    <Dialog>
+      <Heading>Register a new account</Heading>
+      <Divider />
+      <Content>
+        <Form>
+          <TextField label="Name" />
+          <TextField label="Email address" />
+          <Checkbox>Make profile private</Checkbox>
+        </Form>
+        <DialogTrigger isDismissable type="modal">
+          <ActionButton>Privacy Policy</ActionButton>
+          <Dialog>
+            <Heading>Privacy Policy</Heading>
+            <Divider />
+            <Content>
+              <Text>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.
+              </Text>
+            </Content>
+          </Dialog>
+        </DialogTrigger>
+      </Content>
+      <ButtonGroup>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+      </ButtonGroup>    
+    </Dialog>
+  )}
+</DialogTrigger>
+```
+
+### Dismissable
+
+If your modal, fullscreen, or fullscreen takeover Dialog doesn't require the user 
+to make a confirmation, you can set `isDismissable` on the DialogTrigger. This adds
+an exit button that the user can click to dismiss the Dialog.
+
+```tsx example
+<DialogTrigger isDismissable type="modal">
+  <ActionButton>User Status</ActionButton>
+  <Dialog>
+    <Heading>Status: Bob</Heading>
+    <Divider />
+    <Content>
+      <Text>
+        Last Login: December 12,1989
+      </Text>
+    </Content>    
+  </Dialog>
+</DialogTrigger>
+```
+
+### Mobile type
+
+The `mobileType` prop allows you to specify what kind of Dialog should be displayed when viewed in
+mobile devices or smaller viewports. Note that Popover type Dialogs are not supported as
+a valid `mobileType`.
+
+The example below renders as a Popover in desktop but switches to a Modal in mobile. 
+
+```tsx example
+<DialogTrigger type="popover" mobileType="modal">
+  <ActionButton>Info</ActionButton>
+  <Dialog>
+    <Heading>Version Info</Heading>
+    <Divider />
+    <Content>
+      <Text>
+        Version 1.0.0, Copyright 2020
+      </Text>
+    </Content>    
+  </Dialog>
+</DialogTrigger>
+```
 
 ## Dialog Placement
 
-### Dialog Anchor
-// aka targetRef
-### Placement
-// aka placement
+Popover Dialogs support a variety of placement options since they do not take over the user interface
+like Modal or Tray Dialogs.
 
-### Offset
-// aka offset
-### Cross Offset
-// aka crossOffset
+### Dialog Anchor
+
+By default, Popover Dialogs anchor themselves to their associated trigger. This can be overridden by providing
+a separate ref to the `targetRef` prop.
+
+```tsx example
+function Example() {
+  let ref = React.useRef()
+
+  return (
+    <div>
+      <DialogTrigger type="popover" targetRef={ref}>
+        <ActionButton>Trigger</ActionButton>
+        <Dialog>
+          <Heading>The Heading</Heading>
+          <Divider />
+          <Content>
+            This is a popover.
+          </Content>
+        </Dialog>
+      </DialogTrigger>
+      <span ref={ref} style={{marginInlineStart: '200px', width: '50px'}}>Popover appears over here</span>
+    </div>
+  );
+}
+```
+
+### Placement
+
+The Popover Dialog's placement with respect to its anchor element can be adjusted using the `placement`
+prop. See the props table [below](#props) for a full list of available placement combinations.
+
+```tsx example
+<DialogTrigger type="popover" placement="right top">
+  <ActionButton>Trigger</ActionButton>
+  <Dialog>
+    <Heading>The Heading</Heading>
+    <Divider />
+    <Content>
+      This is a popover placed to the right of its trigger and offset so the arrow is at the top of the dialog.
+    </Content>
+  </Dialog>
+</DialogTrigger>
+```
+
+### Offset and Cross Offset
+
+The Popover Dialog's offset with respect to its anchor element can be adjusted using the `offset` and
+`crossOffset` props. `offset` controls the spacing between the Dialog and the anchor element parallel 
+to the direction the Dialog is rendered whereas `crossOffset` handles the offset in the direction perpendicular. 
+
+```tsx example
+<DialogTrigger type="popover" placement="top" offset={-50}>
+  <ActionButton>Trigger</ActionButton>
+  <Dialog>
+    <Heading>The Heading</Heading>
+    <Divider />
+    <Content>
+      This is a popover offset by an additional 50px above the trigger.
+    </Content>
+  </Dialog>
+</DialogTrigger>
+
+<DialogTrigger type="popover" placement="top" crossOffset={100}>
+  <ActionButton>Trigger</ActionButton>
+  <Dialog>
+    <Heading>The Heading</Heading>
+    <Divider />
+    <Content>
+      This is a popover offset by an additional 100px to the right of the trigger.
+    </Content>
+  </Dialog>
+</DialogTrigger>
+```
+
+### Flipping
+
+Applying `shouldFlip` to the DialogTrigger makes the Popover Dialog attempt to flip its placement
+in situations where the original placement would cause it to render out of view.
+
+```tsx example
+<DialogTrigger type="popover" placement="bottom" shouldFlip>
+  <ActionButton>Trigger</ActionButton>
+  <Dialog>
+    <Heading>The Heading</Heading>
+    <Divider />
+    <Content>
+      This is a popover that will flip if it can't fully render below the button.
+    </Content>
+  </Dialog>
+</DialogTrigger>
+```
 
 ### Container Padding
-// aka containerPadding
-### Flipping
-// aka shouldFlip
+
+You can control the minimum padding required between the Popover Dialog and the 
+surrounding container via the `containerPadding` prop. This affects the positioning
+breakpoints that determine when the Dialog will attempt to flip.
+
+The example below will flip the Dialog from above the trigger button to below the trigger
+button if the Dialog cannot render fully while maintaining 50px of padding between itself and
+the top of the browser.
+```tsx example
+<DialogTrigger type="popover" shouldFlip position="top" containerPadding={50}>
+  <ActionButton>Trigger</ActionButton>
+  <Dialog>
+    <Heading>The Heading</Heading>
+    <Divider />
+    <Content>
+      This is a popover.
+    </Content>
+  </Dialog>
+</DialogTrigger>
+```
+
 ### Boundary Element 
-// aka boundary
+
+TODO figure this one out
+
+```tsx example
+function Example() {
+  let ref = React.useRef();
+
+  return (
+    <div ref={ref} style={{border: '5px solid red', height: "500px", width: "500px"}}>
+      <DialogTrigger placement="top" shouldFlip type="popover" boundaryElement={ref.current}>
+        <ActionButton>Trigger</ActionButton>
+        <Dialog>
+          <Heading>The Heading</Heading>
+          <Divider />
+          <Content>
+            This is a popover.
+          </Content>
+        </Dialog>
+      </DialogTrigger>
+    </div>
+  );
+}
+```
+
 ## Events
 
-// TALK ABOUT onOpenCHange
-*If the component supports event props, include this section. Only cover the events that are important to the main functionality of the component.*
+DialogTrigger accepts an `onOpenChange` handler which is triggered whenever the Dialog is opened or closed.
+
+The example below uses `onOpenChange` to update a separate `span` element with the current open state of the
+Dialog.
+
+```tsx example
+function Example() {
+  let [state, setState] = React.useState(false);
+
+  return (
+    <div>
+      <DialogTrigger type="popover" placement="top" onOpenChange={(isOpen) => setState(isOpen)}>
+        <ActionButton>Trigger</ActionButton>
+        <Dialog>
+          <Heading>The Heading</Heading>
+          <Divider />
+          <Content>
+            This is a popover.
+          </Content>
+        </Dialog>
+      </DialogTrigger>
+      <span>Current open state: {state.toString()}</span>
+    </div>
+  );
+}
+```
 
 ## Props
 
@@ -125,9 +448,24 @@ UPDATE DIALOG DOCS TO LINK TO DIALOG TRIGGER DOCS, NEE
 
 ## Visual Options
 
-*Show examples of all variants and visual props here with links to the design website for more usage details. Examples can be grouped together for conciseness.*
+### Hide Arrow
 
-// hideArrow, isOpen
+The `hideArrow` prop hides the Popover Dialog's arrow if applied.
 
-### Sample Option
-[View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
+```tsx example
+<DialogTrigger hideArrow type="popover">
+  <ActionButton>Trigger</ActionButton>
+  <Dialog>
+    <Heading>The Heading</Heading>
+    <Divider />
+    <Content>
+      This is a popover with its tip hidden.
+    </Content>
+  </Dialog>
+</DialogTrigger>
+```
+
+### isOpen and defaultOpen
+
+The `isOpen` and `defaultOpen` props control whether the Dialog is open by default.
+They apply controlled and uncontrolled behavior on the DialogTrigger respectively.

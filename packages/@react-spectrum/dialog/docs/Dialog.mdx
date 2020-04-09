@@ -259,7 +259,7 @@ function Example() {
 ```
 
 Additionally, DialogTrigger accepts an `onOpenChange` prop which is triggered whenever the Dialog is opened or closed. 
-For more information on the `onOpenChange` prop see [DialogTrigger page](TODO LINK HERE).
+For more information on the `onOpenChange` prop see the [DialogTrigger docs](./DialogTrigger.html#events).
 
 ### Dismissable Dialogs
 
@@ -302,12 +302,12 @@ the wrapping `close` function surrounding the Dialog. An example of this can be 
 
 ## Visual Options
 
-### Dialog Variants
+### Dialog Type
 
-Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger docs](TODO link) for more information.
+Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger docs](./DialogTrigger.html#dialog-types) for more information.
 
 ```tsx example
-<DialogTrigger type="modal" isDismissable>
+<DialogTrigger isDismissable type="modal">
   <ActionButton>Trigger Modal</ActionButton>
   <Dialog>
     <Heading>Modal</Heading>
@@ -350,8 +350,8 @@ Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger do
 ### Size
 
 Only `modal` type Dialogs support a user defined size prop. Note that the `fullscreen` and `fullscreenTakeover` sizes 
-require the [DialogTrigger `type`](TODO LINK) prop to be set as `fullscreen` and `fullscreenTakeover` respectively for container sizing
-considerations. Modal sizes on mobile devices are also unaffected by this prop due to screen constraints.
+require the [DialogTrigger `type`](./DialogTrigger.html#dialog-types) prop to be set as `fullscreen` and `fullscreenTakeover`
+respectively for container sizing considerations. Modal sizes on mobile devices are also unaffected by this prop due to screen constraints.
 
 ```tsx example
 <DialogTrigger>
