@@ -89,17 +89,17 @@ article {
   }
 }
 
-article h1 {
-  margin-top: 0;
+article h1.articleHeader  {
+  margin-top: 0 !important;
   font-size: 58px;
 }
 
-article h1 + p {
+article h1.articleHeader + p {
   font-size: 18px;
   max-width: 75%;
 }
 
-article h2 {
+article h2.sectionHeader.docsHeader {
   margin-top: 80px;
 }
 
