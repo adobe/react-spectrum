@@ -21,7 +21,7 @@ export interface TreeState<T> {
   expandedKeys: Set<Key>,
   disabledKeys: Set<Key>,
   toggleKey: (key: Key) => void,
-  selectionManager: SelectionManager
+  selectionManager: SelectionManager<T>
 }
 
 export function useTreeState<T>(props: CollectionBase<T> & Expandable & MultipleSelection): TreeState<T> {

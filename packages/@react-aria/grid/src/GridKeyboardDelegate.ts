@@ -114,6 +114,8 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     if (startItem.type === 'cell') {
       return this.collection.headerRows[this.collection.headerRows.length - 1][startItem.index].key;
     }
+
+    return this.collection.headerRows[this.collection.headerRows.length - 1][0].key;
   }
 
   getKeyRightOf(key: Key) {

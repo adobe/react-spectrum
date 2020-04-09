@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ItemElement, ItemProps, CellElement} from '@react-types/shared';
+import {ItemElement, ItemProps} from '@react-types/shared';
 import {PartialNode} from './types';
 import React, {ReactElement} from 'react';
-import { CollectionBuilder } from './CollectionBuilder';
 
 function Item<T>(props: ItemProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;

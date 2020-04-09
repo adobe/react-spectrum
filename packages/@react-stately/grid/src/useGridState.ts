@@ -10,19 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
-import {CollectionBase, MultipleSelection, Column} from '@react-types/shared';
+import {CollectionBuilder} from '@react-stately/collections';
+import {CollectionBase, MultipleSelection} from '@react-types/shared';
 import {Key, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {GridCollection} from './GridCollection';
 
 export interface GridState<T> {
-  collection: GridCollection<Node<T>>,
+  collection: GridCollection<T>,
   selectionManager: SelectionManager<T>
 }
 
 interface GridStateProps<T> extends CollectionBase<T>, MultipleSelection {
-  columns: Column[]
 }
 
 export function useGridState<T>(props: GridStateProps<T>): GridState<T>  {
@@ -31,8 +30,8 @@ export function useGridState<T>(props: GridStateProps<T>): GridState<T>  {
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey, true), [props.itemKey]);
-  let tree = useMemo(() => {
+  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
+  let collection = useMemo(() => {
     let nodes = builder.build(props, (key) => ({
       isSelected: selectionState.selectedKeys.has(key),
       isDisabled: disabledKeys.has(key),
@@ -43,7 +42,7 @@ export function useGridState<T>(props: GridStateProps<T>): GridState<T>  {
   }, [builder, props, selectionState.selectedKeys, selectionState.focusedKey, disabledKeys]);
 
   return {
-    collection: tree,
-    selectionManager: new SelectionManager(tree, selectionState)
+    collection,
+    selectionManager: new SelectionManager(collection, selectionState)
   };
 }

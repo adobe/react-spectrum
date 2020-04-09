@@ -35,13 +35,20 @@ export function useColumnHeader<T>(props: ColumnHeaderProps, state: GridState<T>
     isVirtualized
   });
 
+  let columnHeaderProps: HTMLAttributes<HTMLElement> = {
+    role: 'columnheader',
+    'aria-colspan': colspan && colspan > 1 ? colspan : null,
+    ...itemProps
+    // 'aria-sort'
+    // 'aria-colindex'
+  };
+
+  if (isVirtualized) {
+    let item = state.collection.getItem(key);
+    columnHeaderProps['aria-colindex'] = item.index + 1;
+  }
+
   return {
-    columnHeaderProps: {
-      role: 'columnheader',
-      'aria-colspan': colspan && colspan > 1 ? colspan : null,
-      ...itemProps
-      // 'aria-sort'
-      // 'aria-colindex'
-    }
+    columnHeaderProps
   };
 }

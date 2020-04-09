@@ -10,22 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, DOMRef, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import {TableProps} from '@react-types/table';
+import {SpectrumTableProps} from '@react-types/table';
 import React, { useRef, useContext } from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useGrid, useRow, useRowGroup, useColumnHeader, useGridCell} from '@react-aria/grid';
-import {useGridState} from '@react-stately/grid';
+import {useGridState, GridState} from '@react-stately/grid';
 import {useProviderProps} from '@react-spectrum/provider';
 import { FocusRing } from '@react-aria/focus';
 
-const TableContext = React.createContext();
+const TableContext = React.createContext<GridState<unknown>>(null);
 function useTableContext() {
   return useContext(TableContext);
 }
 
-function Table<T>(props: TableProps<T>, ref: DOMRef) {
+function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLTableElement>) {
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
   let state = useGridState(props);
