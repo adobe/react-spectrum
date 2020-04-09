@@ -14,6 +14,7 @@ import {GridState} from '@react-stately/grid';
 import {KeyboardDelegate} from '@react-types/shared';
 import {RefObject, HTMLAttributes, Key} from 'react';
 import { useSelectableItem } from '@react-aria/selection';
+import { getColumnHeaderId } from './utils';
 
 interface ColumnHeaderProps {
   key: Key,
@@ -37,10 +38,10 @@ export function useColumnHeader<T>(props: ColumnHeaderProps, state: GridState<T>
 
   let columnHeaderProps: HTMLAttributes<HTMLElement> = {
     role: 'columnheader',
+    id: getColumnHeaderId(state, key),
     'aria-colspan': colspan && colspan > 1 ? colspan : null,
     ...itemProps
     // 'aria-sort'
-    // 'aria-colindex'
   };
 
   if (isVirtualized) {

@@ -16,6 +16,8 @@ import {KeyboardDelegate} from '@react-types/shared';
 import {RefObject, HTMLAttributes, useMemo} from 'react';
 import { useSelectableCollection } from '@react-aria/selection';
 import { useCollator, useLocale } from '@react-aria/i18n';
+import {gridIds} from './utils';
+import { useId } from '@react-aria/utils';
 
 interface GridProps {
   ref: RefObject<HTMLElement>,
@@ -44,15 +46,19 @@ export function useGrid<T>(props: GridProps, state: GridState<T>): GridAria {
     keyboardDelegate: delegate
   });
 
+  let id = useId();
+  gridIds.set(state, id);
+  
   let gridProps: HTMLAttributes<HTMLElement> = {
     role: 'grid',
+    id,
     'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
     ...collectionProps
   };
 
   if (isVirtualized) {
     gridProps['aria-rowcount'] = state.collection.size; // TODO: only rows, not cells?
-    gridProps['aria-colcount'] = 0; // TODO
+    gridProps['aria-colcount'] = state.collection.headerRows[state.collection.headerRows.length - 1].length;
   }
 
   return {

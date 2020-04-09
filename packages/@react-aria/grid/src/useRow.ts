@@ -15,12 +15,13 @@ import {KeyboardDelegate} from '@react-types/shared';
 import {RefObject, HTMLAttributes, Key} from 'react';
 import { useSelectableItem } from '@react-aria/selection';
 import { usePress } from '@react-aria/interactions';
+import { getRowLabelledBy } from './utils';
 
 interface RowProps {
   ref?: RefObject<HTMLElement>,
   isVirtualized?: boolean,
   isSelected?: boolean,
-  key: Key,
+  key: Key
 }
 
 interface RowAria {
@@ -48,7 +49,7 @@ export function useRow<T>(props: RowProps, state: GridState<T>): RowAria {
   let rowProps: HTMLAttributes<HTMLElement> = {
     role: 'row',
     'aria-selected': isSelected,
-    // aria-labelledby = all the column headers
+    'aria-labelledby': getRowLabelledBy(state, key),
     ...itemProps,
     ...pressProps
   };

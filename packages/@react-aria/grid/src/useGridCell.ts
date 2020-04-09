@@ -17,11 +17,13 @@ import { useSelectableItem } from '@react-aria/selection';
 import { usePress } from '@react-aria/interactions';
 import { mergeProps } from '@react-aria/utils';
 import { getFocusableTreeWalker } from '@react-aria/focus';
+import { getCellId } from './utils';
 
 interface GridCellProps {
   ref: RefObject<HTMLElement>,
   key: Key,
-  isVirtualized?: boolean
+  isVirtualized?: boolean,
+  columnIndexOffset?: number
 }
 
 interface GridCellAria {
@@ -32,7 +34,8 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
   let {
     ref,
     key,
-    isVirtualized
+    isVirtualized,
+    columnIndexOffset = 0
   } = props;
 
   let {itemProps} = useSelectableItem({
@@ -70,14 +73,17 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
     }
   };
 
+  let item = state.collection.getItem(key);
+  let columnKey = state.collection.headerRows[state.collection.headerRows.length - 1][item.index].key;
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(interactions, {
     role: 'gridcell',
+    id: getCellId(state, item.parentKey, columnKey),
     onFocus
   });
 
   if (isVirtualized) {
     let item = state.collection.getItem(key);
-    gridCellProps['aria-colindex'] = item.index + 1;
+    gridCellProps['aria-colindex'] = item.index + columnIndexOffset + 1; // aria-colindex is 1-based
   }
 
   return {
