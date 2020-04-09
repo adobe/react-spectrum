@@ -60,7 +60,9 @@
   }
 }
 
-.resourceCard img, svg {
-  width: 64px;
-  height: 64px;
+.resourceCard {
+  img, svg {
+    width: 64px;
+    height: 64px;
+  }
 }

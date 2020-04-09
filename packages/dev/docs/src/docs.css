@@ -90,17 +90,17 @@ article {
 }
 
 article h1 {
-  margin-top: 0 !important;
-  font-size: 58px !important;
+  margin-top: 0;
+  font-size: 58px;
 }
 
 article h1 + p {
-  font-size: 18px !important;
+  font-size: 18px;
   max-width: 75%;
 }
 
 article h2 {
-  margin-top: 80px !important;
+  margin-top: 80px;
 }
 
 article h2 + hr {
