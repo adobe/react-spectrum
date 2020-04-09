@@ -79,5 +79,8 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
   );
 }
 
+/**
+ * Form provides unified structure, alignment, and styling for a user's form fields.
+ */
 const _Form = React.forwardRef(Form);
 export {_Form as Form};
