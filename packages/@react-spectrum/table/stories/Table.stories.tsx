@@ -14,6 +14,8 @@ import {action} from '@storybook/addon-actions';
 import {Table, TableHeader, TableBody, Column, Row, Cell} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {Switch} from '@react-spectrum/switch';
+import {Link} from '@react-spectrum/link';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -85,6 +87,30 @@ storiesOf('Table', module)
               <Cell>{item.baz}</Cell>
             </Row>
           }
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'focusable cells',
+    () => (
+      <Table onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column key="foo">Foo</Column>
+          <Column key="bar">Bar</Column>
+          <Column key="baz">baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell><Switch aria-label="Foo" /></Cell>
+            <Cell><Link><a href="https://google.com" target="_blank">Google</a></Link></Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell><Switch aria-label="Foo" /></Cell>
+            <Cell><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
+            <Cell>Three</Cell>
+          </Row>
         </TableBody>
       </Table>
     )

@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, DOMProps, MultipleSelection, StyleProps, AsyncLoadable, CollectionChildren} from '@react-types/shared';
+import {CollectionBase, DOMProps, MultipleSelection, StyleProps, AsyncLoadable, CollectionChildren, SectionProps} from '@react-types/shared';
 import { Key, ReactElement } from 'react';
 
 export interface TableProps<T> extends MultipleSelection {
-  children: [ReactElement<TableHeaderProps>, ReactElement<TableBodyProps>],
+  children: ReactElement<TableHeaderProps | TableBodyProps | SectionProps | RowProps>[],
   disabledKeys?: Iterable<Key>
 }
 
 export interface SpectrumTableProps<T> extends TableProps<T>, DOMProps, StyleProps {
-
+  rowHeight?: number | 'auto'
 }
 
 export interface TableHeaderProps<T> {
@@ -36,6 +36,16 @@ export interface ColumnProps<T> {
   childColumns?: T[],
   'aria-label'?: string,
   uniqueKey?: Key
+}
+
+// TODO: how to support these in CollectionBuilder...
+export interface SpectrumColumnProps<T> extends ColumnProps<T> {
+  width?: number | string,
+  align?: 'start' | 'center' | 'end',
+  allowsResizing?: boolean,
+  allowsReordering?: boolean,
+  allowsSorting?: boolean,
+  isSticky?: boolean // shouldStick??
 }
 
 export interface TableBodyProps<T> extends AsyncLoadable<T> {

@@ -15,6 +15,8 @@ import {KeyboardDelegate} from '@react-types/shared';
 import {RefObject, HTMLAttributes, Key} from 'react';
 import { useSelectableItem } from '@react-aria/selection';
 import { usePress } from '@react-aria/interactions';
+import { mergeProps } from '@react-aria/utils';
+import { getFocusableTreeWalker } from '@react-aria/focus';
 
 interface GridCellProps {
   ref: RefObject<HTMLElement>,
@@ -42,12 +44,36 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
 
   // TODO: move into useSelectableItem?
   let {pressProps} = usePress(itemProps);
+  let interactions = mergeProps(itemProps, pressProps);
 
-  let gridCellProps: HTMLAttributes<HTMLElement> = {
-    role: 'gridcell',
-    ...itemProps,
-    ...pressProps
+  // Grid cells can have focusable elements inside them. In this case, focus should
+  // be marshalled to that element rather than focusing the cell itself.
+  let onFocus = (e) => {
+    if (e.target !== ref.current) {
+      // useSelectableItem only handles setting the focused key when 
+      // the focused element is the gridcell itself. We also want to
+      // set the focused key when a child element receives focus.
+      state.selectionManager.setFocusedKey(key);
+      return;
+    }
+
+    // If the cell itself is focused, check if there is a child focusable
+    // element, and marshall focus to that.
+    let treeWalker = getFocusableTreeWalker(ref.current);
+    let focusable = treeWalker.firstChild() as HTMLElement;
+    if (focusable) {
+      // Wait a frame so that focus finishes propagatating up to the tree
+      // before we move focus to the child element.
+      requestAnimationFrame(() => {
+        focusable.focus();
+      });
+    }
   };
+
+  let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(interactions, {
+    role: 'gridcell',
+    onFocus
+  });
 
   if (isVirtualized) {
     let item = state.collection.getItem(key);
