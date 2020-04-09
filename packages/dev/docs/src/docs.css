@@ -89,8 +89,8 @@ article {
   }
 }
 
-article h1.articleHeader  {
-  margin-top: 0 !important;
+article h1.articleHeader {
+  margin-top: 0;
   font-size: 58px;
 }
 
@@ -103,7 +103,7 @@ article h2.sectionHeader.docsHeader {
   margin-top: 80px;
 }
 
-article h2 + hr {
+article h2.sectionHeader + hr {
   margin-bottom: 33px;
 }
 
