@@ -113,7 +113,7 @@ storiesOf('DialogTrigger', module)
       <DialogTrigger type="fullscreenTakeover">
         <ActionButton>Trigger</ActionButton>
         <Dialog>
-        <Heading>The Heading</Heading>
+          <Heading>The Heading</Heading>
           <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
           <Divider />
           <Content>
