@@ -34,7 +34,7 @@ const OPEN_STATES = {
 export function OpenTransition(props) {
   return (
     <Transition timeout={{enter: 0, exit: 350}} {...props}>
-      {(state) => React.Children.map(props.children, child => React.cloneElement(child, {isOpen: !!OPEN_STATES[state]}))}
+      {(state) => React.Children.map(props.children, child => child && React.cloneElement(child, {isOpen: !!OPEN_STATES[state]}))}
     </Transition>
   );
 }
