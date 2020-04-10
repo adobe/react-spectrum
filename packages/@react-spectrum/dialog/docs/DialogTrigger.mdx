@@ -143,13 +143,13 @@ Tray Dialogs are useful on mobile device or smaller screens.
 
 ```tsx example
 <DialogTrigger type="tray">
-  <ActionButton>Info</ActionButton>
+  <ActionButton>Check Messages</ActionButton>
   <Dialog>
-    <Heading>Version Info</Heading>
+    <Heading>New Messages</Heading>
     <Divider />
     <Content>
       <Text>
-        Version 1.0.0, Copyright 2020
+        You have 5 new messages.
       </Text>
     </Content>    
   </Dialog>
@@ -159,7 +159,8 @@ Tray Dialogs are useful on mobile device or smaller screens.
 ### Fullscreen
 
 Fullscreen Dialogs are a fullscreen variant of the Modal Dialog, only revealing a small 
-portion of the page behind the underlay. 
+portion of the page behind the underlay. Use this variant for more complex workflow that
+do not fit on the available Modal Dialog sizes.
 
 ```tsx example
 <DialogTrigger type="fullscreen">
@@ -185,9 +186,8 @@ portion of the page behind the underlay.
 ### Fullscreen Takeover
 
 Fullscreen takeover Dialogs are similar to the fullscreen variant except that the 
-background covers the entire screen. The page behind the dialog is not visible. This variant
-should be reserved for workflows where displaying a second dialog on top of the first one is 
-to be expected.
+background covers the entire screen. This variant should be reserved for workflows 
+where displaying a second dialog on top of the first one is to be expected.
 
 ```tsx example
 <DialogTrigger type="fullscreenTakeover">
@@ -237,7 +237,7 @@ on the DialogTrigger. This adds an exit button that the user can click to dismis
     <Divider />
     <Content>
       <Text>
-        Last Login: December 12,1989
+        Last Login: December 12, 1989
       </Text>
     </Content>    
   </Dialog>
@@ -289,7 +289,9 @@ function Example() {
           <Heading>The Heading</Heading>
           <Divider />
           <Content>
-            This is a popover.
+            <Text>
+              This is a popover anchored to the span.
+            </Text>
           </Content>
         </Dialog>
       </DialogTrigger>
@@ -311,7 +313,9 @@ prop. See the props table [below](#props) for a full list of available placement
     <Heading>The Heading</Heading>
     <Divider />
     <Content>
-      This is a popover placed to the right of its trigger and offset so the arrow is at the top of the dialog.
+      <Text>
+        This is a popover placed to the right of its trigger and offset so the arrow is at the top of the dialog.
+      </Text>
     </Content>
   </Dialog>
 </DialogTrigger>
@@ -330,7 +334,9 @@ to the direction the Dialog is rendered whereas `crossOffset` handles the offset
     <Heading>The Heading</Heading>
     <Divider />
     <Content>
-      This is a popover offset by an additional 50px above the trigger.
+      <Text>
+        This is a popover offset by an additional 50px above the trigger.
+      </Text>
     </Content>
   </Dialog>
 </DialogTrigger>
@@ -341,7 +347,9 @@ to the direction the Dialog is rendered whereas `crossOffset` handles the offset
     <Heading>The Heading</Heading>
     <Divider />
     <Content>
-      This is a popover offset by an additional 100px to the right of the trigger.
+      <Text>
+        This is a popover offset by an additional 100px to the right of the trigger.
+      </Text>   
     </Content>
   </Dialog>
 </DialogTrigger>
@@ -359,7 +367,9 @@ in situations where the original placement would cause it to render out of view.
     <Heading>The Heading</Heading>
     <Divider />
     <Content>
-      This is a popover that will flip if it can't fully render below the button.
+      <Text>
+        This is a popover that will flip if it can't fully render below the button.
+      </Text>
     </Content>
   </Dialog>
 </DialogTrigger>
@@ -381,7 +391,9 @@ the top of the browser.
     <Heading>The Heading</Heading>
     <Divider />
     <Content>
-      This is a popover.
+      <Text>
+        This is a popover.
+      </Text>
     </Content>
   </Dialog>
 </DialogTrigger>
@@ -403,7 +415,9 @@ function Example() {
           <Heading>The Heading</Heading>
           <Divider />
           <Content>
-            This is a popover.
+            <Text>
+              This is a popover.
+            </Text>
           </Content>
         </Dialog>
       </DialogTrigger>
@@ -426,12 +440,14 @@ function Example() {
   return (
     <div>
       <DialogTrigger type="popover" placement="top" onOpenChange={(isOpen) => setState(isOpen)}>
-        <ActionButton>Trigger</ActionButton>
+        <ActionButton>Whispers</ActionButton>
         <Dialog>
-          <Heading>The Heading</Heading>
+          <Heading>Whispers and DMs</Heading>
           <Divider />
           <Content>
-            This is a popover.
+            <Text>
+              You have 0 new messages.
+            </Text>
           </Content>
         </Dialog>
       </DialogTrigger>
@@ -453,12 +469,14 @@ The `hideArrow` prop hides the Popover Dialog's arrow if applied.
 
 ```tsx example
 <DialogTrigger hideArrow type="popover">
-  <ActionButton>Trigger</ActionButton>
+  <ActionButton>See Notifications</ActionButton>
   <Dialog>
-    <Heading>The Heading</Heading>
+    <Heading>Notifications</Heading>
     <Divider />
     <Content>
-      This is a popover with its tip hidden.
+      <Text>
+        You have no new notifications.
+      </Text>
     </Content>
   </Dialog>
 </DialogTrigger>
