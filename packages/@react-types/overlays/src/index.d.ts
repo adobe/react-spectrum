@@ -47,11 +47,11 @@ export interface PositionProps {
    * there is insufficient room for it to render completely.
    */
   shouldFlip?: boolean,
-  /**
-   * The element that should be used as the bounding container when calculating container offset
-   * or whether it should flip.
-   */
-  boundaryElement?: Element,
+  // /**
+  //  * The element that should be used as the bounding container when calculating container offset
+  //  * or whether it should flip.
+  //  */
+  // boundaryElement?: Element,
   /** Whether the element is rendered. */
   isOpen?: boolean
 }

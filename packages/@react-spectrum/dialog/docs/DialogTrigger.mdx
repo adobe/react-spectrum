@@ -399,33 +399,6 @@ the top of the browser.
 </DialogTrigger>
 ```
 
-### Boundary Element 
-
-TODO figure this one out
-
-```tsx example
-function Example() {
-  let ref = React.useRef();
-
-  return (
-    <div ref={ref} style={{border: '5px solid red', height: "500px", width: "500px"}}>
-      <DialogTrigger placement="top" shouldFlip type="popover" boundaryElement={ref.current}>
-        <ActionButton>Trigger</ActionButton>
-        <Dialog>
-          <Heading>The Heading</Heading>
-          <Divider />
-          <Content>
-            <Text>
-              This is a popover.
-            </Text>
-          </Content>
-        </Dialog>
-      </DialogTrigger>
-    </div>
-  );
-}
-```
-
 ## Events
 
 DialogTrigger accepts an `onOpenChange` handler which is triggered whenever the Dialog is opened or closed.
