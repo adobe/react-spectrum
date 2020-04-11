@@ -22,8 +22,7 @@ import { getCellId } from './utils';
 interface GridCellProps {
   ref: RefObject<HTMLElement>,
   key: Key,
-  isVirtualized?: boolean,
-  columnIndexOffset?: number
+  isVirtualized?: boolean
 }
 
 interface GridCellAria {
@@ -34,8 +33,7 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
   let {
     ref,
     key,
-    isVirtualized,
-    columnIndexOffset = 0
+    isVirtualized
   } = props;
 
   let {itemProps} = useSelectableItem({
@@ -74,7 +72,7 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
   };
 
   let item = state.collection.getItem(key);
-  let columnKey = state.collection.headerRows[state.collection.headerRows.length - 1][item.index].key;
+  let columnKey = state.collection.columns[item.index].key;
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(interactions, {
     role: 'gridcell',
     id: getCellId(state, item.parentKey, columnKey),
@@ -83,7 +81,7 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
 
   if (isVirtualized) {
     let item = state.collection.getItem(key);
-    gridCellProps['aria-colindex'] = item.index + columnIndexOffset + 1; // aria-colindex is 1-based
+    gridCellProps['aria-colindex'] = item.index + 1; // aria-colindex is 1-based
   }
 
   return {

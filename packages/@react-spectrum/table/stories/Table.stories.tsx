@@ -24,11 +24,13 @@ let columns = [
 ];
 
 let nestedColumns = [
+  {name: 'Test'},
   {name: 'Tiered One Header', children: [
     {name: 'Tier Two Header A', children: [
       {name: 'Foo'},
       {name: 'Bar'}
     ]},
+    {name: 'Yay'},
     {name: 'Tier Two Header B', children: [
       {name: 'Baz'}
     ]}
@@ -36,8 +38,8 @@ let nestedColumns = [
 ];
 
 let items = [
-  {foo: 'Foo 1', bar: 'Bar 1', baz: 'Baz 1'},
-  {foo: 'Foo 2', bar: 'Bar 2', baz: 'Baz 2'},
+  {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
 ];
 
 let onSelectionChange = action('onSelectionChange');
@@ -47,6 +49,7 @@ storiesOf('Table', module)
     () => (
       <Table onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
+          <Column key="test">Test</Column>
           <Column title="Group 1">
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
@@ -57,11 +60,13 @@ storiesOf('Table', module)
         </TableHeader>
         <TableBody>
           <Row>
+            <Cell>Test1</Cell>
             <Cell>One</Cell>
             <Cell>Two</Cell>
             <Cell>Three</Cell>
           </Row>
           <Row>
+            <Cell>Test2</Cell>
             <Cell>One</Cell>
             <Cell>Two</Cell>
             <Cell>Three</Cell>
@@ -82,8 +87,10 @@ storiesOf('Table', module)
         <TableBody items={items} itemKey="foo">
           {item =>
             <Row>
+              <Cell>{item.test}</Cell>
               <Cell>{item.foo}</Cell>
               <Cell>{item.bar}</Cell>
+              <Cell>{item.yay}</Cell>
               <Cell>{item.baz}</Cell>
             </Row>
           }

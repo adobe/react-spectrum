@@ -13,57 +13,76 @@
 import {Collection, Node} from '@react-stately/collections';
 import {Key} from 'react';
 
+interface Placeholder {
+  type: 'placeholder',
+  colspan: number
+}
+
 interface GridNode<T> extends Node<T> {
   colspan?: number
 }
 
+const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
+
 export class GridCollection<T> implements Collection<GridNode<T>> {
   private keyMap: Map<Key, Node<T>> = new Map();
-  headerRows: GridNode<T>[][];
+  headerRows: (GridNode<T> | Placeholder)[][];
+  columns: GridNode<T>[];
   body: GridNode<T>[];
   private firstKey: Key;
   private lastKey: Key;
 
   constructor(nodes: Iterable<Node<T>>) {
     this.headerRows = [];
+    this.columns = [];
+
+    let hasRowHeaders = false;
     let visit = (node: GridNode<T>) => {
       this.keyMap.set(node.key, node);
 
-      if (node.type === 'column') {
-        if (!this.headerRows[node.level]) {
-          this.headerRows[node.level] = [];
-        }
-
-        node.index = this.headerRows[node.level].length;
-        this.headerRows[node.level].push(node);
+      if (node.type === 'column' && !node.hasChildNodes) {
+        this.columns.push(node);
       }
 
-      let leafCount = 0;
+      if (node.type === 'rowheader') {
+        hasRowHeaders = true;
+      }
+
       let children = [...node.childNodes];
-      if (children.length > 0) {
-        for (let child of children) {
-          if (child.type !== 'item' || node.type === 'section' || node.isExpanded) {
-            leafCount += visit(child);
-          }
+      for (let child of children) {
+        if (child.type !== 'item' || node.isExpanded) {
+          visit(child);
         }
-      } else if (node.type === 'column') {
-        leafCount++;
       }
-
-      if (node.type === 'column') {
-        node.colspan = leafCount;
-      }
-
-      return leafCount;
     };
-
+    
     this.body = [];
     for (let node of nodes) {
-      let columnCount = visit(node);
-      if (columnCount === 0) {
+      visit(node);
+      if (node.type !== 'column') {
         this.body.push(node);
       }
     }
+
+    // If rows have header cells, add a corresponding column
+    if (hasRowHeaders) {
+      let rowHeaderColumn: GridNode<T> = {
+        type: 'column',
+        key: ROW_HEADER_COLUMN_KEY,
+        value: null,
+        textValue: '',
+        level: 0,
+        index: 0,
+        hasChildNodes: false,
+        rendered: null,
+        childNodes: []
+      };
+  
+      this.keyMap.set(rowHeaderColumn.key, rowHeaderColumn);
+      this.columns.unshift(rowHeaderColumn);  
+    }
+
+    this.headerRows = this.buildHeaderRows();
 
     let last: GridNode<T>;
     let index = 0;
@@ -85,6 +104,95 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
     if (last) {
       this.lastKey = last.key;
     }
+  }
+
+  buildHeaderRows() {
+    let columns = [];
+    let seen = new Map();
+    for (let column of this.columns) {      
+      let parentKey = column.parentKey;
+      let col = [column];
+
+      while (parentKey) {
+        let parent: GridNode<T> = this.keyMap.get(parentKey);
+
+        // If we've already seen this parent, than it is shared
+        // with a previous column. If the current column is taller
+        // than the previous column, than we need to shift the parent
+        // in the previous column so it's level with the current column.
+        if (seen.has(parent)) {
+          parent.colspan++;
+
+          let {column, index} = seen.get(parent);
+          if (index > col.length) {
+            break;
+          }
+
+          for (let i = index; i < col.length; i++) {
+            column.splice(i, 0, null);
+          }
+
+          // Adjust shifted indices
+          for (let i = col.length; i < column.length; i++) {
+            if (column[i] && seen.has(column[i])) {
+              seen.get(column[i]).index = i;
+            }
+          }
+        } else {
+          parent.colspan = 1;
+          col.push(parent);
+          seen.set(parent, {column: col, index: col.length - 1});
+        }
+
+        parentKey = parent.parentKey;
+      }
+
+      columns.push(col);
+      column.index = columns.length - 1;
+    }
+
+    let maxLength = Math.max(...columns.map(c => c.length));
+    let headerRows = Array(maxLength).fill(0).map(() => [])
+
+    // Convert columns into rows.
+    let colIndex = 0;
+    for (let column of columns) {
+      let i = maxLength - 1;
+      for (let item of column) {
+        if (item) {
+          // Fill the space up until the current column with a placeholder
+          let row = headerRows[i];
+          let rowLength = row.reduce((p, c) => p + c.colspan, 0);
+          if (rowLength < colIndex) {
+            row.push({
+              type: 'placeholder',
+              colspan: colIndex - rowLength
+            });
+          }
+
+          item.level = i;
+          item.index = row.length;
+          row.push(item);
+        }
+
+        i--;
+      }
+
+      colIndex++;
+    }
+
+    // Add placeholders at the end of each row that is shorter than the maximum
+    for (let row of headerRows) {
+      let rowLength = row.reduce((p, c) => p + c.colspan, 0);
+      if (rowLength < this.columns.length) {
+        row.push({
+          type: 'placeholder',
+          colspan: this.columns.length - rowLength
+        });
+      }
+    }
+
+    return headerRows;
   }
 
   *[Symbol.iterator]() {

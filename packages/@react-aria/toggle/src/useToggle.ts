@@ -12,7 +12,7 @@
 
 import {DOMProps} from '@react-types/shared';
 import {InputHTMLAttributes, RefObject} from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLabels} from '@react-aria/utils';
 import {SwitchProps} from '@react-types/switch';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
@@ -31,6 +31,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref
     name,
     children,
     'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
     validationState = 'valid'
   } = props;
 
@@ -41,8 +42,8 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref
     state.setSelected(e.target.checked);
   };
 
-  let hasChildren = children !== null;
-  let hasAriaLabel = ariaLabel !== null;
+  let hasChildren = children != null;
+  let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
   if (!hasChildren && !hasAriaLabel) {
     console.warn('If you do not provide children, you must specify an aria-label for accessibility');
   }
@@ -55,10 +56,11 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref
 
   let {focusableProps} = useFocusable(props, ref);
   let interactions = mergeProps(pressProps, focusableProps);
+  let labelProps = useLabels(props);
 
   return {
     inputProps: {
-      'aria-label': ariaLabel,
+      ...labelProps,
       'aria-invalid': isInvalid,
       onChange,
       disabled: isDisabled,

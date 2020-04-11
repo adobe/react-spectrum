@@ -58,7 +58,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T>): GridAria {
 
   if (isVirtualized) {
     gridProps['aria-rowcount'] = state.collection.size; // TODO: only rows, not cells?
-    gridProps['aria-colcount'] = state.collection.headerRows[state.collection.headerRows.length - 1].length;
+    gridProps['aria-colcount'] = state.collection.columns.length;
   }
 
   return {

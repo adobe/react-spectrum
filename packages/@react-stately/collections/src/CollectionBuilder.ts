@@ -21,11 +21,13 @@ interface CollectionBuilderState {
 
 export class CollectionBuilder<T> {
   private itemKey: string;
+  private context: unknown;
   private cache: Map<T, Node<T>> = new Map();
   private getItemStates: (key: Key) => ItemStates;
 
-  constructor(itemKey: string) {
+  constructor(itemKey: string, context?: unknown) {
     this.itemKey = itemKey;
+    this.context = context;
   }
 
   build(props: CollectionBase<T>, getItemStates?: (key: Key) => ItemStates) {
@@ -128,7 +130,7 @@ export class CollectionBuilder<T> {
         throw new Error(`Unknown element <${name}> in collection.`);
       }
 
-      for (let childNode of type.getCollectionNode(element.props, this) as Iterable<PartialNode<T>>) {
+      for (let childNode of type.getCollectionNode(element.props, this.context) as Iterable<PartialNode<T>>) {
         let nodes = this.getFullNode({
           ...childNode,
           key: childNode.element ? null : this.getKey(element, partialNode, state, parentKey),
@@ -177,6 +179,11 @@ export class CollectionBuilder<T> {
         }
 
         for (let child of partialNode.childNodes()) {
+          // Ensure child keys are globally unique by prepending the parent node's key
+          if (child.key) {
+            child.key = `${node.key}${child.key}`;
+          }
+
           yield* builder.getFullNode(child, builder.getChildState(state, child), node.key, node);
         }
       })

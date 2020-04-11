@@ -15,6 +15,7 @@ import {KeyboardDelegate} from '@react-types/shared';
 import {RefObject, HTMLAttributes, Key} from 'react';
 import { useSelectableItem } from '@react-aria/selection';
 import { getColumnHeaderId } from './utils';
+import { useGridCell } from './useGridCell';
 
 interface ColumnHeaderProps {
   key: Key,
@@ -28,28 +29,16 @@ interface ColumnHeaderAria {
 }
 
 export function useColumnHeader<T>(props: ColumnHeaderProps, state: GridState<T>): ColumnHeaderAria {
-  let {key, ref, isVirtualized, colspan} = props;
-  let {itemProps} = useSelectableItem({
-    selectionManager: state.selectionManager,
-    itemKey: key,
-    itemRef: ref,
-    isVirtualized
-  });
-
-  let columnHeaderProps: HTMLAttributes<HTMLElement> = {
-    role: 'columnheader',
-    id: getColumnHeaderId(state, key),
-    'aria-colspan': colspan && colspan > 1 ? colspan : null,
-    ...itemProps
-    // 'aria-sort'
-  };
-
-  if (isVirtualized) {
-    let item = state.collection.getItem(key);
-    columnHeaderProps['aria-colindex'] = item.index + 1;
-  }
+  let {key, colspan} = props;
+  let {gridCellProps} = useGridCell(props, state);
 
   return {
-    columnHeaderProps
+    columnHeaderProps: {
+      ...gridCellProps,
+      role: 'columnheader',
+      id: getColumnHeaderId(state, key),
+      'aria-colspan': colspan && colspan > 1 ? colspan : null,
+      // 'aria-sort'
+    }
   };
 }

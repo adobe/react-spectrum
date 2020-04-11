@@ -16,10 +16,11 @@ import {mergeProps} from '@react-aria/utils';
 import {SpectrumTableProps} from '@react-types/table';
 import React, { useRef, useContext } from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import {useGrid, useRow, useRowGroup, useColumnHeader, useGridCell} from '@react-aria/grid';
+import {useGrid, useRow, useRowGroup, useColumnHeader, useGridCell, useRowHeader, useSelectionCheckbox, useSelectAllCheckbox} from '@react-aria/grid';
 import {useGridState, GridState} from '@react-stately/grid';
 import {useProviderProps} from '@react-spectrum/provider';
 import { FocusRing } from '@react-aria/focus';
+import { Checkbox } from '@react-spectrum/checkbox';
 
 const TableContext = React.createContext<GridState<unknown>>(null);
 function useTableContext() {
@@ -29,7 +30,7 @@ function useTableContext() {
 function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLTableElement>) {
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
-  let state = useGridState(props);
+  let state = useGridState({...props, showSelectionCheckboxes: true});
   let domRef = useDOMRef(ref);
   let {gridProps} = useGrid({
     ...props,
@@ -59,8 +60,10 @@ function TableHeader() {
     <thead {...rowGroupProps} className={classNames(styles, 'spectrum-Table-head')}>
       {state.collection.headerRows.map(columns => 
         <tr>
-          {columns.map(column => 
-            <TableColumnHeader key={column.key} column={column} />
+          {columns.map(column =>
+            column.type === 'placeholder'
+              ? <th colSpan={column.colspan} />
+              : <TableColumnHeader key={column.key} column={column} />
           )}
         </tr>
       )}
@@ -77,15 +80,23 @@ function TableColumnHeader({column}) {
     colspan: column.colspan
   }, state);
 
+  let isCheckboxCell = state.selectionManager.selectionMode !== 'none' && column.index === 0;
+  let {checkboxProps} = useSelectAllCheckbox(state);
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <th 
         {...columnHeaderProps}
         ref={ref}
-        className={classNames(styles, 'spectrum-Table-headCell')}
+        className={classNames(styles, 'spectrum-Table-headCell', {'spectrum-Table-checkboxCell': isCheckboxCell})}
         colSpan={column.colspan}
-        style={{textAlign: column.colspan > 1 ? 'center' : 'left'}}>
+        style={{textAlign: column.colspan > 1 ? 'center' : 'left', verticalAlign: 'bottom'}}>
         {column.rendered}
+        {isCheckboxCell &&
+          <Checkbox
+            {...checkboxProps}
+            UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
+        }
       </th>
     </FocusRing>
   );
@@ -116,9 +127,38 @@ function TableRow({item}) {
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <tr {...rowProps} ref={ref} className={classNames(styles, 'spectrum-Table-row', {'is-selected': item.isSelected})}>
         {[...item.childNodes].map(cell =>
-          <TableCell key={cell.key} cell={cell} />
+          cell.type === 'rowheader'
+            ? <TableRowHeader key={cell.key} rowHeader={cell} />
+            : <TableCell key={cell.key} cell={cell} />
         )}
       </tr>
+    </FocusRing>
+  );
+}
+
+function TableRowHeader({rowHeader}) {
+  let ref = useRef();
+  let state = useTableContext();
+  let {rowHeaderProps} = useRowHeader({
+    ref,
+    key: rowHeader.key,
+  }, state);
+
+  let {checkboxProps} = useSelectionCheckbox(
+    {key: rowHeader.parentKey},
+    state
+  );
+
+  return (
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <th {...rowHeaderProps} ref={ref} className={classNames(styles, 'spectrum-Table-cell', 'spectrum-Table-checkboxCell')}>
+        {rowHeader.rendered}
+        {state.selectionManager.selectionMode !== 'none' &&
+          <Checkbox
+            {...checkboxProps}
+            UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
+        }
+      </th>
     </FocusRing>
   );
 }

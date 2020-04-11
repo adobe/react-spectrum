@@ -21,7 +21,8 @@ export interface GridState<T> {
   selectionManager: SelectionManager<T>
 }
 
-interface GridStateProps<T> extends CollectionBase<T>, MultipleSelection {
+export interface GridStateProps<T> extends CollectionBase<T>, MultipleSelection {
+  showSelectionCheckboxes?: boolean
 }
 
 export function useGridState<T>(props: GridStateProps<T>): GridState<T>  {
@@ -30,7 +31,7 @@ export function useGridState<T>(props: GridStateProps<T>): GridState<T>  {
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
+  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey, props), [props.itemKey]);
   let collection = useMemo(() => {
     let nodes = builder.build(props, (key) => ({
       isSelected: selectionState.selectedKeys.has(key),

@@ -13,12 +13,13 @@
 import {CellElement, RowProps} from '@react-types/table';
 import {CollectionBuilder, PartialNode} from '@react-stately/collections';
 import React, {ReactElement} from 'react';
+import { GridStateProps } from './useGridState';
 
 function Row<T>(props: RowProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 
-Row.getCollectionNode = function* <T> (props: RowProps<T>, builder: CollectionBuilder<T>): Generator<PartialNode<T>> {
+Row.getCollectionNode = function* <T> (props: RowProps<T>, gridProps: GridStateProps<T>): Generator<PartialNode<T>> {
   let {childItems, children, textValue} = props;
 
   yield {
@@ -30,6 +31,15 @@ Row.getCollectionNode = function* <T> (props: RowProps<T>, builder: CollectionBu
     *childNodes() {
       // Process cells first
       let index = 0;
+
+      if (gridProps.showSelectionCheckboxes && gridProps.selectionMode !== 'none') {
+        yield {
+          type: 'rowheader',
+          key: 'header', // this is combined with the row key by CollectionBuilder
+          index: index++
+        };
+      }
+
       if (typeof children === 'function') {
         for (let column of builder.columns) {
           yield {

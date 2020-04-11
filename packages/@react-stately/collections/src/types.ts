@@ -25,7 +25,8 @@ export interface ItemStates {
 }
 
 export interface Node<T> extends ItemStates {
-  type: 'section' | 'item' | 'column' | 'cell',
+  // TODO: determine how to keep this limited to shared node types
+  type: 'section' | 'item' | 'column' | 'cell' | 'rowheader'
   key: Key,
   value: T,
   level: number,
@@ -43,7 +44,7 @@ export interface Node<T> extends ItemStates {
 }
 
 export interface PartialNode<T> {
-  type?: 'section' | 'item' | 'column' | 'cell',
+  type?: 'section' | 'item' | 'column' | 'cell' | 'rowheader',
   key?: Key,
   value?: T,
   element?: ReactElement,

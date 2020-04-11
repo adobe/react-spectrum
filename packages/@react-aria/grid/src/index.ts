@@ -14,4 +14,6 @@ export * from './useGrid';
 export * from './useColumnHeader';
 export * from './useRowGroup';
 export * from './useRow';
+export * from './useRowHeader';
 export * from './useGridCell';
+export * from './useSelectionCheckbox';

@@ -58,6 +58,15 @@ export class SelectionManager<T> implements MultipleSelectionManager {
     this.state.setSelectedKeys(keys);
   }
 
+  get isEmpty() {
+    return this.state.selectedKeys.size === 0;
+  }
+
+  get isSelectAll() {
+    let allKeys = this.getSelectAllKeys();
+    return allKeys.every(k => this.state.selectedKeys.has(k));
+  }
+
   extendSelection(toKey: Key) {
     this.state.setSelectedKeys((selectedKeys: Selection) => {
       let anchorKey = selectedKeys.anchorKey || toKey;
@@ -134,21 +143,32 @@ export class SelectionManager<T> implements MultipleSelectionManager {
     this.state.setSelectedKeys(new Selection([key], key, key));
   }
 
-  selectAll() {
-    let keys = [...this.collection.getKeys()].filter(key => {
+  private getSelectAllKeys() {
+    return [...this.collection.getKeys()].filter(key => {
       let item = this.collection.getItem(key);
       if (!item) {
         return false;
       }
-      
+
       return item.type === 'item' ||
         (item.type === 'cell' && this.allowsCellSelection);
     });
+  }
 
+  selectAll() {
+    let keys = this.getSelectAllKeys();
     this.state.setSelectedKeys(new Selection(keys, keys[0], keys[keys.length - 1]));
   }
 
   clearSelection() {
     this.state.setSelectedKeys(new Selection());
+  }
+
+  toggleSelectAll() {
+    if (this.isSelectAll) {
+      this.clearSelection();
+    } else {
+      this.selectAll();
+    }
   }
 }
