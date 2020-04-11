@@ -34,7 +34,8 @@ function ListBox<T>(props: SpectrumListBoxProps<T>, ref: DOMRef<HTMLDivElement>)
   );
 }
 
-// forwardRef doesn't support generic parameters, so cast the result to the correct type
-// https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+/** forwardRef doesn't support generic parameters, so cast the result to the correct type
+ * https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
+ */
 const _ListBox = React.forwardRef(ListBox) as <T>(props: SpectrumListBoxProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListBox as ListBox};

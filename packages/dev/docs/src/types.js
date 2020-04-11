@@ -85,7 +85,7 @@ export function Type({type}) {
     case 'alias':
       return <code className={typographyStyles['spectrum-Code4']}><Type type={type.value} /></code>;
     default:
-      console.log('UNKNOWN TYPE', type);
+      console.log('no render for TYPE', type);
       return null;
   }
 }
