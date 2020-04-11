@@ -27,6 +27,8 @@ export interface ButtonProps extends DOMProps, StyleProps, PressEvents, Focusabl
   href?: string,
   /** The target window for the link. */
   target?: string
+  /** Whether the button is in an indeterminate loading state */
+  isPending?: boolean,
 }
 
 export interface SpectrumButtonProps extends ButtonProps {

@@ -26,7 +26,8 @@ interface AriaButtonProps extends ButtonProps {
 
 interface ButtonAria {
   buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>,
-  isPressed: boolean
+  isPressed: boolean,
+  isPending: boolean,
 }
 
 export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): ButtonAria {
@@ -41,6 +42,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onClick: deprecatedOnClick,
     href,
     target,
+    isPending,
     tabIndex,
     isSelected,
     validationState,
@@ -77,6 +79,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
 
   return {
     isPressed, // Used to indicate press state for visual
+    isPending, // Used to indicate pending state for visual
     buttonProps: mergeProps(interactions, {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),

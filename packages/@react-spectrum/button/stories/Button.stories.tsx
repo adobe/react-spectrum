@@ -16,6 +16,7 @@ import {Button} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/typography';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 storiesOf('Button', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -83,6 +84,42 @@ storiesOf('Button', module)
   .add(
     'element: a, href: \'//example.com\', target: \'_self\'',
     () => render({elementType: 'a', href: '//example.com', target: '_self', variant: 'primary'})
+  )
+  .add(
+    'is pending',
+    () => (
+      <div>
+        <VisuallyHidden>
+          <span id="loading-label">Visually hidden loading label</span>
+        </VisuallyHidden>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          variant="primary"
+          isPending={true}
+          aria-label="Loading">
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled
+          variant="primary"
+          isPending={true}
+          aria-label="Loading">
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isQuiet
+          variant="primary"
+          isPending={true}
+          aria-labelledby="loading-label">
+        </Button>
+      </div>
+    )
   );
 
 function render(props: any = {}) {

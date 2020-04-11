@@ -16,6 +16,7 @@ import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
+import {ProgressCircle} from '@react-spectrum/progress';
 import {Text} from '@react-spectrum/typography';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -38,7 +39,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
-  let {buttonProps, isPressed} = useButton(props, domRef);
+  let {buttonProps, isPressed, isPending} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
 
   let buttonVariant = variant;
@@ -61,6 +62,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
             {
               'spectrum-Button--quiet': isQuiet,
               'is-disabled': isDisabled,
+              'is-pending': isPending,
               'is-active': isPressed
             },
             styleProps.className
@@ -76,9 +78,14 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
               UNSAFE_className: classNames(styles, 'spectrum-Button-label')
             }
           }}>
-          {typeof children === 'string' 
-            ? <Text>{children}</Text> 
-            : children}
+          {isPending
+            ? <ProgressCircle isIndeterminate size="S" />
+            : (
+              typeof children === 'string'
+                ? <Text>{children}</Text>
+                : children
+            )
+          }
         </SlotProvider>
       </ElementType>
     </FocusRing>
