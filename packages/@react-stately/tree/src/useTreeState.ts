@@ -17,13 +17,26 @@ import {SelectionManager, useMultipleSelectionState} from '@react-stately/select
 import {useControlledState} from '@react-stately/utils';
 
 export interface TreeState<T> {
+  /** A collection of items in the tree */
   collection: Collection<Node<T>>,
-  expandedKeys: Set<Key>,
+
+  /** A set of keys for items that are disabled */
   disabledKeys: Set<Key>,
+
+  /** A set of keys for items that are expanded */
+  expandedKeys: Set<Key>,
+
+  /** Toggles the expanded state for an item by its key */
   toggleKey: (key: Key) => void,
+
+  /** A selection manager to read and update multiple selection state */
   selectionManager: SelectionManager
 }
 
+/**
+ * Provides state management for tree-like components. Handles building a collection
+ * of items from props, item expanded state, and manages multiple selection state.
+ */
 export function useTreeState<T>(props: CollectionBase<T> & Expandable & MultipleSelection): TreeState<T> {
   let [expandedKeys, setExpandedKeys] = useControlledState(
     props.expandedKeys ? new Set(props.expandedKeys) : undefined,

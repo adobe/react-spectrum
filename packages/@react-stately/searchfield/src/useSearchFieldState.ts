@@ -14,10 +14,16 @@ import {useControlledState} from '@react-stately/utils';
 import {ValueBase} from '@react-types/shared';
 
 export interface SearchFieldState {
+  /** The current value of the search field */
   value: string,
+
+  /** Sets the value of the search field */
   setValue: (val: string, ...args: any) => void
 }
 
+/**
+ * Provides state management for a search field.
+ */
 export function useSearchFieldState(props: ValueBase<string>): SearchFieldState {
   let [value, setValue] = useControlledState(toString(props.value), toString(props.defaultValue) || '', props.onChange);
 

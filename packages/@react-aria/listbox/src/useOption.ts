@@ -28,11 +28,20 @@ interface OptionProps {
 }
 
 interface OptionAria {
+  /** Props for the option element */
   optionProps: HTMLAttributes<HTMLElement>,
+  /** Props for the main text element inside the option */
   labelProps: HTMLAttributes<HTMLElement>,
+  /** Props for the description text element inside the option, if any */
   descriptionProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for an option in a listbox.
+ * See `useListBox` for more details about listboxes.
+ * @param props - props for the option
+ * @param state - state for the listbox, as returned by `useListState`
+ */
 export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAria {
   let {
     isSelected,
@@ -73,6 +82,7 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
   let {hoverProps} = useHover({
     isDisabled: isDisabled || !shouldFocusOnHover,
     onHover() {
+      state.selectionManager.setFocused(true);
       state.selectionManager.setFocusedKey(key);
     }
   });

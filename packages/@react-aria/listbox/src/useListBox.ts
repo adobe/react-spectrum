@@ -17,6 +17,7 @@ import {ListState} from '@react-stately/list';
 import {useSelectableList} from '@react-aria/selection';
 
 interface ListBoxAria {
+  /** Props for the listbox element */
   listBoxProps: HTMLAttributes<HTMLElement>
 }
 
@@ -28,6 +29,12 @@ interface AriaListBoxProps {
   shouldFocusWrap?: boolean
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a listbox component.
+ * A listbox displays a list of options and allows a user to select one or more of them.
+ * @param props - props for the listbox
+ * @param state - state for the listbox, as returned by `useListState`
+ */
 export function useListBox<T>(props: AriaListBoxProps, state: ListState<T>): ListBoxAria {
   let {listProps} = useSelectableList({
     ...props,

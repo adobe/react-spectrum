@@ -1,0 +1,292 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/select';
+import collectionsDocs from 'docs:@react-stately/collections';
+import selectionDocs from 'docs:@react-stately/selection';
+import statelyDocs from 'docs:@react-stately/select';
+import overlaysDocs from 'docs:@react-aria/overlays';
+import focusDocs from 'docs:@react-aria/focus';
+import listboxDocs from 'docs:@react-aria/listbox';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {useSelect} from '@react-aria/select';
+```
+
+# useSelect
+
+<p>{docs.exports.useSelect.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useSelect']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#Listbox'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useSelect} links={docs.links} />
+
+## Features
+
+A select can be built using the [&lt;select&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select)
+and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option) HTML elements, but this is 
+not possible to style consistently cross browser, especially the options. `useSelect` helps achieve accessible 
+select components that can be styled as needed without compromising on high quality interactions.
+
+* Exposed to assistive technology as a button with a `listbox` popup using ARIA (combined with [useListBox](useListBox.html))
+* Support for selecting a single option
+* Support for disabled options
+* Support for sections
+* Labeling support for accessibility
+* Support for mouse, touch, and keyboard interactions
+* Tab stop focus management
+* Keyboard support for opening the listbox using the arrow keys, including automatically focusing 
+  the first or last item accordingly
+* Typeahead to allow selecting options by typing text, even without opening the listbox
+* Browser autofill integration via a hidden native `<select>` element
+* Support for mobile form navigation via software keyboard
+* Mobile screen reader listbox dismissal support
+
+## Anatomy
+
+A select consists of a label, a button which displays a selected value, and a listbox, displayed in a
+popup. Users can click, touch, or use the keyboard on the button to open the listbox popup. `useSelect`
+handles exposing the correct ARIA attributes for accessibility and handles the interactions for the
+select in its collapsed state. It should be combined with [useListBox](useListBox.html), which handles
+the implementation of the popup listbox.
+
+`useSelect` returns props that you should spread onto the appropriate element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useSelect.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSelectState} />
+hook from `@react-stately/select`. The state object should be passed as an option to `useSelect`
+
+If a select not have a visible label, an `aria-label` or `aria-labelledby`
+prop must be passed instead to identify it to assisitive technology.
+
+## State management
+
+`useSelect` requires knowledge of the options in the select in order to handle keyboard
+navigation and other interactions. It does this using the <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} />
+interface, which is a generic interface to access sequential unique keyed data. You can 
+implement this interface yourself, e.g. by using a prop to pass a list of item objects, 
+but <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSelectState} /> from 
+`@react-stately/select` implements a JSX based interface for building collections instead.
+
+In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSelectState} />
+manages the state necessary for multiple selection and exposes
+a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
+which makes use of the collection to provide an interface to update the selection state.
+It also holds state to track if the popup is open.
+
+## Example
+
+This example uses a `<button>` element for the trigger, with a `<span>` inside to hold the value,
+and another for the dropdown arrow icon (hidden from screen readers with `aria-hidden`).
+A &lt;<TypeLink links={docs.links} type={docs.exports.HiddenSelect} />&gt; is used to render a hidden native 
+`<select>`, which enables browser form autofill support.
+
+The listbox popup uses <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useListBox} />
+and <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useOption} /> to render the 
+list of options. In addition, a &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;
+is used to automatically restore focus to the trigger 
+when the popup closes. A hidden &lt;<TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.DismissButton} />&gt;
+is added at the start end end of the popup to allow screen reader users to dismiss the popup.
+
+This example does not do any advanced popover positioning or portaling to escape its visual container.
+See <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlayPosition} /> for an example of
+how to implement this.
+
+In addition, see [useListBox](useListBox.html) for examples of sections (option groups), and more complex
+options.
+
+```tsx example
+import {useSelectState} from '@react-stately/select';
+import {Item} from '@react-stately/collections';
+import {HiddenSelect} from '@react-aria/select';
+import {useListBox, useOption} from '@react-aria/listbox';
+import {mergeProps} from '@react-aria/utils';
+import {useButton} from '@react-aria/button';
+import {useFocus} from '@react-aria/interactions';
+import {FocusScope} from '@react-aria/focus';
+import {useOverlay, DismissButton} from '@react-aria/overlays';
+
+function Select(props) {
+  // Create state based on the incoming props
+  let state = useSelectState(props);
+
+  // Get props for child elements from useSelect
+  let triggerRef = React.useRef();
+  let {
+    labelProps,
+    triggerProps,
+    valueProps,
+    menuProps
+  } = useSelect({...props, triggerRef}, state);
+
+  // Get props for the button based on the trigger props from useSelect
+  let {buttonProps} = useButton(triggerProps);
+
+  return (
+    <div style={{position: 'relative', display: 'inline-block'}}>
+      <div {...labelProps}>{props.label}</div>
+      <HiddenSelect
+        state={state}
+        triggerRef={triggerRef}
+        label={props.label}
+        name={props.name} />
+      <button 
+        {...buttonProps}
+        ref={triggerRef}
+        style={{height: 30, fontSize: 14}}>
+        <span {...valueProps}>
+          {state.selectedItem 
+            ? state.selectedItem.rendered
+            : 'Select an option'
+          }
+        </span>
+        <span
+          aria-hidden="true"
+          style={{paddingLeft: 5}}>
+          ▼
+        </span>
+      </button>
+      {state.isOpen &&
+        <ListBoxPopup 
+          {...menuProps}
+          state={state} />
+      }
+    </div>
+  );
+}
+
+function ListBoxPopup({state, ...otherProps}) {
+  let ref = React.useRef();
+
+  // Get props for the listbox
+  let {listBoxProps} = useListBox({
+    ref,
+    autoFocus: state.focusStrategy,
+    disallowEmptySelection: true
+  }, state);
+
+  // Handle events that should cause the popup to close,
+  // e.g. blur, clicking outside, or pressing the escape key.
+  let overlayRef = React.useRef();
+  let {overlayProps} = useOverlay({
+    ref: overlayRef,
+    onClose: () => state.close(),
+    shouldCloseOnBlur: true,
+    isOpen: state.isOpen,
+    isDismissable: true
+  });
+
+  // Wrap in <FocusScope> so that focus is restored back to the
+  // trigger when the popup is closed. In addition, add hidden
+  // <DismissButton> components at the start end end of the list
+  // to allow screen reader users to dismiss the popup easily.
+  return (
+    <FocusScope restoreFocus>
+      <div {...overlayProps} ref={overlayRef}>
+        <DismissButton onDismiss={() => state.close()} />
+        <ul
+          {...mergeProps(listBoxProps, otherProps)}
+          ref={ref}
+          style={{
+            position: 'absolute',
+            width: '100%',
+            margin: '4px 0 0 0',
+            padding: 0,
+            listStyle: 'none',
+            border: '1px solid gray',
+            background: 'lightgray'
+          }}>
+          {[...state.collection].map(item => (
+            <Option
+              key={item.key}
+              item={item}
+              state={state} />
+          ))}
+        </ul>
+        <DismissButton onDismiss={() => state.close()} />
+      </div>
+    </FocusScope>
+  )
+}
+
+function Option({item, state}) {
+  // Get props for the option element
+  let ref = React.useRef();
+  let {optionProps} = useOption({
+    key: item.key,
+    ref,
+    isDisabled: item.isDisabled,
+    isSelected: item.isSelected,
+    shouldSelectOnPressUp: true,
+    shouldFocusOnHover: true
+  }, state);
+
+  // Handle focus events so we can apply highlighted 
+  // style to the focused option
+  let [isFocused, setFocused] = React.useState(false);
+  let {focusProps} = useFocus({onFocusChange: setFocused});
+
+  return (
+    <li
+      {...mergeProps(optionProps, focusProps)}
+      ref={ref}
+      style={{
+        background: item.isSelected 
+          ? 'blueviolet' 
+          : isFocused 
+            ? 'gray'
+            : 'transparent',
+        color: item.isSelected || isFocused ? 'white' : 'black',
+        padding: '2px 5px',
+        outline: 'none',
+        cursor: 'pointer'
+      }}>
+      {item.rendered}
+    </li>
+  );
+}
+
+<Select label="Favorite Color">
+  <Item>Red</Item>
+  <Item>Orange</Item>
+  <Item>Yellow</Item>
+  <Item>Green</Item>
+  <Item>Blue</Item>
+  <Item>Purple</Item>
+</Select>
+```
+
+## Internationalization
+
+`useSelect` and `useListBox` handle some aspects of internationalization automatically.
+For example, type to select is implemented with an 
+[Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Collator)
+for internationalized string matching. You are responsible for localizing all labels and option 
+content that is passed into the select.
+
+### RTL
+
+In right-to-left languages, the select should be mirrored. The arrow should be on the left,
+and the selected value should be on the right. In addition, the content of list options should
+flip. Ensure that your CSS accounts for this.

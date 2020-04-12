@@ -17,9 +17,15 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface DismissButtonProps {
+  /** Called when the dismiss button is activated */
   onDismiss?: () => void
 }
 
+/**
+ * A visually hidden button that can be used to allow screen reader
+ * users to dismiss a modal or popup when there is no visual
+ * affordance to do so.
+ */
 export function DismissButton(props: DismissButtonProps) {
   let {onDismiss} = props;
   let formatMessage = useMessageFormatter(intlMessages);

@@ -1,0 +1,422 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/listbox';
+import collectionsDocs from 'docs:@react-stately/collections';
+import selectionDocs from 'docs:@react-stately/selection';
+import statelyDocs from 'docs:@react-stately/list';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
+```
+
+# useListBox
+
+<p>{docs.exports.useListBox.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useListBox', 'useOption', 'useListBoxSection']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#Listbox'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useListBox} links={docs.links} />
+<FunctionAPI function={docs.exports.useOption} links={docs.links} />
+<FunctionAPI function={docs.exports.useListBoxSection} links={docs.links} />
+
+## Features
+
+A listbox can be built using the [&lt;select&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select)
+and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option) HTML elements, but this is 
+not possible to style consistently cross browser. `useListBox` helps achieve accessible 
+listbox components that can be styled as needed.
+
+Note: `useListBox` only handles the list itself. For a dropdown similar to a `<select>`, see [useSelect](useSelect.html).
+
+* Exposed to assistive technology as a `listbox` using ARIA
+* Support for single, multiple, or no selection
+* Support for disabled items
+* Support for sections
+* Labeling support for accessibility
+* Support for mouse, touch, and keyboard interactions
+* Tab stop focus management
+* Keyboard navigation support including arrow keys, home/end, page up/down, select all, and clear
+* Automatic scrolling support during keyboard navigation
+* Typeahead to allow focusing options by typing text
+* Virtualized scrolling support for performance with long lists
+
+## Anatomy
+
+A listbox consists of a container element, with a list of options or groups inside.
+`useListBox`, `useOption`, and `useListBoxSection` handle exposing this to assistive
+technology using ARIA, along with handling keyboard, mouse, and interactions to support
+selection and focus behavior.
+
+`useListBox` returns props that you should spread onto the list container element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useListBox.return.id].properties} />
+</TypeContext.Provider>
+
+`useOption` returns props for an individual option and its children:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useOption.return.id].properties} />
+</TypeContext.Provider>
+
+`useListBoxSection` returns props for a section:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useListBoxSection.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} />
+hook from `@react-stately/list`. The state object should be passed as an option to 
+each of the above hooks.
+
+If a listbox, options, or group does not have a visible label, an `aria-label` or `aria-labelledby`
+prop must be passed instead to identify the element to assisitive technology.
+
+## State management
+
+`useListBox` requires knowledge of the options in the listbox in order to handle keyboard
+navigation and other interactions. It does this using 
+the <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} />
+interface, which is a generic interface to access sequential unique keyed data. You can 
+implement this interface yourself, e.g. by using a prop to pass a list of item objects, 
+but <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} /> from
+`@react-stately/list` implements a JSX based interface for building collections instead.
+
+In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} />
+manages the state necessary for multiple selection and exposes
+a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
+which makes use of the collection to provide an interface to update the selection state.
+
+## Example
+
+This example uses HTML `<ul>` and `<li>` elements to represent the list, and applies
+props from <TypeLink links={docs.links} type={docs.exports.useListBox} />
+and <TypeLink links={docs.links} type={docs.exports.useOption} />.
+
+```tsx example
+import {useListState} from '@react-stately/list';
+import {Item} from '@react-stately/collections';
+import {useFocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
+
+function ListBox(props) {
+  // Create state based on the incoming props
+  let state = useListState(props);
+
+  // Get props for the listbox element
+  let ref = React.useRef();
+  let {listBoxProps} = useListBox({...props, ref}, state);
+
+  return (
+    <ul
+      {...listBoxProps}
+      ref={ref}
+      style={{
+        padding: 0,
+        listStyle: 'none',
+        border: '1px solid gray'
+      }}>
+      {[...state.collection].map(item => (
+        <Option
+          key={item.key}
+          item={item}
+          state={state} />
+      ))}
+    </ul>
+  );
+}
+
+function Option({item, state}) {
+  // Get props for the option element
+  let ref = React.useRef();
+  let {optionProps} = useOption({
+    key: item.key,
+    ref,
+    isDisabled: item.isDisabled,
+    isSelected: item.isSelected
+  }, state);
+
+  // Determine whether we should show a keyboard 
+  // focus ring for accessibility
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  return (
+    <li
+      {...mergeProps(optionProps, focusProps)}
+      ref={ref}
+      style={{
+        background: item.isSelected ? 'blueviolet' : 'transparent',
+        color: item.isSelected ? 'white' : null,
+        padding: '2px 5px',
+        outline: isFocusVisible 
+          ? '2px solid orange'
+          : 'none',
+      }}>
+      {item.rendered}
+    </li>
+  );
+}
+
+<ListBox>
+  <Item>One</Item>
+  <Item>Two</Item>
+  <Item>Three</Item>
+</ListBox>
+```
+
+## Sections
+
+This example shows how a listbox can support sections with separators and headings
+using props from <TypeLink links={docs.links} type={docs.exports.useListBoxSection} />.
+This is accomplished using four extra elements: an `<li>` between the sections to 
+represent the separator, an `<li>` to contain the heading `<span>` element, and a 
+`<ul>` to contain the child items. This structure is necessary to ensure HTML semantics
+are correct.
+
+```tsx example
+import {Section} from '@react-stately/collections';
+import {useSeparator} from '@react-aria/separator';
+
+function ListBox(props) {
+  let state = useListState(props);
+  let ref = React.useRef();
+  let {listBoxProps} = useListBox({...props, ref}, state);
+
+  return (
+    <ul
+      {...listBoxProps}
+      ref={ref}
+      style={{
+        margin: 0,
+        padding: 0,
+        listStyle: 'none',
+        border: '1px solid gray'
+      }}>
+      {[...state.collection].map(item => (
+        <ListBoxSection
+          key={item.key}
+          section={item}
+          state={state} />
+      ))}
+    </ul>
+  );
+}
+
+function ListBoxSection({section, state}) {
+  let {itemProps, headingProps, groupProps} = useListBoxSection({
+    heading: section.rendered,
+    'aria-label': section['aria-label']
+  });
+  
+  let {separatorProps} = useSeparator({
+    elementType: 'li'
+  });
+
+  // If the section is not the first, add a separator element.
+  // The heading is rendered inside an <li> element, which contains
+  // a <ul> with the child items.
+  return <>
+    {section.key !== state.collection.getFirstKey() &&
+      <li
+        {...separatorProps}
+        style={{
+          borderTop: '1px solid gray',
+          margin: '2px 5px'
+        }} />
+    }
+    <li {...itemProps}>
+      {section.rendered &&
+        <span
+          {...headingProps}
+          style={{
+            fontWeight: 'bold',
+            fontSize: '1.1em',
+            padding: '2px 5px',
+          }}>
+          {section.rendered}
+        </span>
+      }
+      <ul
+        {...groupProps}
+        style={{
+          padding: 0,
+          listStyle: 'none'
+        }}>
+        {[...section.childNodes].map(node => 
+          <Option
+            key={node.key}
+            item={node}
+            state={state} />
+        )}
+      </ul>
+    </li>
+  </>;
+}
+
+function Option({item, state}) {
+  // Same as in the first example...
+///- begin collapse -///
+  let ref = React.useRef();
+  let {optionProps} = useOption({
+    key: item.key,
+    ref,
+    isDisabled: item.isDisabled,
+    isSelected: item.isSelected
+  }, state);
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  return (
+    <li
+      {...mergeProps(optionProps, focusProps)}
+      ref={ref}
+      style={{
+        background: item.isSelected ? 'blueviolet' : 'transparent',
+        color: item.isSelected ? 'white' : null,
+        padding: '2px 5px',
+        outline: isFocusVisible 
+          ? '2px solid orange'
+          : 'none',
+      }}>
+      {item.rendered}
+    </li>
+  );
+///- end collapse -///
+}
+
+<ListBox>
+  <Section title="Section 1">
+    <Item>One</Item>
+    <Item>Two</Item>
+    <Item>Three</Item>
+  </Section>
+  <Section title="Section 2">
+    <Item>One</Item>
+    <Item>Two</Item>
+    <Item>Three</Item>
+  </Section>
+</ListBox>
+```
+
+## Complex Options
+
+By default, options that only contain text will be labelled by the contents of the option. 
+For options that have more complex content (e.g. icons, multiple lines of text, etc.), use 
+`labelProps` and `descriptionProps` from <TypeLink links={docs.links} type={docs.exports.useOption} />
+as needed to apply to the main text element of the option and its description. This improves screen
+reader announcement.
+
+**NOTE: listbox options cannot contain interactive content (e.g. buttons, checkboxes, etc.). 
+For these cases, see `useGrid` instead.**
+
+This example shows how `labelProps` and `descriptionProps` can be applied to child elements of
+the item to apply ARIA properties returned by <TypeLink links={docs.links} type={docs.exports.useOption} />.
+This is done using `React.cloneElement` in this example, but you can use context or other 
+approaches for this as well.
+
+```tsx example
+function ListBox(props) {
+  // Same as the first example...
+///- begin collapse -///
+  let state = useListState(props);
+  let ref = React.useRef();
+  let {listBoxProps} = useListBox({...props, ref}, state);
+
+  return (
+    <ul
+      {...listBoxProps}
+      ref={ref}
+      style={{
+        padding: 0,
+        listStyle: 'none',
+        border: '1px solid gray'
+      }}>
+      {[...state.collection].map(item => (
+        <Option
+          key={item.key}
+          item={item}
+          state={state} />
+      ))}
+    </ul>
+  );
+///- end collapse -///
+}
+
+function Option({item, state}) {
+  let ref = React.useRef();
+  let {optionProps, labelProps, descriptionProps} = useOption({
+    key: item.key,
+    ref,
+    isDisabled: item.isDisabled,
+    isSelected: item.isSelected
+  }, state);
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  // Pull out the two expected children. We will clone them
+  // and add the necessary props for accessibility.
+  let [title, description] = item.rendered;
+
+  return (
+    <li
+      {...mergeProps(optionProps, focusProps)}
+      ref={ref}
+      style={{
+        background: item.isSelected ? 'blueviolet' : 'transparent',
+        color: item.isSelected ? 'white' : null,
+        padding: '2px 5px',
+        outline: isFocusVisible 
+          ? '2px solid orange'
+          : 'none',
+      }}>
+      {React.cloneElement(title, labelProps)}
+      {React.cloneElement(description, descriptionProps)}
+    </li>
+  );
+}
+
+<ListBox>
+  <Item textValue="Align Left">
+    <div><strong>Align Left</strong></div>
+    <div>Align the selected text to the left</div>
+  </Item>
+  <Item textValue="Align Center">
+    <div><strong>Align Center</strong></div>
+    <div>Align the selected text center</div>
+  </Item>
+  <Item textValue="Align Right">
+    <div><strong>Align Right</strong></div>
+    <div>Align the selected text to the right</div>
+  </Item>
+</ListBox>
+```
+
+## Internationalization
+
+`useListBox` handles some aspects of internationalization automatically.
+For example, type to select is implemented with an 
+[Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Collator)
+for internationalized string matching. You are responsible for localizing all labels and option 
+content that is passed into the listbox.
+
+### RTL
+
+In right-to-left languages, the listbox options should be mirrored. The text content should be
+aligned to the right. Ensure that your CSS accounts for this.

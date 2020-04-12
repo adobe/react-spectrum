@@ -21,8 +21,13 @@ interface AriaButtonProps extends ButtonProps {
   validationState?: 'valid' | 'invalid', // used by FieldButton (e.g. DatePicker, ComboBox)
   'aria-expanded'?: boolean | 'false' | 'true',
   'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
+  'aria-controls'?: string,
   type?: 'button' | 'submit',
-  tabIndex?: number
+  tabIndex?: number,
+  id?: string,
+  'aria-label'?: string,
+  'aria-labelledby'?: string,
+  'aria-describedby'?: string,
 }
 
 interface ButtonAria {
@@ -55,6 +60,11 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     validationState,
     'aria-expanded': ariaExpanded,
     'aria-haspopup': ariaHasPopup,
+    'aria-controls': ariaControls,
+    id,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
+    'aria-describedby': ariaDescribedBy,
     type = 'button'
   } = props;
   let additionalProps;
@@ -87,8 +97,13 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   return {
     isPressed, // Used to indicate press state for visual
     buttonProps: mergeProps(interactions, {
+      id,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby,
+      'aria-describedby': ariaDescribedBy,  
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
+      'aria-controls': ariaControls,
       'aria-checked': isSelected,
       'aria-invalid': validationState === 'invalid' ? true : null,
       disabled: isDisabled,

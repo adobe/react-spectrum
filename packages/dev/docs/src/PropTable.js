@@ -11,7 +11,6 @@
  */
 
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {getUsedLinks} from './utils';
 import {InterfaceType, Type, TypeContext} from './types';
 import React from 'react';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
@@ -77,8 +76,6 @@ const GROUPS = {
 export function PropTable({component, links}) {
   let [ungrouped, groups] = groupProps(component.props.properties);
 
-  let usedLinks = getUsedLinks(component.props.properties, links);
-
   return (
     <>
       <TypeContext.Provider value={links}>
@@ -91,11 +88,6 @@ export function PropTable({component, links}) {
             </summary>
             <InterfaceType properties={groups[group]} showRequired showDefault />
           </details>
-        ))}
-        {Object.values(usedLinks).map(link => (
-          <section id={link.id} data-title={link.name} hidden>
-            <Type type={link} />
-          </section>
         ))}
       </TypeContext.Provider>
     </>

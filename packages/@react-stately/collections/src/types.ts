@@ -35,7 +35,7 @@ export interface Node<T> extends ItemStates {
   textValue: string,
   'aria-label'?: string,
   index?: number,
-  wrapper?: ((element: ReactElement) => ReactElement) | void,
+  wrapper?: (element: ReactElement) => ReactElement,
   parentKey?: Key,
   prevKey?: Key,
   nextKey?: Key,
@@ -47,7 +47,7 @@ export interface PartialNode<T> {
   key?: Key,
   value?: T,
   element?: ReactElement,
-  wrapper?: ((element: ReactElement) => ReactElement) | void,
+  wrapper?: (element: ReactElement) => ReactElement,
   rendered?: ReactNode,
   textValue?: string,
   'aria-label'?: string,
@@ -57,13 +57,30 @@ export interface PartialNode<T> {
   props?: ItemProps<T>
 }
 
+/** 
+ * A generic interface to access a readonly sequential 
+ * collection of unique keyed items.
+ */
 export interface Collection<T> extends Iterable<T> {
+  /** The number of items in the collection */
   readonly size: number;
+
+  /** Iterate over all keys in the collection */
   getKeys(): Iterable<Key>,
+
+  /** Get an item by its key */
   getItem(key: Key): T,
+
+  /** Get the key that comes before the given key in the collection */
   getKeyBefore(key: Key): Key | null,
+
+  /** Get the key that comes after the given key in the collection */
   getKeyAfter(key: Key): Key | null,
+
+  /** Get the first key in the collection */
   getFirstKey(): Key | null,
+
+  /** Get the last key in the collection */
   getLastKey(): Key | null
 }
 

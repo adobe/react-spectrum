@@ -1,0 +1,442 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/menu';
+import collectionsDocs from 'docs:@react-stately/collections';
+import selectionDocs from 'docs:@react-stately/selection';
+import treeDocs from 'docs:@react-stately/tree';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {useMenu, useMenuSection, useMenuItem} from '@react-aria/menu';
+```
+
+# useMenu
+
+<p>{docs.exports.useMenu.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useMenu', 'useMenuItem', 'useMenuSection']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#menu'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useMenu} links={docs.links} />
+<FunctionAPI function={docs.exports.useMenuItem} links={docs.links} />
+<FunctionAPI function={docs.exports.useMenuSection} links={docs.links} />
+
+## Features
+
+There is no native element to implement a menu in HTML that is widely supported. `useMenu` 
+helps achieve accessible menu components that can be styled as needed.
+
+Note: `useMenu` only handles the menu itself. For a dropdown menu, combine with [useMenuTrigger](useMenuTrigger.html).
+
+* Exposed to assistive technology as a `menu` with `menuitem` children using ARIA
+* Support for single, multiple, or no selection
+* Support for disabled items
+* Support for sections
+* Complex item labeling support for accessibility
+* Support for mouse, touch, and keyboard interactions
+* Tab stop focus management
+* Keyboard navigation support including arrow keys, home/end, page up/down
+* Automatic scrolling support during keyboard navigation
+* Typeahead to allow focusing items by typing text
+* Virtualized scrolling support for performance with long lists
+
+## Anatomy
+
+A menu consists of a container element, with a list of menu items or groups inside.
+`useMenu`, `useMenuItem`, and `useMenuSection` handle exposing this to assistive
+technology using ARIA, along with handling keyboard, mouse, and interactions to support
+selection and focus behavior.
+
+`useMenu` returns props that you should spread onto the menu container element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useMenu.return.id].properties} />
+</TypeContext.Provider>
+
+`useMenuItem` returns props for an individual item and its children:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useMenuItem.return.id].properties} />
+</TypeContext.Provider>
+
+`useMenuSection` returns props for a section:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useMenuSection.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={treeDocs.links} type={treeDocs.exports.useTreeState} />
+hook from `@react-stately/tree`. The state object should be passed as an option 
+to each of the above hooks.
+
+If a menu, menu item, or group does not have a visible label, an `aria-label` or `aria-labelledby`
+prop must be passed instead to identify the element to assisitive technology.
+
+## State management
+
+`useMenu` requires knowledge of the items in the menu in order to handle keyboard
+navigation and other interactions. It does this using the <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} />
+interface, which is a generic interface to access sequential unique keyed data. You can 
+implement this interface yourself, e.g. by using a prop to pass a list of item objects, 
+but <TypeLink links={treeDocs.links} type={treeDocs.exports.useTreeState} /> from 
+`@react-stately/tree` implements a JSX based interface for building collections instead.
+
+In addition, <TypeLink links={treeDocs.links} type={treeDocs.exports.useTreeState} />
+manages the state necessary for multiple selection and exposes
+a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
+which makes use of the collection to provide an interface to update the selection state.
+
+## Example
+
+This example uses HTML `<ul>` and `<li>` elements to represent the menu, and applies
+props from <TypeLink links={docs.links} type={docs.exports.useMenu} />
+and <TypeLink links={docs.links} type={docs.exports.useMenuItem} />.
+
+```tsx example
+import {useTreeState} from '@react-stately/tree';
+import {Item} from '@react-stately/collections';
+import {useFocus} from '@react-aria/interactions';
+import {mergeProps} from '@react-aria/utils';
+
+function Menu(props) {
+  // Create state based on the incoming props
+  let state = useTreeState({...props, selectionMode: 'none'});
+
+  // Get props for the menu element
+  let ref = React.useRef();
+  let {menuProps} = useMenu({...props, ref}, state);
+
+  return (
+    <ul
+      {...menuProps}
+      ref={ref}
+      style={{
+        padding: 0,
+        listStyle: 'none',
+        border: '1px solid gray'
+      }}>
+      {[...state.collection].map(item => (
+        <MenuItem
+          key={item.key}
+          item={item}
+          state={state}
+          onAction={props.onAction} />
+      ))}
+    </ul>
+  );
+}
+
+function MenuItem({item, state, onAction}) {
+  // Get props for the menu item element
+  let ref = React.useRef();
+  let {menuItemProps} = useMenuItem({
+    key: item.key,
+    ref,
+    isDisabled: item.isDisabled,
+    onAction
+  }, state);
+
+  // Handle focus events so we can apply highlighted 
+  // style to the focused menu item
+  let [isFocused, setFocused] = React.useState(false);
+  let {focusProps} = useFocus({onFocusChange: setFocused});
+
+  return (
+    <li
+      {...mergeProps(menuItemProps, focusProps)}
+      ref={ref}
+      style={{
+        background: isFocused ? 'gray' : 'transparent',
+        color: isFocused ? 'white' : null,
+        padding: '2px 5px',
+        outline: 'none',
+        cursor: 'pointer'
+      }}>
+      {item.rendered}
+    </li>
+  );
+}
+
+<Menu onAction={alert}>
+  <Item uniqueKey="one">One</Item>
+  <Item uniqueKey="two">Two</Item>
+  <Item uniqueKey="three">Three</Item>
+</Menu>
+```
+
+## Sections
+
+This example shows how a menu can support sections with separators and headings
+using props from <TypeLink links={docs.links} type={docs.exports.useMenuSection} />.
+This is accomplished using four extra elements: an `<li>` between the sections to 
+represent the separator, an `<li>` to contain the heading `<span>` element, and a 
+`<ul>` to contain the child items. This structure is necessary to ensure HTML 
+semantics are correct.
+
+```tsx example
+import {Section} from '@react-stately/collections';
+import {useSeparator} from '@react-aria/separator';
+
+function Menu(props) {
+  let state = useTreeState({...props, selectionMode: 'none'});
+  let ref = React.useRef();
+  let {menuProps} = useMenu({...props, ref}, state);
+
+  return (
+    <ul
+      {...menuProps}
+      ref={ref}
+      style={{
+        margin: 0,
+        padding: 0,
+        listStyle: 'none',
+        border: '1px solid gray'
+      }}>
+      {[...state.collection].map(item => (
+        <MenuSection
+          key={item.key}
+          section={item}
+          state={state}
+          onAction={props.onAction} />
+      ))}
+    </ul>
+  );
+}
+
+function MenuSection({section, state, onAction}) {
+  let {itemProps, headingProps, groupProps} = useMenuSection({
+    heading: section.rendered,
+    'aria-label': section['aria-label']
+  });
+  
+  let {separatorProps} = useSeparator({
+    elementType: 'li'
+  });
+
+  // If the section is not the first, add a separator element.
+  // The heading is rendered inside an <li> element, which contains
+  // a <ul> with the child items.
+  return <>
+    {section.key !== state.collection.getFirstKey() &&
+      <li
+        {...separatorProps}
+        style={{
+          borderTop: '1px solid gray',
+          margin: '2px 5px'
+        }} />
+    }
+    <li {...itemProps}>
+      {section.rendered &&
+        <span
+          {...headingProps}
+          style={{
+            fontWeight: 'bold',
+            fontSize: '1.1em',
+            padding: '2px 5px',
+          }}>
+          {section.rendered}
+        </span>
+      }
+      <ul
+        {...groupProps}
+        style={{
+          padding: 0,
+          listStyle: 'none'
+        }}>
+        {[...section.childNodes].map(node => 
+          <MenuItem
+            key={node.key}
+            item={node}
+            state={state}
+            onAction={onAction} />
+        )}
+      </ul>
+    </li>
+  </>;
+}
+
+function MenuItem({item, state, onAction}) {
+  // Same as in the first example...
+///- begin collapse -///
+  let ref = React.useRef();
+  let {menuItemProps} = useMenuItem({
+    key: item.key,
+    ref,
+    isDisabled: item.isDisabled,
+    onAction
+  }, state);
+  let [isFocused, setFocused] = React.useState(false);
+  let {focusProps} = useFocus({onFocusChange: setFocused});
+
+  return (
+    <li
+      {...mergeProps(menuItemProps, focusProps)}
+      ref={ref}
+      style={{
+        background: isFocused ? 'gray' : 'transparent',
+        color: isFocused ? 'white' : null,
+        padding: '2px 5px',
+        outline: 'none',
+        cursor: 'pointer'
+      }}>
+      {item.rendered}
+    </li>
+  );
+///- end collapse -///
+}
+
+<Menu onAction={alert}>
+  <Section title="Section 1">
+    <Item uniqueKey="section1-item1">One</Item>
+    <Item uniqueKey="section1-item2">Two</Item>
+    <Item uniqueKey="section1-item3">Three</Item>
+  </Section>
+  <Section title="Section 2">
+    <Item uniqueKey="section2-item1">One</Item>
+    <Item uniqueKey="section2-item2">Two</Item>
+    <Item uniqueKey="section2-item3">Three</Item>
+  </Section>
+</Menu>
+```
+
+## Complex menu items
+
+By default, menu items that only contain text will be labelled by the contents of the item. 
+For items that have more complex content (e.g. icons, multiple lines of text, keyboard shortcuts, etc.),
+use `labelProps`, `descriptionProps`, and `keyboardShortcutProps` 
+from <TypeLink links={docs.links} type={docs.exports.useMenuItem} />
+as needed to apply to the main text element of the menu item, its description, and keyboard 
+shortcut text. This improves screen reader announcement.
+
+**NOTE: menu items cannot contain interactive content (e.g. buttons, checkboxes, etc.).**
+
+This example shows how `labelProps`, `descriptionProps`, and `keyboardShortcutProps` can be applied to 
+child elements of the item to apply ARIA properties returned 
+by <TypeLink links={docs.links} type={docs.exports.useMenuItem} />. This is done using 
+`React.cloneElement` in this example, but you can use context or other approaches for this as well.
+
+```tsx example
+function Menu(props) {
+  // Same as the first example...
+///- begin collapse -///
+  let state = useTreeState({...props, selectionMode: 'none'});
+  let ref = React.useRef();
+  let {menuProps} = useMenu({...props, ref}, state);
+
+  return (
+    <ul
+      {...menuProps}
+      ref={ref}
+      style={{
+        padding: 0,
+        listStyle: 'none',
+        border: '1px solid gray'
+      }}>
+      {[...state.collection].map(item => (
+        <MenuItem
+          key={item.key}
+          item={item}
+          state={state}
+          onAction={props.onAction} />
+      ))}
+    </ul>
+  );
+///- end collapse -///
+}
+
+function MenuItem({item, state, onAction}) {
+  // Get props for the menu item element and child elements
+  let ref = React.useRef();
+  let {
+    menuItemProps,
+    labelProps,
+    descriptionProps,
+    keyboardShortcutProps
+  } = useMenuItem({
+    key: item.key,
+    ref,
+    isDisabled: item.isDisabled,
+    onAction
+  }, state);
+
+  // Handle focus events so we can apply highlighted 
+  // style to the focused menu item
+  let [isFocused, setFocused] = React.useState(false);
+  let {focusProps} = useFocus({onFocusChange: setFocused});
+
+  // Pull out the three expected children. We will clone them
+  // and add the necessary props for accessibility.
+  let [title, description, shortcut] = item.rendered;
+
+  return (
+    <li
+      {...mergeProps(menuItemProps, focusProps)}
+      ref={ref}
+      style={{
+        background: isFocused ? 'gray' : 'transparent',
+        color: isFocused ? 'white' : null,
+        padding: '2px 5px',
+        outline: 'none',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      }}>
+      <div>
+        {React.cloneElement(title, labelProps)}
+        {React.cloneElement(description, descriptionProps)}
+      </div>
+      {React.cloneElement(shortcut, keyboardShortcutProps)}
+    </li>
+  );
+}
+
+<Menu onAction={alert}>
+  <Item textValue="Copy" uniqueKey="copy">
+    <div><strong>Copy</strong></div>
+    <div>Copy the selected text</div>
+    <kbd>⌘C</kbd>
+  </Item>
+  <Item textValue="Cut" uniqueKey="cut">
+    <div><strong>Cut</strong></div>
+    <div>Cut the selected text</div>
+    <kbd>⌘X</kbd>
+  </Item>
+  <Item textValue="Paste" uniqueKey="paste">
+    <div><strong>Paste</strong></div>
+    <div>Paste the copied text</div>
+    <kbd>⌘V</kbd>
+  </Item>
+</Menu>
+```
+
+## Internationalization
+
+`useMenu` handles some aspects of internationalization automatically.
+For example, type to select is implemented with an 
+[Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Collator)
+for internationalized string matching. You are responsible for localizing all menu item labels for 
+content that is passed into the menu.
+
+### RTL
+
+In right-to-left languages, the menu items should be mirrored. The text content should be
+aligned to the right, and keyboard shortcuts should be aligned left. Ensure that your CSS 
+accounts for this.

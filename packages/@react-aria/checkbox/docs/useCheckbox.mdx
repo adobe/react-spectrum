@@ -11,7 +11,10 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/checkbox';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import hiddenDocs from 'docs:@react-aria/visually-hidden';
+import focusDocs from 'docs:@react-aria/focus';
+import statelyDocs from 'docs:@react-stately/toggle';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
@@ -58,8 +61,8 @@ to toggle the selection state, or use the Tab key to navigate to it and the Spac
   <InterfaceType properties={docs.links[docs.exports.useCheckbox.return.id].properties} />
 </TypeContext.Provider>
 
-Selection state is managed by the `useToggleState` hook in `@react-stately/toggle`.
-The state object should be passed as an option to `useCheckbox`.
+Selection state is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useToggleState} />
+hook in `@react-stately/toggle`. The state object should be passed as an option to `useCheckbox`.
 
 In most cases, checkboxes should have a visual label. If the checkbox does not have a visible label,
 an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assisitive 
@@ -91,14 +94,16 @@ function Checkbox(props) {
 ## Styling
 
 To build a custom styled checkbox, you can make the native input element visually hidden.
-This is possible using the `<VisuallyHidden>` utility component from `@react-aria/visually-hidden`.
-It is still in the DOM and accessible to assistive technology, but invisible. This example uses SVG
-to build the visual checkbox, which is hidden from screen readers with `aria-hidden`.
+This is possible using the &lt;<TypeLink links={hiddenDocs.links} type={hiddenDocs.exports.VisuallyHidden} />&gt;
+utility component from `@react-aria/visually-hidden`. It is still in the DOM and accessible to 
+assistive technology, but invisible. This example uses SVG to build the visual checkbox,
+which is hidden from screen readers with `aria-hidden`.
 
 For keyboard accessibility, a focus ring is important to indicate which element has keyboard focus.
-This is implemented with the `useFocusRing` hook from `@react-aria/focus`. When `isFocusVisible` is
-true, an extra SVG element is rendered to indicate focus. The focus ring is only visible when the user
-is interacting with a keyboard, not with a mouse or touch.
+This is implemented with the <TypeLink links={focusDocs.links} type={focusDocs.exports.useFocusRing} />
+hook from `@react-aria/focus`. When `isFocusVisible` is true, an extra SVG element is 
+rendered to indicate focus. The focus ring is only visible when the user is interacting 
+with a keyboard, not with a mouse or touch.
 
 ```tsx example
 import {VisuallyHidden} from '@react-aria/visually-hidden';

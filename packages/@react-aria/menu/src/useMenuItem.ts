@@ -18,13 +18,15 @@ import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface MenuItemAria {
+  /** Props for the menu item element */
   menuItemProps: HTMLAttributes<HTMLElement>,
+  /** Props for the main text element inside the menu item */
   labelProps: HTMLAttributes<HTMLElement>,
+  /** Props for the description text element inside the menu item, if any */
   descriptionProps: HTMLAttributes<HTMLElement>,
+  /** Props for the keyboard shortcut text element inside the item, if any */
   keyboardShortcutProps: HTMLAttributes<HTMLElement>
 }
-
-interface MenuState<T> extends TreeState<T> {}
 
 interface MenuItemProps {
   isDisabled?: boolean,
@@ -38,13 +40,19 @@ interface MenuItemProps {
   onAction?: (key: Key) => void
 }
 
-export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuItemAria {
+/**
+ * Provides the behavior and accessibility implementation for an item in a menu.
+ * See `useMenu` for more details about menus.
+ * @param props - props for the item
+ * @param state - state for the menu, as returned by `useTreeState`
+ */
+export function useMenuItem<T>(props: MenuItemProps, state: TreeState<T>): MenuItemAria {
   let {
     isSelected,
     isDisabled,
     key,
     onClose,
-    closeOnSelect,
+    closeOnSelect = true,
     ref,
     isVirtualized,
     onAction
@@ -122,6 +130,7 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
   let {hoverProps} = useHover({
     isDisabled,
     onHover() {
+      state.selectionManager.setFocused(true);
       state.selectionManager.setFocusedKey(key);
     }
   });

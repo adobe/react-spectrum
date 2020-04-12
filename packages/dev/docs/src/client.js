@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {attachToToC} from './attachToToC';
-import {BreadcrumbItem, Breadcrumbs} from '@react-spectrum/breadcrumbs';
+import {Item, Breadcrumbs} from '@react-spectrum/breadcrumbs';
 import {Content, View} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
@@ -59,12 +59,11 @@ function LinkPopover({id}) {
   return (
     <Dialog UNSAFE_className={highlightCss.spectrum} size="L">
       <View slot="heading">
-        <Breadcrumbs isHeading headingAriaLevel={3}>
+        <Breadcrumbs isHeading headingAriaLevel={3} onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}>
           {breadcrumbs.map((b, i) => (
-            <BreadcrumbItem
-              onPress={() => setBreadcrumbs(breadcrumbs.slice(0, i + 1))}>
+            <Item uniqueKey={i + 1}>
               {b.dataset.title}
-            </BreadcrumbItem>
+            </Item>
           ))}
         </Breadcrumbs>
       </View>
