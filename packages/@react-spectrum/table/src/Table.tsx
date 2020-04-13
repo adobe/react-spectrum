@@ -57,11 +57,11 @@ function TableHeader() {
 
   return (
     <thead {...rowGroupProps} className={classNames(styles, 'spectrum-Table-head')}>
-      {state.collection.headerRows.map(columns => (
-        <tr>
-          {columns.map(column =>
+      {state.collection.headerRows.map((columns, i) => (
+        <tr key={i}>
+          {columns.map((column, i) =>
             column.type === 'placeholder'
-              ? <th colSpan={column.colspan} />
+              ? <th key={'placeholder-' + i} colSpan={column.colspan} />
               : <TableColumnHeader key={column.key} column={column} />
           )}
         </tr>

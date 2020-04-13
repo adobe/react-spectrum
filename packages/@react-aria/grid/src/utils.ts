@@ -42,7 +42,12 @@ export function getCellId<T>(state: GridState<T>, rowKey: Key, columnKey: Key) {
 }
 
 export function getRowLabelledBy<T>(state: GridState<T>, rowKey: Key): string {
-  return state.collection.columns.map(c => 
+  let columns = state.collection.columns;
+  if (state.showSelectionCheckboxes && state.selectionManager.selectionMode !== 'none') {
+    columns = columns.slice(1);
+  }
+
+  return columns.map(c => 
     `${getColumnHeaderId(state, c.key)} ${getCellId(state, rowKey, c.key)}`
   ).join(' ');
 }

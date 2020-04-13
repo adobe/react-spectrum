@@ -11,7 +11,7 @@
  */
 
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
-import {cleanup, render} from '@testing-library/react';
+import {cleanup, render, within} from '@testing-library/react';
 import React from 'react';
 
 describe('Table', function () {
@@ -20,7 +20,7 @@ describe('Table', function () {
   });
 
   it('renders a static table', function () {
-    let {getByRole} = render(
+    let {getByRole, getByText} = render(
       <Table>
         <TableHeader>
           <Column>Foo</Column>
@@ -29,14 +29,14 @@ describe('Table', function () {
         </TableHeader>
         <TableBody>
           <Row>
-            <Cell>One</Cell>
-            <Cell>Two</Cell>
-            <Cell>Three</Cell>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
           </Row>
           <Row>
-            <Cell>One</Cell>
-            <Cell>Two</Cell>
-            <Cell>Three</Cell>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
           </Row>
         </TableBody>
       </Table>
@@ -44,5 +44,40 @@ describe('Table', function () {
     
     let grid = getByRole('grid');
     expect(grid).toBeVisible();
+    expect(grid).toHaveAttribute('aria-multiselectable', 'true');
+
+    let rowgroups = within(grid).getAllByRole('rowgroup');
+    expect(rowgroups).toHaveLength(2);
+
+    let headers = within(grid).getAllByRole('columnheader');
+    expect(headers).toHaveLength(4);
+
+    let checkbox = within(headers[0]).getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('aria-label', 'Select All');
+
+    expect(headers[1]).toHaveTextContent('Foo');
+    expect(headers[2]).toHaveTextContent('Bar');
+    expect(headers[3]).toHaveTextContent('Baz');
+
+    let rows = within(rowgroups[1]).getAllByRole('row');
+    expect(rows).toHaveLength(2);
+
+    expect(rows[0]).toHaveAttribute('aria-selected', 'false');
+    expect(rows[0]).toHaveAttribute('aria-labelledby', `${getByText('Foo').id} ${getByText('Foo 1').id} ${getByText('Bar').id} ${getByText('Bar 1').id} ${getByText('Baz').id} ${getByText('Baz 1').id}`);
+
+    expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+    expect(rows[1]).toHaveAttribute('aria-labelledby', `${getByText('Foo').id} ${getByText('Foo 2').id} ${getByText('Bar').id} ${getByText('Bar 2').id} ${getByText('Baz').id} ${getByText('Baz 2').id}`);
+  
+    let rowHeaders = within(rowgroups[1]).getAllByRole('rowheader');
+    checkbox = within(rowHeaders[0]).getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('aria-label', 'Select');
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${getByText('Foo').id} ${getByText('Foo 1').id} ${getByText('Bar').id} ${getByText('Bar 1').id} ${getByText('Baz').id} ${getByText('Baz 1').id}`);
+
+    checkbox = within(rowHeaders[1]).getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('aria-label', 'Select');
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${getByText('Foo').id} ${getByText('Foo 2').id} ${getByText('Bar').id} ${getByText('Bar 2').id} ${getByText('Baz').id} ${getByText('Baz 2').id}`);
+
+    let cells = within(rowgroups[1]).getAllByRole('gridcell');
+    expect(cells).toHaveLength(6);
   });
 });

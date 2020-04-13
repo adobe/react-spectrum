@@ -18,7 +18,8 @@ import {SelectionManager, useMultipleSelectionState} from '@react-stately/select
 
 export interface GridState<T> {
   collection: GridCollection<T>,
-  selectionManager: SelectionManager
+  selectionManager: SelectionManager,
+  showSelectionCheckboxes: boolean
 }
 
 export interface CollectionBuilderContext<T> {
@@ -56,6 +57,7 @@ export function useGridState<T>(props: GridStateProps<T>): GridState<T>  {
 
   return {
     collection,
-    selectionManager: new SelectionManager(collection, selectionState)
+    selectionManager: new SelectionManager(collection, selectionState),
+    showSelectionCheckboxes: props.showSelectionCheckboxes || false
   };
 }
