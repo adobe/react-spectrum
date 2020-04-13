@@ -501,8 +501,6 @@ module.exports = new Transformer({
 
     // console.log(exports)
     asset.type = 'json';
-    let inspect = require('util').inspect;
-    console.log(inspect(exports, {depth: 50}));
     let buffer = v8.serialize(exports);
     asset.setBuffer(buffer);
     return [asset];
