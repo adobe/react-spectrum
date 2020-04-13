@@ -14,20 +14,38 @@ import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
 interface OverlayProps {
+  /** A ref to the overlay container element */
   ref: RefObject<HTMLElement | null>,
-  onClose?: () => void,
+
+  /** Whether the overlay is currently open */
   isOpen?: boolean,
-  // Whether to close overlay if underlay is clicked
+
+  /** Handler that is called when the overlay should close */
+  onClose?: () => void,
+
+  /**
+   * Whether to close the overlay when the user interacts outside it
+   * @default false
+   */
   isDismissable?: boolean,
+
+  /** Whether the overlay should close when focus is lost or moves outside it */
   shouldCloseOnBlur?: boolean
 }
 
 interface OverlayAria {
+  /** Props to apply to the overlay container element */
   overlayProps: HTMLAttributes<HTMLElement>
 }
 
 const visibleOverlays: RefObject<HTMLElement>[] = [];
 
+/**
+ * Provides the behavior for overlays such as dialogs, popovers, and menus.
+ * Handles hiding the overlay when the user interacts outside it (if `isDismissible`),
+ * when the Escape key is pressed, or optionally, on blur. Handles multiple overlays 
+ * open at once as a stack: only the top-most overlay will close at once.
+ */
 export function useOverlay(props: OverlayProps): OverlayAria {
   let {ref, onClose, shouldCloseOnBlur, isOpen, isDismissable = false} = props;
 

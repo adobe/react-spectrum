@@ -14,17 +14,31 @@ import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useId} from '@react-aria/utils';
 
 interface OverlayTriggerProps {
+  /** A ref to the trigger element */
   ref: RefObject<HTMLElement | null>,
+
+  /** Type of overlay that is opened by the trigger */
   type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
-  onClose?: () => void,
-  isOpen?: boolean
+
+  /** Whether the overlay is currently open */
+  isOpen?: boolean,
+
+  /** Handler that is called when the overlay should close */
+  onClose?: () => void
 }
 
 interface OverlayTriggerAria {
+  /** Props for the trigger element */
   triggerProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the overlay container element */
   overlayProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Handles the behavior and accessibility for an overlay trigger, e.g. a button
+ * that opens a popover, menu, or other overlay that is positioned relative to the trigger.
+ */
 export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAria {
   let {ref, type, onClose, isOpen} = props;
   
