@@ -12,14 +12,13 @@
 
 import Asterisk from '@spectrum-icons/workflow/Asterisk';
 import {getDoc} from 'globals-docs';
+import {getUsedLinks} from './utils';
 import Lowlight from 'react-lowlight';
 import Markdown from 'markdown-to-jsx';
 import React, {useContext} from 'react';
 import styles from './docs.css';
 import tableStyles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
-import { getUsedLinks } from './utils';
-import { PropTable } from './PropTable';
 
 const DOC_LINKS = {
   'React.Component': 'https://reactjs.org/docs/react-component.html',
@@ -95,7 +94,7 @@ export function Type({type}) {
       return <ArrayType {...type} />;
     case 'typeParameter':
       return <TypeParameter {...type} />;
-    case 'component':
+    case 'component': {
       let props = type.props;
       if (props.type === 'application') {
         props = props.base;
@@ -104,6 +103,7 @@ export function Type({type}) {
         props = links[props.id];
       }
       return <Type type={{...props, description: type.description}} />;
+    }
     default:
       console.log('no render component for TYPE', type);
       return null;
@@ -260,12 +260,12 @@ export function LinkRenderer() {
 
 export function LinkType({id}) {
   let links = useContext(TypeContext) || {};
+  let registered = useContext(LinkContext);
   let value = links[id];
   if (!value) {
     return null;
   }
 
-  let registered = useContext(LinkContext);
   registered.set(id, {type: value, links});
   
   let used = getUsedLinks(value, links);
@@ -285,7 +285,7 @@ function renderHTMLfromMarkdown(description) {
 }
 
 export function InterfaceType({description, properties, showRequired, showDefault}) {
-  return <>
+  return (<>
     <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
       <thead>
         <tr>
@@ -325,7 +325,7 @@ export function InterfaceType({description, properties, showRequired, showDefaul
         ))}
       </tbody>
     </table>
-  </>;
+  </>);
 }
 
 function ObjectType({properties, exact}) {

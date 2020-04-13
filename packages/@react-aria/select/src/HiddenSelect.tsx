@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {RefObject, ReactNode} from 'react';
+import React, {ReactNode, RefObject} from 'react';
 import {SelectState} from '@react-stately/select';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 

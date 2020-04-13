@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-stately/collections';
 import {Key, useMemo, useState} from 'react';
+import {ListState, useListState} from '@react-stately/list';
 import {MenuTriggerState, useMenuTriggerState} from '@react-stately/menu';
-import {SelectionManager} from '@react-stately/selection';
+import {Node} from '@react-stately/collections';
 import {SelectProps} from '@react-types/select';
 import {useControlledState} from '@react-stately/utils';
-import {useListState, ListState} from '@react-stately/list'; // TODO: move
 
 export interface SelectState<T> extends ListState<T>, MenuTriggerState {
   /** The key for the currently selected item */

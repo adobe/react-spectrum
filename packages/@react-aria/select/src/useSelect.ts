@@ -12,13 +12,13 @@
 
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
+import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {mergeProps, useId} from '@react-aria/utils';
 import {PressProps} from '@react-aria/interactions';
 import {SelectState} from '@react-stately/select';
+import {useCollator} from '@react-aria/i18n';
 import {useLabel} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
-import {useTypeSelect, ListKeyboardDelegate} from '@react-aria/selection';
-import { useCollator } from '@react-aria/i18n';
 
 interface SelectProps {
   /** A ref to the trigger element */

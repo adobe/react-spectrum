@@ -54,7 +54,7 @@ module.exports = new Transformer({
 
             exampleCode.push(code);
 
-            node.value = node.value.replace(/\n*\/\/\/\- begin collapse \-\/\/\/(.|\n)*\/\/\/\- end collapse \-\/\/\//g, '').trim();
+            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*\/\/\/- end collapse -\/\/\//g, '').trim();
 
             return [
               node,

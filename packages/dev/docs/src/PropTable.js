@@ -11,7 +11,7 @@
  */
 
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {InterfaceType, Type, TypeContext} from './types';
+import {InterfaceType, TypeContext} from './types';
 import React from 'react';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 

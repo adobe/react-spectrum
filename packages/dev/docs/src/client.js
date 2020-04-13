@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {attachToToC} from './attachToToC';
-import {Item, Breadcrumbs} from '@react-spectrum/breadcrumbs';
+import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {Content, View} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
