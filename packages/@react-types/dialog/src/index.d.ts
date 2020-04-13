@@ -50,9 +50,9 @@ export interface SpectrumDialogProps extends DOMProps, StyleProps {
   size?: 'S' | 'M' | 'L',
   /** Whether the Dialog is dismissable. See the [examples](#examples) for more details. */
   isDismissable?: boolean,
-  /** Handler that is called when the 'x' button of a dismissable dialog is clicked. */
+  /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
   onDismiss?: () => void,
-  /** The role of the dialog. */
+  /** The role of the Dialog. */
   role?: 'dialog' | 'alertdialog'
 }
 
