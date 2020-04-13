@@ -16,7 +16,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-stately/utils": "^3.0.0-alpha.1"
+    "@react-stately/collections": "^3.0.0-alpha.1",
+    "@react-stately/selection": "^3.0.0-alpha.1",
+    "@react-stately/utils": "^3.0.0-alpha.1",
+    "@react-types/table": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"

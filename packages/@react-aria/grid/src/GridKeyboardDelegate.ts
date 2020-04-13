@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, RefObject} from 'react';
-import {KeyboardDelegate, Direction} from '@react-types/shared';
+import {Direction, KeyboardDelegate} from '@react-types/shared';
 import {GridCollection} from '@react-stately/grid';
+import {Key, RefObject} from 'react';
 import {Node} from '@react-stately/collections';
 
 export class GridKeyboardDelegate<T> implements KeyboardDelegate {

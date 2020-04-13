@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ItemElement, ItemProps, CellElement} from '@react-types/shared';
 import {PartialNode} from '@react-stately/collections';
 import React, {ReactElement} from 'react';
-import { TableBodyProps } from '@react-types/table';
+import {TableBodyProps} from '@react-types/table';
 
 function TableBody<T>(props: TableBodyProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;

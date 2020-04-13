@@ -10,12 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {getColumnHeaderId} from './utils';
 import {GridState} from '@react-stately/grid';
-import {KeyboardDelegate} from '@react-types/shared';
-import {RefObject, HTMLAttributes, Key} from 'react';
-import { useSelectableItem } from '@react-aria/selection';
-import { getColumnHeaderId } from './utils';
-import { useGridCell } from './useGridCell';
+import {HTMLAttributes, Key, RefObject} from 'react';
+import {useGridCell} from './useGridCell';
 
 interface ColumnHeaderProps {
   key: Key,
@@ -37,7 +35,7 @@ export function useColumnHeader<T>(props: ColumnHeaderProps, state: GridState<T>
       ...gridCellProps,
       role: 'columnheader',
       id: getColumnHeaderId(state, key),
-      'aria-colspan': colspan && colspan > 1 ? colspan : null,
+      'aria-colspan': colspan && colspan > 1 ? colspan : null
       // 'aria-sort'
     }
   };

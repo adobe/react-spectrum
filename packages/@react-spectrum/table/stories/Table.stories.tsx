@@ -11,11 +11,11 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Table, TableHeader, TableBody, Column, Row, Cell} from '../';
+import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
+import {Link} from '@react-spectrum/link';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
-import {Link} from '@react-spectrum/link';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -39,13 +39,54 @@ let nestedColumns = [
 
 let items = [
   {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+  {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
 let onSelectionChange = action('onSelectionChange');
 storiesOf('Table', module)
   .add(
     'static',
+    () => (
+      <Table onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column key="foo">Foo</Column>
+          <Column key="bar">Bar</Column>
+          <Column key="baz">Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'dynamic',
+    () => (
+      <Table onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns} columnKey="key">
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items} itemKey="foo">
+          {item =>
+            (<Row>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'static with nested columns',
     () => (
       <Table onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
@@ -76,7 +117,7 @@ storiesOf('Table', module)
     )
   )
   .add(
-    'dynamic',
+    'dynamic with nested columns',
     () => (
       <Table onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={nestedColumns} columnKey="key">
@@ -86,9 +127,9 @@ storiesOf('Table', module)
         </TableHeader>
         <TableBody items={items} itemKey="foo">
           {item =>
-            <Row>
+            (<Row>
               {key => <Cell>{item[key]}</Cell>}
-            </Row>
+            </Row>)
           }
         </TableBody>
       </Table>

@@ -10,17 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {FocusRing} from '@react-aria/focus';
+import {GridState, useGridState} from '@react-stately/grid';
+import React, {useContext, useRef} from 'react';
 import {SpectrumTableProps} from '@react-types/table';
-import React, { useRef, useContext } from 'react';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import {useGrid, useRow, useRowGroup, useColumnHeader, useGridCell, useRowHeader, useSelectionCheckbox, useSelectAllCheckbox} from '@react-aria/grid';
-import {useGridState, GridState} from '@react-stately/grid';
+import {useColumnHeader, useGrid, useGridCell, useRow, useRowGroup, useRowHeader, useSelectAllCheckbox, useSelectionCheckbox} from '@react-aria/grid';
 import {useProviderProps} from '@react-spectrum/provider';
-import { FocusRing } from '@react-aria/focus';
-import { Checkbox } from '@react-spectrum/checkbox';
 
 const TableContext = React.createContext<GridState<unknown>>(null);
 function useTableContext() {
@@ -58,7 +57,7 @@ function TableHeader() {
 
   return (
     <thead {...rowGroupProps} className={classNames(styles, 'spectrum-Table-head')}>
-      {state.collection.headerRows.map(columns => 
+      {state.collection.headerRows.map(columns => (
         <tr>
           {columns.map(column =>
             column.type === 'placeholder'
@@ -66,7 +65,7 @@ function TableHeader() {
               : <TableColumnHeader key={column.key} column={column} />
           )}
         </tr>
-      )}
+      ))}
     </thead>
   );
 }
@@ -141,7 +140,7 @@ function TableRowHeader({rowHeader}) {
   let state = useTableContext();
   let {rowHeaderProps} = useRowHeader({
     ref,
-    key: rowHeader.key,
+    key: rowHeader.key
   }, state);
 
   let {checkboxProps} = useSelectionCheckbox(
@@ -168,7 +167,7 @@ function TableCell({cell}) {
   let state = useTableContext();
   let {gridCellProps} = useGridCell({
     ref,
-    key: cell.key,
+    key: cell.key
   }, state);
 
   return (

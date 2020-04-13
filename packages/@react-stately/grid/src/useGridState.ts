@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBuilder, Node} from '@react-stately/collections';
 import {CollectionBase, MultipleSelection, SelectionMode} from '@react-types/shared';
+import {CollectionBuilder, Node} from '@react-stately/collections';
+import {GridCollection} from './GridCollection';
 import {Key, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
-import {GridCollection} from './GridCollection';
 
 export interface GridState<T> {
   collection: GridCollection<T>,
-  selectionManager: SelectionManager<T>
+  selectionManager: SelectionManager
 }
 
 export interface CollectionBuilderContext<T> {
@@ -52,7 +52,7 @@ export function useGridState<T>(props: GridStateProps<T>): GridState<T>  {
     }), context);
 
     return new GridCollection(nodes);
-  }, [builder, props, selectionState.selectedKeys, selectionState.focusedKey, disabledKeys]);
+  }, [props, selectionState.selectionMode, selectionState.selectedKeys, selectionState.focusedKey, builder, disabledKeys]);
 
   return {
     collection,

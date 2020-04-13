@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, DOMProps, MultipleSelection, StyleProps, AsyncLoadable, CollectionChildren, SectionProps} from '@react-types/shared';
-import { Key, ReactElement } from 'react';
+import {AsyncLoadable, CollectionChildren, DOMProps, MultipleSelection, SectionProps, StyleProps} from '@react-types/shared';
+import {Key, ReactElement} from 'react';
 
 export interface TableProps<T> extends MultipleSelection {
   children: ReactElement<TableHeaderProps | TableBodyProps | SectionProps | RowProps>[],

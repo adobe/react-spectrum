@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {getRowLabelledBy} from './utils';
 import {GridState} from '@react-stately/grid';
-import {KeyboardDelegate} from '@react-types/shared';
-import {RefObject, HTMLAttributes, Key} from 'react';
-import { useSelectableItem } from '@react-aria/selection';
-import { usePress } from '@react-aria/interactions';
-import { getRowLabelledBy } from './utils';
+import {HTMLAttributes, Key, RefObject} from 'react';
+import {usePress} from '@react-aria/interactions';
+import {useSelectableItem} from '@react-aria/selection';
 
 interface RowProps {
   ref?: RefObject<HTMLElement>,

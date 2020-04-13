@@ -152,7 +152,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
     }
 
     let maxLength = Math.max(...columns.map(c => c.length));
-    let headerRows = Array(maxLength).fill(0).map(() => [])
+    let headerRows = Array(maxLength).fill(0).map(() => []);
 
     // Convert columns into rows.
     let colIndex = 0;

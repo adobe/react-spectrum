@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {GridState} from '@react-stately/grid';
-import {GridKeyboardDelegate} from './GridKeyboardDelegate';
-import {KeyboardDelegate} from '@react-types/shared';
-import {RefObject, HTMLAttributes, useMemo} from 'react';
-import { useSelectableCollection } from '@react-aria/selection';
-import { useCollator, useLocale } from '@react-aria/i18n';
 import {gridIds} from './utils';
-import { useId } from '@react-aria/utils';
+import {GridKeyboardDelegate} from './GridKeyboardDelegate';
+import {GridState} from '@react-stately/grid';
+import {HTMLAttributes, RefObject, useMemo} from 'react';
+import {KeyboardDelegate} from '@react-types/shared';
+import {useCollator, useLocale} from '@react-aria/i18n';
+import {useId} from '@react-aria/utils';
+import {useSelectableCollection} from '@react-aria/selection';
 
 interface GridProps {
   ref: RefObject<HTMLElement>,
@@ -40,7 +40,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T>): GridAria {
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {direction} = useLocale();
-  let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate(state.collection, ref, direction, collator), [keyboardDelegate, state.collection, ref, collator]);
+  let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate(state.collection, ref, direction, collator), [keyboardDelegate, state.collection, ref, direction, collator]);
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
     keyboardDelegate: delegate

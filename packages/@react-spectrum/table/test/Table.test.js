@@ -10,25 +10,39 @@
  * governing permissions and limitations under the License.
  */
 
-import Table from '../';
+import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {cleanup, render} from '@testing-library/react';
 import React from 'react';
-import V2Table from '@react/react-spectrum/Table';
-
 
 describe('Table', function () {
-
   afterEach(() => {
     cleanup();
   });
 
-  it.each`
-    Name | Component      | props
-    ${'Table'} | ${Table}| ${{}}
-    ${'V2Table'}      | ${V2Table}      | ${{}}
-  `('$Name handles defaults', function ({Component, props}) {
-    let {getByRole, getByText} = render(<Component {...props}></Component>);
-
-    expect(true).toBeTruthy();
+  it('renders a static table', function () {
+    let {getByRole} = render(
+      <Table>
+        <TableHeader>
+          <Column>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell>One</Cell>
+            <Cell>Two</Cell>
+            <Cell>Three</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+    
+    let grid = getByRole('grid');
+    expect(grid).toBeVisible();
   });
 });

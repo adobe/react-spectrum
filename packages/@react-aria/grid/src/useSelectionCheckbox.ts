@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {GridState} from '@react-stately/grid';
+import {CheckboxProps} from '@react-types/checkbox';
 import {DOMProps} from '@react-types/shared';
+import {getRowLabelledBy} from './utils';
+import {GridState} from '@react-stately/grid';
 import {Key} from 'react';
-import { useId } from '@react-aria/utils';
-import { getRowLabelledBy } from './utils';
-import { CheckboxProps } from '@react-types/checkbox';
+import {useId} from '@react-aria/utils';
 
 interface SelectionCheckboxProps {
   key: Key

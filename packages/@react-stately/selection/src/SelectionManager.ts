@@ -19,12 +19,12 @@ interface SelectionManagerOptions {
   allowsCellSelection?: boolean
 }
 
-export class SelectionManager<T> implements MultipleSelectionManager {
-  private collection: Collection<Node<T>>;
+export class SelectionManager implements MultipleSelectionManager {
+  private collection: Collection<Node<unknown>>;
   private state: MultipleSelectionState;
   private allowsCellSelection: boolean;
 
-  constructor(collection: Collection<Node<T>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
+  constructor(collection: Collection<Node<unknown>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
     this.collection = collection;
     this.state = state;
     this.allowsCellSelection = options?.allowsCellSelection ?? false;
@@ -113,13 +113,21 @@ export class SelectionManager<T> implements MultipleSelectionManager {
       return key;
     }
 
-    if (!this.allowsCellSelection && item.type === 'cell') {
-      key = item.parentKey;
-    } else if (item.type !== 'item') {
+    // If cell selection is allowed, just return the key.
+    if (item.type === 'cell' && this.allowsCellSelection) {
+      return key;
+    }
+
+    // Find a parent item to select
+    while (item.type !== 'item' && item.parentKey) {
+      item = this.collection.getItem(item.parentKey);
+    }
+
+    if (!item || item.type !== 'item') {
       return null;
     }
 
-    return key;
+    return item.key;
   }
 
   toggleSelection(key: Key) {

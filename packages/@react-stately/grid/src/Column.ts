@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {CollectionBuilderContext} from './useGridState';
 import {ColumnProps} from '@react-types/table';
-import {PartialNode, Node} from '@react-stately/collections';
+import {Node, PartialNode} from '@react-stately/collections';
 import React, {ReactElement} from 'react';
-import { CollectionBuilderContext } from './useGridState';
 
 function Column<T>(props: ColumnProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;

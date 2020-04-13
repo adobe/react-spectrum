@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import { GridState } from "@react-stately/grid";
-import { Key } from "react";
+import {GridState} from '@react-stately/grid';
+import {Key} from 'react';
 
 export const gridIds = new WeakMap<GridState<unknown>, string>();
 
