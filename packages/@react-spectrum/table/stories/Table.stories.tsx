@@ -24,15 +24,15 @@ let columns = [
 ];
 
 let nestedColumns = [
-  {name: 'Test'},
-  {name: 'Tiered One Header', children: [
-    {name: 'Tier Two Header A', children: [
-      {name: 'Foo'},
-      {name: 'Bar'}
+  {name: 'Test', key: 'test'},
+  {name: 'Tiered One Header', key: 'tier1', children: [
+    {name: 'Tier Two Header A', key: 'tier2a', children: [
+      {name: 'Foo', key: 'foo'},
+      {name: 'Bar', key: 'bar'}
     ]},
-    {name: 'Yay'},
-    {name: 'Tier Two Header B', children: [
-      {name: 'Baz'}
+    {name: 'Yay', key: 'yay'},
+    {name: 'Tier Two Header B', key: 'tier2b', children: [
+      {name: 'Baz', key: 'baz'}
     ]}
   ]}
 ];
@@ -79,7 +79,7 @@ storiesOf('Table', module)
     'dynamic',
     () => (
       <Table onSelectionChange={s => onSelectionChange([...s])}>
-        <TableHeader columns={nestedColumns} columnKey="name">
+        <TableHeader columns={nestedColumns} columnKey="key">
           {column =>
             <Column childColumns={column.children}>{column.name}</Column>
           }
@@ -87,11 +87,7 @@ storiesOf('Table', module)
         <TableBody items={items} itemKey="foo">
           {item =>
             <Row>
-              <Cell>{item.test}</Cell>
-              <Cell>{item.foo}</Cell>
-              <Cell>{item.bar}</Cell>
-              <Cell>{item.yay}</Cell>
-              <Cell>{item.baz}</Cell>
+              {key => <Cell>{item[key]}</Cell>}
             </Row>
           }
         </TableBody>

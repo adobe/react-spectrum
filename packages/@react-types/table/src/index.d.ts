@@ -69,4 +69,4 @@ export interface CellProps {
 }
 
 export type CellElement = ReactElement<CellProps>;
-export type CellRenderer = (column: Column) => CellElement;
+export type CellRenderer = (columnKey: Key) => CellElement;

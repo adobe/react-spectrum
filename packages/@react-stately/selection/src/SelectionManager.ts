@@ -115,6 +115,8 @@ export class SelectionManager<T> implements MultipleSelectionManager {
 
     if (!this.allowsCellSelection && item.type === 'cell') {
       key = item.parentKey;
+    } else if (item.type !== 'item') {
+      return null;
     }
 
     return key;
@@ -122,6 +124,10 @@ export class SelectionManager<T> implements MultipleSelectionManager {
 
   toggleSelection(key: Key) {
     key = this.getKey(key);
+    if (key == null) {
+      return;
+    }
+
     this.state.setSelectedKeys(selectedKeys => {
       let keys = new Selection(selectedKeys);
       if (keys.has(key)) {
@@ -140,6 +146,10 @@ export class SelectionManager<T> implements MultipleSelectionManager {
 
   replaceSelection(key: Key) {
     key = this.getKey(key);
+    if (key == null) {
+      return;
+    }
+    
     this.state.setSelectedKeys(new Selection([key], key, key));
   }
 

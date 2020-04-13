@@ -21,17 +21,17 @@ interface CollectionBuilderState {
 
 export class CollectionBuilder<T> {
   private itemKey: string;
-  private context: unknown;
+  private context?: unknown;
   private cache: Map<T, Node<T>> = new Map();
   private getItemStates: (key: Key) => ItemStates;
 
-  constructor(itemKey: string, context?: unknown) {
+  constructor(itemKey: string) {
     this.itemKey = itemKey;
-    this.context = context;
   }
 
-  build(props: CollectionBase<T>, getItemStates?: (key: Key) => ItemStates) {
+  build(props: CollectionBase<T>, getItemStates?: (key: Key) => ItemStates, context?: unknown) {
     this.getItemStates = getItemStates || (() => ({}));
+    this.context = context;
     return iterable(() => this.iterateCollection(props));
   }
 
@@ -130,7 +130,10 @@ export class CollectionBuilder<T> {
         throw new Error(`Unknown element <${name}> in collection.`);
       }
 
-      for (let childNode of type.getCollectionNode(element.props, this.context) as Iterable<PartialNode<T>>) {
+      let childNodes = type.getCollectionNode(element.props, this.context) as Generator<PartialNode<T>, void, Node<T>[]>;
+      let result = childNodes.next();
+      while (!result.done && result.value) {
+        let childNode = result.value;
         let nodes = this.getFullNode({
           ...childNode,
           key: childNode.element ? null : this.getKey(element, partialNode, state, parentKey),
@@ -138,7 +141,8 @@ export class CollectionBuilder<T> {
           wrapper: compose(partialNode.wrapper, childNode.wrapper)
         }, this.getChildState(state, childNode), parentKey ? `${parentKey}${element.key}` : element.key, parentNode);
 
-        for (let node of nodes) {
+        let children = [...nodes];
+        for (let node of children) {
           // Cache the node based on its value
           node.value = childNode.value || partialNode.value;
           if (node.value) {
@@ -153,6 +157,8 @@ export class CollectionBuilder<T> {
 
           yield node;
         }
+
+        result = childNodes.next(children);
       }
 
       return;

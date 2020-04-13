@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBuilder} from '@react-stately/collections';
-import {CollectionBase, MultipleSelection} from '@react-types/shared';
+import {CollectionBuilder, Node} from '@react-stately/collections';
+import {CollectionBase, MultipleSelection, SelectionMode} from '@react-types/shared';
 import {Key, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {GridCollection} from './GridCollection';
@@ -19,6 +19,12 @@ import {GridCollection} from './GridCollection';
 export interface GridState<T> {
   collection: GridCollection<T>,
   selectionManager: SelectionManager<T>
+}
+
+export interface CollectionBuilderContext<T> {
+  showSelectionCheckboxes: boolean,
+  selectionMode: SelectionMode,
+  columns: Node<T>[]
 }
 
 export interface GridStateProps<T> extends CollectionBase<T>, MultipleSelection {
@@ -30,14 +36,20 @@ export function useGridState<T>(props: GridStateProps<T>): GridState<T>  {
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
-
-  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey, props), [props.itemKey]);
+  
+  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
   let collection = useMemo(() => {
+    let context = {
+      showSelectionCheckboxes: props.showSelectionCheckboxes,
+      selectionMode: selectionState.selectionMode,
+      columns: []
+    };
+  
     let nodes = builder.build(props, (key) => ({
       isSelected: selectionState.selectedKeys.has(key),
       isDisabled: disabledKeys.has(key),
       isFocused: key === selectionState.focusedKey
-    }));
+    }), context);
 
     return new GridCollection(nodes);
   }, [builder, props, selectionState.selectedKeys, selectionState.focusedKey, disabledKeys]);

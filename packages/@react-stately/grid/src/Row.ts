@@ -13,13 +13,13 @@
 import {CellElement, RowProps} from '@react-types/table';
 import {CollectionBuilder, PartialNode} from '@react-stately/collections';
 import React, {ReactElement} from 'react';
-import { GridStateProps } from './useGridState';
+import { GridStateProps, CollectionBuilderContext } from './useGridState';
 
 function Row<T>(props: RowProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 
-Row.getCollectionNode = function* <T> (props: RowProps<T>, gridProps: GridStateProps<T>): Generator<PartialNode<T>> {
+Row.getCollectionNode = function* <T> (props: RowProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>> {
   let {childItems, children, textValue} = props;
 
   yield {
@@ -32,7 +32,7 @@ Row.getCollectionNode = function* <T> (props: RowProps<T>, gridProps: GridStateP
       // Process cells first
       let index = 0;
 
-      if (gridProps.showSelectionCheckboxes && gridProps.selectionMode !== 'none') {
+      if (context.showSelectionCheckboxes && context.selectionMode !== 'none') {
         yield {
           type: 'rowheader',
           key: 'header', // this is combined with the row key by CollectionBuilder
@@ -41,11 +41,11 @@ Row.getCollectionNode = function* <T> (props: RowProps<T>, gridProps: GridStateP
       }
 
       if (typeof children === 'function') {
-        for (let column of builder.columns) {
+        for (let column of context.columns) {
           yield {
             type: 'cell',
-            element: children(column),
-            key: column.key,
+            element: children(column.key),
+            key: column.key, // this is combined with the row key by CollectionBuilder
             index: index++
           };
         }

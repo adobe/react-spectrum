@@ -11,16 +11,17 @@
  */
 
 import {ColumnProps} from '@react-types/table';
-import {PartialNode} from '@react-stately/collections';
+import {PartialNode, Node} from '@react-stately/collections';
 import React, {ReactElement} from 'react';
+import { CollectionBuilderContext } from './useGridState';
 
 function Column<T>(props: ColumnProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 
-Column.getCollectionNode = function* <T>(props: ColumnProps<T>): Generator<PartialNode<T>> {
+Column.getCollectionNode = function* <T>(props: ColumnProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>, void, Node<T>[]> {
   let {title, children, childColumns} = props;
-  yield {
+  let fullNodes = yield {
     type: 'column',
     hasChildNodes: !!childColumns || (title && React.Children.count(children) > 0),
     rendered: title || children,
@@ -43,6 +44,13 @@ Column.getCollectionNode = function* <T>(props: ColumnProps<T>): Generator<Parti
       }
     }
   };
+
+  // register leaf columns on the context so that <Row> can access them
+  for (let node of fullNodes) {
+    if (!node.hasChildNodes) {
+      context.columns.push(node);
+    }
+  }
 };
 
 // We don't want getCollectionNode to show up in the type definition
