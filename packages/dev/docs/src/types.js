@@ -122,21 +122,16 @@ function Identifier({name}) {
 
 function JoinList({elements, joiner}) {
   return elements
-    .reduce((acc, v, i) => {
-      if (!v) {
-        return acc;
-      }
-      return [
-        ...acc,
-        <span
-          className="token punctuation"
-          key={`join${v.name || v.raw}${i}`}
-          style={{whiteSpace: 'pre-wrap'}}>
-          {joiner}
-        </span>,
-        <Type type={v} key={`type${v.name || v.raw}${i}`} />
-      ];
-    }, []).slice(1);
+    .reduce((acc, v, i) => [
+      ...acc,
+      <span
+        className="token punctuation"
+        key={`join${v.name || v.raw}${i}`}
+        style={{whiteSpace: 'pre-wrap'}}>
+        {joiner}
+      </span>,
+      <Type type={v} key={`type${v.name || v.raw}${i}`} />
+    ], []).slice(1);
 }
 
 function UnionType({elements}) {
