@@ -37,6 +37,12 @@ governing permissions and limitations under the License.
 }
 
 %spectrum-overlay--top--open {
+  /*
+  Edge does not support combination of translate, calc and var.
+  New var equal to negative calculation result is added instead.
+  TODO: for Chromium Edge return to
+  transform: translateX(calc(var(--spectrum-global-dimension-size-75) * -1));
+  */
   transform: translateY(var(--spectrum-overlay-negative-transform-distance));
 }
 
