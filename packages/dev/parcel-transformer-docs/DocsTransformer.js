@@ -93,9 +93,14 @@ module.exports = new Transformer({
     }
 
     function processPath(path, thing) {
-      console.log('called processPath');
+      if (path.isTSParenthesizedType()) {
+        return processExport(path.get('typeAnnotation'), thing);
+      }
+      if (path.isTSAsExpression()) {
+        // not sure why I can't pass typeAnnotation instead
+        return processExport(path.get('expression'), thing);
+      }
       if (path.isVariableDeclarator()) {
-        console.log('isVariableDeclarator');
         if (!path.node.init) {
           return;
         }
@@ -107,14 +112,11 @@ module.exports = new Transformer({
       }
 
       if (isReactForwardRef(path)) {
-        console.log('isReactForwardRef');
         return processExport(path.get('arguments.0'), thing);
       }
 
       if (path.isFunction()) {
-        console.log('isFunction');
         if (isReactComponent(path)) {
-          console.log('isReactComponent');
           let props = path.node.params[0];
           let docs = getJSDocs(path);
           return Object.assign(thing, {
@@ -130,15 +132,8 @@ module.exports = new Transformer({
       }
 
       if (path.isTSTypeReference()) {
-        console.log('isTSTypeReference');
         if (path.node.typeParameters) {
-          console.log('diving into base');
           let base = processExport(path.get('typeName'));
-          console.log('came out of dive');
-          console.log('trying for a match in type reference');
-          if (base === partialNode) {
-            console.log('found a match! in type reference');
-          }
           let typeParameters = path.get('typeParameters.params').map(p => processExport(p));
           return Object.assign(thing, {
             type: 'application',
@@ -148,15 +143,10 @@ module.exports = new Transformer({
         }
 
         let base = processExport(path.get('typeName'), thing);
-        console.log('trying for a match in type reference in else');
-        if (base === partialNode) {
-          console.log('found a match! in type reference');
-        }
         return base;
       }
 
       if (path.isImportSpecifier()) {
-        console.log('isImportSpecifier');
         asset.addDependency({
           moduleSpecifier: path.parent.source.value,
           symbols: new Map([[path.node.imported.name, path.node.local.name]]),
@@ -172,7 +162,6 @@ module.exports = new Transformer({
       }
 
       if (path.isTSTypeAliasDeclaration()) {
-        console.log('isTSTypeAliasDeclaration');
         let docs = getJSDocs(path);
         return Object.assign(thing, {
           type: 'alias',
@@ -186,10 +175,8 @@ module.exports = new Transformer({
       }
 
       if (path.isTSInterfaceDeclaration()) {
-        console.log('isTSInterfaceDeclaration');
         let properties = {};
         if (path.node.id.name === 'PartialNode') {
-          console.log('try1 parsing PartialNode');
           partialNode = thing;
         }
         for (let propertyPath of path.get('body.body')) {
@@ -215,7 +202,6 @@ module.exports = new Transformer({
       }
 
       if (path.isTSTypeLiteral()) {
-        console.log('isTSTypeLiteral');
         let properties = {};
         for (let member of path.get('members')) {
           let property = processExport(member);
@@ -233,7 +219,6 @@ module.exports = new Transformer({
       }
 
       if (path.isTSPropertySignature()) {
-        console.log('isTSPropertySignature');
         let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
         return Object.assign(thing, addDocs({
@@ -245,7 +230,6 @@ module.exports = new Transformer({
       }
 
       if (path.isTSMethodSignature()) {
-        console.log('isTSMethodSignature');
         let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
         return Object.assign(thing, addDocs({
@@ -269,7 +253,6 @@ module.exports = new Transformer({
       }
 
       if (path.isTSExpressionWithTypeArguments()) {
-        console.log('isTSExpressionWithTypeArguments');
         if (path.node.typeParameters) {
           return Object.assign(thing, {
             type: 'application',
@@ -282,7 +265,6 @@ module.exports = new Transformer({
       }
 
       if (path.isIdentifier()) {
-        console.log('identifier', path.node.name);
         let binding = path.scope.getBinding(path.node.name);
         if (!binding) {
           return Object.assign(thing, {
@@ -290,8 +272,7 @@ module.exports = new Transformer({
             name: path.node.name
           });
         }
-        let bindings = processExport(binding.path, thing, 'binding!');
-        console.log('isIdentifier match', bindings === partialNode);
+        let bindings = processExport(binding.path, thing);
         return bindings;
       }
 
@@ -324,7 +305,6 @@ module.exports = new Transformer({
       }
 
       if (path.isTSArrayType()) {
-        console.log('isTSArrayType');
         return Object.assign(thing, {
           type: 'array',
           elementType: processExport(path.get('elementType'))
@@ -332,7 +312,6 @@ module.exports = new Transformer({
       }
 
       if (path.isTSUnionType()) {
-        console.log('isTSUnionType');
         return Object.assign(thing, {
           type: 'union',
           elements: path.get('types').map(t => processExport(t))
@@ -340,7 +319,6 @@ module.exports = new Transformer({
       }
 
       if (path.isTSLiteralType()) {
-        console.log('isTSLiteralType');
         return Object.assign(thing, {
           type: typeof path.node.literal.value,
           value: path.node.literal.value
@@ -348,7 +326,6 @@ module.exports = new Transformer({
       }
 
       if (path.isTSFunctionType() || path.isTSConstructorType()) {
-        console.log('isTSFunctionType isTSConstructorType');
         return Object.assign(thing, {
           type: 'function',
           parameters: path.get('parameters').map(p => ({
@@ -362,7 +339,6 @@ module.exports = new Transformer({
       }
 
       if (path.isTSIntersectionType()) {
-        console.log('isTSIntersectionType');
         return Object.assign(thing, {
           type: 'intersection',
           types: path.get('types').map(p => processExport(p))
@@ -370,7 +346,6 @@ module.exports = new Transformer({
       }
 
       if (path.isTSTypeParameter()) {
-        console.log('isTSTypeParameter');
         return Object.assign(thing, {
           type: 'typeParameter',
           name: path.node.name,
@@ -382,10 +357,7 @@ module.exports = new Transformer({
     }
 
     function processExport(path, thing = {}, binding = false) {
-      console.log('called processExport');
       if (nodeCache.has(path)) {
-        console.log('hit the cache');
-        console.log(binding, partialNode === nodeCache.get(path));
         return nodeCache.get(path);
       } else {
         nodeCache.set(path, thing);
