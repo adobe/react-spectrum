@@ -85,7 +85,7 @@ export function Type({type}) {
     case 'alias':
       return <code className={typographyStyles['spectrum-Code4']}><Type type={type.value} /></code>;
     default:
-      console.log('UNKNOWN TYPE', type);
+      console.log('no render component for TYPE', type);
       return null;
   }
 }
@@ -124,7 +124,12 @@ function JoinList({elements, joiner}) {
   return elements
     .reduce((acc, v, i) => [
       ...acc,
-      <span className="token punctuation" key={`join${v.name || v.raw}${i}`} style={{whiteSpace: 'pre-wrap'}}>{joiner}</span>,
+      <span
+        className="token punctuation"
+        key={`join${v.name || v.raw}${i}`}
+        style={{whiteSpace: 'pre-wrap'}}>
+        {joiner}
+      </span>,
       <Type type={v} key={`type${v.name || v.raw}${i}`} />
     ], []).slice(1);
 }
