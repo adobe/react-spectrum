@@ -80,7 +80,7 @@ A standard Dialog has the following anatomy:
 
 Each of these sections can be populated by providing the following components to your Dialog as children:
 `Header`, `Heading` (title), `Divider`, `Content` (body), `ButtonGroup`, and `Footer`. Each of these components are
-required in a Spectrum compliant Dialog except for `Header` and `Footer` so be sure to design your Dialog accordingly.
+required in a Spectrum compliant Dialog except for `Header`, `Footer`, and `Divider` so be sure to design your Dialog accordingly.
 
 ### Examples
 A typical Dialog with a title, contents, and action buttons can be created like so:
@@ -307,7 +307,7 @@ the wrapping `close` function surrounding the Dialog. An example of this can be 
 Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger docs](TODO link) for more information.
 
 ```tsx example
-<DialogTrigger type="modal">
+<DialogTrigger type="modal" isDismissable>
   <ActionButton>Trigger Modal</ActionButton>
   <Dialog>
     <Heading>Modal</Heading>
@@ -351,11 +351,11 @@ Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger do
 
 Only `modal` type Dialogs support a user defined size prop. Note that the `fullscreen` and `fullscreenTakeover` sizes 
 require the [DialogTrigger `type`](TODO LINK) prop to be set as `fullscreen` and `fullscreenTakeover` respectively for container sizing
-considerations.
+considerations. Modal sizes on mobile devices are also unaffected by this prop due to screen constraints.
 
 ```tsx example
 <DialogTrigger>
-  <ActionButton>Set Profile</ActionButton>
+  <ActionButton>Small</ActionButton>
   {(close) => (
     <Dialog size="S">
       <Heading>Profile</Heading>
@@ -375,7 +375,7 @@ considerations.
 </DialogTrigger>
 
 <DialogTrigger>
-  <ActionButton>Set Profile</ActionButton>
+  <ActionButton>Medium</ActionButton>
   {(close) => (
     <Dialog size="M">
       <Heading>Profile</Heading>
@@ -395,7 +395,7 @@ considerations.
 </DialogTrigger>
 
 <DialogTrigger>
-  <ActionButton>Set Profile</ActionButton>
+  <ActionButton>Large</ActionButton>
   {(close) => (
     <Dialog size="L">
       <Heading>Profile</Heading>

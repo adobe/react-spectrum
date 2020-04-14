@@ -55,7 +55,7 @@ const mdxComponents = {
 };
 
 function getTarget(href) {
-  if (/localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com/.test(href)) {
+  if (/localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com|\#/.test(href)) {
     return null;
   }
 
