@@ -38,9 +38,18 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-IllustratedMessage-heading {
+
     order: 2;
     max-width: var(--spectrum-illustrated-message-heading-max-width);
     margin: var(--spectrum-illustrated-message-heading-margin);
+
+    font-size: var(--spectrum-heading-quiet-2-text-size);
+    font-weight: var(--spectrum-heading-quiet-2-text-font-weight);
+    line-height: var(--spectrum-heading-quiet-2-text-line-height);
+    font-style: var(--spectrum-heading-quiet-2-text-font-style);
+    letter-spacing: var(--spectrum-heading-quiet-2-text-letter-spacing);
+    text-transform: var(--spectrum-heading-quiet-2-text-transform);
+
   }
 
   .spectrum-IllustratedMessage-description {
@@ -48,8 +57,15 @@ governing permissions and limitations under the License.
     max-width: var(--spectrum-illustrated-message-description-max-width);
     margin: var(--spectrum-illustrated-message-description-margin);
 
-    font-style: italic;
+    font-style: var(--spectrum-body-4-emphasis-text-font-style);
+
+    font-size: var(--spectrum-body-4-text-size);
+    font-weight: var(--spectrum-body-4-text-font-weight);
+    line-height: var(--spectrum-body-4-text-line-height);
+    letter-spacing: var(--spectrum-body-4-text-letter-spacing);
+    text-transform: var(--spectrum-body-4-text-transform);
   }
+
 }
 
 .spectrum-IllustratedMessage--cta {
