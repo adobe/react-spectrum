@@ -97,18 +97,16 @@ storiesOf('Button', module)
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}
           variant="primary"
-          isPending={true}
-          aria-label="Loading">
-        </Button>
+          isPending
+          aria-label="Loading" />
         <Button
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}
           isQuiet
           variant="primary"
-          isPending={true}
-          aria-labelledby="loading-label">
-        </Button>
+          isPending
+          aria-labelledby="loading-label" />
       </div>
     )
   )
@@ -124,18 +122,16 @@ storiesOf('Button', module)
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}
           variant="overBackground"
-          isPending={true}
-          aria-label="Loading">
-        </Button>
+          isPending
+          aria-label="Loading" />
         <Button
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}
           isQuiet
           variant="overBackground"
-          isPending={true}
-          aria-labelledby="loading-label">
-        </Button>
+          isPending
+          aria-labelledby="loading-label" />
       </div>
     )
   );
