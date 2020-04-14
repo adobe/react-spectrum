@@ -42,6 +42,7 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 
 ## Content
 
+An IllustratedMessage consists of three areas: an illustration, a title, and a body.
 Each of these sections can be populated by providing the following components to your IllustratedMessage as children:
 `svg`, `Heading` (title), and `Content` (body).
 
@@ -81,7 +82,7 @@ When an IllustratedMessage has a `svg` and a `Heading`, the `svg` needs an `aria
 
 ### Accessibility
 
-The title of a IllustratedMessage is typically provided via its `Heading`.
+The title of an IllustratedMessage is typically provided via its `Heading`.
 If a `Heading` isn't specified, the `svg` needs an `aria-label` prop and a `role` prop set to `img`.
 
 ```tsx example
