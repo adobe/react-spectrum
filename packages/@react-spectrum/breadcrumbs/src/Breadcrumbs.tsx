@@ -177,5 +177,8 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   );
 }
 
+/**
+ * Breadcrumbs show hierarchy and navigational context for a user’s location within an application.
+ */
 let _Breadcrumbs = React.forwardRef(Breadcrumbs);
 export {_Breadcrumbs as Breadcrumbs};
