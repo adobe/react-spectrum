@@ -497,9 +497,6 @@ module.exports = new Transformer({
       }
     }
 
-    // return Object.keys(exports).map()
-
-    // console.log(exports)
     asset.type = 'json';
     let buffer = v8.serialize(exports);
     asset.setBuffer(buffer);

@@ -29,6 +29,7 @@ html, body {
   padding: 0 24px;
   background: var(--spectrum-global-color-gray-75);
   box-sizing: border-box;
+  overflow-y: scroll;
 }
 
 .nav header {

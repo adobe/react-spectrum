@@ -20,8 +20,8 @@
     "plop": "plop",
     "chromatic": "CHROMATIC_APP_CODE=x8ktlved8wd chromatic test --build-script-name build-storybook",
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
-    "start:docs": "PARCEL_WORKER_BACKEND=process parcel 'packages/@react-spectrum/*/docs/*.mdx' 'packages/dev/docs/pages/*.mdx'",
-    "build:docs": "PARCEL_WORKER_BACKEND=process parcel build 'packages/@react-spectrum/*/docs/*.mdx' 'packages/dev/docs/pages/*.mdx' --no-scope-hoist"
+    "start:docs": "PARCEL_WORKER_BACKEND=process parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/dev/docs/pages/*.mdx'",
+    "build:docs": "PARCEL_WORKER_BACKEND=process parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/dev/docs/pages/*.mdx' --no-scope-hoist"
   },
   "workspaces": [
     "packages/*/*"
