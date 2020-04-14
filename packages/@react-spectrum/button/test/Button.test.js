@@ -167,4 +167,20 @@ describe('Button', function () {
     let button = getByRole('button');
     expect(document.activeElement).toBe(button);
   });
+
+  it.each`
+    Name                | Component | props
+    ${'Button'}         | ${Button} | ${{id: 'button', isPending: true, 'aria-label': 'Loading'}}
+  `('$Name supports isPending', function ({Component, props}) {
+    let {getByRole, queryByText} = render(<Component {...props}>Click me</Component>);
+
+    let button = getByRole('button');
+    expect(button).toBeDisabled();
+
+    let text = queryByText('Click Me');
+    expect(text).toBeNull();
+
+    let progressCircle = getByRole('progressbar');
+    expect(progressCircle).toHaveAttribute('aria-labelledby', 'button');
+  });
 });

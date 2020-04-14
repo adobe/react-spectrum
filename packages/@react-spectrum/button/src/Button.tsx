@@ -15,6 +15,7 @@ import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
+import {SpectrumProgressCircleProps} from '@react-types/progress';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {ProgressCircle} from '@react-spectrum/progress';
 import {Text} from '@react-spectrum/typography';
@@ -41,6 +42,13 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed, isPending} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
+  let {id: buttonId} = buttonProps;
+
+  let progressCircleProps: SpectrumProgressCircleProps = {
+    isIndeterminate: true,
+    size: 'S',
+    'aria-labelledby': buttonId,
+  };
 
   let buttonVariant = variant;
   if (VARIANT_MAPPING[variant]) {
@@ -79,7 +87,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
             }
           }}>
           {isPending
-            ? <ProgressCircle isIndeterminate size="S" />
+            ? <ProgressCircle {...progressCircleProps} />
             : (
               typeof children === 'string'
                 ? <Text>{children}</Text>

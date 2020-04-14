@@ -15,6 +15,7 @@ import {mergeProps} from '@react-aria/utils';
 import {RefObject} from 'react';
 import {useDOMPropsResponder, usePress} from '@react-aria/interactions';
 import {useFocusable} from '@react-aria/focus';
+import {useLabels} from '@react-aria/utils';
 
 interface AriaButtonProps extends ButtonProps {
   isSelected?: boolean,
@@ -48,7 +49,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     validationState,
     'aria-expanded': ariaExpanded,
     'aria-haspopup': ariaHasPopup,
-    type = 'button'
+    type = 'button',
+    ...otherProps
   } = props;
   let additionalProps;
   if (elementType !== 'button') {
@@ -74,6 +76,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
 
   let {contextProps} = useDOMPropsResponder(ref);
   let {focusableProps} = useFocusable(props, ref);
+  let {id} = useLabels(otherProps);
   let handlers = mergeProps(pressProps, focusableProps);
   let interactions = mergeProps(contextProps, handlers);
 
@@ -87,6 +90,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
       'aria-invalid': validationState === 'invalid' ? true : null,
       disabled: isDisabled,
       type,
+      id,
       ...(additionalProps || {}),
       onClick: (e) => {
         if (deprecatedOnClick) {
