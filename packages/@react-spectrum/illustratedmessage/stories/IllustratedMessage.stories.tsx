@@ -43,7 +43,7 @@ function render(props: any = {}) {
   } = props;
   return (
     <IllustratedMessage {...otherProps}>
-      {description && <Content>thhe content <em>this is em</em> and <strong>strong</strong></Content>}
+      {description && <Content>{description}</Content>}
       {heading && <Heading>{heading}</Heading>}
       {illustration}
     </IllustratedMessage>

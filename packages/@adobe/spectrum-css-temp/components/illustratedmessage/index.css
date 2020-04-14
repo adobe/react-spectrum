@@ -38,7 +38,6 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-IllustratedMessage-heading {
-
     order: 2;
     max-width: var(--spectrum-illustrated-message-heading-max-width);
     margin: var(--spectrum-illustrated-message-heading-margin);
@@ -49,7 +48,6 @@ governing permissions and limitations under the License.
     font-style: var(--spectrum-heading-quiet-2-text-font-style);
     letter-spacing: var(--spectrum-heading-quiet-2-text-letter-spacing);
     text-transform: var(--spectrum-heading-quiet-2-text-transform);
-
   }
 
   .spectrum-IllustratedMessage-description {
@@ -65,7 +63,6 @@ governing permissions and limitations under the License.
     letter-spacing: var(--spectrum-body-4-text-letter-spacing);
     text-transform: var(--spectrum-body-4-text-transform);
   }
-
 }
 
 .spectrum-IllustratedMessage--cta {
