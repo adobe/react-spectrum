@@ -45,6 +45,14 @@ import {TextField} from '@react-spectrum/textfield';
 ## Example
 
 ```tsx example
+import {ActionButton, Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {Content, Header} from '@react-spectrum/view';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Divider} from '@react-spectrum/divider';
+import {Heading, Text} from '@react-spectrum/typography';
+import {StatusLight} from '@react-spectrum/statuslight';
+
 <DialogTrigger>
   <ActionButton>Check connectivity</ActionButton>
   {(close) => (
@@ -188,7 +196,7 @@ The example below illustrates how a Dialog with a hero image could be rendered v
 Keep in mind when creating your Dialog that the tab order within the Dialog follows the order of the children provided. 
 You are also responsible for determining what component, if any, should be automatically focused on Dialog render.
 
-Additional information about the slots and their effect on tab order behavior can be found in the [Slots documentation](TODO LINK).
+Additional information about the slots and their effect on tab order behavior can be found in the Slots documentation.
 
 ## Labeling
 
