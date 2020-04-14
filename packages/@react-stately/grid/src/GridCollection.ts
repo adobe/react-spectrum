@@ -48,8 +48,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
         hasRowHeaders = true;
       }
 
-      let children = [...node.childNodes];
-      for (let child of children) {
+      for (let child of node.childNodes) {
         if (child.type !== 'item' || node.isExpanded) {
           visit(child);
         }
