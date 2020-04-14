@@ -104,15 +104,6 @@ storiesOf('Button', module)
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}
-          isDisabled
-          variant="primary"
-          isPending={true}
-          aria-label="Loading">
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
           isQuiet
           variant="primary"
           isPending={true}

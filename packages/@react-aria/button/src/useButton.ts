@@ -52,6 +52,11 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     type = 'button',
     ...otherProps
   } = props;
+
+  if (isPending) {
+    isDisabled = true;
+  }
+
   let additionalProps;
   if (elementType !== 'button') {
     additionalProps = {
