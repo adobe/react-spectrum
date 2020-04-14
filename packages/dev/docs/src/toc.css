@@ -14,7 +14,7 @@
   position: fixed;
   top: 80px;
   right: 0;
-  height: 100%;
+  bottom: 0;
   overflow-y: auto;
 }
 

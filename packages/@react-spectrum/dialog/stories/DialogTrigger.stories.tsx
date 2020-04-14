@@ -249,7 +249,7 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'containerPadding',
-    () => renderPopover({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 10})
+    () => renderPopover({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 20})
   )
   .add(
     'targetRef',

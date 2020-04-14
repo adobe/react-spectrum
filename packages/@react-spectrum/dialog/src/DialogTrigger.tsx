@@ -121,7 +121,7 @@ DialogTrigger.getCollectionNode = function (props: SpectrumDialogTriggerProps) {
  */
 
 // We don't want getCollectionNode to show up in the type definition
-let _DialogTrigger = DialogTrigger;
+let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => JSX.Element;
 export {_DialogTrigger as DialogTrigger};
 
 function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, ...props}) {
