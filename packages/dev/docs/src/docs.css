@@ -99,21 +99,21 @@ article {
   }
 }
 
-article h1 {
+article h1.articleHeader {
   margin-top: 0 !important;
-  font-size: 58px !important;
+  font-size: 58px;
 }
 
-article h1 + p {
-  font-size: 18px !important;
+article h1.articleHeader + p {
+  font-size: 18px;
   max-width: 75%;
 }
 
-article h2 {
-  margin-top: 80px !important;
+article h2.sectionHeader.docsHeader {
+  margin-top: 80px;
 }
 
-article h2 + hr {
+article h2.sectionHeader + hr {
   margin-bottom: 33px;
 }
 
