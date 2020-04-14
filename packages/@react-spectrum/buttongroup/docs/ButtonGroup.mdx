@@ -20,7 +20,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {View} from '@react-spectrum/view';
 ```
 
-# Button
+# ButtonGroup
 
 <p>{docs.exports.ButtonGroup.description}</p>
 
@@ -41,6 +41,10 @@ To see the orientation switch, reduce the width of your window.
 </ButtonGroup>
 ```
 
+## Content
+
+ButtonGroup expects [Buttons](./Button.html) as children.
+
 ## Props
 
 <PropTable component={docs.exports.ButtonGroup} links={docs.links} />
@@ -49,7 +53,7 @@ To see the orientation switch, reduce the width of your window.
 
 ### Orientation
 
-Setting this to 'vertical' will prevent any dynamic orientation changes.
+Setting this to 'vertical' will prevent any dynamic orientation changes, the ButtonGroup will remain in vertical regardless of the available width.
 ```tsx example
 <ButtonGroup orientation="vertical">
   <Button variant="secondary">No, thanks</Button>
@@ -60,7 +64,8 @@ Setting this to 'vertical' will prevent any dynamic orientation changes.
 
 ### Alignment
 
-Button groups are aligned contextually. Generally, button groups should be left-aligned to follow content. However, they should be right-aligned inside container components, such as in dialogs, popovers, or cards. They should be center-aligned in the context of an empty state.
+Button groups are aligned contextually. Generally (in LTR languages), button groups should be left-aligned to follow content. However, they should be right-aligned inside container components, such as in dialogs, popovers, or cards. They should be center-aligned in the context of an empty state. In RTL, left and right should be flipped.
+To see the orientation switch, reduce the width of your window.
 ```tsx example
 <View width="50%">
   <ButtonGroup align="end" width="100%">

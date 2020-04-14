@@ -18,17 +18,16 @@ export interface SpectrumButtonGroupProps extends DOMProps, StyleProps {
   /** Whether the Buttons in the ButtonGroup are all disabled. */
   isDisabled?: boolean,
   /**
-   * The axis the ButtonGroup should align with. See the docs[LINK TODO] for additional information
-   * regarding overflow behavior. Setting this to 'vertical' will prevent any switching behaviors
-   * between 'vertical' and 'horizontal'.
+   * The axis the ButtonGroup should align with. Setting this to 'vertical' will prevent
+   * any switching behaviors between 'vertical' and 'horizontal'.
    * @default "horizontal"
    */
   orientation?: Orientation,
-  /** The buttons contained within the ButtonGroup. */
+  /** The Buttons contained within the ButtonGroup. */
   children: ReactNode,
   /**
-   * The alignment of the buttons within the ButtonGroup. Only applicable to "vertical" orientation.
+   * The alignment of the buttons within the ButtonGroup.
    * @default "start"
    */
-  align?: Alignment
+  align?: Alignment | 'center'
 }
