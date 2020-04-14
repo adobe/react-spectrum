@@ -111,6 +111,33 @@ storiesOf('Button', module)
         </Button>
       </div>
     )
+  )
+  .add(
+    'is pending, variant: overBackground',
+    () => (
+      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        <VisuallyHidden>
+          <span id="loading-label">Visually hidden loading label</span>
+        </VisuallyHidden>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          variant="overBackground"
+          isPending={true}
+          aria-label="Loading">
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isQuiet
+          variant="overBackground"
+          isPending={true}
+          aria-labelledby="loading-label">
+        </Button>
+      </div>
+    )
   );
 
 function render(props: any = {}) {

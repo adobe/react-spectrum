@@ -48,6 +48,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
     isIndeterminate: true,
     size: 'S',
     'aria-labelledby': buttonId,
+    ...variant === 'overBackground' && { variant: 'overBackground' }
   };
 
   let buttonVariant = variant;
