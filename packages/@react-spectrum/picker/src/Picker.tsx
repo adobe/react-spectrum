@@ -170,7 +170,7 @@ function Picker<T>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
     input = (
       <VisuallyHidden aria-hidden="true">
         <input
-          tabIndex={isFocused ? -1 : 0}
+          tabIndex={isFocused || state.isOpen ? -1 : 0}
           style={{fontSize: 16}}
           onFocus={() => triggerRef.current.focus()} />
         <label>

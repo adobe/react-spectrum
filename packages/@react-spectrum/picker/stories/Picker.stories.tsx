@@ -430,4 +430,20 @@ storiesOf('Picker', module)
         <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
+  )
+  .add(
+    'picker closes on blur',
+    () => (
+      <>
+        <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+          <input placeholder="Shift tab here" />
+          <Picker label="Test" defaultSelectedKey="One" onSelectionChange={action('selectionChange')}>
+            <Item uniqueKey="One">One</Item>
+            <Item uniqueKey="Two">Two</Item>
+            <Item uniqueKey="Three">Three</Item>
+          </Picker>
+          <input placeholder="Tab here" />
+        </div>
+      </>
+    )
   );
