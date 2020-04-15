@@ -56,7 +56,7 @@ module.exports = new Packager({
       let deps = bundleGraph.getDependencies(asset);
       for (let dep of deps) {
         if (dep.symbols.get('*') === '*') {
-          let resolved = bundleGraph.getDependencyResolution(dep);
+          let resolved = bundleGraph.getDependencyResolution(dep, bundle);
           Object.assign(res, processAsset(resolved));
         }
       }
@@ -68,7 +68,7 @@ module.exports = new Packager({
       return walk(obj, (t, k, recurse) => {
         if (t && t.type === 'reference') {
           let dep = bundleGraph.getDependencies(asset).find(d => d.moduleSpecifier === t.specifier);
-          let res = bundleGraph.getDependencyResolution(dep);
+          let res = bundleGraph.getDependencyResolution(dep, bundle);
           let result = res ? processAsset(res)[t.imported] : null;
           if (result) {
             t = result;

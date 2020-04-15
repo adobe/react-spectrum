@@ -160,7 +160,7 @@ export default {};
       asset,
       {
         type: 'jsx',
-        code: `/* @jsx mdx */
+        content: `/* @jsx mdx */
 import React from 'react';
 import { mdx } from '@mdx-js/react'
 ${compiled}
@@ -187,7 +187,7 @@ ${compiled}
     if (exampleBundle) {
       assets.push({
         type: 'jsx',
-        code: exampleBundle,
+        content: exampleBundle,
         uniqueKey: 'example',
         env: {
           outputFormat: asset.env.scopeHoist ? 'esmodule' : 'global'
