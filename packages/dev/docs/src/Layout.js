@@ -152,13 +152,17 @@ function Nav({currentPage, pages, publicUrl}) {
     let pageParts = p.name.split('/');
     let pageDir = pageParts[0];
 
+    // Pages within same directory (react-spectrum/Alert.html)
     if (currentParts.length > 1) {
       return currentDir === pageDir && !isIndex.test(p.name);
     }
 
+    // Top-level index pages (react-spectrum/index.html)
     if (currentParts.length === 1 && pageParts.length > 1 && isIndex.test(p.name)) {
       return true;
     }
+
+    // Other top-level pages
     return !isIndex.test(p.name) && pageParts.length === 1;
   });
 
