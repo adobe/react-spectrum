@@ -184,19 +184,6 @@ A Menu item's content may accept any renderable node, not just strings.
 The MenuTrigger's Menu is `aria-labelledby` by its trigger, which uses 'aria-controls'.
 Other aria properties of the trigger are `aria-haspopup` and `aria-expanded`.
 
-The Menu by default has a `role` prop of `menu`, which can be set to `listbox`.
-
-```tsx example
-<MenuTrigger role="listbox" isOpen>
-  <ActionButton>
-      Menu Button
-  </ActionButton>
-  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
-    {item => <Item>{item.name}</Item>}
-  </Menu>
-</MenuTrigger>
-```
-
 Menu sections without labels need the prop `aria-label`.
 
 ```tsx example
