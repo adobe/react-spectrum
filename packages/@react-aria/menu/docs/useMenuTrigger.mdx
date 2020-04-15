@@ -74,7 +74,7 @@ and <TypeLink links={menuDocs.links} type={menuDocs.exports.useMenuItem} /> to r
 its items. In addition, a &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;
 is used to automatically restore focus to the trigger when the menu closes. A 
 hidden &lt;<TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.DismissButton} />&gt;
-is added at the start end end of the menu to allow screen reader users to dismiss it easily.
+is added at the start and end of the menu to allow screen reader users to dismiss it easily.
 
 This example does not do any advanced popover positioning or portaling to escape its visual container.
 See <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlayPosition} /> for 
@@ -145,7 +145,7 @@ function MenuPopup(props) {
 
   // Wrap in <FocusScope> so that focus is restored back to the
   // trigger when the menu is closed. In addition, add hidden
-  // <DismissButton> components at the start end end of the list
+  // <DismissButton> components at the start and end of the list
   // to allow screen reader users to dismiss the popup easily.
   return (
     <FocusScope restoreFocus>

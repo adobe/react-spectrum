@@ -107,7 +107,7 @@ and <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useOption} /> 
 list of options. In addition, a &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;
 is used to automatically restore focus to the trigger 
 when the popup closes. A hidden &lt;<TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.DismissButton} />&gt;
-is added at the start end end of the popup to allow screen reader users to dismiss the popup.
+is added at the start and end of the popup to allow screen reader users to dismiss the popup.
 
 This example does not do any advanced popover positioning or portaling to escape its visual container.
 See <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlayPosition} /> for an example of
@@ -199,7 +199,7 @@ function ListBoxPopup({state, ...otherProps}) {
 
   // Wrap in <FocusScope> so that focus is restored back to the
   // trigger when the popup is closed. In addition, add hidden
-  // <DismissButton> components at the start end end of the list
+  // <DismissButton> components at the start and end of the list
   // to allow screen reader users to dismiss the popup easily.
   return (
     <FocusScope restoreFocus>
