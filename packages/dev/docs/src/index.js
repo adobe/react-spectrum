@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+export * from './ExampleImage';
 export * from './Layout';
 export * from './PropTable';
 export * from './HeaderInfo';

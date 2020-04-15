@@ -88,7 +88,7 @@ export function Type({type}) {
     case 'array':
       return <ArrayType {...type} />;
     default:
-      console.log('UNKNOWN TYPE', type);
+      console.log('no render component for TYPE', type);
       return null;
   }
 }
@@ -127,7 +127,11 @@ export function JoinList({elements, joiner}) {
   return elements
     .reduce((acc, v, i) => [
       ...acc,
-      <span className="token punctuation" key={`join${v.name || v.raw}${i}`}>{joiner}</span>,
+      <span
+        className="token punctuation"
+        key={`join${v.name || v.raw}${i}`}>
+        {joiner}
+      </span>,
       <Type type={v} key={`type${v.name || v.raw}${i}`} />
     ], []).slice(1);
 }

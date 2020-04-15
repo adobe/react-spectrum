@@ -11,6 +11,7 @@
  */
 
 const {Packager} = require('@parcel/plugin');
+const v8 = require('v8');
 
 module.exports = new Packager({
   async package({bundle, bundleGraph, options}) {
@@ -171,21 +172,31 @@ module.exports = new Packager({
 });
 
 async function parse(asset) {
-  let code = await asset.getCode();
-  return [asset.id, JSON.parse(code)];
+  let buffer = await asset.getBuffer();
+  return [asset.id, v8.deserialize(buffer)];
 }
 
+let cache = new Map();
+// cache things in pre-visit order so the references exist
 function walk(obj, fn, k = null) {
   let recurse = (obj) => {
+    if (cache.has(obj)) {
+      return cache.get(obj);
+    }
     if (Array.isArray(obj)) {
-      return obj.map((item, i) => walk(item, fn, k));
+      let resultArray = [];
+      cache.set(obj, resultArray);
+      obj.forEach((item, i) => resultArray[i] = walk(item, fn, k));
+      return resultArray;
     } else if (obj && typeof obj === 'object') {
       let res = {};
+      cache.set(obj, res);
       for (let key in obj) {
         res[key] = walk(obj[key], fn, key);
       }
       return res;
     } else {
+      cache.set(obj, obj);
       return obj;
     }
   };

@@ -25,7 +25,7 @@ import typographyStyles from '@adobe/spectrum-css-temp/components/typography/var
 
 const mdxComponents = {
   h1: ({children, ...props}) => (
-    <h1 {...props} className={classNames(typographyStyles['spectrum-Heading1--display'], typographyStyles['spectrum-Article'])}>
+    <h1 {...props} className={classNames(typographyStyles['spectrum-Heading1--display'], typographyStyles['spectrum-Article'], docStyles['articleHeader'])}>
       {children}
     </h1>
   ),
@@ -56,7 +56,7 @@ const mdxComponents = {
 };
 
 function getTarget(href) {
-  if (!/^http/.test(href) || /localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com/.test(href)) {
+  if (!/^http/.test(href) || /localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com|#/.test(href)) {
     return null;
   }
 
@@ -76,7 +76,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
             as close to the top of the page as possible to switch the theme as soon as
             possible during loading. It also handles when the media queries update, or
             local storage is updated. */}
-        <script 
+        <script
           dangerouslySetInnerHTML={{__html: `(() => {
             let classList = document.documentElement.classList;
             let dark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -98,7 +98,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
                 classList.remove("${theme.large['spectrum--large']}");
               }
             };
-            
+
             update();
             dark.addListener(update);
             fine.addListener(update);

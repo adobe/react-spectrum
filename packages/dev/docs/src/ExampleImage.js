@@ -10,10 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
-import {ReactElement} from 'react';
+import docStyles from './docs.css';
+import React from 'react';
 
-export interface SpectrumIllustratedMessageProps extends DOMProps, StyleProps {
-  /** The contents of the IllustratedMessage. */
-  children: [ReactElement]
+export function ExampleImage({children, ...props}) {
+  return (
+    <div className={docStyles['exampleImage']}>
+      {children}
+    </div>
+  );
 }

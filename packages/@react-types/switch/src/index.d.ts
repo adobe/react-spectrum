@@ -16,8 +16,7 @@ import {DOMProps, StyleProps} from '@react-types/shared';
 export interface SwitchProps extends CheckboxBase {}
 export interface SpectrumSwitchProps extends SwitchProps, DOMProps, StyleProps {
   /**
-   * By default, switches are not emphasized (gray).
-   * This prop sets the emphasized style (blue) which provides visual prominence.
+   * This prop sets the emphasized style which provides visual prominence.
    * @default "false"
    */
   isEmphasized?: boolean
