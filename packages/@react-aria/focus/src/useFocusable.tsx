@@ -35,7 +35,7 @@ export function FocusableProvider(props: FocusableProviderProps) {
 }
 
 export function useFocusable(props: FocusableProps, domRef?: RefObject<HTMLElement>) {
-  // TODO: get rid of these and pass props through FocusableProvider instead
+  // TODO (later): get rid of these and pass props through FocusableProvider instead
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
   let domProps = useContext(FocusableContext);
