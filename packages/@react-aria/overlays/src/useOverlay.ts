@@ -14,22 +14,22 @@ import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
 interface OverlayProps {
-  /** A ref to the overlay container element */
+  /** A ref to the overlay container element. */
   ref: RefObject<HTMLElement | null>,
 
-  /** Whether the overlay is currently open */
+  /** Whether the overlay is currently open. */
   isOpen?: boolean,
 
-  /** Handler that is called when the overlay should close */
+  /** Handler that is called when the overlay should close. */
   onClose?: () => void,
 
   /**
-   * Whether to close the overlay when the user interacts outside it
+   * Whether to close the overlay when the user interacts outside it.
    * @default false
    */
   isDismissable?: boolean,
 
-  /** Whether the overlay should close when focus is lost or moves outside it */
+  /** Whether the overlay should close when focus is lost or moves outside it. */
   shouldCloseOnBlur?: boolean
 }
 

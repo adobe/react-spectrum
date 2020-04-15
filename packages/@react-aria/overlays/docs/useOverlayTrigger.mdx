@@ -78,14 +78,14 @@ with <TypeLink links={dialogDocs.links} type={dialogDocs.exports.useDialog} />.
 
 The popover can be closed by clicking or interacting outside the popover, or by pressing the Escape key.
 This is handled by <TypeLink links={docs.links} type={docs.exports.useOverlay} />.
-Focus is restored back to the button that triggered the popover it when it closes by a
+When the popover is closed, focus is restored back to its trigger button by a 
 &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;.
 
 Content outside the popover is hidden from screen readers 
 by <TypeLink links={docs.links} type={docs.exports.useModal} />.
 This improves the experience for screen reader users by ensuring that they don't
 navigate out of context. This is especially important when the popover is rendered
-into a portal at the end of the document, and the content just before it will be
+into a portal at the end of the document, and the content just before it is
 unrelated to the original trigger. 
 
 To allow screen reader users to more easily dismiss the popover, a visually hidden

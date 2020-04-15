@@ -14,18 +14,18 @@ import {focusWithoutScrolling, useSlotId} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 
 export interface DialogProps {
-  /** A ref to the dialog container element */
+  /** A ref to the dialog container element. */
   ref: RefObject<HTMLElement | null>,
 
-  /** The accessibility role for the dialog */
+  /** The accessibility role for the dialog. */
   role?: 'dialog' | 'alertdialog'
 }
 
 interface DialogAria {
-  /** Props for the dialog container element */
+  /** Props for the dialog container element. */
   dialogProps: HTMLAttributes<HTMLElement>
   
-  /** Props for the dialog title element */
+  /** Props for the dialog title element. */
   titleProps: HTMLAttributes<HTMLElement>
 }
 

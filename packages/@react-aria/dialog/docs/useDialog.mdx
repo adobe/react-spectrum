@@ -38,8 +38,8 @@ import {useDialog} from '@react-aria/dialog';
 ## Features
 
 The HTML [&lt;dialog&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) element
-can be used to build dialogs. However, it is not yet widely supported across browsers.
-Building fully accessible custom dialogs from scratch is very difficult and error prone.
+can be used to build dialogs. However, it is not yet widely supported across browsers, and
+building fully accessible custom dialogs from scratch is very difficult and error prone.
 `useDialog`, combined with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useModal} />,
 helps achieve accessible dialogs that can be styled as needed.
 
@@ -68,7 +68,7 @@ to create modal dialogs, popovers, and other types of overlays.
   <InterfaceType properties={docs.links[docs.exports.useDialog.return.id].properties} />
 </TypeContext.Provider>
 
-If a dialog not have a visible title element, an `aria-label` or `aria-labelledby`
+If a dialog does not have a visible title element, an `aria-label` or `aria-labelledby`
 prop must be passed instead to identify the element to assisitive technology.
 
 ## Example
@@ -80,7 +80,7 @@ and hides content ouside the dialog
 with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useModal} />.
 
 The modal can be closed by clicking or interacting outside the dialog if the `isDismissable`
-prop is set to true, or closed by pressing the Escape key.
+prop is set to true, or by pressing the Escape key.
 This is handled by <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlay} />.
 
 Focus is contained within the dialog while it is open using a 
