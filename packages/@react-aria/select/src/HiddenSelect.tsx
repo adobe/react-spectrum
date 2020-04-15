@@ -10,14 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {ReactNode, RefObject} from 'react';
+import React, {RefObject, ReactNode} from 'react';
 import {SelectState} from '@react-stately/select';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface HiddenSelectProps<T> {
+  /** State for the select. */
   state: SelectState<T>,
+
+  /** A ref to the trigger element. */
   triggerRef: RefObject<HTMLElement>,
+
+  /** The text label for the select. */
   label?: ReactNode,
+
+  /** HTML form input name. */
   name?: string
 }
 
@@ -49,7 +56,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
     return (
       <VisuallyHidden aria-hidden="true">
         <input
-          tabIndex={state.isFocused ? -1 : 0}
+          tabIndex={state.isFocused || state.isOpen ? -1 : 0}
           style={{fontSize: 16}}
           onFocus={() => triggerRef.current.focus()} />
         <label>
