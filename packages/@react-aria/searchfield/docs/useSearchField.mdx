@@ -131,15 +131,21 @@ function SearchField(props) {
 }
 
 .search-field div {
-  background: gray;
+  background: slategray;
   padding: 4px 0 4px 4px;
   border-radius: 4px;
-  width: 200px;
+  width: 250px;
   display: flex;
 }
 
 .search-field input {
   flex: 1;
+  color: white;
+  font-size: 15px;
+}
+
+.search-field input::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .search-field input, .search-field button {
