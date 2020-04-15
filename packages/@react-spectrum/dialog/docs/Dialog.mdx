@@ -10,16 +10,25 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
+import DialogAnatomy from '../images/DialogAnatomy.svg';
 import docs from 'docs:@react-spectrum/dialog';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {ExampleImage, HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
 import {ActionButton, Button} from '@react-spectrum/button';
+import Book from '@spectrum-icons/workflow/Book';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content, Footer, Header} from '@react-spectrum/view';
+import {Checkbox} from '@react-spectrum/checkbox';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
+import {Flex} from '@react-spectrum/layout';
+import {Form} from '@react-spectrum/form';
 import {Heading, Text} from '@react-spectrum/typography';
+import {Image} from '@react-spectrum/image';
+import {StatusLight} from '@react-spectrum/statuslight';
+import {TextField} from '@react-spectrum/textfield';
 ```
 
 # Dialog
@@ -37,18 +46,25 @@ import {Heading, Text} from '@react-spectrum/typography';
 
 ```tsx example
 <DialogTrigger>
-  <ActionButton>Trigger</ActionButton>
+  <ActionButton>Check connectivity</ActionButton>
   {(close) => (
     <Dialog>
-      <Header><Heading>The Heading</Heading></Header>
+      <Heading>Internet Speed Test</Heading>
+      <Header>
+        <StatusLight variant="positive">
+          Connection status
+        </StatusLight>
+      </Header>
       <Divider />
       <Content>
-        <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text>
+        <Text>
+          Start speed test?
+        </Text>
       </Content>
-      <Footer>
+      <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
         <Button variant="cta" onPress={close}>Confirm</Button>
-      </Footer>
+      </ButtonGroup>
     </Dialog>
   )}
 </DialogTrigger>
@@ -56,31 +72,229 @@ import {Heading, Text} from '@react-spectrum/typography';
 
 ## Content
 
-*If the component has a children prop that accepts any type of content (e.g. `ReactNode`), include this section. Please include a note about how to internationalize the content.*
+A standard Dialog has the following anatomy:
+
+<ExampleImage>
+  <DialogAnatomy />
+</ExampleImage>
+
+These sections can be populated by providing the following components to your Dialog as children:
+`Header`, `Heading` (title), `Divider`, `Content` (body), `ButtonGroup`, and `Footer`. Each of these components are
+required in a Spectrum compliant Dialog except for `Header`, `Footer`, and `Divider` so be sure to design your Dialog accordingly.
+
+### Examples
+A typical Dialog with a title, contents, and action buttons can be created like so:
+
+```tsx example
+<DialogTrigger>
+  <ActionButton>Publish</ActionButton>
+  {(close) => (
+    <Dialog>
+      <Heading>Publish 3 pages</Heading>
+      <Divider />
+      <Content>Confirm publish?</Content>
+      <ButtonGroup>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+      </ButtonGroup>
+    </Dialog>
+  )}
+</DialogTrigger>
+```
+
+A dismissable Dialog forgoes its ButtonGroup in favor of rendering a close button at the top right of the Dialog. 
+If your Dialog is dismissable, make sure that you do not include a ButtonGroup in the render. 
+While the Dialog will hide any elements occupying the ButtonGroup section, it will not remove them from the DOM, 
+resulting in possible tab order issues.
+
+```tsx example
+<DialogTrigger isDismissable>
+  <ActionButton>Status</ActionButton> 
+  <Dialog>
+    <Heading>Status</Heading>
+    <Divider />
+    <Content>Printer Status: Connected</Content>
+  </Dialog>
+</DialogTrigger>
+```
+
+It is important to note that the `Heading`, `Header`, `Content`, and `Footer` content elements accept any renderable 
+node, not just strings. This allows you to create Dialogs for more complex workflows, such as including a form
+for the user to fill out or adding confirmation checkboxes.
+
+```tsx example
+<DialogTrigger>
+  <ActionButton>Register</ActionButton> 
+  {(close) => (
+    <Dialog>
+      <Heading>
+        <Flex alignItems="center">
+          <Book size="S" />
+          <Text>
+            Register for newsletter
+          </Text>
+        </Flex>
+      </Heading>
+      <Header>
+        <StatusLight variant="negative">
+          Registration Status
+        </StatusLight>
+      </Header>
+      <Divider />
+      <Content>
+        <Form>
+          <TextField label="First Name" placeholder="John" autoFocus />
+          <TextField label="Last Name" placeholder="Smith" />
+          <TextField label="Street Address" placeholder="123 Any Street" />
+          <TextField label="City" placeholder="San Francisco" />
+        </Form>
+      </Content>
+      <Footer>
+        <Checkbox>
+          I want to receive updates for exclusive offers in my area.
+        </Checkbox>
+      </Footer> 
+      <ButtonGroup>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button variant="cta" onPress={close}>Register</Button>
+      </ButtonGroup>
+    </Dialog>
+  )}
+</DialogTrigger>
+```
+
+The example below illustrates how a Dialog with a hero image could be rendered via the `hero` slot:
+
+```tsx example
+<DialogTrigger>
+  <ActionButton>Upload</ActionButton>
+  {(close) => (
+    <Dialog>
+      <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+      <Heading>Upload file</Heading>
+      <Divider />
+      <Content>Are you sure you want to upload this file?</Content>
+      <ButtonGroup>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+      </ButtonGroup>
+    </Dialog>
+  )}
+</DialogTrigger>
+```
 
 ### Accessibility
 
-*If the component has accessibility needs, include this section.*
+The tab order within the Dialog follows the order of the children provided to the Dialog so keep this in mind
+when creating your Dialog. You are also responsible for determining what component, if any, should be automatically
+focused on Dialog render.
 
-### Internationalization
-
-*If this component has content, cover how to internationalize the content, include this section.*
-
-## Value
-
-*If the component displays or allows a user to input a value, include this section.*
+Additional information about the slots and their effect on tab order behavior can be found in the [Slots documentation](TODO LINK).
 
 ## Labeling
 
-*If the component supports a label prop, include this section. Please include a note about how to internationalize the content.*
+### Accessibility
+
+The title of a Dialog is typically provided via its heading. By default, the Dialog sets its 
+`aria-labelledby` to match the heading id, but this can be overridden by providing an `aria-labelledby` prop
+to the Dialog directly. If a visible label isn't specified, an `aria-label` must be provided instead.
+
+```tsx example
+<DialogTrigger>
+  <ActionButton>See Terms and Conditions</ActionButton>
+  {(close) => (
+    <Dialog aria-labelledby="heading-id">
+      <Text slot="header" id="heading-id">Terms and Conditions</Text> 
+      <Divider />
+      <Content>
+        <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mi proin sed libero enim. Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Sed enim ut sem viverra aliquet eget sit amet tellus. Diam quis enim lobortis scelerisque fermentum dui faucibus in ornare. Diam quam nulla porttitor massa id. Eleifend mi in nulla posuere sollicitudin. Turpis nunc eget lorem dolor sed viverra ipsum nunc. Faucibus in ornare quam viverra. Risus commodo viverra maecenas accumsan lacus vel facilisis volutpat est. Nam libero justo laoreet sit amet cursus sit. Netus et malesuada fames ac. Dictum fusce ut placerat orci nulla pellentesque dignissim enim sit. Eros donec ac odio tempor orci. Ut etiam sit amet nisl purus in mollis nunc. Nisl rhoncus mattis rhoncus urna neque viverra. Convallis aenean et tortor at risus. Diam phasellus vestibulum lorem sed risus ultricies.</Text>
+      </Content>
+      <ButtonGroup>
+        <Button autoFocus variant="cta" onPress={close}>Acknowledge</Button>
+      </ButtonGroup>
+    </Dialog>
+  )}
+</DialogTrigger>
+```
 
 ## Events
 
-*If the component supports event props, include this section. Only cover the events that are important to the main functionality of the component.*
+For Dialogs, user defined callbacks should be chained with the DialogTrigger's `close` function in the press/click handler
+of the Dialog's action buttons. The following example alerts if the Dialog's save or cancel button is clicked.
 
-## Validation
+```tsx example
+function Example() {
+  let alertSave = (cb) => {
+    cb();
+    alert('Profile saved!');
+  }
 
-*If the component supports validation props, include this section.*
+  let alertCancel = (cb) => {
+    cb();
+    alert('Profile not saved!');
+  }
+
+  return (
+    <DialogTrigger>
+      <ActionButton>Set Profile</ActionButton>
+      {(close) => (
+        <Dialog>
+          <Heading>Profile</Heading>
+          <Divider />
+          <ButtonGroup>
+            <Button autoFocus variant="cta" onPress={() => alertSave(close)}>Save</Button>
+            <Button variant="secondary" onPress={() => alertCancel(close)}>Cancel</Button>
+          </ButtonGroup>
+          <Content>
+            <Form>
+              <TextField label="Name" />
+              <Checkbox>Make private</Checkbox>
+            </Form>
+          </Content>    
+        </Dialog>
+      )}
+    </DialogTrigger>
+  );
+}
+```
+
+Additionally, DialogTrigger accepts an `onOpenChange` prop which is triggered whenever the Dialog is opened or closed. 
+For more information on the `onOpenChange` prop see [DialogTrigger page](TODO LINK HERE).
+
+### Dismissable Dialogs
+
+Dismissable Dialogs support a `onDismiss` prop which is triggered whenever the Dialog's close button is clicked.
+Similar to non-dismissable dialogs, you must chain the DialogTrigger's `close` function with whatever callback you provide as
+`onDismiss`.
+
+```tsx example
+function Example() {
+  let alertDismiss = (cb) => {
+    cb();
+    alert('Dialog dismissed.');
+  }
+
+  return (
+    <DialogTrigger isDismissable>
+      <ActionButton>Info</ActionButton>
+      {(close) => (
+        <Dialog onDismiss={() => alertDismiss(close)}>
+          <Heading>Version Info</Heading>
+          <Divider />
+          <Content>
+            <Text>
+              Version 1.0.0, Copyright 2020
+            </Text>
+          </Content>    
+        </Dialog>
+      )}
+    </DialogTrigger>
+  );
+}
+```
+
+Note that `onDismiss` is optional. If you don't need to add a `onDismiss` handler to your dismissable Dialog, you may omit
+the wrapping `close` function surrounding the Dialog. An example of this can be found in the Examples section [above](#examples).
 
 ## Props
 
@@ -88,7 +302,115 @@ import {Heading, Text} from '@react-spectrum/typography';
 
 ## Visual Options
 
-*Show examples of all variants and visual props here with links to the design website for more usage details. Examples can be grouped together for conciseness.*
+### Dialog Variants
 
-### Sample Option
-[View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
+Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger docs](TODO link) for more information.
+
+```tsx example
+<DialogTrigger type="modal" isDismissable>
+  <ActionButton>Trigger Modal</ActionButton>
+  <Dialog>
+    <Heading>Modal</Heading>
+    <Divider />
+    <Content>
+      <Text>
+        This is a modal.
+      </Text>
+    </Content>    
+  </Dialog>
+</DialogTrigger>
+
+<DialogTrigger type="popover">
+  <ActionButton>Trigger Popover</ActionButton>
+  <Dialog>
+    <Heading>Popover</Heading>
+    <Divider />
+    <Content>
+      <Text>
+        This is a popover.
+      </Text>
+    </Content>    
+  </Dialog>
+</DialogTrigger>
+
+<DialogTrigger type="tray">
+  <ActionButton>Trigger Tray</ActionButton>
+  <Dialog>
+    <Heading>Tray</Heading>
+    <Divider />
+    <Content>
+      <Text>
+        This is a tray.
+      </Text>
+    </Content>    
+  </Dialog>
+</DialogTrigger>
+```
+
+### Size
+
+Only `modal` type Dialogs support a user defined size prop. Note that the `fullscreen` and `fullscreenTakeover` sizes 
+require the [DialogTrigger `type`](TODO LINK) prop to be set as `fullscreen` and `fullscreenTakeover` respectively for container sizing
+considerations. Modal sizes on mobile devices are also unaffected by this prop due to screen constraints.
+
+```tsx example
+<DialogTrigger>
+  <ActionButton>Small</ActionButton>
+  {(close) => (
+    <Dialog size="S">
+      <Heading>Profile</Heading>
+      <Divider />
+      <ButtonGroup>
+        <Button autoFocus variant="cta" onPress={close}>Save</Button>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+      </ButtonGroup>
+      <Content>
+        <Form>
+          <TextField label="Name" />
+          <Checkbox>Make private</Checkbox>
+        </Form>
+      </Content>    
+    </Dialog>
+  )}
+</DialogTrigger>
+
+<DialogTrigger>
+  <ActionButton>Medium</ActionButton>
+  {(close) => (
+    <Dialog size="M">
+      <Heading>Profile</Heading>
+      <Divider />
+      <ButtonGroup>
+        <Button autoFocus variant="cta" onPress={close}>Save</Button>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+      </ButtonGroup>
+      <Content>
+        <Form>
+          <TextField label="Name" />
+          <Checkbox>Make private</Checkbox>
+        </Form>
+      </Content>    
+    </Dialog>
+  )}
+</DialogTrigger>
+
+<DialogTrigger>
+  <ActionButton>Large</ActionButton>
+  {(close) => (
+    <Dialog size="L">
+      <Heading>Profile</Heading>
+      <Divider />
+      <ButtonGroup>
+        <Button autoFocus variant="cta" onPress={close}>Save</Button>
+        <Button variant="secondary" onPress={close}>Cancel</Button>
+      </ButtonGroup>
+      <Content>
+        <Form>
+          <TextField label="Name" />
+          <Checkbox>Make private</Checkbox>
+        </Form>
+      </Content>    
+    </Dialog>
+  )}
+</DialogTrigger>
+```

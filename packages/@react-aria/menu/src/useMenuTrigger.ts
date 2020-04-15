@@ -53,12 +53,10 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
       switch (e.key) {
         case 'ArrowDown':
           e.preventDefault();
-          e.stopPropagation();
           onPress();
           break;
         case 'ArrowUp':
           e.preventDefault();
-          e.stopPropagation();
           onPress();
           // If no menu item is selected, focus last item when opening menu with ArrowDown
           state.setFocusStrategy('last');

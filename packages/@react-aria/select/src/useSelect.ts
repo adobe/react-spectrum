@@ -68,7 +68,7 @@ export function useSelect<T>(props: SelectProps, state: SelectState<T>): SelectA
       ...triggerProps,
       'aria-labelledby': [
         triggerProps['aria-labelledby'],
-        triggerProps['aria-label'] ? triggerProps.id : null,
+        triggerProps['aria-label'] && !triggerProps['aria-labelledby'] ? triggerProps.id : null,
         valueId
       ].filter(Boolean).join(' ')
     },
@@ -79,7 +79,7 @@ export function useSelect<T>(props: SelectProps, state: SelectState<T>): SelectA
       ...menuProps,
       'aria-labelledby': [
         fieldProps['aria-labelledby'],
-        triggerProps['aria-label'] ? triggerProps.id : null
+        triggerProps['aria-label'] && !fieldProps['aria-labelledby'] ? triggerProps.id : null
       ].filter(Boolean).join(' ')
     }
   };

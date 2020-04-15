@@ -20,6 +20,16 @@ html, body {
   background: var(--spectrum-global-color-gray-50) !important;
 }
 
+.exampleImage {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 12px;
+  svg, img {
+    width: auto;
+    height: auto;
+  }
+}
+
 .nav {
   position: fixed;
   top: 0;
