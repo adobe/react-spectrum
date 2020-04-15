@@ -20,14 +20,15 @@ import {useComboBoxState} from '@react-stately/combobox';
 import {useProviderProps} from '@react-spectrum/provider';
 
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {CollectionBase, DOMRef, InputBase, SingleSelection, TextInputBase} from '@react-types/shared';
+import {CollectionBase, DOMRef, InputBase, LabelPosition, SingleSelection, SpectrumLabelableProps, TextInputBase} from '@react-types/shared';
 import {TextField, TextFieldBase} from '@react-spectrum/textfield';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusScope} from '@react-aria/focus';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
-
+import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import {Label} from '@react-spectrum/label';
 
 interface ComboBox extends CollectionBase<T>, SingleSelection {
   isOpen?: boolean,
@@ -40,10 +41,9 @@ interface ComboBox extends CollectionBase<T>, SingleSelection {
   allowsCustomValue?: boolean,
   onCustomValue?: (value: string) => void,
   completionMode?: 'suggest' | 'complete',
-  menuTrigger?: 'focus' | 'input' | 'manual',
-  label: string // DO WE WANT TO ADD THIS?
+  menuTrigger?: 'focus' | 'input' | 'manual'
 }
-interface SpectrumComboBox extends InputBase, TextInputBase, ComboBox {
+interface SpectrumComboBox extends InputBase, TextInputBase, ComboBox, SpectrumLabelableProps {
   isQuiet?: boolean
 }
 
@@ -54,7 +54,12 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   let {
     isQuiet,
     isDisabled,
-    label
+    label,
+    labelPosition = 'top',
+    labelAlign,
+    isRequired,
+    necessityIndicator,
+    validationState
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -135,56 +140,71 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   // Need to wrap it all in a focus ring so that everything is highlighted when keyboard focused
 
   // Need to handle the label ourselves, can't use textfield label?
-  // Figure out why textfield doesn't recieve aria-autocomplete
+  // Figure out why textfield doesn't recieve aria-autocomplete 
+  
   return (
     <div
+      // Should dom props and dom ref go on this wrapper div or on the top
       {...filterDOMProps(props)}
       {...styleProps}
       ref={domRef}
       className={
         classNames(
-          styles,
-          'spectrum-InputGroup',
+          labelStyles,
+          'spectrum-Field',
           {
-            'spectrum-InputGroup--quiet': isQuiet,
-            'is-disabled': isDisabled
-          },
-          styleProps.className
+            'spectrum-Field--positionTop': labelPosition === 'top',
+            'spectrum-Field--positionSide': labelPosition === 'side'
+          }
         )
       }>
-      <TextFieldBase
-        {...inputProps}
-        // UNSAFE_className={
-        //   classNames(
-        //     styles,
-        //     'spectrum-InputGroup-field'
-        //   )
-        // }
-        ref={inputRef}
-        inputClassName={
+      <Label
+        {...labelProps}
+        labelPosition={labelPosition}
+        labelAlign={labelAlign}
+        isRequired={isRequired}
+        necessityIndicator={necessityIndicator}>
+        {label}
+      </Label>
+      <div
+        className={
           classNames(
             styles,
-            'spectrum-InputGroup-field'
+            'spectrum-InputGroup',
+            {
+              'spectrum-InputGroup--quiet': isQuiet,
+              'is-disabled': isDisabled
+            },
+            styleProps.className
           )
-        }
-        isDisabled={isDisabled}
-        isQuiet={isQuiet}
-        label={label}
-      />
-      <FieldButton
-        {...triggerProps}
-        ref={triggerRef}
-        UNSAFE_className={
-          classNames(
-            styles,
-            'spectrum-FieldButton'
-          )
-        }
-        isDisabled={isDisabled}
-        isQuiet={isQuiet}>
-        <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
-      </FieldButton>
-      {overlay}
+        }>
+        <TextFieldBase
+          {...inputProps}
+          ref={inputRef}
+          inputClassName={
+            classNames(
+              styles,
+              'spectrum-InputGroup-field',
+              classNames(labelStyles, 'spectrum-Field-field')
+            )
+          }
+          isDisabled={isDisabled}
+          isQuiet={isQuiet} />
+        <FieldButton
+          {...triggerProps}
+          ref={triggerRef}
+          UNSAFE_className={
+            classNames(
+              styles,
+              'spectrum-FieldButton'
+            )
+          }
+          isDisabled={isDisabled}
+          isQuiet={isQuiet}>
+          <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
+        </FieldButton>
+        {overlay}
+      </div>
     </div>
   );
 }

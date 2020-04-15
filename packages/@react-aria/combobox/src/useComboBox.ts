@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+ // TODO flesh out these types
 interface ComboBoxProps {
-  label: string,
   triggerRef,
   inputRef
 }
