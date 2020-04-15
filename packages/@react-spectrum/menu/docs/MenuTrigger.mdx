@@ -49,8 +49,8 @@ import Paste from '@spectrum-icons/workflow/Paste';
 
 ## Content
 
-The MenuTrigger accepts exactly two children: the element which triggers the opening
-of the Menu and the Menu itself. The trigger must be the first child passed into
+The MenuTrigger accepts exactly two children: the Menu and the element which
+triggers the opening of the Menu. The trigger must be the first child passed into
 the MenuTrigger and should be an element that supports press events.
 
 If the Menu is open it will close on blur or scroll events.
@@ -146,7 +146,7 @@ Menu's may have Sections with titles and children items.
 
 ### Sematic Elements
 
-A Menu item's content may accept any renderable node, not just strings.
+A Menu item's content may be any renderable node, not just strings.
 
 ```tsx example
 <MenuTrigger>
@@ -181,10 +181,11 @@ A Menu item's content may accept any renderable node, not just strings.
 
 ### Accessibility
 
-The MenuTrigger's Menu is `aria-labelledby` by its trigger, which uses 'aria-controls'.
-Other aria properties of the trigger are `aria-haspopup` and `aria-expanded`.
+The MenuTrigger uses the prop `aria-controls` to point at the menu, which uses
+the prop `aria-labelledby` to reference the trigger. Other aria props of the
+MenuTrigger are `aria-haspopup` and `aria-expanded`.
 
-Menu sections without labels need the prop `aria-label`.
+Menu sections without labels use the prop `aria-label`.
 
 ```tsx example
 <MenuTrigger>
