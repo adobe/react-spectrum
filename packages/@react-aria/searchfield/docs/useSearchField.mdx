@@ -11,7 +11,9 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/searchfield';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import statelyDocs from 'docs:@react-stately/searchfield';
+import buttonDocs from 'docs:@react-aria/button';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
@@ -58,8 +60,8 @@ Enter key to trigger the `onSubmit` event.
   <InterfaceType properties={docs.links[docs.exports.useSearchField.return.id].properties} />
 </TypeContext.Provider>
 
-State is managed by the `useSearchFieldState` hook in `@react-stately/searchfield`. The state object
-should be passed as an option to `useSearchField`.
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSearchFieldState} />
+hook in `@react-stately/searchfield`. The state object should be passed as an option to `useSearchField`.
 
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead 
 to identify the element to screen readers.
@@ -92,18 +94,20 @@ function SearchField(props) {
 ## Styling
 
 This example uses CSS to reset the default browser styling for a search field and implement
-custom styles. It also includes a custom clear button, using props from `useSearchField` and
-`usePress` (from @react-aria/interactions).
+custom styles. It also includes a custom clear button, using props
+from <TypeLink links={docs.links} type={docs.exports.useSearchField} />
+and <TypeLink links={buttonDocs.links} type={buttonDocs.exports.useButton} />
+(from @react-aria/button).
 
 ```tsx example
-import {usePress} from '@react-aria/interactions';
+import {useButton} from '@react-aria/button';
 
 function SearchField(props) {
   let {label} = props;
   let state = useSearchFieldState(props);
   let ref = React.useRef();
   let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, ref);
-  let {pressProps} = usePress(clearButtonProps);
+  let {buttonProps} = useButton(clearButtonProps);
 
   return (
     <div className="search-field">
@@ -111,7 +115,7 @@ function SearchField(props) {
       <div>
         <input {...inputProps} ref={ref} />
         {state.value !== '' &&
-          <button {...clearButtonProps} {...pressProps}>❎</button>
+          <button {...buttonProps}>❎</button>
         }
       </div>
     </div>
