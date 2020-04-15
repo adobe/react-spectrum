@@ -13,7 +13,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import {attachToToC} from './attachToToC';
 import {BreadcrumbItem, Breadcrumbs} from '@react-spectrum/breadcrumbs';
-import {Content, Header} from '@react-spectrum/view';
+import {Content, View} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
@@ -24,7 +24,7 @@ import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeProvider, ThemeSwitcher} from './ThemeSwitcher';
 
-let links = document.querySelectorAll(':not([hidden]) table a[data-link]');
+let links = document.querySelectorAll(':not([hidden]) a[data-link]');
 for (let link of links) {
   let container = document.createElement('span');
 
@@ -57,8 +57,8 @@ function LinkPopover({id}) {
   }, [breadcrumbs]);
 
   return (
-    <Dialog UNSAFE_className={highlightCss.spectrum}>
-      <Header>
+    <Dialog UNSAFE_className={highlightCss.spectrum} size="L">
+      <View slot="heading">
         <Breadcrumbs isHeading headingAriaLevel={3}>
           {breadcrumbs.map((b, i) => (
             <BreadcrumbItem
@@ -67,7 +67,7 @@ function LinkPopover({id}) {
             </BreadcrumbItem>
           ))}
         </Breadcrumbs>
-      </Header>
+      </View>
       <Divider size="M" />
       <Content>
         <div ref={ref} dangerouslySetInnerHTML={{__html: breadcrumbs[breadcrumbs.length -  1].innerHTML}} />

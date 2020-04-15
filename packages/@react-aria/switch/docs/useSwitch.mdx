@@ -1,0 +1,139 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/switch';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {useSwitch} from '@react-aria/switch';
+```
+
+# useSwitch
+
+<p>{docs.exports.useSwitch.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useSwitch']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#switch'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useSwitch} links={docs.links} />
+
+## Features
+
+There is no native HTML element with switch styling. `<input type="checkbox">`
+is the closest semantically, but isn't styled or exposed to assistive technology
+as a switch. `useSwitch` helps achieve accessible switches that can be styled as needed.
+
+* Built with a native HTML `<input>` element, which can be optionally visually 
+  hidden to allow custom styling
+* Full support for browser features like form autofill
+* Keyboard focus management and cross browser normalization
+* Labeling support for screen readers
+* Exposed as a switch to assistive technology via ARIA
+
+## Anatomy
+
+A switch consists of a visual selection indicator and a label. Users may click or touch a switch
+to toggle the selection state, or use the Tab key to navigate to it and the Space key to toggle it.
+
+`useSwitch` returns props to be spread onto its input element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useSwitch.return.id].properties} />
+</TypeContext.Provider>
+
+Selection state is managed by the `useToggleState` hook in `@react-stately/toggle`.
+The state object should be passed as an option to `useSwitch`.
+
+In most cases, switches should have a visual label. If the switch does not have a visible label,
+an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assisitive 
+technology.
+
+## Example
+
+This example uses SVG to build the switch, with a visually hidden native input to represent
+the switch for accessibility. This is possible using the `<VisuallyHidden>` utility component 
+from `@react-aria/visually-hidden`. It is still in the DOM and accessible to assistive technology,
+but invisible. The SVG element is the visual representation, and is hidden from screen readers
+with `aria-hidden`.
+
+For keyboard accessibility, a focus ring is important to indicate which element has keyboard focus.
+This is implemented with the `useFocusRing` hook from `@react-aria/focus`. When `isFocusVisible` is
+true, an extra SVG element is rendered to indicate focus. The focus ring is only visible when the user
+is interacting with a keyboard, not with a mouse or touch.
+
+```tsx example
+import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useToggleState} from '@react-stately/toggle';
+import {useFocusRing} from '@react-aria/focus';
+
+function Switch(props) {
+  let {children} = props;
+  let state = useToggleState(props);
+  let {inputProps} = useSwitch(props, state);
+  let {isFocusVisible, focusProps} = useFocusRing();
+  let isChecked = inputProps.checked;
+
+  return (
+    <label style={{display: 'flex', alignItems: 'center'}}>
+      <VisuallyHidden>
+        <input {...inputProps} {...focusProps} />
+      </VisuallyHidden>
+      <svg
+        width={40}
+        height={24}
+        aria-hidden="true"
+        style={{marginRight: 4}}>
+        <rect
+          x={4}
+          y={4}
+          width={32}
+          height={16}
+          rx={8}
+          fill={isChecked ? 'orange' : 'gray'} />
+        <circle
+          cx={isChecked ? 28 : 12}
+          cy={12}
+          r={5}
+          fill="white" />
+        {isFocusVisible &&
+          <rect
+            x={1}
+            y={1}
+            width={38}
+            height={22}
+            rx={11}
+            fill="none"
+            stroke="orange"
+            strokeWidth={2} />
+        }
+      </svg>
+      {children}
+    </label>
+  );
+}
+
+<Switch>Test</Switch>
+```
+
+## Internationalization
+
+### RTL
+
+In right-to-left languages, switches should be mirrored. The switch should be placed on the right
+side of the label. Ensure that your CSS accounts for this.

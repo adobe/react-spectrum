@@ -12,14 +12,14 @@
 
 import {ButtonProps} from '@react-types/button';
 import {classNames, filterDOMProps, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef} from '@react-types/shared';
+import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 
-interface FieldButtonProps extends ButtonProps {
+interface FieldButtonProps extends ButtonProps, DOMProps, StyleProps {
   isQuiet?: boolean,
   isActive?: boolean,
   validationState?: 'valid' | 'invalid'

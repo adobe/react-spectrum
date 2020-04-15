@@ -1,0 +1,212 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/radio';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {useRadioGroup, useRadio} from '@react-aria/radio';
+```
+
+# useRadioGroup
+
+<p>{docs.exports.useRadioGroup.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useRadioGroup', 'useRadio']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#radiobutton'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useRadioGroup} links={docs.links} />
+<FunctionAPI function={docs.exports.useRadio} links={docs.links} />
+
+## Features
+
+Radio groups can be built in HTML with the 
+[&lt;fieldset&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/fieldset) 
+and [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) elements,
+however these can be difficult to style. `useRadioGroup` and `useRadio` help achieve accessible
+radio groups that can be styled as needed.
+
+* Radio groups are exposed to assistive technology via ARIA
+* Each radio is built with a native HTML `<input>` element, which can be optionally visually 
+  hidden to allow custom styling
+* Full support for browser features like form autofill
+* Keyboard focus management and cross browser normalization
+* Group and radio labeling support for assistive technology
+
+## Anatomy
+
+A radio group consists of a set of radio buttons, and a label. Each radio 
+includes a label and a visual selection indicator. A single radio button
+within the group can be selected at a time. Users may click or touch a radio
+button to select it, or use the Tab key to navigate to the group, the arrow keys
+to navigate within the group, and the Space key to select an option.
+
+`useRadioGroup` returns props for the group and its label, which you should spread 
+onto the appropriate element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useRadioGroup.return.id].properties} />
+</TypeContext.Provider>
+
+`useRadio` returns props for an individual radio:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useRadio.return.id].properties} />
+</TypeContext.Provider>
+
+Selection state is managed by the `useRadioGroupState` hook in `@react-stately/radio`.
+The state object should be passed as an option to `useRadio`.
+
+Individual radio buttons must have a visual label. If the radio group does not have a visible label,
+an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assisitive 
+technology.
+
+## Example
+
+This example uses native input elements for the radios, and React context to share state from the group
+to each radio. An HTML `<label>` element wraps the native input and the text to provide an implicit label
+for the radio.
+
+```tsx example
+import {useRadioGroupState} from '@react-stately/radio';
+
+let RadioContext = React.createContext();
+
+function RadioGroup(props) {
+  let {children, label} = props;
+  let state = useRadioGroupState(props);
+  let {radioGroupProps, labelProps} = useRadioGroup(props, state);
+
+  return (
+    <div {...radioGroupProps}>
+      <span {...labelProps}>{label}</span>
+      <RadioContext.Provider value={state}>
+        {children}
+      </RadioContext.Provider>
+    </div>
+  )
+}
+
+function Radio(props) {
+  let {children} = props;
+  let state = React.useContext(RadioContext);
+  let {inputProps} = useRadio(props, state);
+
+  return (
+    <label style={{display: 'block'}}>
+      <input {...inputProps} />
+      {children}
+    </label>
+  );
+}
+
+<RadioGroup label="Favorite pet">
+  <Radio value="dogs">Dogs</Radio>
+  <Radio value="cats">Cats</Radio>
+</RadioGroup>
+```
+
+## Styling
+
+To build a custom styled radio button, you can make the native input element visually hidden.
+This is possible using the `<VisuallyHidden>` utility component from `@react-aria/visually-hidden`.
+It is still in the DOM and accessible to assistive technology, but invisible. This example uses SVG
+to build the visual radio button, which is hidden from screen readers with `aria-hidden`.
+
+For keyboard accessibility, a focus ring is important to indicate which element has keyboard focus.
+This is implemented with the `useFocusRing` hook from `@react-aria/focus`. When `isFocusVisible` is
+true, an extra SVG element is rendered to indicate focus. The focus ring is only visible when the user
+is interacting with a keyboard, not with a mouse or touch.
+
+```tsx example
+import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useFocusRing} from '@react-aria/focus';
+
+// RadioGroup is the same as in the previous example
+let RadioContext = React.createContext();
+
+function RadioGroup(props) {
+  let {children, label} = props;
+  let state = useRadioGroupState(props);
+  let {radioGroupProps, labelProps} = useRadioGroup(props, state);
+
+  return (
+    <div {...radioGroupProps}>
+      <span {...labelProps}>{label}</span>
+      <RadioContext.Provider value={state}>
+        {children}
+      </RadioContext.Provider>
+    </div>
+  )
+}
+
+function Radio(props) {
+  let {children} = props;
+  let state = React.useContext(RadioContext);
+  let {inputProps} = useRadio(props, state);
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  let isChecked = inputProps.checked;
+  let strokeWidth = isChecked ? 6 : 2;
+
+  return (
+    <label style={{display: 'flex', alignItems: 'center'}}>
+      <VisuallyHidden>
+        <input {...inputProps} {...focusProps} />
+      </VisuallyHidden>
+      <svg 
+        width={24}
+        height={24}
+        aria-hidden="true"
+        style={{marginRight: 4}}>
+        <circle
+          cx={12}
+          cy={12}
+          r={8 - strokeWidth / 2}
+          fill="none"
+          stroke={isChecked ? 'orange' : 'gray'}
+          strokeWidth={strokeWidth} />
+        {isFocusVisible &&
+          <circle
+            cx={12}
+            cy={12}
+            r={11}
+            fill="none"
+            stroke="orange"
+            strokeWidth={2} />
+        }
+      </svg>
+      {children}
+    </label>
+  );
+}
+
+<RadioGroup label="Favorite pet">
+  <Radio value="dogs">Dogs</Radio>
+  <Radio value="cats">Cats</Radio>
+</RadioGroup>
+```
+
+## Internationalization
+
+### RTL
+
+In right-to-left languages, the radio group and radio buttons should be mirrored. 
+The group should be right-aligned, and the radio should be placed on the right
+side of the label. Ensure that your CSS accounts for this.

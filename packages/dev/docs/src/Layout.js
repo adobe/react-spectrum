@@ -16,7 +16,6 @@ import docStyles from './docs.css';
 import highlightCss from './syntax-highlight.css';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
-import path from 'path';
 import React from 'react';
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {theme} from '@react-spectrum/theme-default';
@@ -49,13 +48,14 @@ const mdxComponents = {
     </h3>
   ),
   p: ({children, ...props}) => <p {...props} className={typographyStyles['spectrum-Body3']}>{children}</p>,
+  ul: ({children, ...props}) => <ul {...props} className={typographyStyles['spectrum-Body3']}>{children}</ul>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   a: ({children, ...props}) => <a {...props} className={linkStyle['spectrum-Link']} target={getTarget(props.href)}>{children}</a>
 };
 
 function getTarget(href) {
-  if (/localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com/.test(href)) {
+  if (!/^http/.test(href) || /localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com|#/.test(href)) {
     return null;
   }
 
@@ -83,9 +83,10 @@ function Html({children}) {
   );
 }
 
-function Head({scripts, styles}) {
+function Head({currentPage, scripts, styles}) {
   return (
     <head>
+      <title>{currentPage.title}</title>
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       {/* Server rendering means we cannot use a real <Provider> component to do this.
@@ -145,7 +146,7 @@ function Body({children, scripts}) {
 
 function Nav({currentPage, pages, publicUrl}) {
   let isIndex = /index\.html$/;
-  let currentParts = currentPage.split('/');
+  let currentParts = currentPage.name.split('/');
   let currentDir = currentParts[0];
     
   pages = pages.filter(p => {
@@ -180,7 +181,7 @@ function Nav({currentPage, pages, publicUrl}) {
       </header>
       <ul className={sideNavStyles['spectrum-SideNav']}>
         {pages.map(p => (
-          <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPage})}>
+          <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPage.name})}>
             <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{p.title}</a>
           </li>
         ))}
@@ -192,7 +193,7 @@ function Nav({currentPage, pages, publicUrl}) {
 export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
   return (
     <Html>
-      <Head scripts={scripts} styles={styles} />
+      <Head currentPage={currentPage} scripts={scripts} styles={styles} />
       <Body scripts={scripts}>
         <div className={docStyles.pageHeader} id="header" />
         <Nav currentPage={currentPage} pages={pages} publicUrl={publicUrl} />

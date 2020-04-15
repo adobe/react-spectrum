@@ -56,101 +56,97 @@ module.exports = new Packager({
       let deps = bundleGraph.getDependencies(asset);
       for (let dep of deps) {
         if (dep.symbols.get('*') === '*') {
-          let resolved = bundleGraph.getDependencyResolution(dep);
+          let resolved = bundleGraph.getDependencyResolution(dep, bundle);
           Object.assign(res, processAsset(resolved));
         }
       }
     }
 
     function processCode(asset, obj) {
-      let res = {};
       let application;
       let paramStack = [];
-      for (let exp in obj) {
-        res[exp] = walk(obj[exp], (t, k, recurse) => {
-          if (t && t.type === 'reference') {
-            let dep = bundleGraph.getDependencies(asset).find(d => d.moduleSpecifier === t.specifier);
-            let res = bundleGraph.getDependencyResolution(dep);
-            let result = res ? processAsset(res)[t.imported] : null;
-            if (result) {
-              t = result;
-            } else {
-              return {
-                type: 'identifier',
-                name: t.local
-              };
-            }
-          }
-
-          if (t && t.type === 'application') {
-            application = recurse(t.typeParameters);
-          }
-
-          let hasParams = false;
-          if (t && (t.type === 'alias' || t.type === 'interface') && t.typeParameters && application) {
-            let params = Object.assign({}, paramStack[paramStack.length - 1]);
-            t.typeParameters.forEach((p, i) => {
-              let v = application[i] || p.default;
-              params[p.name] = v;
-            });
-
-            paramStack.push(params);
-            hasParams = true;
-          }
-
-          t = recurse(t);
-
-          if (hasParams) {
-            paramStack.pop();
-          }
-
-          let params = paramStack[paramStack.length - 1];
-          if (t && t.type === 'application') {
-            application = null;
-            if (t.base.type !== 'identifier') {
-              return t.base;
-            }
-          }
-
-          if (t && t.type === 'identifier' && params && params[t.name]) {
-            return params[t.name];
-          }
-
-          if (t && t.type === 'interface') {
-            let merged = mergeInterface(t);
-            if (!nodes[t.id]) {
-              nodes[t.id] = merged;
-            }
-
-            if (!k || k === 'props' || k === 'extends' || k === 'base') {
-              return merged;
-            }
-
+      return walk(obj, (t, k, recurse) => {
+        if (t && t.type === 'reference') {
+          let dep = bundleGraph.getDependencies(asset).find(d => d.moduleSpecifier === t.specifier);
+          let res = bundleGraph.getDependencyResolution(dep, bundle);
+          let result = res ? processAsset(res)[t.imported] : null;
+          if (result) {
+            t = result;
+          } else {
             return {
-              type: 'link',
-              id: t.id
+              type: 'identifier',
+              name: t.local
             };
           }
+        }
 
-          if (t && t.type === 'alias') {
-            if (k === 'base') {
-              return t.value;
-            }
+        if (t && t.type === 'application') {
+          application = recurse(t.typeParameters);
+        }
 
-            if (!nodes[t.id]) {
-              nodes[t.id] = t;
-            }
+        let hasParams = false;
+        if (t && (t.type === 'alias' || t.type === 'interface') && t.typeParameters && application) {
+          let params = Object.assign({}, paramStack[paramStack.length - 1]);
+          t.typeParameters.forEach((p, i) => {
+            let v = application[i] || p.default;
+            params[p.name] = v;
+          });
 
-            return {
-              type: 'link',
-              id: t.id
-            };
+          paramStack.push(params);
+          hasParams = true;
+        }
+
+        t = recurse(t);
+
+        if (hasParams) {
+          paramStack.pop();
+        }
+
+        let params = paramStack[paramStack.length - 1];
+        if (t && t.type === 'application') {
+          application = null;
+          if (t.base && t.base.type !== 'identifier') {
+            return t.base;
+          }
+        }
+
+        if (t && t.type === 'identifier' && params && params[t.name]) {
+          return params[t.name];
+        }
+
+        if (t && t.type === 'interface') {
+          let merged = mergeInterface(t);
+          if (!nodes[t.id]) {
+            nodes[t.id] = merged;
           }
 
-          return t;
-        });
-      }
-      return res;
+          if (!k || k === 'props' || k === 'extends' || k === 'base') {
+            return merged;
+          }
+
+          return {
+            type: 'link',
+            id: t.id
+          };
+        }
+
+        if (t && t.type === 'alias') {
+          if (k === 'base') {
+            return t.value;
+          }
+
+          if (!nodes[t.id]) {
+            nodes[t.id] = t;
+          }
+
+          return {
+            type: 'link',
+            id: t.id
+          };
+        }
+
+        return t;
+      });
     }
 
     let links = {};
@@ -176,32 +172,42 @@ async function parse(asset) {
   return [asset.id, v8.deserialize(buffer)];
 }
 
-let cache = new Map();
 // cache things in pre-visit order so the references exist
-function walk(obj, fn, k = null) {
-  let recurse = (obj) => {
-    if (cache.has(obj)) {
-      return cache.get(obj);
-    }
-    if (Array.isArray(obj)) {
-      let resultArray = [];
-      cache.set(obj, resultArray);
-      obj.forEach((item, i) => resultArray[i] = walk(item, fn, k));
-      return resultArray;
-    } else if (obj && typeof obj === 'object') {
-      let res = {};
-      cache.set(obj, res);
-      for (let key in obj) {
-        res[key] = walk(obj[key], fn, key);
-      }
-      return res;
-    } else {
-      cache.set(obj, obj);
-      return obj;
-    }
-  };
+function walk(obj, fn) {
+  let cache = new Map();
 
-  return fn(obj, k, recurse);
+  let visit = (obj, fn, k = null) => {
+    let recurse = (obj) => {
+      if (cache.has(obj)) {
+        return cache.get(obj);
+      }
+      if (Array.isArray(obj)) {
+        let resultArray = [];
+        cache.set(obj, resultArray);
+        obj.forEach((item, i) => resultArray[i] = visit(item, fn, k));
+        return resultArray;
+      } else if (obj && typeof obj === 'object') {
+        let res = {};
+        cache.set(obj, res);
+        for (let key in obj) {
+          res[key] = visit(obj[key], fn, key);
+        }
+        return res;
+      } else {
+        cache.set(obj, obj);
+        return obj;
+      }
+    };
+  
+    return fn(obj, k, recurse);
+  };
+  
+  let res = {};
+  for (let k in obj) {
+    res[k] = visit(obj[k], fn);
+  }
+
+  return res;
 }
 
 function mergeInterface(obj) {

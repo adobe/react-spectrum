@@ -20,6 +20,16 @@ html, body {
   background: var(--spectrum-global-color-gray-50) !important;
 }
 
+.exampleImage {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 12px;
+  svg, img {
+    width: auto;
+    height: auto;
+  }
+}
+
 .nav {
   position: fixed;
   top: 0;
@@ -64,6 +74,7 @@ article {
 
 .propTable {
   width: 100%;
+  margin-bottom: var(--spectrum-global-dimension-size-150);
 }
 
 .propTable td:last-child {
@@ -127,6 +138,14 @@ article pre {
   padding: 18px;
   border-radius: 4px 4px 0 0;
   overflow-x: auto;
+}
+
+code {
+  white-space: pre-wrap;
+}
+
+article > code {
+  display: block;
 }
 
 .header {

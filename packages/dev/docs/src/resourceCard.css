@@ -35,9 +35,9 @@
     background: rgba(203, 56, 55, 0.1);
   }
 
-  .gitImage, .spectrumImage {
+  .gitImage, .spectrumImage, .w3cImage {
     background-color: var(--spectrum-global-color-gray-200);
-    fill: black;
+    fill: var(--spectrum-global-color-gray-900);
   }
 
   .cardContent {
