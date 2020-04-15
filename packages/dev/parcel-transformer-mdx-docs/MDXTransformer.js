@@ -33,15 +33,23 @@ module.exports = new Transformer({
           if (node.meta === 'example') {
             let id = `example-${exampleCode.length}`;
 
+            // TODO: Parsing code with regex is bad. Replace with babel transform or something.
             let code = node.value;
-            if (code.startsWith('function ')) {
+            code = code.replace(/import (\{.*?\}) from (['"].*?['"])/g, (m) => {
+              exampleCode.push(m);
+              return '';
+            });
+
+            if (/^function (.|\n)*}\s*$/.test(code)) {
               let name = code.match(/^function (.*?)\s*\(/)[1];
               code = `(function () {
                 ${code}
                 ReactDOM.render(<ExampleProvider><${name} /></ExampleProvider>, document.getElementById("${id}"));
               })();`;
-            } else {
-              code = `ReactDOM.render(<ExampleProvider>${code}</ExampleProvider>, document.getElementById("${id}"));`;
+            } else if (/^<(.|\n)*>$/m.test(code)) {
+              code = `(function () {
+                ${code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<ExampleProvider>$1</ExampleProvider>, document.getElementById("${id}"));`)}
+              })();`;
             }
 
             exampleCode.push(code);
@@ -51,6 +59,16 @@ module.exports = new Transformer({
               {
                 type: 'jsx',
                 value: `<div id="${id}" />`
+              }
+            ];
+          }
+
+          if (node.lang === 'css') {
+            return [
+              node,
+              {
+                type: 'jsx',
+                value: '<style>{`' + node.value + '`}</style>'
               }
             ];
           }
@@ -105,7 +123,22 @@ module.exports = new Transformer({
     };
 
     const compiled = await mdx(await asset.getCode(), {
-      remarkPlugins: [slug, extractToc, extractExamples, fragmentWrap, [treeSitter, {grammarPackages: ['@atom-languages/language-typescript']}], fragmentUnWrap]
+      remarkPlugins: [
+        slug,
+        extractToc,
+        extractExamples,
+        fragmentWrap,
+        [
+          treeSitter,
+          {
+            grammarPackages: [
+              '@atom-languages/language-typescript',
+              '@atom-languages/language-css'
+            ]
+          }
+        ],
+        fragmentUnWrap
+      ]
     });
 
     let exampleBundle = exampleCode.length === 0

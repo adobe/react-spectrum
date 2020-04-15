@@ -51,7 +51,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   let formatMessage = useMessageFormatter(intlMessages);
   let {styleProps} = useStyleProps(otherProps);
 
-  size = type === 'popover' ? 'S' : (size || 'L');
+  size = type === 'popover' ? (size || 'S') : (size || 'L');
 
   let domRef = useDOMRef(ref);
   let gridRef = useRef();

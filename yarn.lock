@@ -35,6 +35,12 @@
   resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-workflow/-/react-spectrum-workflow-1.0.1.tgz#32537652fb52a6ebf8746ad58268520a04b7f553"
   integrity sha512-5BM+oJyP4vjmqAV/HSJYLJzR3wDDbEOMUZEEVeKJ81cKyq0aJ6qF9A9tmsW6jb/73cE7PpLr6vb+xqBqTOYsTw==
 
+"@atom-languages/language-css@git+ssh://git@github.com:atom/language-css.git#v0.44.4":
+  version "0.44.4"
+  resolved "git+ssh://git@github.com:atom/language-css.git#9feb69c081308b63f78bb0d6a2af2ff5eb7d869b"
+  dependencies:
+    tree-sitter-css "^0.15.0"
+
 "@atom-languages/language-typescript@git+ssh://git@github.com:atom/language-typescript.git#v0.6.2":
   version "0.6.2"
   resolved "git+ssh://git@github.com:atom/language-typescript.git#020b1e3f7623e9bad89204772e98d4ed8bf83b05"
@@ -14362,7 +14368,7 @@ mz@^2.5.0:
     object-assign "^4.0.1"
     thenify-all "^1.0.0"
 
-nan@^2.12.1, nan@^2.14.0:
+nan@^2.11.1, nan@^2.12.1, nan@^2.14.0:
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
   integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
@@ -20123,6 +20129,13 @@ tree-kill@^1.1.0:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/tree-kill/-/tree-kill-1.2.1.tgz#5398f374e2f292b9dcc7b2e71e30a5c3bb6c743a"
   integrity sha512-4hjqbObwlh2dLyW4tcz0Ymw0ggoaVDMveUB9w8kFSQScdRLo0gxO9J7WFcUBo+W3C1TLdFIEwNOWebgZZ0RH9Q==
+
+tree-sitter-css@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/tree-sitter-css/-/tree-sitter-css-0.15.0.tgz#b75c926a5c05bf4482961163e09ae9ebf724031c"
+  integrity sha512-xeWsAvZ//SD89QA3GvXmNDx3t0iJuvywJf6XLDmz8Dp8cPDgUt4YnhcAE3FCoP6YOU73hpsFOqKvsMSBSRmuQA==
+  dependencies:
+    nan "^2.11.1"
 
 tree-sitter-hast@^1.1.1:
   version "1.1.1"

@@ -40,6 +40,7 @@ export function Type({type}) {
   switch (type.type) {
     case 'any':
     case 'null':
+    case 'undefined':
     case 'void':
       return <Keyword {...type} />;
     case 'identifier':
@@ -84,6 +85,8 @@ export function Type({type}) {
       return <Keyword {...type} />;
     case 'alias':
       return <code className={typographyStyles['spectrum-Code4']}><Type type={type.value} /></code>;
+    case 'array':
+      return <ArrayType {...type} />;
     default:
       console.log('no render component for TYPE', type);
       return null;
@@ -120,14 +123,13 @@ function Identifier({name}) {
   return <span className="token hljs-name">{name}</span>;
 }
 
-function JoinList({elements, joiner}) {
+export function JoinList({elements, joiner}) {
   return elements
     .reduce((acc, v, i) => [
       ...acc,
       <span
         className="token punctuation"
-        key={`join${v.name || v.raw}${i}`}
-        style={{whiteSpace: 'pre-wrap'}}>
+        key={`join${v.name || v.raw}${i}`}>
         {joiner}
       </span>,
       <Type type={v} key={`type${v.name || v.raw}${i}`} />
@@ -151,7 +153,7 @@ function TypeApplication({base, typeParameters}) {
   );
 }
 
-function TypeParameters({typeParameters}) {
+export function TypeParameters({typeParameters}) {
   if (typeParameters.length === 0) {
     return null;
   }
@@ -304,6 +306,15 @@ function ObjectType({properties, exact}) {
         );
       })}
       {endObject}
+    </>
+  );
+}
+
+function ArrayType({elementType}) {
+  return (
+    <>
+      <Type type={elementType} />
+      <span className="token punctuation">[]</span>
     </>
   );
 }

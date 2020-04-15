@@ -73,6 +73,7 @@ article {
 
 .propTable {
   width: 100%;
+  margin-bottom: var(--spectrum-global-dimension-size-150);
 }
 
 .propTable td:last-child {
@@ -136,6 +137,14 @@ article pre {
   padding: 18px;
   border-radius: 4px 4px 0 0;
   overflow-x: auto;
+}
+
+code {
+  white-space: pre-wrap;
+}
+
+article > code {
+  display: block;
 }
 
 .header {
