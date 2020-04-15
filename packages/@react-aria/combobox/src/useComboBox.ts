@@ -12,8 +12,8 @@
 
 interface ComboBoxProps {
   label: string,
-  buttonRef,
-  textFieldRef
+  triggerRef,
+  inputRef
 }
 
 interface ComboBoxAria {
@@ -33,6 +33,9 @@ import {ComboBoxState} from '@react-stately/combobox';
 
 
 export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): ComboBoxAria {
+  // double check that user provided id gets sent to textfield and not to wrapper div
+  
+  
   // onFocus, calls state.open, attaches itself to textfield
   // onChange
   // onInputChange
@@ -49,7 +52,7 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
   // I think we'll need this, probably won't use MenuTrigger component since behavior isn't as straight forward
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      ref: props.buttonRef //ref of the trigger button, maybe not props.ref
+      ref: props.triggerRef //ref of the trigger button, maybe not props.ref
     },
     state
   );
@@ -69,21 +72,27 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
         ...props,
 
       }, 
-      props.textFieldRef);
+      props.inputRef);
 
 
 // Talk to MJ or James about whether the input aria stuff goes on the input or on the wrapper
 // aria-controls vs aria-owns vs having both
 // what v2 stuff we should take, should look at v2?
 // Support listbox only? Or support grid/dialog/etc for popup/menu
+    // grid -> gridview/tableview instead of listbox, like a 2d list, look at aria spec
+    // dialog -> 
 
 
   return {
     triggerProps: {
+      // make sure this has controls -> listbox menu
+      // should have aria-haspopup -> listbox menu
       ...menuTriggerProps,
       tabIndex: -1
     },
     inputProps: {
+      // make sure this doesn't have aria-owns
+      // should have aria-haspopup -> listbox menu
       ...textFieldProps,
       role: 'combobox',
       'aria-controls': state.isOpen? menuProps.id : undefined,

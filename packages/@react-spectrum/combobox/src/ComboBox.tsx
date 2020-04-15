@@ -10,31 +10,181 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, DOMRef, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, unwrapDOMRef, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
-import {ComboBoxProps} from '@react-types/$combobox';
-import React from 'react';
-import styles from '@adobe/spectrum-css-temp/components/combobox/vars.css';
+// import {ComboBoxProps} from '@react-types/$combobox';
+import React, {useRef} from 'react';
+import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function ComboBox(props: ComboBoxProps, ref: DOMRef) {
+import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
+import {CollectionBase, DOMRef, InputBase, SingleSelection, TextInputBase} from '@react-types/shared';
+import {TextField, TextFieldBase} from '@react-spectrum/textfield';
+import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
+import {FieldButton} from '@react-spectrum/button';
+import {FocusScope} from '@react-aria/focus';
+import {Popover, Tray} from '@react-spectrum/overlays';
+import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
+
+
+interface ComboBox extends CollectionBase<T>, SingleSelection {
+  isOpen?: boolean,
+  defaultOpen?: boolean,
+  onOpenChange?: (isOpen: boolean) => void,
+  inputValue?: string,
+  defaultInputValue?: string,
+  onInputChange?: (value: string) => void,
+  onFilter?: (value: string) => void,
+  allowsCustomValue?: boolean,
+  onCustomValue?: (value: string) => void,
+  completionMode?: 'suggest' | 'complete',
+  menuTrigger?: 'focus' | 'input' | 'manual',
+  label: string // DO WE WANT TO ADD THIS?
+}
+interface SpectrumComboBox extends InputBase, TextInputBase, ComboBox {
+  isQuiet?: boolean
+}
+
+function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props);
-  let {styleProps} = useStyleProps(props);
-  let state = useComboBoxState(props);
-  let ariaProps = useComboBox(props, state);
-  let domRef = useDOMRef(ref);
 
+  let {
+    isQuiet,
+    isDisabled,
+    label
+  } = props;
+
+  let {styleProps} = useStyleProps(props);
+  let popoverRef = useRef();
+  let triggerRef = useRef();
+  let listboxRef = useRef();
+  let inputRef = useRef();
+
+  let state = useComboBoxState(props);
+  console.log('state', state)
+  let {triggerProps, inputProps, menuProps, labelProps} = useComboBox(
+    {
+      ...props,
+      triggerRef: unwrapDOMRef(triggerRef),
+      inputRef: unwrapDOMRef(inputRef)
+    },
+    state
+  );
+  let domRef = useDOMRef(ref);
+  console.log('trigger props', triggerProps)
+  console.log('')
+
+
+
+  // Below copied from picker, placeholder for now
+  let layout = useListBoxLayout(state);
+
+  let listbox = (
+    <FocusScope restoreFocus>
+      {/* <DismissButton onDismiss={() => state.setOpen(false)} /> */}
+      <ListBoxBase
+        ref={listboxRef}
+        domProps={menuProps}
+        disallowEmptySelection
+        autoFocus={state.focusStrategy}
+        shouldSelectOnPressUp
+        focusOnPointerEnter
+        layout={layout}
+        state={state}
+        // width={isMobile ? '100%' : undefined} 
+        />
+      {/* <DismissButton onDismiss={() => state.setOpen(false)} /> */}
+    </FocusScope>
+  );
+
+  // Will need to measure the width of textfield + button just like in picker
+  // will also need to do a mobileCheck like in menutrigger/picker
+
+  let {overlayProps, placement} = useOverlayPosition({
+    targetRef: unwrapDOMRef(triggerRef),
+    overlayRef: unwrapDOMRef(popoverRef),
+    scrollRef: listboxRef,
+    // placement: `${direction} ${align}` as Placement,
+    placement: 'bottom start' as Placement,
+    // shouldFlip: shouldFlip,
+    shouldFlip: true, // FOR NOW HARDCODED
+    isOpen: state.isOpen
+  });
+
+  let overlay = (
+    <Popover
+      isOpen={state.isOpen}
+      // UNSAFE_style={style}
+      UNSAFE_style={overlayProps.style}
+      UNSAFE_className={classNames(styles, 'spectrum-Dropdown-popover', {'spectrum-Dropdown-popover--quiet': isQuiet})}
+      ref={popoverRef}
+      placement={placement}
+      hideArrow
+      shouldCloseOnBlur
+      onClose={state.close}>
+      {listbox}
+    </Popover>
+  );
+
+
+  // Use TextFieldBase? Figure out where the class name should go
+  // Maybe we don't even use textfield base, just a base input?
+  // Need to wrap it all in a focus ring so that everything is highlighted when keyboard focused
+
+  // Need to handle the label ourselves, can't use textfield label?
+  // Figure out why textfield doesn't recieve aria-autocomplete
   return (
     <div
       {...filterDOMProps(props)}
-      {...ariaProps}
       {...styleProps}
       ref={domRef}
-      className={classNames(styles, '', styleProps.className)}>
-
+      className={
+        classNames(
+          styles,
+          'spectrum-InputGroup',
+          {
+            'spectrum-InputGroup--quiet': isQuiet,
+            'is-disabled': isDisabled
+          },
+          styleProps.className
+        )
+      }>
+      <TextFieldBase
+        {...inputProps}
+        // UNSAFE_className={
+        //   classNames(
+        //     styles,
+        //     'spectrum-InputGroup-field'
+        //   )
+        // }
+        ref={inputRef}
+        inputClassName={
+          classNames(
+            styles,
+            'spectrum-InputGroup-field'
+          )
+        }
+        isDisabled={isDisabled}
+        isQuiet={isQuiet}
+        label={label}
+      />
+      <FieldButton
+        {...triggerProps}
+        ref={triggerRef}
+        UNSAFE_className={
+          classNames(
+            styles,
+            'spectrum-FieldButton'
+          )
+        }
+        isDisabled={isDisabled}
+        isQuiet={isQuiet}>
+        <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
+      </FieldButton>
+      {overlay}
     </div>
   );
 }

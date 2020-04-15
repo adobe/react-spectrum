@@ -25,6 +25,7 @@ export interface ComboBoxState<T> {
   setOpen: (isOpen: boolean) => void,
   value: string,
   setValue: (value: string) => void
+  // TODO add liststate types and menutrigger types here
 }
 
 interface ComboBoxProps extends CollectionBase<T>, SingleSelection {
