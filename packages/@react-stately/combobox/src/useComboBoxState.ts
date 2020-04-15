@@ -11,9 +11,103 @@
  */
 
 import {useControlledState} from '@react-stately/utils';
+import {useState} from 'react';
 
-export function useComboBoxState(props/*: type me */)/*: type me */  {
-  let [state, setState] = useControlledState(props.value, props.defaultValue, props.onChange);
+import {Collection, CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
+import {CollectionBase, MultipleSelection, SingleSelection} from '@react-types/shared';
+import {Key, useMemo} from 'react';
+import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {useListState} from '@react-stately/list';
+import {useMenuTriggerState} from '@react-stately/menu';
 
-  return [state, setState];
+export interface ComboBoxState<T> {
+  // collection: Collection<Node<T>>,
+  // // disabledKeys: Set<Key>,   will combobox have disabled items in its list?
+  // selectionManager: SelectionManager,
+  isOpen: boolean,
+  setOpen: (isOpen: boolean) => void,
+  value: string,
+  setValue: (value: string) => void,
+  fieldValue: string,
+  setFieldValue: (fieldValue: string) => void
+}
+
+interface ComboBoxProps extends CollectionBase<T>, SingleSelection {
+  isOpen?: boolean,
+  defaultOpen?: boolean,
+  onOpenChange?: (isOpen: boolean) => void,
+  inputValue?: string,
+  defaultInputValue?: string,
+  onInputChange?: (value: string) => void,
+  onFilter?: (value: string) => void,
+  allowsCustomValue?: boolean,
+  onCustomValue?: (value: string) => void,
+  completionMode?: 'suggest' | 'complete',
+  menuTrigger?: 'focus' | 'input' | 'manual'
+}
+
+export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
+  // listState (uncontrolled), gives us collection and selectionManager
+  let listState = useListState({
+    ...props,
+    selectionMode: 'single'
+  })
+
+    
+  // I think we don't need the builder and stuff cuz we can useListState?
+
+  // let selectionState = useMultipleSelectionState({...props, selectionMode: 'single'});
+  // let disabledKeys = useMemo(() =>
+  //   props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
+  // , [props.disabledKeys]);
+  // let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
+  // let collection = useMemo(() => {
+  //   let nodes = builder.build(props, (key) => ({
+  //     isSelected: selectionState.selectedKeys.has(key),
+  //     // isDisabled: disabledKeys.has(key),
+  //     isFocused: key === selectionState.focusedKey
+  //   }));
+
+  //   return new TreeCollection(nodes);
+  // }, [builder, props, selectionState.selectedKeys, selectionState.focusedKey]);
+
+
+
+  // I think we don't need the below since we have useMenuTriggerState
+  
+  // // openState (controlled), gives us ability to open/close menu
+  // let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen, props.onOpenChange);
+  
+  let menuState = useMenuTriggerState(props);
+
+
+  // textFieldStateLive (user input, uncontrolled, read only (controlled)) textFieldStateCommit (internal actual value)
+  let [value, setValue] = useControlledState(props.inputValue, props.defaultInputValue, props.onInputChange)
+  let [fieldValue, setFieldValue] = useState(value);
+  
+
+  // For completionMode = complete
+  let [suggestionValue, setSuggestionValue] = useState('');
+
+
+
+  // selectedItemState (aria-activedecendent), maybe just need to modify useSelectableItem or something
+
+
+
+
+
+  return {
+    // collection,
+    // // disabledKeys,
+    // selectionManager: new SelectionManager(collection, selectionState),
+    ...listState,
+    ...menuState,
+    // isOpen,
+    // setOpen,
+    value,
+    setValue,
+    fieldValue,
+    setFieldValue
+  }
 }
