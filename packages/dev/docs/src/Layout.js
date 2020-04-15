@@ -66,7 +66,7 @@ function getTarget(href) {
   return '_blank';
 }
 
-function Html({children}) {
+function Page({children, title, styles, scripts}) {
   return (
     <html
       lang="en-US"
@@ -78,75 +78,64 @@ function Html({children}) {
         typographyStyles.spectrum,
         docStyles.provider,
         highlightCss.spectrum)}>
-      {children}
+      <head>
+        <title>{title}</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* Server rendering means we cannot use a real <Provider> component to do this.
+            Instead, we apply the default theme classes to the html element. In order to
+            prevent a flash between themes when loading the page, an inline script is put
+            as close to the top of the page as possible to switch the theme as soon as
+            possible during loading. It also handles when the media queries update, or
+            local storage is updated. */}
+        <script
+          dangerouslySetInnerHTML={{__html: `(() => {
+            let classList = document.documentElement.classList;
+            let dark = window.matchMedia('(prefers-color-scheme: dark)');
+            let fine = window.matchMedia('(any-pointer: fine)');
+            let update = () => {
+              if (localStorage.theme === "dark" || (!localStorage.theme && dark.matches)) {
+                classList.remove("${theme.light['spectrum--light']}");
+                classList.add("${theme.dark['spectrum--dark']}");
+              } else {
+                classList.add("${theme.light['spectrum--light']}");
+                classList.remove("${theme.dark['spectrum--dark']}");
+              }
+
+              if (!fine.matches) {
+                classList.remove("${theme.medium['spectrum--medium']}");
+                classList.add("${theme.large['spectrum--large']}");
+              } else {
+                classList.add("${theme.medium['spectrum--medium']}");
+                classList.remove("${theme.large['spectrum--large']}");
+              }
+            };
+
+            update();
+            dark.addListener(update);
+            fine.addListener(update);
+            window.addEventListener('storage', update);
+          })();
+        `.replace(/\n|\s{2,}/g, '')}} />
+        <link rel="stylesheet" href="https://use.typekit.net/uma8ayv.css" />
+        <link rel="preload" as="font" href="https://use.typekit.net/af/eaf09c/000000000000000000017703/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3" crossOrigin="" />
+        <link rel="preload" as="font" href="https://use.typekit.net/af/cb695f/000000000000000000017701/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3" crossOrigin="" />
+        <link rel="preload" as="font" href="https://use.typekit.net/af/505d17/00000000000000003b9aee44/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n9&v=3" crossOrigin="" />
+        <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
+        {styles.map(s => <link rel="stylesheet" href={s.url} />)}
+        {scripts.map(s => <link rel="preload" as="script" href={s.url} crossOrigin="" />)}
+      </head>
+      <body>
+        {children}
+        {scripts.map(s => <script type={s.type} src={s.url} />)}
+      </body>
     </html>
   );
 }
 
-function Head({currentPage, scripts, styles}) {
-  return (
-    <head>
-      <title>{currentPage.title}</title>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      {/* Server rendering means we cannot use a real <Provider> component to do this.
-          Instead, we apply the default theme classes to the html element. In order to
-          prevent a flash between themes when loading the page, an inline script is put
-          as close to the top of the page as possible to switch the theme as soon as
-          possible during loading. It also handles when the media queries update, or
-          local storage is updated. */}
-      <script 
-        dangerouslySetInnerHTML={{__html: `(() => {
-          let classList = document.documentElement.classList;
-          let dark = window.matchMedia('(prefers-color-scheme: dark)');
-          let fine = window.matchMedia('(any-pointer: fine)');
-          let update = () => {
-            if (localStorage.theme === "dark" || (!localStorage.theme && dark.matches)) {
-              classList.remove("${theme.light['spectrum--light']}");
-              classList.add("${theme.dark['spectrum--dark']}");
-            } else {
-              classList.add("${theme.light['spectrum--light']}");
-              classList.remove("${theme.dark['spectrum--dark']}");
-            }
-
-            if (!fine.matches) {
-              classList.remove("${theme.medium['spectrum--medium']}");
-              classList.add("${theme.large['spectrum--large']}");
-            } else {
-              classList.add("${theme.medium['spectrum--medium']}");
-              classList.remove("${theme.large['spectrum--large']}");
-            }
-          };
-          
-          update();
-          dark.addListener(update);
-          fine.addListener(update);
-          window.addEventListener('storage', update);
-        })();
-      `.replace(/\n|\s{2,}/g, '')}} />
-      <link rel="stylesheet" href="https://use.typekit.net/uma8ayv.css" />
-      <link rel="preload" as="font" href="https://use.typekit.net/af/eaf09c/000000000000000000017703/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3" crossOrigin="" />
-      <link rel="preload" as="font" href="https://use.typekit.net/af/cb695f/000000000000000000017701/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3" crossOrigin="" />
-      <link rel="preload" as="font" href="https://use.typekit.net/af/505d17/00000000000000003b9aee44/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n9&v=3" crossOrigin="" />
-      <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
-      {styles.map(s => <link rel="stylesheet" href={s.url} />)}
-      {scripts.map(s => <link rel="preload" as="script" href={s.url} crossOrigin="" />)}
-    </head>
-  );
-}
-
-function Body({children, scripts}) {
-  return (
-    <body>
-      {children}
-      {scripts.map(s => <script type={s.type} src={s.url} />)}
-    </body>
-  );
-}
-
-function Nav({currentPage, pages, publicUrl}) {
+function Nav({currentPageName, pages, publicUrl}) {
   let isIndex = /index\.html$/;
-  let currentParts = currentPage.name.split('/');
+  let currentParts = currentPageName.split('/');
   let currentDir = currentParts[0];
     
   pages = pages.filter(p => {
@@ -181,7 +170,7 @@ function Nav({currentPage, pages, publicUrl}) {
       </header>
       <ul className={sideNavStyles['spectrum-SideNav']}>
         {pages.map(p => (
-          <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPage.name})}>
+          <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPageName})}>
             <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{p.title}</a>
           </li>
         ))}
@@ -192,20 +181,17 @@ function Nav({currentPage, pages, publicUrl}) {
 
 export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
   return (
-    <Html>
-      <Head currentPage={currentPage} scripts={scripts} styles={styles} />
-      <Body scripts={scripts}>
-        <div className={docStyles.pageHeader} id="header" />
-        <Nav currentPage={currentPage} pages={pages} publicUrl={publicUrl} />
-        <main>
-          <article className={typographyStyles['spectrum-Typography']}>
-            <MDXProvider components={mdxComponents}>
-              {children}
-            </MDXProvider>
-          </article>
-          <ToC toc={toc} />
-        </main>
-      </Body>
-    </Html>
+    <Page title={currentPage.title} scripts={scripts} styles={styles}>
+      <div className={docStyles.pageHeader} id="header" />
+      <Nav currentPageName={currentPage.name} pages={pages} publicUrl={publicUrl} />
+      <main>
+        <article className={typographyStyles['spectrum-Typography']}>
+          <MDXProvider components={mdxComponents}>
+            {children}
+          </MDXProvider>
+        </article>
+        <ToC toc={toc} />
+      </main>
+    </Page>
   );
 }
