@@ -222,9 +222,9 @@ export function InterfaceType({properties, showRequired, showDefault}) {
       <thead>
         <tr>
           <td className={tableStyles['spectrum-Table-headCell']}>Name</td>
-          <td className={tableStyles['spectrum-Table-headCell']}>Type</td>
+          <td className={tableStyles['spectrum-Table-headCell']} style={{'width': '30%'}}>Type</td>
           {showDefault && <td className={tableStyles['spectrum-Table-headCell']}>Default</td>}
-          <td className={tableStyles['spectrum-Table-headCell']}>Description</td>
+          <td className={tableStyles['spectrum-Table-headCell']} style={{'width': '40%'}}>Description</td>
         </tr>
       </thead>
       <tbody className={tableStyles['spectrum-Table-body']}>

@@ -1,0 +1,414 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/menu';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {ActionButton} from '@react-spectrum/button'
+import Copy from '@spectrum-icons/workflow/Copy';
+import Cut from '@spectrum-icons/workflow/Cut';
+import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
+import {Keyboard, Text} from '@react-spectrum/typography';
+import Paste from '@spectrum-icons/workflow/Paste';
+```
+
+# MenuTrigger
+
+<p>{docs.exports.MenuTrigger.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['MenuTrigger']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/menu/'}
+  ]} />
+
+## Example
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+      Menu Button
+  </ActionButton>
+  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+```
+
+## Content
+
+The MenuTrigger accepts exactly two children: the element which triggers the opening
+of the Menu and the Menu itself. The trigger must be the first child passed into
+the MenuTrigger and should be an element that supports press events.
+
+If the Menu is open it will close on blur or scroll events.
+
+The `defaultSelectedKeys` prop can be used to set the default state of the Menu
+(uncontrolled). Alternatively, the `selectedKeys` prop can be used to make the
+selected state of the Menu controlled.
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+      Menu Button Controlled
+  </ActionButton>
+  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name" selectedKeys={['Kangaroo']}>
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+<MenuTrigger>
+  <ActionButton>
+      Menu Button Uncontrolled
+  </ActionButton>
+  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+```
+
+The `selectionMode` prop can be used to switch from the default selection of a single menu item to multiple menu items or none.
+
+```tsx example
+function Example() {
+  let [state, setState] = React.useState(['Kangaroo', 'Snake']);
+
+  let onAction = (value) => {
+    if (state.includes(value)) {
+      setState(state.filter((item) => item !== value));
+    } else {
+      let curState = state;
+      curState.push(value);
+      setState(curState);
+    }
+  };
+
+  return (
+    <div>
+      <MenuTrigger>
+        <ActionButton>
+            Menu Button Multiple
+        </ActionButton>
+        <Menu
+          items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
+          itemKey="name"
+          onAction={onAction}
+          defaultSelectedKeys={state}
+          selectionMode="multiple">
+          {item => <Item>{item.name}</Item>}
+        </Menu>
+      </MenuTrigger>
+      <MenuTrigger>
+        <ActionButton>
+            Menu Button None
+        </ActionButton>
+        <Menu
+          items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
+          itemKey="name"
+          selectionMode="none">
+          {item => <Item>{item.name}</Item>}
+        </Menu>
+      </MenuTrigger>
+    </div>
+  );
+}
+```
+
+### Sections
+
+Menu's may have Sections with titles and children items.
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+      Menu Button
+  </ActionButton>
+  <Menu items={[{name: 'Section 1', children: [{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}, {name: 'Section 2', children: [{name: 'Koala'}]}]} itemKey="name">
+    {item => (
+      <Section items={item.children} title={item.name}>
+        {item => <Item>{item.name}</Item>}
+      </Section>
+    )}
+  </Menu>
+</MenuTrigger>
+```
+
+### Sematic Elements
+
+A Menu item's content may accept any renderable node, not just strings.
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+      Menu Button
+  </ActionButton>
+  <Menu
+    itemKey="name"
+    items={[
+      {name: 'Copy', icon: 'Copy', shortcut: '⌘C'},
+      {name: 'Cut', icon: 'Cut', shortcut: '⌘X'},
+      {name: 'Paste', icon: 'Paste', shortcut: '⌘V'}
+    ]}>
+    {item => {
+      let iconMap = {
+        Copy,
+        Cut,
+        Paste
+      };
+      let Icon = iconMap[item.icon];
+      return (
+        <Item childItems={item.children} textValue={item.name}>
+          <Icon size="S" />
+          <Text>{item.name}</Text>
+          <Keyboard>{item.shortcut}</Keyboard>
+        </Item>
+      );
+    }}
+  </Menu>
+</MenuTrigger>
+```
+
+### Accessibility
+
+The MenuTrigger's Menu is `aria-labelledby` by its trigger, which uses 'aria-controls'.
+Other aria properties of the trigger are `aria-haspopup` and `aria-expanded`.
+
+The Menu by default has a `role` prop of `menu`, which can be set to `listbox`.
+
+```tsx example
+<MenuTrigger role="listbox" isOpen>
+  <ActionButton>
+      Menu Button
+  </ActionButton>
+  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+```
+
+Menu sections without labels need the prop `aria-label`.
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+      Menu Button
+  </ActionButton>
+  <Menu items={[{name: 'Section 1', children: [{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}, {name: 'Section 2', children: [{name: 'Koala'}]}]} itemKey="name">
+    {item => (
+      <Section items={item.children} aria-label={item.name}>
+        {item => <Item>{item.name}</Item>}
+      </Section>
+    )}
+  </Menu>
+</MenuTrigger>
+```
+
+## Events
+
+MenuTrigger accepts an `onOpenChange` handler which is triggered whenever the Menu is opened or closed.
+
+The example below uses `onOpenChange` to update a separate span element with the current open state of the Menu.
+
+```tsx example
+function Example() {
+  let [state, setState] = React.useState(false);
+
+  return (
+    <div>
+      <MenuTrigger onOpenChange={(isOpen) => setState(isOpen)}>
+        <ActionButton>
+            Menu Button
+        </ActionButton>
+        <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
+          {item => <Item>{item.name}</Item>}
+        </Menu>
+      </MenuTrigger>
+      <span>Current open state: {state.toString()}</span>
+    </div>
+  );
+}
+```
+
+Menu accepts an `onAction` handler which is triggered whenever a Menu item is selected.
+
+The example below uses `onAction` to tell the user which Menu item was selected.
+
+```tsx example
+function Example() {
+  let onAction = (value) => alert('Menu item selected: ' + value);
+
+  return (
+    <div>
+      <MenuTrigger>
+        <ActionButton>
+            Menu Button
+        </ActionButton>
+        <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name" onAction={onAction}>
+          {item => <Item>{item.name}</Item>}
+        </Menu>
+      </MenuTrigger>
+    </div>
+  );
+}
+```
+
+## Props
+
+### MenuTrigger
+
+<PropTable component={docs.exports.MenuTrigger} links={docs.links} />
+
+### Menu
+
+<PropTable component={docs.exports.Menu} links={docs.links} />
+
+## Visual Options
+
+### Align and Direction
+
+```tsx example
+<MenuTrigger align="start" direction="bottom">
+  <ActionButton>
+      Menu Button
+  </ActionButton>
+  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+<MenuTrigger align="start" direction="top">
+  <ActionButton>
+      Menu Button
+  </ActionButton>
+  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+<MenuTrigger align="end" direction="bottom">
+  <ActionButton>
+      Menu Button
+  </ActionButton>
+  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+<MenuTrigger align="end" direction="top">
+  <ActionButton>
+      Menu Button
+  </ActionButton>
+  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+```
+
+### Autofocus
+
+```tsx example
+<MenuTrigger align="start" closeOnSelect={false}>
+  <ActionButton>
+      Menu Button Autofocus
+  </ActionButton>
+  <Menu
+    items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
+    itemKey="name"
+    autoFocus>
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+<MenuTrigger align="start" closeOnSelect={false}>
+  <ActionButton>
+      Menu Button Autofocus Last
+  </ActionButton>
+  <Menu
+    items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
+    itemKey="name"
+    autoFocus="last">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+```
+
+### Closes Menu onSelect
+
+```tsx example
+<MenuTrigger align="start" closeOnSelect={false}>
+  <ActionButton>
+      Menu Button
+  </ActionButton>
+  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+```
+
+### Disabled Trigger
+
+```tsx example
+<MenuTrigger align="start">
+  <ActionButton isDisabled>
+      Menu Button
+  </ActionButton>
+  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+```
+
+### Disabled Menu Items
+
+```tsx example
+<MenuTrigger align="start">
+  <ActionButton>
+      Menu Button
+  </ActionButton>
+  <Menu
+    items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
+    itemKey="name"
+    disabledKeys={['Aardvark', 'Snake']}>
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+<MenuTrigger align="start">
+  <ActionButton>
+      Menu Button
+  </ActionButton>
+  <Menu
+    items={[{name: 'Aardvark', key: 1}, {name: 'Kangaroo', key: 2}, {name: 'Snake', key: 3}]}
+    itemKey="name"
+    disabledKeys={['1', '3']}>
+    {item => <Item key={item.key}>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+```
+
+### Open
+
+```tsx example
+<MenuTrigger align="start" isOpen>
+  <ActionButton>
+      Menu Button
+  </ActionButton>
+  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+<MenuTrigger align="start" defaultOpen>
+  <ActionButton>
+      Menu Button
+  </ActionButton>
+  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+```

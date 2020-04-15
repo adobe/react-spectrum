@@ -17,22 +17,33 @@ export type FocusStrategy = 'first' | 'last';
 
 export interface MenuTriggerProps {
   // trigger?: 'press' | 'longPress',
+  /** Where the Menu aligns with it's trigger. */
   align?: Alignment,
-  direction?: 'bottom' | 'top', // left right?
+  /** Where the Menu opens relative to it's trigger. */
+  direction?: 'bottom' | 'top',
+  /** Whether the Menu closes when a selection is made. */
   closeOnSelect?: boolean,
+  /** Whether the Menu loads and stays open. */
   isOpen?: boolean,
+  /** Whether the Menu loads open. */
   defaultOpen?: boolean,
+  /** Handler that is called when the Menu opens or closes. */
   onOpenChange?: (isOpen: boolean) => void,
+  /** Weather to flip if the scroll size is greater then available space. */
   shouldFlip?: boolean
 }
 
 export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
+  /** The contents of the MenuTrigger. */
   children: ReactElement[]
 }
 
 export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
+  /** Where the focus should be set. */
   autoFocus?: boolean | FocusStrategy,
+  /** Whether keyboard navigation is circular. */
   shouldFocusWrap?: boolean,
+  /** Handler that is called when an item is selected. */
   onAction?: (key: Key) => void
 }
 
