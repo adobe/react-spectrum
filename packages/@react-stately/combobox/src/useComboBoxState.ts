@@ -13,10 +13,7 @@
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 
-import {Collection, CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
-import {CollectionBase, MultipleSelection, SingleSelection} from '@react-types/shared';
-import {Key, useMemo} from 'react';
-import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {useListState} from '@react-stately/list';
 import {useMenuTriggerState} from '@react-stately/menu';
 
@@ -27,9 +24,7 @@ export interface ComboBoxState<T> {
   isOpen: boolean,
   setOpen: (isOpen: boolean) => void,
   value: string,
-  setValue: (value: string) => void,
-  fieldValue: string,
-  setFieldValue: (fieldValue: string) => void
+  setValue: (value: string) => void
 }
 
 interface ComboBoxProps extends CollectionBase<T>, SingleSelection {
@@ -81,9 +76,7 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let menuState = useMenuTriggerState(props);
 
 
-  // textFieldStateLive (user input, uncontrolled, read only (controlled)) textFieldStateCommit (internal actual value)
-  let [value, setValue] = useControlledState(props.inputValue, props.defaultInputValue, props.onInputChange)
-  let [fieldValue, setFieldValue] = useState(value);
+  let [value, setValue] = useControlledState(toString(props.inputValue), toString(props.defaultInputValue) || '', props.onInputChange);
 
 
   // For completionMode = complete
@@ -92,9 +85,6 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
 
 
   // selectedItemState (aria-activedecendent), maybe just need to modify useSelectableItem or something
-
-
-
 
 
   return {
@@ -106,8 +96,16 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
     // isOpen,
     // setOpen,
     value,
-    setValue,
-    fieldValue,
-    setFieldValue
+    setValue
   };
+}
+
+
+
+function toString(val) {
+  if (val == null) {
+    return;
+  }
+
+  return val.toString();
 }
