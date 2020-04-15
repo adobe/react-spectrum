@@ -25,35 +25,6 @@ const DOMPropNames = {
   'aria-hidden': 1
 };
 
-// Sync with TypeScript definition of TextInputDOMProps
-export const TextInputDOMPropNames = {
-  autoComplete: 1,
-  maxLength: 1,
-  minLength: 1,
-  name: 1,
-  pattern: 1,
-  placeholder: 1,
-  type: 1,
-  inputMode: 1,
-
-  // Clipboard events
-  onCopy: 1,
-  onCut: 1,
-  onPaste: 1,
-
-  // Composition events
-  onCompositionEnd: 1,
-  onCompositionStart: 1,
-  onCompositionUpdate: 1,
-
-  // Selection events
-  onSelect: 1,
-
-  // Input events
-  onBeforeInput: 1,
-  onInput: 1
-};
-
 // Based on DOMAttributes from react types
 export const DOMEventPropNames = {  
   // Focus events

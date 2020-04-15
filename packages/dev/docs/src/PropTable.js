@@ -11,6 +11,7 @@
  */
 
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {getUsedLinks} from './utils';
 import {InterfaceType, Type, TypeContext} from './types';
 import React from 'react';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
@@ -76,19 +77,7 @@ const GROUPS = {
 export function PropTable({component, links}) {
   let [ungrouped, groups] = groupProps(component.props.properties);
 
-  let usedLinks = {};
-  walkLinks(component.props.properties);
-
-  function walkLinks(obj) {
-    walk(obj, (t, k, recurse) => {
-      if (t && t.type === 'link') {
-        usedLinks[t.id] = links[t.id];
-        walkLinks(links[t.id]);
-      }
-
-      return recurse(t);
-    });
-  }
+  let usedLinks = getUsedLinks(component.props.properties, links);
 
   return (
     <>
@@ -144,22 +133,4 @@ function groupProps(props) {
   }
 
   return [props, groups];
-}
-
-function walk(obj, fn, k = null) {
-  let recurse = (obj) => {
-    if (Array.isArray(obj)) {
-      return obj.map((item, i) => walk(item, fn, k));
-    } else if (obj && typeof obj === 'object') {
-      let res = {};
-      for (let key in obj) {
-        res[key] = walk(obj[key], fn, key);
-      }
-      return res;
-    } else {
-      return obj;
-    }
-  };
-
-  return fn(obj, k, recurse);
 }

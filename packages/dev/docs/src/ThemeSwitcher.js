@@ -63,8 +63,9 @@ export function ThemeSwitcher() {
 
   return (
     <ActionButton 
-      icon={colorScheme === 'dark' ? <Light /> : <Moon />}
       aria-label={colorScheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-      onPress={onPress} />
+      onPress={onPress}>
+      {colorScheme === 'dark' ? <Light /> : <Moon />}
+    </ActionButton>
   );
 }
