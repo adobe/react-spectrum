@@ -16,9 +16,9 @@ import {ProgressBarBaseProps} from '@react-types/progress';
 import {useProgressBar} from '@react-aria/progress';
 
 interface MeterAria {
-  /** Props for the meter container element */
+  /** Props for the meter container element. */
   meterProps: HTMLAttributes<HTMLElement>,
-  /** Props for the meter's visual label (if any) */
+  /** Props for the meter's visual label (if any). */
   labelProps: HTMLAttributes<HTMLElement>
 }
 

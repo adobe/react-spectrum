@@ -26,9 +26,9 @@ interface AriaButtonProps extends ButtonProps {
 }
 
 interface ButtonAria {
-  /** Props for the button element */
+  /** Props for the button element. */
   buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>,
-  /** Whether the button is currently pressed */
+  /** Whether the button is currently pressed. */
   isPressed: boolean
 }
 

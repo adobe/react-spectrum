@@ -23,11 +23,11 @@ import {useTextField} from '@react-aria/textfield';
 
 interface SearchFieldAriaProps extends SearchFieldProps, TextInputDOMProps {}
 interface SearchFieldAria {
-  /** Props for the text field's visible label element (if any) */
+  /** Props for the text field's visible label element (if any). */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
-  /** Props for the input element */
+  /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
-  /** Props for the clear button */
+  /** Props for the clear button. */
   clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement> & PressProps
 }
 

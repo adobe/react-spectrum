@@ -18,9 +18,9 @@ import {useLabel} from '@react-aria/label';
 
 interface TextFieldAriaProps extends TextFieldProps, TextInputDOMProps {}
 interface TextFieldAria {
-  /** Props for the input element */
+  /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>
-  /** Props for the text field's visible label element (if any) */
+  /** Props for the text field's visible label element (if any). */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
 }
 

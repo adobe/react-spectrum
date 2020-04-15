@@ -16,7 +16,7 @@ import {ToggleState} from '@react-stately/toggle';
 import {useToggle} from '@react-aria/toggle';
 
 export interface SwitchAria {
-  /** Props for the input element */
+  /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 

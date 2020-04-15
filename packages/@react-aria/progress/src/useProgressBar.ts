@@ -18,9 +18,9 @@ import {useLabel} from '@react-aria/label';
 import {useNumberFormatter} from '@react-aria/i18n';
 
 interface ProgressBarAria {
-  /** Props for the progress bar container element */
+  /** Props for the progress bar container element. */
   progressBarProps: HTMLAttributes<HTMLElement>,
-  /** Props for the progress bar's visual label element (if any) */
+  /** Props for the progress bar's visual label element (if any). */
   labelProps: HTMLAttributes<HTMLElement>
 }
 

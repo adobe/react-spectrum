@@ -89,7 +89,7 @@ describe('useSearchField hook', () => {
         expect(onClear).toHaveBeenCalledTimes(1);
       });
 
-      it('onSubmit and onClear aren\'t called if isDisabled is true', () => {
+      it('does not return an onKeyDown prop if isDisabled is true', () => {
         let {inputProps} = renderSearchHook({isDisabled: true, onClear, onSubmit});
         expect(inputProps.onKeyDown).not.toBeDefined();
       });

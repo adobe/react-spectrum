@@ -17,9 +17,9 @@ import {useFocusWithin} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 
 interface RadioGroupAria {
-  /** Props for the radio group wrapper element */
+  /** Props for the radio group wrapper element. */
   radioGroupProps: HTMLAttributes<HTMLElement>,
-  /** Props for the radio group's visible label (if any) */
+  /** Props for the radio group's visible label (if any). */
   labelProps: HTMLAttributes<HTMLElement>
 }
 
