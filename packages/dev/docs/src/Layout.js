@@ -144,21 +144,33 @@ function Body({children, scripts}) {
 }
 
 function Nav({currentPage, pages, publicUrl}) {
-  let currentDir = currentPage.split('/')[0];
+  let isIndex = /index\.html$/;
+  let currentParts = currentPage.split('/');
+  let currentDir = currentParts[0];
   pages = pages.filter(p => {
-    let pageDir = p.name.split('/')[0];
-    let isIndex = /index\.html$/;
-    // For index pages show pages in same dir
-    if (isIndex.test(currentPage)) {
-      return !isIndex.test(p.name);
+    let pageParts = p.name.split('/');
+    let pageDir = pageParts[0];
+
+    if (currentParts.length > 1) {
+      return currentDir === pageDir && !isIndex.test(p.name);
     }
 
-    // Show pages from same package   
-    if (currentDir === pageDir) {
+    if (currentParts.length === 1 && pageParts.length > 1 && isIndex.test(p.name)) {
       return true;
     }
-    return false;
-  });
+    return !isIndex.test(p.name) && pageParts.length === 1;
+  }).map(p => {
+    if (isIndex.test(p.name)) {
+      p.title = p.name
+        .split('/')[0]
+        .split('-')
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+    } else {
+      p.title = path.basename(p.name, path.extname(p.name));
+    }
+    return p;
+  })
 
   return (
     <nav className={docStyles.nav}>
@@ -175,7 +187,7 @@ function Nav({currentPage, pages, publicUrl}) {
       <ul className={sideNavStyles['spectrum-SideNav']}>
         {pages.map(p => (
           <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPage})}>
-            <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{path.basename(p.name, path.extname(p.name))}</a>
+            <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{p.title}</a>
           </li>
         ))}
       </ul>

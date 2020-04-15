@@ -50,7 +50,11 @@ module.exports = new Packager({
     let pages = [];
     bundleGraph.traverseBundles(b => {
       if (b.isEntry && b.type === 'html') {
-        pages.push({url: urlJoin(b.target.publicUrl, b.name), name: b.name});
+        pages.push({
+          url: urlJoin(b.target.publicUrl, b.name),
+          name: b.name,
+          filePath: b.filePath
+        });
       }
     });
 
