@@ -53,7 +53,7 @@ module.exports = new Packager({
         pages.push({
           url: urlJoin(b.target.publicUrl, b.name),
           name: b.name,
-          filePath: b.filePath
+          title: b.getMainEntry().meta.title
         });
       }
     });

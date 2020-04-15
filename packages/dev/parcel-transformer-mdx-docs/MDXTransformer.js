@@ -61,6 +61,7 @@ module.exports = new Transformer({
     );
 
     let toc = [];
+    let title = '';
     const extractToc = (options) => {
       const settings = options || {};
       const depth = settings.maxDepth || 6;
@@ -96,6 +97,7 @@ module.exports = new Transformer({
         }
 
         toc = treeConverter(fullToc, true);
+        title = toc[0].textContent;
         toc = toc[0].children;
 
         return node;
@@ -122,6 +124,7 @@ export default {};
     asset.type = 'html';
     asset.setCode(Math.random().toString(36).slice(4));
     asset.meta.toc = toc;
+    asset.meta.title = title;
 
     let assets = [
       asset,

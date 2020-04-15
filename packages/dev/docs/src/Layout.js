@@ -147,6 +147,7 @@ function Nav({currentPage, pages, publicUrl}) {
   let isIndex = /index\.html$/;
   let currentParts = currentPage.split('/');
   let currentDir = currentParts[0];
+    
   pages = pages.filter(p => {
     let pageParts = p.name.split('/');
     let pageDir = pageParts[0];
@@ -159,18 +160,7 @@ function Nav({currentPage, pages, publicUrl}) {
       return true;
     }
     return !isIndex.test(p.name) && pageParts.length === 1;
-  }).map(p => {
-    if (isIndex.test(p.name)) {
-      p.title = p.name
-        .split('/')[0]
-        .split('-')
-        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-        .join(' ');
-    } else {
-      p.title = path.basename(p.name, path.extname(p.name));
-    }
-    return p;
-  })
+  });
 
   return (
     <nav className={docStyles.nav}>
