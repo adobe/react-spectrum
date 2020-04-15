@@ -100,7 +100,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
         let maxVisibleOtherItems = showRoot ? MAX_VISIBLE_ITEMS - 1 : MAX_VISIBLE_ITEMS;
 
-        if (isCollapsible && otherVisibleItemsCount > maxVisibleOtherItems) {
+        if (otherVisibleItemsCount > maxVisibleOtherItems) {
           otherVisibleItemsCount = maxVisibleOtherItems;
         }
 
