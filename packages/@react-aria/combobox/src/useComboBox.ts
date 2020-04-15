@@ -17,8 +17,13 @@ interface ComboBoxProps {
 }
 
 interface ComboBoxAria {
+  triggerProps: HTMLAttributes<HTMLElement>,
+  inputProps: HTMLAttributes<HTMLElement>,
+  menuProps: HTMLAttributes<HTMLElement>,
+  labelProps: HTMLAttributes<HTMLElement>
 }
 
+import {HTMLAttributes} from 'react';
 import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
@@ -26,25 +31,20 @@ import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
 import {ComboBoxState} from '@react-stately/combobox';
 
-export function useComboBox(props: ComboBoxProps, state: ComboBoxState): ComboBoxAria {
-  let menuId = useId();
-  let inputId = useId();
-  // let buttonId = useId(); 
-  let labelId = useId();
 
-
-  // onFocus
+export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): ComboBoxAria {
+  // onFocus, calls state.open, attaches itself to textfield
   // onChange
   // onInputChange
 
-  // onKeyPress for tab to complete suggestion
+  // onKeyPress for tab to complete suggestion, handle later
 
 
-  // Might not need this if we have useTextfield since useTextField calls useLabel? Depends on wrapper I guess
-  let {labelProps, fieldProps} = useLabel({
-    id: inputId, // Maybe wrapper id?,
-    ...props
-  });
+  // // Might not need this if we have useTextfield since useTextField calls useLabel? Depends on wrapper I guess
+  // let {labelProps, fieldProps} = useLabel({
+  //   id: inputId, // Maybe wrapper id?,
+  //   ...props
+  // });
 
   // I think we'll need this, probably won't use MenuTrigger component since behavior isn't as straight forward
   let {menuTriggerProps, menuProps} = useMenuTrigger(
@@ -55,14 +55,21 @@ export function useComboBox(props: ComboBoxProps, state: ComboBoxState): ComboBo
   );
 
 
-  // Do we use this? Or do we use useSelectableList instead?
-  let {collectionProps} = useSelectableCollection({
-    selectionManager: state.selectionManager,
-    keyboardDelegate: layout // write own keyboard delegate? Unneeded if using useSelectableList
-  });
 
-  // excluding labelProps since we'll be doing something custom
-  let {textFieldProps} = useTextField(props, props.textFieldRef);
+  // Not sure if we use this. Can we just use `useListBoxLayout` from ListBoxBase?
+    // Do we use this? Or do we use useSelectableList instead?
+    // let {collectionProps} = useSelectableCollection({
+    //   selectionManager: state.selectionManager,
+    //   keyboardDelegate: layout // write own keyboard delegate? Unneeded if using useSelectableList
+    // });
+
+  // maybe need to exclude labelProps since we'll be doing something custom?
+  let {labelProps, textFieldProps} = useTextField(
+      {
+        ...props,
+
+      }, 
+      props.textFieldRef);
 
 
 // Talk to MJ or James about whether the input aria stuff goes on the input or on the wrapper
@@ -72,22 +79,20 @@ export function useComboBox(props: ComboBoxProps, state: ComboBoxState): ComboBo
 
 
   return {
-    buttonAria: {
+    triggerProps: {
       ...menuTriggerProps,
-      tabIndex: '-1'
+      tabIndex: -1
     },
-    inputAria: {
+    inputProps: {
       ...textFieldProps,
       role: 'combobox',
-      'aria-controls': menuId,
-      'aria-autocomplete': 'list',
-      'aria-labelledby': props.label && labelId,
-      'aria-label': !props.label && props['aria-label']
+      'aria-controls': state.isOpen? menuProps.id : undefined,
+      'aria-autocomplete': 'list'
     },
-    menuAria: {
-      ...collectionProps,
+    menuProps: {
+      // ...collectionProps,
       ...menuProps,
-      'aria-labelledby':inputId
-    }
+    },
+    labelProps
   };
 }
