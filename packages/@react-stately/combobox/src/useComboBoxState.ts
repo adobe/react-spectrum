@@ -42,36 +42,24 @@ interface ComboBoxProps extends CollectionBase<T>, SingleSelection {
 }
 
 export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
+  let itemsControlled = !!props.onFilter;
+  let menuControlled = props.isOpen !== undefined;
+  let valueControlled = props.inputValue !== undefined;
+  let selectedControlled = !!props.selectedKey;
+
   // listState (uncontrolled), gives us collection and selectionManager
+  let selectedKeys = props.selectedKey ? [props.selectedKey] : undefined;
+  let defaultSelectedKeys = props.defaultSelectedKey ? [props.defaultSelectedKey] : undefined;
+  let onSelectionChange = (keys) => props.onSelectionChange(Array.from(keys)[0]);
   let listState = useListState({
     ...props,
+    selectedKeys,
+    defaultSelectedKeys,
+    onSelectionChange,
     selectionMode: 'single'
   });
+  let areThereItems = listState.collection.size > 0;
 
-
-  // I think we don't need the builder and stuff cuz we can useListState?
-
-  // let selectionState = useMultipleSelectionState({...props, selectionMode: 'single'});
-  // let disabledKeys = useMemo(() =>
-  //   props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
-  // , [props.disabledKeys]);
-  // let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
-  // let collection = useMemo(() => {
-  //   let nodes = builder.build(props, (key) => ({
-  //     isSelected: selectionState.selectedKeys.has(key),
-  //     // isDisabled: disabledKeys.has(key),
-  //     isFocused: key === selectionState.focusedKey
-  //   }));
-
-  //   return new TreeCollection(nodes);
-  // }, [builder, props, selectionState.selectedKeys, selectionState.focusedKey]);
-
-
-
-  // I think we don't need the below since we have useMenuTriggerState
-
-  // // openState (controlled), gives us ability to open/close menu
-  // let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen, props.onOpenChange);
 
   let menuState = useMenuTriggerState(props);
 
@@ -88,18 +76,12 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
 
 
   return {
-    // collection,
-    // // disabledKeys,
-    // selectionManager: new SelectionManager(collection, selectionState),
     ...listState,
     ...menuState,
-    // isOpen,
-    // setOpen,
     value,
     setValue
   };
 }
-
 
 
 function toString(val) {
