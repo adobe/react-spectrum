@@ -12,7 +12,7 @@
 
 import {FocusEvents, KeyboardEvents} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import {RefObject, useEffect} from 'react';
+import React, {HTMLAttributes, ReactNode, RefObject, useContext, useEffect} from 'react';
 import {useFocus, useKeyboard} from '@react-aria/interactions';
 
 interface FocusableProps extends FocusEvents, KeyboardEvents {
@@ -20,9 +20,25 @@ interface FocusableProps extends FocusEvents, KeyboardEvents {
   autoFocus?: boolean
 }
 
+interface FocusableProviderProps extends HTMLAttributes<HTMLElement> {
+  children: ReactNode
+}
+
+const FocusableContext = React.createContext<HTMLAttributes<HTMLElement>>(null);
+export function FocusableProvider(props: FocusableProviderProps) {
+  let {children, ...domProps} = props;
+  return (
+    <FocusableContext.Provider value={domProps}>
+      {children}
+    </FocusableContext.Provider>
+  );
+}
+
 export function useFocusable(props: FocusableProps, domRef?: RefObject<HTMLElement>) {
+  // TODO: get rid of these and pass props through FocusableProvider instead
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
+  let domProps = useContext(FocusableContext);
 
   useEffect(() => {
     if (props.autoFocus && domRef && domRef.current) {
@@ -31,6 +47,6 @@ export function useFocusable(props: FocusableProps, domRef?: RefObject<HTMLEleme
   }, [props.autoFocus, domRef]);
 
   return {
-    focusableProps: mergeProps(focusProps, keyboardProps)
+    focusableProps: mergeProps(mergeProps(focusProps, keyboardProps), domProps)
   };
 }
