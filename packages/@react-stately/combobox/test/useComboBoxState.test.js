@@ -11,11 +11,13 @@
  */
 
 import {act, renderHook} from 'react-hooks-testing-library';
+import {cleanup} from '@testing-library/react';
 import {Item} from '@react-stately/collections';
 import React from 'react';
 import {useComboBoxState} from '../';
 
 describe('useComboBoxState tests', function () {
+  afterEach(cleanup);
 
   describe('open state', function () {
     let onOpenChange;
@@ -48,23 +50,22 @@ describe('useComboBoxState tests', function () {
       expect(onOpenChange).toHaveBeenCalledWith(false);
     });
 
-    it('open should be a controllable value', function () {
+    it('open should be a controllable value',   function () {
       let props = {...defaultProps, isOpen: true};
-      let {result} = renderHook(() => useComboBoxState(props), {initialProps: props});
+      let {result, rerender} = renderHook(() => useComboBoxState(props), {initialProps: props});
       expect(result.current.isOpen).toBe(true);
 
       act(() => result.current.close());
       expect(result.current.isOpen).toBe(true);
       expect(onOpenChange).toHaveBeenCalledWith(false);
 
-      // TODO fix
-      /*
+
       rerender({...defaultProps, isOpen: false});
       expect(result.current.isOpen).toBe(false);
 
       act(() => result.current.open());
       expect(result.current.isOpen).toBe(false);
-      expect(onOpenChange).toHaveBeenCalledWith(true);*/
+      expect(onOpenChange).toHaveBeenCalledWith(true);
     });
   });
 
@@ -87,7 +88,7 @@ describe('useComboBoxState tests', function () {
       let {result} = renderHook(() => useComboBoxState(props), {initialProps: props});
       expect(result.current.value).toBe('hello');
       expect(onInputChange).not.toHaveBeenCalled();
-      result.current.setValue('hellow');
+      act(() => result.current.setValue('hellow'));
       expect(result.current.value).toBe('hellow');
       expect(onInputChange).toHaveBeenCalledWith('hellow');
     });
@@ -97,7 +98,7 @@ describe('useComboBoxState tests', function () {
       let {result} = renderHook(() => useComboBoxState(props), {initialProps: props});
       expect(result.current.value).toBe('');
       expect(onInputChange).not.toHaveBeenCalled();
-      result.current.setValue('h');
+      act(() => result.current.setValue('h'));
       expect(result.current.value).toBe('h');
       expect(onInputChange).toHaveBeenCalledWith('h');
     });
@@ -107,9 +108,44 @@ describe('useComboBoxState tests', function () {
       let {result} = renderHook(() => useComboBoxState(props), {initialProps: props});
       expect(result.current.value).toBe('hello');
       expect(onInputChange).not.toHaveBeenCalled();
-      result.current.setValue('hellow');
+      act(() => result.current.setValue('hellow'));
       expect(result.current.value).toBe('hello');
       expect(onInputChange).toHaveBeenCalledWith('hellow');
+    });
+  });
+
+  describe('collection', function () {
+    let onSelectionChange;
+    let defaultProps;
+    beforeEach(() => {
+      onSelectionChange = jest.fn();
+      defaultProps = {items: [{id: 1, name: 'one'}, {id: 2, name: 'onomatopoeia'}], children: (props) => <Item>{props.name}</Item>, onSelectionChange};
+    });
+
+    it('support selectedKey', function () {
+      let props = {...defaultProps, selectedKey: '0'};
+      let {result} = renderHook(() => useComboBoxState(props), {initialProps: props});
+      expect(result.current.selectionManager.selectionMode).toBe('single');
+      expect(result.current.selectionManager.selectedKeys).toContain('0');
+      expect(result.current.selectionManager.selectedKeys).not.toContain('1');
+
+      act(() => result.current.selectionManager.setSelectedKeys(['1']));
+      expect(result.current.selectionManager.selectedKeys).toContain('0');
+      expect(result.current.selectionManager.selectedKeys).not.toContain('1');
+      expect(onSelectionChange).toHaveBeenCalledWith('1');
+    });
+
+    it('support defaultSelectedKey', function () {
+      let props = {...defaultProps, defaultSelectedKey: '0'};
+      let {result} = renderHook(() => useComboBoxState(props), {initialProps: props});
+      expect(result.current.selectionManager.selectionMode).toBe('single');
+      expect(result.current.selectionManager.selectedKeys).toContain('0');
+      expect(result.current.selectionManager.selectedKeys).not.toContain('1');
+
+      act(() => result.current.selectionManager.setSelectedKeys(['1']));
+      expect(result.current.selectionManager.selectedKeys).toContain('1');
+      expect(result.current.selectionManager.selectedKeys).not.toContain('0');
+      expect(onSelectionChange).toHaveBeenCalledWith('1');
     });
   });
 });
