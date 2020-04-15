@@ -17,14 +17,18 @@ import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
 interface MenuTriggerAriaProps {
-  type?: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
+  /** The type of menu that the menu trigger opens. */
+  type?: 'menu' | 'listbox',
+
+  /** A ref to the trigger element. */
   ref?: RefObject<HTMLElement | null>
 }
 
 interface MenuTriggerAria {
-  /** Props for the menu trigger element */
+  /** Props for the menu trigger element. */
   menuTriggerProps: HTMLAttributes<HTMLElement> & PressProps,
-  /** Props for the menu */
+
+  /** Props for the menu. */
   menuProps: HTMLAttributes<HTMLElement>
 }
 

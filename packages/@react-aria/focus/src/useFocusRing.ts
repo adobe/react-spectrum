@@ -10,21 +10,21 @@ interface FocusRingProps {
    */
   within?: boolean,
 
-  /** Whether the element is a text input */
+  /** Whether the element is a text input. */
   isTextInput?: boolean,
 
-  /** Whether the element will be auto focused */
+  /** Whether the element will be auto focused. */
   autoFocus?: boolean
 }
 
 interface FocusRingAria {
-  /** Whether the element is currently focused */
+  /** Whether the element is currently focused. */
   isFocused: boolean,
 
-  /** Whether keyboard focus should be visible */
+  /** Whether keyboard focus should be visible. */
   isFocusVisible: boolean,
 
-  /** Props to apply to the container element with the focus ring */
+  /** Props to apply to the container element with the focus ring. */
   focusProps: HTMLAttributes<HTMLElement>
 }
 

@@ -17,15 +17,27 @@ import {ListState} from '@react-stately/list';
 import {useSelectableList} from '@react-aria/selection';
 
 interface ListBoxAria {
-  /** Props for the listbox element */
+  /** Props for the listbox element. */
   listBoxProps: HTMLAttributes<HTMLElement>
 }
 
 interface AriaListBoxProps {
+  /** A ref to the listbox container element. */
   ref?: RefObject<HTMLDivElement>,
+
+  /** Whether the listbox uses virtual scrolling. */
   isVirtualized?: boolean,
+
+  /**
+   * An optional keyboard delegate implementation for type to select,
+   * to override the default.
+   */
   keyboardDelegate?: KeyboardDelegate,
+
+  /** Whether the auto focus the listbox or an option. */
   autoFocus?: boolean | FocusStrategy,
+
+  /** Whether focus should wrap around when the end/start is reached. */
   shouldFocusWrap?: boolean
 }
 

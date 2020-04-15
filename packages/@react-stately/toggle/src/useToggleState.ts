@@ -14,10 +14,10 @@ import {CheckboxBase} from '@react-types/checkbox';
 import {useControlledState} from '@react-stately/utils';
 
 export interface ToggleState {
-  /** Whether the toggle is selected */
+  /** Whether the toggle is selected. */
   isSelected: boolean,
 
-  /** Updates selection state */
+  /** Updates selection state. */
   setSelected: (isSelected: boolean) => void
 }
 

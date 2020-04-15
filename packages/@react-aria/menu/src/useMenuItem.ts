@@ -20,23 +20,46 @@ import {useSelectableItem} from '@react-aria/selection';
 interface MenuItemAria {
   /** Props for the menu item element */
   menuItemProps: HTMLAttributes<HTMLElement>,
+
   /** Props for the main text element inside the menu item */
   labelProps: HTMLAttributes<HTMLElement>,
+
   /** Props for the description text element inside the menu item, if any */
   descriptionProps: HTMLAttributes<HTMLElement>,
+  
   /** Props for the keyboard shortcut text element inside the item, if any */
   keyboardShortcutProps: HTMLAttributes<HTMLElement>
 }
 
 interface MenuItemProps {
+  /** Whether the menu item is disabled. */
   isDisabled?: boolean,
+
+  /** Whether the menu item is selected. */
   isSelected?: boolean,
+
+  /** A screen reader only label for the menu item. */
   'aria-label'?: string,
+
+  /** The unique key for the menu item. */
   key?: Key,
+
+  /** A ref to the menu item element. */
   ref?: RefObject<HTMLElement>,
+
+  /** Handler that is called when the menu should close after selecting an item. */
   onClose?: () => void,
+
+  /** 
+   * Whether the menu should close when the menu item is selected.
+   * @default true
+   */
   closeOnSelect?: boolean,
+
+  /** Whether the menu item is contained in a virtual scrolling menu. */
   isVirtualized?: boolean,
+
+  /** Handler that is called when the user activates the item. */
   onAction?: (key: Key) => void
 }
 

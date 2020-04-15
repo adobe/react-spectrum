@@ -15,25 +15,25 @@ import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
 
 export interface MenuTriggerState {
-  /** Whether the menu is currently open */
+  /** Whether the menu is currently open. */
   isOpen: boolean,
 
-  /** Sets whether the menu is open */
+  /** Sets whether the menu is open. */
   setOpen(value: boolean): void,
 
-  /** Controls which item will be auto focused when the menu opens */
+  /** Controls which item will be auto focused when the menu opens. */
   focusStrategy: FocusStrategy,
 
-  /** Sets which item will be auto focused when the menu opens */
+  /** Sets which item will be auto focused when the menu opens. */
   setFocusStrategy(value: FocusStrategy): void,
 
-  /** Opens the menu */
+  /** Opens the menu. */
   open(): void,
 
-  /** Closes the menu */
+  /** Closes the menu. */
   close(): void,
 
-  /** Toggles the menu */
+  /** Toggles the menu. */
   toggle(focusStrategy?: FocusStrategy): void
 }
 

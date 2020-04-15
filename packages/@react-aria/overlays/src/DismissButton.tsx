@@ -17,7 +17,7 @@ import {useMessageFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface DismissButtonProps {
-  /** Called when the dismiss button is activated */
+  /** Called when the dismiss button is activated. */
   onDismiss?: () => void
 }
 

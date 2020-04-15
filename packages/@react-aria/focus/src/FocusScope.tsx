@@ -17,7 +17,7 @@ import React, {ReactNode, RefObject, useContext, useEffect, useLayoutEffect, use
 // export {FocusScope};
 
 interface FocusScopeProps {
-  /** The contents of the focus scope */
+  /** The contents of the focus scope. */
   children: ReactNode,
 
   /** 

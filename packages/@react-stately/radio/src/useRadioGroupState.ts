@@ -18,16 +18,16 @@ export interface RadioGroupState {
   /** The name for the group, used for native form submission. */
   name: string,
 
-  /** The currently selected value */
+  /** The currently selected value. */
   selectedValue: string | undefined,
 
-  /** Sets the selected value */
+  /** Sets the selected value. */
   setSelectedValue: (value: string) => void,
 
-  /** The last focused radio */
+  /** The last focused radio. */
   focusableRadio: string | undefined,
 
-  /** Sets the last focused radio */
+  /** Sets the last focused radio. */
   setFocusableRadio: (value: string) => void,
 }
 

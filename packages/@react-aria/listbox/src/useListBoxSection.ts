@@ -19,11 +19,13 @@ interface ListBoxSectionProps {
 }
 
 interface ListBoxSectionAria {
-  /** Props for the wrapper list item */
+  /** Props for the wrapper list item. */
   itemProps: HTMLAttributes<HTMLElement>,
-  /** Props for the heading element, if any */
+
+  /** Props for the heading element, if any. */
   headingProps: HTMLAttributes<HTMLElement>,
-  /** Props for the group element */
+  
+  /** Props for the group element. */
   groupProps: HTMLAttributes<HTMLElement>
 }
 

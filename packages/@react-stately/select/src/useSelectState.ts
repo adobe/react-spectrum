@@ -18,19 +18,19 @@ import {SelectProps} from '@react-types/select';
 import {useControlledState} from '@react-stately/utils';
 
 export interface SelectState<T> extends ListState<T>, MenuTriggerState {
-  /** The key for the currently selected item */
+  /** The key for the currently selected item. */
   selectedKey: Key,
 
-  /** Sets the selected key */
+  /** Sets the selected key. */
   setSelectedKey: (key: Key) => void,
 
-  /** The value of the currently selected item */
+  /** The value of the currently selected item. */
   selectedItem: Node<T>,
 
-  /** Whether the select is currently focused */
+  /** Whether the select is currently focused. */
   isFocused: boolean,
 
-  /** Sets whether the select is focused */
+  /** Sets whether the select is focused. */
   setFocused: (isFocused: boolean) => void
 }
 

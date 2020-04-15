@@ -22,8 +22,16 @@ interface MenuAria {
 }
 
 interface AriaMenuProps<T> extends MenuProps<T> {
+  /** A ref to the menu container element. */
   ref?: RefObject<HTMLElement>,
+
+  /** Whether the menu uses virtual scrolling. */
   isVirtualized?: boolean,
+
+  /** 
+   * An optional keyboard delegate implementation for type to select,
+   * to override the default.
+   */
   keyboardDelegate?: KeyboardDelegate
 }
 

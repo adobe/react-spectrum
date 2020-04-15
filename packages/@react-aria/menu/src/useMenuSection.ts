@@ -19,11 +19,13 @@ interface MenuSectionProps {
 }
 
 interface MenuSectionAria {
-  /** Props for the wrapper list item */
+  /** Props for the wrapper list item. */
   itemProps: HTMLAttributes<HTMLElement>,
-  /** Props for the heading element, if any */
+
+  /** Props for the heading element, if any. */
   headingProps: HTMLAttributes<HTMLElement>,
-  /** Props for the heading element, if any */
+
+  /** Props for the heading element, if any. */
   groupProps: HTMLAttributes<HTMLElement>
 }
 

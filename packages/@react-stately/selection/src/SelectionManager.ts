@@ -17,7 +17,7 @@ import {Selection} from './Selection';
 import {SelectionMode} from '@react-types/shared';
 
 /**
- * An interface for reading and updating multiple selection state
+ * An interface for reading and updating multiple selection state.
  */
 export class SelectionManager implements MultipleSelectionManager {
   private collection: Collection<unknown>;

@@ -14,10 +14,10 @@ import {useControlledState} from '@react-stately/utils';
 import {ValueBase} from '@react-types/shared';
 
 export interface SearchFieldState {
-  /** The current value of the search field */
+  /** The current value of the search field. */
   value: string,
 
-  /** Sets the value of the search field */
+  /** Sets the value of the search field. */
   setValue: (val: string, ...args: any) => void
 }
 

@@ -21,25 +21,27 @@ import {useLabel} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
 
 interface SelectProps {
-  /** A ref to the trigger element */
+  /** A ref to the trigger element. */
   triggerRef: RefObject<HTMLElement>,
 
-  /** An optional keyboard delegate implementation for type to select,
-   * to override the default */
+  /**
+   * An optional keyboard delegate implementation for type to select,
+   * to override the default.
+   */
   keyboardDelegate?: KeyboardDelegate
 }
 
 interface SelectAria {
-  /** Props for the label element */
+  /** Props for the label element. */
   labelProps: HTMLAttributes<HTMLElement>,
   
-  /** Props for the popup trigger element */
+  /** Props for the popup trigger element. */
   triggerProps: HTMLAttributes<HTMLElement> & PressProps,
 
-  /** Props for the element representing the selected value */
+  /** Props for the element representing the selected value. */
   valueProps: HTMLAttributes<HTMLElement>,
 
-  /** Props for the popup */
+  /** Props for the popup. */
   menuProps: HTMLAttributes<HTMLElement>
 }
 
