@@ -3,7 +3,7 @@
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
@@ -51,9 +51,9 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let listState = useListState({
     ...props,
     selectionMode: 'single'
-  })
+  });
 
-    
+
   // I think we don't need the builder and stuff cuz we can useListState?
 
   // let selectionState = useMultipleSelectionState({...props, selectionMode: 'single'});
@@ -74,17 +74,17 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
 
 
   // I think we don't need the below since we have useMenuTriggerState
-  
+
   // // openState (controlled), gives us ability to open/close menu
   // let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen, props.onOpenChange);
-  
+
   let menuState = useMenuTriggerState(props);
 
 
   // textFieldStateLive (user input, uncontrolled, read only (controlled)) textFieldStateCommit (internal actual value)
   let [value, setValue] = useControlledState(props.inputValue, props.defaultInputValue, props.onInputChange)
   let [fieldValue, setFieldValue] = useState(value);
-  
+
 
   // For completionMode = complete
   let [suggestionValue, setSuggestionValue] = useState('');
@@ -109,5 +109,5 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
     setValue,
     fieldValue,
     setFieldValue
-  }
+  };
 }
