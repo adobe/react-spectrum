@@ -240,7 +240,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
             styleProps.className
           )
         }
-        styles={{width: '100%'}}>
+        style={{width: '100%'}}>
         <TextFieldBase
           {...inputProps}
           ref={inputRef}
