@@ -134,7 +134,9 @@ describe('SideNav', function () {
 
     let sideNavListItemLinks = getAllByRole('link');
     expect(sideNavListItemLinks.length).toBe(4);
-    expect(sideNavListItemLinks[0].getAttribute('target')).toBe('_self');
+    if (Name !== 'V2SideNav') {
+      expect(sideNavListItemLinks[0].getAttribute('target')).toBe('_self');
+    }
   });
 
   it.each`
