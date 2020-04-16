@@ -16,33 +16,21 @@ import {Flex} from '@react-spectrum/layout';
 import React, {forwardRef} from 'react';
 import {SpectrumIllustratedMessageProps} from '@react-types/illustratedmessage';
 import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.css';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
-    slots,
     ...otherProps
   } = props;
 
   let {styleProps} = useStyleProps(otherProps);
-  let headingClassName = classNames(
-    {},
-    classNames(typographyStyles, 'spectrum-Heading', 'spectrum-Heading--pageTitle'),
-    classNames(styles, 'spectrum-IllustratedMessage-heading')
-  );
-  let contentClassName = classNames(
-    {},
-    classNames(typographyStyles, 'spectrum-Body--secondary'),
-    classNames(styles, 'spectrum-IllustratedMessage-description')
-  );
+  let headingClassName = classNames(styles, 'spectrum-IllustratedMessage-heading');
+  let contentClassName = classNames(styles, 'spectrum-IllustratedMessage-description');
 
-  if (!slots) {
-    slots = {
-      heading: {UNSAFE_className: headingClassName},
-      content: {UNSAFE_className: contentClassName}
-    };
-  }
+  let slots = {
+    heading: {UNSAFE_className: headingClassName},
+    content: {UNSAFE_className: contentClassName}
+  };
 
   return (
     <Flex
@@ -61,5 +49,9 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
   );
 }
 
+/**
+ * An IllustratedMessage displays an illustration and a message, usually
+ * for an empty state or an error page.
+ */
 let _IllustratedMessage = forwardRef(IllustratedMessage);
 export {_IllustratedMessage as IllustratedMessage};

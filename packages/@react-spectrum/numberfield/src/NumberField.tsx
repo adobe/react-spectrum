@@ -16,7 +16,7 @@ import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall';
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
-import React, {RefObject} from 'react';
+import React, {RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
@@ -36,12 +36,14 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
   } = props;
   let {styleProps} = useStyleProps(props);
   let state = useNumberFieldState(otherProps);
+  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
   let {
     numberFieldProps,
+    labelProps,
     inputFieldProps,
     incrementButtonProps,
     decrementButtonProps
-  } = useNumberField(props, state);
+  } = useNumberField(props, state, inputRef);
 
   let className = classNames(
     inputgroupStyles,
@@ -73,12 +75,10 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
         className={className}>
         <TextFieldBase
           isQuiet={isQuiet}
-          autoFocus={autoFocus}
           inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
-          {...inputFieldProps as any}
-          value={state.value}
-          validationState={state.validationState}
-          onChange={state.setValue} />
+          inputRef={inputRef}
+          labelProps={labelProps}
+          inputProps={inputFieldProps} />
         {showStepper &&
         <span
           className={classNames(stepperStyle, 'spectrum-Stepper-buttons')}

@@ -12,10 +12,9 @@
 
 const exec = require('child_process').execSync;
 const fs = require('fs');
-
-// Version to bump to
-// TODO: get this from the command line, and possibly support semver bumping rules
-let version = '3.0.0-rc.1';
+const fetch = require('node-fetch');
+const semver = require('semver');
+const readline = require("readline");
 
 // Packages to release
 let publicPackages = {
@@ -82,37 +81,121 @@ function addPackage(pkg) {
   }
 }
 
-console.log('Released packages:', releasedPackages.keys());
+run();
 
-// Bump versions
-for (let [name, location] of releasedPackages) {
-  let filePath = location + '/package.json';
-  let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-  // pkg.version = version;
-
-  if (pkg.private) {
-    console.warn(`${name} changed from private to public`);
-    delete pkg.private;
-  }
-
-  for (let dep in pkg.dependencies) {
-    if (releasedPackages.has(dep)) {
-      // pkg.dependencies[dep] = '^' + version;
-    }
-  }
-
-  fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
+async function run() {
+  let existingPackages = await getExistingPackages();
+  let versions = getVersions(existingPackages);
+  await promptVersions(versions);
+  bumpVersions(versions);
+  commit(versions);
 }
 
-for (let name in info) {
-  if (!releasedPackages.has(name) && !blackList.has(name)) {
-    let filePath = info[name].location + '/package.json';
+async function getExistingPackages() {
+  // Find what packages already exist on npm
+  let existing = new Set();
+  let promises = [];
+  for (let [name, location] of releasedPackages) {
+    promises.push(
+      fetch(`https://registry.npmjs.com/${name}`, {method: 'HEAD'})
+        .then(res => {
+          if (res.ok) {
+            existing.add(name);
+          }
+        })
+    );
+  }
+
+  await Promise.all(promises);
+  return existing;
+}
+
+function getVersions(existingPackages) {
+  let versions = new Map();
+  let names = [...existingPackages].sort();
+  for (let name of releasedPackages.keys()) {
+    let filePath = releasedPackages.get(name) + '/package.json';
     let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    if (!pkg.private) {
-      console.warn(`${name} should not be public`);
-      pkg = insertKey(pkg, 'license', 'private', true);
-      fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
+    if (pkg.private) {
+      continue;
     }
+
+    if (existingPackages.has(name)) {
+      versions.set(name, [pkg.version, semver.inc(pkg.version, 'prerelease')]);
+    } else {
+      versions.set(name, [pkg.version, pkg.version]);
+    }
+  }
+
+  return versions;
+}
+
+async function promptVersions(versions) {
+  console.log('');
+  for (let [name, [oldVersion, newVersion]] of versions) {
+    if (newVersion !== oldVersion) {
+      console.log(`${name}: ${oldVersion} => ${newVersion}`);
+    }
+  }
+
+  console.log('');
+
+  let rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+
+  return new Promise((resolve, reject) => {
+    rl.question('Do you want to continue? (y/n) ', function(c) {
+      rl.close();
+      if (c === 'n') {
+        reject('Not continuing');
+      } else if (c === 'y') {
+        resolve();
+      } else {
+        reject('Invalid answer');
+      }
+    });
+  });
+}
+
+function bumpVersions(versions) {
+  for (let [name, location] of releasedPackages) {
+    let filePath = location + '/package.json';
+    let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    pkg.version = versions.get(name)[1];
+  
+    if (pkg.private) {
+      console.warn(`${name} changed from private to public`);
+      delete pkg.private;
+    }
+  
+    for (let dep in pkg.dependencies) {
+      if (versions.has(dep)) {
+        pkg.dependencies[dep] = '^' + versions.get(dep)[1];
+      }
+    }
+  
+    fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
+  }
+  
+  for (let name in info) {
+    if (!releasedPackages.has(name) && !blackList.has(name)) {
+      let filePath = info[name].location + '/package.json';
+      let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (!pkg.private) {
+        console.warn(`${name} should not be public`);
+        pkg = insertKey(pkg, 'license', 'private', true);
+        fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
+      }
+    }
+  }  
+}
+
+function commit(versions) {
+  exec('git commit -a -m "Publish"', {stdio: 'inherit'});
+  for (let [name, [, newVersion]] of versions) {
+    exec(`git tag ${name}@${newVersion}`, {stdio: 'inherit'});
   }
 }
 

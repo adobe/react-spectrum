@@ -17,7 +17,7 @@ import {useTextField} from '../';
 describe('useTextField hook', () => {
   let renderTextFieldHook = (props) => {
     let {result} = renderHook(() => useTextField(props));
-    return result.current.textFieldProps;
+    return result.current.inputProps;
   };
 
   describe('should return textFieldProps', () => {
