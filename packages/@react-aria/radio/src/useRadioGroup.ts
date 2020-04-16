@@ -10,25 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvent} from '@react-types/shared';
-import {HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes} from 'react';
+import {HTMLAttributes} from 'react';
 import {RadioGroupProps} from '@react-types/radio';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusWithin} from '@react-aria/interactions';
-import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 
 interface RadioGroupAria {
+  /** Props for the radio group wrapper element. */
   radioGroupProps: HTMLAttributes<HTMLElement>,
-  labelProps: LabelHTMLAttributes<HTMLElement>,
-  radioProps: InputHTMLAttributes<HTMLInputElement>
+  /** Props for the radio group's visible label (if any). */
+  labelProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a radio group component.
+ * Radio groups allow users to select a single item from a list of mutually exclusive options.
+ * @param props - props for the radio group
+ * @param state - state for the radio group, as returned by `useRadioGroupState`
+ */
 export function useRadioGroup(props: RadioGroupProps, state: RadioGroupState): RadioGroupAria {
-  let defaultGroupId = `${useId()}-group`;
-  let {
-    name = defaultGroupId
-  } = props;
   let {labelProps, fieldProps} = useLabel(props);
 
   // When the radio group loses focus, reset the focusable radio to null if
@@ -36,7 +37,7 @@ export function useRadioGroup(props: RadioGroupProps, state: RadioGroupState): R
   // direction to go to the first or last radio.
   let {focusWithinProps} = useFocusWithin({
     onBlurWithin() {
-      if (!state.selectedRadio) {
+      if (!state.selectedValue) {
         state.setFocusableRadio(null);
       }
     }
@@ -48,10 +49,6 @@ export function useRadioGroup(props: RadioGroupProps, state: RadioGroupState): R
       ...fieldProps,
       ...focusWithinProps
     },
-    labelProps,
-    radioProps: {
-      name,
-      onFocus: (e: FocusEvent) => e.continuePropagation()
-    }
+    labelProps
   };
 }

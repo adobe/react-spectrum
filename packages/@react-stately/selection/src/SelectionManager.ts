@@ -14,11 +14,15 @@ import {Collection, Node} from '@react-stately/collections';
 import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
+import {SelectionMode} from '@react-types/shared';
 
 interface SelectionManagerOptions {
   allowsCellSelection?: boolean
 }
 
+/**
+ * An interface for reading and updating multiple selection state.
+ */
 export class SelectionManager implements MultipleSelectionManager {
   private collection: Collection<Node<unknown>>;
   private state: MultipleSelectionState;
@@ -30,11 +34,11 @@ export class SelectionManager implements MultipleSelectionManager {
     this.allowsCellSelection = options?.allowsCellSelection ?? false;
   }
 
-  get selectionMode() {
+  get selectionMode(): SelectionMode {
     return this.state.selectionMode;
   }
 
-  get isFocused() {
+  get isFocused(): boolean {
     return this.state.isFocused;
   }
 
@@ -42,7 +46,7 @@ export class SelectionManager implements MultipleSelectionManager {
     this.state.setFocused(isFocused);
   }
 
-  get focusedKey() {
+  get focusedKey(): Key {
     return this.state.focusedKey;
   }
 
@@ -50,7 +54,7 @@ export class SelectionManager implements MultipleSelectionManager {
     this.state.setFocusedKey(key);
   }
 
-  get selectedKeys() {
+  get selectedKeys(): Set<Key> {
     return this.state.selectedKeys;
   }
 

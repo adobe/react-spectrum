@@ -102,7 +102,7 @@ export interface KeyboardDelegate {
 
   /** Returns the key visually one page above the given one, or `null` for none. */
   getKeyPageAbove?(key: Key): Key,
-  
+
   /** Returns the first key, or `null` for none. */
   getFirstKey?(key?: Key, global?: boolean): Key,
 

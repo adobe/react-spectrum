@@ -57,7 +57,7 @@ export interface DOMProps {
 }
 
 // DOM props that apply to all text inputs
-// Ensure this is synced with TextInputDOMPropNames in filterDOMProps
+// Ensure this is synced with useTextField
 export interface TextInputDOMProps extends DOMProps {
   autoComplete?: string,
   maxLength?: number,

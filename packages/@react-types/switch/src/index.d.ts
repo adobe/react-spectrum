@@ -13,7 +13,7 @@
 import {CheckboxBase} from '@react-types/checkbox';
 import {DOMProps, StyleProps} from '@react-types/shared';
 
-export type SwitchProps = CheckboxBase;
+export interface SwitchProps extends CheckboxBase {}
 export interface SpectrumSwitchProps extends SwitchProps, DOMProps, StyleProps {
   /**
    * This prop sets the emphasized style which provides visual prominence.

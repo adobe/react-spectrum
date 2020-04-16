@@ -14,6 +14,7 @@ import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import highlightCss from './syntax-highlight.css';
+import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
 import path from 'path';
@@ -25,7 +26,7 @@ import typographyStyles from '@adobe/spectrum-css-temp/components/typography/var
 
 const mdxComponents = {
   h1: ({children, ...props}) => (
-    <h1 {...props} className={classNames(typographyStyles['spectrum-Heading1--display'], typographyStyles['spectrum-Article'])}>
+    <h1 {...props} className={classNames(typographyStyles['spectrum-Heading1--display'], typographyStyles['spectrum-Article'], docStyles['articleHeader'])}>
       {children}
     </h1>
   ),
@@ -49,13 +50,14 @@ const mdxComponents = {
     </h3>
   ),
   p: ({children, ...props}) => <p {...props} className={typographyStyles['spectrum-Body3']}>{children}</p>,
+  ul: ({children, ...props}) => <ul {...props} className={typographyStyles['spectrum-Body3']}>{children}</ul>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   a: ({children, ...props}) => <a {...props} className={linkStyle['spectrum-Link']} target={getTarget(props.href)}>{children}</a>
 };
 
 function getTarget(href) {
-  if (/localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com/.test(href)) {
+  if (!/^http/.test(href) || /localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com|#/.test(href)) {
     return null;
   }
 
@@ -67,6 +69,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
     <html lang="en-US" dir="ltr" className={classNames(theme.global.spectrum, theme.light['spectrum--light'], theme.medium['spectrum--medium'], typographyStyles.spectrum, docStyles.provider, highlightCss.spectrum)}>
       <head>
         <meta charset="utf-8" />
+        <title>{path.basename(currentPage, path.extname(currentPage))}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Server rendering means we cannot use a real <Provider> component to do this.
             Instead, we apply the default theme classes to the html element. In order to
@@ -74,7 +77,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
             as close to the top of the page as possible to switch the theme as soon as
             possible during loading. It also handles when the media queries update, or
             local storage is updated. */}
-        <script 
+        <script
           dangerouslySetInnerHTML={{__html: `(() => {
             let classList = document.documentElement.classList;
             let dark = window.matchMedia('(prefers-color-scheme: dark)');
@@ -96,7 +99,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
                 classList.remove("${theme.large['spectrum--large']}");
               }
             };
-            
+
             update();
             dark.addListener(update);
             fine.addListener(update);
@@ -125,7 +128,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
             </a>
           </header>
           <ul className={sideNavStyles['spectrum-SideNav']}>
-            {pages.filter(p => p.name !== 'index.html').map(p => (
+            {pages.filter(p => p.name !== 'index.html' && (currentPage === 'index.html' || p.name.split('/')[0] === currentPage.split('/')[0])).map(p => (
               <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPage})}>
                 <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{path.basename(p.name, path.extname(p.name))}</a>
               </li>
@@ -135,7 +138,9 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
         <main>
           <article className={typographyStyles['spectrum-Typography']}>
             <MDXProvider components={mdxComponents}>
-              {children}
+              <LinkProvider>
+                {children}
+              </LinkProvider>
             </MDXProvider>
           </article>
           <ToC toc={toc} />
