@@ -18,7 +18,7 @@ function Cell(props: CellProps): ReactElement { // eslint-disable-line @typescri
   return null;
 }
 
-Cell.getCollectionNode = function* <T>(props: CellProps): Generator<PartialNode<T>> {
+Cell.getCollectionNode = function* getCollectionNode<T>(props: CellProps): Generator<PartialNode<T>> {
   let {children} = props;
 
   let textValue = props.textValue || (typeof children === 'string' ? children : '') || props['aria-label'] || '';

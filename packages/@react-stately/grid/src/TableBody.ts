@@ -18,7 +18,7 @@ function TableBody<T>(props: TableBodyProps<T>): ReactElement { // eslint-disabl
   return null;
 }
 
-TableBody.getCollectionNode = function* <T>(props: TableBodyProps<T>): Generator<PartialNode<T>> {
+TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyProps<T>): Generator<PartialNode<T>> {
   let {children, items, itemKey} = props;
   if (typeof children === 'function') {
     if (!items) {

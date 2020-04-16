@@ -19,7 +19,7 @@ function Row<T>(props: RowProps<T>): ReactElement { // eslint-disable-line @type
   return null;
 }
 
-Row.getCollectionNode = function* <T> (props: RowProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>> {
+Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>> {
   let {childItems, children, textValue} = props;
 
   yield {

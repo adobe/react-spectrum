@@ -18,7 +18,7 @@ function TableHeader<T>(props: TableHeaderProps<T>): ReactElement { // eslint-di
   return null;
 }
 
-TableHeader.getCollectionNode = function* <T> (props: TableHeaderProps<T>): Generator<PartialNode<T>> {
+TableHeader.getCollectionNode = function* getCollectionNode<T>(props: TableHeaderProps<T>): Generator<PartialNode<T>> {
   let {children, columns, columnKey} = props;
   if (typeof children === 'function') {
     if (!columns) {

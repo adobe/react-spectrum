@@ -18,7 +18,7 @@ function Item<T>(props: ItemProps<T>): ReactElement { // eslint-disable-line @ty
   return null;
 }
 
-Item.getCollectionNode = function* <T>(props: ItemProps<T>): Generator<PartialNode<T>> {
+Item.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>): Generator<PartialNode<T>> {
   let {childItems, title, children} = props;
 
   let rendered = props.title || props.children;

@@ -19,7 +19,7 @@ function Column<T>(props: ColumnProps<T>): ReactElement { // eslint-disable-line
   return null;
 }
 
-Column.getCollectionNode = function* <T>(props: ColumnProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>, void, Node<T>[]> {
+Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>, void, Node<T>[]> {
   let {title, children, childColumns} = props;
   let fullNodes = yield {
     type: 'column',
