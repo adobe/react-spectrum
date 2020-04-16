@@ -9,14 +9,57 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 const {declare} = require('@babel/helper-plugin-utils');
-const path = require('path');
+const glob = require('glob');
+const micromatch = require('micromatch');
+const Path = require('path');
+const template = require('@babel/template').default;
 const {types} = require('@babel/core');
+const t = types;
+
+const requireTemplate = template('INTEROP(require(FILE)).default');
 
 function getContents(filePath, ref) {
-  const resolvedPath = path.join(filePath, '..', ref);
+  const resolvedPath = Path.join(filePath, '..', ref);
   return require(resolvedPath);
+}
+
+function set(obj, path, value) {
+  for (let i = 0; i < path.length - 1; i++) {
+    let part = path[i];
+
+    if (obj[part] == null) {
+      obj[part] = {};
+    }
+
+    obj = obj[part];
+  }
+
+  obj[path[path.length - 1]] = value;
+}
+
+function toRequire(name, file) {
+  return requireTemplate({
+    INTEROP: file.addHelper('interopRequireDefault'),
+    FILE: t.stringLiteral(name)
+  }).expression;
+}
+
+function toObject(obj, file) {
+  if (typeof obj !== 'object') {
+    return toRequire(obj, file);
+  }
+
+  let properties = Object.keys(obj).map(key => {
+    let value = obj[key];
+    if (/\.json$/.test(value)) {
+      return t.objectProperty(t.stringLiteral(key), t.valueToNode(getContents(file.opts.filename, value)));
+    } 
+
+    return t.objectProperty(t.stringLiteral(key), toObject(value, file));
+  });
+
+  return t.objectExpression(properties);
 }
 
 module.exports = declare((api) => {
@@ -24,38 +67,62 @@ module.exports = declare((api) => {
 
   return {
     visitor: {
-      ExportNamedDeclaration(path, {file}) {
-        const fullPath = file && file.opts.filename;
-        if (!fullPath.includes('intl')) {
+      ImportDeclaration(path, state) {
+        let pattern = path.node.source.value;
+        if (!glob.hasMagic(pattern)) {
           return;
         }
 
-        const importExt = path && path.node && path.node.source && path.node.source.value;
-        if (!importExt || !/\.json$/.test(importExt || '')) {
-          return;
+        // Find files
+        let dirname = Path.dirname(state.file.opts.filename);
+        pattern = Path.resolve(dirname, pattern);
+        if (process.platform === 'win32') {
+          pattern = pattern.replace(/\\/g, '/');
         }
 
-        const specifiers = path.node.specifiers;
-        if (!specifiers.length) {
-          return;
+        let files = glob.sync(pattern, {strict: true, nodir: true});
+
+        // Capture matches
+        let re = micromatch.makeRe(pattern, {capture: true});
+        let matches = {};
+
+        for (let file of files) {
+          let match = file.match(re);
+          let parts = match.slice(1).filter(Boolean).reduce((a, p) => a.concat(p.split('/')), []);
+          let relative = './' + Path.relative(dirname, file);
+          set(matches, parts, relative);
         }
 
-        if (!types.isExportSpecifier(specifiers[0])) {
-          return;
+        // Find import names
+        let defaultName = null;
+        let destructured = [];
+        for (let specifier of path.node.specifiers) {
+          if (specifier.type === 'ImportDefaultSpecifier' || specifier.type === 'ImportNamespaceSpecifier') {
+            defaultName = specifier.local.name;
+          } else if (specifier.type === 'ImportSpecifier') {
+            destructured.push({local: specifier.local.name, imported: specifier.imported.name});
+          }
         }
 
-        const json = getContents(fullPath, importExt);
+        // Generate replacements
+        let replacements = [];
+        if (defaultName) {
+          let decl = t.variableDeclaration('const', [
+            t.variableDeclarator(t.identifier(defaultName), toObject(matches, state.file))
+          ]);
 
-        path.replaceWith(
-          types.exportNamedDeclaration(
-            types.variableDeclaration('const', [
-              types.variableDeclarator(
-                types.identifier(specifiers[0].exported.name),
-                types.valueToNode(json)
-              )
-            ]), [], null
-          )
-        );
+          replacements.push(decl);
+        }
+
+        if (destructured) {
+          for (let item of destructured) {
+            replacements.push(t.variableDeclaration('const', [
+              t.variableDeclarator(t.identifier(item.local), toRequire(matches[item.imported], state.file))
+            ]));
+          }
+        }
+
+        path.replaceWithMultiple(replacements);
       }
     }
   };

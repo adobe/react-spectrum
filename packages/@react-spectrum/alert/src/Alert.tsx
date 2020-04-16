@@ -14,7 +14,8 @@ import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import HelpMedium from '@spectrum-icons/ui/HelpMedium';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
-import * as intlMessages from '../intl';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React from 'react';
 import {SpectrumAlertProps} from '@react-types/alert';
 import styles from '@adobe/spectrum-css-temp/components/alert/vars.css';
