@@ -244,6 +244,8 @@
   --spectrum-meter-large-border-radius: 3px;
   --spectrum-meter-small-border-radius: var(--spectrum-global-dimension-static-size-25);
   --spectrum-pagination-page-button-line-height: 26px;
+  --spectrum-overlay-positive-transform-distance: 6px;
+  --spectrum-overlay-negative-transform-distance: -6px;
   --spectrum-radio-text-gap-key-focus: var(--spectrum-global-dimension-static-size-115);
   --spectrum-radio-text-gap-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
   --spectrum-radio-text-gap-error-key-focus: var(--spectrum-global-dimension-static-size-115);

@@ -1,10 +1,11 @@
 {
   "extends": "@parcel/config-default",
   "resolvers": ["parcel-resolver-docs", "..."],
-  "transforms": {
+  "transformers": {
     "docs:*.{js,ts,tsx,json}": ["parcel-transformer-docs", "@parcel/transformer-inline"],
     "docs-json:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
-    "*.mdx": ["parcel-transformer-mdx-docs"]
+    "*.mdx": ["parcel-transformer-mdx-docs"],
+    "*.svg": ["@parcel/transformer-svg-react"]
   },
   "namers": ["parcel-namer-docs", "..."],
   "packagers": {

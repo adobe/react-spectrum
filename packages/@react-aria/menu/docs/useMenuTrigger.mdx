@@ -1,0 +1,226 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/menu';
+import overlaysDocs from 'docs:@react-aria/overlays';
+import focusDocs from 'docs:@react-aria/focus';
+import menuDocs from 'docs:@react-aria/menu';
+import buttonDocs from 'docs:@react-aria/button';
+import statelyDocs from 'docs:@react-stately/menu';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {useMenuTrigger} from '@react-aria/menu';
+```
+
+# useMenuTrigger
+
+<p>{docs.exports.useMenuTrigger.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useMenuTrigger']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#menubutton'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useMenuTrigger} links={docs.links} />
+
+## Features
+
+There is no native element to implement a menu in HTML that is widely supported. `useMenuTrigger` 
+combined with [useMenu](useMeun.html) helps achieve accessible menu components that can be styled as needed.
+
+* Exposed to assistive technology as a button with a `menu` popup using ARIA (combined with [useMenu](useMeun.html))
+* Support for mouse, touch, and keyboard interactions
+* Keyboard support for opening the menu using the arrow keys, including automatically focusing 
+  the first or last item accordingly
+
+## Anatomy
+
+A menu trigger consists of a button or other trigger element combined with a popup menu.
+It should be combined with [useButton](useButton.html) and [useMenu](useMenu.html), which handle
+the implementation of the button and popup menu respectively.
+
+`useMenuTrigger` returns props that you should spread onto the appropriate element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useMenuTrigger.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useMenuTriggerState} />
+hook from `@react-stately/menu`. The state object should be passed as an option to `useMenuTrigger`
+
+## Example
+
+This example shows how to build a menu button
+using <TypeLink links={docs.links} type={docs.exports.useMenuTrigger} />, <TypeLink links={buttonDocs.links} type={buttonDocs.exports.useButton} />,
+and <TypeLink links={menuDocs.links} type={menuDocs.exports.useMenu} />.
+
+The menu popup uses <TypeLink links={menuDocs.links} type={menuDocs.exports.useMenu} />
+and <TypeLink links={menuDocs.links} type={menuDocs.exports.useMenuItem} /> to render the menu and
+its items. In addition, a &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;
+is used to automatically restore focus to the trigger when the menu closes. A 
+hidden &lt;<TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.DismissButton} />&gt;
+is added at the start and end of the menu to allow screen reader users to dismiss it easily.
+
+This example does not do any advanced popover positioning or portaling to escape its visual container.
+See <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlayPosition} /> for 
+an example of how to implement this.
+
+In addition, see [useMenu](useMenu.html) for examples of menu item groups, and more complex item content.
+
+```tsx example
+import {useMenuTriggerState} from '@react-stately/menu';
+import {useButton} from '@react-aria/button';
+import {useMenu, useMenuItem} from '@react-aria/menu';
+import {useTreeState} from '@react-stately/tree';
+import {Item} from '@react-stately/collections';
+import {mergeProps} from '@react-aria/utils';
+import {FocusScope} from '@react-aria/focus';
+import {useFocus} from '@react-aria/interactions';
+import {useOverlay, DismissButton} from '@react-aria/overlays';
+
+function MenuButton(props) {
+  // Create state based on the incoming props
+  let state = useMenuTriggerState(props);
+
+  // Get props for the menu trigger and menu elements
+  let ref = React.useRef();
+  let {menuTriggerProps, menuProps} = useMenuTrigger({ref}, state);
+
+  // Get props for the button based on the trigger props from useMenuTrigger
+  let {buttonProps} = useButton(menuTriggerProps, ref);
+
+  return (
+    <div style={{position: 'relative', display: 'inline-block'}}>
+      <button 
+        {...buttonProps}
+        ref={ref}
+        style={{height: 30, fontSize: 14}}>
+        {props.label}
+        <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
+      </button>
+      {state.isOpen &&
+        <MenuPopup 
+          {...props}
+          domProps={menuProps}
+          autoFocus={state.focusStrategy}
+          onClose={() => state.close()} />
+      }
+    </div>
+  );
+}
+
+function MenuPopup(props) {
+  // Create menu state based on the incoming props
+  let state = useTreeState({...props, selectionMode: 'none'});
+
+  // Get props for the menu element
+  let ref = React.useRef();
+  let {menuProps} = useMenu({...props, ref}, state);
+
+  // Handle events that should cause the menu to close,
+  // e.g. blur, clicking outside, or pressing the escape key.
+  let overlayRef = React.useRef();
+  let {overlayProps} = useOverlay({
+    ref: overlayRef,
+    onClose: props.onClose,
+    shouldCloseOnBlur: true,
+    isOpen: true,
+    isDismissable: true
+  });
+
+  // Wrap in <FocusScope> so that focus is restored back to the
+  // trigger when the menu is closed. In addition, add hidden
+  // <DismissButton> components at the start and end of the list
+  // to allow screen reader users to dismiss the popup easily.
+  return (
+    <FocusScope restoreFocus>
+      <div {...overlayProps} ref={overlayRef}>
+        <DismissButton onDismiss={props.onClose} />
+        <ul
+          {...mergeProps(menuProps, props.domProps)}
+          ref={ref}
+          style={{
+            position: 'absolute',
+            width: '100%',
+            margin: '4px 0 0 0',
+            padding: 0,
+            listStyle: 'none',
+            border: '1px solid gray',
+            background: 'lightgray'
+          }}>
+          {[...state.collection].map(item => (
+            <MenuItem
+              key={item.key}
+              item={item}
+              state={state}
+              onAction={props.onAction}
+              onClose={props.onClose} />
+          ))}
+        </ul>
+        <DismissButton onDismiss={props.onClose} />
+      </div>
+    </FocusScope>
+  );
+}
+
+function MenuItem({item, state, onAction, onClose}) {
+  // Get props for the menu item element
+  let ref = React.useRef();
+  let {menuItemProps} = useMenuItem({
+    key: item.key,
+    ref,
+    isDisabled: item.isDisabled,
+    onAction,
+    onClose
+  }, state);
+
+  // Handle focus events so we can apply highlighted 
+  // style to the focused menu item
+  let [isFocused, setFocused] = React.useState(false);
+  let {focusProps} = useFocus({onFocusChange: setFocused});
+
+  return (
+    <li
+      {...mergeProps(menuItemProps, focusProps)}
+      ref={ref}
+      style={{
+        background: isFocused ? 'gray' : 'transparent',
+        color: isFocused ? 'white' : 'black',
+        padding: '2px 5px',
+        outline: 'none',
+        cursor: 'pointer'
+      }}>
+      {item.rendered}
+    </li>
+  );
+}
+
+<MenuButton label="Actions" onAction={alert}>
+  <Item uniqueKey="copy">Copy</Item>
+  <Item uniqueKey="cut">Cut</Item>
+  <Item uniqueKey="paste">Paste</Item>
+</MenuButton>
+```
+
+## Internationalization
+
+### RTL
+
+In right-to-left languages, the menu button should be mirrored. The arrow should be on the left,
+and the label should be on the right. In addition, the content of menu items should
+flip. Ensure that your CSS accounts for this.

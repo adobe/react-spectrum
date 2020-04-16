@@ -125,7 +125,6 @@ describe('useMenuTrigger', function () {
     });
     expect(setOpen).toHaveBeenCalledTimes(1);
     expect(setOpen).toHaveBeenCalledWith(!state.isOpen);
-    expect(stopPropagation).toHaveBeenCalledTimes(1);
     expect(preventDefault).toHaveBeenCalledTimes(1);
     expect(setFocusStrategy).toHaveBeenCalledTimes(2);
     expect(setFocusStrategy).toHaveBeenLastCalledWith('last');

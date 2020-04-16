@@ -13,6 +13,7 @@
 import {clamp} from '@react-aria/utils';
 import {useControlledState} from '@react-stately/utils';
 import {useRef} from 'react';
+import {ValidationState} from '@react-types/shared';
 
 export interface NumberFieldState {
   setValue: (val: string, ...args: any) => void,
@@ -21,7 +22,7 @@ export interface NumberFieldState {
   incrementToMax: (...args: any) => void,
   decrementToMin: (...args: any) => void,
   value: number,
-  validationState: string
+  validationState: ValidationState
 }
 
 export function useNumberFieldState(props) : NumberFieldState {
@@ -100,7 +101,7 @@ export function useNumberFieldState(props) : NumberFieldState {
     decrement,
     decrementToMin,
     value: numValue,
-    validationState: !isValid.current && 'invalid'
+    validationState: !isValid.current ? 'invalid' : null
   };
 }
 

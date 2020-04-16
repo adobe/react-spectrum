@@ -12,6 +12,7 @@
 
 import Asterisk from '@spectrum-icons/workflow/Asterisk';
 import {getDoc} from 'globals-docs';
+import {getUsedLinks} from './utils';
 import Lowlight from 'react-lowlight';
 import Markdown from 'markdown-to-jsx';
 import React, {useContext} from 'react';
@@ -31,8 +32,11 @@ const DOC_LINKS = {
 };
 
 export const TypeContext = React.createContext();
+export const LinkContext = React.createContext();
 
 export function Type({type}) {
+  let links = useContext(TypeContext);
+
   if (!type) {
     return null;
   }
@@ -40,7 +44,9 @@ export function Type({type}) {
   switch (type.type) {
     case 'any':
     case 'null':
+    case 'undefined':
     case 'void':
+    case 'unknown':
       return <Keyword {...type} />;
     case 'identifier':
       return <Identifier {...type} />;
@@ -84,8 +90,22 @@ export function Type({type}) {
       return <Keyword {...type} />;
     case 'alias':
       return <code className={typographyStyles['spectrum-Code4']}><Type type={type.value} /></code>;
+    case 'array':
+      return <ArrayType {...type} />;
+    case 'typeParameter':
+      return <TypeParameter {...type} />;
+    case 'component': {
+      let props = type.props;
+      if (props.type === 'application') {
+        props = props.base;
+      }
+      if (props.type === 'link') {
+        props = links[props.id];
+      }
+      return <Type type={{...props, description: type.description}} />;
+    }
     default:
-      console.log('UNKNOWN TYPE', type);
+      console.log('no render component for TYPE', type);
       return null;
   }
 }
@@ -120,11 +140,16 @@ function Identifier({name}) {
   return <span className="token hljs-name">{name}</span>;
 }
 
-function JoinList({elements, joiner}) {
+export function JoinList({elements, joiner}) {
   return elements
+    .filter(Boolean)
     .reduce((acc, v, i) => [
       ...acc,
-      <span className="token punctuation" key={`join${v.name || v.raw}${i}`} style={{whiteSpace: 'pre-wrap'}}>{joiner}</span>,
+      <span
+        className="token punctuation"
+        key={`join${v.name || v.raw}${i}`}>
+        {joiner}
+      </span>,
       <Type type={v} key={`type${v.name || v.raw}${i}`} />
     ], []).slice(1);
 }
@@ -146,7 +171,7 @@ function TypeApplication({base, typeParameters}) {
   );
 }
 
-function TypeParameters({typeParameters}) {
+export function TypeParameters({typeParameters}) {
   if (typeParameters.length === 0) {
     return null;
   }
@@ -160,14 +185,29 @@ function TypeParameters({typeParameters}) {
   );
 }
 
-function FunctionType({parameters, return: returnType, typeParameters}) {
+function TypeParameter({name, default: defaultType}) {
   return (
     <>
+      <span className="token hljs-name">{name}</span>
+      {defaultType &&
+        <>
+          <span className="token punctuation">{' = '}</span>
+          <Type type={defaultType} />
+        </>
+      }
+    </>
+  );
+}
+
+function FunctionType({name, parameters, return: returnType, typeParameters}) {  
+  return (
+    <>
+      {name && <span className="token hljs-function">{name}</span>}
       <TypeParameters typeParameters={typeParameters} />
-      <span className="token punctuation">(</span>
-      <JoinList elements={parameters} joiner=", " />
-      <span className="token punctuation">)</span>
-      <span className="token punctuation">{' => '}</span>
+      <span className="token punctuation">{parameters.length > 2 ? '(\n  ' : '('}</span>
+      <JoinList elements={parameters} joiner={parameters.length > 2 ? ',\n  ' : ', '} />
+      <span className="token punctuation">{parameters.length > 2 ? '\n)' : ')'}</span>
+      <span className="token punctuation">{name ? ': ' : ' => '}</span>
       <Type type={returnType} />
     </>
   );
@@ -193,11 +233,44 @@ function Parameter({name, value, default: defaultValue}) {
   );
 }
 
-function LinkType({id}) {
+export function LinkProvider({children}) {
+  let links = new Map();
+  return (
+    <LinkContext.Provider value={links}>
+      {children}
+      <LinkRenderer />
+    </LinkContext.Provider>
+  );
+}
+
+export function LinkRenderer() {
+  let links = useContext(LinkContext);
+  return [...links.values()].map(({type, links}) => (
+    <section key={type.id} id={type.id} data-title={type.name} hidden>
+      {type.description && <Markdown options={{forceBlock: true}} className={styles['type-description']}>{type.description}</Markdown>}
+      <TypeContext.Provider value={links}>
+        {type.type === 'interface' || type.type === 'alias' || type.type === 'component'
+          ? <Type type={type} />
+          : <code className={`${typographyStyles['spectrum-Code4']}`}><Type type={type} /></code>
+        }
+      </TypeContext.Provider>
+    </section>
+  ));
+}
+
+export function LinkType({id}) {
   let links = useContext(TypeContext) || {};
+  let registered = useContext(LinkContext);
   let value = links[id];
   if (!value) {
     return null;
+  }
+
+  registered.set(id, {type: value, links});
+  
+  let used = getUsedLinks(value, links);
+  for (let id in used) {
+    registered.set(id, {type: used[id], links});
   }
 
   return <a href={'#' + id} data-link={id} className={`${styles.colorLink} token hljs-name`}>{value.name}</a>;
@@ -211,8 +284,8 @@ function renderHTMLfromMarkdown(description) {
   }
 }
 
-export function InterfaceType({properties, showRequired, showDefault}) {
-  return (
+export function InterfaceType({description, properties, showRequired, showDefault}) {
+  return (<>
     <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
       <thead>
         <tr>
@@ -252,7 +325,7 @@ export function InterfaceType({properties, showRequired, showDefault}) {
         ))}
       </tbody>
     </table>
-  );
+  </>);
 }
 
 function ObjectType({properties, exact}) {
@@ -299,6 +372,15 @@ function ObjectType({properties, exact}) {
         );
       })}
       {endObject}
+    </>
+  );
+}
+
+function ArrayType({elementType}) {
+  return (
+    <>
+      <Type type={elementType} />
+      <span className="token punctuation">[]</span>
     </>
   );
 }
