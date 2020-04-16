@@ -1,0 +1,13 @@
+{
+  "name": "babel-plugin-intl-optim",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "engines": {
+    "parcel": ">= 2.0.0-alpha.3.2"
+  },
+  "dependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/helper-plugin-utils": "^7.8.3"
+  }
+}

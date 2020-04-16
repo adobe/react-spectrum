@@ -15,7 +15,17 @@ import {useLocale} from './context';
 
 const formatterCache = new Map();
 
+function formatStrings(strings) {
+  let newStrings = {};
+  for (let key in strings) {
+    let newKey = key.replace('_', '-');
+    newStrings[newKey] = strings[key];
+  }
+  return newStrings;
+}
+
 export function useMessageFormatter(strings) {
+  strings = formatStrings(strings);
   let {locale: currentLocale} = useLocale();
 
   // Check the cache

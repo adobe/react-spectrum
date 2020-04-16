@@ -78,7 +78,8 @@
     "@babel/plugin-syntax-object-rest-spread",
     "@babel/plugin-transform-async-to-generator",
     "transform-glob-import",
-    "babel-plugin-macros"
+    "babel-plugin-macros",
+    "babel-plugin-intl-optim"
   ],
   "sourceType": "unambiguous"
 }

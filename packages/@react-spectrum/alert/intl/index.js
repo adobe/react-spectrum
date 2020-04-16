@@ -9,45 +9,22 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-import csCZ from './cs-CZ.json';
-import daDK from './da-DK.json';
-import deDE from './de-DE.json';
-import enUS from './en-US.json';
-import esES from './es-ES.json';
-import fiFI from './fi-FI.json';
-import frFR from './fr-FR.json';
-import itIT from './it-IT.json';
-import jaJP from './ja-JP.json';
-import koKR from './ko-KR.json';
-import nbNO from './nb-NO.json';
-import nlNL from './nl-NL.json';
-import plPL from './pl-PL.json';
-import ptBR from './pt-BR.json';
-import ruRU from './ru-RU.json';
-import svSE from './sv-SE.json';
-import trTR from './tr-TR.json';
-import zhCN from './zh-CN.json';
-import zhTW from './zh-TW.json';
-
-export default {
-  'cs-CZ': csCZ,
-  'da-DK': daDK,
-  'de-DE': deDE,
-  'en-US': enUS,
-  'es-ES': esES,
-  'fi-FI': fiFI,
-  'fr-FR': frFR,
-  'it-IT': itIT,
-  'ja-JP': jaJP,
-  'ko-KR': koKR,
-  'nb-NO': nbNO,
-  'nl-NL': nlNL,
-  'pl-PL': plPL,
-  'pt-BR': ptBR,
-  'ru-RU': ruRU,
-  'sv-SE': svSE,
-  'tr-TR': trTR,
-  'zh-CN': zhCN,
-  'zh-TW': zhTW
-};
+export {default as cs_CZ} from './cs-CZ.json';
+export {default as da_DK} from './da-DK.json';
+export {default as de_DE} from './de-DE.json';
+export {default as en_US} from './en-US.json';
+export {default as es_ES} from './es-ES.json';
+export {default as fi_FI} from './fi-FI.json';
+export {default as fr_FR} from './fr-FR.json';
+export {default as it_IT} from './it-IT.json';
+export {default as ja_JP} from './ja-JP.json';
+export {default as ko_KR} from './ko-KR.json';
+export {default as nb_NO} from './nb-NO.json';
+export {default as nl_NL} from './nl-NL.json';
+export {default as pl_PL} from './pl-PL.json';
+export {default as pt_BR} from './pt-BR.json';
+export {default as ru_RU} from './ru-RU.json';
+export {default as sv_SE} from './sv-SE.json';
+export {default as tr_TR} from './tr-TR.json';
+export {default as zh_CN} from './zh-CN.json';
+export {default as zh_TW} from './zh-TW.json';
