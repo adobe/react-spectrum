@@ -13,7 +13,7 @@
 import {classNames, filterDOMProps, unwrapDOMRef, useDOMRef, useMediaQuery, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
 // import {ComboBoxProps} from '@react-types/$combobox';
-import React, {useLayoutEffect, useRef, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
@@ -190,27 +190,29 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   // Look in the state.collection.size <= 300 logic in Picker and see if we need it for combobox
 
 
+  useEffect(() => {
+    // Logic for what should be rendered in the TextField when state.selectedKey is changed/defined
+    // Perhaps include inputValue here as well? Maybe this is where all the logic for determining state.value should go
+    // Think about where to put this and if there is a better way to do this
+    let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
+    if (selectedItem) {
+      let itemText = selectedItem.textValue || selectedItem.rendered;
 
-  // Logic for what should be rendered in the TextField
-  // Think about where to put this and whether or not to
-  let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
-  if (selectedItem) {
-    let itemText = selectedItem.textValue || selectedItem.rendered;
+      // TODO: logic on whether or not to take the selectedItem value over the current value (check if controlled or not)
+      // TODO: all other logic
 
-    // TODO: logic on whether or not to take the selectedItem value over the current value (check if controlled or not)
-    // TODO: all other logic
+      
+      // Throw error if controlled inputValue and controlled selectedKey don't match
+      if (props.inputValue && props.selectedKey && (props.inputValue !== itemText)) {
+        throw new Error('Mismatch between selected item and inputValue!')
+      } 
 
-
-    // Throw error if controlled inputValue and controlled selectedKey don't match
-    if (props.inputValue && props.selectedKey && (props.inputValue !== itemText)) {
-      throw new Error('Mismatch between selected item and inputValue!')
+      // Update textfield value if new item is selected
+      if (itemText !== state.value) {
+        state.setValue(itemText);
+      }
     }
-
-    // Update textfield value if new item is selected
-    if (itemText !== state.value) {
-      state.setValue(itemText);
-    }
-  }
+  }, [state.selectedKey])
 
   // Use TextFieldBase? Figure out where the class name should go
   // Maybe we don't even use textfield base, just a base input?

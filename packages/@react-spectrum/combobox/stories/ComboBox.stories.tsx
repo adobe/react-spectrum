@@ -40,6 +40,10 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'menuTrigger: manual',
+    () => render({menuTrigger: 'manual'})
+  )
+  .add(
     'isOpen',
     () => render({isOpen: true})
   )
@@ -54,6 +58,30 @@ storiesOf('ComboBox', module)
   .add(
     'defaultInputValue (uncontrolled)',
     () => render({defaultInputValue: 'uncontrolled value'})
+  )
+  .add(
+    'selectedKey (controlled)',
+    () => render({selectedKey: 'two'})
+  )
+  .add(
+    'defaultSelectedKey (uncontrolled)',
+    () => render({defaultSelectedKey: 'two'})
+  )
+  .add(
+    'inputValue and selectedKey (controlled)',
+    () => render({inputValue: 'Item Two', selectedKey: 'two'})
+  )
+  .add(
+    'defaultInputValue and defaultSelectedKey (uncontrolled)',
+    () => render({defaultInputValue: 'Item Two', defaultSelectedKey: 'two'})
+  )
+  .add(
+    'inputValue and defaultSelectedKey (controlled by inputvalue)',
+    () => render({inputValue: 'Item One', defaultSelectedKey: 'two'})
+  )
+  .add(
+    'defaultInputValue and selectedKey (controlled by selectedKey)',
+    () => render({defaultInputValue: 'Item One', selectedKey: 'two'})
   )
   .add(
     'isQuiet',
