@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {ComboBox, Item, Section} from '../';
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
@@ -94,6 +95,23 @@ storiesOf('ComboBox', module)
   .add(
     'autoFocus: true',
     () => render({autoFocus: true})
+  )
+  .add(
+    'customWidth',
+    () => (
+      <Flex flexDirection="column">
+        <ComboBox label='Combobox' onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} width="200px">
+          <Item uniqueKey="one">Item One</Item>
+          <Item uniqueKey="two" textValue="Item Two">Custom Item</Item>
+          <Item uniqueKey="three">Item Three</Item>
+        </ComboBox>
+        <ComboBox label='Combobox' onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} width="800px">
+          <Item uniqueKey="one">Item One</Item>
+          <Item uniqueKey="two" textValue="Item Two">Custom Item</Item>
+          <Item uniqueKey="three">Item Three</Item>
+        </ComboBox>
+      </Flex>
+    )
   );
 
 function render(props = {}) {
@@ -102,6 +120,6 @@ function render(props = {}) {
       <Item uniqueKey="one">Item One</Item>
       <Item uniqueKey="two" textValue="Item Two">Custom Item</Item>
       <Item uniqueKey="three">Item Three</Item>
-  </ComboBox>
+    </ComboBox>
   );
 }

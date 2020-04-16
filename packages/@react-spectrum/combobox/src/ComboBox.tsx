@@ -72,7 +72,8 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
     // What is the default menu trigger operation?
     menuTrigger = 'input',
     autoFocus,
-    shouldFlip = true
+    shouldFlip = true,
+    width
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -117,6 +118,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
 
   
   let isMobile = useMediaQuery('(max-width: 700px)');
+  // Figure out if we need the DismissButton (probably)
   let listbox = (
     <FocusScope restoreFocus>
       {/* <DismissButton onDismiss={() => state.setOpen(false)} /> */}
@@ -130,7 +132,8 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
         focusOnPointerEnter
         layout={layout}
         state={state}
-        // width={isMobile ? '100%' : undefined} 
+        // Figure out what the below is for
+        width={isMobile ? '100%' : undefined} 
         />
       {/* <DismissButton onDismiss={() => state.setOpen(false)} /> */}
     </FocusScope>
@@ -138,13 +141,14 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
 
   // Perhaps we could measure the wrapping div instead?
   // Measure the width of the inputfield and the button to inform the width of the menu (below).
-  let [comboboxWidth, setComboboxWidth] = useState(null);
+  let [menuWidth, setMenuWidth] = useState(null);
   let {scale} = useProvider();
+
   useLayoutEffect(() => {
     if (!isMobile) {
       let buttonWidth = triggerRef.current.UNSAFE_getDOMNode().offsetWidth;
       let inputWidth = inputRef.current.UNSAFE_getDOMNode().offsetWidth;
-      setComboboxWidth(buttonWidth + inputWidth);
+      setMenuWidth(buttonWidth + inputWidth);
     }
   }, [scale, isMobile, triggerRef, state.selectedKey]);
 
@@ -158,13 +162,12 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   } else {
     // Test the below for combobox, copied from Picker
     // let width = isQuiet ? null : comboboxWidth;
-    let width = comboboxWidth;
 
     let style = {
       ...overlayProps.style,
       // Should Combobox support a user defined menu width as well?
       // width: menuWidth ? dimensionValue(menuWidth) : width,
-      width
+      width: menuWidth
       // See if Combobox needs the below as well
       // minWidth: isQuiet ? `calc(${buttonWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : buttonWidth
     };
@@ -259,7 +262,8 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
             // check onInputChange, this probably needs to be onInputChange?
             onChange={state.setValue}
             validationState={validationState}
-            autoFocus={autoFocus} />
+            autoFocus={autoFocus}
+            width={width} />
           <FieldButton
             {...triggerProps}
             ref={triggerRef}
