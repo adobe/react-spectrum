@@ -129,7 +129,7 @@ describe('useComboBoxState tests', function () {
       expect(result.current.selectionManager.selectedKeys).toContain('0');
       expect(result.current.selectionManager.selectedKeys).not.toContain('1');
 
-      act(() => result.current.selectionManager.setSelectedKeys(['1']));
+      act(() => result.current.selectionManager.replaceSelection('1'));
       expect(result.current.selectionManager.selectedKeys).toContain('0');
       expect(result.current.selectionManager.selectedKeys).not.toContain('1');
       expect(onSelectionChange).toHaveBeenCalledWith('1');
@@ -142,7 +142,7 @@ describe('useComboBoxState tests', function () {
       expect(result.current.selectionManager.selectedKeys).toContain('0');
       expect(result.current.selectionManager.selectedKeys).not.toContain('1');
 
-      act(() => result.current.selectionManager.setSelectedKeys(['1']));
+      act(() => result.current.selectionManager.replaceSelection('1'));
       expect(result.current.selectionManager.selectedKeys).toContain('1');
       expect(result.current.selectionManager.selectedKeys).not.toContain('0');
       expect(onSelectionChange).toHaveBeenCalledWith('1');
