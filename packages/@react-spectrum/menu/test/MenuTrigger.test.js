@@ -36,7 +36,7 @@ let withSection = [
   ]}
 ];
 
-function renderComponent(Component, triggerProps = {}, menuProps = {}) {
+function renderComponent(Component, triggerProps = {}, menuProps = {}, buttonProps = {}) {
   if (Component === V2Dropdown) {
     return render(
       <Component {...triggerProps}>
@@ -56,7 +56,7 @@ function renderComponent(Component, triggerProps = {}, menuProps = {}) {
       <Provider theme={theme}>
         <div data-testid="scrollable">
           <Component {...triggerProps}>
-            <Button>
+            <Button {...buttonProps}>
               {triggerText}
             </Button>
             <Menu items={withSection} itemKey="name" {...menuProps}>
@@ -251,9 +251,9 @@ describe('MenuTrigger', function () {
 
   it.each`
     Name             | Component      | props
-    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, isDisabled: true}}
-  `('$Name can be disabled', function ({Component, props}) {
-    let tree = renderComponent(Component, props);
+    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+  `('$Name does not trigger on disabled button', function ({Component, props}) {
+    let tree = renderComponent(Component, props, {}, {isDisabled: true});
     let button = tree.getByRole('button');
     triggerPress(button);
     jest.runAllTimers();
@@ -371,6 +371,7 @@ describe('MenuTrigger', function () {
       fireEvent.scroll(scrollable);
       jest.runAllTimers();
       expect(menu).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(button);
     });
 
     // Can't figure out why this isn't working for the v2 component
@@ -388,6 +389,7 @@ describe('MenuTrigger', function () {
       fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
       jest.runAllTimers();
       expect(menu).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(button);
     });
 
     // Can't figure out why this isn't working for the v2 component
@@ -406,6 +408,7 @@ describe('MenuTrigger', function () {
       fireEvent.mouseUp(document.body);
       jest.runAllTimers();
       expect(menu).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(button);
     });
 
     it.each`
@@ -490,6 +493,7 @@ describe('MenuTrigger', function () {
         jest.runAllTimers();
         let menu = tree.queryByRole('menu');
         expect(menu).toBeNull();
+        expect(document.activeElement).toBe(tree.getByRole('button'));
         cleanup();
       }
     });
@@ -505,6 +509,7 @@ describe('MenuTrigger', function () {
         jest.runAllTimers();
         let menu = tree.queryByRole('menu');
         expect(menu).toBeNull();
+        expect(document.activeElement).toBe(tree.getByRole('button'));
         cleanup();
       }
     });
@@ -532,6 +537,7 @@ describe('MenuTrigger', function () {
       jest.runAllTimers();
       let menu = tree.queryByRole('menu');
       expect(menu).toBeNull();
+      expect(document.activeElement).toBe(tree.getByRole('button'));
     });
 
     // V3 exclusive
@@ -591,9 +597,51 @@ describe('MenuTrigger', function () {
 
       expect(document.activeElement).toBe(tree.getByTestId('after-input'));
 
-      expect(menu).not.toBeInTheDocument();  
+      expect(menu).not.toBeInTheDocument();
       expect(button).toHaveAttribute('aria-expanded', 'false');
       expect(onOpenChange).toBeCalledTimes(2);
+    });
+
+    it('should have a hidden dismiss button for screen readers', function () {
+      let {getByRole, getAllByRole} = render(
+        <Provider theme={theme}>
+          <MenuTrigger onOpenChange={onOpenChange}>
+            <Button>
+              {triggerText}
+            </Button>
+            <Menu items={withSection} itemKey="name">
+              {item => (
+                <Section items={item.children} title={item.name}>
+                  {item => <Item childItems={item.children}>{item.name}</Item>}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+      );
+  
+      let button = getByRole('button');
+      triggerPress(button);
+      jest.runAllTimers();
+  
+      let menu = getByRole('menu');
+      expect(menu).toBeTruthy();
+      expect(onOpenChange).toBeCalledTimes(1);
+      expect(button).toHaveAttribute('aria-expanded', 'true');
+      
+      let buttons = getAllByRole('button');
+      expect(buttons.length).toBe(3);
+      expect(buttons[1]).toHaveAttribute('aria-label', 'Dismiss');
+      expect(buttons[2]).toHaveAttribute('aria-label', 'Dismiss');
+  
+      fireEvent.click(buttons[1]);
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
+      jest.runAllTimers();
+  
+      expect(menu).not.toBeInTheDocument();
+      expect(button).toHaveAttribute('aria-expanded', 'false');
+      expect(onOpenChange).toBeCalledTimes(2);
+      expect(document.activeElement).toBe(button);
     });
   });
 });

@@ -365,9 +365,9 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.mouseDown(el);
-      fireEvent.mouseUp(el);
-      fireEvent.click(el);
+      fireEvent.mouseDown(el, {detail: 1});
+      fireEvent.mouseUp(el, {detail: 1});
+      fireEvent.click(el, {detail: 1});
 
       expect(events).toEqual([
         {
@@ -426,9 +426,9 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.mouseDown(el);
+      fireEvent.mouseDown(el, {detail: 1});
       fireEvent.mouseLeave(el);
-      fireEvent.mouseUp(document.body);
+      fireEvent.mouseUp(document.body, {detail: 1, clientX: 100, clientY: 100});
       fireEvent.mouseEnter(el);
 
       expect(events).toEqual([
@@ -459,11 +459,11 @@ describe('usePress', function () {
       ]);
 
       events = [];
-      fireEvent.mouseDown(el);
+      fireEvent.mouseDown(el, {detail: 1});
       fireEvent.mouseLeave(el);
       fireEvent.mouseEnter(el);
-      fireEvent.mouseUp(el);
-      fireEvent.click(el);
+      fireEvent.mouseUp(el, {detail: 1});
+      fireEvent.click(el, {detail: 1});
 
       expect(events).toEqual([
         {
@@ -546,9 +546,9 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.mouseDown(el, {metaKey: true});
-      fireEvent.mouseUp(el, {shiftKey: true});
-      fireEvent.click(el);
+      fireEvent.mouseDown(el, {detail: 1, metaKey: true});
+      fireEvent.mouseUp(el, {detail: 1, shiftKey: true});
+      fireEvent.click(el, {detail: 1});
 
       expect(events).toEqual([
         {
@@ -607,9 +607,9 @@ describe('usePress', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent.mouseDown(el, {button: 1});
-      fireEvent.mouseUp(el, {button: 1});
-      fireEvent.click(el, {button: 1});
+      fireEvent.mouseDown(el, {detail: 1, button: 1});
+      fireEvent.mouseUp(el, {detail: 1, button: 1});
+      fireEvent.click(el, {detail: 1, button: 1});
 
       expect(events).toEqual([]);
     });

@@ -18,32 +18,64 @@ import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface MenuItemAria {
+  /** Props for the menu item element */
   menuItemProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the main text element inside the menu item */
   labelProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the description text element inside the menu item, if any */
   descriptionProps: HTMLAttributes<HTMLElement>,
+  
+  /** Props for the keyboard shortcut text element inside the item, if any */
   keyboardShortcutProps: HTMLAttributes<HTMLElement>
 }
 
-interface MenuState<T> extends TreeState<T> {}
-
 interface MenuItemProps {
+  /** Whether the menu item is disabled. */
   isDisabled?: boolean,
+
+  /** Whether the menu item is selected. */
   isSelected?: boolean,
+
+  /** A screen reader only label for the menu item. */
+  'aria-label'?: string,
+
+  /** The unique key for the menu item. */
   key?: Key,
+
+  /** A ref to the menu item element. */
   ref?: RefObject<HTMLElement>,
+
+  /** Handler that is called when the menu should close after selecting an item. */
   onClose?: () => void,
+
+  /** 
+   * Whether the menu should close when the menu item is selected.
+   * @default true
+   */
   closeOnSelect?: boolean,
+
+  /** Whether the menu item is contained in a virtual scrolling menu. */
   isVirtualized?: boolean,
+
+  /** Handler that is called when the user activates the item. */
   onAction?: (key: Key) => void
 }
 
-export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuItemAria {
+/**
+ * Provides the behavior and accessibility implementation for an item in a menu.
+ * See `useMenu` for more details about menus.
+ * @param props - props for the item
+ * @param state - state for the menu, as returned by `useTreeState`
+ */
+export function useMenuItem<T>(props: MenuItemProps, state: TreeState<T>): MenuItemAria {
   let {
     isSelected,
     isDisabled,
     key,
     onClose,
-    closeOnSelect,
+    closeOnSelect = true,
     ref,
     isVirtualized,
     onAction
@@ -63,8 +95,9 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
   let ariaProps = {
     'aria-disabled': isDisabled,
     role,
+    'aria-label': props['aria-label'],
     'aria-labelledby': labelId,
-    'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ')
+    'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ') || undefined
   };
 
   if (state.selectionManager.selectionMode !== 'none') {
@@ -113,13 +146,14 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
     selectionManager: state.selectionManager,
     itemKey: key,
     itemRef: ref,
-    selectOnPressUp: true
+    shouldSelectOnPressUp: true
   });
 
   let {pressProps} = usePress(mergeProps({onPressStart, onPressUp, onKeyDown, isDisabled}, itemProps));
   let {hoverProps} = useHover({
     isDisabled,
     onHover() {
+      state.selectionManager.setFocused(true);
       state.selectionManager.setFocusedKey(key);
     }
   });

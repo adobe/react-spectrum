@@ -172,12 +172,14 @@ a.spectrum-ActionButton {
   }
 
   /* text only buttons should have padding at the start */
-  .spectrum-ActionButton-label:only-child {
+  .spectrum-ActionButton-label:only-child,
+  .spectrum-ActionButton-hold + .spectrum-ActionButton-label:last-child {
     padding-inline-start: var(--spectrum-actionbutton-text-padding-x);
   }
 
   /* icon only buttons should have padding at the end */
-  .spectrum-Icon:only-child {
+  .spectrum-Icon:only-child,
+  .spectrum-ActionButton-hold + .spectrum-Icon:last-child {
     padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
   }
 }

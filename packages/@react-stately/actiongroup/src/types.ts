@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionGroupCollection} from './';
+import {Collection, Node} from '@react-stately/collections';
 import {SelectionManager} from '@react-stately/selection';
 
 export interface ActionGroupState<T> {
-  collection: ActionGroupCollection<T>,
+  collection: Collection<Node<T>>,
   selectionManager: SelectionManager
 }

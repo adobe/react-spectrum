@@ -60,16 +60,19 @@ governing permissions and limitations under the License.
 .spectrum-Dropdown-label {
   &.is-placeholder {
     color: var(--spectrum-dropdown-placeholder-text-color);
-
-    &:hover {
-      color: var(--spectrum-dropdown-placeholder-text-color-hover);
-    }
-
-    &:active {
-      color: var(--spectrum-dropdown-placeholder-text-color-mouse-focus);
-    }
   }
 }
+
+.spectrum-Dropdown-trigger {
+  &:hover .spectrum-Dropdown-label {
+    color: var(--spectrum-dropdown-placeholder-text-color-hover);
+  }
+
+  &:active .spectrum-Dropdown-label {
+    color: var(--spectrum-dropdown-placeholder-text-color-mouse-focus);
+  }
+}
+
 .spectrum-Dropdown-trigger.focus-ring {
   .spectrum-Dropdown-label.is-placeholder {
     color: var(--spectrum-dropdown-placeholder-text-color-key-focus);

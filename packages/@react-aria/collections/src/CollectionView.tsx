@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from '@react-aria/utils';
+import {chain, focusWithoutScrolling} from '@react-aria/utils';
 import {Collection, Layout} from '@react-stately/collections';
 import {CollectionItem} from './CollectionItem';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
@@ -29,11 +29,12 @@ interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLEl
   layout: Layout<T>,
   collection: Collection<T>,
   focusedKey?: Key,
-  sizeToFit?: 'width' | 'height'
+  sizeToFit?: 'width' | 'height',
+  scrollDirection?: 'horizontal' | 'vertical' | 'both'
 }
 
 function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, ref: RefObject<HTMLDivElement>) {
-  let {children: renderView, renderWrapper, layout, collection, focusedKey, sizeToFit, ...otherProps} = props;
+  let {children: renderView, renderWrapper, layout, collection, focusedKey, sizeToFit, scrollDirection, ...otherProps} = props;
   let {
     visibleViews,
     visibleRect,
@@ -84,7 +85,7 @@ function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, r
   let focusedView = collectionManager.getItemView(focusedKey);
   useEffect(() => {
     if (focusedKey && !focusedView && isFocusWithin.current && document.activeElement !== ref.current) {
-      ref.current.focus();
+      focusWithoutScrolling(ref.current);
     }
   });
   
@@ -101,7 +102,8 @@ function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, r
       onVisibleRectChange={setVisibleRect}
       onScrollStart={startScrolling}
       onScrollEnd={endScrolling}
-      sizeToFit={sizeToFit}>
+      sizeToFit={sizeToFit}
+      scrollDirection={scrollDirection}>
       {visibleViews}
     </ScrollView>
   );

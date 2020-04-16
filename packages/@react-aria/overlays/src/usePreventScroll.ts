@@ -16,9 +16,12 @@ export function usePreventScroll() {
   // Add overflow: hidden to the body on mount, and restore on unmount.
   useEffect(() => {
     let overflow = document.body.style.overflow;
+    let paddingRight = document.body.style.paddingRight;
+    document.body.style.paddingRight = window.innerWidth - document.documentElement.clientWidth + 'px';
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = overflow;
+      document.body.style.paddingRight = paddingRight;
     };
   }, []);
 }

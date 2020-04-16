@@ -17,7 +17,7 @@ import {useTextField} from '../';
 describe('useTextField hook', () => {
   let renderTextFieldHook = (props) => {
     let {result} = renderHook(() => useTextField(props));
-    return result.current.textFieldProps;
+    return result.current.inputProps;
   };
 
   describe('should return textFieldProps', () => {
@@ -70,14 +70,6 @@ describe('useTextField hook', () => {
 
       props = renderTextFieldHook({validationState: 'valid', 'aria-label': 'mandatory label'});
       expect(props['aria-invalid']).toBeUndefined();
-    });
-
-    it('with appropriate props if autoFocus is defined', () => {
-      let props = renderTextFieldHook({autoFocus: true, 'aria-label': 'mandatory label'});
-      expect(props.autoFocus).toBeTruthy();
-
-      props = renderTextFieldHook({autoFocus: false, 'aria-label': 'mandatory label'});
-      expect(props.autoFocus).toBeFalsy();
     });
 
     it('with an onChange that calls user specified onChange with appropriate values', () => {

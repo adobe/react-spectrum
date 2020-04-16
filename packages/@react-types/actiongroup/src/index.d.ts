@@ -10,15 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, ItemElement, ItemRenderer, MultipleSelection, StyleProps} from '@react-types/shared';
+import {DOMProps, ItemElement, ItemRenderer, MultipleSelection, Orientation, StyleProps} from '@react-types/shared';
+import {Key} from 'react';
 
+// Not extending CollectionBase to avoid async loading props
 export interface ActionGroupProps<T> extends DOMProps, StyleProps, MultipleSelection {
   /**
    * The axis the ActionGroup should align with.
    * @default 'horizontal'
    */
-  orientation?: 'horizontal' | 'vertical',
+  orientation?: Orientation,
   children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>,
+  items?: Iterable<T>,
+  itemKey?: string,
+  disabledKeys?: Iterable<Key>,
   /**
    * Whether the ActionGroup is disabled or not.
    * Shows that a selection exists, but is not available in that circumstance.
@@ -36,7 +41,5 @@ export interface SpectrumActionGroupProps<T> extends ActionGroupProps<T> {
   /** Whether ActionButtons should use the [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
   isQuiet?: boolean,
   /** Whether the ActionButtons should be displayed with a [hold icon](https://spectrum.adobe.com/page/action-button/#Hold-icon). */
-  holdAffordance?: boolean,
-   /** Called when an item is acted upon (usually selection via press). */
-  onSelectionChange?: (...args) => void
+  holdAffordance?: boolean
 }

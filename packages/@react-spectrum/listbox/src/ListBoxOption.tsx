@@ -11,7 +11,7 @@
  */
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {ListState} from '@react-stately/list';
@@ -25,16 +25,17 @@ import {useRef} from 'react';
 interface OptionProps<T> {
   item: Node<T>,
   state: ListState<T>,
-  selectOnPressUp?: boolean,
-  focusOnHover?: boolean
+  shouldSelectOnPressUp?: boolean,
+  shouldFocusOnHover?: boolean
 }
 
+/** @private */
 export function ListBoxOption<T>(props: OptionProps<T>) {
   let {
     item,
     state,
-    selectOnPressUp,
-    focusOnHover
+    shouldSelectOnPressUp,
+    shouldFocusOnHover
   } = props;
 
   let {
@@ -49,10 +50,11 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     {
       isSelected,
       isDisabled,
+      'aria-label': item['aria-label'],
       key,
       ref,
-      selectOnPressUp,
-      focusOnHover: focusOnHover,
+      shouldSelectOnPressUp,
+      shouldFocusOnHover,
       isVirtualized: true
     },
     state
@@ -82,23 +84,25 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
               styles,
               'spectrum-Menu-itemGrid'
             )
-          }
-          slots={{
-            text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
-            icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
-            description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps}
-          }}>
-          {contents}
-          {isSelected && 
-            <CheckmarkMedium
-              slot="checkmark"
-              UNSAFE_className={
-                classNames(
-                  styles, 
-                  'spectrum-Menu-checkmark'
-                )
-              } />
-          }
+          }>
+          <SlotProvider
+            slots={{
+              text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
+              icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
+              description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps}
+            }}>
+            {contents}
+            {isSelected && 
+              <CheckmarkMedium
+                slot="checkmark"
+                UNSAFE_className={
+                      classNames(
+                        styles, 
+                        'spectrum-Menu-checkmark'
+                      )
+                    } />
+                }
+          </SlotProvider>
         </Grid>
       </div>
     </FocusRing>

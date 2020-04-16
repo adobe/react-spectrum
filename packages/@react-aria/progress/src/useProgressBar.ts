@@ -10,22 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
 import {clamp} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
+import {HTMLAttributes} from 'react';
 import {ProgressBarProps} from '@react-types/progress';
 import {useLabel} from '@react-aria/label';
 import {useNumberFormatter} from '@react-aria/i18n';
 
 interface ProgressBarAria {
-  progressBarProps: AllHTMLAttributes<HTMLDivElement>,
-  labelProps: AllHTMLAttributes<HTMLLabelElement>
+  /** Props for the progress bar container element. */
+  progressBarProps: HTMLAttributes<HTMLElement>,
+  /** Props for the progress bar's visual label element (if any). */
+  labelProps: HTMLAttributes<HTMLElement>
 }
 
 interface ProgressBarAriaProps extends ProgressBarProps, DOMProps {
   textValue?: string
 }
 
+/**
+ * Provides the accessibility implementation for a progress bar component.
+ * Progress bars show either determinate or indeterminate progress of an operation
+ * over time.
+ */
 export function useProgressBar(props: ProgressBarAriaProps): ProgressBarAria {
   let {
     value = 0,
@@ -40,7 +47,7 @@ export function useProgressBar(props: ProgressBarAriaProps): ProgressBarAria {
 
   let {labelProps, fieldProps} = useLabel({
     ...props,
-    // Progress bar is not an HTML input element so it 
+    // Progress bar is not an HTML input element so it
     // shouldn't be labeled by a <label> element.
     labelElementType: 'span'
   });

@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/checkbox",
-  "version": "3.0.0-rc.1",
+  "version": "3.0.0-rc.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -29,20 +29,19 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/checkbox": "^3.0.0-rc.1",
-    "@react-aria/focus": "^3.0.0-rc.1",
-    "@react-spectrum/utils": "^3.0.0-rc.1",
-    "@react-stately/toggle": "^3.0.0-rc.1",
-    "@react-types/checkbox": "^3.0.0-rc.1",
-    "@react-types/shared": "^3.0.0-rc.1",
-    "@spectrum-icons/ui": "^3.0.0-rc.1"
+    "@react-aria/checkbox": "^3.0.0-rc.2",
+    "@react-aria/focus": "^3.0.0-rc.2",
+    "@react-spectrum/utils": "^3.0.0-rc.2",
+    "@react-stately/toggle": "^3.0.0-rc.2",
+    "@react-types/checkbox": "^3.0.0-rc.2",
+    "@react-types/shared": "^3.0.0-rc.2",
+    "@spectrum-icons/ui": "^3.0.0-rc.2"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.2"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0",
-    "react-dom": "^16.8.0",
     "@react-spectrum/provider": "^3.0.0-rc.1"
   },
   "publishConfig": {

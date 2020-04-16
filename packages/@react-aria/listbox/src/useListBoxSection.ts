@@ -10,28 +10,49 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes} from 'react';
+import {HTMLAttributes, ReactNode} from 'react';
 import {useId} from '@react-aria/utils';
 
+interface ListBoxSectionProps {
+  heading?: ReactNode,
+  'aria-label'?: string
+}
+
 interface ListBoxSectionAria {
+  /** Props for the wrapper list item. */
+  itemProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the heading element, if any. */
   headingProps: HTMLAttributes<HTMLElement>,
+  
+  /** Props for the group element. */
   groupProps: HTMLAttributes<HTMLElement>
 }
 
-export function useListBoxSection(): ListBoxSectionAria {
+/**
+ * Provides the behavior and accessibility implementation for a section in a listbox.
+ * See `useListBox` for more details about listboxes.
+ * @param props - props for the section
+ */
+export function useListBoxSection(props: ListBoxSectionProps): ListBoxSectionAria {
+  let {heading, 'aria-label': ariaLabel} = props;
   let headingId = useId();
 
   return {
-    headingProps: {
+    itemProps: {
+      role: 'presentation'
+    },
+    headingProps: heading ? {
       // Techincally, listbox cannot contain headings according to ARIA.
       // We hide the heading from assistive technology, and only use it
       // as a label for the nested group.
       id: headingId,
       'aria-hidden': true
-    },
+    } : {},
     groupProps: {
       role: 'group',
-      'aria-labelledby': headingId
+      'aria-label': ariaLabel,
+      'aria-labelledby': heading ? headingId : undefined
     }
   };
 }

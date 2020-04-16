@@ -24,9 +24,8 @@ interface SelectableListOptions {
   collection: Collection<Node<unknown>>,
   ref?: RefObject<HTMLElement>,
   keyboardDelegate?: KeyboardDelegate,
-  autoFocus?: boolean,
-  focusStrategy?: FocusStrategy,
-  wrapAround?: boolean,
+  autoFocus?: boolean | FocusStrategy,
+  shouldFocusWrap?: boolean,
   isVirtualized?: boolean,
   disallowEmptySelection?: boolean
 }
@@ -42,8 +41,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     ref,
     keyboardDelegate,
     autoFocus,
-    focusStrategy,
-    wrapAround,
+    shouldFocusWrap,
     isVirtualized,
     disallowEmptySelection
   } = props;
@@ -57,23 +55,51 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
   // When virtualized, CollectionView handles this internally.
   useEffect(() => {
     if (!isVirtualized && selectionManager.focusedKey) {
-      let element = ref.current.querySelector(`[data-key="${selectionManager.focusedKey}"]`);
+      let element = ref.current.querySelector(`[data-key="${selectionManager.focusedKey}"]`) as HTMLElement;
       if (element) {
-        element.scrollIntoView({block: 'nearest'});
+        scrollIntoView(ref.current, element);
       }
     }
   }, [isVirtualized, ref, selectionManager.focusedKey]);
 
   let {collectionProps} = useSelectableCollection({
+    ref,
     selectionManager,
     keyboardDelegate: delegate,
     autoFocus,
-    focusStrategy,
-    wrapAround,
+    shouldFocusWrap,
     disallowEmptySelection
   });
 
   return {
     listProps: collectionProps
   };
+}
+
+// Scrolls `scrollView` so that `element` is visible.
+// Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
+// but doesn't affect parents above `scrollView`.
+function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
+  let offsetX = element.offsetLeft - scrollView.offsetLeft;
+  let offsetY = element.offsetTop - scrollView.offsetTop;
+  let width = element.offsetWidth;
+  let height = element.offsetHeight;
+  let x = scrollView.scrollLeft;
+  let y = scrollView.scrollTop;
+  let maxX = x + scrollView.offsetWidth;
+  let maxY = y + scrollView.offsetHeight;
+
+  if (offsetX <= x) {
+    x = offsetX;
+  } else if (offsetX + width > maxX) {
+    x += offsetX + width - maxX;
+  }
+  if (offsetY <= y) {
+    y = offsetY;
+  } else if (offsetY + height > maxY) {
+    y += offsetY + height - maxY;
+  }
+
+  scrollView.scrollLeft = x;
+  scrollView.scrollTop = y;
 }

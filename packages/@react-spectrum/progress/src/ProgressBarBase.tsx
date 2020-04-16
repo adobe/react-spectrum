@@ -11,7 +11,7 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {ProgressBarProps} from '@react-types/progress';
 import React, {CSSProperties, HTMLAttributes} from 'react';
@@ -26,7 +26,6 @@ interface ProgressBarBaseProps extends SpectrumProgressBarBaseProps, ProgressBar
 
 // Base ProgressBar component shared with Meter.
 function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement>) {
-  props = useSlotProps(props);
   let {
     value = 0,
     minValue = 0,

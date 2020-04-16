@@ -11,7 +11,7 @@
  */
 
 import {DOMProps} from '@react-types/shared';
-import {InputHTMLAttributes} from 'react';
+import {InputHTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {SwitchProps} from '@react-types/switch';
 import {ToggleState} from '@react-stately/toggle';
@@ -22,9 +22,8 @@ export interface ToggleAria {
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-export function useToggle(props: SwitchProps & DOMProps, state: ToggleState): ToggleAria {
+export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref: RefObject<HTMLElement>): ToggleAria {
   let {
-    autoFocus = false,
     isDisabled = false,
     isRequired,
     isReadOnly,
@@ -54,7 +53,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState): To
     isDisabled
   });
 
-  let {focusableProps} = useFocusable(props);
+  let {focusableProps} = useFocusable(props, ref);
   let interactions = mergeProps(pressProps, focusableProps);
 
   return {
@@ -68,7 +67,6 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState): To
       value,
       name,
       type: 'checkbox',
-      autoFocus,
       ...interactions
     }
   };

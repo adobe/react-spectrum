@@ -16,9 +16,8 @@ import React, {HTMLAttributes, MutableRefObject, useContext} from 'react';
 export interface MenuContextValue extends HTMLAttributes<HTMLElement> {
   onClose?: () => void,
   closeOnSelect?: boolean,
-  focusStrategy?: FocusStrategy,
-  wrapAround?: boolean,
-  autoFocus?: boolean,
+  shouldFocusWrap?: boolean,
+  autoFocus?: boolean | FocusStrategy,
   ref?: MutableRefObject<HTMLUListElement>
 }
 

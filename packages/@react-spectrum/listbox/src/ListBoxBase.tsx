@@ -29,22 +29,23 @@ import {useProvider} from '@react-spectrum/provider';
 interface ListBoxBaseProps<T> extends DOMProps, StyleProps {
   layout: ListLayout<T>,
   state: ListState<T>,
-  autoFocus?: boolean,
-  focusStrategy?: FocusStrategy,
-  wrapAround?: boolean,
-  selectOnPressUp?: boolean,
+  autoFocus?: boolean | FocusStrategy,
+  shouldFocusWrap?: boolean,
+  shouldSelectOnPressUp?: boolean,
   focusOnPointerEnter?: boolean,
   domProps?: HTMLAttributes<HTMLElement>,
   disallowEmptySelection?: boolean
 }
 
+/** @private */
 export function useListBoxLayout<T>(state: ListState<T>) {
   let {scale} = useProvider();
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() =>
-    new ListLayout({
+    new ListLayout<T>({
       estimatedRowHeight: scale === 'large' ? 48 : 35,
       estimatedHeadingHeight: scale === 'large' ? 37 : 30,
+      padding: scale === 'large' ? 5 : 4, // TODO: get from DNA
       collator
     })
   , [collator, scale]);
@@ -53,11 +54,13 @@ export function useListBoxLayout<T>(state: ListState<T>) {
   return layout;
 }
 
+/** @private */
 function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
-  let {layout, state, selectOnPressUp, focusOnPointerEnter, domProps = {}} = props;
+  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, domProps = {}} = props;
   let {listBoxProps} = useListBox({
     ...props,
     ...domProps,
+    ref,
     keyboardDelegate: layout,
     isVirtualized: true
   }, state);
@@ -95,6 +98,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
       ref={ref}
       focusedKey={state.selectionManager.focusedKey}
       sizeToFit="height"
+      scrollDirection="vertical"
       className={
         classNames(
           styles,
@@ -111,8 +115,8 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
             <ListBoxOption
               item={item}
               state={state}
-              selectOnPressUp={selectOnPressUp}
-              focusOnHover={focusOnPointerEnter} />
+              shouldSelectOnPressUp={shouldSelectOnPressUp}
+              shouldFocusOnHover={focusOnPointerEnter} />
           );
         }
       }}

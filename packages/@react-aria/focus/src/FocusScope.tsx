@@ -17,9 +17,22 @@ import React, {ReactNode, RefObject, useContext, useEffect, useLayoutEffect, use
 // export {FocusScope};
 
 interface FocusScopeProps {
+  /** The contents of the focus scope. */
   children: ReactNode,
+
+  /** 
+   * Whether to contain focus inside the scope, so users cannot 
+   * move focus outside, for example in a modal dialog.
+   */
   contain?: boolean,
+
+  /**
+   * Whether to restore focus back to the element that was focused
+   * when the focus scope mounted, after the focus scope unmounts.
+   */
   restoreFocus?: boolean,
+
+  /** Whether to auto focus the first focusable element in the focus scope on mount. */
   autoFocus?: boolean
 }
 
@@ -43,6 +56,14 @@ let scopes: Set<RefObject<HTMLElement[]>> = new Set();
 // https://github.com/reactjs/rfcs/pull/109
 // For now, it relies on the DOM tree order rather than the React tree order, and is probably
 // less optimized for performance.
+
+/**
+ * A FocusScope manages focus for its descendants. It supports containing focus inside
+ * the scope, restoring focus to the previously focused element on unmount, and auto
+ * focusing children on mount. It also acts as a container for a programmatic focus
+ * management interface that can be used to move focus forward and back in response
+ * to user events.
+ */
 export function FocusScope(props: FocusScopeProps) {
   let {children, contain, restoreFocus, autoFocus} = props;
   let startRef = useRef<HTMLSpanElement>();
@@ -133,10 +154,10 @@ const focusableElements = [
   '[contenteditable]'
 ];
 
-export const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(',') + ',[tabindex]';
+const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(',') + ',[tabindex]';
 
 focusableElements.push('[tabindex]:not([tabindex="-1"])');
-export const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([tabindex="-1"]),');
+const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([tabindex="-1"]),');
 
 function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOptions): HTMLElement[] {
   let res = [];
@@ -219,7 +240,10 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       if (!isInAnyScope) {
         activeScope = scopeRef;
         focusedNode.current = e.target;
-        focusedNode.current.focus();
+        // Firefox doesn't shift focus back to the Dialog properly without this 
+        requestAnimationFrame(() => {
+          focusedNode.current.focus();
+        });
       }
     };
 

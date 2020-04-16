@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
+import {HTMLAttributes} from 'react';
 import {Orientation} from '@react-types/shared';
 
 export interface SeparatorProps {
@@ -19,7 +19,7 @@ export interface SeparatorProps {
 }
 
 export interface SeparatorAria {
-  separatorProps: AllHTMLAttributes<HTMLElement>
+  separatorProps: HTMLAttributes<HTMLElement>
 }
 
 export function useSeparator(props: SeparatorProps): SeparatorAria {

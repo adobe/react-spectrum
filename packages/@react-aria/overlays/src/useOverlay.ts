@@ -10,29 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, ButtonHTMLAttributes, RefObject, useEffect} from 'react';
-import intlMessages from '../intl/*.json';
-import {useInteractOutside} from '@react-aria/interactions';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {HTMLAttributes, RefObject, useEffect} from 'react';
+import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
 interface OverlayProps {
   ref: RefObject<HTMLElement | null>,
   onClose?: () => void,
   isOpen?: boolean,
   // Whether to close overlay if underlay is clicked
-  isDismissable?: boolean
+  isDismissable?: boolean,
+  shouldCloseOnBlur?: boolean
 }
 
 interface OverlayAria {
-  overlayProps: AllHTMLAttributes<HTMLElement>,
-  dismissButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
+  overlayProps: HTMLAttributes<HTMLElement>
 }
 
 const visibleOverlays: RefObject<HTMLElement>[] = [];
 
 export function useOverlay(props: OverlayProps): OverlayAria {
-  let {ref, onClose, isOpen, isDismissable = false} = props;
-  
+  let {ref, onClose, shouldCloseOnBlur, isOpen, isDismissable = false} = props;
+
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {
     if (isOpen) {
@@ -65,18 +63,17 @@ export function useOverlay(props: OverlayProps): OverlayAria {
   // Handle clicking outside the overlay to close it
   useInteractOutside({ref, onInteractOutside: isDismissable ? onHide : null});
 
-  let formatMessage = useMessageFormatter(intlMessages);
+  let {focusWithinProps} = useFocusWithin({
+    isDisabled: !shouldCloseOnBlur,
+    onBlurWithin: () => {
+      onClose();
+    }
+  });
 
   return {
     overlayProps: {
-      onKeyDown
-    },
-    dismissButtonProps: isDismissable ? {
-      tabIndex: -1,
-      'aria-label': formatMessage('dismiss'),
-      onClick() {
-        onHide();
-      }
-    } : {}
+      onKeyDown,
+      ...focusWithinProps
+    }
   };
 }

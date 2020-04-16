@@ -144,6 +144,7 @@ export class CollectionBuilder<T> {
       level: parentNode ? parentNode.level + 1 : 0,
       rendered: partialNode.rendered,
       textValue: partialNode.textValue,
+      'aria-label': partialNode['aria-label'],
       wrapper: partialNode.wrapper,
       hasChildNodes: partialNode.hasChildNodes,
       childNodes: iterable(function *() {
@@ -180,7 +181,7 @@ function shallowEqual<T>(a: T, b: T) {
 }
 
 type Wrapper = (element: ReactElement) => ReactElement;
-function compose(outer: Wrapper | void, inner: Wrapper | void): Wrapper | void {
+function compose(outer: Wrapper | void, inner: Wrapper | void): Wrapper {
   if (outer && inner) {
     return (element) => outer(inner(element));
   }
