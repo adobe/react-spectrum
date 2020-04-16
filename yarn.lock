@@ -3479,35 +3479,6 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
-"@react/collection-view@^4.1.5":
-  version "4.1.5"
-  resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/@react/collection-view/-/@react/collection-view-4.1.5.tgz#17034aab37f9cdb91a479b5096d900914ae08ca2"
-  integrity sha1-FwNKqzf5zbkaR5tQltkAkUrgjKI=
-  dependencies:
-    raf "^3.4.0"
-
-"@react/react-spectrum-icons@^2.1.0":
-  version "2.2.0"
-  resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/@react/react-spectrum-icons/-/@react/react-spectrum-icons-2.2.0.tgz#e848f5470ea42b4e825d32a127623d01f964b914"
-  integrity sha1-6Ej1Rw6kK06CXTKhJ2I9AflkuRQ=
-
-"@react/react-spectrum@^2.26.1":
-  version "2.26.1"
-  resolved "https://artifactory-uw2.adobeitc.com/artifactory/api/npm/npm-react-release/@react/react-spectrum/-/@react/react-spectrum-2.26.1.tgz#38dbe2c3c41da6453152243774b37a199fefc931"
-  integrity sha1-ONviw8QdpkUxUiQ3dLN6GZ/vyTE=
-  dependencies:
-    "@react/collection-view" "^4.1.5"
-    autobind-decorator "^1.4.0"
-    classnames "^2.2.5"
-    dom-helpers "^3.3.1"
-    intl-messageformat "^2.2.0"
-    moment "^2.15.1"
-    moment-range "^3.0.3"
-    prop-types "^15.6.0"
-    react-overlays "0.8.3"
-    react-transition-group "^2.2.0"
-    semver-compare "^1.0.0"
-
 "@sheerun/mutationobserver-shim@^0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@sheerun/mutationobserver-shim/-/mutationobserver-shim-0.3.2.tgz#8013f2af54a2b7d735f71560ff360d3a8176a87b"
@@ -5353,11 +5324,6 @@ atob@^2.1.1, atob@^2.1.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
-
-autobind-decorator@^1.4.0:
-  version "1.4.3"
-  resolved "https://registry.yarnpkg.com/autobind-decorator/-/autobind-decorator-1.4.3.tgz#4c96ffa77b10622ede24f110f5dbbf56691417d1"
-  integrity sha1-TJb/p3sQYi7eJPEQ9du/VmkUF9E=
 
 autoprefixer@^6.5.3:
   version "6.7.7"
@@ -8846,7 +8812,7 @@ es6-shim@^0.35.5:
   resolved "https://registry.yarnpkg.com/es6-shim/-/es6-shim-0.35.5.tgz#46f59dc0a84a1c5029e8ff1166ca0a902077a9ab"
   integrity sha512-E9kK/bjtCQRpN1K28Xh4BlmP8egvZBGJJ+9GtnzOwt7mdqtrjHFuVGr7QJfdjBIKqrlU5duPf3pCBoDrkjVYFg==
 
-es6-symbol@^3.1.0, es6-symbol@^3.1.1, es6-symbol@~3.1.1:
+es6-symbol@^3.1.1, es6-symbol@~3.1.1:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/es6-symbol/-/es6-symbol-3.1.2.tgz#859fdd34f32e905ff06d752e7171ddd4444a7ed1"
   integrity sha512-/ZypxQsArlv+KHpGvng52/Iz8by3EQPxhmbuz8yFG89N/caTFBSbcXONDw0aMjy827gQg26XAjP4uXFvnfINmQ==
@@ -14325,14 +14291,7 @@ modify-values@^1.0.0:
   resolved "https://registry.yarnpkg.com/modify-values/-/modify-values-1.0.1.tgz#b3939fa605546474e3e3e3c63d64bd43b4ee6022"
   integrity sha512-xV2bxeN6F7oYjZWTe/YPAy6MN2M+sL4u/Rlm2AHCIVGfo2p1yGmBHQ6vHehl4bRTZBdHu3TSkWdYgkwpYzAGSw==
 
-moment-range@^3.0.3:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/moment-range/-/moment-range-3.1.1.tgz#5c52cf9fab29db9dd9bcd86d37e52b04a7a7271a"
-  integrity sha1-XFLPn6sp253ZvNhtN+UrBKenJxo=
-  dependencies:
-    es6-symbol "^3.1.0"
-
-moment@^2.15.1, moment@^2.18.1:
+moment@^2.18.1:
   version "2.24.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
   integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
@@ -18433,11 +18392,6 @@ select@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/select/-/select-1.1.2.tgz#0e7350acdec80b1108528786ec1d4418d11b396d"
   integrity sha1-DnNQrN7ICxEIUoeG7B1EGNEbOW0=
-
-semver-compare@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/semver-compare/-/semver-compare-1.0.0.tgz#0dee216a1c941ab37e9efb1788f6afc5ff5537fc"
-  integrity sha1-De4hahyUGrN+nvsXiPavxf9VN/w=
 
 semver-diff@^2.0.0:
   version "2.1.0"
