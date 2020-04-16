@@ -192,7 +192,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
 
 
   // Logic for what should be rendered in the TextField
-  // Think about where to put this and whether or not to 
+  // Think about where to put this and whether or not to
   let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
   if (selectedItem) {
     let itemText = selectedItem.textValue || selectedItem.rendered;
@@ -200,11 +200,11 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
     // TODO: logic on whether or not to take the selectedItem value over the current value (check if controlled or not)
     // TODO: all other logic
 
-    
+
     // Throw error if controlled inputValue and controlled selectedKey don't match
     if (props.inputValue && props.selectedKey && (props.inputValue !== itemText)) {
       throw new Error('Mismatch between selected item and inputValue!')
-    } 
+    }
 
     // Update textfield value if new item is selected
     if (itemText !== state.value) {
@@ -220,80 +220,63 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   // Figure out why textfield doesn't recieve aria-autocomplete
 
   let textField = (
-    // Ask if label is optional for combobox (and thus the below div wrapper + label is optional). Can do something like what picker does if so
-    <div
-      // Should dom props and dom ref go on this wrapper div or on the top
-      {...filterDOMProps(props)}
-      {...styleProps}
-      // Maybe dom ref goes on the Textfield and we set inputRef above equal to it?
-      ref={domRef}
-      className={
-        classNames(
-          labelStyles,
-          'spectrum-Field',
-          {
-            'spectrum-Field--positionTop': labelPosition === 'top',
-            'spectrum-Field--positionSide': labelPosition === 'side'
-          }
-        )
-      }>
-      <FocusRing
-        // Should this have within
-        within
-        isTextInput
-        focusClass={classNames(styles, 'is-focused')}
-        focusRingClass={classNames(styles, 'focus-ring')}
-        autoFocus={autoFocus}>
-        <div
-          className={
+    <FocusRing
+      // Should this have within
+      within
+      isTextInput
+      focusClass={classNames(styles, 'is-focused')}
+      focusRingClass={classNames(styles, 'focus-ring')}
+      autoFocus={autoFocus}>
+      <div
+        className={
+          classNames(
+            styles,
+            'spectrum-InputGroup',
+            {
+              'spectrum-InputGroup--quiet': isQuiet,
+              'is-disabled': isDisabled,
+              'is-invalid': validationState === 'invalid'
+            },
+            styleProps.className
+          )
+        }
+        styles={{width: '100%'}}>
+        <TextFieldBase
+          {...inputProps}
+          ref={inputRef}
+          inputClassName={
             classNames(
               styles,
-              'spectrum-InputGroup',
-              {
-                'spectrum-InputGroup--quiet': isQuiet,
-                'is-disabled': isDisabled,
-                'is-invalid': validationState === 'invalid'
-              },
-              styleProps.className
+              'spectrum-InputGroup-field',
+              classNames(labelStyles, 'spectrum-Field-field')
             )
-          }>
-          <TextFieldBase
-            {...inputProps}
-            ref={inputRef}
-            inputClassName={
-              classNames(
-                styles,
-                'spectrum-InputGroup-field',
-                classNames(labelStyles, 'spectrum-Field-field')
-              )
-            }
-            isDisabled={isDisabled}
-            isReadOnly={isReadOnly}
-            isQuiet={isQuiet}
-            value={state.value}
-            validationState={validationState}
-            autoFocus={autoFocus}
-            width={width}
-            placeholder={placeholder} />
-          <FieldButton
-            {...triggerProps}
-            ref={triggerRef}
-            UNSAFE_className={
-              classNames(
-                styles,
-                'spectrum-FieldButton'
-              )
-            }
-            // Disable if readOnly?
-            isDisabled={isDisabled || isReadOnly}
-            isQuiet={isQuiet}
-            validationState={validationState}>
-            <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
-          </FieldButton>
-          {overlay}
-        </div>
-      </FocusRing>
-    </div>
+          }
+          isDisabled={isDisabled}
+          isReadOnly={isReadOnly}
+          isQuiet={isQuiet}
+          value={state.value}
+          validationState={validationState}
+          autoFocus={autoFocus}
+          width={width}
+          placeholder={placeholder} />
+        <FieldButton
+          {...triggerProps}
+          ref={triggerRef}
+          UNSAFE_className={
+            classNames(
+              styles,
+              'spectrum-FieldButton'
+            )
+          }
+          // Disable if readOnly?
+          isDisabled={isDisabled || isReadOnly}
+          isQuiet={isQuiet}
+          validationState={validationState}>
+          <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
+        </FieldButton>
+        {overlay}
+      </div>
+    </FocusRing>
   );
 
   if (props.label) {
