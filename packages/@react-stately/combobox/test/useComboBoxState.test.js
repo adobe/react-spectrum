@@ -27,8 +27,8 @@ describe('useComboBoxState tests', function () {
       defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>, onOpenChange};
     });
     it('should be closed by default', function () {
-      let props = defaultProps;
-      let {result} = renderHook(() => useComboBoxState(props), {initialProps: props});
+      let initialProps = defaultProps;
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
       expect(result.current.isOpen).toBe(false);
 
       act(() => result.current.open());
@@ -41,8 +41,8 @@ describe('useComboBoxState tests', function () {
     });
 
     it('should be set open by default if defaultOpen is true', function () {
-      let props = {...defaultProps, defaultOpen: true};
-      let {result} = renderHook(() => useComboBoxState(props), {initialProps: props});
+      let initialProps = {...defaultProps, defaultOpen: true};
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
       expect(result.current.isOpen).toBe(true);
 
       act(() => result.current.close());
@@ -51,8 +51,8 @@ describe('useComboBoxState tests', function () {
     });
 
     it('open should be a controllable value',   function () {
-      let props = {...defaultProps, isOpen: true};
-      let {result, rerender} = renderHook(() => useComboBoxState(props), {initialProps: props});
+      let initialProps = {...defaultProps, isOpen: true};
+      let {result, rerender} = renderHook((props) => useComboBoxState(props), {initialProps});
       expect(result.current.isOpen).toBe(true);
 
       act(() => result.current.close());
@@ -78,14 +78,14 @@ describe('useComboBoxState tests', function () {
     });
 
     it('can have a default value', function () {
-      let props = {...defaultProps, defaultInputValue: 'hello'};
-      let {result} = renderHook(() => useComboBoxState(props), {initialProps: props});
+      let initialProps = {...defaultProps, defaultInputValue: 'hello'};
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
       expect(result.current.value).toBe('hello');
     });
 
     it('fires an event when the value is changed and updates if uncontrolled', function () {
-      let props = {...defaultProps, defaultInputValue: 'hello'};
-      let {result} = renderHook(() => useComboBoxState(props), {initialProps: props});
+      let initialProps = {...defaultProps, defaultInputValue: 'hello'};
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
       expect(result.current.value).toBe('hello');
       expect(onInputChange).not.toHaveBeenCalled();
       act(() => result.current.setValue('hellow'));
@@ -94,8 +94,8 @@ describe('useComboBoxState tests', function () {
     });
 
     it('starts blank if no (default) value', function () {
-      let props = {...defaultProps};
-      let {result} = renderHook(() => useComboBoxState(props), {initialProps: props});
+      let initialProps = {...defaultProps};
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
       expect(result.current.value).toBe('');
       expect(onInputChange).not.toHaveBeenCalled();
       act(() => result.current.setValue('h'));
@@ -104,8 +104,8 @@ describe('useComboBoxState tests', function () {
     });
 
     it('can be controlled', function () {
-      let props = {...defaultProps, inputValue: 'hello'};
-      let {result} = renderHook(() => useComboBoxState(props), {initialProps: props});
+      let initialProps = {...defaultProps, inputValue: 'hello'};
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
       expect(result.current.value).toBe('hello');
       expect(onInputChange).not.toHaveBeenCalled();
       act(() => result.current.setValue('hellow'));
@@ -123,8 +123,8 @@ describe('useComboBoxState tests', function () {
     });
 
     it('support selectedKey', function () {
-      let props = {...defaultProps, selectedKey: '0'};
-      let {result} = renderHook(() => useComboBoxState(props), {initialProps: props});
+      let initialProps = {...defaultProps, selectedKey: '0'};
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
       expect(result.current.selectionManager.selectionMode).toBe('single');
       expect(result.current.selectionManager.selectedKeys).toContain('0');
       expect(result.current.selectionManager.selectedKeys).not.toContain('1');
@@ -136,8 +136,8 @@ describe('useComboBoxState tests', function () {
     });
 
     it('support defaultSelectedKey', function () {
-      let props = {...defaultProps, defaultSelectedKey: '0'};
-      let {result} = renderHook(() => useComboBoxState(props), {initialProps: props});
+      let initialProps = {...defaultProps, defaultSelectedKey: '0'};
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
       expect(result.current.selectionManager.selectionMode).toBe('single');
       expect(result.current.selectionManager.selectedKeys).toContain('0');
       expect(result.current.selectionManager.selectedKeys).not.toContain('1');
