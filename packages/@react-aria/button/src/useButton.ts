@@ -21,14 +21,28 @@ interface AriaButtonProps extends ButtonProps {
   validationState?: 'valid' | 'invalid', // used by FieldButton (e.g. DatePicker, ComboBox)
   'aria-expanded'?: boolean | 'false' | 'true',
   'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
-  type?: 'button' | 'submit'
+  'aria-controls'?: string,
+  type?: 'button' | 'submit',
+  tabIndex?: number,
+  id?: string,
+  'aria-label'?: string,
+  'aria-labelledby'?: string,
+  'aria-describedby'?: string,
 }
 
 interface ButtonAria {
+  /** Props for the button element. */
   buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>,
+  /** Whether the button is currently pressed. */
   isPressed: boolean
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions, 
+ * focus behavior, and ARIA props for both native button elements and custom element types.
+ * @param props - props to be applied to the button
+ * @param ref - a ref to a DOM element for the button
+ */
 export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): ButtonAria {
   let {
     elementType = 'button',
@@ -46,6 +60,11 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     validationState,
     'aria-expanded': ariaExpanded,
     'aria-haspopup': ariaHasPopup,
+    'aria-controls': ariaControls,
+    id,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
+    'aria-describedby': ariaDescribedBy,
     type = 'button'
   } = props;
   let additionalProps;
@@ -78,8 +97,13 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   return {
     isPressed, // Used to indicate press state for visual
     buttonProps: mergeProps(interactions, {
+      id,
+      'aria-label': ariaLabel,
+      'aria-labelledby': ariaLabelledby,
+      'aria-describedby': ariaDescribedBy,  
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
+      'aria-controls': ariaControls,
       'aria-checked': isSelected,
       'aria-invalid': validationState === 'invalid' ? true : null,
       disabled: isDisabled,

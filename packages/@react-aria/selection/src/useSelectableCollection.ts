@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvent, HTMLAttributes, KeyboardEvent, useEffect} from 'react';
+import {FocusEvent, HTMLAttributes, KeyboardEvent, RefObject, useEffect} from 'react';
+import {focusWithoutScrolling} from '@react-aria/utils';
 import {KeyboardDelegate} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
@@ -34,6 +35,7 @@ function isCtrlKeyPressed(e: KeyboardEvent) {
 interface SelectableCollectionOptions {
   selectionManager: MultipleSelectionManager,
   keyboardDelegate: KeyboardDelegate,
+  ref?: RefObject<HTMLElement>,
   autoFocus?: boolean | FocusStrategy,
   shouldFocusWrap?: boolean,
   disallowEmptySelection?: boolean,
@@ -48,6 +50,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   let {
     selectionManager: manager,
     keyboardDelegate: delegate,
+    ref,
     autoFocus = false,
     shouldFocusWrap = false,
     disallowEmptySelection = false,
@@ -59,12 +62,16 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       case 'ArrowDown': {
         if (delegate.getKeyBelow) {
           e.preventDefault();
-          let nextKey = delegate.getKeyBelow(manager.focusedKey);
+          let nextKey = manager.focusedKey != null
+            ? delegate.getKeyBelow(manager.focusedKey)
+            : delegate.getFirstKey();
+
           if (nextKey) {
             manager.setFocusedKey(nextKey);
           } else if (shouldFocusWrap) {
             manager.setFocusedKey(delegate.getFirstKey());
           }
+
           if (e.shiftKey && manager.selectionMode === 'multiple') {
             manager.extendSelection(nextKey);
           }
@@ -74,12 +81,16 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       case 'ArrowUp': {
         if (delegate.getKeyAbove) {
           e.preventDefault();
-          let nextKey = delegate.getKeyAbove(manager.focusedKey);
+          let nextKey = manager.focusedKey != null
+            ? delegate.getKeyAbove(manager.focusedKey)
+            : delegate.getLastKey();
+
           if (nextKey) {
             manager.setFocusedKey(nextKey);
           } else if (shouldFocusWrap) {
             manager.setFocusedKey(delegate.getLastKey());
           }
+
           if (e.shiftKey && manager.selectionMode === 'multiple') {
             manager.extendSelection(nextKey);
           }
@@ -172,6 +183,10 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   };
 
   let onFocus = (e: FocusEvent) => {
+    if (manager.isFocused) {
+      return;
+    }
+
     manager.setFocused(true);
 
     if (manager.focusedKey == null && e.target === e.currentTarget) {
@@ -193,23 +208,28 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
   useEffect(() => {
     if (autoFocus) {
-      manager.setFocused(true);
+      let focusedKey = null;
 
-      // By default, select first item for focus target
-      let focusedKey = delegate.getFirstKey();
-      let selectedKeys = manager.selectedKeys;
-
-      // Set the last item as the new focus target if autoFocus is 'last' (i.e. ArrowUp opening the menu)
-      if (autoFocus === 'last') {
+      // Check focus strategy to determine which item to focus
+      if (autoFocus === 'first') {
+        focusedKey = delegate.getFirstKey();
+      } if (autoFocus === 'last') {
         focusedKey = delegate.getLastKey();
       }
 
       // If there are any selected keys, make the first one the new focus target
+      let selectedKeys = manager.selectedKeys;
       if (selectedKeys.size) {
         focusedKey = selectedKeys.values().next().value;
       }
 
+      manager.setFocused(true);
       manager.setFocusedKey(focusedKey);
+
+      // If no default focus key is selected, focus the collection itself.
+      if (focusedKey == null) {
+        focusWithoutScrolling(ref.current);
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -221,6 +241,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
   return {
     collectionProps: mergeProps(typeSelectProps, {
+      tabIndex: -1,
       onKeyDown,
       onFocus,
       onBlur

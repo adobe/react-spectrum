@@ -60,7 +60,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     ref: menuRef,
     onClose: state.close,
     closeOnSelect,
-    autoFocus: state.focusStrategy,
+    autoFocus: state.focusStrategy || true,
     UNSAFE_style: {
       width: isMobile ? '100%' : undefined
     }

@@ -396,6 +396,18 @@ storiesOf('ListBox', module)
     )
   )
   .add(
+    'ListBox with autoFocus="first"',
+    () => (
+      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus="first">
+        {item => (
+          <Section items={item.children} title={item.name}>
+            {item => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
+    )
+  )
+  .add(
     'ListBox with autoFocus="last"',
     () => (
       <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus="last">
