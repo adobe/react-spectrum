@@ -181,7 +181,7 @@ function shallowEqual<T>(a: T, b: T) {
 }
 
 type Wrapper = (element: ReactElement) => ReactElement;
-function compose(outer: Wrapper | void, inner: Wrapper | void): Wrapper | void {
+function compose(outer: Wrapper | void, inner: Wrapper | void): Wrapper {
   if (outer && inner) {
     return (element) => outer(inner(element));
   }

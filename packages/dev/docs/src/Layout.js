@@ -14,6 +14,7 @@ import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import highlightCss from './syntax-highlight.css';
+import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
 import React from 'react';
@@ -187,7 +188,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
       <main>
         <article className={typographyStyles['spectrum-Typography']}>
           <MDXProvider components={mdxComponents}>
-            {children}
+            <LinkProvider>{children}</LinkProvider>
           </MDXProvider>
         </article>
         <ToC toc={toc} />

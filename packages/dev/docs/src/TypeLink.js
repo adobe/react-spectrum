@@ -10,23 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {JoinList, Type, TypeContext, TypeParameters} from './types';
-import React from 'react';
+import {getUsedLinks} from './utils';
+import {LinkContext, TypeContext} from './types';
+import React, {useContext} from 'react';
+import styles from './docs.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
-export function FunctionAPI({function: func, links}) {
-  let {name, parameters, return: returnType, typeParameters} = func;
+export function TypeLink({links, type}) {
+  let registered = useContext(LinkContext);
+  registered.set(type.id, {type, links});
+
+  let used = getUsedLinks(type, links);
+  for (let id in used) {
+    registered.set(id, {type: used[id], links});
+  }
 
   return (
     <TypeContext.Provider value={links}>
       <code className={`${typographyStyles['spectrum-Code4']}`}>
-        <span className="token hljs-function">{name}</span>
-        <TypeParameters typeParameters={typeParameters} />
-        <span className="token punctuation">{parameters.length > 2 ? '(\n  ' : '('}</span>
-        <JoinList elements={parameters} joiner={parameters.length > 2 ? ',\n  ' : ', '} />
-        <span className="token punctuation">{parameters.length > 2 ? '\n)' : ')'}</span>
-        <span className="token punctuation">{': '}</span>
-        <Type type={returnType} />
+        <a href={'#' + type.id} data-link={type.id} className={`${styles.colorLink} token hljs-name`}>{type.name}</a>
       </code>
     </TypeContext.Provider>
   );

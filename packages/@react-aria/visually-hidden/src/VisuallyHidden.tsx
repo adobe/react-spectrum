@@ -15,11 +15,23 @@ import React, {HTMLAttributes, JSXElementConstructor, ReactNode} from 'react';
 import styles from './VisuallyHidden.css';
 
 interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {
+  /** The content to visually hide */
   children: ReactNode,
+
+  /**
+   * The element type for the container 
+   * @default 'div'
+   */
   elementType?: string | JSXElementConstructor<any>,
+  
+  /** Whether the content can be focused */
   isFocusable?: boolean
 }
 
+/**
+ * VisuallyHidden hides its children visually, while keeping content visible
+ * to screen readers.
+ */
 export function VisuallyHidden(props: VisuallyHiddenProps) {
   let {
     children,

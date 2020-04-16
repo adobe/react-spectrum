@@ -86,6 +86,10 @@ article {
   cursor: initial;
 }
 
+.type-description {
+  margin-top: 0;
+}
+
 .requiredIcon {
   margin-left: 8px;
 }
@@ -123,7 +127,6 @@ article h2.sectionHeader + hr {
   padding: 40px;
   border-radius: 0 0 4px 4px;
   margin-bottom: var(--spectrum-global-dimension-size-150);
-  overflow-x: auto;
 }
 
 .inlineProvider {
