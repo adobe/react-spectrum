@@ -147,5 +147,17 @@ describe('useComboBoxState tests', function () {
       expect(result.current.selectionManager.selectedKeys).not.toContain('0');
       expect(onSelectionChange).toHaveBeenCalledWith('1');
     });
+
+    it('supports sdefault no selection', function () {
+      let initialProps = {...defaultProps};
+      let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      expect(result.current.selectionManager.selectionMode).toBe('single');
+      expect(result.current.selectionManager.selectedKeys.size).toBe(0);
+
+      act(() => result.current.selectionManager.replaceSelection('1'));
+      expect(result.current.selectionManager.selectedKeys).toContain('1');
+      expect(result.current.selectionManager.selectedKeys).not.toContain('0');
+      expect(onSelectionChange).toHaveBeenCalledWith('1');
+    });
   });
 });
