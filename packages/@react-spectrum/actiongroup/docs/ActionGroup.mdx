@@ -76,13 +76,13 @@ The `selectedKeys` prop can be used to make the selected state controlled.
 ### Accessibility
 
 If no visible label is provided (e.g. an icon only) to each item, an alternative text label must be provided to identify the control for accessibility.
-This should be added using the `textValue` prop to each Item.
+This should be added using the `aria-label` prop to each Item.
 
 ```tsx example
 <ActionGroup>
-  <Item uniqueKey="brush" textValue="Brush"><Brush /></Item>
-  <Item uniqueKey="select" textValue="Select"><Select /></Item>
-  <Item uniqueKey="regionSelect" textValue="Select Region"><RegionSelect /></Item>
+  <Item uniqueKey="brush" aria-label="Brush"><Brush /></Item>
+  <Item uniqueKey="select" aria-label="Select"><Select /></Item>
+  <Item uniqueKey="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
 </ActionGroup>
 ```
 
@@ -186,9 +186,8 @@ Using the `orientation` prop with value `vertical` changes the alignment of the 
 
 ```tsx example
 <ActionGroup orientation="vertical">
-  <Item uniqueKey="brush" textValue="Brush"><Brush /></Item>
-  <Item uniqueKey="select" textValue="Select"><Select /></Item>
-  <Item uniqueKey="regionSelect" textValue="Select Region"><RegionSelect /></Item>
+  <Item uniqueKey="brush" aria-label="Brush"><Brush /></Item>
+  <Item uniqueKey="select" aria-label="Select"><Select /></Item>
+  <Item uniqueKey="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
 </ActionGroup>
 ```
-
