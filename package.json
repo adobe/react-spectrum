@@ -11,7 +11,7 @@
     "check-types": "tsc --skipLibCheck",
     "start": "make run",
     "build-storybook": "build-storybook -c .storybook-v3 -o dist/$(git rev-parse HEAD)/storybook",
-    "test": "make test",
+    "test": "jest",
     "lint": "make lint",
     "jest": "node scripts/jest.js",
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
