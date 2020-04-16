@@ -48,6 +48,9 @@ describe('useComboBox', function () {
     expect(triggerProps.id).toBeTruthy();
     expect(triggerProps.tabIndex).toBe(-1);
     expect(triggerProps['aria-haspopup']).toBeTruthy();
+
+
+    // update triggerProps to that
   });
 
 

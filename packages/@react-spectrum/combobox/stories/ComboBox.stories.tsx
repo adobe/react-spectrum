@@ -11,17 +11,76 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ComboBox, ComboBoxProps} from '../';
+import {ComboBox, Item, Section} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
+// TODO: replace with ComboBoxItem and Section?
+
+
+let items = [
+  {name: 'Aardvark', id:'1'},
+  {name: 'Kangaroo', id:'2'},
+  {name: 'Snake', id:'3'}
+];
+
+
 storiesOf('ComboBox', module)
   .add(
-    'name me',
-    () => render({})
+    'static items',
+    () => (
+      <ComboBox label='bawe'>
+        <Item uniqueKey="one">Item One</Item>
+        <Item uniqueKey="two" textValue="Item Two">blah</Item>
+      </ComboBox>
+    )
+  )
+  .add(
+    'dynamic items',
+    () => (
+      <ComboBox items={items} itemKey="id" label="Combobox">
+        {item => <Item>{item.name}</Item>}
+      </ComboBox>
+    )
+  )
+  .add(
+    'isOpen',
+    () => (
+      <ComboBox isOpen>
+        <Item uniqueKey="one">Item One</Item>
+        <Item uniqueKey="two" textValue="Item Two">blah</Item>
+      </ComboBox>
+    )
+  )
+  .add(
+    'defaultOpen',
+    () => (
+      <ComboBox defaultOpen>
+        <Item uniqueKey="one">Item One</Item>
+        <Item uniqueKey="two" textValue="Item Two">blah</Item>
+      </ComboBox>
+    )
+  )
+  .add(
+    'isQuiet',
+    () => (
+      <ComboBox isQuiet>
+        <Item uniqueKey="one">Item One</Item>
+        <Item uniqueKey="two" textValue="Item Two">blah</Item>
+      </ComboBox>
+    )
+  )
+  .add(
+    'isDisabled',
+    () => (
+      <ComboBox isDisabled>
+        <Item uniqueKey="one">Item One</Item>
+        <Item uniqueKey="two" textValue="Item Two">blah</Item>
+      </ComboBox>
+    )
   );
 
-function render(props:ComboBoxProps = {}) {
+function render(props = {}) {
   return (
     <ComboBox {...props}>
     </ComboBox>
