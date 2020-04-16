@@ -28,7 +28,8 @@ governing permissions and limitations under the License.
 
 %spectrum-overlay--open {
   visibility: visible;
-
+  /* In Edge (pre chromium), a stacking context is formed for opacity less then 1, and then its removed for 1. 
+     It causes a rendering flicker that is visible when css transition is applied. */
   opacity: 0.99;
 
   transition-delay: 0ms;
