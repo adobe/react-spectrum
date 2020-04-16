@@ -85,19 +85,17 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   let inputRef = useRef();
 
   let state = useComboBoxState(props);
-  console.log('state', state)
   // onBlur, onFocus, etc behavior for textfield and stuff should go into useComboBox
   let {triggerProps, inputProps, menuProps, labelProps} = useComboBox(
     {
       ...props,
+      menuTrigger,
       triggerRef: unwrapDOMRef(triggerRef),
       inputRef: unwrapDOMRef(inputRef)
     },
     state
   );
   let domRef = useDOMRef(ref);
-  console.log('props from useCombobox', triggerProps, inputProps, menuProps, labelProps);
-
 
 
 
@@ -117,7 +115,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
     isOpen: state.isOpen
   });
 
-  
+
   let isMobile = useMediaQuery('(max-width: 700px)');
   // Figure out if we need the DismissButton (probably)
   let listbox = (
@@ -134,7 +132,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
         layout={layout}
         state={state}
         // Figure out what the below is for
-        width={isMobile ? '100%' : undefined} 
+        width={isMobile ? '100%' : undefined}
         />
       {/* <DismissButton onDismiss={() => state.setOpen(false)} /> */}
     </FocusScope>
@@ -219,9 +217,9 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   // Need to wrap it all in a focus ring so that everything is highlighted when keyboard focused
 
   // Need to handle the label ourselves, can't use textfield label?
-  // Figure out why textfield doesn't recieve aria-autocomplete 
-  
-  return (
+  // Figure out why textfield doesn't recieve aria-autocomplete
+
+  let textField = (
     // Ask if label is optional for combobox (and thus the below div wrapper + label is optional). Can do something like what picker does if so
     <div
       // Should dom props and dom ref go on this wrapper div or on the top
@@ -239,14 +237,6 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
           }
         )
       }>
-      <Label
-        {...labelProps}
-        labelPosition={labelPosition}
-        labelAlign={labelAlign}
-        isRequired={isRequired}
-        necessityIndicator={necessityIndicator}>
-        {label}
-      </Label>
       <FocusRing
         // Should this have within
         within
@@ -281,8 +271,6 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
             isReadOnly={isReadOnly}
             isQuiet={isQuiet}
             value={state.value}
-            // check onInputChange, this probably needs to be onInputChange?
-            onChange={state.setValue}
             validationState={validationState}
             autoFocus={autoFocus}
             width={width}
@@ -307,6 +295,37 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
       </FocusRing>
     </div>
   );
+
+  if (props.label) {
+    let labelWrapperClass = classNames(
+      labelStyles,
+      'spectrum-Field',
+      {
+        'spectrum-Field--positionTop': labelPosition === 'top',
+        'spectrum-Field--positionSide': labelPosition === 'side'
+      },
+      styleProps.className
+    );
+
+    return (
+      <div
+        {...styleProps}
+        ref={domRef}
+        className={labelWrapperClass}>
+        <Label
+          {...labelProps}
+          labelPosition={labelPosition}
+          labelAlign={labelAlign}
+          isRequired={isRequired}
+          necessityIndicator={necessityIndicator}>
+          {label}
+        </Label>
+        {textField}
+      </div>
+    );
+  }
+
+  return textField;
 }
 
 // Probably need to cast this
