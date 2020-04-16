@@ -35,15 +35,19 @@ import {Flex} from '@react-spectrum/layout';
 ### Horizontal
 
 Horizontal Dividers can be used as is because of how CSS Layout works. They may also be used in Flex and Grid containers.
+
 ```tsx example
-Content above
-<Divider marginTop="10px" marginBottom="10px" />
-Content below
+<Flex flexDirection="column">
+  Content above
+  <Divider marginTop="10px" marginBottom="10px" />
+  Content below
+</Flex>
 ```
 
 ### Vertical
 
 It is recommended to only use vertical Dividers in Flex or Grid containers. CSS Layout otherwise makes displaying a vertical Divider very difficult.
+
 ```tsx example
 <Flex>
   Content left

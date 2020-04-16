@@ -15,6 +15,7 @@ import React, {RefObject, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useTextField} from '@react-aria/textfield';
 
 function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
@@ -27,27 +28,33 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     ...otherProps
   } = props;
 
-  let textfieldRef = useRef<TextFieldRef>(null);
-  textfieldRef = ref || textfieldRef;
+  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
 
   let onHeightChange = () => {
     if (isQuiet) {
-      let input = textfieldRef.current.getInputElement();
+      let input = inputRef.current;
       input.style.height = 'auto';
       input.style.height = `${input.scrollHeight}px`;
     }
   };
 
+  let {labelProps, inputProps} = useTextField({
+    ...props,
+    onChange: chain(onChange, onHeightChange)
+  }, inputRef);
+
   return (
     <TextFieldBase
       {...otherProps}
-      ref={textfieldRef}
+      ref={ref}
+      inputRef={inputRef}
+      labelProps={labelProps}
+      inputProps={inputProps}
       multiLine
       isDisabled={isDisabled}
       isQuiet={isQuiet}
       isReadOnly={isReadOnly}
-      isRequired={isRequired}
-      onChange={chain(onChange, onHeightChange)} />
+      isRequired={isRequired} />
   );
 }
 

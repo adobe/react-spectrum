@@ -14,7 +14,7 @@ const {Resolver} = require('@parcel/plugin');
 const NodeResolver = require('@parcel/node-resolver-core').default;
 
 module.exports = new Resolver({
-  resolve({dependency, options, filePath}) {
+  async resolve({dependency, options, filePath}) {
     if (dependency.pipeline === 'docs' || dependency.pipeline === 'docs-json') {
       const resolver = new NodeResolver({
         extensions: ['ts', 'tsx', 'd.ts', 'js'],
@@ -22,12 +22,17 @@ module.exports = new Resolver({
         options
       });
   
-      return resolver.resolve({
+      let resolved = await resolver.resolve({
         filename: filePath,
         isURL: dependency.isURL,
         parent: dependency.sourcePath,
         env: dependency.env
       });
+
+      if (resolved) {
+        resolved.filePath = await options.inputFS.realpath(resolved.filePath);
+        return resolved;
+      }
     }
   }
 });

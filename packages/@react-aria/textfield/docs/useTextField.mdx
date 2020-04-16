@@ -1,0 +1,90 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/textfield';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {useTextField} from '@react-aria/textfield';
+```
+
+# useTextField
+
+<p>{docs.exports.useTextField.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useTextField']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#textbox'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useTextField} links={docs.links} />
+
+## Features
+
+Text fields can be built with [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)
+and [&lt;label&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label) elements,
+but you must manually ensure that they are semantically connected via ids for accessibility.
+`useTextField` helps automate this, and handle other accessibility features while
+allowing for custom styling.
+
+* Built with a native `<input>` element
+* Visual and ARIA labeling support
+* Change, clipboard, composition, selection, and input event support
+* Required and invalid states exposed to assistive technology via ARIA
+
+## Anatomy
+
+Text fields consist of an input element and a label. `useTextField` automatically manages
+the relationship between the two elements using the `for` attribute on the `<label>` element
+and the `aria-labelledby` attribute on the `<input>` element.
+
+`useTextField` returns two sets of props that you should spread onto the appropriate element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useTextField.return.id].properties} />
+</TypeContext.Provider>
+
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead 
+to identify the element to screen readers.
+
+## Example
+
+```tsx example
+function TextField(props) {
+  let {label} = props;
+  let ref = React.useRef();
+  let {labelProps, inputProps} = useTextField(props, ref);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', width: 200}}>
+      <label {...labelProps}>{label}</label>
+      <input {...inputProps} ref={ref} />
+    </div>
+  );
+}
+
+<TextField 
+  label="Email"
+  placeholder="abc@example.com" />
+```
+
+## Internationalization
+
+### RTL
+
+In right-to-left languages, text fields should be mirrored. The label should be right aligned,
+along with the text in the text field. Ensure that your CSS accounts for this.

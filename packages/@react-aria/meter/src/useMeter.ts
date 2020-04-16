@@ -16,14 +16,20 @@ import {ProgressBarBaseProps} from '@react-types/progress';
 import {useProgressBar} from '@react-aria/progress';
 
 interface MeterAria {
-  meterProps: HTMLAttributes<HTMLDivElement>,
-  labelProps: HTMLAttributes<HTMLLabelElement>
+  /** Props for the meter container element. */
+  meterProps: HTMLAttributes<HTMLElement>,
+  /** Props for the meter's visual label (if any). */
+  labelProps: HTMLAttributes<HTMLElement>
 }
 
 interface MeterAriaProps extends ProgressBarBaseProps, DOMProps {
   textValue?: string
 }
 
+/**
+ * Provides the accessibility implementation for a meter component.
+ * Meters represent a quantity within a known range, or a fractional value.
+ */
 export function useMeter(props: MeterAriaProps): MeterAria {
   let {progressBarProps, labelProps} = useProgressBar(props);
 
