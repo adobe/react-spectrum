@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, unwrapDOMRef, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, unwrapDOMRef, useDOMRef, useMediaQuery, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
 // import {ComboBoxProps} from '@react-types/$combobox';
-import React, {useRef} from 'react';
+import React, {useLayoutEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {CollectionBase, DOMRef, InputBase, LabelPosition, SingleSelection, SpectrumLabelableProps, TextInputBase} from '@react-types/shared';
+import {CollectionBase, DOMRef, DOMProps, InputBase, LabelPosition, SingleSelection, SpectrumLabelableProps, TextInputBase, StyleProps} from '@react-types/shared';
 import {TextField, TextFieldBase} from '@react-spectrum/textfield';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {FieldButton} from '@react-spectrum/button';
@@ -31,6 +31,7 @@ import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css
 import {Label} from '@react-spectrum/label';
 
 
+// Should extend selectProps?
 interface ComboBoxProps extends CollectionBase<T>, SingleSelection {
   isOpen?: boolean,
   defaultOpen?: boolean,
@@ -42,14 +43,18 @@ interface ComboBoxProps extends CollectionBase<T>, SingleSelection {
   allowsCustomValue?: boolean,
   onCustomValue?: (value: string) => void,
   completionMode?: 'suggest' | 'complete',
-  menuTrigger?: 'focus' | 'input' | 'manual'
+  menuTrigger?: 'focus' | 'input' | 'manual',
+  shouldFlip?: boolean
 }
-interface SpectrumComboBox extends InputBase, TextInputBase, ComboBoxProps, SpectrumLabelableProps {
+
+// Check extends
+interface SpectrumComboBox extends InputBase, TextInputBase, ComboBoxProps, SpectrumLabelableProps, DOMProps, StyleProps {
   isQuiet?: boolean
 }
 
 function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
+  // Probably remove this?
   props = useSlotProps(props);
 
   let {
@@ -66,13 +71,15 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
     completionMode = 'suggest',
     // What is the default menu trigger operation?
     menuTrigger = 'input',
-    autoFocus
+    autoFocus,
+    shouldFlip = true
   } = props;
 
   let {styleProps} = useStyleProps(props);
   let popoverRef = useRef();
   let triggerRef = useRef();
   let listboxRef = useRef();
+  // Possibly sync this ref with the one provided by the user?
   let inputRef = useRef();
 
   let state = useComboBoxState(props);
@@ -93,8 +100,23 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
 
 
   // Below copied from picker, placeholder for now
+  // Perhaps reorg this to be a common hook?
   let layout = useListBoxLayout(state);
 
+
+  let {overlayProps, placement} = useOverlayPosition({
+    targetRef: unwrapDOMRef(triggerRef),
+    overlayRef: unwrapDOMRef(popoverRef),
+    scrollRef: listboxRef,
+    // Support direction and align props for combobox?
+    // placement: `${direction} ${align}` as Placement,
+    placement: 'bottom end' as Placement,
+    shouldFlip: shouldFlip,
+    isOpen: state.isOpen
+  });
+
+  
+  let isMobile = useMediaQuery('(max-width: 700px)');
   let listbox = (
     <FocusScope restoreFocus>
       {/* <DismissButton onDismiss={() => state.setOpen(false)} /> */}
@@ -114,34 +136,57 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
     </FocusScope>
   );
 
-  // Will need to measure the width of textfield + button just like in picker
-  // will also need to do a mobileCheck like in menutrigger/picker
+  // Perhaps we could measure the wrapping div instead?
+  // Measure the width of the inputfield and the button to inform the width of the menu (below).
+  let [comboboxWidth, setComboboxWidth] = useState(null);
+  let {scale} = useProvider();
+  useLayoutEffect(() => {
+    if (!isMobile) {
+      let buttonWidth = triggerRef.current.UNSAFE_getDOMNode().offsetWidth;
+      let inputWidth = inputRef.current.UNSAFE_getDOMNode().offsetWidth;
+      setComboboxWidth(buttonWidth + inputWidth);
+    }
+  }, [scale, isMobile, triggerRef, state.selectedKey]);
 
-  let {overlayProps, placement} = useOverlayPosition({
-    targetRef: unwrapDOMRef(triggerRef),
-    overlayRef: unwrapDOMRef(popoverRef),
-    scrollRef: listboxRef,
-    // placement: `${direction} ${align}` as Placement,
-    placement: 'bottom start' as Placement,
-    // shouldFlip: shouldFlip,
-    shouldFlip: true, // FOR NOW HARDCODED
-    isOpen: state.isOpen
-  });
+  let overlay;
+  if (isMobile) {
+    overlay = (
+      <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur>
+        {listbox}
+      </Tray>
+    );
+  } else {
+    // Test the below for combobox, copied from Picker
+    // let width = isQuiet ? null : comboboxWidth;
+    let width = comboboxWidth;
 
-  let overlay = (
-    <Popover
-      isOpen={state.isOpen}
-      // UNSAFE_style={style}
-      UNSAFE_style={overlayProps.style}
-      UNSAFE_className={classNames(styles, 'spectrum-Dropdown-popover', {'spectrum-Dropdown-popover--quiet': isQuiet})}
-      ref={popoverRef}
-      placement={placement}
-      hideArrow
-      shouldCloseOnBlur
-      onClose={state.close}>
-      {listbox}
-    </Popover>
-  );
+    let style = {
+      ...overlayProps.style,
+      // Should Combobox support a user defined menu width as well?
+      // width: menuWidth ? dimensionValue(menuWidth) : width,
+      width
+      // See if Combobox needs the below as well
+      // minWidth: isQuiet ? `calc(${buttonWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : buttonWidth
+    };
+
+    overlay = (
+      <Popover
+        isOpen={state.isOpen}
+        UNSAFE_style={style}
+        // UNSAFE_style={overlayProps.style}
+        UNSAFE_className={classNames(styles, 'spectrum-Dropdown-popover', {'spectrum-Dropdown-popover--quiet': isQuiet})}
+        ref={popoverRef}
+        placement={placement}
+        hideArrow
+        shouldCloseOnBlur
+        onClose={state.close}>
+        {listbox}
+      </Popover>
+    );
+  }
+
+  // Look in the state.collection.size <= 300 logic in Picker and see if we need it for combobox
+
 
 
   // Use TextFieldBase? Figure out where the class name should go
@@ -152,6 +197,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   // Figure out why textfield doesn't recieve aria-autocomplete 
   
   return (
+    // Ask if label is optional for combobox (and thus the below div wrapper + label is optional). Can do something like what picker does if so
     <div
       // Should dom props and dom ref go on this wrapper div or on the top
       {...filterDOMProps(props)}
@@ -236,5 +282,6 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
+// Probably need to cast this
 const _ComboBox = React.forwardRef(ComboBox);
 export {_ComboBox as ComboBox};
