@@ -16,7 +16,6 @@ import packageData from '../package.json';
 
 ```jsx import
 import {ActionGroup} from '@react-spectrum/actiongroup';
-import {ActionButton} from '@react-spectrum/button';
 import Brush from '@spectrum-icons/workflow/Brush';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Item} from '@react-stately/collections';
@@ -47,7 +46,6 @@ import Select from '@spectrum-icons/workflow/Select';
 ActionGroups accept as list of `children`, each with a `uniqueKey` prop.
 
 It is required that the `children` are Item components from the `@react-stately/collections` library.
-
 In order to identify children when a user takes an action on a item, each child needs to have a `uniqueKey` prop.
 See [Events](#events) for more information.
 
@@ -77,7 +75,7 @@ The `selectedKeys` prop can be used to make the selected state controlled.
 
 ### Accessibility
 
-If no visible label is provided (e.g. an icon only) an alternative text label must be provided to identify the control for accessibility.
+If no visible label is provided (e.g. an icon only) to each item, an alternative text label must be provided to identify the control for accessibility.
 This should be added using the `textValue` prop to each Item.
 
 ```tsx example
