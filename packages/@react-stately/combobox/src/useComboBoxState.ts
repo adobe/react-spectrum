@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
+import {useSelectState} from '@react-stately/select';
 import {useState} from 'react';
 
-import {CollectionBase, SingleSelection} from '@react-types/shared';
-import {useListState} from '@react-stately/list';
-import {useMenuTriggerState} from '@react-stately/menu';
 
 export interface ComboBoxState<T> {
   // collection: Collection<Node<T>>,
@@ -28,7 +27,7 @@ export interface ComboBoxState<T> {
   // TODO add liststate types and menutrigger types here
 }
 
-interface ComboBoxProps extends CollectionBase<T>, SingleSelection {
+interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   isOpen?: boolean,
   defaultOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void,
@@ -49,36 +48,19 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let selectedControlled = !!props.selectedKey;
 
   // listState (uncontrolled), gives us collection and selectionManager
-  let selectedKeys = props.selectedKey ? [props.selectedKey] : undefined;
-  let defaultSelectedKeys = props.defaultSelectedKey ? [props.defaultSelectedKey] : undefined;
-  let onSelectionChange = (keys) => props.onSelectionChange(Array.from(keys)[0]);
-  let listState = useListState({
-    ...props,
-    selectedKeys,
-    defaultSelectedKeys,
-    onSelectionChange,
-    selectionMode: 'single'
-  });
-  let areThereItems = listState.collection.size > 0;
-
-
-  let menuState = useMenuTriggerState(props);
-
+  let selectState  = useSelectState(props);
+  //  let areThereItems = listState.collection.size > 0;
 
   let [value, setValue] = useControlledState(toString(props.inputValue), toString(props.defaultInputValue) || '', props.onInputChange);
 
-
   // For completionMode = complete
   let [suggestionValue, setSuggestionValue] = useState('');
-
-
 
   // selectedItemState (aria-activedecendent), maybe just need to modify useSelectableItem or something
 
 
   return {
-    ...listState,
-    ...menuState,
+    ...selectState,
     value,
     setValue
   };
