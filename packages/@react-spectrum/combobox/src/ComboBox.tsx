@@ -73,7 +73,8 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
     menuTrigger = 'input',
     autoFocus,
     shouldFlip = true,
-    width
+    width,
+    placeholder
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -192,6 +193,27 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
 
 
 
+  // Logic for what should be rendered in the TextField
+  // Think about where to put this and whether or not to 
+  let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
+  if (selectedItem) {
+    let itemText = selectedItem.textValue || selectedItem.rendered;
+
+    // TODO: logic on whether or not to take the selectedItem value over the current value (check if controlled or not)
+    // TODO: all other logic
+
+    
+    // Throw error if controlled inputValue and controlled selectedKey don't match
+    if (props.inputValue && props.selectedKey && (props.inputValue !== itemText)) {
+      throw new Error('Mismatch between selected item and inputValue!')
+    } 
+
+    // Update textfield value if new item is selected
+    if (itemText !== state.value) {
+      state.setValue(itemText);
+    }
+  }
+
   // Use TextFieldBase? Figure out where the class name should go
   // Maybe we don't even use textfield base, just a base input?
   // Need to wrap it all in a focus ring so that everything is highlighted when keyboard focused
@@ -263,7 +285,8 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
             onChange={state.setValue}
             validationState={validationState}
             autoFocus={autoFocus}
-            width={width} />
+            width={width}
+            placeholder={placeholder} />
           <FieldButton
             {...triggerProps}
             ref={triggerRef}
