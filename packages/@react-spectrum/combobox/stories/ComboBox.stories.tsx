@@ -28,12 +28,7 @@ let items = [
 storiesOf('ComboBox', module)
   .add(
     'static items',
-    () => (
-      <ComboBox label='bawe'>
-        <Item uniqueKey="one">Item One</Item>
-        <Item uniqueKey="two" textValue="Item Two">blah</Item>
-      </ComboBox>
-    )
+    () => render({})
   )
   .add(
     'dynamic items',
@@ -45,44 +40,68 @@ storiesOf('ComboBox', module)
   )
   .add(
     'isOpen',
-    () => (
-      <ComboBox isOpen>
-        <Item uniqueKey="one">Item One</Item>
-        <Item uniqueKey="two" textValue="Item Two">blah</Item>
-      </ComboBox>
-    )
+    () => render({isOpen: true})
   )
   .add(
     'defaultOpen',
-    () => (
-      <ComboBox defaultOpen>
-        <Item uniqueKey="one">Item One</Item>
-        <Item uniqueKey="two" textValue="Item Two">blah</Item>
-      </ComboBox>
-    )
+    () => render({defaultOpen: true})
+  )
+  .add(
+    'inputValue (controlled)',
+    () => render({inputValue: 'controlled value'})
+  )
+  .add(
+    'defaultInputValue (uncontrolled)',
+    () => render({defaultInputValue: 'uncontrolled value'})
   )
   .add(
     'isQuiet',
-    () => (
-      <ComboBox isQuiet>
-        <Item uniqueKey="one">Item One</Item>
-        <Item uniqueKey="two" textValue="Item Two">blah</Item>
-      </ComboBox>
-    )
+    () => render({isQuiet: true})
   )
   .add(
     'isDisabled',
-    () => (
-      <ComboBox isDisabled>
-        <Item uniqueKey="one">Item One</Item>
-        <Item uniqueKey="two" textValue="Item Two">blah</Item>
-      </ComboBox>
-    )
+    () => render({isDisabled: true})
+  )
+  .add(
+    'isReadOnly',
+    () => render({isReadOnly: true})
+  )
+  // TODO FIX THIS STORY, change spectrum field css width?
+  .add(
+    'labelPosition: top, labelAlign: end',
+    () => render({labelAlign: 'end'})
+  )
+  .add(
+    'labelPosition: side',
+    () => render({labelPosition: 'side'})
+  )
+  .add(
+    'isRequired',
+    () => render({isRequired: true})
+  )
+  .add(
+    'isRequired, necessityIndicator: label',
+    () => render({isRequired: true, necessityIndicator: 'label'})
+  )
+  .add(
+    'validationState: invalid',
+    () => render({validationState: 'invalid'})
+  )
+  .add(
+    'validationState: valid',
+    () => render({validationState: 'valid'})
+  )
+  .add(
+    'autoFocus: true',
+    () => render({autoFocus: true})
   );
 
 function render(props = {}) {
   return (
-    <ComboBox {...props}>
-    </ComboBox>
+    <ComboBox label='Combobox' onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} {...props}>
+      <Item uniqueKey="one">Item One</Item>
+      <Item uniqueKey="two" textValue="Item Two">Custom Item</Item>
+      <Item uniqueKey="three">Item One</Item>
+  </ComboBox>
   );
 }

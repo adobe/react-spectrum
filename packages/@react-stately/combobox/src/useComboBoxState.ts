@@ -51,6 +51,7 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   // listState (uncontrolled), gives us collection and selectionManager
   let selectedKeys = props.selectedKey ? [props.selectedKey] : undefined;
   let defaultSelectedKeys = props.defaultSelectedKey ? [props.defaultSelectedKey] : undefined;
+  // Probably should have a default here for onSelectionChange (console errors right now)
   let onSelectionChange = (keys) => props.onSelectionChange(Array.from(keys)[0]);
   let listState = useListState({
     ...props,

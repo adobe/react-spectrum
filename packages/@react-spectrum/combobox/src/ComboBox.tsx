@@ -24,13 +24,14 @@ import {CollectionBase, DOMRef, InputBase, LabelPosition, SingleSelection, Spect
 import {TextField, TextFieldBase} from '@react-spectrum/textfield';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {FieldButton} from '@react-spectrum/button';
-import {FocusScope} from '@react-aria/focus';
+import {FocusRing, FocusScope} from '@react-aria/focus';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {Label} from '@react-spectrum/label';
 
-interface ComboBox extends CollectionBase<T>, SingleSelection {
+
+interface ComboBoxProps extends CollectionBase<T>, SingleSelection {
   isOpen?: boolean,
   defaultOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void,
@@ -43,7 +44,7 @@ interface ComboBox extends CollectionBase<T>, SingleSelection {
   completionMode?: 'suggest' | 'complete',
   menuTrigger?: 'focus' | 'input' | 'manual'
 }
-interface SpectrumComboBox extends InputBase, TextInputBase, ComboBox, SpectrumLabelableProps {
+interface SpectrumComboBox extends InputBase, TextInputBase, ComboBoxProps, SpectrumLabelableProps {
   isQuiet?: boolean
 }
 
@@ -54,12 +55,18 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   let {
     isQuiet,
     isDisabled,
+    isReadOnly,
     label,
     labelPosition = 'top',
     labelAlign,
     isRequired,
     necessityIndicator,
-    validationState
+    validationState,
+    // What is the default completion mode?
+    completionMode = 'suggest',
+    // What is the default menu trigger operation?
+    menuTrigger = 'input',
+    autoFocus
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -70,6 +77,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
 
   let state = useComboBoxState(props);
   console.log('state', state)
+  // onBlur, onFocus, etc behavior for textfield and stuff should go into useComboBox
   let {triggerProps, inputProps, menuProps, labelProps} = useComboBox(
     {
       ...props,
@@ -79,8 +87,8 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
     state
   );
   let domRef = useDOMRef(ref);
-  console.log('trigger props', triggerProps)
-  console.log('')
+  console.log('props from useCombobox', triggerProps, inputProps, menuProps, labelProps);
+
 
 
 
@@ -94,6 +102,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
         ref={listboxRef}
         domProps={menuProps}
         disallowEmptySelection
+        // Probably should have this be 'first'?
         autoFocus={state.focusStrategy}
         shouldSelectOnPressUp
         focusOnPointerEnter
@@ -147,6 +156,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
       // Should dom props and dom ref go on this wrapper div or on the top
       {...filterDOMProps(props)}
       {...styleProps}
+      // Maybe dom ref goes on the Textfield and we set inputRef above equal to it?
       ref={domRef}
       className={
         classNames(
@@ -166,45 +176,62 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
         necessityIndicator={necessityIndicator}>
         {label}
       </Label>
-      <div
-        className={
-          classNames(
-            styles,
-            'spectrum-InputGroup',
-            {
-              'spectrum-InputGroup--quiet': isQuiet,
-              'is-disabled': isDisabled
-            },
-            styleProps.className
-          )
-        }>
-        <TextFieldBase
-          {...inputProps}
-          ref={inputRef}
-          inputClassName={
+      <FocusRing
+        // Should this have within
+        within
+        isTextInput
+        focusClass={classNames(styles, 'is-focused')}
+        focusRingClass={classNames(styles, 'focus-ring')}
+        autoFocus={autoFocus}>
+        <div
+          className={
             classNames(
               styles,
-              'spectrum-InputGroup-field',
-              classNames(labelStyles, 'spectrum-Field-field')
+              'spectrum-InputGroup',
+              {
+                'spectrum-InputGroup--quiet': isQuiet,
+                'is-disabled': isDisabled,
+                'is-invalid': validationState === 'invalid'
+              },
+              styleProps.className
             )
-          }
-          isDisabled={isDisabled}
-          isQuiet={isQuiet} />
-        <FieldButton
-          {...triggerProps}
-          ref={triggerRef}
-          UNSAFE_className={
-            classNames(
-              styles,
-              'spectrum-FieldButton'
-            )
-          }
-          isDisabled={isDisabled}
-          isQuiet={isQuiet}>
-          <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
-        </FieldButton>
-        {overlay}
-      </div>
+          }>
+          <TextFieldBase
+            {...inputProps}
+            ref={inputRef}
+            inputClassName={
+              classNames(
+                styles,
+                'spectrum-InputGroup-field',
+                classNames(labelStyles, 'spectrum-Field-field')
+              )
+            }
+            isDisabled={isDisabled}
+            isReadOnly={isReadOnly}
+            isQuiet={isQuiet}
+            value={state.value}
+            // check onInputChange, this probably needs to be onInputChange?
+            onChange={state.setValue}
+            validationState={validationState}
+            autoFocus={autoFocus} />
+          <FieldButton
+            {...triggerProps}
+            ref={triggerRef}
+            UNSAFE_className={
+              classNames(
+                styles,
+                'spectrum-FieldButton'
+              )
+            }
+            // Disable if readOnly?
+            isDisabled={isDisabled || isReadOnly}
+            isQuiet={isQuiet}
+            validationState={validationState}>
+            <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
+          </FieldButton>
+          {overlay}
+        </div>
+      </FocusRing>
     </div>
   );
 }
