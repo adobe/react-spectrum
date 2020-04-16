@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import intlMessages from '../intl';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {PaginationState} from '@react-stately/pagination';
 import {useMessageFormatter} from '@react-aria/i18n';
 

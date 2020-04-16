@@ -14,7 +14,8 @@ import {ActionButton} from '@react-spectrum/button';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '@react-spectrum/utils';
-import intlMessages from '../intl';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {PaginationBase} from '@react-types/pagination';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/pagination/vars.css';
