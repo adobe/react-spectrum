@@ -116,9 +116,34 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
   // Do this or just write own onKeyDown since we don't need all of them?
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
-    keyboardDelegate: props.layout
+    keyboardDelegate: props.layout,
+    shouldTypeAhead: false
   });
 
+  // Below copied from v2, refine later
+  let onBlur = (e) => {
+    if (props.onBlur) {
+      props.onBlur(e);
+    }
+
+    // not sure if needs the state.isOpen here, putting it as a guard for now 
+    // refine later for other combination of props/states (controlled/uncontrolled/allowCustomValue)
+    if (state.isOpen && focusedItem) {
+      state.setSelectedKey(state.selectionManager.focusedKey);
+    }
+    
+    if (props.popoverRef.current && props.popoverRef.current.contains(document.activeElement)) {
+      // If the element receiving focus is the Popover (dropdown menu), 
+      // (i.e. user clicking dropdown scroll bar in IE 11),
+      // refocus the input field and return so the menu isn't hidden.
+      event.target.focus();
+      return;
+    }
+
+    // A bit strange behavior when isOpen is true, menu can't close so you can't tab away from the
+    // textfield, almost like a focus trap
+    state.setOpen(false);
+  }
 
   // For textfield specific keydown operations
   let onKeyDown = (e) => {
@@ -164,7 +189,8 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
       'aria-controls': state.isOpen ? menuProps.id : undefined,
       'aria-autocomplete': 'list',
       'aria-activedescendant': state.isOpen ? focusedKeyId : undefined,
-      onKeyDown:  chain(collectionProps.onKeyDown, onKeyDown)
+      onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
+      onBlur
     },
     menuProps: {
       // ...collectionProps,

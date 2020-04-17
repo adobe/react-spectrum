@@ -37,7 +37,8 @@ interface SelectableCollectionOptions {
   autoFocus?: boolean | FocusStrategy,
   shouldFocusWrap?: boolean,
   disallowEmptySelection?: boolean,
-  disallowSelectAll?: boolean
+  disallowSelectAll?: boolean,
+  shouldTypeAhead?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -51,7 +52,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     autoFocus = false,
     shouldFocusWrap = false,
     disallowEmptySelection = false,
-    disallowSelectAll = false
+    disallowSelectAll = false,
+    shouldTypeAhead = true
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -214,16 +216,22 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  let {typeSelectProps} = useTypeSelect({
-    keyboardDelegate: delegate,
-    selectionManager: manager
-  });
+  let handlers = {
+    onKeyDown,
+    onFocus,
+    onBlur
+  };
+
+  if (shouldTypeAhead) {
+    let {typeSelectProps} = useTypeSelect({
+      keyboardDelegate: delegate,
+      selectionManager: manager
+    });
+    
+    handlers = mergeProps(typeSelectProps, handlers);
+  }
 
   return {
-    collectionProps: mergeProps(typeSelectProps, {
-      onKeyDown,
-      onFocus,
-      onBlur
-    })
+    collectionProps: handlers
   };
 }

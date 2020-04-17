@@ -144,7 +144,7 @@ storiesOf('ComboBox', module)
 
 function render(props = {}) {
   return (
-    <ComboBox label='Combobox' onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} {...props}>
+    <ComboBox label='Combobox' onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} {...props}>
       <Item uniqueKey="one">Item One</Item>
       <Item uniqueKey="two" textValue="Item Two">Custom Item</Item>
       <Item uniqueKey="three">Item Three</Item>

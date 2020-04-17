@@ -98,16 +98,12 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
       menuTrigger,
       triggerRef: unwrapDOMRef(triggerRef),
       inputRef: unwrapDOMRef(inputRef),
-      layout
+      layout,
+      popoverRef: unwrapDOMRef(popoverRef)
     },
     state
   );
   let domRef = useDOMRef(ref);
-
-
-
-  
-
 
   let {overlayProps, placement} = useOverlayPosition({
     targetRef: unwrapDOMRef(triggerRef),
