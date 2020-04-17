@@ -10,22 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {Collection, Node} from '@react-stately/collections';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
+import {Key, useEffect, useMemo, useState} from 'react';
+import {SelectState, useSelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
-import {useSelectState} from '@react-stately/select';
-import {Key, useEffect, useState} from 'react';
-import {Collection, Node} from "@react-stately/collections";
 
 
-export interface ComboBoxState<T> {
-  // collection: Collection<Node<T>>,
-  // // disabledKeys: Set<Key>,   will combobox have disabled items in its list?
-  // selectionManager: SelectionManager,
-  isOpen: boolean,
-  setOpen: (isOpen: boolean) => void,
+export interface ComboBoxState<T> extends SelectState<T> {
   value: string,
   setValue: (value: string) => void
-  // TODO add liststate types and menutrigger types here
 }
 
 interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
@@ -69,7 +63,7 @@ class FilteredCollection implements Collection<Node<T>> {
       }
     };
 
-    for (let node of nodes) {
+    for (let node of this.iterable) {
       visit(node);
     }
 
@@ -138,20 +132,23 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let [value, setValue] = useControlledState(toString(props.inputValue), toString(props.defaultInputValue) || '', props.onInputChange);
 
   let selectState  = useSelectState(props);
-  selectState.collection = new FilteredCollection(selectState.collection, (node) => {
-    console.log(node);
-    return node.textValue.startsWith(value);
-  });
-  console.log(selectState.collection.size);
+  selectState.collection = useMemo(() => {
+    if (itemsControlled) {
+      return selectState.collection;
+    }
+    return new FilteredCollection(selectState.collection, (node) => {
+      return node.textValue.startsWith(value);
+    });
+  }, [selectState.collection, value, itemsControlled]);
+  console.log(selectState);
 
   //  let areThereItems = listState.collection.size > 0;
 
-  let setOpen = (open) => {
-    if (selectState.collection.size === 0 && open) {
-      return;
+  useEffect(() => {
+    if (selectState.collection.size === 0 && selectState.isOpen) {
+      selectState.close();
     }
-    selectState.setOpen(open);
-  }
+  });
 
   // For completionMode = complete
   let [suggestionValue, setSuggestionValue] = useState('');
@@ -160,7 +157,6 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
 
   return {
     ...selectState,
-    setOpen,
     value,
     setValue
   };

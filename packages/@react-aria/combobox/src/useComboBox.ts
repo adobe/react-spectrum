@@ -66,7 +66,7 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
   let {fieldProps, labelProps} = useLabel(props);
   let onChange = (val) => {
     if (props.menuTrigger === 'input' && val.length > 0) {
-      state.setOpen(true);
+      state.open();
     }
     state.setValue(val);
   };
@@ -78,7 +78,7 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
     // Logic for what should be rendered in the TextField when state.selectedKey is changed/defined
     // Perhaps include inputValue here as well? Maybe this is where all the logic for determining state.value should go
     // Think about where to put this and if there is a better way to do this
-    
+
     // Pull selectedItem out of the useEffect?
     let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
     if (selectedItem) {
@@ -87,11 +87,11 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
       // TODO: logic on whether or not to take the selectedItem value over the current value (check if controlled or not)
       // TODO: all other logic
 
-      
+
       // Throw error if controlled inputValue and controlled selectedKey don't match
       if (props.inputValue && props.selectedKey && (props.inputValue !== itemText)) {
         throw new Error('Mismatch between selected item and inputValue!')
-      } 
+      }
 
       // Update textfield value if new item is selected
       if (itemText !== state.value) {
@@ -112,7 +112,7 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
   }, [focusedItem])
 
 
-  // Using layout initiated from ComboBox, generate the keydown handlers for textfield (arrow up/down to navigate through menu when focus in the textfield) 
+  // Using layout initiated from ComboBox, generate the keydown handlers for textfield (arrow up/down to navigate through menu when focus in the textfield)
   // Do this or just write own onKeyDown since we don't need all of them?
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
