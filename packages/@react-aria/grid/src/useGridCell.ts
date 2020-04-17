@@ -79,7 +79,6 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
   });
 
   if (isVirtualized) {
-    let item = state.collection.getItem(key);
     gridCellProps['aria-colindex'] = item.index + 1; // aria-colindex is 1-based
   }
 
