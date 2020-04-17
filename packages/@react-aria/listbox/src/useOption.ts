@@ -24,7 +24,9 @@ interface OptionProps {
   ref?: RefObject<HTMLElement>,
   shouldSelectOnPressUp?: boolean,
   shouldFocusOnHover?: boolean,
-  isVirtualized?: boolean
+  isVirtualized?: boolean,
+  shouldUseVirtualFocus?: boolean,
+  baseId?: string
 }
 
 interface OptionAria {
@@ -41,7 +43,9 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     ref,
     shouldSelectOnPressUp,
     shouldFocusOnHover,
-    isVirtualized
+    isVirtualized,
+    shouldUseVirtualFocus,
+    baseId
   } = props;
 
   let labelId = useSlotId();
@@ -66,7 +70,8 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     itemKey: key,
     itemRef: ref,
     shouldSelectOnPressUp,
-    isVirtualized
+    isVirtualized,
+    shouldUseVirtualFocus
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled});
@@ -81,7 +86,10 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     optionProps: {
       ...optionProps,
       ...pressProps,
-      ...hoverProps
+      ...hoverProps,
+      // Can I generate a predictable id like this so ComboBox can intuit the focused items id 
+      // or should I modify collection builder so that id is included somehow
+      id: `${baseId}-option-${key}`
     },
     labelProps: {
       id: labelId

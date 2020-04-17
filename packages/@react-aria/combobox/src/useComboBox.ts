@@ -13,7 +13,8 @@
  // TODO flesh out these types
 interface ComboBoxProps {
   triggerRef,
-  inputRef
+  inputRef,
+  layout: any
 }
 
 interface ComboBoxAria {
@@ -23,7 +24,7 @@ interface ComboBoxAria {
   labelProps: HTMLAttributes<HTMLElement>
 }
 
-import {HTMLAttributes} from 'react';
+import {HTMLAttributes, useEffect, useState} from 'react';
 import {chain, useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
@@ -58,14 +59,6 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
   );
 
 
-
-  // Not sure if we use this. Can we just use `useListBoxLayout` from ListBoxBase?
-    // Do we use this? Or do we use useSelectableList instead?
-    // let {collectionProps} = useSelectableCollection({
-    //   selectionManager: state.selectionManager,
-    //   keyboardDelegate: layout // write own keyboard delegate? Unneeded if using useSelectableList
-    // });
-
   // TextFieldBase already has useTextField and will return the value of onChange as a string instead
   // of an event, this leads to us getting onChange twice if we useTextField as well, and it'll throw an error
   // because string.target doesn't exist
@@ -76,6 +69,73 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
       state.setOpen(true);
     }
     state.setValue(val);
+  };
+
+
+
+  // Belongs in useComboBox or move back to comboBox?
+  useEffect(() => {
+    // Logic for what should be rendered in the TextField when state.selectedKey is changed/defined
+    // Perhaps include inputValue here as well? Maybe this is where all the logic for determining state.value should go
+    // Think about where to put this and if there is a better way to do this
+    
+    // Pull selectedItem out of the useEffect?
+    let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
+    if (selectedItem) {
+      let itemText = selectedItem.textValue || selectedItem.rendered;
+
+      // TODO: logic on whether or not to take the selectedItem value over the current value (check if controlled or not)
+      // TODO: all other logic
+
+      
+      // Throw error if controlled inputValue and controlled selectedKey don't match
+      if (props.inputValue && props.selectedKey && (props.inputValue !== itemText)) {
+        throw new Error('Mismatch between selected item and inputValue!')
+      } 
+
+      // Update textfield value if new item is selected
+      if (itemText !== state.value) {
+        state.setValue(itemText);
+      }
+    }
+  }, [state.selectedKey])
+
+
+  // Refine the below, feels weird to have focusedItem and also need to still do state.selectionManger.focusedKey
+  // Belongs in useComboBox?
+  let [focusedKeyId, setFocusedKeyId] = useState(null);
+  let focusedItem = state.selectionManager.focusedKey ? state.collection.getItem(state.selectionManager.focusedKey) : null;
+  useEffect(() => {
+    if (focusedItem) {
+      setFocusedKeyId(`${menuProps.id}-option-${focusedItem.key}`);
+    }
+  }, [focusedItem])
+
+
+  // Using layout initiated from ComboBox, generate the keydown handlers for textfield (arrow up/down to navigate through menu when focus in the textfield) 
+  // Do this or just write own onKeyDown since we don't need all of them?
+  let {collectionProps} = useSelectableCollection({
+    selectionManager: state.selectionManager,
+    keyboardDelegate: props.layout
+  });
+
+
+  // For textfield specific keydown operations
+  let onKeyDown = (e) => {
+    switch (e.key) {
+      case "Enter":
+        // This probably shouldn't be a if statement on focusedItem only since hitting Enter should prob submit the
+        // current input as well if menu isn't opened but that will be implemented later
+        if (state.isOpen && focusedItem) {
+          state.setSelectedKey(state.selectionManager.focusedKey);
+          state.setOpen(false);
+        }
+
+        break;
+      case "Escape":
+        state.setOpen(false);
+        break;
+    }
   };
 
 
@@ -102,7 +162,9 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
       onChange,
       role: 'combobox',
       'aria-controls': state.isOpen ? menuProps.id : undefined,
-      'aria-autocomplete': 'list'
+      'aria-autocomplete': 'list',
+      'aria-activedescendant': state.isOpen ? focusedKeyId : undefined,
+      onKeyDown:  chain(collectionProps.onKeyDown, onKeyDown)
     },
     menuProps: {
       // ...collectionProps,

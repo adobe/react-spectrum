@@ -106,7 +106,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       }
     )
   });
-
+  
   let textField = (
     <div
       className={
@@ -125,7 +125,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
         <ElementType
           {...mergeProps(
             textFieldProps,
-            filterDOMProps(otherProps, TextInputDOMPropNames)
+            filterDOMProps(otherProps, {...TextInputDOMPropNames, 'aria-activedescendant': 1})
           )}
           ref={inputRef}
           value={value}

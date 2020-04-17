@@ -85,13 +85,20 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   let inputRef = useRef();
 
   let state = useComboBoxState(props);
+
+
+  // Below copied from picker, placeholder for now
+  // Perhaps reorg this to be a common hook?
+  let layout = useListBoxLayout(state);
+
   // onBlur, onFocus, etc behavior for textfield and stuff should go into useComboBox
   let {triggerProps, inputProps, menuProps, labelProps} = useComboBox(
     {
       ...props,
       menuTrigger,
       triggerRef: unwrapDOMRef(triggerRef),
-      inputRef: unwrapDOMRef(inputRef)
+      inputRef: unwrapDOMRef(inputRef),
+      layout
     },
     state
   );
@@ -99,9 +106,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
 
 
 
-  // Below copied from picker, placeholder for now
-  // Perhaps reorg this to be a common hook?
-  let layout = useListBoxLayout(state);
+  
 
 
   let {overlayProps, placement} = useOverlayPosition({
@@ -131,9 +136,9 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
         focusOnPointerEnter
         layout={layout}
         state={state}
-        // Figure out what the below is for
-        width={isMobile ? '100%' : undefined}
-        />
+        // Figure out what the below width is for
+        width={isMobile ? '100%' : undefined} 
+        shouldUseVirtualFocus />
       {/* <DismissButton onDismiss={() => state.setOpen(false)} /> */}
     </FocusScope>
   );
@@ -188,31 +193,6 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   }
 
   // Look in the state.collection.size <= 300 logic in Picker and see if we need it for combobox
-
-
-  useEffect(() => {
-    // Logic for what should be rendered in the TextField when state.selectedKey is changed/defined
-    // Perhaps include inputValue here as well? Maybe this is where all the logic for determining state.value should go
-    // Think about where to put this and if there is a better way to do this
-    let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
-    if (selectedItem) {
-      let itemText = selectedItem.textValue || selectedItem.rendered;
-
-      // TODO: logic on whether or not to take the selectedItem value over the current value (check if controlled or not)
-      // TODO: all other logic
-
-      
-      // Throw error if controlled inputValue and controlled selectedKey don't match
-      if (props.inputValue && props.selectedKey && (props.inputValue !== itemText)) {
-        throw new Error('Mismatch between selected item and inputValue!')
-      } 
-
-      // Update textfield value if new item is selected
-      if (itemText !== state.value) {
-        state.setValue(itemText);
-      }
-    }
-  }, [state.selectedKey])
 
   // Use TextFieldBase? Figure out where the class name should go
   // Maybe we don't even use textfield base, just a base input?

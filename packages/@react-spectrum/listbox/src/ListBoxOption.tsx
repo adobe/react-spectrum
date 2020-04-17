@@ -26,7 +26,9 @@ interface OptionProps<T> {
   item: Node<T>,
   state: ListState<T>,
   shouldSelectOnPressUp?: boolean,
-  shouldFocusOnHover?: boolean
+  shouldFocusOnHover?: boolean,
+  shouldUseVirtualFocus?: boolean,
+  baseId: string
 }
 
 /** @private */
@@ -35,13 +37,16 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     item,
     state,
     shouldSelectOnPressUp,
-    shouldFocusOnHover
+    shouldFocusOnHover,
+    shouldUseVirtualFocus,
+    baseId
   } = props;
 
   let {
     rendered,
     isSelected,
     isDisabled,
+    isFocused,
     key
   } = item;
 
@@ -55,7 +60,9 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
       ref,
       shouldSelectOnPressUp,
       shouldFocusOnHover,
-      isVirtualized: true
+      isVirtualized: true,
+      shouldUseVirtualFocus,
+      baseId
     },
     state
   );
@@ -73,6 +80,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
           styles,
           'spectrum-Menu-item',
           {
+            'is-focused': shouldUseVirtualFocus && isFocused,
             'is-disabled': isDisabled,
             'is-selected': isSelected,
             'is-selectable': state.selectionManager.selectionMode !== 'none'

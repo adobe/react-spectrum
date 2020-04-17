@@ -21,7 +21,8 @@ interface SelectableItemOptions {
   itemKey: Key,
   itemRef: RefObject<HTMLElement>,
   shouldSelectOnPressUp?: boolean,
-  isVirtualized?: boolean
+  isVirtualized?: boolean,
+  shouldUseVirtualFocus?: boolean
 }
 
 interface SelectableItemAria {
@@ -34,7 +35,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     itemKey,
     itemRef,
     shouldSelectOnPressUp,
-    isVirtualized
+    isVirtualized,
+    shouldUseVirtualFocus
   } = options;
 
   let onSelect = (e: PressEvent | PointerEvent) => {
@@ -58,7 +60,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Focus the associated DOM node when this item becomes the focusedKey
   let isFocused = itemKey === manager.focusedKey;
   useEffect(() => {
-    if (isFocused && manager.isFocused && document.activeElement !== itemRef.current) {
+    if (isFocused && manager.isFocused && !shouldUseVirtualFocus && document.activeElement !== itemRef.current) {
       focusWithoutScrolling(itemRef.current);
     }
   }, [itemRef, isFocused, manager.focusedKey, manager.isFocused]);

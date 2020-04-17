@@ -34,7 +34,8 @@ interface ListBoxBaseProps<T> extends DOMProps, StyleProps {
   shouldSelectOnPressUp?: boolean,
   focusOnPointerEnter?: boolean,
   domProps?: HTMLAttributes<HTMLElement>,
-  disallowEmptySelection?: boolean
+  disallowEmptySelection?: boolean,
+  shouldUseVirtualFocus?: boolean
 }
 
 /** @private */
@@ -56,7 +57,7 @@ export function useListBoxLayout<T>(state: ListState<T>) {
 
 /** @private */
 function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
-  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, domProps = {}} = props;
+  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, shouldUseVirtualFocus, domProps = {}} = props;
   let {listBoxProps} = useListBox({
     ...props,
     ...domProps,
@@ -113,10 +114,12 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
         if (type === 'item') {
           return (
             <ListBoxOption
+              baseId={domProps.id}
               item={item}
               state={state}
               shouldSelectOnPressUp={shouldSelectOnPressUp}
-              shouldFocusOnHover={focusOnPointerEnter} />
+              shouldFocusOnHover={focusOnPointerEnter}
+              shouldUseVirtualFocus={shouldUseVirtualFocus} />
           );
         }
       }}
