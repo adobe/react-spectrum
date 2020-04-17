@@ -384,7 +384,7 @@ export function usePress(props: PressHookProps): PressResult {
           focusWithoutScrolling(e.currentTarget);
         }
 
-        triggerPressStart(e, 'mouse');
+        triggerPressStart(e, isVirtualClick(e.nativeEvent) ? 'virtual' : 'mouse');
 
         document.addEventListener('mouseup', onMouseUp, false);
       };
@@ -407,7 +407,7 @@ export function usePress(props: PressHookProps): PressResult {
 
       pressProps.onMouseUp = (e) => {
         if (!state.ignoreEmulatedMouseEvents && e.button === 0) {
-          triggerPressUp(e, 'mouse');
+          triggerPressUp(e, isVirtualClick(e.nativeEvent) ? 'virtual' : 'mouse');
         }
       };
 
@@ -425,10 +425,11 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
+        let pointerType: PointerType = isVirtualClick(e) ? 'virtual' : 'mouse';
         if (isOverTarget(e, state.target)) {
-          triggerPressEnd(createEvent(state.target, e), 'mouse');
+          triggerPressEnd(createEvent(state.target, e), pointerType);
         } else if (state.isOverTarget) {
-          triggerPressEnd(createEvent(state.target, e), 'mouse', false);
+          triggerPressEnd(createEvent(state.target, e), pointerType, false);
         }
 
         state.isOverTarget = false;

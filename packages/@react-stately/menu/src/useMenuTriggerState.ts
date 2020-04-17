@@ -34,7 +34,7 @@ export interface MenuTriggerState {
   close(): void,
 
   /** Toggles the menu. */
-  toggle(focusStrategy?: FocusStrategy): void
+  toggle(focusStrategy?: FocusStrategy | null): void
 }
 
 /**
@@ -43,7 +43,7 @@ export interface MenuTriggerState {
  */
 export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  {
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
-  let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>('first');
+  let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
 
   return {
     isOpen, 
@@ -56,7 +56,7 @@ export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  
     close() {
       setOpen(false);
     },
-    toggle(focusStrategy: FocusStrategy = 'first') {
+    toggle(focusStrategy: FocusStrategy = null) {
       setFocusStrategy(focusStrategy);
       setOpen(!isOpen);
     }
