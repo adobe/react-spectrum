@@ -112,7 +112,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
         <link rel="preload" as="font" href="https://use.typekit.net/af/505d17/00000000000000003b9aee44/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n9&v=3" crossOrigin="" />
         <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
-        {scripts.map(s => <link rel="preload" as="script" href={s.url} crossOrigin="" />)}
+        {scripts.map(s => <script type={s.type} src={s.url} defer />)}
       </head>
       <body>
         <div className={docStyles.pageHeader} id="header" />
@@ -145,7 +145,6 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
           </article>
           <ToC toc={toc} />
         </main>
-        {scripts.map(s => <script type={s.type} src={s.url} />)}
       </body>
     </html>
   );
