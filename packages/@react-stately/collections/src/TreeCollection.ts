@@ -85,7 +85,7 @@ export class TreeCollection<T> implements Collection<Node<T>> {
   getLastKey() {
     return this.lastKey;
   }
-  
+
   getItem(key: Key) {
     return this.keyMap.get(key);
   }
