@@ -67,7 +67,7 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
     modalStyles,
     'spectrum-Modal-wrapper',
     {
-      'spectrum-fullscreenTakeover-Modal-wrapper': typeVariant === 'fullscreenTakeover'
+      'spectrum-Modal-wrapper--fullscreenTakeover': typeVariant === 'fullscreenTakeover'
     },
     classNames(
       overrideStyles,

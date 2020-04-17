@@ -88,12 +88,15 @@ The example below demonstrates how to pass the DialogTrigger's `close` state set
 ## Dialog Types
 
 By providing a `type` prop, you can specify the type of Dialog that is rendered
-by your DialogTrigger. 
+by your DialogTrigger. Note that pressing the `esc` key will close the Dialog regardless
+of its `type`.
 
 ### Modal
 
 Modal Dialogs create an underlay that blocks access to the underlying user interface
 until the Dialog is closed. Sizing options can be found in the [Dialog page](./Dialog.html#size).
+Focus is trapped inside the Modal as per the [accessibility guidelines](https://www.w3.org/TR/wai-aria-practices/#dialog_modal)
+laid out by W3C.
 
 ```tsx example
 <DialogTrigger type="modal">
@@ -357,8 +360,8 @@ to the direction the Dialog is rendered whereas `crossOffset` handles the offset
 
 ### Flipping
 
-Applying `shouldFlip` to the DialogTrigger makes the Popover Dialog attempt to flip its placement
-in situations where the original placement would cause it to render out of view.
+Applying `shouldFlip` to the DialogTrigger makes the Popover Dialog attempt to flip
+on its main axis in situations where the original placement would cause it to render out of view.
 
 ```tsx example
 <DialogTrigger type="popover" placement="bottom" shouldFlip>

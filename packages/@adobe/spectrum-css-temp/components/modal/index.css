@@ -53,7 +53,7 @@ governing permissions and limitations under the License.
     visibility: visible;
   }
 
-  &.spectrum-fullscreenTakeover-Modal-wrapper {
+  &.spectrum-Modal-wrapper--fullscreenTakeover {
     /* Appear below nested modal underlays */
     z-index: 1;
   }

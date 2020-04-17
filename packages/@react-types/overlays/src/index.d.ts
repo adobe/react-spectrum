@@ -31,15 +31,13 @@ export interface PositionProps {
    */
   containerPadding?: number,
   /** 
-   * The additional offset that should be applied between the element and its 
-   * anchor element. Offset is applied in the same direction in which the element 
-   * is rendered.
+   * The additional offset applied along the main axis between the element and its 
+   * anchor element.
    */
   offset?: number,
   /**
-   * The additional offset that should be applied between the element and its
-   * anchor element. Offset is applied perpendicular to the direction in which the element
-   * is rendered. 
+   * The additional offset applied along the cross axis between the element and its
+   * anchor element. 
    */
   crossOffset?: number,
   /** 
