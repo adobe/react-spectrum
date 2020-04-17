@@ -140,7 +140,6 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
       return node.textValue.startsWith(value);
     });
   }, [selectState.collection, value, itemsControlled]);
-  console.log(selectState);
 
   //  let areThereItems = listState.collection.size > 0;
 
