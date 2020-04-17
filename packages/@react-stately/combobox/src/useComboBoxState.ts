@@ -133,7 +133,7 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
 
   let selectState  = useSelectState(props);
   selectState.collection = useMemo(() => {
-    if (itemsControlled) {
+    if (itemsControlled || value === '') {
       return selectState.collection;
     }
     return new FilteredCollection(selectState.collection, (node) => {
