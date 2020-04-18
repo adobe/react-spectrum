@@ -23,18 +23,24 @@ export interface MenuTriggerProps {
   direction?: 'bottom' | 'top',
   /** Whether the Menu closes when a selection is made. */
   closeOnSelect?: boolean,
-  /** Whether the Menu loads and stays open. */
+  /** Whether the Menu loads open (controlled). */
   isOpen?: boolean,
-  /** Whether the Menu loads open. */
+  /** Whether the Menu loads open (uncontrolled). */
   defaultOpen?: boolean,
   /** Handler that is called when the Menu opens or closes. */
   onOpenChange?: (isOpen: boolean) => void,
-  /** Weather to flip if the scroll size is greater then available space. */
+  /**
+   * Whether the element should flip its orientation when there is insufficient
+   * room for it to render completely.
+   */
   shouldFlip?: boolean
 }
 
 export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
-  /** The contents of the MenuTrigger. */
+  /**
+   * The contents of the MenuTrigger, a trigger and a Menu. See the MenuTrigger
+   * [Content section](#content) for more information on what to provide as children.
+   */
   children: ReactElement[]
 }
 
