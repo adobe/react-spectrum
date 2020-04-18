@@ -36,7 +36,7 @@ interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   menuTrigger?: 'focus' | 'input' | 'manual'
 }
 
-function* filter(nodes, filterFn) {
+function* filter(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean) {
   for (let node of nodes) {
     if (filterFn(node)) {
       yield node;
@@ -49,9 +49,11 @@ class FilteredCollection implements Collection<Node<T>> {
   private iterable: Iterable<Node<T>>;
   private firstKey: Key;
   private lastKey: Key;
+  private filterFn: (node: Node<T>) => boolean;
 
-  constructor(nodes: Iterable<Node<T>>, filterFn: (textValue: string) => boolean) {
-    this.iterable = filter(nodes, filterFn);
+  constructor(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean) {
+    this.filterFn = filterFn;
+    this.iterable = nodes;
 
     let visit = (node: Node<T>) => {
       this.keyMap.set(node.key, node);
@@ -63,7 +65,7 @@ class FilteredCollection implements Collection<Node<T>> {
       }
     };
 
-    for (let node of this.iterable) {
+    for (let node of this) {
       visit(node);
     }
 
@@ -88,7 +90,7 @@ class FilteredCollection implements Collection<Node<T>> {
   }
 
   *[Symbol.iterator]() {
-    yield* this.iterable;
+    yield* filter(this.iterable, this.filterFn);
   }
 
   get size() {
@@ -137,9 +139,11 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
       return selectState.collection;
     }
     return new FilteredCollection(selectState.collection, (node) => {
-      return node.textValue.startsWith(value);
+      // ignore case
+      return node.textValue.startsWith(value); // should this be textValue?
     });
   }, [selectState.collection, value, itemsControlled]);
+  // do i need a new selection manager?
 
   //  let areThereItems = listState.collection.size > 0;
 
@@ -147,7 +151,7 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
     if (selectState.collection.size === 0 && selectState.isOpen) {
       selectState.close();
     }
-  });
+  }, [selectState.collection, selectState.isOpen]);
 
   // For completionMode = complete
   let [suggestionValue, setSuggestionValue] = useState('');
