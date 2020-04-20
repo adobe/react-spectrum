@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, cleanup, fireEvent, render, within} from '@testing-library/react';
+import {act, cleanup, fireEvent, render, waitFor, within} from '@testing-library/react';
+import {Button} from '@react-spectrum/button';
 import {ComboBox, Item} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import userEvent from '@testing-library/user-event';
-import {Button} from '@react-spectrum/button';
 
 let theme = {
   light: themeLight,
@@ -46,9 +46,9 @@ describe('ComboBox', function () {
   });
 
   it('renders correctly', function () {
-    let {getAllByText, getByText, getByRole} = render(
+    let {getAllByText, getByRole} = render(
       <Provider theme={theme}>
-        <ComboBox label="Test" placeholder="Select a topic…" onSelectionChange={onSelectionChange}>
+        <ComboBox data-testid="1" label="Test" placeholder="Select a topic…" onSelectionChange={onSelectionChange}>
           <Item>One</Item>
           <Item>Two</Item>
           <Item>Three</Item>
@@ -56,13 +56,14 @@ describe('ComboBox', function () {
       </Provider>
     );
 
-    let combobox = getByRole('button');
-    //expect(combobox).toHaveAttribute('aria-haspopup', 'listbox'); // i think this is what we expect, not just true
+    let combobox = getByRole('combobox');
+    expect(combobox).toHaveAttribute('placeholder', 'Select a topic…');
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-haspopup', 'true'); // i think we really want 'listbox'?
 
     let label = getAllByText('Test')[0];
-    //let value = getByText('Select a topic…');
     expect(label).toBeVisible();
-    //expect(value).toBeVisible();
   });
 
   describe('opening', function () {
@@ -73,7 +74,7 @@ describe('ComboBox', function () {
         // blows up if there are no items, so we'll need to fix this
         let {getByRole} = render(
           <Provider theme={theme}>
-            <ComboBox label="Test" onOpenChange={onOpenChange} onFilter={onFilter} items={[]}>
+            <ComboBox data-testid="2" label="Test" onOpenChange={onOpenChange} onFilter={onFilter} items={[]}>
               {(item) => <Item uniqueKey={item.key}>{item.name}</Item>}
             </ComboBox>
           </Provider>
@@ -97,7 +98,7 @@ describe('ComboBox', function () {
         let onOpenChange = jest.fn();
         let {getByRole} = render(
           <Provider theme={theme}>
-            <ComboBox label="Test" onFilter={onFilter} onOpenChange={onOpenChange}>
+            <ComboBox data-testid="3" label="Test" onFilter={onFilter} onOpenChange={onOpenChange}>
               <Item>One</Item>
               <Item>Two</Item>
               <Item>Three</Item>
@@ -106,7 +107,7 @@ describe('ComboBox', function () {
         );
 
         let button = getByRole('button');
-        //let combobox = getByRole('combobox');
+        let combobox = getByRole('combobox');
         act(() => {
           fireEvent.mouseDown(button);
         });
@@ -127,10 +128,8 @@ describe('ComboBox', function () {
         expect(items[1]).toHaveTextContent('Two');
         expect(items[2]).toHaveTextContent('Three');
 
-        /*
-        expect(document.activeElement).toBe(combobox);
-        expect(combobox).toHaveAttribute('aria-activedescendent', 0);
-        */
+        // expect(document.activeElement).toBe(combobox);
+        expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
       });
     });
   });
@@ -138,7 +137,7 @@ describe('ComboBox', function () {
     it('moves to selected key', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
-          <ComboBox label="Test" selectedKey="1">
+          <ComboBox data-testid="4" label="Test" selectedKey="1">
             <Item>One</Item>
             <Item>Two</Item>
             <Item>Three</Item>
@@ -147,7 +146,7 @@ describe('ComboBox', function () {
       );
 
       let button = getByRole('button');
-      //let combobox = getByRole('combobox');
+      let combobox = getByRole('combobox');
       act(() => {
         fireEvent.mouseDown(button);
       });
@@ -157,16 +156,14 @@ describe('ComboBox', function () {
 
       let items = within(listbox).getAllByRole('option');
 
-      /*
-      expect(document.activeElement).toBe(combobox);
-      expect(combobox).toHaveAttribute('aria-activedescendent', 1);
-      */
+      // expect(document.activeElement).toBe(combobox); // I think we should send focus to the input?
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[1].id);
     });
 
-    it('moves to first item for no selected key', function () {
+    it('moves to first item for no selected key',  function () {
       let {getByRole} = render(
         <Provider theme={theme}>
-          <ComboBox label="Test">
+          <ComboBox data-testid="5" label="Test">
             <Item>One</Item>
             <Item>Two</Item>
             <Item>Three</Item>
@@ -175,7 +172,7 @@ describe('ComboBox', function () {
       );
 
       let button = getByRole('button');
-      //let combobox = getByRole('combobox');
+      let combobox = getByRole('combobox');
       act(() => {
         fireEvent.mouseDown(button);
       });
@@ -185,16 +182,13 @@ describe('ComboBox', function () {
 
       let items = within(listbox).getAllByRole('option');
 
-      /*
-      expect(document.activeElement).toBe(combobox);
-      expect(combobox).toHaveAttribute('aria-activedescendent', 0);
-      */
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
     });
 
     it('does not auto focus for no selected key and allows custom value', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
-          <ComboBox label="Test" allowsCustomValue>
+          <ComboBox data-testid="6" label="Test" allowsCustomValue>
             <Item>One</Item>
             <Item>Two</Item>
             <Item>Three</Item>
@@ -224,7 +218,7 @@ describe('ComboBox', function () {
       let onOpenChange = jest.fn();
       let {getByRole} = render(
         <Provider theme={theme}>
-          <ComboBox label="Test" onOpenChange={onOpenChange}>
+          <ComboBox data-testid="7" label="Test" onOpenChange={onOpenChange}>
             <Item>Bulbasaur</Item>
             <Item>Squirtle</Item>
             <Item>Charmander</Item>
@@ -249,7 +243,7 @@ describe('ComboBox', function () {
       let onSelectionChange = jest.fn();
       let {getByRole, getAllByRole} = render(
         <Provider theme={theme}>
-          <ComboBox label="Test" defaultOpen onFilter={onFilter} onOpenChange={onOpenChange} onSelectionChange={onSelectionChange}>
+          <ComboBox data-testid="8" label="Test" onFilter={onFilter} onOpenChange={onOpenChange} onSelectionChange={onSelectionChange}>
             <Item>Bulbasaur</Item>
             <Item>Squirtle</Item>
             <Item>Charmander</Item>
@@ -259,7 +253,11 @@ describe('ComboBox', function () {
       );
 
       let combobox = getByRole('combobox');
+      let button = getAllByRole('button')[0];
       let secondaryButton = getAllByRole('button')[1];
+      act(() => {
+        fireEvent.mouseDown(button);
+      });
       act(() => {
         fireEvent.keyDown(document.activeElement, {key: 'Tab'});
       });
@@ -275,9 +273,9 @@ describe('ComboBox', function () {
       let onFilter = jest.fn();
       let onOpenChange = jest.fn();
       let onSelectionChange = jest.fn();
-      let {getByRole, getByLabelText} = render(
+      let {getByRole} = render(
         <Provider theme={theme}>
-          <ComboBox label="Test" allowsCustomValue onFilter={onFilter} onOpenChange={onOpenChange} onSelectionChange={onSelectionChange}>
+          <ComboBox data-testid="9" label="Test" allowsCustomValue onFilter={onFilter} onOpenChange={onOpenChange} onSelectionChange={onSelectionChange}>
             <Item>Bulbasaur</Item>
             <Item>Squirtle</Item>
             <Item>Charmander</Item>

@@ -133,7 +133,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
         layout={layout}
         state={state}
         // Figure out what the below width is for
-        width={isMobile ? '100%' : undefined} 
+        width={isMobile ? '100%' : undefined}
         shouldUseVirtualFocus />
       {/* <DismissButton onDismiss={() => state.setOpen(false)} /> */}
     </FocusScope>
