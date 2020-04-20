@@ -13,7 +13,7 @@
 import {ActionGroupKeyboardDelegate} from './ActionGroupKeyboardDelegate';
 import {ActionGroupProps} from '@react-types/actiongroup';
 import {ActionGroupState} from '@react-stately/actiongroup';
-import {FocusEvent, Orientation} from '@react-types/shared';
+import {Orientation} from '@react-types/shared';
 import {HTMLAttributes, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useFocusWithin} from '@react-aria/interactions';
