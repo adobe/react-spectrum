@@ -87,8 +87,6 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
       ...optionProps,
       ...pressProps,
       ...hoverProps,
-      // Can I generate a predictable id like this so ComboBox can intuit the focused items id
-      // or should I modify collection builder so that id is included somehow
       id: `${baseId}-option-${key}`
     },
     labelProps: {

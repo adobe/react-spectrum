@@ -20,8 +20,8 @@ import {useComboBoxState} from '@react-stately/combobox';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {CollectionBase, DOMRef, DOMProps, InputBase, LabelPosition, SingleSelection, SpectrumLabelableProps, TextInputBase, StyleProps} from '@react-types/shared';
-import {TextField, TextFieldBase} from '@react-spectrum/textfield';
+import {CollectionBase, DOMRef, DOMProps, InputBase, SingleSelection, SpectrumLabelableProps, TextInputBase, StyleProps} from '@react-types/shared';
+import {TextFieldBase} from '@react-spectrum/textfield';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing, FocusScope} from '@react-aria/focus';
@@ -30,8 +30,6 @@ import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {Label} from '@react-spectrum/label';
 
-
-// Should extend selectProps?
 interface ComboBoxProps extends CollectionBase<T>, SingleSelection {
   isOpen?: boolean,
   defaultOpen?: boolean,
@@ -47,15 +45,13 @@ interface ComboBoxProps extends CollectionBase<T>, SingleSelection {
   shouldFlip?: boolean
 }
 
-// Check extends
+// TODO: Check extends
 interface SpectrumComboBox extends InputBase, TextInputBase, ComboBoxProps, SpectrumLabelableProps, DOMProps, StyleProps {
   isQuiet?: boolean
 }
 
 function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
-  // Probably remove this?
-  props = useSlotProps(props);
 
   let {
     isQuiet,
@@ -67,9 +63,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
     isRequired,
     necessityIndicator,
     validationState,
-    // What is the default completion mode?
     completionMode = 'suggest',
-    // What is the default menu trigger operation?
     menuTrigger = 'input',
     autoFocus,
     shouldFlip = true,
@@ -81,36 +75,27 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   let popoverRef = useRef();
   let triggerRef = useRef();
   let listboxRef = useRef();
-  // Possibly sync this ref with the one provided by the user?
   let inputRef = useRef();
+  let domRef = useDOMRef(ref);
 
   let state = useComboBoxState(props);
-
-
-  // Below copied from picker, placeholder for now
-  // Perhaps reorg this to be a common hook?
   let layout = useListBoxLayout(state);
-
-  // onBlur, onFocus, etc behavior for textfield and stuff should go into useComboBox
   let {triggerProps, inputProps, menuProps, labelProps} = useComboBox(
     {
       ...props,
       menuTrigger,
+      layout,
       triggerRef: unwrapDOMRef(triggerRef),
       inputRef: unwrapDOMRef(inputRef),
-      layout,
       popoverRef: unwrapDOMRef(popoverRef)
     },
     state
   );
-  let domRef = useDOMRef(ref);
 
   let {overlayProps, placement} = useOverlayPosition({
     targetRef: unwrapDOMRef(triggerRef),
     overlayRef: unwrapDOMRef(popoverRef),
     scrollRef: listboxRef,
-    // Support direction and align props for combobox?
-    // placement: `${direction} ${align}` as Placement,
     placement: 'bottom end' as Placement,
     shouldFlip: shouldFlip,
     isOpen: state.isOpen
@@ -118,28 +103,26 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
 
 
   let isMobile = useMediaQuery('(max-width: 700px)');
-  // Figure out if we need the DismissButton (probably)
   let listbox = (
     <FocusScope restoreFocus>
-      {/* <DismissButton onDismiss={() => state.setOpen(false)} /> */}
+      <DismissButton onDismiss={() => state.setOpen(false)} />
       <ListBoxBase
         ref={listboxRef}
         domProps={menuProps}
         disallowEmptySelection
-        // Probably should have this be 'first'?
+        // TODO: Probably should have this be 'first'? Double check if state even has this prop
         autoFocus={state.focusStrategy}
         shouldSelectOnPressUp
         focusOnPointerEnter
         layout={layout}
         state={state}
-        // Figure out what the below width is for
+        // TODO: Figure out what the below width is for
         width={isMobile ? '100%' : undefined}
         shouldUseVirtualFocus />
-      {/* <DismissButton onDismiss={() => state.setOpen(false)} /> */}
+      <DismissButton onDismiss={() => state.setOpen(false)} />
     </FocusScope>
   );
 
-  // Perhaps we could measure the wrapping div instead?
   // Measure the width of the inputfield and the button to inform the width of the menu (below).
   let [menuWidth, setMenuWidth] = useState(null);
   let {scale} = useProvider();
@@ -160,23 +143,15 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
       </Tray>
     );
   } else {
-    // Test the below for combobox, copied from Picker
-    // let width = isQuiet ? null : comboboxWidth;
-
     let style = {
       ...overlayProps.style,
-      // Should Combobox support a user defined menu width as well?
-      // width: menuWidth ? dimensionValue(menuWidth) : width,
       width: menuWidth
-      // See if Combobox needs the below as well
-      // minWidth: isQuiet ? `calc(${buttonWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : buttonWidth
     };
 
     overlay = (
       <Popover
         isOpen={state.isOpen}
         UNSAFE_style={style}
-        // UNSAFE_style={overlayProps.style}
         UNSAFE_className={classNames(styles, 'spectrum-Dropdown-popover', {'spectrum-Dropdown-popover--quiet': isQuiet})}
         ref={popoverRef}
         placement={placement}
@@ -188,18 +163,9 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
     );
   }
 
-  // Look in the state.collection.size <= 300 logic in Picker and see if we need it for combobox
-
-  // Use TextFieldBase? Figure out where the class name should go
-  // Maybe we don't even use textfield base, just a base input?
-  // Need to wrap it all in a focus ring so that everything is highlighted when keyboard focused
-
-  // Need to handle the label ourselves, can't use textfield label?
-  // Figure out why textfield doesn't recieve aria-autocomplete
-
+  // TODO: Figure out why textfield doesn't recieve aria-autocomplete
   let textField = (
     <FocusRing
-      // Should this have within
       within
       isTextInput
       focusClass={classNames(styles, 'is-focused')}
@@ -246,7 +212,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
               'spectrum-FieldButton'
             )
           }
-          // Disable if readOnly?
+          // TODO: Disable if readOnly? Check designs
           isDisabled={isDisabled || isReadOnly}
           isQuiet={isQuiet}
           validationState={validationState}>
@@ -289,6 +255,6 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
   return textField;
 }
 
-// Probably need to cast this
+// TODO: Probably need to cast this
 const _ComboBox = React.forwardRef(ComboBox);
 export {_ComboBox as ComboBox};

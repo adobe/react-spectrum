@@ -106,7 +106,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       }
     )
   });
-  
+
   let textField = (
     <div
       className={

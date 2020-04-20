@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
- // TODO flesh out these types
+ // TODO: flesh out these types
 interface ComboBoxProps {
   triggerRef,
   inputRef,
@@ -25,44 +25,26 @@ interface ComboBoxAria {
 }
 
 import {HTMLAttributes, useEffect, useState} from 'react';
-import {chain, useId} from '@react-aria/utils';
+import {chain} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useSelectableCollection} from '@react-aria/selection';
-import {useTextField} from '@react-aria/textfield';
 import {ComboBoxState} from '@react-stately/combobox';
 
 let count = 0;
 export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): ComboBoxAria {
-  // double check that user provided id gets sent to textfield and not to wrapper div
+  // TODO: destructure props
 
-
-  // onFocus, calls state.open, attaches itself to textfield
-  // onChange
-  // onInputChange
-
-  // onKeyPress for tab to complete suggestion, handle later
-
-
-  // // Might not need this if we have useTextfield since useTextField calls useLabel? Depends on wrapper I guess
-  // let {labelProps, fieldProps} = useLabel({
-  //   id: inputId, // Maybe wrapper id?,
-  //   ...props
-  // });
-
-  // I think we'll need this, probably won't use MenuTrigger component since behavior isn't as straight forward
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      ref: props.triggerRef //ref of the trigger button, maybe not props.ref
+      ref: props.triggerRef
     },
     state
   );
 
-
   // TextFieldBase already has useTextField and will return the value of onChange as a string instead
   // of an event, this leads to us getting onChange twice if we useTextField as well, and it'll throw an error
   // because string.target doesn't exist
-  // would it be better to useTextField and discard usage of TextFieldBase?
   let {fieldProps, labelProps} = useLabel(props);
   let onChange = (val) => {
     if (props.menuTrigger === 'input' && val.length > 0) {
@@ -71,22 +53,12 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
     state.setValue(val);
   };
 
-
-
-  // Belongs in useComboBox or move back to comboBox?
+  // TODO: double check if selectedItem should be moved into the useEffect
+  // If not change the dependency array to be on selectedItem
+  let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
   useEffect(() => {
-    // Logic for what should be rendered in the TextField when state.selectedKey is changed/defined
-    // Perhaps include inputValue here as well? Maybe this is where all the logic for determining state.value should go
-    // Think about where to put this and if there is a better way to do this
-
-    // Pull selectedItem out of the useEffect?
-    let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
     if (selectedItem) {
       let itemText = selectedItem.textValue || selectedItem.rendered;
-
-      // TODO: logic on whether or not to take the selectedItem value over the current value (check if controlled or not)
-      // TODO: all other logic
-
 
       // Throw error if controlled inputValue and controlled selectedKey don't match
       if (props.inputValue && props.selectedKey && (props.inputValue !== itemText)) {
@@ -101,8 +73,7 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
   }, [state.selectedKey])
 
 
-  // Refine the below, feels weird to have focusedItem and also need to still do state.selectionManger.focusedKey
-  // Belongs in useComboBox?
+  // TODO: Refine the below, feels weird to have focusedItem and also need to still do state.selectionManger.focusedKey
   let [focusedKeyId, setFocusedKeyId] = useState(null);
   let focusedItem = state.selectionManager.focusedKey ? state.collection.getItem(state.selectionManager.focusedKey) : null;
   useEffect(() => {
@@ -113,25 +84,22 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
 
 
   // Using layout initiated from ComboBox, generate the keydown handlers for textfield (arrow up/down to navigate through menu when focus in the textfield)
-  // Do this or just write own onKeyDown since we don't need all of them?
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
     keyboardDelegate: props.layout,
     shouldTypeAhead: false
   });
 
-  // Below copied from v2, refine later
   let onBlur = (e) => {
     if (props.onBlur) {
       props.onBlur(e);
     }
 
-    // not sure if needs the state.isOpen here, putting it as a guard for now 
-    // refine later for other combination of props/states (controlled/uncontrolled/allowCustomValue)
     if (state.isOpen && focusedItem) {
       state.setSelectedKey(state.selectionManager.focusedKey);
     }
     
+    // TODO: Double check if this is needed, from v2
     if (props.popoverRef.current && props.popoverRef.current.contains(document.activeElement)) {
       // If the element receiving focus is the Popover (dropdown menu), 
       // (i.e. user clicking dropdown scroll bar in IE 11),
@@ -149,8 +117,6 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
   let onKeyDown = (e) => {
     switch (e.key) {
       case "Enter":
-        // This probably shouldn't be a if statement on focusedItem only since hitting Enter should prob submit the
-        // current input as well if menu isn't opened but that will be implemented later
         if (state.isOpen && focusedItem) {
           state.setSelectedKey(state.selectionManager.focusedKey);
           state.setOpen(false);
@@ -163,27 +129,19 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
     }
   };
 
-
-// Talk to MJ or James about whether the input aria stuff goes on the input or on the wrapper
-// aria-controls vs aria-owns vs having both
-// what v2 stuff we should take, should look at v2?
-// Support listbox only? Or support grid/dialog/etc for popup/menu
-    // grid -> gridview/tableview instead of listbox, like a 2d list, look at aria spec
-    // dialog ->
-
-
   return {
     labelProps,
     triggerProps: {
-      // make sure this has controls -> listbox menu
-      // should have aria-haspopup -> listbox menu
+      // TODO: make sure this has controls -> listbox menu
+      // TODO: should have aria-haspopup -> listbox menu
       ...menuTriggerProps,
       tabIndex: -1
     },
     inputProps: {
+      // TODO: double check that user provided id gets sent to textfield and not to wrapper div
       ...fieldProps,
-      // make sure this doesn't have aria-owns
-      // should have aria-haspopup -> listbox menu
+      // TODO: make sure this doesn't have aria-owns
+      // TODO: should have aria-haspopup -> listbox menu
       onChange,
       role: 'combobox',
       'aria-controls': state.isOpen ? menuProps.id : undefined,
@@ -192,9 +150,6 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
       onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
       onBlur
     },
-    menuProps: {
-      // ...collectionProps,
-      ...menuProps,
-    }
+    menuProps
   };
 }

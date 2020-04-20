@@ -32,7 +32,6 @@ governing permissions and limitations under the License.
   flex-direction: row;
   flex-wrap: nowrap;
   min-width: calc(2.5 * var(--spectrum-dropdown-height));
-  /* min-width: var(--spectrum-component-single-line-width); */
   border-radius: var(--spectrum-border-radius);
 
   .spectrum-FieldButton {

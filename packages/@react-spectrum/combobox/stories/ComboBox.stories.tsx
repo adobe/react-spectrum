@@ -16,15 +16,11 @@ import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
-// TODO: replace with ComboBoxItem and Section?
-
-
 let items = [
   {name: 'Aardvark', id:'1'},
   {name: 'Kangaroo', id:'2'},
   {name: 'Snake', id:'3'}
 ];
-
 
 storiesOf('ComboBox', module)
   .add(
