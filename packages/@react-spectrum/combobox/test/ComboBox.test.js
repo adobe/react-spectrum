@@ -68,7 +68,7 @@ describe('ComboBox', function () {
 
   describe('opening', function () {
     describe('button click', function () {
-      it.skip('fires onFilter if there are no items loaded yet', function () {
+      it('fires onFilter if there are no items loaded yet', function () {
         let onFilter = jest.fn();
         let onOpenChange = jest.fn();
         // blows up if there are no items, so we'll need to fix this
@@ -87,10 +87,11 @@ describe('ComboBox', function () {
           fireEvent.mouseDown(combobox);
         });
         act(() => jest.runAllTimers());
+
         expect(onFilter).toHaveBeenCalled();
         expect(onOpenChange).not.toHaveBeenCalled();
 
-        expect(getByRole('listbox')).toThrow();
+        expect(() => getByRole('listbox')).toThrow();
       });
 
       it('focuses first item if there are items loaded', function () {
@@ -197,28 +198,23 @@ describe('ComboBox', function () {
       );
 
       let button = getByRole('button');
-      //let combobox = getByRole('combobox');
+      let combobox = getByRole('combobox');
       act(() => {
         fireEvent.mouseDown(button);
       });
       act(() => jest.runAllTimers());
 
-      let listbox = getByRole('listbox');
-
-      let items = within(listbox).getAllByRole('option');
-
-      /*
-      expect(document.activeElement).toBe(combobox);
-      expect(combobox).not.toHaveAttribute('aria-activedescendent');
-      */
+      // expect(document.activeElement).toBe(combobox);
+      expect(combobox).not.toHaveAttribute('aria-activedescendant');
     });
   });
   describe('typing in the textfield', function () {
     it('can be uncontrolled', function () {
       let onOpenChange = jest.fn();
+      let onFilter = jest.fn();
       let {getByRole} = render(
         <Provider theme={theme}>
-          <ComboBox data-testid="7" label="Test" onOpenChange={onOpenChange}>
+          <ComboBox data-testid="7" label="Test" onFilter={onFilter} onOpenChange={onOpenChange}>
             <Item>Bulbasaur</Item>
             <Item>Squirtle</Item>
             <Item>Charmander</Item>
@@ -231,8 +227,9 @@ describe('ComboBox', function () {
         userEvent.type(combobox, 'Bul');
       });
       act(() => jest.runAllTimers());
-      // expect(onFilter).toHaveBeenCalled();
+
       expect(onOpenChange).toHaveBeenCalled();
+      expect(onFilter).toHaveBeenCalled();
     });
   });
 
@@ -273,7 +270,7 @@ describe('ComboBox', function () {
       let onFilter = jest.fn();
       let onOpenChange = jest.fn();
       let onSelectionChange = jest.fn();
-      let {getByRole} = render(
+      let {getByRole, getAllByRole} = render(
         <Provider theme={theme}>
           <ComboBox data-testid="9" label="Test" allowsCustomValue onFilter={onFilter} onOpenChange={onOpenChange} onSelectionChange={onSelectionChange}>
             <Item>Bulbasaur</Item>

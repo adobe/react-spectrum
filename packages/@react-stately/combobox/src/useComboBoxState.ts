@@ -12,7 +12,7 @@
 
 import {Collection, Node} from '@react-stately/collections';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
-import {Key, useEffect, useMemo, useState} from 'react';
+import {Key, useEffect, useMemo, useState, useRef} from 'react';
 import {SelectState, useSelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
 
@@ -124,12 +124,26 @@ class FilteredCollection implements Collection<Node<T>> {
   }
 }
 
+function usePrevious(value) {
+  // The ref object is a generic container whose current property is mutable ...
+  // ... and can hold any value, similar to an instance property on a class
+  const ref = useRef();
+
+  // Store current value in ref
+  useEffect(() => {
+    ref.current = value;
+  }, [value]); // Only re-run if value changes
+
+  // Return previous value (happens before update in useEffect above)
+  return ref.current;
+}
+
+
 export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let itemsControlled = !!props.onFilter;
   let menuControlled = props.isOpen !== undefined;
   let valueControlled = props.inputValue !== undefined;
   let selectedControlled = !!props.selectedKey;
-
 
   let [value, setValue] = useControlledState(toString(props.inputValue), toString(props.defaultInputValue) || '', props.onInputChange);
 
@@ -143,23 +157,52 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
       return node.textValue.startsWith(value); // should this be textValue?
     });
   }, [selectState.collection, value, itemsControlled]);
+
+  let open = function () {
+    if (selectState.collection.size > 0) {
+      selectState.open();
+    } else if (props.onFilter) {
+      props.onFilter(undefined); // what is the value??
+    }
+  };
+  let setOpen = function (value) {
+    if (selectState.collection.size > 0 && value) {
+      selectState.setOpen(value);
+    } else if (props.onFilter) {
+      props.onFilter(undefined); // what is the value??
+    }
+  };
+  let toggle = function () {
+    if (selectState.collection.size > 0 && !selectState.isOpen) {
+      selectState.toggle();
+    } else if (props.onFilter) {
+      props.onFilter(undefined); // what is the value??
+    }
+  };
+
   // do i need a new selection manager?
 
-  //  let areThereItems = listState.collection.size > 0;
-
+  // fire onFilter if we try to go to open and no results have been loaded
+  let wasOpen = usePrevious(selectState.isOpen);
   useEffect(() => {
-    if (selectState.collection.size === 0 && selectState.isOpen) {
-      selectState.close();
+    if (wasOpen === false && selectState.isOpen && selectState.collection.size === 0 && props.onFilter) {
+      props.onFilter(undefined); // what is the value??
     }
-  }, [selectState.collection, selectState.isOpen]);
+  }, [wasOpen, selectState.isOpen, props.onFilter, selectState.collection]);
+
+  //  let areThereItems = listState.collection.size > 0;
 
   // For completionMode = complete
   let [suggestionValue, setSuggestionValue] = useState('');
 
   // selectedItemState (aria-activedecendent), maybe just need to modify useSelectableItem or something
 
+
   return {
     ...selectState,
+    open,
+    setOpen,
+    toggle,
     value,
     setValue
   };

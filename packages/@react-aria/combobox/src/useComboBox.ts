@@ -47,7 +47,7 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
   // because string.target doesn't exist
   let {fieldProps, labelProps} = useLabel(props);
   let onChange = (val) => {
-    if (props.menuTrigger === 'input' && val.length > 0) {
+    if (props.menuTrigger === 'input' && val.length > 0 && state.collection.size > 0) {
       state.open();
     }
     state.setValue(val);
@@ -101,7 +101,7 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
     
     // TODO: Double check if this is needed, from v2
     if (props.popoverRef.current && props.popoverRef.current.contains(document.activeElement)) {
-      // If the element receiving focus is the Popover (dropdown menu), 
+      // If the element receiving focus is the Popover (dropdown menu),
       // (i.e. user clicking dropdown scroll bar in IE 11),
       // refocus the input field and return so the menu isn't hidden.
       event.target.focus();
