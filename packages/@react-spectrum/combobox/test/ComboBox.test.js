@@ -113,7 +113,7 @@ describe('ComboBox', function () {
           fireEvent.mouseDown(button);
         });
         act(() => jest.runAllTimers());
-        expect(onFilter).not.toHaveBeenCalled();
+        expect(onFilter).toHaveBeenCalled(); // unsure of this
         expect(onOpenChange).toHaveBeenCalledWith(true);
 
         let listbox = getByRole('listbox');

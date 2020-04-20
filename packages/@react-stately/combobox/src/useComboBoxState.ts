@@ -161,21 +161,24 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let open = function () {
     if (selectState.collection.size > 0) {
       selectState.open();
-    } else if (props.onFilter) {
+    }
+    if (props.onFilter) {
       props.onFilter(undefined); // what is the value??
     }
   };
   let setOpen = function (value) {
     if (selectState.collection.size > 0 && value) {
       selectState.setOpen(value);
-    } else if (props.onFilter) {
+    }
+    if (value && props.onFilter) {
       props.onFilter(undefined); // what is the value??
     }
   };
   let toggle = function () {
     if (selectState.collection.size > 0 && !selectState.isOpen) {
       selectState.toggle();
-    } else if (props.onFilter) {
+    }
+    if (!selectState.isOpen && props.onFilter) {
       props.onFilter(undefined); // what is the value??
     }
   };
