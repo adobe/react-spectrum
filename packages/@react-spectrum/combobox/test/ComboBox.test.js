@@ -138,9 +138,9 @@ describe('ComboBox', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <ComboBox data-testid="4" label="Test" selectedKey="1">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
+            <Item uniqueKey="1">One</Item>
+            <Item uniqueKey="2">Two</Item>
+            <Item uniqueKey="3">Three</Item>
           </ComboBox>
         </Provider>
       );
@@ -157,7 +157,7 @@ describe('ComboBox', function () {
       let items = within(listbox).getAllByRole('option');
 
       // expect(document.activeElement).toBe(combobox); // I think we should send focus to the input?
-      expect(combobox).toHaveAttribute('aria-activedescendant', items[1].id);
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
     });
 
     it('moves to first item for no selected key',  function () {
