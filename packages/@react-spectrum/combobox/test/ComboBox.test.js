@@ -157,7 +157,7 @@ describe('ComboBox', function () {
 
       let items = within(listbox).getAllByRole('option');
 
-      // expect(document.activeElement).toBe(combobox); // I think we should send focus to the input?
+      expect(document.activeElement).toBe(combobox); // I think we should send focus to the input?
       expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
     });
 

@@ -86,7 +86,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
       menuTrigger,
       layout,
       triggerRef: unwrapDOMRef(triggerRef),
-      inputRef: unwrapDOMRef(inputRef),
+      inputRef: unwrapInputRef(inputRef),
       popoverRef: unwrapDOMRef(popoverRef)
     },
     state
@@ -258,3 +258,11 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
 // TODO: Probably need to cast this
 const _ComboBox = React.forwardRef(ComboBox);
 export {_ComboBox as ComboBox};
+
+function unwrapInputRef(ref: RefObject<TextFieldRef>) {
+  return {
+    get current() {
+      return ref.current && ref.current.getInputElement();
+    }
+  };
+}

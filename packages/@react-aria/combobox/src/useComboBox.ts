@@ -25,7 +25,7 @@ interface ComboBoxAria {
 }
 
 import {HTMLAttributes, useEffect, useState} from 'react';
-import {chain} from '@react-aria/utils';
+import {chain, mergeProps} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useSelectableCollection} from '@react-aria/selection';
@@ -95,10 +95,6 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
       props.onBlur(e);
     }
 
-    if (state.isOpen && focusedItem) {
-      state.setSelectedKey(state.selectionManager.focusedKey);
-    }
-    
     // TODO: Double check if this is needed, from v2
     if (props.popoverRef.current && props.popoverRef.current.contains(document.activeElement)) {
       // If the element receiving focus is the Popover (dropdown menu),
@@ -106,6 +102,10 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
       // refocus the input field and return so the menu isn't hidden.
       event.target.focus();
       return;
+    }
+
+    if (state.isOpen && focusedItem) {
+      state.setSelectedKey(state.selectionManager.focusedKey);
     }
 
     // A bit strange behavior when isOpen is true, menu can't close so you can't tab away from the
@@ -129,12 +129,26 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
     }
   };
 
+  // Return focus to textfield if user clicks menu trigger button
+  let onPress = (e) => {
+    if (e.pointerType === 'touch') {
+      props.inputRef.current.focus();
+    }  
+  };
+
+  let onPressStart = (e) => {
+    if (e.pointerType !== 'touch') {
+      props.inputRef.current.focus();
+    }
+  };
+
   return {
     labelProps,
     triggerProps: {
       // TODO: make sure this has controls -> listbox menu
       // TODO: should have aria-haspopup -> listbox menu
-      ...menuTriggerProps,
+      ...mergeProps({onPressStart, onPress}, menuTriggerProps),
+      // Add an onclick here that focuses the textfield
       tabIndex: -1
     },
     inputProps: {
