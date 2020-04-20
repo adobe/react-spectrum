@@ -182,14 +182,6 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
 
   // do i need a new selection manager?
 
-  // fire onFilter if we try to go to open and no results have been loaded
-  let wasOpen = usePrevious(selectState.isOpen);
-  useEffect(() => {
-    if (wasOpen === false && selectState.isOpen && selectState.collection.size === 0 && props.onFilter) {
-      props.onFilter(undefined); // what is the value??
-    }
-  }, [wasOpen, selectState.isOpen, props.onFilter, selectState.collection]);
-
   //  let areThereItems = listState.collection.size > 0;
 
   // For completionMode = complete
