@@ -125,7 +125,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
         <ElementType
           {...mergeProps(
             textFieldProps,
-            filterDOMProps(otherProps, {...TextInputDOMPropNames, 'aria-activedescendant': 1})
+            filterDOMProps(otherProps, {...TextInputDOMPropNames, 'aria-activedescendant': 1, 'aria-autocomplete': 1})
           )}
           ref={inputRef}
           value={value}

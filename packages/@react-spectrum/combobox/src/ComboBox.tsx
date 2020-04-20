@@ -84,6 +84,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
     {
       ...props,
       menuTrigger,
+      completionMode,
       layout,
       triggerRef: unwrapDOMRef(triggerRef),
       inputRef: unwrapInputRef(inputRef),
@@ -101,7 +102,6 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
     isOpen: state.isOpen
   });
 
-
   let isMobile = useMediaQuery('(max-width: 700px)');
   let listbox = (
     <FocusScope restoreFocus>
@@ -110,13 +110,11 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
         ref={listboxRef}
         domProps={menuProps}
         disallowEmptySelection
-        // TODO: Probably should have this be 'first'? Double check if state even has this prop
-        autoFocus={state.focusStrategy}
+        autoFocus={props.allowsCustomValue ? false : state.focusStrategy}
         shouldSelectOnPressUp
         focusOnPointerEnter
         layout={layout}
         state={state}
-        // TODO: Figure out what the below width is for
         width={isMobile ? '100%' : undefined}
         shouldUseVirtualFocus />
       <DismissButton onDismiss={() => state.setOpen(false)} />

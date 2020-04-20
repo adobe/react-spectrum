@@ -116,15 +116,22 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
   // For textfield specific keydown operations
   let onKeyDown = (e) => {
     switch (e.key) {
-      case "Enter":
+      case 'Enter':
         if (state.isOpen && focusedItem) {
           state.setSelectedKey(state.selectionManager.focusedKey);
           state.setOpen(false);
         }
 
         break;
-      case "Escape":
+      case 'Escape':
         state.setOpen(false);
+        break;
+      case 'ArrowDown':
+      case 'ArrowUp':
+        if (state.isOpen && !focusedItem) {
+          let firstKey = state.collection.firstKey;
+          state.selectionManager.setFocusedKey(firstKey);
+        }
         break;
     }
   };
@@ -159,7 +166,7 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
       onChange,
       role: 'combobox',
       'aria-controls': state.isOpen ? menuProps.id : undefined,
-      'aria-autocomplete': 'list',
+      'aria-autocomplete': props.completionMode === 'suggest' ? 'list' : 'both',
       'aria-activedescendant': state.isOpen ? focusedKeyId : undefined,
       onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
       onBlur

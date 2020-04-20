@@ -121,6 +121,10 @@ storiesOf('ComboBox', module)
     () => render({autoFocus: true})
   )
   .add(
+    'allowsCustomValue: true',
+    () => render({allowsCustomValue: true})
+  )
+  .add(
     'customWidth',
     () => (
       <Flex flexDirection="column">
