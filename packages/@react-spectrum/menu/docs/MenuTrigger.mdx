@@ -306,8 +306,10 @@ function Example() {
 
 ### Autofocus
 
+Applying `autoFocus` to the Menu of the MenuTrigger sets focus to the Menu upon opening.
+
 ```tsx example
-<MenuTrigger align="start" closeOnSelect={false}>
+<MenuTrigger closeOnSelect={false}>
   <ActionButton>
       Menu Button Autofocus
   </ActionButton>
@@ -318,7 +320,7 @@ function Example() {
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
-<MenuTrigger align="start" closeOnSelect={false}>
+<MenuTrigger closeOnSelect={false}>
   <ActionButton>
       Menu Button Autofocus Last
   </ActionButton>
@@ -334,7 +336,7 @@ function Example() {
 ### Closes Menu onSelect
 
 ```tsx example
-<MenuTrigger align="start" closeOnSelect={false}>
+<MenuTrigger closeOnSelect={false}>
   <ActionButton>
       Menu Button
   </ActionButton>
@@ -347,7 +349,7 @@ function Example() {
 ### Disabled Trigger
 
 ```tsx example
-<MenuTrigger align="start">
+<MenuTrigger>
   <ActionButton isDisabled>
       Menu Button
   </ActionButton>
@@ -360,7 +362,7 @@ function Example() {
 ### Disabled Menu Items
 
 ```tsx example
-<MenuTrigger align="start">
+<MenuTrigger>
   <ActionButton>
       Menu Button
   </ActionButton>
@@ -371,7 +373,7 @@ function Example() {
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
-<MenuTrigger align="start">
+<MenuTrigger>
   <ActionButton>
       Menu Button
   </ActionButton>
@@ -384,23 +386,31 @@ function Example() {
 </MenuTrigger>
 ```
 
-### Open
+### Flipping
+
+Applying `shouldFlip` to the MenuTrigger makes the Menu attempt to flip on its
+main axis in situations where the original placement would cause it to render out of view.
 
 ```tsx example
-<MenuTrigger align="start" isOpen>
+<MenuTrigger shouldFlip>
   <ActionButton>
-      Menu Button
+      Menu Button shouldFlip
   </ActionButton>
   <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
-<MenuTrigger align="start" defaultOpen>
+<MenuTrigger shouldFlip={false}>
   <ActionButton>
-      Menu Button
+      Menu Button shouldFlip=false
   </ActionButton>
   <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
 ```
+
+### Open
+
+The `isOpen` and `defaultOpen` props control whether the MenuTrigger is open by default.
+They apply controlled and uncontrolled behavior on the MenuTrigger respectively.
