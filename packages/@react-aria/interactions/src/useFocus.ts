@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvents} from '@react-types/shared';
 import {FocusEvent, HTMLAttributes} from 'react';
+import {FocusEvents} from '@react-types/shared';
 
 interface FocusProps extends FocusEvents {
   /** Whether the focus events should be disabled. */
