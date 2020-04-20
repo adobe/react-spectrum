@@ -31,7 +31,6 @@ import {useMenuTrigger} from '@react-aria/menu';
 import {useSelectableCollection} from '@react-aria/selection';
 import {ComboBoxState} from '@react-stately/combobox';
 
-let count = 0;
 export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): ComboBoxAria {
   // TODO: destructure props
 
@@ -47,8 +46,8 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
   // because string.target doesn't exist
   let {fieldProps, labelProps} = useLabel(props);
   let onChange = (val) => {
-    if (props.menuTrigger === 'input' && val.length > 0 && state.collection.size > 0) {
-      state.open();
+    if (props.menuTrigger === 'input' && val.length > 0) {
+      state.open(); // is this right? at this time, we haven't filtered, so we don't know if the character they type will result in an empty menu
     }
     state.setValue(val);
   };
@@ -140,7 +139,7 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
   let onPress = (e) => {
     if (e.pointerType === 'touch') {
       props.inputRef.current.focus();
-    }  
+    }
   };
 
   let onPressStart = (e) => {
