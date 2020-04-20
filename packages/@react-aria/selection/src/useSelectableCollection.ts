@@ -69,7 +69,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           if (nextKey) {
             manager.setFocusedKey(nextKey);
           } else if (shouldFocusWrap) {
-            manager.setFocusedKey(delegate.getFirstKey());
+            manager.setFocusedKey(delegate.getFirstKey(manager.focusedKey));
           }
 
           if (e.shiftKey && manager.selectionMode === 'multiple') {
@@ -88,7 +88,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           if (nextKey) {
             manager.setFocusedKey(nextKey);
           } else if (shouldFocusWrap) {
-            manager.setFocusedKey(delegate.getLastKey());
+            manager.setFocusedKey(delegate.getLastKey(manager.focusedKey));
           }
 
           if (e.shiftKey && manager.selectionMode === 'multiple') {
@@ -126,7 +126,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       case 'Home':
         if (delegate.getFirstKey) {
           e.preventDefault();
-          let firstKey = delegate.getFirstKey();
+          let firstKey = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(firstKey);
           if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
             manager.extendSelection(firstKey);
@@ -136,7 +136,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       case 'End':
         if (delegate.getLastKey) {
           e.preventDefault();
-          let lastKey = delegate.getLastKey();
+          let lastKey = delegate.getLastKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(lastKey);
           if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
             manager.extendSelection(lastKey);
