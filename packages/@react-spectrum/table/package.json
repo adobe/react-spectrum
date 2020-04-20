@@ -1,0 +1,45 @@
+{
+  "name": "@react-spectrum/table",
+  "version": "3.0.0-alpha.1",
+  "private": true,
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": ["dist"],
+  "sideEffects": false,
+  "targets": {
+    "main": {
+      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+    },
+    "module": {
+      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe-private/react-spectrum-v3"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.6.2",
+    "@react-aria/focus": "^3.0.0-rc.2",
+    "@react-aria/grid": "^3.0.0-alpha.1",
+    "@react-aria/utils": "^3.0.0-alpha.1",
+    "@react-spectrum/checkbox": "^3.0.0-rc.2",
+    "@react-spectrum/utils": "^3.0.0-alpha.1",
+    "@react-stately/grid": "^3.0.0-alpha.1",
+    "@react-types/table": "^3.0.0-alpha.1"
+  },
+  "devDependencies": {
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0",
+    "@react-spectrum/provider": "^3.0.0-rc.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

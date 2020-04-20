@@ -45,7 +45,6 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
   });
 
   return (
-    // @ts-ignore https://github.com/Microsoft/TypeScript/issues/28892
     <Element
       {...filterDOMProps(otherProps)}
       {...styleProps}
@@ -61,6 +60,7 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
           styleProps.className
         )
       }
+      // @ts-ignore https://github.com/Microsoft/TypeScript/issues/28892
       ref={domRef}
       {...separatorProps} />
   );
