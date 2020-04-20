@@ -10,20 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {createEventHandler} from './createEventHandler';
-import {FocusEvent, FocusEvents} from '@react-types/shared';
-import {HTMLAttributes} from 'react';
+import {FocusEvents} from '@react-types/shared';
+import {FocusEvent, HTMLAttributes} from 'react';
 
 interface FocusProps extends FocusEvents {
+  /** Whether the focus events should be disabled. */
   isDisabled?: boolean
 }
 
 interface FocusResult {
+  /** Props to spread onto the target element. */
   focusProps: HTMLAttributes<HTMLElement>
 }
 
 /**
- * Handles focus events for the immediate target (no children)
+ * Handles focus events for the immediate target.
+ * Focus events on child elements will be ignored.
  */
 export function useFocus(props: FocusProps): FocusResult {
   if (props.isDisabled) {
@@ -32,7 +34,7 @@ export function useFocus(props: FocusProps): FocusResult {
 
   let onFocus, onBlur;
   if (props.onFocus || props.onFocusChange) {
-    onFocus = createEventHandler((e: FocusEvent) => {
+    onFocus = (e: FocusEvent) => {
       if (e.target === e.currentTarget) {
         if (props.onFocus) {
           props.onFocus(e);
@@ -42,11 +44,11 @@ export function useFocus(props: FocusProps): FocusResult {
           props.onFocusChange(true);
         }
       }
-    });
+    };
   }
 
   if (props.onBlur || props.onFocusChange) {
-    onBlur = createEventHandler((e: FocusEvent) => {
+    onBlur = (e: FocusEvent) => {
       if (e.target === e.currentTarget) {
         if (props.onBlur) {
           props.onBlur(e);
@@ -56,7 +58,7 @@ export function useFocus(props: FocusProps): FocusResult {
           props.onFocusChange(false);
         }
       }
-    });
+    };
   }
   
   return {

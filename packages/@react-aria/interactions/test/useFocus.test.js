@@ -92,11 +92,11 @@ describe('useFocus', function () {
     expect(events).toEqual([]);
   });
 
-  it('events do not bubble by default', function () {
+  it('events do not bubble when stopPropagation is called', function () {
     let onWrapperFocus = jest.fn();
     let onWrapperBlur = jest.fn();
-    let onInnerFocus = jest.fn();
-    let onInnerBlur = jest.fn();
+    let onInnerFocus = jest.fn(e => e.stopPropagation());
+    let onInnerBlur = jest.fn(e => e.stopPropagation());
     let tree = render(
       <div onFocus={onWrapperFocus} onBlur={onWrapperBlur}>
         <Example
@@ -115,11 +115,11 @@ describe('useFocus', function () {
     expect(onWrapperBlur).not.toHaveBeenCalled();
   });
 
-  it('events bubble when continuePropagation is called', function () {
+  it('events bubble by default', function () {
     let onWrapperFocus = jest.fn();
     let onWrapperBlur = jest.fn();
-    let onInnerFocus = jest.fn(e => e.continuePropagation());
-    let onInnerBlur = jest.fn(e => e.continuePropagation());
+    let onInnerFocus = jest.fn();
+    let onInnerBlur = jest.fn();
     let tree = render(
       <div onFocus={onWrapperFocus} onBlur={onWrapperBlur}>
         <Example
