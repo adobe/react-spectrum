@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, useEffect} from 'react';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useTextField} from '@react-aria/textfield';
 
 interface NumberFieldProps extends SpinButtonProps {
   decrementAriaLabel?: string,
@@ -24,13 +25,14 @@ interface NumberFieldProps extends SpinButtonProps {
 }
 
 interface NumberFieldAria {
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   inputFieldProps: HTMLAttributes<HTMLInputElement>,
   numberFieldProps: HTMLAttributes<HTMLDivElement>,
   incrementButtonProps: HTMLAttributes<HTMLButtonElement>,
   decrementButtonProps: HTMLAttributes<HTMLButtonElement>
 }
 
-export function useNumberField(props: NumberFieldProps, state: NumberFieldState): NumberFieldAria {
+export function useNumberField(props: NumberFieldProps, state: NumberFieldState, ref: RefObject<HTMLInputElement>): NumberFieldAria {
   let {
     decrementAriaLabel,
     incrementAriaLabel,
@@ -39,7 +41,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     isRequired,
     minValue,
     maxValue,
-    step
+    step,
+    autoFocus
   } = props;
 
   let {
@@ -120,6 +123,25 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     };
   }, [inputId, isReadOnly, isDisabled, decrement, increment]);
 
+  let {labelProps, inputProps} = useTextField(mergeProps(spinButtonProps, {
+    autoFocus,
+    value: '' + value,
+    onChange: state.setValue,
+    validationState,
+    autoComplete: 'off',
+    'aria-label': props['aria-label'] || null,
+    'aria-labelledby': props['aria-labelledby'] || null,
+    id: inputId,
+    isDisabled,
+    isReadOnly,
+    isRequired,
+    min: minValue,
+    max: maxValue,
+    placeholder: formatMessage('Enter a number'),
+    type: 'number',
+    step
+  }), ref);
+
   return {
     numberFieldProps: {
       role: 'group',
@@ -128,20 +150,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
       'aria-disabled': isDisabled,
       'aria-invalid': validationState === 'invalid'
     },
-    inputFieldProps: mergeProps(spinButtonProps, {
-      autoComplete: 'off',
-      'aria-label': props['aria-label'] || null,
-      'aria-labelledby': props['aria-labelledby'] || null,
-      id: inputId,
-      isDisabled,
-      isReadOnly,
-      isRequired,
-      min: minValue,
-      max: maxValue,
-      placeholder: formatMessage('Enter a number'),
-      type: 'number',
-      step
-    }),
+    labelProps,
+    inputFieldProps: inputProps,
     incrementButtonProps,
     decrementButtonProps
   };

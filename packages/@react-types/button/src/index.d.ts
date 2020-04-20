@@ -13,7 +13,7 @@
 import {DOMProps, FocusableProps, PressEvents, StyleProps} from '@react-types/shared';
 import {JSXElementConstructor, ReactNode} from 'react';
 
-export interface ButtonProps extends DOMProps, StyleProps, PressEvents, FocusableProps {
+export interface ButtonProps extends PressEvents, FocusableProps {
   /** Whether the button is disabled */
   isDisabled?: boolean,
   /**
@@ -29,14 +29,16 @@ export interface ButtonProps extends DOMProps, StyleProps, PressEvents, Focusabl
   target?: string
 }
 
-export interface SpectrumButtonProps extends ButtonProps {
+export interface SpectrumButtonProps extends ButtonProps, DOMProps, StyleProps {
+  /** An icon to display in the button */
+  icon?: ReactElement,
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
   variant: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
   /** Whether the button should be displayed with a quiet style. */
   isQuiet?: boolean
 }
 
-export interface SpectrumActionButtonProps extends ButtonProps {
+export interface SpectrumActionButtonProps extends ButtonProps, DOMProps, StyleProps {
   /** Whether the ActionButton should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
   isQuiet?: boolean,
   /** Whether the ActionButton should be displayed with a [selected state](https://spectrum.adobe.com/page/action-button/#Selected). */
@@ -47,7 +49,7 @@ export interface SpectrumActionButtonProps extends ButtonProps {
   holdAffordance?: boolean
 }
 
-export interface SpectrumLogicButtonProps extends ButtonProps {
+export interface SpectrumLogicButtonProps extends ButtonProps, DOMProps, StyleProps {
   /** The type of boolean sequence to be represented by the LogicButton. */
   variant: 'and' | 'or'
 }

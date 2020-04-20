@@ -12,24 +12,48 @@
 
 import {RadioGroupProps} from '@react-types/radio';
 import {useControlledState} from '@react-stately/utils';
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 
 export interface RadioGroupState {
-  selectedRadio: string | undefined,
-  setSelectedRadio: (value: string) => void,
+  /** The name for the group, used for native form submission. */
+  name: string,
+
+  /** The currently selected value. */
+  selectedValue: string | undefined,
+
+  /** Sets the selected value. */
+  setSelectedValue: (value: string) => void,
+
+  /** The last focused radio. */
   focusableRadio: string | undefined,
+
+  /** Sets the last focused radio. */
   setFocusableRadio: (value: string) => void,
 }
 
-export function useRadioGroupState(props: RadioGroupProps): RadioGroupState {
-  let [selectedRadio, setSelected] = useControlledState(props.value, props.defaultValue, props.onChange);
+let instance = Math.round(Math.random() * 10000000000);
+let i = 0;
+
+/**
+ * Provides state management for a radio group component. Provides a name for the group,
+ * and manages selection and focus state.
+ */
+export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
+  let name = useMemo(() => props.name || `radio-group-${instance}-${++i}`, [props.name]);
+  let [selectedValue, setSelected] = useControlledState(props.value, props.defaultValue, props.onChange);
   let [focusableRadio, setFocusableRadio] = useState(null);
 
-  let setSelectedRadio = (value) => {
+  let setSelectedValue = (value) => {
     if (!props.isReadOnly) {
       setSelected(value);
     }
   };
 
-  return {selectedRadio, setSelectedRadio, focusableRadio, setFocusableRadio};
+  return {
+    name,
+    selectedValue,
+    setSelectedValue,
+    focusableRadio,
+    setFocusableRadio
+  };
 }

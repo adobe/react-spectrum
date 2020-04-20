@@ -115,7 +115,7 @@ describe('ListBox', function () {
   });
 
   it('allows user to change menu item focus via up/down arrow keys', function () {
-    let tree = renderComponent({autoFocus: true});
+    let tree = renderComponent({autoFocus: 'first'});
     let listbox = tree.getByRole('listbox');
     let options = within(listbox).getAllByRole('option');
     let selectedItem = options[0];
@@ -128,7 +128,7 @@ describe('ListBox', function () {
   });
 
   it('wraps focus from first to last/last to first item if up/down arrow is pressed if shouldFocusWrap is true', function () {
-    let tree = renderComponent({autoFocus: true, shouldFocusWrap: true});
+    let tree = renderComponent({autoFocus: 'first', shouldFocusWrap: true});
     let listbox = tree.getByRole('listbox');
     let options = within(listbox).getAllByRole('option');
     let firstItem = options[0];
@@ -143,7 +143,7 @@ describe('ListBox', function () {
   describe('supports single selection', function () {
     it('supports defaultSelectedKeys (uncontrolled)', function () {
       // Check that correct menu item is selected by default
-      let tree = renderComponent({onSelectionChange, defaultSelectedKeys: ['Blah'], autoFocus: true});
+      let tree = renderComponent({onSelectionChange, defaultSelectedKeys: ['Blah'], autoFocus: 'first'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       let selectedItem = options[3];
@@ -174,7 +174,7 @@ describe('ListBox', function () {
 
     it('supports selectedKeys (controlled)', function () {
       // Check that correct menu item is selected by default
-      let tree = renderComponent({onSelectionChange, selectedKeys: ['Blah'], autoFocus: true});
+      let tree = renderComponent({onSelectionChange, selectedKeys: ['Blah'], autoFocus: 'first'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       let selectedItem = options[3];
@@ -245,7 +245,7 @@ describe('ListBox', function () {
     });
     
     it('supports disabled items', function () {
-      let tree = renderComponent({onSelectionChange, disabledKeys: ['Baz'], autoFocus: true});
+      let tree = renderComponent({onSelectionChange, disabledKeys: ['Baz'], autoFocus: 'first'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
     
@@ -477,7 +477,7 @@ describe('ListBox', function () {
 
   describe('supports type to select', function () {
     it('supports focusing items by typing letters in rapid succession', function () {
-      let tree = renderComponent({autoFocus: true});
+      let tree = renderComponent({autoFocus: 'first'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(options[0]);
@@ -493,7 +493,7 @@ describe('ListBox', function () {
     });
 
     it('resets the search text after a timeout', function () {
-      let tree = renderComponent({autoFocus: true});
+      let tree = renderComponent({autoFocus: 'first'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(options[0]);
@@ -508,7 +508,7 @@ describe('ListBox', function () {
     });
 
     it('wraps around when no items past the current one match', function () {
-      let tree = renderComponent({autoFocus: true});
+      let tree = renderComponent({autoFocus: 'first'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       expect(document.activeElement).toBe(options[0]);

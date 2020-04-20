@@ -195,7 +195,7 @@ describe('calculatePosition', function () {
       offsetBefore: [-200, 50, undefined, 0, 500],
       offsetAfter: [300, 350, undefined, 200, 200],
       crossAxisOffset: [50, 210, undefined, 90, 340],
-      mainAxisOffset: [60, 200, undefined, 100, 350]
+      mainAxisOffset: [40, 200, undefined, 100, 350]
     },
     {
       placement: 'left top',
@@ -203,7 +203,7 @@ describe('calculatePosition', function () {
       offsetBefore: [-200, 50, undefined, 0, 500],
       offsetAfter: [300, 350, undefined, 200, 200],
       crossAxisOffset: [50, 250, undefined, 50, 300],
-      mainAxisOffset: [60, 250, undefined, 50, 300]
+      mainAxisOffset: [40, 250, undefined, 50, 300]
     },
     {
       placement: 'left bottom',
@@ -211,14 +211,14 @@ describe('calculatePosition', function () {
       offsetBefore: [-200, 50, undefined, 0, 500],
       offsetAfter: [300, 350, undefined, 200, 200],
       crossAxisOffset: [50, 160, undefined, 140, 390],
-      mainAxisOffset: [60, 150, undefined, 150, 400]
+      mainAxisOffset: [40, 150, undefined, 150, 400]
     },
     {
       placement: 'top',
       noOffset: [200, 50, 100, undefined, 200],
       offsetBefore: [50, -200, 0, undefined, 0],
       offsetAfter: [350, 300, 200, undefined, 450],
-      mainAxisOffset: [200, 60, 100, undefined, 200],
+      mainAxisOffset: [200, 40, 100, undefined, 200],
       crossAxisOffset: [210, 50, 90, undefined, 200]
     },
     {
@@ -226,7 +226,7 @@ describe('calculatePosition', function () {
       noOffset: [250, 50, 50, undefined, 200],
       offsetBefore: [50, -200, 0, undefined, 0],
       offsetAfter: [350, 300, 200, undefined, 450],
-      mainAxisOffset: [250, 60, 50, undefined, 200],
+      mainAxisOffset: [250, 40, 50, undefined, 200],
       crossAxisOffset: [250, 50, 50, undefined, 200]
     },
     {
@@ -234,7 +234,7 @@ describe('calculatePosition', function () {
       noOffset: [150, 50, 150, undefined, 200],
       offsetBefore: [50, -200, 0, undefined, 0],
       offsetAfter: [350, 300, 200, undefined, 450],
-      mainAxisOffset: [150, 60, 150, undefined, 200],
+      mainAxisOffset: [150, 40, 150, undefined, 200],
       crossAxisOffset: [160, 50, 140, undefined, 200]
     },
     {

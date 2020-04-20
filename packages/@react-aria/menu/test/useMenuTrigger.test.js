@@ -81,7 +81,7 @@ describe('useMenuTrigger', function () {
     expect(setOpen).toHaveBeenCalledTimes(1);
     expect(setOpen).toHaveBeenCalledWith(!state.isOpen);
     expect(setFocusStrategy).toHaveBeenCalledTimes(1);
-    expect(setFocusStrategy).toHaveBeenCalledWith('first');
+    expect(setFocusStrategy).toHaveBeenCalledWith(null);
   });
 
   // Comprehensive onKeyDown functionality is tested in MenuTrigger test
@@ -126,7 +126,7 @@ describe('useMenuTrigger', function () {
     expect(setOpen).toHaveBeenCalledTimes(1);
     expect(setOpen).toHaveBeenCalledWith(!state.isOpen);
     expect(preventDefault).toHaveBeenCalledTimes(1);
-    expect(setFocusStrategy).toHaveBeenCalledTimes(2);
+    expect(setFocusStrategy).toHaveBeenCalledTimes(1);
     expect(setFocusStrategy).toHaveBeenLastCalledWith('last');
   });
 });

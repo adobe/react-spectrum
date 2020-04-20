@@ -32,9 +32,9 @@ describe('Breadcrumbs', function () {
         return {width: 100};
       }
       if (this.className === 'spectrum-Breadcrumbs') {
-        return {width: 250};
+        return {width: 350};
       }
-      return {top: 0, bottom: 0, eft: 0, right: 0};
+      return {top: 0, bottom: 0, left: 0, right: 0};
     });
 
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
@@ -139,7 +139,7 @@ describe('Breadcrumbs', function () {
     expect(within(children[0]).getByRole('button')).toBeTruthy();
     expect(() => getByText('Folder 1')).toThrow();
     expect(() => getByText('Folder 2')).toThrow();
-    expect(() => getByText('Folder 3')).toThrow();
+    expect(getByText('Folder 3')).toBeTruthy();
     expect(getByText('Folder 4')).toBeTruthy();
     expect(getByText('Folder 5')).toBeTruthy();
   });
@@ -161,7 +161,7 @@ describe('Breadcrumbs', function () {
     expect(within(children[1]).getByRole('button')).toBeTruthy();
     expect(() => getByText('Folder 2')).toThrow();
     expect(() => getByText('Folder 3')).toThrow();
-    expect(() => getByText('Folder 4')).toThrow();
+    expect(getByText('Folder 4')).toBeTruthy();
     expect(getByText('Folder 5')).toBeTruthy();
   });
 
@@ -197,7 +197,7 @@ describe('Breadcrumbs', function () {
     expect(within(children[0]).getByRole('button')).toBeTruthy();
     expect(() => getByText('Folder 1')).toThrow();
     expect(() => getByText('Folder 2')).toThrow();
-    expect(() => getByText('Folder 3')).toThrow();
+    expect(getByText('Folder 3')).toBeTruthy();
     expect(getByText('Folder 4')).toBeTruthy();
     expect(getByText('Folder 5')).toBeTruthy();
   });
@@ -218,6 +218,32 @@ describe('Breadcrumbs', function () {
     let {children} = getByRole('list');
     expect(getByText('Folder 1')).toBeTruthy();
     expect(within(children[1]).getByRole('button')).toBeTruthy();
+    expect(() => getByText('Folder 2')).toThrow();
+    expect(() => getByText('Folder 3')).toThrow();
+    expect(getByText('Folder 4')).toBeTruthy();
+    expect(getByText('Folder 5')).toBeTruthy();
+  });
+
+  it('Handles max visible items auto with showRoot and folders of different widths', () => {
+    // Change the width of "Folder 1" from 100px to 200px, which means there's only room for 1 other breadcrumb.
+    HTMLElement.prototype.getBoundingClientRect.mockReturnValueOnce({width: 200});
+
+    let {getByText, getByRole} = render(
+      <Provider theme={theme}>
+        <Breadcrumbs maxVisibleItems="auto" showRoot>
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+          <Item>Folder 5</Item>
+        </Breadcrumbs>
+      </Provider>
+    );
+
+    let {children} = getByRole('list');
+    expect(within(children[1]).getByRole('button')).toBeTruthy();
+    expect(getByText('Folder 1')).toBeTruthy();
+    // expect(() => getByText('Folder 1')).toThrow();
     expect(() => getByText('Folder 2')).toThrow();
     expect(() => getByText('Folder 3')).toThrow();
     expect(() => getByText('Folder 4')).toThrow();

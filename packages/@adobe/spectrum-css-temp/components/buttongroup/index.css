@@ -27,18 +27,30 @@ governing permissions and limitations under the License.
   .spectrum-ButtonGroup-Button + .spectrum-ButtonGroup-Button {
     margin-inline-start: var(--spectrum-buttongroup-button-gap-x);
   }
+
+  &.spectrum-ButtonGroup--alignEnd {
+    justify-content: flex-end;
+  }
+
+  &.spectrum-ButtonGroup--alignCenter {
+    justify-content: center;
+  }
 }
 
 .spectrum-ButtonGroup--vertical {
   display: inline-flex;
   flex-direction: column;
 
+  .spectrum-ButtonGroup-Button + .spectrum-ButtonGroup-Button {
+    margin-block-start: var(--spectrum-buttongroup-button-gap-y);
+    margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
+  }
+
   &.spectrum-ButtonGroup--alignEnd {
     align-items: flex-end;
   }
 
-  .spectrum-ButtonGroup-Button + .spectrum-ButtonGroup-Button {
-    margin-block-start: var(--spectrum-buttongroup-button-gap-y);
-    margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
+  &.spectrum-ButtonGroup--alignCenter {
+    align-items: center;
   }
 }

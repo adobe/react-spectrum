@@ -19,35 +19,34 @@ import {usePress} from '@react-aria/interactions';
 
 interface RadioAriaProps extends RadioProps {
   isRequired?: boolean,
-  isReadOnly?: boolean,
-  name?: string
+  isReadOnly?: boolean
 }
 
 interface RadioAria {
+  /** Props for the input element */
   inputProps: InputHTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for an individual 
+ * radio button in a radio group.
+ * @param props - props for the radio
+ * @param state - state for the radio group, as returned by `useRadioGroupState`
+ * @param ref - ref to the HTML input element
+ */
 export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: RefObject<HTMLElement>): RadioAria {
   let {
     value,
     isRequired,
     isReadOnly,
-    isDisabled,
-    name
+    isDisabled
   } = props;
-  let {
-    selectedRadio,
-    setSelectedRadio,
-    focusableRadio,
-    setFocusableRadio
-  } = state;
 
-  let checked = selectedRadio === value;
+  let checked = state.selectedValue === value;
 
   let onChange = (e) => {
     e.stopPropagation();
-
-    setSelectedRadio(value);
+    state.setSelectedValue(value);
   };
 
   let {pressProps} = usePress({
@@ -55,15 +54,15 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
   });
 
   let {focusableProps} = useFocusable(mergeProps(props, {
-    onFocus: () => setFocusableRadio(value)
+    onFocus: () => state.setFocusableRadio(value)
   }), ref);
   let interactions = mergeProps(pressProps, focusableProps);
 
   return {
     inputProps: {
       type: 'radio',
-      name,
-      tabIndex: focusableRadio === value || focusableRadio == null ? 0 : -1,
+      name: state.name,
+      tabIndex: state.focusableRadio === value || state.focusableRadio == null ? 0 : -1,
       disabled: isDisabled,
       readOnly: isReadOnly,
       required: isRequired,

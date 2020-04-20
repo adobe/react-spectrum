@@ -14,6 +14,7 @@ import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import highlightCss from './syntax-highlight.css';
+import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
 import path from 'path';
@@ -49,13 +50,14 @@ const mdxComponents = {
     </h3>
   ),
   p: ({children, ...props}) => <p {...props} className={typographyStyles['spectrum-Body3']}>{children}</p>,
+  ul: ({children, ...props}) => <ul {...props} className={typographyStyles['spectrum-Body3']}>{children}</ul>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   a: ({children, ...props}) => <a {...props} className={linkStyle['spectrum-Link']} target={getTarget(props.href)}>{children}</a>
 };
 
 function getTarget(href) {
-  if (/localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com|#/.test(href)) {
+  if (!/^http/.test(href) || /localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com|#/.test(href)) {
     return null;
   }
 
@@ -67,6 +69,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
     <html lang="en-US" dir="ltr" className={classNames(theme.global.spectrum, theme.light['spectrum--light'], theme.medium['spectrum--medium'], typographyStyles.spectrum, docStyles.provider, highlightCss.spectrum)}>
       <head>
         <meta charset="utf-8" />
+        <title>{path.basename(currentPage, path.extname(currentPage))}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Server rendering means we cannot use a real <Provider> component to do this.
             Instead, we apply the default theme classes to the html element. In order to
@@ -109,7 +112,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
         <link rel="preload" as="font" href="https://use.typekit.net/af/505d17/00000000000000003b9aee44/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n9&v=3" crossOrigin="" />
         <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
-        {scripts.map(s => <link rel="preload" as="script" href={s.url} crossOrigin="" />)}
+        {scripts.map(s => <script type={s.type} src={s.url} defer />)}
       </head>
       <body>
         <div className={docStyles.pageHeader} id="header" />
@@ -125,7 +128,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
             </a>
           </header>
           <ul className={sideNavStyles['spectrum-SideNav']}>
-            {pages.filter(p => p.name !== 'index.html').map(p => (
+            {pages.filter(p => p.name !== 'index.html' && (currentPage === 'index.html' || p.name.split('/')[0] === currentPage.split('/')[0])).map(p => (
               <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPage})}>
                 <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{path.basename(p.name, path.extname(p.name))}</a>
               </li>
@@ -135,12 +138,13 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
         <main>
           <article className={typographyStyles['spectrum-Typography']}>
             <MDXProvider components={mdxComponents}>
-              {children}
+              <LinkProvider>
+                {children}
+              </LinkProvider>
             </MDXProvider>
           </article>
           <ToC toc={toc} />
         </main>
-        {scripts.map(s => <script type={s.type} src={s.url} />)}
       </body>
     </html>
   );
