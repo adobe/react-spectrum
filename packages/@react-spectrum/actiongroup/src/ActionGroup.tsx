@@ -13,7 +13,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroupState, useActionGroupState} from '@react-stately/actiongroup';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, filterDOMProps, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, DOMRef, SelectionMode, StyleProps} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-stately/collections';
@@ -91,7 +91,7 @@ function ActionGroupItem<T>({item, state, ...otherProps}: ActionGroupItemProps<T
   let {itemProps} = useSelectableItem({
     selectionManager: state && state.selectionManager,
     itemKey: item && item.key,
-    itemRef: ref
+    itemRef: unwrapDOMRef(ref)
   });
 
   let buttonProps = mergeProps(itemProps, otherProps);

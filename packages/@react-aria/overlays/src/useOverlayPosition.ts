@@ -15,11 +15,6 @@ import {HTMLAttributes, RefObject, useEffect, useState} from 'react';
 import {Placement, PlacementAxis} from '@react-types/overlays';
 import {useLocale} from '@react-aria/i18n';
 
-// export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
-//     'top' | 'top left' | 'top right' | 'top start' | 'top end' |
-//     'left' | 'left top' | 'left bottom' | 'start' | 'start top' | 'start bottom' |
-//     'right' | 'right top' | 'right bottom' | 'end' | 'end top' | 'end bottom';
-
 export interface PositionProps {
   placement?: Placement,
   containerPadding?: number,
@@ -43,6 +38,10 @@ interface PositionAria {
   placement: PlacementAxis
 }
 
+/**
+ * Handles positioning overlays like popovers and menus relative to a trigger
+ * element, and updating the position when the window resizes.
+ */
 export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   let {direction} = useLocale();
   let {

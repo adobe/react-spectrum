@@ -1,0 +1,173 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/searchfield';
+import statelyDocs from 'docs:@react-stately/searchfield';
+import buttonDocs from 'docs:@react-aria/button';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {useSearchField} from '@react-aria/searchfield';
+```
+
+# useSearchField
+
+<p>{docs.exports.useSearchField.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useSearchField']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#searchbox'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useSearchField} links={docs.links} />
+
+## Features
+
+Search fields can be built with `<input type="search">`, but these can be hard to
+style consistently cross browser. `useSearchField` helps achieve accessible 
+search fields that can be styled as needed.
+
+* Built with a native `<input type="search">` element
+* Visual and ARIA labeling support
+* Keyboard submit handling via the Enter key
+* Keyboard support for clearing the search field with the Escape key
+* Custom clear button support with internationalized label for accessibility
+
+## Anatomy
+
+Search fields consist of an input element, a label, and an optional clear button. 
+`useSearchField` automatically manages the labeling and relationships between the elements,
+and handles keyboard events. Users can press the Escape key to clear the search field, or the
+Enter key to trigger the `onSubmit` event.
+
+`useSearchField` returns two sets of props that you should spread onto the appropriate element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useSearchField.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSearchFieldState} />
+hook in `@react-stately/searchfield`. The state object should be passed as an option to `useSearchField`.
+
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead 
+to identify the element to screen readers.
+
+## Example
+
+```tsx example
+import {useSearchFieldState} from '@react-stately/searchfield';
+
+function SearchField(props) {
+  let {label} = props;
+  let state = useSearchFieldState(props);
+  let ref = React.useRef();
+  let {labelProps, inputProps} = useSearchField(props, state, ref);
+
+  return (
+    <div style={{display: 'flex', flexDirection: 'column', width: 200}}>
+      <label {...labelProps}>{label}</label>
+      <input {...inputProps} ref={ref} />
+    </div>
+  );
+}
+
+<SearchField 
+  label="Search"
+  placeholder="What are you looking for?"
+  onSubmit={text => alert(text)} />
+```
+
+## Styling
+
+This example uses CSS to reset the default browser styling for a search field and implement
+custom styles. It also includes a custom clear button, using props
+from <TypeLink links={docs.links} type={docs.exports.useSearchField} />
+and <TypeLink links={buttonDocs.links} type={buttonDocs.exports.useButton} />
+(from @react-aria/button).
+
+```tsx example
+import {useButton} from '@react-aria/button';
+
+function SearchField(props) {
+  let {label} = props;
+  let state = useSearchFieldState(props);
+  let ref = React.useRef();
+  let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, ref);
+  let {buttonProps} = useButton(clearButtonProps);
+
+  return (
+    <div className="search-field">
+      <label {...labelProps}>{label}</label>
+      <div>
+        <input {...inputProps} ref={ref} />
+        {state.value !== '' &&
+          <button {...buttonProps}>❎</button>
+        }
+      </div>
+    </div>
+  );
+}
+
+<SearchField 
+  label="Search"
+  placeholder="What are you looking for?"
+  onSubmit={text => alert(text)} />
+```
+
+```css
+.search-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-field div {
+  background: slategray;
+  padding: 4px 0 4px 4px;
+  border-radius: 4px;
+  width: 250px;
+  display: flex;
+}
+
+.search-field input {
+  flex: 1;
+  color: white;
+  font-size: 15px;
+}
+
+.search-field input::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.search-field input, .search-field button {
+  -webkit-appearance: none;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+.search-field input::-webkit-search-cancel-button,
+.search-field input::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+```
+
+## Internationalization
+
+### RTL
+
+In right-to-left languages, search fields should be mirrored. The label should be right aligned,
+along with the text in the input. Ensure that your CSS accounts for this.

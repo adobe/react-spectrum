@@ -17,9 +17,22 @@ import React, {ReactNode, RefObject, useContext, useEffect, useLayoutEffect, use
 // export {FocusScope};
 
 interface FocusScopeProps {
+  /** The contents of the focus scope. */
   children: ReactNode,
+
+  /** 
+   * Whether to contain focus inside the scope, so users cannot 
+   * move focus outside, for example in a modal dialog.
+   */
   contain?: boolean,
+
+  /**
+   * Whether to restore focus back to the element that was focused
+   * when the focus scope mounted, after the focus scope unmounts.
+   */
   restoreFocus?: boolean,
+
+  /** Whether to auto focus the first focusable element in the focus scope on mount. */
   autoFocus?: boolean
 }
 
@@ -43,6 +56,14 @@ let scopes: Set<RefObject<HTMLElement[]>> = new Set();
 // https://github.com/reactjs/rfcs/pull/109
 // For now, it relies on the DOM tree order rather than the React tree order, and is probably
 // less optimized for performance.
+
+/**
+ * A FocusScope manages focus for its descendants. It supports containing focus inside
+ * the scope, restoring focus to the previously focused element on unmount, and auto
+ * focusing children on mount. It also acts as a container for a programmatic focus
+ * management interface that can be used to move focus forward and back in response
+ * to user events.
+ */
 export function FocusScope(props: FocusScopeProps) {
   let {children, contain, restoreFocus, autoFocus} = props;
   let startRef = useRef<HTMLSpanElement>();
@@ -299,20 +320,7 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       }
 
       // Create a DOM tree walker that matches all tabbable elements
-      let walker = document.createTreeWalker(
-        document.body,
-        NodeFilter.SHOW_ELEMENT,
-        {
-          acceptNode(node) {
-            if ((node as HTMLElement).matches(TABBABLE_ELEMENT_SELECTOR)) {
-              return NodeFilter.FILTER_ACCEPT;
-            }
-
-            return NodeFilter.FILTER_SKIP;
-          }
-        },
-        false
-      );
+      let walker = getFocusableTreeWalker(document.body);
 
       // Find the next tabbable element after the currently focused element
       walker.currentNode = focusedElement;
@@ -352,4 +360,24 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       }
     };
   }, [scopeRef, restoreFocus, contain]);
+}
+
+export function getFocusableTreeWalker(root: HTMLElement) {
+  // Create a DOM tree walker that matches all tabbable elements
+  let walker = document.createTreeWalker(
+    root,
+    NodeFilter.SHOW_ELEMENT,
+    {
+      acceptNode(node) {
+        if ((node as HTMLElement).matches(TABBABLE_ELEMENT_SELECTOR)) {
+          return NodeFilter.FILTER_ACCEPT;
+        }
+
+        return NodeFilter.FILTER_SKIP;
+      }
+    },
+    false
+  );
+
+  return walker;
 }

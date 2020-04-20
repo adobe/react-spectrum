@@ -19,6 +19,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/i18n": "^3.0.0-rc.2",
     "@react-aria/interactions": "^3.0.0-rc.2",
+    "@react-aria/textfield": "^3.0.0-rc.2",
     "@react-aria/utils": "^3.0.0-rc.2",
     "@react-stately/searchfield": "^3.0.0-rc.2",
     "@react-types/searchfield": "^3.0.0-rc.2",

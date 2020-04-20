@@ -48,7 +48,9 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
       {...filterDOMProps(
         otherProps,
         {
-          'aria-label': false
+          id: false,
+          'aria-label': false,
+          'aria-labelledby': false
         }
       )}
       {...styleProps}
