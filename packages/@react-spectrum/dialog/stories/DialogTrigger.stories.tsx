@@ -112,26 +112,28 @@ storiesOf('DialogTrigger', module)
     () => (
       <DialogTrigger type="fullscreenTakeover">
         <ActionButton>Trigger</ActionButton>
-        <Dialog>
-          <Heading>The Heading</Heading>
-          <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
-          <Divider />
-          <Content>
-            <DialogTrigger isDismissable>
-              <ActionButton>Trigger</ActionButton>
-              <Dialog>
-                <Content>
-                  <input />
-                  <input />
-                </Content>
-              </Dialog>
-            </DialogTrigger>
-          </Content>
-          <ButtonGroup>
-            <Button variant="secondary" onPress={chain(close, action('cancel'))}>Cancel</Button>
-            <Button variant="cta" onPress={chain(close, action('confirm'))}>Confirm</Button>
-          </ButtonGroup>
-        </Dialog>
+        {(close) => (
+          <Dialog>
+            <Heading>The Heading</Heading>
+            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+            <Divider />
+            <Content>
+              <DialogTrigger isDismissable>
+                <ActionButton>Trigger</ActionButton>
+                <Dialog>
+                  <Content>
+                    <input />
+                    <input />
+                  </Content>
+                </Dialog>
+              </DialogTrigger>
+            </Content>
+            <ButtonGroup>
+              <Button variant="secondary" onPress={chain(close, action('cancel'))}>Cancel</Button>
+              <Button variant="cta" onPress={chain(close, action('confirm'))}>Confirm</Button>
+            </ButtonGroup>
+          </Dialog>
+        )}
       </DialogTrigger>
     ),
     {chromatic: {disable: true}}

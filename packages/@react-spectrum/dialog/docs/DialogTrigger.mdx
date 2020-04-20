@@ -142,7 +142,7 @@ customize the positioning.
 
 ### Tray
 
-Tray Dialogs are useful on mobile device or smaller screens.
+Tray Dialogs are typically used to portray information on mobile device or smaller screens.
 
 ```tsx example
 <DialogTrigger type="tray">
@@ -251,12 +251,12 @@ on the DialogTrigger. This adds an exit button that the user can click to dismis
 
 The `mobileType` prop allows you to specify what kind of Dialog should be displayed when viewed in
 mobile devices or smaller viewports. Note that Popover type Dialogs are not supported as
-a valid `mobileType`.
+a valid `mobileType` and will default to the Modal type if specified.
 
-The example below renders as a Popover in desktop but switches to a Modal in mobile. 
+The example below renders as a Popover in desktop but switches to a Tray in mobile.
 
 ```tsx example
-<DialogTrigger type="popover" mobileType="modal">
+<DialogTrigger type="popover" mobileType="tray">
   <ActionButton>Info</ActionButton>
   <Dialog>
     <Heading>Version Info</Heading>
@@ -327,8 +327,8 @@ prop. See the props table [below](#props) for a full list of available placement
 ### Offset and Cross Offset
 
 The Popover Dialog's offset with respect to its anchor element can be adjusted using the `offset` and
-`crossOffset` props. `offset` controls the spacing between the Dialog and the anchor element parallel 
-to the direction the Dialog is rendered whereas `crossOffset` handles the offset in the direction perpendicular. 
+`crossOffset` props. The `offset` prop controls the spacing applied along the main axis between the element and its
+anchor element whereas the `crossOffset` prop handles the spacing applied along the cross axis. 
 
 ```tsx example
 <DialogTrigger type="popover" placement="top" offset={-50}>
@@ -365,13 +365,26 @@ on its main axis in situations where the original placement would cause it to re
 
 ```tsx example
 <DialogTrigger type="popover" placement="bottom" shouldFlip>
-  <ActionButton>Trigger</ActionButton>
+  <ActionButton>Trigger with shouldFlip</ActionButton>
   <Dialog>
     <Heading>The Heading</Heading>
     <Divider />
     <Content>
       <Text>
         This is a popover that will flip if it can't fully render below the button.
+      </Text>
+    </Content>
+  </Dialog>
+</DialogTrigger>
+
+<DialogTrigger type="popover" placement="bottom" shouldFlip={false}>
+  <ActionButton>Trigger with shouldFlip=false</ActionButton>
+  <Dialog>
+    <Heading>The Heading</Heading>
+    <Divider />
+    <Content>
+      <Text>
+        This is a popover that won't flip if it can't fully render below the button.
       </Text>
     </Content>
   </Dialog>
@@ -387,8 +400,9 @@ breakpoints that determine when the Dialog will attempt to flip.
 The example below will flip the Dialog from above the trigger button to below the trigger
 button if the Dialog cannot render fully while maintaining 50px of padding between itself and
 the top of the browser.
+
 ```tsx example
-<DialogTrigger type="popover" shouldFlip position="top" containerPadding={50}>
+<DialogTrigger type="popover" shouldFlip placement="top" containerPadding={50}>
   <ActionButton>Trigger</ActionButton>
   <Dialog>
     <Heading>The Heading</Heading>
@@ -427,7 +441,7 @@ function Example() {
           </Content>
         </Dialog>
       </DialogTrigger>
-      <span>Current open state: {state.toString()}</span>
+      <span style={{'margin-left': '8px'}}>Current open state: {state.toString()}</span>
     </div>
   );
 }
