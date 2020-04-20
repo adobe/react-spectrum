@@ -1,0 +1,211 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/dialog';
+import overlaysDocs from 'docs:@react-aria/overlays';
+import focusDocs from 'docs:@react-aria/focus';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {useDialog} from '@react-aria/dialog';
+```
+
+# useDialog
+
+<p>{docs.exports.useDialog.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useDialog']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#dialog_modal'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useDialog} links={docs.links} />
+
+## Features
+
+The HTML [&lt;dialog&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog) element
+can be used to build dialogs. However, it is not yet widely supported across browsers, and
+building fully accessible custom dialogs from scratch is very difficult and error prone.
+`useDialog`, combined with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useModal} />,
+helps achieve accessible dialogs that can be styled as needed.
+
+**Note: `useDialog` only handles the dialog itself. It should be combined with other hooks and 
+components as described below to create a fully accessible modal dialog.**
+
+* Exposed to assistive technology as a `dialog` or `alertdialog` with ARIA
+* Handles labelling the dialog by its title element
+* Handles focusing the dialog on mount, unless a child element is already focused
+* Contains focus inside the dialog when combined with &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;
+* Hides content behind the dialog from screen readers when combined with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useModal} />
+* Prevents scrolling the page behind the dialog when combined with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.usePreventScroll} />
+* Handles closing the dialog when interacting outside and pressing the Escape key, when combined with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlay} />
+
+## Anatomy
+
+A dialog consists of a container element and an optional title. `useDialog` handles 
+exposing this to assistive technology using ARIA. It can be combined
+with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useModal} />, <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.usePreventScroll} />,
+and <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlay} /> as needed
+to create modal dialogs, popovers, and other types of overlays.
+
+`useDialog` returns props that you should spread onto the dialog container element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useDialog.return.id].properties} />
+</TypeContext.Provider>
+
+If a dialog does not have a visible title element, an `aria-label` or `aria-labelledby`
+prop must be passed instead to identify the element to assisitive technology.
+
+## Example
+
+This example shows how to build a typical modal dialog. It has a partially transparent
+backdrop above the rest of the page, prevents scrolling the body
+using <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.usePreventScroll} />,
+and hides content ouside the dialog 
+with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useModal} />.
+
+The modal can be closed by clicking or interacting outside the dialog if the `isDismissable`
+prop is set to true, or by pressing the Escape key.
+This is handled by <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlay} />.
+
+Focus is contained within the dialog while it is open using a 
+&lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;. In addition,
+the first focusable element is automatically focused when the dialog opens, and focus is restored
+back to the button that opened it when it closes.
+
+The application is contained in an <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.OverlayProvider} />,
+which is used to hide the content from screen readers with `aria-hidden` while a modal is open.
+In addition, each modal must be contained in an <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.OverlayContainer} />,
+which uses a React [Portal](https://reactjs.org/docs/portals.html) to render the modal at the
+end of the document body. If a nested modal is opened, then the first modal will also be set
+to `aria-hidden`, so that only the top-most modal is accessible.
+
+```tsx example
+import {
+  useOverlay,
+  usePreventScroll,
+  useModal,
+  OverlayProvider,
+  OverlayContainer
+} from '@react-aria/overlays';
+import {FocusScope} from '@react-aria/focus';
+import {useButton} from '@react-aria/button';
+
+function ModalDialog({title, children, isOpen, onClose, isDismissable}) {
+  // Handle interacting outside the dialog and pressing
+  // the the Escape key to close the modal. 
+  let ref = React.useRef();
+  let {overlayProps} = useOverlay({
+    ref,
+    onClose,
+    isOpen,
+    isDismissable
+  });
+
+  // Prevent scrolling while the modal is open, and hide content
+  // outside the modal from screen readers.
+  usePreventScroll();
+  useModal();
+
+  // Get props for the dialog and its title
+  let {dialogProps, titleProps} = useDialog({ref});
+
+  return (
+    <div
+      style={{
+        position: 'fixed',
+        zIndex: 100,
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        background: 'rgba(0, 0, 0, 0.5)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
+      <FocusScope contain restoreFocus autoFocus>
+        <div
+          {...overlayProps}
+          {...dialogProps}
+          ref={ref}
+          style={{
+            background: 'white',
+            color: 'black',
+            padding: 30
+          }}>
+          <h3
+            {...titleProps}
+            style={{marginTop: 0}}>
+            {title}
+          </h3>
+          {children}
+        </div>
+      </FocusScope>
+    </div>
+  );
+}
+
+function Example() {
+  let [isOpen, setOpen] = React.useState();
+
+  // useButton ensures that focus management is handled correctly,
+  // across all browsers. Focus is restored to the button once the
+  // dialog closes.
+  let {buttonProps: openButtonProps} = useButton({
+    onPress: () => setOpen(true)
+  });
+
+  let {buttonProps: closeButtonProps} = useButton({
+    onPress: () => setOpen(false)
+  });
+
+  return <>
+    <button {...openButtonProps}>Open Dialog</button>
+    {isOpen &&
+      <OverlayContainer>
+        <ModalDialog 
+          title="Enter your name"
+          isOpen
+          onClose={() => setOpen(false)}
+          isDismissable>
+          <form style={{display: 'flex', flexDirection: 'column'}}>
+            <label>
+              First Name: <input placeholder="John" />
+            </label>
+            <label>
+              Last Name: <input placeholder="Smith" />
+            </label>
+            <button 
+              {...closeButtonProps}
+              style={{marginTop: 10}}>
+              Submit
+            </button>
+          </form>
+        </ModalDialog>
+      </OverlayContainer>
+    }
+  </>;
+}
+
+// Application must be wrapped in an OverlayProvider so that it can be
+// hidden from screen readers when a modal opens.
+<OverlayProvider>
+  <Example />
+</OverlayProvider>
+```

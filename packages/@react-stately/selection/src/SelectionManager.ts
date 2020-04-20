@@ -10,22 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection} from '@react-stately/collections';
+import {Collection, Node} from '@react-stately/collections';
 import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 import {SelectionMode} from '@react-types/shared';
 
+interface SelectionManagerOptions {
+  allowsCellSelection?: boolean
+}
+
 /**
  * An interface for reading and updating multiple selection state.
  */
 export class SelectionManager implements MultipleSelectionManager {
-  private collection: Collection<unknown>;
+  private collection: Collection<Node<unknown>>;
   private state: MultipleSelectionState;
+  private allowsCellSelection: boolean;
 
-  constructor(collection: Collection<unknown>, state: MultipleSelectionState) {
+  constructor(collection: Collection<Node<unknown>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
     this.collection = collection;
     this.state = state;
+    this.allowsCellSelection = options?.allowsCellSelection ?? false;
   }
 
   get selectionMode(): SelectionMode {
@@ -56,6 +62,15 @@ export class SelectionManager implements MultipleSelectionManager {
     this.state.setSelectedKeys(keys);
   }
 
+  get isEmpty() {
+    return this.state.selectedKeys.size === 0;
+  }
+
+  get isSelectAll() {
+    let allKeys = this.getSelectAllKeys();
+    return allKeys.every(k => this.state.selectedKeys.has(k));
+  }
+
   extendSelection(toKey: Key) {
     this.state.setSelectedKeys((selectedKeys: Selection) => {
       let anchorKey = selectedKeys.anchorKey || toKey;
@@ -80,7 +95,11 @@ export class SelectionManager implements MultipleSelectionManager {
     let keys: Key[] = [];
     let key = from;
     while (key) {
-      keys.push(key);
+      let item = this.collection.getItem(key);
+      if (item && item.type === 'item' || (item.type === 'cell' && this.allowsCellSelection)) {
+        keys.push(key);
+      }
+
       if (key === to) {
         return keys;
       }
@@ -91,7 +110,36 @@ export class SelectionManager implements MultipleSelectionManager {
     return null;
   }
 
+  private getKey(key: Key) {
+    let item = this.collection.getItem(key);
+    if (!item) {
+      // ¯\_(ツ)_/¯
+      return key;
+    }
+
+    // If cell selection is allowed, just return the key.
+    if (item.type === 'cell' && this.allowsCellSelection) {
+      return key;
+    }
+
+    // Find a parent item to select
+    while (item.type !== 'item' && item.parentKey) {
+      item = this.collection.getItem(item.parentKey);
+    }
+
+    if (!item || item.type !== 'item') {
+      return null;
+    }
+
+    return item.key;
+  }
+
   toggleSelection(key: Key) {
+    key = this.getKey(key);
+    if (key == null) {
+      return;
+    }
+
     this.state.setSelectedKeys(selectedKeys => {
       let keys = new Selection(selectedKeys);
       if (keys.has(key)) {
@@ -109,15 +157,40 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   replaceSelection(key: Key) {
+    key = this.getKey(key);
+    if (key == null) {
+      return;
+    }
+    
     this.state.setSelectedKeys(new Selection([key], key, key));
   }
 
+  private getSelectAllKeys() {
+    return [...this.collection.getKeys()].filter(key => {
+      let item = this.collection.getItem(key);
+      if (!item) {
+        return false;
+      }
+
+      return item.type === 'item' ||
+        (item.type === 'cell' && this.allowsCellSelection);
+    });
+  }
+
   selectAll() {
-    let keys = [...this.collection.getKeys()];
+    let keys = this.getSelectAllKeys();
     this.state.setSelectedKeys(new Selection(keys, keys[0], keys[keys.length - 1]));
   }
 
   clearSelection() {
     this.state.setSelectedKeys(new Selection());
+  }
+
+  toggleSelectAll() {
+    if (this.isSelectAll) {
+      this.clearSelection();
+    } else {
+      this.selectAll();
+    }
   }
 }

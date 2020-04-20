@@ -468,16 +468,16 @@ module.exports = new Transformer({
       return isReactCall(path, 'forwardRef');
     }
 
-    function isReactCall(path, name) {
+    function isReactCall(path, name, module = 'react') {
       if (!path.isCallExpression()) {
         return false;
       }
 
       if (!t.isMemberExpression(path.node.callee)) {
-        return path.get('callee').referencesImport('react', name);
+        return path.get('callee').referencesImport(module, name);
       }
 
-      if (path.get('callee.object').referencesImport('react', 'default')) {
+      if (path.get('callee.object').referencesImport(module, 'default')) {
         return t.isIdentifier(path.node.callee.property, {name});
       }
 
@@ -490,7 +490,7 @@ module.exports = new Transformer({
         path.traverse({
           ReturnStatement(path) {
             let ret = path.node.argument;
-            if (t.isJSXElement(ret) || t.isJSXFragment(ret) || isReactCall(path.get('argument'), 'cloneElement')) {
+            if (t.isJSXElement(ret) || t.isJSXFragment(ret) || isReactCall(path.get('argument'), 'cloneElement') || isReactCall(path.get('argument'), 'createPortal', 'react-dom')) {
               returnsJSX = true;
             }
           }

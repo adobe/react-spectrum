@@ -41,7 +41,7 @@ import {useMenuTrigger} from '@react-aria/menu';
 ## Features
 
 There is no native element to implement a menu in HTML that is widely supported. `useMenuTrigger` 
-combined with [useMenu](useMeun.html) helps achieve accessible menu components that can be styled as needed.
+combined with [useMenu](useMenu.html) helps achieve accessible menu components that can be styled as needed.
 
 * Exposed to assistive technology as a button with a `menu` popup using ARIA (combined with [useMenu](useMeun.html))
 * Support for mouse, touch, and keyboard interactions
@@ -77,8 +77,8 @@ hidden &lt;<TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.Dismi
 is added at the start and end of the menu to allow screen reader users to dismiss it easily.
 
 This example does not do any advanced popover positioning or portaling to escape its visual container.
-See <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlayPosition} /> for 
-an example of how to implement this.
+See [useOverlayTrigger](useOverlayTrigger.html) for an example of how to implement this
+using <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlayPosition} />.
 
 In addition, see [useMenu](useMenu.html) for examples of menu item groups, and more complex item content.
 
