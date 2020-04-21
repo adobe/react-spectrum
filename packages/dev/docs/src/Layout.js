@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
@@ -133,6 +134,14 @@ function Page({children, title, styles, scripts}) {
   );
 }
 
+function dirToTitle(dir) {
+  return dir
+    .split('/')[0]
+    .split('-')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
 function Nav({currentPageName, pages, publicUrl}) {
   let isIndex = /index\.html$/;
   let currentParts = currentPageName.split('/');
@@ -156,16 +165,25 @@ function Nav({currentPageName, pages, publicUrl}) {
     return !isIndex.test(p.name) && pageParts.length === 1;
   });
 
+  let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
+
   return (
     <nav className={docStyles.nav}>
       <header>
-        <a href={publicUrl}>
+        {currentParts.length > 1 &&
+          <a href=".." className={docStyles.backBtn}>
+            <ChevronLeft />
+          </a>
+        }
+        <a href={publicUrl} className={docStyles.homeBtn}>
           <svg viewBox="0 0 30 26" fill="#E1251B">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
             <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
           </svg>
-          <h2 className={typographyStyles['spectrum-Heading4']}>React Spectrum</h2>
+          <h2 className={typographyStyles['spectrum-Heading4']}>
+            {title}
+          </h2>
         </a>
       </header>
       <ul className={sideNavStyles['spectrum-SideNav']}>

@@ -43,16 +43,22 @@ html, body {
 }
 
 .nav header {
+  display: flex;
   padding: 30px 0 24px 0;
 }
 
 .nav header a {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   text-decoration: none;
 }
 
-.nav header svg {
+.backBtn {
+  color: var(--spectrum-global-color-gray-900);
+  margin-right: 10px;
+}
+
+.homeBtn svg {
   width: 36px;
   height: 32px;
   display: block;
