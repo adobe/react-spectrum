@@ -166,6 +166,26 @@ describe('ComboBox', function () {
       expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
     });
 
+    // it('moves to selected key (isOpen=true)', function () {
+    //   let {getByRole} = render(
+    //     <Provider theme={theme}>
+    //       <ComboBox isOpen label="Test" selectedKey="2">
+    //         <Item uniqueKey="1">One</Item>
+    //         <Item uniqueKey="2">Two</Item>
+    //         <Item uniqueKey="3">Three</Item>
+    //       </ComboBox>
+    //     </Provider>
+    //   );
+
+    //   let combobox = getByRole('combobox');
+    //   let listbox = getByRole('listbox');
+
+    //   let items = within(listbox).getAllByRole('option');
+
+    //   expect(document.activeElement).toBe(combobox);
+    //   expect(combobox).toHaveAttribute('aria-activedescendant', items[1].id);
+    // });
+
     it('moves to first item for no selected key',  function () {
       let {getByRole} = render(
         <Provider theme={theme}>
@@ -190,6 +210,26 @@ describe('ComboBox', function () {
 
       expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
     });
+
+    // it('moves to first item for no selected key (isOpen=true)', function () {
+    //   let {getByRole} = render(
+    //     <Provider theme={theme}>
+    //       <ComboBox isOpen label="Test">
+    //         <Item uniqueKey="1">One</Item>
+    //         <Item uniqueKey="2">Two</Item>
+    //         <Item uniqueKey="3">Three</Item>
+    //       </ComboBox>
+    //     </Provider>
+    //   );
+
+    //   let combobox = getByRole('combobox');
+    //   let listbox = getByRole('listbox');
+
+    //   let items = within(listbox).getAllByRole('option');
+
+    //   expect(document.activeElement).toBe(combobox);
+    //   expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+    // });
 
     it('does not auto focus for no selected key and allows custom value', function () {
       let {getByRole} = render(

@@ -148,14 +148,21 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
       case 'Enter':
         if (state.isOpen && focusedItem) {
           state.setSelectedKey(state.selectionManager.focusedKey);
-          state.setOpen(false);
+          state.close();
         }
 
         break;
       case 'Escape':
-        state.setOpen(false);
+        state.close();
         break;
       case 'ArrowDown':
+        if (!state.isOpen) {
+          state.open();
+        } else if (state.isOpen && !focusedItem) {
+          let firstKey = state.collection.firstKey;
+          state.selectionManager.setFocusedKey(firstKey);
+        }
+        break;
       case 'ArrowUp':
         if (state.isOpen && !focusedItem) {
           let firstKey = state.collection.firstKey;

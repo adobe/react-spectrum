@@ -110,7 +110,8 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
         ref={listboxRef}
         domProps={menuProps}
         disallowEmptySelection
-        autoFocus={props.allowsCustomValue ? false : state.focusStrategy}
+        // TODO: adjust this from 'first'? Depends on whether or not we want to ever focus something other than the first item if no items are selected
+        autoFocus={props.allowsCustomValue ? false : 'first'}
         shouldSelectOnPressUp
         focusOnPointerEnter
         layout={layout}
@@ -184,6 +185,7 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
         style={{width: '100%'}}>
         <TextFieldBase
           // Perhaps should filterDOMProps(DOMEventPropNames)?
+          // Think about whether or not we want to do send all otherProps to Textfield or be more discerning?
           {...otherProps}
           inputProps={inputProps}
           ref={inputRef}

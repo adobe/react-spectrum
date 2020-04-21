@@ -239,8 +239,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   let handlers = {
     onKeyDown,
     onFocus,
-    onBlur,
-    tabIndex: -1 // todo put in right place
+    onBlur
   };
 
   if (shouldTypeAhead) {
@@ -253,6 +252,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   }
 
   return {
-    collectionProps: handlers
+    collectionProps: {
+      ...handlers,
+      tabIndex: -1
+    }
   };
 }
