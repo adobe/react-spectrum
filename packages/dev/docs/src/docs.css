@@ -34,7 +34,8 @@ html, body {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100%;
+  overflow-y: scroll;
+  bottom: 0;
   width: 256px;
   padding: 0 24px;
   background: var(--spectrum-global-color-gray-75);
