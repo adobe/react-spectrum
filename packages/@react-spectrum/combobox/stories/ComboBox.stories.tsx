@@ -128,12 +128,12 @@ storiesOf('ComboBox', module)
     'customWidth',
     () => (
       <Flex flexDirection="column">
-        <ComboBox label='Combobox' onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} width="200px">
+        <ComboBox label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} width="200px">
           <Item uniqueKey="one">Item One</Item>
           <Item uniqueKey="two" textValue="Item Two">Custom Item</Item>
           <Item uniqueKey="three">Item Three</Item>
         </ComboBox>
-        <ComboBox label='Combobox' onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} width="800px">
+        <ComboBox label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} width="800px">
           <Item uniqueKey="one">Item One</Item>
           <Item uniqueKey="two" textValue="Item Two">Custom Item</Item>
           <Item uniqueKey="three">Item Three</Item>
@@ -144,7 +144,7 @@ storiesOf('ComboBox', module)
 
 function render(props = {}) {
   return (
-    <ComboBox label='Combobox' onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} {...props}>
+    <ComboBox label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} {...props}>
       <Item uniqueKey="one">Item One</Item>
       <Item uniqueKey="two" textValue="Item Two">Custom Item</Item>
       <Item uniqueKey="three">Item Three</Item>
