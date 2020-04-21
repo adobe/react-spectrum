@@ -10,23 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {createEventHandler} from './createEventHandler';
-import {FocusEvent} from '@react-types/shared';
-import {HTMLAttributes, useRef} from 'react';
+import {FocusEvent, HTMLAttributes, useRef} from 'react';
 
 interface FocusWithinProps {
+  /** Whether the focus within events should be disabled. */
   isDisabled?: boolean,
+  /** Handler that is called when the target element or a descendant receives focus. */
   onFocusWithin?: (e: FocusEvent) => void,
+  /** Handler that is called when the target element and all descendants lose focus. */
   onBlurWithin?: (e: FocusEvent) => void,
+  /** Handler that is called when the the focus within state changes. */
   onFocusWithinChange?: (isFocusWithin: boolean) => void
 }
 
 interface FocusWithinResult {
+  /** Props to spread onto the target element. */
   focusWithinProps: HTMLAttributes<HTMLElement>
 }
 
 /**
- * Handles focus events for the target and all children
+ * Handles focus events for the target and its descendants.
  */
 export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
   let state = useRef({
@@ -37,21 +40,21 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
     return {focusWithinProps: {}};
   }
 
-  let onFocus = createEventHandler((e: FocusEvent) => {
-    if (props.onFocusWithin) {
-      props.onFocusWithin(e);
-    }
-
+  let onFocus = (e: FocusEvent) => {
     if (!state.isFocusWithin) {
+      if (props.onFocusWithin) {
+        props.onFocusWithin(e);
+      }
+  
       if (props.onFocusWithinChange) {
         props.onFocusWithinChange(true);
       }
 
       state.isFocusWithin = true;
     }
-  });
+  };
 
-  let onBlur = createEventHandler((e: FocusEvent) => {
+  let onBlur = (e: FocusEvent) => {
     // We don't want to trigger onBlurWithin and then immediately onFocusWithin again 
     // when moving focus inside the element. Only trigger if the currentTarget doesn't 
     // include the relatedTarget (where focus is moving).
@@ -66,7 +69,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
 
       state.isFocusWithin = false;
     }
-  });
+  };
   
   return {
     focusWithinProps: {

@@ -11,7 +11,7 @@
  */
 
 import {
-  FocusEvent as ReactFocusEvent,
+  FocusEvent,
   KeyboardEvent as ReactKeyboardEvent,
   SyntheticEvent
 } from 'react';
@@ -25,16 +25,21 @@ export type BaseEvent<T extends SyntheticEvent> = T & {
 }
 
 export type KeyboardEvent = BaseEvent<ReactKeyboardEvent<any>>;
-export type FocusEvent = BaseEvent<ReactFocusEvent<any>>;
 
 export type PointerType = 'mouse' | 'pen' | 'touch' | 'keyboard' | 'virtual';
 
 export interface PressEvent {
+  /** The type of press event being fired. */
   type: 'pressstart' | 'pressend' | 'pressup' | 'press',
+  /** The pointer type that triggered the press event. */
   pointerType: PointerType,
+  /** The target element of the press event. */
   target: HTMLElement,
+  /** Whether the shift keyboard modifier was held during the press event. */
   shiftKey: boolean,
+  /** Whether the ctrl keyboard modifier was held during the press event. */
   ctrlKey: boolean,
+  /** Whether the meta keyboard modifier was held during the press event. */
   metaKey: boolean
 }
 
@@ -67,15 +72,21 @@ export interface HoverEvents {
 }
 
 export interface PressEvents {
-  /**
-   * Called when the mouse or touch is released
-   * @param e A press event
-   * @returns nothing
-   */
+  /** Handler that is called when the press is released over the target. */
   onPress?: (e: PressEvent) => void,
+  /** Handler that is called when a press interaction starts. */
   onPressStart?: (e: PressEvent) => void,
+  /** 
+   * Handler that is called when a press interation ends, either 
+   * over the target or when the pointer leaves the target.
+   */
   onPressEnd?: (e: PressEvent) => void,
+  /** Handler that is called when the press state changes. */
   onPressChange?: (isPressed: boolean) => void,
+  /**
+   * Handler that is called when a press is released over the target, regardless of
+   * whether it started on the target or not.
+   */
   onPressUp?: (e: PressEvent) => void
 }
 
