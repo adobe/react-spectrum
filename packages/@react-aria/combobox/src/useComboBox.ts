@@ -48,6 +48,7 @@ import {useLabel} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useSelectableCollection} from '@react-aria/selection';
 import {ComboBoxState} from '@react-stately/combobox';
+import {useTextField} from "@react-aria/textfield";
 
 export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
   // TODO: destructure props
@@ -62,7 +63,6 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
   // TextFieldBase already has useTextField and will return the value of onChange as a string instead
   // of an event, this leads to us getting onChange twice if we useTextField as well, and it'll throw an error
   // because string.target doesn't exist
-  let {fieldProps, labelProps} = useLabel(props);
   let onChange = (val) => {
     if (props.menuTrigger === 'input' && val.length > 0) {
       state.open(); // is this right? at this time, we haven't filtered, so we don't know if the character they type will result in an empty menu
@@ -109,7 +109,7 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
 
   let onBlur = (e) => {
     // Need to propagate blur event so that wrapping focus ring properly removes itself via its own blur handler
-    e.continuePropagation();
+    // e.continuePropagation();
 
     // TODO: Double check if this is needed, from v2
     if (props.popoverRef.current && props.popoverRef.current.contains(document.activeElement)) {
@@ -135,7 +135,7 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
 
   let onFocus = (e) => {
     // Need to propagate focus event so that wrapping div focus ring properly applies
-    e.continuePropagation();
+    // e.continuePropagation();
 
     if (props.onFocus) {
       props.onFocus(e);
@@ -178,6 +178,14 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
     }
   };
 
+  let {labelProps, inputProps} = useTextField({
+    ...props,
+    onChange,
+    onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
+    onFocus,
+    onBlur
+  }, props.inputRef);
+
   return {
     labelProps,
     triggerProps: {
@@ -186,15 +194,11 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
     },
     inputProps: {
       // TODO: double check that user provided id gets sent to textfield and not to wrapper div
-      ...fieldProps,
-      onChange,
+      ...inputProps,
       role: 'combobox',
       'aria-controls': state.isOpen ? menuProps.id : undefined,
       'aria-autocomplete': props.completionMode === 'suggest' ? 'list' : 'both',
-      'aria-activedescendant': state.isOpen ? focusedKeyId : undefined,
-      onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
-      onBlur,
-      onFocus
+      'aria-activedescendant': state.isOpen ? focusedKeyId : undefined
     },
     menuProps
   };

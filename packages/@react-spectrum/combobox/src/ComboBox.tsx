@@ -185,7 +185,7 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
         <TextFieldBase
           // Perhaps should filterDOMProps(DOMEventPropNames)?
           {...otherProps}
-          {...inputProps}
+          inputProps={inputProps}
           ref={inputRef}
           inputClassName={
             classNames(
