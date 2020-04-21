@@ -13,9 +13,9 @@
 import {ActionGroupKeyboardDelegate} from './ActionGroupKeyboardDelegate';
 import {ActionGroupProps} from '@react-types/actiongroup';
 import {ActionGroupState} from '@react-stately/actiongroup';
-import {FocusEvent, Orientation} from '@react-types/shared';
 import {HTMLAttributes, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
+import {Orientation} from '@react-types/shared';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
@@ -72,8 +72,7 @@ export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroup
       ...mergeProps(focusWithinProps, collectionProps)
     },
     buttonProps: {
-      role: BUTTON_ROLES[selectionMode],
-      onFocus: (e: FocusEvent) => {e.continuePropagation();}
+      role: BUTTON_ROLES[selectionMode]
     }
   };
 }

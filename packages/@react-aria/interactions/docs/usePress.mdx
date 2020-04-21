@@ -1,0 +1,116 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/interactions';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {usePress} from '@react-aria/interactions';
+```
+
+# usePress
+
+<p>{docs.exports.usePress.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['usePress']} />
+
+## API
+
+<FunctionAPI function={docs.exports.usePress} links={docs.links} />
+
+## Features
+
+`usePress` handles press interactions across mouse, touch, keyboard, and screen readers. A press interaction starts when a 
+user presses down with a mouse or their finger on the target, and ends when they move the pointer off the target. It may
+start again if the pointer re-enters the target. `usePress` returns the current press state, which can be used to adjust
+the visual appearance of the target. If the pointer is released over the target, then an `onPress` event is fired.
+
+* Handles mouse and touch events
+* Handles Enter or Space key presses
+* Handles screen reader virtual clicks
+* Uses pointer events where available, with fallbacks to mouse and touch events
+* Normalizes focus behavior on mouse and touch interactions across browsers
+* Handles disabling text selection on mobile while the press interaction is active
+* Handles canceling press interactions on scroll
+* Normalizes many cross browser inconsistencies
+
+## Usage
+
+`usePress` returns props that you should spread onto the target element, along with the current press state:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.usePress.return.id].properties} />
+</TypeContext.Provider>
+
+`usePress` supports the following event handlers:
+
+<TypeContext.Provider value={typesDocs.links}>
+  <InterfaceType properties={typesDocs.exports.PressEvents.properties} />
+</TypeContext.Provider>
+
+Each of these handlers is fired with a `PressEvent`, which exposes information about the target and the
+type of event that triggered the interaction.
+
+<TypeContext.Provider value={typesDocs.links}>
+  <InterfaceType properties={typesDocs.exports.PressEvent.properties} />
+</TypeContext.Provider>
+
+## Example
+
+This example shows a simple target that handles press events with `usePress` and logs them to a list below.
+It also uses the `isPressed` state to adjust the background color when the target is pressed.
+Press down on the target and drag your pointer off and over to see when the events are fired, and try focusing
+the target with a keyboard and pressing the Enter or Space keys to trigger events as well.
+
+**NOTE: for more advanced button functionality, see [useButton](useButton.html).**
+
+```tsx example
+function Example() {
+  let [events, setEvents] = React.useState([]);
+  let {pressProps, isPressed} = usePress({
+    onPressStart: e => setEvents(
+      events => [...events, `press start with ${e.pointerType}`]
+    ),
+    onPressEnd: e => setEvents(
+      events => [...events, `press end with ${e.pointerType}`]
+    ),
+    onPress: e => setEvents(
+      events => [...events, `press with ${e.pointerType}`]
+    )
+  });
+
+  return (
+    <>
+      <div
+        {...pressProps}
+        style={{
+          background: isPressed ? 'darkgreen' : 'green',
+          color: 'white',
+          display: 'inline-block',
+          padding: 4,
+          cursor: 'pointer'
+        }}
+        role="button"
+        tabIndex={0}>
+        Press me!
+      </div>
+      <ul>
+        {events.map((e, i) => <li key={i}>{e}</li>)}
+      </ul>
+    </>
+  );
+}
+```

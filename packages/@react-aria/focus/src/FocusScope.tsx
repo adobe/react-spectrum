@@ -320,20 +320,7 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       }
 
       // Create a DOM tree walker that matches all tabbable elements
-      let walker = document.createTreeWalker(
-        document.body,
-        NodeFilter.SHOW_ELEMENT,
-        {
-          acceptNode(node) {
-            if ((node as HTMLElement).matches(TABBABLE_ELEMENT_SELECTOR)) {
-              return NodeFilter.FILTER_ACCEPT;
-            }
-
-            return NodeFilter.FILTER_SKIP;
-          }
-        },
-        false
-      );
+      let walker = getFocusableTreeWalker(document.body);
 
       // Find the next tabbable element after the currently focused element
       walker.currentNode = focusedElement;
@@ -373,4 +360,24 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       }
     };
   }, [scopeRef, restoreFocus, contain]);
+}
+
+export function getFocusableTreeWalker(root: HTMLElement) {
+  // Create a DOM tree walker that matches all tabbable elements
+  let walker = document.createTreeWalker(
+    root,
+    NodeFilter.SHOW_ELEMENT,
+    {
+      acceptNode(node) {
+        if ((node as HTMLElement).matches(TABBABLE_ELEMENT_SELECTOR)) {
+          return NodeFilter.FILTER_ACCEPT;
+        }
+
+        return NodeFilter.FILTER_SKIP;
+      }
+    },
+    false
+  );
+
+  return walker;
 }

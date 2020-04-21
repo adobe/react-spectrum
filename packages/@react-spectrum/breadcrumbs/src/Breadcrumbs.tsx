@@ -22,8 +22,14 @@ import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
 import {useProviderProps} from '@react-spectrum/provider';
 
-const MIN_VISIBLE_ITEMS = 2;
-const MAX_VISIBLE_ITEMS = 4;
+// This value doesn't include the "menu", or the root if showRoot = true. The reason we ignore the menu and root is
+// because we always want to make sure we show the current breadcrumb.
+const MIN_VISIBLE_ITEMS = 1;
+
+// When dealing with the maximum number of items, we consider the root an item if showRoot = true (which is different
+// to the minimum). This means you'll see the root, the menu, and 4 other items when showRoot = true. When the root is
+// not showing, you'll see the menu and 5 other items.
+const MAX_VISIBLE_ITEMS = 5;
 
 function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   props = useProviderProps(props);
@@ -45,46 +51,71 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   let domRef = useDOMRef(ref);
   let listRef = useRef(null);
 
-  const [visibleItems, setVisibleItems] = useState(isCollapsible ? childArray.length : maxVisibleItems);
+  let defaultVisibleItems: number;
+
+  if (isCollapsible) {
+    defaultVisibleItems = childArray.length;
+  } else {
+    defaultVisibleItems = showRoot ? maxVisibleItems as number - 1 : maxVisibleItems as number;
+  }
+
+  const [visibleItems, setVisibleItems] = useState(defaultVisibleItems);
 
   let {breadcrumbsProps} = useBreadcrumbs(props);
   let {styleProps} = useStyleProps(otherProps);
 
   useEffect(() => {
-    let listItems = [...listRef.current.children];
-    let childrenWidthTotals = listItems.reduce((acc, item, index) => (
-      [...acc, acc[index] + item.getBoundingClientRect().width]
-    ), [0]);
+    // Only run the resize logic if the menu is collapsible to avoid the risk of performance problems.
+    if (isCollapsible && listRef.current) {
+      let listItems = [...listRef.current.children];
+      // Ignore the last item when the size is large because it wraps onto a new line and doesn't take up horizontal space.
+      let listItemsToMeasure = size === 'L' ? listItems.slice(0, listItems.length - 1) : listItems;
+      let childrenWidths = listItemsToMeasure.map((item) => item.getBoundingClientRect().width);
 
-    let onResize = () => {
-      if (isCollapsible && listRef.current) {
+      let onResize = () => {
         let containerWidth = listRef.current.getBoundingClientRect().width;
-        let index = childrenWidthTotals.findIndex(totalWidth => totalWidth > containerWidth);
+        let [rootBreadcrumbWidth, ...otherBreadcrumbWidths] = childrenWidths;
+        let calculatedWidth = 0;
 
-        let visibleItemsCount;
-        let minVisibleItems = showRoot ? MIN_VISIBLE_ITEMS + 1 : MIN_VISIBLE_ITEMS;
-
-        if (index ===  -1) {
-          visibleItemsCount = childArray.length;
-        } else if (index < minVisibleItems) {
-          visibleItemsCount = minVisibleItems;
-        } else {
-          visibleItemsCount = index;
+        // Make sure we account for the root breadcrumb if it's enabled.
+        if (showRoot) {
+          calculatedWidth += rootBreadcrumbWidth;
         }
 
-        setVisibleItems(visibleItemsCount);
-      }
-    };
+        let otherVisibleItemsCount = 0;
 
-    window.addEventListener('resize', onResize);
-    onResize();
-    return () => {
-      window.removeEventListener('resize', onResize);
-    };
-  }, [isCollapsible, childArray.length, listRef, showRoot]);
+        // See how many other breadcrumbs we can fit (starting from the right).
+        otherBreadcrumbWidths.reverse().forEach(breadcrumbWidth => {
+          calculatedWidth += breadcrumbWidth;
+          if (calculatedWidth < containerWidth) {
+            otherVisibleItemsCount++;
+          }
+        });
+
+        let minVisibleItems = showRoot ? MIN_VISIBLE_ITEMS + 1 : MIN_VISIBLE_ITEMS;
+
+        if (otherVisibleItemsCount < minVisibleItems) {
+          otherVisibleItemsCount = MIN_VISIBLE_ITEMS;
+        }
+
+        let maxVisibleOtherItems = showRoot ? MAX_VISIBLE_ITEMS - 1 : MAX_VISIBLE_ITEMS;
+
+        if (otherVisibleItemsCount > maxVisibleOtherItems) {
+          otherVisibleItemsCount = maxVisibleOtherItems;
+        }
+
+        setVisibleItems(otherVisibleItemsCount);
+      };
+
+      window.addEventListener('resize', onResize);
+      onResize();
+      return () => {
+        window.removeEventListener('resize', onResize);
+      };
+    }
+  }, [isCollapsible, childArray.length, listRef, showRoot, size]);
 
   if (childArray.length > visibleItems) {
-    let rootItems = showRoot ? [childArray[0]] : [];
     let selectedItem = childArray[childArray.length - 1];
     let selectedKey = selectedItem.props.uniqueKey || selectedItem.key;
     let onMenuAction = (key: Key) => {
@@ -109,13 +140,14 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         </MenuTrigger>
       </BreadcrumbItem>
     );
-    rootItems.push(menuItem);
 
-    let restItems = childArray.slice(-visibleItems + rootItems.length);
+    let [rootBreadcrumb, ...otherBreadcrumbs] = childArray;
+    let rootItems = showRoot ? [rootBreadcrumb, menuItem] : [menuItem];
+    let visibleBreadcrumbs = otherBreadcrumbs.slice(-visibleItems);
 
     childArray = [
       ...rootItems,
-      ...restItems
+      ...visibleBreadcrumbs
     ];
   }
 
