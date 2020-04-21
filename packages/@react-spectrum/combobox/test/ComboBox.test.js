@@ -238,32 +238,35 @@ describe('ComboBox', function () {
       let onFilter = jest.fn();
       let onOpenChange = jest.fn();
       let onSelectionChange = jest.fn();
-      let {getByRole, getAllByRole} = render(
+      let onInputChange = jest.fn();
+      let {queryByRole, getAllByRole} = render(
         <Provider theme={theme}>
-          <ComboBox data-testid="8" label="Test" onFilter={onFilter} onOpenChange={onOpenChange} onSelectionChange={onSelectionChange}>
-            <Item>Bulbasaur</Item>
-            <Item>Squirtle</Item>
-            <Item>Charmander</Item>
+          <ComboBox data-testid="8" label="Test" onFilter={onFilter} onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
+            <Item uniqueKey="1">Bulbasaur</Item>
+            <Item uniqueKey="2">Squirtle</Item>
+            <Item uniqueKey="3">Charmander</Item>
           </ComboBox>
           <Button variant="secondary">Focus move</Button>
         </Provider>
       );
 
-      let combobox = getByRole('combobox');
       let button = getAllByRole('button')[0];
       let secondaryButton = getAllByRole('button')[1];
       act(() => {
         fireEvent.mouseDown(button);
       });
+      
       act(() => {
-        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+        userEvent.tab();
       });
+  
       expect(document.activeElement).toBe(secondaryButton);
       expect(onOpenChange).toHaveBeenCalledWith(false);
-      expect(onSelectionChange).not.toHaveBeenCalled();
-      expect(onFilter).not.toHaveBeenCalled(); // it may be called during defaultOpen?
+      expect(onSelectionChange).toHaveBeenCalledWith('1');
+      expect(onInputChange).toHaveBeenCalledWith('Bulbasaur');
+      expect(onFilter).toHaveBeenCalled(); // it may be called during defaultOpen?
 
-      expect(getByRole('listbox')).toThrow();
+      expect(queryByRole('listbox')).toBeFalsy();
     });
 
     it('closes and commits custom value', function () {
