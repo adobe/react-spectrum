@@ -104,7 +104,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
 
   let isMobile = useMediaQuery('(max-width: 700px)');
   let listbox = (
-    <FocusScope restoreFocus>
+    <FocusScope>
       <DismissButton onDismiss={() => state.setOpen(false)} />
       <ListBoxBase
         ref={listboxRef}

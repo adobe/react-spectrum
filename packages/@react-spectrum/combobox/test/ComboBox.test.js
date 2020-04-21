@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, cleanup, fireEvent, render, waitFor, within} from '@testing-library/react';
+import {act, cleanup, fireEvent, render, within} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
 import {ComboBox, Item} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -23,6 +23,11 @@ let theme = {
   light: themeLight,
   medium: scaleMedium
 };
+
+/**
+ * Questions:
+ * Is isOpen or defaultIsOpen similar to setting autoFocus on the combobox? it should be focused on mount?
+ */
 
 describe('ComboBox', function () {
   let offsetWidth, offsetHeight;
@@ -255,11 +260,10 @@ describe('ComboBox', function () {
       act(() => {
         fireEvent.mouseDown(button);
       });
-      
       act(() => {
         userEvent.tab();
       });
-  
+
       expect(document.activeElement).toBe(secondaryButton);
       expect(onOpenChange).toHaveBeenCalledWith(false);
       expect(onSelectionChange).toHaveBeenCalledWith('1');
