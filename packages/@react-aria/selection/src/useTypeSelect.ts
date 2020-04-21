@@ -33,7 +33,7 @@ export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
 
   let onKeyDown = (e: KeyboardEvent) => {
     let character = getStringForKey(e.key);
-    if (!character) {
+    if (!character || e.ctrlKey || e.metaKey) {
       return;
     }
 

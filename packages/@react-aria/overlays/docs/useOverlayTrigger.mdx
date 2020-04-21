@@ -1,0 +1,222 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/overlays';
+import focusDocs from 'docs:@react-aria/focus';
+import dialogDocs from 'docs:@react-aria/dialog';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {useOverlayTrigger} from '@react-aria/overlays';
+```
+
+# useOverlayTrigger
+
+<p>{docs.exports.useOverlayTrigger.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useOverlayTrigger']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#dialog_modal'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useOverlayTrigger} links={docs.links} />
+
+## Features
+
+There is no built in way to create popovers or other types of overlays in 
+HTML. <TypeLink links={docs.links} type={docs.exports.useOverlayTrigger} />,
+combined with <TypeLink links={docs.links} type={docs.exports.useOverlayPosition} />,
+helps achieve accessible overlays that can be styled as needed.
+
+**Note: `useOverlayTrigger` only handles the overlay itself. It should be combined 
+with [useDialog](useDialog.html) to create fully accessible popovers. For menus,
+see [useMenuTrigger](useMenuTrigger.html), which builds on `useOverlayTrigger` and provides
+additional functionality specific to menus.**
+
+* Exposes overlay trigger and connects trigger to overlay with ARIA
+* Positions the overlay relative to the trigger when combined with <TypeLink links={docs.links} type={docs.exports.useOverlayPosition} />
+* Hides content behind the overlay from screen readers when combined with <TypeLink links={docs.links} type={docs.exports.useModal} />
+* Handles closing the overlay when interacting outside and pressing the Escape key, when combined with <TypeLink links={docs.links} type={docs.exports.useOverlay} />
+
+## Anatomy
+
+An overlay trigger consists of a trigger element (e.g. button) and an overlay
+(e.g. popover, menu, listbox, etc.). `useOverlayTrigger` handles exposing the
+trigger and overlay to assistive technology with ARIA. It should be combined
+with <TypeLink links={docs.links} type={docs.exports.useOverlay} /> to handle
+closing the overlay, <TypeLink links={docs.links} type={docs.exports.useModal} />
+to handle hiding content behind the overlay from screen readers, and optionally
+with <TypeLink links={docs.links} type={docs.exports.useOverlayPosition} /> to
+handle positioning the overlay relative to the trigger.
+
+`useOverlayTrigger` returns props that you should spread onto the trigger element and 
+the overlay container element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useOverlayTrigger.return.id].properties} />
+</TypeContext.Provider>
+
+## Example
+
+This example shows how to build a typical popover overlay that is positioned relative to
+a trigger button. The content of the popover is a dialog, built 
+with <TypeLink links={dialogDocs.links} type={dialogDocs.exports.useDialog} />.
+
+The popover can be closed by clicking or interacting outside the popover, or by pressing the Escape key.
+This is handled by <TypeLink links={docs.links} type={docs.exports.useOverlay} />.
+When the popover is closed, focus is restored back to its trigger button by a 
+&lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;.
+
+Content outside the popover is hidden from screen readers 
+by <TypeLink links={docs.links} type={docs.exports.useModal} />.
+This improves the experience for screen reader users by ensuring that they don't
+navigate out of context. This is especially important when the popover is rendered
+into a portal at the end of the document, and the content just before it is
+unrelated to the original trigger. 
+
+To allow screen reader users to more easily dismiss the popover, a visually hidden
+&lt;<TypeLink links={docs.links} type={docs.exports.DismissButton} />&gt;
+is added at the end of the dialog.
+
+The application is contained in an <TypeLink links={docs.links} type={docs.exports.OverlayProvider} />,
+which is used to hide the content from screen readers with `aria-hidden` while an overlay is open.
+In addition, each overlay must be contained in an <TypeLink links={docs.links} type={docs.exports.OverlayContainer} />,
+which uses a React [Portal](https://reactjs.org/docs/portals.html) to render the overlay at the
+end of the document body. If a nested overlay is opened, then the first overlay will also be set
+to `aria-hidden`, so that only the top-most overlay is accessible to screen readers.
+
+```tsx example
+import {
+  useOverlay,
+  useOverlayPosition,
+  useModal,
+  OverlayProvider,
+  OverlayContainer,
+  DismissButton
+} from '@react-aria/overlays';
+import {useDialog} from '@react-aria/dialog';
+import {FocusScope} from '@react-aria/focus';
+import {useButton} from '@react-aria/button';
+import {mergeProps} from '@react-aria/utils';
+
+const Popover = React.forwardRef(({
+  title,
+  children,
+  isOpen,
+  onClose,
+  style,
+  ...otherProps
+}, ref) => {
+  // Handle interacting outside the dialog and pressing
+  // the the Escape key to close the modal. 
+  let {overlayProps} = useOverlay({
+    ref,
+    onClose,
+    isOpen,
+    isDismissable: true
+  });
+
+  // Hide content outside the modal from screen readers.
+  useModal();
+
+  // Get props for the dialog and its title
+  let {dialogProps, titleProps} = useDialog({ref});
+
+  return (
+    <FocusScope restoreFocus>
+      <div
+        {...mergeProps(overlayProps, mergeProps(dialogProps, otherProps))}
+        ref={ref}
+        style={{
+          background: 'white',
+          color: 'black',
+          padding: 30,
+          ...style
+        }}>
+        <h3
+          {...titleProps}
+          style={{marginTop: 0}}>
+          {title}
+        </h3>
+        {children}
+        <DismissButton onDismiss={onClose} />
+      </div>
+    </FocusScope>
+  );
+});
+
+function Example() {
+  let [isOpen, setOpen] = React.useState(false);
+
+  let triggerRef = React.useRef();
+  let overlayRef = React.useRef();
+
+  // Get props for the trigger and overlay. This also handles
+  // hiding the overlay when a parent element of the trigger scrolls
+  // (which invalidates the popover positioning).
+  let {triggerProps, overlayProps} = useOverlayTrigger({
+    ref: triggerRef,
+    type: 'dialog',
+    onClose: () => setOpen(false),
+    isOpen
+  });
+
+  // Get popover positioning props relative to the trigger
+  let {overlayProps: positionProps} = useOverlayPosition({
+    targetRef: triggerRef,
+    overlayRef,
+    placement: 'top',
+    offset: 5,
+    isOpen
+  });
+
+  // useButton ensures that focus management is handled correctly,
+  // across all browsers. Focus is restored to the button once the
+  // popover closes.
+  let {buttonProps} = useButton({
+    onPress: () => setOpen(true)
+  });
+
+  return <>
+    <button 
+      {...buttonProps}
+      {...triggerProps}
+      ref={triggerRef}>
+      Open Popover
+    </button>
+    {isOpen &&
+      <OverlayContainer>
+        <Popover
+          {...overlayProps}
+          {...positionProps}
+          ref={overlayRef}
+          title="Popover title"
+          isOpen
+          onClose={() => setOpen(false)}>
+          This is the content of the popover.
+        </Popover>
+      </OverlayContainer>
+    }
+  </>;
+}
+
+// Application must be wrapped in an OverlayProvider so that it can be
+// hidden from screen readers when an overlay opens.
+<OverlayProvider>
+  <Example />
+</OverlayProvider>
+```

@@ -25,9 +25,11 @@ export class TreeCollection<T> implements Collection<Node<T>> {
     let visit = (node: Node<T>) => {
       this.keyMap.set(node.key, node);
 
-      if (node.childNodes && (node.type === 'section' || node.isExpanded)) {
+      if (node.childNodes) {
         for (let child of node.childNodes) {
-          visit(child);
+          if (child.type !== 'item' || node.type === 'section' || node.isExpanded) {
+            visit(child);
+          }
         }
       }
     };

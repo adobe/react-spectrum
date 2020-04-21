@@ -134,6 +134,10 @@ governing permissions and limitations under the License.
 .spectrum-Table-headCell {
   position: relative;
 
+  &:focus {
+    outline: none;
+  }
+
   &:focus-ring,
   &.is-focused {
     outline: none;
