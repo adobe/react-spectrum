@@ -199,7 +199,6 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
           isDisabled={isDisabled}
           isReadOnly={isReadOnly}
           isQuiet={isQuiet}
-          value={state.value}
           validationState={validationState}
           autoFocus={autoFocus}
           width={width} />

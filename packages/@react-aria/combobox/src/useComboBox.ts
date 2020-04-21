@@ -190,7 +190,8 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
     onChange,
     onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
     onFocus,
-    onBlur
+    onBlur,
+    value: state.value
   }, props.inputRef);
 
   return {
