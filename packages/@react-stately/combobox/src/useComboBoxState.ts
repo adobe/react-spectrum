@@ -185,12 +185,8 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
 
   // do i need a new selection manager?
 
-  //  let areThereItems = listState.collection.size > 0;
-
   // For completionMode = complete
   let [suggestionValue, setSuggestionValue] = useState('');
-
-  // selectedItemState (aria-activedecendent), maybe just need to modify useSelectableItem or something
 
 
   return {
