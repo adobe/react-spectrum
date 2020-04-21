@@ -109,7 +109,7 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
 
     // A bit strange behavior when isOpen is true, menu can't close so you can't tab away from the
     // textfield, almost like a focus trap
-    state.setOpen(false);
+    state.close();
   }
 
   // For textfield specific keydown operations
