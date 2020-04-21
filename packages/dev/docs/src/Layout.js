@@ -171,7 +171,7 @@ function Nav({currentPageName, pages, publicUrl}) {
     <nav className={docStyles.nav}>
       <header>
         {currentParts.length > 1 &&
-          <a href=".." className={docStyles.backBtn}>
+          <a href="../index.html" className={docStyles.backBtn}>
             <ChevronLeft />
           </a>
         }
