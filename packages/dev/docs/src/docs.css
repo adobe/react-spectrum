@@ -69,13 +69,45 @@ html, body {
 main {
   margin-left: 256px;
   margin-right: 160px;
-  padding: 40px 52px;
+  padding: 40px 52px 0 52px;
   box-sizing: border-box;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
 }
 
 article {
   max-width: 967px;
-  margin: 0 auto;
+  flex: 1;
+  padding-bottom: 40px;
+}
+
+footer {
+  max-width: 967px;
+}
+
+footer ul {
+  padding: 0;
+}
+
+@media (min-width: 1020px) {
+  footer {
+    text-align: right;
+  }
+}
+
+footer li {
+  display: inline-block;
+  list-style: none;
+}
+
+footer li:after {
+  margin: 0 8px;
+  content: '/';
+}
+
+footer li:last-child:after {
+  content: '';
 }
 
 .propTable {

@@ -19,6 +19,7 @@ import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
 import React from 'react';
+import ruleStyles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {theme} from '@react-spectrum/theme-default';
 import {ToC} from './ToC';
@@ -198,6 +199,7 @@ function Nav({currentPageName, pages, publicUrl}) {
 }
 
 export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
+  const year = new Date().getFullYear();
   return (
     <Page title={currentPage.title} scripts={scripts} styles={styles}>
       <div className={docStyles.pageHeader} id="header" />
@@ -209,6 +211,15 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
           </MDXProvider>
         </article>
         <ToC toc={toc} />
+        <footer>
+          <hr className={classNames(ruleStyles['spectrum-Rule'], ruleStyles['spectrum-Rule--small'], ruleStyles['spectrum-Rule--horizontal'])} />
+          <ul>
+            <li>Copyright © {year} Adobe. All rights reserved.</li>
+            <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy.html">Privacy</a></li>
+            <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/legal/terms.html">Terms of Use</a></li>
+            <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy/cookies.html">Cookies</a></li>
+          </ul>
+        </footer>
       </main>
     </Page>
   );
