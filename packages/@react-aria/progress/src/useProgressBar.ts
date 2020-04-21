@@ -18,14 +18,21 @@ import {useLabel} from '@react-aria/label';
 import {useNumberFormatter} from '@react-aria/i18n';
 
 interface ProgressBarAria {
-  progressBarProps: HTMLAttributes<HTMLDivElement>,
-  labelProps: HTMLAttributes<HTMLLabelElement>
+  /** Props for the progress bar container element. */
+  progressBarProps: HTMLAttributes<HTMLElement>,
+  /** Props for the progress bar's visual label element (if any). */
+  labelProps: HTMLAttributes<HTMLElement>
 }
 
 interface ProgressBarAriaProps extends ProgressBarProps, DOMProps {
   textValue?: string
 }
 
+/**
+ * Provides the accessibility implementation for a progress bar component.
+ * Progress bars show either determinate or indeterminate progress of an operation
+ * over time.
+ */
 export function useProgressBar(props: ProgressBarAriaProps): ProgressBarAria {
   let {
     value = 0,

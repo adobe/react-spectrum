@@ -53,7 +53,7 @@ describe('ComboBox', function () {
   it('renders correctly', function () {
     let {getAllByText, getByRole} = render(
       <Provider theme={theme}>
-        <ComboBox data-testid="1" label="Test" placeholder="Select a topic…" onSelectionChange={onSelectionChange}>
+        <ComboBox label="Test" placeholder="Select a topic…" onSelectionChange={onSelectionChange}>
           <Item>One</Item>
           <Item>Two</Item>
           <Item>Three</Item>
@@ -79,7 +79,7 @@ describe('ComboBox', function () {
         // blows up if there are no items, so we'll need to fix this
         let {getByRole} = render(
           <Provider theme={theme}>
-            <ComboBox data-testid="2" label="Test" onOpenChange={onOpenChange} onFilter={onFilter} items={[]}>
+            <ComboBox label="Test" onOpenChange={onOpenChange} onFilter={onFilter} items={[]}>
               {(item) => <Item uniqueKey={item.key}>{item.name}</Item>}
             </ComboBox>
           </Provider>
@@ -104,7 +104,7 @@ describe('ComboBox', function () {
         let onOpenChange = jest.fn();
         let {getByRole} = render(
           <Provider theme={theme}>
-            <ComboBox data-testid="3" label="Test" onFilter={onFilter} onOpenChange={onOpenChange}>
+            <ComboBox label="Test" onFilter={onFilter} onOpenChange={onOpenChange}>
               <Item>One</Item>
               <Item>Two</Item>
               <Item>Three</Item>
@@ -143,7 +143,7 @@ describe('ComboBox', function () {
     it('moves to selected key', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
-          <ComboBox data-testid="4" label="Test" selectedKey="1">
+          <ComboBox label="Test" selectedKey="1">
             <Item uniqueKey="1">One</Item>
             <Item uniqueKey="2">Two</Item>
             <Item uniqueKey="3">Three</Item>
@@ -169,7 +169,7 @@ describe('ComboBox', function () {
     it('moves to first item for no selected key',  function () {
       let {getByRole} = render(
         <Provider theme={theme}>
-          <ComboBox data-testid="5" label="Test">
+          <ComboBox label="Test">
             <Item>One</Item>
             <Item>Two</Item>
             <Item>Three</Item>
@@ -194,7 +194,7 @@ describe('ComboBox', function () {
     it('does not auto focus for no selected key and allows custom value', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
-          <ComboBox data-testid="6" label="Test" allowsCustomValue>
+          <ComboBox label="Test" allowsCustomValue>
             <Item>One</Item>
             <Item>Two</Item>
             <Item>Three</Item>
@@ -219,7 +219,7 @@ describe('ComboBox', function () {
       let onFilter = jest.fn();
       let {getByRole} = render(
         <Provider theme={theme}>
-          <ComboBox data-testid="7" label="Test" onFilter={onFilter} onOpenChange={onOpenChange}>
+          <ComboBox label="Test" onFilter={onFilter} onOpenChange={onOpenChange}>
             <Item>Bulbasaur</Item>
             <Item>Squirtle</Item>
             <Item>Charmander</Item>
@@ -246,7 +246,7 @@ describe('ComboBox', function () {
       let onInputChange = jest.fn();
       let {queryByRole, getAllByRole} = render(
         <Provider theme={theme}>
-          <ComboBox data-testid="8" label="Test" onFilter={onFilter} onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
+          <ComboBox label="Test" onFilter={onFilter} onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
             <Item uniqueKey="1">Bulbasaur</Item>
             <Item uniqueKey="2">Squirtle</Item>
             <Item uniqueKey="3">Charmander</Item>
@@ -279,7 +279,7 @@ describe('ComboBox', function () {
       let onSelectionChange = jest.fn();
       let {getByRole, getAllByRole} = render(
         <Provider theme={theme}>
-          <ComboBox data-testid="9" label="Test" allowsCustomValue onFilter={onFilter} onOpenChange={onOpenChange} onSelectionChange={onSelectionChange}>
+          <ComboBox label="Test" allowsCustomValue onFilter={onFilter} onOpenChange={onOpenChange} onSelectionChange={onSelectionChange}>
             <Item>Bulbasaur</Item>
             <Item>Squirtle</Item>
             <Item>Charmander</Item>

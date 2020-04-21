@@ -38,6 +38,18 @@ storiesOf('ButtonGroup', module)
   .add(
     'isDisabled, orientation: vertical',
     () => render({isDisabled: true, orientation: 'vertical'})
+  )
+  .add(
+    'align: end',
+    () => render({align: 'end'})
+  )
+  .add(
+    'align: center',
+    () => render({align: 'center'})
+  )
+  .add(
+    'align: center, orientation: vertical',
+    () => render({align: 'center', orientation: 'vertical'})
   );
 
 function render(props) {

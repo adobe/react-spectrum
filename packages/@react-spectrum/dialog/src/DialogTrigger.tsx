@@ -101,9 +101,9 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
 }
 
 // Support DialogTrigger inside components using CollectionBuilder.
-DialogTrigger.getCollectionNode = function (props: SpectrumDialogTriggerProps) {
+DialogTrigger.getCollectionNode = function* (props: SpectrumDialogTriggerProps) {
   let [trigger, content] = React.Children.toArray(props.children);
-  return {
+  yield {
     element: trigger,
     wrapper: (element) => (
       <DialogTrigger key={element.key} {...props}>

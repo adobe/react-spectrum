@@ -43,9 +43,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   } = props;
 
   let state = useSearchFieldState(props);
-  let textfieldRef = useRef<TextFieldRef>();
-  textfieldRef = ref || textfieldRef;
-  let {searchFieldProps, clearButtonProps} = useSearchField(props, state, unwrapInputRef(textfieldRef));
+  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
+  let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, inputRef);
 
   let clearButton = (
     <ClearButton
@@ -63,7 +62,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   return (
     <TextFieldBase
       {...otherProps}
-      {...searchFieldProps as any}
+      labelProps={labelProps}
+      inputProps={inputProps}
       UNSAFE_className={
         classNames(
           styles,
@@ -81,11 +81,10 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
           'spectrum-Search-input'
         )
       }
-      ref={textfieldRef}
+      ref={ref}
+      inputRef={inputRef}
       isDisabled={isDisabled}
       icon={icon}
-      onChange={state.setValue}
-      value={state.value}
       wrapperChildren={(state.value !== '' && !props.isReadOnly) && clearButton} />
   );
 }
@@ -95,11 +94,3 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
  */
 let _SearchField = forwardRef(SearchField);
 export {_SearchField as SearchField};
-
-function unwrapInputRef(ref: RefObject<TextFieldRef>) {
-  return {
-    get current() {
-      return ref.current && ref.current.getInputElement();
-    }
-  };
-}

@@ -41,7 +41,7 @@ export function HeaderInfo(props) {
           <tr>
             <th className={typographyStyles['spectrum-Body--secondary']}>usage</th>
             <td className={typographyStyles['spectrum-Body4']}>
-              <Lowlight language="js" value={`import {${componentNames.join(',')}} from '${packageData.name}'`} inline className={typographyStyles['spectrum-Code4']} />
+              <Lowlight language="js" value={`import {${componentNames.join(', ')}} from '${packageData.name}'`} inline className={typographyStyles['spectrum-Code4']} />
             </td>
           </tr>
         </tbody>

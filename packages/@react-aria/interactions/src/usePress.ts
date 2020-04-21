@@ -16,11 +16,14 @@ import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useSt
 import {PressResponderContext} from './context';
 
 export interface PressProps extends PressEvents {
+  /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
   isPressed?: boolean,
+  /** Whether the press events should be disabled. */
   isDisabled?: boolean
 }
 
 export interface PressHookProps extends PressProps, DOMProps {
+  /** A ref to the target element. */
   ref?: RefObject<HTMLElement>
 }
 
@@ -42,7 +45,9 @@ interface EventBase {
 }
 
 export interface PressResult {
+  /** Whether the target is currently pressed. */
   isPressed: boolean,
+  /** Props to spread on the target element. */
   pressProps: HTMLAttributes<HTMLElement>
 }
 
@@ -68,6 +73,11 @@ function usePressResponderContext(props: PressHookProps): PressHookProps {
   return props;
 }
 
+/**
+ * Handles press interactions across mouse, touch, keyboard, and screen readers.
+ * It normalizes behavior across browsers and platforms, and handles many nuances
+ * of dealing with pointer and keyboard events.
+ */
 export function usePress(props: PressHookProps): PressResult {
   let {
     onPress,
@@ -384,7 +394,7 @@ export function usePress(props: PressHookProps): PressResult {
           focusWithoutScrolling(e.currentTarget);
         }
 
-        triggerPressStart(e, 'mouse');
+        triggerPressStart(e, isVirtualClick(e.nativeEvent) ? 'virtual' : 'mouse');
 
         document.addEventListener('mouseup', onMouseUp, false);
       };
@@ -407,7 +417,7 @@ export function usePress(props: PressHookProps): PressResult {
 
       pressProps.onMouseUp = (e) => {
         if (!state.ignoreEmulatedMouseEvents && e.button === 0) {
-          triggerPressUp(e, 'mouse');
+          triggerPressUp(e, isVirtualClick(e.nativeEvent) ? 'virtual' : 'mouse');
         }
       };
 
@@ -425,10 +435,11 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
+        let pointerType: PointerType = isVirtualClick(e) ? 'virtual' : 'mouse';
         if (isOverTarget(e, state.target)) {
-          triggerPressEnd(createEvent(state.target, e), 'mouse');
+          triggerPressEnd(createEvent(state.target, e), pointerType);
         } else if (state.isOverTarget) {
-          triggerPressEnd(createEvent(state.target, e), 'mouse', false);
+          triggerPressEnd(createEvent(state.target, e), pointerType, false);
         }
 
         state.isOverTarget = false;

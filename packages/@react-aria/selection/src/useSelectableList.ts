@@ -63,6 +63,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
   }, [isVirtualized, ref, selectionManager.focusedKey]);
 
   let {collectionProps} = useSelectableCollection({
+    ref,
     selectionManager,
     keyboardDelegate: delegate,
     autoFocus,

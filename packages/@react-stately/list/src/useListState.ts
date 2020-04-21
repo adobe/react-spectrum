@@ -16,11 +16,20 @@ import {Key, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
 export interface ListState<T> {
+  /** A collection of items in the list. */
   collection: Collection<Node<T>>,
+
+  /** A set of items that are disabled. */
   disabledKeys: Set<Key>,
+
+  /** A selection manager to read and update multiple selection state. */
   selectionManager: SelectionManager
 }
 
+/**
+ * Provides state management for list-like components. Handles building a collection
+ * of items from props, and manages multiple selection state.
+ */
 export function useListState<T>(props: CollectionBase<T> & MultipleSelection): ListState<T>  {
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>

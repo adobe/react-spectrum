@@ -17,15 +17,26 @@ import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
 interface MenuTriggerAriaProps {
-  type?: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
+  /** The type of menu that the menu trigger opens. */
+  type?: 'menu' | 'listbox',
+
+  /** A ref to the trigger element. */
   ref?: RefObject<HTMLElement | null>
 }
 
 interface MenuTriggerAria {
+  /** Props for the menu trigger element. */
   menuTriggerProps: HTMLAttributes<HTMLElement> & PressProps,
+
+  /** Props for the menu. */
   menuProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a menu trigger.
+ * @param props - props for the menu trigger
+ * @param state - state for the menu trigger
+ */
 export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerState): MenuTriggerAria {
   let {
     ref,
@@ -40,10 +51,6 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
     isOpen: state.isOpen
   });
 
-  let onPress = () => {
-    state.toggle('first');
-  };
-
   let onKeyDown = (e) => {
     if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {
       return;
@@ -53,13 +60,11 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
       switch (e.key) {
         case 'ArrowDown':
           e.preventDefault();
-          onPress();
+          state.toggle('first');
           break;
         case 'ArrowUp':
           e.preventDefault();
-          onPress();
-          // If no menu item is selected, focus last item when opening menu with ArrowDown
-          state.setFocusStrategy('last');
+          state.toggle('last');
           break;
       }
     }
@@ -72,12 +77,14 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
       onPressStart(e) {
         // For consistency with native, open the menu on mouse/key down, but touch up.
         if (e.pointerType !== 'touch') {
-          onPress();
+          // If opened with a keyboard or screen reader, auto focus the first item.
+          // Otherwise, the menu itself will be focused.
+          state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
         }
       },
       onPress(e) {
         if (e.pointerType === 'touch') {
-          onPress();
+          state.toggle();
         }
       },
       onKeyDown

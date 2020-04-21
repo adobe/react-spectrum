@@ -34,7 +34,6 @@
     "@react-aria/overlays": "^3.0.0-alpha.1",
     "@react-aria/select": "^3.0.0-alpha.1",
     "@react-aria/utils": "^3.0.0-rc.2",
-    "@react-aria/visually-hidden": "^3.0.0-alpha.1",
     "@react-spectrum/button": "^3.0.0-rc.2",
     "@react-spectrum/form": "^3.0.0-rc.2",
     "@react-spectrum/label": "^3.0.0-rc.2",
