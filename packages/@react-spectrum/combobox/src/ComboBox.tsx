@@ -68,7 +68,8 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
     autoFocus,
     shouldFlip = true,
     width,
-    placeholder
+    placeholder,
+    ...otherProps
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -161,7 +162,6 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
     );
   }
 
-  // TODO: Figure out why textfield doesn't recieve aria-autocomplete
   let textField = (
     <FocusRing
       within
@@ -184,6 +184,8 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
         }
         style={{width: '100%'}}>
         <TextFieldBase
+          // Perhaps should filterDOMProps(DOMEventPropNames)
+          {...otherProps}
           {...inputProps}
           ref={inputRef}
           inputClassName={

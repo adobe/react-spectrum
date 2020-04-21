@@ -90,9 +90,8 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
   });
 
   let onBlur = (e) => {
-    if (props.onBlur) {
-      props.onBlur(e);
-    }
+    // Need to propagate blur event so that wrapping focus ring properly removes itself via its own blur handler
+    e.continuePropagation();
 
     // TODO: Double check if this is needed, from v2
     if (props.popoverRef.current && props.popoverRef.current.contains(document.activeElement)) {
@@ -101,6 +100,10 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
       // refocus the input field and return so the menu isn't hidden.
       event.target.focus();
       return;
+    }
+
+    if (props.onBlur) {
+      props.onBlur(e);
     }
 
     if (state.isOpen && focusedItem) {

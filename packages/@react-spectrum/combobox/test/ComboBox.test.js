@@ -309,5 +309,34 @@ describe('ComboBox', function () {
 
       expect(() => getByRole('listbox')).toThrow();
     });
+
+    it('does\'t propagate blur event outside of the component', function () {
+      let outerBlur = jest.fn();
+      let onBlur = jest.fn();
+
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <div onBlur={outerBlur}>
+            <ComboBox label="Test" autoFocus onBlur={onBlur}>
+              <Item uniqueKey="1">Bulbasaur</Item>
+              <Item uniqueKey="2">Squirtle</Item>
+              <Item uniqueKey="3">Charmander</Item>
+            </ComboBox>
+          </div>
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      expect(document.activeElement).toBe(combobox);
+      expect(onBlur).toHaveBeenCalledTimes(0);
+      expect(outerBlur).toHaveBeenCalledTimes(0);
+
+      act(() => {
+        userEvent.tab();
+      });
+
+      expect(onBlur).toHaveBeenCalledTimes(1);
+      expect(outerBlur).toHaveBeenCalledTimes(0);
+    });
   });
 });
