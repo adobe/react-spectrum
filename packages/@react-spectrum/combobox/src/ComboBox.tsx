@@ -30,7 +30,7 @@ import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {Label} from '@react-spectrum/label';
 
-interface ComboBoxProps extends CollectionBase<T>, SingleSelection {
+interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   isOpen?: boolean,
   defaultOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void,
@@ -46,11 +46,11 @@ interface ComboBoxProps extends CollectionBase<T>, SingleSelection {
 }
 
 // TODO: Check extends
-interface SpectrumComboBox extends InputBase, TextInputBase, ComboBoxProps, SpectrumLabelableProps, DOMProps, StyleProps {
+interface SpectrumComboBox<T> extends InputBase, TextInputBase, ComboBoxProps<T>, SpectrumLabelableProps, DOMProps, StyleProps {
   isQuiet?: boolean
 }
 
-function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
+function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
   let {
@@ -68,7 +68,6 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
     autoFocus,
     shouldFlip = true,
     width,
-    placeholder,
     ...otherProps
   } = props;
 
@@ -184,7 +183,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
         }
         style={{width: '100%'}}>
         <TextFieldBase
-          // Perhaps should filterDOMProps(DOMEventPropNames)
+          // Perhaps should filterDOMProps(DOMEventPropNames)?
           {...otherProps}
           {...inputProps}
           ref={inputRef}
@@ -201,8 +200,7 @@ function ComboBox(props: SpectrumComboBox, ref: DOMRef<HTMLDivElement>) {
           value={state.value}
           validationState={validationState}
           autoFocus={autoFocus}
-          width={width}
-          placeholder={placeholder} />
+          width={width} />
         <FieldButton
           {...triggerProps}
           ref={triggerRef}

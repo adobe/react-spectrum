@@ -10,11 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
- // TODO: flesh out these types
-interface ComboBoxProps {
+
+ // TODO: Move the below into combobox types
+import {CollectionBase, SingleSelection} from '@react-types/shared';
+interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
+  isOpen?: boolean,
+  defaultOpen?: boolean,
+  onOpenChange?: (isOpen: boolean) => void,
+  inputValue?: string,
+  defaultInputValue?: string,
+  onInputChange?: (value: string) => void,
+  onFilter?: (value: string) => void,
+  allowsCustomValue?: boolean,
+  onCustomValue?: (value: string) => void,
+  completionMode?: 'suggest' | 'complete',
+  menuTrigger?: 'focus' | 'input' | 'manual',
+  shouldFlip?: boolean
+}
+
+interface AriaComboBoxProps<T> extends ComboBoxProps<T>{
   triggerRef,
   inputRef,
-  layout: any
+  layout,
+  popoverRef
 }
 
 interface ComboBoxAria {
@@ -31,7 +49,7 @@ import {useMenuTrigger} from '@react-aria/menu';
 import {useSelectableCollection} from '@react-aria/selection';
 import {ComboBoxState} from '@react-stately/combobox';
 
-export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): ComboBoxAria {
+export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
   // TODO: destructure props
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
@@ -115,6 +133,15 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
     state.close();
   }
 
+  let onFocus = (e) => {
+    // Need to propagate focus event so that wrapping div focus ring properly applies
+    e.continuePropagation();
+
+    if (props.onFocus) {
+      props.onFocus(e);
+    }
+  }
+
   // For textfield specific keydown operations
   let onKeyDown = (e) => {
     switch (e.key) {
@@ -154,24 +181,20 @@ export function useComboBox<T>(props: ComboBoxProps, state: ComboBoxState<T>): C
   return {
     labelProps,
     triggerProps: {
-      // TODO: make sure this has controls -> listbox menu
-      // TODO: should have aria-haspopup -> listbox menu
       ...mergeProps({onPressStart, onPress}, menuTriggerProps),
-      // Add an onclick here that focuses the textfield
       tabIndex: -1
     },
     inputProps: {
       // TODO: double check that user provided id gets sent to textfield and not to wrapper div
       ...fieldProps,
-      // TODO: make sure this doesn't have aria-owns
-      // TODO: should have aria-haspopup -> listbox menu
       onChange,
       role: 'combobox',
       'aria-controls': state.isOpen ? menuProps.id : undefined,
       'aria-autocomplete': props.completionMode === 'suggest' ? 'list' : 'both',
       'aria-activedescendant': state.isOpen ? focusedKeyId : undefined,
       onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
-      onBlur
+      onBlur,
+      onFocus
     },
     menuProps
   };
