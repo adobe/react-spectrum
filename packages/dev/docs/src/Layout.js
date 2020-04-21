@@ -225,7 +225,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
             <LinkProvider>{children}</LinkProvider>
           </MDXProvider>
         </article>
-        <ToC toc={toc} />
+        {toc.length ? <ToC toc={toc} /> : null}
         <Footer />
       </main>
     </Page>
