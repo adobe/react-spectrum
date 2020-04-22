@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Dialog} from '@react-spectrum/dialog';
+import {fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Popover} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

@@ -11,8 +11,8 @@
  */
 
 import {act, renderHook} from '@testing-library/react-hooks';
-import {render} from '@testing-library/react';
 import React, {useEffect, useState} from 'react';
+import {render} from '@testing-library/react';
 import {useControlledState} from '../src';
 import userEvent from '@testing-library/user-event';
 

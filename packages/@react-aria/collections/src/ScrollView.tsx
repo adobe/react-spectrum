@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+// @ts-ignore - todo it's after midnight, figure out later, it's just a warning
 import {flushSync} from 'react-dom';
 import React, {CSSProperties, HTMLAttributes, ReactNode, RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {Rect, Size} from '@react-stately/collections';
@@ -28,10 +29,10 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
 
 function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   let {
-    contentSize, 
-    visibleRect, 
-    onVisibleRectChange, 
-    children, 
+    contentSize,
+    visibleRect,
+    onVisibleRectChange,
+    children,
     innerStyle,
     sizeToFit,
     onScrollStart,

@@ -12,9 +12,9 @@
 
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '../';
-import {render, within} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {render, within} from '@testing-library/react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';

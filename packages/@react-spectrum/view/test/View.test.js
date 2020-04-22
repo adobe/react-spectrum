@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {render} from '@testing-library/react';
 import React from 'react';
+import {render} from '@testing-library/react';
 import {View} from '../';
 
 describe('View', function () {

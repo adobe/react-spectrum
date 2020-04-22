@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {render} from '@testing-library/react';
 import React, {useRef} from 'react';
+import {render} from '@testing-library/react';
 import V2Well from '@react/react-spectrum/Well';
 import {Well} from '../';
 

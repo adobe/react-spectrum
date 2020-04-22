@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, getAllByRole as getAllByRoleInContainer, render} from '@testing-library/react';
 import {DateRangePicker} from '../';
+import {fireEvent, getAllByRole as getAllByRoleInContainer, render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';

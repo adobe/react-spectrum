@@ -1072,7 +1072,7 @@ describe('Picker', function () {
     });
 
     it('supports default selection', function () {
-      let {getAllByRole, getByRole} = render(
+      let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" defaultSelectedKey="two" onSelectionChange={onSelectionChange}>
             <Item uniqueKey="one">One</Item>
@@ -1112,7 +1112,7 @@ describe('Picker', function () {
     });
 
     it('skips disabled items', function () {
-      let {getAllByRole, getByRole} = render(
+      let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange} disabledKeys={['two']}>
             <Item uniqueKey="one">One</Item>

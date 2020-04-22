@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../';
 import React from 'react';
+import {render} from '@testing-library/react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import userEvent from '@testing-library/user-event';

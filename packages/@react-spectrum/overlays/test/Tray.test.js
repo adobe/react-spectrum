@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Dialog} from '@react-spectrum/dialog';
+import {fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';

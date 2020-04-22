@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {render} from '@testing-library/react';
 import React, {useRef} from 'react';
+import {render} from '@testing-library/react';
 import {useDialog} from '../';
 
 function Example(props) {

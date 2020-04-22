@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {render} from '@testing-library/react';
 import {ProgressCircle} from '../';
 import React from 'react';
+import {render} from '@testing-library/react';
 import V2ProgressCircle from '@react/react-spectrum/Wait';
 
 

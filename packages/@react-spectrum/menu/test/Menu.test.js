@@ -11,8 +11,8 @@
  */
 
 import Bell from '@spectrum-icons/workflow/Bell';
-import {fireEvent, render, within} from '@testing-library/react';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {fireEvent, render, within} from '@testing-library/react';
 import {Item, Menu, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/typography';
 import {MenuContext} from '../src/context';

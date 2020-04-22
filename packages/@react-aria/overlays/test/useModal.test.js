@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {render} from '@testing-library/react';
 import {OverlayContainer, OverlayProvider, useModal} from '..';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {render} from '@testing-library/react';
 
 function ModalDOM(props) {
   useModal();

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
 import {Dialog} from '../';
 import {DialogContext} from '../src/context';
+import {fireEvent, render} from '@testing-library/react';
 import {Header} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/typography';
 import {ModalProvider} from '@react-aria/overlays';

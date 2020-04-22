@@ -11,8 +11,8 @@
  */
 
 import {ActionButton, Button} from '@react-spectrum/button';
-import {fireEvent, render, waitForDomChange, within} from '@testing-library/react';
 import {Dialog, DialogTrigger} from '../';
+import {fireEvent, render, waitForDomChange, within} from '@testing-library/react';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
