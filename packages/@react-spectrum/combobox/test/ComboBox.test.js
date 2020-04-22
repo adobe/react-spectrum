@@ -252,6 +252,37 @@ describe('ComboBox', function () {
       // expect(document.activeElement).toBe(combobox);
       expect(combobox).not.toHaveAttribute('aria-activedescendant');
     });
+
+    it('keeps the menu open if the user clears the input field', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <ComboBox label="Test">
+            <Item uniqueKey="1">One</Item>
+            <Item uniqueKey="2">Two</Item>
+            <Item uniqueKey="3">Three</Item>
+          </ComboBox>
+        </Provider>
+      );
+      
+      let combobox = getByRole('combobox');
+      act(() => {
+        userEvent.type(combobox, 'One');
+      });
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(1);
+
+      act(() => {
+        fireEvent.change(combobox, {target: {value: ''}});
+      });
+      act(() => jest.runAllTimers());
+
+      listbox = getByRole('listbox');
+      items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+    });
   });
   describe('typing in the textfield', function () {
     it('can be uncontrolled', function () {
@@ -350,7 +381,7 @@ describe('ComboBox', function () {
       expect(() => getByRole('listbox')).toThrow();
     });
 
-    it('does\'t propagate blur event outside of the component', function () {
+    it('propagates blur event outside of the component', function () {
       let outerBlur = jest.fn();
       let onBlur = jest.fn();
 
@@ -368,17 +399,15 @@ describe('ComboBox', function () {
 
       let combobox = getByRole('combobox');
       expect(document.activeElement).toBe(combobox);
-      
+
       expect(onBlur).toHaveBeenCalledTimes(0);
       expect(outerBlur).toHaveBeenCalledTimes(0);
 
       act(() => {
         userEvent.tab();
       });
-      // combobox.blur();
 
       expect(onBlur).toHaveBeenCalledTimes(1);
-      // TODO: check in design review, looks like blur events are leaking to the outside?
       expect(outerBlur).toHaveBeenCalledTimes(1);
     });
   });

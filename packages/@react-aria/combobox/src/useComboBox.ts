@@ -65,12 +65,16 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   // of an event, this leads to us getting onChange twice if we useTextField as well, and it'll throw an error
   // because string.target doesn't exist
   let onChange = (val) => {
-    if (props.menuTrigger === 'input' && val.length > 0) {
-      state.open(); // is this right? at this time, we haven't filtered, so we don't know if the character they type will result in an empty menu
-    }
-
     state.setValue(val);
   };
+
+  useEffect(() => {
+    if (props.menuTrigger === 'input' && state.value.length > 0 && state.collection.size > 0) {
+      state.open(); // is this right? at this time, we haven't filtered, so we don't know if the character they type will result in an empty menu
+    } else if (state.collection && state.collection.size === 0) {
+      state.close();
+    }
+  }, [state.collection, state.value, props.menuTrigger]);
 
   useEffect(() => {
     let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
