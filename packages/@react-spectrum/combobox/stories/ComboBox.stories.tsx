@@ -30,7 +30,7 @@ storiesOf('ComboBox', module)
   .add(
     'dynamic items',
     () => (
-      <ComboBox items={items} itemKey="id" label="Combobox">
+      <ComboBox items={items} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')}>
         {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
     )

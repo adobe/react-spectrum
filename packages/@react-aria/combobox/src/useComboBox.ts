@@ -68,6 +68,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if (props.menuTrigger === 'input' && val.length > 0) {
       state.open(); // is this right? at this time, we haven't filtered, so we don't know if the character they type will result in an empty menu
     }
+
     state.setValue(val);
   };
 
@@ -86,7 +87,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
         state.setValue(itemText);
       }
     }
-  }, [state, props.inputValue, props.selectedKey]);
+  }, [state.selectedKey, props.inputValue, props.selectedKey]);
 
 
   // TODO: Refine the below, feels weird to have focusedItem and also need to still do state.selectionManger.focusedKey
@@ -103,19 +104,11 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
     keyboardDelegate: props.layout,
-    shouldTypeAhead: false
+    shouldTypeAhead: false,
+    disallowEmptySelection: true
   });
 
-  let onBlur = (e) => {
-    // TODO: Double check if this is needed, from v2
-    if (props.popoverRef.current && props.popoverRef.current.contains(document.activeElement)) {
-      // If the element receiving focus is the Popover (dropdown menu),
-      // (i.e. user clicking dropdown scroll bar in IE 11),
-      // refocus the input field and return so the menu isn't hidden.
-      e.target.focus();
-      return;
-    }
-
+  let onBlur = () => {
     if (state.isOpen && focusedItem) {
       state.setSelectedKey(state.selectionManager.focusedKey);
     }
