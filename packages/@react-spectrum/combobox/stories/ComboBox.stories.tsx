@@ -17,9 +17,9 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 let items = [
-  {name: 'Aardvark', id:'1'},
-  {name: 'Kangaroo', id:'2'},
-  {name: 'Snake', id:'3'}
+  {name: 'Aardvark', id: '1'},
+  {name: 'Kangaroo', id: '2'},
+  {name: 'Snake', id: '3'}
 ];
 
 storiesOf('ComboBox', module)

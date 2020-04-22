@@ -12,7 +12,7 @@
 
 import {Collection, Node} from '@react-stately/collections';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
-import {Key, useEffect, useMemo, useState, useRef} from 'react';
+import {Key, useMemo} from 'react';
 import {SelectState, useSelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
 
@@ -139,10 +139,8 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
     if (itemsControlled || value === '') {
       return selectState.collection;
     }
-    return new FilteredCollection(selectState.collection, (node) => {
-      // ignore case
-      return node.textValue.startsWith(value); // should this be textValue?
-    });
+    // should value be textValue?
+    return new FilteredCollection(selectState.collection, (node) => node.textValue.startsWith(value));
   }, [selectState.collection, value, itemsControlled]);
 
   let open = function () {
