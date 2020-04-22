@@ -176,7 +176,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           necessityIndicator={necessityIndicator}>
           {label}
         </Label>
-        {textFiel}
+        {textField}
       </div>
     );
   }
