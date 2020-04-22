@@ -15,7 +15,7 @@
 import {chain, mergeProps} from '@react-aria/utils';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {ComboBoxState} from '@react-stately/combobox';
-import {HTMLAttributes, useEffect, useState} from 'react';
+import {FocusEvent, HTMLAttributes, useEffect, useState} from 'react';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
@@ -35,11 +35,13 @@ interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   shouldFlip?: boolean
 }
 
-interface AriaComboBoxProps<T> extends ComboBoxProps<T>{
+interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   triggerRef,
   inputRef,
   layout,
-  popoverRef
+  popoverRef,
+  onBlur?: (e: FocusEvent<Element>) => void, // don't think these two (blur/focus) should be added?
+  onFocus?: (e: FocusEvent<Element>) => void
 }
 
 interface ComboBoxAria {
@@ -49,7 +51,7 @@ interface ComboBoxAria {
   labelProps: HTMLAttributes<HTMLElement>
 }
 
-export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
+export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
   // TODO: destructure props
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
@@ -74,11 +76,11 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
   let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
   useEffect(() => {
     if (selectedItem) {
-      let itemText = selectedItem.textValue || selectedItem.rendered;
+      let itemText = selectedItem.textValue || selectedItem.rendered as string; // how should we handle this? rendered is typed as an object
 
       // Throw error if controlled inputValue and controlled selectedKey don't match
       if (props.inputValue && props.selectedKey && (props.inputValue !== itemText)) {
-        throw new Error('Mismatch between selected item and inputValue!')
+        throw new Error('Mismatch between selected item and inputValue!');
       }
 
       // Update textfield value if new item is selected
@@ -86,7 +88,7 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
         state.setValue(itemText);
       }
     }
-  }, [state.selectedKey])
+  }, [state.selectedKey]);
 
 
   // TODO: Refine the below, feels weird to have focusedItem and also need to still do state.selectionManger.focusedKey
@@ -96,7 +98,7 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
     if (focusedItem) {
       setFocusedKeyId(`${menuProps.id}-option-${focusedItem.key}`);
     }
-  }, [focusedItem])
+  }, [focusedItem]);
 
 
   // Using layout initiated from ComboBox, generate the keydown handlers for textfield (arrow up/down to navigate through menu when focus in the textfield)
@@ -112,7 +114,7 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
       // If the element receiving focus is the Popover (dropdown menu),
       // (i.e. user clicking dropdown scroll bar in IE 11),
       // refocus the input field and return so the menu isn't hidden.
-      event.target.focus();
+      e.target.focus();
       return;
     }
 
@@ -142,14 +144,14 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
         if (!state.isOpen) {
           state.open();
         } else if (state.isOpen && !focusedItem) {
-          let firstKey = state.collection.firstKey;
+          let firstKey = state.collection.getFirstKey();
           state.selectionManager.setFocusedKey(firstKey);
         }
 
         break;
       case 'ArrowUp':
         if (state.isOpen && !focusedItem) {
-          let firstKey = state.collection.firstKey;
+          let firstKey = state.collection.getFirstKey();
           state.selectionManager.setFocusedKey(firstKey);
         }
 

@@ -12,20 +12,32 @@
 
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, unwrapDOMRef, useDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
-import {CollectionBase, DOMProps, DOMRef, InputBase, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase} from '@react-types/shared';
+import {
+  CollectionBase,
+  DOMProps,
+  DOMRef, DOMRefValue,
+  FocusableRefValue,
+  InputBase,
+  SingleSelection,
+  SpectrumLabelableProps,
+  StyleProps,
+  TextInputBase
+} from '@react-types/shared';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
+import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import React, {useLayoutEffect, useRef, useState} from 'react';
+import React, {RefObject, useLayoutEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
+import {TextFieldRef} from "@react-types/textfield";
 
 
 interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
@@ -70,10 +82,10 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
   } = props;
 
   let {styleProps} = useStyleProps(props);
-  let popoverRef = useRef();
-  let triggerRef = useRef();
+  let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
   let listboxRef = useRef();
-  let inputRef = useRef();
+  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
   let domRef = useDOMRef(ref);
 
   let state = useComboBoxState(props);
@@ -130,7 +142,7 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
       let inputWidth = inputRef.current.UNSAFE_getDOMNode().offsetWidth;
       setMenuWidth(buttonWidth + inputWidth);
     }
-  }, [scale, isMobile, triggerRef, state.selectedKey]);
+  }, [scale, isMobile, triggerRef, inputRef, state.selectedKey]);
 
   let overlay;
   if (isMobile) {
