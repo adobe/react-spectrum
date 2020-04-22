@@ -71,10 +71,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     state.setValue(val);
   };
 
-  // TODO: double check if selectedItem should be moved into the useEffect
-  // If not change the dependency array to be on selectedItem
-  let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
   useEffect(() => {
+    let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
     if (selectedItem) {
       let itemText = selectedItem.textValue || selectedItem.rendered as string; // how should we handle this? rendered is typed as an object
 
@@ -88,7 +86,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
         state.setValue(itemText);
       }
     }
-  }, [state.selectedKey, selectedItem.textValue, selectedItem.rendered, state.value, state.setValue]);
+  }, [state, props.inputValue, props.selectedKey]);
 
 
   // TODO: Refine the below, feels weird to have focusedItem and also need to still do state.selectionManger.focusedKey
@@ -98,7 +96,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if (focusedItem) {
       setFocusedKeyId(`${menuProps.id}-option-${focusedItem.key}`);
     }
-  }, [focusedItem, setFocusedKeyId]);
+  }, [state.selectionManager.focusedKey, state.collection, focusedItem, setFocusedKeyId, menuProps.id]);
 
 
   // Using layout initiated from ComboBox, generate the keydown handlers for textfield (arrow up/down to navigate through menu when focus in the textfield)
