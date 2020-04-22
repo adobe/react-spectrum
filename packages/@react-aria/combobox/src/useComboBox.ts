@@ -137,15 +137,17 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
         break;
       case 'ArrowDown':
         if (!state.isOpen) {
-          state.open();
-        } else if (state.isOpen && !focusedItem) {
+          state.toggle('first');
+        } else if (!focusedItem) {
           let firstKey = state.collection.getFirstKey();
           state.selectionManager.setFocusedKey(firstKey);
         }
 
         break;
       case 'ArrowUp':
-        if (state.isOpen && !focusedItem) {
+        if (!state.isOpen) {
+          state.toggle('last');
+        } else if (!focusedItem) {
           let firstKey = state.collection.getFirstKey();
           state.selectionManager.setFocusedKey(firstKey);
         }

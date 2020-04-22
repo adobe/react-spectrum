@@ -112,6 +112,7 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
   });
 
   let isMobile = useMediaQuery('(max-width: 700px)');
+
   let listbox = (
     <FocusScope>
       <DismissButton onDismiss={() => state.setOpen(false)} />
@@ -120,7 +121,7 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
         domProps={menuProps}
         disallowEmptySelection
         // TODO: adjust this from 'first'? Depends on whether or not we want to ever focus something other than the first item if no items are selected
-        autoFocus={props.allowsCustomValue ? false : 'first'}
+        autoFocus={props.allowsCustomValue ? false : (state.focusStrategy || 'first')}
         shouldSelectOnPressUp
         focusOnPointerEnter
         layout={layout}

@@ -13,6 +13,7 @@
 import {Collection, Node} from '@react-stately/collections';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {Key, useMemo} from 'react';
+import {FocusStrategy} from '@react-types/menu';
 import {SelectState, useSelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
 
@@ -159,9 +160,9 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
       props.onFilter(undefined); // what is the value??
     }
   };
-  let toggle = function () {
+  let toggle = function (focusStrategy: FocusStrategy = null) {
     if (selectState.collection.size > 0 && !selectState.isOpen) {
-      selectState.toggle();
+      selectState.toggle(focusStrategy);
     }
     if (!selectState.isOpen && props.onFilter) {
       props.onFilter(undefined); // what is the value??

@@ -72,6 +72,10 @@ describe('ComboBox', function () {
   });
 
   describe('opening', function () {
+    describe('via isOpen and defaultOpen', function () {
+      // TODO by Dan, write case testing each of these props
+    });
+
     describe('button click', function () {
       it('fires onFilter if there are no items loaded yet', function () {
         let onFilter = jest.fn();
@@ -136,6 +140,20 @@ describe('ComboBox', function () {
 
         // expect(document.activeElement).toBe(combobox);
         expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+      });
+    });
+
+    describe('keyboard input', function () {
+      it('opens the menu on down arrow press', function () {
+        // TODO by Dan
+      });
+
+      it('opens the menu on up arrow press', function () {
+        // TODO by Dan
+      });
+
+      it('opens the menu on user typing', function () {
+        // TODO by Dan
       });
     });
   });
