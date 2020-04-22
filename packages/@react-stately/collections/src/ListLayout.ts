@@ -418,7 +418,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
 
     let collection = this.collection;
-    let key = fromKey ? this.getKeyBelow(fromKey) : this.getFirstKey();
+    let key = fromKey || this.getFirstKey();
     while (key) {
       let item = collection.getItem(key);
       let substring = item.textValue.slice(0, search.length);
