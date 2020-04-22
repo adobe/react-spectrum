@@ -12,7 +12,14 @@
 
 
  // TODO: Move the below into combobox types
+import {chain, mergeProps} from '@react-aria/utils';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
+import {ComboBoxState} from '@react-stately/combobox';
+import {HTMLAttributes, useEffect, useState} from 'react';
+import {useMenuTrigger} from '@react-aria/menu';
+import {useSelectableCollection} from '@react-aria/selection';
+import {useTextField} from '@react-aria/textfield';
+
 interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   isOpen?: boolean,
   defaultOpen?: boolean,
@@ -41,14 +48,6 @@ interface ComboBoxAria {
   menuProps: HTMLAttributes<HTMLElement>,
   labelProps: HTMLAttributes<HTMLElement>
 }
-
-import {HTMLAttributes, useEffect, useState} from 'react';
-import {chain, mergeProps} from '@react-aria/utils';
-import {useLabel} from '@react-aria/label';
-import {useMenuTrigger} from '@react-aria/menu';
-import {useSelectableCollection} from '@react-aria/selection';
-import {ComboBoxState} from '@react-stately/combobox';
-import {useTextField} from "@react-aria/textfield";
 
 export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
   // TODO: destructure props
