@@ -15,7 +15,13 @@
     "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2"
+    "@babel/runtime": "^7.6.2",
+    "@react-aria/menu": "^3.0.0-alpha.1",
+    "@react-aria/selection": "^3.0.0-alpha.1",
+    "@react-aria/textfield": "^3.0.0-rc.2",
+    "@react-aria/utils": "^3.0.0-rc.2",
+    "@react-stately/combobox": "^3.0.0-alpha.1",
+    "@react-types/shared": "^3.0.0-rc.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"
