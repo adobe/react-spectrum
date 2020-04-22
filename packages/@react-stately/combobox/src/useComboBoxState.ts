@@ -36,7 +36,7 @@ interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   menuTrigger?: 'focus' | 'input' | 'manual'
 }
 
-function* filter(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean) {
+function* filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean) {
   for (let node of nodes) {
     if (filterFn(node)) {
       yield node;
@@ -44,7 +44,7 @@ function* filter(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean)
   }
 }
 
-class FilteredCollection implements Collection<Node<T>> {
+class FilteredCollection<T> implements Collection<Node<T>> {
   private keyMap: Map<Key, Node<T>> = new Map();
   private iterable: Iterable<Node<T>>;
   private firstKey: Key;
@@ -86,7 +86,7 @@ class FilteredCollection implements Collection<Node<T>> {
       last = node;
     }
 
-    this.lastKey = last ? last.key : last;
+    this.lastKey = last ? last.key : ''; // what to do in empty collection??
   }
 
   *[Symbol.iterator]() {
@@ -124,26 +124,13 @@ class FilteredCollection implements Collection<Node<T>> {
   }
 }
 
-function usePrevious(value) {
-  // The ref object is a generic container whose current property is mutable ...
-  // ... and can hold any value, similar to an instance property on a class
-  const ref = useRef();
-
-  // Store current value in ref
-  useEffect(() => {
-    ref.current = value;
-  }, [value]); // Only re-run if value changes
-
-  // Return previous value (happens before update in useEffect above)
-  return ref.current;
-}
-
-
 export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let itemsControlled = !!props.onFilter;
+  /*
   let menuControlled = props.isOpen !== undefined;
   let valueControlled = props.inputValue !== undefined;
   let selectedControlled = !!props.selectedKey;
+   */
 
   let [value, setValue] = useControlledState(toString(props.inputValue), toString(props.defaultInputValue) || '', props.onInputChange);
 
@@ -186,7 +173,7 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   // do i need a new selection manager?
 
   // For completionMode = complete
-  let [suggestionValue, setSuggestionValue] = useState('');
+  // let [suggestionValue, setSuggestionValue] = useState('');
 
 
   return {
