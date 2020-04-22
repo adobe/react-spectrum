@@ -62,6 +62,9 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
       setDirty(true);
     }
   }, [children, scale]);
+  // don't include dirty here, it will cause tests to hang
+  // we should do devon's imperative approach anyways
+  // where we remove and measure inline instead of this circular `use*Effect`
 
   // Check for overflow on window resize
   useEffect(() => {
