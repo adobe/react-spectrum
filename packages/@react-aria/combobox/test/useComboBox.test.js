@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ListLayout} from '@react-stately/collections';
 import React from 'react';
 import {renderHook} from 'react-hooks-testing-library';
 import {useComboBox} from '../';
@@ -17,6 +18,10 @@ import {useComboBox} from '../';
 describe('useComboBox', function () {
   let state = {selectionManager: {}};
   let setOpen = jest.fn();
+
+  let mockLayout = new ListLayout({
+    rowHeight: 40
+  });
 
   beforeEach(() => {
   });
@@ -29,7 +34,8 @@ describe('useComboBox', function () {
     let props = {
       label: 'test label',
       buttonRef: {current: true},
-      textFieldRef: {current: true}
+      textFieldRef: {current: true},
+      layout: mockLayout
     };
 
     let {result} = renderHook(() => useComboBox(props, state));
