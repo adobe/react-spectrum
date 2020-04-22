@@ -15,10 +15,11 @@
 import {chain, mergeProps} from '@react-aria/utils';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {ComboBoxState} from '@react-stately/combobox';
-import {FocusEvent, HTMLAttributes, useEffect, useState} from 'react';
+import React, {FocusEvent, HTMLAttributes, useEffect, useState} from 'react';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
+import {TextFieldBase} from "@react-spectrum/textfield";
 
 interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   isOpen?: boolean,
@@ -41,7 +42,8 @@ interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   layout,
   popoverRef,
   onBlur?: (e: FocusEvent<Element>) => void, // don't think these two (blur/focus) should be added?
-  onFocus?: (e: FocusEvent<Element>) => void
+  onFocus?: (e: FocusEvent<Element>) => void,
+  setIsFocused: (e: boolean) => void
 }
 
 interface ComboBoxAria {
@@ -67,14 +69,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onChange = (val) => {
     state.setValue(val);
   };
-
-  useEffect(() => {
-    if (props.menuTrigger === 'input' && state.value.length > 0 && state.collection.size > 0) {
-      state.open(); // is this right? at this time, we haven't filtered, so we don't know if the character they type will result in an empty menu
-    } else if (state.collection && state.collection.size === 0) {
-      state.close();
-    }
-  }, [state.collection, state.value, props.menuTrigger]);
 
   useEffect(() => {
     let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
@@ -116,6 +110,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if (state.isOpen && focusedItem) {
       state.setSelectedKey(state.selectionManager.focusedKey);
     }
+    props.setIsFocused(false);
 
     // A bit strange behavior when isOpen is true, menu can't close so you can't tab away from the
     // textfield, almost like a focus trap
@@ -130,7 +125,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
           state.setSelectedKey(state.selectionManager.focusedKey);
           state.close();
         }
-
         break;
       case 'Escape':
         state.close();
@@ -142,14 +136,15 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
           let firstKey = state.collection.getFirstKey();
           state.selectionManager.setFocusedKey(firstKey);
         }
-
         break;
       case 'ArrowUp':
         if (state.isOpen && !focusedItem) {
           let firstKey = state.collection.getFirstKey();
           state.selectionManager.setFocusedKey(firstKey);
         }
-
+        break;
+      case 'Backspace':
+        console.log('delete');
         break;
     }
   };
@@ -158,6 +153,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onPress = (e) => {
     if (e.pointerType === 'touch') {
       props.inputRef.current.focus();
+      //props.inputRef.selectionStart = 0;
+      //props.inputRef.selectionEnd = 0;
     }
   };
 
@@ -166,13 +163,18 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       props.inputRef.current.focus();
     }
   };
+  let onFocus = (val) => {
+    console.log('calling setFocused', val);
+    props.setIsFocused(val);
+  };
 
   let {labelProps, inputProps} = useTextField({
     ...props,
     onChange,
     onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
     onBlur: chain(props.onBlur, onBlur),
-    value: state.value
+    value: state.value,
+    onFocus: chain(props.onFocus, onFocus)
   }, props.inputRef);
 
   return {

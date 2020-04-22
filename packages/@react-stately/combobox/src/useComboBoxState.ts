@@ -12,7 +12,7 @@
 
 import {Collection, Node} from '@react-stately/collections';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
-import {Key, useMemo} from 'react';
+import {Key, useEffect, useMemo, useRef, useState} from 'react';
 import {SelectState, useSelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
 
@@ -33,7 +33,8 @@ interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   allowsCustomValue?: boolean,
   onCustomValue?: (value: string) => void,
   completionMode?: 'suggest' | 'complete',
-  menuTrigger?: 'focus' | 'input' | 'manual'
+  menuTrigger?: 'focus' | 'input' | 'manual',
+  isFocused: boolean
 }
 
 function* filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean) {
@@ -124,8 +125,23 @@ class FilteredCollection<T> implements Collection<Node<T>> {
   }
 }
 
+function usePrevious(value) {
+  // The ref object is a generic container whose current property is mutable ...
+  // ... and can hold any value, similar to an instance property on a class
+  const ref = useRef();
+
+  // Store current value in ref
+  useEffect(() => {
+    ref.current = value;
+  }, [value]); // Only re-run if value changes
+
+  // Return previous value (happens before update in useEffect above)
+  return ref.current;
+}
+
 export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let itemsControlled = !!props.onFilter;
+  let trigger = props.menuTrigger || 'input';
   /*
   let menuControlled = props.isOpen !== undefined;
   let valueControlled = props.inputValue !== undefined;
@@ -143,30 +159,30 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
     return new FilteredCollection(selectState.collection, (node) => node.textValue.startsWith(value));
   }, [selectState.collection, value, itemsControlled]);
 
-  let open = function () {
-    if (selectState.collection.size > 0) {
+  /**
+   * open
+   prop isOpen - unless collection size is 0
+   prop defaultIsOpen - unless collection size is 0
+   button clicked - unless collection size is 0
+   arrow down/up - unless collection size is 0
+   mode: input - input onChange - unless collection size is 0
+   mode: focus - input onFocus - unless collection size is 0
+
+   close
+   prop isOpen removed
+   button clicked
+   input onBlur
+   esc key
+   collection size is 0
+   onSelectionChange (edited)
+   */
+  useEffect(() => {
+    if (value.length > 0 && selectState.collection.size > 0 && trigger === 'input' && props.isFocused) {
       selectState.open();
+    } else if (selectState.collection && selectState.collection.size === 0) {
+      selectState.close();
     }
-    if (props.onFilter) {
-      props.onFilter(undefined); // what is the value??
-    }
-  };
-  let setOpen = function (value) {
-    if (selectState.collection.size > 0 && value) {
-      selectState.setOpen(value);
-    }
-    if (value && props.onFilter) {
-      props.onFilter(undefined); // what is the value??
-    }
-  };
-  let toggle = function () {
-    if (selectState.collection.size > 0 && !selectState.isOpen) {
-      selectState.toggle();
-    }
-    if (!selectState.isOpen && props.onFilter) {
-      props.onFilter(undefined); // what is the value??
-    }
-  };
+  }, [selectState.collection, props.menuTrigger, props.isFocused, value]);
 
   // do i need a new selection manager?
 
@@ -176,9 +192,6 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
 
   return {
     ...selectState,
-    open,
-    setOpen,
-    toggle,
     value,
     setValue
   };
