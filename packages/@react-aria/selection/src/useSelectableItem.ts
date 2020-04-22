@@ -63,7 +63,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (isFocused && manager.isFocused && !shouldUseVirtualFocus && document.activeElement !== itemRef.current) {
       focusWithoutScrolling(itemRef.current);
     }
-  }, [itemRef, isFocused, manager.focusedKey, manager.isFocused]);
+  }, [itemRef, isFocused, manager.focusedKey, manager.isFocused, shouldUseVirtualFocus]);
 
   let itemProps: SelectableItemAria['itemProps'] = {
     tabIndex: isFocused ? 0 : -1,
@@ -76,7 +76,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
   };
 
-  // By default, selection occurs on pointer down. This can be strange if selecting an 
+  // By default, selection occurs on pointer down. This can be strange if selecting an
   // item causes the UI to disappear immediately (e.g. menuts).
   // If shouldSelectOnPressUp is true, we use onPressUp instead of onPressStart.
   // onPress requires a pointer down event on the same element as pointer up. For menus,
@@ -89,7 +89,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         onSelect(e);
       }
     };
-    
+
     itemProps.onPressUp = (e) => {
       if (e.pointerType !== 'keyboard') {
         onSelect(e);

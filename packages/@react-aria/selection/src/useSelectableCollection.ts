@@ -242,12 +242,12 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     onBlur
   };
 
+  let {typeSelectProps} = useTypeSelect({
+    keyboardDelegate: delegate,
+    selectionManager: manager
+  });
+
   if (shouldTypeAhead) {
-    let {typeSelectProps} = useTypeSelect({
-      keyboardDelegate: delegate,
-      selectionManager: manager
-    });
-    
     handlers = mergeProps(typeSelectProps, handlers);
   }
 

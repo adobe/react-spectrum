@@ -88,7 +88,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
         state.setValue(itemText);
       }
     }
-  }, [state.selectedKey]);
+  }, [state.selectedKey, selectedItem.textValue, selectedItem.rendered, state.value, state.setValue]);
 
 
   // TODO: Refine the below, feels weird to have focusedItem and also need to still do state.selectionManger.focusedKey
@@ -98,7 +98,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if (focusedItem) {
       setFocusedKeyId(`${menuProps.id}-option-${focusedItem.key}`);
     }
-  }, [focusedItem]);
+  }, [focusedItem, setFocusedKeyId]);
 
 
   // Using layout initiated from ComboBox, generate the keydown handlers for textfield (arrow up/down to navigate through menu when focus in the textfield)
@@ -125,7 +125,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     // A bit strange behavior when isOpen is true, menu can't close so you can't tab away from the
     // textfield, almost like a focus trap
     state.close();
-  }
+  };
 
   // For textfield specific keydown operations
   let onKeyDown = (e) => {
