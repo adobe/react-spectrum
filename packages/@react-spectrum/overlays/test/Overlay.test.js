@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import {Overlay} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -27,8 +27,6 @@ function ExampleOverlay() {
 }
 
 describe('Overlay', function () {
-  afterEach(cleanup);
-
   it('should render nothing if isOpen is not set', function () {
     let overlayRef = React.createRef();
     render(

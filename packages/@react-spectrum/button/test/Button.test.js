@@ -11,7 +11,7 @@
  */
 
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
@@ -26,7 +26,6 @@ describe('Button', function () {
   let onPressSpy = jest.fn();
 
   afterEach(() => {
-    cleanup();
     onPressSpy.mockClear();
   });
 

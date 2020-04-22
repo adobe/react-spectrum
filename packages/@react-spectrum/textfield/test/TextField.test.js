@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, cleanup, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
@@ -40,7 +40,6 @@ describe('Shared TextField behavior', () => {
     onChange.mockClear();
     onBlur.mockClear();
     onFocus.mockClear();
-    cleanup();
   });
 
   // Omitting v3 TextField and TextArea for now since we need https://jira.corp.adobe.com/browse/RSP-1182 to compensate
@@ -210,7 +209,7 @@ describe('Shared TextField behavior', () => {
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('aria-invalid', 'true');
     if (Component === TextField || Component === TextArea) {
-      let invalidIcon = tree.getByRole('img');
+      let invalidIcon = tree.getByRole('img', {hidden: true});
       expect(invalidIcon).toBeTruthy();
     }
   });
@@ -227,7 +226,7 @@ describe('Shared TextField behavior', () => {
     let input = tree.getByTestId(testId);
     expect(input).not.toHaveAttribute('aria-invalid', 'true');
     if (Component === TextField || Component === TextArea) {
-      let validIcon = tree.getByRole('img');
+      let validIcon = tree.getByRole('img', {hidden: true});
       expect(validIcon).toBeTruthy();
     }
   });

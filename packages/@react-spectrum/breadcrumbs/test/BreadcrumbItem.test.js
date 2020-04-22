@@ -11,17 +11,12 @@
  */
 
 import {BreadcrumbItem} from '../src/BreadcrumbItem';
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import React from 'react';
-import {triggerPress} from '@react-spectrum/test-utils'; 
+import {triggerPress} from '@react-spectrum/test-utils';
 
 // v3 component
 describe('BreadcrumbItem', function () {
-
-  afterEach(() => {
-    cleanup();
-  });
-
   it('Handles defaults', () => {
     let {getByText} = render(<BreadcrumbItem >Breadcrumb item</BreadcrumbItem>);
     let breadcrumbItem = getByText('Breadcrumb item');

@@ -14,7 +14,7 @@
 import MatchMediaMock from 'jest-matchmedia-mock';
 // eslint-disable-next-line rulesdir/sort-imports
 import {Button} from '@react-spectrum/button';
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import {Provider} from '../';
 import React from 'react';
 import {triggerPress} from '@react-spectrum/test-utils';
@@ -36,7 +36,6 @@ describe('Provider', () => {
   });
   afterEach(() => {
     matchMedia.clear();
-    cleanup();
   });
 
   it('Uses OS theme by default - dark', () => {

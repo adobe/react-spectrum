@@ -10,18 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import React from 'react';
 import {StatusLight} from '../';
 import V2StatusLight from '@react/react-spectrum/StatusLight';
 
 
 describe('StatusLight', function () {
-
-  afterEach(() => {
-    cleanup();
-  });
-
   it.each`
     Name               | Component        | props
     ${'StatusLight'}   | ${StatusLight}   | ${{}}

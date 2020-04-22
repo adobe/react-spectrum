@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import React from 'react';
 import {Switch} from '../';
 import userEvent from '@testing-library/user-event';
@@ -22,7 +22,6 @@ describe('Switch', function () {
 
   afterEach(() => {
     onChangeSpy.mockClear();
-    cleanup();
   });
 
   it.each`

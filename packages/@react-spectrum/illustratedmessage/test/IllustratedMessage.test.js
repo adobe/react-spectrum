@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import {Content} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/typography';
 import {IllustratedMessage} from '../';
@@ -44,11 +44,6 @@ function renderIllustratedMessage(Component, props) {
 }
 
 describe('IllustratedMessage', function () {
-
-  afterEach(() => {
-    cleanup();
-  });
-
   it.each`
     Name                       | Component               | props
     ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar', illustration: <Image />}}

@@ -11,7 +11,7 @@
  */
 
 import {AlertDialog} from '../';
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
@@ -24,8 +24,6 @@ let theme = {
 };
 
 describe('AlertDialog', function () {
-  afterEach(cleanup);
-
   it('renders alert dialog with onPrimaryAction', function () {
     let onPrimaryAction = jest.fn();
     let {getByRole} = render(

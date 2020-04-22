@@ -20,6 +20,8 @@ try {
 } catch (err) {
   console.log('Skipping v2 parity tests since it is not installed...');
   args.push('-t', '^((?!v2).)*$');
+  // leaving this in to make it easy for people to target a certain suite
+  // args.push('packages/@react-spectrum/form/test/Form.test.js');
 }
 
 process.env.NODE_ICU_DATA = 'node_modules/full-icu';

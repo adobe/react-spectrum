@@ -11,7 +11,7 @@
  */
 
 import {Breadcrumbs} from '../';
-import {cleanup, render, within} from '@testing-library/react';
+import {render, within} from '@testing-library/react';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
@@ -44,7 +44,6 @@ describe('Breadcrumbs', function () {
   afterEach(() => {
     HTMLElement.prototype.getBoundingClientRect.mockRestore();
     HTMLElement.prototype.scrollIntoView.mockRestore();
-    cleanup();
   });
 
   it.each`

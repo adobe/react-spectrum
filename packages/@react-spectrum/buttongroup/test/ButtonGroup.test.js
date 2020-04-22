@@ -12,7 +12,7 @@
 
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '../';
-import {cleanup, render, within} from '@testing-library/react';
+import {render, within} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
@@ -49,7 +49,6 @@ function renderComponent(Component, props = {}) {
 
 describe('ButtonGroup', function () {
   afterEach(() => {
-    cleanup();
     jest.clearAllMocks();
   });
 

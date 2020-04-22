@@ -10,17 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import {Divider} from '../';
 import React from 'react';
 import Rule from '@react/react-spectrum/Rule';
 
 describe('Divider', function () {
-
-  afterEach(() => {
-    cleanup();
-  });
-
   it.each`
     Name         | Component  | props
     ${'Divider'} | ${Divider} | ${{}}

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render, waitForDomChange} from '@testing-library/react';
+import {fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Dialog} from '@react-spectrum/dialog';
 import {Popover} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -27,8 +27,6 @@ function PopoverWithDialog({children}) {
 }
 
 describe('Popover', function () {
-  afterEach(cleanup);
-
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });

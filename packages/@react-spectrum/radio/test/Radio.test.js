@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../';
 import React from 'react';
@@ -40,7 +40,6 @@ describe('Radios', function () {
 
   afterEach(() => {
     onChangeSpy.mockClear();
-    cleanup();
   });
 
   it.each`

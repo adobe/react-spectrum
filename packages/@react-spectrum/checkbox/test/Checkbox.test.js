@@ -11,7 +11,7 @@
  */
 
 import {Checkbox} from '../';
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import V2Checkbox from '@react/react-spectrum/Checkbox';
@@ -22,7 +22,6 @@ describe('Checkbox', function () {
 
   afterEach(() => {
     onChangeSpy.mockClear();
-    cleanup();
   });
 
   it.each`

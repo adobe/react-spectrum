@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import {DatePicker, DateRangePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -24,8 +24,6 @@ let theme = {
 };
 
 describe('DatePickerBase', function () {
-  afterEach(cleanup);
-
   describe('basics', function () {
     it.each`
       Name                   | Component            | numSegments

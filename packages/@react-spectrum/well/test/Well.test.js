@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import React, {useRef} from 'react';
 import V2Well from '@react/react-spectrum/Well';
 import {Well} from '../';
@@ -30,10 +30,6 @@ let refExists = (ComponentToCheck, children, props) => {
 };
 
 describe('Well', () => {
-  afterEach(function () {
-    cleanup();
-  });
-
   it.each`
     Name      | Component   | props
     ${'v3'}   | ${Well}     | ${{UNSAFE_className: 'myClass', 'data-testid': 'wellV3'}}

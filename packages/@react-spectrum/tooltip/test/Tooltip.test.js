@@ -10,16 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import React from 'react';
 import {Tooltip} from '../';
 import V2Tooltip from '@react/react-spectrum/Tooltip';
 
 describe('Tooltip', function () {
-  afterEach(() => {
-    cleanup();
-  });
-
   it.each`
   Name           | Component
   ${'Tooltip'}   | ${Tooltip}

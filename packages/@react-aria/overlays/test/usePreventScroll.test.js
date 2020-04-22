@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {usePreventScroll} from '..';
@@ -23,8 +23,6 @@ function Example(props) {
 }
 
 describe('usePreventScroll', function () {
-  afterEach(cleanup);
-
   it('should set overflow: hidden on the body on mount and remove on unmount', function () {
     expect(document.body).not.toHaveStyle('overflow: hidden');
 

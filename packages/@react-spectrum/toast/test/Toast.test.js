@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import React from 'react';
 import {Toast} from '../';
 import {triggerPress} from '@react-spectrum/test-utils';
@@ -30,7 +30,6 @@ describe('Toast', function () {
   afterEach(() => {
     onClose.mockClear();
     onAction.mockClear();
-    cleanup();
   });
 
   it.each`
@@ -43,7 +42,7 @@ describe('Toast', function () {
     expect(getByRole('alert')).toBeTruthy();
     expect(getByText(message)).toBeTruthy();
     if (name === 'Toast') {
-      expect(getAllByRole('img').length).toBe(1);
+      expect(getAllByRole('img', {hidden: true}).length).toBe(1);
     }
   });
 
@@ -64,7 +63,7 @@ describe('Toast', function () {
   `('$Name supports variant info', function ({Component, props, message}) {
     let {getAllByRole} = renderComponent(Component, props, message);
 
-    expect(getAllByRole('img').length).toBe(2);
+    expect(getAllByRole('img', {hidden: true}).length).toBe(2); // there's one hidden and one not
   });
 
   it.each`

@@ -3,14 +3,14 @@
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
 
-import {act, cleanup, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
@@ -51,10 +51,6 @@ describe('Table', function () {
     jest.useFakeTimers();
   });
 
-  afterEach(() => {
-    cleanup();
-  });
-
   it('renders a static table', function () {
     let {getByRole, getByText} = render(
       <Table>
@@ -77,7 +73,7 @@ describe('Table', function () {
         </TableBody>
       </Table>
     );
-    
+
     let grid = getByRole('grid');
     expect(grid).toBeVisible();
     expect(grid).toHaveAttribute('aria-multiselectable', 'true');
@@ -103,7 +99,7 @@ describe('Table', function () {
 
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
     expect(rows[1]).toHaveAttribute('aria-labelledby', `${getByText('Foo').id} ${getByText('Foo 2').id} ${getByText('Bar').id} ${getByText('Bar 2').id} ${getByText('Baz').id} ${getByText('Baz 2').id}`);
-  
+
     let rowHeaders = within(rowgroups[1]).getAllByRole('rowheader');
     checkbox = within(rowHeaders[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
@@ -132,7 +128,7 @@ describe('Table', function () {
         </TableBody>
       </Table>
     );
-    
+
     let grid = getByRole('grid');
     expect(grid).toBeVisible();
     expect(grid).toHaveAttribute('aria-multiselectable', 'true');
@@ -158,7 +154,7 @@ describe('Table', function () {
 
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
     expect(rows[1]).toHaveAttribute('aria-labelledby', `${getByText('Foo').id} ${getByText('Foo 2').id} ${getByText('Bar').id} ${getByText('Bar 2').id} ${getByText('Baz').id} ${getByText('Baz 2').id}`);
-  
+
     let rowHeaders = within(rowgroups[1]).getAllByRole('rowheader');
     checkbox = within(rowHeaders[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
@@ -201,7 +197,7 @@ describe('Table', function () {
         </TableBody>
       </Table>
     );
-    
+
     let grid = getByRole('grid');
     expect(grid).toBeVisible();
     expect(grid).toHaveAttribute('aria-multiselectable', 'true');
@@ -241,7 +237,7 @@ describe('Table', function () {
 
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
     expect(rows[1]).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Test 2').id} ${getByText('Foo').id} ${getByText('Foo 2').id} ${getByText('Bar').id} ${getByText('Bar 2').id} ${getByText('Baz').id} ${getByText('Baz 2').id}`);
-  
+
     let rowHeaders = within(rowgroups[1]).getAllByRole('rowheader');
     checkbox = within(rowHeaders[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
@@ -272,7 +268,7 @@ describe('Table', function () {
         </TableBody>
       </Table>
     );
-    
+
     let grid = getByRole('grid');
     expect(grid).toBeVisible();
     expect(grid).toHaveAttribute('aria-multiselectable', 'true');
@@ -321,7 +317,7 @@ describe('Table', function () {
 
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
     expect(rows[1]).toHaveAttribute('aria-labelledby', `${getByText('Test').id} ${getByText('Test 2').id} ${getByText('Foo').id} ${getByText('Foo 2').id} ${getByText('Bar').id} ${getByText('Bar 2').id} ${getByText('Yay').id} ${getByText('Yay 2').id} ${getByText('Baz').id} ${getByText('Baz 2').id}`);
-  
+
     let rowHeaders = within(rowgroups[1]).getAllByRole('rowheader');
     checkbox = within(rowHeaders[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
@@ -662,7 +658,7 @@ describe('Table', function () {
           </TableBody>
         </Table>
       );
-  
+
       it('should marshall focus to the focusable element inside a cell', function () {
         let tree = renderFocusable();
         focusCell(tree, 'Baz 1');
@@ -829,7 +825,7 @@ describe('Table', function () {
       let rows = tree.getAllByRole('row');
       expect(rows[1]).toHaveAttribute('aria-selected', 'false');
       expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-      
+
       act(() => userEvent.click(tree.getByLabelText('Select All')));
 
       checkSelection(onSelectionChange, ['Foo 1', 'Foo 2']);
@@ -847,7 +843,7 @@ describe('Table', function () {
       let rows = tree.getAllByRole('row');
       expect(rows[1]).toHaveAttribute('aria-selected', 'false');
       expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-      
+
       act(() => {fireEvent.keyDown(tree.getByText('Bar 1'), {key: 'a', ctrlKey: true});});
 
       checkSelection(onSelectionChange, ['Foo 1', 'Foo 2']);
@@ -867,7 +863,7 @@ describe('Table', function () {
       expect(rows[2]).toHaveAttribute('aria-selected', 'false');
       act(() => triggerPress(tree.getByText('Baz 1')));
       checkSelectAll(tree, 'indeterminate');
-      
+
       onSelectionChange.mockReset();
       act(() => {fireEvent.keyDown(tree.getByText('Bar 1'), {key: 'Escape'});});
 

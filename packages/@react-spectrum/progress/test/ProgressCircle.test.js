@@ -10,18 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import {ProgressCircle} from '../';
 import React from 'react';
 import V2ProgressCircle from '@react/react-spectrum/Wait';
 
 
 describe('ProgressCircle', function () {
-
-  afterEach(() => {
-    cleanup();
-  });
-
   it.each`
     Name                  | Component           | props
     ${'ProgressCircle'}   | ${ProgressCircle}   | ${{}}

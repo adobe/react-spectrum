@@ -10,18 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import {Meter} from '../';
 import React from 'react';
+import {render} from '@testing-library/react';
 
 describe('Meter', function () {
-  afterEach(() => {
-    cleanup();
-  });
-
   it('handles defaults', function () {
-    let {getByRole} = render(<Meter label="Meter" />);
-    let progressBar = getByRole('meter progressbar');
+    let {getByLabelText} = render(<Meter label="Meter" />);
+    let progressBar = getByLabelText('Meter');
     expect(progressBar).toHaveAttribute('aria-valuemin', '0');
     expect(progressBar).toHaveAttribute('aria-valuemax', '100');
     expect(progressBar).toHaveAttribute('aria-valuenow', '0');
@@ -34,8 +30,8 @@ describe('Meter', function () {
   });
 
   it('updates all fields by value', function () {
-    let {getByRole} = render(<Meter value={30} label="Meter" />);
-    let progressBar = getByRole('meter progressbar');
+    let {getByLabelText} = render(<Meter value={30} label="Meter" />);
+    let progressBar = getByLabelText('Meter');
     expect(progressBar).toHaveAttribute('aria-valuemin', '0');
     expect(progressBar).toHaveAttribute('aria-valuemax', '100');
     expect(progressBar).toHaveAttribute('aria-valuenow', '30');
@@ -43,29 +39,30 @@ describe('Meter', function () {
   });
 
   it('clamps values to 0', function () {
-    let {getByRole} = render(<Meter value={-1} label="Meter" />);
-    let progressBar = getByRole('meter progressbar');
+    let {getByLabelText} = render(<Meter value={-1} label="Meter" />);
+    let progressBar = getByLabelText('Meter');
     expect(progressBar).toHaveAttribute('aria-valuenow', '0');
     expect(progressBar).toHaveAttribute('aria-valuetext', '0%');
   });
 
   it('clamps values to 100', function () {
-    let {getByRole} = render(<Meter value={1000} label="Meter" />);
-    let progressBar = getByRole('meter progressbar');
+    let {getByLabelText} = render(<Meter value={1000} label="Meter" />);
+    let progressBar = getByLabelText('Meter');
     expect(progressBar).toHaveAttribute('aria-valuenow', '100');
     expect(progressBar).toHaveAttribute('aria-valuetext', '100%');
   });
 
   it('supports UNSAFE_className', function () {
-    let {getByRole} = render(<Meter size="S" UNSAFE_className="testClass" label="Meter" />);
-    let progressBar = getByRole('meter progressbar');
+    let {getByLabelText} = render(<Meter size="S" UNSAFE_className="testClass" label="Meter" />);
+    let progressBar = getByLabelText('Meter');
     expect(progressBar).toHaveAttribute('class', expect.stringContaining('testClass'));
   });
 
   it('can handle negative values', function () {
-    let {getByRole} = render(<Meter value={0} minValue={-5} maxValue={5} label="Meter" />);
-    let progressBar = getByRole('meter progressbar');
+    let {getByLabelText} = render(<Meter value={0} minValue={-5} maxValue={5} label="Meter" />);
+    let progressBar = getByLabelText('Meter');
     expect(progressBar).toHaveAttribute('aria-valuenow', '0');
     expect(progressBar).toHaveAttribute('aria-valuetext', '50%');
+    expect(progressBar).toHaveAttribute('role', 'meter progressbar');
   });
 });

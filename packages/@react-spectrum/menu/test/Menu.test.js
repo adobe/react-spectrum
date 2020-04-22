@@ -11,7 +11,7 @@
  */
 
 import Bell from '@spectrum-icons/workflow/Bell';
-import {cleanup, fireEvent, render, within} from '@testing-library/react';
+import {fireEvent, render, within} from '@testing-library/react';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Item, Menu, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/typography';
@@ -103,14 +103,13 @@ describe('Menu', function () {
 
   afterEach(() => {
     onSelectionChange.mockClear();
-    cleanup();
   });
 
   afterAll(function () {
     offsetWidth.mockReset();
     offsetHeight.mockReset();
   });
-  
+
   it.each`
     Name        | Component | props
     ${'Menu'}   | ${Menu}   | ${{}}
@@ -189,7 +188,7 @@ describe('Menu', function () {
     fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 40, charCode: 40});
     expect(firstItem).toBe(document.activeElement);
   });
-  
+
   describe('supports single selection', function () {
     it.each`
       Name        | Component | props
@@ -205,9 +204,9 @@ describe('Menu', function () {
       expect(selectedItem).toHaveAttribute('tabindex', '0');
       let itemText = within(selectedItem).getByText('Blah');
       expect(itemText).toBeTruthy();
-      let checkmark = within(selectedItem).getByRole('img');
+      let checkmark = within(selectedItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-    
+
       // Select a different menu item via enter
       let nextSelectedItem = menuItems[4];
       fireEvent.keyDown(nextSelectedItem, {key: 'Enter', code: 13, charCode: 13});
@@ -215,11 +214,11 @@ describe('Menu', function () {
       expect(nextSelectedItem).toHaveAttribute('aria-checked', 'true');
       itemText = within(nextSelectedItem).getByText('Bleh');
       expect(itemText).toBeTruthy();
-      checkmark = within(nextSelectedItem).getByRole('img');
+      checkmark = within(nextSelectedItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
 
       // Make sure there is only a single checkmark in the entire menu
-      let checkmarks = tree.getAllByRole('img');
+      let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(1);
 
       expect(onSelectionChange).toBeCalledTimes(1);
@@ -240,20 +239,20 @@ describe('Menu', function () {
       expect(selectedItem).toHaveAttribute('tabindex', '0');
       let itemText = within(selectedItem).getByText('Blah');
       expect(itemText).toBeTruthy();
-      let checkmark = within(selectedItem).getByRole('img');
+      let checkmark = within(selectedItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-    
+
       // Select a different menu item via enter
       let nextSelectedItem = menuItems[4];
       fireEvent.keyDown(nextSelectedItem, {key: 'Enter', code: 13, charCode: 13});
       fireEvent.keyUp(nextSelectedItem, {key: 'Enter', code: 13, charCode: 13});
       expect(nextSelectedItem).toHaveAttribute('aria-checked', 'false');
       expect(selectedItem).toHaveAttribute('aria-checked', 'true');
-      checkmark = within(selectedItem).getByRole('img');
+      checkmark = within(selectedItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
 
       // Make sure there is only a single checkmark in the entire menu
-      let checkmarks = tree.getAllByRole('img');
+      let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(1);
 
       expect(onSelectionChange).toBeCalledTimes(1);
@@ -268,18 +267,18 @@ describe('Menu', function () {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
-    
+
       // Trigger a menu item via space
       let item = menuItems[4];
       fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32});
       fireEvent.keyUp(item, {key: ' ', code: 32, charCode: 32});
       if (Component === Menu) {
         expect(item).toHaveAttribute('aria-checked', 'true');
-        let checkmark = within(item).getByRole('img');
+        let checkmark = within(item).getByRole('img', {hidden: true});
         expect(checkmark).toBeTruthy();
-  
+
         // Make sure there is only a single checkmark in the entire menu
-        let checkmarks = tree.getAllByRole('img');
+        let checkmarks = tree.getAllByRole('img', {hidden: true});
         expect(checkmarks.length).toBe(1);
       }
 
@@ -301,17 +300,17 @@ describe('Menu', function () {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
-    
+
       // Trigger a menu item via press
       let item = menuItems[4];
       triggerPress(item);
       if (Component === Menu) {
         expect(item).toHaveAttribute('aria-checked', 'true');
-        let checkmark = within(item).getByRole('img');
+        let checkmark = within(item).getByRole('img', {hidden: true});
         expect(checkmark).toBeTruthy();
-  
+
         // Make sure there is only a single checkmark in the entire menu
-        let checkmarks = tree.getAllByRole('img');
+        let checkmarks = tree.getAllByRole('img', {hidden: true});
         expect(checkmarks.length).toBe(1);
       }
 
@@ -324,7 +323,7 @@ describe('Menu', function () {
         expect(onSelect.mock.calls[0][0]).toBe('bleh');
       }
     });
-    
+
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{selectionMode: 'single', onSelectionChange, disabledKeys: ['Baz']}}
@@ -333,7 +332,7 @@ describe('Menu', function () {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
-    
+
       // Attempt to trigger the disabled item
       let disabledItem = menuItems[2];
       triggerPress(disabledItem);
@@ -341,7 +340,7 @@ describe('Menu', function () {
       expect(disabledItem).toHaveAttribute('aria-disabled', 'true');
 
       // Make sure there are no checkmarks
-      let checkmarks = tree.queryAllByRole('img');
+      let checkmarks = tree.queryAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(0);
 
       // Verify onSelectionChange is not called
@@ -360,27 +359,27 @@ describe('Menu', function () {
     `('$Name supports selecting multiple items', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      
+
       // Make sure nothing is checked by default
-      let checkmarks = tree.queryAllByRole('img');
+      let checkmarks = tree.queryAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(0);
 
       let menuItems = within(menu).getAllByRole('menuitemcheckbox');
       let firstItem = menuItems[3];
       triggerPress(firstItem);
       expect(firstItem).toHaveAttribute('aria-checked', 'true');
-      let checkmark = within(firstItem).getByRole('img');
+      let checkmark = within(firstItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-    
+
       // Select a different menu item
       let secondItem = menuItems[1];
       triggerPress(secondItem);
       expect(secondItem).toHaveAttribute('aria-checked', 'true');
-      checkmark = within(secondItem).getByRole('img');
+      checkmark = within(secondItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
 
       // Make sure there are multiple checkmark in the entire menu
-      checkmarks = tree.getAllByRole('img');
+      checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
       expect(onSelectionChange).toBeCalledTimes(2);
@@ -394,35 +393,35 @@ describe('Menu', function () {
     `('$Name supports multiple defaultSelectedKeys (uncontrolled)', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      
+
       // Make sure two items are checked by default
-      let checkmarks = tree.getAllByRole('img');
+      let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
       let menuItems = within(menu).getAllByRole('menuitemcheckbox');
       let firstItem = menuItems[0];
       let secondItem = menuItems[1];
-      
+
       expect(firstItem).toHaveAttribute('aria-checked', 'true');
       expect(secondItem).toHaveAttribute('aria-checked', 'true');
       let itemText = within(firstItem).getByText('Foo');
       expect(itemText).toBeTruthy();
       itemText = within(secondItem).getByText('Bar');
       expect(itemText).toBeTruthy();
-      let checkmark = within(firstItem).getByRole('img');
+      let checkmark = within(firstItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-      checkmark = within(secondItem).getByRole('img');
+      checkmark = within(secondItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-         
+
       // Select a different menu item
       let thirdItem = menuItems[4];
       triggerPress(thirdItem);
       expect(thirdItem).toHaveAttribute('aria-checked', 'true');
-      checkmark = within(thirdItem).getByRole('img');
+      checkmark = within(thirdItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
 
       // Make sure there are now three checkmarks
-      checkmarks = tree.getAllByRole('img');
+      checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(3);
 
       expect(onSelectionChange).toBeCalledTimes(1);
@@ -437,35 +436,35 @@ describe('Menu', function () {
     `('$Name supports multiple selectedKeys (controlled)', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      
+
       // Make sure two items are checked by default
-      let checkmarks = tree.getAllByRole('img');
+      let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
       let menuItems = within(menu).getAllByRole('menuitemcheckbox');
       let firstItem = menuItems[0];
       let secondItem = menuItems[1];
-      
+
       expect(firstItem).toHaveAttribute('aria-checked', 'true');
       expect(secondItem).toHaveAttribute('aria-checked', 'true');
       let itemText = within(firstItem).getByText('Foo');
       expect(itemText).toBeTruthy();
       itemText = within(secondItem).getByText('Bar');
       expect(itemText).toBeTruthy();
-      let checkmark = within(firstItem).getByRole('img');
+      let checkmark = within(firstItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-      checkmark = within(secondItem).getByRole('img');
+      checkmark = within(secondItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-        
+
       // Select a different menu item
       let thirdItem = menuItems[4];
       triggerPress(thirdItem);
       expect(thirdItem).toHaveAttribute('aria-checked', 'false');
-      checkmark = within(thirdItem).queryByRole('img');
+      checkmark = within(thirdItem).queryByRole('img', {hidden: true});
       expect(checkmark).toBeNull();
 
       // Make sure there are still two checkmarks
-      checkmarks = tree.getAllByRole('img');
+      checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
       expect(onSelectionChange).toBeCalledTimes(1);
@@ -478,34 +477,34 @@ describe('Menu', function () {
     `('$Name supports deselection', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      
+
       // Make sure two items are checked by default
-      let checkmarks = tree.getAllByRole('img');
+      let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
       let menuItems = within(menu).getAllByRole('menuitemcheckbox');
       let firstItem = menuItems[0];
       let secondItem = menuItems[1];
-      
+
       expect(firstItem).toHaveAttribute('aria-checked', 'true');
       expect(secondItem).toHaveAttribute('aria-checked', 'true');
       let itemText = within(firstItem).getByText('Foo');
       expect(itemText).toBeTruthy();
       itemText = within(secondItem).getByText('Bar');
       expect(itemText).toBeTruthy();
-      let checkmark = within(firstItem).getByRole('img');
+      let checkmark = within(firstItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-      checkmark = within(secondItem).getByRole('img');
+      checkmark = within(secondItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-         
+
       // Deselect the first item
       triggerPress(firstItem);
       expect(firstItem).toHaveAttribute('aria-checked', 'false');
-      checkmark = within(firstItem).queryByRole('img');
+      checkmark = within(firstItem).queryByRole('img', {hidden: true});
       expect(checkmark).toBeNull();
 
       // Make sure there only a single checkmark now
-      checkmarks = tree.getAllByRole('img');
+      checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(1);
 
       expect(onSelectionChange).toBeCalledTimes(1);
@@ -523,12 +522,12 @@ describe('Menu', function () {
       let menuItems = within(menu).getAllByRole('menuitemcheckbox');
       let disabledItem = menuItems[2];
       triggerPress(disabledItem);
-      
+
       expect(disabledItem).toHaveAttribute('aria-checked', 'false');
       expect(disabledItem).toHaveAttribute('aria-disabled', 'true');
-         
+
       // Make sure that only two items are checked still
-      let checkmarks = tree.getAllByRole('img');
+      let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
       expect(onSelectionChange).toBeCalledTimes(0);
@@ -542,9 +541,9 @@ describe('Menu', function () {
     `('$Name prevents selection of any items', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      
+
       // Make sure nothing is checked by default
-      let checkmarks = tree.queryAllByRole('img');
+      let checkmarks = tree.queryAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(0);
 
       // Attempt to select a variety of items via enter, space, and click
@@ -558,9 +557,9 @@ describe('Menu', function () {
       expect(firstItem).not.toHaveAttribute('aria-checked', 'true');
       expect(secondItem).not.toHaveAttribute('aria-checked', 'true');
       expect(thirdItem).not.toHaveAttribute('aria-checked', 'true');
-      
+
       // Make sure nothing is still checked
-      checkmarks = tree.queryAllByRole('img');
+      checkmarks = tree.queryAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(0);
       expect(onSelectionChange).toBeCalledTimes(0);
     });
@@ -747,7 +746,7 @@ describe('Menu', function () {
     let label = within(menu).getByText('Label');
     let description = within(menu).getByText('Description');
     let keyboard = within(menu).getByText('⌘V');
-    
+
     expect(menuItem).toHaveAttribute('aria-labelledby', label.id);
     expect(menuItem).toHaveAttribute('aria-describedby', `${description.id} ${keyboard.id}`);
   });
