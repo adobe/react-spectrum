@@ -97,7 +97,7 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
       completionMode,
       layout,
       triggerRef: unwrapDOMRef(triggerRef),
-      inputRef: unwrapInputRef(inputRef),
+      inputRef: inputRef,
       popoverRef: unwrapDOMRef(popoverRef)
     },
     state
@@ -139,7 +139,7 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
   useLayoutEffect(() => {
     if (!isMobile) {
       let buttonWidth = triggerRef.current.UNSAFE_getDOMNode().offsetWidth;
-      let inputWidth = inputRef.current.UNSAFE_getDOMNode().offsetWidth;
+      let inputWidth = inputRef.current.offsetWidth;
       setMenuWidth(buttonWidth + inputWidth);
     }
   }, [scale, isMobile, triggerRef, inputRef, state.selectedKey]);
@@ -197,8 +197,10 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
           // Perhaps should filterDOMProps(DOMEventPropNames)?
           // Think about whether or not we want to do send all otherProps to Textfield or be more discerning?
           {...otherProps}
+          // check this passing of labelProps since we handle label ourselves for combobox
+          labelProps={labelProps}
           inputProps={inputProps}
-          ref={inputRef}
+          inputRef={inputRef}
           inputClassName={
             classNames(
               styles,
@@ -267,10 +269,10 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
 const _ComboBox = React.forwardRef(ComboBox);
 export {_ComboBox as ComboBox};
 
-function unwrapInputRef(ref: RefObject<TextFieldRef>) {
-  return {
-    get current() {
-      return ref.current && ref.current.getInputElement();
-    }
-  };
-}
+// function unwrapInputRef(ref: RefObject<TextFieldRef>) {
+//   return {
+//     get current() {
+//       return ref.current && ref.current.getInputElement();
+//     }
+//   };
+// }

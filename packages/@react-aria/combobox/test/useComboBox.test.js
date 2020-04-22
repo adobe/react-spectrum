@@ -40,6 +40,8 @@ describe('useComboBox', function () {
     expect(inputProps.id).toBeTruthy();
     expect(inputProps['aria-labelledby']).toBe(labelProps.id);
     expect(inputProps.role).toBe('combobox');
+
+    // TODO: This should be list right?
     expect(inputProps['aria-autocomplete']).toBe('both');
     expect(inputProps['aria-controls']).toBeFalsy();
 
