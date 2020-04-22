@@ -31,7 +31,7 @@ storiesOf('ComboBox', module)
     'dynamic items',
     () => (
       <ComboBox items={items} itemKey="id" label="Combobox">
-        {item => <Item>{item.name}</Item>}
+        {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
     )
   )
