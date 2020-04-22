@@ -108,9 +108,6 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
   });
 
   let onBlur = (e) => {
-    // Need to propagate blur event so that wrapping focus ring properly removes itself via its own blur handler
-    // e.continuePropagation();
-
     // TODO: Double check if this is needed, from v2
     if (props.popoverRef.current && props.popoverRef.current.contains(document.activeElement)) {
       // If the element receiving focus is the Popover (dropdown menu),
@@ -120,10 +117,6 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
       return;
     }
 
-    if (props.onBlur) {
-      props.onBlur(e);
-    }
-
     if (state.isOpen && focusedItem) {
       state.setSelectedKey(state.selectionManager.focusedKey);
     }
@@ -131,15 +124,6 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
     // A bit strange behavior when isOpen is true, menu can't close so you can't tab away from the
     // textfield, almost like a focus trap
     state.close();
-  }
-
-  let onFocus = (e) => {
-    // Need to propagate focus event so that wrapping div focus ring properly applies
-    // e.continuePropagation();
-
-    if (props.onFocus) {
-      props.onFocus(e);
-    }
   }
 
   // For textfield specific keydown operations
@@ -162,12 +146,14 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
           let firstKey = state.collection.firstKey;
           state.selectionManager.setFocusedKey(firstKey);
         }
+
         break;
       case 'ArrowUp':
         if (state.isOpen && !focusedItem) {
           let firstKey = state.collection.firstKey;
           state.selectionManager.setFocusedKey(firstKey);
         }
+
         break;
     }
   };
@@ -189,8 +175,7 @@ export function useComboBox<T>(props: ComboBoxProps<T>, state: ComboBoxState<T>)
     ...props,
     onChange,
     onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
-    onFocus,
-    onBlur,
+    onBlur: chain(props.onBlur, onBlur),
     value: state.value
   }, props.inputRef);
 

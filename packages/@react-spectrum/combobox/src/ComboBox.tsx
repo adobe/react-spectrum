@@ -200,7 +200,6 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
           isReadOnly={isReadOnly}
           isQuiet={isQuiet}
           validationState={validationState}
-          autoFocus={autoFocus}
           width={width} />
         <FieldButton
           {...triggerProps}
