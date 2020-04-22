@@ -77,6 +77,10 @@ describe('ComboBox', function () {
     });
 
     describe('button click', function () {
+      it('keeps focus within the textfield after opening the menu', function () {
+        // TODO by Dan
+      });
+      
       it('fires onFilter if there are no items loaded yet', function () {
         let onFilter = jest.fn();
         let onOpenChange = jest.fn();

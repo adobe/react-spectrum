@@ -37,6 +37,7 @@ import {TextFieldBase} from '@react-spectrum/textfield';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
+import {chain} from "@react-aria/utils";
 
 
 interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
@@ -86,8 +87,9 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
   let listboxRef = useRef();
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
   let domRef = useDOMRef(ref);
+  let [isFocused, setIsFocused] = useState(false);
 
-  let state = useComboBoxState(props);
+  let state = useComboBoxState({...props, isFocused});
   let layout = useListBoxLayout(state);
   let {triggerProps, inputProps, menuProps, labelProps} = useComboBox(
     {
@@ -97,7 +99,8 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
       layout,
       triggerRef: unwrapDOMRef(triggerRef),
       inputRef: inputRef,
-      popoverRef: unwrapDOMRef(popoverRef)
+      popoverRef: unwrapDOMRef(popoverRef),
+      setIsFocused
     },
     state
   );
