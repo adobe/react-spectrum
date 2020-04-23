@@ -140,7 +140,6 @@ function usePrevious(value) {
 
 export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let itemsControlled = !!props.onFilter;
-  let trigger = props.menuTrigger || 'input';
   /*
   let menuControlled = props.isOpen !== undefined;
   let valueControlled = props.inputValue !== undefined;
