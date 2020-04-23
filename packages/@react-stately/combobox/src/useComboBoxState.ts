@@ -12,7 +12,7 @@
 
 import {Collection, Node} from '@react-stately/collections';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
-import {Key, useEffect, useMemo, useRef, useState} from 'react';
+import {Key, useEffect, useMemo, useReducer, useRef, useState} from 'react';
 import {SelectState, useSelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
 
@@ -125,6 +125,20 @@ class FilteredCollection<T> implements Collection<Node<T>> {
   }
 }
 
+function usePrevious(value) {
+  // The ref object is a generic container whose current property is mutable ...
+  // ... and can hold any value, similar to an instance property on a class
+  const ref = useRef();
+
+  // Store current value in ref
+  useEffect(() => {
+    ref.current = value;
+  }, [value]); // Only re-run if value changes
+
+  // Return previous value (happens before update in useEffect above)
+  return ref.current;
+}
+
 export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let itemsControlled = !!props.onFilter;
   let trigger = props.menuTrigger || 'input';
@@ -133,7 +147,9 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let valueControlled = props.inputValue !== undefined;
   let selectedControlled = !!props.selectedKey;
    */
+
   let selectState = useSelectState(props);
+
   let selectedKeyItem = props.selectedKey ? selectState.collection.getItem(props.selectedKey) : undefined;
   let selectedKeyText = selectedKeyItem ? selectedKeyItem.textValue || selectedKeyItem.rendered as string : undefined;
   // Maybe don't need to do for defaultSelectedKey? Need to do for selectedKey so that the textfield is properly controlled reflects selectedKey text
@@ -142,13 +158,24 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   // Double check if props.selectedKey should make textfield value controlled
   let [value, setValue] = useControlledState(toString(props.inputValue) || selectedKeyText, toString(props.defaultInputValue) || defaultSelectedKeyText || '', props.onInputChange);
 
-  selectState.collection = useMemo(() => {
-    if (itemsControlled || value === '') {
-      return selectState.collection;
+  if (value !== '') {
+    selectState.collection = new FilteredCollection(selectState.collection, (node) => node.textValue.startsWith(value));
+  }
+  if (selectState.isOpen && selectState.collection.size === 0) {
+    selectState.close();
+  }
+
+  let open = () => {
+    if (props.isFocused) {
+      selectState.open();
     }
-    // should value be textValue?
-    return new FilteredCollection(selectState.collection, (node) => node.textValue.startsWith(value));
-  }, [selectState.collection, value, itemsControlled]);
+  };
+
+  let toggle = (strategy, force) => {
+    if (props.isFocused || force) {
+      selectState.toggle(strategy);
+    }
+  };
 
   /**
    * open
@@ -168,33 +195,6 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
    onSelectionChange (edited)
    */
 
-  function usePrevious(value) {
-    // The ref object is a generic container whose current property is mutable ...
-    // ... and can hold any value, similar to an instance property on a class
-    const ref = useRef();
-  
-    // Store current value in ref
-    useEffect(() => {
-      ref.current = value;
-    }, [value]); // Only re-run if value changes
-  
-    // Return previous value (happens before update in useEffect above)
-    return ref.current;
-  }
-
-  let prevValue = usePrevious(value);
-  
-  useEffect(() => {
-    // Only open combobox menu if there are results, if the user has focused the field, 
-    // and the value has changed recently (aka don't reopen if user closed menu via escape or clicking the button)
-    // Still need a condition for if the user hits enter and then it shouldn't open
-    if (selectState.collection.size > 0 && trigger === 'input' && props.isFocused && prevValue !== value) {
-      selectState.open();
-    } else if (selectState.collection && selectState.collection.size === 0) {
-      selectState.close();
-    }
-  }, [selectState.collection, props.menuTrigger, props.isFocused, value, prevValue]);
-
   // do i need a new selection manager?
 
   // For completionMode = complete
@@ -203,6 +203,8 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
 
   return {
     ...selectState,
+    open,
+    toggle,
     value,
     setValue
   };

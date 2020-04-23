@@ -72,8 +72,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       // don't use clearSelection? For some reason toggleSelection doesn't work
       state.selectionManager.clearSelection();
       // state.selectionManager.toggleSelection(state.selectedKey);
-      state.open();
     }
+    state.open();
   };
 
 
@@ -138,7 +138,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
     // A bit strange behavior when isOpen is true, menu can't close so you can't tab away from the
     // textfield, almost like a focus trap
-    
+
     if (state.isOpen && focusedItem) {
       state.setSelectedKey(state.selectionManager.focusedKey);
     }
@@ -147,7 +147,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onFocus = () => {
     props.setIsFocused(true);
   };
-  
+
   // For textfield specific keydown operations
   let onKeyDown = (e) => {
     switch (e.key) {
@@ -185,12 +185,14 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       props.inputRef.current.focus();
       //props.inputRef.selectionStart = 0;
       //props.inputRef.selectionEnd = 0;
+      state.toggle(null, true);
     }
   };
 
   let onPressStart = (e) => {
     if (e.pointerType !== 'touch') {
       props.inputRef.current.focus();
+      state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null, true);
     }
   };
 
@@ -206,8 +208,10 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   return {
     labelProps,
     triggerProps: {
-      ...mergeProps({onPressStart, onPress}, menuTriggerProps),
-      tabIndex: -1
+      ...menuTriggerProps,
+      tabIndex: -1,
+      onPress,
+      onPressStart
     },
     inputProps: {
       // TODO: double check that user provided id gets sent to textfield and not to wrapper div
