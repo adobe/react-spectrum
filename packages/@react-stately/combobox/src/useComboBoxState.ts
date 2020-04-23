@@ -12,10 +12,9 @@
 
 import {Collection, Node} from '@react-stately/collections';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
-import {Key, useEffect, useMemo, useReducer, useRef, useState} from 'react';
+import {Key, useEffect, useMemo, useRef} from 'react';
 import {SelectState, useSelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
-
 
 export interface ComboBoxState<T> extends SelectState<T> {
   value: string,
