@@ -24,14 +24,16 @@ describe('useComboBoxState tests', function () {
     let defaultProps;
     beforeEach(() => {
       onOpenChange = jest.fn();
-      defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>, onOpenChange};
+      defaultProps = {isFocused: true, items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>, onOpenChange};
     });
     it('should be closed by default', function () {
       let initialProps = defaultProps;
       let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
       expect(result.current.isOpen).toBe(false);
 
-      act(() => result.current.open());
+      act(() => {
+        result.current.open();
+      });
       expect(result.current.isOpen).toBe(true);
       expect(onOpenChange).toHaveBeenCalledWith(true);
 
