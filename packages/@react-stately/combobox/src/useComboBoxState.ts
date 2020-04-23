@@ -141,7 +141,7 @@ function usePrevious(value) {
 
 export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let itemsControlled = !!props.onFilter;
-  let collator = useCollator({});
+  let collator = useCollator({ sensitivity: 'base' });
   /*
   let menuControlled = props.isOpen !== undefined;
   let valueControlled = props.inputValue !== undefined;
