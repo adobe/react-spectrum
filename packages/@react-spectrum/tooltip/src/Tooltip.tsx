@@ -11,19 +11,25 @@
  */
 
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {mergeProps} from '@react-aria/utils';
 import React, {RefObject, useRef} from 'react';
 import {SpectrumTooltipProps} from '@react-types/tooltip';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
 import {useTooltip} from '@react-aria/tooltip';
+import {useTooltipProvider} from './TooltipTrigger';
 
 export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefObject<HTMLDivElement>) => {
   ref = ref || useRef();
+  let {
+    overlayRef,
+    ...tooltipContext
+  } = useTooltipProvider();
   let {
     variant = 'neutral',
     placement = 'right',
     isOpen,
     ...otherProps
-  } = props;
+  } = mergeProps(props, tooltipContext);
   let {styleProps} = useStyleProps(otherProps);
   let {tooltipProps} = useTooltip(props);
 
@@ -42,7 +48,7 @@ export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefOb
         },
         styleProps.className
       )}
-      ref={ref}>
+      ref={overlayRef || ref}>
       {props.children && (
         <span className={classNames(styles, 'spectrum-Tooltip-label')}>
           {props.children}

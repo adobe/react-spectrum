@@ -53,32 +53,23 @@ storiesOf('Tooltip', module)
     () => render(longMarkup)
   )
   .add(
-    'triggered by click, placement: left',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'start', type: 'click'})
+    'triggered, placement: left',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'start'})
   ).add(
-    'triggered by click, placement: right',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'end', type: 'click'})
+    'triggered, placement: right',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'end'})
   ).add(
-    'triggered by hover and focus, placement: top',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'top', type: ['hover', 'focus']})
+    'triggered, placement: top',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'top'})
   ).add(
-    'triggered by hover and focus, placement: bottom',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: ['hover', 'focus']})
+    'triggered, placement: bottom',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'bottom'})
   ).add(
-    'supports disable prop: click',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click', isDisabled: true})
+    'triggered, isDisabled',
+    () => renderWithTrigger('This is a tooltip.', {placement: 'left', isDisabled: true})
   ).add(
-    'supports disable prop: hover and focus',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: ['hover', 'focus'], isDisabled: true})
-  ).add(
-     'single tooltip: hover',
-     () => renderMultipleTriggers('This is a tooltip.', {placement: 'left', type: 'hover'})
-   ).add(
-     'single tooltip: click',
-     () => renderMultipleTriggers('This is a tooltip.', {placement: 'left', type: 'click'})
-   ).add(
-     'single tooltip: hover & click',
-     () => renderWithDifferentTriggerTypes('This is a tooltip.')
+     'multiple tooltips',
+     () => renderMultipleTriggers('This is a tooltip.', {placement: 'left'})
    );
 
 function render(content, props = {}) {
@@ -145,70 +136,6 @@ function renderMultipleTriggers(content, props = {}) {
         <TooltipTrigger {...props}>
           <ActionButton>
             Tooltip Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-    </div>
-  );
-}
-
-function renderWithDifferentTriggerTypes(content) {
-  const hoverProps = {placement: 'right' as const, type: 'hover' as const};
-  const clickProps = {placement: 'right' as const, type: 'click' as const};
-
-  return (
-    <div>
-      <div>
-        <TooltipTrigger {...hoverProps}>
-          <ActionButton>
-            Hover Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...clickProps}>
-          <ActionButton>
-            Click Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...hoverProps}>
-          <ActionButton>
-            Hover Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...clickProps}>
-          <ActionButton>
-            Click Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...clickProps}>
-          <ActionButton>
-            Click Trigger
           </ActionButton>
           <Tooltip>
             {content}
