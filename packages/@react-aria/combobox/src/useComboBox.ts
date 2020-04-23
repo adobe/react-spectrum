@@ -106,20 +106,26 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   });
 
   let onBlur = (e) => {
-    if (state.isOpen && focusedItem) {
-      state.setSelectedKey(state.selectionManager.focusedKey);
-    }
+    state.close();
 
-    // If user is clicking on the combobox button, early return so we don't change focus state and close menu twice
+    // If user is clicking on the combobox button, early return so we don't change textfield focus state, update the selected key erroneously
+    // and trigger close menu twice
     if (props.triggerRef && props.triggerRef.current.contains(e.relatedTarget)) {
       return;
+    }
+    
+    if (props.onBlur) {
+      props.onBlur(e);
     }
 
     props.setIsFocused(false);
 
     // A bit strange behavior when isOpen is true, menu can't close so you can't tab away from the
     // textfield, almost like a focus trap
-    state.close();
+    
+    if (state.isOpen && focusedItem) {
+      state.setSelectedKey(state.selectionManager.focusedKey);
+    }
   };
   
   // For textfield specific keydown operations
@@ -175,7 +181,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     ...props,
     onChange,
     onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
-    onBlur: chain(props.onBlur, onBlur),
+    onBlur,
     value: state.value,
     onFocus: chain(props.onFocus, onFocus)
   }, props.inputRef);

@@ -163,13 +163,32 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
    onSelectionChange (edited)
    */
 
+  function usePrevious(value) {
+    // The ref object is a generic container whose current property is mutable ...
+    // ... and can hold any value, similar to an instance property on a class
+    const ref = useRef();
+  
+    // Store current value in ref
+    useEffect(() => {
+      ref.current = value;
+    }, [value]); // Only re-run if value changes
+  
+    // Return previous value (happens before update in useEffect above)
+    return ref.current;
+  }
+
+  let prevValue = usePrevious(value);
+  
   useEffect(() => {
-    if (value.length > 0 && selectState.collection.size > 0 && trigger === 'input' && props.isFocused) {
+    // Only open combobox menu if there are results, if the user has focused the field, 
+    // and the value has changed recently (aka don't reopen if user closed menu via escape or clicking the button)
+    // Still need a condition for if the user hits enter and then it shouldn't open
+    if (selectState.collection.size > 0 && trigger === 'input' && props.isFocused && prevValue !== value) {
       selectState.open();
     } else if (selectState.collection && selectState.collection.size === 0) {
       selectState.close();
     }
-  }, [selectState.collection, props.menuTrigger, props.isFocused, value]);
+  }, [selectState.collection, props.menuTrigger, props.isFocused, value, prevValue]);
 
   // do i need a new selection manager?
 
