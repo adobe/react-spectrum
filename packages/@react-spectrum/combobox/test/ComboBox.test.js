@@ -80,7 +80,7 @@ describe('ComboBox', function () {
       it('keeps focus within the textfield after opening the menu', function () {
         // TODO by Dan
       });
-      
+
       it('fires onFilter if there are no items loaded yet', function () {
         let onFilter = jest.fn();
         let onOpenChange = jest.fn();
@@ -290,12 +290,13 @@ describe('ComboBox', function () {
           </ComboBox>
         </Provider>
       );
-      
+
       let combobox = getByRole('combobox');
       act(() => {
         combobox.focus();
+      });
+      act(() => {
         userEvent.type(combobox, 'One');
-        jest.runAllTimers();
       });
 
       let listbox = getByRole('listbox');
@@ -336,11 +337,11 @@ describe('ComboBox', function () {
 
       let combobox = getByRole('combobox');
       act(() => {
-        jest.runAllTimers();
         combobox.focus();
-        userEvent.type(combobox, 'Bul');
-        jest.runAllTimers();
       });
+      act(() => {
+        userEvent.type(combobox, 'Bul');
+      })
 
       expect(onOpenChange).toHaveBeenCalled();
       // TODO: test for onFilter when implemented
@@ -409,7 +410,7 @@ describe('ComboBox', function () {
         userEvent.tab();
         jest.runAllTimers();
       });
-      
+
       expect(document.activeElement).toBe(secondaryButton);
       expect(onOpenChange).toHaveBeenCalledWith(false);
       // expect(onSelectionChange).toHaveBeenCalledWith('Gengar'); // turn on when custom value allowed
