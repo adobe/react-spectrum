@@ -125,20 +125,6 @@ class FilteredCollection<T> implements Collection<Node<T>> {
   }
 }
 
-function usePrevious(value) {
-  // The ref object is a generic container whose current property is mutable ...
-  // ... and can hold any value, similar to an instance property on a class
-  const ref = useRef();
-
-  // Store current value in ref
-  useEffect(() => {
-    ref.current = value;
-  }, [value]); // Only re-run if value changes
-
-  // Return previous value (happens before update in useEffect above)
-  return ref.current;
-}
-
 export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let itemsControlled = !!props.onFilter;
   let trigger = props.menuTrigger || 'input';
@@ -150,7 +136,7 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
 
   let [value, setValue] = useControlledState(toString(props.inputValue), toString(props.defaultInputValue) || '', props.onInputChange);
 
-  let selectState  = useSelectState(props);
+  let selectState = useSelectState(props);
   selectState.collection = useMemo(() => {
     if (itemsControlled || value === '') {
       return selectState.collection;
@@ -176,6 +162,7 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
    collection size is 0
    onSelectionChange (edited)
    */
+
   useEffect(() => {
     if (value.length > 0 && selectState.collection.size > 0 && trigger === 'input' && props.isFocused) {
       selectState.open();

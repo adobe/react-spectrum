@@ -99,7 +99,6 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
       layout,
       triggerRef: unwrapDOMRef(triggerRef),
       inputRef: inputRef,
-      popoverRef: unwrapDOMRef(popoverRef),
       setIsFocused
     },
     state

@@ -40,7 +40,6 @@ interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   triggerRef,
   inputRef,
   layout,
-  popoverRef,
   onBlur?: (e: FocusEvent<Element>) => void, // don't think these two (blur/focus) should be added?
   onFocus?: (e: FocusEvent<Element>) => void,
   setIsFocused: (e: boolean) => void
@@ -106,17 +105,23 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     disallowEmptySelection: true
   });
 
-  let onBlur = () => {
+  let onBlur = (e) => {
     if (state.isOpen && focusedItem) {
       state.setSelectedKey(state.selectionManager.focusedKey);
     }
+
+    // If user is clicking on the combobox button, early return so we don't change focus state and close menu twice
+    if (props.triggerRef && props.triggerRef.current.contains(e.relatedTarget)) {
+      return;
+    }
+
     props.setIsFocused(false);
 
     // A bit strange behavior when isOpen is true, menu can't close so you can't tab away from the
     // textfield, almost like a focus trap
     state.close();
   };
-
+  
   // For textfield specific keydown operations
   let onKeyDown = (e) => {
     switch (e.key) {
@@ -145,9 +150,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
           state.selectionManager.setFocusedKey(firstKey);
         }
         break;
-      case 'Backspace':
-        console.log('delete');
-        break;
     }
   };
 
@@ -165,9 +167,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       props.inputRef.current.focus();
     }
   };
-  let onFocus = (val) => {
-    console.log('calling setFocused', val);
-    props.setIsFocused(val);
+  let onFocus = () => {
+    props.setIsFocused(true);
   };
 
   let {labelProps, inputProps} = useTextField({
