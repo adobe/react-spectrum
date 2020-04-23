@@ -19,7 +19,6 @@ import React, {FocusEvent, HTMLAttributes, useEffect, useState} from 'react';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
-import {TextFieldBase} from "@react-spectrum/textfield";
 
 interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   isOpen?: boolean,
@@ -126,6 +125,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
     // If user is clicking on the combobox button, early return so we don't change textfield focus state, update the selected key erroneously
     // and trigger close menu twice
+    // TODO add a condition here that also checks if you are clicking on the popover menu item
+    // if so set focus back onto the input menu
     if (props.triggerRef && props.triggerRef.current.contains(e.relatedTarget)) {
       return;
     }
@@ -183,8 +184,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onPress = (e) => {
     if (e.pointerType === 'touch') {
       props.inputRef.current.focus();
-      //props.inputRef.selectionStart = 0;
-      //props.inputRef.selectionEnd = 0;
+      // props.inputRef.selectionStart = 0;
+      // props.inputRef.selectionEnd = 0;
     }
   };
 

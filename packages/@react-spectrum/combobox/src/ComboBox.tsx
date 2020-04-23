@@ -37,8 +37,6 @@ import {TextFieldBase} from '@react-spectrum/textfield';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-import {chain} from "@react-aria/utils";
-
 
 interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   isOpen?: boolean,
