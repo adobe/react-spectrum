@@ -15,7 +15,7 @@
 import {chain, mergeProps} from '@react-aria/utils';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {ComboBoxState} from '@react-stately/combobox';
-import React, {FocusEvent, HTMLAttributes, useEffect, useState} from 'react';
+import {FocusEvent, HTMLAttributes, useEffect, useState} from 'react';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
