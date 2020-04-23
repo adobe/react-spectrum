@@ -166,7 +166,31 @@ function Nav({currentPageName, pages, publicUrl}) {
     return !isIndex.test(p.name) && pageParts.length === 1;
   });
 
+  // Key by category
+  let pageMap = {};
+  let rootPages = [];
+  pages.forEach(p => {
+    let cat = p.category;
+    if (cat) {
+      if (cat in pageMap) {
+        pageMap[cat].push(p);
+      } else {
+        pageMap[cat] = [p];
+      }
+    } else {
+      rootPages.push(p);
+    }
+  });
+
   let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
+
+  function SideNavItem({name, url, title}) {
+    return (
+      <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: name === currentPageName})}>
+        <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={url}>{title}</a>
+      </li>
+    );
+  }
 
   return (
     <nav className={docStyles.nav}>
@@ -188,9 +212,13 @@ function Nav({currentPageName, pages, publicUrl}) {
         </a>
       </header>
       <ul className={sideNavStyles['spectrum-SideNav']}>
-        {pages.map(p => (
-          <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPageName})}>
-            <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{p.title}</a>
+        {rootPages.map(p => <SideNavItem {...p} />)}
+        {Object.keys(pageMap).sort().map(key => (
+          <li className={sideNavStyles['spectrum-SideNav-item']}>
+            <h3 className={sideNavStyles['spectrum-SideNav-heading']}>{key}</h3>
+            <ul className={sideNavStyles['spectrum-SideNav']}>
+              {pageMap[key].map(p => <SideNavItem {...p} />)}
+            </ul>
           </li>
         ))}
       </ul>

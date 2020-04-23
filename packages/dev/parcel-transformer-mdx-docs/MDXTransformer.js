@@ -15,6 +15,7 @@ const mdx = require('@mdx-js/mdx');
 const flatMap = require('unist-util-flatmap');
 const treeSitter = require('remark-tree-sitter');
 const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
+const frontmatter = require('remark-frontmatter');
 const slug = require('remark-slug');
 const util = require('mdast-util-toc');
 
@@ -84,6 +85,7 @@ module.exports = new Transformer({
 
     let toc = [];
     let title = '';
+    let category = '';
     const extractToc = (options) => {
       const settings = options || {};
       const depth = settings.maxDepth || 6;
@@ -122,6 +124,16 @@ module.exports = new Transformer({
         title = toc[0].textContent;
         toc = toc[0].children;
 
+        /*
+         * Piggy back here to grab additional metadata.
+         * Should probably use js-yaml at some point.
+         */ 
+        let metadata = node.children.find(c => c.type === 'yaml');
+        if (metadata) {
+          let matches = /^category:\s(\w+)$/.exec(metadata.value);
+          category = matches ? matches[1] : '';
+        }
+
         return node;
       }
 
@@ -134,6 +146,7 @@ module.exports = new Transformer({
         extractToc,
         extractExamples,
         fragmentWrap,
+        [frontmatter, {type: 'yaml', anywhere: true, marker: '-'}],
         [
           treeSitter,
           {
@@ -162,6 +175,7 @@ export default {};
     asset.setCode(Math.random().toString(36).slice(4));
     asset.meta.toc = toc;
     asset.meta.title = title;
+    asset.meta.category = category;
 
     let assets = [
       asset,
