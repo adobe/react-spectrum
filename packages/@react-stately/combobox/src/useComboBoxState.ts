@@ -157,11 +157,16 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   // Double check if props.selectedKey should make textfield value controlled
   let [value, setValue] = useControlledState(toString(props.inputValue) || selectedKeyText, toString(props.defaultInputValue) || defaultSelectedKeyText || '', props.onInputChange);
 
-  if (value !== '') {
-    selectState.collection = new FilteredCollection(selectState.collection, (node) => node.textValue.startsWith(value));
-  }
+  selectState.collection = useMemo(() => {
+    if (itemsControlled || value === '') {
+      return selectState.collection;
+    }
+    // should value be textValue?
+    return new FilteredCollection(selectState.collection, (node) => node.textValue.startsWith(value));
+  }, [selectState.collection, value, itemsControlled]);
+
   if (selectState.isOpen && selectState.collection.size === 0) {
-    selectState.close();
+    selectState.close(); // i don't like this, i'm changing state in the render flow
   }
 
   let open = () => {
