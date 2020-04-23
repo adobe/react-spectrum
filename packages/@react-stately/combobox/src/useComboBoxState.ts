@@ -133,10 +133,15 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let valueControlled = props.inputValue !== undefined;
   let selectedControlled = !!props.selectedKey;
    */
-
-  let [value, setValue] = useControlledState(toString(props.inputValue), toString(props.defaultInputValue) || '', props.onInputChange);
-
   let selectState = useSelectState(props);
+  let selectedKeyItem = props.selectedKey ? selectState.collection.getItem(props.selectedKey) : undefined;
+  let selectedKeyText = selectedKeyItem ? selectedKeyItem.textValue || selectedKeyItem.rendered as string : undefined;
+  // Maybe don't need to do for defaultSelectedKey? Need to do for selectedKey so that the textfield is properly controlled reflects selectedKey text
+  let defaultSelectedKeyItem = props.defaultSelectedKey ? selectState.collection.getItem(props.defaultSelectedKey) : undefined;
+  let defaultSelectedKeyText = defaultSelectedKeyItem ? defaultSelectedKeyItem.textValue || defaultSelectedKeyItem.rendered as string : undefined;
+  // Double check if props.selectedKey should make textfield value controlled
+  let [value, setValue] = useControlledState(toString(props.inputValue) || selectedKeyText, toString(props.defaultInputValue) || defaultSelectedKeyText || '', props.onInputChange);
+
   selectState.collection = useMemo(() => {
     if (itemsControlled || value === '') {
       return selectState.collection;

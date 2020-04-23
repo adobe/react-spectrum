@@ -62,14 +62,24 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     state
   );
 
-  // TextFieldBase already has useTextField and will return the value of onChange as a string instead
-  // of an event, this leads to us getting onChange twice if we useTextField as well, and it'll throw an error
-  // because string.target doesn't exist
   let onChange = (val) => {
     state.setValue(val);
+
+    // If user deletes entry in textfield, clear combobox selection
+    // Probably needs more conditions here (shouldn't clear in controlled?)
+    // Move into a useEffect?
+    if (val === '' && state.selectedKey) {
+      // don't use clearSelection? For some reason toggleSelection doesn't work
+      state.selectionManager.clearSelection();
+      // state.selectionManager.toggleSelection(state.selectedKey);
+      state.open();
+    }
   };
 
+
+  // Perhaps this goes into stately
   useEffect(() => {
+    // Perhaps replace the below with state.selectedItem?
     let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
     if (selectedItem) {
       let itemText = selectedItem.textValue || selectedItem.rendered as string; // how should we handle this? rendered is typed as an object
@@ -80,8 +90,14 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       }
 
       // Update textfield value if new item is selected
-      if (itemText !== state.value) {
+      // Only do this if not controlled?
+      if (itemText !== state.value && !(props.inputValue)) {
         state.setValue(itemText);
+      }
+    } else {
+      if (props.inputValue) {
+        // TODO find item that has matching text and set as selectedKey
+        // If none found, make invalid?
       }
     }
   }, [state.selectedKey, props.inputValue, props.selectedKey]);
@@ -113,7 +129,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if (props.triggerRef && props.triggerRef.current.contains(e.relatedTarget)) {
       return;
     }
-    
+
     if (props.onBlur) {
       props.onBlur(e);
     }
@@ -126,6 +142,10 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if (state.isOpen && focusedItem) {
       state.setSelectedKey(state.selectionManager.focusedKey);
     }
+  };
+
+  let onFocus = () => {
+    props.setIsFocused(true);
   };
   
   // For textfield specific keydown operations
@@ -172,9 +192,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if (e.pointerType !== 'touch') {
       props.inputRef.current.focus();
     }
-  };
-  let onFocus = () => {
-    props.setIsFocused(true);
   };
 
   let {labelProps, inputProps} = useTextField({

@@ -433,4 +433,50 @@ describe('ComboBox', function () {
       expect(outerBlur).toHaveBeenCalledTimes(1);
     });
   });
+
+  describe('clears selection', function () {
+    it('if user deletes all text in input (uncontrolled)', function () {
+      // TODO by Dan
+    });
+
+    it('doesn\'t happen if user deletes all text in input (controlled)', function () {
+      // TODO by Dan
+    });
+  });
+
+  describe('controlled', function () {
+    it('test behavior for selectedKey and inputValue (matching)', function () {
+      // TODO by Dan
+    });
+
+    it('test behavior for selectedKey and inputValue (not matching should error)', function () {
+      // TODO by Dan
+    });
+
+    it('test behavior for selectedKey and defaultInputValue', function () {
+      // TODO by Dan
+    });
+
+    it('test behavior for defaultSelectedKey and inputValue', function () {
+      // TODO by Dan
+    });
+  });
+
+  describe('uncontrolled', function () {
+    it('test behavior for defaultSelectedKey and defaultValue (matching)', function () {
+      // TODO by Dan
+    });
+
+    it('test behavior for defaultSelectedKey and defaultValue (not matching should error?)', function () {
+      // TODO by Dan
+    });
+
+    it('test behavior for only defaultInputValue', function () {
+      // TODO by Dan
+    });
+
+    it('test behavior for only defaultSelectedKey', function () {
+      // TODO by Dan
+    });
+  });
 });
