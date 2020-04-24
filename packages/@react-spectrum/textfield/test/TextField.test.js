@@ -133,7 +133,7 @@ describe('Shared TextField behavior', () => {
     } else {
       input = tree.getAllByTestId(testId)[0];
     }
-    act(() => {fireEvent.change(input, {target: {value: inputText}});})
+    act(() => {fireEvent.change(input, {target: {value: inputText}});});
     expect(onChange).toHaveBeenCalledTimes(1);
 
     if (Component === V2SearchField) {
