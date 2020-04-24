@@ -40,15 +40,11 @@ export function useFocusRing(props: FocusRingProps = {}): FocusRingAria {
   let {isFocusVisible} = useFocusVisible(props);
   let {focusProps} = useFocus({
     isDisabled: within,
-    onFocusChange: setFocused,
-    onFocus: e => e.continuePropagation(),
-    onBlur: e => e.continuePropagation()
+    onFocusChange: setFocused
   });
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !within,
-    onFocusWithinChange: setFocusWithin,
-    onFocusWithin: e => e.continuePropagation(),
-    onBlurWithin: e => e.continuePropagation()
+    onFocusWithinChange: setFocusWithin
   });
 
   return {
