@@ -87,3 +87,6 @@ build:
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
+
+website-master:
+	yarn build:docs --dist-dir dist/master/docs
