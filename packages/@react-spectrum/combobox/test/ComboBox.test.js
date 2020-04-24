@@ -71,6 +71,14 @@ describe('ComboBox', function () {
     expect(label).toBeVisible();
   });
 
+  it('features default behavior of completionMode suggest and menuTrigger focus', function () {
+     // TODO by Dan
+  });
+
+  it('attaches a ref to the input field if provided as a prop', function () {
+    // TODO by Dan
+  });
+
   describe('opening', function () {
     describe('via isOpen and defaultOpen', function () {
       // TODO by Dan, write case testing each of these props
@@ -339,9 +347,10 @@ describe('ComboBox', function () {
       act(() => {
         combobox.focus();
       });
+      
       act(() => {
         userEvent.type(combobox, 'Bul');
-      })
+      });
 
       expect(onOpenChange).toHaveBeenCalled();
       // TODO: test for onFilter when implemented

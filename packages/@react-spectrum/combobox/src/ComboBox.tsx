@@ -11,11 +11,11 @@
  */
 
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, unwrapDOMRef, useDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
+import {classNames, unwrapDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
 import {
   CollectionBase,
   DOMProps,
-  DOMRef, DOMRefValue,
+  DOMRefValue,
   FocusableRefValue,
   InputBase,
   SingleSelection,
@@ -31,9 +31,10 @@ import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import React, {useLayoutEffect, useRef, useState} from 'react';
+import React, {RefObject, useLayoutEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
+import {TextFieldRef} from '@react-types/textfield';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
@@ -55,10 +56,11 @@ interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
 
 // TODO: Check extends
 interface SpectrumComboBox<T> extends InputBase, TextInputBase, ComboBoxProps<T>, SpectrumLabelableProps, DOMProps, StyleProps {
-  isQuiet?: boolean
+  isQuiet?: boolean,
+  direction?: 'bottom' | 'top'
 }
 
-function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
+function ComboBox<T>(props: SpectrumComboBox<T>, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
 
   let {
@@ -76,6 +78,7 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
     autoFocus,
     shouldFlip = true,
     width,
+    direction = 'bottom',
     ...otherProps
   } = props;
 
@@ -84,7 +87,6 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
   let listboxRef = useRef();
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
-  let domRef = useDOMRef(ref);
   let [isFocused, setIsFocused] = useState(false);
 
   let state = useComboBoxState({...props, isFocused});
@@ -106,7 +108,7 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
     targetRef: unwrapDOMRef(triggerRef),
     overlayRef: unwrapDOMRef(popoverRef),
     scrollRef: listboxRef,
-    placement: 'bottom end' as Placement,
+    placement: `${direction} end` as Placement,
     shouldFlip: shouldFlip,
     isOpen: state.isOpen
   });
@@ -197,10 +199,10 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
           // Perhaps should filterDOMProps(DOMEventPropNames)?
           // Think about whether or not we want to do send all otherProps to Textfield or be more discerning?
           {...otherProps}
-          // check this passing of labelProps since we handle label ourselves for combobox
           labelProps={labelProps}
           inputProps={inputProps}
           inputRef={inputRef}
+          ref={ref}
           inputClassName={
             classNames(
               styles,
@@ -247,7 +249,6 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
     return (
       <div
         {...styleProps}
-        ref={domRef}
         className={labelWrapperClass}>
         <Label
           {...labelProps}
@@ -268,11 +269,3 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: DOMRef<HTMLDivElement>) {
 // TODO: Probably need to cast this
 const _ComboBox = React.forwardRef(ComboBox);
 export {_ComboBox as ComboBox};
-
-// function unwrapInputRef(ref: RefObject<TextFieldRef>) {
-//   return {
-//     get current() {
-//       return ref.current && ref.current.getInputElement();
-//     }
-//   };
-// }

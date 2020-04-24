@@ -12,10 +12,12 @@
 
 
  // TODO: Move the below into combobox types
-import {chain, mergeProps} from '@react-aria/utils';
+import {chain} from '@react-aria/utils';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {ComboBoxState} from '@react-stately/combobox';
-import {FocusEvent, HTMLAttributes, useEffect, useState} from 'react';
+import {FocusEvent, HTMLAttributes, RefObject, useEffect, useState} from 'react';
+import {ListLayout} from '@react-stately/collections';
+import {PressProps} from '@react-aria/interactions';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
@@ -36,16 +38,16 @@ interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
 }
 
 interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
-  triggerRef,
-  inputRef,
-  layout,
+  triggerRef: RefObject<HTMLElement>,
+  inputRef: RefObject<HTMLInputElement>,
+  layout: ListLayout<T>,
   onBlur?: (e: FocusEvent<Element>) => void, // don't think these two (blur/focus) should be added?
   onFocus?: (e: FocusEvent<Element>) => void,
   setIsFocused: (e: boolean) => void
 }
 
 interface ComboBoxAria {
-  triggerProps: HTMLAttributes<HTMLElement>,
+  triggerProps: HTMLAttributes<HTMLElement> & PressProps,
   inputProps: HTMLAttributes<HTMLElement>,
   menuProps: HTMLAttributes<HTMLElement>,
   labelProps: HTMLAttributes<HTMLElement>
@@ -184,8 +186,9 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onPress = (e) => {
     if (e.pointerType === 'touch') {
       props.inputRef.current.focus();
-      //props.inputRef.selectionStart = 0;
-      //props.inputRef.selectionEnd = 0;
+      // props.inputRef.selectionStart = 0;
+      // props.inputRef.selectionEnd = 0;
+      // Force toggle the menu regardless of focus state
       state.toggle(null, true);
     }
   };

@@ -12,13 +12,39 @@
 
 import {Collection, Node} from '@react-stately/collections';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
-import {Key, useEffect, useMemo, useRef} from 'react';
-import {SelectState, useSelectState} from '@react-stately/select';
+import {FocusStrategy} from '@react-types/menu';
+import {Key} from 'react';
+import {ListState} from '@react-stately/list';
 import {useControlledState} from '@react-stately/utils';
+import {useSelectState} from '@react-stately/select';
 
-export interface ComboBoxState<T> extends SelectState<T> {
+// Can't extend SelectState because we modify toggle here, copied types for now
+export interface ComboBoxState<T> extends ListState<T> {
+  /** The key for the currently selected item. */
+  selectedKey: Key,
+  /** Sets the selected key. */
+  setSelectedKey: (key: Key) => void,
+  /** The value of the currently selected item. */
+  selectedItem: Node<T>,
+  /** Whether the select is currently focused. */
+  isFocused: boolean,
+  /** Sets whether the select is focused. */
+  setFocused: (isFocused: boolean) => void,
+  /** Whether the menu is currently open. */
+  isOpen: boolean,
+  /** Sets whether the menu is open. */
+  setOpen(value: boolean): void,
+  /** Controls which item will be auto focused when the menu opens. */
+  focusStrategy: FocusStrategy,
+  /** Sets which item will be auto focused when the menu opens. */
+  setFocusStrategy(value: FocusStrategy): void,
+  /** Opens the menu. */
+  open(): void,
+  /** Closes the menu. */
+  close(): void,
   value: string,
-  setValue: (value: string) => void
+  setValue: (value: string) => void,
+  toggle: (strategy: FocusStrategy | null, force?: boolean) => void 
 }
 
 interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
@@ -124,29 +150,8 @@ class FilteredCollection<T> implements Collection<Node<T>> {
   }
 }
 
-function usePrevious(value) {
-  // The ref object is a generic container whose current property is mutable ...
-  // ... and can hold any value, similar to an instance property on a class
-  const ref = useRef();
-
-  // Store current value in ref
-  useEffect(() => {
-    ref.current = value;
-  }, [value]); // Only re-run if value changes
-
-  // Return previous value (happens before update in useEffect above)
-  return ref.current;
-}
 
 export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
-  let itemsControlled = !!props.onFilter;
-  let trigger = props.menuTrigger || 'input';
-  /*
-  let menuControlled = props.isOpen !== undefined;
-  let valueControlled = props.inputValue !== undefined;
-  let selectedControlled = !!props.selectedKey;
-   */
-
   let selectState = useSelectState(props);
 
   let selectedKeyItem = props.selectedKey ? selectState.collection.getItem(props.selectedKey) : undefined;
@@ -170,35 +175,11 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
     }
   };
 
-  let toggle = (strategy, force) => {
+  let toggle = (strategy, force = false) => {
     if (props.isFocused || force) {
       selectState.toggle(strategy);
     }
   };
-
-  /**
-   * open
-   prop isOpen - unless collection size is 0
-   prop defaultIsOpen - unless collection size is 0
-   button clicked - unless collection size is 0
-   arrow down/up - unless collection size is 0
-   mode: input - input onChange - unless collection size is 0
-   mode: focus - input onFocus - unless collection size is 0
-
-   close
-   prop isOpen removed
-   button clicked
-   input onBlur
-   esc key
-   collection size is 0
-   onSelectionChange (edited)
-   */
-
-  // do i need a new selection manager?
-
-  // For completionMode = complete
-  // let [suggestionValue, setSuggestionValue] = useState('');
-
 
   return {
     ...selectState,
@@ -208,7 +189,6 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
     setValue
   };
 }
-
 
 function toString(val) {
   if (val == null) {

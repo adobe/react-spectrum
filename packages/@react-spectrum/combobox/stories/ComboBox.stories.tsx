@@ -36,6 +36,19 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'user provided id and label',
+    () => (
+      <div>
+        <label id="test-label" htmlFor="test-id">Combobox</label>
+        <ComboBox id="test-id" aria-labelledby="test-label" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+          <Item uniqueKey="one">Item One</Item>
+          <Item uniqueKey="two" textValue="Item Two">Custom Item</Item>
+          <Item uniqueKey="three">Item Three</Item>
+        </ComboBox>
+      </div>
+    )
+  )
+  .add(
     'menuTrigger: manual',
     () => render({menuTrigger: 'manual'})
   )
@@ -119,6 +132,10 @@ storiesOf('ComboBox', module)
   .add(
     'autoFocus: true',
     () => render({autoFocus: true})
+  )
+  .add(
+    'direction: top',
+    () => render({direction: 'top'})
   )
   .add(
     'allowsCustomValue: true',
