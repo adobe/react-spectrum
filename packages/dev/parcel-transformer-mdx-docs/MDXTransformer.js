@@ -174,6 +174,9 @@ ${compiled}
         uniqueKey: 'page',
         env: {
           context: 'node',
+          engines: {
+            node: process.versions.node
+          },
           outputFormat: 'commonjs',
           includeNodeModules: {
             react: false
