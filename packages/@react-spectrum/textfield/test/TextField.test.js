@@ -133,7 +133,7 @@ describe('Shared TextField behavior', () => {
     } else {
       input = tree.getAllByTestId(testId)[0];
     }
-    fireEvent.change(input, {target: {value: inputText}});
+    act(() => {fireEvent.change(input, {target: {value: inputText}});})
     expect(onChange).toHaveBeenCalledTimes(1);
 
     if (Component === V2SearchField) {
@@ -165,7 +165,7 @@ describe('Shared TextField behavior', () => {
     } else {
       input = tree.getAllByTestId(testId)[0];
     }
-    fireEvent.focus(input);
+    act(() => {fireEvent.focus(input);});
     expect(onFocus).toHaveBeenCalledTimes(1);
     act(() => {userEvent.click(input);});
     expect(onFocus).toHaveBeenCalledTimes(2);
@@ -304,9 +304,6 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name automatically focuses the input field if autoFocus=true', ({Name, Component}) => {
     let tree = renderComponent(Component, {autoFocus: true, onFocus, 'aria-label': 'mandatory label'});
     let input;
@@ -316,13 +313,8 @@ describe('Shared TextField behavior', () => {
       input = tree.getAllByTestId(testId)[0];
     }
 
-    // v2 components seem to focus the entire body, not sure if bug, but functionally is the same
-    if (Name.indexOf('v2') !== -1) {
-      expect(document.activeElement).toEqual(document.body);
-    } else {
-      expect(document.activeElement).toEqual(input);
-      expect(onFocus).toHaveBeenCalledTimes(1);
-    }
+    expect(document.activeElement).toEqual(input);
+    expect(onFocus).toHaveBeenCalledTimes(1);
   });
 
   it.each`
