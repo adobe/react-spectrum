@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
@@ -17,8 +18,8 @@ import highlightCss from './syntax-highlight.css';
 import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
-import path from 'path';
 import React from 'react';
+import ruleStyles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {theme} from '@react-spectrum/theme-default';
 import {ToC} from './ToC';
@@ -61,15 +62,28 @@ function getTarget(href) {
     return null;
   }
 
+  if (/^\//.test(href)) {
+    return null;
+  }
+
   return '_blank';
 }
 
-export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
+function Page({children, title, styles, scripts}) {
   return (
-    <html lang="en-US" dir="ltr" className={classNames(theme.global.spectrum, theme.light['spectrum--light'], theme.medium['spectrum--medium'], typographyStyles.spectrum, docStyles.provider, highlightCss.spectrum)}>
+    <html
+      lang="en-US"
+      dir="ltr"
+      className={classNames(
+        theme.global.spectrum,
+        theme.light['spectrum--light'],
+        theme.medium['spectrum--medium'],
+        typographyStyles.spectrum,
+        docStyles.provider,
+        highlightCss.spectrum)}>
       <head>
+        <title>{title}</title>
         <meta charset="utf-8" />
-        <title>{path.basename(currentPage, path.extname(currentPage))}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Server rendering means we cannot use a real <Provider> component to do this.
             Instead, we apply the default theme classes to the html element. In order to
@@ -115,37 +129,105 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
         {scripts.map(s => <script type={s.type} src={s.url} defer />)}
       </head>
       <body>
-        <div className={docStyles.pageHeader} id="header" />
-        <nav className={docStyles.nav}>
-          <header>
-            <a href={publicUrl}>
-              <svg viewBox="0 0 30 26" fill="#E1251B">
-                <polygon points="19,0 30,0 30,26" />
-                <polygon points="11.1,0 0,0 0,26" />
-                <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
-              </svg>
-              <h2 className={typographyStyles['spectrum-Heading4']}>React Spectrum</h2>
-            </a>
-          </header>
-          <ul className={sideNavStyles['spectrum-SideNav']}>
-            {pages.filter(p => p.name !== 'index.html' && (currentPage === 'index.html' || p.name.split('/')[0] === currentPage.split('/')[0])).map(p => (
-              <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPage})}>
-                <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{path.basename(p.name, path.extname(p.name))}</a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        <main>
-          <article className={typographyStyles['spectrum-Typography']}>
-            <MDXProvider components={mdxComponents}>
-              <LinkProvider>
-                {children}
-              </LinkProvider>
-            </MDXProvider>
-          </article>
-          <ToC toc={toc} />
-        </main>
+        {children}
       </body>
     </html>
+  );
+}
+
+function dirToTitle(dir) {
+  return dir
+    .split('/')[0]
+    .split('-')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+function Nav({currentPageName, pages, publicUrl}) {
+  let isIndex = /index\.html$/;
+  let currentParts = currentPageName.split('/');
+  let currentDir = currentParts[0];
+    
+  pages = pages.filter(p => {
+    let pageParts = p.name.split('/');
+    let pageDir = pageParts[0];
+
+    // Pages within same directory (react-spectrum/Alert.html)
+    if (currentParts.length > 1) {
+      return currentDir === pageDir && !isIndex.test(p.name);
+    }
+
+    // Top-level index pages (react-spectrum/index.html)
+    if (currentParts.length === 1 && pageParts.length > 1 && isIndex.test(p.name)) {
+      return true;
+    }
+
+    // Other top-level pages
+    return !isIndex.test(p.name) && pageParts.length === 1;
+  });
+
+  let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
+
+  return (
+    <nav className={docStyles.nav}>
+      <header>
+        {currentParts.length > 1 &&
+          <a href="../index.html" className={docStyles.backBtn}>
+            <ChevronLeft />
+          </a>
+        }
+        <a href={publicUrl} className={docStyles.homeBtn}>
+          <svg viewBox="0 0 30 26" fill="#E1251B">
+            <polygon points="19,0 30,0 30,26" />
+            <polygon points="11.1,0 0,0 0,26" />
+            <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
+          </svg>
+          <h2 className={typographyStyles['spectrum-Heading4']}>
+            {title}
+          </h2>
+        </a>
+      </header>
+      <ul className={sideNavStyles['spectrum-SideNav']}>
+        {pages.map(p => (
+          <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: p.name === currentPageName})}>
+            <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={p.url}>{p.title}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+function Footer() {
+  const year = new Date().getFullYear();
+  return (
+    <footer>
+      <hr className={classNames(ruleStyles['spectrum-Rule'], ruleStyles['spectrum-Rule--small'], ruleStyles['spectrum-Rule--horizontal'])} />
+      <ul>
+        <li>Copyright © {year} Adobe. All rights reserved.</li>
+        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy.html">Privacy</a></li>
+        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/legal/terms.html">Terms of Use</a></li>
+        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy/cookies.html">Cookies</a></li>
+      </ul>
+    </footer>
+  );
+}
+
+export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
+
+  return (
+    <Page title={currentPage.title} scripts={scripts} styles={styles}>
+      <div className={docStyles.pageHeader} id="header" />
+      <Nav currentPageName={currentPage.name} pages={pages} publicUrl={publicUrl} />
+      <main>
+        <article className={typographyStyles['spectrum-Typography']}>
+          <MDXProvider components={mdxComponents}>
+            <LinkProvider>{children}</LinkProvider>
+          </MDXProvider>
+        </article>
+        {toc.length ? <ToC toc={toc} /> : null}
+        <Footer />
+      </main>
+    </Page>
   );
 }
