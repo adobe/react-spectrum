@@ -30,6 +30,20 @@ html, body {
   }
 }
 
+.heroImage {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+.highlights {
+  display: flex;
+
+  div {
+    padding: 0 8px;
+  }
+}
+
 .nav {
   position: fixed;
   top: 0;

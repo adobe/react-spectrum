@@ -10,8 +10,38 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-# React Spectrum
+import {Highlights, Image} from '@react-spectrum/docs';
+import heroNarrow from 'url:./assets/hero-narrow.png';
+import heroWide from 'url:./assets/hero-wide.png';
 
-- [React Spectrum](./react-spectrum/index.html)
-- [React Aria](./react-aria/index.html)
-- [React Stately](./react-stately/index.html)
+# Meet React Spectrum
+
+React Spectrum is an open-source implementation of Spectrum, Adobe’s design system written in JavaScript.
+It includes React components and tools to make applications accessible and cohesive.
+
+<Image type="hero">
+  <img srcset={`${heroNarrow} 600w,
+              ${heroWide} 967w`}
+      sizes="(max-width: 600px) 480px,
+              967px"
+      src={heroWide}
+      alt="React Spectrum hero image" />
+</Image>
+
+<Highlights items={[
+  {
+    title: 'React Spectrum',
+    description: 'In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document',
+    url: './react-spectrum/index.html'
+  },
+  {
+    title: 'React Aria',
+    description: 'In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document',
+    url: './react-aria/index.html'
+  },
+  {
+    title: 'React Stately',
+    description: 'In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document',
+    url: './react-stately/index.html'
+  }
+]} />

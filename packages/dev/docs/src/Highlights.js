@@ -12,11 +12,18 @@
 
 import docStyles from './docs.css';
 import React from 'react';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
-export function ExampleImage({children, ...props}) {
+export function Highlights({items}) {
   return (
-    <div className={docStyles['exampleImage']}>
-      {children}
+    <div className={docStyles.highlights}>
+      {items.map(i => (
+        <div key={i.title}>
+          <h3 className={typographyStyles['spectrum-Heading3']}>{i.title}</h3>
+          <p className={typographyStyles['spectrum-Body3']}>{i.description}</p>
+          <p className={typographyStyles['spectrum-Body3']}><a href={i.url}>Learn more</a></p>
+        </div>
+      ))}
     </div>
   );
 }
