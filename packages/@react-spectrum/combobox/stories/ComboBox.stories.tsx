@@ -62,11 +62,11 @@ storiesOf('ComboBox', module)
   )
   .add(
     'inputValue (controlled)',
-    () => render({inputValue: 'controlled value'})
+    () => render({inputValue: 'Item'})
   )
   .add(
     'defaultInputValue (uncontrolled)',
-    () => render({defaultInputValue: 'uncontrolled value'})
+    () => render({defaultInputValue: 'Item'})
   )
   .add(
     'selectedKey (controlled)',

@@ -220,7 +220,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
     onBlur,
     value: state.value,
-    onFocus,
+    onFocus
   }, props.inputRef);
 
   return {
