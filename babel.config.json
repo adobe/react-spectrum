@@ -2,7 +2,11 @@
   "presets": [
     "@babel/preset-typescript",
     "@babel/preset-react",
-    "@parcel/babel-preset-env"
+    ["@parcel/babel-preset-env",
+      {
+        "loose": true
+      }
+    ]
   ],
   "env": {
     "storybook": {
@@ -10,10 +14,12 @@
         "@babel/preset-typescript",
         "@babel/preset-react",
         [
-          "@babel/preset-env",
+          "@parcel/babel-preset-env",
           {
-            "useBuiltIns": "usage",
-            "corejs": 3
+            "loose": true,
+            "targets": {
+              "esmodules": true
+            }
           }
         ]
       ]
@@ -68,15 +74,12 @@
     [
       "@babel/plugin-proposal-class-properties",
       {
-        "loose": false
+        "loose": true
       }
     ],
     "@babel/plugin-proposal-export-default-from",
     "@babel/plugin-proposal-export-namespace-from",
-    "@babel/plugin-proposal-object-rest-spread",
     "@babel/plugin-syntax-class-properties",
-    "@babel/plugin-syntax-object-rest-spread",
-    "@babel/plugin-transform-async-to-generator",
     "transform-glob-import",
     "babel-plugin-macros"
   ],

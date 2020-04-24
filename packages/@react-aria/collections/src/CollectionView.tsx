@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, focusWithoutScrolling} from '@react-aria/utils';
 import {Collection, Layout} from '@react-stately/collections';
 import {CollectionItem} from './CollectionItem';
+import {CollectionState, useCollectionState} from '@react-stately/collections';
+import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
 import {ReusableView} from '@react-stately/collections';
 import {ScrollView} from './ScrollView';
-import {useCollectionState} from '@react-stately/collections';
 
 interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLElement> {
   children: (type: string, content: T) => V,
@@ -34,25 +34,47 @@ interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLEl
 }
 
 function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, ref: RefObject<HTMLDivElement>) {
-  let {children: renderView, renderWrapper, layout, collection, focusedKey, sizeToFit, scrollDirection, ...otherProps} = props;
-  let {
-    visibleViews,
-    visibleRect,
-    setVisibleRect,
-    contentSize,
-    isAnimating,
-    collectionManager,
-    startScrolling,
-    endScrolling
-  } = useCollectionState({
-    layout,
-    collection,
-    renderView,
-    renderWrapper: renderWrapper || defaultRenderWrapper
-  });
+  let {children: renderView, renderWrapper, layout, collection, sizeToFit, scrollDirection, ...otherProps} = props;
 
   let fallbackRef = useRef<HTMLDivElement>();
   ref = ref || fallbackRef;
+
+  let state = useCollectionState({
+    layout,
+    collection,
+    renderView,
+    renderWrapper: renderWrapper || defaultRenderWrapper,
+    onVisibleRectChange(rect) {
+      ref.current.scrollLeft = rect.x;
+      ref.current.scrollTop = rect.y;
+    }
+  });
+
+  let {collectionViewProps} = useCollectionView(props, state, ref);
+  
+  return (
+    <ScrollView 
+      {...mergeProps(otherProps, collectionViewProps)}
+      ref={ref}
+      innerStyle={state.isAnimating ? {transition: `none ${state.collectionManager.transitionDuration}ms`} : undefined}
+      contentSize={state.contentSize}
+      onVisibleRectChange={state.setVisibleRect}
+      onScrollStart={state.startScrolling}
+      onScrollEnd={state.endScrolling}
+      sizeToFit={sizeToFit}
+      scrollDirection={scrollDirection}>
+      {state.visibleViews}
+    </ScrollView>
+  );
+}
+
+interface CollectionViewOpts {
+  focusedKey?: Key
+}
+
+export function useCollectionView<T extends object, V, W>(props: CollectionViewOpts, state: CollectionState<T, V, W>, ref: RefObject<HTMLElement>) {
+  let {focusedKey} = props;
+  let {collectionManager} = state;
 
   // Scroll to the focusedKey when it changes. Actually focusing the focusedKey
   // is up to the implementation using CollectionView since we don't have refs
@@ -82,31 +104,20 @@ function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, r
 
   // When the focused item is scrolled out of view and is removed from the DOM, 
   // move focus to the collection view as a whole if focus was within before.
-  let focusedView = collectionManager.getItemView(focusedKey);
+  let focusedView = collectionManager.getView(focusedKey);
   useEffect(() => {
     if (focusedKey && !focusedView && isFocusWithin.current && document.activeElement !== ref.current) {
       focusWithoutScrolling(ref.current);
     }
   });
-  
-  return (
-    <ScrollView 
-      {...otherProps}
-      tabIndex={focusedView ? -1 : 0}
-      ref={ref}
-      onFocus={chain(otherProps.onFocus, onFocus)}
-      onBlur={chain(otherProps.onBlur, onBlur)}
-      innerStyle={isAnimating ? {transition: `none ${collectionManager.transitionDuration}ms`} : undefined}
-      contentSize={contentSize}
-      visibleRect={visibleRect}
-      onVisibleRectChange={setVisibleRect}
-      onScrollStart={startScrolling}
-      onScrollEnd={endScrolling}
-      sizeToFit={sizeToFit}
-      scrollDirection={scrollDirection}>
-      {visibleViews}
-    </ScrollView>
-  );
+
+  return {
+    collectionViewProps: {
+      tabIndex: focusedView ? -1 : 0,
+      onFocus,
+      onBlur
+    }
+  };
 }
 
 // forwardRef doesn't support generic parameters, so cast the result to the correct type

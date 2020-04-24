@@ -81,8 +81,11 @@ article {
 }
 
 .propTable tr {
-  background: none !important;
   cursor: initial;
+}
+
+.propTable td {
+  background: none !important;
 }
 
 .type-description {

@@ -39,15 +39,36 @@ let nestedColumns = [
 
 let items = [
   {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
-  {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
+  {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+  {test: 'Test 1', foo: 'Foo 3', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  {test: 'Test 2', foo: 'Foo 4', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+  {test: 'Test 1', foo: 'Foo 5', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  {test: 'Test 2', foo: 'Foo 6', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'},
+  {test: 'Test 1', foo: 'Foo 7', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
+  {test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
+
+let manyColunns = [];
+for (let i = 0; i < 100; i++) {
+  manyColunns.push({name: 'Column ' + i, key: 'C' + i});
+}
+
+let manyRows = [];
+for (let i = 0; i < 1000; i++) {
+  let row = {key: 'R' + i};
+  for (let j = 0; j < 100; j++) {
+    row['C' + j] = `${i}, ${j}`;
+  }
+
+  manyRows.push(row);
+}
 
 let onSelectionChange = action('onSelectionChange');
 storiesOf('Table', module)
   .add(
     'static',
     () => (
-      <Table onSelectionChange={s => onSelectionChange([...s])}>
+      <Table width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column key="foo">Foo</Column>
           <Column key="bar">Bar</Column>
@@ -71,7 +92,7 @@ storiesOf('Table', module)
   .add(
     'dynamic',
     () => (
-      <Table onSelectionChange={s => onSelectionChange([...s])}>
+      <Table width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={columns} columnKey="key">
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -88,7 +109,7 @@ storiesOf('Table', module)
   .add(
     'static with nested columns',
     () => (
-      <Table onSelectionChange={s => onSelectionChange([...s])}>
+      <Table width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column key="test">Test</Column>
           <Column title="Group 1">
@@ -119,7 +140,7 @@ storiesOf('Table', module)
   .add(
     'dynamic with nested columns',
     () => (
-      <Table onSelectionChange={s => onSelectionChange([...s])}>
+      <Table width={700} height={300} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={nestedColumns} columnKey="key">
           {column =>
             <Column childColumns={column.children}>{column.name}</Column>
@@ -138,7 +159,7 @@ storiesOf('Table', module)
   .add(
     'focusable cells',
     () => (
-      <Table onSelectionChange={s => onSelectionChange([...s])}>
+      <Table width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column key="foo">Foo</Column>
           <Column key="bar">Bar</Column>
@@ -154,6 +175,92 @@ storiesOf('Table', module)
             <Cell><Switch aria-label="Foo" /></Cell>
             <Cell><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
             <Cell>Three</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'many columns and rows',
+    () => (
+      <Table width={700} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={manyColunns} columnKey="key">
+          {column =>
+            <Column minWidth={100}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={manyRows} itemKey="key">
+          {item =>
+            (<Row>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'isQuiet, many columns and rows',
+    () => (
+      <Table width={700} height={200} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={manyColunns} columnKey="key">
+          {column =>
+            <Column minWidth={100}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={manyRows} itemKey="key">
+          {item =>
+            (<Row>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'column widths and dividers',
+    () => (
+      <Table width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column width={250} showDivider>File Name</Column>
+          <Column>Type</Column>
+          <Column align="end">Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'isQuiet, column widths and dividers',
+    () => (
+      <Table width={500} height={200} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column width={250} showDivider>File Name</Column>
+          <Column>Type</Column>
+          <Column align="end">Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
           </Row>
         </TableBody>
       </Table>

@@ -13,3 +13,5 @@
 export * from './CollectionView';
 export * from './useCollectionItem';
 export * from './CollectionItem';
+export * from './ScrollView';
+export * from './utils';
