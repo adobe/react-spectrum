@@ -15,6 +15,7 @@ import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {FocusStrategy} from '@react-types/menu';
 import {Key} from 'react';
 import {ListState} from '@react-stately/list';
+import {useCollator} from "@react-aria/i18n";
 import {useControlledState} from '@react-stately/utils';
 import {useSelectState} from '@react-stately/select';
 
@@ -152,6 +153,14 @@ class FilteredCollection<T> implements Collection<Node<T>> {
 
 
 export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
+  let itemsControlled = !!props.onFilter;
+  let collator = useCollator({ sensitivity: 'base' });
+  /*
+  let menuControlled = props.isOpen !== undefined;
+  let valueControlled = props.inputValue !== undefined;
+  let selectedControlled = !!props.selectedKey;
+   */
+
   let selectState = useSelectState(props);
 
   let selectedKeyItem = props.selectedKey ? selectState.collection.getItem(props.selectedKey) : undefined;
@@ -161,12 +170,41 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let defaultSelectedKeyText = defaultSelectedKeyItem ? defaultSelectedKeyItem.textValue || defaultSelectedKeyItem.rendered as string : undefined;
   // Double check if props.selectedKey should make textfield value controlled
   let [value, setValue] = useControlledState(toString(props.inputValue) || selectedKeyText, toString(props.defaultInputValue) || defaultSelectedKeyText || '', props.onInputChange);
+  let lowercaseValue = value.toLowerCase();
 
-  if (value !== '') {
-    selectState.collection = new FilteredCollection(selectState.collection, (node) => node.textValue.startsWith(value));
-  }
+  let defaultFilterFn = useMemo(() => (node: Node<T>) => {
+    let scan = 0;
+    let lowercaseNode = node.textValue.toLowerCase();
+    let whitespace = /\s/;
+    for (let i in lowercaseValue) {
+      if (whitespace.test(lowercaseValue[i])) {
+        continue;
+      }
+      let match = false;
+      for (; scan < lowercaseNode.length && !match; scan++) {
+        if (!whitespace.test(lowercaseNode[scan])) { // if whitespace, move on to next character
+          let compareVal = collator.compare(lowercaseValue[i], lowercaseNode[scan]);
+          if (compareVal !== 0) { // if it didn't match, we can exit
+            return false;
+          } else { // we matched, move to next character in input for comparison
+            match = true;
+          }
+        }
+      }
+    }
+    return true;
+  }, [value, collator]);
+
+  selectState.collection = useMemo(() => {
+    if (itemsControlled || value === '') {
+      return selectState.collection;
+    }
+    // should value be textValue?
+    return new FilteredCollection(selectState.collection, defaultFilterFn);
+  }, [selectState.collection, value, itemsControlled]);
+
   if (selectState.isOpen && selectState.collection.size === 0) {
-    selectState.close();
+    selectState.close(); // i don't like this, i'm changing state in the render flow
   }
 
   let open = () => {
