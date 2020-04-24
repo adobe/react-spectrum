@@ -199,7 +199,6 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
     if (itemsControlled || value === '') {
       return selectState.collection;
     }
-    // should value be textValue?
     return new FilteredCollection(selectState.collection, defaultFilterFn);
   }, [selectState.collection, value, itemsControlled, defaultFilterFn]);
 
