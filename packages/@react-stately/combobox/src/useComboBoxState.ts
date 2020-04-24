@@ -151,6 +151,7 @@ class FilteredCollection<T> implements Collection<Node<T>> {
   }
 }
 
+let whitespace = /\s/;
 
 export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let itemsControlled = !!props.onFilter;
@@ -175,7 +176,6 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let defaultFilterFn = useMemo(() => (node: Node<T>) => {
     let scan = 0;
     let lowercaseNode = node.textValue.toLowerCase();
-    let whitespace = /\s/;
     for (let i in lowercaseValue) {
       if (whitespace.test(lowercaseValue[i])) {
         continue;
@@ -201,7 +201,7 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
     }
     // should value be textValue?
     return new FilteredCollection(selectState.collection, defaultFilterFn);
-  }, [selectState.collection, value, itemsControlled]);
+  }, [selectState.collection, value, itemsControlled, defaultFilterFn]);
 
   useEffect(() => {
     if (selectState.isOpen && selectState.collection.size === 0) {

@@ -194,8 +194,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onPress = (e) => {
     if (e.pointerType === 'touch') {
       props.inputRef.current.focus();
-      // props.inputRef.selectionStart = 0;
-      // props.inputRef.selectionEnd = 0;
       // Force toggle the menu regardless of focus state
       state.toggle(null, true);
     }
