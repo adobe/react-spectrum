@@ -97,6 +97,25 @@ jobs:
           paths:
             - '*/docs/'
 
+  docs-master:
+    docker:
+      - image: circleci/node:12.10
+    resource_class: large
+
+    working_directory: ~/react-spectrum-v3
+    steps:
+      - restore_cache:
+          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build docs
+          command: make website-master
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/docs/'
+
   deploy:
     executor: azure-cli/azure-docker
     steps:
@@ -113,7 +132,7 @@ jobs:
           at: /tmp/dist
       - run:
           name: deploy
-          command: az storage blob upload-batch -d $web -s /tmp/dist/*/docs/* --account-name reactspectrum
+          command: az storage blob upload-batch -d $web -s /tmp/dist/master/docs --account-name reactspectrum
 
   comment:
     docker:
@@ -145,6 +164,12 @@ workflows:
       - docs:
           requires:
             - build
+      - docs-master:
+          filters:
+            branches:
+              only: master
+          requires:
+            - build
       - deploy:
           requires:
             - lint
@@ -156,7 +181,7 @@ workflows:
             branches:
               only: master
           requires:
-            - deploy
+            - docs-master
       - comment:
           requires:
             - deploy
