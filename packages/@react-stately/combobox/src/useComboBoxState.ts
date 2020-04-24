@@ -13,7 +13,7 @@
 import {Collection, Node} from '@react-stately/collections';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {FocusStrategy} from '@react-types/menu';
-import {Key, useMemo} from 'react';
+import {Key, useEffect, useMemo} from 'react';
 import {ListState} from '@react-stately/list';
 import {useCollator} from '@react-aria/i18n';
 import {useControlledState} from '@react-stately/utils';
@@ -45,7 +45,7 @@ export interface ComboBoxState<T> extends ListState<T> {
   close(): void,
   value: string,
   setValue: (value: string) => void,
-  toggle: (strategy: FocusStrategy | null, force?: boolean) => void 
+  toggle: (strategy: FocusStrategy | null, force?: boolean) => void
 }
 
 interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
@@ -203,9 +203,12 @@ export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
     return new FilteredCollection(selectState.collection, defaultFilterFn);
   }, [selectState.collection, value, itemsControlled]);
 
-  if (selectState.isOpen && selectState.collection.size === 0) {
-    selectState.close(); // i don't like this, i'm changing state in the render flow
-  }
+  useEffect(() => {
+    if (selectState.isOpen && selectState.collection.size === 0) {
+      selectState.close();
+    }
+  }, [selectState.isOpen, selectState.collection, selectState]);
+
 
   let open = () => {
     if (props.isFocused) {
