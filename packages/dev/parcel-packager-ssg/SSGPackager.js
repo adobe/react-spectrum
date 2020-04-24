@@ -58,10 +58,12 @@ module.exports = new Packager({
     let pages = [];
     bundleGraph.traverseBundles(b => {
       if (b.isEntry && b.type === 'html') {
+        let meta = b.getMainEntry().meta;
         pages.push({
           url: urlJoin(b.target.publicUrl, b.name),
           name: b.name,
-          title: b.getMainEntry().meta.title
+          title: meta.title,
+          category: meta.category
         });
       }
     });
