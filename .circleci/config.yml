@@ -132,7 +132,7 @@ jobs:
           at: /tmp/dist
       - run:
           name: deploy
-          command: az storage blob upload-batch -d $web -s /tmp/dist/master/docs --account-name reactspectrum
+          command: az storage blob upload-batch -d "\$web" -s /tmp/dist/master/docs --account-name reactspectrum
 
   comment:
     docker:
