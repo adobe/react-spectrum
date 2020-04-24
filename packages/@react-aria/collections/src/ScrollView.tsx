@@ -101,7 +101,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
         }, 300);
       }
     });
-  }, [props, direction, state.scrollTop, state.height, state.scrollLeft, state.width, state.isScrolling, state.scrollEndTime, state.scrollTimeout, contentSize.height, contentSize.width, onVisibleRectChange, onScrollStart, onScrollEnd]);
+  }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollEnd]);
 
   useLayoutEffect(() => {
     // TODO: resize observer
@@ -146,7 +146,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     return () => {
       window.removeEventListener('resize', updateSize, false);
     };
-  }, [onVisibleRectChange, ref, state, sizeToFit, contentSize.width, contentSize.height]);
+  }, [onVisibleRectChange, ref, state, sizeToFit, contentSize]);
 
   let style: React.CSSProperties = {
     // Reset padding so that relative positioning works correctly. Padding will be done in JS layout.
