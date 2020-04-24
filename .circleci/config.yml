@@ -106,6 +106,15 @@ jobs:
           name: deploy
           command: az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
 
+  deploy-master:
+    executor: azure-cli/azure-docker
+    steps:
+      - attach_workspace:
+          at: /tmp/dist
+      - run:
+          name: deploy
+          command: az storage blob upload-batch -d $web -s /tmp/dist --account-name reactspectrum
+
   comment:
     docker:
       - image: circleci/node:12.10
@@ -142,6 +151,12 @@ workflows:
             - test
             - storybook
             - docs
+      - deploy-master:
+          filters:
+            branches:
+              only: master
+          requires:
+            - deploy
       - comment:
           requires:
             - deploy
