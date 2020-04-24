@@ -17,7 +17,7 @@ import {DOMRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {GridState, useGridState} from '@react-stately/grid';
 import {Node, ReusableView, useCollectionState} from '@react-stately/collections';
-import React, {ReactElement, useCallback, useContext, useLayoutEffect, useMemo, useRef} from 'react';
+import React, {ReactElement, useCallback, useContext, useMemo, useRef} from 'react';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
