@@ -44,6 +44,7 @@ interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   layout: ListLayout<T>,
   onBlur?: (e: FocusEvent<Element>) => void, // don't think these two (blur/focus) should be added?
   onFocus?: (e: FocusEvent<Element>) => void,
+  isFocused: boolean,
   setIsFocused: (e: boolean) => void
 }
 
@@ -125,10 +126,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   let onBlur = (e) => {
     state.close();
-    // If user is clicking on the combobox button, early return so we don't change textfield focus state, update the selected key erroneously
+    // If user is clicking on the combobox button, early return so we don't change textfield focus state, update the selected key erroneously,
     // and trigger close menu twice
-    // TODO add a condition here that also checks if you are clicking on the popover menu item
-    // if so set focus back onto the input menu
     if (props.triggerRef.current && props.triggerRef.current.contains(e.relatedTarget)) {
       return;
     }
@@ -155,7 +154,16 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
-  let onFocus = () => {
+  let onFocus = (e) => {
+    // If inputfield is already focused, early return to prevent extra props.onFocus calls
+    if (props.isFocused) {
+      return;
+    }
+
+    if (props.onFocus) {
+      props.onFocus(e);
+    }
+
     props.setIsFocused(true);
   };
 
@@ -212,7 +220,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
     onBlur,
     value: state.value,
-    onFocus: chain(props.onFocus, onFocus)
+    onFocus,
   }, props.inputRef);
 
   return {
