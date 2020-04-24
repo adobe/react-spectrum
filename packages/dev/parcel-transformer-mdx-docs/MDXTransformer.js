@@ -179,7 +179,15 @@ ${compiled}
           },
           outputFormat: 'commonjs',
           includeNodeModules: {
-            react: false
+            // These don't need to be bundled.
+            react: false,
+            'react-dom': false,
+            'intl-messageformat': false,
+            'globals-docs': false,
+            lowlight: false,
+            scheduler: false,
+            'markdown-to-jsx': false,
+            'prop-types': false
           },
           scopeHoist: false,
           minify: false
