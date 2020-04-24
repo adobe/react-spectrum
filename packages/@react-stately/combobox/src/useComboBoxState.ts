@@ -13,9 +13,9 @@
 import {Collection, Node} from '@react-stately/collections';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {FocusStrategy} from '@react-types/menu';
-import {Key} from 'react';
+import {Key, useMemo} from 'react';
 import {ListState} from '@react-stately/list';
-import {useCollator} from "@react-aria/i18n";
+import {useCollator} from '@react-aria/i18n';
 import {useControlledState} from '@react-stately/utils';
 import {useSelectState} from '@react-stately/select';
 
@@ -154,7 +154,7 @@ class FilteredCollection<T> implements Collection<Node<T>> {
 
 export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let itemsControlled = !!props.onFilter;
-  let collator = useCollator({ sensitivity: 'base' });
+  let collator = useCollator({sensitivity: 'base'});
   /*
   let menuControlled = props.isOpen !== undefined;
   let valueControlled = props.inputValue !== undefined;

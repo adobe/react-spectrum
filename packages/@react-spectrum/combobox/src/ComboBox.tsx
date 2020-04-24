@@ -98,6 +98,7 @@ function ComboBox<T>(props: SpectrumComboBox<T>, ref: RefObject<TextFieldRef>) {
       completionMode,
       layout,
       triggerRef: unwrapDOMRef(triggerRef),
+      popoverRef: unwrapDOMRef(popoverRef),
       inputRef: inputRef,
       setIsFocused
     },

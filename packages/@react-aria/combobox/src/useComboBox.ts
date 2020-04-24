@@ -38,6 +38,7 @@ interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
 }
 
 interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
+  popoverRef: RefObject<HTMLDivElement>,
   triggerRef: RefObject<HTMLElement>,
   inputRef: RefObject<HTMLInputElement>,
   layout: ListLayout<T>,
@@ -124,12 +125,19 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   let onBlur = (e) => {
     state.close();
-
     // If user is clicking on the combobox button, early return so we don't change textfield focus state, update the selected key erroneously
     // and trigger close menu twice
     // TODO add a condition here that also checks if you are clicking on the popover menu item
     // if so set focus back onto the input menu
-    if (props.triggerRef && props.triggerRef.current.contains(e.relatedTarget)) {
+    if (props.triggerRef.current && props.triggerRef.current.contains(e.relatedTarget)) {
+      return;
+    }
+
+    // If blur happens from clicking on menu item, refocus textfield and early return
+    if (props.popoverRef.current && props.popoverRef.current.contains(e.relatedTarget)) {
+      // Stop propagation so focus styles on button don't go away
+      e.stopPropagation();
+      props.inputRef.current.focus();
       return;
     }
 
