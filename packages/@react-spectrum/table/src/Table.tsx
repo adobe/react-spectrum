@@ -143,6 +143,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
 
 // This is a custom CollectionView that also has a header that syncs its scroll position with the body.
 function TableCollectionView({layout, collection, focusedKey, renderView, renderWrapper, domRef, isQuiet, ...otherProps}) {
+  let {direction} = useLocale();
   let collectionState = useCollectionState({
     layout,
     collection,
@@ -153,16 +154,6 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
       setScrollLeft(domRef.current, direction, rect.x);
     }
   });
-
-  // Force a re-render of all cached collection items when the layout direction changes.
-  let {direction} = useLocale();
-  let lastDir = useRef(direction);
-  useLayoutEffect(() => {
-    if (direction !== lastDir.current) {
-      collectionState.collectionManager.relayout();
-      lastDir.current = direction;
-    }
-  }, [collectionState.collectionManager, direction]);
 
   let {collectionViewProps} = useCollectionView({focusedKey}, collectionState, domRef);
 
@@ -179,8 +170,19 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
     <div
       {...otherProps}
       {...collectionViewProps}
-      className={classNames(styles, 'spectrum-Table', {'spectrum-Table--quiet': isQuiet})}
-      style={{...otherProps.style, display: 'flex', flexDirection: 'column'}}>
+      className={
+        classNames(
+          styles,
+          'spectrum-Table',
+          {
+            'spectrum-Table--quiet': isQuiet
+          },
+          classNames(
+            stylesOverrides,
+            'react-spectrum-Table'
+          )
+        )
+      }>
       <div
         role="presentation"
         style={{
@@ -317,7 +319,6 @@ function TableRowHeader({rowHeader}) {
       <div 
         {...rowHeaderProps}
         ref={ref}
-        style={{height: '100%'}}
         className={
           classNames(
             styles,
@@ -354,7 +355,6 @@ function TableCell({cell}) {
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div 
         {...gridCellProps}
-        style={{height: '100%'}}
         ref={ref}
         className={
           classNames(

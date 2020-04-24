@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+.react-spectrum-Table {
+  display: flex;
+  flex-direction: column;
+}
+
 .react-spectrum-Table-cell {
   display: flex;
   align-items: center;
+  height: 100%;
 }
