@@ -361,13 +361,15 @@ function TableCell({cell}) {
             styles,
             'spectrum-Table-cell',
             {
-              'spectrum-Table-cell--divider': columnProps.showDivider,
-              'spectrum-Table-cell--alignCenter': columnProps.align === 'center',
-              'spectrum-Table-cell--alignEnd': columnProps.align === 'end'
+              'spectrum-Table-cell--divider': columnProps.showDivider
             },
             classNames(
               stylesOverrides,
-              'react-spectrum-Table-cell'
+              'react-spectrum-Table-cell',
+              {
+                'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center',
+                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end'  
+              }
             )
           )
         }>

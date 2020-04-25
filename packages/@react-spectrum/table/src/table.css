@@ -20,3 +20,11 @@
   align-items: center;
   height: 100%;
 }
+
+.react-spectrum-Table-cell--alignCenter {
+  justify-content: center;
+}
+
+.react-spectrum-Table-cell--alignEnd {
+  justify-content: flex-end;
+}
