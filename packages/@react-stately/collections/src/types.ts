@@ -19,7 +19,7 @@ import {Transaction} from './Transaction';
 
 export interface Node<T> {
   // TODO: determine how to keep this limited to shared node types
-  type: 'section' | 'item' | 'column' | 'cell' | 'rowheader' | 'placeholder',
+  type: 'section' | 'item' | 'column' | 'cell' | 'rowheader' | 'placeholder' | 'headerrow',
   key: Key,
   value: T,
   level: number,
@@ -33,7 +33,7 @@ export interface Node<T> {
   parentKey?: Key,
   prevKey?: Key,
   nextKey?: Key,
-  props?: object
+  props?: any
 }
 
 export interface PartialNode<T> {
@@ -50,7 +50,7 @@ export interface PartialNode<T> {
   childKey?: string,
   hasChildNodes?: boolean,
   childNodes?: () => IterableIterator<PartialNode<T>>,
-  props?: object
+  props?: any
 }
 
 /** 
