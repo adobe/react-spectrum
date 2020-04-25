@@ -13,11 +13,12 @@
 import {CollectionBase, MultipleSelection, SelectionMode} from '@react-types/shared';
 import {CollectionBuilder, Node} from '@react-stately/collections';
 import {GridCollection} from './GridCollection';
-import {Key, useMemo} from 'react';
+import {Key, useMemo, useRef} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
 export interface GridState<T> {
   collection: GridCollection<T>,
+  disabledKeys: Set<Key>,
   selectionManager: SelectionManager,
   showSelectionCheckboxes: boolean
 }
@@ -32,13 +33,14 @@ export interface GridStateProps<T> extends CollectionBase<T>, MultipleSelection 
   showSelectionCheckboxes?: boolean
 }
 
-export function useGridState<T>(props: GridStateProps<T>): GridState<T>  {
+export function useGridState<T extends object>(props: GridStateProps<T>): GridState<T>  {
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
   
   let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
+  let collectionRef = useRef<GridCollection<T>>();
   let collection = useMemo(() => {
     let context = {
       showSelectionCheckboxes: props.showSelectionCheckboxes,
@@ -46,17 +48,15 @@ export function useGridState<T>(props: GridStateProps<T>): GridState<T>  {
       columns: []
     };
   
-    let nodes = builder.build(props, (key) => ({
-      isSelected: selectionState.selectedKeys.has(key),
-      isDisabled: disabledKeys.has(key),
-      isFocused: key === selectionState.focusedKey
-    }), context);
+    let nodes = builder.build(props, context);
 
-    return new GridCollection(nodes);
-  }, [props, selectionState.selectionMode, selectionState.selectedKeys, selectionState.focusedKey, builder, disabledKeys]);
+    collectionRef.current = new GridCollection(nodes, collectionRef.current);
+    return collectionRef.current;
+  }, [props, selectionState.selectionMode, builder]);
 
   return {
     collection,
+    disabledKeys,
     selectionManager: new SelectionManager(collection, selectionState),
     showSelectionCheckboxes: props.showSelectionCheckboxes || false
   };

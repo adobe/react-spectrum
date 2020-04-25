@@ -10,12 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-stately/collections';
-import {Key} from 'react';
-import {SelectionManager} from '@react-stately/selection';
+import React from 'react';
+import {TreeState} from '@react-stately/tree';
 
-export interface ActionGroupState<T> {
-  collection: Collection<Node<T>>,
-  disabledKeys: Set<Key>,
-  selectionManager: SelectionManager
-}
+export const SideNavContext = React.createContext<TreeState<unknown>>(null);

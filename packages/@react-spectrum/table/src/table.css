@@ -10,12 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-stately/collections';
-import {Key} from 'react';
-import {SelectionManager} from '@react-stately/selection';
+.react-spectrum-Table {
+  display: flex;
+  flex-direction: column;
+}
 
-export interface ActionGroupState<T> {
-  collection: Collection<Node<T>>,
-  disabledKeys: Set<Key>,
-  selectionManager: SelectionManager
+.react-spectrum-Table-cell {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.react-spectrum-Table-cell--alignCenter {
+  justify-content: center;
+}
+
+.react-spectrum-Table-cell--alignEnd {
+  justify-content: flex-end;
 }
