@@ -253,6 +253,8 @@ export class TableLayout<T> extends ListLayout<T> {
         let lastVisibleCell = this.binarySearch(node.children, rect.topRight, 'x');
         let stickyIndex = 0;
         for (let i = firstVisibleCell; i <= lastVisibleCell; i++) {
+          // Sticky columns and row headers are always in the DOM. Interleave these
+          // with the visible range so that they are in the right order.
           if (stickyIndex < this.stickyColumnIndices.length) {
             let idx = this.stickyColumnIndices[stickyIndex];
             while (idx < i) {
