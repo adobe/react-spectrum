@@ -30,7 +30,7 @@ export interface ListState<T> {
  * Provides state management for list-like components. Handles building a collection
  * of items from props, and manages multiple selection state.
  */
-export function useListState<T>(props: CollectionBase<T> & MultipleSelection): ListState<T>  {
+export function useListState<T extends object>(props: CollectionBase<T> & MultipleSelection): ListState<T>  {
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
@@ -38,14 +38,9 @@ export function useListState<T>(props: CollectionBase<T> & MultipleSelection): L
 
   let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
   let collection = useMemo(() => {
-    let nodes = builder.build(props, (key) => ({
-      isSelected: selectionState.selectedKeys.has(key),
-      isDisabled: disabledKeys.has(key),
-      isFocused: key === selectionState.focusedKey
-    }));
-
-    return new TreeCollection(nodes);
-  }, [builder, props, selectionState.selectedKeys, selectionState.focusedKey, disabledKeys]);
+    let nodes = builder.build(props);
+    return new TreeCollection(nodes, new Set());
+  }, [builder, props]);
 
   return {
     collection,

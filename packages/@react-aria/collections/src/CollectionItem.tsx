@@ -10,18 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
+import {Direction} from '@react-types/shared';
 import {LayoutInfo} from '@react-stately/collections';
 import React, {CSSProperties, useRef} from 'react';
 import {ReusableView} from '@react-stately/collections';
 import {useCollectionItem} from './useCollectionItem';
+import {useLocale} from '@react-aria/i18n';
 
 interface CollectionItemProps<T extends object, V> {
   reusableView: ReusableView<T, V>,
-  parent?: ReusableView<T, V>
+  parent?: ReusableView<T, V>,
+  className?: string
 }
 
 export function CollectionItem<T extends object, V>(props: CollectionItemProps<T, V>) {
-  let {reusableView, parent} = props;
+  let {className, reusableView, parent} = props;
+  let {direction} = useLocale();
   let ref = useRef();
   useCollectionItem({
     reusableView,
@@ -29,18 +33,25 @@ export function CollectionItem<T extends object, V>(props: CollectionItemProps<T
   });
 
   return (
-    <div role="presentation" ref={ref} style={layoutInfoToStyle(reusableView.layoutInfo, parent && parent.layoutInfo)}>
+    <div role="presentation" ref={ref} className={className} style={layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo)}>
       {reusableView.rendered}
     </div>
   );
 }
 
-export function layoutInfoToStyle(layoutInfo: LayoutInfo, parent?: LayoutInfo | null): CSSProperties {
-  return {
-    position: 'absolute',
+let cache = new WeakMap();
+export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent?: LayoutInfo | null): CSSProperties {
+  let xProperty = dir === 'rtl' ? 'right' : 'left';
+  let cached = cache.get(layoutInfo);
+  if (cached && cached[xProperty] != null) {
+    return cached;
+  }
+
+  let style: CSSProperties = {
+    position: layoutInfo.isSticky ? 'sticky' : 'absolute',
     overflow: 'hidden',
     top: layoutInfo.rect.y - (parent ? parent.rect.y : 0),
-    left: layoutInfo.rect.x - (parent ? parent.rect.x : 0),
+    [xProperty]: layoutInfo.rect.x - (parent ? parent.rect.x : 0),
     transition: 'all',
     WebkitTransition: 'all',
     WebkitTransitionDuration: 'inherit',
@@ -52,4 +63,7 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, parent?: LayoutInfo | 
     transform: layoutInfo.transform,
     contain: 'size layout style paint'
   };
+
+  cache.set(layoutInfo, style);
+  return style;
 }

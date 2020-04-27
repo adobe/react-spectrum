@@ -39,7 +39,7 @@ export interface SelectState<T> extends ListState<T>, MenuTriggerState {
  * of items from props, handles the open state for the popup menu, and manages
  * multiple selection state.
  */
-export function useSelectState<T>(props: SelectProps<T>): SelectState<T>  {
+export function useSelectState<T extends object>(props: SelectProps<T>): SelectState<T>  {
   let [selectedKey, setSelectedKey] = useControlledState(props.selectedKey, props.defaultSelectedKey, props.onSelectionChange);
   let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
   let triggerState = useMenuTriggerState(props);

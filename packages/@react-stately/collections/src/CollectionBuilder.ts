@@ -11,7 +11,7 @@
  */
 
 import {CollectionBase, CollectionElement} from '@react-types/shared';
-import {ItemStates, Node, PartialNode} from './types';
+import {Node, PartialNode} from './types';
 import React, {Key, ReactElement} from 'react';
 
 interface CollectionBuilderState {
@@ -19,18 +19,16 @@ interface CollectionBuilderState {
   childKey?: string
 }
 
-export class CollectionBuilder<T> {
+export class CollectionBuilder<T extends object> {
   private itemKey: string;
   private context?: unknown;
-  private cache: Map<T, Node<T>> = new Map();
-  private getItemStates: (key: Key) => ItemStates;
+  private cache: WeakMap<T, Node<T>> = new WeakMap();
 
   constructor(itemKey: string) {
     this.itemKey = itemKey;
   }
 
-  build(props: CollectionBase<T>, getItemStates?: (key: Key) => ItemStates, context?: unknown) {
-    this.getItemStates = getItemStates || (() => ({}));
+  build(props: CollectionBase<T>, context?: unknown) {
     this.context = context;
     return iterable(() => this.iterateCollection(props));
   }
@@ -59,45 +57,29 @@ export class CollectionBuilder<T> {
   }
 
   getKey(item: CollectionElement<T>, partialNode: PartialNode<T>, state: CollectionBuilderState, parentKey?: Key): Key {
-    if (item.props.uniqueKey) {
+    if (item.props.uniqueKey != null) {
       return item.props.uniqueKey;
     }
 
-    if (item.key) {
+    if (item.key != null) {
       return parentKey ? `${parentKey}${item.key}` : item.key;
     }
 
-    if (partialNode.type === 'cell' && partialNode.key) {
+    if (partialNode.type === 'cell' && partialNode.key != null) {
       return `${parentKey}${partialNode.key}`;
     }
 
-    if (state.childKey && partialNode.value[state.childKey]) {
+    if (state.childKey && partialNode.value[state.childKey] != null) {
       return partialNode.value[state.childKey];
     }
   
     let v = partialNode.value as any;
-    let key = v.key || v.id;
+    let key = v.key ?? v.id;
     if (key == null) {
       throw new Error('No key found for item');
     }
     
     return key;
-  }
-
-  getCached(item: T) {
-    let node = this.cache.get(item);
-    if (!node) {
-      return;
-    }
-
-    if (node.type === 'section') {
-      return node;
-    }
-
-    let states = this.getItemStates(node.key);
-    if (shallowEqual(states, node)) {
-      return node;
-    }
   }
 
   getChildState(state: CollectionBuilderState, partialNode: PartialNode<T>) {
@@ -112,7 +94,7 @@ export class CollectionBuilder<T> {
     // use it to render an element for the value.
     let element = partialNode.element;
     if (!element && partialNode.value && state && state.renderer) {
-      let cached = this.getCached(partialNode.value);
+      let cached = this.cache.get(partialNode.value);
       if (cached) {
         yield cached;
         return;
@@ -146,6 +128,15 @@ export class CollectionBuilder<T> {
           // Cache the node based on its value
           node.value = childNode.value || partialNode.value;
           if (node.value) {
+            // If there was a previous cached node for this value,
+            // we can reuse the child nodes. This happens when item
+            // states like selection/focus change, which only affects
+            // the node itself, not its children.
+            let prevCached = this.cache.get(node.value);
+            if (prevCached) {
+              node.childNodes = prevCached.childNodes;
+            }
+
             this.cache.set(node.value, node);
           }
 
@@ -195,30 +186,30 @@ export class CollectionBuilder<T> {
       })
     };
 
-    // Add states if the node is an item
-    if (node.type === 'item') {
-      Object.assign(node, this.getItemStates(node.key));
-    }
-
     yield node;
   }
 }
 
-// Wraps an iterator function as an iterable object.
+// Wraps an iterator function as an iterable object, and caches the results.
 function iterable<T>(iterator: () => IterableIterator<Node<T>>): Iterable<Node<T>> {
+  let cache = [];
+  let iterable = null;
   return {
-    [Symbol.iterator]: iterator
-  };
-}
+    *[Symbol.iterator]() {
+      for (let item of cache) {
+        yield item;
+      }
 
-function shallowEqual<T>(a: T, b: T) {
-  for (let key in a) {
-    if (a[key] !== b[key]) {
-      return false;
+      if (!iterable) {
+        iterable = iterator();
+      }
+
+      for (let item of iterable) {
+        cache.push(item);
+        yield item;
+      }
     }
-  }
-
-  return true;
+  };
 }
 
 type Wrapper = (element: ReactElement) => ReactElement;

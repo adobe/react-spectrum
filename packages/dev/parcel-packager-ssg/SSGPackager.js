@@ -58,7 +58,13 @@ module.exports = new Packager({
     let pages = [];
     bundleGraph.traverseBundles(b => {
       if (b.isEntry && b.type === 'html') {
-        pages.push({url: urlJoin(b.target.publicUrl, b.name), name: b.name});
+        let meta = b.getMainEntry().meta;
+        pages.push({
+          url: urlJoin(b.target.publicUrl, b.name),
+          name: b.name,
+          title: meta.title,
+          category: meta.category
+        });
       }
     });
 
@@ -72,7 +78,11 @@ module.exports = new Packager({
           url: urlJoin(b.target.publicUrl, b.name)
         })),
         pages,
-        currentPage: bundle.name,
+        currentPage: {
+          name: bundle.name,
+          title: mainAsset.meta.title,
+          url: urlJoin(bundle.target.publicUrl, bundle.name)
+        },
         toc: mainAsset.meta.toc,
         publicUrl: bundle.target.publicUrl
       })

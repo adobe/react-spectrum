@@ -45,10 +45,11 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
 
   let {
     rendered,
-    isSelected,
-    isDisabled,
     key
   } = item;
+
+  let isSelected = state.selectionManager.selectedKeys.has(key);
+  let isDisabled = state.disabledKeys.has(key);
 
   let ref = useRef<HTMLLIElement>();
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps} = useMenuItem(

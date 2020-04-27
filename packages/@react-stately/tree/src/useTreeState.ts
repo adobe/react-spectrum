@@ -37,7 +37,7 @@ export interface TreeState<T> {
  * Provides state management for tree-like components. Handles building a collection
  * of items from props, item expanded state, and manages multiple selection state.
  */
-export function useTreeState<T>(props: CollectionBase<T> & Expandable & MultipleSelection): TreeState<T> {
+export function useTreeState<T extends object>(props: CollectionBase<T> & Expandable & MultipleSelection): TreeState<T> {
   let [expandedKeys, setExpandedKeys] = useControlledState(
     props.expandedKeys ? new Set(props.expandedKeys) : undefined,
     props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
@@ -51,15 +51,9 @@ export function useTreeState<T>(props: CollectionBase<T> & Expandable & Multiple
 
   let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
   let tree = useMemo(() => {
-    let nodes = builder.build(props, (key) => ({
-      isExpanded: expandedKeys.has(key),
-      isSelected: selectionState.selectedKeys.has(key),
-      isDisabled: disabledKeys.has(key),
-      isFocused: key === selectionState.focusedKey
-    }));
-
-    return new TreeCollection(nodes);
-  }, [builder, props, expandedKeys, selectionState.selectedKeys, selectionState.focusedKey, disabledKeys]);
+    let nodes = builder.build(props);
+    return new TreeCollection(nodes, expandedKeys);
+  }, [builder, expandedKeys, props]);
 
   let onToggle = (key: Key) => {
     setExpandedKeys(expandedKeys => toggleKey(expandedKeys, key));

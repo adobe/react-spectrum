@@ -21,6 +21,10 @@ import packageData from '../package.json';
 import {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
 ```
 
+---
+category: Collections
+---
+
 # useListBox
 
 <p>{docs.exports.useListBox.description}</p>
@@ -149,11 +153,13 @@ function ListBox(props) {
 function Option({item, state}) {
   // Get props for the option element
   let ref = React.useRef();
+  let isDisabled = state.disabledKeys.has(item.key);
+  let isSelected = state.selectionManager.isSelected(item.key);
   let {optionProps} = useOption({
     key: item.key,
     ref,
-    isDisabled: item.isDisabled,
-    isSelected: item.isSelected
+    isDisabled,
+    isSelected
   }, state);
 
   // Determine whether we should show a keyboard 
@@ -165,8 +171,8 @@ function Option({item, state}) {
       {...mergeProps(optionProps, focusProps)}
       ref={ref}
       style={{
-        background: item.isSelected ? 'blueviolet' : 'transparent',
-        color: item.isSelected ? 'white' : null,
+        background: isSelected ? 'blueviolet' : 'transparent',
+        color: isSelected ? 'white' : null,
         padding: '2px 5px',
         outline: isFocusVisible 
           ? '2px solid orange'
@@ -278,11 +284,13 @@ function Option({item, state}) {
   // Same as in the first example...
 ///- begin collapse -///
   let ref = React.useRef();
+  let isDisabled = state.disabledKeys.has(item.key);
+  let isSelected = state.selectionManager.isSelected(item.key);
   let {optionProps} = useOption({
     key: item.key,
     ref,
-    isDisabled: item.isDisabled,
-    isSelected: item.isSelected
+    isDisabled,
+    isSelected
   }, state);
   let {isFocusVisible, focusProps} = useFocusRing();
 
@@ -291,8 +299,8 @@ function Option({item, state}) {
       {...mergeProps(optionProps, focusProps)}
       ref={ref}
       style={{
-        background: item.isSelected ? 'blueviolet' : 'transparent',
-        color: item.isSelected ? 'white' : null,
+        background: isSelected ? 'blueviolet' : 'transparent',
+        color: isSelected ? 'white' : null,
         padding: '2px 5px',
         outline: isFocusVisible 
           ? '2px solid orange'
@@ -365,11 +373,13 @@ function ListBox(props) {
 
 function Option({item, state}) {
   let ref = React.useRef();
+  let isDisabled = state.disabledKeys.has(item.key);
+  let isSelected = state.selectionManager.isSelected(item.key);
   let {optionProps, labelProps, descriptionProps} = useOption({
     key: item.key,
     ref,
-    isDisabled: item.isDisabled,
-    isSelected: item.isSelected
+    isDisabled,
+    isSelected
   }, state);
   let {isFocusVisible, focusProps} = useFocusRing();
 
@@ -382,8 +392,8 @@ function Option({item, state}) {
       {...mergeProps(optionProps, focusProps)}
       ref={ref}
       style={{
-        background: item.isSelected ? 'blueviolet' : 'transparent',
-        color: item.isSelected ? 'white' : null,
+        background: isSelected ? 'blueviolet' : 'transparent',
+        color: isSelected ? 'white' : null,
         padding: '2px 5px',
         outline: isFocusVisible 
           ? '2px solid orange'

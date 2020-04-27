@@ -40,7 +40,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T>): GridAria {
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {direction} = useLocale();
-  let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate(state.collection, ref, direction, collator), [keyboardDelegate, state.collection, ref, direction, collator]);
+  let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate(state.collection, state.disabledKeys, ref, direction, collator), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator]);
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
     keyboardDelegate: delegate
