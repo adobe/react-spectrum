@@ -10,6 +10,7 @@
     "@react-spectrum/breadcrumbs": "^3.0.0-alpha.1",
     "@react-spectrum/divider": "^3.0.0-rc.1",
     "@react-spectrum/dialog": "^3.0.0-alpha.1",
+    "@react-spectrum/link": "^3.0.0-alpha.1",
     "@react-spectrum/view": "^3.0.0-alpha.1",
     "@react-aria/interactions": "^3.0.0-alpha.1",
     "@react-spectrum/theme-default": "^3.0.0-rc.1",

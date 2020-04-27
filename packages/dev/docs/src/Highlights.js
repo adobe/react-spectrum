@@ -11,6 +11,7 @@
  */
 
 import docStyles from './docs.css';
+import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import React from 'react';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
@@ -21,7 +22,7 @@ export function Highlights({items}) {
         <div key={i.title}>
           <h3 className={typographyStyles['spectrum-Heading3']}>{i.title}</h3>
           <p className={typographyStyles['spectrum-Body3']}>{i.description}</p>
-          <p className={typographyStyles['spectrum-Body3']}><a href={i.url}>Learn more</a></p>
+          <p className={typographyStyles['spectrum-Body3']}><a className={linkStyle['spectrum-Link']} href={i.url}>Learn more</a></p>
         </div>
       ))}
     </div>

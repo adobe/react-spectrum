@@ -34,10 +34,18 @@ html, body {
   display: flex;
   justify-content: center;
   padding: 40px 0;
+
+  img {
+    max-width: 100%;
+  }
 }
 
 .highlights {
   display: flex;
+
+  @media (max-width: 1020px) {
+    display: block;
+  }
 
   div {
     padding: 0 8px;
