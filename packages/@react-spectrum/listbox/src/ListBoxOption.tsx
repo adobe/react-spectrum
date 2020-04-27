@@ -14,9 +14,9 @@ import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
-import {ListState} from '@react-stately/list';
+import {ListBoxContext} from './ListBoxContext';
 import {Node} from '@react-stately/collections';
-import React from 'react';
+import React, {useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/typography';
 import {useOption} from '@react-aria/listbox';
@@ -24,7 +24,6 @@ import {useRef} from 'react';
 
 interface OptionProps<T> {
   item: Node<T>,
-  state: ListState<T>,
   shouldSelectOnPressUp?: boolean,
   shouldFocusOnHover?: boolean
 }
@@ -33,17 +32,18 @@ interface OptionProps<T> {
 export function ListBoxOption<T>(props: OptionProps<T>) {
   let {
     item,
-    state,
     shouldSelectOnPressUp,
     shouldFocusOnHover
   } = props;
 
   let {
     rendered,
-    isSelected,
-    isDisabled,
     key
   } = item;
+
+  let state = useContext(ListBoxContext);
+  let isSelected = state.selectionManager.isSelected(key);
+  let isDisabled = state.disabledKeys.has(key);
 
   let ref = useRef<HTMLDivElement>();
   let {optionProps, labelProps, descriptionProps} = useOption(

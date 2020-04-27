@@ -10,14 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionGroupCollection} from './ActionGroupCollection';
 import {ActionGroupProps} from '@react-types/actiongroup';
 import {ActionGroupState} from './types';
-import {CollectionBuilder} from '@react-stately/collections';
+import {CollectionBuilder, TreeCollection} from '@react-stately/collections';
 import {Key, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
-export function useActionGroupState<T>(props: ActionGroupProps<T>): ActionGroupState<T> {
+export function useActionGroupState<T extends object>(props: ActionGroupProps<T>): ActionGroupState<T> {
   let selectionState = useMultipleSelectionState(props);
 
   let disabledKeys = useMemo(() =>
@@ -26,16 +25,13 @@ export function useActionGroupState<T>(props: ActionGroupProps<T>): ActionGroupS
 
   let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
   let collection = useMemo(() => {
-    let nodes = builder.build(props, (key) => ({
-      isSelected: selectionState.selectedKeys.has(key),
-      isDisabled: disabledKeys.has(key) || props.isDisabled
-    }));
-
-    return new ActionGroupCollection(nodes);
-  }, [builder, props, selectionState.selectedKeys, disabledKeys]);
+    let nodes = builder.build(props);
+    return new TreeCollection(nodes, disabledKeys);
+  }, [builder, props, disabledKeys]);
 
   return {
     collection,
+    disabledKeys,
     selectionManager: new SelectionManager(collection, selectionState)
   };
 }

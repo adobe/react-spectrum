@@ -46,13 +46,21 @@ let items = [
 ];
 
 describe('Table', function () {
+  let offsetWidth, offsetHeight;
   beforeAll(function () {
+    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     jest.useFakeTimers();
   });
 
   afterEach(() => {
     cleanup();
+  });
+
+  afterAll(function () {
+    offsetWidth.mockReset();
+    offsetHeight.mockReset();
   });
 
   it('renders a static table', function () {
@@ -213,14 +221,16 @@ describe('Table', function () {
     expect(headerRows).toHaveLength(2);
 
     let headers = within(headerRows[0]).getAllByRole('columnheader');
-    expect(headers).toHaveLength(3);
+    let placeholderCells = within(headerRows[0]).getAllByRole('gridcell');
+    expect(headers).toHaveLength(2);
+    expect(placeholderCells).toHaveLength(1);
 
-    expect(headers[0]).toHaveTextContent('');
-    expect(headers[0]).toHaveAttribute('colspan', '2');
+    expect(placeholderCells[0]).toHaveTextContent('');
+    expect(placeholderCells[0]).toHaveAttribute('aria-colspan', '2');
 
-    expect(headers[1]).toHaveTextContent('Group 1');
-    expect(headers[1]).toHaveAttribute('aria-colspan', '2');
-    expect(headers[2]).toHaveTextContent('Group 2');
+    expect(headers[0]).toHaveTextContent('Group 1');
+    expect(headers[0]).toHaveAttribute('aria-colspan', '2');
+    expect(headers[1]).toHaveTextContent('Group 2');
 
     headers = within(headerRows[1]).getAllByRole('columnheader');
     expect(headers).toHaveLength(5);
@@ -284,22 +294,26 @@ describe('Table', function () {
     expect(headerRows).toHaveLength(3);
 
     let headers = within(headerRows[0]).getAllByRole('columnheader');
-    expect(headers).toHaveLength(2);
+    let placeholderCells = within(headerRows[0]).getAllByRole('gridcell');
+    expect(headers).toHaveLength(1);
+    expect(placeholderCells).toHaveLength(1);
 
-    expect(headers[0]).toHaveTextContent('');
-    expect(headers[0]).toHaveAttribute('colspan', '2');
-    expect(headers[1]).toHaveTextContent('Tiered One Header');
-    expect(headers[1]).toHaveAttribute('aria-colspan', '4');
+    expect(placeholderCells[0]).toHaveTextContent('');
+    expect(placeholderCells[0]).toHaveAttribute('aria-colspan', '2');
+    expect(headers[0]).toHaveTextContent('Tiered One Header');
+    expect(headers[0]).toHaveAttribute('aria-colspan', '4');
 
     headers = within(headerRows[1]).getAllByRole('columnheader');
-    expect(headers).toHaveLength(4);
+    placeholderCells = within(headerRows[1]).getAllByRole('gridcell');
+    expect(headers).toHaveLength(2);
+    expect(placeholderCells).toHaveLength(2);
 
-    expect(headers[0]).toHaveTextContent('');
-    expect(headers[0]).toHaveAttribute('colspan', '2');
-    expect(headers[1]).toHaveTextContent('Tier Two Header A');
-    expect(headers[1]).toHaveAttribute('aria-colspan', '2');
-    expect(headers[2]).toHaveTextContent('');
-    expect(headers[3]).toHaveTextContent('Tier Two Header B');
+    expect(placeholderCells[0]).toHaveTextContent('');
+    expect(placeholderCells[0]).toHaveAttribute('aria-colspan', '2');
+    expect(headers[0]).toHaveTextContent('Tier Two Header A');
+    expect(headers[0]).toHaveAttribute('aria-colspan', '2');
+    expect(placeholderCells[1]).toHaveTextContent('');
+    expect(headers[1]).toHaveTextContent('Tier Two Header B');
 
     headers = within(headerRows[2]).getAllByRole('columnheader');
     expect(headers).toHaveLength(6);

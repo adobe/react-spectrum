@@ -134,8 +134,11 @@ footer li:last-child:after {
 }
 
 .propTable tr {
-  background: none !important;
   cursor: initial;
+}
+
+.propTable td {
+  background: none !important;
 }
 
 .type-description {

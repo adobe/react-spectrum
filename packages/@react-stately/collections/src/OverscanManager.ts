@@ -37,8 +37,11 @@ export class OverscanManager {
     if (time < 500) {
       this.averageTime.addSample(time);
 
-      if (rect.y !== this.visibleRect.y && time > 0) {
+      if (rect.x !== this.visibleRect.x && time > 0) {
         this.velocity.x = (rect.x - this.visibleRect.x) / time;
+      }
+
+      if (rect.y !== this.visibleRect.y && time > 0) {
         this.velocity.y = (rect.y - this.visibleRect.y) / time;
       }
     }

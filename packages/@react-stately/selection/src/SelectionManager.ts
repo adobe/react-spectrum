@@ -27,11 +27,13 @@ export class SelectionManager implements MultipleSelectionManager {
   private collection: Collection<Node<unknown>>;
   private state: MultipleSelectionState;
   private allowsCellSelection: boolean;
+  private _isSelectAll: boolean;
 
   constructor(collection: Collection<Node<unknown>>, state: MultipleSelectionState, options?: SelectionManagerOptions) {
     this.collection = collection;
     this.state = state;
     this.allowsCellSelection = options?.allowsCellSelection ?? false;
+    this._isSelectAll = null;
   }
 
   get selectionMode(): SelectionMode {
@@ -62,16 +64,26 @@ export class SelectionManager implements MultipleSelectionManager {
     this.state.setSelectedKeys(keys);
   }
 
+  isSelected(key: Key) {
+    return this.state.selectedKeys.has(key);
+  }
+
   get isEmpty() {
     return this.state.selectedKeys.size === 0;
   }
 
   get isSelectAll() {
+    if (this._isSelectAll != null) {
+      return this._isSelectAll;
+    }
+
     let allKeys = this.getSelectAllKeys();
-    return allKeys.every(k => this.state.selectedKeys.has(k));
+    this._isSelectAll = allKeys.every(k => this.state.selectedKeys.has(k));
+    return this._isSelectAll;
   }
 
   extendSelection(toKey: Key) {
+    toKey = this.getKey(toKey);
     this.state.setSelectedKeys((selectedKeys: Selection) => {
       let anchorKey = selectedKeys.anchorKey || toKey;
       let keys = new Selection(selectedKeys, anchorKey, toKey);
@@ -88,7 +100,17 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   private getKeyRange(from: Key, to: Key) {
-    return this.getKeyRangeInternal(from, to) || this.getKeyRangeInternal(to, from) || [];
+    let fromItem = this.collection.getItem(from);
+    let toItem = this.collection.getItem(to);
+    if (fromItem && toItem) {
+      if (fromItem.index <= toItem.index) {
+        return this.getKeyRangeInternal(from, to);
+      }
+
+      return this.getKeyRangeInternal(to, from);
+    }
+
+    return [];
   }
 
   private getKeyRangeInternal(from: Key, to: Key) {
@@ -107,7 +129,7 @@ export class SelectionManager implements MultipleSelectionManager {
       key = this.collection.getKeyAfter(key);
     }
 
-    return null;
+    return [];
   }
 
   private getKey(key: Key) {
@@ -166,15 +188,25 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   private getSelectAllKeys() {
-    return [...this.collection.getKeys()].filter(key => {
-      let item = this.collection.getItem(key);
-      if (!item) {
-        return false;
-      }
+    let keys = [];
+    let addKeys = (key: Key) => {
+      while (key) {
+        let item = this.collection.getItem(key);
+        if (item.type === 'item') {
+          keys.push(key);
+        }
+        
+        // Add child keys. If cell selection is allowed, then include item children too.
+        if (item.hasChildNodes && (this.allowsCellSelection || item.type !== 'item')) {
+          addKeys([...item.childNodes][0].key);
+        }
 
-      return item.type === 'item' ||
-        (item.type === 'cell' && this.allowsCellSelection);
-    });
+        key = this.collection.getKeyAfter(key);
+      }
+    };
+
+    addKeys(this.collection.getFirstKey());
+    return keys;
   }
 
   selectAll() {

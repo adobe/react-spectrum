@@ -51,6 +51,7 @@ export function useMenu<T>(props: AriaMenuProps<T>, state: TreeState<T>): MenuAr
     ...otherProps,
     selectionManager: state.selectionManager,
     collection: state.collection,
+    disabledKeys: state.disabledKeys,
     shouldFocusWrap
   });
 

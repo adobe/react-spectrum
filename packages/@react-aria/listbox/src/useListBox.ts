@@ -51,7 +51,8 @@ export function useListBox<T>(props: AriaListBoxProps, state: ListState<T>): Lis
   let {listProps} = useSelectableList({
     ...props,
     selectionManager: state.selectionManager,
-    collection: state.collection
+    collection: state.collection,
+    disabledKeys: state.disabledKeys
   });
 
   return {
