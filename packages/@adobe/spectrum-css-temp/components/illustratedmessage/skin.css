@@ -15,3 +15,11 @@ governing permissions and limitations under the License.
   fill: currentColor;
   stroke: currentColor;
 }
+
+.spectrum-IllustratedMessage-heading {
+  color: var(--spectrum-heading-page-title-text-color);
+}
+
+.spectrum-IllustratedMessage-description {
+  color: var(--spectrum-body-secondary-text-color);
+}

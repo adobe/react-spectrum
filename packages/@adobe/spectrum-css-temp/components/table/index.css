@@ -19,7 +19,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Table-sortedIcon {
   display: none;
-  margin-left: var(--spectrum-table-header-sort-icon-gap);
+  margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
 
   vertical-align: middle;
 
@@ -28,7 +28,6 @@ governing permissions and limitations under the License.
 
 .spectrum-Table-headCell {
   box-sizing: border-box;
-  text-align: left;
   font-size: var(--spectrum-table-header-text-size);
   font-weight: var(--spectrum-table-header-text-font-weight);
   line-height: var(--spectrum-table-header-text-line-height);
@@ -65,8 +64,8 @@ governing permissions and limitations under the License.
   text-align: center;
 }
 
-.spectrum-Table-cell--alignRight {
-  text-align: right;
+.spectrum-Table-cell--alignEnd {
+  text-align: end;
 }
 
 /* Helper for shared drop target overlay */
@@ -89,6 +88,9 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-table-border-radius);
   overflow: auto;
   vertical-align: var(--spectrum-table-cell-vertical-alignment);
+
+  /* Fix scrollbars on iOS with sticky row headers */
+  transform: translate3d(0, 0, 0);
 
   &.is-drop-target {
     @inherit: %drop-target;
@@ -128,11 +130,16 @@ governing permissions and limitations under the License.
   padding: var(--spectrum-table-cell-padding-y) var(--spectrum-table-cell-padding-x);
   /* Subtract top/bottom padding for this value to be correct in this implementation */
   min-height: calc(var(--spectrum-table-cell-min-height) - calc(var(--spectrum-table-cell-padding-y) * 2));
+  overflow: hidden;
 }
 
 .spectrum-Table-cell,
 .spectrum-Table-headCell {
   position: relative;
+
+  &:focus {
+    outline: none;
+  }
 
   &:focus-ring,
   &.is-focused {
@@ -168,7 +175,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table-cell--divider {
-  border-right-width: var(--spectrum-table-divider-border-size);
+  border-inline-end-width: var(--spectrum-table-divider-border-size);
 }
 
 .spectrum-Table-row {
@@ -205,7 +212,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Table-checkboxCell {
-  padding-right: var(--spectrum-table-cell-checkbox-padding-right);
+  padding-inline-end: var(--spectrum-table-cell-checkbox-padding-right);
   /* have to eliminate vertical padding to allow proper vertical alignment */
   padding-top: 0px;
   padding-bottom: 0px;

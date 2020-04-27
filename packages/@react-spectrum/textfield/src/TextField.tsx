@@ -10,15 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {forwardRef, RefObject} from 'react';
+import React, {forwardRef, RefObject, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
+import {useTextField} from '@react-aria/textfield';
 
 function TextField(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
+  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
+  let {labelProps, inputProps} = useTextField(props, inputRef);
   return (
     <TextFieldBase
       {...props}
-      ref={ref} />
+      labelProps={labelProps}
+      inputProps={inputProps}
+      ref={ref}
+      inputRef={inputRef} />
   );
 }
 

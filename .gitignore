@@ -9,6 +9,7 @@ dist
 .package-lock.json
 .cache
 .parcel-cache
+packages/dev/v2-test-deps
 
 dist
 public

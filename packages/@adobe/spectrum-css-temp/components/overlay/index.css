@@ -10,10 +10,6 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
-  --spectrum-overlay-animation-distance: var(--spectrum-dropdown-flyout-menu-offset-y);
-}
-
 %spectrum-overlay {
   visibility: hidden;
 
@@ -28,8 +24,9 @@ governing permissions and limitations under the License.
 
 %spectrum-overlay--open {
   visibility: visible;
-
-  opacity: 1;
+  /* In Edge (pre chromium), a stacking context is formed for opacity less then 1, and then its removed for 1. 
+     It causes a rendering flicker that is visible when css transition is applied. */
+  opacity: 0.99;
 
   transition-delay: 0ms;
 
@@ -37,17 +34,23 @@ governing permissions and limitations under the License.
 }
 
 %spectrum-overlay--bottom--open {
-  transform: translateY(var(--spectrum-overlay-animation-distance));
+  transform: translateY(var(--spectrum-overlay-positive-transform-distance));
 }
 
 %spectrum-overlay--top--open {
-  transform: translateY(calc(var(--spectrum-overlay-animation-distance) * -1));
+  /*
+  Edge does not support combination of translate, calc and var.
+  New var equal to negative calculation result is added instead.
+  TODO: for Chromium Edge return to
+  transform: translateX(calc(var(--spectrum-global-dimension-size-75) * -1));
+  */
+  transform: translateY(var(--spectrum-overlay-negative-transform-distance));
 }
 
 %spectrum-overlay--right--open {
-  transform: translateX(var(--spectrum-overlay-animation-distance));
+  transform: translateX(var(--spectrum-overlay-positive-transform-distance));
 }
 
 %spectrum-overlay--left--open {
-  transform: translateX(calc(var(--spectrum-overlay-animation-distance) * -1));
+  transform: translateX(var(--spectrum-overlay-negative-transform-distance));
 }

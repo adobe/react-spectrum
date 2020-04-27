@@ -15,6 +15,7 @@ import {CollectionItem, CollectionView} from '@react-aria/collections';
 import {ListLayout, Node} from '@react-stately/collections';
 import React, {ReactElement, useMemo} from 'react';
 import {ReusableView} from '@react-stately/collections';
+import {SideNavContext} from './SideNavContext';
 import {SideNavItem} from './SideNavItem';
 import {SideNavSection} from './SideNavSection';
 import {SpectrumSideNavProps} from '@react-types/sidenav';
@@ -31,6 +32,7 @@ export function SideNav<T>(props: SpectrumSideNavProps<T>) {
   let {styleProps} = useStyleProps(props);
 
   layout.collection = state.collection;
+  layout.disabledKeys = state.disabledKeys;
 
   // This overrides collection view's renderWrapper to support heirarchy of items in sections.
   // The header is extracted from the children so it can receive ARIA labeling properties.
@@ -60,23 +62,23 @@ export function SideNav<T>(props: SpectrumSideNavProps<T>) {
       {...filterDOMProps(props)}
       {...navProps}
       {...styleProps}>
-      <CollectionView
-        {...listProps}
-        focusedKey={state.selectionManager.focusedKey}
-        className={classNames(styles, 'spectrum-SideNav')}
-        layout={layout}
-        collection={state.collection}
-        renderWrapper={renderWrapper}>
-        {(type, item) => {
-          if (type === 'item') {
-            return (
-              <SideNavItem
-                state={state}
-                item={item} />
-            );
-          }
-        }}
-      </CollectionView>
+      <SideNavContext.Provider value={state}>
+        <CollectionView
+          {...listProps}
+          focusedKey={state.selectionManager.focusedKey}
+          className={classNames(styles, 'spectrum-SideNav')}
+          layout={layout}
+          collection={state.collection}
+          renderWrapper={renderWrapper}>
+          {(type, item) => {
+            if (type === 'item') {
+              return (
+                <SideNavItem item={item} />
+              );
+            }
+          }}
+        </CollectionView>
+      </SideNavContext.Provider>
     </nav>
   );
 }

@@ -51,14 +51,11 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   let formatMessage = useMessageFormatter(intlMessages);
   let {styleProps} = useStyleProps(otherProps);
 
-  size = type === 'popover' ? 'S' : (size || 'L');
-  if (type === 'fullscreen' || type === 'fullscreenTakeover') {
-    size = type;
-  }
+  size = type === 'popover' ? (size || 'S') : (size || 'L');
 
   let domRef = useDOMRef(ref);
   let gridRef = useRef();
-  let sizeVariant = sizeMap[size];
+  let sizeVariant = sizeMap[type] || sizeMap[size];
   let {dialogProps, titleProps} = useDialog({ref: domRef, role, ...otherProps});
 
   let hasHeader = useHasChild(`.${styles['spectrum-Dialog-header']}`, unwrapDOMRef(gridRef));
@@ -126,8 +123,8 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
 }
 
 /**
- * Dialogs display important information that users need to acknowledge.
- * They appear over the interface and block further interactions.
+ * Dialogs are windows containing contextual information, tasks, or workflows that appear over the user interface. 
+ * Depending on the kind of Dialog, further interactions may be blocked until the Dialog is acknowledged.
  */
 let _Dialog = React.forwardRef(Dialog);
 export {_Dialog as Dialog};

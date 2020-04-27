@@ -28,7 +28,7 @@ const fragmentWrap = () => (tree, file) => (
     if (node.type === 'code') {
       if (node.meta === 'example') {
         let code = node.value;
-        if (!code.startsWith('function ')) {
+        if (/^<(.|\n)*>$/.test(code)) {
           node.value = `${openingTag}${code}${closingTag}`;
         }
 

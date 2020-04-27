@@ -15,6 +15,7 @@ const mdx = require('@mdx-js/mdx');
 const flatMap = require('unist-util-flatmap');
 const treeSitter = require('remark-tree-sitter');
 const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
+const frontmatter = require('remark-frontmatter');
 const slug = require('remark-slug');
 const util = require('mdast-util-toc');
 
@@ -33,24 +34,46 @@ module.exports = new Transformer({
           if (node.meta === 'example') {
             let id = `example-${exampleCode.length}`;
 
+            // TODO: Parsing code with regex is bad. Replace with babel transform or something.
             let code = node.value;
-            if (code.startsWith('function ')) {
+            code = code.replace(/import (\{(?:.|\n)*?\}) from (['"].*?['"])/g, (m) => {
+              exampleCode.push(m);
+              return '';
+            });
+
+            if (/^function (.|\n)*}\s*$/.test(code)) {
               let name = code.match(/^function (.*?)\s*\(/)[1];
               code = `(function () {
                 ${code}
                 ReactDOM.render(<ExampleProvider><${name} /></ExampleProvider>, document.getElementById("${id}"));
               })();`;
-            } else {
-              code = `ReactDOM.render(<ExampleProvider>${code}</ExampleProvider>, document.getElementById("${id}"));`;
+            } else if (/^<(.|\n)*>$/m.test(code)) {
+              code = `(function () {
+                ${code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<ExampleProvider>$1</ExampleProvider>, document.getElementById("${id}"));`)}
+              })();`;
             }
 
             exampleCode.push(code);
+
+            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actuall
+            // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
+            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*\/\/\/- end collapse -\/\/\//g, '').trim();
 
             return [
               node,
               {
                 type: 'jsx',
                 value: `<div id="${id}" />`
+              }
+            ];
+          }
+
+          if (node.lang === 'css') {
+            return [
+              node,
+              {
+                type: 'jsx',
+                value: '<style>{`' + node.value + '`}</style>'
               }
             ];
           }
@@ -61,6 +84,8 @@ module.exports = new Transformer({
     );
 
     let toc = [];
+    let title = '';
+    let category = '';
     const extractToc = (options) => {
       const settings = options || {};
       const depth = settings.maxDepth || 6;
@@ -96,7 +121,18 @@ module.exports = new Transformer({
         }
 
         toc = treeConverter(fullToc, true);
+        title = toc[0].textContent;
         toc = toc[0].children;
+
+        /*
+         * Piggy back here to grab additional metadata.
+         * Should probably use js-yaml at some point.
+         */ 
+        let metadata = node.children.find(c => c.type === 'yaml');
+        if (metadata) {
+          let matches = /^category:\s(\w+)$/.exec(metadata.value);
+          category = matches ? matches[1] : '';
+        }
 
         return node;
       }
@@ -105,7 +141,23 @@ module.exports = new Transformer({
     };
 
     const compiled = await mdx(await asset.getCode(), {
-      remarkPlugins: [slug, extractToc, extractExamples, fragmentWrap, [treeSitter, {grammarPackages: ['@atom-languages/language-typescript']}], fragmentUnWrap]
+      remarkPlugins: [
+        slug,
+        extractToc,
+        extractExamples,
+        fragmentWrap,
+        [frontmatter, {type: 'yaml', anywhere: true, marker: '-'}],
+        [
+          treeSitter,
+          {
+            grammarPackages: [
+              '@atom-languages/language-typescript',
+              '@atom-languages/language-css'
+            ]
+          }
+        ],
+        fragmentUnWrap
+      ]
     });
 
     let exampleBundle = exampleCode.length === 0
@@ -122,12 +174,14 @@ export default {};
     asset.type = 'html';
     asset.setCode(Math.random().toString(36).slice(4));
     asset.meta.toc = toc;
+    asset.meta.title = title;
+    asset.meta.category = category;
 
     let assets = [
       asset,
       {
         type: 'jsx',
-        code: `/* @jsx mdx */
+        content: `/* @jsx mdx */
 import React from 'react';
 import { mdx } from '@mdx-js/react'
 ${compiled}
@@ -137,9 +191,20 @@ ${compiled}
         uniqueKey: 'page',
         env: {
           context: 'node',
+          engines: {
+            node: process.versions.node
+          },
           outputFormat: 'commonjs',
           includeNodeModules: {
-            react: false
+            // These don't need to be bundled.
+            react: false,
+            'react-dom': false,
+            'intl-messageformat': false,
+            'globals-docs': false,
+            lowlight: false,
+            scheduler: false,
+            'markdown-to-jsx': false,
+            'prop-types': false
           },
           scopeHoist: false,
           minify: false
@@ -154,7 +219,7 @@ ${compiled}
     if (exampleBundle) {
       assets.push({
         type: 'jsx',
-        code: exampleBundle,
+        content: exampleBundle,
         uniqueKey: 'example',
         env: {
           outputFormat: asset.env.scopeHoist ? 'esmodule' : 'global'

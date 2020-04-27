@@ -6,8 +6,8 @@ PATH := ./node_modules/.bin:$(PATH)
 all: node_modules
 
 adobe_setup:
-	echo "--install.ignore-optional false" > .yarnrc
-	git update-index --assume-unchanged .yarnrc
+	mkdir packages/dev/v2-test-deps
+	cp scripts/v2-package.json packages/dev/v2-test-deps/package.json
 
 node_modules: package.json
 	yarn install
@@ -87,3 +87,6 @@ build:
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
+
+website-master:
+	yarn build:docs --dist-dir dist/master/docs

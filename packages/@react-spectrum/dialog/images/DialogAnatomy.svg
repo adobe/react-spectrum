@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="611.999" height="372" viewBox="0 0 611.999 372">
+  <g id="Group_72711" data-name="Group 72711" transform="translate(-297 -48)">
+    <rect id="Background" width="480" height="372" rx="4" transform="translate(356 48)" fill="#f4f6fc"/>
+    <g id="Rule" transform="translate(396 122)">
+      <rect id="Placement_Area" data-name="Placement Area" width="400" height="2" fill="red" opacity="0"/>
+      <rect id="Bar" width="400" height="2" rx="1" fill="#dae2f4"/>
+    </g>
+    <g id="Rectangle_138301" data-name="Rectangle 138301" transform="translate(396 140)" fill="rgba(74,111,195,0.05)" stroke="#a2b6e1" stroke-width="1" stroke-dasharray="4 2">
+      <rect width="400" height="168" stroke="none"/>
+      <rect x="0.5" y="0.5" width="399" height="167" fill="none"/>
+    </g>
+    <text id="Body_area" data-name="Body area" transform="translate(596 229)" fill="#496ec2" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-25.818" y="0">Body area</tspan></text>
+    <g id="Rectangle_138302" data-name="Rectangle 138302" transform="translate(608 348)" fill="rgba(74,111,195,0.05)" stroke="#a2b6e1" stroke-width="1" stroke-dasharray="4 2">
+      <rect width="188" height="32" stroke="none"/>
+      <rect x="0.5" y="0.5" width="187" height="31" fill="none"/>
+    </g>
+    <g id="Rectangle_138303" data-name="Rectangle 138303" transform="translate(570 88)" fill="none" stroke="#a2b6e1" stroke-width="1" stroke-dasharray="4 2">
+      <rect width="226" height="22" stroke="none"/>
+      <rect x="0.5" y="0.5" width="225" height="21" fill="none"/>
+    </g>
+    <g id="Rectangle_138450" data-name="Rectangle 138450" transform="translate(396 88)" fill="rgba(74,111,195,0.05)" stroke="#a2b6e1" stroke-width="1" stroke-dasharray="4 2">
+      <rect width="150" height="22" stroke="none"/>
+      <rect x="0.5" y="0.5" width="149" height="21" fill="none"/>
+    </g>
+    <g id="Rectangle_138449" data-name="Rectangle 138449" transform="translate(396 348)" fill="none" stroke="#a2b6e1" stroke-width="1" stroke-dasharray="4 2">
+      <rect width="188" height="32" stroke="none"/>
+      <rect x="0.5" y="0.5" width="187" height="31" fill="none"/>
+    </g>
+    <text id="Title_area" data-name="Title area" transform="translate(471 103)" fill="#496ec2" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-23.608" y="0">Title area</tspan></text>
+    <text id="Footer_content_area_optional_" data-name="Footer content area (optional)" transform="translate(490 368)" fill="#496ec2" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-75.985" y="0">Footer content area (optional)</tspan></text>
+    <text id="Header_content_area_optional_" data-name="Header content area (optional)" transform="translate(688 103)" fill="#496ec2" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-78.11" y="0">Header content area (optional)</tspan></text>
+    <text id="Button_group_area" data-name="Button group area" transform="translate(702 368)" fill="#496ec2" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-46.169" y="0">Button group area</tspan></text>
+    <text id="Header" transform="translate(870.999 103)" fill="#4a6fc3" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="0" y="0">Header</tspan></text>
+    <text id="Footer" transform="translate(869.999 368)" fill="#4a6fc3" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="0" y="0">Footer</tspan></text>
+    <text id="Body" transform="translate(869.999 228)" fill="#4a6fc3" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="0" y="0">Body</tspan></text>
+    <rect id="Rectangle_138454" data-name="Rectangle 138454" width="8" height="1" transform="translate(853 99)" fill="#4a6fc3"/>
+    <rect id="Rectangle_138456" data-name="Rectangle 138456" width="8" height="1" transform="translate(853 364)" fill="#4a6fc3"/>
+    <rect id="Rectangle_138455" data-name="Rectangle 138455" width="8" height="1" transform="translate(853 224)" fill="#4a6fc3"/>
+    <g id="Group_72702" data-name="Group 72702" transform="translate(0 -494)">
+      <rect id="Rectangle_138451" data-name="Rectangle 138451" width="8" height="1" transform="translate(844 582)" fill="#4a6fc3"/>
+      <rect id="Rectangle_138453" data-name="Rectangle 138453" width="1" height="22" transform="translate(852 582)" fill="#4a6fc3"/>
+      <rect id="Rectangle_138452" data-name="Rectangle 138452" width="8" height="1" transform="translate(844 603)" fill="#4a6fc3"/>
+    </g>
+    <g id="Group_72704" data-name="Group 72704" transform="translate(0 -234)">
+      <rect id="Rectangle_138451-2" data-name="Rectangle 138451" width="8" height="1" transform="translate(844 582)" fill="#4a6fc3"/>
+      <rect id="Rectangle_138453-2" data-name="Rectangle 138453" width="1" height="32" transform="translate(852 582)" fill="#4a6fc3"/>
+      <rect id="Rectangle_138452-2" data-name="Rectangle 138452" width="8" height="1" transform="translate(844 613)" fill="#4a6fc3"/>
+    </g>
+    <g id="Group_72703" data-name="Group 72703" transform="translate(0 -442)">
+      <rect id="Rectangle_138451-3" data-name="Rectangle 138451" width="8" height="1" transform="translate(844 582)" fill="#4a6fc3"/>
+      <rect id="Rectangle_138453-3" data-name="Rectangle 138453" width="1" height="168" transform="translate(852 582)" fill="#4a6fc3"/>
+      <rect id="Rectangle_138452-3" data-name="Rectangle 138452" width="8" height="1" transform="translate(844 749)" fill="#4a6fc3"/>
+    </g>
+    <text id="Divider" transform="translate(334 126)" fill="#4a6fc3" font-size="13" font-family="AdobeClean-It, Adobe Clean" font-style="italic"><tspan x="-36.14" y="0">Divider</tspan></text>
+    <path id="Union_58" data-name="Union 58" d="M-9114.949-372H-9168v-1h53.05a2.5,2.5,0,0,1,2.451-2,2.5,2.5,0,0,1,2.5,2.5,2.5,2.5,0,0,1-2.5,2.5A2.5,2.5,0,0,1-9114.949-372Z" transform="translate(9508 495.501)" fill="#718dcf"/>
+  </g>
+</svg>

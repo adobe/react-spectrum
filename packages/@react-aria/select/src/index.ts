@@ -11,3 +11,4 @@
  */
 
 export * from './useSelect';
+export * from './HiddenSelect';

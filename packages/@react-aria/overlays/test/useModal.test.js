@@ -11,46 +11,31 @@
  */
 
 import {cleanup, render} from '@testing-library/react';
-import {ModalProvider, useModal, useModalProvider} from '..';
+import {OverlayContainer, OverlayProvider, useModal} from '..';
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-function ProviderExample(props) {
-  let {modalProviderProps} = useModalProvider();
-  return <div {...modalProviderProps} data-testid={props['data-testid']}>{props.children}</div>;
-}
 
 function ModalDOM(props) {
   useModal();
   return <div data-testid={props.modalId || 'modal'}>{props.children}</div>;
 }
 
-function Portal(props) {
-  return ReactDOM.createPortal(props.children, document.body);
-}
-
 function Modal(props) {
   return (
-    <Portal>
-      <ModalProvider>
-        <ProviderExample data-testid={props.providerId || 'modal-provider'}>
-          <ModalDOM modalId={props.modalId}>{props.children}</ModalDOM>
-        </ProviderExample>
-      </ModalProvider>
-    </Portal>
+    <OverlayContainer data-testid={props.providerId || 'modal-provider'}>
+      <ModalDOM modalId={props.modalId}>{props.children}</ModalDOM>
+    </OverlayContainer>
   );
 }
 
 function Example(props) {
   return (
-    <ModalProvider>
-      <ProviderExample data-testid="root-provider">
-        This is the root provider.
-        {props.showModal &&
-          <Modal>{props.children}</Modal>
-        }
-      </ProviderExample>
-    </ModalProvider>
+    <OverlayProvider data-testid="root-provider">
+      This is the root provider.
+      {props.showModal &&
+        <Modal>{props.children}</Modal>
+      }
+    </OverlayProvider>
   );
 }
 

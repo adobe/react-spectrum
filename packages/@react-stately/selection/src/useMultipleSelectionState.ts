@@ -16,11 +16,15 @@ import {Selection} from './Selection';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
 
+/**
+ * Manages state for multiple selection and focus in a collection.
+ */
 export function useMultipleSelectionState(props: MultipleSelection): MultipleSelectionState {
   let {
     selectionMode = 'multiple' as SelectionMode,
     disallowEmptySelection
   } = props;
+
   let isFocused = useRef(false);
   let [focusedKey, setFocusedKey] = useState(null);
   let selectedKeysProp = useMemo(() => props.selectedKeys ? new Selection(props.selectedKeys) : undefined, [props.selectedKeys]);
