@@ -24,7 +24,7 @@ import {useCollator} from '@react-aria/i18n';
 import {useSideNav} from '@react-aria/sidenav';
 import {useTreeState} from '@react-stately/tree';
 
-export function SideNav<T>(props: SpectrumSideNavProps<T>) {
+export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
   let state = useTreeState({...props, selectionMode: 'single', disallowEmptySelection: true});
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() => new ListLayout({rowHeight: 40, collator}), [collator]);
