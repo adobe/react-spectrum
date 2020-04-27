@@ -85,7 +85,7 @@ class FilteredCollection<T> implements Collection<Node<T>> {
     let visit = (node: Node<T>) => {
       this.keyMap.set(node.key, node);
 
-      if (node.childNodes && (node.type === 'section' || node.isExpanded)) {
+      if (node.childNodes && (node.type === 'section')) {
         for (let child of node.childNodes) {
           visit(child);
         }
@@ -153,7 +153,7 @@ class FilteredCollection<T> implements Collection<Node<T>> {
 
 let whitespace = /\s/;
 
-export function useComboBoxState<T>(props: ComboBoxProps<T>): ComboBoxState<T> {
+export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let itemsControlled = !!props.onFilter;
   let collator = useCollator({sensitivity: 'base'});
   /*

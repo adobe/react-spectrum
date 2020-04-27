@@ -60,7 +60,7 @@ interface SpectrumComboBox<T> extends InputBase, TextInputBase, ComboBoxProps<T>
   direction?: 'bottom' | 'top'
 }
 
-function ComboBox<T>(props: SpectrumComboBox<T>, ref: RefObject<TextFieldRef>) {
+function ComboBox<T extends object>(props: SpectrumComboBox<T>, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
 
   let {
