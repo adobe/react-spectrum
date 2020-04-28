@@ -114,16 +114,19 @@ main {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
+  align-items: center;
 }
 
 article {
   max-width: 967px;
   flex: 1;
   padding-bottom: 40px;
+  width: 100%;
 }
 
 footer {
   max-width: 967px;
+  width: 100%
 }
 
 footer ul {
