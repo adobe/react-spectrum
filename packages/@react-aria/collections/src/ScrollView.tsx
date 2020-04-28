@@ -31,7 +31,6 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
 function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   let {
     contentSize,
-    visibleRect,
     onVisibleRectChange,
     children,
     innerStyle,
