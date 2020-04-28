@@ -333,7 +333,7 @@ describe('MenuTrigger', function () {
       }
       tree = null;
     });
-    // these tests still need some work, originally, any calling triggerMenuItem were not cleaning up (shrug?)
+    // TODO: these tests still need some work, originally, any calling triggerMenuItem were not cleaning up (shrug?)
     // however, it's clear now that triggerMenuItem isn't for every test in this describe and that they
     // are randomly sprinkled, this should be pulled together a bit more so the auto cleanup ones can do that
     function triggerMenuItem(Component, triggerProps = {}, menuProps = {}, triggerEvent) {
