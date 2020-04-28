@@ -194,8 +194,11 @@ article h1.articleHeader {
   font-size: 58px;
 }
 
-article.inCategory h1.articleHeader + p {
+article h1.articleHeader + p {
   font-size: 18px;
+}
+
+article.inCategory h1.articleHeader + p {
   max-width: 75%;
 }
 
