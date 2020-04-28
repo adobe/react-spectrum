@@ -249,7 +249,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
       <div className={docStyles.pageHeader} id="header" />
       <Nav currentPageName={currentPage.name} pages={pages} />
       <main>
-        <article className={typographyStyles['spectrum-Typography']}>
+        <article className={classNames(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>
           <MDXProvider components={mdxComponents}>
             <ImageContext.Provider value={publicUrl}>
               <LinkProvider>{children}</LinkProvider>

@@ -79,6 +79,7 @@ module.exports = new Packager({
         })),
         pages,
         currentPage: {
+          category: mainAsset.meta.category,
           name: bundle.name,
           title: mainAsset.meta.title,
           url: urlJoin(bundle.target.publicUrl, bundle.name)
