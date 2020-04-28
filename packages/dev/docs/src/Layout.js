@@ -143,7 +143,7 @@ function dirToTitle(dir) {
     .join(' ');
 }
 
-function Nav({currentPageName, pages, publicUrl}) {
+function Nav({currentPageName, pages}) {
   let isIndex = /index\.html$/;
   let currentParts = currentPageName.split('/');
   let currentDir = currentParts[0];
@@ -200,7 +200,7 @@ function Nav({currentPageName, pages, publicUrl}) {
             <ChevronLeft />
           </a>
         }
-        <a href={publicUrl} className={docStyles.homeBtn}>
+        <a href="./index.html" className={docStyles.homeBtn}>
           <svg viewBox="0 0 30 26" fill="#E1251B">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
@@ -241,12 +241,12 @@ function Footer() {
   );
 }
 
-export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
+export function Layout({scripts, styles, pages, currentPage, children, toc}) {
 
   return (
     <Page title={currentPage.title} scripts={scripts} styles={styles}>
       <div className={docStyles.pageHeader} id="header" />
-      <Nav currentPageName={currentPage.name} pages={pages} publicUrl={publicUrl} />
+      <Nav currentPageName={currentPage.name} pages={pages} />
       <main>
         <article className={typographyStyles['spectrum-Typography']}>
           <MDXProvider components={mdxComponents}>

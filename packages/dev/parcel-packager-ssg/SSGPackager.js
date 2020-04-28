@@ -83,8 +83,7 @@ module.exports = new Packager({
           title: mainAsset.meta.title,
           url: urlJoin(bundle.target.publicUrl, bundle.name)
         },
-        toc: mainAsset.meta.toc,
-        publicUrl: bundle.target.publicUrl
+        toc: mainAsset.meta.toc
       })
     );
 
