@@ -164,6 +164,10 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       return;
     }
 
+    if (menuTrigger === 'focus') {
+      state.open(true);
+    }
+
     if (props.onFocus) {
       props.onFocus(e);
     }

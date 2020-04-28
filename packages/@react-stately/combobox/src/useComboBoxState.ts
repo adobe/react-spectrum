@@ -19,7 +19,7 @@ import {useCollator} from '@react-aria/i18n';
 import {useControlledState} from '@react-stately/utils';
 import {useSelectState} from '@react-stately/select';
 
-// Can't extend SelectState because we modify toggle here, copied types for now
+// Can't extend SelectState because we modify toggle/open here, copied types for now
 export interface ComboBoxState<T> extends ListState<T> {
   /** The key for the currently selected item. */
   selectedKey: Key,
@@ -39,13 +39,12 @@ export interface ComboBoxState<T> extends ListState<T> {
   focusStrategy: FocusStrategy,
   /** Sets which item will be auto focused when the menu opens. */
   setFocusStrategy(value: FocusStrategy): void,
-  /** Opens the menu. */
-  open(): void,
   /** Closes the menu. */
   close(): void,
   value: string,
   setValue: (value: string) => void,
-  toggle: (strategy: FocusStrategy | null, force?: boolean) => void
+  toggle: (strategy: FocusStrategy | null, force?: boolean) => void,
+  open: (force?: boolean) => void
 }
 
 interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
@@ -218,9 +217,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     }
   }, [selectState.isOpen, selectState.collection, selectState]);
 
-
-  let open = () => {
-    if (isFocused) {
+  // Maybe we can get rid of these force parameters if we have the selectState.open/toggle calls
+  // within a useEffect instead (it calls those only if isFocused and isOpen). These func are changed so it calls
+  // setOpen(true) and setOpen(!isOpen)?
+  let open = (force = false) => {
+    if (isFocused || force) {
       selectState.open();
     }
   };
