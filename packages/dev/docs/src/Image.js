@@ -23,7 +23,8 @@ export function Hero({wide, narrow, alt}) {
   let wideUrl = baseUrl + wide;
   return (
     <div className={docStyles.heroImage}>
-      <img srcset={`${narrowUrl} 600w,
+      <img
+        srcSet={`${narrowUrl} 600w,
               ${wideUrl} 967w`}
         sizes="(max-width: 600px) 480px,
                 967px"
