@@ -107,6 +107,9 @@ class FilteredCollection<T> implements Collection<Node<T>> {
       }
 
       last = node;
+      // Set nextKey as undefined since this might be the last node
+      // If it isn't the last node, last.nextKey will properly set at start of new loop 
+      last.nextKey = undefined;
     }
 
     this.lastKey = last ? last.key : ''; // what to do in empty collection??
@@ -157,7 +160,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     inputValue,
     defaultInputValue,
     onInputChange,
-    isFocused
+    isFocused,
+    menuTrigger
   } = props;
   
   let itemsControlled = !!onFilter;
@@ -252,6 +256,20 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     }
   }, [selectState.selectedKey, inputValue, selectedKey]);
 
+  // For manual trigger mode
+  useEffect(() => {
+    // Should this also require that completionMode="Complete"?
+    // Should items be automatically selected or does user need to hit enter to select it?
+    // TODO: Make this item + text extraction logic into a helper function, maybe can add to collectionManager
+    // Pull focusedItem out of useEffect and change dep array?
+    let focusedItem = selectState.collection.getItem(selectState.selectionManager.focusedKey)
+    if (menuTrigger === 'manual' && focusedItem) {
+      let focusedItemText = focusedItem ? focusedItem.textValue || focusedItem.rendered as string : undefined;
+      if (focusedItemText) {
+        setValue(focusedItemText);
+      }
+    }
+  }, [selectState.selectionManager.focusedKey])
 
   return {
     ...selectState,

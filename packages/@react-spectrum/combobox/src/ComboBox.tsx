@@ -70,7 +70,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       popoverRef: unwrapDOMRef(popoverRef),
       inputRef: inputRef,
       isFocused,
-      setIsFocused
+      setIsFocused,
+      menuTrigger
     },
     state
   );

@@ -20,7 +20,8 @@ import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
 
 interface ComboBoxProps {
-  completionMode?: 'suggest' | 'complete'
+  completionMode?: 'suggest' | 'complete',
+  menuTrigger?: 'focus' | 'input' | 'manual'
 }
 
 interface AriaComboBoxProps<T> extends ComboBoxProps {
@@ -49,7 +50,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     layout,
     isFocused,
     setIsFocused,
-    completionMode
+    completionMode,
+    menuTrigger
   } = props;
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
@@ -70,7 +72,10 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       state.selectionManager.clearSelection();
       // state.selectionManager.toggleSelection(state.selectedKey);
     }
-    state.open();
+
+    if (menuTrigger !== 'manual') {
+      state.open();
+    }
   };
 
   // TODO: Refine the below, feels weird to have focusedItem and also need to still do state.selectionManger.focusedKey
@@ -103,20 +108,22 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
         state.close();
         break;
       case 'ArrowDown':
-        if (!state.isOpen) {
+        if (!state.isOpen && menuTrigger !== 'manual') {
           state.toggle('first');
-        } else if (!focusedItem) {
+        } else if (!focusedItem) { // Forget why this block is here, double check
           let firstKey = state.collection.getFirstKey();
           state.selectionManager.setFocusedKey(firstKey);
         }
+
         break;
       case 'ArrowUp':
-        if (!state.isOpen) {
+        if (!state.isOpen && menuTrigger !== 'manual') {
           state.toggle('last');
-        } else if (!focusedItem) {
+        } else if (!focusedItem) { // Forget why this block is here, double check
           let firstKey = state.collection.getFirstKey();
           state.selectionManager.setFocusedKey(firstKey);
         }
+
         break;
     }
   };

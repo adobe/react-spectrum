@@ -49,6 +49,10 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'menuTrigger: focus',
+    () => render({menuTrigger: 'focus'})
+  )
+  .add(
     'menuTrigger: manual',
     () => render({menuTrigger: 'manual'})
   )
