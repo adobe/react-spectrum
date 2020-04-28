@@ -400,7 +400,7 @@ module.exports = new Transformer({
       }
 
       if (path.isTSUnknownKeyword()) {
-        return {type: 'unknown'};
+        return Object.assign(node, {type: 'unknown'});
       }
 
       if (path.isTSArrayType()) {
