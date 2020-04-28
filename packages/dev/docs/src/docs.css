@@ -191,16 +191,16 @@ article h1.articleHeader {
   font-size: 58px;
 }
 
-article h1.articleHeader + p {
+article.inCategory h1.articleHeader + p {
   font-size: 18px;
   max-width: 75%;
 }
 
-article h2.sectionHeader.docsHeader {
+article.inCategory h2.sectionHeader.docsHeader {
   margin-top: 80px;
 }
 
-article h2.sectionHeader + hr {
+article.inCategory h2.sectionHeader + hr {
   margin-bottom: 33px;
 }
 

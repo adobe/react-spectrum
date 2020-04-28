@@ -242,13 +242,12 @@ function Footer() {
 }
 
 export function Layout({scripts, styles, pages, currentPage, children, toc}) {
-
   return (
     <Page title={currentPage.title} scripts={scripts} styles={styles}>
       <div className={docStyles.pageHeader} id="header" />
       <Nav currentPageName={currentPage.name} pages={pages} />
       <main>
-        <article className={typographyStyles['spectrum-Typography']}>
+        <article className={classNames(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>
           <MDXProvider components={mdxComponents}>
             <LinkProvider>{children}</LinkProvider>
           </MDXProvider>
