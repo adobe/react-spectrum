@@ -10,12 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {CollectionBase, DOMProps, InputBase, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase} from '@react-types/shared';
 
-export interface ComboBoxProps {
-  
+export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
+  isOpen?: boolean,
+  defaultOpen?: boolean,
+  onOpenChange?: (isOpen: boolean) => void,
+  inputValue?: string,
+  defaultInputValue?: string,
+  onInputChange?: (value: string) => void,
+  onFilter?: (value: string) => void,
+  allowsCustomValue?: boolean,
+  onCustomValue?: (value: string) => void,
+  completionMode?: 'suggest' | 'complete',
+  menuTrigger?: 'focus' | 'input' | 'manual',
+  shouldFlip?: boolean
 }
 
-export interface SpectrumComboBoxProps extends ComboBoxProps, DOMProps, StyleProps {
-
+// TODO: Check extends
+export interface SpectrumComboBoxProps<T> extends InputBase, TextInputBase, ComboBoxProps<T>, SpectrumLabelableProps, DOMProps, StyleProps {
+  isQuiet?: boolean,
+  direction?: 'bottom' | 'top'
 }

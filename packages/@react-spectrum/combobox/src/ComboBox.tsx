@@ -12,18 +12,8 @@
 
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, unwrapDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
-import {
-  CollectionBase,
-  DOMProps,
-  DOMRefValue,
-  FocusableRefValue,
-  InputBase,
-  SingleSelection,
-  SpectrumLabelableProps,
-  StyleProps,
-  TextInputBase
-} from '@react-types/shared';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
+import {DOMRefValue, FocusableRefValue} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 import {Label} from '@react-spectrum/label';
@@ -32,6 +22,7 @@ import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import React, {RefObject, useLayoutEffect, useRef, useState} from 'react';
+import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
@@ -39,28 +30,7 @@ import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
-interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
-  isOpen?: boolean,
-  defaultOpen?: boolean,
-  onOpenChange?: (isOpen: boolean) => void,
-  inputValue?: string,
-  defaultInputValue?: string,
-  onInputChange?: (value: string) => void,
-  onFilter?: (value: string) => void,
-  allowsCustomValue?: boolean,
-  onCustomValue?: (value: string) => void,
-  completionMode?: 'suggest' | 'complete',
-  menuTrigger?: 'focus' | 'input' | 'manual',
-  shouldFlip?: boolean
-}
-
-// TODO: Check extends
-interface SpectrumComboBox<T> extends InputBase, TextInputBase, ComboBoxProps<T>, SpectrumLabelableProps, DOMProps, StyleProps {
-  isQuiet?: boolean,
-  direction?: 'bottom' | 'top'
-}
-
-function ComboBox<T extends object>(props: SpectrumComboBox<T>, ref: RefObject<TextFieldRef>) {
+function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
 
   let {
@@ -94,7 +64,6 @@ function ComboBox<T extends object>(props: SpectrumComboBox<T>, ref: RefObject<T
   let {triggerProps, inputProps, menuProps, labelProps} = useComboBox(
     {
       ...props,
-      menuTrigger,
       completionMode,
       layout,
       triggerRef: unwrapDOMRef(triggerRef),

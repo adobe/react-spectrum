@@ -10,10 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-
- // TODO: Move the below into combobox types
 import {chain} from '@react-aria/utils';
-import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, HTMLAttributes, RefObject, useEffect, useState} from 'react';
 import {ListLayout} from '@react-stately/collections';
@@ -22,22 +19,11 @@ import {useMenuTrigger} from '@react-aria/menu';
 import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
 
-interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
-  isOpen?: boolean,
-  defaultOpen?: boolean,
-  onOpenChange?: (isOpen: boolean) => void,
-  inputValue?: string,
-  defaultInputValue?: string,
-  onInputChange?: (value: string) => void,
-  onFilter?: (value: string) => void,
-  allowsCustomValue?: boolean,
-  onCustomValue?: (value: string) => void,
-  completionMode?: 'suggest' | 'complete',
-  menuTrigger?: 'focus' | 'input' | 'manual',
-  shouldFlip?: boolean
+interface ComboBoxProps {
+  completionMode?: 'suggest' | 'complete'
 }
 
-interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
+interface AriaComboBoxProps<T> extends ComboBoxProps {
   popoverRef: RefObject<HTMLDivElement>,
   triggerRef: RefObject<HTMLElement>,
   inputRef: RefObject<HTMLInputElement>,
@@ -56,11 +42,19 @@ interface ComboBoxAria {
 }
 
 export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
-  // TODO: destructure props
+  let {
+    triggerRef,
+    popoverRef,
+    inputRef,
+    layout,
+    isFocused,
+    setIsFocused,
+    completionMode
+  } = props;
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      ref: props.triggerRef
+      ref: triggerRef
     },
     state
   );
@@ -79,33 +73,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     state.open();
   };
 
-
-  // Perhaps this goes into stately
-  useEffect(() => {
-    // Perhaps replace the below with state.selectedItem?
-    let selectedItem = state.selectedKey ? state.collection.getItem(state.selectedKey) : null;
-    if (selectedItem) {
-      let itemText = selectedItem.textValue || selectedItem.rendered as string; // how should we handle this? rendered is typed as an object
-
-      // Throw error if controlled inputValue and controlled selectedKey don't match
-      if (props.inputValue && props.selectedKey && (props.inputValue !== itemText)) {
-        throw new Error('Mismatch between selected item and inputValue!');
-      }
-
-      // Update textfield value if new item is selected
-      // Only do this if not controlled?
-      if (itemText !== state.value && !(props.inputValue)) {
-        state.setValue(itemText);
-      }
-    } else {
-      if (props.inputValue) {
-        // TODO find item that has matching text and set as selectedKey
-        // If none found, make invalid?
-      }
-    }
-  }, [state.selectedKey, props.inputValue, props.selectedKey]);
-
-
   // TODO: Refine the below, feels weird to have focusedItem and also need to still do state.selectionManger.focusedKey
   let [focusedKeyId, setFocusedKeyId] = useState(null);
   let focusedItem = state.selectionManager.focusedKey ? state.collection.getItem(state.selectionManager.focusedKey) : null;
@@ -115,57 +82,13 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   }, [state.selectionManager.focusedKey, state.collection, focusedItem, setFocusedKeyId, menuProps.id]);
 
-
   // Using layout initiated from ComboBox, generate the keydown handlers for textfield (arrow up/down to navigate through menu when focus in the textfield)
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
-    keyboardDelegate: props.layout,
+    keyboardDelegate: layout,
     shouldTypeAhead: false,
     disallowEmptySelection: true
   });
-
-  let onBlur = (e) => {
-    state.close();
-    // If user is clicking on the combobox button, early return so we don't change textfield focus state, update the selected key erroneously,
-    // and trigger close menu twice
-    if (props.triggerRef.current && props.triggerRef.current.contains(e.relatedTarget)) {
-      return;
-    }
-
-    // If blur happens from clicking on menu item, refocus textfield and early return
-    if (props.popoverRef.current && props.popoverRef.current.contains(e.relatedTarget)) {
-      // Stop propagation so focus styles on button don't go away
-      e.stopPropagation();
-      props.inputRef.current.focus();
-      return;
-    }
-
-    if (props.onBlur) {
-      props.onBlur(e);
-    }
-
-    props.setIsFocused(false);
-
-    // A bit strange behavior when isOpen is true, menu can't close so you can't tab away from the
-    // textfield, almost like a focus trap
-
-    if (state.isOpen && focusedItem) {
-      state.setSelectedKey(state.selectionManager.focusedKey);
-    }
-  };
-
-  let onFocus = (e) => {
-    // If inputfield is already focused, early return to prevent extra props.onFocus calls
-    if (props.isFocused) {
-      return;
-    }
-
-    if (props.onFocus) {
-      props.onFocus(e);
-    }
-
-    props.setIsFocused(true);
-  };
 
   // For textfield specific keydown operations
   let onKeyDown = (e) => {
@@ -198,20 +121,47 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
-  // Return focus to textfield if user clicks menu trigger button
-  let onPress = (e) => {
-    if (e.pointerType === 'touch') {
-      props.inputRef.current.focus();
-      // Force toggle the menu regardless of focus state
-      state.toggle(null, true);
+  let onBlur = (e) => {
+    state.close();
+    // If user is clicking on the combobox button, early return so we don't change textfield focus state, update the selected key erroneously,
+    // and trigger close menu twice
+    if (triggerRef.current && triggerRef.current.contains(e.relatedTarget)) {
+      return;
+    }
+
+    // If blur happens from clicking on menu item, refocus textfield and early return
+    if (popoverRef.current && popoverRef.current.contains(e.relatedTarget)) {
+      // Stop propagation so focus styles on button don't go away
+      e.stopPropagation();
+      inputRef.current.focus();
+      return;
+    }
+
+    if (props.onBlur) {
+      props.onBlur(e);
+    }
+
+    setIsFocused(false);
+
+    // A bit strange behavior when isOpen is true, menu can't close so you can't tab away from the
+    // textfield, almost like a focus trap
+
+    if (state.isOpen && focusedItem) {
+      state.setSelectedKey(state.selectionManager.focusedKey);
     }
   };
 
-  let onPressStart = (e) => {
-    if (e.pointerType !== 'touch') {
-      props.inputRef.current.focus();
-      state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null, true);
+  let onFocus = (e) => {
+    // If inputfield is already focused, early return to prevent extra props.onFocus calls
+    if (isFocused) {
+      return;
     }
+
+    if (props.onFocus) {
+      props.onFocus(e);
+    }
+
+    setIsFocused(true);
   };
 
   let {labelProps, inputProps} = useTextField({
@@ -221,7 +171,23 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     onBlur,
     value: state.value,
     onFocus
-  }, props.inputRef);
+  }, inputRef);
+
+  // Return focus to textfield if user clicks menu trigger button
+  let onPress = (e) => {
+    if (e.pointerType === 'touch') {
+      inputRef.current.focus();
+      // Force toggle the menu regardless of focus state
+      state.toggle(null, true);
+    }
+  };
+
+  let onPressStart = (e) => {
+    if (e.pointerType !== 'touch') {
+      inputRef.current.focus();
+      state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null, true);
+    }
+  };
 
   return {
     labelProps,
@@ -232,11 +198,10 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       onPressStart
     },
     inputProps: {
-      // TODO: double check that user provided id gets sent to textfield and not to wrapper div
       ...inputProps,
       role: 'combobox',
       'aria-controls': state.isOpen ? menuProps.id : undefined,
-      'aria-autocomplete': props.completionMode === 'suggest' ? 'list' : 'both',
+      'aria-autocomplete': completionMode === 'suggest' ? 'list' : 'both',
       'aria-activedescendant': state.isOpen ? focusedKeyId : undefined
     },
     menuProps
