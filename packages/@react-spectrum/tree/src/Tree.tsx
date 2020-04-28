@@ -25,7 +25,7 @@ import {useSelectableCollection, useSelectableItem} from '@react-aria/selection'
 
 export {Item, Section};
 
-export function Tree<T>(props: CollectionBase<T> & Expandable & MultipleSelection) {
+export function Tree<T extends object>(props: CollectionBase<T> & Expandable & MultipleSelection) {
   let state = useTreeState(props);
   let layout = useMemo(() => 
     new ListLayout({
@@ -70,11 +70,13 @@ interface TreeItemProps<T> {
 function TreeItem<T>(props: TreeItemProps<T>) {
   let {item, state} = props;
   let {
+    key,
     rendered,
-    hasChildNodes,
-    isExpanded,
-    isSelected
+    hasChildNodes
   } = item;
+
+  let isExpanded = state.expandedKeys.has(key);
+  let isSelected = state.selectionManager.isSelected(key);
   
   let itemClassName = classNames(styles, 'spectrum-TreeView-item', {
     'is-open': isExpanded

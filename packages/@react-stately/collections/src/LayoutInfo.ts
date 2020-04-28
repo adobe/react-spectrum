@@ -47,6 +47,11 @@ export class LayoutInfo {
   estimatedSize: boolean;
 
   /**
+   * Whether the layout info sticks to the viewport when scrolling.
+   */
+  isSticky: boolean;
+
+  /**
    * The view's opacity. 1 by default.
    */
   opacity: number;

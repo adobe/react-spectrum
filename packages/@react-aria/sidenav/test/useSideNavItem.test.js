@@ -16,7 +16,12 @@ import {useSideNavItem} from '../';
 
 describe('useSideNavItem', function () {
   let mockState = {
-    selectionManager: {}
+    selectionManager: {
+      isSelected(key) {
+        return key === 'selected';
+      }
+    },
+    disabledKeys: new Set()
   };
 
   let renderSideNavItemHook = (menuProps, itemProps = {}) => {
@@ -40,7 +45,7 @@ describe('useSideNavItem', function () {
   });
 
   it('returns aria for selected item', function () {
-    let {listItemProps, listItemLinkProps} = renderSideNavItemHook({}, {isSelected: true});
+    let {listItemProps, listItemLinkProps} = renderSideNavItemHook({}, {key: 'selected'});
     expect(listItemProps).toBeDefined();
     expect(listItemProps.role).toBe('listitem');
     expect(listItemLinkProps).toBeDefined();

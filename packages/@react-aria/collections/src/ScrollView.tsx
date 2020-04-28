@@ -12,16 +12,17 @@
 
 // @ts-ignore - todo it's after midnight, figure out later, it's just a warning
 import {flushSync} from 'react-dom';
-import React, {CSSProperties, HTMLAttributes, ReactNode, RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import {getScrollLeft} from './utils';
+import React, {CSSProperties, HTMLAttributes, ReactNode, RefObject, useCallback, useLayoutEffect, useRef, useState} from 'react';
 import {Rect, Size} from '@react-stately/collections';
+import {useLocale} from '@react-aria/i18n';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   contentSize: Size,
-  visibleRect: Rect,
   onVisibleRectChange: (rect: Rect) => void,
   children: ReactNode,
-  innerStyle: CSSProperties,
-  sizeToFit: 'width' | 'height',
+  innerStyle?: CSSProperties,
+  sizeToFit?: 'width' | 'height',
   onScrollStart?: () => void,
   onScrollEnd?: () => void,
   scrollDirection?: 'horizontal' | 'vertical' | 'both'
@@ -49,21 +50,33 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     scrollEndTime: 0,
     scrollTimeout: null,
     width: 0,
-    height: 0
+    height: 0,
+    isScrolling: false
   }).current;
+  let {direction} = useLocale();
 
   let [isScrolling, setScrolling] = useState(false);
   let onScroll = useCallback((e) => {
+    if (e.target !== e.currentTarget) {
+      return;
+    }
+
+    if (props.onScroll) {
+      props.onScroll(e);
+    }
+
     flushSync(() => {
-      let {scrollTop, scrollLeft, scrollHeight, scrollWidth, clientHeight, clientWidth} = e.currentTarget;
+      let scrollTop = e.currentTarget.scrollTop;
+      let scrollLeft = getScrollLeft(e.currentTarget, direction);
 
       // Prevent rubber band scrolling from shaking when scrolling out of bounds
-      state.scrollTop = Math.max(0, Math.min(scrollTop, scrollHeight - clientHeight));
-      state.scrollLeft = Math.max(0, Math.min(scrollLeft, scrollWidth - clientWidth));
+      state.scrollTop = Math.max(0, Math.min(scrollTop, contentSize.height - state.height));
+      state.scrollLeft = Math.max(0, Math.min(scrollLeft, contentSize.width - state.width));
 
       onVisibleRectChange(new Rect(state.scrollLeft, state.scrollTop, state.width, state.height));
 
-      if (!isScrolling) {
+      if (!state.isScrolling) {
+        state.isScrolling = true;
         setScrolling(true);
 
         if (onScrollStart) {
@@ -80,6 +93,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
 
         clearTimeout(state.scrollTimeout);
         state.scrollTimeout = setTimeout(() => {
+          state.isScrolling = false;
           setScrolling(false);
           state.scrollTimeout = null;
 
@@ -89,9 +103,9 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
         }, 300);
       }
     });
-  }, [isScrolling, onScrollEnd, onScrollStart, onVisibleRectChange, state.height, state.scrollEndTime, state.scrollLeft, state.scrollTimeout, state.scrollTop, state.width]);
+  }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollEnd]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // TODO: resize observer
     // https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver
     let updateSize = () => {
@@ -134,30 +148,12 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     return () => {
       window.removeEventListener('resize', updateSize, false);
     };
-  }, [onVisibleRectChange, ref, state.height, state.scrollLeft, state.scrollTop, state.width, sizeToFit, contentSize.width, contentSize.height]);
-
-  useLayoutEffect(() => {
-    let dom = ref.current;
-    if (!dom) {
-      return;
-    }
-
-    if (visibleRect.x !== state.scrollLeft) {
-      state.scrollLeft = visibleRect.x;
-      dom.scrollLeft = visibleRect.x;
-    }
-
-    if (visibleRect.y !== state.scrollTop) {
-      state.scrollTop = visibleRect.y;
-      dom.scrollTop = visibleRect.y;
-    }
-  }, [ref, state.scrollLeft, state.scrollTop, visibleRect.x, visibleRect.y]);
+  }, [onVisibleRectChange, ref, state, sizeToFit, contentSize]);
 
   let style: React.CSSProperties = {
-    ...otherProps.style,
-    position: 'relative',
     // Reset padding so that relative positioning works correctly. Padding will be done in JS layout.
-    padding: 0
+    padding: 0,
+    ...otherProps.style
   };
 
   if (scrollDirection === 'horizontal') {
@@ -172,7 +168,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
 
   return (
     <div {...otherProps} style={style} ref={ref} onScroll={onScroll}>
-      <div role="presentation" style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', ...innerStyle}}>
+      <div role="presentation" style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', position: 'relative', ...innerStyle}}>
         {children}
       </div>
     </div>

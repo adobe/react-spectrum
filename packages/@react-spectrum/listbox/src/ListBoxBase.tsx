@@ -14,6 +14,7 @@ import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {CollectionItem, CollectionView} from '@react-aria/collections';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import {FocusStrategy} from '@react-types/menu';
+import {ListBoxContext} from './ListBoxContext';
 import {ListBoxOption} from './ListBoxOption';
 import {ListBoxSection} from './ListBoxSection';
 import {ListLayout, Node} from '@react-stately/collections';
@@ -51,6 +52,7 @@ export function useListBoxLayout<T>(state: ListState<T>) {
   , [collator, scale]);
 
   layout.collection = state.collection;
+  layout.disabledKeys = state.disabledKeys;
   return layout;
 }
 
@@ -74,7 +76,6 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
       return (
         <ListBoxSection
           key={reusableView.key}
-          state={state}
           reusableView={reusableView}
           header={children.find(c => c.viewType === 'header')}>
           {renderChildren(children.filter(c => c.viewType === 'item'))}
@@ -91,36 +92,37 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
   };
 
   return (
-    <CollectionView
-      {...filterDOMProps(props)}
-      {...styleProps}
-      {...mergeProps(listBoxProps, domProps)}
-      ref={ref}
-      focusedKey={state.selectionManager.focusedKey}
-      sizeToFit="height"
-      scrollDirection="vertical"
-      className={
-        classNames(
-          styles,
-          'spectrum-Menu',
-          styleProps.className
-        )
-      }
-      layout={layout}
-      collection={state.collection}
-      renderWrapper={renderWrapper}>
-      {(type, item) => {
-        if (type === 'item') {
-          return (
-            <ListBoxOption
-              item={item}
-              state={state}
-              shouldSelectOnPressUp={shouldSelectOnPressUp}
-              shouldFocusOnHover={focusOnPointerEnter} />
-          );
+    <ListBoxContext.Provider value={state}>
+      <CollectionView
+        {...filterDOMProps(props)}
+        {...styleProps}
+        {...mergeProps(listBoxProps, domProps)}
+        ref={ref}
+        focusedKey={state.selectionManager.focusedKey}
+        sizeToFit="height"
+        scrollDirection="vertical"
+        className={
+          classNames(
+            styles,
+            'spectrum-Menu',
+            styleProps.className
+          )
         }
-      }}
-    </CollectionView>
+        layout={layout}
+        collection={state.collection}
+        renderWrapper={renderWrapper}>
+        {(type, item) => {
+          if (type === 'item') {
+            return (
+              <ListBoxOption
+                item={item}
+                shouldSelectOnPressUp={shouldSelectOnPressUp}
+                shouldFocusOnHover={focusOnPointerEnter} />
+            );
+          }
+        }}
+      </CollectionView>
+    </ListBoxContext.Provider>
   );
 }
 

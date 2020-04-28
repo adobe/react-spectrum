@@ -22,7 +22,7 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
-function Menu<T>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
+function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
   let contextProps = useContext(MenuContext);
   let completeProps = {
     ...mergeProps(contextProps, props),

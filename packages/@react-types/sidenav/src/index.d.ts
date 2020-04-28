@@ -13,7 +13,6 @@
 import {CollectionBase, DOMProps, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
 import {HTMLAttributes, ReactNode} from 'react';
 import {Node, ReusableView} from '@react-stately/collections';
-import {TreeState} from '@react-stately/tree';
 
 export interface SideNavProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps, StyleProps {
   shouldFocusWrap?: boolean
@@ -23,8 +22,7 @@ export interface SpectrumSideNavProps<T> extends SideNavProps<T> {
 }
 
 export interface SpectrumSideNavItemProps<T> extends HTMLAttributes<HTMLElement>{
-  item: Node<T>,
-  state: TreeState<T>
+  item: Node<T>
 }
 
 interface SideNavSectionProps<T> {

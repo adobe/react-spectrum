@@ -10,12 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-stately/collections';
-import {Key} from 'react';
-import {SelectionManager} from '@react-stately/selection';
+import {ListState} from '@react-stately/list';
+import React from 'react';
 
-export interface ActionGroupState<T> {
-  collection: Collection<Node<T>>,
-  disabledKeys: Set<Key>,
-  selectionManager: SelectionManager
-}
+export const ListBoxContext = React.createContext<ListState<unknown>>(null);

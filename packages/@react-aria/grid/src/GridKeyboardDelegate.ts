@@ -17,12 +17,14 @@ import {Node} from '@react-stately/collections';
 
 export class GridKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: GridCollection<T>;
+  private disabledKeys: Set<Key>;
   private ref: RefObject<HTMLElement>;
   private direction: Direction;
   private collator: Intl.Collator;
 
-  constructor(collection: GridCollection<T>, ref: RefObject<HTMLElement>, direction: Direction, collator?: Intl.Collator) {
+  constructor(collection: GridCollection<T>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement>, direction: Direction, collator?: Intl.Collator) {
     this.collection = collection;
+    this.disabledKeys = disabledKeys;
     this.ref = ref;
     this.direction = direction;
     this.collator = collator;
@@ -76,9 +78,8 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
         return child.key;
       }
 
-      return this.findNextKey(item => 
-        this.isCell(item) && item.index === startItem.index
-      );
+      let firstItem = this.collection.getItem(this.collection.getFirstKey());
+      return [...firstItem.childNodes][startItem.index].key;
     }
 
     // If focus was on a cell, start searching from the parent row
@@ -87,7 +88,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     }
     
     // Find the next enabled item
-    key = this.findNextKey(item => item.type === 'item' && !item.isDisabled, key);
+    key = this.findNextKey(item => item.type === 'item' && !this.disabledKeys.has(item.key), key);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the next row.
       if (this.isCell(startItem)) {
@@ -122,7 +123,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     // Find the previous enabled item
-    key = this.findPreviousKey(item => item.type === 'item' && !item.isDisabled, key);
+    key = this.findPreviousKey(item => item.type === 'item' && !this.disabledKeys.has(item.key), key);
     if (key != null) {
       // If focus was on a cell, focus the cell with the same index in the previous row.
       if (this.isCell(startItem)) {
@@ -277,7 +278,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     // Find the first enabled row
-    key = this.findNextKey(item => item.type === 'item' && !item.isDisabled);
+    key = this.findNextKey(item => item.type === 'item' && !this.disabledKeys.has(item.key));
 
     // If global flag is set, focus the first cell in the first row.
     if (key != null && item && this.isCell(item) && global) {
@@ -307,7 +308,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     // Find the last enabled row
-    key = this.findPreviousKey(item => item.type === 'item' && !item.isDisabled);
+    key = this.findPreviousKey(item => item.type === 'item' && !this.disabledKeys.has(item.key));
 
     // If global flag is set, focus the last cell in the last row.
     if (key != null && item && this.isCell(item) && global) {
