@@ -87,6 +87,18 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
 
   let isMobile = useMediaQuery('(max-width: 700px)');
 
+  let comboBoxAutoFocus;
+  // Focus first/last item on menu open if focusStategy is set (done by up/down arrows)
+  // Otherwise if allowsCustomValue is true, only autofocus if there is a selected item
+  // If allowsCustomValue is false, autofocus first item/selectedItem 
+  if (state.focusStrategy) {
+    comboBoxAutoFocus = state.focusStrategy;
+  } else if (props.allowsCustomValue) {
+    comboBoxAutoFocus = state.selectedKey ? true : false;
+  } else {
+    comboBoxAutoFocus = 'first';
+  }
+  
   let listbox = (
     <FocusScope>
       <DismissButton onDismiss={() => state.setOpen(false)} />
@@ -94,8 +106,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         ref={listboxRef}
         domProps={menuProps}
         disallowEmptySelection
-        // TODO: adjust this from 'first'? Depends on whether or not we want to ever focus something other than the first item if no items are selected
-        autoFocus={props.allowsCustomValue ? false : (state.focusStrategy || 'first')}
+        autoFocus={comboBoxAutoFocus}
         shouldSelectOnPressUp
         focusOnPointerEnter
         layout={layout}

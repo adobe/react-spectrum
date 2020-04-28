@@ -110,7 +110,9 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       case 'ArrowDown':
         if (!state.isOpen) {
           state.toggle('first');
-        } else if (!focusedItem) { // Forget why this block is here, double check
+        } else if (!focusedItem) { 
+          // If there isn't a focused item (allowsCustomValue=true) but the menu is open , set a item to focus when the user
+          // presses the arrow keys
           let firstKey = state.collection.getFirstKey();
           state.selectionManager.setFocusedKey(firstKey);
         }
@@ -119,9 +121,9 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       case 'ArrowUp':
         if (!state.isOpen) {
           state.toggle('last');
-        } else if (!focusedItem) { // Forget why this block is here, double check
-          let firstKey = state.collection.getFirstKey();
-          state.selectionManager.setFocusedKey(firstKey);
+        } else if (!focusedItem) { 
+          let lastKey = state.collection.getLastKey();
+          state.selectionManager.setFocusedKey(lastKey);
         }
 
         break;
