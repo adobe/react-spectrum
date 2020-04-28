@@ -108,7 +108,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
         state.close();
         break;
       case 'ArrowDown':
-        if (!state.isOpen && menuTrigger !== 'manual') {
+        if (!state.isOpen) {
           state.toggle('first');
         } else if (!focusedItem) { // Forget why this block is here, double check
           let firstKey = state.collection.getFirstKey();
@@ -117,7 +117,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
         break;
       case 'ArrowUp':
-        if (!state.isOpen && menuTrigger !== 'manual') {
+        if (!state.isOpen) {
           state.toggle('last');
         } else if (!focusedItem) { // Forget why this block is here, double check
           let firstKey = state.collection.getFirstKey();

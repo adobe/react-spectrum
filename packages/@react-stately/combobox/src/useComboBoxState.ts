@@ -256,21 +256,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     }
   }, [selectState.selectedKey, inputValue, selectedKey]);
 
-  // For manual trigger mode
-  useEffect(() => {
-    // Should this also require that completionMode="Complete"?
-    // Should items be automatically selected or does user need to hit enter to select it?
-    // TODO: Make this item + text extraction logic into a helper function, maybe can add to collectionManager
-    // Pull focusedItem out of useEffect and change dep array?
-    let focusedItem = selectState.collection.getItem(selectState.selectionManager.focusedKey)
-    if (menuTrigger === 'manual' && focusedItem) {
-      let focusedItemText = focusedItem ? focusedItem.textValue || focusedItem.rendered as string : undefined;
-      if (focusedItemText) {
-        setValue(focusedItemText);
-      }
-    }
-  }, [selectState.selectionManager.focusedKey])
-
   return {
     ...selectState,
     open,
