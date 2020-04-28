@@ -13,15 +13,22 @@
 import docStyles from './docs.css';
 import React from 'react';
 
-const classNames = {
-  example: docStyles.exampleImage,
-  hero: docStyles.heroImage
-};
+export const ImageContext = React.createContext();
 
-export function Image({type, children}) {
+export function Hero({wide, narrow, alt}) {
+  // Temporary fix for parcel issue with relative urls in server rendering.
+  let publicUrl = React.useContext(ImageContext);
+  let baseUrl = publicUrl.replace(/\/$/, '');
+  let narrowUrl = baseUrl + narrow;
+  let wideUrl = baseUrl + wide;
   return (
-    <div className={classNames[type]}>
-      {children}
+    <div className={docStyles.heroImage}>
+      <img srcset={`${narrowUrl} 600w,
+              ${wideUrl} 967w`}
+        sizes="(max-width: 600px) 480px,
+                967px"
+        src={wideUrl}
+        alt={alt} />
     </div>
   );
 }

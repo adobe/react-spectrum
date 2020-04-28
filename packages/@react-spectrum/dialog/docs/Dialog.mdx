@@ -14,6 +14,7 @@ import DialogAnatomy from '../images/DialogAnatomy.svg';
 import docs from 'docs:@react-spectrum/dialog';
 import {Image, HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
+import styles from '@react-spectrum/docs/src/docs.css';
 
 ```jsx import
 import {ActionButton, Button} from '@react-spectrum/button';
@@ -78,9 +79,9 @@ category: Overlays
 
 A standard Dialog has the following anatomy:
 
-<Image type="example">
+<div className={styles.exampleImage}>
   <DialogAnatomy />
-</Image>
+</div>
 
 These sections can be populated by providing the following components to your Dialog as children:
 `Header`, `Heading` (title), `Divider`, `Content` (body), `ButtonGroup`, and `Footer`. Each of these components are

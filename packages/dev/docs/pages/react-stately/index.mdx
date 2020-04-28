@@ -10,7 +10,7 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import {Highlights, Image} from '@react-spectrum/docs';
+import {Highlights, Hero} from '@react-spectrum/docs';
 import heroNarrow from 'url:../assets/hero-narrow.png';
 import heroWide from 'url:../assets/hero-wide.png';
 
@@ -18,14 +18,10 @@ import heroWide from 'url:../assets/hero-wide.png';
 
 A library of React Hooks that provides cross-platform state management for your design system.
 
-<Image type="hero">
-  <img srcset={`${heroNarrow} 600w,
-              ${heroWide} 967w`}
-      sizes="(max-width: 600px) 480px,
-              967px"
-      src={heroWide}
-      alt="React Spectrum hero image" />
-</Image>
+<Hero
+  narrow={heroNarrow}
+  wide={heroWide}
+  alt="React Stately hero image" />
 
 <Highlights items={[
   {

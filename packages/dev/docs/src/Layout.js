@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import highlightCss from './syntax-highlight.css';
+import {ImageContext} from './Image';
 import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
@@ -241,7 +242,7 @@ function Footer() {
   );
 }
 
-export function Layout({scripts, styles, pages, currentPage, children, toc}) {
+export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
 
   return (
     <Page title={currentPage.title} scripts={scripts} styles={styles}>
@@ -250,7 +251,9 @@ export function Layout({scripts, styles, pages, currentPage, children, toc}) {
       <main>
         <article className={typographyStyles['spectrum-Typography']}>
           <MDXProvider components={mdxComponents}>
-            <LinkProvider>{children}</LinkProvider>
+            <ImageContext.Provider value={publicUrl}>
+              <LinkProvider>{children}</LinkProvider>
+            </ImageContext.Provider>
           </MDXProvider>
         </article>
         {toc.length ? <ToC toc={toc} /> : null}
