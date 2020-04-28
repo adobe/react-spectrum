@@ -26,8 +26,8 @@ export function Hero({wide, narrow, wide2x, narrow2x, alt}) {
   return (
     <div className={docStyles.heroImage}>
       <picture>
-        <source srcset={` ${wideUrl} 967w,  ${wide2xUrl} 2x`} media="(min-width: 600px)" />
-        <source srcset={`${narrowUrl} 600w, ${narrow2xUrl} 2x`} media="(max-width: 600px)" />
+        <source srcSet={` ${wideUrl} 967w,  ${wide2xUrl} 2x`} media="(min-width: 600px)" />
+        <source srcSet={`${narrowUrl} 600w, ${narrow2xUrl} 2x`} media="(max-width: 600px)" />
         <img src={wideUrl} alt={alt} />
       </picture>
     </div>
