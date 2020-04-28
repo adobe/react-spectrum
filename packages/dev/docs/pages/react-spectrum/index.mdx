@@ -10,4 +10,38 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
+import {Highlights, Image} from '@react-spectrum/docs';
+import heroNarrow from 'url:../assets/hero-narrow.png';
+import heroWide from 'url:../assets/hero-wide.png';
+
 # React Spectrum
+
+A React implementation of Spectrum, Adobe’s design system.
+
+<Image type="hero">
+  <img srcset={`${heroNarrow} 600w,
+              ${heroWide} 967w`}
+      sizes="(max-width: 600px) 480px,
+              967px"
+      src={heroWide}
+      alt="React Spectrum hero image" />
+</Image>
+
+<Highlights items={[
+  {
+    title: 'Accessible',
+    description: 'React Spectrum components are designed with accessibility in mind, including full screen reader and keyboard navigation support.',
+  },
+  {
+    title: 'Adaptive',
+    description: 'React Spectrum components are designed to work with mouse, touch, and keyboard interactions. Built with responsive design principles to deliver a great experience no matter the device.',
+  },
+  {
+    title: 'Themeable',
+    description: 'React Spectrum supports custom themes to match your brand, including automatic support for dark mode.'
+  },
+  {
+    title: 'Internationalized',
+    description: 'React Spectrum components are designed to support over 30 languages, including support for right to left, date and number formatting, and more.'
+  }
+]} />

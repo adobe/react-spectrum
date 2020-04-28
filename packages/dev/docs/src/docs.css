@@ -42,13 +42,31 @@ html, body {
 
 .highlights {
   display: flex;
+  flex-wrap: wrap;
 
   @media (max-width: 1020px) {
     display: block;
+
+    div {
+      width: 100%;
+    }
   }
 
   div {
-    padding: 0 8px;
+    box-sizing: border-box;
+    padding: 0 16px;
+  }
+
+  @media (min-width: 1020px) {
+    div:first-child:nth-last-child(3),
+    div:first-child:nth-last-child(3) ~ div {
+      width: 33.3333%;
+    }
+
+    div:first-child:nth-last-child(4),
+    div:first-child:nth-last-child(4) ~ div {
+      width: 50%;
+    }
   }
 }
 

@@ -10,4 +10,38 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
+import {Highlights, Image} from '@react-spectrum/docs';
+import heroNarrow from 'url:../assets/hero-narrow.png';
+import heroWide from 'url:../assets/hero-wide.png';
+
 # React Stately
+
+A library of React Hooks that provides cross-platform state management for your design system.
+
+<Image type="hero">
+  <img srcset={`${heroNarrow} 600w,
+              ${heroWide} 967w`}
+      sizes="(max-width: 600px) 480px,
+              967px"
+      src={heroWide}
+      alt="React Spectrum hero image" />
+</Image>
+
+<Highlights items={[
+  {
+    title: 'Foundation',
+    description: 'React Stately provides the foundation and business logic for your component library. It handles state management for common components via an easy to use interface.',
+  },
+  {
+    title: 'Powered by React Hooks',
+    description: 'React Stately is implemented as a library of React Hooks, which allows you to adapt them to your needs through composition.',
+  },
+  {
+    title: 'Cross Platform',
+    description: 'React Stately only provides state management, with no assumptions about the DOM or other view systems.'
+  },
+  {
+    title: 'Design Agnostic',
+    description: 'React Stately does not make any assumptions about your design. It provides state management intrinsic to the functionality of the component.'
+  }
+]} />
