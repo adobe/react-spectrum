@@ -15,21 +15,21 @@ import React from 'react';
 
 export const ImageContext = React.createContext();
 
-export function Hero({wide, narrow, alt}) {
+export function Hero({wide, narrow, wide2x, narrow2x, alt}) {
   // Temporary fix for parcel issue with relative urls in server rendering.
   let publicUrl = React.useContext(ImageContext);
   let baseUrl = publicUrl.replace(/\/$/, '');
   let narrowUrl = baseUrl + narrow;
+  let narrow2xUrl = baseUrl + narrow2x;
   let wideUrl = baseUrl + wide;
+  let wide2xUrl = baseUrl + wide2x;
   return (
     <div className={docStyles.heroImage}>
-      <img
-        srcSet={`${narrowUrl} 600w,
-              ${wideUrl} 967w`}
-        sizes="(max-width: 600px) 480px,
-                967px"
-        src={wideUrl}
-        alt={alt} />
+      <picture>
+        <source srcset={` ${wideUrl} 967w,  ${wide2xUrl} 2x`} media="(min-width: 600px)" />
+        <source srcset={`${narrowUrl} 600w, ${narrow2xUrl} 2x`} media="(max-width: 600px)" />
+        <img src={wideUrl} alt={alt} />
+      </picture>
     </div>
   );
 }
