@@ -1,16 +1,17 @@
 
-# Setup Guide for Mac Users with Corporate git credentials.
+# Setup Guide for users with multiple git credentials.
 
-This guide is for corporate contributors who are already using corporate git accounts and need to configure their system to support using a separate public github account in addition to their pre-existing corporate account.
+This guide is for corporate contributors or others who are already using different git accounts and need to configure their system to support using a separate public github account in addition to their pre-existing account.
 
+## Mac
 
-## Setup SSH config for multiple hosts.
+### Setup SSH config for multiple hosts.
 
-### Step 1: Setup a github.com user account if you don't already have one.
+#### Step 1: Setup a github.com user account if you don't already have one.
 
 Use a personal email account, not your corporate email account.
 
-### Step 2: Generate a new ssh key for your github.com account
+#### Step 2: (OPTIONAL if using ssh) Generate a new ssh key for your github.com account
 
 Follow these steps with these notes:
 
@@ -19,7 +20,7 @@ Follow these steps with these notes:
 
 https://help.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 
-### Step 3: Edit your ~/.ssh/config file to use different ssh keys
+#### Step 3: (OPTIONAL if using ssh) Edit your ~/.ssh/config file to use different ssh keys
 
 This is mine for reference. Make sure you DO NOT have an IdentifyFile setting under the Host * section.
 
@@ -37,13 +38,13 @@ This is mine for reference. Make sure you DO NOT have an IdentifyFile setting un
         User git
         IdentitiesOnly yes
 
-## Setup GIT config for multiple hosts.
+### Setup GIT config for multiple hosts.
 
-### Step 4: Create a separate root directory for public github.com projects
+#### Step 4: Create a separate root directory for public github.com projects
 
 I use `~/Projects/public`
 
-### Step 5: Create a .gitconfig in that directory setting the user to your public email address
+#### Step 5: Create a .gitconfig in that directory setting the user to your public email address
 
 `~/Projects/public/.gitconfig`
 
@@ -51,24 +52,17 @@ I use `~/Projects/public`
         email = youremail@gmail.com
         name = Your Name
 
-### Step 6: Add an [includeIf] section to your ~/.gitconfig telling it to use the new .gitconfig within that directory
+#### Step 6: Add an [includeIf] section to your ~/.gitconfig telling it to use the new .gitconfig within that directory
 
 `~/.gitconfig`
 
     [user]
         name = Your Name
         email = youremail@yourcorporation.com
-    [merge]
-        tool = p4mergetool
-    [mergetool "p4mergetool"]
-        cmd = /Applications/p4merge.app/Contents/Resources/launchp4merge $PWD/$BASE $PWD/$REMOTE $PWD/$LOCAL $PWD/$MERGED
-        trustExitCode = false
-    [mergetool]
-        keepBackup = false
     [includeIf "gitdir:Projects/public/"]
         path = Projects/public/.gitconfig
 
-### Step 7: Test your ssh connection to github.com
+#### Step 7: Test your ssh connection to github.com
 
 Change to your public directory
 
@@ -95,7 +89,7 @@ Finally, test your ssh connection to github as per https://help.github.com/en/gi
 
     ssh -T git@github.com
 
-### Step 8 Clone React Spectrum using the git: url into the `~/Projects/public` directory, build and test.
+#### Step 8 Clone React Spectrum using the git: url into the `~/Projects/public` directory, build and test.
 
     git clone git@github.com:adobe-private/react-spectrum-v3.git
 
