@@ -178,7 +178,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       }
     }
 
-    this.cache.set(node, layoutNode);
+    // this.cache.set(node, layoutNode);
     return layoutNode;
   }
 

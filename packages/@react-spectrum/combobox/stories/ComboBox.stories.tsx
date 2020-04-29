@@ -161,7 +161,31 @@ storiesOf('ComboBox', module)
         </ComboBox>
       </Flex>
     )
+  )
+  .add(
+    'onFilter, (value included in list)',
+    () => customFilterComboBox()
   );
+
+let customFilterItems = [
+  {name: 'The first item', id: '1'},
+  {name: 'The second item', id: '2'},
+  {name: 'The third item', id: '3'}
+];
+
+let customFilterComboBox = () => {
+  let [list, setList] = React.useState(customFilterItems);
+
+  let onFilter = (value) => {
+    setList(customFilterItems.filter(item => item.name.includes(value)));
+  }
+
+  return (
+    <ComboBox items={list} itemKey="id" label="Combobox" onFilter={onFilter} onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+      {(item: any) => <Item>{item.name}</Item>}
+    </ComboBox>
+  )
+}
 
 function render(props = {}) {
   return (

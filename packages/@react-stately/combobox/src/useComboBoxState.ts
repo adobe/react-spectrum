@@ -204,6 +204,12 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     return true;
   }, [value, collator]);
 
+  useEffect(() => {
+    if (onFilter) {
+      onFilter(value);
+    }
+  }, [value])
+
   selectState.collection = useMemo(() => {
     if (itemsControlled || value === '') {
       return selectState.collection;
