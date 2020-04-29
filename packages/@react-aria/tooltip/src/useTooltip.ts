@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes} from 'react';
+import {DOMPropsResponderContext} from '@react-aria/interactions';
+import {HTMLAttributes, useContext} from 'react';
 import {SpectrumTooltipProps} from '@react-types/tooltip';
 import {useId} from '@react-aria/utils';
 
@@ -24,10 +25,14 @@ export function useTooltip(props: SpectrumTooltipProps): TooltipAria {
     role = 'tooltip'
   } = props;
 
+  let {onPointerLeave, onPointerEnter} = useContext(DOMPropsResponderContext) || {};
+
   return {
     tooltipProps: {
       role,
-      id: useId(id)
+      id: useId(id),
+      onPointerEnter,
+      onPointerLeave
     }
   };
 }

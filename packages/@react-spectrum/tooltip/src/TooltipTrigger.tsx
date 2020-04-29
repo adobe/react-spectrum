@@ -13,7 +13,7 @@
 import {DOMPropsResponder} from '@react-aria/interactions';
 import {Overlay} from '@react-spectrum/overlays';
 import {PlacementAxis} from '@react-types/overlays';
-import React, {Fragment, RefObject, useContext, useRef} from 'react';
+import React, {RefObject, useContext, useRef} from 'react';
 import {StyleProps} from '@react-types/shared';
 import {TooltipTriggerProps} from '@react-types/tooltip';
 import {useOverlayPosition} from '@react-aria/overlays';
@@ -58,13 +58,11 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   });
 
   return (
-    <Fragment>
-      <DOMPropsResponder
-        {...triggerProps}
-        ref={triggerRef}
-        isDisabled={isDisabled}>
-        {trigger}
-      </DOMPropsResponder>
+    <DOMPropsResponder
+      {...triggerProps}
+      ref={triggerRef}
+      isDisabled={isDisabled}>
+      {trigger}
       <TooltipContext.Provider
         value={{
           placement,
@@ -76,6 +74,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           {tooltip}
         </Overlay>
       </TooltipContext.Provider>
-    </Fragment>
+    </DOMPropsResponder>
   );
 }
