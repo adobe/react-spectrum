@@ -227,14 +227,18 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   // Maybe we can get rid of these force parameters if we have the selectState.open/toggle calls
   // within a useEffect instead (it calls those only if isFocused and isOpen). These func are changed so it calls
   // setOpen(true) and setOpen(!isOpen)?
+  // Feels kinda convoluted now, prob gona refactor to the above
   let open = (force = false) => {
-    if (isFocused || force) {
+    // Only open if field is focused or force and there are items to display
+    if ((isFocused || force) && selectState.collection.size > 0) {
       selectState.open();
     }
   };
 
   let toggle = (strategy, force = false) => {
-    if (isFocused || force) {
+    // Only toggle open if field is focused or forced and there are items to display
+    // Call toggle if field is focused and the menu is open (aka close it)
+    if ((isFocused || force) && (selectState.isOpen || selectState.collection.size > 0)) {
       selectState.toggle(strategy);
     }
   };
