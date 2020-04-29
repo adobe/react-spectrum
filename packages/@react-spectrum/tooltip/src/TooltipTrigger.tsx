@@ -65,18 +65,17 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
         isDisabled={isDisabled}>
         {trigger}
       </DOMPropsResponder>
-      <Overlay isOpen={state.open}>
-        <TooltipContext.Provider
-          value={{
-            placement,
-            overlayRef,
-            UNSAFE_style: overlayProps.style,
-            isOpen: state.open,
-            ...tooltipProps
-          }}>
+      <TooltipContext.Provider
+        value={{
+          placement,
+          overlayRef,
+          UNSAFE_style: overlayProps.style,
+          ...tooltipProps
+        }}>
+        <Overlay isOpen={state.open}>
           {tooltip}
-        </TooltipContext.Provider>
-      </Overlay>
+        </Overlay>
+      </TooltipContext.Provider>
     </Fragment>
   );
 }
