@@ -70,11 +70,12 @@ function getTarget(href) {
   return '_blank';
 }
 
-function Page({children, title, styles, scripts}) {
+function Page({children, currentPage, publicUrl, styles, scripts}) {
   return (
     <html
       lang="en-US"
       dir="ltr"
+      prefix="og: http://ogp.me/ns#"
       className={classNames(
         theme.global.spectrum,
         theme.light['spectrum--light'],
@@ -83,7 +84,7 @@ function Page({children, title, styles, scripts}) {
         docStyles.provider,
         highlightCss.spectrum)}>
       <head>
-        <title>{title}</title>
+        <title>{currentPage.title}</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Server rendering means we cannot use a real <Provider> component to do this.
@@ -128,6 +129,14 @@ function Page({children, title, styles, scripts}) {
         <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
         {scripts.map(s => <script type={s.type} src={s.url} defer />)}
+        <meta name="description" content={currentPage.description} />
+        <meta name="keywords" content={currentPage.keywords} />
+        <meta property="og:title" content={currentPage.title} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://react-spectrum.adobe.com${currentPage.url}`} />
+        <meta property="og:image" content="https://react-spectrum.adobe.com/hero-wide@2x.73bcb619.png" />
+        <meta property="og:description" content={currentPage.description} />
+        <meta property="og:locale" content="en_US" />
       </head>
       <body>
         {children}
@@ -245,7 +254,7 @@ function Footer() {
 export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
 
   return (
-    <Page title={currentPage.title} scripts={scripts} styles={styles}>
+    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage}>
       <div className={docStyles.pageHeader} id="header" />
       <Nav currentPageName={currentPage.name} pages={pages} />
       <main>

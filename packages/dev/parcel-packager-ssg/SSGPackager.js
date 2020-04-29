@@ -75,12 +75,14 @@ module.exports = new Packager({
         styles: bundles.filter(b => b.type === 'css').map(b => ({
           url: urlJoin(b.target.publicUrl, b.name)
         })),
-        pages,
+        pages,  
         currentPage: {
           category: mainAsset.meta.category,
           name: bundle.name,
           title: mainAsset.meta.title,
-          url: urlJoin(bundle.target.publicUrl, bundle.name)
+          url: urlJoin(bundle.target.publicUrl, bundle.name),
+          description: '',
+          keywords: mainAsset.meta.keywords
         },
         toc: mainAsset.meta.toc,
         publicUrl: bundle.target.publicUrl

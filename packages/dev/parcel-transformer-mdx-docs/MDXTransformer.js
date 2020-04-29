@@ -18,6 +18,7 @@ const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
 const frontmatter = require('remark-frontmatter');
 const slug = require('remark-slug');
 const util = require('mdast-util-toc');
+const yaml = require('js-yaml');
 
 module.exports = new Transformer({
   async transform({asset, options}) {
@@ -86,6 +87,7 @@ module.exports = new Transformer({
     let toc = [];
     let title = '';
     let category = '';
+    let keywords = [];
     const extractToc = (options) => {
       const settings = options || {};
       const depth = settings.maxDepth || 6;
@@ -126,12 +128,12 @@ module.exports = new Transformer({
 
         /*
          * Piggy back here to grab additional metadata.
-         * Should probably use js-yaml at some point.
-         */ 
+         */
         let metadata = node.children.find(c => c.type === 'yaml');
         if (metadata) {
-          let matches = /^category:\s(\w+)$/.exec(metadata.value);
-          category = matches ? matches[1] : '';
+          let yamlData = yaml.safeLoad(metadata.value);
+          category = yamlData.category || '';
+          keywords = yamlData.keywords || [];
         }
 
         return node;
@@ -175,6 +177,8 @@ export default {};
     asset.meta.toc = toc;
     asset.meta.title = title;
     asset.meta.category = category;
+    // Keywords are supplemented by a few other known fields
+    asset.meta.keywords = keywords.concat([category, title, 'react spectrum']).join(',');
 
     let assets = [
       asset,
