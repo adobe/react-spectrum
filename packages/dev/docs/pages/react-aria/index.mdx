@@ -10,4 +10,38 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
+import {Highlights, Hero} from '@react-spectrum/docs';
+import heroNarrow from 'url:../assets/hero-narrow.png';
+import heroNarrow2x from 'url:../assets/hero-narrow@2x.png';
+import heroWide from 'url:../assets/hero-wide.png';
+import heroWide2x from 'url:../assets/hero-wide@2x.png';
+
 # React Aria
+
+A library of React Hooks that provides accessible UI primitives for your design system.
+
+<Hero
+  narrow={heroNarrow}
+  narrow2x={heroNarrow2x}
+  wide={heroWide}
+  wide2x={heroWide2x}
+  alt="React Aria hero image" />
+
+<Highlights items={[
+  {
+    title: 'Accessible',
+    description: 'React Aria provides accessibility and behavior according to WAI-ARIA Authoring Practices, including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users.',
+  },
+  {
+    title: 'Adaptive',
+    description: 'React Aria supports mouse, touch, keyboard, and screen reader interactions, which have been tested across a wide variety of browsers, devices, and platforms. We ensure consistent behavior across browsers and devices so you don’t have to!',
+  },
+  {
+    title: 'Internationalized',
+    description: 'React Aria supports over 30 languages, including right to left specific behavior, internationalized date and number formatting, and more.'
+  },
+  {
+    title: '100% Customizable',
+    description: 'React Aria doesn’t implement any rendering or impose a DOM structure, styling methodology, or design specific details. It provides behavior, accessibility, and interactions and lets you focus on your design.'
+  }
+]} />
