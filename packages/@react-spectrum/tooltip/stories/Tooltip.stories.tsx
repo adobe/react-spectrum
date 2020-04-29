@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/button';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Tooltip, TooltipTrigger} from '../src';
+import {Tooltip} from '../src';
 
 storiesOf('Tooltip', module)
   .add(
@@ -51,50 +50,8 @@ storiesOf('Tooltip', module)
   .add(
     'long content',
     () => render(longMarkup)
-  )
-  .add(
-    'triggered, placement: left',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'start'})
-  ).add(
-    'triggered, placement: right',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'end'})
-  ).add(
-    'triggered, placement: top',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'top'})
-  ).add(
-    'triggered, placement: bottom',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'bottom'})
-  ).add(
-    'triggered, isDisabled',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'left', isDisabled: true})
-  ).add(
-     'multiple tooltips',
-     () => renderMultipleTriggers('This is a tooltip.', {placement: 'left'})
-   );
-
-function render(content, props = {}) {
-  return (
-    <div style={{display: 'inline-block'}}>
-      <Tooltip
-        {...props}
-        isOpen>
-        {content}
-      </Tooltip>
-    </div>
   );
-}
-
-function renderWithTrigger(content, props = {}) {
-  return (
-    <TooltipTrigger {...props}>
-      <ActionButton>Trigger Tooltip</ActionButton>
-      <Tooltip>
-        {content}
-      </Tooltip>
-    </TooltipTrigger>
-  );
-}
-
+ 
 const longMarkup = (
   <div>
   Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor
@@ -105,43 +62,14 @@ const longMarkup = (
   </div>
 );
 
-// These are sample functions for proof of concept in this PR. Can be removed at in the next tooltip related pull request.
-
-function renderMultipleTriggers(content, props = {}) {
+function render(content, props = {}) {
   return (
-    <div>
-      <div>
-        <TooltipTrigger {...props}>
-          <ActionButton>
-            Tooltip Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...props}>
-          <ActionButton>
-            Tooltip Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...props}>
-          <ActionButton>
-            Tooltip Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
+    <div style={{display: 'inline-block'}}>
+      <Tooltip
+        {...props}
+        isOpen>
+        {content}
+      </Tooltip>
     </div>
   );
 }

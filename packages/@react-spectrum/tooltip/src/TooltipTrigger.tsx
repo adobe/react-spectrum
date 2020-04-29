@@ -52,7 +52,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   }, state, triggerRef);
 
   let {overlayProps, placement} = useOverlayPosition({
-    placement: props.placement,
+    placement: props.placement || 'right',
     targetRef: triggerRef,
     overlayRef
   });
