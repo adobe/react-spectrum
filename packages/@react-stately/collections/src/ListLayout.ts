@@ -178,6 +178,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       }
     }
 
+    // TODO: fix this so listbox item state changes render properly
+    // Commenting it out breaks tests
     this.cache.set(node, layoutNode);
     return layoutNode;
   }

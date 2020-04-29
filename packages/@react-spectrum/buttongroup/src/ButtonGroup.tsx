@@ -61,6 +61,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
     if (!dirty) {
       setDirty(true);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children, scale]);
   // don't include dirty here, it will cause tests to hang
   // we should do devon's imperative approach anyways
