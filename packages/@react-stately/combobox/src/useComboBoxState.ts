@@ -159,8 +159,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     inputValue,
     defaultInputValue,
     onInputChange,
-    isFocused,
-    menuTrigger
+    isFocused
   } = props;
   
   let itemsControlled = !!onFilter;
@@ -202,13 +201,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
       }
     }
     return true;
-  }, [value, collator]);
+  }, [collator, lowercaseValue]);
 
   useEffect(() => {
     if (onFilter) {
       onFilter(value);
     }
-  }, [value])
+  // Having onFilter in the dep array seems to break it
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   selectState.collection = useMemo(() => {
     if (itemsControlled || value === '') {
@@ -261,6 +262,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
         // If none found, make invalid?
       }
     }
+  // Double check this dependency array (does it need value,setValue, selectState.collection)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectState.selectedKey, inputValue, selectedKey]);
 
   return {

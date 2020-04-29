@@ -12,9 +12,11 @@
 
 import {action} from '@storybook/addon-actions';
 import {ComboBox, Item} from '../';
+import Copy from '@spectrum-icons/workflow/Copy';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {Text} from '@react-spectrum/typography';
 
 let items = [
   {name: 'Aardvark', id: '1'},
@@ -42,7 +44,10 @@ storiesOf('ComboBox', module)
         <label id="test-label" htmlFor="test-id">Combobox</label>
         <ComboBox id="test-id" aria-labelledby="test-label" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')}>
           <Item uniqueKey="one">Item One</Item>
-          <Item uniqueKey="two" textValue="Item Two">Custom Item</Item>
+          <Item uniqueKey="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
           <Item uniqueKey="three">Item Three</Item>
         </ComboBox>
       </div>
@@ -151,12 +156,18 @@ storiesOf('ComboBox', module)
       <Flex flexDirection="column">
         <ComboBox label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} width="200px">
           <Item uniqueKey="one">Item One</Item>
-          <Item uniqueKey="two" textValue="Item Two">Custom Item</Item>
+          <Item uniqueKey="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
           <Item uniqueKey="three">Item Three</Item>
         </ComboBox>
         <ComboBox label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} width="800px">
           <Item uniqueKey="one">Item One</Item>
-          <Item uniqueKey="two" textValue="Item Two">Custom Item</Item>
+          <Item uniqueKey="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
           <Item uniqueKey="three">Item Three</Item>
         </ComboBox>
       </Flex>
@@ -164,7 +175,9 @@ storiesOf('ComboBox', module)
   )
   .add(
     'onFilter, (value included in list)',
-    () => customFilterComboBox()
+    () => (
+      <CustomFilterComboBox />
+    )
   );
 
 let customFilterItems = [
@@ -173,25 +186,28 @@ let customFilterItems = [
   {name: 'The third item', id: '3'}
 ];
 
-let customFilterComboBox = () => {
+let CustomFilterComboBox = () => {
   let [list, setList] = React.useState(customFilterItems);
 
   let onFilter = (value) => {
     setList(customFilterItems.filter(item => item.name.includes(value)));
-  }
+  };
 
   return (
     <ComboBox items={list} itemKey="id" label="Combobox" onFilter={onFilter} onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')}>
       {(item: any) => <Item>{item.name}</Item>}
     </ComboBox>
-  )
-}
+  );
+};
 
 function render(props = {}) {
   return (
     <ComboBox label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} {...props}>
       <Item uniqueKey="one">Item One</Item>
-      <Item uniqueKey="two" textValue="Item Two">Custom Item</Item>
+      <Item uniqueKey="two" textValue="Item Two">
+        <Copy size="S" />
+        <Text>Item Two</Text>
+      </Item>
       <Item uniqueKey="three">Item Three</Item>
     </ComboBox>
   );

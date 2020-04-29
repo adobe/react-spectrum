@@ -234,7 +234,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       }
     } else {
       // Reset focused key from previous value on render but don't focus collection (e.g. Combobox w/ allowsCustomValue=true)
-      manager.setFocusedKey(null);
+      manager && manager.setFocusedKey && manager.setFocusedKey(null);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

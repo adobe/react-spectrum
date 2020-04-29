@@ -94,7 +94,9 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   if (state.focusStrategy) {
     comboBoxAutoFocus = state.focusStrategy;
   } else if (props.allowsCustomValue) {
-    comboBoxAutoFocus = state.selectedKey ? true : false;
+    if (state.selectedKey) {
+      comboBoxAutoFocus = true;
+    }
   } else {
     comboBoxAutoFocus = 'first';
   }
