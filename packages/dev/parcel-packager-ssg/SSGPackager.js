@@ -53,8 +53,6 @@ module.exports = new Packager({
       return p.concat(bundles);
     }, []);
 
-    bundles.reverse();
-
     let pages = [];
     bundleGraph.traverseBundles(b => {
       if (b.isEntry && b.type === 'html') {
