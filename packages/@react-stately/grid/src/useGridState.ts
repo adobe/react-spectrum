@@ -43,14 +43,14 @@ export function useGridState<T extends object>(props: GridStateProps<T>): GridSt
   let collectionRef = useRef<GridCollection<T>>();
   let collection = useMemo(() => {
     let context = {
-      showSelectionCheckboxes: props.showSelectionCheckboxes,
+      showSelectionCheckboxes: props.showSelectionCheckboxes && selectionState.selectionMode !== 'none',
       selectionMode: selectionState.selectionMode,
       columns: []
     };
   
     let nodes = builder.build(props, context);
 
-    collectionRef.current = new GridCollection(nodes, collectionRef.current);
+    collectionRef.current = new GridCollection(nodes, collectionRef.current, context);
     return collectionRef.current;
   }, [props, selectionState.selectionMode, builder]);
 

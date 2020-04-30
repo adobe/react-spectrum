@@ -165,7 +165,6 @@ module.exports = new Transformer({
       : `import React from 'react';
 import ReactDOM from 'react-dom';
 import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
-import '@react-spectrum/docs/src/client';
 ${exampleCode.join('\n')}
 export default {};
 `;
@@ -211,6 +210,18 @@ ${compiled}
         }
       }
     ];
+
+    asset.addDependency({
+      moduleSpecifier: '@react-spectrum/docs/src/client',
+      isAsync: true
+    });
+
+    if (toc.length || exampleBundle) {
+      asset.addDependency({
+        moduleSpecifier: '@react-spectrum/docs/src/docs',
+        isAsync: true
+      });
+    }
 
     asset.addDependency({
       moduleSpecifier: 'page'
