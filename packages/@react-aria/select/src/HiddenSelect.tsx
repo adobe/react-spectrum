@@ -65,6 +65,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
           <select
             tabIndex={-1}
             name={name}
+            size={state.collection.size}
             value={state.selectedKey}
             onChange={e => state.setSelectedKey(e.target.value)}>
             {[...state.collection.getKeys()].map(key => {

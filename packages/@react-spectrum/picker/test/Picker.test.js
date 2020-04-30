@@ -1413,7 +1413,15 @@ describe('Picker', function () {
       expect(hiddenLabel.tagName).toBe('LABEL');
       expect(hiddenLabel.parentElement).toHaveAttribute('aria-hidden', 'true');
 
-      let hiddenSelect = getByRole('combobox', {hidden: true}); // not sure why i can't use listbox https://github.com/A11yance/aria-query#elements-to-roles
+      // For anyone else who comes through this listbox/combobox path
+      // I can't use combobox here because there is a size attribute on the html select
+      // everything below this line is the path i followed to get to the correct role:
+      //   not sure why i can't use listbox https://github.com/A11yance/aria-query#elements-to-roles
+      //   however, i think this is correct based on https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles
+      //   which says "The listbox role is used for lists from which a user may select one or more items which are static and, unlike HTML <select> elements, may contain images."
+      //   Also, this test in react testing library seems to indicate something about size which we do not currently have, probably a bug
+      //   https://github.com/testing-library/dom-testing-library/blob/master/src/__tests__/element-queries.js#L548
+      let hiddenSelect = getByRole('listbox', {hidden: true});
       expect(hiddenSelect.parentElement).toBe(hiddenLabel);
       expect(hiddenSelect).toHaveAttribute('tabIndex', '-1');
 
