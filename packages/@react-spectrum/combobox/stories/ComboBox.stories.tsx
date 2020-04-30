@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ComboBox, Item} from '../';
+import {ComboBox, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
@@ -24,16 +24,45 @@ let items = [
   {name: 'Snake', id: '3'}
 ];
 
+let withSection = [
+  {name: 'Animals', children: [
+    {name: 'Aardvark'},
+    {name: 'Kangaroo'},
+    {name: 'Snake'}
+  ]},
+  {name: 'People', children: [
+    {name: 'Danni'},
+    {name: 'Devon'},
+    {name: 'Ross', children: [
+      {name: 'Tests'}
+    ]}
+  ]}
+];
+
 storiesOf('ComboBox', module)
   .add(
     'static items',
     () => render({})
   )
+  // TODO: figure out why item needs a :any here
   .add(
     'dynamic items',
     () => (
       <ComboBox items={items} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')}>
         {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+    )
+  )
+  // TODO: figure out why item needs a :any here
+  .add(
+    'with sections',
+    () => (
+      <ComboBox items={withSection} itemKey="name" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+        {(item: any) => (
+          <Section items={item.children} title={item.name}>
+            {(item: any) => <Item>{item.name}</Item>}
+          </Section>
+        )}
       </ComboBox>
     )
   )

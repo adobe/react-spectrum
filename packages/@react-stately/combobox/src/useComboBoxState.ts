@@ -58,12 +58,24 @@ interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   isFocused: boolean
 }
 
-function* filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean) {
+
+// Maybe change this function to not be a generator, instead have it check every node and push the filtered results to an array
+function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean) {
+  let filteredNode = [];
   for (let node of nodes) {
-    if (filterFn(node)) {
-      yield node;
+    if (node.type === 'section' && node.hasChildNodes) {
+      let copyOfNode = {...node};
+      let copyOfChildNodes = copyOfNode.childNodes;
+      let filtered = filter(copyOfChildNodes, filterFn);
+      if ([...filtered].length > 0) {
+        copyOfNode.childNodes = filtered;
+        filteredNode.push(copyOfNode);
+      }
+    } else if (node.type !== 'section' && filterFn(node)) {
+      filteredNode.push(node);
     }
   }
+  return filteredNode;
 }
 
 class FilteredCollection<T> implements Collection<Node<T>> {
@@ -186,28 +198,23 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   let defaultSelectedKeyText = defaultSelectedKeyItem ? defaultSelectedKeyItem.textValue || defaultSelectedKeyItem.rendered as string : undefined;
   // Double check if selectedKey should make textfield value controlled
   let [value, setValue] = useControlledState(toString(inputValue) || selectedKeyText, toString(defaultInputValue) || defaultSelectedKeyText || '', onInputChange);
-  let lowercaseValue = value.toLowerCase();
+  let lowercaseValue = value.toLowerCase().replace(' ', '');
 
   let defaultFilterFn = useMemo(() => (node: Node<T>) => {
     let scan = 0;
-    let lowercaseNode = node.textValue.toLowerCase();
-    for (let i in lowercaseValue) {
-      if (whitespace.test(lowercaseValue[i])) {
-        continue;
-      }
-      let match = false;
-      for (; scan < lowercaseNode.length && !match; scan++) {
-        if (!whitespace.test(lowercaseNode[scan])) { // if whitespace, move on to next character
-          let compareVal = collator.compare(lowercaseValue[i], lowercaseNode[scan]);
-          if (compareVal !== 0) { // if it didn't match, we can exit
-            return false;
-          } else { // we matched, move to next character in input for comparison
-            match = true;
-          }
-        }
+    let lowercaseNode = node.textValue.toLowerCase().replace(' ', '');
+    let sliceLen = lowercaseValue.length;
+    let match = false;
+
+    for (; scan + sliceLen <= lowercaseNode.length && !match; scan++) {
+      let nodeSlice = lowercaseNode.slice(scan, scan+sliceLen);
+      let compareVal = collator.compare(lowercaseValue, nodeSlice);
+      if (compareVal === 0) {
+        match = true;
       }
     }
-    return true;
+
+    return match;
   }, [collator, lowercaseValue]);
 
   useEffect(() => {
