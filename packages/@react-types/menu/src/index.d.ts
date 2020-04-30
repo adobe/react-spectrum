@@ -17,9 +17,9 @@ export type FocusStrategy = 'first' | 'last';
 
 export interface MenuTriggerProps {
   // trigger?: 'press' | 'longPress',
-  /** Where the Menu aligns with it's trigger. */
+  /** Where the Menu aligns with its trigger. */
   align?: Alignment,
-  /** Where the Menu opens relative to it's trigger. */
+  /** Where the Menu opens relative to its trigger. */
   direction?: 'bottom' | 'top',
   /** Whether the Menu closes when a selection is made. */
   closeOnSelect?: boolean,
@@ -31,7 +31,7 @@ export interface MenuTriggerProps {
   onOpenChange?: (isOpen: boolean) => void,
   /**
    * Whether the element should flip its orientation when there is insufficient
-   * room for it to render completely.
+   * space for it to render within the view.
    */
   shouldFlip?: boolean
 }

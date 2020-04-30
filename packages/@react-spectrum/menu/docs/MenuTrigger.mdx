@@ -19,7 +19,6 @@ import {ActionButton} from '@react-spectrum/button'
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
-import {Keyboard, Text} from '@react-spectrum/typography';
 import Paste from '@spectrum-icons/workflow/Paste';
 ```
 
@@ -55,24 +54,32 @@ the MenuTrigger and should be an element that supports press events.
 
 If the Menu is open it will close on blur or scroll events.
 
-The `defaultSelectedKeys` prop can be used to set the default state of the Menu
-(uncontrolled). Alternatively, the `selectedKeys` prop can be used to make the
-selected state of the Menu controlled.
+The `defaultSelectedKeys` prop can be used to preselect items in the Menu
+placing it in an uncontrolled state. Alternatively, the `selectedKeys` preselect
+items in the Menu placing it in a controlled state.
 
 ```tsx example
-<MenuTrigger>
+<MenuTrigger closeOnSelect={false}>
   <ActionButton>
-      Menu Button Controlled
+      Menu Controlled
   </ActionButton>
-  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name" selectedKeys={['Kangaroo']}>
+  <Menu
+    items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
+    itemKey="name"
+    selectionMode="single"
+    selectedKeys={['Kangaroo']}>
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
-<MenuTrigger>
+<MenuTrigger closeOnSelect={false}>
   <ActionButton>
-      Menu Button Uncontrolled
+      Menu Uncontrolled
   </ActionButton>
-  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
+  <Menu
+    items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
+    itemKey="name"
+    selectionMode="single"
+    defaultSelectedKeys={['Snake']}>
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
@@ -81,53 +88,34 @@ selected state of the Menu controlled.
 The `selectionMode` prop can be used to switch from the default selection of a single menu item to multiple menu items or none.
 
 ```tsx example
-function Example() {
-  let [state, setState] = React.useState(['Kangaroo', 'Snake']);
-
-  let onAction = (value) => {
-    if (state.includes(value)) {
-      setState(state.filter((item) => item !== value));
-    } else {
-      let curState = state;
-      curState.push(value);
-      setState(curState);
-    }
-  };
-
-  return (
-    <div>
-      <MenuTrigger>
-        <ActionButton>
-            Menu Button Multiple
-        </ActionButton>
-        <Menu
-          items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
-          itemKey="name"
-          onAction={onAction}
-          defaultSelectedKeys={state}
-          selectionMode="multiple">
-          {item => <Item>{item.name}</Item>}
-        </Menu>
-      </MenuTrigger>
-      <MenuTrigger>
-        <ActionButton>
-            Menu Button None
-        </ActionButton>
-        <Menu
-          items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
-          itemKey="name"
-          selectionMode="none">
-          {item => <Item>{item.name}</Item>}
-        </Menu>
-      </MenuTrigger>
-    </div>
-  );
-}
+<MenuTrigger closeOnSelect={false}>
+  <ActionButton>
+      Menu Selection Multiple
+  </ActionButton>
+  <Menu
+    items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
+    itemKey="name"
+    defaultSelectedKeys={['Kangaroo', 'Snake']}
+    selectionMode="multiple">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+<MenuTrigger closeOnSelect={false}>
+  <ActionButton>
+      Menu Selection None
+  </ActionButton>
+  <Menu
+    items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
+    itemKey="name"
+    selectionMode="none">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
 ```
 
 ### Sections
 
-Menu's may have Sections with titles and children items.
+Menus may have Sections with titles and children items.
 
 ```tsx example
 <MenuTrigger>
@@ -151,6 +139,8 @@ A Menu item's content may be any renderable node, not just strings.
 [View guidelines](https://spectrum.adobe.com/page/popovers/#Content-types)
 
 ```tsx example
+import {Keyboard, Text} from '@react-spectrum/typography';
+
 <MenuTrigger>
   <ActionButton>
       Menu Button
@@ -182,10 +172,6 @@ A Menu item's content may be any renderable node, not just strings.
 ```
 
 ### Accessibility
-
-The MenuTrigger uses the prop `aria-controls` to point at the menu, which uses
-the prop `aria-labelledby` to reference the trigger. Other aria props of the
-MenuTrigger are `aria-haspopup` and `aria-expanded`.
 
 Menu sections without labels use the prop `aria-label`.
 
@@ -270,33 +256,33 @@ function Example() {
 [View guidelines](https://spectrum.adobe.com/page/popovers/#Placement)
 
 ```tsx example
-<MenuTrigger align="start" direction="bottom">
+<MenuTrigger align="start" direction="bottom" shouldFlip={false}>
   <ActionButton>
-      Menu Button
+      align=start direction=bottom
   </ActionButton>
   <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
-<MenuTrigger align="start" direction="top">
+<MenuTrigger align="start" direction="top" shouldFlip={false}>
   <ActionButton>
-      Menu Button
+      align=start direction=top
   </ActionButton>
   <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
-<MenuTrigger align="end" direction="bottom">
+<MenuTrigger align="end" direction="bottom" shouldFlip={false}>
   <ActionButton>
-      Menu Button
+      align=end direction=bottom
   </ActionButton>
   <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
-<MenuTrigger align="end" direction="top">
+<MenuTrigger align="end" direction="top" shouldFlip={false}>
   <ActionButton>
-      Menu Button
+      align=end direction=top
   </ActionButton>
   <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
     {item => <Item>{item.name}</Item>}
@@ -306,23 +292,49 @@ function Example() {
 
 ### Autofocus
 
-Applying `autoFocus` to the Menu of the MenuTrigger sets focus to the Menu upon opening.
+Applying `autoFocus` to the Menu of the MenuTrigger sets focus within the Menu upon opening.
 
 ```tsx example
-<MenuTrigger closeOnSelect={false}>
+<MenuTrigger>
   <ActionButton>
-      Menu Button Autofocus
+      autofocus
   </ActionButton>
   <Menu
     items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
     itemKey="name"
+    selectionMode="single"
+    selectedKeys={['Kangaroo']}
     autoFocus>
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
-<MenuTrigger closeOnSelect={false}>
+<MenuTrigger>
   <ActionButton>
-      Menu Button Autofocus Last
+      autofocus=false
+  </ActionButton>
+  <Menu
+    items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
+    itemKey="name"
+    selectionMode="single"
+    selectedKeys={['Kangaroo']}
+    autoFocus={false}>
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+<MenuTrigger>
+  <ActionButton>
+      autofocus=first
+  </ActionButton>
+  <Menu
+    items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
+    itemKey="name"
+    autoFocus="first">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+<MenuTrigger>
+  <ActionButton>
+      autofocus=last
   </ActionButton>
   <Menu
     items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
@@ -336,11 +348,25 @@ Applying `autoFocus` to the Menu of the MenuTrigger sets focus to the Menu upon 
 ### Closes Menu onSelect
 
 ```tsx example
+<MenuTrigger closeOnSelect>
+  <ActionButton>
+      closeOnSelect=true
+  </ActionButton>
+  <Menu
+    items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
+    itemKey="name"
+    selectionMode="single">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
 <MenuTrigger closeOnSelect={false}>
   <ActionButton>
-      Menu Button
+      closeOnSelect=false
   </ActionButton>
-  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
+  <Menu
+    items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
+    itemKey="name"
+    selectionMode="single">
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
@@ -351,7 +377,7 @@ Applying `autoFocus` to the Menu of the MenuTrigger sets focus to the Menu upon 
 ```tsx example
 <MenuTrigger>
   <ActionButton isDisabled>
-      Menu Button
+      Disabled Menu Button
   </ActionButton>
   <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
     {item => <Item>{item.name}</Item>}
@@ -364,24 +390,13 @@ Applying `autoFocus` to the Menu of the MenuTrigger sets focus to the Menu upon 
 ```tsx example
 <MenuTrigger>
   <ActionButton>
-      Menu Button
+      Disabled Menu Items
   </ActionButton>
   <Menu
-    items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
-    itemKey="name"
-    disabledKeys={['Aardvark', 'Snake']}>
+    items={[{name: 'Aardvark', dataId: 'a1b2c3'}, {name: 'Kangaroo', dataId: 'g5h1j9'}, {name: 'Snake', dataId: 'p8k3i4'}]}
+    itemKey="dataId"
+    disabledKeys={['a1b2c3', 'p8k3i4']}>
     {item => <Item>{item.name}</Item>}
-  </Menu>
-</MenuTrigger>
-<MenuTrigger>
-  <ActionButton>
-      Menu Button
-  </ActionButton>
-  <Menu
-    items={[{name: 'Aardvark', key: 1}, {name: 'Kangaroo', key: 2}, {name: 'Snake', key: 3}]}
-    itemKey="name"
-    disabledKeys={['1', '3']}>
-    {item => <Item key={item.key}>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
 ```
@@ -394,7 +409,7 @@ main axis in situations where the original placement would cause it to render ou
 ```tsx example
 <MenuTrigger shouldFlip>
   <ActionButton>
-      Menu Button shouldFlip
+      shouldFlip=true
   </ActionButton>
   <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
     {item => <Item>{item.name}</Item>}
@@ -402,7 +417,7 @@ main axis in situations where the original placement would cause it to render ou
 </MenuTrigger>
 <MenuTrigger shouldFlip={false}>
   <ActionButton>
-      Menu Button shouldFlip=false
+      shouldFlip=false
   </ActionButton>
   <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
     {item => <Item>{item.name}</Item>}
