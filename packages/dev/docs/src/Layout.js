@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import highlightCss from './syntax-highlight.css';
+import {ImageContext} from './Image';
 import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
@@ -143,7 +144,7 @@ function dirToTitle(dir) {
     .join(' ');
 }
 
-function Nav({currentPageName, pages, publicUrl}) {
+function Nav({currentPageName, pages}) {
   let isIndex = /index\.html$/;
   let currentParts = currentPageName.split('/');
   let currentDir = currentParts[0];
@@ -200,7 +201,7 @@ function Nav({currentPageName, pages, publicUrl}) {
             <ChevronLeft />
           </a>
         }
-        <a href={publicUrl} className={docStyles.homeBtn}>
+        <a href="./index.html" className={docStyles.homeBtn}>
           <svg viewBox="0 0 30 26" fill="#E1251B">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
@@ -246,11 +247,13 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
   return (
     <Page title={currentPage.title} scripts={scripts} styles={styles}>
       <div className={docStyles.pageHeader} id="header" />
-      <Nav currentPageName={currentPage.name} pages={pages} publicUrl={publicUrl} />
+      <Nav currentPageName={currentPage.name} pages={pages} />
       <main>
-        <article className={typographyStyles['spectrum-Typography']}>
+        <article className={classNames(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>
           <MDXProvider components={mdxComponents}>
-            <LinkProvider>{children}</LinkProvider>
+            <ImageContext.Provider value={publicUrl}>
+              <LinkProvider>{children}</LinkProvider>
+            </ImageContext.Provider>
           </MDXProvider>
         </article>
         {toc.length ? <ToC toc={toc} /> : null}
