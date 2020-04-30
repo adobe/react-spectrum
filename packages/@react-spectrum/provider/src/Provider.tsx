@@ -145,12 +145,20 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
     }
   );
 
+  let style = {
+    ...styleProps.style,
+    // This ensures that browser native UI like scrollbars are rendered in the right color scheme.
+    // See https://web.dev/color-scheme/.
+    colorScheme: props.colorScheme ?? Object.keys(theme).filter(k => k === 'light' || k === 'dark').join(' ')
+  };
+
   return (
     <div
       {...filterDOMProps(otherProps)}
       {...styleProps}
       {...modalProviderProps}
       className={className}
+      style={style}
       lang={locale}
       dir={direction}
       ref={domRef}>

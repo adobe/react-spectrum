@@ -25,6 +25,7 @@ Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>,
     type: 'column',
     hasChildNodes: !!childColumns || (title && React.Children.count(children) > 0),
     rendered: title || children,
+    props,
     *childNodes() {
       if (childColumns) {
         for (let child of childColumns) {

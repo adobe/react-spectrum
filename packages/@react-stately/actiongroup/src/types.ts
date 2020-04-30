@@ -11,9 +11,11 @@
  */
 
 import {Collection, Node} from '@react-stately/collections';
+import {Key} from 'react';
 import {SelectionManager} from '@react-stately/selection';
 
 export interface ActionGroupState<T> {
   collection: Collection<Node<T>>,
+  disabledKeys: Set<Key>,
   selectionManager: SelectionManager
 }

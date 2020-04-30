@@ -237,11 +237,13 @@ function ListBoxPopup({state, ...otherProps}) {
 function Option({item, state}) {
   // Get props for the option element
   let ref = React.useRef();
+  let isDisabled = state.disabledKeys.has(item.key);
+  let isSelected = state.selectionManager.isSelected(item.key);
   let {optionProps} = useOption({
     key: item.key,
     ref,
-    isDisabled: item.isDisabled,
-    isSelected: item.isSelected,
+    isDisabled,
+    isSelected,
     shouldSelectOnPressUp: true,
     shouldFocusOnHover: true
   }, state);
@@ -256,12 +258,12 @@ function Option({item, state}) {
       {...mergeProps(optionProps, focusProps)}
       ref={ref}
       style={{
-        background: item.isSelected 
+        background: isSelected 
           ? 'blueviolet' 
           : isFocused 
             ? 'gray'
             : 'transparent',
-        color: item.isSelected || isFocused ? 'white' : 'black',
+        color: isSelected || isFocused ? 'white' : 'black',
         padding: '2px 5px',
         outline: 'none',
         cursor: 'pointer'

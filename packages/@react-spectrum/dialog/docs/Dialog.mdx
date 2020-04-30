@@ -12,8 +12,9 @@ export default Layout;
 
 import DialogAnatomy from '../images/DialogAnatomy.svg';
 import docs from 'docs:@react-spectrum/dialog';
-import {ExampleImage, HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {Image, HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
+import styles from '@react-spectrum/docs/src/docs.css';
 
 ```jsx import
 import Book from '@spectrum-icons/workflow/Book';
@@ -80,9 +81,9 @@ import {StatusLight} from '@react-spectrum/statuslight';
 
 A standard Dialog has the following anatomy:
 
-<ExampleImage>
+<div className={styles.exampleImage}>
   <DialogAnatomy />
-</ExampleImage>
+</div>
 
 These sections can be populated by providing the following components to your Dialog as children:
 `Header`, `Heading` (title), `Divider`, `Content` (body), `ButtonGroup`, and `Footer`. Each of these components are

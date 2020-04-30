@@ -12,24 +12,24 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {layoutInfoToStyle, useCollectionItem} from '@react-aria/collections';
-import {ListState} from '@react-stately/list';
+import {ListBoxContext} from './ListBoxContext';
 import {Node} from '@react-stately/collections';
-import React, {Fragment, ReactNode, useRef} from 'react';
+import React, {Fragment, ReactNode, useContext, useRef} from 'react';
 import {ReusableView} from '@react-stately/collections';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useListBoxSection} from '@react-aria/listbox';
+import {useLocale} from '@react-aria/i18n';
 import {useSeparator} from '@react-aria/separator';
 
 interface ListBoxSectionProps<T> {
   reusableView: ReusableView<Node<T>, unknown>,
   header: ReusableView<Node<T>, unknown>,
-  state: ListState<T>,
   children?: ReactNode
 }
 
 /** @private */
 export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
-  let {state, children, reusableView, header} = props;
+  let {children, reusableView, header} = props;
   let item = reusableView.content;
   let {headingProps, groupProps} = useListBoxSection({
     heading: item.rendered,
@@ -46,9 +46,12 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
     ref: headerRef
   });
 
+  let {direction} = useLocale();
+  let state = useContext(ListBoxContext);
+
   return (
     <Fragment>
-      <div role="presentation" ref={headerRef} style={layoutInfoToStyle(header.layoutInfo)}>
+      <div role="presentation" ref={headerRef} style={layoutInfoToStyle(header.layoutInfo, direction)}>
         {item.key !== state.collection.getFirstKey() &&
           <div
             {...separatorProps}
@@ -72,7 +75,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
       </div>
       <div
         {...groupProps}
-        style={layoutInfoToStyle(reusableView.layoutInfo)}
+        style={layoutInfoToStyle(reusableView.layoutInfo, direction)}
         className={
           classNames(
             styles, 

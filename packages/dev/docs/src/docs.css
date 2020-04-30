@@ -30,6 +30,47 @@ html, body {
   }
 }
 
+.heroImage {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+
+  img {
+    max-width: 100%;
+    border-radius: 4px;
+  }
+}
+
+.highlights {
+  display: flex;
+  flex-wrap: wrap;
+
+  @media (max-width: 1020px) {
+    display: block;
+
+    div {
+      width: 100%;
+    }
+  }
+
+  div {
+    box-sizing: border-box;
+    padding: 0 16px;
+  }
+
+  @media (min-width: 1020px) {
+    div:first-child:nth-last-child(3),
+    div:first-child:nth-last-child(3) ~ div {
+      width: 33.3333%;
+    }
+
+    div:first-child:nth-last-child(4),
+    div:first-child:nth-last-child(4) ~ div {
+      width: 50%;
+    }
+  }
+}
+
 .nav {
   position: fixed;
   top: 0;
@@ -74,16 +115,19 @@ main {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
+  align-items: center;
 }
 
 article {
   max-width: 967px;
   flex: 1;
   padding-bottom: 40px;
+  width: 100%;
 }
 
 footer {
   max-width: 967px;
+  width: 100%
 }
 
 footer ul {
@@ -120,8 +164,11 @@ footer li:last-child:after {
 }
 
 .propTable tr {
-  background: none !important;
   cursor: initial;
+}
+
+.propTable td {
+  background: none !important;
 }
 
 .type-description {
@@ -150,14 +197,17 @@ article h1.articleHeader {
 
 article h1.articleHeader + p {
   font-size: 18px;
+}
+
+article.inCategory h1.articleHeader + p {
   max-width: 75%;
 }
 
-article h2.sectionHeader.docsHeader {
+article.inCategory h2.sectionHeader.docsHeader {
   margin-top: 80px;
 }
 
-article h2.sectionHeader + hr {
+article.inCategory h2.sectionHeader + hr {
   margin-bottom: 33px;
 }
 

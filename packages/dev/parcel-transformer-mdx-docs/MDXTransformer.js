@@ -165,7 +165,6 @@ module.exports = new Transformer({
       : `import React from 'react';
 import ReactDOM from 'react-dom';
 import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
-import '@react-spectrum/docs/src/client';
 ${exampleCode.join('\n')}
 export default {};
 `;
@@ -191,15 +190,38 @@ ${compiled}
         uniqueKey: 'page',
         env: {
           context: 'node',
+          engines: {
+            node: process.versions.node
+          },
           outputFormat: 'commonjs',
           includeNodeModules: {
-            react: false
+            // These don't need to be bundled.
+            react: false,
+            'react-dom': false,
+            'intl-messageformat': false,
+            'globals-docs': false,
+            lowlight: false,
+            scheduler: false,
+            'markdown-to-jsx': false,
+            'prop-types': false
           },
           scopeHoist: false,
           minify: false
         }
       }
     ];
+
+    asset.addDependency({
+      moduleSpecifier: '@react-spectrum/docs/src/client',
+      isAsync: true
+    });
+
+    if (toc.length || exampleBundle) {
+      asset.addDependency({
+        moduleSpecifier: '@react-spectrum/docs/src/docs',
+        isAsync: true
+      });
+    }
 
     asset.addDependency({
       moduleSpecifier: 'page'

@@ -10,12 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Image';
-export * from './Highlights';
-export * from './Layout';
-export * from './PropTable';
-export * from './HeaderInfo';
-export * from './ResourceCard';
-export * from './types';
-export * from './FunctionAPI';
-export * from './TypeLink';
+import React from 'react';
+import {TreeState} from '@react-stately/tree';
+
+export const SideNavContext = React.createContext<TreeState<unknown>>(null);

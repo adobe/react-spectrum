@@ -17,7 +17,7 @@ import {SpectrumListBoxProps} from '@react-types/listbox';
 import {useDOMRef} from '@react-spectrum/utils';
 import {useListState} from '@react-stately/list';
 
-function ListBox<T>(props: SpectrumListBoxProps<T>, ref: DOMRef<HTMLDivElement>) {
+function ListBox<T extends object>(props: SpectrumListBoxProps<T>, ref: DOMRef<HTMLDivElement>) {
   let state = useListState({
     ...props,
     selectionMode: props.selectionMode || 'single'

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {getCellId} from './utils';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, Key, RefObject} from 'react';
 import {useGridCell} from './useGridCell';
@@ -27,10 +28,13 @@ interface RowHeaderAria {
 export function useRowHeader<T>(props: RowHeaderProps, state: GridState<T>): RowHeaderAria {
   let {gridCellProps} = useGridCell(props, state);
 
+  let item = state.collection.getItem(props.key);
+  let columnKey = state.collection.columns[item.index].key;
   return {
     rowHeaderProps: {
       ...gridCellProps,
-      role: 'rowheader'
+      role: 'rowheader',
+      id: getCellId(state, item.parentKey, columnKey)
     }
   };
 }

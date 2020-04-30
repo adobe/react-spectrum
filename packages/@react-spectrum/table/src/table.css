@@ -10,12 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Image';
-export * from './Highlights';
-export * from './Layout';
-export * from './PropTable';
-export * from './HeaderInfo';
-export * from './ResourceCard';
-export * from './types';
-export * from './FunctionAPI';
-export * from './TypeLink';
+.react-spectrum-Table {
+  display: flex;
+  flex-direction: column;
+}
+
+.react-spectrum-Table-cell {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.react-spectrum-Table-cell--alignCenter {
+  justify-content: center;
+}
+
+.react-spectrum-Table-cell--alignEnd {
+  justify-content: flex-end;
+}

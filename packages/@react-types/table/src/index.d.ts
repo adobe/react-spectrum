@@ -19,7 +19,8 @@ export interface TableProps<T> extends MultipleSelection {
 }
 
 export interface SpectrumTableProps<T> extends TableProps<T>, DOMProps, StyleProps {
-  rowHeight?: number | 'auto'
+  rowHeight?: number | 'auto',
+  isQuiet?: boolean
 }
 
 export interface TableHeaderProps<T> {
@@ -41,11 +42,16 @@ export interface ColumnProps<T> {
 // TODO: how to support these in CollectionBuilder...
 export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   width?: number | string,
+  minWidth?: number | string,
+  maxWidth?: number | string,
+  defaultWidth?: number | string,
   align?: 'start' | 'center' | 'end',
   allowsResizing?: boolean,
   allowsReordering?: boolean,
   allowsSorting?: boolean,
-  isSticky?: boolean // shouldStick??
+  isSticky?: boolean, // shouldStick??
+  isRowHeader?: boolean,
+  showDivider?: boolean
 }
 
 export interface TableBodyProps<T> extends AsyncLoadable<T> {
