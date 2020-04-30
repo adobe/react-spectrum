@@ -120,7 +120,7 @@ module.exports = new Packager({
             nodes[t.id] = merged;
           }
 
-          if (!k || k === 'props' || k === 'extends' || (k === 'base' && !t.typeParameters)) {
+          if (!k || k === 'props' || k === 'extends' || k === 'base') {
             return merged;
           }
 
@@ -198,10 +198,10 @@ function walk(obj, fn) {
         return obj;
       }
     };
-  
+
     return fn(obj, k, recurse);
   };
-  
+
   let res = {};
   for (let k in obj) {
     res[k] = visit(obj[k], fn);
