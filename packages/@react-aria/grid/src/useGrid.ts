@@ -42,6 +42,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T>): GridAria {
   let {direction} = useLocale();
   let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate(state.collection, state.disabledKeys, ref, direction, collator), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator]);
   let {collectionProps} = useSelectableCollection({
+    ref,
     selectionManager: state.selectionManager,
     keyboardDelegate: delegate
   });

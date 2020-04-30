@@ -16,6 +16,7 @@ import {CollectionItem, layoutInfoToStyle, ScrollView, setScrollLeft, useCollect
 import {DOMRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {GridState, useGridState} from '@react-stately/grid';
+import {mergeProps} from '@react-aria/utils';
 import {Node, ReusableView, useCollectionState} from '@react-stately/collections';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef} from 'react';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
@@ -183,8 +184,7 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
 
   return (
     <div
-      {...otherProps}
-      {...collectionViewProps}
+      {...mergeProps(otherProps, collectionViewProps)}
       className={
         classNames(
           styles,
@@ -214,7 +214,7 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
         role="presentation"
         className={classNames(styles, 'spectrum-Table-body')}
         style={{flex: 1}}
-        innerStyle={{overflow: 'visible'}}
+        innerStyle={{overflow: 'visible', transition: collectionState.isAnimating ? `none ${collectionState.collectionManager.transitionDuration}ms` : undefined}}
         ref={domRef}
         contentSize={collectionState.contentSize}
         onVisibleRectChange={collectionState.setVisibleRect}
@@ -241,7 +241,7 @@ function TableColumnHeader({column}) {
   let ref = useRef();
   let state = useTableContext();
   let {columnHeaderProps} = useColumnHeader({
-    key: column.key,
+    node: column,
     ref,
     colspan: column.colspan,
     isVirtualized: true
@@ -294,7 +294,7 @@ function TableRow({item, children, ...otherProps}) {
   let state = useTableContext();
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useRow({
-    key: item.key,
+    node: item,
     isSelected,
     ref,
     isVirtualized: true
@@ -322,8 +322,8 @@ function TableCheckboxCell({cell}) {
   let ref = useRef();
   let state = useTableContext();
   let {gridCellProps} = useGridCell({
+    node: cell,
     ref,
-    key: cell.key,
     isVirtualized: true
   }, state);
 
@@ -361,8 +361,8 @@ function TableCell({cell}) {
   let ref = useRef();
   let state = useTableContext();
   let {gridCellProps} = useGridCell({
+    node: cell,
     ref,
-    key: cell.key,
     isVirtualized: true
   }, state);
   let column = state.collection.columns[cell.index];
@@ -400,8 +400,8 @@ function TableRowHeader({cell}) {
   let ref = useRef();
   let state = useTableContext();
   let {rowHeaderProps} = useRowHeader({
+    node: cell,
     ref,
-    key: cell.key,
     isVirtualized: true
   }, state);
   let column = state.collection.columns[cell.index];
