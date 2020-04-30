@@ -43,8 +43,8 @@ export interface ComboBoxState<T> extends ListState<T> {
   close(): void,
   value: string,
   setValue: (value: string) => void,
-  toggle: (strategy: FocusStrategy | null, force?: boolean) => void,
-  open: (force?: boolean) => void
+  toggle: (strategy?: FocusStrategy | null) => void,
+  open: () => void
 }
 
 interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
@@ -159,7 +159,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     inputValue,
     defaultInputValue,
     onInputChange,
-    isFocused
+    isFocused,
+    isOpen,
+    defaultOpen
   } = props;
   
   let itemsControlled = !!onFilter;
@@ -169,6 +171,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   let valueControlled = inputValue !== undefined;
   let selectedControlled = !!selectedKey;
    */
+
+  // Create a separate menu open state tracker so onOpenChange doesn't fire with open and close in quick succession
+  // in cases where there aren't items to show
+  // Note that this means onOpenChange won't fire for controlled open states
+  let [menuIsOpen, setMenuIsOpen] = useControlledState(isOpen, defaultOpen || false, () => {});
 
   let selectState = useSelectState(props);
 
@@ -217,30 +224,38 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     }
     return new FilteredCollection(selectState.collection, defaultFilterFn);
   }, [selectState.collection, value, itemsControlled, defaultFilterFn]);
-
+ 
   useEffect(() => {
-    if (selectState.isOpen && selectState.collection.size === 0) {
+    // Close the menu if it was open but there aren't any items to display
+    if (menuIsOpen && selectState.collection.size === 0) {
       selectState.close();
     }
-  }, [selectState.isOpen, selectState.collection, selectState]);
 
-  // Maybe we can get rid of these force parameters if we have the selectState.open/toggle calls
-  // within a useEffect instead (it calls those only if isFocused and isOpen). These func are changed so it calls
-  // setOpen(true) and setOpen(!isOpen)?
-  // Feels kinda convoluted now, prob gona refactor to the above
-  let open = (force = false) => {
-    // Only open if field is focused or force and there are items to display
-    if ((isFocused || force) && selectState.collection.size > 0) {
+    // Only open the menu if there are items to display and the combobox is focused
+    // Note: doesn't affect controlled isOpen or defaultOpen
+    if (isFocused && menuIsOpen && selectState.collection.size > 0) {
       selectState.open();
     }
+
+    // Close the menu if it is supposed to be closed
+    if (!menuIsOpen) {
+      selectState.close();
+    }
+
+    // Maybe change dep array back to selectState? or make it selectState.close?
+  }, [menuIsOpen, selectState.collection, selectState, isFocused]);
+
+  let open = () => {
+    setMenuIsOpen(true);
   };
 
-  let toggle = (strategy, force = false) => {
-    // Only toggle open if field is focused or forced and there are items to display
-    // Call toggle if field is focused and the menu is open (aka close it)
-    if ((isFocused || force) && (selectState.isOpen || selectState.collection.size > 0)) {
-      selectState.toggle(strategy);
-    }
+  let close = () => {
+    setMenuIsOpen(false);
+  };
+
+  let toggle = (focusStrategy = null) => {
+    setMenuIsOpen(state => !state);
+    selectState.setFocusStrategy(focusStrategy);
   };
 
   // Moved from aria to stately cuz it feels more like stately
@@ -273,6 +288,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   return {
     ...selectState,
     open,
+    close,
     toggle,
     value,
     setValue
