@@ -1115,6 +1115,7 @@ describe('Table', function () {
 
       let checkbox = within(rows[0]).getByRole('checkbox');
       act(() => userEvent.click(checkbox));
+      expect(checkbox.checked).toBe(true);
 
       let deleteButton = tree.getByLabelText('Delete selected items');
       act(() => triggerPress(deleteButton));
@@ -1129,6 +1130,8 @@ describe('Table', function () {
 
       rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(1);
+
+      expect(checkbox.checked).toBe(false);
     });
 
     it('can edit items', function () {
