@@ -31,7 +31,7 @@ export function useSelectionCheckbox<T>(props: SelectionCheckboxProps, state: Gr
   } = props;
 
   let checkboxId = useId();
-  let isSelected = state.collection.getItem(key).isSelected;
+  let isSelected = state.selectionManager.isSelected(key);
 
   return {
     checkboxProps: {
