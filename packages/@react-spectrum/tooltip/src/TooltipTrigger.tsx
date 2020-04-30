@@ -21,7 +21,7 @@ import {useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
 
 interface TooltipContextProps extends StyleProps {
-  overlayRef?: RefObject<HTMLDivElement>,
+  ref?: RefObject<HTMLDivElement>,
   placement?: PlacementAxis,
   isOpen?: boolean
 }
@@ -66,7 +66,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
       <TooltipContext.Provider
         value={{
           placement,
-          overlayRef,
+          ref: overlayRef,
           UNSAFE_style: overlayProps.style,
           ...tooltipProps
         }}>

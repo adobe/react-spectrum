@@ -21,15 +21,12 @@ import {useTooltipProvider} from './TooltipTrigger';
 export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefObject<HTMLDivElement>) => {
   ref = ref || useRef();
   let {
-    overlayRef,
-    ...tooltipContext
-  } = useTooltipProvider();
-  let {
     variant = 'neutral',
     placement = 'right',
     isOpen,
+    ref: overlayRef,
     ...otherProps
-  } = mergeProps(props, tooltipContext);
+  } = mergeProps({...props, ref}, useTooltipProvider());
   let {styleProps} = useStyleProps(otherProps);
   let {tooltipProps} = useTooltip(props);
 
@@ -48,7 +45,7 @@ export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefOb
         },
         styleProps.className
       )}
-      ref={overlayRef || ref}>
+      ref={overlayRef}>
       {props.children && (
         <span className={classNames(styles, 'spectrum-Tooltip-label')}>
           {props.children}
