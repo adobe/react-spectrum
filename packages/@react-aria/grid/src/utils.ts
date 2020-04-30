@@ -42,12 +42,8 @@ export function getCellId<T>(state: GridState<T>, rowKey: Key, columnKey: Key) {
 }
 
 export function getRowLabelledBy<T>(state: GridState<T>, rowKey: Key): string {
-  let columns = state.collection.columns;
-  if (state.showSelectionCheckboxes && state.selectionManager.selectionMode !== 'none') {
-    columns = columns.slice(1);
-  }
-
-  return columns.map(c => 
-    `${getColumnHeaderId(state, c.key)} ${getCellId(state, rowKey, c.key)}`
+  // A row is labelled by it's row headers.
+  return [...state.collection.rowHeaderColumnKeys].map(columnKey => 
+    getCellId(state, rowKey, columnKey)
   ).join(' ');
 }

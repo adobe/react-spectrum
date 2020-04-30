@@ -147,10 +147,11 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
 
   private findNextColumnKey(column: Node<T>) {
     let row = this.collection.headerRows[column.level];
+    let childNodes = [...row.childNodes];
 
     // Search following columns
-    for (let i = column.index + 1; i < row.length; i++) {
-      let item = row[i];
+    for (let i = column.index + 1; i < childNodes.length; i++) {
+      let item = childNodes[i];
       if (item.type === 'column') {
         return item.key;
       }
@@ -158,7 +159,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
 
     // Wrap around to the first column
     for (let i = 0; i < column.index; i++) {
-      let item = row[i];
+      let item = childNodes[i];
       if (item.type === 'column') {
         return item.key;
       }
@@ -167,18 +168,19 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
 
   private findPreviousColumnKey(column: Node<T>) {
     let row = this.collection.headerRows[column.level];
+    let childNodes = [...row.childNodes];
 
     // Search previous columns
     for (let i = column.index - 1; i >= 0; i--) {
-      let item = row[i];
+      let item = childNodes[i];
       if (item.type === 'column') {
         return item.key;
       }
     }
 
     // Wrap around to the last column
-    for (let i = row.length - 1; i > column.index; i--) {
-      let item = row[i];
+    for (let i = childNodes.length - 1; i > column.index; i--) {
+      let item = childNodes[i];
       if (item.type === 'column') {
         return item.key;
       }
