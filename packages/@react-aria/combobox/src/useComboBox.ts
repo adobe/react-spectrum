@@ -131,12 +131,13 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   };
 
   let onBlur = (e) => {
-    state.close();
     // If user is clicking on the combobox button, early return so we don't change textfield focus state, update the selected key erroneously,
     // and trigger close menu twice
     if (triggerRef.current && triggerRef.current.contains(e.relatedTarget)) {
       return;
     }
+
+    state.close();
 
     // If blur happens from clicking on menu item, refocus textfield and early return
     if (popoverRef.current && popoverRef.current.contains(e.relatedTarget)) {
@@ -167,7 +168,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
 
     if (menuTrigger === 'focus') {
-      state.open(true);
+      state.open();
     }
 
     if (props.onFocus) {
@@ -190,15 +191,14 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onPress = (e) => {
     if (e.pointerType === 'touch') {
       inputRef.current.focus();
-      // Force toggle the menu regardless of focus state
-      state.toggle(null, true);
+      state.toggle();
     }
   };
 
   let onPressStart = (e) => {
     if (e.pointerType !== 'touch') {
       inputRef.current.focus();
-      state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null, true);
+      state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
     }
   };
 
