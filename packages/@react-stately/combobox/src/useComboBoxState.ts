@@ -58,12 +58,22 @@ interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   isFocused: boolean
 }
 
-function* filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean) {
+function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean) {
+  let filteredNode = [];
   for (let node of nodes) {
-    if (filterFn(node)) {
-      yield node;
+    if (node.type === 'section' && node.hasChildNodes) {
+      let copyOfNode = {...node};
+      let copyOfChildNodes = copyOfNode.childNodes;
+      let filtered = filter(copyOfChildNodes, filterFn);
+      if ([...filtered].length > 0) {
+        copyOfNode.childNodes = filtered;
+        filteredNode.push(copyOfNode);
+      }
+    } else if (node.type !== 'section' && filterFn(node)) {
+      filteredNode.push(node);
     }
   }
+  return filteredNode;
 }
 
 class FilteredCollection<T> implements Collection<Node<T>> {
@@ -111,7 +121,7 @@ class FilteredCollection<T> implements Collection<Node<T>> {
       last.nextKey = undefined;
     }
 
-    this.lastKey = last ? last.key : ''; // what to do in empty collection??
+    this.lastKey = last ? last.key : ''; // TODO: figure out what to do in empty collection??
   }
 
   *[Symbol.iterator]() {
@@ -149,8 +159,6 @@ class FilteredCollection<T> implements Collection<Node<T>> {
   }
 }
 
-let whitespace = /\s/;
-
 export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let {
     onFilter,
@@ -166,48 +174,36 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   
   let itemsControlled = !!onFilter;
   let collator = useCollator({sensitivity: 'base'});
-  /*
-  let menuControlled = props.isOpen !== undefined;
-  let valueControlled = inputValue !== undefined;
-  let selectedControlled = !!selectedKey;
-   */
 
   // Create a separate menu open state tracker so onOpenChange doesn't fire with open and close in quick succession
   // in cases where there aren't items to show
   // Note that this means onOpenChange won't fire for controlled open states
   let [menuIsOpen, setMenuIsOpen] = useControlledState(isOpen, defaultOpen || false, () => {});
-
   let selectState = useSelectState(props);
 
   let selectedKeyItem = selectedKey ? selectState.collection.getItem(selectedKey) : undefined;
   let selectedKeyText = selectedKeyItem ? selectedKeyItem.textValue || selectedKeyItem.rendered as string : undefined;
-  // Maybe don't need to do for defaultSelectedKey? Need to do for selectedKey so that the textfield is properly controlled reflects selectedKey text
   let defaultSelectedKeyItem = defaultSelectedKey ? selectState.collection.getItem(defaultSelectedKey) : undefined;
   let defaultSelectedKeyText = defaultSelectedKeyItem ? defaultSelectedKeyItem.textValue || defaultSelectedKeyItem.rendered as string : undefined;
-  // Double check if selectedKey should make textfield value controlled
+ 
   let [value, setValue] = useControlledState(toString(inputValue) || selectedKeyText, toString(defaultInputValue) || defaultSelectedKeyText || '', onInputChange);
-  let lowercaseValue = value.toLowerCase();
+  let lowercaseValue = value.toLowerCase().replace(' ', '');
 
   let defaultFilterFn = useMemo(() => (node: Node<T>) => {
     let scan = 0;
-    let lowercaseNode = node.textValue.toLowerCase();
-    for (let i in lowercaseValue) {
-      if (whitespace.test(lowercaseValue[i])) {
-        continue;
-      }
-      let match = false;
-      for (; scan < lowercaseNode.length && !match; scan++) {
-        if (!whitespace.test(lowercaseNode[scan])) { // if whitespace, move on to next character
-          let compareVal = collator.compare(lowercaseValue[i], lowercaseNode[scan]);
-          if (compareVal !== 0) { // if it didn't match, we can exit
-            return false;
-          } else { // we matched, move to next character in input for comparison
-            match = true;
-          }
-        }
+    let lowercaseNode = node.textValue.toLowerCase().replace(' ', '');
+    let sliceLen = lowercaseValue.length;
+    let match = false;
+
+    for (; scan + sliceLen <= lowercaseNode.length && !match; scan++) {
+      let nodeSlice = lowercaseNode.slice(scan, scan + sliceLen);
+      let compareVal = collator.compare(lowercaseValue, nodeSlice);
+      if (compareVal === 0) {
+        match = true;
       }
     }
-    return true;
+
+    return match;
   }, [collator, lowercaseValue]);
 
   useEffect(() => {
@@ -279,6 +275,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
       if (inputValue) {
         // TODO find item that has matching text and set as selectedKey
         // If none found, make invalid?
+        // Confirmed dig through all nodes and find the one with matching text
       }
     }
   // Double check this dependency array (does it need value,setValue, selectState.collection)

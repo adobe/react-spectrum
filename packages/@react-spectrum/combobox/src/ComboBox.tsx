@@ -61,7 +61,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
 
   let state = useComboBoxState({...props, isFocused});
   let layout = useListBoxLayout(state);
-  let {triggerProps, inputProps, menuProps, labelProps} = useComboBox(
+  let {triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
     {
       ...props,
       completionMode,
@@ -106,7 +106,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       <DismissButton onDismiss={() => state.setOpen(false)} />
       <ListBoxBase
         ref={listboxRef}
-        domProps={menuProps}
+        domProps={listBoxProps}
         disallowEmptySelection
         autoFocus={comboBoxAutoFocus}
         shouldSelectOnPressUp

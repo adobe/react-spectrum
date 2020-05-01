@@ -38,7 +38,7 @@ interface AriaComboBoxProps<T> extends ComboBoxProps {
 interface ComboBoxAria {
   triggerProps: HTMLAttributes<HTMLElement> & PressProps,
   inputProps: HTMLAttributes<HTMLElement>,
-  menuProps: HTMLAttributes<HTMLElement>,
+  listBoxProps: HTMLAttributes<HTMLElement>,
   labelProps: HTMLAttributes<HTMLElement>
 }
 
@@ -217,6 +217,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       'aria-autocomplete': completionMode === 'suggest' ? 'list' : 'both',
       'aria-activedescendant': state.isOpen ? focusedKeyId : undefined
     },
-    menuProps
+    listBoxProps: {
+      ...menuProps
+    }
   };
 }
