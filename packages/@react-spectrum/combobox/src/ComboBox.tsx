@@ -26,6 +26,7 @@ import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
+import {useCollator} from '@react-aria/i18n';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
@@ -59,7 +60,9 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
   let [isFocused, setIsFocused] = useState(false);
 
-  let state = useComboBoxState({...props, isFocused});
+  let collator = useCollator({sensitivity: 'base'});
+
+  let state = useComboBoxState({...props, isFocused, collator});
   let layout = useListBoxLayout(state);
   let {triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
     {

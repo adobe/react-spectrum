@@ -12,7 +12,7 @@
 
 import {chain} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
-import {FocusEvent, HTMLAttributes, RefObject, useEffect, useState} from 'react';
+import {FocusEvent, HTMLAttributes, RefObject} from 'react';
 import {ListLayout} from '@react-stately/collections';
 import {PressProps} from '@react-aria/interactions';
 import {useMenuTrigger} from '@react-aria/menu';
@@ -78,14 +78,9 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
-  // TODO: Refine the below, feels weird to have focusedItem and also need to still do state.selectionManger.focusedKey
-  let [focusedKeyId, setFocusedKeyId] = useState(null);
-  let focusedItem = state.selectionManager.focusedKey ? state.collection.getItem(state.selectionManager.focusedKey) : null;
-  useEffect(() => {
-    if (focusedItem) {
-      setFocusedKeyId(`${menuProps.id}-option-${focusedItem.key}`);
-    }
-  }, [state.selectionManager.focusedKey, state.collection, focusedItem, setFocusedKeyId, menuProps.id]);
+
+  let focusedItem = state.selectionManager.focusedKey ? state.collection.getItem(state.selectionManager.focusedKey) : undefined;
+  let focusedKeyId = focusedItem ? `${menuProps.id}-option-${focusedItem.key}` : undefined;
 
   // Using layout initiated from ComboBox, generate the keydown handlers for textfield (arrow up/down to navigate through menu when focus in the textfield)
   let {collectionProps} = useSelectableCollection({
@@ -110,20 +105,12 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       case 'ArrowDown':
         if (!state.isOpen) {
           state.toggle('first');
-        } else if (!focusedItem) { 
-          // If there isn't a focused item (allowsCustomValue=true) but the menu is open , set a item to focus when the user
-          // presses the arrow keys
-          let firstKey = state.collection.getFirstKey();
-          state.selectionManager.setFocusedKey(firstKey);
         }
 
         break;
       case 'ArrowUp':
         if (!state.isOpen) {
           state.toggle('last');
-        } else if (!focusedItem) { 
-          let lastKey = state.collection.getLastKey();
-          state.selectionManager.setFocusedKey(lastKey);
         }
 
         break;
@@ -152,10 +139,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
 
     setIsFocused(false);
-
-    // A bit strange behavior when isOpen is true, menu can't close so you can't tab away from the
-    // textfield, almost like a focus trap
-
+    
     if (state.isOpen && focusedItem) {
       state.setSelectedKey(state.selectionManager.focusedKey);
     }
