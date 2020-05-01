@@ -110,7 +110,7 @@ storiesOf('Picker', module)
   .add(
     'labelAlign: end',
     () => (
-      <Picker label="Test" labelAlign="end" onSelectionChange={action('selectionChange')}>
+      <Picker direction="top" label="Test" labelAlign="end" onSelectionChange={action('selectionChange')}>
         <Item uniqueKey="One">One</Item>
         <Item uniqueKey="Two">Two</Item>
         <Item uniqueKey="Three">Three</Item>
