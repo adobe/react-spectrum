@@ -133,7 +133,7 @@ module.exports = new Packager({
           // merged interface.
           let lastKey = keyStack[keyStack.length - 1];
           if (k === 'base' && (lastKey === 'props' || lastKey === 'extends')) {
-            return merged
+            return merged;
           }
 
           // Otherwise return a type link.
