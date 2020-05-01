@@ -10,23 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {ItemProps, ItemRenderer} from '@react-types/shared';
+import {ItemRenderer} from '@react-types/shared';
 import {Key, ReactElement, ReactNode} from 'react';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
 import {Transaction} from './Transaction';
 
-export interface ItemStates {
-  isSelected?: boolean,
-  isExpanded?: boolean,
-  isDisabled?: boolean,
-  isFocused?: boolean
-}
-
-export interface Node<T> extends ItemStates {
+export interface Node<T> {
   // TODO: determine how to keep this limited to shared node types
-  type: 'section' | 'item' | 'column' | 'cell' | 'rowheader'
+  type: 'section' | 'item' | 'column' | 'cell' | 'rowheader' | 'placeholder' | 'headerrow',
   key: Key,
   value: T,
   level: number,
@@ -40,7 +33,7 @@ export interface Node<T> extends ItemStates {
   parentKey?: Key,
   prevKey?: Key,
   nextKey?: Key,
-  props?: ItemProps<T>
+  props?: any
 }
 
 export interface PartialNode<T> {
@@ -57,7 +50,7 @@ export interface PartialNode<T> {
   childKey?: string,
   hasChildNodes?: boolean,
   childNodes?: () => IterableIterator<PartialNode<T>>,
-  props?: ItemProps<T>
+  props?: any
 }
 
 /** 

@@ -187,7 +187,7 @@ export class CollectionManager<T extends object, V, W> {
       this._overscanManager.setVisibleRect(rect);
     }
 
-    let shouldInvalidate = this.layout && this.layout.shouldInvalidate(rect);
+    let shouldInvalidate = this.layout && this.layout.shouldInvalidate(rect, this._visibleRect);
 
     this._resetAnimatedContentOffset();
     this._visibleRect = rect;
@@ -304,7 +304,7 @@ export class CollectionManager<T extends object, V, W> {
   }
 
   getReusableView(layoutInfo: LayoutInfo): ReusableView<T, V> {
-    let content = this._getViewContent(layoutInfo.type, layoutInfo.key);
+    let content = this.getItem(layoutInfo.key);
     let {reuseType} = this._getReuseType(layoutInfo, content);
 
     if (!this._reusableViews[reuseType]) {
@@ -330,21 +330,9 @@ export class CollectionManager<T extends object, V, W> {
     return view;
   }
 
-  private _getViewContent(type: string, key: Key): T | null {
-    // if (type === 'item') {
-    return this.getItem(key);
-    // }
-
-    // if (this.delegate.getContentForExtraView) {
-    //   return this.delegate.getContentForExtraView(type, key);
-    // }
-
-    // return null;
-  }
-
   private _renderView(reusableView: ReusableView<T, V>) {
     let {type, key} = reusableView.layoutInfo;
-    reusableView.content = this._getViewContent(type, key);
+    reusableView.content = this.getItem(key);
     reusableView.rendered = this._renderContent(type, reusableView.content);
   }
 
@@ -370,74 +358,21 @@ export class CollectionManager<T extends object, V, W> {
   }
 
   /**
-   * Gets the visible item view for the given key. Returns null if
-   * the view is not currently visible.
-   */
-  getItemView(key: Key): ReusableView<T, V> | null {
-    return this.getView('item', key);
-  }
-
-  /**
    * Gets the visible view for the given type and key. Returns null if
    * the view is not currently visible.
    *
-   * @param type The view type. `'item'` for an item view.
    * @param key The key of the view to retrieve
   */
-  getView(type: string, key: Key): ReusableView<T, V> | null {
-    try {
-      let k = this._getViewKey(type, key);
-      return this._visibleViews.get(k) || null;
-    } catch (err) {
-      return null;
-    }
+  getView(key: Key): ReusableView<T, V> | null {
+    return this._visibleViews.get(key) || null;
   }
 
   /**
    * Returns an array of visible views matching the given type.
-   * @param type The view type to find. `'item'` for item views.
+   * @param type The view type to find.
    */
   getViewsOfType(type: string): ReusableView<T, V>[] {
     return this.visibleViews.filter(v => v.layoutInfo && v.layoutInfo.type === type);
-  }
-
-  /**
-   * Reloads the content of the supplementary view matching the given parameters.
-   * This method does not work with item views. You should emit a "reloadItem" or
-   * "reloadSection" event from your data source instead.
-   *
-   * @param type The view type. `'item'` for an item view.
-   * @param key The key of the view to reload.
-   */
-  reloadSupplementaryView(type: string, key: Key) {
-    if (type === 'item') {
-      throw new Error('Do not reload item views with this method. ' +
-        'Emit a "reloadItem" or "reloadSection" event from your data source instead.');
-    }
-
-    // TODO
-    // let content = this._getViewContent(type, key);
-
-    this._runTransaction(() => {
-      let view = this.getView(type, key);
-      if (!view) {
-        return;
-      }
-
-      // view.setContent(content);
-    }, false);
-  }
-
-  /**
-   * Reloads the content of all visible supplementary views of the given type.
-   * @param type The view type to reload. `'item'` for an item view.
-   */
-  reloadSupplementaryViewsOfType(type: string) {
-    for (let view of this.getViewsOfType(type)) {
-      if (view.layoutInfo) {
-        this.reloadSupplementaryView(type, view.layoutInfo.key);
-      }
-    }
   }
 
   /**
@@ -445,7 +380,7 @@ export class CollectionManager<T extends object, V, W> {
    * if the view is not currently visible.
    */
   keyForView(view: ReusableView<T, V>): Key | null {
-    if (view && view.layoutInfo && view.layoutInfo.type === 'item') {
+    if (view && view.layoutInfo) {
       return view.layoutInfo.key;
     }
 
@@ -459,7 +394,7 @@ export class CollectionManager<T extends object, V, W> {
     let rect = new Rect(point.x, point.y, 1, 1);
     let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
 
-    let layoutInfo = layoutInfos.filter(l => l.type === 'item')[0];
+    let layoutInfo = layoutInfos[0];
     if (!layoutInfo) {
       return null;
     }
@@ -622,10 +557,10 @@ export class CollectionManager<T extends object, V, W> {
     if (this.delegate.getScrollAnchor) {
       let key = this.delegate.getScrollAnchor(visibleRect);
       if (key) {
-        let layoutInfo = this.layout.getLayoutInfo('item', key);
+        let layoutInfo = this.layout.getLayoutInfo(key);
         let corner = layoutInfo.rect.getCornerInRect(visibleRect);
         if (corner) {
-          let key = this._getViewKey(layoutInfo.type, layoutInfo.key);
+          let key = layoutInfo.key;
           let offset = layoutInfo.rect[corner].y - visibleRect.y;
           return {key, layoutInfo, corner, offset};
         }
@@ -661,9 +596,9 @@ export class CollectionManager<T extends object, V, W> {
     let contentOffset = this.getVisibleRect();
 
     if (scrollAnchor) {
-      let finalAnchor = context.transaction
+      let finalAnchor = context.transaction?.animated
         ? context.transaction.finalMap.get(scrollAnchor.key)
-        : this.layout.getLayoutInfo(scrollAnchor.layoutInfo.type, scrollAnchor.layoutInfo.key);
+        : this.layout.getLayoutInfo(scrollAnchor.layoutInfo.key);
 
       if (finalAnchor) {
         let adjustment = (finalAnchor.rect[scrollAnchor.corner].y - contentOffset.y) - scrollAnchor.offset;
@@ -687,10 +622,6 @@ export class CollectionManager<T extends object, V, W> {
     return this._visibleLayoutInfos;
   }
 
-  private _getViewKey(type: string, key: Key) {
-    return type + ':' + key;
-  }
-
   private _getLayoutInfoMap(rect: Rect, copy = false) {
     let layoutInfos = this.layout.getVisibleLayoutInfos(rect);
     let map = new Map;
@@ -700,8 +631,7 @@ export class CollectionManager<T extends object, V, W> {
         layoutInfo = layoutInfo.copy();
       }
 
-      let key = this._getViewKey(layoutInfo.type, layoutInfo.key);
-      map.set(key, layoutInfo);
+      map.set(layoutInfo.key, layoutInfo);
     }
 
     return map;
@@ -894,7 +824,7 @@ export class CollectionManager<T extends object, V, W> {
 
       let cur = view.layoutInfo;
       if (cur) {
-        let layoutInfo = this.layout.getLayoutInfo(cur.type, cur.key);
+        let layoutInfo = this.layout.getLayoutInfo(cur.key);
         if (this._applyLayoutInfo(view, layoutInfo)) {
           updated = true;
         }
@@ -905,7 +835,7 @@ export class CollectionManager<T extends object, V, W> {
     if (this._transaction) {
       for (let view of this._transaction.toRemove.values()) {
         let cur = view.layoutInfo;
-        let layoutInfo = this.layout.getLayoutInfo(cur.type, cur.key);
+        let layoutInfo = this.layout.getLayoutInfo(cur.key);
         if (this._applyLayoutInfo(view, layoutInfo)) {
           updated = true;
         }
@@ -913,8 +843,7 @@ export class CollectionManager<T extends object, V, W> {
 
       for (let view of this._transaction.removed.values()) {
         let cur = view.layoutInfo;
-        let k = this._getViewKey(cur.type, cur.key);
-        let layoutInfo = this._transaction.finalLayoutInfo.get(k) || cur;
+        let layoutInfo = this._transaction.finalLayoutInfo.get(cur.key) || cur;
         layoutInfo = this.layout.getFinalLayoutInfo(layoutInfo.copy());
         if (this._applyLayoutInfo(view, layoutInfo)) {
           updated = true;
@@ -987,7 +916,7 @@ export class CollectionManager<T extends object, V, W> {
       return;
     }
 
-    let layoutInfo = this.layout.getLayoutInfo('item', key);
+    let layoutInfo = this.layout.getLayoutInfo(key);
     if (!layoutInfo) {
       return;
     }
@@ -1131,7 +1060,9 @@ export class CollectionManager<T extends object, V, W> {
       beforeLayout: () => {
         // Get the initial layout infos for all views before the updates
         // so we can figure out which views to add and remove.
-        transaction.initialMap = this._getLayoutInfoMap(this._getContentRect(), true);
+        if (transaction.animated) {
+          transaction.initialMap = this._getLayoutInfoMap(this._getContentRect(), true);
+        }
 
         // Apply the actions that occurred during this transaction
         for (let action of transaction.actions) {
@@ -1141,10 +1072,10 @@ export class CollectionManager<T extends object, V, W> {
 
       afterLayout: () => {
         // Get the final layout infos after the updates
-        transaction.finalMap = this._getLayoutInfoMap(this._getContentRect());
-        this._setupTransactionAnimations(transaction);
-
-        if (!transaction.animated) {
+        if (transaction.animated) {
+          transaction.finalMap = this._getLayoutInfoMap(this._getContentRect());
+          this._setupTransactionAnimations(transaction);
+        } else {
           this._transaction = null;
         }
       },
@@ -1179,8 +1110,7 @@ export class CollectionManager<T extends object, V, W> {
       } else {
         // This view was removed. Store the layout info for use
         // in Layout#getFinalLayoutInfo during animations.
-        let k = this._getViewKey(layoutInfo.type, layoutInfo.key);
-        transaction.finalLayoutInfo.set(k, layoutInfo);
+        transaction.finalLayoutInfo.set(layoutInfo.key, layoutInfo);
       }
     }
 
@@ -1201,9 +1131,8 @@ export class CollectionManager<T extends object, V, W> {
         // In case something weird happened, where we have a view but no
         // initial layout info, use the one attached to the view.
         if (view.layoutInfo) {
-          let k = this._getViewKey(view.layoutInfo.type, view.layoutInfo.key);
-          if (!transaction.finalLayoutInfo.has(k)) {
-            transaction.finalLayoutInfo.set(k, view.layoutInfo);
+          if (!transaction.finalLayoutInfo.has(view.layoutInfo.key)) {
+            transaction.finalLayoutInfo.set(view.layoutInfo.key, view.layoutInfo);
           }
         }
       }

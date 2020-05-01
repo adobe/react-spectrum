@@ -150,7 +150,9 @@ module.exports = new Transformer({
         }, docs));
       }
 
-      if (path.isClassMethod()) {
+      if (path.isClassMethod() || path.isTSDeclareMethod()) {
+        // not sure why isTSDeclareMethod isn't a recognized method, can't find documentation on it either, but it works and that's the type
+        // it seems to be mostly abstract class methods that comes through as this?
         let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
 
@@ -388,7 +390,7 @@ module.exports = new Transformer({
       }
 
       if (path.isTSUndefinedKeyword()) {
-        return {type: 'undefined'};
+        return Object.assign(node, {type: 'undefined'});
       }
 
       if (path.isTSVoidKeyword()) {
@@ -400,7 +402,7 @@ module.exports = new Transformer({
       }
 
       if (path.isTSUnknownKeyword()) {
-        return {type: 'unknown'};
+        return Object.assign(node, {type: 'unknown'});
       }
 
       if (path.isTSArrayType()) {
@@ -605,9 +607,6 @@ module.exports = new Transformer({
       }
     }
 
-    // return Object.keys(exports).map()
-
-    // console.log(exports)
     asset.type = 'json';
     let buffer = v8.serialize(exports);
     asset.setBuffer(buffer);

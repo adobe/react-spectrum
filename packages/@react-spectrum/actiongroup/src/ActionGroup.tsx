@@ -26,9 +26,9 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useSelectableItem} from '@react-aria/selection';
 
 /**
- * An ActionGroup is a grouping of ActionButtons that are related to one another.
- */
-function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+* An ActionGroup is a grouping of ActionButtons that are related to one another.
+*/
+function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
   let {
@@ -72,6 +72,7 @@ function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivE
           <ActionGroupItem
             key={item.key}
             {...buttonProps}
+            isDisabled={isDisabled}
             UNSAFE_className={classNames(buttonStyles, 'spectrum-ButtonGroup-item')}
             item={item}
             state={state} />
@@ -86,10 +87,11 @@ export {_ActionGroup as ActionGroup};
 
 interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
   item: Node<T>,
-  state: ActionGroupState<T>
+  state: ActionGroupState<T>,
+  isDisabled: boolean
 }
 
-function ActionGroupItem<T>({item, state, ...otherProps}: ActionGroupItemProps<T>) {
+function ActionGroupItem<T>({item, state, isDisabled, ...otherProps}: ActionGroupItemProps<T>) {
   let ref = useRef();
   let {itemProps} = useSelectableItem({
     selectionManager: state && state.selectionManager,
@@ -98,13 +100,15 @@ function ActionGroupItem<T>({item, state, ...otherProps}: ActionGroupItemProps<T
   });
 
   let buttonProps = mergeProps(itemProps, otherProps);
+  isDisabled = isDisabled || state.disabledKeys.has(item.key);
+  let isSelected = state.selectionManager.isSelected(item.key);
 
   return (
     <ActionButton
       {...buttonProps}
       ref={ref}
-      isSelected={state.selectionManager.selectionMode !== 'none' ? item.isSelected : null}
-      isDisabled={item.isDisabled}
+      isSelected={state.selectionManager.selectionMode !== 'none' ? isSelected : null}
+      isDisabled={isDisabled}
       aria-label={item['aria-label']}>
       {item.rendered}
     </ActionButton>

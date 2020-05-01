@@ -25,10 +25,13 @@ module.exports = new Namer({
     let parts = entryFilePath.split(path.sep);
 
     let basename = path.basename(entryFilePath, path.extname(entryFilePath)) + '.html';
+
+    // For dev files, simply /PageName.html or /dir/PageName.html
     if (parts[1] === 'dev') {
       return path.join(...parts.slice(4, -1), basename);
     }
 
+    // For @namespace package files, urls will be /${namespace}/PageName.html
     return path.join(
       parts[1].replace(/^@/, ''),
       ...parts.slice(4, -1),

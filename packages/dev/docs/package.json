@@ -13,6 +13,7 @@
     "@react-spectrum/view": "^3.0.0-alpha.1",
     "@react-aria/interactions": "^3.0.0-alpha.1",
     "@react-spectrum/theme-default": "^3.0.0-rc.1",
+    "@spectrum-icons/ui": "^3.0.0-rc.2",
     "@spectrum-icons/workflow": "^3.0.0-alpha.1",
     "highlight.js": "9.18.1",
     "classnames": "^2.2.6",
