@@ -58,7 +58,7 @@ export class TreeCollection<T> implements Collection<Node<T>> {
       last.nextKey = undefined;
     }
 
-    this.lastKey = last?.key || undefined;
+    this.lastKey = last?.key;
   }
 
   *[Symbol.iterator]() {
