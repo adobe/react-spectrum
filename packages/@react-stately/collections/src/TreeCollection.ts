@@ -44,6 +44,7 @@ export class TreeCollection<T> implements Collection<Node<T>> {
         node.prevKey = last.key;
       } else {
         this.firstKey = key;
+        node.prevKey = undefined;
       }
 
       if (node.type === 'item') {
