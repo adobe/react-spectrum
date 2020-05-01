@@ -45,6 +45,12 @@ describe('useTreeData', function () {
     expect(result.current.selectedKeys).toEqual(new Set(['John', 'Stacy']));
   });
 
+  it('should get a node by key', function () {
+    let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
+    expect(result.current.getItem('Sam').value).toBe(initial[0].children[1]);
+    expect(result.current.getItem('David').value).toBe(initial[0]);
+  });
+
   it('should insert an item into a child node', function () {
     let {result} = renderHook(() => useTreeData({initialItems: initial, getChildren, getKey}));
     let initialResult = result.current;

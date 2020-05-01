@@ -37,6 +37,12 @@ interface TreeData<T extends object> {
   setSelectedKeys(keys: Set<Key>): void,
 
   /**
+   * Gets a node from the tree by key.
+   * @param key 
+   */
+  getItem(key: Key): TreeNode<T>,
+
+  /**
    * Inserts an item into a parent node as a child.
    * @param parentKey - the key of the parent item to insert into. `null` for the root.
    * @param index - the index within the parent to insert into.
@@ -210,6 +216,9 @@ export function useTreeData<T extends object>(opts: TreeOptions<T>): TreeData<T>
     items,
     selectedKeys,
     setSelectedKeys,
+    getItem(key: Key) {
+      return map.get(key);
+    },
     insert(parentKey: Key | null, index: number, ...values: T[]) {
       setItems(items => {
         let nodes = values.map(value => createNode(parentKey, value));

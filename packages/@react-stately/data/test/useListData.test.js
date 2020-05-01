@@ -29,6 +29,11 @@ describe('useListData', function () {
     expect(result.current.selectedKeys).toEqual(new Set(['Sam', 'Julia']));
   });
 
+  it('should get an item by key', function () {
+    let {result} = renderHook(() => useListData({initialItems: initial, getKey}));
+    expect(result.current.getItem('Sam')).toBe(initial[1]);
+  });
+
   it('should insert an item at an index', function () {
     let {result} = renderHook(() => useListData({initialItems: initial, getKey}));
     let initialResult = result.current;

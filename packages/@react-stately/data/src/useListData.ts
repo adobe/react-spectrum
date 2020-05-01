@@ -29,6 +29,12 @@ interface ListData<T extends object> {
   setSelectedKeys(keys: Set<Key>): void,
 
   /**
+   * Gets an item from the list by key.
+   * @param key 
+   */
+  getItem(key: Key): T,
+
+  /**
    * Inserts items into the list at the given index.
    * @param index - the index to insert into.
    * @param values - the values to insert.
@@ -105,6 +111,9 @@ export function useListData<T extends object>(opts: ListOptions<T>): ListData<T>
     items,
     selectedKeys,
     setSelectedKeys,
+    getItem(key: Key) {
+      return items.find(item => getKey(item) === key);
+    },
     insert(index: number, ...values: T[]) {
       setItems(items => [
         ...items.slice(0, index),
