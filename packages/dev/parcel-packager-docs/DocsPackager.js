@@ -65,6 +65,7 @@ module.exports = new Packager({
     function processCode(asset, obj) {
       let application;
       let paramStack = [];
+      let keyStack = [];
       return walk(obj, (t, k, recurse) => {
         if (t && t.type === 'reference') {
           let dep = bundleGraph.getDependencies(asset).find(d => d.moduleSpecifier === t.specifier);
@@ -96,7 +97,9 @@ module.exports = new Packager({
           hasParams = true;
         }
 
+        keyStack.push(k);
         t = recurse(t);
+        keyStack.pop();
 
         if (hasParams) {
           paramStack.pop();
@@ -120,10 +123,20 @@ module.exports = new Packager({
             nodes[t.id] = merged;
           }
 
-          if (!k || k === 'props' || k === 'extends' || (k === 'base' && !t.typeParameters)) {
+          // Return merged interface if the parent is a component or an interface we're extending.
+          if (!k || k === 'props' || k === 'extends') {
             return merged;
           }
 
+          // If the key is "base", then it came from a generic type application, so we need to
+          // check one level above. If that was a component or extended interface, return the
+          // merged interface.
+          let lastKey = keyStack[keyStack.length - 1];
+          if (k === 'base' && (lastKey === 'props' || lastKey === 'extends')) {
+            return merged;
+          }
+
+          // Otherwise return a type link.
           return {
             type: 'link',
             id: t.id
@@ -198,10 +211,10 @@ function walk(obj, fn) {
         return obj;
       }
     };
-  
+
     return fn(obj, k, recurse);
   };
-  
+
   let res = {};
   for (let k in obj) {
     res[k] = visit(obj[k], fn);
