@@ -23,6 +23,10 @@ import RegionSelect from '@spectrum-icons/workflow/RegionSelect';
 import Select from '@spectrum-icons/workflow/Select';
 ```
 
+---
+category: Buttons
+---
+
 # ActionGroup
 
 <p>{docs.exports.ActionGroup.description}</p>
@@ -43,10 +47,24 @@ import Select from '@spectrum-icons/workflow/Select';
 
 ## Content
 
-ActionGroups accept as list of `children`, each with a `uniqueKey` prop.
+ActionGroups accept as list of `children`, each with a `uniqueKey` prop. Generally `children` will be `Item` components from the `@react-stately/collections` library.
 
-It is required that the `children` are Item components from the `@react-stately/collections` library.
-In order to identify children when a user takes an action on a item, each child needs to have a `uniqueKey` prop.
+However, a function that returns `Item` components is also accepted.
+
+```tsx example
+const items = [
+  {children: 'React', name: 'React'},
+  {children: 'Add', name: 'Add'},
+  {children: 'Delete', name: 'Delete'}
+];
+<ActionGroup items={items} itemKey="name">
+  {item => <Item textValue={item.name}>{item.children}</Item>}
+</ActionGroup>
+```
+
+
+In order to identify children when a user takes an action on a item, each child needs to have a `uniqueKey` prop. If using a function, an `itemKey` prop is required on the ActionGroup.
+
 See [Events](#events) for more information.
 
 ## Value
@@ -99,7 +117,7 @@ The following example uses the `onSelectionChange` prop to update a string store
 
 ```tsx example
 function Example() {
-  let [lastKey, setLastKey] = React.useState('');
+  let [lastKey, setLastKey] = React.useState(new Set());
   return (
     <div>
       <ActionGroup onSelectionChange={setLastKey}>
@@ -107,7 +125,7 @@ function Example() {
         <Item uniqueKey="delete">Delete</Item>
         <Item uniqueKey="edit">Edit</Item>
       </ActionGroup>
-      <p>Last selected: <span>{lastKey}</span></p>
+      <p>Last selected: {lastKey}</p>
     </div>
   );
 }
@@ -116,15 +134,15 @@ function Example() {
 For multiple selections, use the `selectionMode` prop with the `multiple` value.
 ```tsx example
 function Example() {
-  let [selectedKeys, setSelectedKeys] = React.useState([]);
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set());
   return (
     <div>
-      <ActionGroup selectionMode="multiple" onSelectionChange={(...args) => setSelectedKeys(args)}>
+      <ActionGroup selectionMode="multiple" onSelectionChange={setSelectedKeys}>
         <Item uniqueKey="add">Add</Item>
         <Item uniqueKey="delete">Delete</Item>
         <Item uniqueKey="edit">Edit</Item>
       </ActionGroup>
-      <p>Selected: {selectedKeys.map(k => <span key={k}>{k}</span>)}</p>
+      <p>Selected: {[...selectedKeys].toString()}</p>
     </div>
   );
 }
