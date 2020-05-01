@@ -88,6 +88,7 @@ module.exports = new Transformer({
     let title = '';
     let category = '';
     let keywords = [];
+    let description = '';
     const extractToc = (options) => {
       const settings = options || {};
       const depth = settings.maxDepth || 6;
@@ -134,6 +135,7 @@ module.exports = new Transformer({
           let yamlData = yaml.safeLoad(metadata.value);
           category = yamlData.category || '';
           keywords = yamlData.keywords || [];
+          description = yamlData.description || '';
         }
 
         return node;
@@ -177,8 +179,8 @@ export default {};
     asset.meta.toc = toc;
     asset.meta.title = title;
     asset.meta.category = category;
-    // Keywords are supplemented by a few other known fields
-    asset.meta.keywords = keywords.concat([category, title, 'react spectrum']).join(',');
+    asset.meta.description = description;
+    asset.meta.keywords = keywords;
 
     let assets = [
       asset,

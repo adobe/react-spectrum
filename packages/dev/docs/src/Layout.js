@@ -26,6 +26,8 @@ import {theme} from '@react-spectrum/theme-default';
 import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
+const TLD = 'react-spectrum.adobe.com';
+
 const mdxComponents = {
   h1: ({children, ...props}) => (
     <h1 {...props} className={classNames(typographyStyles['spectrum-Heading1--display'], typographyStyles['spectrum-Article'], docStyles['articleHeader'])}>
@@ -70,7 +72,23 @@ function getTarget(href) {
   return '_blank';
 }
 
+function dirToTitle(dir) {
+  return dir
+    .split('/')[0]
+    .split('-')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
 function Page({children, currentPage, publicUrl, styles, scripts}) {
+  let isSubpage = currentPage.name.split('/').length > 1;
+  let pageSection = isSubpage ? dirToTitle(currentPage.name) : 'React Spectrum';
+  if (/index\.html$/.test(currentPage.name) && isSubpage) {
+    currentPage.title = 'Home';
+  }
+  let keywords = currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).join(',');
+  let description = currentPage.description || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
+  let title = currentPage.title + (isSubpage ? ` | ${pageSection}` : '');
   return (
     <html
       lang="en-US"
@@ -84,7 +102,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         docStyles.provider,
         highlightCss.spectrum)}>
       <head>
-        <title>{currentPage.title}</title>
+        <title>{title}</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Server rendering means we cannot use a real <Provider> component to do this.
@@ -129,13 +147,13 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
         {scripts.map(s => <script type={s.type} src={s.url} defer />)}
-        <meta name="description" content={currentPage.description} />
-        <meta name="keywords" content={currentPage.keywords} />
+        <meta name="description" content={description} />
+        <meta name="keywords" content={keywords} />
         <meta property="og:title" content={currentPage.title} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={`https://react-spectrum.adobe.com${currentPage.url}`} />
-        <meta property="og:image" content="https://react-spectrum.adobe.com/hero-wide@2x.73bcb619.png" />
-        <meta property="og:description" content={currentPage.description} />
+        <meta property="og:url" content={`https://${TLD}${currentPage.url}`} />
+        <meta property="og:image" content={`https://${TLD}/hero-wide@2x.73bcb619.png`} />
+        <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
       </head>
       <body>
@@ -143,14 +161,6 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
       </body>
     </html>
   );
-}
-
-function dirToTitle(dir) {
-  return dir
-    .split('/')[0]
-    .split('-')
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
 }
 
 function Nav({currentPageName, pages}) {
