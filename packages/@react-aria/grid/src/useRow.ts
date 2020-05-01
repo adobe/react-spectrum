@@ -54,7 +54,7 @@ export function useRow<T>(props: RowProps, state: GridState<T>): RowAria {
   };
 
   if (isVirtualized) {
-    rowProps['aria-rowindex'] = state.collection.getItem(key).index;
+    rowProps['aria-rowindex'] = state.collection.getItem(key).index + state.collection.headerRows.length + 1; // aria-rowindex is 1 based
   }
 
   return {

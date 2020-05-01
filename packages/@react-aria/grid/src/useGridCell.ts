@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {getCellId} from './utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, Key, RefObject} from 'react';
@@ -71,10 +70,8 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
   };
 
   let item = state.collection.getItem(key);
-  let columnKey = state.collection.columns[item.index].key;
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(interactions, {
     role: 'gridcell',
-    id: getCellId(state, item.parentKey, columnKey),
     onFocus
   });
 

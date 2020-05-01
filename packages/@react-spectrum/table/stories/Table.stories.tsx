@@ -265,4 +265,28 @@ storiesOf('Table', module)
         </TableBody>
       </Table>
     )
+  )
+  .add(
+    'custom isRowHeader labeling',
+    () => (
+      <Table width={500} height={200} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column isRowHeader>First Name</Column>
+          <Column isRowHeader>Last Name</Column>
+          <Column>Birthday</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Sam</Cell>
+            <Cell>Smith</Cell>
+            <Cell>May 3</Cell>
+          </Row>
+          <Row>
+            <Cell>Julia</Cell>
+            <Cell>Jones</Cell>
+            <Cell>February 10</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
   );
