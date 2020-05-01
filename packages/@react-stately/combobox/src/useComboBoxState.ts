@@ -78,7 +78,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   let selectedKeyItem = selectedKey ? selectState.collection.getItem(selectedKey) : undefined;
   let selectedKeyText = selectedKeyItem ? selectedKeyItem.textValue : undefined;
   let defaultSelectedKeyItem = defaultSelectedKey ? selectState.collection.getItem(defaultSelectedKey) : undefined;
-  let defaultSelectedKeyText = defaultSelectedKeyItem ? defaultSelectedKeyItem.textValue || defaultSelectedKeyItem.rendered as string : undefined;
+  let defaultSelectedKeyText = defaultSelectedKeyItem ? defaultSelectedKeyItem.textValue : undefined;
 
   let [value, setValue] = useControlledState(toString(inputValue) || selectedKeyText, toString(defaultInputValue) || defaultSelectedKeyText || '', onInputChange);
   let lowercaseValue = value.toLowerCase().replace(' ', '');
