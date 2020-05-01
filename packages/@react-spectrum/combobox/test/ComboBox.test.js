@@ -462,6 +462,11 @@ describe('ComboBox', function () {
       // TODO: test for onFilter when implemented
       // expect(onFilter).toHaveBeenCalled();
     });
+
+    it('filters combobox items using contains strategy', function () {
+      // TODO by Dan
+      // Test this via a Combobox with sections
+    });
   });
 
   describe('blur', function () {
