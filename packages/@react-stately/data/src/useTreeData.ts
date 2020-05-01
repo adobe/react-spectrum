@@ -125,16 +125,16 @@ export function useTreeData<T extends object>(opts: TreeOptions<T>): TreeData<T>
   let [items, setItems] = useState(initialNodes);
   let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
 
-  function buildTree(initialItems: T[], parent?: TreeNode<T>) {
+  function buildTree(initialItems: T[], parentKey?: Key | null) {
     return initialItems.map(item => {
       let node: TreeNode<T> = {
         key: getKey(item),
-        parentKey: parent?.key,
+        parentKey: parentKey,
         value: item,
         children: null
       };
   
-      node.children = buildTree(getChildren(item), node);
+      node.children = buildTree(getChildren(item), node.key);
       map.set(node.key, node);
       return node;
     });
@@ -203,18 +203,6 @@ export function useTreeData<T extends object>(opts: TreeOptions<T>): TreeData<T>
     }
   }
 
-  function createNode(parentKey: Key | null, value: T) {
-    let node: TreeNode<T> = {
-      key: getKey(value),
-      parentKey,
-      value: value,
-      children: null
-    };
-
-    node.children = buildTree(getChildren(value), node);
-    return node;
-  }
-
   return {
     items,
     selectedKeys,
@@ -224,7 +212,7 @@ export function useTreeData<T extends object>(opts: TreeOptions<T>): TreeData<T>
     },
     insert(parentKey: Key | null, index: number, ...values: T[]) {
       setItems(items => {
-        let nodes = values.map(value => createNode(parentKey, value));
+        let nodes = buildTree(values, parentKey);
 
         // If parentKey is null, insert into the root.
         if (parentKey == null) {
@@ -334,7 +322,7 @@ export function useTreeData<T extends object>(opts: TreeOptions<T>): TreeData<T>
           children: null
         };
 
-        node.children = buildTree(getChildren(newValue), node);
+        node.children = buildTree(getChildren(newValue), node.key);
         return node;
       }));
     }
