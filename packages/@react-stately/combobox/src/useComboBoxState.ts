@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-stately/collections';
+import {Collection, Node, TreeCollection} from '@react-stately/collections';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {FocusStrategy} from '@react-types/menu';
 import {Key, useEffect, useMemo} from 'react';
@@ -76,89 +76,6 @@ function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolea
   return filteredNode;
 }
 
-class FilteredCollection<T> implements Collection<Node<T>> {
-  private keyMap: Map<Key, Node<T>> = new Map();
-  private iterable: Iterable<Node<T>>;
-  private firstKey: Key;
-  private lastKey: Key;
-  private filterFn: (node: Node<T>) => boolean;
-
-  constructor(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean) {
-    this.filterFn = filterFn;
-    this.iterable = nodes;
-
-    let visit = (node: Node<T>) => {
-      this.keyMap.set(node.key, node);
-
-      if (node.childNodes && (node.type === 'section')) {
-        for (let child of node.childNodes) {
-          visit(child);
-        }
-      }
-    };
-
-    for (let node of this) {
-      visit(node);
-    }
-
-    let last: Node<T>;
-    let index = 0;
-    for (let [key, node] of this.keyMap) {
-      if (last) {
-        last.nextKey = key;
-        node.prevKey = last.key;
-      } else {
-        this.firstKey = key;
-      }
-
-      if (node.type === 'item') {
-        node.index = index++;
-      }
-
-      last = node;
-      // Set nextKey as undefined since this might be the last node
-      // If it isn't the last node, last.nextKey will properly set at start of new loop 
-      last.nextKey = undefined;
-    }
-
-    this.lastKey = last ? last.key : ''; // TODO: figure out what to do in empty collection??
-  }
-
-  *[Symbol.iterator]() {
-    yield* filter(this.iterable, this.filterFn);
-  }
-
-  get size() {
-    return this.keyMap.size;
-  }
-
-  getKeys() {
-    return this.keyMap.keys();
-  }
-
-  getKeyBefore(key: Key) {
-    let node = this.keyMap.get(key);
-    return node ? node.prevKey : null;
-  }
-
-  getKeyAfter(key: Key) {
-    let node = this.keyMap.get(key);
-    return node ? node.nextKey : null;
-  }
-
-  getFirstKey() {
-    return this.firstKey;
-  }
-
-  getLastKey() {
-    return this.lastKey;
-  }
-
-  getItem(key: Key) {
-    return this.keyMap.get(key);
-  }
-}
-
 export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let {
     onFilter,
@@ -171,7 +88,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     isOpen,
     defaultOpen
   } = props;
-  
+
   let itemsControlled = !!onFilter;
   let collator = useCollator({sensitivity: 'base'});
 
@@ -185,7 +102,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   let selectedKeyText = selectedKeyItem ? selectedKeyItem.textValue || selectedKeyItem.rendered as string : undefined;
   let defaultSelectedKeyItem = defaultSelectedKey ? selectState.collection.getItem(defaultSelectedKey) : undefined;
   let defaultSelectedKeyText = defaultSelectedKeyItem ? defaultSelectedKeyItem.textValue || defaultSelectedKeyItem.rendered as string : undefined;
- 
+
   let [value, setValue] = useControlledState(toString(inputValue) || selectedKeyText, toString(defaultInputValue) || defaultSelectedKeyText || '', onInputChange);
   let lowercaseValue = value.toLowerCase().replace(' ', '');
 
@@ -218,9 +135,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     if (itemsControlled || value === '') {
       return selectState.collection;
     }
-    return new FilteredCollection(selectState.collection, defaultFilterFn);
+    return new TreeCollection(filter(selectState.collection, defaultFilterFn), new Set());
   }, [selectState.collection, value, itemsControlled, defaultFilterFn]);
- 
+
   useEffect(() => {
     // Close the menu if it was open but there aren't any items to display
     if (menuIsOpen && selectState.collection.size === 0) {
