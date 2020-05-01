@@ -27,7 +27,7 @@ import {Modal} from '@react-spectrum/overlays';
 import More from '@spectrum-icons/workflow/More';
 import React, {useState} from 'react';
 import {TextField} from '@react-spectrum/textfield';
-import {useListData} from '@react-stately/collections';
+import {useListData} from '@react-stately/data';
 
 export function CRUDExample() {
   let list = useListData({
