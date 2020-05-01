@@ -19,6 +19,7 @@ import {Flex} from '@react-spectrum/layout';
 import {Picker, Item, Section} from '@react-spectrum/picker';
 ```
 
+// TODO: Figure out how to ignore multiple import statements so they can be shown in the examples
 ---
 category: Forms
 ---
@@ -191,7 +192,6 @@ function StaticExample() {
     </>
   );
 }
-
 ```
 
 When using Picker with dynamic items, selection works much the same way using `uniqueKey`. However, if your data already has an `id` key (as is common with many data sets), Picker can use that id without needing to specify a `uniqueKey` prop. The below example shows Picker using the id of each item from the `items` array as the selected value without the need for `uniqueKey`. Note that `uniqueKey` will always take precedence if set.
@@ -287,3 +287,58 @@ TODO
   </Picker>
 </Flex>
 ```
+### Align and Direction
+```tsx example
+<Flex flexDirection="column">
+  <Picker label="Choose frequency" align="end">
+    <Item uniqueKey="rarely">Rarely</Item>
+    <Item uniqueKey="sometimes">Sometimes</Item>
+    <Item uniqueKey="always">Always</Item>
+  </Picker>
+
+  <Picker label="Choose animal" direction="top">
+    <Item uniqueKey="Emu">Emu</Item>
+    <Item uniqueKey="Kangaroo">Kangaroo</Item>
+    <Item uniqueKey="Platypus">Platypus</Item>
+  </Picker>
+</Flex>
+```
+### Custom Widths
+```tsx example
+<Flex flexDirection="column">
+  <Picker label="Choose frequency" width="size-6000">
+    <Item uniqueKey="rarely">Rarely</Item>
+    <Item uniqueKey="sometimes">Sometimes</Item>
+    <Item uniqueKey="always">Always</Item>
+  </Picker>
+
+  <Picker label="Choose animal" menuWidth="size-6000">
+    <Item uniqueKey="Emu">Emu</Item>
+    <Item uniqueKey="Kangaroo">Kangaroo</Item>
+    <Item uniqueKey="Platypus">Platypus</Item>
+  </Picker>
+</Flex>
+```
+### Custom Widths
+```tsx example
+<Flex flexDirection="column">
+  <Picker label="Choose frequency" width="size-6000">
+    <Item uniqueKey="rarely">Rarely</Item>
+    <Item uniqueKey="sometimes">Sometimes</Item>
+    <Item uniqueKey="always">Always</Item>
+  </Picker>
+
+  <Picker label="Choose animal" menuWidth="size-6000">
+    <Item uniqueKey="Emu">Emu</Item>
+    <Item uniqueKey="Kangaroo">Kangaroo</Item>
+    <Item uniqueKey="Platypus">Platypus</Item>
+  </Picker>
+</Flex>
+```
+
+
+TODO
+Align
+Direction
+shouldFlip
+Open
