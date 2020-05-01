@@ -118,8 +118,11 @@ export function useTreeData<T extends object>(opts: TreeOptions<T>): TreeData<T>
     getChildren = (item: any) => item.children
   } = opts;
   let map = useMemo(() => new Map<Key, TreeNode<T>>(), []);
-  let nodes = useMemo(() => buildTree(initialItems), [buildTree, initialItems]);
-  let [items, setItems] = useState(nodes);
+
+  // We only want to compute this on initial render.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  let initialNodes = useMemo(() => buildTree(initialItems), []);
+  let [items, setItems] = useState(initialNodes);
   let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
 
   function buildTree(initialItems: T[], parent?: TreeNode<T>) {
