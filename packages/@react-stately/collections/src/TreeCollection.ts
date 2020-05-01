@@ -53,7 +53,7 @@ export class TreeCollection<T> implements Collection<Node<T>> {
       last = node;
     }
 
-    this.lastKey = last ? last.key : ''; // what to do in empty case??
+    this.lastKey = last ? last.key : null;
   }
 
   *[Symbol.iterator]() {

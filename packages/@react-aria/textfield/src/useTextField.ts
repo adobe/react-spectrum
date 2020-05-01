@@ -52,6 +52,8 @@ export function useTextField(
       readOnly: isReadOnly,
       'aria-required': isRequired || undefined,
       'aria-invalid': validationState === 'invalid' || undefined,
+      'aria-activedescendant': props['aria-activedescendant'],
+      'aria-autocomplete': props['aria-autocomplete'],
       value: props.value,
       defaultValue: props.defaultValue,
       onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value),

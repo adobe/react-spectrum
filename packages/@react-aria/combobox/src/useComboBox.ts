@@ -12,7 +12,7 @@
 
 import {chain} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
-import {FocusEvent, HTMLAttributes, RefObject, useEffect, useState} from 'react';
+import {FocusEvent, HTMLAttributes, RefObject} from 'react';
 import {ListLayout} from '@react-stately/collections';
 import {PressProps} from '@react-aria/interactions';
 import {useMenuTrigger} from '@react-aria/menu';
@@ -139,10 +139,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
 
     setIsFocused(false);
-
-    // A bit strange behavior when isOpen is true, menu can't close so you can't tab away from the
-    // textfield, almost like a focus trap
-
+    
     if (state.isOpen && focusedItem) {
       state.setSelectedKey(state.selectionManager.focusedKey);
     }

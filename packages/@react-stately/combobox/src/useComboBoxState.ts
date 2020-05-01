@@ -12,39 +12,14 @@
 
 import {Collection, Node} from '@react-stately/collections';
 import {CollectionBase, SingleSelection} from '@react-types/shared';
-import {FocusStrategy} from '@react-types/menu';
 import {Key, useEffect, useMemo} from 'react';
-import {ListState} from '@react-stately/list';
-import {useCollator} from '@react-aria/i18n';
+import {SelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
 import {useSelectState} from '@react-stately/select';
 
-// Can't extend SelectState because we modify toggle/open here, copied types for now
-export interface ComboBoxState<T> extends ListState<T> {
-  /** The key for the currently selected item. */
-  selectedKey: Key,
-  /** Sets the selected key. */
-  setSelectedKey: (key: Key) => void,
-  /** The value of the currently selected item. */
-  selectedItem: Node<T>,
-  /** Whether the select is currently focused. */
-  isFocused: boolean,
-  /** Sets whether the select is focused. */
-  setFocused: (isFocused: boolean) => void,
-  /** Whether the menu is currently open. */
-  isOpen: boolean,
-  /** Sets whether the menu is open. */
-  setOpen(value: boolean): void,
-  /** Controls which item will be auto focused when the menu opens. */
-  focusStrategy: FocusStrategy,
-  /** Sets which item will be auto focused when the menu opens. */
-  setFocusStrategy(value: FocusStrategy): void,
-  /** Closes the menu. */
-  close(): void,
+export interface ComboBoxState<T> extends SelectState<T> {
   value: string,
-  setValue: (value: string) => void,
-  toggle: (strategy?: FocusStrategy | null) => void,
-  open: () => void
+  setValue: (value: string) => void
 }
 
 interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
@@ -55,7 +30,8 @@ interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   defaultInputValue?: string,
   onInputChange?: (value: string) => void,
   onFilter?: (value: string) => void,
-  isFocused: boolean
+  isFocused: boolean,
+  collator: Intl.Collator
 }
 
 function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean) {
@@ -121,7 +97,7 @@ class FilteredCollection<T> implements Collection<Node<T>> {
       last.nextKey = undefined;
     }
 
-    this.lastKey = last ? last.key : ''; // TODO: figure out what to do in empty collection??
+    this.lastKey = last ? last.key : null;
   }
 
   *[Symbol.iterator]() {
@@ -169,11 +145,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     onInputChange,
     isFocused,
     isOpen,
-    defaultOpen
+    defaultOpen,
+    collator
   } = props;
   
   let itemsControlled = !!onFilter;
-  let collator = useCollator({sensitivity: 'base'});
 
   // Create a separate menu open state tracker so onOpenChange doesn't fire with open and close in quick succession
   // in cases where there aren't items to show
@@ -182,9 +158,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   let selectState = useSelectState(props);
 
   let selectedKeyItem = selectedKey ? selectState.collection.getItem(selectedKey) : undefined;
-  let selectedKeyText = selectedKeyItem ? selectedKeyItem.textValue || selectedKeyItem.rendered as string : undefined;
+  let selectedKeyText = selectedKeyItem ? selectedKeyItem.textValue : undefined;
   let defaultSelectedKeyItem = defaultSelectedKey ? selectState.collection.getItem(defaultSelectedKey) : undefined;
-  let defaultSelectedKeyText = defaultSelectedKeyItem ? defaultSelectedKeyItem.textValue || defaultSelectedKeyItem.rendered as string : undefined;
+  let defaultSelectedKeyText = defaultSelectedKeyItem ? defaultSelectedKeyItem.textValue : undefined;
  
   let [value, setValue] = useControlledState(toString(inputValue) || selectedKeyText, toString(defaultInputValue) || defaultSelectedKeyText || '', onInputChange);
   let lowercaseValue = value.toLowerCase().replace(' ', '');
@@ -259,7 +235,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     // Perhaps replace the below with state.selectedItem?
     let selectedItem = selectState.selectedKey ? selectState.collection.getItem(selectState.selectedKey) : null;
     if (selectedItem) {
-      let itemText = selectedItem.textValue || selectedItem.rendered as string; // how should we handle this? rendered is typed as an object
+      let itemText = selectedItem.textValue;
 
       // Throw error if controlled inputValue and controlled selectedKey don't match
       if (inputValue && selectedKey && (inputValue !== itemText)) {

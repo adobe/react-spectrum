@@ -41,6 +41,14 @@ let withSection = [
 
 storiesOf('ComboBox', module)
   .add(
+    'no items',
+    () => (
+      <ComboBox items={[]} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+    )
+  )
+  .add(
     'static items',
     () => render({})
   )
@@ -161,11 +169,11 @@ storiesOf('ComboBox', module)
   )
   .add(
     'validationState: invalid',
-    () => render({validationState: 'invalid'})
+    () => render({validationState: 'invalid', defaultSelectedKey: 'two'})
   )
   .add(
     'validationState: valid',
-    () => render({validationState: 'valid'})
+    () => render({validationState: 'valid', defaultSelectedKey: 'two'})
   )
   .add(
     'autoFocus: true',
