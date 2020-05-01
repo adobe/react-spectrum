@@ -42,7 +42,7 @@ interface SelectAria {
   valueProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the popup. */
-  menuProps: HTMLAttributes<HTMLElement>
+  listBoxProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -105,7 +105,7 @@ export function useSelect<T>(props: SelectProps, state: SelectState<T>): SelectA
     valueProps: {
       id: valueId
     },
-    menuProps: {
+    listBoxProps: {
       ...menuProps,
       'aria-labelledby': [
         fieldProps['aria-labelledby'],

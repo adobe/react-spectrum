@@ -39,7 +39,7 @@ describe('useComboBox', function () {
     };
 
     let {result} = renderHook(() => useComboBox(props, state));
-    let {triggerProps, inputProps, menuProps, labelProps} = result.current;
+    let {triggerProps, inputProps, listBoxProps, labelProps} = result.current;
 
     expect(labelProps.id).toBeTruthy();
     expect(labelProps.htmlFor).toBe(inputProps.id);
@@ -51,8 +51,8 @@ describe('useComboBox', function () {
     expect(inputProps['aria-autocomplete']).toBe('both');
     expect(inputProps['aria-controls']).toBeFalsy();
 
-    expect(menuProps.id).toBeTruthy();
-    expect(menuProps['aria-labelledby']).toBe(triggerProps.id);
+    expect(listBoxProps.id).toBeTruthy();
+    expect(listBoxProps['aria-labelledby']).toBe(triggerProps.id);
     expect(triggerProps.id).toBeTruthy();
     expect(triggerProps.tabIndex).toBe(-1);
     expect(triggerProps['aria-haspopup']).toBeTruthy();
