@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node, TreeCollection} from '@react-stately/collections';
+
 import {CollectionBase, SingleSelection} from '@react-types/shared';
-import {Key, useEffect, useMemo} from 'react';
+import {Node, TreeCollection} from '@react-stately/collections';
 import {SelectState} from '@react-stately/select';
+import {useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
 import {useSelectState} from '@react-stately/select';
 
@@ -99,13 +100,14 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     return match;
   }, [collator, lowercaseValue]);
 
+  let lastValue = useRef('');
   useEffect(() => {
-    if (onFilter) {
+    if (onFilter && lastValue.current !== value) {
       onFilter(value);
     }
-  // Having onFilter in the dep array seems to break it
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+
+    lastValue.current = value;
+  }, [value, onFilter]);
 
   selectState.collection = useMemo(() => {
     if (itemsControlled || value === '') {
