@@ -14,8 +14,8 @@
 import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {Node, TreeCollection} from '@react-stately/collections';
 import {SelectState} from '@react-stately/select';
-import {useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
+import {useEffect, useMemo, useRef} from 'react';
 import {useSelectState} from '@react-stately/select';
 
 export interface ComboBoxState<T> extends SelectState<T> {
