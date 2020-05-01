@@ -24,7 +24,8 @@ describe('useComboBoxState tests', function () {
     let defaultProps;
     beforeEach(() => {
       onOpenChange = jest.fn();
-      defaultProps = {isFocused: true, items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>, onOpenChange};
+      let collator = {compare: jest.fn().mockReturnValue(true)};
+      defaultProps = {isFocused: true, items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>, onOpenChange, collator};
     });
     it('should be closed by default', function () {
       let initialProps = defaultProps;
@@ -76,7 +77,8 @@ describe('useComboBoxState tests', function () {
     let defaultProps;
     beforeEach(() => {
       onInputChange = jest.fn();
-      defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>, onInputChange};
+      let collator = {compare: jest.fn().mockReturnValue(true)};
+      defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>, onInputChange, collator};
     });
 
     it('can have a default value', function () {
@@ -121,7 +123,8 @@ describe('useComboBoxState tests', function () {
     let defaultProps;
     beforeEach(() => {
       onSelectionChange = jest.fn();
-      defaultProps = {items: [{id: 1, name: 'one'}, {id: 2, name: 'onomatopoeia'}], children: (props) => <Item>{props.name}</Item>, onSelectionChange};
+      let collator = {compare: jest.fn().mockReturnValue(true)};
+      defaultProps = {items: [{id: 1, name: 'one'}, {id: 2, name: 'onomatopoeia'}], children: (props) => <Item>{props.name}</Item>, onSelectionChange, collator};
     });
 
     it('support selectedKey', function () {
