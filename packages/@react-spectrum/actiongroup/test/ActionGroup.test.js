@@ -11,6 +11,7 @@
  */
 
 import {ActionGroup} from '../';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {fireEvent, render} from '@testing-library/react';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
@@ -368,5 +369,75 @@ describe('ActionGroup', function () {
 
     let button1 = getByRole('radio');
     expect(button1).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it('fires onAction when a button is pressed', function () {
+    let onAction = jest.fn();
+    let tree = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup selectionMode="none" onAction={onAction}>
+          <Item uniqueKey="test">Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button = tree.getByRole('button');
+    triggerPress(button);
+
+    expect(onAction).toHaveBeenCalledTimes(1);
+    expect(onAction).toHaveBeenCalledWith('test');
+  });
+
+  it('does not fire onAction if the action group is disabled', function () {
+    let onAction = jest.fn();
+    let tree = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup selectionMode="none" onAction={onAction} isDisabled>
+          <Item uniqueKey="test">Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button = tree.getByRole('button');
+    triggerPress(button);
+
+    expect(onAction).not.toHaveBeenCalled();
+  });
+
+  it('does not fire onAction if the item is disabled', function () {
+    let onAction = jest.fn();
+    let tree = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup selectionMode="none" onAction={onAction} disabledKeys={['test']}>
+          <Item uniqueKey="test">Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button = tree.getByRole('button');
+    triggerPress(button);
+
+    expect(onAction).not.toHaveBeenCalled();
+  });
+
+  it('supports DialogTrigger as a wrapper around items', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <ActionGroup selectionMode="none">
+          <DialogTrigger>
+            <Item>Hi</Item>
+            <Dialog>
+              I'm a dialog
+            </Dialog>
+          </DialogTrigger>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button = tree.getByRole('button');
+    triggerPress(button);
+
+    let dialog = tree.getByRole('dialog');
+    expect(dialog).toBeVisible();
   });
 });

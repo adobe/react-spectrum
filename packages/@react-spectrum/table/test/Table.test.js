@@ -12,6 +12,7 @@
 
 import {act, fireEvent, render, within} from '@testing-library/react';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
+import {CRUDExample} from '../stories/CRUDExample';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -1026,6 +1027,148 @@ describe('Table', function () {
       expect(rows[1]).toHaveAttribute('aria-selected', 'false');
       expect(rows[2]).toHaveAttribute('aria-selected', 'false');
       checkSelectAll(tree, 'unchecked');
+    });
+  });
+
+  describe('CRUD', function () {
+    it('can add items', function () {
+      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+
+      let button = tree.getByLabelText('Add item');
+      act(() => triggerPress(button));
+
+      let dialog = tree.getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let firstName = tree.getByLabelText('First Name');
+      act(() => {userEvent.type(firstName, 'Devon');});
+
+      let lastName = tree.getByLabelText('Last Name');
+      act(() => {userEvent.type(lastName, 'Govett');});
+
+      let birthday = tree.getByLabelText('Birthday');
+      act(() => {userEvent.type(birthday, 'Feb 3');});
+
+      let createButton = tree.getByText('Create');
+      act(() => triggerPress(createButton));
+
+      expect(dialog).not.toBeInTheDocument();
+
+      act(() => jest.runAllTimers());
+
+      rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(4);
+
+      let rowHeaders = within(rows[1]).getAllByRole('rowheader');
+      expect(rowHeaders[0]).toHaveTextContent('Devon');
+      expect(rowHeaders[1]).toHaveTextContent('Govett');
+
+      let cells = within(rows[1]).getAllByRole('gridcell');
+      expect(cells[1]).toHaveTextContent('Feb 3');
+    });
+
+    it('can remove items', function () {
+      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+
+      let button = within(rows[2]).getByRole('button');
+      act(() => triggerPress(button));
+
+      let menu = tree.getByRole('menu');
+      expect(document.activeElement).toBe(menu);
+
+      let menuItems = within(menu).getAllByRole('menuitem');
+      expect(menuItems.length).toBe(2);
+
+      act(() => triggerPress(menuItems[1]));
+      expect(menu).not.toBeInTheDocument();
+
+      let dialog = tree.getByRole('alertdialog');
+      let deleteButton = within(dialog).getByRole('button');
+
+      act(() => triggerPress(deleteButton));
+      expect(dialog).not.toBeInTheDocument();
+
+      act(() => jest.runAllTimers());
+      expect(rows[2]).not.toBeInTheDocument();
+
+      rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      
+      let rowHeaders = within(rows[1]).getAllByRole('rowheader');
+      expect(rowHeaders[0]).toHaveTextContent('Sam');
+    });
+
+    it('can bulk remove items', function () {
+      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+
+      let checkbox = within(rows[0]).getByRole('checkbox');
+      act(() => userEvent.click(checkbox));
+      expect(checkbox.checked).toBe(true);
+
+      let deleteButton = tree.getByLabelText('Delete selected items');
+      act(() => triggerPress(deleteButton));
+
+      let dialog = tree.getByRole('alertdialog');
+      let confirmButton = within(dialog).getByRole('button');
+
+      act(() => triggerPress(confirmButton));
+      expect(dialog).not.toBeInTheDocument();
+
+      act(() => jest.runAllTimers());
+
+      rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+
+      expect(checkbox.checked).toBe(false);
+    });
+
+    it('can edit items', function () {
+      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+
+      let button = within(rows[2]).getByRole('button');
+      act(() => triggerPress(button));
+
+      let menu = tree.getByRole('menu');
+      expect(document.activeElement).toBe(menu);
+
+      let menuItems = within(menu).getAllByRole('menuitem');
+      expect(menuItems.length).toBe(2);
+
+      act(() => triggerPress(menuItems[0]));
+      expect(menu).not.toBeInTheDocument();
+
+      let dialog = tree.getByRole('dialog');
+      expect(dialog).toBeVisible();
+
+      let firstName = tree.getByLabelText('First Name');
+      act(() => {userEvent.type(firstName, 'Jessica');});
+
+      let saveButton = tree.getByText('Save');
+      act(() => triggerPress(saveButton));
+
+      expect(dialog).not.toBeInTheDocument();
+
+      act(() => jest.runAllTimers());
+
+      let rowHeaders = within(rows[2]).getAllByRole('rowheader');
+      expect(rowHeaders[0]).toHaveTextContent('Jessica');
+      expect(rowHeaders[1]).toHaveTextContent('Jones');
     });
   });
 });

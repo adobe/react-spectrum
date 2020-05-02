@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
+import {CRUDExample} from './CRUDExample';
 import {Link} from '@react-spectrum/link';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -288,5 +289,11 @@ storiesOf('Table', module)
           </Row>
         </TableBody>
       </Table>
+    )
+  )
+  .add(
+    'CRUD',
+    () => (
+      <CRUDExample />
     )
   );

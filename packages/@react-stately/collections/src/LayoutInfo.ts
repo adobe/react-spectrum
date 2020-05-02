@@ -78,6 +78,7 @@ export class LayoutInfo {
     this.parentKey = null;
     this.rect = rect;
     this.estimatedSize = false;
+    this.isSticky = false;
     this.opacity = 1;
     this.transform = null;
     this.zIndex = 0;
@@ -91,6 +92,8 @@ export class LayoutInfo {
     res.estimatedSize = this.estimatedSize;
     res.opacity = this.opacity;
     res.transform = this.transform;
+    res.parentKey = this.parentKey;
+    res.isSticky = this.isSticky;
     return res;
   }
 }

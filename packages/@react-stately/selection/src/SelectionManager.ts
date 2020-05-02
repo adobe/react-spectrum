@@ -77,6 +77,10 @@ export class SelectionManager implements MultipleSelectionManager {
       return this._isSelectAll;
     }
 
+    if (this.isEmpty) {
+      return false;
+    }
+
     let allKeys = this.getSelectAllKeys();
     this._isSelectAll = allKeys.every(k => this.state.selectedKeys.has(k));
     return this._isSelectAll;
