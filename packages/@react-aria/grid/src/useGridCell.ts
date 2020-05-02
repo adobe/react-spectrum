@@ -3,7 +3,7 @@
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
@@ -43,13 +43,14 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
 
   // TODO: move into useSelectableItem?
   let {pressProps} = usePress(itemProps);
+  // TODO: interactions has onPress/onPressStart and they will be spread onto a div in TableColumnHeader.ts
   let interactions = mergeProps(itemProps, pressProps);
 
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
   let onFocus = (e) => {
     if (e.target !== ref.current) {
-      // useSelectableItem only handles setting the focused key when 
+      // useSelectableItem only handles setting the focused key when
       // the focused element is the gridcell itself. We also want to
       // set the focused key when a child element receives focus.
       state.selectionManager.setFocusedKey(node.key);

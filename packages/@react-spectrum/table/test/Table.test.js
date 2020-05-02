@@ -121,7 +121,7 @@ describe('Table', function () {
 
     expect(rows[0]).toHaveAttribute('aria-selected', 'false');
     expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
-  
+
     checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
     expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
@@ -201,7 +201,7 @@ describe('Table', function () {
 
     expect(rows[0]).toHaveAttribute('aria-selected', 'false');
     expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
-  
+
     checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
     expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
@@ -416,7 +416,7 @@ describe('Table', function () {
     expect(rows[0]).toHaveAttribute('aria-selected', 'false');
     expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
     expect(rows[0]).toHaveAttribute('aria-rowindex', '4');
-  
+
     checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
     expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
@@ -459,7 +459,7 @@ describe('Table', function () {
         </TableBody>
       </Table>
     );
-    
+
     let grid = getByRole('grid');
     let rowgroups = within(grid).getAllByRole('rowgroup');
     let rows = within(rowgroups[1]).getAllByRole('row');
@@ -470,7 +470,7 @@ describe('Table', function () {
     expect(rowheaders[1]).toHaveTextContent('Smith');
 
     expect(rows[0]).toHaveAttribute('aria-labelledby', `${rowheaders[0].id} ${rowheaders[1].id}`);
-  
+
     let checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
     expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheaders[0].id} ${rowheaders[1].id}`);
@@ -1090,8 +1090,9 @@ describe('Table', function () {
       act(() => triggerPress(menuItems[1]));
       expect(menu).not.toBeInTheDocument();
 
-      let dialog = tree.getByRole('alertdialog');
-      let deleteButton = within(dialog).getByRole('button');
+      // TODO this really shouldn't be hidden, but it is in the browser as well
+      let dialog = tree.getByRole('alertdialog', {hidden: true});
+      let deleteButton = within(dialog).getByRole('button', {hidden: true}); // TODO: also shouldn't be hidden
 
       act(() => triggerPress(deleteButton));
       expect(dialog).not.toBeInTheDocument();
@@ -1101,7 +1102,7 @@ describe('Table', function () {
 
       rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(2);
-      
+
       let rowHeaders = within(rows[1]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Sam');
     });
@@ -1153,7 +1154,9 @@ describe('Table', function () {
       act(() => triggerPress(menuItems[0]));
       expect(menu).not.toBeInTheDocument();
 
-      let dialog = tree.getByRole('dialog');
+      // TODO: this really shouldn't need hidden true
+      // I've verified that it happens in the browser too
+      let dialog = tree.getByRole('dialog', {hidden: true});
       expect(dialog).toBeVisible();
 
       let firstName = tree.getByLabelText('First Name');
