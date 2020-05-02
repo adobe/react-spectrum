@@ -64,15 +64,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onChange = (val) => {
     state.setValue(val);
 
-    // If user deletes entry in textfield, clear combobox selection
-    // Probably needs more conditions here (shouldn't clear in controlled?)
-    // Move into a useEffect?
-    if (val === '' && state.selectedKey) {
-      // don't use clearSelection? For some reason toggleSelection doesn't work
-      state.selectionManager.clearSelection();
-      // state.selectionManager.toggleSelection(state.selectedKey);
-    }
-
     if (menuTrigger !== 'manual') {
       state.open();
     }
@@ -96,7 +87,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       case 'Enter':
         if (state.isOpen && focusedItem) {
           state.setSelectedKey(state.selectionManager.focusedKey);
-          state.close();
         }
         break;
       case 'Escape':
