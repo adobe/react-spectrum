@@ -11,13 +11,13 @@
  */
 
 import {getCellId} from './utils';
-import {GridState} from '@react-stately/grid';
-import {HTMLAttributes, Key, RefObject} from 'react';
+import {GridNode, GridState} from '@react-stately/grid';
+import {HTMLAttributes, RefObject} from 'react';
 import {useGridCell} from './useGridCell';
 
 interface RowHeaderProps {
+  node: GridNode<unknown>,
   ref: RefObject<HTMLElement>,
-  key: Key,
   isVirtualized?: boolean
 }
 
@@ -28,13 +28,12 @@ interface RowHeaderAria {
 export function useRowHeader<T>(props: RowHeaderProps, state: GridState<T>): RowHeaderAria {
   let {gridCellProps} = useGridCell(props, state);
 
-  let item = state.collection.getItem(props.key);
-  let columnKey = state.collection.columns[item.index].key;
+  let columnKey = state.collection.columns[props.node.index].key;
   return {
     rowHeaderProps: {
       ...gridCellProps,
       role: 'rowheader',
-      id: getCellId(state, item.parentKey, columnKey)
+      id: getCellId(state, props.node.parentKey, columnKey)
     }
   };
 }
