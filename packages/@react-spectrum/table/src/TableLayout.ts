@@ -96,32 +96,11 @@ export class TableLayout<T> extends ListLayout<T> {
     let width = 0;
     let children: LayoutNode[] = [];
     for (let headerRow of this.collection.headerRows) {
-      let rect = new Rect(0, y, 0, 0);
-      let row = new LayoutInfo('headerrow', headerRow.key, rect);
-      row.parentKey = layoutInfo.key;
-      this.layoutInfos.set(row.key, row);
-
-      let x = 0;
-      let height = 0;
-      let columns: LayoutNode[] = [];
-      for (let cell of headerRow.childNodes) {
-        let layoutNode = this.buildChild(cell, x, y);
-        layoutNode.layoutInfo.parentKey = row.key;
-        x = layoutNode.layoutInfo.rect.maxX;
-        height = Math.max(height, layoutNode.layoutInfo.rect.height);
-        columns.push(layoutNode);
-      }
-
-      rect.height = height;
-      rect.width = x;
-
-      children.push({
-        layoutInfo: row,
-        children: columns
-      });
-
-      y += height;
-      width = Math.max(width, x);
+      let layoutNode = this.buildChild(headerRow, 0, y);
+      layoutNode.layoutInfo.parentKey = 'header';
+      y = layoutNode.layoutInfo.rect.maxY;
+      width = Math.max(width, layoutNode.layoutInfo.rect.width);
+      children.push(layoutNode);
     }
 
     rect.width = width;
@@ -132,6 +111,29 @@ export class TableLayout<T> extends ListLayout<T> {
     return {
       layoutInfo,
       children
+    };
+  }
+
+  buildHeaderRow(headerRow: GridNode<T>, x: number, y: number) {
+    let rect = new Rect(0, y, 0, 0);
+    let row = new LayoutInfo('headerrow', headerRow.key, rect);
+
+    let height = 0;
+    let columns: LayoutNode[] = [];
+    for (let cell of headerRow.childNodes) {
+      let layoutNode = this.buildChild(cell, x, y);
+      layoutNode.layoutInfo.parentKey = row.key;
+      x = layoutNode.layoutInfo.rect.maxX;
+      height = Math.max(height, layoutNode.layoutInfo.rect.height);
+      columns.push(layoutNode);
+    }
+
+    rect.height = height;
+    rect.width = x;
+
+    return {
+      layoutInfo: row,
+      children: columns
     };
   }
 
@@ -163,6 +165,8 @@ export class TableLayout<T> extends ListLayout<T> {
 
   buildNode(node: GridNode<T>, x: number, y: number): LayoutNode {
     switch (node.type) {
+      case 'headerrow':
+        return this.buildHeaderRow(node, x, y);
       case 'item':
         return this.buildRow(node, x, y);
       case 'cell':
