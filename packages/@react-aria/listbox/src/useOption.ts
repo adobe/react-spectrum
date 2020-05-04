@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {getItemId} from './utils';
 import {HTMLAttributes, Key, RefObject} from 'react';
 import {ListState} from '@react-stately/list';
 import {useHover, usePress} from '@react-aria/interactions';
@@ -51,8 +52,7 @@ interface OptionProps {
 
   /** Whether the option is contained in a virtual scrolling listbox. */
   isVirtualized?: boolean,
-  shouldUseVirtualFocus?: boolean,
-  baseId?: string
+  shouldUseVirtualFocus?: boolean
 }
 
 /**
@@ -70,8 +70,7 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     shouldSelectOnPressUp,
     shouldFocusOnHover,
     isVirtualized,
-    shouldUseVirtualFocus,
-    baseId
+    shouldUseVirtualFocus
   } = props;
 
   let labelId = useSlotId();
@@ -114,7 +113,7 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
       ...optionProps,
       ...pressProps,
       ...hoverProps,
-      id: `${baseId}-option-${key}`
+      id: getItemId(state, key)
     },
     labelProps: {
       id: labelId

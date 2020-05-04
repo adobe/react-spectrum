@@ -26,8 +26,7 @@ interface OptionProps<T> {
   item: Node<T>,
   shouldSelectOnPressUp?: boolean,
   shouldFocusOnHover?: boolean,
-  shouldUseVirtualFocus?: boolean,
-  baseId: string
+  shouldUseVirtualFocus?: boolean
 }
 
 /** @private */
@@ -36,8 +35,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     item,
     shouldSelectOnPressUp,
     shouldFocusOnHover,
-    shouldUseVirtualFocus,
-    baseId
+    shouldUseVirtualFocus
   } = props;
 
   let {
@@ -61,8 +59,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
       shouldSelectOnPressUp,
       shouldFocusOnHover,
       isVirtualized: true,
-      shouldUseVirtualFocus,
-      baseId
+      shouldUseVirtualFocus
     },
     state
   );

@@ -104,7 +104,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   } else {
     comboBoxAutoFocus = 'first';
   }
-  
+
   let listbox = (
     <FocusScope>
       <DismissButton onDismiss={() => state.setOpen(false)} />

@@ -116,7 +116,6 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
           if (type === 'item') {
             return (
               <ListBoxOption
-                baseId={domProps.id}
                 item={item}
                 shouldSelectOnPressUp={shouldSelectOnPressUp}
                 shouldFocusOnHover={focusOnPointerEnter}
