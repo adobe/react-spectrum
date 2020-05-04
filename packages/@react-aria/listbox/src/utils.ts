@@ -10,7 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useListBox';
-export * from './useOption';
-export * from './useListBoxSection';
-export * from './utils';
+import {ListState} from '@react-stately/list';
+import {Key} from 'react';
+
+export const listIds = new WeakMap<ListState<unknown>, string>();
+
+function normalizeKey(key: Key): string {
+  if (typeof key === 'string') {
+    return key.replace(/\s*/g, '');
+  }
+
+  return '' + key;
+}
+
+export function getItemId<T>(state: ListState<T>, itemKey: Key): string {
+  let listId = listIds.get(state);
+
+  if (!listId) {
+    throw new Error('Unknown list');
+  }
+
+  return `${listId}-option-${normalizeKey(itemKey)}`;
+}

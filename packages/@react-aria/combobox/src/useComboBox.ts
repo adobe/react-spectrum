@@ -13,6 +13,7 @@
 import {chain} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, HTMLAttributes, RefObject} from 'react';
+import {getItemId, listIds} from '@react-aria/listbox';
 import {ListLayout} from '@react-stately/collections';
 import {PressProps} from '@react-aria/interactions';
 import {useMenuTrigger} from '@react-aria/menu';
@@ -78,10 +79,13 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
+  // Had to set the list id here instead of in useListBox or ListBoxBase
+  listIds.set(state, menuProps.id);
 
   let focusedItem = state.selectionManager.focusedKey ? state.collection.getItem(state.selectionManager.focusedKey) : undefined;
-  let focusedKeyId = focusedItem ? `${menuProps.id}-option-${focusedItem.key}` : undefined;
-
+  let focusedKeyId = focusedItem ? getItemId(state, focusedItem.key) : undefined;
+  console.log('focuseditemdId', focusedKeyId);
+  
   // Using layout initiated from ComboBox, generate the keydown handlers for textfield (arrow up/down to navigate through menu when focus in the textfield)
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
