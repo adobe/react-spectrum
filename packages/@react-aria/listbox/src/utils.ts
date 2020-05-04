@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ListState} from '@react-stately/list';
 import {Key} from 'react';
+import {ListState} from '@react-stately/list';
 
 export const listIds = new WeakMap<ListState<unknown>, string>();
 

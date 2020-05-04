@@ -84,8 +84,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   let focusedItem = state.selectionManager.focusedKey ? state.collection.getItem(state.selectionManager.focusedKey) : undefined;
   let focusedKeyId = focusedItem ? getItemId(state, focusedItem.key) : undefined;
-  console.log('focuseditemdId', focusedKeyId);
-  
+
   // Using layout initiated from ComboBox, generate the keydown handlers for textfield (arrow up/down to navigate through menu when focus in the textfield)
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
