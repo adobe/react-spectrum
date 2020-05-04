@@ -13,7 +13,9 @@
 import {FocusStrategy} from '@react-types/listbox';
 import {HTMLAttributes, RefObject} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
+import {listIds} from './utils';
 import {ListState} from '@react-stately/list';
+import {useId} from '@react-aria/utils';
 import {useSelectableList} from '@react-aria/selection';
 
 interface ListBoxAria {
@@ -38,7 +40,10 @@ interface AriaListBoxProps {
   autoFocus?: boolean | FocusStrategy,
 
   /** Whether focus should wrap around when the end/start is reached. */
-  shouldFocusWrap?: boolean
+  shouldFocusWrap?: boolean,
+
+  /** ID of the listbox. */
+  id?: string
 }
 
 /**
@@ -54,6 +59,9 @@ export function useListBox<T>(props: AriaListBoxProps, state: ListState<T>): Lis
     collection: state.collection,
     disabledKeys: state.disabledKeys
   });
+
+  let id = useId(props.id);
+  listIds.set(state, id);
 
   return {
     listBoxProps: {
