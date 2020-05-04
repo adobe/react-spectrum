@@ -60,7 +60,7 @@ describe('useComboBoxState tests', function () {
 
       act(() => result.current.close());
       expect(result.current.isOpen).toBe(true);
-      expect(onOpenChange).not.toHaveBeenCalled();
+      expect(onOpenChange).toHaveBeenCalledWith(false);
 
 
       rerender({...defaultProps, isOpen: false});
@@ -68,7 +68,7 @@ describe('useComboBoxState tests', function () {
 
       act(() => result.current.open());
       expect(result.current.isOpen).toBe(false);
-      expect(onOpenChange).not.toHaveBeenCalled();
+      expect(onOpenChange).toHaveBeenCalledWith(true);
     });
   });
 

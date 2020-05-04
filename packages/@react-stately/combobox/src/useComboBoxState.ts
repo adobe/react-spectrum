@@ -62,17 +62,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     defaultInputValue,
     onInputChange,
     isFocused,
-    isOpen,
-    defaultOpen,
     collator
   } = props;
 
   let itemsControlled = !!onFilter;
 
-  // Create a separate menu open state tracker so onOpenChange doesn't fire with open and close in quick succession
-  // in cases where there aren't items to show
-  // Note that this means onOpenChange won't fire for controlled open states
-  let [menuIsOpen, setMenuIsOpen] = useControlledState(isOpen, defaultOpen || false, () => {});
   let selectState = useSelectState(props);
 
   let selectedKeyItem = selectedKey ? selectState.collection.getItem(selectedKey) : undefined;
@@ -116,39 +110,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     return new TreeCollection(filter(selectState.collection, defaultFilterFn), new Set());
   }, [selectState.collection, value, itemsControlled, defaultFilterFn]);
 
-  useEffect(() => {
-    // Close the menu if it was open but there aren't any items to display
-    if (menuIsOpen && selectState.collection.size === 0) {
-      selectState.close();
-    }
-
-    // Only open the menu if there are items to display and the combobox is focused
-    // Note: doesn't affect controlled isOpen or defaultOpen
-    if (isFocused && menuIsOpen && selectState.collection.size > 0) {
-      selectState.open();
-    }
-
-    // Close the menu if it is supposed to be closed
-    if (!menuIsOpen) {
-      selectState.close();
-    }
-
-    // Maybe change dep array back to selectState? or make it selectState.close?
-  }, [menuIsOpen, selectState.collection, selectState, isFocused]);
-
-  let open = () => {
-    setMenuIsOpen(true);
-  };
-
-  let close = () => {
-    setMenuIsOpen(false);
-  };
-
-  let toggle = (focusStrategy = null) => {
-    setMenuIsOpen(state => !state);
-    selectState.setFocusStrategy(focusStrategy);
-  };
-
   // Moved from aria to stately cuz it feels more like stately
   useEffect(() => {
     // Perhaps replace the below with state.selectedItem?
@@ -179,11 +140,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
 
   return {
     ...selectState,
-    open,
-    close,
-    toggle,
     value,
-    setValue
+    setValue,
+    isOpen: selectState.isOpen && isFocused && selectState.collection.size > 0
   };
 }
 
