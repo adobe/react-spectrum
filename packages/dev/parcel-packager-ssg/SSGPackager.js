@@ -75,7 +75,7 @@ module.exports = new Packager({
         styles: bundles.filter(b => b.type === 'css').map(b => ({
           url: urlJoin(b.target.publicUrl, b.name)
         })),
-        pages,  
+        pages,
         currentPage: {
           category: mainAsset.meta.category,
           name: bundle.name,

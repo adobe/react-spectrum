@@ -14,6 +14,7 @@ import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
+import heroImage from 'url:../pages/assets/hero-narrow.png';
 import highlightCss from './syntax-highlight.css';
 import {ImageContext} from './Image';
 import {LinkProvider} from './types';
@@ -149,7 +150,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <meta property="og:title" content={currentPage.title} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://${TLD}${currentPage.url}`} />
-        <meta property="og:image" content={`https://${TLD}/hero-wide@2x.73bcb619.png`} />
+        <meta property="og:image" content={`https://${TLD}${heroImage}`} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
       </head>
