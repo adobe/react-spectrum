@@ -13,47 +13,50 @@
 import {DOMProps, PressEvent} from '@react-types/shared';
 import {HTMLAttributes, RefObject, SyntheticEvent} from 'react';
 import {LinkProps} from '@react-types/link';
-import {useId} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
 
 export interface AriaLinkProps extends LinkProps, DOMProps {
+  /** Whether the link is disabled. */
   isDisabled?: boolean,
-  href?: string,
-  tabIndex?: number,
-  onPress?: (e: PressEvent) => void,
-  onClick?: (e: SyntheticEvent) => void,
-  ref: RefObject<HTMLElement | null>
+  /**
+   * The HTML element used to render the link, e.g. "a", or "span".
+   * @default "a"
+   */
+  elementType?: string,
+  /** A ref to the link element. */
+  ref?: RefObject<HTMLElement | null>
 }
 
 export interface LinkAria {
+  /** Props for the link element. */
   linkProps: HTMLAttributes<HTMLDivElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a link component.
+ * A link allows a user to navigate to another page or resource within a web page
+ * or application.
+ */
 export function useLink(props: AriaLinkProps): LinkAria {
   let {
     id,
-    href,
     tabIndex = 0,
-    children,
+    elementType = 'a',
     onPress,
     onPressStart,
     onPressEnd,
+    // @ts-ignore
     onClick: deprecatedOnClick,
     isDisabled,
     ref
   } = props;
 
   let linkProps: HTMLAttributes<HTMLDivElement>;
-  if (typeof children === 'string') {
+  if (elementType !== 'a') {
     linkProps = {
       role: 'link',
-      tabIndex: !isDisabled ? tabIndex : undefined,
-      'aria-disabled': isDisabled || undefined
+      tabIndex: !isDisabled ? tabIndex : undefined
     };
-  }
-
-  if (href) {
-    console.warn('href is deprecated, please use an anchor element as children');
   }
 
   let {pressProps} = usePress({onPress, onPressStart, onPressEnd, isDisabled, ref});
@@ -62,7 +65,8 @@ export function useLink(props: AriaLinkProps): LinkAria {
     linkProps: {
       ...pressProps,
       ...linkProps,
-      id: useId(id),
+      id,
+      'aria-disabled': isDisabled || undefined,
       onClick: (e) => {
         pressProps.onClick(e);
         if (deprecatedOnClick) {

@@ -15,21 +15,38 @@ import {ItemProps} from '@react-types/shared';
 import {Key, ReactElement, ReactNode} from 'react';
 
 export interface BreadcrumbItemProps extends PressEvents {
+  /** Whether the breadcrumb item represents the current page. */
   isCurrent?: boolean,
-  isHeading?: boolean,
-  isDisabled?: boolean,
-  headingAriaLevel?: number,
+  /**
+   * The type of current location the breadcrumb item represents, if `isCurrent` is true.
+   * @default "page"
+   */
   'aria-current'?: 'page' | 'step' | 'location' | 'date' | 'time' | boolean | 'true' | 'false',
+  /** Whether the breadcrumbs are used as a heading element. */
+  isHeading?: boolean,
+  /** Whether the breadcrumb item is disabled. */
+  isDisabled?: boolean,
+  /**
+   * The aria-level for the heading element if `isHeading` and `isCurrent` are true.
+   * @default 1
+   */
+  headingAriaLevel?: number,
+  /** The contents of the breadcrumb item. */
   children: ReactNode
 }
 
 export interface BreadcrumbsProps<T> {
+  /** The breadcrumb items. */
   children: ReactElement<ItemProps<T>> | ReactElement<ItemProps<T>>[],
+  /** Whether the breadcrumbs are used as a heading element. */
+  isHeading?: boolean,
   /**
-   * The current number of visible items before items are collapsed.
-   * @default 4
+   * Sets the aria-level attribute of the last item, but only if `isHeading` is true.
+   * @default 1
    */
-  maxVisibleItems?: 'auto' | number,
+  headingAriaLevel?: number,  
+  /** Whether the Breadcrumbs are disabled. */
+  isDisabled?: boolean,
   /** Called when an item is acted upon (usually selection via press). */
   onAction?: (key: Key) => void
 }
@@ -40,15 +57,11 @@ export interface SpectrumBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMPro
    * @default "M"
    */
   size?: 'S' | 'M' | 'L',
-  /** Whether the last item should have role of "heading". */
-  isHeading?: boolean,
   /**
-   * Sets the aria-level attribute of the last item, but only if `isHeading` is true.
-   * @default 1
+   * The current number of visible items before items are collapsed.
+   * @default 4
    */
-  headingAriaLevel?: number,
+  maxVisibleItems?: 'auto' | number,
   /** Whether to always show the root item if the items are collapsed. */
-  showRoot?: boolean,
-  /** Whether the Breadcrumbs are disabled. */
-  isDisabled?: boolean
+  showRoot?: boolean
 }

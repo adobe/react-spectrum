@@ -1,0 +1,132 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/focus';
+import {HeaderInfo, PropTable, FunctionAPI, TypeLink, ClassAPI} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```tsx import
+import {FocusScope, useFocusManager} from '@react-aria/focus';
+```
+
+---
+category: Focus
+---
+
+# FocusScope
+
+<p>{docs.exports.FocusScope.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['FocusScope', 'useFocusManager']} />
+
+## Introduction
+
+`FocusScope` is a utility component that can be used to manage focus for its descendants.
+When the `contain` prop is set, focus is contained within the scope. This is useful when
+implementing overlays like modal dialogs, which should not allow focus to escape them while open.
+In addition, the `restoreFocus` prop can be used to restore focus back to the previously focused 
+element when the focus scope unmounts, for example, back to a button which opened a dialog.
+A FocusScope can also optionally auto focus the first focusable element within it on mount
+when the `autoFocus` prop is set.
+
+The <TypeLink links={docs.links} type={docs.exports.useFocusManager} /> hook can also be used
+in combination with a FocusScope to programmatically move focus within the scope. For example,
+arrow key navigation could be implemented by handling keyboard events and using a focus manager
+to move focus to the next and previous elements.
+
+## Props
+
+<PropTable links={docs.links} component={docs.exports.FocusScope} />
+
+## FocusManager Interface
+
+To get a focus manager, call the <TypeLink links={docs.links} type={docs.exports.useFocusManager} /> hook
+from a component within the FocusScope. A focus manager supports the following methods:
+
+<ClassAPI links={docs.links} class={docs.links[docs.exports.useFocusManager.return.id]} />
+
+## Example
+
+A basic example of a focus scope that contains focus within it is below. Clicking the "Open"
+button mounts a FocusScope, which auto focuses the first input inside it. Once open, you can
+press the Tab key to move within the scope, but focus is contained inside. Clicking the "Close"
+button unmounts the focus scope, which restores focus back to the button.
+
+For a full example of building a modal dialog, see [useDialog](useDialog.html).
+
+```tsx example
+function Example() {
+  let [isOpen, setOpen] = React.useState(false);
+  return (
+    <>
+      {!isOpen &&
+        <button onClick={() => setOpen(true)}>Open</button>
+      }
+      {isOpen && 
+        <FocusScope contain restoreFocus autoFocus>
+          <input aria-label="First input" placeholder="First input" />
+          <input aria-label="Second input" placeholder="Second input" />
+          <button onClick={() => setOpen(false)}>Close</button>
+        </FocusScope>
+      }
+    </>
+  );
+}
+```
+
+## useFocusManager Example
+
+This example shows how to use `useFocusManager` to programmatically move focus within a
+`FocusScope`. It implements a basic toolbar component, which allows using the left and 
+right arrow keys to move focus to the previous and next buttons. The `wrap` option is
+used to make focus wrap around when it reaches the first or last button.
+
+```tsx example
+function Toolbar(props) {
+  return (
+    <div role="toolbar">
+      <FocusScope>
+        {props.children}
+      </FocusScope>
+    </div>
+  );
+}
+
+function ToolbarButton(props) {
+  let focusManager = useFocusManager();
+  let onKeyDown = (e) => {
+    switch (e.key) {
+      case 'ArrowRight':
+        focusManager.focusNext({wrap: true});
+        break;
+      case 'ArrowLeft':
+        focusManager.focusPrevious({wrap: true});
+        break;
+    }
+  };
+
+  return (
+    <button
+      onKeyDown={onKeyDown}>
+      {props.children}
+    </button>
+  );
+}
+
+<Toolbar>
+  <ToolbarButton>Cut</ToolbarButton>
+  <ToolbarButton>Copy</ToolbarButton>
+  <ToolbarButton>Paste</ToolbarButton>
+</Toolbar>
+```
