@@ -10,17 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {getCellId} from './utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {GridState} from '@react-stately/grid';
-import {HTMLAttributes, Key, RefObject} from 'react';
+import {GridNode, GridState} from '@react-stately/grid';
+import {HTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface GridCellProps {
+  node: GridNode<unknown>,
   ref: RefObject<HTMLElement>,
-  key: Key,
   isVirtualized?: boolean
 }
 
@@ -30,14 +29,14 @@ interface GridCellAria {
 
 export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridCellAria {
   let {
+    node,
     ref,
-    key,
     isVirtualized
   } = props;
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: key,
+    itemKey: node.key,
     itemRef: ref,
     isVirtualized
   });
@@ -53,7 +52,7 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
       // useSelectableItem only handles setting the focused key when 
       // the focused element is the gridcell itself. We also want to
       // set the focused key when a child element receives focus.
-      state.selectionManager.setFocusedKey(key);
+      state.selectionManager.setFocusedKey(node.key);
       return;
     }
 
@@ -70,16 +69,13 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
     }
   };
 
-  let item = state.collection.getItem(key);
-  let columnKey = state.collection.columns[item.index].key;
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(interactions, {
     role: 'gridcell',
-    id: getCellId(state, item.parentKey, columnKey),
     onFocus
   });
 
   if (isVirtualized) {
-    gridCellProps['aria-colindex'] = item.index + 1; // aria-colindex is 1-based
+    gridCellProps['aria-colindex'] = node.index + 1; // aria-colindex is 1-based
   }
 
   return {

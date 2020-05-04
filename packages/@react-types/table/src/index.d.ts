@@ -50,6 +50,7 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   allowsReordering?: boolean,
   allowsSorting?: boolean,
   isSticky?: boolean, // shouldStick??
+  isRowHeader?: boolean,
   showDivider?: boolean
 }
 
