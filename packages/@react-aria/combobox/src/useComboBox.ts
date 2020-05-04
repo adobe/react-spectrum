@@ -71,7 +71,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
-  // Had to set the list id here instead of in useListBox or ListBoxBase
+  // Had to set the list id here instead of in useListBox or ListBoxBase so that it would be properly defined
+  // when getting focusedKeyId
   listIds.set(state, menuProps.id);
 
   let focusedItem = state.selectionManager.focusedKey ? state.collection.getItem(state.selectionManager.focusedKey) : undefined;
