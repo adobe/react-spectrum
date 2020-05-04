@@ -74,82 +74,37 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   let [inputValue, setInputValue] = useControlledState(toString(props.inputValue), toString(props.defaultInputValue) || '', onInputChange);
   let selectedKeyText = selectState.selectedItem ? selectState.selectedItem.textValue : undefined;
 
-  // rename to inputValue?
+  // TODO: rename to inputValue
   let value = inputValue || selectedKeyText || '';
 
-
-
-
-
-
-
-  // Attempt to put it all within a single use effect
-  // I think I'm going about this all wrong
-
-  let lastInputValue = useRef(inputValue);
-  let lastSelectedKey = useRef(selectState.selectedKey);
+  // Clear selection when inputValue doesn't equal the selected option text (e.g. user edits field or inputValue prop changes)
   useEffect(() => {
-    // If selectedKey exists but inputValue doesn't equal the selectedKeyText
-    // clear selection (e.g. user backspaces in input field)
-    // Maybe should be value?
-    if (lastInputValue.current !== inputValue && selectState.selectedKey && inputValue !== selectedKeyText) {
+    if (selectState.selectedKey && inputValue !== selectedKeyText) {
       selectState.selectionManager.clearSelection();
-      lastInputValue.current = inputValue;
-      lastSelectedKey.current = undefined;
-    } else if (lastSelectedKey.current !== selectState.selectedKey) {
-      // If user selects a item or the selectedKey is updated via prop, update the field's
-      // text to match the selectedKey and close the menu
-      if (selectedKeyText) {
-        setInputValue(selectedKeyText);
-        lastInputValue.current = selectedKeyText
-      }
-     
-      lastSelectedKey.current = selectState.selectedKey;
-      // TODO change menuIsOpen and setMenuIsOpen to new way after Rob does the open state updates
-      if (menuIsOpen) {
-        setMenuIsOpen(false);
-      }
-    } else {
-      // error if the values are out of sync
-      if (inputValue && selectState.selectedKey && (inputValue !== selectedKeyText)) {
-        // console.log('inputValue and selectedKey text',  inputValue, selectState.selectedKey, inputValue, selectedKeyText);
-        throw new Error('Mismatch between selected item and inputValue!');
-      }
     }
-  }, [inputValue, selectedKeyText, menuIsOpen, setMenuIsOpen, selectState.selectedKey])
+  }, [inputValue])
 
-
-
-//  // Double check this one, do we need this if we clearSelection on change?
-//   useEffect(() => {
-//     if (selectState.selectedKey && inputValue !== selectedKeyText) {
-//       selectState.selectionManager.clearSelection();
-//     }
-//   }, [inputValue])
-
-
-  // If selectedKey changes, attempt to update inputValue as well?
-  // If selectedKey is changed and menu is open, close the menu
-  // Need to do a lastKey ref check kinda like onFilter does?
-  // useEffect(() => {
-  //   selectedKeyText && setInputValue(selectedKeyText);
+  // Update inputValue when selected key changes and close menu
+  useEffect(() => {
+    selectedKeyText && setInputValue(selectedKeyText);
     
-  //   // TODO change menuIsOpen and setMenuIsOpen to new way after Rob does the open state updates
-  //   if (menuIsOpen) {
-  //     setMenuIsOpen(false);
-  //   }
-  // }, [selectState.selectedKey])
+    // TODO change menuIsOpen and setMenuIsOpen to new way after Rob does the open state updates
+    // Bug: closes the menu when user selects a item, then backspaces (menu opens to display options but then closes cuz of this)
+    if (menuIsOpen) {
+      setMenuIsOpen(false);
+    }
+  }, [selectState.selectedKey, selectedKeyText])
 
  
-  // // Put in useEffect? comment out for now
-  // useEffect(() => {
-  //   if (inputValue && selectState.selectedKey && (inputValue !== selectedKeyText)) {
-  //     console.log('inputValue and selectedKey text',  inputValue, selectState.selectedKey, inputValue, selectedKeyText);
-  //     // throw new Error('Mismatch between selected item and inputValue!');
-  //   }
-  // }, [inputValue, selectState.selectedKey])
-
-  
+  // Maybe this should check props.inputValue && props.selectedKey? Not inputValue and selectState.selectedKey
+  // Issue since there will be many cases where inputValue is defined and selectedKey is also defined but they aren't synced up
+  // Bug: this will trigger when user selects a option or modifies the input field after selecting a option 
+  useEffect(() => {
+    if (inputValue && selectState.selectedKey && (inputValue !== selectedKeyText)) {
+      console.log('erroring',  inputValue, selectState.selectedKey, inputValue, selectedKeyText);
+      // throw new Error('Mismatch between selected item and inputValue!');
+    }
+  }, [inputValue, selectState.selectedKey])
 
 
   let lowercaseValue = value.toLowerCase().replace(' ', '');
