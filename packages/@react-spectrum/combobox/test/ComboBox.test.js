@@ -103,14 +103,14 @@ describe('ComboBox', function () {
             </ComboBox>
           </Provider>
         );
-          
+
         let button = getByRole('button');
         let combobox = getByRole('combobox');
         act(() => {
           combobox.focus();
           jest.runAllTimers();
         });
-        
+
         // TODO make this a helper function cuz it will prob be pretty common
         // That or add multiple variations in one test like we do for all the other tests
         let listbox = getByRole('listbox');
@@ -220,6 +220,39 @@ describe('ComboBox', function () {
         // TODO by Dan
       });
 
+      it('closes the menu if there are no matching items', function () {
+        let {getByRole} = render(
+          <Provider theme={theme}>
+            <ComboBox label="Test">
+              <Item uniqueKey="1">One</Item>
+              <Item uniqueKey="2">Two</Item>
+              <Item uniqueKey="3">Three</Item>
+            </ComboBox>
+          </Provider>
+        );
+
+        let combobox = getByRole('combobox');
+        act(() => {
+          combobox.focus();
+        });
+        act(() => {
+          userEvent.type(combobox, 'One');
+        });
+        act(() => jest.runAllTimers());
+
+        let listbox = getByRole('listbox');
+
+        let items = within(listbox).getAllByRole('option');
+        expect(items.length).toBe(1);
+
+
+        act(() => {
+          userEvent.type(combobox, 'z');
+        });
+        act(() => jest.runAllTimers());
+        expect(() => getByRole('listbox')).toThrow();
+      });
+
       it('doesn\'t opens the menu on user typing if menuTrigger=manual', function () {
         let {getByRole} = render(
           <Provider theme={theme}>
@@ -230,7 +263,7 @@ describe('ComboBox', function () {
             </ComboBox>
           </Provider>
         );
-  
+
         let combobox = getByRole('combobox');
         act(() => {
           combobox.focus();
@@ -453,7 +486,7 @@ describe('ComboBox', function () {
       act(() => {
         combobox.focus();
       });
-      
+
       act(() => {
         userEvent.type(combobox, 'Bul');
       });
@@ -461,6 +494,38 @@ describe('ComboBox', function () {
       expect(onOpenChange).toHaveBeenCalled();
       // TODO: test for onFilter when implemented
       // expect(onFilter).toHaveBeenCalled();
+    });
+
+    it('can select by mouse', function () {
+      let onSelectionChange = jest.fn();
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <ComboBox label="Test" onFilter={onFilter} onOpenChange={onOpenChange} onSelectionChange={onSelectionChange}>
+            <Item uniqueKey="1">Cheer</Item>
+            <Item uniqueKey="2">Cheerio</Item>
+            <Item uniqueKey="3">Cheeriest</Item>
+          </ComboBox>
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        combobox.focus();
+      });
+
+      act(() => {
+        userEvent.type(combobox, 'Che');
+      });
+
+      expect(onOpenChange).toHaveBeenCalled();
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      act(() => {
+        triggerPress(items[1]);
+      });
+      act(() => jest.runAllTimers());
+      expect(onSelectionChange).toHaveBeenCalledWith('2');
     });
 
     it('filters combobox items using contains strategy', function () {
