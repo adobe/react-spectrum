@@ -57,18 +57,10 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   let {
     onFilter,
     isFocused,
-    isOpen,
-    defaultOpen,
     collator
   } = props;
 
   let itemsControlled = !!onFilter;
-
-  // Create a separate menu open state tracker so onOpenChange doesn't fire with open and close in quick succession
-  // in cases where there aren't items to show
-  // Note that this means onOpenChange won't fire for controlled open states
-  let [menuIsOpen, setMenuIsOpen] = useControlledState(isOpen, defaultOpen || false, () => {});
-
   let computeKeyFromValue = (value, collection) => {
     let key;
     for (let item of collection.iterable) {
@@ -175,45 +167,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   }, [collection, inputValue, itemsControlled, defaultFilterFn]);
 
   let selectionManager = new SelectionManager(filteredCollection, selectionState);
-
-  useEffect(() => {
-    console.log('isfocused', isFocused, menuIsOpen);
-    // Close the menu if it was open but there aren't any items to display
-    if (menuIsOpen && filteredCollection.size === 0) {
-      triggerState.close();
-    }
-
-    // Only open the menu if there are items to display and the combobox is focused
-    // Note: doesn't affect controlled isOpen or defaultOpen
-    if (isFocused && menuIsOpen && filteredCollection.size > 0) {
-      
-      triggerState.open();
-    }
-
-    // Close the menu if it is supposed to be closed
-    if (!menuIsOpen) {
-      triggerState.close();
-    }
-
-    // Maybe change dep array back to selectState? or make it selectState.close?
-  }, [menuIsOpen, filteredCollection, triggerState, isFocused]);
-
-  let open = () => {
-    setMenuIsOpen(true);
-  };
-
-  let close = () => {
-    setMenuIsOpen(false);
-  };
-
-  let toggle = (focusStrategy = null) => {
-    setMenuIsOpen(state => !state);
-    triggerState.setFocusStrategy(focusStrategy);
-  };
-
-  let selectedItem = selectedKey
-  ? collection.getItem(selectedKey)
-  : null;
+  let selectedItem = selectedKey ? collection.getItem(selectedKey) : null;
 
   return {
     ...triggerState,
@@ -225,9 +179,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     setFocused: () => {},
     selectedItem,
     collection: filteredCollection,
-    open,
-    close,
-    toggle,
+    isOpen: triggerState.isOpen && isFocused && filteredCollection.size > 0,
     // TODO: rename to inputValue
     value: inputValue,
     setValue: setInputValue
