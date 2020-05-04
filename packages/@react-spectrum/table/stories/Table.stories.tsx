@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
+import {CRUDExample} from './CRUDExample';
 import {Link} from '@react-spectrum/link';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -264,5 +265,35 @@ storiesOf('Table', module)
           </Row>
         </TableBody>
       </Table>
+    )
+  )
+  .add(
+    'custom isRowHeader labeling',
+    () => (
+      <Table width={500} height={200} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column isRowHeader>First Name</Column>
+          <Column isRowHeader>Last Name</Column>
+          <Column>Birthday</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Sam</Cell>
+            <Cell>Smith</Cell>
+            <Cell>May 3</Cell>
+          </Row>
+          <Row>
+            <Cell>Julia</Cell>
+            <Cell>Jones</Cell>
+            <Cell>February 10</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'CRUD',
+    () => (
+      <CRUDExample />
     )
   );

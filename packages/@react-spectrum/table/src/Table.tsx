@@ -16,6 +16,7 @@ import {CollectionItem, layoutInfoToStyle, ScrollView, setScrollLeft, useCollect
 import {DOMRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {GridState, useGridState} from '@react-stately/grid';
+import {mergeProps} from '@react-aria/utils';
 import {Node, ReusableView, useCollectionState} from '@react-stately/collections';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef} from 'react';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
@@ -90,7 +91,8 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
       return (
         <TableHeaderRow
           key={reusableView.key}
-          style={style}>
+          style={style}
+          item={reusableView.content}>
           {renderChildren(children)}
         </TableHeaderRow>
       );
@@ -113,12 +115,26 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
       case 'row':
       case 'headerrow':
         return null;
-      case 'rowheader':
-        return <TableRowHeader rowHeader={item} />;
-      case 'cell':
+      case 'cell': {
+        if (item.props.isSelectionCell) {
+          return <TableCheckboxCell cell={item} />;
+        }
+
+        let column = state.collection.columns[item.index];
+        if (state.collection.rowHeaderColumnKeys.has(column.key)) {
+          return <TableRowHeader cell={item} />;
+        }
+
         return <TableCell cell={item} />;
+      }
       case 'placeholder':
-        return <div role="gridcell" aria-colspan={item.colspan > 1 ? item.colspan : null} />;
+        // TODO: move to react-aria?
+        return (
+          <div 
+            role="gridcell"
+            aria-colindex={item.index + 1}
+            aria-colspan={item.colspan > 1 ? item.colspan : null} />
+        );
       case 'column':
         return <TableColumnHeader column={item} />;
     }
@@ -168,8 +184,7 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
 
   return (
     <div
-      {...otherProps}
-      {...collectionViewProps}
+      {...mergeProps(otherProps, collectionViewProps)}
       className={
         classNames(
           styles,
@@ -199,7 +214,7 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
         role="presentation"
         className={classNames(styles, 'spectrum-Table-body')}
         style={{flex: 1}}
-        innerStyle={{overflow: 'visible'}}
+        innerStyle={{overflow: 'visible', transition: collectionState.isAnimating ? `none ${collectionState.collectionManager.transitionDuration}ms` : undefined}}
         ref={domRef}
         contentSize={collectionState.contentSize}
         onVisibleRectChange={collectionState.setVisibleRect}
@@ -226,9 +241,10 @@ function TableColumnHeader({column}) {
   let ref = useRef();
   let state = useTableContext();
   let {columnHeaderProps} = useColumnHeader({
-    key: column.key,
+    node: column,
     ref,
-    colspan: column.colspan
+    colspan: column.colspan,
+    isVirtualized: true
   }, state);
 
   let isCheckboxCell = state.selectionManager.selectionMode !== 'none' && column.index === 0;
@@ -278,7 +294,7 @@ function TableRow({item, children, ...otherProps}) {
   let state = useTableContext();
   let isSelected = state.selectionManager.isSelected(item.key);
   let {rowProps} = useRow({
-    key: item.key,
+    node: item,
     isSelected,
     ref,
     isVirtualized: true
@@ -293,31 +309,33 @@ function TableRow({item, children, ...otherProps}) {
   );
 }
 
-function TableHeaderRow({children, ...otherProps}) {
+function TableHeaderRow({item, children, ...otherProps}) {
+  // TODO: move to react-aria?
   return (
-    <div role="row" {...otherProps}>
+    <div role="row" aria-rowindex={item.index + 1} {...otherProps}>
       {children}
     </div>
   );
 }
 
-function TableRowHeader({rowHeader}) {
+function TableCheckboxCell({cell}) {
   let ref = useRef();
   let state = useTableContext();
-  let {rowHeaderProps} = useRowHeader({
+  let {gridCellProps} = useGridCell({
+    node: cell,
     ref,
-    key: rowHeader.key
+    isVirtualized: true
   }, state);
 
   let {checkboxProps} = useSelectionCheckbox(
-    {key: rowHeader.parentKey},
+    {key: cell.parentKey},
     state
   );
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div 
-        {...rowHeaderProps}
+        {...gridCellProps}
         ref={ref}
         className={
           classNames(
@@ -329,7 +347,6 @@ function TableRowHeader({rowHeader}) {
               'react-spectrum-Table-cell'
             )
           )}>
-        {rowHeader.rendered}
         {state.selectionManager.selectionMode !== 'none' &&
           <Checkbox
             {...checkboxProps}
@@ -344,8 +361,8 @@ function TableCell({cell}) {
   let ref = useRef();
   let state = useTableContext();
   let {gridCellProps} = useGridCell({
+    node: cell,
     ref,
-    key: cell.key,
     isVirtualized: true
   }, state);
   let column = state.collection.columns[cell.index];
@@ -355,6 +372,45 @@ function TableCell({cell}) {
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div 
         {...gridCellProps}
+        ref={ref}
+        className={
+          classNames(
+            styles,
+            'spectrum-Table-cell',
+            {
+              'spectrum-Table-cell--divider': columnProps.showDivider
+            },
+            classNames(
+              stylesOverrides,
+              'react-spectrum-Table-cell',
+              {
+                'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center',
+                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end'  
+              }
+            )
+          )
+        }>
+        {cell.rendered}
+      </div>
+    </FocusRing>
+  );
+}
+
+function TableRowHeader({cell}) {
+  let ref = useRef();
+  let state = useTableContext();
+  let {rowHeaderProps} = useRowHeader({
+    node: cell,
+    ref,
+    isVirtualized: true
+  }, state);
+  let column = state.collection.columns[cell.index];
+  let columnProps = column.props as SpectrumColumnProps<unknown>;
+
+  return (
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div 
+        {...rowHeaderProps}
         ref={ref}
         className={
           classNames(

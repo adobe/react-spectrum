@@ -20,7 +20,8 @@ export interface ActionGroupProps<T> extends DOMProps, StyleProps, MultipleSelec
   items?: Iterable<T>,
   itemKey?: string,
   disabledKeys?: Iterable<Key>,
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  onAction?: (key: Key) => void
 }
 
 export interface SpectrumActionGroupProps<T> extends ActionGroupProps<T> {

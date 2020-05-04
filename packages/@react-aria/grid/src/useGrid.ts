@@ -42,6 +42,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T>): GridAria {
   let {direction} = useLocale();
   let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate(state.collection, state.disabledKeys, ref, direction, collator), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator]);
   let {collectionProps} = useSelectableCollection({
+    ref,
     selectionManager: state.selectionManager,
     keyboardDelegate: delegate
   });
@@ -57,7 +58,7 @@ export function useGrid<T>(props: GridProps, state: GridState<T>): GridAria {
   };
 
   if (isVirtualized) {
-    gridProps['aria-rowcount'] = state.collection.size; // TODO: only rows, not cells?
+    gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
     gridProps['aria-colcount'] = state.collection.columns.length;
   }
 

@@ -18,9 +18,10 @@ import {SpectrumColumnProps} from '@react-types/table';
 export class TableLayout<T> extends ListLayout<T> {
   collection: GridCollection<T>;
   columnWidths: Map<Key, number>;
+  stickyColumnIndices: number[];
 
   buildCollection(): LayoutNode[] {
-    this.columnWidths = this.buildColumnWidths();
+    this.buildColumnWidths();
     let header = this.buildHeader();
     let body = this.buildBody(0);
     this.contentSize = new Size(body.layoutInfo.rect.width, body.layoutInfo.rect.maxY);
@@ -31,7 +32,8 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   buildColumnWidths() {
-    let columnWidths = new Map();
+    this.columnWidths = new Map();
+    this.stickyColumnIndices = [];
 
     // Pass 1: set widths for all explicitly defined columns.
     let remainingColumns = new Set<Node<T>>();
@@ -41,16 +43,22 @@ export class TableLayout<T> extends ListLayout<T> {
       let width = props.width ?? props.defaultWidth;
       if (width != null) {
         let w = this.parseWidth(width);
-        columnWidths.set(column.key, w);
+        this.columnWidths.set(column.key, w);
         remainingSpace -= w;
       } else {
         remainingColumns.add(column);
+      }
+
+      // The selection cell and any other sticky columns always need to be visible.
+      // In addition, row headers need to be in the DOM for accessibility labeling.
+      if (column.props.isSelectionCell || this.collection.rowHeaderColumnKeys.has(column.key)) {
+        this.stickyColumnIndices.push(column.index);
       }
     }
 
     // Pass 2: if there are remaining columns, then distribute the remaining space evenly.
     if (remainingColumns.size > 0) {
-      let columnWidth = remainingSpace / (this.collection.columns.length - columnWidths.size);
+      let columnWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
 
       for (let column of remainingColumns) {
         let props = column.props as SpectrumColumnProps<T>;
@@ -58,14 +66,13 @@ export class TableLayout<T> extends ListLayout<T> {
         let maxWidth = props.maxWidth != null ? this.parseWidth(props.maxWidth) : Infinity;
         let width = Math.max(minWidth, Math.min(maxWidth, columnWidth));
 
-        columnWidths.set(column.key, width);
+        this.columnWidths.set(column.key, width);
+        remainingSpace -= width;
         if (width !== columnWidth) {
-          columnWidth = remainingSpace / (this.collection.columns.length - columnWidths.size);
+          columnWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
         }
       }
     }
-
-    return columnWidths;
   }
 
   parseWidth(width: number | string): number {
@@ -75,7 +82,7 @@ export class TableLayout<T> extends ListLayout<T> {
         throw new Error('Only percentages are supported as column widths');
       }
 
-      return this.collectionManager.visibleRect.width * parseInt(match[1], 10);
+      return this.collectionManager.visibleRect.width * (parseInt(match[1], 10) / 100);
     }
 
     return width;
@@ -87,35 +94,13 @@ export class TableLayout<T> extends ListLayout<T> {
     
     let y = 0;
     let width = 0;
-    let i = 0;
     let children: LayoutNode[] = [];
-    for (let cells of this.collection.headerRows) {
-      let rect = new Rect(0, y, 0, 0);
-      let row = new LayoutInfo('headerrow', 'header-' + i++, rect);
-      row.parentKey = layoutInfo.key;
-      this.layoutInfos.set(row.key, row);
-
-      let x = 0;
-      let height = 0;
-      let columns: LayoutNode[] = [];
-      for (let cell of cells) {
-        let layoutNode = this.buildChild(cell, x, y);
-        layoutNode.layoutInfo.parentKey = row.key;
-        x = layoutNode.layoutInfo.rect.maxX;
-        height = Math.max(height, layoutNode.layoutInfo.rect.height);
-        columns.push(layoutNode);
-      }
-
-      rect.height = height;
-      rect.width = x;
-
-      children.push({
-        layoutInfo: row,
-        children: columns
-      });
-
-      y += height;
-      width = Math.max(width, x);
+    for (let headerRow of this.collection.headerRows) {
+      let layoutNode = this.buildChild(headerRow, 0, y);
+      layoutNode.layoutInfo.parentKey = 'header';
+      y = layoutNode.layoutInfo.rect.maxY;
+      width = Math.max(width, layoutNode.layoutInfo.rect.width);
+      children.push(layoutNode);
     }
 
     rect.width = width;
@@ -126,6 +111,29 @@ export class TableLayout<T> extends ListLayout<T> {
     return {
       layoutInfo,
       children
+    };
+  }
+
+  buildHeaderRow(headerRow: GridNode<T>, x: number, y: number) {
+    let rect = new Rect(0, y, 0, 0);
+    let row = new LayoutInfo('headerrow', headerRow.key, rect);
+
+    let height = 0;
+    let columns: LayoutNode[] = [];
+    for (let cell of headerRow.childNodes) {
+      let layoutNode = this.buildChild(cell, x, y);
+      layoutNode.layoutInfo.parentKey = row.key;
+      x = layoutNode.layoutInfo.rect.maxX;
+      height = Math.max(height, layoutNode.layoutInfo.rect.height);
+      columns.push(layoutNode);
+    }
+
+    rect.height = height;
+    rect.width = x;
+
+    return {
+      layoutInfo: row,
+      children: columns
     };
   }
 
@@ -157,9 +165,10 @@ export class TableLayout<T> extends ListLayout<T> {
 
   buildNode(node: GridNode<T>, x: number, y: number): LayoutNode {
     switch (node.type) {
+      case 'headerrow':
+        return this.buildHeaderRow(node, x, y);
       case 'item':
         return this.buildRow(node, x, y);
-      case 'rowheader':
       case 'cell':
       case 'placeholder':
       case 'column':
@@ -201,7 +210,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
     let rect = new Rect(x, y, width, node.type === 'column' || node.type === 'placeholder' ? 34 : 50);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
-    layoutInfo.isSticky = node.type === 'rowheader' || (node.type === 'column' && node.index === 0);
+    layoutInfo.isSticky = node.props?.isSelectionCell;
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
 
     return {
@@ -233,22 +242,6 @@ export class TableLayout<T> extends ListLayout<T> {
         }
         break;
       }
-      case 'headerrow': {
-        for (let child of node.children) {
-          if (child.layoutInfo.isSticky) {
-            res.push(child.layoutInfo);
-          } else {
-            break;
-          }
-        }
-
-        for (let child of node.children) {
-          if (child.layoutInfo.rect.x <= rect.x + rect.width && rect.x <= child.layoutInfo.rect.x + child.layoutInfo.rect.width) {
-            res.push(child.layoutInfo);
-          }
-        }
-        break;
-      }
       case 'rowgroup': {
         let firstVisibleRow = this.binarySearch(node.children, rect.topLeft, 'y');
         let lastVisibleRow = this.binarySearch(node.children, rect.bottomRight, 'y');
@@ -258,19 +251,28 @@ export class TableLayout<T> extends ListLayout<T> {
         }
         break;
       }
+      case 'headerrow':
       case 'row': {
-        for (let child of node.children) {
-          if (child.layoutInfo.isSticky) {
-            res.push(child.layoutInfo);
-          } else {
-            break;
-          }
-        }
-
         let firstVisibleCell = this.binarySearch(node.children, rect.topLeft, 'x');
         let lastVisibleCell = this.binarySearch(node.children, rect.topRight, 'x');
+        let stickyIndex = 0;
         for (let i = firstVisibleCell; i <= lastVisibleCell; i++) {
+          // Sticky columns and row headers are always in the DOM. Interleave these
+          // with the visible range so that they are in the right order.
+          if (stickyIndex < this.stickyColumnIndices.length) {
+            let idx = this.stickyColumnIndices[stickyIndex];
+            while (idx < i) {
+              res.push(node.children[idx].layoutInfo);
+              idx = this.stickyColumnIndices[stickyIndex++];
+            }
+          }
+          
           res.push(node.children[i].layoutInfo);
+        }
+
+        while (stickyIndex < this.stickyColumnIndices.length) {
+          let idx = this.stickyColumnIndices[stickyIndex++];
+          res.push(node.children[idx].layoutInfo);
         }
         break;
       }

@@ -68,8 +68,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let itemProps: SelectableItemAria['itemProps'] = {
     tabIndex: isFocused ? 0 : -1,
     onFocus(e) {
-      manager.setFocused(true);
-
       if (e.target === itemRef.current) {
         manager.setFocusedKey(itemKey);
       }
