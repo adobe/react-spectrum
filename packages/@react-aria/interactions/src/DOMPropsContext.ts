@@ -11,7 +11,7 @@
  */
 
 import {mergeProps} from '@react-aria/utils';
-import React, {HTMLAttributes, MutableRefObject, useContext, useEffect, RefObject} from 'react';
+import React, {HTMLAttributes, MutableRefObject, RefObject, useContext, useEffect} from 'react';
 
 interface DOMPropsResponderProps extends HTMLAttributes<HTMLElement> {
   ref?: RefObject<HTMLElement>
