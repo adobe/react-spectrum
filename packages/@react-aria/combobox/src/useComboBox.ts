@@ -31,9 +31,7 @@ interface AriaComboBoxProps<T> extends ComboBoxProps {
   inputRef: RefObject<HTMLInputElement>,
   layout: ListLayout<T>,
   onBlur?: (e: FocusEvent<Element>) => void, // don't think these two (blur/focus) should be added?
-  onFocus?: (e: FocusEvent<Element>) => void,
-  isFocused: boolean,
-  setIsFocused: (e: boolean) => void
+  onFocus?: (e: FocusEvent<Element>) => void
 }
 
 interface ComboBoxAria {
@@ -49,9 +47,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     popoverRef,
     inputRef,
     layout,
-    // TODO: see if I can replace these with state.isFocused/setIsFocused
-    isFocused,
-    setIsFocused,
     completionMode,
     menuTrigger
   } = props;
@@ -134,7 +129,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       props.onBlur(e);
     }
 
-    setIsFocused(false);
+    state.setFocused(false);
     
     if (state.isOpen && focusedItem) {
       state.setSelectedKey(state.selectionManager.focusedKey);
@@ -143,7 +138,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   let onFocus = (e) => {
     // If inputfield is already focused, early return to prevent extra props.onFocus calls
-    if (isFocused) {
+    if (state.isFocused) {
       return;
     }
 
@@ -155,7 +150,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       props.onFocus(e);
     }
 
-    setIsFocused(true);
+    state.setFocused(true);
   };
 
   let {labelProps, inputProps} = useTextField({

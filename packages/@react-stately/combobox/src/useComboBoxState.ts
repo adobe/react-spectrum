@@ -12,7 +12,7 @@
 
 import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
-import {Key, useEffect, useMemo, useRef} from 'react';
+import {Key, useEffect, useMemo, useRef, useState} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {SelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
@@ -31,7 +31,6 @@ interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   defaultInputValue?: string,
   onInputChange?: (value: string) => void,
   onFilter?: (value: string) => void,
-  isFocused: boolean,
   collator: Intl.Collator
 }
 
@@ -56,10 +55,10 @@ function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolea
 export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let {
     onFilter,
-    isFocused,
     collator
   } = props;
 
+  let [isFocused, setFocused] = useState(false);
   let itemsControlled = !!onFilter;
 
   let computeKeyFromValue = (value, collection) => {
@@ -188,7 +187,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     setSelectedKey,
     disabledKeys,
     isFocused,
-    setFocused: () => {},
+    setFocused,
     selectedItem,
     collection: filteredCollection,
     isOpen: triggerState.isOpen && isFocused && filteredCollection.size > 0,
