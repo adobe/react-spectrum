@@ -10,15 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-
 import {CollectionBase, SingleSelection} from '@react-types/shared';
+import {CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
+import {Key, useEffect, useMemo, useRef} from 'react';
+import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {SelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
-import {Key, useEffect, useMemo, useRef} from 'react';
-
-
-import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
-import {CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
 import {useMenuTriggerState} from '@react-stately/menu';
 
 export interface ComboBoxState<T> extends SelectState<T> {
@@ -105,7 +102,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     }
 
     let newSelectedKey = computeKeyFromValue(value, collection);
-
     if (newSelectedKey !== selectedKey) {
       if (props.onSelectionChange) {
         props.onSelectionChange(newSelectedKey);
@@ -113,36 +109,20 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     }
   };
 
-  // Problem: For comboboxes with props.selectedKey, onInputChange only fires once per unique key press (press 'a' a bunch).
-  // Fixed by adding selected key text value to inputValue useControlledState
-  // Problem: For a combobox with props.defaultSelectedKey, deleting the entire input field made the value reset to defaultSelectedKey since inputValue became ''
-  // Fixed by adding defaultSelectedKeyText to this useControlledState below
   let initialSelectedKeyText = collection.getItem(props.selectedKey)?.textValue;
   let initialDefaultSelectedKeyText = collection.getItem(props.defaultSelectedKey)?.textValue;
   let [inputValue, setInputValue] = useControlledState(toString(props.inputValue) || initialSelectedKeyText, toString(props.defaultInputValue) || initialDefaultSelectedKeyText || '', onInputChange);
-
-  let value;
-  // Set value equal to whatever controlled prop exists (selectedKey or inputValue)
-  // If neither exist, set equal to inputValue 
-  // This if statement can probably go away in favor of "value = inputValue" if the above useControlledState retains the initialSelectedKeyText stuff in it
-  if (props.selectedKey) {
-    value = initialSelectedKeyText || '';
-  } else if (props.inputValue) {
-    value = toString(props.inputValue);
-  } else {
-    value = inputValue || '';
-  }
 
   let selectedKey =  computeKeyFromValue(inputValue, collection);
   let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
 
   let setSelectedKey = (key) => {
-    // if (key !== selectedKey) {
+    if (key !== selectedKey) {
       let item = collection.getItem(key);
       let itemText = item ? item.textValue : '';
       setInputValue(itemText);
       triggerState.setOpen(false);
-    // }
+    }
   };
 
   let selectionState = useMultipleSelectionState(
@@ -159,8 +139,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   , [props.disabledKeys]);
   
   let triggerState = useMenuTriggerState(props);
-
-  let lowercaseValue = value.toLowerCase().replace(' ', '');
+  let lowercaseValue = inputValue.toLowerCase().replace(' ', '');
 
   let defaultFilterFn = useMemo(() => (node: Node<T>) => {
     let scan = 0;
@@ -181,23 +160,24 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
 
   let lastValue = useRef('');
   useEffect(() => {
-    if (onFilter && lastValue.current !== value) {
-      onFilter(value);
+    if (onFilter && lastValue.current !== inputValue) {
+      onFilter(inputValue);
     }
 
-    lastValue.current = value;
-  }, [value, onFilter]);
+    lastValue.current = inputValue;
+  }, [inputValue, onFilter]);
 
   let filteredCollection = useMemo(() => {
-    if (itemsControlled || value === '') {
+    if (itemsControlled || inputValue === '') {
       return collection;
     }
     return new TreeCollection(filter(collection, defaultFilterFn), new Set());
-  }, [collection, value, itemsControlled, defaultFilterFn]);
+  }, [collection, inputValue, itemsControlled, defaultFilterFn]);
 
   let selectionManager = new SelectionManager(filteredCollection, selectionState);
 
   useEffect(() => {
+    console.log('isfocused', isFocused, menuIsOpen);
     // Close the menu if it was open but there aren't any items to display
     if (menuIsOpen && filteredCollection.size === 0) {
       triggerState.close();
@@ -206,6 +186,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     // Only open the menu if there are items to display and the combobox is focused
     // Note: doesn't affect controlled isOpen or defaultOpen
     if (isFocused && menuIsOpen && filteredCollection.size > 0) {
+      
       triggerState.open();
     }
 
@@ -238,17 +219,18 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     ...triggerState,
     selectionManager,
     selectedKey,
+    setSelectedKey,
+    disabledKeys,
     isFocused,
+    setFocused: () => {},
     selectedItem,
     collection: filteredCollection,
-    disabledKeys,
-    setFocused: () => {},
     open,
     close,
     toggle,
-    value,
-    setValue: setInputValue,
-    setSelectedKey
+    // TODO: rename to inputValue
+    value: inputValue,
+    setValue: setInputValue
   };
 }
 
