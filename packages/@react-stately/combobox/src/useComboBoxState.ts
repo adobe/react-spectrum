@@ -19,8 +19,8 @@ import {useControlledState} from '@react-stately/utils';
 import {useMenuTriggerState} from '@react-stately/menu';
 
 export interface ComboBoxState<T> extends SelectState<T> {
-  value: string,
-  setValue: (value: string) => void
+  inputValue: string,
+  setInputValue: (value: string) => void
 }
 
 interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
@@ -61,7 +61,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   } = props;
 
   let itemsControlled = !!onFilter;
-  
+
   let computeKeyFromValue = (value, collection) => {
     let key;
     for (let [itemKey, node] of collection.keyMap) {
@@ -173,10 +173,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
 
   // Focus first item if filtered collection no longer contains original focused item
   useEffect(() => {
-    if (!filteredCollection.getItem(selectionManager.focusedKey)) {
+    // Only set a focused key if one existed previously, don't want to focus something by default if customValue = true
+    if (selectionManager.focusedKey && !filteredCollection.getItem(selectionManager.focusedKey)) {
       selectionManager.setFocusedKey(filteredCollection.getFirstKey());
     }
-  }, [selectionManager, filteredCollection])
+  }, [selectionManager, filteredCollection]);
 
   let selectedItem = selectedKey ? collection.getItem(selectedKey) : null;
 
@@ -191,9 +192,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     selectedItem,
     collection: filteredCollection,
     isOpen: triggerState.isOpen && isFocused && filteredCollection.size > 0,
-    // TODO: rename to inputValue
-    value: inputValue,
-    setValue: setInputValue
+    inputValue,
+    setInputValue
   };
 }
 

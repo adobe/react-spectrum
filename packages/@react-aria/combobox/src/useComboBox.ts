@@ -64,7 +64,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   );
 
   let onChange = (val) => {
-    state.setValue(val);
+    state.setInputValue(val);
 
     if (menuTrigger !== 'manual') {
       state.open();
@@ -163,7 +163,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     onChange,
     onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
     onBlur,
-    value: state.value,
+    value: state.inputValue,
     onFocus
   }, inputRef);
 
