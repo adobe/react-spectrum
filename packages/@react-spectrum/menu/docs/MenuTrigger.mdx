@@ -48,8 +48,10 @@ category: Menus
   <ActionButton>
       Menu Button
   </ActionButton>
-  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
-    {item => <Item>{item.name}</Item>}
+  <Menu>
+    <Item>Aardvark</Item>
+    <Item>Kangaroo</Item>
+    <Item>Snake</Item>
   </Menu>
 </MenuTrigger>
 ```
@@ -62,7 +64,11 @@ the MenuTrigger and should be an element that supports press events.
 
 If the Menu is open it will close on blur or scroll events.
 
-The `defaultSelectedKeys` prop can be used to preselect items in the Menu
+### Value
+
+The Menu's selected Item is propagated via the event [`onAction`](#onaction).
+
+The `defaultSelectedKeys` prop can be used to preselect Menu Items in the Menu
 placing it in an uncontrolled state. Alternatively, the `selectedKeys` preselect
 items in the Menu placing it in a controlled state.
 
@@ -93,7 +99,7 @@ items in the Menu placing it in a controlled state.
 </MenuTrigger>
 ```
 
-The `selectionMode` prop can be used to switch from the default selection of a single menu item to multiple menu items or none.
+The `selectionMode` prop can be used to switch from the default selection of a single Menu Item to multiple Menu Items or none.
 
 ```tsx example
 <MenuTrigger closeOnSelect={false}>
@@ -200,6 +206,8 @@ Menu sections without labels use the prop `aria-label`.
 
 ## Events
 
+### onOpenChange
+
 MenuTrigger accepts an `onOpenChange` handler which is triggered whenever the Menu is opened or closed.
 
 The example below uses `onOpenChange` to update a separate span element with the current open state of the Menu.
@@ -224,13 +232,15 @@ function Example() {
 }
 ```
 
-Menu accepts an `onAction` handler which is triggered whenever a Menu item is selected.
+### onAction
 
-The example below uses `onAction` to tell the user which Menu item was selected.
+Menu accepts an `onAction` handler which is triggered whenever a Menu Item is selected.
+
+The example below uses the `onAction` handler to pass which Menu Item was selected to an alert.
 
 ```tsx example
 function Example() {
-  let onAction = (value) => alert('Menu item selected: ' + value);
+  let onAction = (value) => alert('Menu Item selected: ' + value);
 
   return (
     <div>
@@ -257,40 +267,47 @@ function Example() {
 
 <PropTable component={docs.exports.Menu} links={docs.links} />
 
-## Visual Options
+## Behavioral Options
 
-### Align and Direction
+### Align
 
 [View guidelines](https://spectrum.adobe.com/page/popovers/#Placement)
 
 ```tsx example
-<MenuTrigger align="start" direction="bottom" shouldFlip={false}>
+<MenuTrigger align="start">
   <ActionButton>
-      align=start direction=bottom
+      Menu placement align=start
   </ActionButton>
   <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
-<MenuTrigger align="start" direction="top" shouldFlip={false}>
+<MenuTrigger align="end">
   <ActionButton>
-      align=start direction=top
+      Menu placement align=end
   </ActionButton>
   <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
-<MenuTrigger align="end" direction="bottom" shouldFlip={false}>
+```
+
+### Direction
+
+[View guidelines](https://spectrum.adobe.com/page/popovers/#Placement)
+
+```tsx example
+<MenuTrigger direction="bottom" shouldFlip={false}>
   <ActionButton>
-      align=end direction=bottom
+      Menu placement direction=bottom
   </ActionButton>
   <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
-<MenuTrigger align="end" direction="top" shouldFlip={false}>
+<MenuTrigger direction="top" shouldFlip={false}>
   <ActionButton>
-      align=end direction=top
+      Menu placement direction=top
   </ActionButton>
   <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
     {item => <Item>{item.name}</Item>}
@@ -301,6 +318,8 @@ function Example() {
 ### Autofocus
 
 Applying `autoFocus` to the Menu of the MenuTrigger sets focus within the Menu upon opening.
+
+These examples demonstrate when the Menu is opened and the selected Menu Item is focused or not.
 
 ```tsx example
 <MenuTrigger>
@@ -329,6 +348,11 @@ Applying `autoFocus` to the Menu of the MenuTrigger sets focus within the Menu u
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
+```
+
+These examples demonstrate when the Menu is opened the first Menu Item or last Menu Item is focused.
+
+```tsx example
 <MenuTrigger>
   <ActionButton>
       autofocus=first
@@ -375,19 +399,6 @@ Applying `autoFocus` to the Menu of the MenuTrigger sets focus within the Menu u
     items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]}
     itemKey="name"
     selectionMode="single">
-    {item => <Item>{item.name}</Item>}
-  </Menu>
-</MenuTrigger>
-```
-
-### Disabled Trigger
-
-```tsx example
-<MenuTrigger>
-  <ActionButton isDisabled>
-      Disabled Menu Button
-  </ActionButton>
-  <Menu items={[{name: 'Aardvark'}, {name: 'Kangaroo'}, {name: 'Snake'}]} itemKey="name">
     {item => <Item>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
