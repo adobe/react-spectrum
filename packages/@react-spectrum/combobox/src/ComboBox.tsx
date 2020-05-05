@@ -58,6 +58,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
   let listboxRef = useRef();
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
+  // TODO: see if I can remove this and use state.isFocused and state.setIsfocused instead
   let [isFocused, setIsFocused] = useState(false);
 
   let collator = useCollator({sensitivity: 'base'});

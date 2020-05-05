@@ -12,11 +12,14 @@
 
 
 import {CollectionBase, SingleSelection} from '@react-types/shared';
-import {Node, TreeCollection} from '@react-stately/collections';
 import {SelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
-import {useEffect, useMemo, useRef} from 'react';
-import {useSelectState} from '@react-stately/select';
+import {Key, useEffect, useMemo, useRef} from 'react';
+
+
+import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
+import {useMenuTriggerState} from '@react-stately/menu';
 
 export interface ComboBoxState<T> extends SelectState<T> {
   value: string,
@@ -35,7 +38,7 @@ interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   collator: Intl.Collator
 }
 
-function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean) {
+function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean): Iterable<Node<T>> {
   let filteredNode = [];
   for (let node of nodes) {
     if (node.type === 'section' && node.hasChildNodes) {
@@ -69,25 +72,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   // Note that this means onOpenChange won't fire for controlled open states
   let [menuIsOpen, setMenuIsOpen] = useControlledState(isOpen, defaultOpen || false, () => {});
 
-
- 
-
-  // Problem: cannot pass in selectedKey: computeKeyFromValue(inputValue, collection) since collection doesn't exist till useSelectState is done
-  // let selectState = useSelectState({...props, selectedKey: computeKeyFromValue(inputValue)});
-  let selectState = useSelectState({...props, onSelectionChange: undefined});
-  
-  if (props.selectedKey && props.inputValue) {
-    let selectedItem = selectState.collection.getItem(props.selectedKey);
-    let itemText = selectedItem ? selectedItem.textValue : '';
-    if (itemText !== props.inputValue) {
-      throw new Error('Mismatch between selected item and inputValue!');
-    }  
-  }
-
-  // Problem: selectState.collection is actively filtered and thus sometimes makes key lookup return null (especially since onInputChange happens before the filtering finishes)
-  // Copied selectState.collection so lookup isn't impeded 
-  let originalCollection = {...selectState.collection};
-  
   let computeKeyFromValue = (value, collection) => {
     let key;
     for (let item of collection.iterable) {
@@ -101,39 +85,31 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     return key;
   };
 
+  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
+  let collection = useMemo(() => {
+    let nodes = builder.build(props);
+    return new TreeCollection(nodes, new Set());
+  }, [builder, props]);
 
+  if (props.selectedKey && props.inputValue) {
+    let selectedItem = collection.getItem(props.selectedKey);
+    let itemText = selectedItem ? selectedItem.textValue : '';
+    if (itemText !== props.inputValue) {
+      throw new Error('Mismatch between selected item and inputValue!');
+    }  
+  }
 
-  // Do we want to calculate the starting key ourselves or just use state.selectedKey?
-  // Used a ref since this is computed before inputValue is declared (ideally we'd want this to be computed from inputValue only but onInputChange needs it)
-  let oldSelectedKey = useRef(props.selectedKey || computeKeyFromValue(props.inputValue, originalCollection) || props.defaultSelectedKey || computeKeyFromValue(props.defaultInputValue, originalCollection));
-  console.log('oldSelectedKey', oldSelectedKey.current);
-
-  // replacement setSelectedKey util function that calls setInputValue based off of key provided
-  // Only call if selectedKey is different from oldSelectedKey?
-  let setSelectedKey = (key) => {
-    console.log('setselectedKey check', key, oldSelectedKey.current)
-    if (key !== oldSelectedKey.current) {
-      let item = selectState.collection.getItem(key);
-      let itemText = item ? item.textValue : '';
-      setInputValue(itemText);
-    }
-  };
-
-  // Add a function that takes new input value, calculates the corresponding key, compares that with the previously calculated
-  // key, then fires onSelectionChange if different
   let onInputChange = (value) => {
     if (props.onInputChange) {
       props.onInputChange(value);
     }
 
-    let newSelectedKey = computeKeyFromValue(value, originalCollection);
+    let newSelectedKey = computeKeyFromValue(value, collection);
 
-    if (newSelectedKey !== oldSelectedKey.current) {
+    if (newSelectedKey !== selectedKey) {
       if (props.onSelectionChange) {
         props.onSelectionChange(newSelectedKey);
       }
-      // Maybe move the below out (have oldSelectedKey.current be updated every render to mirror current inputValue?)
-      // oldSelectedKey.current = newSelectedKey
     }
   };
 
@@ -141,10 +117,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   // Fixed by adding selected key text value to inputValue useControlledState
   // Problem: For a combobox with props.defaultSelectedKey, deleting the entire input field made the value reset to defaultSelectedKey since inputValue became ''
   // Fixed by adding defaultSelectedKeyText to this useControlledState below
-  let initialSelectedKeyText = selectState.collection.getItem(props.selectedKey)?.textValue;
-  let initialDefaultSelectedKeyText = selectState.collection.getItem(props.defaultSelectedKey)?.textValue;
+  let initialSelectedKeyText = collection.getItem(props.selectedKey)?.textValue;
+  let initialDefaultSelectedKeyText = collection.getItem(props.defaultSelectedKey)?.textValue;
   let [inputValue, setInputValue] = useControlledState(toString(props.inputValue) || initialSelectedKeyText, toString(props.defaultInputValue) || initialDefaultSelectedKeyText || '', onInputChange);
-
 
   let value;
   // Set value equal to whatever controlled prop exists (selectedKey or inputValue)
@@ -158,37 +133,32 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     value = inputValue || '';
   }
 
-  // Sync selectedKey tracker to current value every render
-  oldSelectedKey.current = computeKeyFromValue(value, originalCollection);
-  
-  // if inputValue matches a key, update the selectedKeystate (this is for typing)
-  // Also clears the selected key if inputValue doesn't match any keys
-  useEffect(() => {
-    let key = computeKeyFromValue(inputValue, originalCollection);
-    selectState.setSelectedKey(key);
-  }, [inputValue, selectState, props.onSelectionChange, originalCollection]);
-  
-  // Problem: clicking on menu items doesn't call our selectedKey function so the inputValue doesn't update
-  // The below fixes it by watching for a selectedKey change and calling our setSelectedKey function for it
-  // IF WE CAN GET RID OF THIS IT FIXES BUGS WITH ONINPUTCHANGE AUTOFIRING ON INITIAL RENDER
-  // Fixed the above by having setSelectedKey fire onInputChange if the key is different from the old key
-  useEffect(() => {
-    // Added the below if statement to stop this from firing for props.inputValue being defined but props.defaultSelected being set as something different
-    // Feels silly, really it should just stop the first render or we should just set the selectState.selectedKey state to controlled
-    if (!(props.inputValue && props.defaultSelectedKey)) {
-      selectState.selectedKey && setSelectedKey(selectState.selectedKey);
+  let selectedKey =  computeKeyFromValue(inputValue, collection);
+  let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
+
+  let setSelectedKey = (key) => {
+    // if (key !== selectedKey) {
+      let item = collection.getItem(key);
+      let itemText = item ? item.textValue : '';
+      setInputValue(itemText);
+      triggerState.setOpen(false);
+    // }
+  };
+
+  let selectionState = useMultipleSelectionState(
+    {
+      ...props,
+      selectedKeys, 
+      onSelectionChange: (keys) => setSelectedKey(keys.values().next().value),
+      selectionMode: 'single'
     }
-  }, [selectState.selectedKey])
-  // console.log('selectionManager', selectState.selectionManager);
-
-  // Problem: Hitting enter to select a menu item doesn't close the menu
-  // Possible solution is to add back .close to the Enter key down in useComboBox
-  // Then add a useEffect watching props.selectedKey that closes the menu if it is open and the selectedKey prop changes 
-
-
-
-
-
+  );
+  
+  let disabledKeys = useMemo(() =>
+    props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
+  , [props.disabledKeys]);
+  
+  let triggerState = useMenuTriggerState(props);
 
   let lowercaseValue = value.toLowerCase().replace(' ', '');
 
@@ -218,32 +188,34 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     lastValue.current = value;
   }, [value, onFilter]);
 
-  selectState.collection = useMemo(() => {
+  let filteredCollection = useMemo(() => {
     if (itemsControlled || value === '') {
-      return selectState.collection;
+      return collection;
     }
-    return new TreeCollection(filter(selectState.collection, defaultFilterFn), new Set());
-  }, [selectState.collection, value, itemsControlled, defaultFilterFn]);
+    return new TreeCollection(filter(collection, defaultFilterFn), new Set());
+  }, [collection, value, itemsControlled, defaultFilterFn]);
+
+  let selectionManager = new SelectionManager(filteredCollection, selectionState);
 
   useEffect(() => {
     // Close the menu if it was open but there aren't any items to display
-    if (menuIsOpen && selectState.collection.size === 0) {
-      selectState.close();
+    if (menuIsOpen && filteredCollection.size === 0) {
+      triggerState.close();
     }
 
     // Only open the menu if there are items to display and the combobox is focused
     // Note: doesn't affect controlled isOpen or defaultOpen
-    if (isFocused && menuIsOpen && selectState.collection.size > 0) {
-      selectState.open();
+    if (isFocused && menuIsOpen && filteredCollection.size > 0) {
+      triggerState.open();
     }
 
     // Close the menu if it is supposed to be closed
     if (!menuIsOpen) {
-      selectState.close();
+      triggerState.close();
     }
 
     // Maybe change dep array back to selectState? or make it selectState.close?
-  }, [menuIsOpen, selectState.collection, selectState, isFocused]);
+  }, [menuIsOpen, filteredCollection, triggerState, isFocused]);
 
   let open = () => {
     setMenuIsOpen(true);
@@ -255,11 +227,22 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
 
   let toggle = (focusStrategy = null) => {
     setMenuIsOpen(state => !state);
-    selectState.setFocusStrategy(focusStrategy);
+    triggerState.setFocusStrategy(focusStrategy);
   };
 
+  let selectedItem = selectedKey
+  ? collection.getItem(selectedKey)
+  : null;
+
   return {
-    ...selectState,
+    ...triggerState,
+    selectionManager,
+    selectedKey,
+    isFocused,
+    selectedItem,
+    collection: filteredCollection,
+    disabledKeys,
+    setFocused: () => {},
     open,
     close,
     toggle,

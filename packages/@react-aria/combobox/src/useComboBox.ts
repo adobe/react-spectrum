@@ -48,6 +48,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     popoverRef,
     inputRef,
     layout,
+    // TODO: see if I can replace these with state.isFocused/setIsFocused
     isFocused,
     setIsFocused,
     completionMode,
@@ -78,7 +79,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     selectionManager: state.selectionManager,
     keyboardDelegate: layout,
     shouldTypeAhead: false,
-    disallowEmptySelection: true
+    disallowEmptySelection: true,
+    disallowSelectAll: true
   });
 
   // For textfield specific keydown operations
