@@ -70,11 +70,20 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   let [menuIsOpen, setMenuIsOpen] = useControlledState(isOpen, defaultOpen || false, () => {});
 
 
+ 
 
   // Problem: cannot pass in selectedKey: computeKeyFromValue(inputValue, collection) since collection doesn't exist till useSelectState is done
   // let selectState = useSelectState({...props, selectedKey: computeKeyFromValue(inputValue)});
   let selectState = useSelectState({...props, onSelectionChange: undefined});
   
+  if (props.selectedKey && props.inputValue) {
+    let selectedItem = selectState.collection.getItem(props.selectedKey);
+    let itemText = selectedItem ? selectedItem.textValue : '';
+    if (itemText !== props.inputValue) {
+      throw new Error('Mismatch between selected item and inputValue!');
+    }  
+  }
+
   // Problem: selectState.collection is actively filtered and thus sometimes makes key lookup return null (especially since onInputChange happens before the filtering finishes)
   // Copied selectState.collection so lookup isn't impeded 
   let originalCollection = {...selectState.collection};
@@ -90,14 +99,25 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     }
 
     return key;
-  }
+  };
+
+
+
+  // Do we want to calculate the starting key ourselves or just use state.selectedKey?
+  // Used a ref since this is computed before inputValue is declared (ideally we'd want this to be computed from inputValue only but onInputChange needs it)
+  let oldSelectedKey = useRef(props.selectedKey || computeKeyFromValue(props.inputValue, originalCollection) || props.defaultSelectedKey || computeKeyFromValue(props.defaultInputValue, originalCollection));
+  console.log('oldSelectedKey', oldSelectedKey.current);
 
   // replacement setSelectedKey util function that calls setInputValue based off of key provided
+  // Only call if selectedKey is different from oldSelectedKey?
   let setSelectedKey = (key) => {
-    let item = selectState.collection.getItem(key);
-    let itemText = item ? item.textValue : '';
-    setInputValue(itemText);
-  }
+    console.log('setselectedKey check', key, oldSelectedKey.current)
+    if (key !== oldSelectedKey.current) {
+      let item = selectState.collection.getItem(key);
+      let itemText = item ? item.textValue : '';
+      setInputValue(itemText);
+    }
+  };
 
   // Add a function that takes new input value, calculates the corresponding key, compares that with the previously calculated
   // key, then fires onSelectionChange if different
@@ -106,63 +126,67 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
       props.onInputChange(value);
     }
 
-
-    // compute selected key off of value
-    // compared selected key with previous selected key (TODO how to get old selectedKey, right now I'm using selectState.selectedKey)
-    // if different, fire onSelectionChange(new key)
     let newSelectedKey = computeKeyFromValue(value, originalCollection);
-    // console.log('selectState.selectedKey', selectState.selectedKey, newSelectedKey, value, selectState.collection);
 
-
-    if (newSelectedKey !== selectState.selectedKey) {
+    if (newSelectedKey !== oldSelectedKey.current) {
       if (props.onSelectionChange) {
         props.onSelectionChange(newSelectedKey);
       }
+      // Maybe move the below out (have oldSelectedKey.current be updated every render to mirror current inputValue?)
+      // oldSelectedKey.current = newSelectedKey
     }
-  }
+  };
 
-  let [inputValue, setInputValue] = useControlledState(toString(props.inputValue), toString(props.defaultInputValue) || '', onInputChange);
-  let selectedKeyText = selectState.selectedItem ? selectState.selectedItem.textValue : undefined;
+  // Problem: For comboboxes with props.selectedKey, onInputChange only fires once per unique key press (press 'a' a bunch).
+  // Fixed by adding selected key text value to inputValue useControlledState
+  // Problem: For a combobox with props.defaultSelectedKey, deleting the entire input field made the value reset to defaultSelectedKey since inputValue became ''
+  // Fixed by adding defaultSelectedKeyText to this useControlledState below
+  let initialSelectedKeyText = selectState.collection.getItem(props.selectedKey)?.textValue;
+  let initialDefaultSelectedKeyText = selectState.collection.getItem(props.defaultSelectedKey)?.textValue;
+  let [inputValue, setInputValue] = useControlledState(toString(props.inputValue) || initialSelectedKeyText, toString(props.defaultInputValue) || initialDefaultSelectedKeyText || '', onInputChange);
 
-  if (props.selectedKey && props.inputValue) {
-    let selectedItem = selectState.collection.getItem(props.selectedKey);
-    let itemText = selectedItem ? selectedItem.textValue : '';
-    if (itemText !== props.inputValue) {
-      throw new Error('Mismatch between selected item and inputValue!');
-    }  
-  }
 
-  // TODO: rename to inputValue
   let value;
   // Set value equal to whatever controlled prop exists (selectedKey or inputValue)
   // If neither exist, set equal to inputValue 
+  // This if statement can probably go away in favor of "value = inputValue" if the above useControlledState retains the initialSelectedKeyText stuff in it
   if (props.selectedKey) {
-    value = selectedKeyText || '';
+    value = initialSelectedKeyText || '';
   } else if (props.inputValue) {
-    value = inputValue;
+    value = toString(props.inputValue);
   } else {
-    value = inputValue || selectedKeyText || '';
+    value = inputValue || '';
   }
 
+  // Sync selectedKey tracker to current value every render
+  oldSelectedKey.current = computeKeyFromValue(value, originalCollection);
+  
   // if inputValue matches a key, update the selectedKeystate (this is for typing)
   // Also clears the selected key if inputValue doesn't match any keys
   useEffect(() => {
     let key = computeKeyFromValue(inputValue, originalCollection);
     selectState.setSelectedKey(key);
-  }, [inputValue, selectState.collection, props.onSelectionChange])
+  }, [inputValue, selectState, props.onSelectionChange, originalCollection]);
   
   // Problem: clicking on menu items doesn't call our selectedKey function so the inputValue doesn't update
   // The below fixes it by watching for a selectedKey change and calling our setSelectedKey function for it
-  // Problem: doesn't call onSelection change though since the newKey == selectedKey in setSelectedKey
-  // Possible solution: don't do a "different key check" in onInputChange for deciding to call onSelection
+  // IF WE CAN GET RID OF THIS IT FIXES BUGS WITH ONINPUTCHANGE AUTOFIRING ON INITIAL RENDER
+  // Fixed the above by having setSelectedKey fire onInputChange if the key is different from the old key
   useEffect(() => {
-    selectState.selectedKey && setSelectedKey(selectState.selectedKey);
+    // Added the below if statement to stop this from firing for props.inputValue being defined but props.defaultSelected being set as something different
+    // Feels silly, really it should just stop the first render or we should just set the selectState.selectedKey state to controlled
+    if (!(props.inputValue && props.defaultSelectedKey)) {
+      selectState.selectedKey && setSelectedKey(selectState.selectedKey);
+    }
   }, [selectState.selectedKey])
   // console.log('selectionManager', selectState.selectionManager);
 
   // Problem: Hitting enter to select a menu item doesn't close the menu
   // Possible solution is to add back .close to the Enter key down in useComboBox
   // Then add a useEffect watching props.selectedKey that closes the menu if it is open and the selectedKey prop changes 
+
+
+
 
 
 
