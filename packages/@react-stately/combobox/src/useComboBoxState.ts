@@ -61,13 +61,16 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   } = props;
 
   let itemsControlled = !!onFilter;
+  
   let computeKeyFromValue = (value, collection) => {
     let key;
-    for (let item of collection.iterable) {
-      let itemText = item.textValue;
-      if (itemText === value) {
-        key = item.key;
-        break;
+    for (let [itemKey, node] of collection.keyMap) {
+      if (node.type !== 'section') {
+        let itemText = node.textValue;
+        if (itemText === value) {
+          key = itemKey;
+          break;
+        }
       }
     }
 
