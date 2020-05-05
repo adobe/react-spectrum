@@ -107,7 +107,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   let initialDefaultSelectedKeyText = collection.getItem(props.defaultSelectedKey)?.textValue;
   let [inputValue, setInputValue] = useControlledState(toString(props.inputValue) || initialSelectedKeyText, toString(props.defaultInputValue) || initialDefaultSelectedKeyText || '', onInputChange);
 
-  let selectedKey =  computeKeyFromValue(inputValue, collection);
+  let selectedKey = computeKeyFromValue(inputValue, collection);
   let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
 
   let setSelectedKey = (key) => {

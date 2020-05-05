@@ -35,7 +35,7 @@ describe('useComboBoxState tests', function () {
       act(() => {
         result.current.open();
       });
-      expect(result.current.isOpen).toBe(true);
+      expect(result.current.isOpen).toBe(false);
       expect(onOpenChange).toHaveBeenCalledWith(true);
 
       act(() => result.current.close());
@@ -43,9 +43,12 @@ describe('useComboBoxState tests', function () {
       expect(onOpenChange).toHaveBeenCalledWith(false);
     });
 
-    it('should be set open by default if defaultOpen is true', function () {
+    it('should be set open by default if defaultOpen is true and isFocused is true', function () {
       let initialProps = {...defaultProps, defaultOpen: true};
       let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
+      
+      act(() => result.current.setFocused(true));
+
       expect(result.current.isOpen).toBe(true);
 
       act(() => result.current.close());
@@ -53,9 +56,11 @@ describe('useComboBoxState tests', function () {
       expect(onOpenChange).toHaveBeenCalledWith(false);
     });
 
-    it('open should be a controllable value',   function () {
+    it('open should be a controllable value', function () {
       let initialProps = {...defaultProps, isOpen: true};
       let {result, rerender} = renderHook((props) => useComboBoxState(props), {initialProps});
+      act(() => result.current.setFocused(true));
+
       expect(result.current.isOpen).toBe(true);
 
       act(() => result.current.close());
@@ -84,36 +89,36 @@ describe('useComboBoxState tests', function () {
     it('can have a default value', function () {
       let initialProps = {...defaultProps, defaultInputValue: 'hello'};
       let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
-      expect(result.current.value).toBe('hello');
+      expect(result.current.inputValue).toBe('hello');
     });
 
     it('fires an event when the value is changed and updates if uncontrolled', function () {
       let initialProps = {...defaultProps, defaultInputValue: 'hello'};
       let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
-      expect(result.current.value).toBe('hello');
+      expect(result.current.inputValue).toBe('hello');
       expect(onInputChange).not.toHaveBeenCalled();
-      act(() => result.current.setValue('hellow'));
-      expect(result.current.value).toBe('hellow');
+      act(() => result.current.setInputValue('hellow'));
+      expect(result.current.inputValue).toBe('hellow');
       expect(onInputChange).toHaveBeenCalledWith('hellow');
     });
 
     it('starts blank if no (default) value', function () {
       let initialProps = {...defaultProps};
       let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
-      expect(result.current.value).toBe('');
+      expect(result.current.inputValue).toBe('');
       expect(onInputChange).not.toHaveBeenCalled();
-      act(() => result.current.setValue('h'));
-      expect(result.current.value).toBe('h');
+      act(() => result.current.setInputValue('h'));
+      expect(result.current.inputValue).toBe('h');
       expect(onInputChange).toHaveBeenCalledWith('h');
     });
 
     it('can be controlled', function () {
       let initialProps = {...defaultProps, inputValue: 'hello'};
       let {result} = renderHook((props) => useComboBoxState(props), {initialProps});
-      expect(result.current.value).toBe('hello');
+      expect(result.current.inputValue).toBe('hello');
       expect(onInputChange).not.toHaveBeenCalled();
-      act(() => result.current.setValue('hellow'));
-      expect(result.current.value).toBe('hello');
+      act(() => result.current.setInputValue('hellow'));
+      expect(result.current.inputValue).toBe('hello');
       expect(onInputChange).toHaveBeenCalledWith('hellow');
     });
   });
@@ -124,7 +129,7 @@ describe('useComboBoxState tests', function () {
     beforeEach(() => {
       onSelectionChange = jest.fn();
       let collator = {compare: jest.fn().mockReturnValue(true)};
-      defaultProps = {items: [{id: 1, name: 'one'}, {id: 2, name: 'onomatopoeia'}], children: (props) => <Item>{props.name}</Item>, onSelectionChange, collator};
+      defaultProps = {items: [{uniqueKey: '0', name: 'one'}, {uniqueKey: '1', name: 'onomatopoeia'}], children: (props) => <Item {...props}>{props.name}</Item>, onSelectionChange, collator};
     });
 
     it('support selectedKey', function () {
