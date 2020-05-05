@@ -167,6 +167,14 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   }, [collection, inputValue, itemsControlled, defaultFilterFn]);
 
   let selectionManager = new SelectionManager(filteredCollection, selectionState);
+
+  // Focus first item if filtered collection no longer contains original focused item
+  useEffect(() => {
+    if (!filteredCollection.getItem(selectionManager.focusedKey)) {
+      selectionManager.setFocusedKey(filteredCollection.getFirstKey());
+    }
+  }, [selectionManager, filteredCollection])
+
   let selectedItem = selectedKey ? collection.getItem(selectedKey) : null;
 
   return {
