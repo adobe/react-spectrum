@@ -10,39 +10,41 @@
  * governing permissions and limitations under the License.
  */
 
+const  TOOLTIP_DELAY = 220; // --spectrum-global-animation-duration-400
+
 export class TooltipManager {
 
-  visibleTooltips?: null | {triggerId: string, state: {open: boolean, setOpen(value: boolean), tooltipManager: string}}
+  visibleTooltip?: null | {triggerId: string, state: {open: boolean, setOpen(value: boolean), tooltipManager: string}}
   hoverHideTimeout?: null | ReturnType<typeof setTimeout>;
   hoverShowTimeout?: null | ReturnType<typeof setTimeout>;
 
   // Arbitrary timeout lengths in place for current demo purposes. Delays to be adjusted for warmup / cooldown logic PR
   constructor() {
-    this.visibleTooltips = null;
+    this.visibleTooltip = null;
     this.hoverHideTimeout = null;
     this.hoverShowTimeout = null;
   }
 
   updateTooltipState(state, triggerId)  {
     state.setOpen(!state.open);
-    this.visibleTooltips = {triggerId, state};
+    this.visibleTooltip = {triggerId, state};
   }
 
   isSameTarget(currentTriggerId) {
-    return currentTriggerId === this.visibleTooltips.triggerId;
+    return currentTriggerId === this.visibleTooltip.triggerId;
   }
 
   showTooltip(state) {
     state.setOpen(true);
     // Close previously open tooltip
-    if (this.visibleTooltips) {
-      this.visibleTooltips.state.setOpen(false);
+    if (this.visibleTooltip) {
+      this.visibleTooltip.state.setOpen(false);
     }
   }
 
   hideTooltip(state) {
     state.setOpen(false);
-    this.visibleTooltips = null;
+    this.visibleTooltip = null;
   }
 
   showTooltipDelayed(state, triggerId) {
@@ -55,8 +57,8 @@ export class TooltipManager {
     this.hoverShowTimeout = setTimeout(() => {
       this.hoverShowTimeout = null;
       this.showTooltip(state);
-      this.visibleTooltips = {triggerId, state};
-    }, 200);
+      this.visibleTooltip = {triggerId, state};
+    }, TOOLTIP_DELAY);
   }
 
   hideTooltipDelayed(state) {
@@ -69,6 +71,6 @@ export class TooltipManager {
     this.hoverHideTimeout = setTimeout(() => {
       this.hoverHideTimeout = null;
       this.hideTooltip(state);
-    }, 200);
+    }, TOOLTIP_DELAY);
   }
 }

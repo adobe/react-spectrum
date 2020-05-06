@@ -11,8 +11,7 @@
  */
 
 import {TooltipManager} from './TooltipManager';
-import {TooltipTriggerProps} from '@react-types/tooltip';
-import {useControlledState} from '@react-stately/utils';
+import {useState} from 'react';
 
 export interface TooltipTriggerState {
   open: boolean,
@@ -22,8 +21,8 @@ export interface TooltipTriggerState {
 
 let tooltipManager = new TooltipManager();
 
-export function useTooltipTriggerState(props: TooltipTriggerProps): TooltipTriggerState {
-  let [open, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
+export function useTooltipTriggerState(): TooltipTriggerState {
+  let [open, setOpen] = useState(false);
 
   return {
     open,
