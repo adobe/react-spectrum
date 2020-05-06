@@ -88,7 +88,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     let selectedItem = collection.getItem(props.selectedKey);
     let itemText = selectedItem ? selectedItem.textValue : '';
     if (itemText !== props.inputValue) {
-      throw new Error('Mismatch between selected item and inputValue!');
+      console.error('Mismatch between selected item and inputValue!');
     }  
   }
 
