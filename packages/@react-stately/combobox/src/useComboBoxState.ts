@@ -55,7 +55,9 @@ function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolea
 export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let {
     onFilter,
-    collator
+    collator,
+    itemKey,
+    onSelectionChange
   } = props;
 
   let [isFocused, setFocused] = useState(false);
@@ -76,7 +78,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     return key;
   };
 
-  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
+  let builder = useMemo(() => new CollectionBuilder<T>(itemKey), [itemKey]);
   let collection = useMemo(() => {
     let nodes = builder.build(props);
     return new TreeCollection(nodes, new Set());
@@ -97,8 +99,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
 
     let newSelectedKey = computeKeyFromValue(value, collection);
     if (newSelectedKey !== selectedKey) {
-      if (props.onSelectionChange) {
-        props.onSelectionChange(newSelectedKey);
+      if (onSelectionChange) {
+        onSelectionChange(newSelectedKey);
       }
     }
   };
