@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-// @ts-ignore - todo it's after midnight, figure out later, it's just a warning
+// @ts-ignore
 import {flushSync} from 'react-dom';
 import {getScrollLeft} from './utils';
 import React, {CSSProperties, HTMLAttributes, ReactNode, RefObject, useCallback, useLayoutEffect, useRef, useState} from 'react';
