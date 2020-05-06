@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-
 import {CollectionBase, SingleSelection} from '@react-types/shared';
-import {Node, TreeCollection} from '@react-stately/collections';
+import {CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
+import {Key, useEffect, useMemo, useRef, useState} from 'react';
+import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {SelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
-import {useEffect, useMemo, useRef} from 'react';
-import {useSelectState} from '@react-stately/select';
+import {useMenuTriggerState} from '@react-stately/menu';
 
 export interface ComboBoxState<T> extends SelectState<T> {
-  value: string,
-  setValue: (value: string) => void
+  inputValue: string,
+  setInputValue: (value: string) => void
 }
 
 interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
@@ -31,11 +31,10 @@ interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   defaultInputValue?: string,
   onInputChange?: (value: string) => void,
   onFilter?: (value: string) => void,
-  isFocused: boolean,
   collator: Intl.Collator
 }
 
-function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean) {
+function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean): Iterable<Node<T>> {
   let filteredNode = [];
   for (let node of nodes) {
     if (node.type === 'section' && node.hasChildNodes) {
@@ -56,26 +55,85 @@ function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolea
 export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): ComboBoxState<T> {
   let {
     onFilter,
-    selectedKey,
-    defaultSelectedKey,
-    inputValue,
-    defaultInputValue,
-    onInputChange,
-    isFocused,
     collator
   } = props;
 
+  let [isFocused, setFocused] = useState(false);
   let itemsControlled = !!onFilter;
 
-  let selectState = useSelectState(props);
+  let computeKeyFromValue = (value, collection) => {
+    let key;
+    for (let [itemKey, node] of collection.keyMap) {
+      if (node.type !== 'section') {
+        let itemText = node.textValue;
+        if (itemText === value) {
+          key = itemKey;
+          break;
+        }
+      }
+    }
 
-  let selectedKeyItem = selectedKey ? selectState.collection.getItem(selectedKey) : undefined;
-  let selectedKeyText = selectedKeyItem ? selectedKeyItem.textValue : undefined;
-  let defaultSelectedKeyItem = defaultSelectedKey ? selectState.collection.getItem(defaultSelectedKey) : undefined;
-  let defaultSelectedKeyText = defaultSelectedKeyItem ? defaultSelectedKeyItem.textValue : undefined;
+    return key;
+  };
 
-  let [value, setValue] = useControlledState(toString(inputValue) || selectedKeyText, toString(defaultInputValue) || defaultSelectedKeyText || '', onInputChange);
-  let lowercaseValue = value.toLowerCase().replace(' ', '');
+  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
+  let collection = useMemo(() => {
+    let nodes = builder.build(props);
+    return new TreeCollection(nodes, new Set());
+  }, [builder, props]);
+
+  if (props.selectedKey && props.inputValue) {
+    let selectedItem = collection.getItem(props.selectedKey);
+    let itemText = selectedItem ? selectedItem.textValue : '';
+    if (itemText !== props.inputValue) {
+      throw new Error('Mismatch between selected item and inputValue!');
+    }  
+  }
+
+  let onInputChange = (value) => {
+    if (props.onInputChange) {
+      props.onInputChange(value);
+    }
+
+    let newSelectedKey = computeKeyFromValue(value, collection);
+    if (newSelectedKey !== selectedKey) {
+      if (props.onSelectionChange) {
+        props.onSelectionChange(newSelectedKey);
+      }
+    }
+  };
+
+  let initialSelectedKeyText = collection.getItem(props.selectedKey)?.textValue;
+  let initialDefaultSelectedKeyText = collection.getItem(props.defaultSelectedKey)?.textValue;
+  let [inputValue, setInputValue] = useControlledState(toString(props.inputValue) || initialSelectedKeyText, toString(props.defaultInputValue) || initialDefaultSelectedKeyText || '', onInputChange);
+
+  let selectedKey = computeKeyFromValue(inputValue, collection);
+  let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
+
+  let setSelectedKey = (key) => {
+    if (key !== selectedKey) {
+      let item = collection.getItem(key);
+      let itemText = item ? item.textValue : '';
+      setInputValue(itemText);
+      triggerState.setOpen(false);
+    }
+  };
+
+  let selectionState = useMultipleSelectionState(
+    {
+      ...props,
+      selectedKeys, 
+      onSelectionChange: (keys) => setSelectedKey(keys.values().next().value),
+      selectionMode: 'single'
+    }
+  );
+  
+  let disabledKeys = useMemo(() =>
+    props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
+  , [props.disabledKeys]);
+  
+  let triggerState = useMenuTriggerState(props);
+  let lowercaseValue = inputValue.toLowerCase().replace(' ', '');
 
   let defaultFilterFn = useMemo(() => (node: Node<T>) => {
     let scan = 0;
@@ -96,53 +154,45 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
 
   let lastValue = useRef('');
   useEffect(() => {
-    if (onFilter && lastValue.current !== value) {
-      onFilter(value);
+    if (onFilter && lastValue.current !== inputValue) {
+      onFilter(inputValue);
     }
 
-    lastValue.current = value;
-  }, [value, onFilter]);
+    lastValue.current = inputValue;
+  }, [inputValue, onFilter]);
 
-  selectState.collection = useMemo(() => {
-    if (itemsControlled || value === '') {
-      return selectState.collection;
+  let filteredCollection = useMemo(() => {
+    if (itemsControlled || inputValue === '') {
+      return collection;
     }
-    return new TreeCollection(filter(selectState.collection, defaultFilterFn), new Set());
-  }, [selectState.collection, value, itemsControlled, defaultFilterFn]);
+    return new TreeCollection(filter(collection, defaultFilterFn), new Set());
+  }, [collection, inputValue, itemsControlled, defaultFilterFn]);
 
-  // Moved from aria to stately cuz it feels more like stately
+  let selectionManager = new SelectionManager(filteredCollection, selectionState);
+
+  // Focus first item if filtered collection no longer contains original focused item
   useEffect(() => {
-    // Perhaps replace the below with state.selectedItem?
-    let selectedItem = selectState.selectedKey ? selectState.collection.getItem(selectState.selectedKey) : null;
-    if (selectedItem) {
-      let itemText = selectedItem.textValue;
-
-      // Throw error if controlled inputValue and controlled selectedKey don't match
-      if (inputValue && selectedKey && (inputValue !== itemText)) {
-        throw new Error('Mismatch between selected item and inputValue!');
-      }
-
-      // Update textfield value if new item is selected
-      // Only do this if not controlled?
-      if (itemText !== value && !(inputValue)) {
-        setValue(itemText);
-      }
-    } else {
-      if (inputValue) {
-        // TODO find item that has matching text and set as selectedKey
-        // If none found, make invalid?
-        // Confirmed dig through all nodes and find the one with matching text
-      }
+    // Only set a focused key if one existed previously, don't want to focus something by default if customValue = true
+    if (selectionManager.focusedKey && !filteredCollection.getItem(selectionManager.focusedKey)) {
+      selectionManager.setFocusedKey(filteredCollection.getFirstKey());
     }
-  // Double check this dependency array (does it need value,setValue, selectState.collection)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectState.selectedKey, inputValue, selectedKey]);
+  }, [selectionManager, filteredCollection]);
+
+  let selectedItem = selectedKey ? collection.getItem(selectedKey) : null;
 
   return {
-    ...selectState,
-    value,
-    setValue,
-    isOpen: selectState.isOpen && isFocused && selectState.collection.size > 0
+    ...triggerState,
+    selectionManager,
+    selectedKey,
+    setSelectedKey,
+    disabledKeys,
+    isFocused,
+    setFocused,
+    selectedItem,
+    collection: filteredCollection,
+    isOpen: triggerState.isOpen && isFocused && filteredCollection.size > 0,
+    inputValue,
+    setInputValue
   };
 }
 
