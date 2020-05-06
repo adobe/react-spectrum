@@ -37,18 +37,30 @@ category: Buttons
 ## Example
 
 ```tsx example
-<ActionButton icon={<Edit />}>Edit</ActionButton>
+import {Text} from '@react-spectrum/typography';
+
+<ActionButton>
+  <Edit />
+  <Text>Edit</Text>
+</ActionButton>
 ```
 
 ## Content
 
-ActionButtons can have a label, and icon, or both. An icon is provided by passing an icon component to the `icon` prop.
-A visible label can be provided by passing children.
+ActionButtons can have a label, an icon, or both. An icon is provided by passing an icon component as a child to the ActionButton.
+A visible label can be provided by passing a string or a Text component as a child, depending on whether the ActionButton has an accompanying icon.
 
 ```tsx example
-<ActionButton>Label only</ActionButton>
-<ActionButton icon={<Edit />}>Icon + Label</ActionButton>
-<ActionButton icon={<Edit />} aria-label="Icon only" />
+<ActionButton>
+  Label only
+</ActionButton>
+<ActionButton>
+  <Edit />
+  <Text>Icon + Label</Text>
+</ActionButton>
+<ActionButton aria-label="Icon only">
+  <Edit />
+</ActionButton>
 ```
 
 ### Accessibility
@@ -73,7 +85,7 @@ function Example() {
   let [count, setCount] = React.useState(0);
 
   return (
-    <ActionButton icon={<Edit />} onPress={() => setCount(c => c + 1)}>{count} Edits</ActionButton>
+   <ActionButton onPress={() => setCount(c => c + 1)}>{count} Edits</ActionButton>
   );
 }
 ```
@@ -111,7 +123,9 @@ Note that the styling provided by the `isEmphasized` prop is only applied when t
 [View guidelines](https://spectrum.adobe.com/page/action-button/#Hold-icon)
 
 ```tsx example
-<ActionButton holdAffordance icon={<Edit />} aria-label="Edit" />
+<ActionButton holdAffordance aria-label="Edit">
+  <Edit />
+</ActionButton>
 ```
 
 ### Disabled
