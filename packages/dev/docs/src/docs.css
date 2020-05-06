@@ -30,11 +30,53 @@ html, body {
   }
 }
 
+.heroImage {
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+
+  img {
+    max-width: 100%;
+    border-radius: 4px;
+  }
+}
+
+.highlights {
+  display: flex;
+  flex-wrap: wrap;
+
+  @media (max-width: 1020px) {
+    display: block;
+
+    div {
+      width: 100%;
+    }
+  }
+
+  div {
+    box-sizing: border-box;
+    padding: 0 16px;
+  }
+
+  @media (min-width: 1020px) {
+    div:first-child:nth-last-child(3),
+    div:first-child:nth-last-child(3) ~ div {
+      width: 33.3333%;
+    }
+
+    div:first-child:nth-last-child(4),
+    div:first-child:nth-last-child(4) ~ div {
+      width: 50%;
+    }
+  }
+}
+
 .nav {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100%;
+  overflow-y: scroll;
+  bottom: 0;
   width: 256px;
   padding: 0 24px;
   background: var(--spectrum-global-color-gray-75);
@@ -42,16 +84,22 @@ html, body {
 }
 
 .nav header {
+  display: flex;
   padding: 30px 0 24px 0;
 }
 
 .nav header a {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   text-decoration: none;
 }
 
-.nav header svg {
+.backBtn {
+  color: var(--spectrum-global-color-gray-900);
+  margin-right: 10px;
+}
+
+.homeBtn svg {
   width: 36px;
   height: 32px;
   display: block;
@@ -62,13 +110,48 @@ html, body {
 main {
   margin-left: 256px;
   margin-right: 160px;
-  padding: 40px 52px;
+  padding: 40px 52px 0 52px;
   box-sizing: border-box;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
 }
 
 article {
   max-width: 967px;
-  margin: 0 auto;
+  flex: 1;
+  padding-bottom: 40px;
+  width: 100%;
+}
+
+footer {
+  max-width: 967px;
+  width: 100%
+}
+
+footer ul {
+  padding: 0;
+}
+
+@media (min-width: 1020px) {
+  footer {
+    text-align: right;
+  }
+}
+
+footer li {
+  display: inline-block;
+  list-style: none;
+}
+
+footer li:after {
+  margin: 0 8px;
+  content: '/';
+}
+
+footer li:last-child:after {
+  content: '';
 }
 
 .propTable {
@@ -81,8 +164,11 @@ article {
 }
 
 .propTable tr {
-  background: none !important;
   cursor: initial;
+}
+
+.propTable td {
+  background: none !important;
 }
 
 .type-description {
@@ -111,14 +197,17 @@ article h1.articleHeader {
 
 article h1.articleHeader + p {
   font-size: 18px;
+}
+
+article.inCategory h1.articleHeader + p {
   max-width: 75%;
 }
 
-article h2.sectionHeader.docsHeader {
+article.inCategory h2.sectionHeader.docsHeader {
   margin-top: 80px;
 }
 
-article h2.sectionHeader + hr {
+article.inCategory h2.sectionHeader + hr {
   margin-bottom: 33px;
 }
 

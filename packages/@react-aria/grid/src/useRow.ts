@@ -11,16 +11,16 @@
  */
 
 import {getRowLabelledBy} from './utils';
-import {GridState} from '@react-stately/grid';
-import {HTMLAttributes, Key, RefObject} from 'react';
+import {GridNode, GridState} from '@react-stately/grid';
+import {HTMLAttributes, RefObject} from 'react';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface RowProps {
+  node: GridNode<unknown>,
   ref?: RefObject<HTMLElement>,
   isVirtualized?: boolean,
-  isSelected?: boolean,
-  key: Key
+  isSelected?: boolean
 }
 
 interface RowAria {
@@ -29,15 +29,15 @@ interface RowAria {
 
 export function useRow<T>(props: RowProps, state: GridState<T>): RowAria {
   let {
+    node,
     ref,
     isVirtualized,
-    isSelected,
-    key
+    isSelected
   } = props;
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: key,
+    itemKey: node.key,
     itemRef: ref,
     isVirtualized
   });
@@ -48,13 +48,13 @@ export function useRow<T>(props: RowProps, state: GridState<T>): RowAria {
   let rowProps: HTMLAttributes<HTMLElement> = {
     role: 'row',
     'aria-selected': isSelected,
-    'aria-labelledby': getRowLabelledBy(state, key),
+    'aria-labelledby': getRowLabelledBy(state, node.key),
     ...itemProps,
     ...pressProps
   };
 
   if (isVirtualized) {
-    rowProps['aria-rowindex'] = state.collection.getItem(key).index;
+    rowProps['aria-rowindex'] = node.index + state.collection.headerRows.length + 1; // aria-rowindex is 1 based
   }
 
   return {

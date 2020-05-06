@@ -12,7 +12,7 @@
 
 import {Collection} from './types';
 import {CollectionManager} from './CollectionManager';
-import {Key, useLayoutEffect, useMemo, useState} from 'react';
+import {Key, useCallback, useLayoutEffect, useMemo, useState} from 'react';
 import {Layout} from './Layout';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
@@ -28,32 +28,33 @@ interface CollectionProps<T extends object, V, W> {
   ): W,
   layout: Layout<T>,
   collection: Collection<T>,
+  onVisibleRectChange(rect: Rect): void,
   getScrollAnchor?(rect: Rect): Key
 }
 
-interface CollectionState<T extends object, V, W> {
+export interface CollectionState<T extends object, V, W> {
   visibleViews: W[],
-  visibleRect: Rect,
   setVisibleRect: (rect: Rect) => void,
   contentSize: Size,
   isAnimating: boolean,
   collectionManager: CollectionManager<T, V, W>,
+  isScrolling: boolean,
   startScrolling: () => void,
   endScrolling: () => void
 }
 
 export function useCollectionState<T extends object, V, W>(opts: CollectionProps<T, V, W>): CollectionState<T, V, W> {
   let [visibleViews, setVisibleViews] = useState<W[]>([]);
-  let [visibleRect, setVisibleRect] = useState(new Rect());
   let [contentSize, setContentSize] = useState(new Size());
   let [isAnimating, setAnimating] = useState(false);
+  let [isScrolling, setScrolling] = useState(false);
   let collectionManager = useMemo(() => new CollectionManager<T, V, W>(), []);
 
   collectionManager.delegate = {
     setVisibleViews,
     setVisibleRect(rect) {
       collectionManager.visibleRect = rect;
-      setVisibleRect(rect);
+      opts.onVisibleRectChange(rect);
     },
     setContentSize,
     renderView: opts.renderView,
@@ -65,7 +66,6 @@ export function useCollectionState<T extends object, V, W>(opts: CollectionProps
 
   collectionManager.layout = opts.layout;
   collectionManager.collection = opts.collection;
-  collectionManager.visibleRect = visibleRect;
 
   useLayoutEffect(() => {
     collectionManager.afterRender();
@@ -74,18 +74,19 @@ export function useCollectionState<T extends object, V, W>(opts: CollectionProps
   return {
     collectionManager,
     visibleViews,
-    visibleRect,
-    setVisibleRect(rect) {
+    setVisibleRect: useCallback((rect) => {
       collectionManager.visibleRect = rect;
-      setVisibleRect(rect);
-    },
+    }, [collectionManager]),
     contentSize,
     isAnimating,
-    startScrolling() {
+    isScrolling,
+    startScrolling: useCallback(() => {
       collectionManager.startScrolling();
-    },
-    endScrolling() {
+      setScrolling(true);
+    }, [collectionManager]),
+    endScrolling: useCallback(() => {
       collectionManager.endScrolling();
-    }
+      setScrolling(false);
+    }, [collectionManager])
   };
 }

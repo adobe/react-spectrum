@@ -11,69 +11,11 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {attachToToC} from './attachToToC';
-import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
-import {Content, View} from '@react-spectrum/view';
-import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
-import highlightCss from './syntax-highlight.css';
-import {Pressable} from '@react-aria/interactions';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
-import {ThemeProvider, ThemeSwitcher} from './ThemeSwitcher';
-
-let links = document.querySelectorAll(':not([hidden]) a[data-link]');
-for (let link of links) {
-  let container = document.createElement('span');
-
-  ReactDOM.render(
-    <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
-      <DialogTrigger type="popover">
-        <Pressable>
-          <a href={link.href} data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
-        </Pressable>
-        <LinkPopover id={link.dataset.link} />
-      </DialogTrigger>
-    </ThemeProvider>
-  , container);
-
-  link.parentNode.replaceChild(container, link);
-}
-
-function LinkPopover({id}) {
-  let ref = useRef();
-  let [breadcrumbs, setBreadcrumbs] = useState([document.getElementById(id)]);
-
-  useEffect(() => {
-    let links = ref.current.querySelectorAll('[data-link]');
-    for (let link of links) {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        setBreadcrumbs([...breadcrumbs, document.getElementById(link.dataset.link)]);
-      });
-    }
-  }, [breadcrumbs]);
-
-  return (
-    <Dialog UNSAFE_className={highlightCss.spectrum} size="L">
-      <View slot="heading">
-        <Breadcrumbs isHeading headingAriaLevel={3} onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}>
-          {breadcrumbs.map((b, i) => (
-            <Item uniqueKey={i + 1}>
-              {b.dataset.title}
-            </Item>
-          ))}
-        </Breadcrumbs>
-      </View>
-      <Divider size="M" />
-      <Content>
-        <div ref={ref} dangerouslySetInnerHTML={{__html: breadcrumbs[breadcrumbs.length -  1].innerHTML}} />
-      </Content>
-    </Dialog>
-  );
-}
+import {ThemeSwitcher} from './ThemeSwitcher';
 
 function Hamburger() {
   let onPress = () => {
@@ -104,5 +46,3 @@ ReactDOM.render(<>
   <Hamburger />
   <ThemeSwitcher />
 </>, document.getElementById('header'));
-
-attachToToC();

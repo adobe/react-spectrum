@@ -18,14 +18,14 @@ import {DOMProps, DOMRef, SelectionMode, StyleProps} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
-import React, {forwardRef, ReactElement, useRef} from 'react';
+import React, {forwardRef, Key, ReactElement, useRef} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {useActionGroup} from '@react-aria/actiongroup';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSelectableItem} from '@react-aria/selection';
 
-function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
+function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
   let {
@@ -36,6 +36,7 @@ function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivE
     selectionMode = 'single' as SelectionMode,
     orientation = 'horizontal',
     isQuiet,
+    onAction,
     ...otherProps
   } = props;
 
@@ -69,6 +70,8 @@ function ActionGroup<T>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivE
           <ActionGroupItem
             key={item.key}
             {...buttonProps}
+            onAction={onAction}
+            isDisabled={isDisabled}
             UNSAFE_className={classNames(buttonStyles, 'spectrum-ButtonGroup-item')}
             item={item}
             state={state} />
@@ -83,10 +86,12 @@ export {_ActionGroup as ActionGroup};
 
 interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
   item: Node<T>,
-  state: ActionGroupState<T>
+  state: ActionGroupState<T>,
+  isDisabled: boolean,
+  onAction: (key: Key) => void
 }
 
-function ActionGroupItem<T>({item, state, ...otherProps}: ActionGroupItemProps<T>) {
+function ActionGroupItem<T>({item, state, isDisabled, onAction, ...otherProps}: ActionGroupItemProps<T>) {
   let ref = useRef();
   let {itemProps} = useSelectableItem({
     selectionManager: state && state.selectionManager,
@@ -95,15 +100,29 @@ function ActionGroupItem<T>({item, state, ...otherProps}: ActionGroupItemProps<T
   });
 
   let buttonProps = mergeProps(itemProps, otherProps);
+  isDisabled = isDisabled || state.disabledKeys.has(item.key);
+  let isSelected = state.selectionManager.isSelected(item.key);
 
-  return (
+  if (onAction && !isDisabled) {
+    buttonProps = mergeProps(buttonProps, {
+      onPress: () => onAction(item.key)
+    });
+  }
+
+  let button = (
     <ActionButton
       {...buttonProps}
       ref={ref}
-      isSelected={state.selectionManager.selectionMode !== 'none' ? item.isSelected : null}
-      isDisabled={item.isDisabled}
+      isSelected={state.selectionManager.selectionMode !== 'none' ? isSelected : null}
+      isDisabled={isDisabled}
       aria-label={item['aria-label']}>
       {item.rendered}
     </ActionButton>
   );
+
+  if (item.wrapper) {
+    button = item.wrapper(button);
+  }
+
+  return button;
 }

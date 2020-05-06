@@ -16,11 +16,13 @@ import {KeyboardDelegate} from '@react-types/shared';
 
 export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<Node<T>>;
+  private disabledKeys: Set<Key>;
   private ref: RefObject<HTMLElement>;
   private collator: Intl.Collator;
 
-  constructor(collection: Collection<Node<T>>, ref: RefObject<HTMLElement>, collator?: Intl.Collator) {
+  constructor(collection: Collection<Node<T>>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement>, collator?: Intl.Collator) {
     this.collection = collection;
+    this.disabledKeys = disabledKeys;
     this.ref = ref;
     this.collator = collator;
   }
@@ -29,7 +31,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     key = this.collection.getKeyAfter(key);
     while (key) {
       let item = this.collection.getItem(key);
-      if (item.type === 'item' && !item.isDisabled) {
+      if (item.type === 'item' && !this.disabledKeys.has(key)) {
         return key;
       }
 
@@ -41,7 +43,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     key = this.collection.getKeyBefore(key);
     while (key) {
       let item = this.collection.getItem(key);
-      if (item.type === 'item' && !item.isDisabled) {
+      if (item.type === 'item' && !this.disabledKeys.has(key)) {
         return key;
       }
 
@@ -53,7 +55,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     let key = this.collection.getFirstKey();
     while (key) {
       let item = this.collection.getItem(key);
-      if (item.type === 'item' && !item.isDisabled) {
+      if (item.type === 'item' && !this.disabledKeys.has(key)) {
         return key;
       }
 
@@ -65,7 +67,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     let key = this.collection.getLastKey();
     while (key) {
       let item = this.collection.getItem(key);
-      if (item.type === 'item' && !item.isDisabled) {
+      if (item.type === 'item' && !this.disabledKeys.has(key)) {
         return key;
       }
 
