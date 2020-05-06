@@ -1090,9 +1090,8 @@ describe('Table', function () {
       act(() => triggerPress(menuItems[1]));
       expect(menu).not.toBeInTheDocument();
 
-      // TODO this really shouldn't be hidden, but it is in the browser as well
       let dialog = tree.getByRole('alertdialog', {hidden: true});
-      let deleteButton = within(dialog).getByRole('button', {hidden: true}); // TODO: also shouldn't be hidden
+      let deleteButton = within(dialog).getByRole('button', {hidden: true});
 
       act(() => triggerPress(deleteButton));
       expect(dialog).not.toBeInTheDocument();
@@ -1154,8 +1153,6 @@ describe('Table', function () {
       act(() => triggerPress(menuItems[0]));
       expect(menu).not.toBeInTheDocument();
 
-      // TODO: this really shouldn't need hidden true
-      // I've verified that it happens in the browser too
       let dialog = tree.getByRole('dialog', {hidden: true});
       expect(dialog).toBeVisible();
 

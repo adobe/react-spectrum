@@ -205,9 +205,8 @@ export function useStyleProps(props: StyleProps, handlers: StyleHandlers = baseS
     );
   }
 
-  // TODO: not sure if this is the best solution... but AlertDialog seems to be sending in style = {}
   // @ts-ignore
-  if (otherProps.style && Object.keys(otherProps.style).length > 0) {
+  if (otherProps.style) {
     console.warn(
       'The style prop is unsafe and is unsupported in React Spectrum v3. ' +
       'Please use style props with Spectrum variables, or UNSAFE_style if you absolutely must to something custom. ' +

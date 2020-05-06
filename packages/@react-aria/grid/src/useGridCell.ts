@@ -43,7 +43,6 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
 
   // TODO: move into useSelectableItem?
   let {pressProps} = usePress(itemProps);
-  // TODO: interactions has onPress/onPressStart and they will be spread onto a div in TableColumnHeader.ts
   let interactions = mergeProps(itemProps, pressProps);
 
   // Grid cells can have focusable elements inside them. In this case, focus should
