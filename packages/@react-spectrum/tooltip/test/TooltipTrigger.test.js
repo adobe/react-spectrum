@@ -17,7 +17,6 @@ import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {Tooltip, TooltipTrigger} from '../';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 let theme = {
   light: themeLight,
@@ -32,81 +31,6 @@ describe('TooltipTrigger', function () {
     onOpen.mockClear();
     onClose.mockClear();
     cleanup();
-  });
-
-  describe('click related tests', function () {
-
-    it('a click event can open the tooltip', async function () {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <TooltipTrigger type="click">
-            <ActionButton>Trigger</ActionButton>
-            <Tooltip>content</Tooltip>
-          </TooltipTrigger>
-        </Provider>
-      );
-
-      let button = getByRole('button');
-      triggerPress(button);
-
-      let tooltip = getByRole('tooltip');
-
-      await wait(() => {
-        expect(tooltip).toBeInTheDocument();
-      });
-    });
-
-    it('a click event can close the tooltip', async function () {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <TooltipTrigger type="click">
-            <ActionButton>Trigger</ActionButton>
-            <Tooltip>content</Tooltip>
-          </TooltipTrigger>
-        </Provider>
-      );
-
-      let button = getByRole('button');
-      triggerPress(button);
-
-      let tooltip = getByRole('tooltip');
-
-      await wait(() => {
-        expect(tooltip).toBeInTheDocument();
-      });
-
-      triggerPress(button);
-
-      await wait(() => {
-        expect(tooltip).not.toBeInTheDocument();
-      });
-    });
-
-    it('pressing escape should close the tooltip after a click event', async function () {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <TooltipTrigger type="click">
-            <ActionButton>Trigger</ActionButton>
-            <Tooltip>content</Tooltip>
-          </TooltipTrigger>
-        </Provider>
-      );
-
-      let button = getByRole('button');
-      triggerPress(button);
-
-      let tooltip = getByRole('tooltip');
-
-      await wait(() => {
-        expect(tooltip).toBeInTheDocument();
-      });
-
-      fireEvent.keyDown(button, {key: 'Escape'});
-
-      await wait(() => {
-        expect(tooltip).not.toBeInTheDocument();
-      });
-    });
   });
 
   describe('focus related tests', function () {

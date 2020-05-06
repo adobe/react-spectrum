@@ -21,16 +21,16 @@ describe('TooltipManager', () => {
     let tooltip = {open: false, setOpen: setOpenSpy, tooltipManager};
     let triggerId = 'triggerId-1';
 
-    expect(tooltipManager.visibleTooltips).toBeNull();
+    expect(tooltipManager.visibleTooltip).toBeNull();
     expect(tooltipManager.hoverHideTimeout).toBeNull();
     expect(tooltipManager.hoverShowTimeout).toBeNull();
 
     tooltipManager.showTooltipDelayed(tooltip, triggerId);
-    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
+    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 220);
     jest.runAllTimers();
 
     expect(setOpenSpy).toHaveBeenCalledWith(true);
-    expect(tooltipManager.visibleTooltips).toStrictEqual({triggerId, state: tooltip});
+    expect(tooltipManager.visibleTooltip).toStrictEqual({triggerId, state: tooltip});
     expect(tooltipManager.hoverHideTimeout).toBeNull();
     expect(tooltipManager.hoverShowTimeout).toBeNull();
   });
@@ -44,23 +44,23 @@ describe('TooltipManager', () => {
 
     tooltipManager.showTooltipDelayed(tooltip, triggerId);
 
-    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
+    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 220);
     jest.runAllTimers();
 
     expect(setOpenSpy).toHaveBeenCalledWith(true);
-    expect(tooltipManager.visibleTooltips).toStrictEqual({triggerId, state: tooltip});
+    expect(tooltipManager.visibleTooltip).toStrictEqual({triggerId, state: tooltip});
     expect(tooltipManager.hoverHideTimeout).toBeNull();
     expect(tooltipManager.hoverShowTimeout).toBeNull();
 
     tooltipManager.hideTooltipDelayed(tooltip, triggerId);
 
-    expect(tooltipManager.visibleTooltips).toStrictEqual({triggerId, state: tooltip});
+    expect(tooltipManager.visibleTooltip).toStrictEqual({triggerId, state: tooltip});
     expect(tooltipManager.hoverHideTimeout).toBeTruthy();
     expect(tooltipManager.hoverShowTimeout).toBeNull();
-    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
+    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 220);
     jest.runAllTimers();
     expect(setOpenSpy).toHaveBeenCalledWith(false);
-    expect(tooltipManager.visibleTooltips).toBeNull();
+    expect(tooltipManager.visibleTooltip).toBeNull();
     expect(tooltipManager.hoverHideTimeout).toBeNull();
     expect(tooltipManager.hoverShowTimeout).toBeNull();
   });
@@ -73,7 +73,7 @@ describe('TooltipManager', () => {
     let triggerId = 'triggerId-1';
 
     tooltipManager.showTooltipDelayed(tooltip, triggerId);
-    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
+    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 220);
     jest.runAllTimers();
 
     let setOpenSpy2 = jest.fn();
@@ -81,12 +81,12 @@ describe('TooltipManager', () => {
     let triggerId2 = 'triggerId-2';
 
     tooltipManager.showTooltipDelayed(tooltip2, triggerId2);
-    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 200);
+    expect(setTimeout).toHaveBeenCalledWith(expect.any(Function), 220);
     jest.runAllTimers();
 
     expect(setOpenSpy).toHaveBeenLastCalledWith(false);
     expect(setOpenSpy2).toHaveBeenCalledWith(true);
-    expect(tooltipManager.visibleTooltips).toStrictEqual({triggerId: triggerId2, state: tooltip2});
+    expect(tooltipManager.visibleTooltip).toStrictEqual({triggerId: triggerId2, state: tooltip2});
     expect(tooltipManager.hoverHideTimeout).toBeNull();
     expect(tooltipManager.hoverShowTimeout).toBeNull();
   });
@@ -104,14 +104,14 @@ describe('TooltipManager', () => {
     expect(tooltipManager.hoverHideTimeout).toBeNull();
 
     jest.advanceTimersByTime(100);
-    expect(tooltipManager.visibleTooltips).toBeNull();
+    expect(tooltipManager.visibleTooltip).toBeNull();
     expect(tooltipManager.hoverShowTimeout).not.toBeNull();
     expect(tooltipManager.hoverHideTimeout).toBeNull();
 
     tooltipManager.hideTooltip(tooltip);
 
     expect(setOpenSpy).toHaveBeenCalledWith(false);
-    expect(tooltipManager.visibleTooltips).toBeNull();
+    expect(tooltipManager.visibleTooltip).toBeNull();
   });
 
   it('will not show the first delayed tooltip if a second is delay shown before the first shows', () => {
@@ -126,7 +126,7 @@ describe('TooltipManager', () => {
     expect(tooltipManager.hoverHideTimeout).toBeNull();
 
     jest.advanceTimersByTime(100);
-    expect(tooltipManager.visibleTooltips).toBeNull();
+    expect(tooltipManager.visibleTooltip).toBeNull();
     expect(tooltipManager.hoverShowTimeout).not.toBeNull();
     expect(tooltipManager.hoverHideTimeout).toBeNull();
 
@@ -138,13 +138,13 @@ describe('TooltipManager', () => {
 
     expect(tooltipManager.hoverShowTimeout).not.toBeNull();
     expect(tooltipManager.hoverHideTimeout).toBeNull();
-    expect(tooltipManager.visibleTooltips).toBeNull();
+    expect(tooltipManager.visibleTooltip).toBeNull();
 
     // run past first tooltips show timer
     jest.advanceTimersByTime(150);
     // finish all the timers
     jest.runAllTimers();
     expect(setOpenSpy2).toHaveBeenCalledWith(true);
-    expect(tooltipManager.visibleTooltips).toStrictEqual({triggerId: triggerId2, state: tooltip2});
+    expect(tooltipManager.visibleTooltip).toStrictEqual({triggerId: triggerId2, state: tooltip2});
   });
 });
