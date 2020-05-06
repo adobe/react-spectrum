@@ -32,9 +32,9 @@ tables, trees, and grids. These collections can usually be navigated with the ke
 many have some form of selection. Many support loading data asynchronously, updating that data over time,
 virtualized scrolling for performance with large collections, and more.
 
-There are many ways one could design an API for components like this: JSX children, a prop that accepts a
-list of option objects, as a datasource object with getter functions for each item, etc.. Selection, and 
-other states like disabled, could be passed as options to each item, or as a separate top-level prop.
+There are many ways one could design an API for components like this: JSX children, a
+list of option objects, or a datasource object. Selection, and 
+other states like disabled, could be passed in to each item, or as a top-level prop.
 Each of these has various tradeoffs. This page describes how we do it in React Spectrum, and covers some
 of these tradeoffs in detail.
 
@@ -59,7 +59,7 @@ we considered were:
 ## Static collections
 
 React Spectrum implements a JSX-based API for defining collections. This allows an intuitive way to provide
-items, which can contain rich rendering of item contents, and various options as props. Building heirarchical
+items, which can contain rich rendering, and various options as props. Building heirarchical
 collections, e.g. sections, or a tree of items is also very natural in JSX.
 
 A **static collection** is a collection that does not change over time (e.g. hard coded). This is common for
@@ -102,7 +102,7 @@ interface that can be learned once and applied everywhere.
 &lt;<TypeLink links={docs.links} type={docs.exports.Item} />&gt; and 
 &lt;<TypeLink links={docs.links} type={docs.exports.Section} />&gt; only define the data for 
 the items and sections, not the rendering, visual appearance, or behavior. This is up to 
-the parent component (e.g. Menu or ListBox).
+the individual collection component (e.g. Menu or ListBox) to implement.
 
 ## Dynamic collections
 
@@ -152,7 +152,7 @@ let [animals, setAnimals] = useState([
 
 ### Why not array map?
 
-If you're an experienced React developer, you may be wondering why we didn't use `animals.map` in this example.
+You may be wondering why we didn't use `animals.map` in this example.
 In fact, you can do this if you want and it will work, but it will not be as performant.
 
 ```tsx
@@ -178,11 +178,13 @@ has big performance benefits for large collections.
 When you need to update the data to add, remove, or change an item, you can do so using a standard React state update.
 
 **IMPORTANT: all items passed to a collection component must be immutable. Changing a property on an item, or calling 
-`array.push()` or other mutating methods will not work as expected. To make this easier, see the 
-[useListData](useListData.html) hook.**
+`array.push()` or other mutating methods will not work as expected.**
 
-The following example shows how you might append a new item to the list 
-using <TypeLink links={dataDocs.links} type={dataDocs.exports.useListData} />.
+The <TypeLink links={dataDocs.links} type={dataDocs.exports.useListData} /> hook can be used to manage the 
+data and state for a list of items, and update it over time. It will also handle removing items from the selection
+state when they are removed from the list. See the [useListBox docs](useListBox.html) for more details.
+
+The following example shows how you might append a new item to the list.
 
 ```tsx
 import {useListData} from '@react-stately/data';
@@ -243,10 +245,13 @@ let [sections, setSections] = useState([
 
 When updating nested data, be sure that all parent items change accordingly. Items are immutable,
 so don't use mutating methods like push, or replace a property on a parent item. Instead, copy
-the items that changed as needed. You can do this by hand if you like, but it can be challenging.
-To make it easier, you can use the <TypeLink links={dataDocs.links} type={dataDocs.exports.useTreeData} />
-hook. `useTreeData` will also handle automatically removing items from the selection when they are
-removed from the list. See the [useTreeData docs](useTreeData.html) for more details.
+the items that changed as needed.
+
+The <TypeLink links={dataDocs.links} type={dataDocs.exports.useTreeData} /> hook can be used to
+manage data and state for a tree of items. This is similar to `useListData`, but with support for
+heirarchical data. Like `useListData`, `useTreeData` will also handle automatically 
+removing items from the selection when they are removed from the list. See the
+[useTreeData docs](useTreeData.html) for more details.
 
 ```tsx
 import {useTreeData} from '@react-stately/data';

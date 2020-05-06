@@ -72,7 +72,7 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   /**
-   *The currently selected keys in the collection.
+   * The currently selected keys in the collection.
    */
   get selectedKeys(): Set<Key> {
     return this.state.selectedKeys;
