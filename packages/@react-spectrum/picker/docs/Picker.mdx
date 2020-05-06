@@ -17,10 +17,17 @@ import packageData from '../package.json';
 ```jsx import
 import {Flex} from '@react-spectrum/layout';
 import {Picker, Item, Section} from '@react-spectrum/picker';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Cut from '@spectrum-icons/workflow/Cut';
+import Paste from '@spectrum-icons/workflow/Paste';
+import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
+import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
+import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import {Text} from '@react-spectrum/typography';
 ```
 
 ---
-category: Forms
+category: Pickers
 ---
 
 # Picker
@@ -223,7 +230,39 @@ function DynamicExample() {
 ```
 
 ## Complex Items
-TODO
+```tsx example
+<Picker label="Test" >
+  <Section title="Section 1">
+    <Item textValue="Copy">
+      <Copy size="S" />
+      <Text>Copy</Text>
+    </Item>
+    <Item textValue="Cut">
+      <Cut size="S" />
+      <Text>Cut</Text>
+    </Item>
+    <Item textValue="Paste">
+      <Paste size="S" />
+      <Text>Paste</Text>
+    </Item>
+  </Section>
+  <Section title="Section 2">
+    <Item textValue="Puppy">
+      <AlignLeft size="S" />
+      <Text>Puppy</Text>
+      <Text slot="description">Puppy description super long as well geez</Text>
+    </Item>
+    <Item textValue="Doggo with really really really long long long text">
+      <AlignCenter size="S" />
+      <Text>Doggo with really really really long long long text</Text>
+    </Item>
+    <Item textValue="Floof">
+      <AlignRight size="S" />
+      <Text>Floof</Text>
+    </Item>
+  </Section>
+</Picker>
+```
 
 ## Props
 
@@ -234,14 +273,6 @@ TODO
 ### Label Alignment
 ```tsx example
 <Picker label="Choose frequency" labelAlign="end">
-  <Item uniqueKey="rarely">Rarely</Item>
-  <Item uniqueKey="sometimes">Sometimes</Item>
-  <Item uniqueKey="always">Always</Item>
-</Picker>
-```
-### Label Position
-```tsx example
-<Picker label="Choose frequency" labelPosition="side">
   <Item uniqueKey="rarely">Rarely</Item>
   <Item uniqueKey="sometimes">Sometimes</Item>
   <Item uniqueKey="always">Always</Item>
@@ -288,9 +319,30 @@ TODO
 </Flex>
 ```
 ### Align and Direction
+```tsx example
+<Flex flexDirection="column">
+  <Picker label="Choose frequency" align="start">
+    <Item uniqueKey="rarely">Rarely</Item>
+    <Item uniqueKey="sometimes">Sometimes</Item>
+    <Item uniqueKey="always">Always</Item>
+  </Picker>
+
+  <Picker label="Choose animal" direction="top">
+    <Item uniqueKey="Emu">Emu</Item>
+    <Item uniqueKey="Kangaroo">Kangaroo</Item>
+    <Item uniqueKey="Platypus">Platypus</Item>
+  </Picker>
+</Flex>
+```
 
 TODO
 Align
 Direction
 shouldFlip
 Open
+
+
+// TODO add exaple of controlled
+// call out id as key in earlier
+// do the same examples in list box
+// mobile behavior - maybe in an iframe
