@@ -33,7 +33,9 @@
     "@react-spectrum/utils": "^3.0.0-alpha.1",
     "@react-stately/collections": "^3.0.0-alpha.1",
     "@react-stately/grid": "^3.0.0-alpha.1",
-    "@react-types/table": "^3.0.0-alpha.1"
+    "@react-spectrum/progress": "^3.0.0-rc.2",
+    "@react-types/table": "^3.0.0-alpha.1",
+    "@spectrum-icons/ui": "^3.0.0-rc.2"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"

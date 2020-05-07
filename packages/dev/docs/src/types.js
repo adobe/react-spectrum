@@ -199,7 +199,7 @@ function TypeParameter({name, default: defaultType}) {
   );
 }
 
-function FunctionType({name, parameters, return: returnType, typeParameters}) {  
+function FunctionType({name, parameters, return: returnType, typeParameters, rest}) {  
   return (
     <>
       {name && <span className="token hljs-function">{name}</span>}
@@ -213,9 +213,10 @@ function FunctionType({name, parameters, return: returnType, typeParameters}) {
   );
 }
 
-function Parameter({name, value, default: defaultValue}) {
+function Parameter({name, value, default: defaultValue, rest}) {
   return (
     <>
+      {rest && <span className="token punctuation">...</span>}
       <span className="token hljs-attr">{name}</span>
       {value &&
         <>
@@ -276,56 +277,97 @@ export function LinkType({id}) {
   return <a href={'#' + id} data-link={id} className={`${styles.colorLink} token hljs-name`}>{value.name}</a>;
 }
 
-function renderHTMLfromMarkdown(description) {
+export function renderHTMLfromMarkdown(description) {
   if (description) {
-    return <Markdown>{description}</Markdown>;
+    return <Markdown options={{forceInline: true}}>{description}</Markdown>;
   } else {
     return '';
   }
 }
 
-export function InterfaceType({description, properties, showRequired, showDefault}) {
-  return (<>
-    <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
-      <thead>
-        <tr>
-          <td className={tableStyles['spectrum-Table-headCell']}>Name</td>
-          <td className={tableStyles['spectrum-Table-headCell']}>Type</td>
-          {showDefault && <td className={tableStyles['spectrum-Table-headCell']}>Default</td>}
-          <td className={tableStyles['spectrum-Table-headCell']}>Description</td>
-        </tr>
-      </thead>
-      <tbody className={tableStyles['spectrum-Table-body']}>
-        {Object.values(properties).map((prop, index) => (
-          <tr key={index} className={tableStyles['spectrum-Table-row']}>
-            <td className={tableStyles['spectrum-Table-cell']} data-column="Name">
-              <code className={`${typographyStyles['spectrum-Code4']}`}>
-                <span className="token hljs-attr">{prop.name}</span>
-              </code>
-              {!prop.optional && showRequired
-                ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} alt="Required" />
-                : null
-              }
-            </td>
-            <td className={tableStyles['spectrum-Table-cell']} data-column="Type">
-              <code className={typographyStyles['spectrum-Code4']}>
-                <Type type={prop.value} />
-              </code>
-            </td>
-            {showDefault &&
-              <td className={`${tableStyles['spectrum-Table-cell']} ${!prop.default ? styles.noDefault : ''}`} data-column="Default">
-                {prop.default
-                  ? <Lowlight language="js" value={prop.default} inline className={typographyStyles['spectrum-Code4']} />
-                  : '—'
+export function InterfaceType({description, properties: props, showRequired, showDefault}) {
+  let properties = Object.values(props).filter(prop => prop.type === 'property');
+  let methods = Object.values(props).filter(prop => prop.type === 'method');
+
+  return (
+    <>
+      {methods.length > 0 && properties.length > 0 && 
+        <h3 className={typographyStyles['spectrum-Heading4']}>Properties</h3>
+      }
+      {properties.length > 0 &&
+        <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
+          <thead>
+            <tr>
+              <td className={tableStyles['spectrum-Table-headCell']}>Name</td>
+              <td className={tableStyles['spectrum-Table-headCell']}>Type</td>
+              {showDefault && <td className={tableStyles['spectrum-Table-headCell']}>Default</td>}
+              <td className={tableStyles['spectrum-Table-headCell']}>Description</td>
+            </tr>
+          </thead>
+          <tbody className={tableStyles['spectrum-Table-body']}>
+            {properties.map((prop, index) => (
+              <tr key={index} className={tableStyles['spectrum-Table-row']}>
+                <td className={tableStyles['spectrum-Table-cell']} data-column="Name">
+                  <code className={`${typographyStyles['spectrum-Code4']}`}>
+                    <span className="token hljs-attr">{prop.name}</span>
+                  </code>
+                  {!prop.optional && showRequired
+                    ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} alt="Required" />
+                    : null
+                  }
+                </td>
+                <td className={tableStyles['spectrum-Table-cell']} data-column="Type">
+                  <code className={typographyStyles['spectrum-Code4']}>
+                    <Type type={prop.value} />
+                  </code>
+                </td>
+                {showDefault &&
+                  <td className={`${tableStyles['spectrum-Table-cell']} ${!prop.default ? styles.noDefault : ''}`} data-column="Default">
+                    {prop.default
+                      ? <Lowlight language="js" value={prop.default} inline className={typographyStyles['spectrum-Code4']} />
+                      : '—'
+                    }
+                  </td>
                 }
-              </td>
-            }
-            <td className={tableStyles['spectrum-Table-cell']}>{renderHTMLfromMarkdown(prop.description)}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </>);
+                <td className={tableStyles['spectrum-Table-cell']}>{renderHTMLfromMarkdown(prop.description)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      }
+      {methods.length > 0 && properties.length > 0 && 
+        <h3 className={typographyStyles['spectrum-Heading4']}>Methods</h3>
+      }
+      {methods.length > 0 &&
+        <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable} ${styles.methodTable}`}>
+          <thead>
+            <tr>
+              <td className={tableStyles['spectrum-Table-headCell']}>Method</td>
+              <td className={tableStyles['spectrum-Table-headCell']}>Description</td>
+            </tr>
+          </thead>
+          <tbody className={tableStyles['spectrum-Table-body']}>
+            {methods.map((prop, index) => (
+              <tr key={index} className={tableStyles['spectrum-Table-row']}>
+                <td className={tableStyles['spectrum-Table-cell']} data-column="Name">
+                  <code className={`${typographyStyles['spectrum-Code4']}`}>
+                    <span className="token hljs-function">{prop.name}</span>
+                    <TypeParameters typeParameters={prop.value.typeParameters} />
+                    <span className="token punctuation">{prop.value.parameters.length > 2 ? '(\n  ' : '('}</span>
+                    <JoinList elements={prop.value.parameters} joiner={prop.value.parameters.length > 2 ? ',\n  ' : ', '} />
+                    <span className="token punctuation">{prop.value.parameters.length > 2 ? '\n)' : ')'}</span>
+                    <span className="token punctuation">{': '}</span>
+                    <Type type={prop.value.return} />
+                  </code>
+                </td>
+                <td className={tableStyles['spectrum-Table-cell']}>{renderHTMLfromMarkdown(prop.description)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      }
+    </>
+  );
 }
 
 function ObjectType({properties, exact}) {
@@ -347,7 +389,7 @@ function ObjectType({properties, exact}) {
         let value = property.value;
 
         // Special handling for methods
-        if (value && value.type === 'function' && !optional && token === 'property') {
+        if (value && value.type === 'function' && !optional && token === 'method') {
           return (
             <div key={property.key} style={{paddingLeft: '1.5em'}}>
               <span className="token hljs-attr">{k}</span>

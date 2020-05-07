@@ -118,11 +118,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky;
   }
 
-  shouldInvalidate(newRect: Rect, oldRect: Rect): boolean {
-    // We only care if the width changes.
-    return newRect.width !== oldRect.width;
-  }
-
   validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
     // Invalidate cache if the size of the collection changed.
     // In this case, we need to recalculate the entire layout.
@@ -130,6 +125,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       this.cache = new WeakMap();
     }
 
+    this.collection = this.collectionManager.collection;
     this.rootNodes = this.buildCollection();
 
     this.lastWidth = this.collectionManager.visibleRect.width;
