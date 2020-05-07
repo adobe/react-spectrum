@@ -21,7 +21,7 @@ import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import React, {RefObject, useLayoutEffect, useRef, useState} from 'react';
+import React, {ReactElement, RefObject, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
@@ -58,9 +58,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
   let listboxRef = useRef();
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
-
   let collator = useCollator({sensitivity: 'base'});
-
   let state = useComboBoxState({...props, collator});
   let layout = useListBoxLayout(state);
   let {triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
@@ -181,8 +179,6 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         }
         style={{width: '100%'}}>
         <TextFieldBase
-          // Perhaps should filterDOMProps(DOMEventPropNames)?
-          // Think about whether or not we want to do send all otherProps to Textfield or be more discerning?
           {...otherProps}
           labelProps={labelProps}
           inputProps={inputProps}
@@ -209,7 +205,6 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
               'spectrum-FieldButton'
             )
           }
-          // TODO: Disable if readOnly? Check designs
           isDisabled={isDisabled || isReadOnly}
           isQuiet={isQuiet}
           validationState={validationState}>
@@ -251,6 +246,5 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   return textField;
 }
 
-// TODO: Probably need to cast this
-const _ComboBox = React.forwardRef(ComboBox);
+const _ComboBox = React.forwardRef(ComboBox) as <T>(props: SpectrumComboBoxProps<T> & {ref?: RefObject<TextFieldRef>}) => ReactElement;
 export {_ComboBox as ComboBox};
