@@ -27,13 +27,13 @@ export interface Node<T> {
   value: T,
   /** The level of depth this node is at in the heirarchy. */
   level: number,
-  /** Whether the node has children (whether loaded or not). */
+  /** Whether this item has children, even if not loaded yet. */
   hasChildNodes: boolean,
   /** The loaded children of this node. */
   childNodes: Iterable<Node<T>>,
   /** The rendered contents of this node (e.g. JSX). */
   rendered: ReactNode,
-  /** A string value for this node, for accessibility features like typeahead. */
+  /** A string value for this node, used for features like typeahead. */
   textValue: string,
   /** An accessibility label for this node. */
   'aria-label'?: string,
