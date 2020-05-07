@@ -17,12 +17,11 @@ import packageData from '../package.json';
 ```jsx import
 import {Flex} from '@react-spectrum/layout';
 import {Picker, Item, Section} from '@react-spectrum/picker';
-import Copy from '@spectrum-icons/workflow/Copy';
-import Cut from '@spectrum-icons/workflow/Cut';
-import Paste from '@spectrum-icons/workflow/Paste';
-import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
+import Book from '@spectrum-icons/workflow/Book';
+import BulkEditUsers from '@spectrum-icons/workflow/BulkEditUsers';
+import Draw from '@spectrum-icons/workflow/Draw';
+import ColorPalette from '@spectrum-icons/workflow/ColorPalette';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
-import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import {Text} from '@react-spectrum/typography';
 ```
 
@@ -36,11 +35,10 @@ category: Pickers
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Picker']}
+  componentNames={['Picker', 'Item', 'Section']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/dropdown/'}
   ]} />
-// TODO: Figure out how to ignore multiple import statements so they can be shown in the examples
 
 ## Example
 ```tsx example
@@ -56,26 +54,26 @@ Picker follows the collections API, accepting both static and dynamic forms of c
 
 The dynamic method (shown below) would be better suited to use if the options came from a data object such as values returned from an API call. Providing the data in this way allows for Picker to automatically cache the rendering of each item, which dramatically improves performance.
 
-As seen below, an iterable list of options is passed to the Picker using the `items` prop. The value to be passed to the `onSelectionChange` handler is set via the `uniqueKey` prop. See the <a href="#events" title="Events">events</a> section for more detail on selection.s
+As seen below, an iterable list of options is passed to the Picker using the `items` prop. The value to be passed to the `onSelectionChange` handler can be set via the `uniqueKey` prop. Alternatively, if the options dataset contains an `id` key, as shown in the example below, this can be used instead. See the <a href="#events" title="Events">events</a> section for more detail on selection.
 
 ```tsx example
 function Example() {
   let options = [
-    {name: 'Aardvark'},
-    {name: 'Cat'},
-    {name: 'Dog'},
-    {name: 'Kangaroo'},
-    {name: 'Koala'},
-    {name: 'Penguin'},
-    {name: 'Snake'},
-    {name: 'Turtle'},
-    {name: 'Wombat'}
+    {id: 1, name: 'Aardvark'},
+    {id: 2, name: 'Cat'},
+    {id: 3, name: 'Dog'},
+    {id: 4, name: 'Kangaroo'},
+    {id: 5, name: 'Koala'},
+    {id: 6, name: 'Penguin'},
+    {id: 7, name: 'Snake'},
+    {id: 8, name: 'Turtle'},
+    {id: 9, name: 'Wombat'}
   ];
 
   return (
     // Dynamic Items
     <Picker label="Pick an animal" items={options} onSelectionChange={selected => console.log(selected)}>
-      {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+      {item => <Item>{item.name}</Item>}
     </Picker>
   );
 }
@@ -119,12 +117,22 @@ function Example() {
     {name: 'Bison'},
     {name: 'Skunk'}
   ];
+  let [animal, setAnimal] = React.useState("Bison");
+
 
   return (
-    <Picker
-      label="Pick an animal" items={options} defaultSelectedKey="Bison">
-      {item => <Item uniqueKey={item.name}>{item.name}</Item>}
-    </Picker>
+    <>
+      <Picker
+        label="Pick an animal (uncontrolled)" items={options} defaultSelectedKey="Bison" marginEnd="20px">
+        {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+      </Picker>
+
+
+      <Picker
+        label="Pick an animal (controled)" items={options} selectedKey={animal} onSelectionChange={selected => setAnimal(selected)}>
+        {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+      </Picker>
+    </>
   );
 }
 ```
@@ -180,9 +188,9 @@ function Example() {
 
 ## Events
 Picker supports selection via mouse, keyboard, and touch. You can handle all of these via the `onSelectionChange`
-prop. Picker will pass the selected `uniqueKey` to the `onSelectionChange` callback.
+prop. Picker will pass the selected `uniqueKey` to the `onSelectionChange` handler.
 
-The following example uses an `onSelectionChange` callback to update the selection stored in React state.
+The following example uses an `onSelectionChange` handler to update the selection stored in React state.
 
 ```tsx example
 function StaticExample() {
@@ -230,35 +238,25 @@ function DynamicExample() {
 ```
 
 ## Complex Items
+Items within Picker also allow for additional content used to better communicate options. Icons, descriptions can be added to the `children` of `Item` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+
 ```tsx example
-<Picker label="Test" >
-  <Section title="Section 1">
-    <Item textValue="Copy">
-      <Copy size="S" />
-      <Text>Copy</Text>
+<Picker label="Options" >
+  <Section title="Permission">
+    <Item textValue="Read">
+      <Book size="S" />
+      <Text>Read</Text>
+      <Text slot="description">Read Only</Text>
     </Item>
-    <Item textValue="Cut">
-      <Cut size="S" />
-      <Text>Cut</Text>
+    <Item textValue="Write">
+      <Draw size="S" />
+      <Text>Write</Text>
+      <Text slot="description">Read and Write Only</Text>
     </Item>
-    <Item textValue="Paste">
-      <Paste size="S" />
-      <Text>Paste</Text>
-    </Item>
-  </Section>
-  <Section title="Section 2">
-    <Item textValue="Puppy">
-      <AlignLeft size="S" />
-      <Text>Puppy</Text>
-      <Text slot="description">Puppy description super long as well geez</Text>
-    </Item>
-    <Item textValue="Doggo with really really really long long long text">
-      <AlignCenter size="S" />
-      <Text>Doggo with really really really long long long text</Text>
-    </Item>
-    <Item textValue="Floof">
-      <AlignRight size="S" />
-      <Text>Floof</Text>
+    <Item textValue="Admin">
+      <BulkEditUsers size="S" />
+      <Text>Admin</Text>
+      <Text slot="description">Full access</Text>
     </Item>
   </Section>
 </Picker>
@@ -302,7 +300,7 @@ function DynamicExample() {
   <Item uniqueKey="always">Always</Item>
 </Picker>
 ```
-### Custom Widths
+### Custom widths
 ```tsx example
 <Flex flexDirection="column">
   <Picker label="Choose frequency" width="size-6000">
@@ -318,10 +316,10 @@ function DynamicExample() {
   </Picker>
 </Flex>
 ```
-### Align and Direction
+### Align and direction
 ```tsx example
 <Flex flexDirection="column">
-  <Picker label="Choose frequency" align="start">
+  <Picker label="Choose frequency" align="end" menuWidth="size-3000">
     <Item uniqueKey="rarely">Rarely</Item>
     <Item uniqueKey="sometimes">Sometimes</Item>
     <Item uniqueKey="always">Always</Item>
@@ -334,15 +332,11 @@ function DynamicExample() {
   </Picker>
 </Flex>
 ```
-
-TODO
-Align
-Direction
-shouldFlip
-Open
-
-
-// TODO add exaple of controlled
-// call out id as key in earlier
-// do the same examples in list box
-// mobile behavior - maybe in an iframe
+### Menu state
+```tsx example
+<Picker label="Choose frequency" defaultOpen>
+  <Item uniqueKey="rarely">Rarely</Item>
+  <Item uniqueKey="sometimes">Sometimes</Item>
+  <Item uniqueKey="always">Always</Item>
+</Picker>
+```
