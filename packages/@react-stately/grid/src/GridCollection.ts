@@ -106,10 +106,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
         node.prevKey = null;
       }
 
-      if (node.type === 'item') {
-        node.index = index++;
-      }
-
+      node.index = index++;
       visit(node);
       if (node.type !== 'column') {
         bodyKeys.add(node.key);

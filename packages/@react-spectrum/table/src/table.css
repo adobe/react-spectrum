@@ -28,3 +28,11 @@
 .react-spectrum-Table-cell--alignEnd {
   justify-content: flex-end;
 }
+
+.react-spectrum-Table-centeredWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}

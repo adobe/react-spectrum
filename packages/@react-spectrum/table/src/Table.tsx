@@ -477,17 +477,14 @@ function TableRowHeader({cell}) {
 function CenteredWrapper({children}) {
   let state = useTableContext();
   return (
-    <Flex 
-      role="row" 
-      aria-colspan={state.collection.columns.length}
-      alignItems="center"
-      justifyContent="center"
-      width="100%"
-      height="100%">
-      <div role="rowheader">
+    <div 
+      role="row"
+      aria-rowindex={state.collection.headerRows.length + state.collection.size + 1}
+      className={classNames(stylesOverrides, 'react-spectrum-Table-centeredWrapper')}>
+      <div role="rowheader" aria-colspan={state.collection.columns.length}>
         {children}
       </div>
-    </Flex>
+    </div>
   );
 }
 

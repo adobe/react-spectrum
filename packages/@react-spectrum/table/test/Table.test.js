@@ -107,6 +107,10 @@ describe('Table', function () {
     expect(headers[2]).toHaveAttribute('aria-colindex', '3');
     expect(headers[3]).toHaveAttribute('aria-colindex', '4');
 
+    for (let header of headers) {
+      expect(header).not.toHaveAttribute('aria-sort');
+    }
+
     let checkbox = within(headers[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select All');
 
@@ -1169,6 +1173,388 @@ describe('Table', function () {
       let rowHeaders = within(rows[2]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Jessica');
       expect(rowHeaders[1]).toHaveTextContent('Jones');
+    });
+  });
+
+  describe('async loading', function () {
+    let defaultTable = (
+      <Table>
+        <TableHeader>
+          <Column uniqueKey="foo">Foo</Column>
+          <Column uniqueKey="bar">Bar</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+          </Row>
+          <Row>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+
+    it('should display a spinner when loading', function () {
+      let tree = render(
+        <Table>
+          <TableHeader>
+            <Column uniqueKey="foo">Foo</Column>
+            <Column uniqueKey="bar">Bar</Column>
+          </TableHeader>
+          <TableBody isLoading>
+            {[]}
+          </TableBody>
+        </Table>
+      );
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
+
+      let cell = within(rows[1]).getByRole('rowheader');
+      expect(cell).toHaveAttribute('aria-colspan', '3');
+
+      let spinner = within(cell).getByRole('progressbar');
+      expect(spinner).toBeVisible();
+      expect(spinner).toHaveAttribute('aria-label', 'Loading...');
+      expect(spinner).not.toHaveAttribute('aria-valuenow');
+
+      tree.rerender(defaultTable);
+      act(() => jest.runAllTimers());
+
+      rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(spinner).not.toBeInTheDocument();
+    });
+
+    it('should display a spinner at the bottom when loading more', function () {
+      let tree = render(
+        <Table>
+          <TableHeader>
+            <Column uniqueKey="foo">Foo</Column>
+            <Column uniqueKey="bar">Bar</Column>
+          </TableHeader>
+          <TableBody isLoading>
+            <Row>
+              <Cell>Foo 1</Cell>
+              <Cell>Bar 1</Cell>
+            </Row>
+            <Row>
+              <Cell>Foo 2</Cell>
+              <Cell>Bar 2</Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      );
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(4);
+      expect(rows[3]).toHaveAttribute('aria-rowindex', '4');
+
+      let cell = within(rows[3]).getByRole('rowheader');
+      expect(cell).toHaveAttribute('aria-colspan', '3');
+
+      let spinner = within(cell).getByRole('progressbar');
+      expect(spinner).toBeVisible();
+      expect(spinner).toHaveAttribute('aria-label', 'Loading more...');
+      expect(spinner).not.toHaveAttribute('aria-valuenow');
+
+      tree.rerender(defaultTable);
+      act(() => jest.runAllTimers());
+
+      rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(spinner).not.toBeInTheDocument();
+    });
+
+    it('should fire onLoadMore when scrolling near the bottom', function () {
+      let items = [];
+      for (let i = 1; i <= 100; i++) {
+        items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
+      }
+
+      let onLoadMore = jest.fn();
+      let tree = render(
+        <Table>
+          <TableHeader>
+            <Column uniqueKey="foo">Foo</Column>
+            <Column uniqueKey="bar">Bar</Column>
+          </TableHeader>
+          <TableBody items={items} onLoadMore={onLoadMore}>
+            {row => 
+              <Row>
+                {key => <Cell>row[key]</Cell>}
+              </Row>
+            }
+          </TableBody>
+        </Table>
+      );
+
+      let table = tree.getByRole('grid');
+      let body = tree.getAllByRole('rowgroup')[1];
+      let scrollView = body.parentNode.parentNode;
+
+      let rows = within(body).getAllByRole('row');
+      expect(rows).toHaveLength(20); // each row is 50px tall. table is 1000px tall. 20 rows fit.
+
+      scrollView.scrollTop = 250;
+      fireEvent.scroll(scrollView);
+
+      scrollView.scrollTop = 1500;
+      fireEvent.scroll(scrollView);
+
+      scrollView.scrollTop = 3000;
+      fireEvent.scroll(scrollView);
+
+      scrollView.scrollTop = 3500;
+      fireEvent.scroll(scrollView);
+
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+
+    it('should display an empty state when there are no items', function () {
+      let tree = render(
+        <Table renderEmptyState={() => <h3>No results</h3>}>
+          <TableHeader>
+            <Column uniqueKey="foo">Foo</Column>
+            <Column uniqueKey="bar">Bar</Column>
+          </TableHeader>
+          <TableBody>
+            {[]}
+          </TableBody>
+        </Table>
+      );
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
+
+      let cell = within(rows[1]).getByRole('rowheader');
+      expect(cell).toHaveAttribute('aria-colspan', '3');
+
+      let heading = within(cell).getByRole('heading');
+      expect(heading).toBeVisible();
+      expect(heading).toHaveTextContent('No results');
+
+      tree.rerender(defaultTable);
+      act(() => jest.runAllTimers());
+
+      rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(heading).not.toBeInTheDocument();
+    });
+  });
+
+  describe('sorting', function() {
+    it('should set aria-sort="none" on sortable column headers', function () {
+      let tree = render(
+        <Table selectionMode="none">
+          <TableHeader>
+            <Column uniqueKey="foo" allowsSorting>Foo</Column>
+            <Column uniqueKey="bar" allowsSorting>Bar</Column>
+            <Column uniqueKey="baz">Baz</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Foo 1</Cell>
+              <Cell>Bar 1</Cell>
+              <Cell>Baz 1</Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      );
+
+      let table = tree.getByRole('grid');
+      let columnheaders = within(table).getAllByRole('columnheader');
+      expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+    });
+
+    it('should set aria-sort="ascending" on sorted column header', function () {
+      let tree = render(
+        <Table selectionMode="none" sortDescriptor={{column: 'bar', direction: 'ascending'}}>
+          <TableHeader>
+            <Column uniqueKey="foo" allowsSorting>Foo</Column>
+            <Column uniqueKey="bar" allowsSorting>Bar</Column>
+            <Column uniqueKey="baz">Baz</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Foo 1</Cell>
+              <Cell>Bar 1</Cell>
+              <Cell>Baz 1</Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      );
+
+      let table = tree.getByRole('grid');
+      let columnheaders = within(table).getAllByRole('columnheader');
+      expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[1]).toHaveAttribute('aria-sort', 'ascending');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+    });
+
+    it('should set aria-sort="descending" on sorted column header', function () {
+      let tree = render(
+        <Table selectionMode="none" sortDescriptor={{column: 'bar', direction: 'descending'}}>
+          <TableHeader>
+            <Column uniqueKey="foo" allowsSorting>Foo</Column>
+            <Column uniqueKey="bar" allowsSorting>Bar</Column>
+            <Column uniqueKey="baz">Baz</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Foo 1</Cell>
+              <Cell>Bar 1</Cell>
+              <Cell>Baz 1</Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      );
+
+      let table = tree.getByRole('grid');
+      let columnheaders = within(table).getAllByRole('columnheader');
+      expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[1]).toHaveAttribute('aria-sort', 'descending');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+    });
+
+    it('should fire onSortChange when there is no existing sortDescriptor', function () {
+      let onSortChange = jest.fn();
+      let tree = render(
+        <Table selectionMode="none" onSortChange={onSortChange}>
+          <TableHeader>
+            <Column uniqueKey="foo" allowsSorting>Foo</Column>
+            <Column uniqueKey="bar" allowsSorting>Bar</Column>
+            <Column uniqueKey="baz">Baz</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Foo 1</Cell>
+              <Cell>Bar 1</Cell>
+              <Cell>Baz 1</Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      );
+
+      let table = tree.getByRole('grid');
+      let columnheaders = within(table).getAllByRole('columnheader');
+      expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+
+      act(() => triggerPress(columnheaders[0]));
+
+      expect(onSortChange).toHaveBeenCalledTimes(1);
+      expect(onSortChange).toHaveBeenCalledWith({column: 'foo', direction: 'ascending'});
+    });
+
+    it('should toggle the sort direction from ascending to descending', function () {
+      let onSortChange = jest.fn();
+      let tree = render(
+        <Table selectionMode="none" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
+          <TableHeader>
+            <Column uniqueKey="foo" allowsSorting>Foo</Column>
+            <Column uniqueKey="bar" allowsSorting>Bar</Column>
+            <Column uniqueKey="baz">Baz</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Foo 1</Cell>
+              <Cell>Bar 1</Cell>
+              <Cell>Baz 1</Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      );
+
+      let table = tree.getByRole('grid');
+      let columnheaders = within(table).getAllByRole('columnheader');
+      expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-sort', 'ascending');
+      expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+
+      act(() => triggerPress(columnheaders[0]));
+
+      expect(onSortChange).toHaveBeenCalledTimes(1);
+      expect(onSortChange).toHaveBeenCalledWith({column: 'foo', direction: 'descending'});
+    });
+
+    it('should toggle the sort direction from descending to ascending', function () {
+      let onSortChange = jest.fn();
+      let tree = render(
+        <Table selectionMode="none" sortDescriptor={{column: 'foo', direction: 'descending'}} onSortChange={onSortChange}>
+          <TableHeader>
+            <Column uniqueKey="foo" allowsSorting>Foo</Column>
+            <Column uniqueKey="bar" allowsSorting>Bar</Column>
+            <Column uniqueKey="baz">Baz</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Foo 1</Cell>
+              <Cell>Bar 1</Cell>
+              <Cell>Baz 1</Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      );
+
+      let table = tree.getByRole('grid');
+      let columnheaders = within(table).getAllByRole('columnheader');
+      expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-sort', 'descending');
+      expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+
+      act(() => triggerPress(columnheaders[0]));
+
+      expect(onSortChange).toHaveBeenCalledTimes(1);
+      expect(onSortChange).toHaveBeenCalledWith({column: 'foo', direction: 'ascending'});
+    });
+
+    it('should trigger sorting on a different column', function () {
+      let onSortChange = jest.fn();
+      let tree = render(
+        <Table selectionMode="none" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
+          <TableHeader>
+            <Column uniqueKey="foo" allowsSorting>Foo</Column>
+            <Column uniqueKey="bar" allowsSorting>Bar</Column>
+            <Column uniqueKey="baz">Baz</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Foo 1</Cell>
+              <Cell>Bar 1</Cell>
+              <Cell>Baz 1</Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      );
+
+      let table = tree.getByRole('grid');
+      let columnheaders = within(table).getAllByRole('columnheader');
+      expect(columnheaders).toHaveLength(3);
+      expect(columnheaders[0]).toHaveAttribute('aria-sort', 'ascending');
+      expect(columnheaders[1]).toHaveAttribute('aria-sort', 'none');
+      expect(columnheaders[2]).not.toHaveAttribute('aria-sort');
+
+      act(() => triggerPress(columnheaders[1]));
+
+      expect(onSortChange).toHaveBeenCalledTimes(1);
+      expect(onSortChange).toHaveBeenCalledWith({column: 'bar', direction: 'ascending'});
     });
   });
 });
