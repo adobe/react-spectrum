@@ -12,7 +12,7 @@
 
 import {chain} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
-import {FocusEvent, HTMLAttributes, RefObject} from 'react';
+import {FocusEvent, HTMLAttributes, RefObject, useEffect} from 'react';
 import {getItemId, listIds} from '@react-aria/listbox';
 import {ListLayout} from '@react-stately/collections';
 import {PressProps} from '@react-aria/interactions';
@@ -177,6 +177,14 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
     }
   };
+
+  // Focus first item if filtered collection no longer contains original focused item
+  useEffect(() => {
+    // Only set a focused key if one existed previously, don't want to focus something by default if customValue = true
+    if (state.selectionManager.focusedKey && !state.collection.getItem(state.selectionManager.focusedKey)) {
+      state.selectionManager.setFocusedKey(layout.getFirstKey());
+    }
+  }, [state.selectionManager, state.collection, layout]);
 
   return {
     labelProps,
