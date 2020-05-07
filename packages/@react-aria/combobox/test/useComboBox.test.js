@@ -46,19 +46,13 @@ describe('useComboBox', function () {
     expect(inputProps.id).toBeTruthy();
     expect(inputProps['aria-labelledby']).toBe(labelProps.id);
     expect(inputProps.role).toBe('combobox');
-
-    // TODO: This should be list right?
-    expect(inputProps['aria-autocomplete']).toBe('both');
+    expect(inputProps['aria-autocomplete']).toBe('list');
     expect(inputProps['aria-controls']).toBeFalsy();
-
     expect(listBoxProps.id).toBeTruthy();
     expect(listBoxProps['aria-labelledby']).toBe(triggerProps.id);
     expect(triggerProps.id).toBeTruthy();
     expect(triggerProps.tabIndex).toBe(-1);
     expect(triggerProps['aria-haspopup']).toBeTruthy();
-
-
-    // update triggerProps to that
   });
 
 

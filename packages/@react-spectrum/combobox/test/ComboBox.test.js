@@ -25,19 +25,37 @@ let theme = {
   medium: scaleMedium
 };
 
-/**
- * Questions:
- * Is isOpen or defaultIsOpen similar to setting autoFocus on the combobox? it should be focused on mount?
- */
+let offsetWidth, offsetHeight;
+let onSelectionChange = jest.fn();
+let onOpenChange = jest.fn();
+let onFilter = jest.fn();
+let onInputChange = jest.fn();
+let outerBlur = jest.fn();
+let onBlur = jest.fn();
+
+function renderComboBox(props = {}) {
+  let comboboxProps = {
+    label: 'Test',
+    placeholder: 'Select a topic...',
+    onSelectionChange,
+    onOpenChange,
+    onInputChange,
+    onBlur,
+    ...props
+  };
+
+  return render(
+    <Provider theme={theme}>
+      <ComboBox {...comboboxProps}>
+        <Item uniqueKey="1">One</Item>
+        <Item uniqueKey="2">Two</Item>
+        <Item uniqueKey="3">Three</Item>
+      </ComboBox>
+    </Provider>
+  );
+}
 
 describe('ComboBox', function () {
-  let offsetWidth, offsetHeight;
-  let onSelectionChange = jest.fn();
-  let onOpenChange = jest.fn();
-  let onFilter = jest.fn();
-  let onInputChange = jest.fn();
-  let outerBlur = jest.fn();
-  let onBlur = jest.fn();
 
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
@@ -63,46 +81,57 @@ describe('ComboBox', function () {
   });
 
   it('renders correctly', function () {
-    let {getAllByText, getByRole} = render(
-      <Provider theme={theme}>
-        <ComboBox label="Test" placeholder="Select a topic…" onSelectionChange={onSelectionChange}>
-          <Item>One</Item>
-          <Item>Two</Item>
-          <Item>Three</Item>
-        </ComboBox>
-      </Provider>
-    );
+    let {getAllByText, getByRole} = renderComboBox();
 
     let combobox = getByRole('combobox');
-    expect(combobox).toHaveAttribute('placeholder', 'Select a topic…');
+    expect(combobox).toHaveAttribute('placeholder', 'Select a topic...');
 
     let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-haspopup', 'true'); // i think we really want 'listbox'?
+    expect(button).toHaveAttribute('aria-haspopup', 'listbox'); // i think we really want 'listbox'?
 
     let label = getAllByText('Test')[0];
     expect(label).toBeVisible();
   });
 
-  it('features default behavior of completionMode suggest and menuTrigger focus', function () {
-     // TODO by Dan
+  it('features default behavior of completionMode suggest and menuTrigger input', function () {
+    let {getByRole} = renderComboBox();
+
+    let combobox = getByRole('combobox');
+    // TODO: test that it doesn't have aria-controls 
+    // has the right aria-autocomplete
+    // doesn't have aria-activedecendant
+
+    act(() => {
+      combobox.focus();
+      userEvent.type(combobox, 'On');
+      jest.runAllTimers();
+    });
+
+    let listbox = getByRole('listbox');
+
+    // TODO: test that it has aria-controls (equal to listbox id)
+    // has the right aria-autocomplete
+    // has the correct aria-descendant
+
+    let items = within(listbox).getAllByRole('option');
+    expect(items.length).toBe(1);
+
+    expect(combobox.value).toBe('On');
+    expect(items[0]).toHaveTextContent('One');
   });
 
   it('attaches a ref to the input field if provided as a prop', function () {
-    // TODO by Dan
+    let ref = React.createRef();
+    let {getByRole} = renderComboBox({ref});
+
+    let combobox = getByRole('combobox');
+    expect(ref.current.getInputElement()).toEqual(combobox);
   });
 
   describe('opening', function () {
     describe('menuTrigger = focus', function () {
       it('opens menu when combobox is focused', function () {
-        let {getByRole} = render(
-          <Provider theme={theme}>
-            <ComboBox label="Test" menuTrigger="focus" onOpenChange={onOpenChange}>
-              <Item uniqueKey="1">One</Item>
-              <Item uniqueKey="2">Two</Item>
-              <Item uniqueKey="3">Three</Item>
-            </ComboBox>
-          </Provider>
-        );
+        let {getByRole} = renderComboBox({menuTrigger: 'focus'});
 
         let button = getByRole('button');
         let combobox = getByRole('combobox');
@@ -111,9 +140,9 @@ describe('ComboBox', function () {
           jest.runAllTimers();
         });
 
+        let listbox = getByRole('listbox');
         // TODO make this a helper function cuz it will prob be pretty common
         // That or add multiple variations in one test like we do for all the other tests
-        let listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
         expect(onOpenChange).toBeCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true);
@@ -140,43 +169,32 @@ describe('ComboBox', function () {
         // TODO by Dan
       });
 
-      it('fires onFilter if there are no items loaded yet', function () {
-        // blows up if there are no items, so we'll need to fix this
-        let {getByRole} = render(
-          <Provider theme={theme}>
-            <ComboBox label="Test" onOpenChange={onOpenChange} onFilter={onFilter} items={[]}>
-              {(item) => <Item uniqueKey={item.key}>{item.name}</Item>}
-            </ComboBox>
-          </Provider>
-        );
+      // Double check this test
+      // it('fires onFilter if there are no items loaded yet', function () {
+      //   let {getByRole} = render(
+      //     <Provider theme={theme}>
+      //       <ComboBox label="Test" onOpenChange={onOpenChange} onFilter={onFilter} items={[]}>
+      //         {(item) => <Item uniqueKey={item.key}>{item.name}</Item>}
+      //       </ComboBox>
+      //     </Provider>
+      //   );
 
-        // expect(getAllByRole('listbox')).toHaveLength(1); // are comboboxes browser autofillable?
+      //   let button = getByRole('button');
+      //   act(() => {
+      //     triggerPress(button);
+      //     jest.runAllTimers();
+      //   });
 
-        let combobox = getByRole('button');
-        act(() => {
-          triggerPress(combobox);
-          jest.runAllTimers();
-        });
+      //   expect(onFilter).toHaveBeenCalled();
 
-        // TODO: test for onFilter when implemented
-        // expect(onFilter).toHaveBeenCalled();
+      //   expect(onOpenChange).toHaveBeenCalledWith(true);
+      //   expect(onOpenChange).toHaveBeenCalledTimes(1);
 
-        // TODO: double check this test, probably should make it so onOpenChange doesn't fire at all
-        // expect(onOpenChange).not.toHaveBeenCalled();
-
-        expect(() => getByRole('listbox')).toThrow();
-      });
+      //   expect(() => getByRole('listbox')).toThrow();
+      // });
 
       it('focuses first item if there are items loaded', function () {
-        let {getByRole} = render(
-          <Provider theme={theme}>
-            <ComboBox label="Test" onFilter={onFilter} onOpenChange={onOpenChange}>
-              <Item>One</Item>
-              <Item>Two</Item>
-              <Item>Three</Item>
-            </ComboBox>
-          </Provider>
-        );
+        let {getByRole} = renderComboBox();
 
         let button = getByRole('button');
         let combobox = getByRole('combobox');
@@ -185,11 +203,10 @@ describe('ComboBox', function () {
           () => jest.runAllTimers();
         });
 
-        // TODO: test for onFilter when implemented
-        // expect(onFilter).toHaveBeenCalled(); // unsure of this
         expect(onOpenChange).toHaveBeenCalledWith(true);
 
         let listbox = getByRole('listbox');
+        // TODO: make the below a util function
         expect(listbox).toBeVisible();
         expect(onOpenChange).toBeCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true);
@@ -221,15 +238,7 @@ describe('ComboBox', function () {
       });
 
       it('closes the menu if there are no matching items', function () {
-        let {getByRole} = render(
-          <Provider theme={theme}>
-            <ComboBox label="Test">
-              <Item uniqueKey="1">One</Item>
-              <Item uniqueKey="2">Two</Item>
-              <Item uniqueKey="3">Three</Item>
-            </ComboBox>
-          </Provider>
-        );
+        let {getByRole} = renderComboBox();
 
         let combobox = getByRole('combobox');
         act(() => {
@@ -254,15 +263,7 @@ describe('ComboBox', function () {
       });
 
       it('doesn\'t opens the menu on user typing if menuTrigger=manual', function () {
-        let {getByRole} = render(
-          <Provider theme={theme}>
-            <ComboBox label="Test" menuTrigger="manual">
-              <Item uniqueKey="1">One</Item>
-              <Item uniqueKey="2">Two</Item>
-              <Item uniqueKey="3">Three</Item>
-            </ComboBox>
-          </Provider>
-        );
+        let {getByRole} = renderComboBox({menuTrigger: 'manual'});
 
         let combobox = getByRole('combobox');
         act(() => {
@@ -274,21 +275,21 @@ describe('ComboBox', function () {
         });
 
         expect(() => getByRole('listbox')).toThrow();
-        // TODO test that arrow keys and button still works
+        
+        let button = getByRole('button');
+        act(() => {
+          triggerPress(button);
+          () => jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeTruthy;
       });
     });
   });
   describe('showing menu', function () {
     it('moves to selected key', function () {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <ComboBox label="Test" selectedKey="1">
-            <Item uniqueKey="1">One</Item>
-            <Item uniqueKey="2">Two</Item>
-            <Item uniqueKey="3">Three</Item>
-          </ComboBox>
-        </Provider>
-      );
+      let {getByRole} = renderComboBox({selectedKey: '2'});
 
       let button = getByRole('button');
       let combobox = getByRole('combobox');
@@ -301,44 +302,29 @@ describe('ComboBox', function () {
 
       let items = within(listbox).getAllByRole('option');
 
-      expect(document.activeElement).toBe(combobox); // I think we should send focus to the input?
+      expect(document.activeElement).toBe(combobox);
       expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
     });
 
-    // TODO: Add back in when top question is answered (should isOpen/defaultOpen also autoFocus the textfield?)
-    // it('moves to selected key (isOpen=true)', function () {
-    //   let {getByRole} = render(
-    //     <Provider theme={theme}>
-    //       <ComboBox isOpen label="Test" selectedKey="2">
-    //         <Item uniqueKey="1">One</Item>
-    //         <Item uniqueKey="2">Two</Item>
-    //         <Item uniqueKey="3">Three</Item>
-    //       </ComboBox>
-    //     </Provider>
-    //   );
+    it('moves to selected key (isOpen=true)', function () {
+      let {getByRole} = renderComboBox({selectedKey: '2', isOpen: true});
 
-    //   act(() => {
-    //     jest.runAllTimers();
-    //   });
+      let combobox = getByRole('combobox');
 
-    //   let combobox = getByRole('combobox');
-    //   let listbox = getByRole('listbox');
+      act(() => {
+        combobox.focus();
+        jest.runAllTimers();
+      });
 
-    //   let items = within(listbox).getAllByRole('option');
+      let listbox = getByRole('listbox');
 
-    //   expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
-    // });
+      let items = within(listbox).getAllByRole('option');
+
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+    });
 
     it('moves to first item for no selected key',  function () {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <ComboBox label="Test">
-            <Item>One</Item>
-            <Item>Two</Item>
-            <Item>Three</Item>
-          </ComboBox>
-        </Provider>
-      );
+      let {getByRole} = renderComboBox();
 
       let button = getByRole('button');
       let combobox = getByRole('combobox');
@@ -354,40 +340,25 @@ describe('ComboBox', function () {
       expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
     });
 
-    // TODO: Add back in when top question is answered (should isOpen/defaultOpen also autoFocus the textfield?)
-    // it('moves to first item for no selected key (isOpen=true)', function () {
-    //   let {getByRole} = render(
-    //     <Provider theme={theme}>
-    //       <ComboBox isOpen label="Test">
-    //         <Item uniqueKey="1">One</Item>
-    //         <Item uniqueKey="2">Two</Item>
-    //         <Item uniqueKey="3">Three</Item>
-    //       </ComboBox>
-    //     </Provider>
-    //   );
+    it('moves to first item for no selected key (isOpen=true)', function () {
+      let {getByRole} = renderComboBox({isOpen: true});
 
-    //   act(() => {
-    //     jest.runAllTimers();
-    //   });
+      let combobox = getByRole('combobox');
 
-    //   let combobox = getByRole('combobox');
-    //   let listbox = getByRole('listbox');
+      act(() => {
+        combobox.focus();
+        jest.runAllTimers();
+      });
 
-    //   let items = within(listbox).getAllByRole('option');
+      let listbox = getByRole('listbox');
 
-    //   expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
-    // });
+      let items = within(listbox).getAllByRole('option');
+
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+    });
 
     it('does not auto focus a item if no selected key and allowsCustomValue=true', function () {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <ComboBox label="Test" allowsCustomValue>
-            <Item uniqueKey="one">One</Item>
-            <Item uniqueKey="two">Two</Item>
-            <Item uniqueKey="three">Three</Item>
-          </ComboBox>
-        </Provider>
-      );
+      let {getByRole} = renderComboBox({allowsCustomValue: true});
 
       let button = getByRole('button');
       let combobox = getByRole('combobox');
@@ -404,15 +375,7 @@ describe('ComboBox', function () {
     });
 
     it('does auto focus the selected key if allowsCustomValue is true', function () {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <ComboBox label="Test" selectedKey="2" allowsCustomValue>
-            <Item uniqueKey="1">One</Item>
-            <Item uniqueKey="2">Two</Item>
-            <Item uniqueKey="3">Three</Item>
-          </ComboBox>
-        </Provider>
-      );
+      let {getByRole} = renderComboBox({selectedKey: '2', allowsCustomValue: true});
 
       let button = getByRole('button');
       let combobox = getByRole('combobox');
@@ -430,15 +393,7 @@ describe('ComboBox', function () {
     });
 
     it('keeps the menu open if the user clears the input field', function () {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <ComboBox label="Test">
-            <Item uniqueKey="1">One</Item>
-            <Item uniqueKey="2">Two</Item>
-            <Item uniqueKey="3">Three</Item>
-          </ComboBox>
-        </Provider>
-      );
+      let {getByRole} = renderComboBox();
 
       let combobox = getByRole('combobox');
       act(() => {
@@ -474,7 +429,7 @@ describe('ComboBox', function () {
     it('can be uncontrolled', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
-          <ComboBox label="Test" onFilter={onFilter} onOpenChange={onOpenChange}>
+          <ComboBox label="Test" onOpenChange={onOpenChange}>
             <Item uniqueKey="1">Bulbasaur</Item>
             <Item uniqueKey="2">Squirtle</Item>
             <Item uniqueKey="3">Charmander</Item>
@@ -492,8 +447,6 @@ describe('ComboBox', function () {
       });
 
       expect(onOpenChange).toHaveBeenCalled();
-      // TODO: test for onFilter when implemented
-      // expect(onFilter).toHaveBeenCalled();
     });
 
     it('can select by mouse', function () {
@@ -538,7 +491,7 @@ describe('ComboBox', function () {
     it('closes', function () {
       let {queryByRole, getAllByRole} = render(
         <Provider theme={theme}>
-          <ComboBox label="Test" onFilter={onFilter} onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
+          <ComboBox label="Test" onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
             <Item uniqueKey="1">Bulbasaur</Item>
             <Item uniqueKey="2">Squirtle</Item>
             <Item uniqueKey="3">Charmander</Item>
@@ -560,9 +513,6 @@ describe('ComboBox', function () {
       expect(onOpenChange).toHaveBeenCalledWith(false);
       expect(onSelectionChange).toHaveBeenCalledWith('1');
       expect(onInputChange).toHaveBeenCalledWith('Bulbasaur');
-      // TODO: test for onFilter when implemented
-      // expect(onFilter).toHaveBeenCalled(); // it may be called during defaultOpen?
-
       expect(queryByRole('listbox')).toBeFalsy();
     });
 
@@ -669,4 +619,6 @@ describe('ComboBox', function () {
       // TODO by Dan
     });
   });
+
+  // TODO: write tests for ComboBox with sections
 });

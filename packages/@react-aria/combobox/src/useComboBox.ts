@@ -47,13 +47,14 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     popoverRef,
     inputRef,
     layout,
-    completionMode,
-    menuTrigger
+    completionMode = 'suggest',
+    menuTrigger = 'input'
   } = props;
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      ref: triggerRef
+      ref: triggerRef,
+      type: 'listbox'
     },
     state
   );
