@@ -11,8 +11,9 @@
  */
 
 import {getItemId} from './utils';
-import {HTMLAttributes, Key, RefObject} from 'react';
+import {HTMLAttributes, RefObject} from 'react';
 import {ListState} from '@react-stately/list';
+import {Node} from '@react-stately/collections';
 import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 import {useSlotId} from '@react-aria/utils';
@@ -38,8 +39,8 @@ interface OptionProps {
   /** A screen reader only label for the option. */
   'aria-label'?: string,
 
-  /** The unique key for the option. */
-  key?: Key,
+  /** The item node. */
+  item?: Node<T>,
 
   /** A ref to the option element. */
   ref?: RefObject<HTMLElement>,
@@ -65,7 +66,7 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
   let {
     isSelected,
     isDisabled,
-    key,
+    item,
     ref,
     shouldSelectOnPressUp,
     shouldFocusOnHover,
@@ -86,13 +87,13 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
   };
 
   if (isVirtualized) {
-    optionProps['aria-posinset'] = state.collection.getItem(key).index;
+    optionProps['aria-posinset'] = item.index;
     optionProps['aria-setsize'] = state.collection.size;
   }
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: key,
+    itemKey: item.key,
     itemRef: ref,
     shouldSelectOnPressUp,
     isVirtualized,
@@ -104,7 +105,7 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     isDisabled: isDisabled || !shouldFocusOnHover,
     onHover() {
       state.selectionManager.setFocused(true);
-      state.selectionManager.setFocusedKey(key);
+      state.selectionManager.setFocusedKey(item.key);
     }
   });
 
@@ -113,7 +114,7 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
       ...optionProps,
       ...pressProps,
       ...hoverProps,
-      id: getItemId(state, key)
+      id: getItemId(state, item.key)
     },
     labelProps: {
       id: labelId
