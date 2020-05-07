@@ -196,7 +196,7 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
           ...state,
           items,
           selectedKeys: new Set()
-        }
+        };
       });
     },
     move(key: Key, toIndex: number) {

@@ -34,12 +34,6 @@ describe('useAsyncList', () => {
     jest.useFakeTimers();
   });
 
-  function flushPromises() {
-    return new Promise(function(resolve) {
-      setImmediate(resolve);
-    });
-  }
-
   it('should call load function on init', async () => {
     let load = jest.fn().mockImplementation(getItems);
     let {result, waitForNextUpdate} = renderHook(() => useAsyncList({load}));
@@ -278,17 +272,15 @@ describe('useAsyncList', () => {
   it('should abort duplicate concurrent loads', async () => {
     let load = jest.fn().mockImplementation(getItems2);
     let isAborted;
-    let sort = jest.fn().mockImplementation(({signal}) => {
-      return new Promise((resolve, reject) => {
-        isAborted = false;
-        signal.addEventListener('abort', () => {
-          isAborted = true;
-          reject();
-        });
-  
-        setTimeout(() => resolve({items: ITEMS}), 100);
+    let sort = jest.fn().mockImplementation(({signal}) => new Promise((resolve, reject) => {
+      isAborted = false;
+      signal.addEventListener('abort', () => {
+        isAborted = true;
+        reject();
       });
-    });
+  
+      setTimeout(() => resolve({items: ITEMS}), 100);
+    }));
 
     let {result, waitForNextUpdate} = renderHook(
       () => useAsyncList({load, sort})
@@ -465,16 +457,14 @@ describe('useAsyncList', () => {
     expect(result.current.items).toEqual(ITEMS2);
 
     let isAborted = false;
-    load.mockImplementation(({signal}) => {
-      return new Promise((resolve, reject) => {
-        signal.addEventListener('abort', () => {
-          isAborted = true;
-          reject();
-        });
-  
-        setTimeout(() => resolve({items: ITEMS}), 100);
+    load.mockImplementation(({signal}) => new Promise((resolve, reject) => {
+      signal.addEventListener('abort', () => {
+        isAborted = true;
+        reject();
       });
-    });
+  
+      setTimeout(() => resolve({items: ITEMS}), 100);
+    }));
 
     await act(async () => {
       result.current.loadMore();
@@ -609,7 +599,7 @@ describe('useAsyncList', () => {
     await act(async () => {
       jest.advanceTimersByTime(500);
       await waitForNextUpdate();
-      });
+    });
 
     expect(result.current.isLoading).toBe(false);
     expect(result.current.items).toEqual(ITEMS);
@@ -644,7 +634,7 @@ describe('useAsyncList', () => {
 
   it('should throw if updating the list while loading', async () => {
     let load = jest.fn().mockImplementation(getItems);
-    let {result, waitForNextUpdate} = renderHook(
+    let {result} = renderHook(
       () => useAsyncList({load})
     );
 
@@ -657,7 +647,9 @@ describe('useAsyncList', () => {
       act(() => {
         result.current.insert(1, {name: 'Test', id: 5});
       });
-    } catch (err) {}
+    } catch (err) {
+      // ignore
+    }
 
     expect(result.error).toEqual(new Error('Invalid action "update" in state "loading"'));
   });

@@ -1285,16 +1285,15 @@ describe('Table', function () {
             <Column uniqueKey="bar">Bar</Column>
           </TableHeader>
           <TableBody items={items} onLoadMore={onLoadMore}>
-            {row => 
+            {row => (
               <Row>
                 {key => <Cell>row[key]</Cell>}
               </Row>
-            }
+            )}
           </TableBody>
         </Table>
       );
 
-      let table = tree.getByRole('grid');
       let body = tree.getAllByRole('rowgroup')[1];
       let scrollView = body.parentNode.parentNode;
 
@@ -1350,7 +1349,7 @@ describe('Table', function () {
     });
   });
 
-  describe('sorting', function() {
+  describe('sorting', function () {
     it('should set aria-sort="none" on sortable column headers', function () {
       let tree = render(
         <Table selectionMode="none">

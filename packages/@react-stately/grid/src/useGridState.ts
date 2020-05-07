@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, MultipleSelection, SelectionMode, SortDescriptor, Sortable, SortDirection} from '@react-types/shared';
+import {CollectionBase, MultipleSelection, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {CollectionBuilder, Node} from '@react-stately/collections';
 import {GridCollection} from './GridCollection';
 import {Key, useMemo, useRef} from 'react';
@@ -59,7 +59,8 @@ export function useGridState<T extends object>(props: GridStateProps<T>): GridSt
 
     collectionRef.current = new GridCollection(nodes, collectionRef.current, context);
     return collectionRef.current;
-  }, [props.children, selectionState.selectionMode, builder]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.children, props.showSelectionCheckboxes, selectionState.selectionMode, builder]);
 
   return {
     collection,

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {CollectionItem, layoutInfoToStyle, ScrollView, setScrollLeft, useCollectionView} from '@react-aria/collections';
@@ -17,7 +18,8 @@ import {DOMRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {GridState, useGridState} from '@react-stately/grid';
 import {mergeProps} from '@react-aria/utils';
-import {Node, ReusableView, useCollectionState, Rect} from '@react-stately/collections';
+import {Node, Rect, ReusableView, useCollectionState} from '@react-stately/collections';
+import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef} from 'react';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
@@ -26,9 +28,6 @@ import {TableLayout} from './TableLayout';
 import {useColumnHeader, useGrid, useGridCell, useRow, useRowGroup, useRowHeader, useSelectAllCheckbox, useSelectionCheckbox} from '@react-aria/grid';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import { ProgressCircle } from '@react-spectrum/progress';
-import { Flex } from '@react-spectrum/layout';
-import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 
 const TableContext = React.createContext<GridState<unknown>>(null);
 function useTableContext() {
@@ -148,7 +147,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
               aria-label={state.collection.size > 0 ? 'Loading more...' : 'Loading...'} />
           </CenteredWrapper>
         );
-      case 'empty':
+      case 'empty': {
         let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
         if (emptyState == null) {
           return null;
@@ -159,6 +158,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
             {emptyState}
           </CenteredWrapper>
         );
+      }
     }
   };
 
@@ -213,7 +213,7 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
         collection.body.props.onLoadMore();
       }
     }
-  }, [collection]);
+  }, [collection.body.props, collectionState]);
 
   return (
     <div

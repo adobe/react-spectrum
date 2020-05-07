@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {createListActions, ListData, ListState} from './useListData';
+import {Key, Reducer, useEffect, useReducer} from 'react';
 import {SortDescriptor} from '@react-types/shared';
-import {useEffect, useReducer, Key, Reducer} from 'react';
-import { ListData, useListData, createListActions, ListState } from './useListData';
 
 interface AsyncListOptions<T, C> {
   initialSelectedKeys?: Iterable<Key>,
@@ -226,6 +226,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
 
   useEffect(() => {
     dispatchFetch({type: 'loading'}, load);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
@@ -252,7 +253,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       dispatchFetch({type: 'sorting', sortDescriptor}, sort || load);
     },
     ...createListActions(options, fn => {
-      dispatch({type: 'update', updater: fn})
+      dispatch({type: 'update', updater: fn});
     })
   };
 }

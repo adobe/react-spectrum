@@ -13,9 +13,9 @@
 import {getColumnHeaderId} from './utils';
 import {GridNode, GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject} from 'react';
+import {mergeProps} from '@react-aria/utils';
 import {useGridCell} from './useGridCell';
-import { usePress } from '@react-aria/interactions';
-import { mergeProps } from '@react-aria/utils';
+import {usePress} from '@react-aria/interactions';
 
 interface ColumnHeaderProps {
   node: GridNode<unknown>,

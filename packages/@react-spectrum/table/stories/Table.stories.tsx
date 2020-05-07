@@ -12,15 +12,15 @@
 
 import {action} from '@storybook/addon-actions';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
+import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
+import {Heading} from '@react-spectrum/typography';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
-import { useAsyncList } from '@react-stately/data';
-import { IllustratedMessage } from '../../illustratedmessage';
-import { Heading } from '@react-spectrum/typography';
-import { Content } from '@react-spectrum/view';
+import {useAsyncList} from '@react-stately/data';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -382,7 +382,7 @@ function AsyncLoadingExample() {
 
   let list = useAsyncList<Item>({
     async load({signal, cursor}) {
-      let url = new URL(`https://www.reddit.com/r/news.json`);
+      let url = new URL('https://www.reddit.com/r/news.json');
       if (cursor) {
         url.searchParams.append('after', cursor);
       }
@@ -400,7 +400,7 @@ function AsyncLoadingExample() {
           }
           return cmp;
         })
-      }
+      };
     }
   });
 
