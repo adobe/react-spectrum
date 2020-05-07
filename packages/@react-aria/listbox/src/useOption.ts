@@ -29,7 +29,7 @@ interface OptionAria {
   descriptionProps: HTMLAttributes<HTMLElement>
 }
 
-interface OptionProps {
+interface OptionProps<T> {
   /** Whether the option is disabled. */
   isDisabled?: boolean,
 
@@ -62,7 +62,7 @@ interface OptionProps {
  * @param props - props for the option
  * @param state - state for the listbox, as returned by `useListState`
  */
-export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAria {
+export function useOption<T>(props: OptionProps<T>, state: ListState<T>): OptionAria {
   let {
     isSelected,
     isDisabled,
