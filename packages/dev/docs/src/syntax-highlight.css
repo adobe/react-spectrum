@@ -142,6 +142,10 @@
   padding: 0;
 }
 
+:global(.constant) {
+  color: var(--hljs-literal-color);
+}
+
 :global(.storage.type),
 :global(.constant.color),
 :global(.support.property-value.css) {
@@ -170,10 +174,6 @@
 
 :global(.punctuation.section) {
   color: var(--hljs-title-color);
-}
-
-:global(.constant.numeric) {
-  color: var(--hljs-literal-color);
 }
 
 :global(.variable.other.object.property) {
