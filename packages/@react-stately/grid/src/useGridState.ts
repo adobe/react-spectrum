@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, MultipleSelection, SelectionMode} from '@react-types/shared';
+import {CollectionBase, MultipleSelection, SelectionMode, SortDescriptor, Sortable, SortDirection} from '@react-types/shared';
 import {CollectionBuilder, Node} from '@react-stately/collections';
 import {GridCollection} from './GridCollection';
 import {Key, useMemo, useRef} from 'react';
@@ -20,7 +20,9 @@ export interface GridState<T> {
   collection: GridCollection<T>,
   disabledKeys: Set<Key>,
   selectionManager: SelectionManager,
-  showSelectionCheckboxes: boolean
+  showSelectionCheckboxes: boolean,
+  sortDescriptor: SortDescriptor,
+  sort(columnKey: Key): void
 }
 
 export interface CollectionBuilderContext<T> {
@@ -29,9 +31,14 @@ export interface CollectionBuilderContext<T> {
   columns: Node<T>[]
 }
 
-export interface GridStateProps<T> extends CollectionBase<T>, MultipleSelection {
+export interface GridStateProps<T> extends CollectionBase<T>, MultipleSelection, Sortable {
   showSelectionCheckboxes?: boolean
 }
+
+const OPPOSITE_SORT_DIRECTION = {
+  ascending: 'descending' as SortDirection,
+  descending: 'ascending' as SortDirection
+};
 
 export function useGridState<T extends object>(props: GridStateProps<T>): GridState<T>  {
   let selectionState = useMultipleSelectionState(props);
@@ -52,12 +59,21 @@ export function useGridState<T extends object>(props: GridStateProps<T>): GridSt
 
     collectionRef.current = new GridCollection(nodes, collectionRef.current, context);
     return collectionRef.current;
-  }, [props, selectionState.selectionMode, builder]);
+  }, [props.children, selectionState.selectionMode, builder]);
 
   return {
     collection,
     disabledKeys,
     selectionManager: new SelectionManager(collection, selectionState),
-    showSelectionCheckboxes: props.showSelectionCheckboxes || false
+    showSelectionCheckboxes: props.showSelectionCheckboxes || false,
+    sortDescriptor: props.sortDescriptor,
+    sort(columnKey: Key) {
+      props.onSortChange({
+        column: columnKey,
+        direction: props.sortDescriptor?.column === columnKey 
+          ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction] 
+          : 'ascending'
+      });
+    }
   };
 }

@@ -10,17 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncLoadable, CollectionChildren, DOMProps, MultipleSelection, SectionProps, StyleProps} from '@react-types/shared';
+import {AsyncLoadable, CollectionChildren, DOMProps, MultipleSelection, SectionProps, StyleProps, Sortable} from '@react-types/shared';
 import {Key, ReactElement} from 'react';
 
-export interface TableProps<T> extends MultipleSelection {
+export interface TableProps<T> extends MultipleSelection, Sortable {
   children: ReactElement<TableHeaderProps | TableBodyProps | SectionProps | RowProps>[],
   disabledKeys?: Iterable<Key>
 }
 
 export interface SpectrumTableProps<T> extends TableProps<T>, DOMProps, StyleProps {
   rowHeight?: number | 'auto',
-  isQuiet?: boolean
+  isQuiet?: boolean,
+  renderEmptyState?: () => JSX.Element
 }
 
 export interface TableHeaderProps<T> {

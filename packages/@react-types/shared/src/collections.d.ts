@@ -21,10 +21,7 @@ export interface ItemProps<T> {
   textValue?: string,
   /** An accessibility label for this item. */
   'aria-label'?: string,  
-  /** 
-   * Child items of this item. The function that rendered 
-   * this items will be called recursively to render each one.
-   * */
+  /** A list of child item objects. Used for dynamic collections. */
   childItems?: Iterable<T>,
   /** Whether this item has children, even if not loaded yet. */
   hasChildItems?: boolean,
@@ -99,10 +96,8 @@ export interface Expandable {
 }
 
 export interface Sortable {
-  /** The current sorted column and direction (controlled). */
+  /** The current sorted column and direction. */
   sortDescriptor?: SortDescriptor,
-  /** The initial sorted column and direction (uncontrolled). */
-  defaultSortDescriptor?: SortDescriptor,
   /** Handler that is called when the sorted column or direction changes. */
   onSortChange?: (descriptor: SortDescriptor) => any
 }
@@ -114,10 +109,7 @@ export interface SortDescriptor {
   direction?: SortDirection
 }
 
-export enum SortDirection {
-  ASC,
-  DESC
-}
+export type SortDirection = 'ascending' | 'descending';
 
 export interface KeyboardDelegate {
   /** Returns the key visually below the given one, or `null` for none. */
@@ -147,34 +139,3 @@ export interface KeyboardDelegate {
   /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
   getKeyForSearch?(search: string, fromKey?: Key): Key
 }
-
-interface AsyncListOptions<T> {
-  load: (state: ListState<T>) => Promise<ListState<T>>,
-  loadMore?: (state: ListState<T>) => Promise<ListState<T>>,
-  defaultSortDescriptor?: SortDescriptor,
-  sort?: (state: ListState<T>) => Promise<ListState<T>>
-}
-
-interface ListState<T> {
-  items: Iterable<T>,
-  disabledKeys?: Iterable<Key>,
-  selectedKeys?: Iterable<Key>,
-  selectedKey?: Key,
-  expandedKeys?: Iterable<Key>,
-  sortDescriptor?: SortDescriptor
-}
-
-interface AsyncListProps<T> {
-  items: Iterable<T>,
-  isLoading: boolean,
-  error?: Error,
-  onLoadMore?: () => void,
-  sortDescriptor?: SortDescriptor,
-  onSortChange?: (desc: SortDescriptor) => void,
-  disabledKeys?: Iterable<Key>,
-  selectedKeys?: Iterable<Key>,
-  selectedKey?: Key,
-  expandedKeys?: Iterable<Key>
-}
-
-declare function useAsyncList<T>(opts: AsyncListOptions<T>): AsyncListProps<T>;

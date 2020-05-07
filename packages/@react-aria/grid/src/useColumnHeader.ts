@@ -14,6 +14,8 @@ import {getColumnHeaderId} from './utils';
 import {GridNode, GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {useGridCell} from './useGridCell';
+import { usePress } from '@react-aria/interactions';
+import { mergeProps } from '@react-aria/utils';
 
 interface ColumnHeaderProps {
   node: GridNode<unknown>,
@@ -30,13 +32,25 @@ export function useColumnHeader<T>(props: ColumnHeaderProps, state: GridState<T>
   let {node, colspan} = props;
   let {gridCellProps} = useGridCell(props, state);
 
+  let {pressProps} = usePress({
+    isDisabled: !node.props.allowsSorting,
+    onPress() {
+      state.sort(node.key);
+    }
+  });
+
+  let ariaSort: HTMLAttributes<HTMLElement>['aria-sort'] = null;
+  if (node.props.allowsSorting) {
+    ariaSort = state.sortDescriptor?.column === node.key ? state.sortDescriptor.direction : 'none';
+  }
+
   return {
     columnHeaderProps: {
-      ...gridCellProps,
+      ...mergeProps(gridCellProps, pressProps),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
-      'aria-colspan': colspan && colspan > 1 ? colspan : null
-      // 'aria-sort'
+      'aria-colspan': colspan && colspan > 1 ? colspan : null,
+      'aria-sort': ariaSort
     }
   };
 }
