@@ -69,6 +69,8 @@ export interface CollectionBase<T> extends AsyncLoadable<T> {
 }
 
 export interface SingleSelection {
+  /** Whether the collection allows empty selection. */
+  disallowEmptySelection?: boolean,
   /** The currently selected key in the collection (controlled). */
   selectedKey?: Key,
   /** The initial selected key in the collection (uncontrolled). */
@@ -81,6 +83,8 @@ export type SelectionMode = 'none' | 'single' | 'multiple';
 export interface MultipleSelection {
   /** The type of selection that is allowed in the collection. */
   selectionMode?: SelectionMode,
+  /** Whether the collection allows empty selection. */
+  disallowEmptySelection?: boolean,
   /** The currently selected keys in the collection (controlled). */
   selectedKeys?: Iterable<Key>,
   /** The initial selected keys in the collection (uncontrolled). */
