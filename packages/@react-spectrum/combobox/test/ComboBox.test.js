@@ -97,9 +97,9 @@ describe('ComboBox', function () {
     let {getByRole} = renderComboBox();
 
     let combobox = getByRole('combobox');
-    // TODO: test that it doesn't have aria-controls 
-    // has the right aria-autocomplete
-    // doesn't have aria-activedecendant
+    expect(combobox).not.toHaveAttribute('aria-controls');
+    expect(combobox).not.toHaveAttribute('aria-activedescendant');
+    expect(combobox).toHaveAttribute('aria-autocomplete', 'list');
 
     act(() => {
       combobox.focus();
@@ -109,15 +109,13 @@ describe('ComboBox', function () {
 
     let listbox = getByRole('listbox');
 
-    // TODO: test that it has aria-controls (equal to listbox id)
-    // has the right aria-autocomplete
-    // has the correct aria-descendant
-
     let items = within(listbox).getAllByRole('option');
     expect(items.length).toBe(1);
 
     expect(combobox.value).toBe('On');
     expect(items[0]).toHaveTextContent('One');
+    expect(combobox).toHaveAttribute('aria-controls', listbox.id);
+    expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
   });
 
   it('attaches a ref to the input field if provided as a prop', function () {
@@ -148,6 +146,7 @@ describe('ComboBox', function () {
         expect(onOpenChange).toHaveBeenCalledWith(true);
         expect(button).toHaveAttribute('aria-expanded', 'true');
         expect(button).toHaveAttribute('aria-controls', listbox.id);
+        expect(combobox).toHaveAttribute('aria-controls', listbox.id);
 
         let items = within(listbox).getAllByRole('option');
         expect(items.length).toBe(3);
@@ -161,7 +160,83 @@ describe('ComboBox', function () {
     });
 
     describe('via isOpen and defaultOpen', function () {
-      // TODO by Dan, write case testing each of these props
+      it('has a controlled open state via isOpen', function () {
+        let {getByRole} = renderComboBox({isOpen: true});
+
+        let button = getByRole('button');
+        let combobox = getByRole('combobox');
+        expect(() => getByRole('listbox')).toThrow();
+
+        act(() => {
+          combobox.focus();
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(onOpenChange).toBeCalledTimes(0);
+        expect(button).toHaveAttribute('aria-expanded', 'true');
+        expect(button).toHaveAttribute('aria-controls', listbox.id);
+        expect(combobox).toHaveAttribute('aria-controls', listbox.id);
+
+        let items = within(listbox).getAllByRole('option');
+        expect(items.length).toBe(3);
+        expect(items[0]).toHaveTextContent('One');
+        expect(items[1]).toHaveTextContent('Two');
+        expect(items[2]).toHaveTextContent('Three');
+
+        expect(document.activeElement).toBe(combobox);
+        expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        expect(listbox).toBeVisible();
+        expect(onOpenChange).toBeCalledTimes(1);
+        expect(onOpenChange).toHaveBeenCalledWith(false);
+      });
+
+      it('has a uncontrolled open state via defaultOpen', function () {
+        let {getByRole} = renderComboBox({defaultOpen: true});
+
+        let button = getByRole('button');
+        let combobox = getByRole('combobox');
+        expect(() => getByRole('listbox')).toThrow();
+
+        act(() => {
+          combobox.focus();
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(onOpenChange).toBeCalledTimes(0);
+        expect(button).toHaveAttribute('aria-expanded', 'true');
+        expect(button).toHaveAttribute('aria-controls', listbox.id);
+
+        let items = within(listbox).getAllByRole('option');
+        expect(items.length).toBe(3);
+        expect(items[0]).toHaveTextContent('One');
+        expect(items[1]).toHaveTextContent('Two');
+        expect(items[2]).toHaveTextContent('Three');
+
+        expect(document.activeElement).toBe(combobox);
+        expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+
+        act(() => {
+          triggerPress(button);
+          jest.runAllTimers();
+        });
+
+        expect(() => getByRole('listbox')).toThrow();
+        expect(onOpenChange).toBeCalledTimes(1);
+        expect(onOpenChange).toHaveBeenCalledWith(false);
+        expect(button).not.toHaveAttribute('aria-expanded');
+        expect(button).not.toHaveAttribute('aria-controls');
+        expect(combobox).not.toHaveAttribute('aria-controls');
+      });
     });
 
     describe('button click', function () {
