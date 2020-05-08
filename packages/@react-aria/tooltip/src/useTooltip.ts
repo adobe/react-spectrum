@@ -25,14 +25,21 @@ export function useTooltip(props: SpectrumTooltipProps): TooltipAria {
     role = 'tooltip'
   } = props;
 
-  let {onPointerLeave, onPointerEnter} = useContext(DOMPropsResponderContext) || {};
+  let {
+    onPointerLeave,
+    onPointerEnter,
+    onMouseEnter,
+    onMouseLeave
+  } = useContext(DOMPropsResponderContext) || {};
 
   return {
     tooltipProps: {
       role,
       id: useId(id),
       onPointerEnter,
-      onPointerLeave
+      onPointerLeave,
+      onMouseEnter,
+      onMouseLeave
     }
   };
 }

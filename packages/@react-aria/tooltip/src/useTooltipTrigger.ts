@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, useId} from '@react-aria/utils';
 import {FocusEvents} from '@react-types/shared';
 import {HoverProps, PressProps} from '@react-aria/interactions';
 import {HTMLAttributes, RefObject} from 'react';
+import {mergeProps, useId} from '@react-aria/utils';
 import {TooltipProps, TooltipTriggerAriaProps, TriggerProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
+import {useFocusable} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 
 interface TooltipTriggerAria {
@@ -33,17 +34,6 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
   let tooltipId = useId(tooltipProps.id);
   let triggerId = useId(triggerProps.id);
 
-  let onKeyDownTrigger = (e) => {
-    if (ref && ref.current) {
-      // dismiss tooltip on esc key press
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        e.stopPropagation();
-        state.setOpen(false);
-      }
-    }
-  };
-
   // abstract away knowledge of timing transitions from aria hook
   let tooltipManager = state.tooltipManager;
 
@@ -59,21 +49,34 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
     tooltipManager.hideTooltipDelayed(state);
   };
 
+  let onKeyDownTrigger = (e) => {
+    if (ref && ref.current) {
+      // dismiss tooltip on esc key press
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        handleDelayedHide();
+      }
+    }
+  };
+
   let {hoverProps} = useHover({
     isDisabled,
-    ref,
     onHover: handleDelayedShow,
     onHoverEnd: handleDelayedHide
   });
+
+  let {focusableProps} = useFocusable({
+    isDisabled,
+    onFocus: handleDelayedShow,
+    onBlur: handleDelayedHide,
+    onKeyDown: onKeyDownTrigger
+  }, ref);
 
   return {
     triggerProps: {
       id: triggerId,
       'aria-describedby': state.open ? tooltipId : undefined,
-      onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
-      ...hoverProps,
-      onFocus: handleDelayedShow,
-      onBlur: handleDelayedHide
+      ...mergeProps(focusableProps, hoverProps)
     },
     tooltipProps: {
       id: tooltipId

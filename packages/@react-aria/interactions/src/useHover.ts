@@ -11,7 +11,7 @@
  */
 
 import {DOMProps, HoverEvents} from '@react-types/shared';
-import {HTMLAttributes, RefObject, useMemo} from 'react';
+import {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
 import {mergeProps} from '@react-aria/utils';
 
 export interface HoverProps extends HoverEvents, DOMProps {
@@ -38,6 +38,11 @@ export function useHover(props: HoverHookProps): HoverResult {
     isDisabled,
     ...domProps
   } = props;
+
+  let stateRef = useRef({
+    ignoreEmulatedMouseEvents: false
+  });
+  let state = stateRef.current;
 
   let hoverProps = useMemo(() => {
 
@@ -95,25 +100,40 @@ export function useHover(props: HoverHookProps): HoverResult {
     let hoverProps: HTMLAttributes<HTMLElement> = {};
 
     if (typeof PointerEvent !== 'undefined') {
+      hoverProps.onTouchStart = (e) => {
+        e.stopPropagation();
+        state.ignoreEmulatedMouseEvents = true;
+      };
+
       hoverProps.onPointerEnter = (e) => {
-        triggerHoverStart(e, e.pointerType);
+        if (!state.ignoreEmulatedMouseEvents) {
+          triggerHoverStart(e, e.pointerType);
+        }
       };
 
       hoverProps.onPointerLeave = (e) => {
-        triggerHoverEnd(e, e.pointerType);
+        if (!state.ignoreEmulatedMouseEvents) {
+          triggerHoverEnd(e, e.pointerType);
+        }
+        state.ignoreEmulatedMouseEvents = false;
       };
 
     } else {
       hoverProps.onMouseEnter = (e) => {
-        triggerHoverStart(e, 'mouse');
+        if (!state.ignoreEmulatedMouseEvents) {
+          triggerHoverStart(e, 'mouse');
+        }
       };
 
       hoverProps.onMouseLeave = (e) => {
-        triggerHoverEnd(e, 'mouse');
+        if (!state.ignoreEmulatedMouseEvents) {
+          triggerHoverEnd(e, 'mouse');
+        }
+        state.ignoreEmulatedMouseEvents = false;
       };
     }
     return hoverProps;
-  }, [onHover, onHoverChange, onHoverEnd, isDisabled]);
+  }, [onHover, onHoverChange, onHoverEnd, isDisabled, state.ignoreEmulatedMouseEvents]);
 
   return {
     hoverProps: mergeProps(domProps, hoverProps)
