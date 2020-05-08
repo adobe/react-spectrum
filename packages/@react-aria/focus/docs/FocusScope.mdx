@@ -70,9 +70,7 @@ function Example() {
   let [isOpen, setOpen] = React.useState(false);
   return (
     <>
-      {!isOpen &&
-        <button onClick={() => setOpen(true)}>Open</button>
-      }
+      <button onClick={() => setOpen(true)}>Open</button>
       {isOpen && 
         <FocusScope contain restoreFocus autoFocus>
           <input aria-label="First input" placeholder="First input" />
