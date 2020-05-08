@@ -218,11 +218,27 @@ export class CollectionManager<T extends object, V, W> {
     if (this._collection) {
       this._runTransaction(() => {
         this._collection = data;
-      }, false); // TODO: determine if we should animate somehow??
+      }, this._shouldAnimate(data));
     } else {
       this._collection = data;
       this.reloadData();
     }
+  }
+
+  private _shouldAnimate(collection: Collection<T>) {
+    for (let key of collection.getKeys()) {
+      if (!this._collection.getItem(key)) {
+        return true;
+      }
+    }
+
+    for (let key of this._collection.getKeys()) {
+      if (!collection.getItem(key)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -809,7 +825,6 @@ export class CollectionManager<T extends object, V, W> {
     }
 
     view.layoutInfo = layoutInfo;
-    this._renderView(view);
     return true;
   }
 
@@ -1089,11 +1104,12 @@ export class CollectionManager<T extends object, V, W> {
           }
         }
 
+        this._transaction = null;
+
         // Ensure DOM order is correct for accessibility after animations are complete
         this._correctItemOrder();
         this._flushVisibleViews();
 
-        this._transaction = null;
         this._processTransactionQueue();
       }
     });

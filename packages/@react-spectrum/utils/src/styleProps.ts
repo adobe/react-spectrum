@@ -233,37 +233,37 @@ export function passthroughStyle(value) {
 }
 
 const boxAlignmentStyleProps: StyleHandlers = {
-  justifyItems: ['justify-items', passthroughStyle],
-  justifyContent: ['justify-content', passthroughStyle],
-  alignItems: ['align-items', passthroughStyle],
-  alignContent: ['align-content', passthroughStyle],
+  justifyItems: ['justifyItems', passthroughStyle],
+  justifyContent: ['justifyContent', passthroughStyle],
+  alignItems: ['alignItems', passthroughStyle],
+  alignContent: ['alignContent', passthroughStyle],
   ...baseStyleProps
 };
 
 export const flexStyleProps: StyleHandlers = {
-  flexDirection: ['flex-direction', passthroughStyle],
-  flexWrap: ['flex-wrap', passthroughStyle],
-  flexFlow: ['flex-flow', passthroughStyle],
+  flexDirection: ['flexDirection', passthroughStyle],
+  flexWrap: ['flexWrap', passthroughStyle],
+  flexFlow: ['flexFlow', passthroughStyle],
   ...boxAlignmentStyleProps
 };
 
 export const gridStyleProps: StyleHandlers = {
   grid: ['grid', passthroughStyle],
-  gridArea: ['grid-area', passthroughStyle],
-  gridAutoColumns: ['grid-auto-columns', passthroughStyle],
-  gridAutoFlow: ['grid-auto-flow', passthroughStyle],
-  gridAutoRows: ['grid-auto-rows', passthroughStyle],
-  gridColumn: ['grid-column', passthroughStyle],
-  gridColumnEnd: ['grid-column-end', passthroughStyle],
-  gridColumnStart: ['grid-column-start', passthroughStyle],
-  gridRow: ['grid-row', passthroughStyle],
-  gridRowEnd: ['grid-row-end', passthroughStyle],
-  gridRowStart: ['grid-row-start', passthroughStyle],
-  gridTemplate: ['grid-template', passthroughStyle],
-  gridTemplateAreas: ['grid-template-areas', passthroughStyle],
-  gridTemplateColumns: ['grid-template-columns', passthroughStyle],
-  gridTemplateRows: ['grid-template-rows', passthroughStyle],
-  rowGap: ['row-gap', dimensionValue],
-  columnGap: ['row-gap', dimensionValue],
+  gridArea: ['gridArea', passthroughStyle],
+  gridAutoColumns: ['gridAutoColumns', passthroughStyle],
+  gridAutoFlow: ['gridAutoFlow', passthroughStyle],
+  gridAutoRows: ['gridAutoRows', passthroughStyle],
+  gridColumn: ['gridColumn', passthroughStyle],
+  gridColumnEnd: ['gridColumnEnd', passthroughStyle],
+  gridColumnStart: ['gridColumnStart', passthroughStyle],
+  gridRow: ['gridRow', passthroughStyle],
+  gridRowEnd: ['gridRowEnd', passthroughStyle],
+  gridRowStart: ['gridRowStart', passthroughStyle],
+  gridTemplate: ['gridTemplate', passthroughStyle],
+  gridTemplateAreas: ['gridTemplateAreas', passthroughStyle],
+  gridTemplateColumns: ['gridTemplateColumns', passthroughStyle],
+  gridTemplateRows: ['gridTemplateRows', passthroughStyle],
+  rowGap: ['rowGap', dimensionValue],
+  columnGap: ['rowGap', dimensionValue],
   ...boxAlignmentStyleProps
 };

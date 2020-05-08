@@ -150,7 +150,9 @@ module.exports = new Transformer({
         }, docs));
       }
 
-      if (path.isClassMethod()) {
+      if (path.isClassMethod() || path.isTSDeclareMethod()) {
+        // not sure why isTSDeclareMethod isn't a recognized method, can't find documentation on it either, but it works and that's the type
+        // it seems to be mostly abstract class methods that comes through as this?
         let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
 
@@ -166,13 +168,7 @@ module.exports = new Transformer({
         } else {
           value = {
             type: 'function',
-            parameters: path.get('params').map(p => ({
-              type: 'parameter',
-              name: p.node.name,
-              value: p.node.typeAnnotation
-                ? processExport(p.get('typeAnnotation.typeAnnotation'))
-                : {type: 'any'}
-            })),
+            parameters: path.get('params').map(processParameter),
             return: path.node.returnType
               ? processExport(path.get('returnType.typeAnnotation'))
               : {type: 'void'},
@@ -183,7 +179,7 @@ module.exports = new Transformer({
         }
 
         return Object.assign(node, addDocs({
-          type: 'property',
+          type: value.type === 'function' ? 'method' : 'property',
           name,
           value
         }, docs));
@@ -208,13 +204,7 @@ module.exports = new Transformer({
             type: 'function',
             id: path.node.id ? `${asset.filePath}:${path.node.id.name}` : null,
             name: path.node.id ? path.node.id.name : null,
-            parameters: path.get('params').map(p => ({
-              type: 'parameter',
-              name: p.node.name,
-              value: p.node.typeAnnotation
-                ? processExport(p.get('typeAnnotation.typeAnnotation'))
-                : {type: 'any'}
-            })),
+            parameters: path.get('params').map(processParameter),
             return: path.node.returnType
               ? processExport(path.get('returnType.typeAnnotation'))
               : {type: 'any'},
@@ -324,15 +314,11 @@ module.exports = new Transformer({
         let name = t.isStringLiteral(path.node.key) ? path.node.key.value : path.node.key.name;
         let docs = getJSDocs(path);
         return Object.assign(node, addDocs({
-          type: 'property',
+          type: 'method',
           name,
           value: {
             type: 'function',
-            parameters: path.get('parameters').map(p => ({
-              type: 'parameter',
-              name: p.node.name,
-              value: processExport(p.get('typeAnnotation.typeAnnotation'))
-            })),
+            parameters: path.get('parameters').map(processParameter),
             return: path.node.typeAnnotation
               ? processExport(path.get('typeAnnotation.typeAnnotation'))
               : {type: 'any'},
@@ -388,7 +374,7 @@ module.exports = new Transformer({
       }
 
       if (path.isTSUndefinedKeyword()) {
-        return {type: 'undefined'};
+        return Object.assign(node, {type: 'undefined'});
       }
 
       if (path.isTSVoidKeyword()) {
@@ -400,7 +386,7 @@ module.exports = new Transformer({
       }
 
       if (path.isTSUnknownKeyword()) {
-        return {type: 'unknown'};
+        return Object.assign(node, {type: 'unknown'});
       }
 
       if (path.isTSArrayType()) {
@@ -427,11 +413,7 @@ module.exports = new Transformer({
       if (path.isTSFunctionType() || path.isTSConstructorType()) {
         return Object.assign(node, {
           type: 'function',
-          parameters: path.get('parameters').map(p => ({
-            type: 'parameter',
-            name: p.node.name,
-            value: p.node.typeAnnotation ? processExport(p.get('typeAnnotation.typeAnnotation')) : {type: 'any'}
-          })),
+          parameters: path.get('parameters').map(processParameter),
           return: path.node.typeAnnotation ? processExport(path.get('typeAnnotation.typeAnnotation')) : {type: 'any'},
           typeParameters: path.node.typeParameters ? path.get('typeParameters.params').map(p => processExport(p)) : []
         });
@@ -453,6 +435,15 @@ module.exports = new Transformer({
       }
 
       console.log('UNKNOWN TYPE', path.node.type);
+    }
+
+    function processParameter(p) {
+      return {
+        type: 'parameter',
+        name: p.isRestElement() ? p.node.argument.name : p.node.name,
+        value: p.node.typeAnnotation ? processExport(p.get('typeAnnotation.typeAnnotation')) : {type: 'any'},
+        rest: p.isRestElement()
+      };
     }
 
     function processExport(path, node = {}) {
@@ -580,7 +571,7 @@ module.exports = new Transformer({
         value.access = docs.access;
       }
 
-      if (value.type === 'property') {
+      if (value.type === 'property' || value.type === 'method') {
         value.default = docs.default || value.default || null;
         if (value.value && value.value.type === 'function') {
           addFunctionDocs(value.value, docs);
