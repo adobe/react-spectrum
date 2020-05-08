@@ -44,6 +44,13 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   /**
+   * Whether the collection allows empty selection.
+   */
+  get disallowEmptySelection(): boolean {
+    return this.state.disallowEmptySelection;
+  }
+
+  /**
    * Whether the collection is currently focused.
    */
   get isFocused(): boolean {
