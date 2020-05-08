@@ -18,11 +18,17 @@ import intlMessages from '../intl/*.json';
 import {useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
+interface AriaBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps {}
 interface BreadcrumbsAria {
+  /** Props for the bradcrumbs navigation element.  */
   breadcrumbsProps: HTMLAttributes<HTMLDivElement>
 }
 
-export function useBreadcrumbs<T>(props: BreadcrumbsProps<T> & DOMProps): BreadcrumbsAria {
+/**
+ * Provides the behavior and accessibility implementation for a breadcrumbs component.
+ * Breadcrumbs display a heirarchy of links to the current page or resource in an application.
+ */
+export function useBreadcrumbs<T>(props: AriaBreadcrumbsProps<T>): BreadcrumbsAria {
   let {
     id,
     'aria-label': ariaLabel
