@@ -23,8 +23,6 @@ governing permissions and limitations under the License.
   @inherit: %spectrum-overlay;
 
   position: relative;
-  left: 0px;
-  top: 0px;
 
   display: inline-flex;
   flex-direction: row;

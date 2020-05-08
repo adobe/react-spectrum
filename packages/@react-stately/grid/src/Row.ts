@@ -34,9 +34,12 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
 
       if (context.showSelectionCheckboxes && context.selectionMode !== 'none') {
         yield {
-          type: 'rowheader',
+          type: 'cell',
           key: 'header', // this is combined with the row key by CollectionBuilder
-          index: index++
+          index: index++,
+          props: {
+            isSelectionCell: true
+          }
         };
       }
 
@@ -51,6 +54,10 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
         }
       } else {
         let cells = React.Children.toArray(children);
+        if (cells.length !== context.columns.length) {
+          throw new Error(`Cell count must match column count. Found ${cells.length} cells and ${context.columns.length} columns.`);
+        }
+
         for (let cell of cells) {
           yield {
             type: 'cell',

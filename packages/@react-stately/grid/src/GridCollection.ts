@@ -17,21 +17,26 @@ export interface GridNode<T> extends Node<T> {
   colspan?: number
 }
 
+interface GridCollectionOptions {
+  showSelectionCheckboxes?: boolean
+}
+
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
 
 export class GridCollection<T> implements Collection<GridNode<T>> {
   private keyMap: Map<Key, Node<T>>;
-  headerRows: GridNode<T>[][];
+  headerRows: GridNode<T>[];
   columns: GridNode<T>[];
+  rowHeaderColumnKeys: Set<Key>;
   body: GridNode<T>[];
   private firstKey: Key;
   private lastKey: Key;
-  private hasRowHeaders: boolean;
 
-  constructor(nodes: Iterable<Node<T>>, prev?: GridCollection<T>) {
-    this.keyMap = prev?.keyMap || new Map();
-    this.hasRowHeaders = prev?.hasRowHeaders || false;
+  constructor(nodes: Iterable<Node<T>>, prev?: GridCollection<T>, opts?: GridCollectionOptions) {
+    this.keyMap = new Map(prev?.keyMap) || new Map();
     this.columns = [];
+    this.rowHeaderColumnKeys = new Set();
+    this.body = prev?.body || [];
 
     let visit = (node: GridNode<T>) => {
       // If the node is the same object as the previous node for the same key,
@@ -46,11 +51,10 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
 
       if (node.type === 'column' && !node.hasChildNodes) {
         this.columns.push(node);
-      }
 
-      // TODO: update this in case the column gets removed somehow??
-      if (node.type === 'rowheader') {
-        this.hasRowHeaders = true;
+        if (node.props.isRowHeader) {
+          this.rowHeaderColumnKeys.add(node.key);
+        }
       }
 
       let childKeys = new Set();
@@ -62,6 +66,8 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
         if (last) {
           last.nextKey = child.key;
           child.prevKey = last.key;
+        } else {
+          child.prevKey = null;
         }
   
         if (node.type === 'item') {
@@ -73,6 +79,10 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
         }
 
         last = child;
+      }
+
+      if (last) {
+        last.nextKey = null;
       }
 
       // Remove deleted nodes and their children from the key map
@@ -94,13 +104,16 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
       }
     };
     
-    this.body = [];
+    let bodyKeys = new Set();
     let last: GridNode<T>;
     let index = 0;
+    let body = [];
     for (let node of nodes) {
       if (last) {
         last.nextKey = node.key;
         node.prevKey = last.key;
+      } else {
+        node.prevKey = null;
       }
 
       if (node.type === 'item') {
@@ -113,18 +126,33 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
           this.firstKey = node.key;
         }
 
-        this.body.push(node);
+        bodyKeys.add(node.key);
+        body.push(node);
       }
 
       last = node;
     }
 
     if (last) {
+      last.nextKey = null;
       this.lastKey = last.key;
     }
 
-    // If rows have header cells, add a corresponding column
-    if (this.hasRowHeaders) {
+    for (let node of this.body) {
+      if (!bodyKeys.has(node.key)) {
+        remove(node);
+      }
+    }
+
+    this.body = body;
+
+    // Default row header column to the first one.
+    if (this.rowHeaderColumnKeys.size === 0) {
+      this.rowHeaderColumnKeys.add(this.columns[0].key);
+    }
+
+    // Add cell for selection checkboxes if needed.
+    if (opts?.showSelectionCheckboxes) {
       let rowHeaderColumn: GridNode<T> = {
         type: 'column',
         key: ROW_HEADER_COLUMN_KEY,
@@ -136,6 +164,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
         rendered: null,
         childNodes: [],
         props: {
+          isSelectionCell: true,
           width: 55 // TODO: spectrum??
         }
       };
@@ -209,7 +238,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
               type: 'placeholder',
               key: 'placeholder-' + item.key,
               colspan: colIndex - rowLength,
-              index: row.length,
+              index: rowLength,
               value: null,
               rendered: null,
               level: i,
@@ -223,7 +252,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
           }
 
           item.level = i;
-          item.index = row.length;
+          item.index = colIndex;
           row.push(item);
         }
 
@@ -242,7 +271,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
           type: 'placeholder',
           key: 'placeholder-' + row[row.length - 1].key,
           colspan: this.columns.length - rowLength,
-          index: row.length,
+          index: rowLength,
           value: null,
           rendered: null,
           level: i,
@@ -258,7 +287,22 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
       i++;
     }
 
-    return headerRows;
+    return headerRows.map((childNodes, index) => {
+      let row: GridNode<T> = {
+        type: 'headerrow',
+        key: 'headerrow-' + index,
+        index,
+        value: null,
+        rendered: null,
+        level: 0,
+        hasChildNodes: true,
+        childNodes,
+        textValue: null
+      };
+
+      this.keyMap.set(row.key, row);
+      return row;
+    });
   }
 
   *[Symbol.iterator]() {
@@ -266,7 +310,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
   }
 
   get size() {
-    return this.keyMap.size;
+    return this.body.length;
   }
 
   getKeys() {

@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import highlightCss from './syntax-highlight.css';
+import {ImageContext} from './Image';
 import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
@@ -94,15 +95,18 @@ function Page({children, title, styles, scripts}) {
         <script
           dangerouslySetInnerHTML={{__html: `(() => {
             let classList = document.documentElement.classList;
+            let style = document.documentElement.style;
             let dark = window.matchMedia('(prefers-color-scheme: dark)');
             let fine = window.matchMedia('(any-pointer: fine)');
             let update = () => {
               if (localStorage.theme === "dark" || (!localStorage.theme && dark.matches)) {
                 classList.remove("${theme.light['spectrum--light']}");
                 classList.add("${theme.dark['spectrum--dark']}");
+                style.colorScheme = 'dark';
               } else {
                 classList.add("${theme.light['spectrum--light']}");
                 classList.remove("${theme.dark['spectrum--dark']}");
+                style.colorScheme = 'light';
               }
 
               if (!fine.matches) {
@@ -143,7 +147,7 @@ function dirToTitle(dir) {
     .join(' ');
 }
 
-function Nav({currentPageName, pages, publicUrl}) {
+function Nav({currentPageName, pages}) {
   let isIndex = /index\.html$/;
   let currentParts = currentPageName.split('/');
   let currentDir = currentParts[0];
@@ -200,7 +204,7 @@ function Nav({currentPageName, pages, publicUrl}) {
             <ChevronLeft />
           </a>
         }
-        <a href={publicUrl} className={docStyles.homeBtn}>
+        <a href="./index.html" className={docStyles.homeBtn}>
           <svg viewBox="0 0 30 26" fill="#E1251B">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
@@ -217,7 +221,7 @@ function Nav({currentPageName, pages, publicUrl}) {
           <li className={sideNavStyles['spectrum-SideNav-item']}>
             <h3 className={sideNavStyles['spectrum-SideNav-heading']}>{key}</h3>
             <ul className={sideNavStyles['spectrum-SideNav']}>
-              {pageMap[key].map(p => <SideNavItem {...p} />)}
+              {pageMap[key].sort((a, b) => a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
             </ul>
           </li>
         ))}
@@ -246,11 +250,13 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
   return (
     <Page title={currentPage.title} scripts={scripts} styles={styles}>
       <div className={docStyles.pageHeader} id="header" />
-      <Nav currentPageName={currentPage.name} pages={pages} publicUrl={publicUrl} />
+      <Nav currentPageName={currentPage.name} pages={pages} />
       <main>
-        <article className={typographyStyles['spectrum-Typography']}>
+        <article className={classNames(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>
           <MDXProvider components={mdxComponents}>
-            <LinkProvider>{children}</LinkProvider>
+            <ImageContext.Provider value={publicUrl}>
+              <LinkProvider>{children}</LinkProvider>
+            </ImageContext.Provider>
           </MDXProvider>
         </article>
         {toc.length ? <ToC toc={toc} /> : null}

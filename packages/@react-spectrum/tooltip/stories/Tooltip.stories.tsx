@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/button';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Tooltip, TooltipTrigger} from '../src';
+import {Tooltip} from '../src';
 
 storiesOf('Tooltip', module)
   .add(
@@ -51,59 +50,8 @@ storiesOf('Tooltip', module)
   .add(
     'long content',
     () => render(longMarkup)
-  )
-  .add(
-    'triggered by click, placement: left',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'start', type: 'click'})
-  ).add(
-    'triggered by click, placement: right',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'end', type: 'click'})
-  ).add(
-    'triggered by hover and focus, placement: top',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'top', type: ['hover', 'focus']})
-  ).add(
-    'triggered by hover and focus, placement: bottom',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'bottom', type: ['hover', 'focus']})
-  ).add(
-    'supports disable prop: click',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: 'click', isDisabled: true})
-  ).add(
-    'supports disable prop: hover and focus',
-    () => renderWithTrigger('This is a tooltip.', {placement: 'left', type: ['hover', 'focus'], isDisabled: true})
-  ).add(
-     'single tooltip: hover',
-     () => renderMultipleTriggers('This is a tooltip.', {placement: 'left', type: 'hover'})
-   ).add(
-     'single tooltip: click',
-     () => renderMultipleTriggers('This is a tooltip.', {placement: 'left', type: 'click'})
-   ).add(
-     'single tooltip: hover & click',
-     () => renderWithDifferentTriggerTypes('This is a tooltip.')
-   );
-
-function render(content, props = {}) {
-  return (
-    <div style={{display: 'inline-block'}}>
-      <Tooltip
-        {...props}
-        isOpen>
-        {content}
-      </Tooltip>
-    </div>
   );
-}
-
-function renderWithTrigger(content, props = {}) {
-  return (
-    <TooltipTrigger {...props}>
-      <ActionButton>Trigger Tooltip</ActionButton>
-      <Tooltip>
-        {content}
-      </Tooltip>
-    </TooltipTrigger>
-  );
-}
-
+ 
 const longMarkup = (
   <div>
   Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor
@@ -114,107 +62,14 @@ const longMarkup = (
   </div>
 );
 
-// These are sample functions for proof of concept in this PR. Can be removed at in the next tooltip related pull request.
-
-function renderMultipleTriggers(content, props = {}) {
+function render(content, props = {}) {
   return (
-    <div>
-      <div>
-        <TooltipTrigger {...props}>
-          <ActionButton>
-            Tooltip Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...props}>
-          <ActionButton>
-            Tooltip Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...props}>
-          <ActionButton>
-            Tooltip Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-    </div>
-  );
-}
-
-function renderWithDifferentTriggerTypes(content) {
-  const hoverProps = {placement: 'right' as const, type: 'hover' as const};
-  const clickProps = {placement: 'right' as const, type: 'click' as const};
-
-  return (
-    <div>
-      <div>
-        <TooltipTrigger {...hoverProps}>
-          <ActionButton>
-            Hover Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...clickProps}>
-          <ActionButton>
-            Click Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...hoverProps}>
-          <ActionButton>
-            Hover Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...clickProps}>
-          <ActionButton>
-            Click Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...clickProps}>
-          <ActionButton>
-            Click Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
+    <div style={{display: 'inline-block'}}>
+      <Tooltip
+        {...props}
+        isOpen>
+        {content}
+      </Tooltip>
     </div>
   );
 }

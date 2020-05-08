@@ -140,6 +140,21 @@ module.exports = new Transformer({
       return transformer;
     };
 
+    // Adds an `example` class to `pre` tags followed by examples.
+    // This allows us to remove the bottom rounded corners, but only when
+    // there is a rendered example below.
+    function wrapExamples() {
+      return (tree) => (
+        flatMap(tree, node => {
+          if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].properties.metastring === 'example') {
+            node.properties.className = ['example'];
+          }
+
+          return [node];
+        })
+      );
+    }
+
     const compiled = await mdx(await asset.getCode(), {
       remarkPlugins: [
         slug,
@@ -157,6 +172,9 @@ module.exports = new Transformer({
           }
         ],
         fragmentUnWrap
+      ],
+      rehypePlugins: [
+        wrapExamples
       ]
     });
 
@@ -165,7 +183,6 @@ module.exports = new Transformer({
       : `import React from 'react';
 import ReactDOM from 'react-dom';
 import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
-import '@react-spectrum/docs/src/client';
 ${exampleCode.join('\n')}
 export default {};
 `;
@@ -211,6 +228,18 @@ ${compiled}
         }
       }
     ];
+
+    asset.addDependency({
+      moduleSpecifier: '@react-spectrum/docs/src/client',
+      isAsync: true
+    });
+
+    if (toc.length || exampleBundle) {
+      asset.addDependency({
+        moduleSpecifier: '@react-spectrum/docs/src/docs',
+        isAsync: true
+      });
+    }
 
     asset.addDependency({
       moduleSpecifier: 'page'

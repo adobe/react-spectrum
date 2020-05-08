@@ -11,54 +11,30 @@
  */
 
 import {chain, useId} from '@react-aria/utils';
-import {DOMProps, FocusEvents} from '@react-types/shared';
+import {FocusEvents} from '@react-types/shared';
 import {HoverProps, PressProps} from '@react-aria/interactions';
 import {HTMLAttributes, RefObject} from 'react';
-import {TooltipProps} from '@react-types/tooltip';
+import {TooltipProps, TooltipTriggerAriaProps, TriggerProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
 import {useHover} from '@react-aria/interactions';
-import {useOverlay} from '@react-aria/overlays';
-
-interface TriggerRefProps extends DOMProps, HTMLAttributes<HTMLElement> {
-  ref: RefObject<HTMLElement | null>,
-}
-
-interface TooltipTriggerProps {
-  tooltipProps: TooltipProps,
-  triggerProps: TriggerRefProps,
-  state: TooltipTriggerState,
-  isDisabled: boolean,
-  type: string
-}
 
 interface TooltipTriggerAria {
   triggerProps: HTMLAttributes<HTMLElement> & PressProps & HoverProps & FocusEvents,
   tooltipProps: HTMLAttributes<HTMLElement>
 }
 
-export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAria {
-  let tooltipId = useId();
-  let triggerId = useId();
+export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: TooltipTriggerState, ref: RefObject<HTMLElement>) : TooltipTriggerAria {
   let {
-    tooltipProps,
-    triggerProps,
-    state,
-    isDisabled,
-    type
+    tooltipProps = {} as TooltipProps,
+    triggerProps = {} as TriggerProps,
+    isDisabled
   } = props;
 
-  let onClose = () => {
-    state.setOpen(false);
-  };
-
-  let {overlayProps} = useOverlay({
-    ref: triggerProps.ref,
-    onClose: onClose,
-    isOpen: state.open
-  });
+  let tooltipId = useId(tooltipProps.id);
+  let triggerId = useId(triggerProps.id);
 
   let onKeyDownTrigger = (e) => {
-    if (triggerProps.ref && triggerProps.ref.current) {
+    if (ref && ref.current) {
       // dismiss tooltip on esc key press
       if (e.key === 'Escape') {
         e.preventDefault();
@@ -75,7 +51,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     if (isDisabled) {
       return;
     }
-    let triggerId = triggerProps.ref.current.id;
+    let triggerId = ref.current.id;
     tooltipManager.showTooltipDelayed(state, triggerId);
   };
 
@@ -83,16 +59,9 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
     tooltipManager.hideTooltipDelayed(state);
   };
 
-  let onPress = () => {
-    let triggerId = triggerProps.ref.current.id;
-    tooltipManager.updateTooltipState(state, triggerId);
-  };
-
-  let triggerType = type;
-
   let {hoverProps} = useHover({
     isDisabled,
-    ref: triggerProps.ref,
+    ref,
     onHover: handleDelayedShow,
     onHoverEnd: handleDelayedHide
   });
@@ -100,16 +69,13 @@ export function useTooltipTrigger(props: TooltipTriggerProps): TooltipTriggerAri
   return {
     triggerProps: {
       id: triggerId,
-      'aria-describedby': tooltipId,
+      'aria-describedby': state.open ? tooltipId : undefined,
       onKeyDown: chain(triggerProps.onKeyDown, onKeyDownTrigger),
-      onPress: triggerType === 'click' ? onPress : undefined,
-      ...(triggerType.includes('hover') && hoverProps),
-      onFocus: (triggerType.includes('focus') || triggerType.includes('hover')) ? handleDelayedShow : undefined,
-      onBlur: (triggerType.includes('focus') || triggerType.includes('hover')) ? handleDelayedHide : undefined
+      ...hoverProps,
+      onFocus: handleDelayedShow,
+      onBlur: handleDelayedHide
     },
     tooltipProps: {
-      ...overlayProps,
-      ...tooltipProps,
       id: tooltipId
     }
   };
