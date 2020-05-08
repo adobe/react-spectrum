@@ -52,11 +52,6 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
   let state = useGridState({...props, showSelectionCheckboxes: true});
   let domRef = useDOMRef(ref);
-  let {gridProps} = useGrid({
-    ...props,
-    ref: domRef,
-    isVirtualized: true
-  }, state);
 
   let {scale} = useProvider();
   let layout = useMemo(() => new TableLayout({
@@ -76,6 +71,13 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   }), [props.rowHeight, scale]);
   let {direction} = useLocale();
   layout.collection = state.collection;
+
+  let {gridProps} = useGrid({
+    ...props,
+    ref: domRef,
+    isVirtualized: true,
+    layout
+  }, state);
 
   // This overrides collection view's renderWrapper to support DOM heirarchy.
   type View = ReusableView<Node<T>, unknown>;
