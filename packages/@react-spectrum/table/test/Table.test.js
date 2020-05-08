@@ -505,21 +505,23 @@ describe('Table', function () {
       </Provider>
     );
 
-    let renderNested = () => render(
-      <Table selectionMode="none">
-        <TableHeader columns={nestedColumns} columnKey="key">
-          {column =>
-            <Column childColumns={column.children}>{column.name}</Column>
-          }
-        </TableHeader>
-        <TableBody items={items} itemKey="foo">
-          {item =>
-            (<Row>
-              {key => <Cell>{item[key]}</Cell>}
-            </Row>)
-          }
-        </TableBody>
-      </Table>
+    let renderNested = (locale = 'en-US') => render(
+      <Provider locale={locale} theme={theme}>
+        <Table selectionMode="none">
+          <TableHeader columns={nestedColumns} columnKey="key">
+            {column =>
+              <Column childColumns={column.children}>{column.name}</Column>
+            }
+          </TableHeader>
+          <TableBody items={items} itemKey="foo">
+            {item =>
+              (<Row>
+                {key => <Cell>{item[key]}</Cell>}
+              </Row>)
+            }
+          </TableBody>
+        </Table>
+      </Provider>
     );
 
     let focusCell = (tree, text) => tree.getByText(text).focus();
@@ -580,6 +582,20 @@ describe('Table', function () {
         focusCell(tree, 'Bar');
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(tree.getByText('Foo'));
+      });
+
+      it('should move to the next nested column header in a row with ArrowRight', function () {
+        let tree = renderNested();
+        focusCell(tree, 'Tier Two Header A');
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(tree.getByText('Tier Two Header B'));
+      });
+
+      it('should move to the previous nested column header in a row with ArrowRight in RTL', function () {
+        let tree = renderNested('ar-AE');
+        focusCell(tree, 'Tier Two Header B');
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(tree.getByText('Tier Two Header A'));
       });
 
       it('should move to the first column header when focus is on the last column with ArrowRight', function () {
@@ -652,6 +668,20 @@ describe('Table', function () {
         focusCell(tree, 'Bar');
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(tree.getByText('Baz'));
+      });
+
+      it('should move to the previous nested column header in a row with ArrowLeft', function () {
+        let tree = renderNested();
+        focusCell(tree, 'Tier Two Header B');
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(tree.getByText('Tier Two Header A'));
+      });
+
+      it('should move to the next nested column header in a row with ArrowLeft in RTL', function () {
+        let tree = renderNested('ar-AE');
+        focusCell(tree, 'Tier Two Header A');
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(tree.getByText('Tier Two Header B'));
       });
 
       it('should move to the last column header when focus is on the first column with ArrowLeft', function () {
