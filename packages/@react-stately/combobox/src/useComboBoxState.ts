@@ -89,7 +89,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     let itemText = selectedItem ? selectedItem.textValue : '';
     if (itemText !== props.inputValue) {
       console.error('Mismatch between selected item and inputValue!');
-    }  
+    }
   }
 
   let onInputChange = (value) => {
@@ -124,16 +124,17 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   let selectionState = useMultipleSelectionState(
     {
       ...props,
-      selectedKeys, 
+      selectedKeys,
+      disallowEmptySelection: true,
       onSelectionChange: (keys) => setSelectedKey(keys.values().next().value),
       selectionMode: 'single'
     }
   );
-  
+
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
-  
+
   let triggerState = useMenuTriggerState(props);
   let lowercaseValue = inputValue.toLowerCase().replace(' ', '');
 
