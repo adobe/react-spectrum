@@ -101,11 +101,14 @@ interface, which is a generic interface to access sequential unique keyed data. 
 implement this interface yourself, e.g. by using a prop to pass a list of item objects, 
 but <TypeLink links={treeDocs.links} type={treeDocs.exports.useTreeState} /> from 
 `@react-stately/tree` implements a JSX based interface for building collections instead.
+See [Collection Components](/react-stately/collections.html) for more information, 
+and [Collection Interface](/react-stately/Collection.html) for internal details.
 
 In addition, <TypeLink links={treeDocs.links} type={treeDocs.exports.useTreeState} />
 manages the state necessary for multiple selection and exposes
 a <TypeLink links={selectionDocs.links} type={selectionDocs.exports.SelectionManager} />,
 which makes use of the collection to provide an interface to update the selection state.
+For more information, see [Selection](/react-stately/selection.html).
 
 ## Example
 

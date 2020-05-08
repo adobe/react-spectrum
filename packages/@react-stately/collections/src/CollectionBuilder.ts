@@ -33,7 +33,7 @@ export class CollectionBuilder<T extends object> {
     return iterable(() => this.iterateCollection(props));
   }
 
-  *iterateCollection(props: CollectionBase<T>) {
+  private *iterateCollection(props: CollectionBase<T>) {
     let {children, items} = props;
 
     if (typeof children === 'function') {
@@ -56,7 +56,7 @@ export class CollectionBuilder<T extends object> {
     }
   }
 
-  getKey(item: CollectionElement<T>, partialNode: PartialNode<T>, state: CollectionBuilderState, parentKey?: Key): Key {
+  private getKey(item: CollectionElement<T>, partialNode: PartialNode<T>, state: CollectionBuilderState, parentKey?: Key): Key {
     if (item.props.uniqueKey != null) {
       return item.props.uniqueKey;
     }
@@ -82,14 +82,14 @@ export class CollectionBuilder<T extends object> {
     return key;
   }
 
-  getChildState(state: CollectionBuilderState, partialNode: PartialNode<T>) {
+  private getChildState(state: CollectionBuilderState, partialNode: PartialNode<T>) {
     return {
       renderer: partialNode.renderer || state.renderer,
       childKey: partialNode.childKey || state.childKey
     };
   }
 
-  *getFullNode(partialNode: PartialNode<T>, state: CollectionBuilderState, parentKey?: Key, parentNode?: Node<T>): Generator<Node<T>> {
+  private *getFullNode(partialNode: PartialNode<T>, state: CollectionBuilderState, parentKey?: Key, parentNode?: Node<T>): Generator<Node<T>> {
     // If there's a value instead of an element on the node, and a parent renderer function is available,
     // use it to render an element for the value.
     let element = partialNode.element;
