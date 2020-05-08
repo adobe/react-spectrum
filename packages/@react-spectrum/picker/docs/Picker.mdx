@@ -50,7 +50,7 @@ category: Pickers
 ```
 
 ## Content
-Picker follows the [Collection Components](collections.html) API, accepting both static and dynamic forms of children. Similar to the Menu, Picker accepts an `<Item>` component, each with a `uniqueKey` prop. Basic usage of the Picker, seen in the example above, shows multiple options populated with a string. This implementation would be used when the list of options is finite and known.
+Picker follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic forms of children. Similar to the Menu, Picker accepts an `<Item>` component, each with a `uniqueKey` prop. Basic usage of the Picker, seen in the example above, shows multiple options populated with a string. This implementation would be used when the list of options is finite and known.
 
 The dynamic method (shown below) would be better suited to use if the options came from a data object such as values returned from an API call. Providing the data in this way allows for Picker to automatically cache the rendering of each item, which dramatically improves performance.
 
