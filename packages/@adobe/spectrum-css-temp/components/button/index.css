@@ -136,6 +136,7 @@ a.spectrum-ActionButton {
   -webkit-appearance: none;
   /* Make link text not selectable  */
   user-select: none;
+  cursor: pointer;
 }
 
 .spectrum-ActionButton {
