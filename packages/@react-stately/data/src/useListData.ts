@@ -30,7 +30,7 @@ interface ListData<T extends object> {
 
   /**
    * Gets an item from the list by key.
-   * @param key 
+   * @param key - the key of the item to retrieve.
    */
   getItem(key: Key): T,
 
