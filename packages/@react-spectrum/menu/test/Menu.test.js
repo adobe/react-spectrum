@@ -601,7 +601,7 @@ describe('Menu', function () {
       jest.runAllTimers();
 
       fireEvent.keyDown(menu, {key: 'B'});
-      expect(document.activeElement).toBe(menuItems[1]);
+      expect(document.activeElement).toBe(menuItems[2]);
     });
 
     it.each`

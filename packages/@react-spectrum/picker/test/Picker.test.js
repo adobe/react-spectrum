@@ -1373,8 +1373,8 @@ describe('Picker', function () {
       jest.runAllTimers();
 
       fireEvent.keyDown(picker, {key: 'h'});
-      expect(onSelectionChange).toHaveBeenCalledTimes(2);
-      expect(picker).toHaveTextContent('One');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(picker).toHaveTextContent('Two');
     });
 
     it('wraps around when no items past the current one match', function () {

@@ -33,8 +33,7 @@ let withSection = [
   ]},
   {name: 'Heading 2', children: [
     {name: 'Blah'},
-    {name: 'Bleh'},
-    {name: 'Brb'}
+    {name: 'Bleh'}
   ]}
 ];
 
@@ -92,7 +91,7 @@ describe('ListBox', function () {
     expect(dividers.length).toBe(1);
 
     let items = within(listbox).getAllByRole('option');
-    expect(items.length).toBe(6);
+    expect(items.length).toBe(5);
     let i = 0;
     for (let item of items) {
       expect(item).toHaveAttribute('tabindex');
@@ -493,7 +492,7 @@ describe('ListBox', function () {
       expect(document.activeElement).toBe(options[4]);
     });
 
-    it('focuses on the same item if its key is typed before and after search timeout', function () {
+    it('resets the search text after a timeout', function () {
       let tree = renderComponent({autoFocus: 'first'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
@@ -505,7 +504,7 @@ describe('ListBox', function () {
       jest.runAllTimers();
 
       fireEvent.keyDown(listbox, {key: 'B'});
-      expect(document.activeElement).toBe(options[1]);
+      expect(document.activeElement).toBe(options[2]);
     });
 
     it('wraps around when no items past the current one match', function () {
@@ -521,8 +520,8 @@ describe('ListBox', function () {
 
       jest.runAllTimers();
 
-      fireEvent.keyDown(listbox, {key: 'U'});
-      expect(document.activeElement).toBe(options[0]);
+      fireEvent.keyDown(listbox, {key: 'B'});
+      expect(document.activeElement).toBe(options[1]);
     });
   });
 

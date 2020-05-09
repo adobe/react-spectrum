@@ -46,7 +46,7 @@ const DEFAULT_HEIGHT = 48;
  *
  * To configure a ListLayout, you can use the properties to define the
  * layouts and/or use the method for defining indentation.
- * The {@link ListLayoutDelegate} extends the existing collection view
+ * The {@link ListKeyboardDelegate} extends the existing collection view
  * delegate with an additional method to do this (it uses the same delegate object as
  * the collection view itself).
  */
