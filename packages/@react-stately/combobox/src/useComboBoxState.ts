@@ -107,19 +107,22 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
 
   let initialSelectedKeyText = collection.getItem(props.selectedKey)?.textValue;
   let initialDefaultSelectedKeyText = collection.getItem(props.defaultSelectedKey)?.textValue;
-  let [inputValue, setInputValue] = useControlledState(toString(props.inputValue) || initialSelectedKeyText, toString(props.defaultInputValue) || initialDefaultSelectedKeyText || '', onInputChange);
+  let [inputValue, setInputValue] = useControlledState(toString(props.inputValue), toString(props.defaultInputValue) || initialSelectedKeyText || initialDefaultSelectedKeyText || '', onInputChange);
 
-  let selectedKey = computeKeyFromValue(inputValue, collection);
+  let selectedKey = props.selectedKey || computeKeyFromValue(inputValue, collection);
   let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
 
   let setSelectedKey = (key) => {
-    if (key !== selectedKey) {
-      let item = collection.getItem(key);
-      let itemText = item ? item.textValue : '';
-      setInputValue(itemText);
-      triggerState.setOpen(false);
-    }
+    let item = collection.getItem(key);
+    let itemText = item ? item.textValue : '';
+    itemText && setInputValue(itemText);
+    triggerState.setOpen(false);
   };
+
+  // Update the selectedKey and inputValue when props.selectedKey updates
+  useEffect(() => {
+    setSelectedKey(props.selectedKey);
+  }, [props.selectedKey]);
 
   let selectionState = useMultipleSelectionState(
     {
