@@ -22,32 +22,23 @@ describe('useLink', function () {
 
   it('handles defaults', function () {
     let {linkProps} = renderLinkHook({children: 'Test Link'});
-    expect(linkProps.role).toBe('link');
-    expect(linkProps.tabIndex).toBe(0);
-    expect(linkProps.id).toBeDefined();
+    expect(linkProps.role).toBeUndefined();
+    expect(linkProps.tabIndex).toBeUndefined();
     expect(typeof linkProps.onKeyDown).toBe('function');
   });
 
-  it('handles custom children', function () {
-    let {linkProps} = renderLinkHook({children: <div>Test Link</div>});
-    expect(linkProps.role).toBeUndefined();
-    expect(linkProps.tabIndex).toBeUndefined();
-    expect(linkProps.id).toBeDefined();
+  it('handles custom element type', function () {
+    let {linkProps} = renderLinkHook({children: <div>Test Link</div>, elementType: 'div'});
+    expect(linkProps.role).toBe('link');
+    expect(linkProps.tabIndex).toBe(0);
   });
 
   it('handles isDisabled', function () {
-    let {linkProps} = renderLinkHook({children: 'Test Link', isDisabled: true});
+    let {linkProps} = renderLinkHook({children: 'Test Link', elementType: 'span', isDisabled: true});
     expect(linkProps.role).toBe('link');
     expect(linkProps['aria-disabled']).toBe(true);
     expect(linkProps.tabIndex).toBeUndefined();
-    expect(linkProps.id).toBeDefined();
     expect(typeof linkProps.onKeyDown).toBe('function');
-  });
-
-  it('handles href warning', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-    renderLinkHook({children: 'Test Link', href: '#'});
-    expect(spyWarn).toHaveBeenCalledWith('href is deprecated, please use an anchor element as children');
   });
 
   it('handles onClick warning', function () {

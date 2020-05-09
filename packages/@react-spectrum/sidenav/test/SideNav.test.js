@@ -383,4 +383,70 @@ describe('SideNav', function () {
     expect(alice).toHaveAttribute('aria-disabled', 'false');
   });
 
+  it.each`
+    Name                           | Component    | ComponentSection | ComponentItem
+    ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
+  `('$Name does not allow empty selection', async function ({Name, Component, ComponentSection, ComponentItem}) {
+    let spy = jest.fn();
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy});
+
+    await waitForDomChange();
+
+    let [bar, alice] = [
+      getByText('Bar'),
+      getByText('Alice')
+    ];
+
+    expect(bar).not.toHaveAttribute('aria-current');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(1);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(2);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+
+
+    alice.focus();
+    triggerPress(alice);
+    expect(bar).not.toHaveAttribute('aria-current');
+    expect(alice).toHaveAttribute('aria-current', 'page');
+    expect(spy).toBeCalledTimes(3);
+  });
+
+  it.each`
+    Name                           | Component    | ComponentSection | ComponentItem
+    ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
+  `('$Name with default key does not allow empty selection', async function ({Name, Component, ComponentSection, ComponentItem}) {
+    let spy = jest.fn();
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy, defaultSelectedKey: ['bar']});
+
+    await waitForDomChange();
+
+    let [bar, alice] = [
+      getByText('Bar'),
+      getByText('Bob')
+    ];
+
+    expect(bar).not.toHaveAttribute('aria-current');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(1);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(2);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+
+
+    alice.focus();
+    triggerPress(alice);
+    expect(bar).not.toHaveAttribute('aria-current');
+    expect(alice).toHaveAttribute('aria-current', 'page');
+    expect(spy).toBeCalledTimes(3);
+  });
+
 });
