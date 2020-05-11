@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMPropsResponder} from '@react-aria/interactions';
+import {FocusableProvider} from '@react-aria/focus';
 import {Overlay} from '@react-spectrum/overlays';
 import {PlacementAxis} from '@react-types/overlays';
 import React, {RefObject, useContext, useRef} from 'react';
@@ -58,10 +58,9 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   });
 
   return (
-    <DOMPropsResponder
+    <FocusableProvider
       {...triggerProps}
-      ref={triggerRef}
-      isDisabled={isDisabled}>
+      ref={triggerRef}>
       {trigger}
       <TooltipContext.Provider
         value={{
@@ -74,6 +73,6 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           {tooltip}
         </Overlay>
       </TooltipContext.Provider>
-    </DOMPropsResponder>
+    </FocusableProvider>
   );
 }
