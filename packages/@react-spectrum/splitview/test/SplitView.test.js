@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {SplitView} from '../';
 import V2SplitView from '@react/react-spectrum/SplitView';
@@ -30,7 +30,6 @@ describe('SplitView tests', function () {
 
   afterEach(function () {
     document.body.style.cursor = null;
-    cleanup();
   });
 
   it.each`

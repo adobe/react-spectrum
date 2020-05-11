@@ -11,9 +11,9 @@
  */
 
 import {Button} from '@react-spectrum/button';
-import {cleanup, render, waitForDomChange} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {render, waitForDomChange} from '@testing-library/react';
 import {ToastContainer, ToastProvider, useToastProvider} from '../';
 import {triggerPress} from '@react-spectrum/test-utils';
 
@@ -38,10 +38,6 @@ function renderComponent(contents) {
 }
 
 describe.skip('Toast Provider and Container', function () {
-  afterEach(() => {
-    cleanup();
-  });
-
   it('Renders a button that triggers a toast via the provider', async () => {
     let {getByRole, queryAllByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');

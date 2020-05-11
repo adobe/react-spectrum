@@ -10,27 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {HoverHookProps, HoverProps} from './useHover';
 import {mergeProps} from '@react-aria/utils';
-import React, {MutableRefObject, useContext, useEffect} from 'react';
+import React, {HTMLAttributes, MutableRefObject, RefObject, useContext, useEffect} from 'react';
 
-interface DOMPropsResponderContext extends HoverProps {
+interface DOMPropsResponderProps extends HTMLAttributes<HTMLElement> {
+  ref?: RefObject<HTMLElement>
+}
+
+interface DOMPropsResponderContext extends HTMLAttributes<HTMLElement> {
   register(): void,
-  ref?: MutableRefObject<HTMLElement>,
-  onMouseEnter?: () => void,
-  onMouseLeave?: () => void,
-  onPointerEnter?: () => void,
-  onPointerLeave?: () => void
+  ref?: MutableRefObject<HTMLElement>
 }
 
 export const DOMPropsResponderContext = React.createContext<DOMPropsResponderContext>(null);
 
-export function useDOMPropsResponderContext(props: HoverHookProps): HoverHookProps {
+export function useDOMPropsResponderContext(props: DOMPropsResponderProps): DOMPropsResponderProps {
   // Consume context from <DOMPropsResponder> and merge with props.
   let context = useContext(DOMPropsResponderContext);
   if (context) {
     let {register, ...contextProps} = context;
-    props = mergeProps(contextProps, props) as HoverHookProps;
+    props = mergeProps(contextProps, props);
     register();
   }
 
