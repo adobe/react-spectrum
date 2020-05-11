@@ -11,6 +11,8 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {ComboBox, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
 import {Flex} from '@react-spectrum/layout';
@@ -98,10 +100,12 @@ storiesOf('ComboBox', module)
     'menuTrigger: manual',
     () => render({menuTrigger: 'manual'})
   )
+  // TODO: add a line of text in the story indicating that you need focus to make combobox menu display
   .add(
     'isOpen',
     () => render({isOpen: true})
   )
+  // TODO: add a line of text in the story indicating that you need focus to make combobox menu display
   .add(
     'defaultOpen',
     () => render({defaultOpen: true})
@@ -116,7 +120,9 @@ storiesOf('ComboBox', module)
   )
   .add(
     'selectedKey (controlled)',
-    () => render({selectedKey: 'two'})
+    () => (
+      <ControlledKeyComboBox selectedKey="Kangaroo" />
+    )
   )
   .add(
     'defaultSelectedKey (uncontrolled)',
@@ -136,7 +142,9 @@ storiesOf('ComboBox', module)
   )
   .add(
     'defaultInputValue and selectedKey (controlled by selectedKey)',
-    () => render({defaultInputValue: 'Item One', selectedKey: 'two'})
+    () => (
+      <ControlledKeyComboBox defaultInputValue="Blah" selectedKey="Kangaroo" />
+    )
   )
   .add(
     'isQuiet',
@@ -234,6 +242,37 @@ let CustomFilterComboBox = () => {
     <ComboBox items={list} itemKey="id" label="Combobox" onFilter={onFilter} onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')}>
       {(item: any) => <Item>{item.name}</Item>}
     </ComboBox>
+  );
+};
+
+let ControlledKeyComboBox = (props) => {
+  let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
+
+  let onSelectionChange = (key) => {
+    // If we get an actual key (not ''), update selectedKey state
+    if (key) {
+      setSelectedKey(key);
+    }
+  };
+
+  return (
+    <div>
+      <ButtonGroup marginEnd="30px">
+        <Button variant="secondary" onPress={() => setSelectedKey('Snake')}>
+          <Text>Snake</Text>
+        </Button>
+        <Button variant="secondary" onPress={() => setSelectedKey('Ross')}>
+          <Text>Ross</Text>
+        </Button>
+      </ButtonGroup>
+      <ComboBox {...props} selectedKey={selectedKey} items={withSection} itemKey="name" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')}>
+        {(item: any) => (
+          <Section items={item.children} title={item.name}>
+            {(item: any) => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ComboBox>
+    </div>
   );
 };
 
