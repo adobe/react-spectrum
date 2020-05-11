@@ -28,7 +28,10 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
   } = props;
 
   let {direction} = useLocale();
-  let {breadcrumbItemProps} = useBreadcrumbItem(props);
+  let {breadcrumbItemProps} = useBreadcrumbItem({
+    ...props,
+    elementType: typeof children === 'string' ? 'span' : 'a'
+  });
 
   let element = React.cloneElement(
     getWrappedElement(children),

@@ -25,10 +25,11 @@ export interface ActionGroupProps<T> extends DOMProps, StyleProps, MultipleSelec
   itemKey?: string,
   disabledKeys?: Iterable<Key>,
   /**
-   * Whether the ActionGroup is disabled or not.
+   * Whether the ActionGroup is disabled.
    * Shows that a selection exists, but is not available in that circumstance.
    */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  onAction?: (key: Key) => void
 }
 
 export interface SpectrumActionGroupProps<T> extends ActionGroupProps<T> {

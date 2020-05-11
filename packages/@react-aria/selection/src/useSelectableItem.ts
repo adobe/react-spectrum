@@ -43,7 +43,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
 
     if (manager.selectionMode === 'single') {
-      if (manager.selectedKeys.has(itemKey)) {
+      if (manager.selectedKeys.has(itemKey) && !manager.disallowEmptySelection) {
         manager.toggleSelection(itemKey);
       } else {
         manager.replaceSelection(itemKey);
@@ -66,8 +66,6 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let itemProps: SelectableItemAria['itemProps'] = {
     tabIndex: isFocused ? 0 : -1,
     onFocus(e) {
-      manager.setFocused(true);
-
       if (e.target === itemRef.current) {
         manager.setFocusedKey(itemKey);
       }

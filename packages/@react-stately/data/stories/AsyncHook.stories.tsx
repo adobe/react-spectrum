@@ -11,11 +11,12 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {Item, useAsyncList} from '../src';
+import {Item} from '@react-stately/collections';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {useEffect} from 'react';
 // import {storiesOf} from '@storybook/react';
 import {Tree} from '@react-spectrum/tree';
+import {useAsyncList} from '../src';
 
 /*
  these are broken, commenting out for now
