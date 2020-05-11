@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import {Form} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {render} from '@testing-library/react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 
@@ -23,17 +23,13 @@ let theme = {
 };
 
 describe('Form', function () {
-  afterEach(() => {
-    cleanup();
-  });
-
   it('should render a form', () => {
     let {getByRole} = render(
       <Provider theme={theme}>
-        <Form />
+        <Form aria-label="Home" />
       </Provider>
     );
-    
+
     let form = getByRole('form');
     expect(form).toBeTruthy();
   });
@@ -41,7 +37,7 @@ describe('Form', function () {
   it('should render children inside the form', () => {
     let {getByRole} = render(
       <Provider theme={theme}>
-        <Form>
+        <Form aria-label="Home">
           <button>Test</button>
         </Form>
       </Provider>
@@ -55,10 +51,10 @@ describe('Form', function () {
     let ref = React.createRef();
     let {getByRole} = render(
       <Provider theme={theme}>
-        <Form ref={ref} />
+        <Form aria-label="Home" ref={ref} />
       </Provider>
     );
-    
+
     let form = getByRole('form');
     expect(form).toBe(ref.current.UNSAFE_getDOMNode());
   });

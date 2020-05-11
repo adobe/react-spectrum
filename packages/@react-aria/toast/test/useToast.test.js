@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup} from '@testing-library/react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {renderHook} from 'react-hooks-testing-library';
+import {renderHook} from '@testing-library/react-hooks';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {useToast} from '../';
@@ -28,7 +27,6 @@ describe('useToast', () => {
   afterEach(() => {
     onClose.mockClear();
     onAction.mockClear();
-    cleanup();
   });
 
   let renderToastHook = (props, state, wrapper) => {
