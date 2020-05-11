@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import React, {useRef} from 'react';
 import {useOverlay} from '../';
 
@@ -21,8 +21,6 @@ function Example(props) {
 }
 
 describe('useOverlay', function () {
-  afterEach(cleanup);
-
   it('should not focus the overlay if a child is focused', function () {
     let res = render(
       <Example isOpen>

@@ -10,15 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup} from '@testing-library/react';
 import {ListLayout} from '@react-stately/collections';
 import React from 'react';
-import {renderHook} from 'react-hooks-testing-library';
+import {renderHook} from '@testing-library/react-hooks';
 import {useSideNav} from '../';
 
 describe('useSideNav', function () {
-  afterEach(cleanup);
-
   let mockState = {};
   let mockLayout = new ListLayout({
     rowHeight: 40

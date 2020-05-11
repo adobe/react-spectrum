@@ -55,7 +55,7 @@ function LinkPopover({id}) {
   }, [breadcrumbs]);
 
   return (
-    <Dialog UNSAFE_className={highlightCss.spectrum} size="L">
+    <Dialog UNSAFE_className={`${highlightCss.spectrum} ${docsStyle.popover}`} size="L">
       <View slot="heading">
         <Breadcrumbs isHeading headingAriaLevel={3} onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}>
           {breadcrumbs.map((b, i) => (

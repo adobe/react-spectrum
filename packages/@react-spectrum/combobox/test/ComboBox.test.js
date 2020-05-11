@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, cleanup, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
 import {ComboBox, Item} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -54,7 +54,6 @@ describe('ComboBox', function () {
     onFilter.mockClear();
     onSelectionChange.mockClear();
     onOpenChange.mockClear();
-    cleanup();
   });
 
   afterAll(function () {

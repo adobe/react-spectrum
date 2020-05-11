@@ -38,7 +38,7 @@ interface TreeData<T extends object> {
 
   /**
    * Gets a node from the tree by key.
-   * @param key 
+   * @param key - the key of the item to retrieve.
    */
   getItem(key: Key): TreeNode<T>,
 

@@ -36,43 +36,84 @@ export class SelectionManager implements MultipleSelectionManager {
     this._isSelectAll = null;
   }
 
+  /**
+   * The type of selection that is allowed in the collection.
+   */
   get selectionMode(): SelectionMode {
     return this.state.selectionMode;
   }
 
+  /**
+   * Whether the collection allows empty selection.
+   */
+  get disallowEmptySelection(): boolean {
+    return this.state.disallowEmptySelection;
+  }
+
+  /**
+   * Whether the collection is currently focused.
+   */
   get isFocused(): boolean {
     return this.state.isFocused;
   }
 
+  /**
+   * Sets whether the collection is focused.
+   */
   setFocused(isFocused: boolean) {
     this.state.setFocused(isFocused);
   }
 
+  /**
+   * The current focused key in the collection.
+   */
   get focusedKey(): Key {
     return this.state.focusedKey;
   }
 
+  /**
+   * Sets the focused key.
+   */
   setFocusedKey(key: Key) {
     this.state.setFocusedKey(key);
   }
 
+  /**
+   * The currently selected keys in the collection.
+   */
   get selectedKeys(): Set<Key> {
     return this.state.selectedKeys;
   }
 
+  /**
+   * Replaces all selected keys in the collection with a new set.
+   */
   setSelectedKeys(keys: Selection) {
     this.state.setSelectedKeys(keys);
   }
 
+  /**
+   * Returns whether a key is selected.
+   */
   isSelected(key: Key) {
     return this.state.selectedKeys.has(key);
   }
 
+  /**
+   * Whether the selection is empty.
+   */
   get isEmpty() {
     return this.state.selectedKeys.size === 0;
   }
 
+  /**
+   * Whether all items in the collection are selected.
+   */
   get isSelectAll() {
+    if (this.isEmpty) {
+      return false;
+    }
+
     if (this._isSelectAll != null) {
       return this._isSelectAll;
     }
@@ -86,6 +127,9 @@ export class SelectionManager implements MultipleSelectionManager {
     return this._isSelectAll;
   }
 
+  /**
+   * Extends the selection to the given key.
+   */
   extendSelection(toKey: Key) {
     toKey = this.getKey(toKey);
     this.state.setSelectedKeys((selectedKeys: Selection) => {
@@ -160,6 +204,9 @@ export class SelectionManager implements MultipleSelectionManager {
     return item.key;
   }
 
+  /**
+   * Toggles whether the given key is selected.
+   */
   toggleSelection(key: Key) {
     key = this.getKey(key);
     if (key == null) {
@@ -182,6 +229,9 @@ export class SelectionManager implements MultipleSelectionManager {
     });
   }
 
+  /**
+   * Replaces the selection with only the given key.
+   */
   replaceSelection(key: Key) {
     key = this.getKey(key);
     if (key == null) {
@@ -213,15 +263,24 @@ export class SelectionManager implements MultipleSelectionManager {
     return keys;
   }
 
+  /**
+   * Selects all items in the collection.
+   */
   selectAll() {
     let keys = this.getSelectAllKeys();
     this.state.setSelectedKeys(new Selection(keys, keys[0], keys[keys.length - 1]));
   }
 
+  /**
+   * Removes all keys from the selection.
+   */
   clearSelection() {
     this.state.setSelectedKeys(new Selection());
   }
 
+  /**
+   * Toggles between select all and an empty selection.
+   */
   toggleSelectAll() {
     if (this.isSelectAll) {
       this.clearSelection();

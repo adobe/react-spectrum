@@ -10,14 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup} from '@testing-library/react';
 import React from 'react';
-import {renderHook} from 'react-hooks-testing-library';
+import {renderHook} from '@testing-library/react-hooks';
 import {useProgressBar} from '../';
 
 describe('useProgressBar', function () {
-  afterEach(cleanup);
-
   let renderProgressBarHook = (props) => {
     let {result} = renderHook(() => useProgressBar(props));
     return result.current;

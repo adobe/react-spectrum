@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import React from 'react';
+import {render} from '@testing-library/react';
 import {useFocusWithin} from '../';
 
 function Example(props) {
@@ -20,8 +20,6 @@ function Example(props) {
 }
 
 describe('useFocusWithin', function () {
-  afterEach(cleanup);
-
   it('handles focus events on the target itself', function () {
     let events = [];
     let addEvent = (e) => events.push({type: e.type, target: e.target});
