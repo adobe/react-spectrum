@@ -162,8 +162,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
           return <TableCheckboxCell cell={item} />;
         }
 
-        let column = state.collection.columns[item.index];
-        if (state.collection.rowHeaderColumnKeys.has(column.key)) {
+        if (state.collection.rowHeaderColumnKeys.has(item.column.key)) {
           return <TableRowHeader cell={item} />;
         }
 
@@ -282,7 +281,8 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
           height: headerHeight,
           overflow: 'hidden',
           position: 'relative',
-          willChange: collectionState.isScrolling ? 'scroll-position' : ''
+          willChange: collectionState.isScrolling ? 'scroll-position' : '',
+          transition: collectionState.isAnimating ? `none ${collectionState.collectionManager.transitionDuration}ms` : undefined
         }}
         ref={headerRef}>
         {collectionState.visibleViews[0]}
@@ -475,8 +475,7 @@ function TableCell({cell}) {
     ref,
     isVirtualized: true
   }, state);
-  let column = state.collection.columns[cell.index];
-  let columnProps = column.props as SpectrumColumnProps<unknown>;
+  let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -514,8 +513,7 @@ function TableRowHeader({cell}) {
     ref,
     isVirtualized: true
   }, state);
-  let column = state.collection.columns[cell.index];
-  let columnProps = column.props as SpectrumColumnProps<unknown>;
+  let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
