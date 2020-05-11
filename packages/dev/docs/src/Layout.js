@@ -112,15 +112,18 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <script
           dangerouslySetInnerHTML={{__html: `(() => {
             let classList = document.documentElement.classList;
+            let style = document.documentElement.style;
             let dark = window.matchMedia('(prefers-color-scheme: dark)');
             let fine = window.matchMedia('(any-pointer: fine)');
             let update = () => {
               if (localStorage.theme === "dark" || (!localStorage.theme && dark.matches)) {
                 classList.remove("${theme.light['spectrum--light']}");
                 classList.add("${theme.dark['spectrum--dark']}");
+                style.colorScheme = 'dark';
               } else {
                 classList.add("${theme.light['spectrum--light']}");
                 classList.remove("${theme.dark['spectrum--dark']}");
+                style.colorScheme = 'light';
               }
 
               if (!fine.matches) {
@@ -235,7 +238,7 @@ function Nav({currentPageName, pages}) {
           <li className={sideNavStyles['spectrum-SideNav-item']}>
             <h3 className={sideNavStyles['spectrum-SideNav-heading']}>{key}</h3>
             <ul className={sideNavStyles['spectrum-SideNav']}>
-              {pageMap[key].map(p => <SideNavItem {...p} />)}
+              {pageMap[key].sort((a, b) => a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
             </ul>
           </li>
         ))}

@@ -11,7 +11,6 @@
  */
 
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-
 import {CollectionItem, CollectionView} from '@react-aria/collections';
 import {ListLayout, Node} from '@react-stately/collections';
 import React, {ReactElement, useMemo} from 'react';
@@ -26,7 +25,7 @@ import {useSideNav} from '@react-aria/sidenav';
 import {useTreeState} from '@react-stately/tree';
 
 export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
-  let state = useTreeState({...props, selectionMode: 'single'});
+  let state = useTreeState({...props, selectionMode: 'single', disallowEmptySelection: true});
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() => new ListLayout({rowHeight: 40, collator}), [collator]);
   let {navProps, listProps} = useSideNav(props, state, layout);

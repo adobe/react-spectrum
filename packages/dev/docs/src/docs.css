@@ -18,6 +18,7 @@ html, body {
   min-width: 100vw;
   min-height: 100vh;
   background: var(--spectrum-global-color-gray-50) !important;
+  color-scheme: light dark;
 }
 
 .exampleImage {
@@ -81,6 +82,11 @@ html, body {
   padding: 0 24px;
   background: var(--spectrum-global-color-gray-75);
   box-sizing: border-box;
+}
+
+.nav ul {
+  /* override spectrum-css's 100%, which causes extra scrolling */
+  height: auto;
 }
 
 .nav header {
@@ -224,11 +230,15 @@ article.inCategory h2.sectionHeader + hr {
 }
 
 article pre {
-  margin-bottom: 0;
   background: var(--spectrum-global-color-gray-75);
   padding: 18px;
-  border-radius: 4px 4px 0 0;
+  border-radius: 4px;
   overflow-x: auto;
+}
+
+article pre:global(.example) {
+  border-radius: 4px 4px 0 0;
+  margin-bottom: 0;
 }
 
 code {
@@ -237,6 +247,15 @@ code {
 
 article > code {
   display: block;
+}
+
+article kbd {
+  font-family: var(--spectrum-font-family-base);
+  background: var(--spectrum-global-color-gray-300);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin: 0 2px;
+  font-size: 0.95em;
 }
 
 .header {
@@ -356,6 +375,57 @@ h2.sectionHeader {
   }
 }
 
+@define-mixin small-propTable {
+  /* Collapse the prop table into a list with key/value pairs */
+  .propTable tr {
+    display: table;
+    width: 100%;
+    padding: 8px 0;
+  }
+
+  .propTable td {
+    display: table-row;
+  }
+
+  .propTable thead {
+    display: none;
+  }
+
+  .propTable td[data-column] code {
+    display: inline-block;
+    vertical-align: text-top;
+    word-break: break-word;
+    width: calc(100% - 80px);
+  }
+
+  .propTable td[data-column]:before {
+    content: attr(data-column);
+    font-size: var(--spectrum-table-header-text-size);
+    font-weight: var(--spectrum-table-header-text-font-weight);
+    min-height: var(--spectrum-table-header-min-height);
+    letter-spacing: var(--spectrum-table-header-text-letter-spacing);
+    color: var(--spectrum-table-header-text-color);
+    text-transform: uppercase;
+    width: 80px;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 8px 0;
+  }
+
+  .noDefault {
+    text-align: left;
+  }
+
+  .methodTable td[data-column]:before {
+    display: none;
+  }
+
+  .methodTable td > span {
+    display: block;
+    padding-top: 8px;
+  }
+}
+
 @media (max-width: 1020px) {
   /* Turn the sidenav into a hamburger menu */
   .nav {
@@ -408,43 +478,9 @@ h2.sectionHeader {
     max-width: initial !important;
   }
 
-  /* Collapse the prop table into a list with key/value pairs */
-  .propTable tr {
-    display: table;
-    width: 100%;
-    padding: 8px 0;
-  }
+  @mixin small-propTable;
+}
 
-  .propTable td {
-    display: table-row;
-  }
-
-  .propTable thead {
-    display: none;
-  }
-
-  .propTable td[data-column] code {
-    display: inline-block;
-    vertical-align: text-top;
-    word-break: break-word;
-    width: calc(100% - 80px);
-  }
-
-  .propTable td[data-column]:before {
-    content: attr(data-column);
-    font-size: var(--spectrum-table-header-text-size);
-    font-weight: var(--spectrum-table-header-text-font-weight);
-    min-height: var(--spectrum-table-header-min-height);
-    letter-spacing: var(--spectrum-table-header-text-letter-spacing);
-    color: var(--spectrum-table-header-text-color);
-    text-transform: uppercase;
-    width: 80px;
-    display: inline-block;
-    vertical-align: middle;
-    padding: 8px 0;
-  }
-
-  .noDefault {
-    text-align: left;
-  }
+.popover {
+  @mixin small-propTable;
 }

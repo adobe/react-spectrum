@@ -184,6 +184,16 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
   let onFocus = (e: FocusEvent) => {
     if (manager.isFocused) {
+      // If a focus event bubbled through a portal, reset focus state.
+      if (!e.currentTarget.contains(e.target)) {
+        manager.setFocused(false);
+      }
+
+      return;
+    }
+
+    // Focus events can bubble through portals. Ignore these events.
+    if (!e.currentTarget.contains(e.target)) {
       return;
     }
 

@@ -16,11 +16,24 @@ import {HTMLAttributes, useRef} from 'react';
 import {useId} from '@react-aria/utils';
 import {useLink} from '@react-aria/link';
 
+interface AriaBreadcrumbItemProps extends BreadcrumbItemProps, DOMProps {
+  /**
+   * The HTML element used to render the breadcrumb link, e.g. "a", or "span".
+   * @default "a"
+   */
+  elementType?: string,
+}
+
 interface BreadcrumbItemAria {
+  /** Props for the breadcrumb item link element. */
   breadcrumbItemProps: HTMLAttributes<HTMLDivElement>
 }
 
-export function useBreadcrumbItem(props: BreadcrumbItemProps & DOMProps): BreadcrumbItemAria {
+/**
+ * Provides the behavior and accessibility implementation for an in a breadcrumbs component.
+ * See `useBreadcrumbs` for details about breadcrumbs.
+ */
+export function useBreadcrumbItem(props: AriaBreadcrumbItemProps): BreadcrumbItemAria {
   let {
     id,
     isCurrent,
@@ -33,11 +46,11 @@ export function useBreadcrumbItem(props: BreadcrumbItemProps & DOMProps): Breadc
   } = props;
 
   let ref = useRef();
-  let {linkProps} = useLink({children, isDisabled, ...otherProps, ref});
+  let {linkProps} = useLink({children, isDisabled: isDisabled || isCurrent, ...otherProps, ref});
 
   let itemProps: HTMLAttributes<HTMLDivElement> = isCurrent
-    ? {'aria-current': ariaCurrent || 'page', role: linkProps.role}
-    : {...linkProps};
+    ? {...linkProps, 'aria-current': ariaCurrent || 'page'}
+    : linkProps;
 
   let breadcrumbItemHeadingProps;
   if (isHeading && isCurrent) {

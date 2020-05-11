@@ -144,6 +144,21 @@ module.exports = new Transformer({
       return transformer;
     };
 
+    // Adds an `example` class to `pre` tags followed by examples.
+    // This allows us to remove the bottom rounded corners, but only when
+    // there is a rendered example below.
+    function wrapExamples() {
+      return (tree) => (
+        flatMap(tree, node => {
+          if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].properties.metastring === 'example') {
+            node.properties.className = ['example'];
+          }
+
+          return [node];
+        })
+      );
+    }
+
     const compiled = await mdx(await asset.getCode(), {
       remarkPlugins: [
         slug,
@@ -161,6 +176,9 @@ module.exports = new Transformer({
           }
         ],
         fragmentUnWrap
+      ],
+      rehypePlugins: [
+        wrapExamples
       ]
     });
 
