@@ -812,4 +812,5 @@ describe('ComboBox', function () {
   });
 
   // TODO: write tests for ComboBox with sections
+  // TODO: write test for onCustomValue
 });
