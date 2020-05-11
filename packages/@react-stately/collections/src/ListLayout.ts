@@ -65,8 +65,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected lastWidth: number;
   protected lastCollection: Collection<Node<T>>;
   protected rootNodes: LayoutNode[];
-  private collator: Intl.Collator;
-  private cache: WeakMap<Node<T>, LayoutNode> = new WeakMap();
+  protected collator: Intl.Collator;
+  protected cache: WeakMap<Node<T>, LayoutNode> = new WeakMap();
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description

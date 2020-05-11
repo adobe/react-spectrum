@@ -95,7 +95,7 @@ export class CollectionBuilder<T extends object> {
     let element = partialNode.element;
     if (!element && partialNode.value && state && state.renderer) {
       let cached = this.cache.get(partialNode.value);
-      if (cached) {
+      if (cached && (!cached.shouldInvalidate || !cached.shouldInvalidate(this.context))) {
         yield cached;
         return;
       }
@@ -128,15 +128,6 @@ export class CollectionBuilder<T extends object> {
           // Cache the node based on its value
           node.value = childNode.value || partialNode.value;
           if (node.value) {
-            // If there was a previous cached node for this value,
-            // we can reuse the child nodes. This happens when item
-            // states like selection/focus change, which only affects
-            // the node itself, not its children.
-            let prevCached = this.cache.get(node.value);
-            if (prevCached) {
-              node.childNodes = prevCached.childNodes;
-            }
-
             this.cache.set(node.value, node);
           }
 
@@ -169,6 +160,7 @@ export class CollectionBuilder<T extends object> {
       textValue: partialNode.textValue,
       'aria-label': partialNode['aria-label'],
       wrapper: partialNode.wrapper,
+      shouldInvalidate: partialNode.shouldInvalidate,
       hasChildNodes: partialNode.hasChildNodes,
       childNodes: iterable(function *() {
         if (!partialNode.hasChildNodes) {
