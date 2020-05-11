@@ -28,7 +28,7 @@ export interface MenuTriggerState {
   setFocusStrategy(value: FocusStrategy): void,
 
   /** Opens the menu. */
-  open(): void,
+  open(focusStrategy?: FocusStrategy | null): void,
 
   /** Closes the menu. */
   close(): void,
@@ -46,11 +46,12 @@ export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
 
   return {
-    isOpen, 
-    setOpen, 
-    focusStrategy, 
+    isOpen,
+    setOpen,
+    focusStrategy,
     setFocusStrategy,
-    open() {
+    open(focusStrategy: FocusStrategy = null) {
+      setFocusStrategy(focusStrategy);
       setOpen(true);
     },
     close() {

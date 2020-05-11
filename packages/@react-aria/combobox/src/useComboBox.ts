@@ -96,16 +96,10 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
         state.close();
         break;
       case 'ArrowDown':
-        if (!state.isOpen) {
-          state.toggle('first');
-        }
-
+        state.open('first');
         break;
       case 'ArrowUp':
-        if (!state.isOpen) {
-          state.toggle('last');
-        }
-
+        state.open('last');
         break;
     }
   };
@@ -132,10 +126,10 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
 
     state.setFocused(false);
-    
+
     if (focusedItem) {
       state.setSelectedKey(state.selectionManager.focusedKey);
-    } else if (allowsCustomValue && !state.selectedKey) {
+    } else if (allowsCustomValue && !state.selectedKey && onCustomValue) {
       onCustomValue(state.inputValue);
     } else if (!allowsCustomValue) {
       let item = state.collection.getItem(state.selectedKey);
@@ -174,14 +168,14 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onPress = (e) => {
     if (e.pointerType === 'touch') {
       inputRef.current.focus();
-      !state.isOpen && state.close();
+      state.open();
     }
   };
 
   let onPressStart = (e) => {
     if (e.pointerType !== 'touch') {
       inputRef.current.focus();
-      !state.isOpen && state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
+      state.open(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
     }
   };
 
