@@ -24,6 +24,7 @@ export class TableLayout<T> extends ListLayout<T> {
     this.buildColumnWidths();
     let header = this.buildHeader();
     let body = this.buildBody(0);
+    body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
     this.contentSize = new Size(body.layoutInfo.rect.width, body.layoutInfo.rect.maxY);
     return [
       header,
@@ -144,12 +145,33 @@ export class TableLayout<T> extends ListLayout<T> {
     let startY = y;
     let width = 0;
     let children: LayoutNode[] = [];
-    for (let node of this.collection) {
+    for (let node of this.collection.body.childNodes) {
       let layoutNode = this.buildChild(node, 0, y);
       layoutNode.layoutInfo.parentKey = 'body';
       y = layoutNode.layoutInfo.rect.maxY;
       width = Math.max(width, layoutNode.layoutInfo.rect.width);
       children.push(layoutNode);
+    }
+
+    // TODO: not show the spinner at the bottom when sorting?
+    if (this.collection.body.props.isLoading) {
+      let rect = new Rect(0, y, width || this.collectionManager.visibleRect.width, children.length === 0 ? this.collectionManager.visibleRect.height : 60);
+      let loader = new LayoutInfo('loader', 'loader', rect);
+      loader.parentKey = 'body';
+      loader.isSticky = children.length === 0;
+      this.layoutInfos.set('loader', loader);
+      children.push({layoutInfo: loader});
+      y = loader.rect.maxY;
+      width = Math.max(width, rect.width);
+    } else if (children.length === 0) {
+      let rect = new Rect(0, y, this.collectionManager.visibleRect.width, this.collectionManager.visibleRect.height);
+      let empty = new LayoutInfo('empty', 'empty', rect);
+      empty.parentKey = 'body';
+      empty.isSticky = true;
+      this.layoutInfos.set('empty', empty);
+      children.push({layoutInfo: empty});
+      y = empty.rect.maxY;
+      width = Math.max(width, rect.width);
     }
 
     rect.width = width;
@@ -230,7 +252,7 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   addVisibleLayoutInfos(res: LayoutInfo[], node: LayoutNode, rect: Rect) {
-    if (node.children.length === 0) {
+    if (!node.children || node.children.length === 0) {
       return;
     }
 
