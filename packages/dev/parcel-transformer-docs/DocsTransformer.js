@@ -438,6 +438,10 @@ module.exports = new Transformer({
     }
 
     function processParameter(p) {
+      if (p.isAssignmentPattern()) {
+        p = p.get('left');
+      }
+
       return {
         type: 'parameter',
         name: p.isRestElement() ? p.node.argument.name : p.node.name,

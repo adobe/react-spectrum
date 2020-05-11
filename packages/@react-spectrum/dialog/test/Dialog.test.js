@@ -10,17 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
 import {Dialog} from '../';
 import {DialogContext} from '../src/context';
+import {fireEvent, render} from '@testing-library/react';
 import {Header} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/typography';
 import {ModalProvider} from '@react-aria/overlays';
 import React from 'react';
 
 describe('Dialog', function () {
-  afterEach(cleanup);
-
   it('does not auto focus anything inside', function () {
     let {getByRole} = render(
       <Dialog>
@@ -164,8 +162,8 @@ describe('Dialog', function () {
           </Dialog>
         </DialogContext.Provider>
       </ModalProvider>
-    );      
-    
+    );
+
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'Dismiss');
 
@@ -183,8 +181,8 @@ describe('Dialog', function () {
           </Dialog>
         </DialogContext.Provider>
       </ModalProvider>
-    );      
-    
+    );
+
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'Dismiss');
 

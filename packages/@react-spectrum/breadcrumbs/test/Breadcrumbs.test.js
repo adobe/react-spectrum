@@ -11,10 +11,10 @@
  */
 
 import {Breadcrumbs} from '../';
-import {cleanup, render, within} from '@testing-library/react';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
+import {render, within} from '@testing-library/react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
@@ -44,7 +44,6 @@ describe('Breadcrumbs', function () {
   afterEach(() => {
     HTMLElement.prototype.getBoundingClientRect.mockRestore();
     HTMLElement.prototype.scrollIntoView.mockRestore();
-    cleanup();
   });
 
   it.each`

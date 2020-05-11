@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import React, {useRef} from 'react';
 import {useOverlayTrigger} from '../';
 
@@ -21,8 +21,6 @@ function Example(props) {
 }
 
 describe('useOverlayTrigger', function () {
-  afterEach(cleanup);
-
   it('should close the overlay when the trigger scrolls', function () {
     let onClose = jest.fn();
     let res = render(
