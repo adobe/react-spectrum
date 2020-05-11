@@ -168,14 +168,14 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onPress = (e) => {
     if (e.pointerType === 'touch') {
       inputRef.current.focus();
-      !state.isOpen && state.close();
+      state.open();
     }
   };
 
   let onPressStart = (e) => {
     if (e.pointerType !== 'touch') {
       inputRef.current.focus();
-      !state.isOpen && state.open(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
+      state.open(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
     }
   };
 
