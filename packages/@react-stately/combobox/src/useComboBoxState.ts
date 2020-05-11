@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
+import {ComboBoxProps} from '@react-types/combobox';
 import {Key, useEffect, useMemo, useRef, useState} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {SelectState} from '@react-stately/select';
@@ -23,14 +23,7 @@ export interface ComboBoxState<T> extends SelectState<T> {
   setInputValue: (value: string) => void
 }
 
-interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
-  isOpen?: boolean,
-  defaultOpen?: boolean,
-  onOpenChange?: (isOpen: boolean) => void,
-  inputValue?: string,
-  defaultInputValue?: string,
-  onInputChange?: (value: string) => void,
-  onFilter?: (value: string) => void,
+interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
   collator: Intl.Collator
 }
 
@@ -52,7 +45,7 @@ function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolea
   return filteredNode;
 }
 
-export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): ComboBoxState<T> {
+export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>): ComboBoxState<T> {
   let {
     onFilter,
     collator,
@@ -107,22 +100,37 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
 
   let initialSelectedKeyText = collection.getItem(props.selectedKey)?.textValue;
   let initialDefaultSelectedKeyText = collection.getItem(props.defaultSelectedKey)?.textValue;
-  let [inputValue, setInputValue] = useControlledState(toString(props.inputValue), toString(props.defaultInputValue) || initialSelectedKeyText || initialDefaultSelectedKeyText || '', onInputChange);
+  let [inputValue, setInputValue] = useControlledState(toString(props.inputValue), initialSelectedKeyText || toString(props.defaultInputValue) || initialDefaultSelectedKeyText || '', onInputChange);
 
   let selectedKey = props.selectedKey || computeKeyFromValue(inputValue, collection);
   let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
 
   let triggerState = useMenuTriggerState(props);
+  // Fires when user hits Enter or clicks
   let setSelectedKey = (key) => {
     let item = collection.getItem(key);
     let itemText = item ? item.textValue : '';
+    // think about the below conditionals below
+    // If I don't have the extra itemText check, then setting props.selectedKey to undef or just deleting one letter of the text
+    // so it doesn't match a key will then clear the textfield entirely
     itemText && setInputValue(itemText);
-    triggerState.setOpen(false);
+    // Only close the menu if the key is being set to something and not to undefined? (this is so when user backspaces the menu stays open)
+    // Or should this even be here? If we remove and put .close on Enter in useComboBox then we can
+    // have consitent behavior of menu staying open when the user types in something matching a combobox option for controlled and uncontrolled
+    // and still have Enter/Click close the menu
+    // This question is mainly around the behavior of if the menu should close when the user
+    // types something matching a option or if it should stay open
+    // If we want to keep the behavior of closing the menu when the user types in a valid combobox value
+    // then I think we'll have to add someting to onInputChange where it calls .close after onSelectionCHange (actually doesn't work cuz onChange in useCOmbobox makes it open again)
+    // key && triggerState.setOpen(false);
   };
 
   // Update the selectedKey and inputValue when props.selectedKey updates
   useEffect(() => {
     setSelectedKey(props.selectedKey);
+    // as asked about, should the the triggerstate.setOpen be put here?
+    // having it here means
+    // props.selectedKey && triggerState.setOpen(false);
   }, [props.selectedKey]);
 
   let selectionState = useMultipleSelectionState(
