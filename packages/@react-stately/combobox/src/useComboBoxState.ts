@@ -112,6 +112,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   let selectedKey = computeKeyFromValue(inputValue, collection);
   let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
 
+  let triggerState = useMenuTriggerState(props);
   let setSelectedKey = (key) => {
     if (key !== selectedKey) {
       let item = collection.getItem(key);
@@ -135,7 +136,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let triggerState = useMenuTriggerState(props);
   let lowercaseValue = inputValue.toLowerCase().replace(' ', '');
 
   let defaultFilterFn = useMemo(() => (node: Node<T>) => {

@@ -95,16 +95,10 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
         state.close();
         break;
       case 'ArrowDown':
-        if (!state.isOpen) {
-          state.toggle('first');
-        }
-
+        state.open('first');
         break;
       case 'ArrowUp':
-        if (!state.isOpen) {
-          state.toggle('last');
-        }
-
+        state.open('last');
         break;
     }
   };
@@ -131,7 +125,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
 
     state.setFocused(false);
-    
+
     if (state.isOpen && focusedItem) {
       state.setSelectedKey(state.selectionManager.focusedKey);
     }
@@ -174,7 +168,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onPressStart = (e) => {
     if (e.pointerType !== 'touch') {
       inputRef.current.focus();
-      !state.isOpen && state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
+      !state.isOpen && state.open(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
     }
   };
 
