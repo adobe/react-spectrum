@@ -158,7 +158,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let {labelProps, inputProps} = useTextField({
     ...props,
     onChange,
-    onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
+    onKeyDown: chain(state.isOpen && collectionProps.onKeyDown, onKeyDown),
     onBlur,
     value: state.inputValue,
     onFocus
