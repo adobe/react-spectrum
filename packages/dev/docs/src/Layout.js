@@ -84,7 +84,7 @@ function dirToTitle(dir) {
 function Page({children, currentPage, publicUrl, styles, scripts}) {
   let isSubpage = currentPage.name.split('/').length > 1 && !/index\.html$/.test(currentPage.name);
   let pageSection = isSubpage ? dirToTitle(currentPage.name) : 'React Spectrum';
-  let keywords = currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).join(',');
+  let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
   let description = currentPage.description || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
   let title = currentPage.title + (!/index\.html$/.test(currentPage.name) ? ` - ${pageSection}` : '');
   return (
