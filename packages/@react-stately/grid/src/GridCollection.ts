@@ -225,8 +225,18 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
               textValue: null
             };
 
+            if (row.length > 0) {
+              row[row.length - 1].nextKey = placeholder.key;
+              placeholder.prevKey = row[row.length - 1].key;
+            }
+
             row.push(placeholder);
             this.keyMap.set(placeholder.key, placeholder);
+          }
+
+          if (row.length > 0) {
+            row[row.length - 1].nextKey = item.key;
+            item.prevKey = row[row.length - 1].key;
           }
 
           item.level = i;
@@ -255,7 +265,8 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
           level: i,
           hasChildNodes: false,
           childNodes: [],
-          textValue: null
+          textValue: null,
+          prevKey: row[row.length - 1].key
         };
 
         row.push(placeholder);
