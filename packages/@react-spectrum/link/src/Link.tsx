@@ -28,12 +28,22 @@ export function Link(props: SpectrumLinkProps) {
     variant = 'primary',
     isQuiet,
     children,
+    // @ts-ignore
+    href,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(props);
 
+  if (href) {
+    console.warn('href is deprecated, please use an anchor element as children');
+  }
+
   let ref = useRef();
-  let {linkProps} = useLink({...props, ref});
+  let {linkProps} = useLink({
+    ...props,
+    ref,
+    elementType: typeof children === 'string' ? 'span' : 'a'
+  });
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render, waitForDomChange} from '@testing-library/react';
+import {fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Modal} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -23,8 +23,6 @@ let theme = {
 };
 
 describe('Modal', function () {
-  afterEach(cleanup);
-
   it('should render nothing if isOpen is not set', function () {
     let {getByRole} = render(
       <Provider theme={theme}>

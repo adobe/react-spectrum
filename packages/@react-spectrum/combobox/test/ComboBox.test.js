@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, cleanup, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
 import {ComboBox, Item} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -25,7 +25,6 @@ let theme = {
   medium: scaleMedium
 };
 
-let offsetWidth, offsetHeight;
 let onSelectionChange = jest.fn();
 let onOpenChange = jest.fn();
 let onFilter = jest.fn();
@@ -74,26 +73,19 @@ function testComboBoxOpen(combobox, button, listbox, focusedItemIndex) {
 describe('ComboBox', function () {
 
   beforeAll(function () {
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.useFakeTimers();
   });
 
   afterEach(() => {
-    outerBlur = jest.fn();
-    onBlur = jest.fn();
-    onInputChange.mockClear();
-    onFilter.mockClear();
-    onSelectionChange.mockClear();
-    onOpenChange.mockClear();
-    cleanup();
+    jest.clearAllMocks();
   });
 
   afterAll(function () {
-    offsetWidth.mockReset();
-    offsetHeight.mockReset();
+    jest.restoreAllMocks();
   });
 
   it('renders correctly', function () {
@@ -746,7 +738,8 @@ describe('ComboBox', function () {
               <Item uniqueKey="2">Squirtle</Item>
               <Item uniqueKey="3">Charmander</Item>
             </ComboBox>
-          </div>
+            <Button variant="primary">Second focus</Button>
+          </div>    
         </Provider>
       );
 

@@ -61,7 +61,7 @@ governing permissions and limitations under the License.
 
   line-height: var(--spectrum-button-line-height);
 
-  cursor: pointer;
+  cursor: default;
   user-select: none;
   -webkit-user-select: none;
   touch-action: none; /* prevent touch scrolling on buttons */
@@ -136,6 +136,7 @@ a.spectrum-ActionButton {
   -webkit-appearance: none;
   /* Make link text not selectable  */
   user-select: none;
+  cursor: pointer;
 }
 
 .spectrum-ActionButton {
@@ -253,7 +254,7 @@ a.spectrum-ActionButton {
   line-height: normal;
   -webkit-font-smoothing: initial;
 
-  cursor: pointer;
+  cursor: default;
   outline: none;
 }
 

@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {cleanup, fireEvent, render, wait} from '@testing-library/react';
+import {fireEvent, render, wait} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
@@ -30,7 +30,6 @@ describe('TooltipTrigger', function () {
   afterEach(() => {
     onOpen.mockClear();
     onClose.mockClear();
-    cleanup();
   });
 
   describe('focus related tests', function () {

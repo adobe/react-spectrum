@@ -11,8 +11,8 @@
  */
 
 import {ActionGroup} from '../';
-import {cleanup, fireEvent, render} from '@testing-library/react';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {fireEvent, render} from '@testing-library/react';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -122,7 +122,6 @@ function renderComponent(props) {
 describe('ActionGroup', function () {
   afterEach(() => {
     btnBehavior.reset();
-    cleanup();
   });
 
   it.each`
@@ -358,7 +357,7 @@ describe('ActionGroup', function () {
     expect(button1).toHaveAttribute('aria-checked', 'false');
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
-  
+
   it('ActionGroup allow aria-label on Item', function () {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">

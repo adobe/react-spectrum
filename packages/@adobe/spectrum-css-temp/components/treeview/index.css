@@ -45,7 +45,7 @@ governing permissions and limitations under the License.
 .spectrum-TreeView-itemLink {
   display: block;
   box-sizing: border-box;
-  cursor: pointer;
+  cursor: default;
 
   padding: calc(calc(var(--spectrum-treeview-item-margin-y) / 2) + var(--spectrum-treeview-item-padding-y)) var(--spectrum-treeview-item-padding-x);
 

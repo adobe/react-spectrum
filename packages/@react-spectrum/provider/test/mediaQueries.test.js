@@ -13,9 +13,8 @@
 // needs to be imported first
 import MatchMediaMock from 'jest-matchmedia-mock';
 // eslint-disable-next-line rulesdir/sort-imports
-import {cleanup} from '@testing-library/react';
 import React from 'react';
-import {renderHook} from 'react-hooks-testing-library';
+import {renderHook} from '@testing-library/react-hooks';
 import {useColorScheme} from '../src/mediaQueries';
 
 let theme = {
@@ -36,7 +35,6 @@ describe('mediaQueries', () => {
   });
   afterEach(() => {
     matchMedia.clear();
-    cleanup();
   });
 
   describe('useColorScheme', () => {

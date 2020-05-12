@@ -11,7 +11,7 @@
  */
 
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
-import {cleanup, fireEvent, render, within} from '@testing-library/react';
+import {fireEvent, render, within} from '@testing-library/react';
 import React from 'react';
 import {SearchField} from '../';
 import {triggerPress} from '@react-spectrum/test-utils';
@@ -41,7 +41,6 @@ describe('Search', () => {
     onFocus.mockClear();
     onSubmit.mockClear();
     onClear.mockClear();
-    cleanup();
   });
 
   it.each`
