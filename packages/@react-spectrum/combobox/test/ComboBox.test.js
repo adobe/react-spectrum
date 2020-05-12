@@ -31,6 +31,7 @@ let onFilter = jest.fn();
 let onInputChange = jest.fn();
 let outerBlur = jest.fn();
 let onBlur = jest.fn();
+let onCustomValue = jest.fn();
 
 function renderComboBox(props = {}) {
   let comboboxProps = {
@@ -40,6 +41,7 @@ function renderComboBox(props = {}) {
     onOpenChange,
     onInputChange,
     onBlur,
+    onCustomValue,
     ...props
   };
 
@@ -741,10 +743,10 @@ describe('ComboBox', function () {
     it('closes and commits custom value', function () {
       let {getByRole, getAllByRole} = render(
         <Provider theme={theme}>
-          <ComboBox label="Test" allowsCustomValue onFilter={onFilter} onOpenChange={onOpenChange} onSelectionChange={onSelectionChange}>
-            <Item>Bulbasaur</Item>
-            <Item>Squirtle</Item>
-            <Item>Charmander</Item>
+          <ComboBox label="Test" allowsCustomValue onOpenChange={onOpenChange} onSelectionChange={onSelectionChange} onCustomValue={onCustomValue}>
+            <Item uniqueKey="1">Bulbasaur</Item>
+            <Item uniqueKey="2">Squirtle</Item>
+            <Item uniqueKey="3">Charmander</Item>
           </ComboBox>
           <Button variant="secondary">Focus move</Button>
         </Provider>
@@ -752,10 +754,11 @@ describe('ComboBox', function () {
 
       let combobox = getByRole('combobox');
       let secondaryButton = getAllByRole('button')[1];
+      expect(onCustomValue).not.toHaveBeenCalled();
       act(() => {
         userEvent.click(combobox);
         jest.runAllTimers();
-        userEvent.type(combobox, 'Gengar');
+        userEvent.type(combobox, 'Bulba');
         jest.runAllTimers();
         userEvent.tab();
         jest.runAllTimers();
@@ -763,7 +766,53 @@ describe('ComboBox', function () {
 
       expect(document.activeElement).toBe(secondaryButton);
       expect(onOpenChange).toHaveBeenCalledWith(false);
-      // expect(onSelectionChange).toHaveBeenCalledWith('Gengar'); // turn on when custom value allowed
+      expect(onCustomValue).toHaveBeenCalledTimes(1);
+      expect(onCustomValue).toHaveBeenCalledWith('Bulba');
+
+      expect(() => getByRole('listbox')).toThrow();
+    });
+
+    it('closes and doesn\'t commit custom value if a actual menu item is focused', function () {
+      let {getByRole, getAllByRole} = render(
+        <Provider theme={theme}>
+          <ComboBox label="Test" allowsCustomValue onOpenChange={onOpenChange} onSelectionChange={onSelectionChange} onCustomValue={onCustomValue}>
+            <Item uniqueKey="1">Bulbasaur</Item>
+            <Item uniqueKey="2">Squirtle</Item>
+            <Item uniqueKey="3">Charmander</Item>
+          </ComboBox>
+          <Button variant="secondary">Focus move</Button>
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      let secondaryButton = getAllByRole('button')[1];
+
+      expect(onCustomValue).not.toHaveBeenCalled();
+      act(() => {
+        userEvent.click(combobox);
+        jest.runAllTimers();
+        userEvent.type(combobox, 'Charm');
+        jest.runAllTimers();
+        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+      });
+      
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      let items = within(listbox).getAllByRole('option');
+
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+
+      act(() => {
+        jest.runAllTimers();
+        userEvent.tab();
+        jest.runAllTimers();
+      });
+      
+      expect(document.activeElement).toBe(secondaryButton);
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onCustomValue).not.toHaveBeenCalled();
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledWith('3');
 
       expect(() => getByRole('listbox')).toThrow();
     });
@@ -844,6 +893,6 @@ describe('ComboBox', function () {
   });
 
   // TODO: write tests for ComboBox with sections
-  // TODO: write test for onCustomValue
+  // TODO: write test for onCustomValue ()
   // TODO: write test with onFilter
 });
