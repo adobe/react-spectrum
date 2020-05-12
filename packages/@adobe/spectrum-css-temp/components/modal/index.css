@@ -52,11 +52,6 @@ governing permissions and limitations under the License.
   &.is-open {
     visibility: visible;
   }
-
-  &.spectrum-Modal-wrapper--fullscreenTakeover {
-    /* Appear below nested modal underlays */
-    z-index: 1;
-  }
 }
 
 .spectrum-Modal {

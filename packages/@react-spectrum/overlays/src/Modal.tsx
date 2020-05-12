@@ -36,7 +36,7 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
 
   return (
     <Overlay {...otherProps}>
-      {type !== 'fullscreenTakeover' && <Underlay />}
+      <Underlay />
       <ModalWrapper
         {...filterDOMProps(otherProps)}
         {...styleProps}
@@ -66,9 +66,6 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
   let wrapperClassName = classNames(
     modalStyles,
     'spectrum-Modal-wrapper',
-    {
-      'spectrum-Modal-wrapper--fullscreenTakeover': typeVariant === 'fullscreenTakeover'
-    },
     classNames(
       overrideStyles,
       'spectrum-Modal-wrapper',
