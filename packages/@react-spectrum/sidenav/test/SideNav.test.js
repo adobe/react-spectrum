@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render, waitForDomChange} from '@testing-library/react';
+import {fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Item, Section} from '@react-spectrum/tree';
 import React from 'react';
 import {SideNav} from '../src';
@@ -82,8 +82,6 @@ function renderComponent(Name, Component, ComponentSection, ComponentItem, props
 }
 
 describe('SideNav', function () {
-  afterEach(cleanup);
-
   let stub1, stub2;
   beforeAll(function () {
     stub1 = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 200);
@@ -177,7 +175,7 @@ describe('SideNav', function () {
 
     bar.focus();
     triggerPress(bar);
-  
+
     expect(foo).not.toHaveAttribute('aria-current');
     expect(foo).toHaveAttribute('tabindex', '-1');
     expect(document.activeElement).toBe(bar);
@@ -237,7 +235,7 @@ describe('SideNav', function () {
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name can focus up/down item', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let {getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem);
-    
+
     await waitForDomChange();
 
     let items = getAllByRole('link');
@@ -259,7 +257,7 @@ describe('SideNav', function () {
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name can keep focus on first/last item', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let {getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem);
-    
+
     await waitForDomChange();
 
     let items = getAllByRole('link');
@@ -284,7 +282,7 @@ describe('SideNav', function () {
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name can focus first to last/last to first item', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let {getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem, {shouldFocusWrap: true});
-    
+
     await waitForDomChange();
 
     let items = getAllByRole('link');
@@ -383,6 +381,72 @@ describe('SideNav', function () {
     expect(bar).toHaveAttribute('aria-disabled', 'false');
     expect(bob).toHaveAttribute('aria-disabled', 'true');
     expect(alice).toHaveAttribute('aria-disabled', 'false');
+  });
+
+  it.each`
+    Name                           | Component    | ComponentSection | ComponentItem
+    ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
+  `('$Name does not allow empty selection', async function ({Name, Component, ComponentSection, ComponentItem}) {
+    let spy = jest.fn();
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy});
+
+    await waitForDomChange();
+
+    let [bar, alice] = [
+      getByText('Bar'),
+      getByText('Alice')
+    ];
+
+    expect(bar).not.toHaveAttribute('aria-current');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(1);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(2);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+
+
+    alice.focus();
+    triggerPress(alice);
+    expect(bar).not.toHaveAttribute('aria-current');
+    expect(alice).toHaveAttribute('aria-current', 'page');
+    expect(spy).toBeCalledTimes(3);
+  });
+
+  it.each`
+    Name                           | Component    | ComponentSection | ComponentItem
+    ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
+  `('$Name with default key does not allow empty selection', async function ({Name, Component, ComponentSection, ComponentItem}) {
+    let spy = jest.fn();
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy, defaultSelectedKey: ['bar']});
+
+    await waitForDomChange();
+
+    let [bar, alice] = [
+      getByText('Bar'),
+      getByText('Bob')
+    ];
+
+    expect(bar).not.toHaveAttribute('aria-current');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(1);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(2);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+
+
+    alice.focus();
+    triggerPress(alice);
+    expect(bar).not.toHaveAttribute('aria-current');
+    expect(alice).toHaveAttribute('aria-current', 'page');
+    expect(spy).toBeCalledTimes(3);
   });
 
 });

@@ -22,10 +22,6 @@ Cell.getCollectionNode = function* getCollectionNode<T>(props: CellProps): Gener
   let {children} = props;
 
   let textValue = props.textValue || (typeof children === 'string' ? children : '') || props['aria-label'] || '';
-  if (!textValue) {
-    console.warn('<Cell> with non-plain text contents is unsupported by type to select for accessibility. Please add a `textValue` prop.');
-  }
-
   yield {
     type: 'cell',
     props: props,

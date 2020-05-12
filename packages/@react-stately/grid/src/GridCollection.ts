@@ -28,12 +28,10 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
   headerRows: GridNode<T>[];
   columns: GridNode<T>[];
   rowHeaderColumnKeys: Set<Key>;
-  body: GridNode<T>[];
-  private firstKey: Key;
-  private lastKey: Key;
+  body: GridNode<T>;
 
   constructor(nodes: Iterable<Node<T>>, prev?: GridCollection<T>, opts?: GridCollectionOptions) {
-    this.keyMap = prev?.keyMap || new Map();
+    this.keyMap = new Map(prev?.keyMap) || new Map();
     this.columns = [];
     this.rowHeaderColumnKeys = new Set();
 
@@ -65,17 +63,17 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
         if (last) {
           last.nextKey = child.key;
           child.prevKey = last.key;
+        } else {
+          child.prevKey = null;
         }
   
-        if (node.type === 'item') {
-          child.index = index++;
-        }
-
-        if (child.type !== 'item') {
-          visit(child);
-        }
-
+        child.index = index++;
+        visit(child);
         last = child;
+      }
+
+      if (last) {
+        last.nextKey = null;
       }
 
       // Remove deleted nodes and their children from the key map
@@ -97,33 +95,33 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
       }
     };
     
-    this.body = [];
+    let bodyKeys = new Set();
     let last: GridNode<T>;
     let index = 0;
     for (let node of nodes) {
       if (last) {
         last.nextKey = node.key;
         node.prevKey = last.key;
+      } else {
+        node.prevKey = null;
       }
 
-      if (node.type === 'item') {
-        node.index = index++;
-      }
-
+      node.index = index++;
       visit(node);
       if (node.type !== 'column') {
-        if (this.firstKey == null) {
-          this.firstKey = node.key;
-        }
+        bodyKeys.add(node.key);
+      }
 
-        this.body.push(node);
+      if (node.type === 'body') {
+        this.body = node;
       }
 
       last = node;
     }
 
+
     if (last) {
-      this.lastKey = last.key;
+      last.nextKey = null;
     }
 
     // Default row header column to the first one.
@@ -286,11 +284,11 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
   }
 
   *[Symbol.iterator]() {
-    yield* this.body;
+    yield* this.body.childNodes;
   }
 
   get size() {
-    return this.body.length;
+    return [...this.body.childNodes].length;
   }
 
   getKeys() {
@@ -308,11 +306,12 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
   }
 
   getFirstKey() {
-    return this.firstKey;
+    return [...this.body.childNodes][0]?.key;
   }
 
   getLastKey() {
-    return this.lastKey;
+    let rows = [...this.body.childNodes];
+    return rows[rows.length - 1]?.key;
   }
   
   getItem(key: Key) {

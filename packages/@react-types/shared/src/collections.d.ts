@@ -13,12 +13,19 @@
 import {Key, ReactElement, ReactNode} from 'react';
 
 export interface ItemProps<T> {
-  title?: ReactNode, // label?? contents?
-  childItems?: Iterable<T>,
-  hasChildItems?: boolean,
+  /** Rendered contents of the item or child items. */
   children: ReactNode,
+  /** Rendered contents of the item if `children` contains child items. */
+  title?: ReactNode, // label?? contents?
+  /** A string representation of the item's contents, used for features like typeahead. */
   textValue?: string,
-  'aria-label'?: string,
+  /** An accessibility label for this item. */
+  'aria-label'?: string,  
+  /** A list of child item objects. Used for dynamic collections. */
+  childItems?: Iterable<T>,
+  /** Whether this item has children, even if not loaded yet. */
+  hasChildItems?: boolean,
+  /** A unique key for this item. */
   uniqueKey?: Key
 }
 
@@ -26,16 +33,24 @@ export type ItemElement<T> = ReactElement<ItemProps<T>>;
 export type ItemRenderer<T> = (item: T) => ItemElement<T>;
 
 interface AsyncLoadable<T> {
+  /** Item objects in the collection or section. */
   items?: Iterable<T>,
+  /** Property name on each item object to use as the unique key. `id` or `key` by default. */
   itemKey?: string,
+  /** Whether the items are currently loading. */
   isLoading?: boolean, // possibly isLoadingMore
+  /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
   onLoadMore?: () => any
 }
 
 export interface SectionProps<T> extends AsyncLoadable<T> {
+  /** Rendered contents of the section, e.g. a header. */
   title?: ReactNode,
+  /** An accessibility label for the section. */
   'aria-label'?: string,
+  /** Static child items or a function to render children. */
   children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>,
+  /** A unique key for the section. */
   uniqueKey?: Key
 }
 
@@ -44,45 +59,61 @@ export type SectionElement<T> = ReactElement<SectionProps<T>>;
 export type CollectionElement<T> = SectionElement<T> | ItemElement<T>;
 export type CollectionChildren<T> = CollectionElement<T> | CollectionElement<T>[] | ((item: T) => CollectionElement<T>);
 export interface CollectionBase<T> extends AsyncLoadable<T> {
+  /** The contents of the collection. */
   children: CollectionChildren<T>,
+  /** They item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with. */
   disabledKeys?: Iterable<Key>
 }
 
 export interface SingleSelection {
+  /** Whether the collection allows empty selection. */
+  disallowEmptySelection?: boolean,
+  /** The currently selected key in the collection (controlled). */
   selectedKey?: Key,
+  /** The initial selected key in the collection (uncontrolled). */
   defaultSelectedKey?: Key,
+  /** Handler that is called when the selection changes. */
   onSelectionChange?: (key: Key) => any
 }
 
 export type SelectionMode = 'none' | 'single' | 'multiple';
 export interface MultipleSelection {
+  /** The type of selection that is allowed in the collection. */
   selectionMode?: SelectionMode,
+  /** Whether the collection allows empty selection. */
+  disallowEmptySelection?: boolean,
+  /** The currently selected keys in the collection (controlled). */
   selectedKeys?: Iterable<Key>,
+  /** The initial selected keys in the collection (uncontrolled). */
   defaultSelectedKeys?: Iterable<Key>,
+  /** Handler that is called when the selection changes. */
   onSelectionChange?: (keys: Set<Key>) => any
 }
 
 export interface Expandable {
+  /** The currently expanded keys in the collection (controlled). */
   expandedKeys?: Iterable<Key>,
+  /** The initial expanded keys in the collection (uncontrolled). */
   defaultExpandedKeys?: Iterable<Key>,
+  /** Handler that is called when items are expanded or collapsed. */
   onExpandedChange?: (keys: Set<Key>) => any
 }
 
 export interface Sortable {
+  /** The current sorted column and direction. */
   sortDescriptor?: SortDescriptor,
-  defaultSortDescriptor?: SortDescriptor,
+  /** Handler that is called when the sorted column or direction changes. */
   onSortChange?: (descriptor: SortDescriptor) => any
 }
 
 export interface SortDescriptor {
-  column?: string,
+  /** The key of the column to sort by. */
+  column?: Key,
+  /** The direction to sort by. */
   direction?: SortDirection
 }
 
-export enum SortDirection {
-  ASC,
-  DESC
-}
+export type SortDirection = 'ascending' | 'descending';
 
 export interface KeyboardDelegate {
   /** Returns the key visually below the given one, or `null` for none. */
@@ -112,34 +143,3 @@ export interface KeyboardDelegate {
   /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
   getKeyForSearch?(search: string, fromKey?: Key): Key
 }
-
-interface AsyncListOptions<T> {
-  load: (state: ListState<T>) => Promise<ListState<T>>,
-  loadMore?: (state: ListState<T>) => Promise<ListState<T>>,
-  defaultSortDescriptor?: SortDescriptor,
-  sort?: (state: ListState<T>) => Promise<ListState<T>>
-}
-
-interface ListState<T> {
-  items: Iterable<T>,
-  disabledKeys?: Iterable<Key>,
-  selectedKeys?: Iterable<Key>,
-  selectedKey?: Key,
-  expandedKeys?: Iterable<Key>,
-  sortDescriptor?: SortDescriptor
-}
-
-interface AsyncListProps<T> {
-  items: Iterable<T>,
-  isLoading: boolean,
-  error?: Error,
-  onLoadMore?: () => void,
-  sortDescriptor?: SortDescriptor,
-  onSortChange?: (desc: SortDescriptor) => void,
-  disabledKeys?: Iterable<Key>,
-  selectedKeys?: Iterable<Key>,
-  selectedKey?: Key,
-  expandedKeys?: Iterable<Key>
-}
-
-declare function useAsyncList<T>(opts: AsyncListOptions<T>): AsyncListProps<T>;

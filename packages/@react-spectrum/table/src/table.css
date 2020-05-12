@@ -18,6 +18,9 @@
 .react-spectrum-Table-cell {
   display: flex;
   align-items: center;
+}
+
+.react-spectrum-Table-cellWrapper > .react-spectrum-Table-cell {
   height: 100%;
 }
 
@@ -27,4 +30,12 @@
 
 .react-spectrum-Table-cell--alignEnd {
   justify-content: flex-end;
+}
+
+.react-spectrum-Table-centeredWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }

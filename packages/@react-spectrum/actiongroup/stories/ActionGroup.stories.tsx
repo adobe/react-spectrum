@@ -76,7 +76,7 @@ storiesOf('ActionGroup', module)
   )
   .add(
     'selectionMode: none',
-    () => render({selectionMode: 'none'})
+    () => render({selectionMode: 'none', onAction: action('onAction')})
   )
   .add(
     'selectionMode: multiple',

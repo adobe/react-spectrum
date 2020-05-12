@@ -30,8 +30,6 @@ export interface ButtonProps extends PressEvents, FocusableProps {
 }
 
 export interface SpectrumButtonProps extends ButtonProps, DOMProps, StyleProps {
-  /** An icon to display in the button */
-  icon?: ReactElement,
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
   variant: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
   /** Whether the button should be displayed with a quiet style. */

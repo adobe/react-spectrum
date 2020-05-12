@@ -48,7 +48,7 @@ export function useControlledState<T>(
       // if we're in an uncontrolled state, then we also return the value of myFunc which to setState looks as though it was just called with myFunc from the beginning
       // otherwise we just return the controlled value, which won't cause a rerender because React knows to bail out when the value is the same
       let updateFunction = (oldValue, ...functionArgs) => {
-        let interceptedValue = value(oldValue, ...functionArgs);
+        let interceptedValue = value(isControlled ? stateRef.current : oldValue, ...functionArgs);
         onChangeCaller(interceptedValue, ...args);
         if (!isControlled) {
           return interceptedValue;

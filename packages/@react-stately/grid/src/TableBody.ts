@@ -20,28 +20,35 @@ function TableBody<T>(props: TableBodyProps<T>): ReactElement { // eslint-disabl
 
 TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyProps<T>): Generator<PartialNode<T>> {
   let {children, items, itemKey} = props;
-  if (typeof children === 'function') {
-    if (!items) {
-      throw new Error('props.children was a function but props.items is missing');
+  yield {
+    type: 'body',
+    hasChildNodes: true,
+    props,
+    *childNodes() {
+      if (typeof children === 'function') {
+        if (!items) {
+          throw new Error('props.children was a function but props.items is missing');
+        }
+    
+        for (let item of items) {
+          yield {
+            type: 'item',
+            value: item,
+            childKey: itemKey,
+            renderer: children
+          };
+        }
+      } else {
+        let items = React.Children.toArray(children);
+        for (let item of items) {
+          yield {
+            type: 'item',
+            element: item
+          };
+        }
+      }
     }
-
-    for (let item of items) {
-      yield {
-        type: 'item',
-        value: item,
-        childKey: itemKey,
-        renderer: children
-      };
-    }
-  } else {
-    let items = React.Children.toArray(children);
-    for (let item of items) {
-      yield {
-        type: 'item',
-        element: item
-      };
-    }
-  }
+  };
 };
 
 // We don't want getCollectionNode to show up in the type definition
