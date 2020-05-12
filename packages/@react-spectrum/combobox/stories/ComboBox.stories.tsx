@@ -247,7 +247,7 @@ let CustomFilterComboBox = () => {
 
 let ControlledKeyComboBox = (props) => {
   let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
-  
+
   let onSelectionChange = (key) => {
     setSelectedKey(key);
   };
