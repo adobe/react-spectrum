@@ -199,7 +199,7 @@ function TypeParameter({name, default: defaultType}) {
   );
 }
 
-function FunctionType({name, parameters, return: returnType, typeParameters, rest}) {  
+function FunctionType({name, parameters, return: returnType, typeParameters, rest}) {
   return (
     <>
       {name && <span className="token hljs-function">{name}</span>}
@@ -268,7 +268,7 @@ export function LinkType({id}) {
   }
 
   registered.set(id, {type: value, links});
-  
+
   let used = getUsedLinks(value, links);
   for (let id in used) {
     registered.set(id, {type: used[id], links});
@@ -291,7 +291,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
 
   return (
     <>
-      {methods.length > 0 && properties.length > 0 && 
+      {methods.length > 0 && properties.length > 0 &&
         <h3 className={typographyStyles['spectrum-Heading4']}>Properties</h3>
       }
       {properties.length > 0 &&
@@ -299,9 +299,9 @@ export function InterfaceType({description, properties: props, showRequired, sho
           <thead>
             <tr>
               <td className={tableStyles['spectrum-Table-headCell']}>Name</td>
-              <td className={tableStyles['spectrum-Table-headCell']}>Type</td>
+              <td className={tableStyles['spectrum-Table-headCell']} style={{'width': '30%'}}>Type</td>
               {showDefault && <td className={tableStyles['spectrum-Table-headCell']}>Default</td>}
-              <td className={tableStyles['spectrum-Table-headCell']}>Description</td>
+              <td className={tableStyles['spectrum-Table-headCell']} style={{'width': '40%'}}>Description</td>
             </tr>
           </thead>
           <tbody className={tableStyles['spectrum-Table-body']}>
@@ -335,7 +335,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
           </tbody>
         </table>
       }
-      {methods.length > 0 && properties.length > 0 && 
+      {methods.length > 0 && properties.length > 0 &&
         <h3 className={typographyStyles['spectrum-Heading4']}>Methods</h3>
       }
       {methods.length > 0 &&
