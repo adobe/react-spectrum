@@ -270,6 +270,25 @@ describe('ComboBox', function () {
         let listbox = getByRole('listbox');
         testComboBoxOpen(combobox, button, listbox, 0);
       });
+
+      it('opens for touch', () => {
+        let {getByRole} = renderComboBox({});
+
+        let button = getByRole('button');
+        let combobox = getByRole('combobox');
+        expect(document.activeElement).not.toBe(combobox);
+
+        act(() => {
+          fireEvent.touchStart(button, {targetTouches: [{identifier: 1}]});
+          fireEvent.touchEnd(button, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+          jest.runAllTimers();
+        });
+
+        expect(document.activeElement).toBe(combobox);
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeTruthy;
+        expect(document.activeElement).toBe(combobox);
+      });
     });
 
     describe('keyboard input', function () {
@@ -325,11 +344,11 @@ describe('ComboBox', function () {
         expect(button).toHaveAttribute('aria-expanded', 'true');
         expect(button).toHaveAttribute('aria-controls', listbox.id);
         expect(combobox).toHaveAttribute('aria-controls', listbox.id);
-      
+
         let items = within(listbox).getAllByRole('option');
         expect(items.length).toBe(1);
         expect(items[0]).toHaveTextContent('Two');
-      
+
         expect(document.activeElement).toBe(combobox);
         expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
       });
@@ -375,7 +394,7 @@ describe('ComboBox', function () {
         });
 
         expect(() => getByRole('listbox')).toThrow();
-        
+
         let button = getByRole('button');
         act(() => {
           triggerPress(button);
@@ -682,6 +701,44 @@ describe('ComboBox', function () {
       expect(items[1]).toHaveTextContent('Two');
     });
 
+    it('calls onFilter', () => {
+      let customFilterItems = [
+        {name: 'The first item', id: '1'},
+        {name: 'The second item', id: '2'},
+        {name: 'The third item', id: '3'}
+      ];
+
+      let CustomFilterComboBox = () => {
+        let [list, setList] = React.useState(customFilterItems);
+
+        let onFilter = (value) => {
+          setList(customFilterItems.filter(item => item.name.includes(value)));
+        };
+
+        return (
+          <ComboBox items={list} itemKey="id" label="Combobox" onFilter={onFilter}>
+            {(item) => <Item>{item.name}</Item>}
+          </ComboBox>
+        );
+      };
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <CustomFilterComboBox />
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        combobox.focus();
+        userEvent.type(combobox, 'second');
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(1);
+    });
+
     it('doesn\'t focus the first item in combobox menu if you completely clear your textfield', function () {
       let {getByRole} = renderComboBox();
 
@@ -741,6 +798,7 @@ describe('ComboBox', function () {
     });
 
     it('closes and commits custom value', function () {
+      let onCustomValue = jest.fn();
       let {getByRole, getAllByRole} = render(
         <Provider theme={theme}>
           <ComboBox label="Test" allowsCustomValue onOpenChange={onOpenChange} onSelectionChange={onSelectionChange} onCustomValue={onCustomValue}>
@@ -827,7 +885,7 @@ describe('ComboBox', function () {
               <Item uniqueKey="3">Charmander</Item>
             </ComboBox>
             <Button variant="primary">Second focus</Button>
-          </div>    
+          </div>
         </Provider>
       );
 
