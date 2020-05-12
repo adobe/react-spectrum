@@ -77,7 +77,7 @@ governing permissions and limitations under the License.
   letter-spacing: var(--spectrum-accordion-item-title-tracking-actual);
 
   text-overflow: ellipsis;
-  cursor: pointer;
+  cursor: default;
   font-weight: 500;
 
   /* reset styling if button element is used */
