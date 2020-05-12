@@ -978,7 +978,7 @@ describe('Table', function () {
         expect(document.activeElement).toBe(tree.getByText('John'));
       });
 
-      it('wraps around when no items past the current one match', function () {
+      it('wraps around when reaching the end of the collection', function () {
         let tree = renderTypeSelect();
         focusCell(tree, 'Sam');
 
@@ -992,6 +992,19 @@ describe('Table', function () {
 
         moveFocus('J');
         expect(document.activeElement).toBe(tree.getByText('Julia'));
+      });
+
+      it('wraps around when no items past the current one match', function () {
+        let tree = renderTypeSelect();
+        focusCell(tree, 'Sam');
+
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getByText('Julia'));
+
+        jest.runAllTimers();
+
+        moveFocus('S');
+        expect(document.activeElement).toBe(tree.getByText('Sam'));
       });
     });
 

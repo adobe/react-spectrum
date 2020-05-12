@@ -411,6 +411,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
       key = startItem.parentKey;
     }
 
+    let hasWrapped = false;
     while (key) {
       let item = collection.getItem(key);
 
@@ -430,6 +431,12 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
       }
 
       key = this.getKeyBelow(key);
+
+      // Wrap around when reaching the end of the collection
+      if (key == null && !hasWrapped) {
+        key = this.getFirstKey();
+        hasWrapped = true;
+      }
     }
 
     return null;
