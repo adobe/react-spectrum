@@ -41,7 +41,7 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-table-header-border-radius);
 
   &.is-sortable {
-    cursor: pointer;
+    cursor: default;
   }
 
   &.is-sorted-asc,
@@ -180,7 +180,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Table-row {
   position: relative;
-  cursor: pointer;
+  cursor: default;
   transition: background-color var(--spectrum-global-animation-duration-100) ease-in-out;
 
   &:focus {

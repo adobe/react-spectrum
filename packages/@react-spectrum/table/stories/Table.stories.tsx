@@ -12,11 +12,15 @@
 
 import {action} from '@storybook/addon-actions';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
+import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
+import {Heading} from '@react-spectrum/typography';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
+import {useAsyncList} from '@react-stately/data';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -62,6 +66,18 @@ for (let i = 0; i < 1000; i++) {
   }
 
   manyRows.push(row);
+}
+
+function renderEmptyState() {
+  return (
+    <IllustratedMessage>
+      <svg width="150" height="103" viewBox="0 0 150 103">
+        <path d="M133.7,8.5h-118c-1.9,0-3.5,1.6-3.5,3.5v27c0,0.8,0.7,1.5,1.5,1.5s1.5-0.7,1.5-1.5V23.5h119V92c0,0.3-0.2,0.5-0.5,0.5h-118c-0.3,0-0.5-0.2-0.5-0.5V69c0-0.8-0.7-1.5-1.5-1.5s-1.5,0.7-1.5,1.5v23c0,1.9,1.6,3.5,3.5,3.5h118c1.9,0,3.5-1.6,3.5-3.5V12C137.2,10.1,135.6,8.5,133.7,8.5z M15.2,21.5V12c0-0.3,0.2-0.5,0.5-0.5h118c0.3,0,0.5,0.2,0.5,0.5v9.5H15.2z M32.6,16.5c0,0.6-0.4,1-1,1h-10c-0.6,0-1-0.4-1-1s0.4-1,1-1h10C32.2,15.5,32.6,15.9,32.6,16.5z M13.6,56.1l-8.6,8.5C4.8,65,4.4,65.1,4,65.1c-0.4,0-0.8-0.1-1.1-0.4c-0.6-0.6-0.6-1.5,0-2.1l8.6-8.5l-8.6-8.5c-0.6-0.6-0.6-1.5,0-2.1c0.6-0.6,1.5-0.6,2.1,0l8.6,8.5l8.6-8.5c0.6-0.6,1.5-0.6,2.1,0c0.6,0.6,0.6,1.5,0,2.1L15.8,54l8.6,8.5c0.6,0.6,0.6,1.5,0,2.1c-0.3,0.3-0.7,0.4-1.1,0.4c-0.4,0-0.8-0.1-1.1-0.4L13.6,56.1z" />
+      </svg>
+      <Heading>No results</Heading>
+      <Content>No results found</Content>
+    </IllustratedMessage>
+  );
 }
 
 let onSelectionChange = action('onSelectionChange');
@@ -184,7 +200,7 @@ storiesOf('Table', module)
   .add(
     'many columns and rows',
     () => (
-      <Table width={700} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+      <Table width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={manyColunns} columnKey="key">
           {column =>
             <Column minWidth={100}>{column.name}</Column>
@@ -203,7 +219,7 @@ storiesOf('Table', module)
   .add(
     'isQuiet, many columns and rows',
     () => (
-      <Table width={700} height={200} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
+      <Table width={700} height={500} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={manyColunns} columnKey="key">
           {column =>
             <Column minWidth={100}>{column.name}</Column>
@@ -296,4 +312,117 @@ storiesOf('Table', module)
     () => (
       <CRUDExample />
     )
+  )
+  .add(
+    'isLoading',
+    () => (
+      <Table width={700} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={manyColunns} columnKey="key">
+          {column =>
+            <Column minWidth={100}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={[]} isLoading itemKey="key">
+          {item =>
+            (<Row>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'isLoading more',
+    () => (
+      <Table width={700} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns} columnKey="key">
+          {column =>
+            <Column minWidth={100}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={items} isLoading itemKey="foo">
+          {item =>
+            (<Row>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'renderEmptyState',
+    () => (
+      <Table width={700} height={400} isQuiet renderEmptyState={renderEmptyState} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={manyColunns} columnKey="key">
+          {column =>
+            <Column minWidth={100}>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody>
+          {[]}
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'async loading',
+    () => <AsyncLoadingExample />
   );
+
+function AsyncLoadingExample() {
+  interface Item {
+    data: {
+      id: string,
+      url: string,
+      title: string
+    }
+  }
+
+  let list = useAsyncList<Item>({
+    async load({signal, cursor}) {
+      let url = new URL('https://www.reddit.com/r/news.json');
+      if (cursor) {
+        url.searchParams.append('after', cursor);
+      }
+
+      let res = await fetch(url.toString(), {signal});
+      let json = await res.json();
+      return {items: json.data.children, cursor: json.data.after};
+    },
+    async sort({items, sortDescriptor}) {
+      return {
+        items: items.slice().sort((a, b) => {
+          let cmp = a.data[sortDescriptor.column] < b.data[sortDescriptor.column] ? -1 : 1;
+          if (sortDescriptor.direction === 'descending') {
+            cmp *= -1;
+          }
+          return cmp;
+        })
+      };
+    }
+  });
+
+  return (
+    <Table width={1000} height={500} isQuiet selectionMode="none" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+      <TableHeader columns={columns} columnKey="key">
+        <Column uniqueKey="score" width={100} allowsSorting>Score</Column>
+        <Column uniqueKey="title" isRowHeader allowsSorting>Title</Column>
+        <Column uniqueKey="author" width={200} allowsSorting>Author</Column>
+        <Column uniqueKey="num_comments" width={100} allowsSorting>Comments</Column>
+      </TableHeader>
+      <TableBody items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
+        {item =>
+          (<Row uniqueKey={item.data.id}>
+            {key => 
+              key === 'title'
+                ? <Cell><Link isQuiet><a href={item.data.url} target="_blank">{item.data.title}</a></Link></Cell>
+                : <Cell>{item.data[key]}</Cell>
+            }
+          </Row>)
+        }
+      </TableBody>
+    </Table>
+  );
+}

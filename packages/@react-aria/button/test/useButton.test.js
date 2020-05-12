@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {renderHook} from 'react-hooks-testing-library';
+import {renderHook} from '@testing-library/react-hooks';
 import {useButton} from '../';
 
 describe('useButton tests', function () {

@@ -10,18 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import {ProgressBar} from '../';
 import React from 'react';
+import {render} from '@testing-library/react';
 import V2ProgressBar from '@react/react-spectrum/Progress';
 
 
 describe('ProgressBar', function () {
-
-  afterEach(() => {
-    cleanup();
-  });
-
   it.each`
     Name               | Component
     ${'ProgressBar'}   | ${ProgressBar}
