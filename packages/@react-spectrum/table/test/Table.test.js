@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, cleanup, fireEvent, render as renderComponent, within} from '@testing-library/react';
+import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {CRUDExample} from '../stories/CRUDExample';
 import {Link} from '@react-spectrum/link';
