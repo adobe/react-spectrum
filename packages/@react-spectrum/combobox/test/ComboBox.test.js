@@ -597,8 +597,8 @@ describe('ComboBox', function () {
               <Item uniqueKey="2">Squirtle</Item>
               <Item uniqueKey="3">Charmander</Item>
             </ComboBox>
-          </div>
-          <Button variant="primary">Second focus</Button>
+            <Button variant="primary">Second focus</Button>
+          </div>    
         </Provider>
       );
 
