@@ -37,13 +37,18 @@ interface FocusScopeProps {
 }
 
 interface FocusManagerOptions {
+  /** The element to start searching from. The currently focused element by default. */
   from?: HTMLElement,
+  /** Whether to only include tabbable elements, or all focusable elements. */
   tabbable?: boolean,
+  /** Whether focus should wrap around when it reaches the end of the scope. */
   wrap?: boolean
 }
 
 interface FocusManager {
+  /** Moves focus to the next focusable or tabbable element in the focus scope. */
   focusNext(opts?: FocusManagerOptions): HTMLElement,
+  /** Moves focus to the previous focusable or tabbable element in the focus scope. */
   focusPrevious(opts?: FocusManagerOptions): HTMLElement
 }
 
@@ -101,7 +106,12 @@ export function FocusScope(props: FocusScopeProps) {
   );
 }
 
-export function useFocusManager() {
+/**
+ * Returns a FocusManager interface for the parent FocusScope.
+ * A FocusManager can be used to programmatically move focus within
+ * a FocusScope, e.g. in response to user events like keyboard navigation.
+ */
+export function useFocusManager(): FocusManager {
   return useContext(FocusContext);
 }
 

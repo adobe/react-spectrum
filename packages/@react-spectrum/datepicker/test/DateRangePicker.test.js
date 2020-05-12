@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, getAllByRole as getAllByRoleInContainer, render} from '@testing-library/react';
 import {DateRangePicker} from '../';
+import {fireEvent, getAllByRole as getAllByRoleInContainer, render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
@@ -24,8 +24,6 @@ let theme = {
 };
 
 describe('DateRangePicker', function () {
-  afterEach(cleanup);
-
   describe('basics', function () {
     it('should render a DateRangePicker with a specified date range', function () {
       let {getByRole, getAllByRole} = render(<DateRangePicker value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}} />);

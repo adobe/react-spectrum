@@ -10,33 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, HoverEvents} from '@react-types/shared';
-import {HTMLAttributes, RefObject, useMemo, useRef} from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {HoverEvents} from '@react-types/shared';
+import {HTMLAttributes, useMemo, useRef} from 'react';
 
-export interface HoverProps extends HoverEvents, DOMProps {
- isDisabled?: boolean
-}
-
-export interface HoverHookProps extends HoverProps, DOMProps {
- ref?: RefObject<HTMLElement>
-}
-
-interface HoverState {
- target?: HTMLElement
+export interface HoverProps extends HoverEvents {
+  /** Whether the hover events should be disabled. */
+  isDisabled?: boolean
 }
 
 interface HoverResult {
- hoverProps: HTMLAttributes<HTMLElement>
+  /** Props to spread on the target element. */
+  hoverProps: HTMLAttributes<HTMLElement>
 }
 
-export function useHover(props: HoverHookProps): HoverResult {
+/**
+ * Handles pointer hover interactions for an element. Normalizes behavior
+ * across browsers and platforms, and ignores emulated mouse events on touch devices.
+ */
+export function useHover(props: HoverProps): HoverResult {
   let {
     onHover,
     onHoverChange,
     onHoverEnd,
-    isDisabled,
-    ...domProps
+    isDisabled
   } = props;
 
   let stateRef = useRef({
@@ -47,7 +43,6 @@ export function useHover(props: HoverHookProps): HoverResult {
   let hoverProps = useMemo(() => {
 
     let triggerHoverStart = (event, pointerType) => {
-
       if (isDisabled) {
         return;
       }
@@ -73,7 +68,6 @@ export function useHover(props: HoverHookProps): HoverResult {
 
 
     let triggerHoverEnd = (event, pointerType) => {
-
       if (isDisabled) {
         return;
       }
@@ -136,6 +130,6 @@ export function useHover(props: HoverHookProps): HoverResult {
   }, [onHover, onHoverChange, onHoverEnd, isDisabled, state.ignoreEmulatedMouseEvents]);
 
   return {
-    hoverProps: mergeProps(domProps, hoverProps)
+    hoverProps
   };
 }

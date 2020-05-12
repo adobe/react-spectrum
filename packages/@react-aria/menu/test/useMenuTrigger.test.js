@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {renderHook} from 'react-hooks-testing-library';
+import {renderHook} from '@testing-library/react-hooks';
 import {useMenuTrigger} from '../';
 
 describe('useMenuTrigger', function () {
@@ -99,7 +99,7 @@ describe('useMenuTrigger', function () {
 
     // doesn't trigger event if isDefaultPrevented returns true
     menuTriggerProps.onKeyDown({
-      pointerType: 'not keyboard', 
+      pointerType: 'not keyboard',
       isDefaultPrevented: () => true,
       key: 'ArrowUp'
     });
@@ -108,7 +108,7 @@ describe('useMenuTrigger', function () {
 
     // doesn't trigger event if defaultPrevented is true
     menuTriggerProps.onKeyDown({
-      pointerType: 'not keyboard', 
+      pointerType: 'not keyboard',
       defaultPrevented: true,
       key: 'ArrowUp'
     });
@@ -117,7 +117,7 @@ describe('useMenuTrigger', function () {
 
      // triggers event if defaultPrevented is not true and it matches one of the keys
     menuTriggerProps.onKeyDown({
-      pointerType: 'not keyboard', 
+      pointerType: 'not keyboard',
       defaultPrevented: false,
       key: 'ArrowUp',
       preventDefault,

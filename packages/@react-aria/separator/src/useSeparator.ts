@@ -14,14 +14,25 @@ import {HTMLAttributes} from 'react';
 import {Orientation} from '@react-types/shared';
 
 export interface SeparatorProps {
+  /**
+   * The orientation of the separator.
+   * @default 'horizontal'
+   */
   orientation?: Orientation,
+  /** The HTML element type that will be used to render the separator. */
   elementType?: string
 }
 
 export interface SeparatorAria {
+  /** Props for the separator element. */
   separatorProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the accessibility implementation for a separator.
+ * A separator is a visual divider between two groups of content,
+ * e.g. groups of menu items or sections of a page.
+ */
 export function useSeparator(props: SeparatorProps): SeparatorAria {
   let ariaOrientation;
   // if orientation is horizontal, aria-orientation default is horizontal, so we leave it undefined

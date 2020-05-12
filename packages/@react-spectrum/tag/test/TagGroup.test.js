@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import {fireEvent} from '@testing-library/react';
 import React from 'react';
+import {render} from '@testing-library/react';
 import {Tag, TagGroup} from '../src';
 import {TagList} from '@react/react-spectrum/TagList';
 
@@ -20,7 +20,6 @@ describe('TagGroup', function () {
   let onRemoveSpy = jest.fn();
 
   afterEach(() => {
-    cleanup();
     onRemoveSpy.mockClear();
   });
 
