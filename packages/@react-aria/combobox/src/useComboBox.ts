@@ -195,7 +195,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
 
     lastValue.current = state.inputValue;
-  }, [state.selectionManager, state.inputValue])
+  }, [state.selectionManager, state.inputValue]);
 
   return {
     labelProps,

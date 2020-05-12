@@ -131,7 +131,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     // as asked about, should the the triggerstate.setOpen be put here?
     // having it here means
     // props.selectedKey && triggerState.setOpen(false);
-  }, [props.selectedKey]);
+  }, [props.selectedKey, setSelectedKey]);
 
   let selectionState = useMultipleSelectionState(
     {
