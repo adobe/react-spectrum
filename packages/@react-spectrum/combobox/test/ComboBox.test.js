@@ -31,7 +31,6 @@ let theme = {
  */
 
 describe('ComboBox', function () {
-  let offsetWidth, offsetHeight;
   let onSelectionChange = jest.fn();
   let onOpenChange = jest.fn();
   let onFilter = jest.fn();
@@ -40,25 +39,19 @@ describe('ComboBox', function () {
   let onBlur = jest.fn();
 
   beforeAll(function () {
-    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
-    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.useFakeTimers();
   });
 
   afterEach(() => {
-    outerBlur = jest.fn();
-    onBlur = jest.fn();
-    onInputChange.mockClear();
-    onFilter.mockClear();
-    onSelectionChange.mockClear();
-    onOpenChange.mockClear();
+    jest.clearAllMocks();
   });
 
   afterAll(function () {
-    offsetWidth.mockReset();
-    offsetHeight.mockReset();
+    jest.restoreAllMocks();
   });
 
   it('renders correctly', function () {
@@ -605,6 +598,7 @@ describe('ComboBox', function () {
               <Item uniqueKey="3">Charmander</Item>
             </ComboBox>
           </div>
+          <Button variant="primary">Second focus</Button>
         </Provider>
       );
 
