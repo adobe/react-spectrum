@@ -10,18 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import {FocusScope, useFocusManager} from '../';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 describe('FocusScope', function () {
-  afterEach(cleanup);
-
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
-  
+
   afterEach(() => {
     window.requestAnimationFrame.mockRestore();
   });
@@ -248,7 +246,7 @@ describe('FocusScope', function () {
 
       input2.blur();
       expect(document.activeElement).toBe(document.body);
-      
+
       outside.focus();
       fireEvent.focusIn(outside);
       expect(document.activeElement).toBe(input2);
@@ -303,7 +301,7 @@ describe('FocusScope', function () {
 
       let outside = getByTestId('outside');
       outside.focus();
-      
+
       rerender(<Test show />);
 
       let input1 = getByTestId('input1');
@@ -336,7 +334,7 @@ describe('FocusScope', function () {
 
       let trigger = getByTestId('trigger');
       trigger.focus();
-      
+
       rerender(<Test show />);
 
       let input1 = getByTestId('input1');
@@ -371,7 +369,7 @@ describe('FocusScope', function () {
 
       let trigger = getByTestId('trigger');
       trigger.focus();
-      
+
       rerender(<Test show />);
 
       let input1 = getByTestId('input1');
@@ -392,7 +390,7 @@ describe('FocusScope', function () {
           <input data-testid="input3" />
         </FocusScope>
       );
-  
+
       let input1 = getByTestId('input1');
       expect(document.activeElement).toBe(input1);
     });
@@ -406,7 +404,7 @@ describe('FocusScope', function () {
           <input data-testid="input3" />
         </FocusScope>
       );
-  
+
       let input2 = getByTestId('input2');
       expect(document.activeElement).toBe(input2);
     });
@@ -626,7 +624,7 @@ describe('FocusScope', function () {
       function ChildComponent(props) {
         return ReactDOM.createPortal(props.children, document.body);
       }
-      
+
       function Test({show}) {
         return (
           <div>
@@ -644,7 +642,7 @@ describe('FocusScope', function () {
           </div>
         );
       }
-      
+
       let {getByTestId, rerender} = render(<Test />);
       // Set a focused node and make first FocusScope the active scope
       let input1 = getByTestId('input1');
@@ -658,6 +656,6 @@ describe('FocusScope', function () {
       input3.focus();
       fireEvent.focusIn(input3);
       expect(document.activeElement).toBe(input3);
-    }); 
+    });
   });
 });

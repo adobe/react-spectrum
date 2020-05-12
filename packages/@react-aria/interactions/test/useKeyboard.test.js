@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {useKeyboard} from '../';
 
@@ -20,8 +20,6 @@ function Example(props) {
 }
 
 describe('useKeyboard', function () {
-  afterEach(cleanup);
-
   it('should handle keyboard events', function () {
     let events = [];
     let addEvent = (e) => events.push({type: e.type, target: e.target});

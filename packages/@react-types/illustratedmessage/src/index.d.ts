@@ -11,9 +11,9 @@
  */
 
 import {DOMProps, StyleProps} from '@react-types/shared';
-import {ReactElement} from 'react';
+import {ReactNode} from 'react';
 
 export interface SpectrumIllustratedMessageProps extends DOMProps, StyleProps {
   /** The contents of the IllustratedMessage. */
-  children: [ReactElement]
+  children: ReactNode
 }

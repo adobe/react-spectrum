@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import {Pressable} from '../';
 import React from 'react';
 
 describe('Pressable', function () {
-  afterEach(cleanup);
 
   it('should apply press events to child element', function () {
     let onPress = jest.fn();

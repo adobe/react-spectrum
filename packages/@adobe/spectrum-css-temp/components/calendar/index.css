@@ -146,7 +146,7 @@ governing permissions and limitations under the License.
   line-height: calc(var(--spectrum-calendar-day-width) - var(--spectrum-calendar-day-border-size-key-focus) * 2);
   white-space: nowrap;
 
-  cursor: pointer;
+  cursor: default;
 
   transition: background var(--spectrum-global-animation-duration-100) ease-in-out,
       color var(--spectrum-global-animation-duration-100) ease-in-out,

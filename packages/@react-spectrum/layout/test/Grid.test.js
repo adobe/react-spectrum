@@ -10,17 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup} from '@testing-library/react';
 import Grid from '../';
 import React from 'react';
 
 // TODO: testing :)
 describe('Grid', function () {
-
-  afterEach(() => {
-    cleanup();
-  });
-
   it.each`
     Name      | Component  | props
     ${'Grid'} | ${Grid}    | ${{}}

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {CollectionItem, layoutInfoToStyle, ScrollView, setScrollLeft, useCollectionView} from '@react-aria/collections';
@@ -17,7 +18,8 @@ import {DOMRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {GridState, useGridState} from '@react-stately/grid';
 import {mergeProps} from '@react-aria/utils';
-import {Node, ReusableView, useCollectionState} from '@react-stately/collections';
+import {Node, Rect, ReusableView, useCollectionState} from '@react-stately/collections';
+import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef} from 'react';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
@@ -137,6 +139,26 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
         );
       case 'column':
         return <TableColumnHeader column={item} />;
+      case 'loader':
+        return (
+          <CenteredWrapper>
+            <ProgressCircle 
+              isIndeterminate 
+              aria-label={state.collection.size > 0 ? 'Loading more...' : 'Loading...'} />
+          </CenteredWrapper>
+        );
+      case 'empty': {
+        let emptyState = props.renderEmptyState ? props.renderEmptyState() : null;
+        if (emptyState == null) {
+          return null;
+        }
+        
+        return (
+          <CenteredWrapper>
+            {emptyState}
+          </CenteredWrapper>
+        );
+      }
     }
   };
 
@@ -182,6 +204,17 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
     headerRef.current.scrollLeft = domRef.current.scrollLeft;
   }, [domRef]);
 
+  let onVisibleRectChange = useCallback((rect: Rect) => {
+    collectionState.setVisibleRect(rect);
+
+    if (!collection.body.props.isLoading && collection.body.props.onLoadMore && collectionState.collectionManager.contentSize.height > rect.height * 2) {
+      let scrollOffset = collectionState.collectionManager.contentSize.height - rect.height * 2;
+      if (rect.y > scrollOffset) {
+        collection.body.props.onLoadMore();
+      }
+    }
+  }, [collection.body.props, collectionState]);
+
   return (
     <div
       {...mergeProps(otherProps, collectionViewProps)}
@@ -217,7 +250,7 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
         innerStyle={{overflow: 'visible', transition: collectionState.isAnimating ? `none ${collectionState.collectionManager.transitionDuration}ms` : undefined}}
         ref={domRef}
         contentSize={collectionState.contentSize}
-        onVisibleRectChange={collectionState.setVisibleRect}
+        onVisibleRectChange={onVisibleRectChange}
         onScrollStart={collectionState.startScrolling}
         onScrollEnd={collectionState.endScrolling}
         onScroll={onScroll}>
@@ -264,7 +297,10 @@ function TableColumnHeader({column}) {
             {
               'spectrum-Table-checkboxCell': isCheckboxCell,
               'spectrum-Table-cell--alignCenter': columnProps.align === 'center' || column.colspan > 1,
-              'spectrum-Table-cell--alignEnd': columnProps.align === 'end'
+              'spectrum-Table-cell--alignEnd': columnProps.align === 'end',
+              'is-sortable': columnProps.allowsSorting,
+              'is-sorted-desc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'descending',
+              'is-sorted-asc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'ascending'
             }
           )
         }>
@@ -273,6 +309,9 @@ function TableColumnHeader({column}) {
           <Checkbox
             {...checkboxProps}
             UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
+        }
+        {columnProps.allowsSorting &&
+          <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />
         }
       </div>
     </FocusRing>
@@ -432,6 +471,20 @@ function TableRowHeader({cell}) {
         {cell.rendered}
       </div>
     </FocusRing>
+  );
+}
+
+function CenteredWrapper({children}) {
+  let state = useTableContext();
+  return (
+    <div 
+      role="row"
+      aria-rowindex={state.collection.headerRows.length + state.collection.size + 1}
+      className={classNames(stylesOverrides, 'react-spectrum-Table-centeredWrapper')}>
+      <div role="rowheader" aria-colspan={state.collection.columns.length}>
+        {children}
+      </div>
+    </div>
   );
 }
 
