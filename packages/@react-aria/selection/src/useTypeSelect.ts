@@ -37,18 +37,11 @@ export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
       return;
     }
 
-    const isTimedOut = state.search === '';
-
     state.search += character;
-
-    const keyBelowFocused = keyboardDelegate.getKeyBelow(selectionManager.focusedKey);
 
     // Use the delegate to find a key to focus.
     // Prioritize items after the currently focused item, falling back to searching the whole list.
-    // If search times out, begin from key below focused item; else, keep focused item in search context.
-    let key = isTimedOut 
-      ? keyboardDelegate.getKeyForSearch(state.search, keyBelowFocused)
-      : keyboardDelegate.getKeyForSearch(state.search, selectionManager.focusedKey);
+    let key = keyboardDelegate.getKeyForSearch(state.search, selectionManager.focusedKey);
 
     // If no key found, search from the top.
     key = key || keyboardDelegate.getKeyForSearch(state.search);
