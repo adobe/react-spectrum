@@ -58,7 +58,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected padding: number;
   protected indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number;
   protected layoutInfos: Map<Key, LayoutInfo>;
-  private layoutNodes: Map<Key, LayoutNode>;
+  protected layoutNodes: Map<Key, LayoutNode>;
   protected contentSize: Size;
   collection: Collection<Node<T>>;
   disabledKeys: Set<Key> = new Set();

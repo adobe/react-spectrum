@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {CRUDExample} from '../stories/CRUDExample';
 import {Link} from '@react-spectrum/link';
@@ -59,6 +59,18 @@ describe('Table', function () {
     offsetWidth.mockReset();
     offsetHeight.mockReset();
   });
+
+  let render = (children, scale = 'medium') => renderComponent(
+    <Provider theme={theme} scale={scale}>
+      {children}
+    </Provider>
+  );
+
+  let rerender = (tree, children, scale = 'medium') => tree.rerender(
+    <Provider theme={theme} scale={scale}>
+      {children}
+    </Provider>
+  );
 
   it('renders a static table', function () {
     let {getByRole} = render(
@@ -1222,7 +1234,7 @@ describe('Table', function () {
       expect(spinner).toHaveAttribute('aria-label', 'Loading...');
       expect(spinner).not.toHaveAttribute('aria-valuenow');
 
-      tree.rerender(defaultTable);
+      rerender(tree, defaultTable);
       act(() => jest.runAllTimers());
 
       rows = within(table).getAllByRole('row');
@@ -1263,7 +1275,7 @@ describe('Table', function () {
       expect(spinner).toHaveAttribute('aria-label', 'Loading more...');
       expect(spinner).not.toHaveAttribute('aria-valuenow');
 
-      tree.rerender(defaultTable);
+      rerender(tree, defaultTable);
       act(() => jest.runAllTimers());
 
       rows = within(table).getAllByRole('row');
@@ -1298,7 +1310,7 @@ describe('Table', function () {
       let scrollView = body.parentNode.parentNode;
 
       let rows = within(body).getAllByRole('row');
-      expect(rows).toHaveLength(20); // each row is 50px tall. table is 1000px tall. 20 rows fit.
+      expect(rows).toHaveLength(21); // each row is 49px tall. table is 1000px tall. 21 rows fit.
 
       scrollView.scrollTop = 250;
       fireEvent.scroll(scrollView);
@@ -1306,7 +1318,7 @@ describe('Table', function () {
       scrollView.scrollTop = 1500;
       fireEvent.scroll(scrollView);
 
-      scrollView.scrollTop = 3000;
+      scrollView.scrollTop = 2800;
       fireEvent.scroll(scrollView);
 
       scrollView.scrollTop = 3500;
@@ -1340,7 +1352,7 @@ describe('Table', function () {
       expect(heading).toBeVisible();
       expect(heading).toHaveTextContent('No results');
 
-      tree.rerender(defaultTable);
+      rerender(tree, defaultTable);
       act(() => jest.runAllTimers());
 
       rows = within(table).getAllByRole('row');
@@ -1554,6 +1566,359 @@ describe('Table', function () {
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'bar', direction: 'ascending'});
+    });
+  });
+
+  describe('layout', function () {
+    describe('row heights', function () {
+      let renderTable = (props, scale) => render(
+        <Table {...props}>
+          <TableHeader columns={columns} columnKey="key">
+            {column => <Column>{column.name}</Column>}
+          </TableHeader>
+          <TableBody items={items} itemKey="foo">
+            {item =>
+              (<Row>
+                {key => <Cell>{item[key]}</Cell>}
+              </Row>)
+            }
+          </TableBody>
+        </Table>
+      , scale);
+  
+      it('should layout rows with default height', function () {
+        let tree = renderTable();
+        let rows = tree.getAllByRole('row');
+        expect(rows).toHaveLength(3);
+
+        expect(rows[0].style.top).toBe('0px');
+        expect(rows[0].style.height).toBe('34px');
+        expect(rows[1].style.top).toBe('0px');
+        expect(rows[1].style.height).toBe('49px');
+        expect(rows[2].style.top).toBe('49px');
+        expect(rows[2].style.height).toBe('49px');
+
+        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('48px');
+        }
+      });
+
+      it('should layout rows with default height in large scale', function () {
+        let tree = renderTable({}, 'large');
+        let rows = tree.getAllByRole('row');
+        expect(rows).toHaveLength(3);
+
+        expect(rows[0].style.top).toBe('0px');
+        expect(rows[0].style.height).toBe('40px');
+        expect(rows[1].style.top).toBe('0px');
+        expect(rows[1].style.height).toBe('65px');
+        expect(rows[2].style.top).toBe('65px');
+        expect(rows[2].style.height).toBe('65px');
+
+        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('64px');
+        }
+      });
+
+      it('should layout rows with a custom rowHeight', function () {
+        let tree = renderTable({rowHeight: 72});
+        let rows = tree.getAllByRole('row');
+        expect(rows).toHaveLength(3);
+
+        expect(rows[0].style.top).toBe('0px');
+        expect(rows[0].style.height).toBe('34px');
+        expect(rows[1].style.top).toBe('0px');
+        expect(rows[1].style.height).toBe('73px');
+        expect(rows[2].style.top).toBe('73px');
+        expect(rows[2].style.height).toBe('73px');
+
+        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('72px');
+        }
+      });
+
+      it('should support variable row heights with rowHeight="auto"', function () {
+        let scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+          .mockImplementation(function () {
+            return this.textContent === 'Foo 1' ? 64 : 48;
+          });
+        
+        let tree = renderTable({rowHeight: 'auto'});
+        let rows = tree.getAllByRole('row');
+        expect(rows).toHaveLength(3);
+
+        expect(rows[1].style.top).toBe('0px');
+        expect(rows[1].style.height).toBe('65px');
+        expect(rows[2].style.top).toBe('65px');
+        expect(rows[2].style.height).toBe('49px');
+
+        for (let cell of rows[1].childNodes) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('64px');
+        }
+
+        for (let cell of rows[2].childNodes) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('48px');
+        }
+
+        scrollHeight.mockRestore();
+      });
+
+      it('should support variable column header heights with rowHeight="auto"', function () {
+        let scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+          .mockImplementation(function () {
+            return this.textContent === 'Tier Two Header B' ? 48 : 34;
+          });
+        
+        let tree = render(
+          <Table rowHeight="auto">
+            <TableHeader columns={nestedColumns} columnKey="key">
+              {column => <Column childColumns={column.children}>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+        let rows = tree.getAllByRole('row');
+        expect(rows).toHaveLength(5);
+
+        expect(rows[0].style.top).toBe('0px');
+        expect(rows[0].style.height).toBe('34px');
+        expect(rows[1].style.top).toBe('34px');
+        expect(rows[1].style.height).toBe('48px');
+        expect(rows[2].style.top).toBe('82px');
+        expect(rows[2].style.height).toBe('34px');
+
+        for (let cell of rows[0].childNodes) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('34px');
+        }
+
+        for (let cell of rows[1].childNodes) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('48px');
+        }
+
+        for (let cell of rows[2].childNodes) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('34px');
+        }
+
+        scrollHeight.mockRestore();
+      });
+    });
+
+    describe('column widths', function () {
+      it('should divide the available width by default', function () {
+        let tree = render(
+          <Table>
+            <TableHeader columns={columns} columnKey="key">
+              {column => <Column>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[1].style.width).toBe('315px');
+          expect(row.childNodes[2].style.width).toBe('315px');
+          expect(row.childNodes[3].style.width).toBe('315px');  
+        }
+      });
+
+      it('should support explicitly sized columns', function () {
+        let tree = render(
+          <Table>
+            <TableHeader>
+              <Column uniqueKey="foo" width={200}>Foo</Column>
+              <Column uniqueKey="bar" width={500}>Bar</Column>
+              <Column uniqueKey="baz" width={300}>Baz</Column>
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+        
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('500px');
+          expect(row.childNodes[3].style.width).toBe('300px');  
+        }
+      });
+
+      it('should divide remaining width amoung remaining columns', function () {
+        let tree = render(
+          <Table>
+            <TableHeader>
+              <Column uniqueKey="foo" width={200}>Foo</Column>
+              <Column uniqueKey="bar">Bar</Column>
+              <Column uniqueKey="baz">Baz</Column>
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+        
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('372.5px');
+          expect(row.childNodes[3].style.width).toBe('372.5px');  
+        }
+      });
+
+      it('should support percentage widths', function () {
+        let tree = render(
+          <Table>
+            <TableHeader>
+              <Column uniqueKey="foo" width="10%">Foo</Column>
+              <Column uniqueKey="bar" width={500}>Bar</Column>
+              <Column uniqueKey="baz">Baz</Column>
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+        
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[1].style.width).toBe('100px');
+          expect(row.childNodes[2].style.width).toBe('500px');
+          expect(row.childNodes[3].style.width).toBe('345px');  
+        }
+      });
+
+      it('should support minWidth', function () {
+        let tree = render(
+          <Table>
+            <TableHeader>
+              <Column uniqueKey="foo" width={200}>Foo</Column>
+              <Column uniqueKey="bar" minWidth={500}>Bar</Column>
+              <Column uniqueKey="baz">Baz</Column>
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+        
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('500px');
+          expect(row.childNodes[3].style.width).toBe('245px');  
+        }
+      });
+
+      it('should support maxWidth', function () {
+        let tree = render(
+          <Table>
+            <TableHeader>
+              <Column uniqueKey="foo" width={200}>Foo</Column>
+              <Column uniqueKey="bar" maxWidth={300}>Bar</Column>
+              <Column uniqueKey="baz">Baz</Column>
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+        
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('300px');
+          expect(row.childNodes[3].style.width).toBe('445px');  
+        }
+      });
+
+      it('should compute the correct widths for tiered headings', function () {
+        let tree = render(
+          <Table>
+            <TableHeader columns={nestedColumns} columnKey="key">
+              {column => <Column childColumns={column.children}>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+
+        let rows = tree.getAllByRole('row');
+
+        expect(rows[0].childNodes[0].style.width).toBe('244px');
+        expect(rows[0].childNodes[1].style.width).toBe('756px');
+
+        expect(rows[1].childNodes[0].style.width).toBe('244px');
+        expect(rows[1].childNodes[1].style.width).toBe('378px');
+        expect(rows[1].childNodes[2].style.width).toBe('189px');
+        expect(rows[1].childNodes[3].style.width).toBe('189px');
+
+        for (let row of rows.slice(2)) {
+          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[1].style.width).toBe('189px');
+          expect(row.childNodes[2].style.width).toBe('189px');
+          expect(row.childNodes[3].style.width).toBe('189px');
+          expect(row.childNodes[4].style.width).toBe('189px');
+          expect(row.childNodes[5].style.width).toBe('189px');
+        }
+      });
     });
   });
 });
