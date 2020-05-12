@@ -157,7 +157,7 @@ storiesOf('Table', module)
   .add(
     'dynamic with nested columns',
     () => (
-      <Table width={700} height={300} onSelectionChange={s => onSelectionChange([...s])}>
+      <Table width={700} height={300} rowHeight="auto" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={nestedColumns} columnKey="key">
           {column =>
             <Column childColumns={column.children}>{column.name}</Column>
@@ -271,6 +271,54 @@ storiesOf('Table', module)
         <TableBody>
           <Row>
             <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'rowHeight=72',
+    () => (
+      <Table width={500} height={200} isQuiet rowHeight={80} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column width={250} showDivider>File Name</Column>
+          <Column>Type</Column>
+          <Column align="end">Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'rowHeight=auto',
+    () => (
+      <Table width={500} height={300} isQuiet rowHeight="auto" onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column width={250} showDivider>File Name</Column>
+          <Column>Type</Column>
+          <Column align="end">Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal with very very very very very very long long long long long filename</Cell>
             <Cell>PDF</Cell>
             <Cell>214 KB</Cell>
           </Row>
