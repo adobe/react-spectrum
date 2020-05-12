@@ -13,7 +13,7 @@
 import {chain} from '@react-aria/utils';
 import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
-import {FocusEvent, HTMLAttributes, RefObject, useEffect} from 'react';
+import {FocusEvent, HTMLAttributes, RefObject, useEffect, useRef} from 'react';
 import {getItemId, listIds} from '@react-aria/listbox';
 import {ListLayout} from '@react-stately/collections';
 import {PressProps} from '@react-aria/interactions';
@@ -186,6 +186,16 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       state.selectionManager.setFocusedKey(layout.getFirstKey());
     }
   }, [state.selectionManager, state.collection, layout]);
+
+  // Clear focused key if user clears textfield to prevent accidental selection on blur
+  let lastValue = useRef(state.inputValue);
+  useEffect(() => {
+    if (state.inputValue === '' && lastValue.current !== state.inputValue) {
+      state.selectionManager.setFocusedKey(null);
+    }
+
+    lastValue.current = state.inputValue;
+  }, [state.selectionManager, state.inputValue])
 
   return {
     labelProps,

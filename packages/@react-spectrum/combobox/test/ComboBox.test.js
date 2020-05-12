@@ -504,7 +504,18 @@ describe('ComboBox', function () {
       });
 
       listbox = getByRole('listbox');
-      testComboBoxOpen(combobox, button, listbox, 1);
+      items = within(listbox).getAllByRole('option');
+      expect(listbox).toBeVisible();
+      expect(button).toHaveAttribute('aria-expanded', 'true');
+      expect(button).toHaveAttribute('aria-controls', listbox.id);
+      expect(combobox).toHaveAttribute('aria-controls', listbox.id);
+      expect(items.length).toBe(3);
+      expect(items[0]).toHaveTextContent('One');
+      expect(items[1]).toHaveTextContent('Two');
+      expect(items[2]).toHaveTextContent('Three');
+    
+      expect(document.activeElement).toBe(combobox);
+      expect(combobox).not.toHaveAttribute('aria-activedescendant');
     });
 
     it('allows the user to navigate the menu via arrow keys', function () {
@@ -668,6 +679,34 @@ describe('ComboBox', function () {
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
     });
+
+    it('doesn\'t focus the first item in combobox menu if you completely clear your textfield', function () {
+      let {getByRole} = renderComboBox();
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        combobox.focus();
+        userEvent.type(combobox, 'o');
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+
+      let items = within(listbox).getAllByRole('option');
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+
+      act(() => {
+        fireEvent.change(combobox, {target: {value: ''}});
+        jest.runAllTimers();
+      });
+
+      listbox = getByRole('listbox');
+      items = within(listbox).getAllByRole('option');
+      expect(listbox).toBeVisible();
+      expect(items.length).toBe(3);
+      expect(combobox).not.toHaveAttribute('aria-activedescendant');
+    });
   });
 
   describe('blur', function () {
@@ -806,4 +845,5 @@ describe('ComboBox', function () {
 
   // TODO: write tests for ComboBox with sections
   // TODO: write test for onCustomValue
+  // TODO: write test with onFilter
 });
