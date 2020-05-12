@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from 'react-hooks-testing-library';
+import {act, renderHook} from '@testing-library/react-hooks';
 import React from 'react';
 import {useTreeData} from '../src/useTreeData';
 

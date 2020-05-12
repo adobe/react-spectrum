@@ -54,7 +54,7 @@ governing permissions and limitations under the License.
   opacity: .0001;
   z-index: 1;
 
-  cursor: pointer;
+  cursor: default;
 
   &:checked + .spectrum-ToggleSwitch-switch {
     [dir='ltr'] &::after {

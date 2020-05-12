@@ -11,7 +11,7 @@
  */
 
 import {Calendar, RangeCalendar} from '../';
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import {getDaysInMonth} from 'date-fns';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -30,8 +30,6 @@ let headingFormatter = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'n
 let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40};
 
 describe('CalendarBase', () => {
-  afterEach(cleanup);
-
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
@@ -272,10 +270,10 @@ describe('CalendarBase', () => {
         defaultValue = [defaultValue, defaultValue];
       }
 
-      let {getByRole, getByLabelText} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
-      let grid = getByRole('grid');
+      let {getByRole, getAllByRole, getByLabelText, getAllByLabelText, unmount} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
+      let grid = getAllByRole('grid')[0]; // get by role will see two, role=grid and implicit <table> which also has role=grid
 
-      let cell = getByLabelText('selected', {exact: false});
+      let cell = getAllByLabelText('selected', {exact: false})[0];
       expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
 
       fireEvent.keyDown(document.activeElement, {key, keyCode: keyCodes[key], ...opts});
@@ -285,7 +283,7 @@ describe('CalendarBase', () => {
       let heading = getByRole('heading');
       expect(heading).toHaveTextContent(month);
 
-      cleanup();
+      unmount();
     }
 
     it.each`
