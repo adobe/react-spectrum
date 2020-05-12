@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {MultipleSelection} from '@react-types/shared';
+import {MultipleSelection, SelectionMode} from '@react-types/shared';
 import {MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 import {useControlledState} from '@react-stately/utils';
@@ -19,7 +19,12 @@ import {useMemo, useRef, useState} from 'react';
 /**
  * Manages state for multiple selection and focus in a collection.
  */
-export function useMultipleSelectionState(props: MultipleSelection): MultipleSelectionState  {
+export function useMultipleSelectionState(props: MultipleSelection): MultipleSelectionState {
+  let {
+    selectionMode = 'multiple' as SelectionMode,
+    disallowEmptySelection
+  } = props;
+
   let isFocused = useRef(false);
   let [focusedKey, setFocusedKey] = useState(null);
   let selectedKeysProp = useMemo(() => props.selectedKeys ? new Selection(props.selectedKeys) : undefined, [props.selectedKeys]);
@@ -31,7 +36,8 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
   );
 
   return {
-    selectionMode: props.selectionMode || 'multiple',
+    selectionMode,
+    disallowEmptySelection,
     get isFocused() {
       return isFocused.current;
     },

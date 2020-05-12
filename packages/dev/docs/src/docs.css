@@ -84,6 +84,11 @@ html, body {
   box-sizing: border-box;
 }
 
+.nav ul {
+  /* override spectrum-css's 100%, which causes extra scrolling */
+  height: auto;
+}
+
 .nav header {
   display: flex;
   padding: 30px 0 24px 0;

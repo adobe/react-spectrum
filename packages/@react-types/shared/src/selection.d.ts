@@ -13,7 +13,7 @@
 export interface SelectionOptions {
   allowsSelection?: boolean,
   allowsMultipleSelection?: boolean,
-  allowsEmptySelection?: boolean,
+  disallowEmptySelection?: boolean,
   typeToSelect?: boolean // ???
 }
 

@@ -18,9 +18,8 @@ import {Size} from './Size';
 import {Transaction} from './Transaction';
 
 export interface Node<T> {
-  // TODO: determine how to keep this limited to shared node types
   /** The type of item this node represents. */
-  type: 'section' | 'item' | 'column' | 'cell' | 'rowheader' | 'placeholder' | 'headerrow',
+  type: string,
   /** A unique key for the node. */
   key: Key,
   /** The object value the node was created from. */
@@ -52,7 +51,7 @@ export interface Node<T> {
 }
 
 export interface PartialNode<T> {
-  type?: 'section' | 'item' | 'column' | 'cell' | 'rowheader',
+  type?: string,
   key?: Key,
   value?: T,
   element?: ReactElement,

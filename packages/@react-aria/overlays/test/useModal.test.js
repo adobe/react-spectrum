@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import {OverlayContainer, OverlayProvider, useModal} from '..';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {render} from '@testing-library/react';
 
 function ModalDOM(props) {
   useModal();
@@ -40,8 +39,6 @@ function Example(props) {
 }
 
 describe('useModal', function () {
-  afterEach(cleanup);
-
   it('should set aria-hidden on parent providers on mount and remove on unmount', function () {
     let res = render(<Example />);
     let rootProvider = res.getByTestId('root-provider');

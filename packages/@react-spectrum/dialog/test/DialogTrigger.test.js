@@ -11,8 +11,8 @@
  */
 
 import {ActionButton, Button} from '@react-spectrum/button';
-import {cleanup, fireEvent, render, waitForDomChange, within} from '@testing-library/react';
 import {Dialog, DialogTrigger} from '../';
+import {fireEvent, render, waitForDomChange, within} from '@testing-library/react';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -36,7 +36,6 @@ describe('DialogTrigger', function () {
   afterEach(() => {
     matchMedia.clear();
     window.requestAnimationFrame.mockRestore();
-    cleanup();
   });
 
   it('should trigger a modal by default', function () {
@@ -423,7 +422,7 @@ describe('DialogTrigger', function () {
 
     let onOpenChange = jest.fn();
     let {getByRole} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
-    
+
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
     await waitForDomChange(); // wait for animation
@@ -448,7 +447,7 @@ describe('DialogTrigger', function () {
 
     let onOpenChange = jest.fn();
     let {getByTestId} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
-    
+
     let modal = getByTestId('modal');
     expect(modal).toBeVisible();
     await waitForDomChange(); // wait for animation

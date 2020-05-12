@@ -12,13 +12,13 @@
 
 import {Key, useState} from 'react';
 
-interface ListOptions<T extends object> {
+interface ListOptions<T> {
   initialItems?: T[],
   initialSelectedKeys?: Iterable<Key>,
   getKey?: (item: T) => Key
 }
 
-interface ListData<T extends object> {
+export interface ListData<T> {
   /** The items in the list. */
   items: T[],
 
@@ -94,94 +94,142 @@ interface ListData<T extends object> {
   update(key: Key, newValue: T): void
 }
 
+export interface ListState<T> {
+  items: T[],
+  selectedKeys: Set<Key>
+}
+
 /**
  * Manages state for an immutable list data structure, and provides convenience methods to
  * update the data over time.
  */
-export function useListData<T extends object>(opts: ListOptions<T>): ListData<T> {
+export function useListData<T>(opts: ListOptions<T>): ListData<T> {
   let {
     initialItems = [],
     initialSelectedKeys,
     getKey = (item: any) => item.id || item.key
   } = opts;
-  let [items, setItems] = useState(initialItems);
-  let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
+  let [state, setState] = useState<ListState<T>>({
+    items: initialItems,
+    selectedKeys: new Set<Key>(initialSelectedKeys || [])
+  });
 
   return {
-    items,
-    selectedKeys,
-    setSelectedKeys,
+    ...state,
+    ...createListActions({getKey}, setState),
     getItem(key: Key) {
-      return items.find(item => getKey(item) === key);
+      return state.items.find(item => getKey(item) === key);
+    }
+  };
+}
+
+function insert<T>(state: ListState<T>, index: number, ...values: T[]): ListState<T> {
+  return {
+    ...state,
+    items: [
+      ...state.items.slice(0, index),
+      ...values,
+      ...state.items.slice(index)
+    ]
+  };
+}
+
+export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem'> {
+  let {getKey} = opts;
+  return {
+    setSelectedKeys(selectedKeys: Set<Key>) {
+      dispatch(state => ({
+        ...state,
+        selectedKeys
+      }));
     },
     insert(index: number, ...values: T[]) {
-      setItems(items => [
-        ...items.slice(0, index),
-        ...values,
-        ...items.slice(index)
-      ]);
+      dispatch(state => insert(state, index, ...values));
     },
     insertBefore(key: Key, ...values: T[]) {
-      let index = items.findIndex(item => getKey(item) === key);
-      if (index === -1) {
-        return;
-      }
-
-      this.insert(index, ...values);
-    },
-    insertAfter(key: Key, ...values: T[]) {
-      let index = items.findIndex(item => getKey(item) === key);
-      if (index === -1) {
-        return;
-      }
-
-      this.insert(index + 1, ...values);
-    },
-    prepend(...values: T[]) {
-      this.insert(0, ...values);
-    },
-    append(...values: T[]) {
-      this.insert(items.length, ...values);
-    },
-    remove(...keys: Key[]) {
-      let keySet = new Set(keys);
-      setItems(items => items.filter(item => !keySet.has(getKey(item))));
-
-      let selection = new Set(selectedKeys);
-      for (let key of keys) {
-        selection.delete(key);
-      }
-
-      setSelectedKeys(selection);
-    },
-    removeSelectedItems() {
-      this.remove(...selectedKeys);
-    },
-    move(key: Key, toIndex: number) {
-      setItems(items => {
-        let index = items.findIndex(item => getKey(item) === key);
+      dispatch(state => {
+        let index = state.items.findIndex(item => getKey(item) === key);
         if (index === -1) {
-          return items;
+          return;
         }
 
-        let copy = items.slice();
+        return insert(state, index, ...values);
+      });
+    },
+    insertAfter(key: Key, ...values: T[]) {
+      dispatch(state => {
+        let index = state.items.findIndex(item => getKey(item) === key);
+        if (index === -1) {
+          return;
+        }
+
+        return insert(state, index + 1, ...values);
+      });
+    },
+    prepend(...values: T[]) {
+      dispatch(state => insert(state, 0, ...values));
+    },
+    append(...values: T[]) {
+      dispatch(state => insert(state, state.items.length, ...values));
+    },
+    remove(...keys: Key[]) {
+      dispatch(state => {
+        let keySet = new Set(keys);
+        let items = state.items.filter(item => !keySet.has(getKey(item)));
+
+        let selection = new Set(state.selectedKeys);
+        for (let key of keys) {
+          selection.delete(key);
+        }
+
+        return {
+          ...state,
+          items,
+          selectedKeys: selection
+        };
+      });
+    },
+    removeSelectedItems() {
+      dispatch(state => {
+        let items = state.items.filter(item => !state.selectedKeys.has(getKey(item)));
+        return {
+          ...state,
+          items,
+          selectedKeys: new Set()
+        };
+      });
+    },
+    move(key: Key, toIndex: number) {
+      dispatch(state => {
+        let index = state.items.findIndex(item => getKey(item) === key);
+        if (index === -1) {
+          return state;
+        }
+
+        let copy = state.items.slice();
         let [item] = copy.splice(index, 1);
         copy.splice(toIndex, 0, item);
-        return copy;
+        return {
+          ...state,
+          items: copy
+        };
       });
     },
     update(key: Key, newValue: T) {
-      setItems(items => {
-        let index = items.findIndex(item => getKey(item) === key);
+      dispatch(state => {
+        let index = state.items.findIndex(item => getKey(item) === key);
         if (index === -1) {
-          return items;
+          return state;
         }
 
-        return [
-          ...items.slice(0, index),
-          newValue,
-          ...items.slice(index + 1)
-        ];
+        return {
+          ...state,
+          items: [
+            ...state.items.slice(0, index),
+            newValue,
+            ...state.items.slice(index + 1)
+          ]
+        };
       });
     }
   };

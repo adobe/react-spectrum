@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {renderHook} from 'react-hooks-testing-library';
+import {renderHook} from '@testing-library/react-hooks';
 import {useTag} from '../';
 
 describe('useTag tests', () => {

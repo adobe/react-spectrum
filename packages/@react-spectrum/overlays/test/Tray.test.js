@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Dialog} from '@react-spectrum/dialog';
+import {fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
@@ -24,8 +24,6 @@ let theme = {
 };
 
 describe('Tray', function () {
-  afterEach(cleanup);
-
   it('should render nothing if isOpen is not set', function () {
     let {getByRole} = render(
       <Provider theme={theme}>

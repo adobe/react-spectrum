@@ -12,7 +12,7 @@
 
 jest.mock('@react-aria/live-announcer');
 import {announce} from '@react-aria/live-announcer';
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import {RangeCalendar} from '../';
 import React from 'react';
 import {startOfDay} from 'date-fns';
@@ -23,8 +23,6 @@ let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'num
 let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40, Escape: 27};
 
 describe('RangeCalendar', () => {
-  afterEach(cleanup);
-
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
