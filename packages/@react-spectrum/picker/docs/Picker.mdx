@@ -54,7 +54,7 @@ Picker follows the [Collection Components](../react-stately/collections.html) AP
 
 The dynamic method (shown below) would be better suited to use if the options came from a data object such as values returned from an API call. Providing the data in this way allows for Picker to automatically cache the rendering of each item, which dramatically improves performance.
 
-As seen below, an iterable list of options is passed to the Picker using the `items` prop. The value to be passed to the `onSelectionChange` handler can be set via the `uniqueKey` prop. Alternatively, if the options dataset contains an `id` key, as shown in the example below, this can be used instead. See the <a href="#events" title="Events">events</a> section for more detail on selection.
+As seen below, an iterable list of options is passed to the Picker using the `items` prop. Each item accepts a uniqueKey prop, which is passed to the onSelectionChange handler to identify the selected item. Alternatively, if the item objects contain an id property, as shown in the example below, then this is used automatically and a uniqueKey prop is not required. See the <a href="#events" title="Events">events</a> section for more detail on selection.
 
 ```tsx example
 function Example() {
@@ -119,7 +119,6 @@ function Example() {
   ];
   let [animal, setAnimal] = React.useState("Bison");
 
-
   return (
     <>
       <Picker
@@ -129,7 +128,6 @@ function Example() {
         marginEnd="20px">
         {item => <Item uniqueKey={item.name}>{item.name}</Item>}
       </Picker>
-
 
       <Picker
         label="Pick an animal (controlled)"
@@ -147,16 +145,16 @@ Picker supports sections in order to group options. Sections can be used by wrap
 
 ### Static Items
 ```tsx example
-<Picker label="Pick an animal">
-  <Section uniqueKey="Animals" title="Animals">
-    <Item uniqueKey="Aardvark">Aardvark</Item>
-    <Item uniqueKey="Kangaroo">Kangaroo</Item>
-    <Item uniqueKey="Snake">Snake</Item>
+<Picker label="Pick your favorite">
+  <Section title="Animals">
+    <Item>Aardvark</Item>
+    <Item>Kangaroo</Item>
+    <Item>Snake</Item>
   </Section>
-  <Section uniqueKey="People" title="People">
-    <Item uniqueKey="Danni">Danni</Item>
-    <Item uniqueKey="Devon">Devon</Item>
-    <Item uniqueKey="Ross">Ross</Item>
+  <Section title="People">
+    <Item>Danni</Item>
+    <Item>Devon</Item>
+    <Item>Ross</Item>
   </Section>
 </Picker>
 ```
@@ -215,7 +213,7 @@ function StaticExample() {
 }
 ```
 
-When using Picker with dynamic items, selection works much the same way using `uniqueKey`. However, if your data already has an `id` key (as is common with many data sets), Picker can use that id without needing to specify a `uniqueKey` prop. The below example shows Picker using the id of each item from the `items` array as the selected value without the need for `uniqueKey`. Note that `uniqueKey` will always take precedence if set.
+When using Picker with dynamic items, selection works much the same way using `uniqueKey`. However, if your data already has an `id` property (as is common with many data sets), Picker can use that id without needing to specify a `uniqueKey` prop. The below example shows Picker using the id of each item from the `items` array as the selected value without the need for `uniqueKey`. Note that `uniqueKey` will always take precedence if set.
 
 ```tsx example
 function DynamicExample() {
@@ -244,10 +242,10 @@ function DynamicExample() {
 ```
 
 ## Complex Items
-Items within Picker also allow for additional content used to better communicate options. Icons, descriptions can be added to the `children` of `Item` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+Items within Picker also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
 
 ```tsx example
-<Picker label="Options" >
+<Picker label="Options">
   <Section title="Permission">
     <Item textValue="Read">
       <Book size="S" />
