@@ -126,7 +126,7 @@ laid out by W3C.
 ### Popover
 
 If you want a Dialog that doesn't block access to the user interface, consider
-using a Popover Dialog. See the [docs below](#dialog-placement) for how you can
+using a Popover Dialog. See [Dialog placement](#dialog-placement) for how you can
 customize the positioning.
 
 ```tsx example
@@ -335,7 +335,7 @@ The Popover Dialog's offset with respect to its anchor element can be adjusted u
 anchor element whereas the `crossOffset` prop handles the spacing applied along the cross axis. 
 
 ```tsx example
-<DialogTrigger type="popover" placement="top" offset={-50}>
+<DialogTrigger type="popover" placement="top" offset={50}>
   <ActionButton>Trigger</ActionButton>
   <Dialog>
     <Heading>The Heading</Heading>
