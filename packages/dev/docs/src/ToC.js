@@ -55,5 +55,3 @@ function SideNav(props) {
     );
   }
 }
-
-

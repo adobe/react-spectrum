@@ -503,7 +503,7 @@ describe('ListBox', function () {
       jest.runAllTimers();
 
       fireEvent.keyDown(listbox, {key: 'B'});
-      expect(document.activeElement).toBe(options[2]);
+      expect(document.activeElement).toBe(options[1]);
     });
 
     it('wraps around when no items past the current one match', function () {
@@ -520,7 +520,7 @@ describe('ListBox', function () {
       jest.runAllTimers();
 
       fireEvent.keyDown(listbox, {key: 'B'});
-      expect(document.activeElement).toBe(options[1]);
+      expect(document.activeElement).toBe(options[4]);
     });
   });
 
