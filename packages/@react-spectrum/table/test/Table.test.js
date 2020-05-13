@@ -13,6 +13,7 @@
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {CRUDExample} from '../stories/CRUDExample';
+import {HidingColumns} from '../stories/HidingColumns';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -2119,6 +2120,80 @@ describe('Table', function () {
           expect(row.childNodes[5].style.width).toBe('189px');
         }
       });
+    });
+  });
+
+  describe('updating columns', function () {
+    it('should support removing columns', function () {
+      let tree = render(<HidingColumns />);
+
+      let checkbox = tree.getByLabelText('Net Budget');
+      expect(checkbox.checked).toBe(true);
+
+      let table = tree.getByRole('grid');
+      let columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(6);
+      expect(columns[1]).toHaveTextContent('Plan Name');
+      expect(columns[2]).toHaveTextContent('Audience Type');
+      expect(columns[3]).toHaveTextContent('Net Budget');
+      expect(columns[4]).toHaveTextContent('Target OTP');
+      expect(columns[5]).toHaveTextContent('Reach');
+
+      for (let row of within(table).getAllByRole('row').slice(1)) {
+        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
+        expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
+      }
+      
+      act(() => {userEvent.click(checkbox);});
+      expect(checkbox.checked).toBe(false);
+
+      act(() => jest.runAllTimers());
+
+      columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(5);
+      expect(columns[1]).toHaveTextContent('Plan Name');
+      expect(columns[2]).toHaveTextContent('Audience Type');
+      expect(columns[3]).toHaveTextContent('Target OTP');
+      expect(columns[4]).toHaveTextContent('Reach');
+
+      for (let row of within(table).getAllByRole('row').slice(1)) {
+        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
+        expect(within(row).getAllByRole('gridcell')).toHaveLength(4);
+      }
+    });
+
+    it('should support adding columns', function () {
+      let tree = render(<HidingColumns />);
+
+      let checkbox = tree.getByLabelText('Net Budget');
+      expect(checkbox.checked).toBe(true);
+
+      act(() => {userEvent.click(checkbox);});
+      expect(checkbox.checked).toBe(false);
+
+      act(() => jest.runAllTimers());
+
+      let table = tree.getByRole('grid');
+      let columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(5);
+
+      act(() => {userEvent.click(checkbox);});
+      expect(checkbox.checked).toBe(true);
+
+      act(() => jest.runAllTimers());
+
+      columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(6);
+      expect(columns[1]).toHaveTextContent('Plan Name');
+      expect(columns[2]).toHaveTextContent('Audience Type');
+      expect(columns[3]).toHaveTextContent('Net Budget');
+      expect(columns[4]).toHaveTextContent('Target OTP');
+      expect(columns[5]).toHaveTextContent('Reach');
+
+      for (let row of within(table).getAllByRole('row').slice(1)) {
+        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
+        expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
+      }
     });
   });
 });

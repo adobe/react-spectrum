@@ -76,6 +76,13 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
           };
         }
       }
+    },
+    shouldInvalidate(newContext: CollectionBuilderContext<T>) {
+      // Invalidate all rows if the columns changed.
+      return newContext.columns.length !== context.columns.length ||
+        newContext.columns.some((c, i) => c.key !== context.columns[i].key) ||
+        newContext.showSelectionCheckboxes !== context.showSelectionCheckboxes ||
+        newContext.selectionMode !== context.selectionMode;
     }
   };
 };

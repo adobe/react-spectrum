@@ -14,6 +14,7 @@ import {Collection, Node} from '@react-stately/collections';
 import {Key} from 'react';
 
 export interface GridNode<T> extends Node<T> {
+  column?: GridNode<T>,
   colspan?: number
 }
 
@@ -35,6 +36,28 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
     this.columns = [];
     this.rowHeaderColumnKeys = new Set();
 
+    // Add cell for selection checkboxes if needed.
+    if (opts?.showSelectionCheckboxes) {
+      let rowHeaderColumn: GridNode<T> = {
+        type: 'column',
+        key: ROW_HEADER_COLUMN_KEY,
+        value: null,
+        textValue: '',
+        level: 0,
+        index: 0,
+        hasChildNodes: false,
+        rendered: null,
+        childNodes: [],
+        props: {
+          isSelectionCell: true,
+          width: 55 // TODO: spectrum??
+        }
+      };
+  
+      this.keyMap.set(rowHeaderColumn.key, rowHeaderColumn);
+      this.columns.unshift(rowHeaderColumn);  
+    }
+
     let visit = (node: GridNode<T>) => {
       // If the node is the same object as the previous node for the same key,
       // we can skip this node and its children. We always visit columns though,
@@ -52,6 +75,10 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
         if (node.props.isRowHeader) {
           this.rowHeaderColumnKeys.add(node.key);
         }
+      }
+
+      if (node.type === 'cell') {
+        node.column = this.columns[node.index];
       }
 
       let childKeys = new Set();
@@ -126,29 +153,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
 
     // Default row header column to the first one.
     if (this.rowHeaderColumnKeys.size === 0) {
-      this.rowHeaderColumnKeys.add(this.columns[0].key);
-    }
-
-    // Add cell for selection checkboxes if needed.
-    if (opts?.showSelectionCheckboxes) {
-      let rowHeaderColumn: GridNode<T> = {
-        type: 'column',
-        key: ROW_HEADER_COLUMN_KEY,
-        value: null,
-        textValue: '',
-        level: 0,
-        index: 0,
-        hasChildNodes: false,
-        rendered: null,
-        childNodes: [],
-        props: {
-          isSelectionCell: true,
-          width: 55 // TODO: spectrum??
-        }
-      };
-  
-      this.keyMap.set(rowHeaderColumn.key, rowHeaderColumn);
-      this.columns.unshift(rowHeaderColumn);  
+      this.rowHeaderColumnKeys.add(this.columns[opts?.showSelectionCheckboxes ? 1 : 0].key);
     }
 
     this.headerRows = this.buildHeaderRows();

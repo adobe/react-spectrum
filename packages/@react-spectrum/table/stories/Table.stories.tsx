@@ -15,6 +15,7 @@ import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
 import {Heading} from '@react-spectrum/typography';
+import {HidingColumns} from './HidingColumns';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import React from 'react';
@@ -126,7 +127,7 @@ storiesOf('Table', module)
   .add(
     'static with nested columns',
     () => (
-      <Table width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+      <Table width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column key="test">Test</Column>
           <Column title="Group 1">
@@ -362,6 +363,12 @@ storiesOf('Table', module)
     )
   )
   .add(
+    'hiding columns',
+    () => (
+      <HidingColumns />
+    )
+  )
+  .add(
     'isLoading',
     () => (
       <Table width={700} height={200} onSelectionChange={s => onSelectionChange([...s])}>
@@ -454,7 +461,7 @@ function AsyncLoadingExample() {
 
   return (
     <Table width={1000} height={500} isQuiet selectionMode="none" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
-      <TableHeader columns={columns} columnKey="key">
+      <TableHeader>
         <Column uniqueKey="score" width={100} allowsSorting>Score</Column>
         <Column uniqueKey="title" isRowHeader allowsSorting>Title</Column>
         <Column uniqueKey="author" width={200} allowsSorting>Author</Column>
