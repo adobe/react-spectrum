@@ -30,16 +30,18 @@ interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLEl
   collection: Collection<T>,
   focusedKey?: Key,
   sizeToFit?: 'width' | 'height',
-  scrollDirection?: 'horizontal' | 'vertical' | 'both'
+  scrollDirection?: 'horizontal' | 'vertical' | 'both',
+  disableAnimations?: boolean
 }
 
 function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, ref: RefObject<HTMLDivElement>) {
-  let {children: renderView, renderWrapper, layout, collection, sizeToFit, scrollDirection, ...otherProps} = props;
+  let {children: renderView, renderWrapper, layout, collection, sizeToFit, scrollDirection, disableAnimations, ...otherProps} = props;
 
   let fallbackRef = useRef<HTMLDivElement>();
   ref = ref || fallbackRef;
 
   let state = useCollectionState({
+    disableAnimations,
     layout,
     collection,
     renderView,
@@ -51,9 +53,9 @@ function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, r
   });
 
   let {collectionViewProps} = useCollectionView(props, state, ref);
-  
+
   return (
-    <ScrollView 
+    <ScrollView
       {...mergeProps(otherProps, collectionViewProps)}
       ref={ref}
       innerStyle={state.isAnimating ? {transition: `none ${state.collectionManager.transitionDuration}ms`} : undefined}
@@ -102,7 +104,7 @@ export function useCollectionView<T extends object, V, W>(props: CollectionViewO
     isFocusWithin.current = ref.current.contains(e.relatedTarget as Element);
   }, [ref]);
 
-  // When the focused item is scrolled out of view and is removed from the DOM, 
+  // When the focused item is scrolled out of view and is removed from the DOM,
   // move focus to the collection view as a whole if focus was within before.
   let focusedView = collectionManager.getView(focusedKey);
   useEffect(() => {

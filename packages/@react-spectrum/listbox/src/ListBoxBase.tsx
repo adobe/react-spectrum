@@ -36,7 +36,8 @@ interface ListBoxBaseProps<T> extends DOMProps, StyleProps {
   focusOnPointerEnter?: boolean,
   domProps?: HTMLAttributes<HTMLElement>,
   disallowEmptySelection?: boolean,
-  shouldUseVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean,
+  disableAnimations?: boolean
 }
 
 /** @private */
@@ -59,7 +60,7 @@ export function useListBoxLayout<T>(state: ListState<T>) {
 
 /** @private */
 function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
-  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, shouldUseVirtualFocus, domProps = {}} = props;
+  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, shouldUseVirtualFocus, domProps = {}, disableAnimations} = props;
   let {listBoxProps} = useListBox({
     ...props,
     ...domProps,
@@ -111,7 +112,8 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
         }
         layout={layout}
         collection={state.collection}
-        renderWrapper={renderWrapper}>
+        renderWrapper={renderWrapper}
+        disableAnimations>
         {(type, item) => {
           if (type === 'item') {
             return (

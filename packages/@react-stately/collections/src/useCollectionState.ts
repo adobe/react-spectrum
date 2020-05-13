@@ -29,7 +29,8 @@ interface CollectionProps<T extends object, V, W> {
   layout: Layout<T>,
   collection: Collection<T>,
   onVisibleRectChange(rect: Rect): void,
-  getScrollAnchor?(rect: Rect): Key
+  getScrollAnchor?(rect: Rect): Key,
+  disableAnimations?: boolean
 }
 
 export interface CollectionState<T extends object, V, W> {
@@ -48,7 +49,7 @@ export function useCollectionState<T extends object, V, W>(opts: CollectionProps
   let [contentSize, setContentSize] = useState(new Size());
   let [isAnimating, setAnimating] = useState(false);
   let [isScrolling, setScrolling] = useState(false);
-  let collectionManager = useMemo(() => new CollectionManager<T, V, W>(), []);
+  let collectionManager = useMemo(() => new CollectionManager<T, V, W>({disableAnimations: opts.disableAnimations}), []);
 
   collectionManager.delegate = {
     setVisibleViews,
