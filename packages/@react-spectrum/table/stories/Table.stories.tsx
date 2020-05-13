@@ -465,7 +465,7 @@ function AsyncLoadingExample() {
           (<Row uniqueKey={item.data.id}>
             {key => 
               key === 'title'
-                ? <Cell><Link isQuiet><a href={item.data.url} target="_blank">{item.data.title}</a></Link></Cell>
+                ? <Cell textValue={item.data.title}><Link isQuiet><a href={item.data.url} target="_blank">{item.data.title}</a></Link></Cell>
                 : <Cell>{item.data[key]}</Cell>
             }
           </Row>)
