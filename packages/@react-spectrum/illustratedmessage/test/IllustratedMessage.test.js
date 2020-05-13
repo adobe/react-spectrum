@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import {Content} from '@react-spectrum/view';
 import {Heading} from '@react-spectrum/typography';
 import {IllustratedMessage} from '../';
 import React from 'react';
+import {render} from '@testing-library/react';
 import V2IllustratedMessage from '@react/react-spectrum/IllustratedMessage';
 
 let dataTestId = 'IMsvg1';
@@ -44,11 +44,6 @@ function renderIllustratedMessage(Component, props) {
 }
 
 describe('IllustratedMessage', function () {
-
-  afterEach(() => {
-    cleanup();
-  });
-
   it.each`
     Name                       | Component               | props
     ${'IllustratedMessage'}    | ${IllustratedMessage}   | ${{heading: 'foo', description: 'bar', illustration: <Image />}}

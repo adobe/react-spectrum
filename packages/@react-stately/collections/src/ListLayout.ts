@@ -58,15 +58,15 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected padding: number;
   protected indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number;
   protected layoutInfos: Map<Key, LayoutInfo>;
-  private layoutNodes: Map<Key, LayoutNode>;
+  protected layoutNodes: Map<Key, LayoutNode>;
   protected contentSize: Size;
   collection: Collection<Node<T>>;
   disabledKeys: Set<Key> = new Set();
   protected lastWidth: number;
   protected lastCollection: Collection<Node<T>>;
   protected rootNodes: LayoutNode[];
-  private collator: Intl.Collator;
-  private cache: WeakMap<Node<T>, LayoutNode> = new WeakMap();
+  protected collator: Intl.Collator;
+  protected cache: WeakMap<Node<T>, LayoutNode> = new WeakMap();
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description
@@ -118,11 +118,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky;
   }
 
-  shouldInvalidate(newRect: Rect, oldRect: Rect): boolean {
-    // We only care if the width changes.
-    return newRect.width !== oldRect.width;
-  }
-
   validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
     // Invalidate cache if the size of the collection changed.
     // In this case, we need to recalculate the entire layout.
@@ -130,6 +125,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       this.cache = new WeakMap();
     }
 
+    this.collection = this.collectionManager.collection;
     this.rootNodes = this.buildCollection();
 
     this.lastWidth = this.collectionManager.visibleRect.width;

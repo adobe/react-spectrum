@@ -12,5 +12,4 @@
 
 export * from './useAsyncList';
 export * from './useTreeData';
-export * from './useListData';
-
+export {useListData} from './useListData';

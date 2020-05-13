@@ -18,9 +18,8 @@ import {Size} from './Size';
 import {Transaction} from './Transaction';
 
 export interface Node<T> {
-  // TODO: determine how to keep this limited to shared node types
   /** The type of item this node represents. */
-  type: 'section' | 'item' | 'column' | 'cell' | 'rowheader' | 'placeholder' | 'headerrow',
+  type: string,
   /** A unique key for the node. */
   key: Key,
   /** The object value the node was created from. */
@@ -48,11 +47,13 @@ export interface Node<T> {
   /** The key of the node after this node. */
   nextKey?: Key,
   /** Additional properties specific to a particular node type. */
-  props?: any
+  props?: any,
+  /** @private */
+  shouldInvalidate?: (context: unknown) => boolean
 }
 
 export interface PartialNode<T> {
-  type?: 'section' | 'item' | 'column' | 'cell' | 'rowheader',
+  type?: string,
   key?: Key,
   value?: T,
   element?: ReactElement,
@@ -65,7 +66,8 @@ export interface PartialNode<T> {
   childKey?: string,
   hasChildNodes?: boolean,
   childNodes?: () => IterableIterator<PartialNode<T>>,
-  props?: any
+  props?: any,
+  shouldInvalidate?: (context: unknown) => boolean
 }
 
 /** 
