@@ -50,7 +50,7 @@ export function HidingColumns() {
     <Flex>
       <Form>
         {columns.slice(1).map(c => 
-          <Checkbox isSelected={visibleColumns.has(c.key)} onChange={() => toggleColumn(c.key)}>{c.title}</Checkbox>
+          <Checkbox key={c.key} isSelected={visibleColumns.has(c.key)} onChange={() => toggleColumn(c.key)}>{c.title}</Checkbox>
         )}
       </Form>
       <Table width={900} height={500} isQuiet>

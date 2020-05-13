@@ -2126,9 +2126,8 @@ describe('Table', function () {
   describe('updating columns', function () {
     it('should support removing columns', function () {
       let tree = render(<HidingColumns />);
-      let form = tree.getByRole('form');
 
-      let checkbox = within(form).getByLabelText('Net Budget');
+      let checkbox = tree.getByLabelText('Net Budget');
       expect(checkbox.checked).toBe(true);
 
       let table = tree.getByRole('grid');
@@ -2165,9 +2164,8 @@ describe('Table', function () {
 
     it('should support adding columns', function () {
       let tree = render(<HidingColumns />);
-      let form = tree.getByRole('form');
 
-      let checkbox = within(form).getByLabelText('Net Budget');
+      let checkbox = tree.getByLabelText('Net Budget');
       expect(checkbox.checked).toBe(true);
 
       act(() => {userEvent.click(checkbox);});
