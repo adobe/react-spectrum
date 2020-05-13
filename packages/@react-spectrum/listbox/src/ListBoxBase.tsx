@@ -113,7 +113,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
         layout={layout}
         collection={state.collection}
         renderWrapper={renderWrapper}
-        disableAnimations>
+        disableAnimations={disableAnimations}>
         {(type, item) => {
           if (type === 'item') {
             return (
