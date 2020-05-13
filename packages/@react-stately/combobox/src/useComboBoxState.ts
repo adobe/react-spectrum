@@ -12,7 +12,7 @@
 
 import {CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
 import {ComboBoxProps} from '@react-types/combobox';
-import {Key, useEffect, useMemo, useRef, useState} from 'react';
+import {Key, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {SelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
@@ -107,7 +107,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   let triggerState = useMenuTriggerState(props);
   // Fires when user hits Enter or clicks
-  let setSelectedKey = (key) => {
+  let setSelectedKey = useCallback((key) => {
     let item = collection.getItem(key);
     let itemText = item ? item.textValue : '';
     // think about the below conditionals below
@@ -123,7 +123,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     // If we want to keep the behavior of closing the menu when the user types in a valid combobox value
     // then I think we'll have to add someting to onInputChange where it calls .close after onSelectionCHange (actually doesn't work cuz onChange in useCOmbobox makes it open again)
     // key && triggerState.setOpen(false);
-  };
+  }, [collection, setInputValue]);
 
   // Update the selectedKey and inputValue when props.selectedKey updates
   useEffect(() => {
