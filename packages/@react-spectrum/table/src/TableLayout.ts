@@ -17,10 +17,20 @@ import {SpectrumColumnProps} from '@react-types/table';
 
 export class TableLayout<T> extends ListLayout<T> {
   collection: GridCollection<T>;
+  lastCollection: GridCollection<T>;
   columnWidths: Map<Key, number>;
   stickyColumnIndices: number[];
 
   buildCollection(): LayoutNode[] {
+    // If columns changed, clear layout cache.
+    if (
+      !this.lastCollection ||
+      this.collection.columns.length !== this.lastCollection.columns.length ||
+      this.collection.columns.some((c, i) => c.key !== this.lastCollection.columns[i].key)
+    ) {
+      this.cache = new WeakMap();
+    }
+
     this.buildColumnWidths();
     let header = this.buildHeader();
     let body = this.buildBody(0);

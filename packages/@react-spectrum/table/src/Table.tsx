@@ -52,11 +52,6 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
   let state = useGridState({...props, showSelectionCheckboxes: true});
   let domRef = useDOMRef(ref);
-  let {gridProps} = useGrid({
-    ...props,
-    ref: domRef,
-    isVirtualized: true
-  }, state);
 
   let {scale} = useProvider();
   let layout = useMemo(() => new TableLayout({
@@ -76,6 +71,13 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   }), [props.rowHeight, scale]);
   let {direction} = useLocale();
   layout.collection = state.collection;
+
+  let {gridProps} = useGrid({
+    ...props,
+    ref: domRef,
+    isVirtualized: true,
+    layout
+  }, state);
 
   // This overrides collection view's renderWrapper to support DOM heirarchy.
   type View = ReusableView<Node<T>, unknown>;
@@ -160,8 +162,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
           return <TableCheckboxCell cell={item} />;
         }
 
-        let column = state.collection.columns[item.index];
-        if (state.collection.rowHeaderColumnKeys.has(column.key)) {
+        if (state.collection.rowHeaderColumnKeys.has(item.column.key)) {
           return <TableRowHeader cell={item} />;
         }
 
@@ -280,7 +281,8 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
           height: headerHeight,
           overflow: 'hidden',
           position: 'relative',
-          willChange: collectionState.isScrolling ? 'scroll-position' : ''
+          willChange: collectionState.isScrolling ? 'scroll-position' : '',
+          transition: collectionState.isAnimating ? `none ${collectionState.collectionManager.transitionDuration}ms` : undefined
         }}
         ref={headerRef}>
         {collectionState.visibleViews[0]}
@@ -473,8 +475,7 @@ function TableCell({cell}) {
     ref,
     isVirtualized: true
   }, state);
-  let column = state.collection.columns[cell.index];
-  let columnProps = column.props as SpectrumColumnProps<unknown>;
+  let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -512,8 +513,7 @@ function TableRowHeader({cell}) {
     ref,
     isVirtualized: true
   }, state);
-  let column = state.collection.columns[cell.index];
-  let columnProps = column.props as SpectrumColumnProps<unknown>;
+  let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>

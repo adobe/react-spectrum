@@ -15,32 +15,42 @@ import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
+import {Layout, Node} from '@react-stately/collections';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useId} from '@react-aria/utils';
 import {useSelectableCollection} from '@react-aria/selection';
 
-interface GridProps {
+interface GridProps<T> {
   ref: RefObject<HTMLElement>,
   isVirtualized?: boolean,
   keyboardDelegate?: KeyboardDelegate,
+  layout?: Layout<Node<T>>
 }
 
 interface GridAria {
   gridProps: HTMLAttributes<HTMLElement>
 }
 
-export function useGrid<T>(props: GridProps, state: GridState<T>): GridAria {
+export function useGrid<T>(props: GridProps<T>, state: GridState<T>): GridAria {
   let {
     ref,
     isVirtualized,
-    keyboardDelegate
+    keyboardDelegate,
+    layout
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {direction} = useLocale();
-  let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate(state.collection, state.disabledKeys, ref, direction, collator), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator]);
+  let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate({
+    collection: state.collection,
+    disabledKeys: state.disabledKeys,
+    ref,
+    direction,
+    collator,
+    layout
+  }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, layout]);
   let {collectionProps} = useSelectableCollection({
     ref,
     selectionManager: state.selectionManager,

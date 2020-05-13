@@ -43,15 +43,26 @@ Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>,
           };
         }
       }
+    },
+    shouldInvalidate(newContext: CollectionBuilderContext<T>) {
+      // This is a bit of a hack, but it works.
+      // If this method is called, then there's a cached version of this node available.
+      // But, we need to keep the list of columns in the new context up to date.
+      updateContext(newContext);
+      return false;
     }
   };
 
-  // register leaf columns on the context so that <Row> can access them
-  for (let node of fullNodes) {
-    if (!node.hasChildNodes) {
-      context.columns.push(node);
+  let updateContext = (context: CollectionBuilderContext<T>) => {
+    // register leaf columns on the context so that <Row> can access them
+    for (let node of fullNodes) {
+      if (!node.hasChildNodes) {
+        context.columns.push(node);
+      }
     }
-  }
+  };
+
+  updateContext(context);
 };
 
 // We don't want getCollectionNode to show up in the type definition

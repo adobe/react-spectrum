@@ -13,6 +13,7 @@
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {CRUDExample} from '../stories/CRUDExample';
+import {HidingColumns} from '../stories/HidingColumns';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -45,6 +46,11 @@ let items = [
   {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1'},
   {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
+
+let manyItems = [];
+for (let i = 1; i <= 100; i++) {
+  manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
+}
 
 describe('Table', function () {
   let offsetWidth, offsetHeight;
@@ -540,6 +546,23 @@ describe('Table', function () {
       </Provider>
     );
 
+    let renderMany = () => render(
+      <Table selectionMode="none">
+        <TableHeader columns={columns} columnKey="key">
+          {column =>
+            <Column>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={manyItems} itemKey="foo">
+          {item =>
+            (<Row>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    );
+
     let focusCell = (tree, text) => tree.getByText(text).focus();
     let moveFocus = (key, opts = {}) => fireEvent.keyDown(document.activeElement, {key, ...opts});
 
@@ -835,8 +858,156 @@ describe('Table', function () {
       });
     });
 
-    // TODO: PageUp and PageDown once scrolling is supported
-    // TODO: type to select once that is figured out
+    describe('PageDown', function () {
+      it('should focus the cell a page below', function () {
+        let tree = renderMany();
+        focusCell(tree, 'Foo 1');
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByText('Foo 21'));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByText('Foo 41'));
+      });
+
+      it('should focus the row a page below', function () {
+        let tree = renderMany();
+        tree.getAllByRole('row')[1].focus();
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[21]);
+      });
+    });
+
+    describe('PageUp', function () {
+      it('should focus the cell a page below', function () {
+        let tree = renderMany();
+        focusCell(tree, 'Foo 21');
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(tree.getByText('Foo 1'));
+      });
+
+      it('should focus the row a page below', function () {
+        let tree = renderMany();
+        tree.getAllByRole('row')[21].focus();
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
+      });
+    });
+
+    describe('type to select', function () {
+      let renderTypeSelect = () => render(
+        <Table selectionMode="none">
+          <TableHeader>
+            <Column isRowHeader>First Name</Column>
+            <Column isRowHeader>Last Name</Column>
+            <Column>Birthday</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Sam</Cell>
+              <Cell>Smith</Cell>
+              <Cell>May 3</Cell>
+            </Row>
+            <Row>
+              <Cell>Julia</Cell>
+              <Cell>Jones</Cell>
+              <Cell>February 10</Cell>
+            </Row>
+            <Row>
+              <Cell>John</Cell>
+              <Cell>Doe</Cell>
+              <Cell>December 12</Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      );
+
+      it('focuses cell by typing letters in rapid succession', function () {
+        let tree = renderTypeSelect();
+        focusCell(tree, 'Sam');
+
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getByText('Julia'));
+
+        moveFocus('o');
+        expect(document.activeElement).toBe(tree.getByText('John'));
+      });
+
+      it('matches against all row header cells', function () {
+        let tree = renderTypeSelect();
+        focusCell(tree, 'Sam');
+
+        moveFocus('D');
+        expect(document.activeElement).toBe(tree.getByText('Doe'));
+      });
+
+      it('non row header columns don\'t match', function () {
+        let tree = renderTypeSelect();
+        focusCell(tree, 'Sam');
+
+        moveFocus('F');
+        expect(document.activeElement).toBe(tree.getByText('Sam'));
+      });
+
+      it('focuses row by typing letters in rapid succession', function () {
+        let tree = renderTypeSelect();
+        tree.getAllByRole('row')[1].focus();
+
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
+
+        moveFocus('o');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[3]);
+      });
+
+      it('matches row against all row header cells', function () {
+        let tree = renderTypeSelect();
+        tree.getAllByRole('row')[1].focus();
+
+        moveFocus('D');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[3]);
+      });
+
+      it('resets the search text after a timeout', function () {
+        let tree = renderTypeSelect();
+        focusCell(tree, 'Sam');
+
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getByText('Julia'));
+
+        jest.runAllTimers();
+        
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getByText('John'));
+      });
+
+      it('wraps around when reaching the end of the collection', function () {
+        let tree = renderTypeSelect();
+        focusCell(tree, 'Sam');
+
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getByText('Julia'));
+
+        moveFocus('o');
+        expect(document.activeElement).toBe(tree.getByText('John'));
+
+        jest.runAllTimers();
+
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getByText('Julia'));
+      });
+
+      it('wraps around when no items past the current one match', function () {
+        let tree = renderTypeSelect();
+        focusCell(tree, 'Sam');
+
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getByText('Julia'));
+
+        jest.runAllTimers();
+
+        moveFocus('S');
+        expect(document.activeElement).toBe(tree.getByText('Sam'));
+      });
+    });
 
     describe('focus marshalling', function () {
       let renderFocusable = () => render(
@@ -1949,6 +2120,80 @@ describe('Table', function () {
           expect(row.childNodes[5].style.width).toBe('189px');
         }
       });
+    });
+  });
+
+  describe('updating columns', function () {
+    it('should support removing columns', function () {
+      let tree = render(<HidingColumns />);
+
+      let checkbox = tree.getByLabelText('Net Budget');
+      expect(checkbox.checked).toBe(true);
+
+      let table = tree.getByRole('grid');
+      let columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(6);
+      expect(columns[1]).toHaveTextContent('Plan Name');
+      expect(columns[2]).toHaveTextContent('Audience Type');
+      expect(columns[3]).toHaveTextContent('Net Budget');
+      expect(columns[4]).toHaveTextContent('Target OTP');
+      expect(columns[5]).toHaveTextContent('Reach');
+
+      for (let row of within(table).getAllByRole('row').slice(1)) {
+        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
+        expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
+      }
+      
+      act(() => {userEvent.click(checkbox);});
+      expect(checkbox.checked).toBe(false);
+
+      act(() => jest.runAllTimers());
+
+      columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(5);
+      expect(columns[1]).toHaveTextContent('Plan Name');
+      expect(columns[2]).toHaveTextContent('Audience Type');
+      expect(columns[3]).toHaveTextContent('Target OTP');
+      expect(columns[4]).toHaveTextContent('Reach');
+
+      for (let row of within(table).getAllByRole('row').slice(1)) {
+        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
+        expect(within(row).getAllByRole('gridcell')).toHaveLength(4);
+      }
+    });
+
+    it('should support adding columns', function () {
+      let tree = render(<HidingColumns />);
+
+      let checkbox = tree.getByLabelText('Net Budget');
+      expect(checkbox.checked).toBe(true);
+
+      act(() => {userEvent.click(checkbox);});
+      expect(checkbox.checked).toBe(false);
+
+      act(() => jest.runAllTimers());
+
+      let table = tree.getByRole('grid');
+      let columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(5);
+
+      act(() => {userEvent.click(checkbox);});
+      expect(checkbox.checked).toBe(true);
+
+      act(() => jest.runAllTimers());
+
+      columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(6);
+      expect(columns[1]).toHaveTextContent('Plan Name');
+      expect(columns[2]).toHaveTextContent('Audience Type');
+      expect(columns[3]).toHaveTextContent('Net Budget');
+      expect(columns[4]).toHaveTextContent('Target OTP');
+      expect(columns[5]).toHaveTextContent('Reach');
+
+      for (let row of within(table).getAllByRole('row').slice(1)) {
+        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
+        expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
+      }
     });
   });
 });
