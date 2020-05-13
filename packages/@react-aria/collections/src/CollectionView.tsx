@@ -31,17 +31,17 @@ interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLEl
   focusedKey?: Key,
   sizeToFit?: 'width' | 'height',
   scrollDirection?: 'horizontal' | 'vertical' | 'both',
-  disableAnimations?: boolean
+  transitionDuration?: number
 }
 
 function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, ref: RefObject<HTMLDivElement>) {
-  let {children: renderView, renderWrapper, layout, collection, sizeToFit, scrollDirection, disableAnimations, ...otherProps} = props;
+  let {children: renderView, renderWrapper, layout, collection, sizeToFit, scrollDirection, transitionDuration, ...otherProps} = props;
 
   let fallbackRef = useRef<HTMLDivElement>();
   ref = ref || fallbackRef;
 
   let state = useCollectionState({
-    disableAnimations,
+    transitionDuration,
     layout,
     collection,
     renderView,

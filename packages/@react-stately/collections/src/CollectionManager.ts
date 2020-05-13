@@ -37,8 +37,7 @@ export interface CollectionManagerOptions<T extends object, V, W> {
   transitionDuration?: number,
   anchorScrollPosition?: boolean,
   anchorScrollPositionAtTop?: boolean,
-  shouldOverscan?: boolean,
-  disableAnimations?: boolean
+  shouldOverscan?: boolean
 }
 
 /**
@@ -92,11 +91,6 @@ export class CollectionManager<T extends object, V, W> {
    */
   shouldOverscan: boolean;
 
-  /**
-   * If animations should not be performed, such as in a dropdown list.
-   */
-  disableAnimations: boolean;
-
   private _collection: Collection<T>;
   private _layout: Layout<T>;
   private _contentSize: Size;
@@ -139,11 +133,10 @@ export class CollectionManager<T extends object, V, W> {
     this._transactionQueue = [];
 
     // Set options from passed object if given
-    this.transitionDuration = options.transitionDuration || 500;
+    this.transitionDuration = isNaN(options.transitionDuration) ? 500 : options.transitionDuration;
     this.anchorScrollPosition = options.anchorScrollPosition || false;
     this.anchorScrollPositionAtTop = options.anchorScrollPositionAtTop || false;
     this.shouldOverscan = options.shouldOverscan !== false;
-    this.disableAnimations = options.disableAnimations || false;
     for (let key of ['delegate', 'size', 'layout', 'collection']) {
       if (options[key]) {
         this[key] = options[key];
@@ -225,7 +218,7 @@ export class CollectionManager<T extends object, V, W> {
     if (this._collection) {
       this._runTransaction(() => {
         this._collection = data;
-      }, !this.disableAnimations);
+      }, this.transitionDuration > 0);
     } else {
       this._collection = data;
       this.reloadData();
