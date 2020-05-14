@@ -175,7 +175,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     return match;
   }, [collator, lowercaseValue]);
 
-  let lastValue = useRef('');
+  let lastValue = useRef(inputValue);
   useEffect(() => {
     if (onFilter && lastValue.current !== inputValue) {
       onFilter(inputValue);
@@ -194,8 +194,16 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let selectionManager = new SelectionManager(filteredCollection, selectionState);
   let selectedItem = selectedKey ? collection.getItem(selectedKey) : null;
 
+  // Prevent open operations from triggering if there is nothing to display
+  let open = (focusStrategy?) => {
+    if (filteredCollection.size > 0) {
+      triggerState.open(focusStrategy);
+    }
+  }
+
   return {
     ...triggerState,
+    open,
     selectionManager,
     selectedKey,
     setSelectedKey,
