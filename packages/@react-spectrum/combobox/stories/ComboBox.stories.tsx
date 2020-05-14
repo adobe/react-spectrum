@@ -77,7 +77,7 @@ storiesOf('ComboBox', module)
   .add(
     'user provided id and label',
     () => (
-      <div>
+      <div style={{width: '192px'}}>
         <label id="test-label" htmlFor="test-id">Combobox</label>
         <ComboBox id="test-id" aria-labelledby="test-label" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
           <Item uniqueKey="one">Item One</Item>
