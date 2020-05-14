@@ -181,8 +181,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   // Focus first item if filtered collection no longer contains original focused item
   useEffect(() => {
-    // Only set a focused key if one existed previously, don't want to focus something by default if customValue = true
-    if (state.selectionManager.focusedKey && !state.collection.getItem(state.selectionManager.focusedKey)) {
+    // Only set a focused key if one existed previously, don't want to focus something by default if allowsCustomValue = true
+    if ((!allowsCustomValue || state.selectionManager.focusedKey) && state.inputValue !== '' && !state.collection.getItem(state.selectionManager.focusedKey)) {
       state.selectionManager.setFocusedKey(layout.getFirstKey());
     }
   }, [state.selectionManager, state.collection, layout]);

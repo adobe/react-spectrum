@@ -110,7 +110,9 @@ storiesOf('ComboBox', module)
   )
   .add(
     'inputValue (controlled)',
-    () => render({inputValue: 'Item'})
+    () => (
+      <ControlledValueComboBox inputValue="Test" />
+    )
   )
   .add(
     'defaultInputValue (uncontrolled)',
@@ -136,7 +138,9 @@ storiesOf('ComboBox', module)
   )
   .add(
     'inputValue and defaultSelectedKey (controlled by inputvalue)',
-    () => render({inputValue: 'Item One', defaultSelectedKey: 'two'})
+    () => (
+      <ControlledValueComboBox inputValue="K" defaultSelectedKey="3" />
+    )
   )
   .add(
     'defaultInputValue and selectedKey (controlled by selectedKey)',
@@ -219,7 +223,7 @@ storiesOf('ComboBox', module)
   .add(
     'onFilter, (value included in list)',
     () => (
-      <CustomFilterComboBox />
+      <CustomFilterComboBox selectedKey="2" />
     )
   );
 
@@ -229,15 +233,20 @@ let customFilterItems = [
   {name: 'The third item', id: '3'}
 ];
 
-let CustomFilterComboBox = () => {
+let CustomFilterComboBox = (props) => {
   let [list, setList] = React.useState(customFilterItems);
+  let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
+
+  let onSelectionChange = (key) => {
+    setSelectedKey(key);
+  };
 
   let onFilter = (value) => {
     setList(customFilterItems.filter(item => item.name.includes(value)));
   };
 
   return (
-    <ComboBox items={list} itemKey="id" label="Combobox" onFilter={onFilter} onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+    <ComboBox items={list} itemKey="id" selectedKey={selectedKey} label="Combobox" onSelectionChange={onSelectionChange} onFilter={onFilter} onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
       {(item: any) => <Item>{item.name}</Item>}
     </ComboBox>
   );
@@ -261,6 +270,34 @@ let ControlledKeyComboBox = (props) => {
         </Button>
       </ButtonGroup>
       <ComboBox {...props} selectedKey={selectedKey} items={withSection} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+        {(item: any) => (
+          <Section items={item.children} title={item.name}>
+            {(item: any) => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ComboBox>
+    </div>
+  );
+};
+
+let ControlledValueComboBox = (props) => {
+  let [value, setValue] = React.useState(props.inputValue);
+
+  let onValueChange = (value) => {
+    setValue(value);
+  };
+
+  return (
+    <div>
+      <ButtonGroup marginEnd="30px">
+        <Button variant="secondary" onPress={() => setValue('Blah')}>
+          <Text>Blah</Text>
+        </Button>
+        <Button variant="secondary" onPress={() => setValue('Kangaroo')}>
+          <Text>Kangaroo</Text>
+        </Button>
+      </ButtonGroup>
+      <ComboBox {...props} inputValue={value} items={withSection} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onValueChange} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
