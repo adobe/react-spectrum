@@ -27,15 +27,15 @@ let items = [
 ];
 
 let withSection = [
-  {name: 'Animals', id: '1', children: [
-    {name: 'Aardvark', id: '2'},
-    {name: 'Kangaroo', id: '3'},
-    {name: 'Snake', id: '4'}
+  {name: 'Animals', id: 's1', children: [
+    {name: 'Aardvark', id: '1'},
+    {name: 'Kangaroo', id: '2'},
+    {name: 'Snake', id: '3'}
   ]},
-  {name: 'People', id: '5', children: [
-    {name: 'Danni', id: '6'},
-    {name: 'Devon', id: '7'},
-    {name: 'Ross', id: '8'}
+  {name: 'People', id: 's2', children: [
+    {name: 'Danni', id: '4'},
+    {name: 'Devon', id: '5'},
+    {name: 'Ross', id: '6'}
   ]}
 ];
 
@@ -121,16 +121,22 @@ storiesOf('ComboBox', module)
   .add(
     'selectedKey (controlled)',
     () => (
-      <ControlledKeyComboBox selectedKey="Kangaroo" />
+      <ControlledKeyComboBox selectedKey="4" />
     )
   )
   .add(
     'defaultSelectedKey (uncontrolled)',
     () => render({defaultSelectedKey: 'two'})
   )
+  // .add(
+  //   'inputValue and selectedKey (controlled)',
+  //   () => render({inputValue: 'Item Two', selectedKey: 'two'})
+  // )
   .add(
     'inputValue and selectedKey (controlled)',
-    () => render({inputValue: 'Item Two', selectedKey: 'two'})
+    () => (
+      <AllControlledComboBox selectedKey="2" inputValue="Kangaroo" />
+    )
   )
   .add(
     'defaultInputValue and defaultSelectedKey (uncontrolled)',
@@ -139,13 +145,13 @@ storiesOf('ComboBox', module)
   .add(
     'inputValue and defaultSelectedKey (controlled by inputvalue)',
     () => (
-      <ControlledValueComboBox inputValue="K" defaultSelectedKey="3" />
+      <ControlledValueComboBox inputValue="K" defaultSelectedKey="2" />
     )
   )
   .add(
     'defaultInputValue and selectedKey (controlled by selectedKey)',
     () => (
-      <ControlledKeyComboBox defaultInputValue="Blah" selectedKey="4" />
+      <ControlledKeyComboBox defaultInputValue="Blah" selectedKey="2" />
     )
   )
   .add(
@@ -193,9 +199,15 @@ storiesOf('ComboBox', module)
     'direction: top',
     () => render({direction: 'top'})
   )
+  // .add(
+  //   'allowsCustomValue: true',
+  //   () => render({allowsCustomValue: true})
+  // )
   .add(
     'allowsCustomValue: true',
-    () => render({allowsCustomValue: true})
+    () => (
+      <CustomValueComboBox allowsCustomValue selectedKey="2" />
+    )
   )
   .add(
     'customWidth',
@@ -252,6 +264,34 @@ let CustomFilterComboBox = (props) => {
   );
 };
 
+let AllControlledComboBox = (props) => {
+  let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
+  let [inputValue, setInputValue] = React.useState(props.inputValue);
+
+  let onSelectionChange = (key) => {
+    setSelectedKey(key);
+  };
+
+  let onInputChange = (value) => {
+    setInputValue(value);
+  };
+
+  return (
+    <div>
+      <div>Current selectedKey: {selectedKey}</div>
+      <div>Current input value: {inputValue}</div>
+      <ComboBox {...props} selectedKey={selectedKey} inputValue={inputValue} items={withSection} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+        {(item: any) => (
+          <Section items={item.children} title={item.name}>
+            {(item: any) => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ComboBox>
+    </div>
+  );
+};
+
+
 let ControlledKeyComboBox = (props) => {
   let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
 
@@ -261,11 +301,12 @@ let ControlledKeyComboBox = (props) => {
 
   return (
     <div>
+      <div>Current selectedKey: {selectedKey}</div>
       <ButtonGroup marginEnd="30px">
-        <Button variant="secondary" onPress={() => setSelectedKey('4')}>
+        <Button variant="secondary" onPress={() => setSelectedKey('3')}>
           <Text>Snake</Text>
         </Button>
-        <Button variant="secondary" onPress={() => setSelectedKey('8')}>
+        <Button variant="secondary" onPress={() => setSelectedKey('6')}>
           <Text>Ross</Text>
         </Button>
       </ButtonGroup>
@@ -289,6 +330,7 @@ let ControlledValueComboBox = (props) => {
 
   return (
     <div>
+      <div>Current input value: {value}</div>
       <ButtonGroup marginEnd="30px">
         <Button variant="secondary" onPress={() => setValue('Blah')}>
           <Text>Blah</Text>
@@ -307,6 +349,33 @@ let ControlledValueComboBox = (props) => {
     </div>
   );
 };
+
+let CustomValueComboBox = (props) => {
+  let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
+  let [customValue, setCustomValue] = React.useState();
+
+  let onSelectionChange = (key) => {
+    setSelectedKey(key);
+  };
+
+  let onCustomValue = (value) => {
+    setCustomValue(value);
+  }
+
+  return (
+    <div>
+      <div>Last custom value: {customValue}</div>
+      <div>Selected Key: {selectedKey}</div>
+      <ComboBox {...props} selectedKey={selectedKey} items={withSection} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={onCustomValue} marginTop="40px">
+        {(item: any) => (
+          <Section items={item.children} title={item.name}>
+            {(item: any) => <Item>{item.name}</Item>}
+          </Section>
+        )}
+      </ComboBox>
+    </div>
+  );
+}
 
 function render(props = {}) {
   return (

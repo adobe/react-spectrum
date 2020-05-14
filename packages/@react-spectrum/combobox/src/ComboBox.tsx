@@ -180,7 +180,6 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         }
         style={{width: '100%'}}>
         <TextFieldBase
-          {...otherProps}
           labelProps={labelProps}
           inputProps={inputProps}
           inputRef={inputRef}
