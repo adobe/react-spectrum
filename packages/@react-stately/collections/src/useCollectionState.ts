@@ -29,7 +29,8 @@ interface CollectionProps<T extends object, V, W> {
   layout: Layout<T>,
   collection: Collection<T>,
   onVisibleRectChange(rect: Rect): void,
-  getScrollAnchor?(rect: Rect): Key
+  getScrollAnchor?(rect: Rect): Key,
+  transitionDuration?: number
 }
 
 export interface CollectionState<T extends object, V, W> {
@@ -66,6 +67,7 @@ export function useCollectionState<T extends object, V, W>(opts: CollectionProps
 
   collectionManager.layout = opts.layout;
   collectionManager.collection = opts.collection;
+  collectionManager.transitionDuration = opts.transitionDuration;
 
   useLayoutEffect(() => {
     collectionManager.afterRender();
