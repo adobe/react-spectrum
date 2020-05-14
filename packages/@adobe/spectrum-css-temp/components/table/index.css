@@ -187,9 +187,27 @@ governing permissions and limitations under the License.
     outline: 0;
   }
 
+  /* The focus ring must be on top of the first cell, so needs to be absolutely positioned. */
+  &:focus-ring {
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: var(--spectrum-selectlist-border-size-key-focus);
+      z-index: 3;
+    }
+  }
+
   &.is-drop-target {
     @inherit: %drop-target;
   }
+}
+
+/* the CSS logical properties postcss plugin doesn't seem to work with :focus-ring. */
+[dir="rtl"] .spectrum-Table-row:focus-ring:before {
+  right: 0;
 }
 
 .spectrum-Table > .spectrum-Table-body > .spectrum-Table-row:last-of-type {
