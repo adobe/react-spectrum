@@ -108,6 +108,37 @@ storiesOf('DialogTrigger', module)
     {chromatic: {disable: true}}
   )
   .add(
+    'nested modals, fullscreentakeover',
+    () => (
+      <DialogTrigger type="fullscreenTakeover">
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog>
+            <Heading>The Heading</Heading>
+            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+            <Divider />
+            <Content>
+              <DialogTrigger isDismissable>
+                <ActionButton>Trigger</ActionButton>
+                <Dialog>
+                  <Content>
+                    <input />
+                    <input />
+                  </Content>
+                </Dialog>
+              </DialogTrigger>
+            </Content>
+            <ButtonGroup>
+              <Button variant="secondary" onPress={chain(close, action('cancel'))}>Cancel</Button>
+              <Button variant="cta" onPress={chain(close, action('confirm'))}>Confirm</Button>
+            </ButtonGroup>
+          </Dialog>
+        )}
+      </DialogTrigger>
+    ),
+    {chromatic: {disable: true}}
+  )
+  .add(
     'nested popovers',
     () => (
       <div style={{paddingTop: 100}}>
@@ -223,6 +254,10 @@ storiesOf('DialogTrigger', module)
     () => renderPopover({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 20})
   )
   .add(
+    'targetRef',
+    () => (<TriggerWithRef type="popover" />)
+  )
+  .add(
     'alert dialog',
     () => renderAlert({})
   );
@@ -265,6 +300,25 @@ function renderPopover({width = 'auto', ...props}) {
     </div>
   );
 }
+
+let TriggerWithRef = (props) => {
+  let ref = React.useRef();
+  return (
+    <div style={{display: 'flex'}}>
+      <DialogTrigger {...props} targetRef={ref} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
+        <ActionButton>Trigger</ActionButton>
+        <Dialog>
+          <Heading>The Heading</Heading>
+          <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+          <Divider />
+          <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
+        </Dialog>
+      </DialogTrigger>
+      <span ref={ref} style={{marginInlineStart: '200px'}}>Popover appears over here</span>
+    </div>
+  );
+};
+
 
 function renderAlert({width = 'auto', ...props}) {
   return (

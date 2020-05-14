@@ -46,7 +46,7 @@ const DEFAULT_HEIGHT = 48;
  *
  * To configure a ListLayout, you can use the properties to define the
  * layouts and/or use the method for defining indentation.
- * The {@link ListLayoutDelegate} extends the existing collection view
+ * The {@link ListKeyboardDelegate} extends the existing collection view
  * delegate with an additional method to do this (it uses the same delegate object as
  * the collection view itself).
  */
@@ -58,15 +58,15 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected padding: number;
   protected indentationForItem?: (collection: Collection<Node<T>>, key: Key) => number;
   protected layoutInfos: Map<Key, LayoutInfo>;
-  private layoutNodes: Map<Key, LayoutNode>;
+  protected layoutNodes: Map<Key, LayoutNode>;
   protected contentSize: Size;
   collection: Collection<Node<T>>;
   disabledKeys: Set<Key> = new Set();
   protected lastWidth: number;
   protected lastCollection: Collection<Node<T>>;
   protected rootNodes: LayoutNode[];
-  private collator: Intl.Collator;
-  private cache: WeakMap<Node<T>, LayoutNode> = new WeakMap();
+  protected collator: Intl.Collator;
+  protected cache: WeakMap<Node<T>, LayoutNode> = new WeakMap();
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description
@@ -414,7 +414,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
 
     let collection = this.collection;
-    let key = fromKey ? this.getKeyBelow(fromKey) : this.getFirstKey();
+    let key = fromKey || this.getFirstKey();
     while (key) {
       let item = collection.getItem(key);
       let substring = item.textValue.slice(0, search.length);

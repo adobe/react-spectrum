@@ -15,6 +15,7 @@ import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
 import {Heading} from '@react-spectrum/typography';
+import {HidingColumns} from './HidingColumns';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
 import React from 'react';
@@ -126,7 +127,7 @@ storiesOf('Table', module)
   .add(
     'static with nested columns',
     () => (
-      <Table width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+      <Table width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column key="test">Test</Column>
           <Column title="Group 1">
@@ -157,7 +158,7 @@ storiesOf('Table', module)
   .add(
     'dynamic with nested columns',
     () => (
-      <Table width={700} height={300} onSelectionChange={s => onSelectionChange([...s])}>
+      <Table width={700} height={300} rowHeight="auto" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={nestedColumns} columnKey="key">
           {column =>
             <Column childColumns={column.children}>{column.name}</Column>
@@ -284,6 +285,54 @@ storiesOf('Table', module)
     )
   )
   .add(
+    'rowHeight=72',
+    () => (
+      <Table width={500} height={200} isQuiet rowHeight={80} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column width={250} showDivider>File Name</Column>
+          <Column>Type</Column>
+          <Column align="end">Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'rowHeight=auto',
+    () => (
+      <Table width={500} height={300} isQuiet rowHeight="auto" onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column width={250} showDivider>File Name</Column>
+          <Column>Type</Column>
+          <Column align="end">Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal with very very very very very very long long long long long filename</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
     'custom isRowHeader labeling',
     () => (
       <Table width={500} height={200} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
@@ -311,6 +360,12 @@ storiesOf('Table', module)
     'CRUD',
     () => (
       <CRUDExample />
+    )
+  )
+  .add(
+    'hiding columns',
+    () => (
+      <HidingColumns />
     )
   )
   .add(
@@ -406,7 +461,7 @@ function AsyncLoadingExample() {
 
   return (
     <Table width={1000} height={500} isQuiet selectionMode="none" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
-      <TableHeader columns={columns} columnKey="key">
+      <TableHeader>
         <Column uniqueKey="score" width={100} allowsSorting>Score</Column>
         <Column uniqueKey="title" isRowHeader allowsSorting>Title</Column>
         <Column uniqueKey="author" width={200} allowsSorting>Author</Column>
@@ -417,7 +472,7 @@ function AsyncLoadingExample() {
           (<Row uniqueKey={item.data.id}>
             {key => 
               key === 'title'
-                ? <Cell><Link isQuiet><a href={item.data.url} target="_blank">{item.data.title}</a></Link></Cell>
+                ? <Cell textValue={item.data.title}><Link isQuiet><a href={item.data.url} target="_blank">{item.data.title}</a></Link></Cell>
                 : <Cell>{item.data[key]}</Cell>
             }
           </Row>)

@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {CRUDExample} from '../stories/CRUDExample';
+import {HidingColumns} from '../stories/HidingColumns';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -46,6 +47,11 @@ let items = [
   {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
+let manyItems = [];
+for (let i = 1; i <= 100; i++) {
+  manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
+}
+
 describe('Table', function () {
   let offsetWidth, offsetHeight;
   beforeAll(function () {
@@ -59,6 +65,18 @@ describe('Table', function () {
     offsetWidth.mockReset();
     offsetHeight.mockReset();
   });
+
+  let render = (children, scale = 'medium') => renderComponent(
+    <Provider theme={theme} scale={scale}>
+      {children}
+    </Provider>
+  );
+
+  let rerender = (tree, children, scale = 'medium') => tree.rerender(
+    <Provider theme={theme} scale={scale}>
+      {children}
+    </Provider>
+  );
 
   it('renders a static table', function () {
     let {getByRole} = render(
@@ -509,14 +527,33 @@ describe('Table', function () {
       </Provider>
     );
 
-    let renderNested = () => render(
+    let renderNested = (locale = 'en-US') => render(
+      <Provider locale={locale} theme={theme}>
+        <Table selectionMode="none">
+          <TableHeader columns={nestedColumns} columnKey="key">
+            {column =>
+              <Column childColumns={column.children}>{column.name}</Column>
+            }
+          </TableHeader>
+          <TableBody items={items} itemKey="foo">
+            {item =>
+              (<Row>
+                {key => <Cell>{item[key]}</Cell>}
+              </Row>)
+            }
+          </TableBody>
+        </Table>
+      </Provider>
+    );
+
+    let renderMany = () => render(
       <Table selectionMode="none">
-        <TableHeader columns={nestedColumns} columnKey="key">
+        <TableHeader columns={columns} columnKey="key">
           {column =>
-            <Column childColumns={column.children}>{column.name}</Column>
+            <Column>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={items} itemKey="foo">
+        <TableBody items={manyItems} itemKey="foo">
           {item =>
             (<Row>
               {key => <Cell>{item[key]}</Cell>}
@@ -584,6 +621,20 @@ describe('Table', function () {
         focusCell(tree, 'Bar');
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(tree.getByText('Foo'));
+      });
+
+      it('should move to the next nested column header in a row with ArrowRight', function () {
+        let tree = renderNested();
+        focusCell(tree, 'Tier Two Header A');
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(tree.getByText('Tier Two Header B'));
+      });
+
+      it('should move to the previous nested column header in a row with ArrowRight in RTL', function () {
+        let tree = renderNested('ar-AE');
+        focusCell(tree, 'Tier Two Header B');
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(tree.getByText('Tier Two Header A'));
       });
 
       it('should move to the first column header when focus is on the last column with ArrowRight', function () {
@@ -656,6 +707,20 @@ describe('Table', function () {
         focusCell(tree, 'Bar');
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(tree.getByText('Baz'));
+      });
+
+      it('should move to the previous nested column header in a row with ArrowLeft', function () {
+        let tree = renderNested();
+        focusCell(tree, 'Tier Two Header B');
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(tree.getByText('Tier Two Header A'));
+      });
+
+      it('should move to the next nested column header in a row with ArrowLeft in RTL', function () {
+        let tree = renderNested('ar-AE');
+        focusCell(tree, 'Tier Two Header A');
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(tree.getByText('Tier Two Header B'));
       });
 
       it('should move to the last column header when focus is on the first column with ArrowLeft', function () {
@@ -793,8 +858,156 @@ describe('Table', function () {
       });
     });
 
-    // TODO: PageUp and PageDown once scrolling is supported
-    // TODO: type to select once that is figured out
+    describe('PageDown', function () {
+      it('should focus the cell a page below', function () {
+        let tree = renderMany();
+        focusCell(tree, 'Foo 1');
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByText('Foo 21'));
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getByText('Foo 41'));
+      });
+
+      it('should focus the row a page below', function () {
+        let tree = renderMany();
+        tree.getAllByRole('row')[1].focus();
+        moveFocus('PageDown');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[21]);
+      });
+    });
+
+    describe('PageUp', function () {
+      it('should focus the cell a page below', function () {
+        let tree = renderMany();
+        focusCell(tree, 'Foo 21');
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(tree.getByText('Foo 1'));
+      });
+
+      it('should focus the row a page below', function () {
+        let tree = renderMany();
+        tree.getAllByRole('row')[21].focus();
+        moveFocus('PageUp');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
+      });
+    });
+
+    describe('type to select', function () {
+      let renderTypeSelect = () => render(
+        <Table selectionMode="none">
+          <TableHeader>
+            <Column isRowHeader>First Name</Column>
+            <Column isRowHeader>Last Name</Column>
+            <Column>Birthday</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell>Sam</Cell>
+              <Cell>Smith</Cell>
+              <Cell>May 3</Cell>
+            </Row>
+            <Row>
+              <Cell>Julia</Cell>
+              <Cell>Jones</Cell>
+              <Cell>February 10</Cell>
+            </Row>
+            <Row>
+              <Cell>John</Cell>
+              <Cell>Doe</Cell>
+              <Cell>December 12</Cell>
+            </Row>
+          </TableBody>
+        </Table>
+      );
+
+      it('focuses cell by typing letters in rapid succession', function () {
+        let tree = renderTypeSelect();
+        focusCell(tree, 'Sam');
+
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getByText('Julia'));
+
+        moveFocus('o');
+        expect(document.activeElement).toBe(tree.getByText('John'));
+      });
+
+      it('matches against all row header cells', function () {
+        let tree = renderTypeSelect();
+        focusCell(tree, 'Sam');
+
+        moveFocus('D');
+        expect(document.activeElement).toBe(tree.getByText('Doe'));
+      });
+
+      it('non row header columns don\'t match', function () {
+        let tree = renderTypeSelect();
+        focusCell(tree, 'Sam');
+
+        moveFocus('F');
+        expect(document.activeElement).toBe(tree.getByText('Sam'));
+      });
+
+      it('focuses row by typing letters in rapid succession', function () {
+        let tree = renderTypeSelect();
+        tree.getAllByRole('row')[1].focus();
+
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
+
+        moveFocus('o');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[3]);
+      });
+
+      it('matches row against all row header cells', function () {
+        let tree = renderTypeSelect();
+        tree.getAllByRole('row')[1].focus();
+
+        moveFocus('D');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[3]);
+      });
+
+      it('resets the search text after a timeout', function () {
+        let tree = renderTypeSelect();
+        focusCell(tree, 'Sam');
+
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getByText('Julia'));
+
+        jest.runAllTimers();
+        
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getByText('John'));
+      });
+
+      it('wraps around when reaching the end of the collection', function () {
+        let tree = renderTypeSelect();
+        focusCell(tree, 'Sam');
+
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getByText('Julia'));
+
+        moveFocus('o');
+        expect(document.activeElement).toBe(tree.getByText('John'));
+
+        jest.runAllTimers();
+
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getByText('Julia'));
+      });
+
+      it('wraps around when no items past the current one match', function () {
+        let tree = renderTypeSelect();
+        focusCell(tree, 'Sam');
+
+        moveFocus('J');
+        expect(document.activeElement).toBe(tree.getByText('Julia'));
+
+        jest.runAllTimers();
+
+        moveFocus('S');
+        expect(document.activeElement).toBe(tree.getByText('Sam'));
+      });
+    });
 
     describe('focus marshalling', function () {
       let renderFocusable = () => render(
@@ -1222,7 +1435,7 @@ describe('Table', function () {
       expect(spinner).toHaveAttribute('aria-label', 'Loading...');
       expect(spinner).not.toHaveAttribute('aria-valuenow');
 
-      tree.rerender(defaultTable);
+      rerender(tree, defaultTable);
       act(() => jest.runAllTimers());
 
       rows = within(table).getAllByRole('row');
@@ -1263,7 +1476,7 @@ describe('Table', function () {
       expect(spinner).toHaveAttribute('aria-label', 'Loading more...');
       expect(spinner).not.toHaveAttribute('aria-valuenow');
 
-      tree.rerender(defaultTable);
+      rerender(tree, defaultTable);
       act(() => jest.runAllTimers());
 
       rows = within(table).getAllByRole('row');
@@ -1298,7 +1511,7 @@ describe('Table', function () {
       let scrollView = body.parentNode.parentNode;
 
       let rows = within(body).getAllByRole('row');
-      expect(rows).toHaveLength(20); // each row is 50px tall. table is 1000px tall. 20 rows fit.
+      expect(rows).toHaveLength(21); // each row is 49px tall. table is 1000px tall. 21 rows fit.
 
       scrollView.scrollTop = 250;
       fireEvent.scroll(scrollView);
@@ -1306,7 +1519,7 @@ describe('Table', function () {
       scrollView.scrollTop = 1500;
       fireEvent.scroll(scrollView);
 
-      scrollView.scrollTop = 3000;
+      scrollView.scrollTop = 2800;
       fireEvent.scroll(scrollView);
 
       scrollView.scrollTop = 3500;
@@ -1340,7 +1553,7 @@ describe('Table', function () {
       expect(heading).toBeVisible();
       expect(heading).toHaveTextContent('No results');
 
-      tree.rerender(defaultTable);
+      rerender(tree, defaultTable);
       act(() => jest.runAllTimers());
 
       rows = within(table).getAllByRole('row');
@@ -1554,6 +1767,433 @@ describe('Table', function () {
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'bar', direction: 'ascending'});
+    });
+  });
+
+  describe('layout', function () {
+    describe('row heights', function () {
+      let renderTable = (props, scale) => render(
+        <Table {...props}>
+          <TableHeader columns={columns} columnKey="key">
+            {column => <Column>{column.name}</Column>}
+          </TableHeader>
+          <TableBody items={items} itemKey="foo">
+            {item =>
+              (<Row>
+                {key => <Cell>{item[key]}</Cell>}
+              </Row>)
+            }
+          </TableBody>
+        </Table>
+      , scale);
+  
+      it('should layout rows with default height', function () {
+        let tree = renderTable();
+        let rows = tree.getAllByRole('row');
+        expect(rows).toHaveLength(3);
+
+        expect(rows[0].style.top).toBe('0px');
+        expect(rows[0].style.height).toBe('34px');
+        expect(rows[1].style.top).toBe('0px');
+        expect(rows[1].style.height).toBe('49px');
+        expect(rows[2].style.top).toBe('49px');
+        expect(rows[2].style.height).toBe('49px');
+
+        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('48px');
+        }
+      });
+
+      it('should layout rows with default height in large scale', function () {
+        let tree = renderTable({}, 'large');
+        let rows = tree.getAllByRole('row');
+        expect(rows).toHaveLength(3);
+
+        expect(rows[0].style.top).toBe('0px');
+        expect(rows[0].style.height).toBe('40px');
+        expect(rows[1].style.top).toBe('0px');
+        expect(rows[1].style.height).toBe('65px');
+        expect(rows[2].style.top).toBe('65px');
+        expect(rows[2].style.height).toBe('65px');
+
+        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('64px');
+        }
+      });
+
+      it('should layout rows with a custom rowHeight', function () {
+        let tree = renderTable({rowHeight: 72});
+        let rows = tree.getAllByRole('row');
+        expect(rows).toHaveLength(3);
+
+        expect(rows[0].style.top).toBe('0px');
+        expect(rows[0].style.height).toBe('34px');
+        expect(rows[1].style.top).toBe('0px');
+        expect(rows[1].style.height).toBe('73px');
+        expect(rows[2].style.top).toBe('73px');
+        expect(rows[2].style.height).toBe('73px');
+
+        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('72px');
+        }
+      });
+
+      it('should support variable row heights with rowHeight="auto"', function () {
+        let scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+          .mockImplementation(function () {
+            return this.textContent === 'Foo 1' ? 64 : 48;
+          });
+        
+        let tree = renderTable({rowHeight: 'auto'});
+        let rows = tree.getAllByRole('row');
+        expect(rows).toHaveLength(3);
+
+        expect(rows[1].style.top).toBe('0px');
+        expect(rows[1].style.height).toBe('65px');
+        expect(rows[2].style.top).toBe('65px');
+        expect(rows[2].style.height).toBe('49px');
+
+        for (let cell of rows[1].childNodes) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('64px');
+        }
+
+        for (let cell of rows[2].childNodes) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('48px');
+        }
+
+        scrollHeight.mockRestore();
+      });
+
+      it('should support variable column header heights with rowHeight="auto"', function () {
+        let scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
+          .mockImplementation(function () {
+            return this.textContent === 'Tier Two Header B' ? 48 : 34;
+          });
+        
+        let tree = render(
+          <Table rowHeight="auto">
+            <TableHeader columns={nestedColumns} columnKey="key">
+              {column => <Column childColumns={column.children}>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+        let rows = tree.getAllByRole('row');
+        expect(rows).toHaveLength(5);
+
+        expect(rows[0].style.top).toBe('0px');
+        expect(rows[0].style.height).toBe('34px');
+        expect(rows[1].style.top).toBe('34px');
+        expect(rows[1].style.height).toBe('48px');
+        expect(rows[2].style.top).toBe('82px');
+        expect(rows[2].style.height).toBe('34px');
+
+        for (let cell of rows[0].childNodes) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('34px');
+        }
+
+        for (let cell of rows[1].childNodes) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('48px');
+        }
+
+        for (let cell of rows[2].childNodes) {
+          expect(cell.style.top).toBe('0px');
+          expect(cell.style.height).toBe('34px');
+        }
+
+        scrollHeight.mockRestore();
+      });
+    });
+
+    describe('column widths', function () {
+      it('should divide the available width by default', function () {
+        let tree = render(
+          <Table>
+            <TableHeader columns={columns} columnKey="key">
+              {column => <Column>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[1].style.width).toBe('315px');
+          expect(row.childNodes[2].style.width).toBe('315px');
+          expect(row.childNodes[3].style.width).toBe('315px');  
+        }
+      });
+
+      it('should support explicitly sized columns', function () {
+        let tree = render(
+          <Table>
+            <TableHeader>
+              <Column uniqueKey="foo" width={200}>Foo</Column>
+              <Column uniqueKey="bar" width={500}>Bar</Column>
+              <Column uniqueKey="baz" width={300}>Baz</Column>
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+        
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('500px');
+          expect(row.childNodes[3].style.width).toBe('300px');  
+        }
+      });
+
+      it('should divide remaining width amoung remaining columns', function () {
+        let tree = render(
+          <Table>
+            <TableHeader>
+              <Column uniqueKey="foo" width={200}>Foo</Column>
+              <Column uniqueKey="bar">Bar</Column>
+              <Column uniqueKey="baz">Baz</Column>
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+        
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('372.5px');
+          expect(row.childNodes[3].style.width).toBe('372.5px');  
+        }
+      });
+
+      it('should support percentage widths', function () {
+        let tree = render(
+          <Table>
+            <TableHeader>
+              <Column uniqueKey="foo" width="10%">Foo</Column>
+              <Column uniqueKey="bar" width={500}>Bar</Column>
+              <Column uniqueKey="baz">Baz</Column>
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+        
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[1].style.width).toBe('100px');
+          expect(row.childNodes[2].style.width).toBe('500px');
+          expect(row.childNodes[3].style.width).toBe('345px');  
+        }
+      });
+
+      it('should support minWidth', function () {
+        let tree = render(
+          <Table>
+            <TableHeader>
+              <Column uniqueKey="foo" width={200}>Foo</Column>
+              <Column uniqueKey="bar" minWidth={500}>Bar</Column>
+              <Column uniqueKey="baz">Baz</Column>
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+        
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('500px');
+          expect(row.childNodes[3].style.width).toBe('245px');  
+        }
+      });
+
+      it('should support maxWidth', function () {
+        let tree = render(
+          <Table>
+            <TableHeader>
+              <Column uniqueKey="foo" width={200}>Foo</Column>
+              <Column uniqueKey="bar" maxWidth={300}>Bar</Column>
+              <Column uniqueKey="baz">Baz</Column>
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+        
+        let rows = tree.getAllByRole('row');
+
+        for (let row of rows) {
+          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[1].style.width).toBe('200px');
+          expect(row.childNodes[2].style.width).toBe('300px');
+          expect(row.childNodes[3].style.width).toBe('445px');  
+        }
+      });
+
+      it('should compute the correct widths for tiered headings', function () {
+        let tree = render(
+          <Table>
+            <TableHeader columns={nestedColumns} columnKey="key">
+              {column => <Column childColumns={column.children}>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items} itemKey="foo">
+              {item =>
+                (<Row>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </Table>
+        );
+
+        let rows = tree.getAllByRole('row');
+
+        expect(rows[0].childNodes[0].style.width).toBe('244px');
+        expect(rows[0].childNodes[1].style.width).toBe('756px');
+
+        expect(rows[1].childNodes[0].style.width).toBe('244px');
+        expect(rows[1].childNodes[1].style.width).toBe('378px');
+        expect(rows[1].childNodes[2].style.width).toBe('189px');
+        expect(rows[1].childNodes[3].style.width).toBe('189px');
+
+        for (let row of rows.slice(2)) {
+          expect(row.childNodes[0].style.width).toBe('55px');
+          expect(row.childNodes[1].style.width).toBe('189px');
+          expect(row.childNodes[2].style.width).toBe('189px');
+          expect(row.childNodes[3].style.width).toBe('189px');
+          expect(row.childNodes[4].style.width).toBe('189px');
+          expect(row.childNodes[5].style.width).toBe('189px');
+        }
+      });
+    });
+  });
+
+  describe('updating columns', function () {
+    it('should support removing columns', function () {
+      let tree = render(<HidingColumns />);
+
+      let checkbox = tree.getByLabelText('Net Budget');
+      expect(checkbox.checked).toBe(true);
+
+      let table = tree.getByRole('grid');
+      let columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(6);
+      expect(columns[1]).toHaveTextContent('Plan Name');
+      expect(columns[2]).toHaveTextContent('Audience Type');
+      expect(columns[3]).toHaveTextContent('Net Budget');
+      expect(columns[4]).toHaveTextContent('Target OTP');
+      expect(columns[5]).toHaveTextContent('Reach');
+
+      for (let row of within(table).getAllByRole('row').slice(1)) {
+        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
+        expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
+      }
+      
+      act(() => {userEvent.click(checkbox);});
+      expect(checkbox.checked).toBe(false);
+
+      act(() => jest.runAllTimers());
+
+      columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(5);
+      expect(columns[1]).toHaveTextContent('Plan Name');
+      expect(columns[2]).toHaveTextContent('Audience Type');
+      expect(columns[3]).toHaveTextContent('Target OTP');
+      expect(columns[4]).toHaveTextContent('Reach');
+
+      for (let row of within(table).getAllByRole('row').slice(1)) {
+        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
+        expect(within(row).getAllByRole('gridcell')).toHaveLength(4);
+      }
+    });
+
+    it('should support adding columns', function () {
+      let tree = render(<HidingColumns />);
+
+      let checkbox = tree.getByLabelText('Net Budget');
+      expect(checkbox.checked).toBe(true);
+
+      act(() => {userEvent.click(checkbox);});
+      expect(checkbox.checked).toBe(false);
+
+      act(() => jest.runAllTimers());
+
+      let table = tree.getByRole('grid');
+      let columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(5);
+
+      act(() => {userEvent.click(checkbox);});
+      expect(checkbox.checked).toBe(true);
+
+      act(() => jest.runAllTimers());
+
+      columns = within(table).getAllByRole('columnheader');
+      expect(columns).toHaveLength(6);
+      expect(columns[1]).toHaveTextContent('Plan Name');
+      expect(columns[2]).toHaveTextContent('Audience Type');
+      expect(columns[3]).toHaveTextContent('Net Budget');
+      expect(columns[4]).toHaveTextContent('Target OTP');
+      expect(columns[5]).toHaveTextContent('Reach');
+
+      for (let row of within(table).getAllByRole('row').slice(1)) {
+        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
+        expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
+      }
     });
   });
 });
