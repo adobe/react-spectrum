@@ -175,7 +175,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     return match;
   }, [collator, lowercaseValue]);
 
-  let lastValue = useRef(inputValue);
+  let lastValue = useRef('');
   useEffect(() => {
     if (onFilter && lastValue.current !== inputValue) {
       onFilter(inputValue);
