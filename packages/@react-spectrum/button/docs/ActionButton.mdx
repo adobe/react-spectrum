@@ -85,7 +85,7 @@ function Example() {
   let [count, setCount] = React.useState(0);
 
   return (
-   <ActionButton onPress={() => setCount(c => c + 1)}>{count} Edits</ActionButton>
+   <ActionButton onPress={() => setCount(c => c + 1)}><Text>{count} Edits</Text></ActionButton>
   );
 }
 ```
