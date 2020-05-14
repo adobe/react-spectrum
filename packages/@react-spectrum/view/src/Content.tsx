@@ -34,5 +34,8 @@ function Content(props: ContentProps, ref: DOMRef) {
   );
 }
 
+/**
+ * Content is used to specify primary content of a component.
+ */
 const _Content = forwardRef(Content);
 export {_Content as Content};

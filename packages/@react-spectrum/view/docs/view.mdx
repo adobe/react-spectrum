@@ -1,0 +1,116 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/view';
+import docsImage from 'docs:@react-spectrum/image';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+import packageDataImage from '../../image/package.json';
+
+```jsx import
+import {Image} from '@react-spectrum/image';
+import {Content, Footer, Header} from '@react-spectrum/view';
+```
+
+---
+category: Content
+---
+
+# View
+
+<p>
+  {docs.exports.Content.description}
+  <br />
+  {docs.exports.Footer.description}
+  <br />
+  {docs.exports.Header.description}
+  <br />
+  {docsImage.exports.Image.description}
+</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Content', 'Footer', 'Header']} />
+
+<HeaderInfo
+  packageData={packageDataImage}
+  componentNames={['Image']} />
+
+## Examples
+
+```tsx example
+<Content>Try another search</Content>
+```
+
+```tsx example
+<Footer>&copy; All rights reserved.</Footer>
+```
+
+```tsx example
+<Header>Terms and Conditions</Header>
+```
+
+```tsx example
+<Image src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+```
+
+## Content
+
+The Content, Footer, Header, and Image components exist as children to other
+components providing formatting and semantic meaning as explained in
+[Dialog](http://localhost:1234/react-spectrum/Dialog.html#content). It is
+important to note that the Header, Content, and Footer content elements
+accept any renderable node, not just strings.
+
+### Content
+
+Used to specify the content of a component. Examples of usage
+[Dialog](Dialog.html#example) and [IllustratedMessage](IllustratedMessage.html#example).
+
+### Footer
+
+Used to specify a layout region below the content section of a component.
+Example of usage [Dialog](Dialog.html#example).
+
+See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/footer) for more information.
+
+### Header
+
+Used to specify a layout region providing supplemental title information above the
+content section of a component. Example of usage [Dialog](Dialog.html#example).
+
+See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/header) for more information.
+
+### Image
+
+Used to add images to components. Example of usage
+[Dialog](Dialog.html#examples).
+
+See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img) for more information.
+
+## Props
+
+### Content
+
+<PropTable component={docs.exports.Content} links={docs.links} />
+
+### Footer
+
+<PropTable component={docs.exports.Footer} links={docs.links} />
+
+### Header
+
+<PropTable component={docs.exports.Header} links={docs.links} />
+
+### Image
+
+<PropTable component={docsImage.exports.Image} links={docsImage.links} />

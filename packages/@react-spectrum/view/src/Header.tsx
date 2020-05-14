@@ -31,5 +31,8 @@ function Header(props: HeaderProps, ref: DOMRef) {
   );
 }
 
+/**
+ * Header is used to position additional heading or title information.
+ */
 const _Header = forwardRef(Header);
 export {_Header as Header};
