@@ -114,6 +114,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     // If I don't have the extra itemText check, then setting props.selectedKey to undef or just deleting one letter of the text
     // so it doesn't match a key will then clear the textfield entirely
     itemText && setInputValue(itemText);
+
+    // If itemText happens to be the same as the current input text but the keys don't match
+    // setInputValue won't call onSelectionChange for us so we call it here manually
+    if (itemText === inputValue && selectedKey !== key) {
+      if (onSelectionChange) {
+        onSelectionChange(key);
+      }
+    }
+
     // Only close the menu if the key is being set to something and not to undefined? (this is so when user backspaces the menu stays open)
     // Or should this even be here? If we remove and put .close on Enter in useComboBox then we can
     // have consitent behavior of menu staying open when the user types in something matching a combobox option for controlled and uncontrolled

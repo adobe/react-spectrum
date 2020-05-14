@@ -27,17 +27,15 @@ let items = [
 ];
 
 let withSection = [
-  {name: 'Animals', children: [
-    {name: 'Aardvark'},
-    {name: 'Kangaroo'},
-    {name: 'Snake'}
+  {name: 'Animals', id: '1', children: [
+    {name: 'Aardvark', id: '2'},
+    {name: 'Kangaroo', id: '3'},
+    {name: 'Snake', id: '4'}
   ]},
-  {name: 'People', children: [
-    {name: 'Danni'},
-    {name: 'Devon'},
-    {name: 'Ross', children: [
-      {name: 'Tests'}
-    ]}
+  {name: 'People', id: '5', children: [
+    {name: 'Danni', id: '6'},
+    {name: 'Devon', id: '7'},
+    {name: 'Ross', id: '8'}
   ]}
 ];
 
@@ -143,7 +141,7 @@ storiesOf('ComboBox', module)
   .add(
     'defaultInputValue and selectedKey (controlled by selectedKey)',
     () => (
-      <ControlledKeyComboBox defaultInputValue="Blah" selectedKey="Kangaroo" />
+      <ControlledKeyComboBox defaultInputValue="Blah" selectedKey="4" />
     )
   )
   .add(
@@ -255,14 +253,14 @@ let ControlledKeyComboBox = (props) => {
   return (
     <div>
       <ButtonGroup marginEnd="30px">
-        <Button variant="secondary" onPress={() => setSelectedKey('Snake')}>
+        <Button variant="secondary" onPress={() => setSelectedKey('4')}>
           <Text>Snake</Text>
         </Button>
-        <Button variant="secondary" onPress={() => setSelectedKey('Ross')}>
+        <Button variant="secondary" onPress={() => setSelectedKey('8')}>
           <Text>Ross</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox {...props} selectedKey={selectedKey} items={withSection} itemKey="name" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+      <ComboBox {...props} selectedKey={selectedKey} items={withSection} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
