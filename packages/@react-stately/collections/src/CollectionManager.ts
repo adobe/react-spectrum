@@ -133,7 +133,7 @@ export class CollectionManager<T extends object, V, W> {
     this._transactionQueue = [];
 
     // Set options from passed object if given
-    this.transitionDuration = isNaN(options.transitionDuration) ? 500 : options.transitionDuration;
+    this.transitionDuration = options.transitionDuration ?? 500;
     this.anchorScrollPosition = options.anchorScrollPosition || false;
     this.anchorScrollPositionAtTop = options.anchorScrollPositionAtTop || false;
     this.shouldOverscan = options.shouldOverscan !== false;

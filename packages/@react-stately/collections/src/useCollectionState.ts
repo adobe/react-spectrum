@@ -49,7 +49,7 @@ export function useCollectionState<T extends object, V, W>(opts: CollectionProps
   let [contentSize, setContentSize] = useState(new Size());
   let [isAnimating, setAnimating] = useState(false);
   let [isScrolling, setScrolling] = useState(false);
-  let collectionManager = useMemo(() => new CollectionManager<T, V, W>({transitionDuration: opts.transitionDuration}), []);
+  let collectionManager = useMemo(() => new CollectionManager<T, V, W>(), []);
 
   collectionManager.delegate = {
     setVisibleViews,
@@ -67,6 +67,7 @@ export function useCollectionState<T extends object, V, W>(opts: CollectionProps
 
   collectionManager.layout = opts.layout;
   collectionManager.collection = opts.collection;
+  collectionManager.transitionDuration = opts.transitionDuration;
 
   useLayoutEffect(() => {
     collectionManager.afterRender();
