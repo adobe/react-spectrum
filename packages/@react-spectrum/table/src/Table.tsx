@@ -15,7 +15,7 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {CollectionItem, layoutInfoToStyle, ScrollView, setScrollLeft, useCollectionView} from '@react-aria/collections';
 import {DOMRef} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {GridState, useGridState} from '@react-stately/grid';
 import {mergeProps} from '@react-aria/utils';
 import {Node, Rect, ReusableView, useCollectionState} from '@react-stately/collections';
@@ -410,12 +410,41 @@ function TableRow({item, children, ...otherProps}) {
     isVirtualized: true
   }, state);
 
+  // The row should show the focus background style when any cell inside it is focused.
+  // If the row itself is focused, then it should have a blue focus indicator on the left.
+  let {
+    isFocusVisible: isFocusVisibleWithin,
+    focusProps: focusWithinProps
+  } = useFocusRing({within: true});
+  let {isFocusVisible, focusProps} = useFocusRing();
+  let props = mergeProps(
+    mergeProps(
+      rowProps,
+      otherProps
+    ),
+    mergeProps(
+      focusWithinProps,
+      focusProps
+    )
+  );
+
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div {...rowProps} {...otherProps} ref={ref} className={classNames(styles, 'spectrum-Table-row', {'is-selected': isSelected})}>
-        {children}
-      </div>
-    </FocusRing>
+    <div 
+      {...props}
+      ref={ref}
+      className={
+        classNames(
+          styles,
+          'spectrum-Table-row',
+          {
+            'is-selected': isSelected,
+            'is-focused': isFocusVisibleWithin,
+            'focus-ring': isFocusVisible
+          }
+        )
+      }>
+      {children}
+    </div>
   );
 }
 
