@@ -11,7 +11,8 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/actiongroup';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import collectionsDocs from 'docs:@react-stately/collections';
+import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
@@ -47,7 +48,7 @@ category: Buttons
 
 ## Content
 
-ActionGroups accept as list of `children`, each with a `uniqueKey` prop. Generally `children` will be `Item` components from the `@react-stately/collections` library.
+ActionGroups accepts a list of `children`, each with a `uniqueKey` prop. It is required that the `children` are <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Item} /> components from the `@react-stately/collections` library.
 
 However, a function that returns `Item` components is also accepted.
 
@@ -63,7 +64,7 @@ const items = [
 ```
 
 
-In order to identify children when a user takes an action on a item, each child needs to have a `uniqueKey` prop. If using a function, an `itemKey` prop is required on the ActionGroup.
+Each child needs to have a `uniqueKey` prop so it can be identified when actioned upon by a user. If using a function, an `itemKey` prop is required on the ActionGroup.
 
 See [Events](#events) for more information.
 
@@ -125,7 +126,7 @@ function Example() {
         <Item uniqueKey="delete">Delete</Item>
         <Item uniqueKey="edit">Edit</Item>
       </ActionGroup>
-      <p>Last selected: {lastKey}</p>
+      <p>Current selection: {lastKey}</p>
     </div>
   );
 }
