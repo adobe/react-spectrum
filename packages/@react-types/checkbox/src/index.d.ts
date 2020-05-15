@@ -24,8 +24,9 @@ export interface CheckboxBase extends InputBase {
 
 export interface CheckboxProps extends CheckboxBase {
   /**
-   * Indeterminism is presentational, when a checkbox is indeterminate, it overrides the selection state.
+   * When a checkbox is indeterminate, it overrides the selection state.
    * The indeterminate visual representation remains even after subsequent clicks.
+   * It will also emit a change event to go to false because this is a controlled state and we want it to be .
    */
   isIndeterminate?: boolean
 }

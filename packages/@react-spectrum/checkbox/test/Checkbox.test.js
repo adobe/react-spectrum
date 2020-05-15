@@ -138,8 +138,6 @@ describe('Checkbox', function () {
     Name                       | Component      | props
     ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, isIndeterminate: true}}
     ${'Checkbox isEmphasized'} | ${Checkbox}    | ${{onChange: onChangeSpy, isIndeterminate: true, isEmphasized: true}}
-    ${'V2Checkbox'}            | ${V2Checkbox}  | ${{onChange: onChangeSpy, indeterminate: true}}
-    ${'V2Checkbox quiet'}      | ${V2Checkbox}  | ${{onChange: onChangeSpy, indeterminate: true, quiet: true}}
   `('$Name can be indeterminate (this one is weird) it is controlled, but not via isSelected', function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
@@ -148,9 +146,9 @@ describe('Checkbox', function () {
     expect(checkbox.checked).toBeFalsy();
 
     userEvent.click(checkbox);
-    expect(checkbox.checked).toBeTruthy();
+    expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).toHaveBeenCalled();
-    expect(onChangeSpy.mock.calls[0][0]).toBe(true);
+    expect(onChangeSpy.mock.calls[0][0]).toBe(false);
 
     userEvent.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
