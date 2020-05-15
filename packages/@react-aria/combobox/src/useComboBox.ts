@@ -186,7 +186,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if ((!allowsCustomValue || state.selectionManager.focusedKey) && state.inputValue !== '' && !state.collection.getItem(state.selectionManager.focusedKey)) {
       state.selectionManager.setFocusedKey(layout.getFirstKey());
     }
-  }, [state.selectionManager, state.collection, layout]);
+  }, [state.selectionManager, state.collection, layout, allowsCustomValue, state.inputValue]);
 
   // Clear focused key if user clears textfield to prevent accidental selection on blur
   let lastValue = useRef(state.inputValue);

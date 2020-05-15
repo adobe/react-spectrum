@@ -132,11 +132,16 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     // If we want to keep the behavior of closing the menu when the user types in a valid combobox value
     // then I think we'll have to add someting to onInputChange where it calls .close after onSelectionCHange (actually doesn't work cuz onChange in useCOmbobox makes it open again)
     // key && triggerState.setOpen(false);
-  }, [collection, setInputValue]);
+  }, [collection, setInputValue, inputValue, onSelectionChange, selectedKey]);
 
+
+  let lastSelectedKeyProp = useRef('' as Key);
   // Update the selectedKey and inputValue when props.selectedKey updates
   useEffect(() => {
-    setSelectedKey(props.selectedKey);
+    if (lastSelectedKeyProp.current !== props.selectedKey) {
+      setSelectedKey(props.selectedKey);
+    }
+    lastSelectedKeyProp.current = props.selectedKey;
     // as asked about, should the the triggerstate.setOpen be put here?
     // having it here means
     // props.selectedKey && triggerState.setOpen(false);
