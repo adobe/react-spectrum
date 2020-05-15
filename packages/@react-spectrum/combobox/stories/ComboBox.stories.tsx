@@ -98,15 +98,37 @@ storiesOf('ComboBox', module)
     'menuTrigger: manual',
     () => render({menuTrigger: 'manual'})
   )
-  // TODO: add a line of text in the story indicating that you need focus to make combobox menu display
   .add(
     'isOpen',
-    () => render({isOpen: true})
+    () => (
+      <div>
+        <div>Note: Combobox needs focus to show dropdown.</div>
+        <ComboBox label="Combobox" isOpen onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+          <Item uniqueKey="one">Item One</Item>
+          <Item uniqueKey="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
+          <Item uniqueKey="three">Item Three</Item>
+        </ComboBox>
+      </div>
+    )
   )
-  // TODO: add a line of text in the story indicating that you need focus to make combobox menu display
   .add(
     'defaultOpen',
-    () => render({defaultOpen: true})
+    () => (
+      <div>
+        <div>Note: Combobox needs focus to show dropdown.</div>
+        <ComboBox label="Combobox" defaultOpen onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+          <Item uniqueKey="one">Item One</Item>
+          <Item uniqueKey="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
+          <Item uniqueKey="three">Item Three</Item>
+        </ComboBox>
+      </div>
+    )
   )
   .add(
     'inputValue (controlled)',
@@ -128,10 +150,6 @@ storiesOf('ComboBox', module)
     'defaultSelectedKey (uncontrolled)',
     () => render({defaultSelectedKey: 'two'})
   )
-  // .add(
-  //   'inputValue and selectedKey (controlled)',
-  //   () => render({inputValue: 'Item Two', selectedKey: 'two'})
-  // )
   .add(
     'inputValue and selectedKey (controlled)',
     () => (
@@ -199,10 +217,6 @@ storiesOf('ComboBox', module)
     'direction: top',
     () => render({direction: 'top'})
   )
-  // .add(
-  //   'allowsCustomValue: true',
-  //   () => render({allowsCustomValue: true})
-  // )
   .add(
     'allowsCustomValue: true',
     () => (
@@ -298,7 +312,6 @@ let AllControlledComboBox = (props) => {
     </div>
   );
 };
-
 
 let ControlledKeyComboBox = (props) => {
   let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
