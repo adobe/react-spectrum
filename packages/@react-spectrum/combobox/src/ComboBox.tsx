@@ -49,8 +49,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     autoFocus,
     shouldFlip = true,
     width,
-    direction = 'bottom',
-    ...otherProps
+    direction = 'bottom'
   } = props;
 
   let {styleProps} = useStyleProps(props);

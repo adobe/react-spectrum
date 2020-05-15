@@ -607,6 +607,36 @@ describe('ComboBox', function () {
       expect(onSelectionChange).toHaveBeenCalledWith('2');
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
     });
+
+    it('focuses the first key if the previously focused key is filtered out of the list', function () {
+      let {getByRole} = renderComboBox();
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        combobox.focus();
+        userEvent.type(combobox, 'O');
+        jest.runAllTimers();
+        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+      });
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(2);
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[1].id);
+      expect(items[1].textContent).toBe('Two');
+
+      act(() => {
+        userEvent.type(combobox, 'n');
+        jest.runAllTimers();
+      });
+
+      listbox = getByRole('listbox');
+      items = within(listbox).getAllByRole('option');
+      expect(combobox.value).toBe('On');
+      expect(items.length).toBe(1);
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+      expect(items[0].textContent).toBe('One');
+    });
   });
 
   describe('typing in the textfield', function () {
@@ -951,6 +981,4 @@ describe('ComboBox', function () {
   });
 
   // TODO: write tests for ComboBox with sections
-  // TODO: write test for onCustomValue ()
-  // TODO: write test with onFilter
 });

@@ -179,6 +179,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
+  // TODO: Think about if the below focus key stuff needs to account for mobile
   // Focus first item if filtered collection no longer contains original focused item
   useEffect(() => {
     // Only set a focused key if one existed previously, don't want to focus something by default if allowsCustomValue = true

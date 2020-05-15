@@ -360,7 +360,7 @@ let CustomValueComboBox = (props) => {
 
   let onCustomValue = (value) => {
     setCustomValue(value);
-  }
+  };
 
   return (
     <div>
@@ -375,7 +375,7 @@ let CustomValueComboBox = (props) => {
       </ComboBox>
     </div>
   );
-}
+};
 
 function render(props = {}) {
   return (

@@ -199,7 +199,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     if (filteredCollection.size > 0) {
       triggerState.open(focusStrategy);
     }
-  }
+  };
 
   return {
     ...triggerState,
