@@ -25,8 +25,12 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
     disallowEmptySelection
   } = props;
 
-  let isFocused = useRef(false);
-  let [focusedKey, setFocusedKey] = useState(null);
+  // We want synchronous updates to `isFocused` and `focusedKey` after their setters are called.
+  // But we also need to trigger a react re-render. So, we have both a ref (sync) and state (async).
+  let isFocusedRef = useRef(false);
+  let [, setFocused] = useState(false);
+  let focusedKeyRef = useRef(null);
+  let [, setFocusedKey] = useState(null);
   let selectedKeysProp = useMemo(() => props.selectedKeys ? new Selection(props.selectedKeys) : undefined, [props.selectedKeys]);
   let defaultSelectedKeys = useMemo(() => props.defaultSelectedKeys ? new Selection(props.defaultSelectedKeys) : new Selection(), [props.defaultSelectedKeys]);
   let [selectedKeys, setSelectedKeys] = useControlledState(
@@ -39,13 +43,19 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
     selectionMode,
     disallowEmptySelection,
     get isFocused() {
-      return isFocused.current;
+      return isFocusedRef.current;
     },
     setFocused(f) {
-      isFocused.current = f;
+      isFocusedRef.current = f;
+      setFocused(f);
     },
-    focusedKey,
-    setFocusedKey,
+    get focusedKey() {
+      return focusedKeyRef.current;
+    },
+    setFocusedKey(k) {
+      focusedKeyRef.current = k;
+      setFocusedKey(k);
+    },
     selectedKeys,
     setSelectedKeys
   };

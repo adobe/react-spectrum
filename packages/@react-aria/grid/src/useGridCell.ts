@@ -16,6 +16,7 @@ import {HTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
+import {useTabKey} from './useTabKey';
 
 interface GridCellProps {
   node: GridNode<unknown>,
@@ -44,6 +45,7 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
   // TODO: move into useSelectableItem?
   let {pressProps} = usePress(itemProps);
   let interactions = mergeProps(itemProps, pressProps);
+  let tabKey = useTabKey();
 
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
@@ -52,7 +54,12 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
       // useSelectableItem only handles setting the focused key when
       // the focused element is the gridcell itself. We also want to
       // set the focused key when a child element receives focus.
-      state.selectionManager.setFocusedKey(node.key);
+      // If the tab key is currently pressed, then skip this. We want
+      // to restore focus to the previously focused row/cell in that case
+      // since the table should act like a single tab stop.
+      if (!tabKey.isDown()) {
+        state.selectionManager.setFocusedKey(node.key);
+      }
       return;
     }
 
