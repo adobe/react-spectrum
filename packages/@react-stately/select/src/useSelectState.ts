@@ -47,7 +47,7 @@ export function useSelectState<T extends object>(props: SelectProps<T>): SelectS
     ...props,
     selectionMode: 'single',
     selectedKeys,
-    onSelectionChange: (keys) => {
+    onSelectionChange: (keys: Set<Key>) => {
       setSelectedKey(keys.values().next().value);
       triggerState.setOpen(false);
     }

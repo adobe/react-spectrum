@@ -460,7 +460,7 @@ function AsyncLoadingExample() {
   });
 
   return (
-    <Table width={1000} height={500} isQuiet selectionMode="none" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+    <Table width={1000} height={500} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
       <TableHeader>
         <Column uniqueKey="score" width={100} allowsSorting>Score</Column>
         <Column uniqueKey="title" isRowHeader allowsSorting>Title</Column>
