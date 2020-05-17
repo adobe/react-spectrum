@@ -94,10 +94,10 @@ export function useCollectionView<T extends object, V, W>(props: CollectionViewO
   // is up to the implementation using CollectionView since we don't have refs
   // to all of the item DOM nodes.
   useEffect(() => {
-    if (focusedKey) {
+    if (focusedKey && collectionManager.visibleRect.height > 0) {
       collectionManager.scrollToItem(focusedKey, 0);
     }
-  }, [focusedKey, collectionManager]);
+  }, [focusedKey, collectionManager.visibleRect.height, collectionManager]);
 
   let isFocusWithin = useRef(false);
   let onFocus = useCallback((e: FocusEvent) => {
