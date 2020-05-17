@@ -85,6 +85,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     }
   }
 
+  let lastSelectedKey = useRef('');
   let onInputChange = (value) => {
     if (props.onInputChange) {
       props.onInputChange(value);
@@ -96,6 +97,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
         onSelectionChange(newSelectedKey);
       }
     }
+
+    lastSelectedKey.current = newSelectedKey;
   };
 
   let initialSelectedKeyText = collection.getItem(props.selectedKey)?.textValue;
@@ -112,7 +115,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     let itemText = item ? item.textValue : '';
     // think about the below conditionals below
     // If I don't have the extra itemText check, then setting props.selectedKey to undef or just deleting one letter of the text
-    // so it doesn't match a key will then clear the textfield entirely
+    // so it doesn't match a key will then clear the textfield entirely (in controlled selected key case)
     itemText && setInputValue(itemText);
 
     // If itemText happens to be the same as the current input text but the keys don't match
@@ -138,6 +141,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let lastSelectedKeyProp = useRef('' as Key);
   // Update the selectedKey and inputValue when props.selectedKey updates
   useEffect(() => {
+    // need this check since setSelectedKey changes a lot making this useEffect fire even when props.selectedKey hasn't changed
     if (lastSelectedKeyProp.current !== props.selectedKey) {
       setSelectedKey(props.selectedKey);
     }
@@ -146,6 +150,23 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     // having it here means
     // props.selectedKey && triggerState.setOpen(false);
   }, [props.selectedKey, setSelectedKey]);
+
+  // If props.inputValue changes, call onSelectionChange (it doesn't get called since onInputChange doesn't trigger on prop.inputValue changes)
+  let lastInputValueProp = useRef('');
+  useEffect(() => {
+    let newSelectedKey = computeKeyFromValue(props.inputValue, collection);
+    if (lastInputValueProp.current !== props.inputValue) {
+      // Only call onSelection if key changes (lastSelectedKey is also updated when user types so this stops duplicated onSelectionChange calls)
+      if (newSelectedKey !== lastSelectedKey.current) {
+        if (onSelectionChange) {
+          onSelectionChange(newSelectedKey);
+        }
+      }
+    }
+
+    lastSelectedKey.current = selectedKey;
+    lastInputValueProp.current = props.inputValue;
+  }, [props.inputValue, collection, selectedKey, onSelectionChange]);
 
   let selectionState = useMultipleSelectionState(
     {
