@@ -296,7 +296,7 @@ let AllControlledComboBox = (props) => {
       <div>Current input value: {inputValue}</div>
       <ButtonGroup marginEnd="30px">
         <Button variant="secondary" onPress={() => setInputValue('Danni')}>
-          <Text>Set Input text: Danni (2)</Text>
+          <Text>Set Input text: Danni (4)</Text>
         </Button>
         <Button variant="secondary" onPress={() => setSelectedKey('6')}>
           <Text>Set selected key: 6 (Ross)</Text>
@@ -330,6 +330,9 @@ let ControlledKeyComboBox = (props) => {
         <Button variant="secondary" onPress={() => setSelectedKey('6')}>
           <Text>Ross</Text>
         </Button>
+        <Button variant="secondary" onPress={() => setSelectedKey('')}>
+          <Text>Clear key</Text>
+        </Button>
       </ButtonGroup>
       <ComboBox {...props} selectedKey={selectedKey} items={withSection} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
         {(item: any) => (
@@ -358,6 +361,9 @@ let ControlledValueComboBox = (props) => {
         </Button>
         <Button variant="secondary" onPress={() => setValue('Kangaroo')}>
           <Text>Kangaroo</Text>
+        </Button>
+        <Button variant="secondary" onPress={() => setValue('')}>
+          <Text>Clear field</Text>
         </Button>
       </ButtonGroup>
       <ComboBox {...props} inputValue={value} items={withSection} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onValueChange} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
