@@ -152,7 +152,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   }, [props.selectedKey, setSelectedKey]);
 
   // If props.inputValue changes, call onSelectionChange (it doesn't get called since onInputChange doesn't trigger on prop.inputValue changes)
-  let lastInputValueProp = useRef('');
+  let lastInputValueProp = useRef(props.inputValue);
   useEffect(() => {
     let newSelectedKey = computeKeyFromValue(props.inputValue, collection);
     if (lastInputValueProp.current !== props.inputValue) {
