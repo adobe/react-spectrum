@@ -61,6 +61,17 @@ export function useSelectState<T extends object>(props: SelectProps<T>): SelectS
 
   return {
     ...triggerState,
+    open() {
+      // Don't open if the collection is empty.
+      if (collection.size !== 0) {
+        triggerState.open();
+      }
+    },
+    toggle(focusStrategy) {
+      if (collection.size !== 0) {
+        triggerState.toggle(focusStrategy);
+      }
+    },
     collection,
     disabledKeys,
     selectionManager,
