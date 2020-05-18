@@ -1494,4 +1494,66 @@ describe('Picker', function () {
       expect(hiddenInput).toHaveAttribute('tabIndex', '0');
     });
   });
+
+  describe('async loading', function () {
+    it('should display a spinner while loading', function () {
+      let {getByRole, rerender} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" items={[]} isLoading>
+            {item => <Item>{item.name}</Item>}
+          </Picker>
+        </Provider>
+      );
+
+      let picker = getByRole('button');
+      let progressbar = within(picker).getByRole('progressbar');
+      expect(progressbar).toHaveAttribute('aria-label', 'Loading…');
+      expect(progressbar).not.toHaveAttribute('aria-valuenow');
+
+      rerender(
+        <Provider theme={theme}>
+          <Picker label="Test" items={[]}>
+            {item => <Item>{item.name}</Item>}
+          </Picker>
+        </Provider>
+      );
+
+      expect(progressbar).not.toBeInTheDocument();
+    });
+
+    it('should display a spinner inside the listbox when loading more', function () {
+      let items = [{name: 'Foo'}, {name: 'Bar'}];
+      let {getByRole, rerender} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" items={items} isLoading>
+            {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+          </Picker>
+        </Provider>
+      );
+
+      let picker = getByRole('button');
+      act(() => triggerPress(picker));
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+      expect(options.length).toBe(3);
+
+      let progressbar = within(options[2]).getByRole('progressbar');
+      expect(progressbar).toHaveAttribute('aria-label', 'Loading more…');
+      expect(progressbar).not.toHaveAttribute('aria-valuenow');
+
+      rerender(
+        <Provider theme={theme}>
+          <Picker label="Test" items={items}>
+            {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+          </Picker>
+        </Provider>
+      );
+
+      options = within(listbox).getAllByRole('option');
+      expect(options.length).toBe(2);
+      expect(progressbar).not.toBeInTheDocument();
+    });
+  });
 });
