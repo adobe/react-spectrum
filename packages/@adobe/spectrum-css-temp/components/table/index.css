@@ -126,10 +126,10 @@ governing permissions and limitations under the License.
   box-sizing: border-box;
   font-size: var(--spectrum-table-cell-text-size);
   font-weight: var(--spectrum-table-cell-text-font-weight);
-  line-height: var(--spectrum-table-cell-text-line-height);
+  /* need to subtract 1px here because 14px * 1.5 + 14px + 14px = 49px, and we want 48px */
+  line-height: calc(calc(var(--spectrum-table-cell-text-size) * var(--spectrum-table-cell-text-line-height)) - 1px);
   padding: var(--spectrum-table-cell-padding-y) var(--spectrum-table-cell-padding-x);
-  /* Subtract top/bottom padding for this value to be correct in this implementation */
-  min-height: calc(var(--spectrum-table-cell-min-height) - calc(var(--spectrum-table-cell-padding-y) * 2));
+  min-height: var(--spectrum-table-cell-min-height);
   overflow: hidden;
 }
 
@@ -187,9 +187,27 @@ governing permissions and limitations under the License.
     outline: 0;
   }
 
+  /* The focus ring must be on top of the first cell, so needs to be absolutely positioned. */
+  &:focus-ring {
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: var(--spectrum-selectlist-border-size-key-focus);
+      z-index: 3;
+    }
+  }
+
   &.is-drop-target {
     @inherit: %drop-target;
   }
+}
+
+/* the CSS logical properties postcss plugin doesn't seem to work with :focus-ring. */
+[dir="rtl"] .spectrum-Table-row:focus-ring:before {
+  right: 0;
 }
 
 .spectrum-Table > .spectrum-Table-body > .spectrum-Table-row:last-of-type {

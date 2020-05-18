@@ -58,7 +58,7 @@ Alternatively, a controlled value can be provided using the `value` prop.
 <SearchField value="Default text" label="Controlled SearchField" />
 ```
 
-Placeholder text that describes the expected value or formatting for the SearchField can be provided using the `placeholder` prop. 
+Placeholder text that describes the expected value or formatting for the SearchField can be provided using the `placeholder` prop.
 Placeholder text will only appear when the SearchField is empty, and should not be used as a substitute for labeling the component with a visible label.
 
 ```tsx example
@@ -67,8 +67,7 @@ Placeholder text will only appear when the SearchField is empty, and should not 
 
 ## Labeling
 
-A visual label should be provided for the SearchField using the `label` prop. If the SearchField is required, the `isRequired` and 
-`necessityIndicator` props can be used to show a required state.
+A visual label should be provided for the SearchField using the `label` prop. If the SearchField is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
 
 ```tsx example
 <SearchField label="Street address" marginEnd="20px" />
@@ -79,8 +78,8 @@ A visual label should be provided for the SearchField using the `label` prop. If
 
 ### Accessibility
 
-If a visible label isn't specified, an `aria-label` must be provided to the SearchField for 
-accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using 
+If a visible label isn't specified, an `aria-label` must be provided to the SearchField for
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using
 the `id` of the labeling element instead.
 
 ```tsx example
@@ -101,9 +100,9 @@ When the `necessityIndicator` prop is set to `"label"`, a localized string will 
 ## Events
 
 The most commonly used handlers for events in SearchField are the:
-- `onChange` prop which is triggered whenever the value is edited by the user. 
-- `onSubmit` prop which is triggered whenever the value is submitted by the user. 
-- `onClear` prop which is triggered whenever the value is cleared by the user. 
+- `onChange` prop which is triggered whenever the value is edited by the user.
+- `onSubmit` prop which is triggered whenever the value is submitted by the user.
+- `onClear` prop which is triggered whenever the value is cleared by the user.
 
 The example below uses `onChange`, `onSubmit`, and `onClear` to update two separate elements with the text entered into the SearchField.
 
@@ -136,7 +135,7 @@ function Example() {
 
 ## Visual Options
 
-### Quiet 
+### Quiet
 
 ```tsx example
 <SearchField label="Email" placeholder="Email Address" isQuiet />
@@ -150,7 +149,7 @@ function Example() {
 
 ### Read Only
 
-The `isReadOnly` boolean prop makes the SearchField's text content immutable. Unlike `isDisabled` the SearchField remains focusable 
+The `isReadOnly` boolean prop makes the SearchField's text content immutable. Unlike `isDisabled` the SearchField remains focusable
 and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
 
 ```tsx example

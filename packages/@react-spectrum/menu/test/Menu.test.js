@@ -600,7 +600,7 @@ describe('Menu', function () {
       jest.runAllTimers();
 
       fireEvent.keyDown(menu, {key: 'B'});
-      expect(document.activeElement).toBe(menuItems[2]);
+      expect(document.activeElement).toBe(menuItems[1]);
     });
 
     it.each`
@@ -620,7 +620,7 @@ describe('Menu', function () {
       jest.runAllTimers();
 
       fireEvent.keyDown(menu, {key: 'B'});
-      expect(document.activeElement).toBe(menuItems[1]);
+      expect(document.activeElement).toBe(menuItems[4]);
     });
   });
 

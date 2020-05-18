@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Layout} from '@react-stately/collections';
+import {Collection, Layout, Rect} from '@react-stately/collections';
 import {CollectionItem} from './CollectionItem';
 import {CollectionState, useCollectionState} from '@react-stately/collections';
 import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
@@ -31,7 +31,9 @@ interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLEl
   focusedKey?: Key,
   sizeToFit?: 'width' | 'height',
   scrollDirection?: 'horizontal' | 'vertical' | 'both',
-  transitionDuration?: number
+  transitionDuration?: number,
+  isLoading?: boolean,
+  onLoadMore?: () => void
 }
 
 function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, ref: RefObject<HTMLDivElement>) {
@@ -54,13 +56,25 @@ function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, r
 
   let {collectionViewProps} = useCollectionView(props, state, ref);
 
+  // Handle scrolling, and call onLoadMore when nearing the bottom.
+  let onVisibleRectChange = useCallback((rect: Rect) => {
+    state.setVisibleRect(rect);
+
+    if (!props.isLoading && props.onLoadMore) {
+      let scrollOffset = state.collectionManager.contentSize.height - rect.height * 2;
+      if (rect.y > scrollOffset) {
+        props.onLoadMore();
+      }
+    }
+  }, [props.isLoading, props.onLoadMore, state]);
+  
   return (
     <ScrollView
       {...mergeProps(otherProps, collectionViewProps)}
       ref={ref}
       innerStyle={state.isAnimating ? {transition: `none ${state.collectionManager.transitionDuration}ms`} : undefined}
       contentSize={state.contentSize}
-      onVisibleRectChange={state.setVisibleRect}
+      onVisibleRectChange={onVisibleRectChange}
       onScrollStart={state.startScrolling}
       onScrollEnd={state.endScrolling}
       sizeToFit={sizeToFit}
@@ -82,10 +96,10 @@ export function useCollectionView<T extends object, V, W>(props: CollectionViewO
   // is up to the implementation using CollectionView since we don't have refs
   // to all of the item DOM nodes.
   useEffect(() => {
-    if (focusedKey) {
+    if (focusedKey && collectionManager.visibleRect.height > 0) {
       collectionManager.scrollToItem(focusedKey, 0);
     }
-  }, [focusedKey, collectionManager]);
+  }, [focusedKey, collectionManager.visibleRect.height, collectionManager]);
 
   let isFocusWithin = useRef(false);
   let onFocus = useCallback((e: FocusEvent) => {

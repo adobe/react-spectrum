@@ -47,7 +47,7 @@ describe('ActionButton', function () {
     expect(button).toHaveAttribute('aria-hidden', 'true');
   });
 
-  it.each`
+  it.each`'
     Name              | Component        | props
     ${'ActionButton'} | ${ActionButton}  | ${{onPress: onPressSpy, holdAffordance: true}}
     ${'V2Button'}     | ${V2Button}      | ${{variant: 'action', onClick: onPressSpy, holdAffordance: true}}
