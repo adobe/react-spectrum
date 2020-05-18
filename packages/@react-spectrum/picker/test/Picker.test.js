@@ -1310,6 +1310,36 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
     });
+
+    it('does not deselect when pressing an already selected item', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" defaultSelectedKey="two" onSelectionChange={onSelectionChange}>
+            <Item uniqueKey="one">One</Item>
+            <Item uniqueKey="two">Two</Item>
+            <Item uniqueKey="three">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let picker = getByRole('button');
+      expect(picker).toHaveTextContent('Two');
+      act(() => triggerPress(picker));
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+
+      expect(document.activeElement).toBe(items[1]);
+
+      act(() => triggerPress(items[1]));
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      act(() => jest.runAllTimers());
+      expect(listbox).not.toBeInTheDocument();
+
+      expect(document.activeElement).toBe(picker);
+      expect(picker).toHaveTextContent('Two');
+    });
   });
 
   describe('type to select', function () {
