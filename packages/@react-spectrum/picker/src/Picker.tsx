@@ -26,6 +26,7 @@ import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps} from '@react-aria/utils';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
+import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
@@ -83,6 +84,9 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     isOpen: state.isOpen
   });
 
+  let isLoadingInitial = props.isLoading && state.collection.size === 0;
+  let isLoadingMore = props.isLoading && state.collection.size > 0;
+
   // On small screen devices, the listbox is rendered in a tray, otherwise a popover.
   let isMobile = useMediaQuery('(max-width: 700px)');
   let listbox = (
@@ -97,7 +101,9 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         focusOnPointerEnter
         layout={layout}
         state={state}
-        width={isMobile ? '100%' : undefined} />
+        width={isMobile ? '100%' : undefined}
+        isLoading={isLoadingMore}
+        onLoadMore={props.onLoadMore} />
       <DismissButton onDismiss={() => state.setOpen(false)} />
     </FocusScope>
   );
@@ -194,12 +200,19 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           }}>
           {contents}
         </SlotProvider>
-        {validationState === 'invalid' &&
+        {isLoadingInitial &&
+          <ProgressCircle 
+            isIndeterminate
+            size="S"
+            aria-label={formatMessage('loading')}
+            UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
+        }
+        {validationState === 'invalid' && !isLoadingInitial &&
           <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-invalidIcon')} />
         }
         <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
       </FieldButton>
-      {overlay}
+      {state.collection.size === 0 ? null : overlay}
     </div>
   );
 

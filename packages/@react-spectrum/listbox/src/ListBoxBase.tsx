@@ -14,16 +14,19 @@ import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {CollectionItem, CollectionView} from '@react-aria/collections';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import {FocusStrategy} from '@react-types/menu';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {ListBoxContext} from './ListBoxContext';
 import {ListBoxOption} from './ListBoxOption';
 import {ListBoxSection} from './ListBoxSection';
 import {ListLayout, Node} from '@react-stately/collections';
 import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
+import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, RefObject, useMemo} from 'react';
 import {ReusableView} from '@react-stately/collections';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {useCollator} from '@react-aria/i18n';
+import {useCollator, useMessageFormatter} from '@react-aria/i18n';
 import {useListBox} from '@react-aria/listbox';
 import {useProvider} from '@react-spectrum/provider';
 
@@ -36,7 +39,9 @@ interface ListBoxBaseProps<T> extends DOMProps, StyleProps {
   focusOnPointerEnter?: boolean,
   domProps?: HTMLAttributes<HTMLElement>,
   disallowEmptySelection?: boolean,
-  shouldUseVirtualFocus?: boolean
+  shouldUseVirtualFocus?: boolean,
+  isLoading?: boolean,
+  onLoadMore?: () => void
 }
 
 /** @private */
@@ -68,6 +73,10 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
     isVirtualized: true
   }, state);
   let {styleProps} = useStyleProps(props);
+  let formatMessage = useMessageFormatter(intlMessages);
+
+  // Sync loading state into the layout.
+  layout.isLoading = props.isLoading;
 
   // This overrides collection view's renderWrapper to support heirarchy of items in sections.
   // The header is extracted from the children so it can receive ARIA labeling properties.
@@ -111,7 +120,9 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
         }
         layout={layout}
         collection={state.collection}
-        renderWrapper={renderWrapper}>
+        renderWrapper={renderWrapper}
+        isLoading={props.isLoading}
+        onLoadMore={props.onLoadMore}>
         {(type, item) => {
           if (type === 'item') {
             return (
@@ -120,6 +131,17 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
                 shouldSelectOnPressUp={shouldSelectOnPressUp}
                 shouldFocusOnHover={focusOnPointerEnter}
                 shouldUseVirtualFocus={shouldUseVirtualFocus} />
+            );
+          } else if (type === 'loader') {
+            return (
+              // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
+              <div role="option" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
+                <ProgressCircle 
+                  isIndeterminate
+                  size="S"
+                  aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')}
+                  UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
+              </div>
             );
           }
         }}
