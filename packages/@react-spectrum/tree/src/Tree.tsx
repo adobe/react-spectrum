@@ -37,7 +37,9 @@ export function Tree<T extends object>(props: CollectionBase<T> & Expandable & M
     })
   , []);
 
+  let ref = useRef();
   let {collectionProps} = useSelectableCollection({
+    ref,
     selectionManager: state.selectionManager,
     keyboardDelegate: layout
   });
@@ -45,6 +47,7 @@ export function Tree<T extends object>(props: CollectionBase<T> & Expandable & M
   return (
     <CollectionView
       {...collectionProps}
+      ref={ref}
       focusedKey={state.selectionManager.focusedKey}
       className={classNames(styles, 'spectrum-TreeView')}
       layout={layout}
