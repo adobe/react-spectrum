@@ -29,7 +29,10 @@ const I18nContext = React.createContext<LocaleContext>({
   direction: 'ltr'
 });
 
-export function Provider(props: ProviderProps) {
+/**
+ * Provides the locale for the application to all child components.
+ */
+export function I18nProvider(props: ProviderProps) {
   let {locale, children} = props;
   let defaultLocale = useDefaultLocale();
   if (!locale) {
@@ -48,7 +51,10 @@ export function Provider(props: ProviderProps) {
   );
 }
 
-export function useLocale() {
+/**
+ * Returns the current locale and layout direction.
+ */
+export function useLocale(): LocaleContext {
   return useContext(I18nContext);
 }
 

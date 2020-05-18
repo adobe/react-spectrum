@@ -1,0 +1,132 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+---
+category: Introduction
+---
+
+# Getting Started
+
+This page describes how to get started building your own component library with React Aria.
+
+## What is React Aria?
+
+**React Aria** is a library of [React Hooks](https://reactjs.org/docs/hooks-intro.html) that provides 
+accessible UI primitives for your design system. It provides [accessibility](accessibility.html) and behavior for many common 
+UI components so you can focus on your unique design and styling. It implements [adaptive interactions](interactions.html) 
+to ensure the best experience possible for all users, including support for mouse, touch, keyboard, and 
+screen readers.
+
+## Installation
+
+React Aria is **incrementally adoptable**. Each component is published as a separate package, so you can try it
+out in a single component and gradually add more over time. All of these packages are published under the 
+[@react-aria](https://www.npmjs.com/org/react-aria) scope on npm.
+
+You can install any React Aria package using a package manager like [npm](https://docs.npmjs.com/cli/npm) or
+[yarn](https://classic.yarnpkg.com/lang/en/).
+
+```
+yarn add @react-aria/button
+```
+
+## Building a component
+
+React Aria provides behavior and accessibility through React Hooks. Since **it does not provide any rendering**,
+you are responsible for defining the DOM structure for your component and passing the DOM props returned by each
+React Aria hook to the appropriate elements. This is powerful because it allows you to be in **complete control** over
+the DOM structure that you render. For example, you may need to add extra elements for styling or layout control.
+You also get complete control over how you style your components: you could use CSS classes, inline styles, CSS-in-JS, etc.
+
+Start by importing the hook you wish to use, and calling it in your component. You'll typically pass through the props
+from your component, along with a [ref](https://reactjs.org/docs/refs-and-the-dom.html) to the DOM node in some cases. 
+The hook will return one or more sets of DOM props which you should pass through to the appropriate element. This can be 
+done by [spreading the props](https://reactjs.org/docs/jsx-in-depth.html#spread-attributes) returned from the hook onto
+the element that you render.
+
+This example shows a very simple button component built with the [useButton](useButton.html) hook.
+
+```tsx example
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = React.useRef();
+  let {buttonProps} = useButton(props, ref);
+
+  return (
+    <button {...buttonProps} ref={ref}>
+      {props.children}
+    </button>
+  );
+}
+
+<Button onPress={() => alert('Button pressed!')}>
+  Press me
+</Button>
+```
+
+Now you just need to add your own styling, and you have a fully accessible button component that works consistently
+across mouse, touch, keyboard, and screen readers! See the [useButton](useButton.html) docs for an example of how to do that.
+
+## Stateful components
+
+Many components are **stateless** — they display information to a user. Examples of stateless components include buttons,
+progress bars, and links. These components don't update as the user interacts when them.
+
+A **stateful** component has some state, and allows a user to interact with the component in order to update that state.
+Examples of stateful components include text fields, checkboxes, and selects.
+
+React Aria separates the state management logic into a separate hook that lives in [react-stately](../react-stately/index.html).
+The state hook holds the state for the component, and provides an interface to read and update that state. This allows
+this logic to be reused across different platforms, e.g. in react-native.
+
+To build a stateful component, you'll need to install and import the corresponding state hook from react-stately.
+Then, call the state hook from your component, and pass the resulting state object to the React Aria hook.
+You can also use the state in your rendering code to determine what visual state to display.
+
+This example shows a very simple checkbox component built with the [useCheckbox](useCheckbox.html) hook, along
+with [useToggleState](../react-stately/useToggleState.html) hook from react-stately.
+
+```tsx example
+import {useToggleState} from '@react-stately/toggle';
+import {useCheckbox} from '@react-aria/checkbox';
+
+function Checkbox(props) {
+  let state = useToggleState(props);
+  let ref = React.useRef();
+  let {inputProps} = useCheckbox(props, state, ref);
+
+  return (
+    <label style={{display: 'block'}}>
+      <input {...inputProps} ref={ref} />
+      {props.children}
+    </label>
+  );
+}
+
+<Checkbox onChange={isChecked => alert(isChecked ? 'Checked!' : 'Unchecked')}>
+  Check me
+</Checkbox>
+```
+
+See the [useCheckbox](useCheckbox.html) docs for a full example of a custom styled checkbox.
+
+## Next steps
+
+Now that you understand how to use the hooks in React Aria to build your own components, you can read the documentation
+for the individual hooks to understand them in detail. We also have high level documentation about topics like 
+[interactions](interactions.html), [internationalization](internationalization.html), and [accessibility](accessibility.html).
+
+For a complete example of a component library built with React Aria, check out [React Spectrum](../react-spectrum/index.html),
+which is an implementation of [Spectrum](https://spectrum.adobe.com/), Adobe's design system.
+The [source code](https://github.com/adobe-private/react-spectrum-v3/tree/master/packages/%40react-spectrum) is a good
+example of how the React Aria hooks are used in many real world components.
