@@ -17,10 +17,20 @@ import {SpectrumColumnProps} from '@react-types/table';
 
 export class TableLayout<T> extends ListLayout<T> {
   collection: GridCollection<T>;
+  lastCollection: GridCollection<T>;
   columnWidths: Map<Key, number>;
   stickyColumnIndices: number[];
 
   buildCollection(): LayoutNode[] {
+    // If columns changed, clear layout cache.
+    if (
+      !this.lastCollection ||
+      this.collection.columns.length !== this.lastCollection.columns.length ||
+      this.collection.columns.some((c, i) => c.key !== this.lastCollection.columns[i].key)
+    ) {
+      this.cache = new WeakMap();
+    }
+
     this.buildColumnWidths();
     let header = this.buildHeader();
     let body = this.buildBody(0);
@@ -129,12 +139,74 @@ export class TableLayout<T> extends ListLayout<T> {
       columns.push(layoutNode);
     }
 
+    this.setChildHeights(columns, height);
+
     rect.height = height;
     rect.width = x;
 
     return {
       layoutInfo: row,
       children: columns
+    };
+  }
+
+  setChildHeights(children: LayoutNode[], height: number) {
+    for (let child of children) {
+      if (child.layoutInfo.rect.height !== height) {
+        // Need to copy the layout info before we mutate it.
+        child.layoutInfo = child.layoutInfo.copy();
+        this.layoutInfos.set(child.layoutInfo.key, child.layoutInfo);
+
+        child.layoutInfo.rect.height = height;
+      }
+    }
+  }
+
+  getColumnWidth(node: GridNode<T>) {
+    let colspan = node.colspan ?? 1;
+    let width = 0;
+    for (let i = 0; i < colspan; i++) {
+      let column = this.collection.columns[node.index + i];
+      width += this.columnWidths.get(column.key);
+    }
+
+    return width;
+  }
+
+  getEstimatedHeight(node: GridNode<T>, width: number, height: number, estimatedHeight: number) {
+    let isEstimated = false;
+
+    // If no explicit height is available, use an estimated height.
+    if (height == null) {
+      // If a previous version of this layout info exists, reuse its height.
+      // Mark as estimated if the size of the overall collection view changed,
+      // or the content of the item changed.
+      let previousLayoutNode = this.layoutNodes.get(node.key);
+      if (previousLayoutNode) {
+        let curNode = this.collection.getItem(node.key);
+        let lastNode = this.lastCollection ? this.lastCollection.getItem(node.key) : null;
+        height = previousLayoutNode.layoutInfo.rect.height;
+        isEstimated = curNode !== lastNode || width !== previousLayoutNode.layoutInfo.rect.width || previousLayoutNode.layoutInfo.estimatedSize;
+      } else {
+        height = estimatedHeight;
+        isEstimated = true;
+      }
+    }
+
+    return {height, isEstimated};
+  }
+
+  buildColumn(node: GridNode<T>, x: number, y: number): LayoutNode {
+    let width = this.getColumnWidth(node);
+    let {height, isEstimated} = this.getEstimatedHeight(node, width, this.headingHeight, this.estimatedHeadingHeight);
+    let rect = new Rect(x, y, width, height);
+    let layoutInfo = new LayoutInfo(node.type, node.key, rect);
+    layoutInfo.isSticky = node.props?.isSelectionCell;
+    layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
+    layoutInfo.estimatedSize = isEstimated;
+
+    return {
+      layoutInfo
     };
   }
 
@@ -191,9 +263,10 @@ export class TableLayout<T> extends ListLayout<T> {
         return this.buildHeaderRow(node, x, y);
       case 'item':
         return this.buildRow(node, x, y);
-      case 'cell':
-      case 'placeholder':
       case 'column':
+      case 'placeholder':
+        return this.buildColumn(node, x, y);
+      case 'cell':
         return this.buildCell(node, x, y);
       default:
         throw new Error('Unknown node type ' + node.type);
@@ -213,6 +286,8 @@ export class TableLayout<T> extends ListLayout<T> {
       children.push(layoutNode);
     }
 
+    this.setChildHeights(children, height);
+
     rect.width = x;
     rect.height = height + 1; // +1 for bottom border
 
@@ -223,17 +298,13 @@ export class TableLayout<T> extends ListLayout<T> {
   }
 
   buildCell(node: GridNode<T>, x: number, y: number): LayoutNode {
-    let colspan = node.colspan ?? 1;
-    let width = 0;
-    for (let i = 0; i < colspan; i++) {
-      let column = this.collection.columns[node.index + i];
-      width += this.columnWidths.get(column.key);
-    }
-
-    let rect = new Rect(x, y, width, node.type === 'column' || node.type === 'placeholder' ? 34 : 50);
+    let width = this.getColumnWidth(node);
+    let {height, isEstimated} = this.getEstimatedHeight(node, width, this.rowHeight, this.estimatedRowHeight);
+    let rect = new Rect(x, y, width, height);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
     layoutInfo.isSticky = node.props?.isSelectionCell;
     layoutInfo.zIndex = layoutInfo.isSticky ? 2 : 1;
+    layoutInfo.estimatedSize = isEstimated;
 
     return {
       layoutInfo

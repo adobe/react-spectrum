@@ -13,7 +13,16 @@
 import {Direction, KeyboardDelegate} from '@react-types/shared';
 import {GridCollection} from '@react-stately/grid';
 import {Key, RefObject} from 'react';
-import {Node} from '@react-stately/collections';
+import {Layout, Node, Rect} from '@react-stately/collections';
+
+interface GridKeyboardDelegateOptions<T> {
+  collection: GridCollection<T>,
+  disabledKeys: Set<Key>,
+  ref?: RefObject<HTMLElement>,
+  direction: Direction,
+  collator?: Intl.Collator,
+  layout?: Layout<Node<T>>
+}
 
 export class GridKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: GridCollection<T>;
@@ -21,13 +30,15 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
   private ref: RefObject<HTMLElement>;
   private direction: Direction;
   private collator: Intl.Collator;
+  private layout: Layout<Node<T>>;
 
-  constructor(collection: GridCollection<T>, disabledKeys: Set<Key>, ref: RefObject<HTMLElement>, direction: Direction, collator?: Intl.Collator) {
-    this.collection = collection;
-    this.disabledKeys = disabledKeys;
-    this.ref = ref;
-    this.direction = direction;
-    this.collator = collator;
+  constructor(options: GridKeyboardDelegateOptions<T>) {
+    this.collection = options.collection;
+    this.disabledKeys = options.disabledKeys;
+    this.ref = options.ref;
+    this.direction = options.direction;
+    this.collator = options.collator;
+    this.layout = options.layout;
   }
 
   private isCell(node: Node<T>) {
@@ -146,20 +157,15 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   private findNextColumnKey(column: Node<T>) {
-    let row = this.collection.headerRows[column.level];
-    let childNodes = [...row.childNodes];
-
     // Search following columns
-    for (let i = column.index + 1; i < childNodes.length; i++) {
-      let item = childNodes[i];
-      if (item.type === 'column') {
-        return item.key;
-      }
+    let key = this.findNextKey(item => item.type === 'column', column.key);
+    if (key != null) {
+      return key;
     }
 
     // Wrap around to the first column
-    for (let i = 0; i < column.index; i++) {
-      let item = childNodes[i];
+    let row = this.collection.headerRows[column.level];     
+    for (let item of row.childNodes) {
       if (item.type === 'column') {
         return item.key;
       }
@@ -167,19 +173,16 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   private findPreviousColumnKey(column: Node<T>) {
-    let row = this.collection.headerRows[column.level];
-    let childNodes = [...row.childNodes];
-
     // Search previous columns
-    for (let i = column.index - 1; i >= 0; i--) {
-      let item = childNodes[i];
-      if (item.type === 'column') {
-        return item.key;
-      }
+    let key = this.findPreviousKey(item => item.type === 'column', column.key);
+    if (key != null) {
+      return key;
     }
 
     // Wrap around to the last column
-    for (let i = childNodes.length - 1; i > column.index; i--) {
+    let row = this.collection.headerRows[column.level];
+    let childNodes = [...row.childNodes];
+    for (let i = childNodes.length - 1; i >= 0; i--) {
       let item = childNodes[i];
       if (item.type === 'column') {
         return item.key;
@@ -327,35 +330,61 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     return this.ref.current.querySelector(`[data-key="${key}"]`);
   }
 
-  getKeyPageAbove(key: Key) {
-    let menu = this.ref.current;
+  private getItemRect(key: Key): Rect {
+    if (this.layout) {
+      return this.layout.getLayoutInfo(key)?.rect;
+    }
+
     let item = this.getItem(key);
-    if (!item) {
+    if (item) {
+      return new Rect(item.offsetLeft, item.offsetTop, item.offsetWidth, item.offsetHeight);
+    }
+  }
+
+  private getPageHeight(): number {
+    if (this.layout) {
+      return this.layout.collectionManager?.visibleRect.height;
+    }
+
+    return this.ref?.current?.offsetHeight;
+  }
+
+  private getContentHeight(): number {
+    if (this.layout) {
+      return this.layout.getContentSize().height;
+    }
+
+    return this.ref?.current?.scrollHeight;
+  }
+
+  getKeyPageAbove(key: Key) {
+    let itemRect = this.getItemRect(key);
+    if (!itemRect) {
       return null;
     }
 
-    let pageY = Math.max(0, item.offsetTop + item.offsetHeight - menu.offsetHeight);
+    let pageY = Math.max(0, itemRect.maxY - this.getPageHeight());
     
-    while (item && item.offsetTop > pageY) {
+    while (itemRect && itemRect.y > pageY) {
       key = this.getKeyAbove(key);
-      item = this.getItem(key);
+      itemRect = this.getItemRect(key);
     }
 
     return key;
   }
 
   getKeyPageBelow(key: Key) {
-    let menu = this.ref.current;
-    let item = this.getItem(key);
-    if (!item) {
+    let itemRect = this.getItemRect(key);
+    if (!itemRect) {
       return null;
     }
 
-    let pageY = Math.min(menu.scrollHeight, item.offsetTop - item.offsetHeight + menu.offsetHeight);
+    let pageHeight = this.getPageHeight();
+    let pageY = Math.min(this.getContentHeight() - pageHeight, itemRect.y + pageHeight);
 
-    while (item && item.offsetTop < pageY) {
+    while (itemRect && itemRect.maxY < pageY) {
       key = this.getKeyBelow(key);
-      item = this.getItem(key);
+      itemRect = this.getItemRect(key);
     }
 
     return key;
@@ -367,15 +396,47 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     let collection = this.collection;
-    let key = fromKey ? this.getKeyBelow(fromKey) : this.getFirstKey(fromKey);
+    let key: Key;
+    if (fromKey != null) {
+      key = this.getKeyBelow(fromKey);
+    }
+    
+    if (key == null) {
+      key = this.getFirstKey();
+    }
+
+    // If the starting key is a cell, search from its parent row.
+    let startItem = collection.getItem(key);
+    if (startItem.type === 'cell') {
+      key = startItem.parentKey;
+    }
+
+    let hasWrapped = false;
     while (key) {
       let item = collection.getItem(key);
-      let substring = item.textValue.slice(0, search.length);
-      if (item.textValue && this.collator.compare(substring, search) === 0) {
-        return key;
+
+      // Check each of the row header cells in this row for a match
+      for (let cell of item.childNodes) {
+        let column = collection.columns[cell.index];
+        if (collection.rowHeaderColumnKeys.has(column.key) && cell.textValue) {
+          let substring = cell.textValue.slice(0, search.length);
+          if (this.collator.compare(substring, search) === 0) {
+            // If we started on a cell, end on the matching cell. Otherwise, end on the row.
+            let fromItem = fromKey != null ? collection.getItem(fromKey) : startItem;
+            return fromItem.type === 'cell' 
+              ? cell.key
+              : item.key;
+          }
+        }
       }
 
       key = this.getKeyBelow(key);
+
+      // Wrap around when reaching the end of the collection
+      if (key == null && !hasWrapped) {
+        key = this.getFirstKey();
+        hasWrapped = true;
+      }
     }
 
     return null;

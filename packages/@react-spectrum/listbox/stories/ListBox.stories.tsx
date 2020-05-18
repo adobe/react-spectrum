@@ -24,6 +24,7 @@ import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/typography';
+import {useAsyncList} from '@react-stately/data';
 
 let iconMap = {
   AlignCenter,
@@ -473,13 +474,35 @@ storiesOf('ListBox', module)
   .add(
     'with semantic elements (generative)',
     () => (
-      <ListBox width={200} aria-labelledby="label"items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
+      <ListBox width={200} aria-labelledby="label" items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
         {item => (
           <Section items={item.children} title={item.name}>
             {item => customOption(item)}
           </Section>
         )}
       </ListBox>
+    )
+  )
+  .add(
+    'isLoading',
+    () => (
+      <ListBox aria-labelledby="label" width={200} items={[]} isLoading>
+        {item => <Item>{item.name}</Item>}
+      </ListBox>
+    )
+  )
+  .add(
+    'isLoading more',
+    () => (
+      <ListBox aria-labelledby="label" width={200} items={flatOptions} isLoading>
+        {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+      </ListBox>
+    )
+  )
+  .add(
+    'async loading',
+    () => (
+      <AsyncLoadingExample />
     )
   );
 
@@ -492,3 +515,27 @@ let customOption = (item) => {
     </Item>
   );
 };
+
+function AsyncLoadingExample() {
+  interface Pokemon {
+    name: string,
+    url: string
+  }
+
+  let list = useAsyncList<Pokemon>({
+    async load({signal, cursor}) {
+      let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <ListBox aria-labelledby="label" width={200} items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
+      {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+    </ListBox>
+  );
+}
