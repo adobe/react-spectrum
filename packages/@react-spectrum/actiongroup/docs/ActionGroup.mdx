@@ -149,6 +149,23 @@ function Example() {
 }
 ```
 
+To continue to capturing actions when `selectionMode` is `none`, utilize the `onAction` prop.
+```tsx example
+function Example() {
+  let [actedKey, setActedKey] = React.useState('');
+  return (
+    <div>
+      <ActionGroup selectionMode="none" onAction={setActedKey}>
+        <Item uniqueKey="add">Add</Item>
+        <Item uniqueKey="delete">Delete</Item>
+        <Item uniqueKey="edit">Edit</Item>
+      </ActionGroup>
+      <p>Last action: {actedKey}</p>
+    </div>
+  );
+}
+```
+
 ## Props
 
 <PropTable component={docs.exports.ActionGroup} links={docs.links} />

@@ -33,7 +33,10 @@ export interface ActionGroupProps<T> extends DOMProps, StyleProps, MultipleSelec
    * Shows that a selection exists, but is not available in that circumstance.
    */
   isDisabled?: boolean,
-  /** Invoked when an action is taken on a child. The sole argument `key` is the uniqueKey for the item. */
+  /**
+   * Invoked when an action is taken on a child. Especially useful when `selectionMode` is none.
+   * The sole argument `key` is the uniqueKey for the item.
+   */
   onAction?: (key: Key) => void
 }
 
