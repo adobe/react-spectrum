@@ -1011,25 +1011,29 @@ describe('Table', function () {
 
     describe('focus marshalling', function () {
       let renderFocusable = () => render(
-        <Table>
-          <TableHeader>
-            <Column>Foo</Column>
-            <Column>Bar</Column>
-            <Column>baz</Column>
-          </TableHeader>
-          <TableBody>
-            <Row>
-              <Cell textValue="Foo 1"><Switch aria-label="Foo 1" /></Cell>
-              <Cell textValue="Google"><Link><a href="https://google.com" target="_blank">Google</a></Link></Cell>
-              <Cell>Baz 1</Cell>
-            </Row>
-            <Row>
-              <Cell textValue="Foo 2"><Switch aria-label="Foo 2" /></Cell>
-              <Cell textValue="Yahoo"><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
-              <Cell>Baz 2</Cell>
-            </Row>
-          </TableBody>
-        </Table>
+        <>
+          <input data-testid="before" />
+          <Table>
+            <TableHeader>
+              <Column>Foo</Column>
+              <Column>Bar</Column>
+              <Column>baz</Column>
+            </TableHeader>
+            <TableBody>
+              <Row>
+                <Cell textValue="Foo 1"><Switch aria-label="Foo 1" /></Cell>
+                <Cell textValue="Google"><Link><a href="https://google.com" target="_blank">Google</a></Link></Cell>
+                <Cell>Baz 1</Cell>
+              </Row>
+              <Row>
+                <Cell textValue="Foo 2"><Switch aria-label="Foo 2" /></Cell>
+                <Cell textValue="Yahoo"><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
+                <Cell>Baz 2</Cell>
+              </Row>
+            </TableBody>
+          </Table>
+          <input data-testid="after" />
+        </>
       );
 
       it('should marshall focus to the focusable element inside a cell', function () {
@@ -1052,6 +1056,110 @@ describe('Table', function () {
 
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(tree.getAllByRole('checkbox')[0]);
+      });
+
+      it('should move focus to the first row when tabbing into the table from the start', function () {
+        let tree = renderFocusable();
+
+        let table = tree.getByRole('grid');
+        expect(table).toHaveAttribute('tabIndex', '0');
+
+        let before = tree.getByTestId('before');
+        before.focus();
+
+        // Simulate tabbing to the first "tabbable" item inside the table
+        fireEvent.keyDown(before, {key: 'Tab'});
+        within(table).getAllByRole('switch')[0].focus();
+        fireEvent.keyUp(before, {key: 'Tab'});
+
+        expect(document.activeElement).toBe(within(table).getAllByRole('row')[1]);
+      });
+
+      it('should move focus to the last row when tabbing into the table from the end', function () {
+        let tree = renderFocusable();
+
+        let table = tree.getByRole('grid');
+        expect(table).toHaveAttribute('tabIndex', '0');
+
+        let after = tree.getByTestId('after');
+        after.focus();
+
+        // Simulate tabbing to the last "tabbable" item inside the table
+        fireEvent.keyDown(after, {key: 'Tab', shiftKey: true});
+        within(table).getAllByRole('link')[1].focus();
+        fireEvent.keyUp(after, {key: 'Tab', shiftKey: true});
+
+        expect(document.activeElement).toBe(within(table).getAllByRole('row')[2]);
+      });
+
+      it('should move focus to the last focused cell when tabbing into the table from the start', function () {
+        let tree = renderFocusable();
+
+        let table = tree.getByRole('grid');
+        expect(table).toHaveAttribute('tabIndex', '0');
+
+        let baz1 = tree.getByText('Baz 1');
+        baz1.focus();
+
+        expect(table).toHaveAttribute('tabIndex', '-1');
+
+        let before = tree.getByTestId('before');
+        before.focus();
+
+        // Simulate tabbing to the first "tabbable" item inside the table
+        fireEvent.keyDown(before, {key: 'Tab'});
+        within(table).getAllByRole('switch')[0].focus();
+        fireEvent.keyUp(before, {key: 'Tab'});
+
+        expect(document.activeElement).toBe(baz1);
+      });
+
+      it('should move focus to the last focused cell when tabbing into the table from the end', function () {
+        let tree = renderFocusable();
+
+        let table = tree.getByRole('grid');
+        expect(table).toHaveAttribute('tabIndex', '0');
+
+        let baz1 = tree.getByText('Baz 1');
+        baz1.focus();
+
+        expect(table).toHaveAttribute('tabIndex', '-1');
+
+        let after = tree.getByTestId('after');
+        after.focus();
+
+        // Simulate tabbing to the last "tabbable" item inside the table
+        fireEvent.keyDown(after, {key: 'Tab'});
+        within(table).getAllByRole('link')[1].focus();
+        fireEvent.keyUp(after, {key: 'Tab'});
+
+        expect(document.activeElement).toBe(baz1);
+      });
+
+      it('should move focus after the table when tabbing', function () {
+        let tree = renderFocusable();
+
+        tree.getAllByRole('switch')[1].focus();
+
+        // Simulate tabbing within the table
+        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+        fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+
+        let after = tree.getByTestId('after');
+        expect(document.activeElement).toBe(after);
+      });
+
+      it('should move focus before the table when shift tabbing', function () {
+        let tree = renderFocusable();
+
+        tree.getAllByRole('switch')[1].focus();
+
+        // Simulate shift tabbing within the table
+        fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
+
+        let before = tree.getByTestId('before');
+        expect(document.activeElement).toBe(before);
       });
     });
   });
