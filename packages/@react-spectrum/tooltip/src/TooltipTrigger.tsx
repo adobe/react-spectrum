@@ -69,7 +69,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
           UNSAFE_style: overlayProps.style,
           ...tooltipProps
         }}>
-        <Overlay isOpen={state.open}>
+        <Overlay isOpen={state.tooltipManager.isOpen}>
           {tooltip}
         </Overlay>
       </TooltipContext.Provider>

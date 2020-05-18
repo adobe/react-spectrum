@@ -12,7 +12,7 @@
 
 import {TooltipManager} from '../';
 
-describe('TooltipManager', () => {
+describe.skip('TooltipManager', () => {
 
   it('can show a tooltip', () => {
     jest.useFakeTimers();

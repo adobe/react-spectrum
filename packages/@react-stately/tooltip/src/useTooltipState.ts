@@ -10,7 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useTooltipTriggerState';
-export * from './useTooltipState';
-export * from './TooltipManager';
-export * from './types';
+import {TooltipState} from './types';
+import {useState} from 'react';
+
+export function useTooltipState(): TooltipState {
+  let [isOpen, setOpen] = useState(false);
+
+  return {
+    isOpen,
+    setOpen,
+    open() {
+      setOpen(true);
+    },
+    close() {
+      setOpen(false);
+    }
+  };
+}

@@ -18,6 +18,7 @@ import {TooltipProps, TooltipTriggerAriaProps, TriggerProps} from '@react-types/
 import {TooltipTriggerState} from '@react-stately/tooltip';
 import {useFocusable} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
+import {usePress} from '@react-aria/interactions';
 
 interface TooltipTriggerAria {
   triggerProps: HTMLAttributes<HTMLElement> & PressProps & HoverProps & FocusEvents,
@@ -34,49 +35,44 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
   let tooltipId = useId(tooltipProps.id);
   let triggerId = useId(triggerProps.id);
 
-  // abstract away knowledge of timing transitions from aria hook
-  let tooltipManager = state.tooltipManager;
-
-  let handleDelayedShow = () => {
-    if (isDisabled) {
-      return;
-    }
-    let triggerId = ref.current.id;
-    tooltipManager.showTooltipDelayed(state, triggerId);
-  };
-
-  let handleDelayedHide = () => {
-    tooltipManager.hideTooltipDelayed(state);
-  };
+  let {
+    tooltipManager
+   } = state;
 
   let onKeyDownTrigger = (e) => {
     if (ref && ref.current) {
       // dismiss tooltip on esc key press
       if (e.key === 'Escape') {
         e.preventDefault();
-        handleDelayedHide();
+        tooltipManager.closeTooltip();
       }
     }
   };
 
+  let {pressProps} = usePress({
+    onPress: () => tooltipManager.closeTooltip()
+  });
+
   let {hoverProps} = useHover({
     isDisabled,
-    onHover: handleDelayedShow,
-    onHoverEnd: handleDelayedHide
+    onHover: () => tooltipManager.openTooltipDelayed(),
+    onHoverEnd: () => tooltipManager.closeTooltipDelayed()
   });
 
   let {focusableProps} = useFocusable({
     isDisabled,
-    onFocus: handleDelayedShow,
-    onBlur: handleDelayedHide,
+    onFocus: () => tooltipManager.openTooltip(),
+    onBlur: () => tooltipManager.closeTooltip(),
     onKeyDown: onKeyDownTrigger
   }, ref);
+
+  let interactionProps = mergeProps(pressProps, focusableProps);
 
   return {
     triggerProps: {
       id: triggerId,
-      'aria-describedby': state.open ? tooltipId : undefined,
-      ...mergeProps(focusableProps, hoverProps)
+      'aria-describedby': tooltipManager.isOpen ? tooltipId : undefined,
+      ...mergeProps(interactionProps, hoverProps)
     },
     tooltipProps: {
       id: tooltipId

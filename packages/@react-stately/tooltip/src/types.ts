@@ -10,7 +10,27 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useTooltipTriggerState';
-export * from './useTooltipState';
-export * from './TooltipManager';
-export * from './types';
+import {TooltipManager} from './TooltipManager';
+
+export interface TooltipState {
+  /** Whether the tooltip is currently open. */
+  isOpen: boolean,
+  /** Sets whether the tooltip is open. */
+  setOpen: (value: boolean) => void,
+  /** Opens the tooltip. */
+  open(): void,
+  /** Closes the tooltip. */
+  close(): void
+}
+
+export interface TooltipTriggerState {
+  /** A tooltip manager to update multiple tooltips state. */
+  tooltipManager: TooltipManager
+}
+
+export interface MultipleTolltipManager {
+  openTooltip(): void,
+  closeTooltip(): void,
+  openTooltipDelayed(): void,
+  closeTooltipDelayed(): void
+}

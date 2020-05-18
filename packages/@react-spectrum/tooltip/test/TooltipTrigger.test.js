@@ -23,7 +23,7 @@ let theme = {
   medium: scaleMedium
 };
 
-describe('TooltipTrigger', function () {
+describe.skip('TooltipTrigger', function () {
   let onOpen = jest.fn();
   let onClose = jest.fn();
 

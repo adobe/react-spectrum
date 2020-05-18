@@ -11,22 +11,14 @@
  */
 
 import {TooltipManager} from './TooltipManager';
-import {useState} from 'react';
-
-export interface TooltipTriggerState {
-  open: boolean,
-  setOpen: (value: boolean) => void,
-  tooltipManager: TooltipManager
-}
-
-let tooltipManager = new TooltipManager();
+import {TooltipTriggerState} from './types';
+import {useMemo} from 'react';
+import {useTooltipState} from './useTooltipState';
 
 export function useTooltipTriggerState(): TooltipTriggerState {
-  let [open, setOpen] = useState(false);
+  let state = useTooltipState();
 
   return {
-    open,
-    setOpen,
-    tooltipManager
+    tooltipManager: useMemo(() => new TooltipManager(state), [state])
   };
 }

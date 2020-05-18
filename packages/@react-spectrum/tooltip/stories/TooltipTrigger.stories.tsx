@@ -11,6 +11,9 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import Copy from '@spectrum-icons/workflow/Copy';
+import Delete from '@spectrum-icons/workflow/Delete';
+import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Tooltip, TooltipTrigger} from '../src';
@@ -33,7 +36,7 @@ storiesOf('TooltipTrigger', module)
     () => render('This is a tooltip.', {placement: 'left', isDisabled: true})
   ).add(
      'multiple tooltips',
-     () => renderMultipleTriggers('This is a tooltip.', {placement: 'left'})
+     () => renderMultipleTriggers('This is a tooltip.', {placement: 'top'})
    );
 
 function render(content, props = {}) {
@@ -51,35 +54,29 @@ function render(content, props = {}) {
 function renderMultipleTriggers(content, props = {}) {
   return (
     <div>
-      <div>
+      <TooltipTrigger {...props}>
+        <ActionButton aria-label="Copy">
+          <Copy />
+        </ActionButton>
+        <Tooltip>
+          Copy
+        </Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger {...props}>
+        <ActionButton aria-label="Paste">
+          <Paste />
+        </ActionButton>
+        <Tooltip>
+          Paste
+        </Tooltip>
+      </TooltipTrigger>
+      <div style={{'marginInlineStart': '50px', 'display': 'inline'}}>
         <TooltipTrigger {...props}>
-          <ActionButton>
-            Tooltip Trigger
+          <ActionButton aria-label="Delete">
+            <Delete />
           </ActionButton>
           <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...props}>
-          <ActionButton>
-            Tooltip Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...props}>
-          <ActionButton>
-            Tooltip Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
+            Delete
           </Tooltip>
         </TooltipTrigger>
       </div>

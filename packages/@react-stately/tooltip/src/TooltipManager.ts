@@ -10,67 +10,76 @@
  * governing permissions and limitations under the License.
  */
 
-const  TOOLTIP_DELAY = 220; // --spectrum-global-animation-duration-400
+import {MultipleTolltipManager, TooltipState} from './types';
 
-export class TooltipManager {
+const CLOSE_DELAY = 220; // --spectrum-global-animation-duration-400
+const WARMUP_DELAY = 350;  // --spectrum-global-animation-duration-700
+const COOLDOWN_DELAY = 400; // --spectrum-global-animation-duration-1000
 
-  visibleTooltip?: null | {triggerId: string, state: {open: boolean, setOpen(value: boolean), tooltipManager: string}}
-  hoverHideTimeout?: null | ReturnType<typeof setTimeout>;
-  hoverShowTimeout?: null | ReturnType<typeof setTimeout>;
+let visibleTooltip: null | TooltipState = null;
+let warmupTimer: null | ReturnType<typeof setTimeout> = null;
+let cooldownTimer: null | ReturnType<typeof setTimeout> = null;
+let closeTimer: null | ReturnType<typeof setTimeout> = null;
+let warmedup: boolean = false;
 
-  // Arbitrary timeout lengths in place for current demo purposes. Delays to be adjusted for warmup / cooldown logic PR
-  constructor() {
-    this.visibleTooltip = null;
-    this.hoverHideTimeout = null;
-    this.hoverShowTimeout = null;
+export class TooltipManager implements MultipleTolltipManager {
+  private state: TooltipState;
+
+  constructor(state: TooltipState) {
+    this.state = state;
   }
 
-  updateTooltipState(state, triggerId)  {
-    state.setOpen(!state.open);
-    this.visibleTooltip = {triggerId, state};
+  get isOpen(): boolean {
+    return this.state.isOpen;
   }
 
-  isSameTarget(currentTriggerId) {
-    return currentTriggerId === this.visibleTooltip.triggerId;
-  }
-
-  showTooltip(state) {
-    state.setOpen(true);
+  openTooltip() {
     // Close previously open tooltip
-    if (this.visibleTooltip) {
-      this.visibleTooltip.state.setOpen(false);
+    if (visibleTooltip) {
+      visibleTooltip.close();
     }
+
+    this.state.open();
+    visibleTooltip = this.state;
   }
 
-  hideTooltip(state) {
-    state.setOpen(false);
-    this.visibleTooltip = null;
+  closeTooltip() {
+    this.state.close();
+    visibleTooltip = null;
   }
 
-  showTooltipDelayed(state, triggerId) {
-    if (this.hoverHideTimeout && this.isSameTarget(triggerId)) {
-      clearTimeout(this.hoverHideTimeout);
-      this.hoverHideTimeout = null;
+  openTooltipDelayed() {
+    if (cooldownTimer) {
+      clearTimeout(cooldownTimer);
+    }
+
+    if (closeTimer) {
+      clearTimeout(closeTimer);
+    }
+
+    if (warmedup) {
+      this.openTooltip();
       return;
     }
 
-    this.hoverShowTimeout = setTimeout(() => {
-      this.hoverShowTimeout = null;
-      this.showTooltip(state);
-      this.visibleTooltip = {triggerId, state};
-    }, TOOLTIP_DELAY);
+    warmupTimer = setTimeout(() => {
+      this.openTooltip();
+      warmedup = true;
+    }, WARMUP_DELAY);
   }
 
-  hideTooltipDelayed(state) {
-    if (this.hoverShowTimeout) {
-      clearTimeout(this.hoverShowTimeout);
-      this.hoverShowTimeout = null;
-      return;
+  closeTooltipDelayed() {
+    if (warmupTimer) {
+      clearTimeout(warmupTimer);
     }
 
-    this.hoverHideTimeout = setTimeout(() => {
-      this.hoverHideTimeout = null;
-      this.hideTooltip(state);
-    }, TOOLTIP_DELAY);
+    closeTimer = setTimeout(() => {
+      this.closeTooltip();
+
+      cooldownTimer = setTimeout(() => {
+        warmedup = false;
+      }, COOLDOWN_DELAY);
+
+    }, CLOSE_DELAY);
   }
 }
