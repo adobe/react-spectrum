@@ -1792,7 +1792,7 @@ describe('Table', function () {
 
       let spinner = within(cell).getByRole('progressbar');
       expect(spinner).toBeVisible();
-      expect(spinner).toHaveAttribute('aria-label', 'Loading...');
+      expect(spinner).toHaveAttribute('aria-label', 'Loading…');
       expect(spinner).not.toHaveAttribute('aria-valuenow');
 
       rerender(tree, defaultTable);
@@ -1833,7 +1833,7 @@ describe('Table', function () {
 
       let spinner = within(cell).getByRole('progressbar');
       expect(spinner).toBeVisible();
-      expect(spinner).toHaveAttribute('aria-label', 'Loading more...');
+      expect(spinner).toHaveAttribute('aria-label', 'Loading more…');
       expect(spinner).not.toHaveAttribute('aria-valuenow');
 
       rerender(tree, defaultTable);

@@ -17,6 +17,8 @@ import {CollectionItem, layoutInfoToStyle, ScrollView, setScrollLeft, useCollect
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {GridState, useGridState} from '@react-stately/grid';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import {Node, Rect, ReusableView, useCollectionState} from '@react-stately/collections';
 import {ProgressCircle} from '@react-spectrum/progress';
@@ -26,7 +28,7 @@ import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableLayout} from './TableLayout';
 import {useColumnHeader, useGrid, useGridCell, useRow, useRowGroup, useRowHeader, useSelectAllCheckbox, useSelectionCheckbox} from '@react-aria/grid';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 const MIN_ROW_HEIGHT = 48;
@@ -52,6 +54,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
   let state = useGridState({...props, showSelectionCheckboxes: true});
   let domRef = useDOMRef(ref);
+  let formatMessage = useMessageFormatter(intlMessages);
 
   let {scale} = useProvider();
   let layout = useMemo(() => new TableLayout({
@@ -187,7 +190,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
           <CenteredWrapper>
             <ProgressCircle 
               isIndeterminate 
-              aria-label={state.collection.size > 0 ? 'Loading more...' : 'Loading...'} />
+              aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
           </CenteredWrapper>
         );
       case 'empty': {
