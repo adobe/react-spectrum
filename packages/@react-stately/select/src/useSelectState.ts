@@ -46,6 +46,7 @@ export function useSelectState<T extends object>(props: SelectProps<T>): SelectS
   let {collection, disabledKeys, selectionManager} = useListState({
     ...props,
     selectionMode: 'single',
+    disallowEmptySelection: true,
     selectedKeys,
     onSelectionChange: (keys) => {
       setSelectedKey(keys.values().next().value);
