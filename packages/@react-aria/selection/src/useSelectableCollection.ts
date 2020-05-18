@@ -12,6 +12,7 @@
 
 import {FocusEvent, HTMLAttributes, KeyboardEvent, RefObject, useEffect} from 'react';
 import {focusWithoutScrolling} from '@react-aria/utils';
+import {getFocusableTreeWalker} from '@react-aria/focus';
 import {KeyboardDelegate} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
@@ -35,7 +36,7 @@ function isCtrlKeyPressed(e: KeyboardEvent) {
 interface SelectableCollectionOptions {
   selectionManager: MultipleSelectionManager,
   keyboardDelegate: KeyboardDelegate,
-  ref?: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement>,
   autoFocus?: boolean | FocusStrategy,
   shouldFocusWrap?: boolean,
   disallowEmptySelection?: boolean,
@@ -181,6 +182,19 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           manager.clearSelection();
         }
         break;
+      case 'Tab': {
+        // There may be elements that are "tabbable" inside a collection (e.g. in a grid cell).
+        // However, collections should be treated as a single tab stop, with arrow key navigation internally.
+        // We don't control the rendering of these, so we can't override the tabIndex to prevent tabbing.
+        // Instead, we handle the Tab key, and move focus manually to the next/previous tabbable element from the collection.
+        e.preventDefault();
+        let walker = getFocusableTreeWalker(document.body, {tabbable: true, from: ref.current});
+        let next = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
+        if (next) {
+          next.focus();
+        }
+        break;
+      }
     }
   };
 
@@ -201,7 +215,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
     manager.setFocused(true);
 
-    if (manager.focusedKey == null && e.target === e.currentTarget) {
+    if (manager.focusedKey == null) {
       // If the user hasn't yet interacted with the collection, there will be no focusedKey set.
       // Attempt to detect whether the user is tabbing forward or backward into the collection
       // and either focus the first or last item accordingly.
@@ -214,8 +228,11 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     }
   };
 
-  let onBlur = () => {
-    manager.setFocused(false);
+  let onBlur = (e) => {
+    // Don't set blurred and then focused again if moving focus within the collection.
+    if (!e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
+      manager.setFocused(false);
+    }
   };
 
   useEffect(() => {
