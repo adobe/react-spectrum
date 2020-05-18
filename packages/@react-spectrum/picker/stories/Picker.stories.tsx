@@ -22,17 +22,18 @@ import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/typography';
+import {useAsyncList} from '@react-stately/data';
 
 let flatOptions = [
-  {name: 'Aardvark'},
-  {name: 'Kangaroo'},
-  {name: 'Snake'},
-  {name: 'Danni'},
-  {name: 'Devon'},
-  {name: 'Ross'},
-  {name: 'Puppy'},
-  {name: 'Doggo'},
-  {name: 'Floof'}
+  {id: 1, name: 'Aardvark'},
+  {id: 2, name: 'Kangaroo'},
+  {id: 3, name: 'Snake'},
+  {id: 4, name: 'Danni'},
+  {id: 5, name: 'Devon'},
+  {id: 6, name: 'Ross'},
+  {id: 7, name: 'Puppy'},
+  {id: 8, name: 'Doggo'},
+  {id: 9, name: 'Floof'}
 ];
 
 let withSection = [
@@ -54,9 +55,9 @@ storiesOf('Picker', module)
     'default',
     () => (
       <Picker label="Test" onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
@@ -65,14 +66,14 @@ storiesOf('Picker', module)
     () => (
       <Picker label="Test" onSelectionChange={action('selectionChange')}>
         <Section title="Animals">
-          <Item>Aardvark</Item>
-          <Item>Kangaroo</Item>
-          <Item>Snake</Item>
+          <Item uniqueKey="Aardvark">Aardvark</Item>
+          <Item uniqueKey="Kangaroo">Kangaroo</Item>
+          <Item uniqueKey="Snake">Snake</Item>
         </Section>
         <Section title="People">
-          <Item>Danni</Item>
-          <Item>Devon</Item>
-          <Item>Ross</Item>
+          <Item uniqueKey="Danni">Danni</Item>
+          <Item uniqueKey="Devon">Devon</Item>
+          <Item uniqueKey="Ross">Ross</Item>
         </Section>
       </Picker>
     )
@@ -80,7 +81,7 @@ storiesOf('Picker', module)
   .add(
     'dynamic',
     () => (
-      <Picker label="Test" items={flatOptions} itemKey="name" onSelectionChange={action('selectionChange')}>
+      <Picker label="Test" items={flatOptions} onSelectionChange={action('selectionChange')}>
         {item => <Item>{item.name}</Item>}
       </Picker>
     )
@@ -90,7 +91,7 @@ storiesOf('Picker', module)
     () => (
       <Picker label="Test" items={withSection} itemKey="name" onSelectionChange={action('selectionChange')}>
         {item => (
-          <Section items={item.children} title={item.name}>
+          <Section items={item.children} itemKey="name" title={item.name}>
             {item => <Item>{item.name}</Item>}
           </Section>
         )}
@@ -101,19 +102,19 @@ storiesOf('Picker', module)
     'isDisabled',
     () => (
       <Picker label="Test" isDisabled onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
   .add(
     'labelAlign: end',
     () => (
-      <Picker label="Test" labelAlign="end" onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
+      <Picker direction="top" label="Test" labelAlign="end" onSelectionChange={action('selectionChange')}>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
@@ -121,9 +122,9 @@ storiesOf('Picker', module)
     'labelPosition: side',
     () => (
       <Picker label="Test" labelPosition="side" onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
@@ -131,9 +132,9 @@ storiesOf('Picker', module)
     'isRequired',
     () => (
       <Picker label="Test" isRequired onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
@@ -141,9 +142,9 @@ storiesOf('Picker', module)
     'isRequired, necessityIndicator: label',
     () => (
       <Picker label="Test" isRequired necessityIndicator="label" onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
@@ -151,9 +152,9 @@ storiesOf('Picker', module)
     'optional, necessityIndicator: label',
     () => (
       <Picker label="Test" necessityIndicator="label" onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
@@ -161,9 +162,9 @@ storiesOf('Picker', module)
     'validationState: invalid',
     () => (
       <Picker label="Test" validationState="invalid" onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
@@ -171,9 +172,9 @@ storiesOf('Picker', module)
     'isQuiet',
     () => (
       <Picker isQuiet label="Test" onSelectionChange={action('selectionChange')}>
-        <Item>One hundred</Item>
-        <Item>Two thousand and twelve</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="100">One hundred</Item>
+        <Item uniqueKey="2012">Two thousand and twelve</Item>
+        <Item uniqueKey="3">Three</Item>
       </Picker>
     )
   )
@@ -181,9 +182,9 @@ storiesOf('Picker', module)
     'isQuiet, isDisabled',
     () => (
       <Picker label="Test" isQuiet isDisabled onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two million</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two million">Two million</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
@@ -191,9 +192,9 @@ storiesOf('Picker', module)
     'isQuiet, labelAlign: end',
     () => (
       <Picker label="Test" isQuiet labelAlign="end" onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two dollary-doos</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="two">Two dollary-doos</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
@@ -201,9 +202,9 @@ storiesOf('Picker', module)
     'isQuiet, labelPosition: side',
     () => (
       <Picker label="Test" isQuiet labelPosition="side" onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
@@ -211,9 +212,9 @@ storiesOf('Picker', module)
     'isQuiet, isRequired',
     () => (
       <Picker label="Test" isQuiet isRequired onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
@@ -221,9 +222,9 @@ storiesOf('Picker', module)
     'isQuiet, isRequired, necessityIndicator: label',
     () => (
       <Picker label="Test" isQuiet isRequired necessityIndicator="label" onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
@@ -231,9 +232,9 @@ storiesOf('Picker', module)
     'isQuiet, optional, necessityIndicator: label',
     () => (
       <Picker label="Test" isQuiet necessityIndicator="label" onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
@@ -241,9 +242,9 @@ storiesOf('Picker', module)
     'isQuiet, validationState: invalid',
     () => (
       <Picker label="Test" isQuiet validationState="invalid" onSelectionChange={action('selectionChange')}>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
+        <Item uniqueKey="One">One</Item>
+        <Item uniqueKey="Two">Two</Item>
+        <Item uniqueKey="Three">Three</Item>
       </Picker>
     )
   )
@@ -446,4 +447,60 @@ storiesOf('Picker', module)
         </div>
       </>
     )
+  )
+  .add(
+    'isLoading',
+    () => (
+      <Picker label="Test" isLoading items={[]}>
+        {item => <Item>{item.name}</Item>}
+      </Picker>
+    )
+  )
+  .add(
+    'isLoading, isQuiet',
+    () => (
+      <Picker label="Test" isLoading isQuiet items={[]}>
+        {item => <Item>{item.name}</Item>}
+      </Picker>
+    )
+  )
+  .add(
+    'isLoading more',
+    () => (
+      <Picker label="Test" isLoading items={flatOptions}>
+        {item => <Item>{item.name}</Item>}
+      </Picker>
+    )
+  )
+  .add(
+    'async loading',
+    () => (
+      <AsyncLoadingExample />
+    )
   );
+
+function AsyncLoadingExample() {
+  interface Pokemon {
+    name: string,
+    url: string
+  }
+
+  let list = useAsyncList<Pokemon>({
+    async load({signal, cursor}) {
+      let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
+      let json = await res.json();
+      // The API is too fast sometimes, so make it take longer so we can see the spinner
+      await new Promise(resolve => setTimeout(resolve, cursor ? 500 : 1000));
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Picker label="Pick a Pokemon" items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
+      {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+    </Picker>
+  );
+}

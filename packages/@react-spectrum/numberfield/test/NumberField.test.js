@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render, within} from '@testing-library/react';
+import {fireEvent, render, within} from '@testing-library/react';
 import {NumberField} from '../';
 import NumberInput from '@react/react-spectrum/NumberInput';
 import React from 'react';
@@ -22,7 +22,6 @@ describe('NumberField', function () {
 
   afterEach(() => {
     onChangeSpy.mockClear();
-    cleanup();
   });
 
   function renderNumberField(Component, props = {}) {

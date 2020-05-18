@@ -128,6 +128,12 @@ tbody.spectrum-Table-body {
     background-color: var(--spectrum-table-row-background-color-hover);
   }
 
+  &:focus-ring {
+    &:before {
+      background: var(--spectrum-selectlist-option-focus-indicator-color);
+    }
+  }
+
   &:active .spectrum-Table-cell {
     background-color: var(--spectrum-table-row-background-color-down);
   }
@@ -181,7 +187,7 @@ tbody.spectrum-Table-body {
   }
 
   .spectrum-Table-row {
-    .spectrum-Table-cell {
+    .spectrum-Table-cellWrapper {
       background-color: var(--spectrum-alias-background-color-default);
     }
 

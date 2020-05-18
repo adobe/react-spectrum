@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {usePress} from '../';
 
@@ -32,8 +32,6 @@ function pointerEvent(type, opts) {
 }
 
 describe('usePress', function () {
-  afterEach(cleanup);
-
   // TODO: JSDOM doesn't yet support pointer events. Once they do, convert these tests.
   // https://github.com/jsdom/jsdom/issues/2527
   describe('pointer events', function () {

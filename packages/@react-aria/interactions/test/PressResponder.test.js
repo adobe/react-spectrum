@@ -10,13 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import {Pressable, PressResponder} from '../';
 import React from 'react';
 
 describe('PressResponder', function () {
-  afterEach(cleanup);
-
   it('should handle press events on nested pressable children', function () {
     let onPress = jest.fn();
     let {getByRole} = render(

@@ -218,27 +218,11 @@ export class CollectionManager<T extends object, V, W> {
     if (this._collection) {
       this._runTransaction(() => {
         this._collection = data;
-      }, this._shouldAnimate(data));
+      }, true);
     } else {
       this._collection = data;
       this.reloadData();
     }
-  }
-
-  private _shouldAnimate(collection: Collection<T>) {
-    for (let key of collection.getKeys()) {
-      if (!this._collection.getItem(key)) {
-        return true;
-      }
-    }
-
-    for (let key of this._collection.getKeys()) {
-      if (!collection.getItem(key)) {
-        return true;
-      }
-    }
-
-    return false;
   }
 
   /**
@@ -463,11 +447,6 @@ export class CollectionManager<T extends object, V, W> {
 
     let scrollAnchor = this._getScrollAnchor();
 
-    // Enable transitions if this is an animated relayout
-    if (context.animated) {
-      this._enableTransitions();
-    }
-
     // Trigger the beforeLayout hook, if provided
     if (typeof context.beforeLayout === 'function') {
       context.beforeLayout();
@@ -491,6 +470,7 @@ export class CollectionManager<T extends object, V, W> {
     contentOffsetX = Math.max(0, Math.min(this.contentSize.width - visibleRect.width, contentOffsetX));
     contentOffsetY = Math.max(0, Math.min(this.contentSize.height - visibleRect.height, contentOffsetY));
 
+    let hasLayoutUpdates = false;
     if (contentOffsetX !== visibleRect.x || contentOffsetY !== visibleRect.y) {
       // If this is an animated relayout, we do not immediately scroll because it would be jittery.
       // Save the difference between the current and new content offsets, and apply it to the
@@ -500,12 +480,12 @@ export class CollectionManager<T extends object, V, W> {
       if (context.animated || !this._animatedContentOffset.isOrigin()) {
         this._animatedContentOffset.x += visibleRect.x - contentOffsetX;
         this._animatedContentOffset.y += visibleRect.y - contentOffsetY;
-        this.updateSubviews(context.contentChanged);
+        hasLayoutUpdates = this.updateSubviews(context.contentChanged);
       } else {
         this._setContentOffset(new Point(contentOffsetX, contentOffsetY));
       }
     } else {
-      this.updateSubviews(context.contentChanged);
+      hasLayoutUpdates = this.updateSubviews(context.contentChanged);
     }
 
     // Apply layout infos, unless this is coming from an animated transaction
@@ -514,7 +494,9 @@ export class CollectionManager<T extends object, V, W> {
     }
 
     // Wait for animations, and apply the afterAnimation hook, if provided
-    if (context.animated) {
+    if (context.animated && hasLayoutUpdates) {
+      this._enableTransitions();
+      
       let done = () => {
         this._disableTransitions();
 
@@ -531,7 +513,8 @@ export class CollectionManager<T extends object, V, W> {
         }
       };
 
-      setTimeout(done, this.transitionDuration);
+      // Sometimes the animation takes slightly longer than expected.
+      setTimeout(done, this.transitionDuration + 100);
       return;
     } else if (typeof context.afterAnimation === 'function') {
       context.afterAnimation();
@@ -771,7 +754,9 @@ export class CollectionManager<T extends object, V, W> {
 
     this._correctItemOrder();
     this._flushVisibleViews();
-    if (this._transaction) {
+
+    let hasLayoutUpdates = this._transaction && (toAdd.size > 0 || toRemove.size > 0 || this._hasLayoutUpdates());
+    if (hasLayoutUpdates) {
       requestAnimationFrame(() => {
         // If we're in a transaction, apply animations to visible views
         // and "to be removed" views, which animate off screen.
@@ -780,6 +765,8 @@ export class CollectionManager<T extends object, V, W> {
         }
       });
     }
+
+    return hasLayoutUpdates;
   }
 
   afterRender() {
@@ -832,11 +819,7 @@ export class CollectionManager<T extends object, V, W> {
     let updated = false;
 
     // Apply layout infos to visible views
-    for (let [key, view] of this._visibleViews) {
-      if (this._transaction && this._transaction.initialLayoutInfo.get(key) === view.layoutInfo) {
-        // view.forceStyleUpdate();
-      }
-
+    for (let view of this._visibleViews.values()) {
       let cur = view.layoutInfo;
       if (cur) {
         let layoutInfo = this.layout.getLayoutInfo(cur.key);
@@ -869,6 +852,30 @@ export class CollectionManager<T extends object, V, W> {
     if (updated) {
       this._flushVisibleViews();
     }
+  }
+
+  private _hasLayoutUpdates() {
+    if (!this._transaction) {
+      return false;
+    }
+
+    for (let view of this._visibleViews.values()) {
+      let cur = view.layoutInfo;
+      if (!cur) {
+        return true;
+      }
+
+      let layoutInfo = this.layout.getLayoutInfo(cur.key);
+      if (
+        !cur.rect.pointEquals(layoutInfo.rect) ||
+        cur.opacity !== layoutInfo.opacity ||
+        cur.transform !== layoutInfo.transform
+      ) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   reuseView(view: ReusableView<T, V>) {

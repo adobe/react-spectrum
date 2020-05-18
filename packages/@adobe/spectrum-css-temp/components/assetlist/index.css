@@ -45,7 +45,7 @@ governing permissions and limitations under the License.
   font-weight: var(--spectrum-selectlist-option-text-font-weight);
   font-style: normal;
 
-  cursor: pointer;
+  cursor: default;
 
   outline: none;
 

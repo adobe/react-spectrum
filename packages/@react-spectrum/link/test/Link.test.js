@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import {Link} from '../';
 import React from 'react';
 import V2Link from '@react/react-spectrum/Link';
@@ -27,7 +27,6 @@ describe('Link', function () {
   let onPressSpy = jest.fn();
 
   afterEach(() => {
-    cleanup();
     onPressSpy.mockClear();
   });
 
@@ -37,7 +36,7 @@ describe('Link', function () {
     ${'V2Link'} | ${V2Link} | ${{onClick: onPressSpy}}
   `('$Name handles defaults', function ({Component, props}) {
     let {getByText} = render(<Component {...props} >Click me</Component>);
- 
+
     let link = getByText('Click me');
     expect(link).not.toBeNull();
 

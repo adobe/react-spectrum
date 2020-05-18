@@ -12,7 +12,7 @@
 
 jest.mock('@react-aria/live-announcer');
 import {announce} from '@react-aria/live-announcer';
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {useSpinButton} from '../';
 
@@ -22,8 +22,6 @@ function Example(props) {
 }
 
 describe('useSpinButton', function () {
-  afterEach(cleanup);
-
   it('should have role="spinbutton" and aria props', function () {
     let res = render(<Example value={2} textValue="2 items" minValue={1} maxValue={3} />);
     let el = res.getByTestId('test');

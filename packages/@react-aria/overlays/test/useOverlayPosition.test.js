@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import React, {useRef} from 'react';
 import {useOverlayPosition} from '../';
 
@@ -43,8 +43,6 @@ HTMLElement.prototype.getBoundingClientRect = function () {
 };
 
 describe('useOverlayPosition', function () {
-  afterEach(cleanup);
-
   it('should position the overlay relative to the trigger', function () {
     let res = render(<Example />);
     let overlay = res.getByTestId('overlay');
