@@ -92,4 +92,6 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
         value={state.selectedKey} />
     );
   }
+
+  return null;
 }
