@@ -1343,6 +1343,7 @@ describe('ComboBox', function () {
       let {getByRole, getByText} = renderSectionComboBox();
 
       let combobox = getByRole('combobox');
+      let button = getByRole('button');
       act(() => {
         combobox.focus();
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
@@ -1356,10 +1357,10 @@ describe('ComboBox', function () {
       let groups = within(listbox).getAllByRole('group');
       expect(items).toHaveLength(6);
       expect(groups).toHaveLength(2);
-      expect(groups[0]).toHaveAttribute('aria-labelledby', getByText('Section 1').id);
-      expect(getByText('Section 1')).toHaveAttribute('aria-hidden', 'true');
-      expect(groups[1]).toHaveAttribute('aria-labelledby', getByText('Section 2').id);
-      expect(getByText('Section 2')).toHaveAttribute('aria-hidden', 'true');
+      expect(groups[0]).toHaveAttribute('aria-labelledby', getByText('Section One').id);
+      expect(getByText('Section One')).toHaveAttribute('aria-hidden', 'true');
+      expect(groups[1]).toHaveAttribute('aria-labelledby', getByText('Section Two').id);
+      expect(getByText('Section Two')).toHaveAttribute('aria-hidden', 'true');
       expect(document.activeElement).toBe(combobox);
       expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
 
@@ -1378,17 +1379,65 @@ describe('ComboBox', function () {
 
       act(() => {
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        jest.runAllTimers();
+        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        jest.runAllTimers();
+        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        jest.runAllTimers();
       });
       
-      // Do a bunch of key down arrow down
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[3].id);
 
-      // select a option, check the onSelection and onInputChange fire correctly
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        jest.runAllTimers();
+      });
 
-      // open the menu, check that only one section is visible now
+      expect(combobox.value).toBe('Four');
+      expect(() => getByRole('listbox')).toThrow(); 
+      expect(onInputChange).toHaveBeenCalledTimes(1);
+      expect(onInputChange).toHaveBeenCalledWith('Four');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledWith('4');
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+
+      items = within(listbox).getAllByRole('option');
+      groups = within(listbox).getAllByRole('group');
+      expect(items).toHaveLength(1);
+      expect(groups).toHaveLength(1);
+      expect(items[0]).toHaveTextContent('Four');
+      expect(items[0]).toHaveAttribute('aria-selected', 'true'); 
+      expect(groups[0]).toContainElement(items[0]);
+      expect(groups[0]).toHaveAttribute('aria-labelledby', getByText('Section Two').id);
+      expect(() => getByText('Section One')).toThrow();
     });
 
     it('sections are not valid selectable values', function () {
+      let {getByRole} = renderSectionComboBox({selectedKey: 'section 1'});
 
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+      expect(combobox.value).toBe('');
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      
+      let groups = within(listbox).getAllByRole('group');
+      expect(groups[0]).not.toHaveAttribute('aria-selected');
+
+      expect(() => within(listbox).getAllByRole('img', {hidden: true})).toThrow();
     });
   });
 
