@@ -46,8 +46,9 @@ export function useSelectState<T extends object>(props: SelectProps<T>): SelectS
   let {collection, disabledKeys, selectionManager} = useListState({
     ...props,
     selectionMode: 'single',
+    disallowEmptySelection: true,
     selectedKeys,
-    onSelectionChange: (keys) => {
+    onSelectionChange: (keys: Set<Key>) => {
       setSelectedKey(keys.values().next().value);
       triggerState.setOpen(false);
     }
@@ -61,6 +62,17 @@ export function useSelectState<T extends object>(props: SelectProps<T>): SelectS
 
   return {
     ...triggerState,
+    open() {
+      // Don't open if the collection is empty.
+      if (collection.size !== 0) {
+        triggerState.open();
+      }
+    },
+    toggle(focusStrategy) {
+      if (collection.size !== 0) {
+        triggerState.toggle(focusStrategy);
+      }
+    },
     collection,
     disabledKeys,
     selectionManager,

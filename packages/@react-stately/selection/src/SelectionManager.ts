@@ -82,28 +82,23 @@ export class SelectionManager implements MultipleSelectionManager {
    * The currently selected keys in the collection.
    */
   get selectedKeys(): Set<Key> {
-    return this.state.selectedKeys;
-  }
-
-  /**
-   * Replaces all selected keys in the collection with a new set.
-   */
-  setSelectedKeys(keys: Selection) {
-    this.state.setSelectedKeys(keys);
+    return this.state.selectedKeys === 'all'
+      ? new Set(this.getSelectAllKeys())
+      : this.state.selectedKeys;
   }
 
   /**
    * Returns whether a key is selected.
    */
   isSelected(key: Key) {
-    return this.state.selectedKeys.has(key);
+    return this.state.selectedKeys === 'all' || this.state.selectedKeys.has(key);
   }
 
   /**
    * Whether the selection is empty.
    */
   get isEmpty() {
-    return this.state.selectedKeys.size === 0;
+    return this.state.selectedKeys !== 'all' && this.state.selectedKeys.size === 0;
   }
 
   /**
@@ -114,16 +109,17 @@ export class SelectionManager implements MultipleSelectionManager {
       return false;
     }
 
+    if (this.state.selectedKeys === 'all') {
+      return true;
+    }
+
     if (this._isSelectAll != null) {
       return this._isSelectAll;
     }
 
-    if (this.isEmpty) {
-      return false;
-    }
-
     let allKeys = this.getSelectAllKeys();
-    this._isSelectAll = allKeys.every(k => this.state.selectedKeys.has(k));
+    let selectedKeys = this.state.selectedKeys;
+    this._isSelectAll = allKeys.every(k => selectedKeys.has(k));
     return this._isSelectAll;
   }
 
@@ -132,10 +128,16 @@ export class SelectionManager implements MultipleSelectionManager {
    */
   extendSelection(toKey: Key) {
     toKey = this.getKey(toKey);
-    this.state.setSelectedKeys((selectedKeys: Selection) => {
-      let anchorKey = selectedKeys.anchorKey || toKey;
-      let keys = new Selection(selectedKeys, anchorKey, toKey);
-      for (let key of this.getKeyRange(anchorKey, selectedKeys.currentKey || toKey)) {
+    this.state.setSelectedKeys(selectedKeys => {
+      // Only select the one key if coming from a select all.
+      if (selectedKeys === 'all') {
+        return new Selection([toKey], toKey, toKey);
+      }
+
+      let selection = selectedKeys as Selection;
+      let anchorKey = selection.anchorKey || toKey;
+      let keys = new Selection(selection, anchorKey, toKey);
+      for (let key of this.getKeyRange(anchorKey, selection.currentKey || toKey)) {
         keys.delete(key);
       }
 
@@ -214,7 +216,7 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     this.state.setSelectedKeys(selectedKeys => {
-      let keys = new Selection(selectedKeys);
+      let keys = new Selection(selectedKeys === 'all' ? this.getSelectAllKeys() : selectedKeys);
       if (keys.has(key)) {
         keys.delete(key);
         // TODO: move anchor to last selected key...
@@ -242,7 +244,7 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   private getSelectAllKeys() {
-    let keys = [];
+    let keys: Key[] = [];
     let addKeys = (key: Key) => {
       while (key) {
         let item = this.collection.getItem(key);
@@ -267,8 +269,9 @@ export class SelectionManager implements MultipleSelectionManager {
    * Selects all items in the collection.
    */
   selectAll() {
-    let keys = this.getSelectAllKeys();
-    this.state.setSelectedKeys(new Selection(keys, keys[0], keys[keys.length - 1]));
+    if (this.selectionMode === 'multiple') {
+      this.state.setSelectedKeys('all');
+    }
   }
 
   /**

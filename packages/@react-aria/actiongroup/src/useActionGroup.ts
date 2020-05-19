@@ -13,7 +13,7 @@
 import {ActionGroupKeyboardDelegate} from './ActionGroupKeyboardDelegate';
 import {ActionGroupProps} from '@react-types/actiongroup';
 import {ActionGroupState} from '@react-stately/actiongroup';
-import {HTMLAttributes, useMemo, useState} from 'react';
+import {HTMLAttributes, RefObject, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {Orientation} from '@react-types/shared';
 import {useFocusWithin} from '@react-aria/interactions';
@@ -37,7 +37,8 @@ export interface ActionGroupAria {
   actionGroupProps: HTMLAttributes<HTMLElement>,
   buttonProps: HTMLAttributes<HTMLElement>,
 }
-export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroupState<T>): ActionGroupAria {
+
+export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroupState<T>, ref: RefObject<HTMLElement>): ActionGroupAria {
   let {
     id,
     selectionMode = 'single',
@@ -50,6 +51,7 @@ export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroup
   let keyboardDelegate = useMemo(() => new ActionGroupKeyboardDelegate(state.collection, direction, orientation), [state.collection, direction, orientation]);
 
   let {collectionProps} = useSelectableCollection({
+    ref,
     selectionManager: state.selectionManager,
     keyboardDelegate,
     disallowSelectAll: true

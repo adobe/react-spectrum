@@ -11,7 +11,7 @@
  */
 
 import {focusWithoutScrolling} from '@react-aria/utils';
-import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
+import {HTMLAttributes, Key, RefObject, useLayoutEffect} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressEvent} from '@react-types/shared';
 import {PressProps} from '@react-aria/interactions';
@@ -43,7 +43,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
 
     if (manager.selectionMode === 'single') {
-      if (manager.selectedKeys.has(itemKey) && !manager.disallowEmptySelection) {
+      if (manager.isSelected(itemKey) && !manager.disallowEmptySelection) {
         manager.toggleSelection(itemKey);
       } else {
         manager.replaceSelection(itemKey);
@@ -57,7 +57,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   // Focus the associated DOM node when this item becomes the focusedKey
   let isFocused = itemKey === manager.focusedKey;
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isFocused && manager.isFocused && document.activeElement !== itemRef.current) {
       focusWithoutScrolling(itemRef.current);
     }
