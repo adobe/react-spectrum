@@ -79,7 +79,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     keyboardDelegate: layout,
     shouldTypeAhead: false,
     disallowEmptySelection: true,
-    disallowSelectAll: true
+    disallowSelectAll: true,
+    ref: inputRef
   });
 
   // For textfield specific keydown operations
