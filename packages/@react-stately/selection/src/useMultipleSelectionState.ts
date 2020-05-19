@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {Key, useMemo, useRef, useState} from 'react';
 import {MultipleSelection, SelectionMode} from '@react-types/shared';
 import {MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo, useRef, useState} from 'react';
 
 /**
  * Manages state for multiple selection and focus in a collection.
@@ -31,8 +31,8 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
   let [, setFocused] = useState(false);
   let focusedKeyRef = useRef(null);
   let [, setFocusedKey] = useState(null);
-  let selectedKeysProp = useMemo(() => props.selectedKeys ? new Selection(props.selectedKeys) : undefined, [props.selectedKeys]);
-  let defaultSelectedKeys = useMemo(() => props.defaultSelectedKeys ? new Selection(props.defaultSelectedKeys) : new Selection(), [props.defaultSelectedKeys]);
+  let selectedKeysProp = useMemo(() => convertSelection(props.selectedKeys), [props.selectedKeys]);
+  let defaultSelectedKeys = useMemo(() => convertSelection(props.defaultSelectedKeys, new Selection()), [props.defaultSelectedKeys]);
   let [selectedKeys, setSelectedKeys] = useControlledState(
     selectedKeysProp,
     defaultSelectedKeys,
@@ -59,4 +59,14 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
     selectedKeys,
     setSelectedKeys
   };
+}
+
+function convertSelection(selection: 'all' | Iterable<Key>, defaultValue?: Selection): 'all' | Selection {
+  if (!selection) {
+    return defaultValue;
+  }
+
+  return selection === 'all'
+    ? 'all'
+    : new Selection(selection);
 }
