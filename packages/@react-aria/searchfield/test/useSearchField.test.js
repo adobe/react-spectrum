@@ -134,7 +134,7 @@ describe('useSearchField hook', () => {
         expect(ref.current.focus).toHaveBeenCalledTimes(1);
         // Verify that props.onClear is triggered as well with the same event
         expect(onClear).toHaveBeenCalledTimes(1);
-        expect(onClear).not.toHaveBeenCalledWith(mockEvent);
+        expect(onClear).toHaveBeenCalledWith();
       });
     });
   });
