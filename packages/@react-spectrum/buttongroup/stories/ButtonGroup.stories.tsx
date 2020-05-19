@@ -62,7 +62,7 @@ let Component = (props) => {
     <ButtonGroup maxWidth="100vw" {...props}>
       <Button variant="primary" onPress={action('press')}>Button 1</Button>
       <Button variant="negative" onPress={action('press')}>Button long long long name</Button>
-      <Button variant="cta" isQuiet onPress={action('press')}>Quiet button</Button>
+      <Button variant="primary" isQuiet onPress={action('press')}>Quiet button</Button>
       <Button variant="primary" isDisabled onPress={action('press')}>Disabled button</Button>
       <Button variant="secondary" onPress={() => setShow(show => !show)}>
         <Bell />

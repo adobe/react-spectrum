@@ -69,6 +69,8 @@ export function CRUDExample() {
     }
   };
 
+  let selectedCount = list.selectedKeys === 'all' ? list.items.length : list.selectedKeys.size;
+
   return (
     <Flex flexDirection="column">
       <ActionGroup selectionMode="none" marginBottom={8}>
@@ -76,11 +78,11 @@ export function CRUDExample() {
           <Item aria-label="Add item"><Add /></Item>
           {onClose => <EditDialog item={null} onClose={onClose} onConfirm={createItem} />}
         </DialogTrigger>
-        {list.selectedKeys.size > 0 &&
+        {selectedCount > 0 &&
           <DialogTrigger>
             <Item aria-label="Delete selected items"><Delete /></Item>
             <AlertDialog title="Delete" variant="destructive" primaryActionLabel="Delete" onPrimaryAction={deleteSelectedItems}>
-              Are you sure you want to delete {list.selectedKeys.size === 1 ? '1 item' : `${list.selectedKeys.size} items`}?
+              Are you sure you want to delete {selectedCount === 1 ? '1 item' : `${selectedCount} items`}?
             </AlertDialog>
           </DialogTrigger>
         }
