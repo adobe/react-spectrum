@@ -11,8 +11,8 @@
  */
 
 import Asterisk from '@spectrum-icons/workflow/Asterisk';
-import {getDoc} from 'globals-docs';
 import {getAnchorProps, getUsedLinks} from './utils';
+import {getDoc} from 'globals-docs';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import Lowlight from 'react-lowlight';
 import Markdown from 'markdown-to-jsx';
