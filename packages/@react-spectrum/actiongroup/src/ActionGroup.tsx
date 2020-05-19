@@ -66,10 +66,10 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
         )
       }>
       <Provider {...providerProps}>
-        {[...state.collection].map((item) => (
+        {[...state.collection].map((item, index) => (
           <ActionGroupItem
             key={item.key}
-            {...buttonProps}
+            {...buttonProps[index]}
             onAction={onAction}
             isDisabled={isDisabled}
             UNSAFE_className={classNames(buttonStyles, 'spectrum-ButtonGroup-item')}

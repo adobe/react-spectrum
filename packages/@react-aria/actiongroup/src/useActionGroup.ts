@@ -13,9 +13,9 @@
 import {ActionGroupKeyboardDelegate} from './ActionGroupKeyboardDelegate';
 import {ActionGroupProps} from '@react-types/actiongroup';
 import {ActionGroupState} from '@react-stately/actiongroup';
-import {HTMLAttributes, RefObject, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {Orientation} from '@react-types/shared';
+import React, {HTMLAttributes, RefObject, useMemo, useState} from 'react';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
@@ -35,7 +35,7 @@ const BUTTON_ROLES = {
 
 export interface ActionGroupAria {
   actionGroupProps: HTMLAttributes<HTMLElement>,
-  buttonProps: HTMLAttributes<HTMLElement>,
+  buttonProps: HTMLAttributes<HTMLElement>[],
 }
 
 export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroupState<T>, ref: RefObject<HTMLElement>): ActionGroupAria {
@@ -44,7 +44,8 @@ export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroup
     selectionMode = 'single',
     isDisabled,
     orientation = 'horizontal' as Orientation,
-    role = BUTTON_GROUP_ROLES[selectionMode]
+    role = BUTTON_GROUP_ROLES[selectionMode],
+    children
   } = props;
 
   let {direction} = useLocale();
@@ -62,6 +63,41 @@ export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroup
     onFocusWithinChange: setFocusWithin
   });
 
+  let buttonProps = useMemo(() => {
+    let childArray = React.Children.toArray(children);
+    let childrenLength = childArray.length;
+    let first = false;
+    let last = 0;
+    let nextButtonProps = Array.from(Array(childrenLength), (_, i) => {
+      let buttonProp = {
+        role: BUTTON_ROLES[selectionMode],
+        tabIndex: undefined
+      };
+      if (isFocusWithin) {
+        buttonProp.tabIndex = -1;
+      } else if (state.selectionManager.selectedKeys.size > 0) {
+        if (state.selectionManager.selectedKeys.has(childArray[i].props.uniqueKey) && !first) {
+          buttonProp.tabIndex = 0;
+          first = true;
+          last = i;
+        } else if (state.selectionManager.selectedKeys.has(childArray[i].props.uniqueKey)) {
+          last = i;
+          buttonProp.tabIndex = -1;
+        } else {
+          buttonProp.tabIndex = -1;
+        }
+      } else if (i === 0 || i === childrenLength - 1) {
+        buttonProp.tabIndex = 0;
+      } else {
+        buttonProp.tabIndex = -1;
+      }
+      return buttonProp;
+    });
+    if (state.selectionManager.selectedKeys.size > 0) {
+      nextButtonProps[last].tabIndex = 0;
+    }
+    return nextButtonProps;
+  }, [children, selectionMode, isFocusWithin]);
   let tabIndex = isFocusWithin ? -1 : 0;
 
   return {
@@ -73,8 +109,6 @@ export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroup
       'aria-disabled': isDisabled,
       ...mergeProps(focusWithinProps, collectionProps)
     },
-    buttonProps: {
-      role: BUTTON_ROLES[selectionMode]
-    }
+    buttonProps
   };
 }
