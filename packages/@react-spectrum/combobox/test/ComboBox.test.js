@@ -102,6 +102,7 @@ describe('ComboBox', function () {
           combobox.focus();
           jest.runAllTimers();
         });
+        expect(onOpenChange).toHaveBeenLastCalledWith(true);
 
         // TODO make this a helper function cuz it will prob be pretty common
         // That or add multiple variations in one test like we do for all the other tests
@@ -598,7 +599,7 @@ describe('ComboBox', function () {
               <Item uniqueKey="3">Charmander</Item>
             </ComboBox>
             <Button variant="primary">Second focus</Button>
-          </div>    
+          </div>
         </Provider>
       );
 

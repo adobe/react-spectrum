@@ -60,7 +60,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Focus the associated DOM node when this item becomes the focusedKey
   let isFocused = itemKey === manager.focusedKey;
   useLayoutEffect(() => {
-    if (isFocused && manager.isFocused && document.activeElement !== itemRef.current) {
+    if (isFocused && manager.isFocused && !shouldUseVirtualFocus && document.activeElement !== itemRef.current) {
       focusWithoutScrolling(itemRef.current);
     }
   }, [itemRef, isFocused, manager.focusedKey, manager.isFocused, shouldUseVirtualFocus]);
@@ -74,7 +74,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
   };
 
-  // By default, selection occurs on pointer down. This can be strange if selecting an 
+  // By default, selection occurs on pointer down. This can be strange if selecting an
   // item causes the UI to disappear immediately (e.g. menus).
   // If shouldSelectOnPressUp is true, we use onPressUp instead of onPressStart.
   // onPress requires a pointer down event on the same element as pointer up. For menus,
