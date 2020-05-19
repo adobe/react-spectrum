@@ -47,7 +47,9 @@ export interface Node<T> {
   /** The key of the node after this node. */
   nextKey?: Key,
   /** Additional properties specific to a particular node type. */
-  props?: any
+  props?: any,
+  /** @private */
+  shouldInvalidate?: (context: unknown) => boolean
 }
 
 export interface PartialNode<T> {
@@ -64,7 +66,8 @@ export interface PartialNode<T> {
   childKey?: string,
   hasChildNodes?: boolean,
   childNodes?: () => IterableIterator<PartialNode<T>>,
-  props?: any
+  props?: any,
+  shouldInvalidate?: (context: unknown) => boolean
 }
 
 /** 

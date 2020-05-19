@@ -15,8 +15,10 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {CollectionItem, layoutInfoToStyle, ScrollView, setScrollLeft, useCollectionView} from '@react-aria/collections';
 import {DOMRef} from '@react-types/shared';
-import {FocusRing} from '@react-aria/focus';
+import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {GridState, useGridState} from '@react-stately/grid';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import {Node, Rect, ReusableView, useCollectionState} from '@react-stately/collections';
 import {ProgressCircle} from '@react-spectrum/progress';
@@ -26,7 +28,7 @@ import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableLayout} from './TableLayout';
 import {useColumnHeader, useGrid, useGridCell, useRow, useRowGroup, useRowHeader, useSelectAllCheckbox, useSelectionCheckbox} from '@react-aria/grid';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 const MIN_ROW_HEIGHT = 48;
@@ -52,11 +54,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
   let state = useGridState({...props, showSelectionCheckboxes: true});
   let domRef = useDOMRef(ref);
-  let {gridProps} = useGrid({
-    ...props,
-    ref: domRef,
-    isVirtualized: true
-  }, state);
+  let formatMessage = useMessageFormatter(intlMessages);
 
   let {scale} = useProvider();
   let layout = useMemo(() => new TableLayout({
@@ -76,6 +74,13 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   }), [props.rowHeight, scale]);
   let {direction} = useLocale();
   layout.collection = state.collection;
+
+  let {gridProps} = useGrid({
+    ...props,
+    ref: domRef,
+    isVirtualized: true,
+    layout
+  }, state);
 
   // This overrides collection view's renderWrapper to support DOM heirarchy.
   type View = ReusableView<Node<T>, unknown>;
@@ -160,8 +165,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
           return <TableCheckboxCell cell={item} />;
         }
 
-        let column = state.collection.columns[item.index];
-        if (state.collection.rowHeaderColumnKeys.has(column.key)) {
+        if (state.collection.rowHeaderColumnKeys.has(item.column.key)) {
           return <TableRowHeader cell={item} />;
         }
 
@@ -186,7 +190,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
           <CenteredWrapper>
             <ProgressCircle 
               isIndeterminate 
-              aria-label={state.collection.size > 0 ? 'Loading more...' : 'Loading...'} />
+              aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')} />
           </CenteredWrapper>
         );
       case 'empty': {
@@ -280,7 +284,8 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
           height: headerHeight,
           overflow: 'hidden',
           position: 'relative',
-          willChange: collectionState.isScrolling ? 'scroll-position' : ''
+          willChange: collectionState.isScrolling ? 'scroll-position' : '',
+          transition: collectionState.isAnimating ? `none ${collectionState.collectionManager.transitionDuration}ms` : undefined
         }}
         ref={headerRef}>
         {collectionState.visibleViews[0]}
@@ -408,12 +413,41 @@ function TableRow({item, children, ...otherProps}) {
     isVirtualized: true
   }, state);
 
+  // The row should show the focus background style when any cell inside it is focused.
+  // If the row itself is focused, then it should have a blue focus indicator on the left.
+  let {
+    isFocusVisible: isFocusVisibleWithin,
+    focusProps: focusWithinProps
+  } = useFocusRing({within: true});
+  let {isFocusVisible, focusProps} = useFocusRing();
+  let props = mergeProps(
+    mergeProps(
+      rowProps,
+      otherProps
+    ),
+    mergeProps(
+      focusWithinProps,
+      focusProps
+    )
+  );
+
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div {...rowProps} {...otherProps} ref={ref} className={classNames(styles, 'spectrum-Table-row', {'is-selected': isSelected})}>
-        {children}
-      </div>
-    </FocusRing>
+    <div 
+      {...props}
+      ref={ref}
+      className={
+        classNames(
+          styles,
+          'spectrum-Table-row',
+          {
+            'is-selected': isSelected,
+            'is-focused': isFocusVisibleWithin,
+            'focus-ring': isFocusVisible
+          }
+        )
+      }>
+      {children}
+    </div>
   );
 }
 
@@ -473,8 +507,7 @@ function TableCell({cell}) {
     ref,
     isVirtualized: true
   }, state);
-  let column = state.collection.columns[cell.index];
-  let columnProps = column.props as SpectrumColumnProps<unknown>;
+  let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -512,8 +545,7 @@ function TableRowHeader({cell}) {
     ref,
     isVirtualized: true
   }, state);
-  let column = state.collection.columns[cell.index];
-  let columnProps = column.props as SpectrumColumnProps<unknown>;
+  let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
