@@ -122,6 +122,28 @@ function Page({children, title, styles, scripts}) {
             dark.addListener(update);
             fine.addListener(update);
             window.addEventListener('storage', update);
+
+            window.marketingtech = {
+              adobe: {
+                launch: {
+                  property: 'minimal',
+                  environment: location.hostname === 'react-spectrum.adobe.com' ? 'production' : 'stage'
+                },
+                target: false,
+                audienceManager: false
+              }
+            };
+            window.digitalData = {
+              page: {
+                pageInfo: 'React Spectrum Website',
+                template: 'default template',
+                language: 'en-US',
+                geoRegion: 'US',
+                issueDate: '2018-03-02',
+                legacyMarketSegment: 'com',
+                productName: 'React Spectrum'
+              }
+            };
           })();
         `.replace(/\n|\s{2,}/g, '')}} />
         <link rel="stylesheet" href="https://use.typekit.net/uma8ayv.css" />
@@ -131,6 +153,7 @@ function Page({children, title, styles, scripts}) {
         <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
         {scripts.map(s => <script type={s.type} src={s.url} defer />)}
+        <script type="text/javascript" src="https://www.adobe.com/marketingtech/main.no-promise.min.js" defer />
       </head>
       <body>
         {children}
@@ -237,9 +260,10 @@ function Footer() {
       <hr className={classNames(ruleStyles['spectrum-Rule'], ruleStyles['spectrum-Rule--small'], ruleStyles['spectrum-Rule--horizontal'])} />
       <ul>
         <li>Copyright © {year} Adobe. All rights reserved.</li>
-        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy.html">Privacy</a></li>
-        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/legal/terms.html">Terms of Use</a></li>
-        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy/cookies.html">Cookies</a></li>
+        <li><a className={linkStyle['spectrum-Link--secondary']} href="https://www.adobe.com/privacy.html">Privacy</a></li>
+        <li><a className={linkStyle['spectrum-Link--secondary']} href="https://www.adobe.com/legal/terms.html">Terms of Use</a></li>
+        <li><a className={linkStyle['spectrum-Link--secondary']} href="https://www.adobe.com/privacy/cookies.html">Cookies</a></li>
+        <li><a className={linkStyle['spectrum-Link--secondary']} href="https://www.adobe.com/privacy/ca-rights.html">Do not sell my personal information</a></li>
       </ul>
     </footer>
   );
