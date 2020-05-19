@@ -41,37 +41,7 @@ category: Collections
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/popovers/'}
   ]} />
 
-## Menu Example
-
-```tsx example
-<Menu width="200px">
-  <Item>Cut</Item>
-  <Item>Copy</Item>
-  <Item>Paste</Item>
-</Menu>
-```
-
-## Content
-
-The Menu accepts Items and [`Sections`](#sections) as children. Items can be
-statically populated (initial example above) or dynamically (below). The dynamic
-method would be better suited to use if the actions within a Menu came from a
-data object such as values returned from an API call. The `uniqueKey` prop needs
-to be set on an Item when statically defining Items and the `itemKey` prop in
-the Menu when its Items are dynamically populated.
-
-```tsx example
-<Menu
-  items={[{name: 'Cut'}, {name: 'Copy'}, {name: 'Paste'}]}
-  itemKey="name"
-  width="200px">
-  {item => <Item>{item.name}</Item>}
-</Menu>
-```
-
-The MenuTrigger accepts exactly two children: the Menu and the element which
-triggers the opening of the Menu. The trigger must be the first child passed into
-the MenuTrigger and should be an element that supports press events.
+## Example
 
 ```tsx example
 <MenuTrigger>
@@ -86,6 +56,32 @@ the MenuTrigger and should be an element that supports press events.
 </MenuTrigger>
 ```
 
+## Content
+
+The Menu accepts Items and [`Sections`](#sections) as children. Items can be
+statically populated (initial example above) or dynamically (below). The dynamic
+method would be better suited to use if the actions within a Menu came from a
+data object such as values returned from an API call. The `uniqueKey` prop needs
+to be set on an Item when statically defining Items and the `itemKey` prop in
+the Menu when its Items are dynamically populated.
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+      Edit
+  </ActionButton>
+  <Menu
+    items={[{name: 'Cut'}, {name: 'Copy'}, {name: 'Paste'}]}
+    itemKey="name">
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+```
+
+The MenuTrigger accepts exactly two children: the Menu and the element which
+triggers the opening of the Menu. The trigger must be the first child passed into
+the MenuTrigger and should be an element that supports press events.
+
 If the Menu is open within a MenuTrigger it will close on blur or scroll events.
 
 ### Selection
@@ -98,24 +94,26 @@ placing selection of a Menu in an uncontrolled state. Alternatively, the
 controlled state.
 
 ```tsx example
-<div>Edit (Controlled)</div>
-<Menu
-  selectionMode="single"
-  selectedKeys={['copy']}
-  width="200px">
-  <Item uniqueKey="cut">Cut</Item>
-  <Item uniqueKey="copy">Copy</Item>
-  <Item uniqueKey="paste">Paste</Item>
-</Menu>
-<div>Edit (Uncontrolled)</div>
-<Menu
-  selectionMode="single"
-  defaultSelectedKeys={['paste']}
-  width="200px">
-  <Item uniqueKey="cut">Cut</Item>
-  <Item uniqueKey="copy">Copy</Item>
-  <Item uniqueKey="paste">Paste</Item>
-</Menu>
+<MenuTrigger closeOnSelect={false}>
+  <ActionButton>
+      Edit (Controlled)
+  </ActionButton>
+  <Menu selectionMode="single" selectedKeys={['copy']}>
+    <Item uniqueKey="cut">Cut</Item>
+    <Item uniqueKey="copy">Copy</Item>
+    <Item uniqueKey="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
+<MenuTrigger closeOnSelect={false}>
+  <ActionButton>
+      Edit (Uncontrolled)
+  </ActionButton>
+  <Menu selectionMode="single" defaultSelectedKeys={['paste']}>
+    <Item uniqueKey="cut">Cut</Item>
+    <Item uniqueKey="copy">Copy</Item>
+    <Item uniqueKey="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
 ```
 
 The `selectionMode` prop specifies how many Menu Items can be selected, with
@@ -123,24 +121,27 @@ the options of a single Menu Item, multiple Menu Items, or disabling selection
 entirely (default).
 
 ```tsx example
-<div>Show (multiple)</div>
-<Menu
-  selectionMode="multiple"
-  defaultSelectedKeys={['Sidebar', 'Console']}
-  width="200px">
-  <Item uniqueKey='Sidebar'>Sidebar</Item>
-  <Item uniqueKey='Searchbar'>Searchbar</Item>
-  <Item uniqueKey='Tools'>Tools</Item>
-  <Item uniqueKey='Console'>Console</Item>
-</Menu>
-<div>Selection Mode None</div>
-<Menu
-  selectionMode="none"
-  width="200px">
-  <Item uniqueKey="cut">Cut</Item>
-  <Item uniqueKey="copy">Copy</Item>
-  <Item uniqueKey="paste">Paste</Item>
-</Menu>
+<MenuTrigger closeOnSelect={false}>
+  <ActionButton>
+      Show (Multiple)
+  </ActionButton>
+  <Menu selectionMode="multiple" defaultSelectedKeys={['Sidebar', 'Console']}>
+    <Item uniqueKey='Sidebar'>Sidebar</Item>
+    <Item uniqueKey='Searchbar'>Searchbar</Item>
+    <Item uniqueKey='Tools'>Tools</Item>
+    <Item uniqueKey='Console'>Console</Item>
+  </Menu>
+</MenuTrigger>
+<MenuTrigger closeOnSelect={false}>
+  <ActionButton>
+      Edit (Selection Mode None)
+  </ActionButton>
+  <Menu selectionMode="none">
+    <Item uniqueKey="cut">Cut</Item>
+    <Item uniqueKey="copy">Copy</Item>
+    <Item uniqueKey="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
 ```
 
 ### Sections
@@ -151,8 +152,11 @@ Menus may have Sections which can be used to wrap groups of Items. Each
 #### Static Items
 
 ```tsx example
-<div>Edit</div>
-<Menu width="200px">
+<MenuTrigger>
+  <ActionButton>
+      Edit
+  </ActionButton>
+  <Menu>
     <Section uniqueKey="rollback" title="Rollback Options">
       <Item uniqueKey="undo">Undo</Item>
       <Item uniqueKey="redo">Redo</Item>
@@ -162,7 +166,8 @@ Menus may have Sections which can be used to wrap groups of Items. Each
       <Item uniqueKey="copy">Copy</Item>
       <Item uniqueKey="paste">Paste</Item>
     </Section>
-</Menu>
+  </Menu>
+</MenuTrigger>
 ```
 
 #### Dynamic Items
@@ -171,20 +176,23 @@ Sections should be populated with dynamic Items from a hierarchical data
 structure. Section takes an array of data using the `items` prop.
 
 ```tsx example
-<div>File Types</div>
-<Menu
-  items={[{name: 'Docs', children: [{name: 'PDF'}]}, {name: 'Images', children: [{name: 'jpeg'}, {name: 'png'}, {name: 'tiff'}]}]}
-  itemKey="name"
-  width="200px">
-  {item => (
-    <Section items={item.children} title={item.name}>
-      {item => <Item>{item.name}</Item>}
-    </Section>
-  )}
-</Menu>
+<MenuTrigger>
+  <ActionButton>
+      File Types
+  </ActionButton>
+  <Menu
+    items={[{name: 'Docs', children: [{name: 'PDF'}]}, {name: 'Images', children: [{name: 'jpeg'}, {name: 'png'}, {name: 'tiff'}]}]}
+    itemKey="name">
+    {item => (
+      <Section items={item.children} title={item.name}>
+        {item => <Item>{item.name}</Item>}
+      </Section>
+    )}
+  </Menu>
+</MenuTrigger>
 ```
 
-### Sematic Elements
+### Complex Content Elements
 
 A Menu Item's content may be any renderable node, not just strings.
 
@@ -291,14 +299,17 @@ function Example() {
 
   return (
     <div>
-      <div>Edit (onAction: {state.toString()})</div>
-      <Menu
-        onAction={(value) => setState(value)}
-        width="200px">
-        <Item uniqueKey="cut">Cut</Item>
-        <Item uniqueKey="copy">Copy</Item>
-        <Item uniqueKey="paste">Paste</Item>
-      </Menu>
+      <MenuTrigger>
+        <ActionButton>
+            Edit
+        </ActionButton>
+        <Menu onAction={(value) => setState(value)}>
+          <Item uniqueKey="cut">Cut</Item>
+          <Item uniqueKey="copy">Copy</Item>
+          <Item uniqueKey="paste">Paste</Item>
+        </Menu>
+      </MenuTrigger>
+      <span style={{'margin-left': '8px'}}>onAction: {state.toString()}</span>
     </div>
   );
 }
@@ -381,25 +392,12 @@ the selected Menu Item should be automatically focused when the Menu is opened.
 ```tsx example
 <MenuTrigger>
   <ActionButton>
-    autofocus
+    autoFocus
   </ActionButton>
   <Menu
     selectionMode="single"
     selectedKeys={['copy']}
     autoFocus>
-    <Item uniqueKey="cut">Cut</Item>
-    <Item uniqueKey="copy">Copy</Item>
-    <Item uniqueKey="paste">Paste</Item>
-  </Menu>
-</MenuTrigger>
-<MenuTrigger>
-  <ActionButton>
-    autofocus=false
-  </ActionButton>
-  <Menu
-    selectionMode="single"
-    selectedKeys={['copy']}
-    autoFocus={false}>
     <Item uniqueKey="cut">Cut</Item>
     <Item uniqueKey="copy">Copy</Item>
     <Item uniqueKey="paste">Paste</Item>
@@ -466,18 +464,22 @@ selections at once.
 ### Disabled Menu Items (Menu)
 
 ```tsx example
-<div>Filter by:</div>
-<Menu
-  items={[
-    {name: 'tiff', dataId: 'a1b2c3'},
-    {name: 'png', dataId: 'g5h1j9'},
-    {name: 'jpg', dataId: 'p8k3i4'},
-    {name: 'PDF', dataId: 'j7i3a0'}
-  ]}
-  itemKey="dataId"
-  disabledKeys={['a1b2c3', 'p8k3i4']}>
-  {item => <Item>{item.name}</Item>}
-</Menu>
+<MenuTrigger>
+  <ActionButton>
+    Filter
+  </ActionButton>
+  <Menu
+    items={[
+      {name: 'tiff', dataId: 'a1b2c3'},
+      {name: 'png', dataId: 'g5h1j9'},
+      {name: 'jpg', dataId: 'p8k3i4'},
+      {name: 'PDF', dataId: 'j7i3a0'}
+    ]}
+    itemKey="dataId"
+    disabledKeys={['a1b2c3', 'p8k3i4']}>
+    {item => <Item>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
 ```
 
 ### Flipping (MenuTrigger)
