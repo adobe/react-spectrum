@@ -130,6 +130,15 @@ governing permissions and limitations under the License.
   box-sizing: border-box;
 
   outline: none; /* Hide focus outline around header */
+  & :first-child {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  & :last-child {
+    margin-top: 0;
+    padding-bottom: 0;
+  }
 }
 
 .spectrum-Dialog-typeIcon {
