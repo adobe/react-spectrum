@@ -62,6 +62,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected contentSize: Size;
   collection: Collection<Node<T>>;
   disabledKeys: Set<Key> = new Set();
+  isLoading: boolean;
   protected lastWidth: number;
   protected lastCollection: Collection<Node<T>>;
   protected rootNodes: LayoutNode[];
@@ -139,6 +140,14 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       let layoutNode = this.buildChild(node, 0, y);
       y = layoutNode.layoutInfo.rect.maxY;
       nodes.push(layoutNode);
+    }
+
+    if (this.isLoading) {
+      let rect = new Rect(0, y, this.collectionManager.visibleRect.width, 40);
+      let loader = new LayoutInfo('loader', 'loader', rect);
+      this.layoutInfos.set('loader', loader);
+      nodes.push({layoutInfo: loader});
+      y = loader.rect.maxY;
     }
 
     this.contentSize = new Size(this.collectionManager.visibleRect.width, y + this.padding);
