@@ -365,7 +365,8 @@ governing permissions and limitations under the License.
   }
 
   &:disabled,
-  &.is-disabled {
+  &.is-disabled,
+  &[aria-disabled='true'] {
     background-color: var(--spectrum-actionbutton-background-color-disabled);
     border-color: var(--spectrum-actionbutton-border-color-disabled);
     color: var(--spectrum-actionbutton-text-color-disabled);
@@ -419,7 +420,8 @@ governing permissions and limitations under the License.
     }
 
     &:disabled,
-    &.is-disabled {
+    &.is-disabled,
+    &[aria-disabled='true'] {
       background-color: var(--spectrum-actionbutton-background-color-selected-disabled);
       border-color: var(--spectrum-actionbutton-border-color-selected-disabled);
       color: var(--spectrum-actionbutton-text-color-selected-disabled);
@@ -458,7 +460,8 @@ governing permissions and limitations under the License.
   }
 
   &:disabled,
-  &.is-disabled {
+  &.is-disabled,
+  &[aria-disabled='true'] {
     background-color: var(--spectrum-actionbutton-quiet-background-color-disabled);
     border-color: var(--spectrum-actionbutton-quiet-border-color-disabled);
     color: var(--spectrum-actionbutton-quiet-text-color-disabled);
@@ -644,7 +647,8 @@ governing permissions and limitations under the License.
   }
 
   &:disabled,
-  &.is-disabled {
+  &.is-disabled,
+  &[aria-disabled='true'] {
     background-color: var(--spectrum-actionbutton-emphasized-background-color-disabled);
     border-color: var(--spectrum-actionbutton-emphasized-border-color-disabled);
     color: var(--spectrum-actionbutton-emphasized-text-color-disabled);
@@ -699,7 +703,8 @@ governing permissions and limitations under the License.
     }
 
     &:disabled,
-    &.is-disabled {
+    &.is-disabled,
+    &[aria-disabled='true'] {
       background-color: var(--spectrum-actionbutton-emphasized-background-color-selected-disabled);
       border-color: var(--spectrum-actionbutton-emphasized-border-color-selected-disabled);
       color: var(--spectrum-actionbutton-emphasized-text-color-selected-disabled);

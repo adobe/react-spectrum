@@ -84,7 +84,7 @@ governing permissions and limitations under the License.
   }
 
   &:disabled,
-  &.is-disabled {
+  &.is-disabled  {
     cursor: default;
   }
 
@@ -120,7 +120,7 @@ governing permissions and limitations under the License.
     box-shadow: none;
   }
 
-  /* there should be space between the icon and text no matter the DOM order */ 
+  /* there should be space between the icon and text no matter the DOM order */
   .spectrum-Icon + .spectrum-Button-label {
     margin-inline-start: var(--spectrum-button-primary-text-gap);
   }

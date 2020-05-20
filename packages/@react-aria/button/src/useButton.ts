@@ -38,7 +38,7 @@ interface ButtonAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions, 
+ * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions,
  * focus behavior, and ARIA props for both native button elements and custom element types.
  * @param props - props to be applied to the button
  * @param ref - a ref to a DOM element for the button
@@ -65,6 +65,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
     'aria-describedby': ariaDescribedBy,
+    'aria-disabled': ariaDisabled,
     type = 'button'
   } = props;
   let additionalProps;
@@ -85,7 +86,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onPressEnd,
     onPressChange,
     onPress,
-    isDisabled,
+    isDisabled: isDisabled || ariaDisabled,
     ref
   });
 
@@ -100,7 +101,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
       id,
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabelledby,
-      'aria-describedby': ariaDescribedBy,  
+      'aria-describedby': ariaDescribedBy,
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
       'aria-controls': ariaControls,

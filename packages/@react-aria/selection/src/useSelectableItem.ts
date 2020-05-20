@@ -72,7 +72,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
   };
 
-  // By default, selection occurs on pointer down. This can be strange if selecting an 
+  // By default, selection occurs on pointer down. This can be strange if selecting an
   // item causes the UI to disappear immediately (e.g. menus).
   // If shouldSelectOnPressUp is true, we use onPressUp instead of onPressStart.
   // onPress requires a pointer down event on the same element as pointer up. For menus,
@@ -85,7 +85,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         onSelect(e);
       }
     };
-    
+
     itemProps.onPressUp = (e) => {
       if (e.pointerType !== 'keyboard') {
         onSelect(e);

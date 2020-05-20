@@ -114,7 +114,7 @@ function ActionGroupItem<T>({item, state, isDisabled, onAction, ...otherProps}: 
       {...buttonProps}
       ref={ref}
       isSelected={state.selectionManager.selectionMode !== 'none' ? isSelected : null}
-      isDisabled={isDisabled}
+      aria-disabled={isDisabled}
       aria-label={item['aria-label']}>
       {item.rendered}
     </ActionButton>
