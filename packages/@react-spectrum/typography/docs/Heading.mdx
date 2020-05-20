@@ -15,81 +15,44 @@ import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
-import {Heading, Keyboard, Text} from '@react-spectrum/typography';
+import {Heading} from '@react-spectrum/typography';
 ```
 
 ---
 category: Content
 ---
 
-# Text
+# Heading
 
-<p>
-  {docs.exports.Heading.description}
-  <br />
-  {docs.exports.Keyboard.description}
-  <br />
-  {docs.exports.Text.description}
-</p>
+<p>{docs.exports.Heading.description}</p>
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Heading', 'Keyboard', 'Text']}
+  componentNames={['Heading']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/typography/'}
   ]} />
 
-## Examples
+## Example
 
 ```tsx example
 <Heading>Edit</Heading>
 ```
 
-```tsx example
-<Keyboard>⌘V</Keyboard>
-```
-
-```tsx example
-<Text>Paste</Text>
-```
-
 ## Content
 
-The Heading, Keyboard, and Text components are
-[Typography](https://spectrum.adobe.com/page/typography) related and exist as
-children to other components providing formatting, semantic meaning, and hierarchical information.
-
-### Heading
-
 [View guidelines](https://spectrum.adobe.com/page/typography/#Heading)
+
+The Heading is a [Typography](https://spectrum.adobe.com/page/typography)
+component related and is a children to other components providing formatting,
+semantic meaning, and hierarchical information. It is important to note that
+the Heading component accepts any renderable node, not just strings.
 
 Used to specify the hierarchy of text, like a title, within a component. Examples of usage
 [Dialog](Dialog.html#example) and [IllustratedMessage](IllustratedMessage.html#example).
 
 See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements) for more information.
 
-### Keyboard
-
-Used to format text indicating that is a keyboard command. Example of usage
-[Menu](MenuTrigger.html#sematic-elements).
-
-See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/kbd) for more information.
-
-### Text
-
-Used to wrap your text elements with other components. Examples of usage
-[Dialog](Dialog.html#example) and [Button](Button.html#content).
-
 ## Props
 
-### Heading
-
 <PropTable component={docs.exports.Heading} links={docs.links} />
-
-### Keyboard
-
-<PropTable component={docs.exports.Keyboard} links={docs.links} />
-
-### Text
-
-<PropTable component={docs.exports.Text} links={docs.links} />
