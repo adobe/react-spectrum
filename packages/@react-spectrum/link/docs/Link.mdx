@@ -35,19 +35,12 @@ category: Navigation
 ## Example
 
 ```tsx example
-<Link onPress={() => alert('pressed!')}>The missing link.</Link>
+<Link><a href="https://www.imdb.com/title/tt6348138/" target="_blank">The missing link.</a></Link>
 ```
 
 ## Content
 
 Links accept content as children.
-If the content is plain text, it will be styled and exposed to assistive technologies as a link.
-Events will need to be handled in JavaScript with the `onPress` prop.
-
-```tsx example
-<Link onPress={() => alert('pressed!')}>A label</Link>
-```
-
 If the child is a native anchor element, or a link component used with a client side router, the Link component will add spectrum styles and event handlers to that element.
 Actual navigation will be handled by the wrapped element.
 
@@ -64,6 +57,24 @@ import {Link as RouterLink} from 'react-router-dom';
 <Link><RouterLink to="/next-page">Next Page</RouterLink></Link>
 ```
 
+If the content is plain text, it will be styled and exposed to assistive technologies as a link.
+Events will need to be handled in JavaScript with the `onPress` prop.
+Note, this will not bring up link context menus in mobile, it's recommended that you use an anchor tag or something that will render one.
+
+```tsx example
+function TrackLink () {
+  let [visited, setVisited] = React.useState(false)
+  return (
+    <>
+        <Link onPress={() => setVisited(true)}>A label</Link>
+        <br />
+        {visited && 'You visited the link!'}
+    </>
+  );
+}
+```
+
+
 ### Internationalization
 
 In order to internationalize a link, a localized string should be passed to the `children` prop.
@@ -73,9 +84,19 @@ In order to internationalize a link, a localized string should be passed to the 
 For string-typed `children`, the link component will expose the accessible role to assistive technology as a "link".
 
 ```tsx example
-<Link onPress={e => alert(`clicked "${e.target.textContent}" Link`)}>
-  I forgot my password
-</Link>
+function GetPressTarget () {
+  let [text, setText] = React.useState('')
+
+  return (
+    <>
+        <Link onPress={e => setText(`clicked "${e.target.textContent}" Link`)}>
+          I forgot my password
+        </Link>
+        {text.length > 0 && <br />}
+        {text}
+    </>
+  );
+}
 ```
 
 For other children, use an element of semantic meaning, or use a [role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles) where appropriate.
