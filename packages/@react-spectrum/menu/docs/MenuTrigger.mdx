@@ -30,7 +30,7 @@ category: Collections
 
 <p>
   {docs.exports.MenuTrigger.description}
-  <br />
+  <br /><br />
   {docs.exports.Menu.description}
 </p>
 
@@ -86,7 +86,7 @@ If the Menu is open within a MenuTrigger it will close on blur or scroll events.
 
 ### Selection
 
-The Menu's selected Item key is propagated as the selection via the event [`onAction`](#onaction).
+Changes to the Menu's selected Item are propagated via the event [`onAction`](#onaction).
 
 The `defaultSelectedKeys` prop can be used to preselect Menu Items in the Menu
 placing selection of a Menu in an uncontrolled state. Alternatively, the
@@ -192,7 +192,7 @@ structure. Section takes an array of data using the `items` prop.
 </MenuTrigger>
 ```
 
-### Complex Content Elements
+### Complex Menu Items
 
 A Menu Item's content may be any renderable node, not just strings.
 
