@@ -14,6 +14,7 @@ import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
+import {getAnchorProps} from './utils';
 import highlightCss from './syntax-highlight.css';
 import {ImageContext} from './Image';
 import {LinkProvider} from './types';
@@ -55,20 +56,8 @@ const mdxComponents = {
   ul: ({children, ...props}) => <ul {...props} className={typographyStyles['spectrum-Body3']}>{children}</ul>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
-  a: ({children, ...props}) => <a {...props} className={linkStyle['spectrum-Link']} target={getTarget(props.href)}>{children}</a>
+  a: ({children, ...props}) => <a {...props} className={linkStyle['spectrum-Link']} {...getAnchorProps(props.href)}>{children}</a>
 };
-
-function getTarget(href) {
-  if (!/^http/.test(href) || /localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com|#/.test(href)) {
-    return null;
-  }
-
-  if (/^\//.test(href)) {
-    return null;
-  }
-
-  return '_blank';
-}
 
 function Page({children, title, styles, scripts}) {
   return (
