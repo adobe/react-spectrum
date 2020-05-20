@@ -11,7 +11,7 @@
  */
 
 import {Key} from 'react';
-import {SelectionMode} from '@react-types/shared';
+import {Selection, SelectionMode} from '@react-types/shared';
 
 export interface FocusState {
   isFocused: boolean,
@@ -29,14 +29,18 @@ export interface SingleSelectionState extends FocusState {
 export interface MultipleSelectionState extends FocusState {
   selectionMode: SelectionMode,
   disallowEmptySelection?: boolean,
-  selectedKeys: Set<Key>,
-  setSelectedKeys(keys: Set<Key> | ((v: Set<Key>) => Set<Key>)): void
+  selectedKeys: Selection,
+  setSelectedKeys(keys: Selection | ((v: Selection) => Selection)): void
 }
 
-export interface MultipleSelectionManager extends MultipleSelectionState {
+export interface MultipleSelectionManager extends FocusState {
+  selectionMode: SelectionMode,
+  disallowEmptySelection?: boolean,
+  selectedKeys: Set<Key>,
   extendSelection(toKey: Key): void,
   toggleSelection(key: Key): void,
   replaceSelection(key: Key): void,
   selectAll(): void,
-  clearSelection(): void
+  clearSelection(): void,
+  isSelected(key: Key): boolean
 }
