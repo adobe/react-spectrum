@@ -176,7 +176,8 @@ governing permissions and limitations under the License.
 }
 .spectrum-Menu-icon {
   grid-area: icon;
-  align-self: center;
+  vertical-align: top;
+  padding-block-start: calc(var(--spectrum-selectlist-option-text-size) / 7);
   padding-inline-end: 5px;
 }
 .spectrum-Menu-description {
