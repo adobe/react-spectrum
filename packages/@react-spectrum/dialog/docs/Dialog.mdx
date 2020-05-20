@@ -22,6 +22,7 @@ import {Footer} from '@react-spectrum/view';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
+import {Link} from '@react-spectrum/link';
 import {Image} from '@react-spectrum/image';
 import {TextField} from '@react-spectrum/textfield';
 ```
@@ -50,18 +51,13 @@ import {Content, Header} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/typography';
-import {StatusLight} from '@react-spectrum/statuslight';
 
 <DialogTrigger>
   <ActionButton>Check connectivity</ActionButton>
   {(close) => (
     <Dialog>
       <Heading>Internet Speed Test</Heading>
-      <Header>
-        <StatusLight variant="positive">
-          Connection status
-        </StatusLight>
-      </Header>
+      <Header>Connection status: Connected</Header>
       <Divider />
       <Content>
         <Text>
@@ -143,9 +139,9 @@ for the user to fill out or adding confirmation checkboxes.
         </Flex>
       </Heading>
       <Header>
-        <StatusLight variant="negative">
-          Registration Status
-        </StatusLight>
+        <Link>
+          <a href="//example.com" target="_blank">What is this?</a>
+        </Link>
       </Header>
       <Divider />
       <Content>
