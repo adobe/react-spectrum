@@ -77,17 +77,18 @@ export interface SingleSelection {
 }
 
 export type SelectionMode = 'none' | 'single' | 'multiple';
+export type Selection = 'all' | Set<Key>;
 export interface MultipleSelection {
   /** The type of selection that is allowed in the collection. */
   selectionMode?: SelectionMode,
   /** Whether the collection allows empty selection. */
   disallowEmptySelection?: boolean,
   /** The currently selected keys in the collection (controlled). */
-  selectedKeys?: Iterable<Key>,
+  selectedKeys?: 'all' | Iterable<Key>,
   /** The initial selected keys in the collection (uncontrolled). */
-  defaultSelectedKeys?: Iterable<Key>,
+  defaultSelectedKeys?: 'all' | Iterable<Key>,
   /** Handler that is called when the selection changes. */
-  onSelectionChange?: (keys: Set<Key>) => any
+  onSelectionChange?: (keys: Selection) => any
 }
 
 export interface Expandable {
