@@ -47,8 +47,7 @@ category: Forms
 RadioGroup accepts multiple Radio elements as children.
 Each Radio represents an option that can be selected, labeled by its children.
 
-Note: A Radio must be contained within a RadioGroup. If for whatever reason you need to
-have a single radio by itself, wrap it in a RadioGroup.
+Note: A Radio cannot be used outside of a RadioGroup.
 
 ## Value
 
@@ -138,8 +137,8 @@ Implement your own validation logic in your app and pass `"invalid"` to the Radi
 
 ### Orientation
 
-A RadioGroup is vertically aligned by default.
-An optional prop can be passed to the RadioGroup to position the Radio elements inline.
+RadioGroups are vertically oriented by default.
+The `orientation` prop can be used to change the orientation to horizontal.
 
 ```tsx example
 <RadioGroup label="Example Options" orientation="horizontal">
@@ -148,26 +147,13 @@ An optional prop can be passed to the RadioGroup to position the Radio elements 
 </RadioGroup>
 ```
 
-### Label Position
+### Label Position and Alignment
 
-The default position of a label is on top of the RadioGroup.
-An optional prop can be passed to the RadioGroup that will position the label at the start of the topmost Radio.
-
-```tsx example
-<RadioGroup label="Example Options" labelPosition="side">
- <Radio value="wizard">Wizard</Radio>
- <Radio value="dragon">Dragon</Radio>
-</RadioGroup>
-```
-
-### Label Align
-
-Labels can be aligned to the "start" or the "end" of the RadioGroup.
-For left-to-right (LTR) languages, "start" refers to the left most edge of the RadioGroup
-and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+By default, the label is positioned above the RadioGroup.
+The `labelPosition` prop can be used to position the label to the side.
 
 ```tsx example
-<RadioGroup label="Example Options" labelAlign="end">
+<RadioGroup label="Example Options" labelPosition="side" labelAlign="end">
  <Radio value="wizard">Wizard</Radio>
  <Radio value="dragon">Dragon</Radio>
 </RadioGroup>

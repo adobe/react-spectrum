@@ -41,7 +41,7 @@ function Example() {
       <SearchField
       label="Search"
       placeholder="Enter text"
-      onSubmit={text => setSubmittedText(text)} />
+      onSubmit={setSubmittedText} />
       <p>Submitted text: {submittedText}</p>
     </div>
   );
@@ -50,7 +50,7 @@ function Example() {
 
 ## Value
 
-A SearchFields's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+A SearchField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
 Alternatively, a controlled value can be provided using the `value` prop.
 
 ```tsx example

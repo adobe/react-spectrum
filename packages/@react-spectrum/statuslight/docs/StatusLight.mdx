@@ -74,7 +74,7 @@ If StatusLight communicates a state, such as "Approved" or "Failed", that state 
 In cases where the status changes at runtime,
 it may be appropriate to add `role="status"` so that the status change will be announced politely by assistive technology.
 When using `role="status"`, be sure to provide appropriate context for the status change in the label for the StatusLight.
-A status change that announces "Approved" without meaningful context would not be helpful. 
+A status change that announces "Approved" without meaningful context would not be helpful.
 Also, use caution when adding `role="status"` in cases where multiple status lights can update at once.
 For example, with a large list of files that change status when deployed,
 a single announcement when all files have deployed would be preferable to the verbosity of each file status announcing individually.
@@ -85,7 +85,7 @@ function Example() {
 
   return (
     <div>
-      <StatusLight role="stauts" variant={isApproved ? "positive" : "notice" }>
+      <StatusLight role="status" variant={isApproved ? "positive" : "notice" }>
         <VisuallyHidden>Pull Request</VisuallyHidden>
         {isApproved ? "Approved" : "Needs Approval"}
       </StatusLight>
