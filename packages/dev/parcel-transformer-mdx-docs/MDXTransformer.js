@@ -31,7 +31,7 @@ module.exports = new Transformer({
             return [];
           }
 
-          if (node.meta === 'example') {
+          if (/example|snippet/.test(node.meta)) {
             let id = `example-${exampleCode.length}`;
 
             // TODO: Parsing code with regex is bad. Replace with babel transform or something.
@@ -41,15 +41,16 @@ module.exports = new Transformer({
               return '';
             });
 
+            let Provider = node.meta === 'example' ? 'ExampleProvider' : 'SnippetProvider';
             if (/^function (.|\n)*}\s*$/.test(code)) {
               let name = code.match(/^function (.*?)\s*\(/)[1];
               code = `(function () {
                 ${code}
-                ReactDOM.render(<ExampleProvider><${name} /></ExampleProvider>, document.getElementById("${id}"));
+                ReactDOM.render(<${Provider}><${name} /></${Provider}>, document.getElementById("${id}"));
               })();`;
             } else if (/^<(.|\n)*>$/m.test(code)) {
               code = `(function () {
-                ${code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<ExampleProvider>$1</ExampleProvider>, document.getElementById("${id}"));`)}
+                ${code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${Provider}>$1</${Provider}>, document.getElementById("${id}"));`)}
               })();`;
             }
 
@@ -182,7 +183,7 @@ module.exports = new Transformer({
       ?  ''
       : `import React from 'react';
 import ReactDOM from 'react-dom';
-import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
+import {Example as ExampleProvider, Snippet as SnippetProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
 ${exampleCode.join('\n')}
 export default {};
 `;

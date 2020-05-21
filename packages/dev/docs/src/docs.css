@@ -272,6 +272,10 @@ article.inCategory h2.sectionHeader + hr {
   margin-bottom: var(--spectrum-global-dimension-size-150);
 }
 
+.snippet {
+  background: none;
+}
+
 .inlineProvider {
   display: inline !important;
   background: none !important;

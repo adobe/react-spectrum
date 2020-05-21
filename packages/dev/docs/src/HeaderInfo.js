@@ -19,6 +19,30 @@ import typographyStyles from '@adobe/spectrum-css-temp/components/typography/var
 
 Lowlight.registerLanguage('js', js);
 
+export function HeaderTable({name, version, importSnippet}) {
+  return (
+    <table className={styles['headerInfo']}>
+      <tbody>
+        <tr>
+          <th className={typographyStyles['spectrum-Body--secondary']}>install</th>
+          <td className={typographyStyles['spectrum-Body4']}><code className={typographyStyles['spectrum-Code4']}>yarn add {name}</code></td>
+        </tr>
+        <tr>
+          <th className={typographyStyles['spectrum-Body--secondary']}>version</th>
+          <td className={typographyStyles['spectrum-Body4']}>{version}</td>
+        </tr>
+        {importSnippet ? 
+          <tr>
+            <th className={typographyStyles['spectrum-Body--secondary']}>usage</th>
+            <td className={typographyStyles['spectrum-Body4']}>
+              <Lowlight language="js" value={importSnippet} inline className={typographyStyles['spectrum-Code4']} />
+            </td>
+          </tr> : null}
+      </tbody>
+    </table>
+  );
+}
+
 export function HeaderInfo(props) {
   let {
     packageData,
@@ -28,24 +52,7 @@ export function HeaderInfo(props) {
 
   return (
     <>
-      <table className={styles['headerInfo']}>
-        <tbody>
-          <tr>
-            <th className={typographyStyles['spectrum-Body--secondary']}>install</th>
-            <td className={typographyStyles['spectrum-Body4']}><code className={typographyStyles['spectrum-Code4']}>yarn add {packageData.name}</code></td>
-          </tr>
-          <tr>
-            <th className={typographyStyles['spectrum-Body--secondary']}>version</th>
-            <td className={typographyStyles['spectrum-Body4']}>{packageData.version}</td>
-          </tr>
-          <tr>
-            <th className={typographyStyles['spectrum-Body--secondary']}>usage</th>
-            <td className={typographyStyles['spectrum-Body4']}>
-              <Lowlight language="js" value={`import {${componentNames.join(', ')}} from '${packageData.name}'`} inline className={typographyStyles['spectrum-Code4']} />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <HeaderTable name={packageData.name} version={packageData.version} importSnippet={`import {${componentNames.join(', ')}} from '${packageData.name}'`} />
       <div className={styles['resourceCardGroup']}>
         {sourceData.map((source) => (
           <ResourceCard type={source.type} url={source.url} />

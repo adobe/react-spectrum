@@ -21,7 +21,7 @@ const get = p => o =>
 
 /**
  * Takes example code blocks in mdx files that are just React Tags and wraps all of them into
- * a single Fragment shorthand node. This way syntax trees can parse them and return something meaningful
+ * a single Fragment shorthand node. This way syntax trees can parse them and return something meaningful.
  */
 const fragmentWrap = () => (tree, file) => (
   flatMap(tree, node => {
@@ -32,9 +32,11 @@ const fragmentWrap = () => (tree, file) => (
           node.value = `${openingTag}${code}${closingTag}`;
         }
 
-        return [
-          node
-        ];
+        return [node];
+      }
+
+      if (node.meta === 'snippet') {
+        return [];
       }
     }
 
@@ -48,7 +50,7 @@ const fragmentWrap = () => (tree, file) => (
 const fragmentUnWrap = () => (tree, file) => (
   flatMap(tree, node => {
     if (node.type === 'code') {
-      if (node.meta === 'example' && node.data && node.data.hChildren) {
+      if (/example|snippet/.test(node.meta) && node.data && node.data.hChildren) {
         if (get(['data', 'hChildren', 0, 'children', 1, 'children', 0, 'value'])(node) === '>') {
           // unshift the children that make up `<>\n`
           node.data.hChildren[0].children.shift();

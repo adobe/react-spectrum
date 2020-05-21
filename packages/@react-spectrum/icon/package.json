@@ -33,7 +33,11 @@
     "@react-types/shared": "^3.0.0-rc.2"
   },
   "devDependencies": {
-    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
+    "@adobe/spectrum-css-workflow-icons": "^1.0.0",
+    "@react-spectrum/searchfield": "^3.0.0-rc.2",
+    "@spectrum-icons/workflow": "^3.0.0-rc.2",
+    "react-lowlight": "^2.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0",

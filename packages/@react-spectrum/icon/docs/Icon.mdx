@@ -11,11 +11,13 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/icon';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, HeaderTable, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
+import workflowIconPackageData from '@spectrum-icons/workflow/package.json';
 
 ```jsx import
 import {Icon} from '@react-spectrum/icon';
+import IconTable from './IconTable';
 ```
 
 ---
@@ -24,3 +26,12 @@ category: Misc
 
 # Icon
 <p>Docs coming soon</p>
+
+## Available Icons
+
+### Workflow
+<HeaderTable name={workflowIconPackageData.name} version={workflowIconPackageData.version} />
+
+```tsx snippet
+<IconTable iconPackage="workflow" />
+```
