@@ -13,7 +13,7 @@
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '@react-spectrum/table';
 import js from 'highlight.js/lib/languages/javascript';
 import Lowlight from 'react-lowlight';
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
@@ -35,12 +35,12 @@ const icons = {
 };
 
 function debounce(func, wait) {
-	let timeout;
-	return function () {
-		let later = () => func.apply(this, arguments);
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-	};
+  let timeout;
+  return function () {
+    let later = () => func.apply(this, arguments);
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
 }
 
 export default function IconTable(props: {iconPackage: string}) {
@@ -55,7 +55,7 @@ export default function IconTable(props: {iconPackage: string}) {
       loading: false,
       items: tableState.originalItems.filter(oi => oi.name.toLowerCase().indexOf(value.toLowerCase()) > -1)
     }));
-  }, 500);
+  }, 400);
 
   useEffect(() => {
     const packageMeta = icons[props.iconPackage];
@@ -64,13 +64,13 @@ export default function IconTable(props: {iconPackage: string}) {
         name = name.split('.')[0];
         return {
           name,
-          icon: <img src={packageMeta.srcTemplate(name)} width={36} height={36} />,
+          icon: <img alt={`${name} icon`} src={packageMeta.srcTemplate(name)} width={36} height={36} />,
           import: <Lowlight language="js" value={packageMeta.importTemplate(name)} inline className={typographyStyles['spectrum-Code4']} />
         };
       });
       setTableState({items: [...originalItems], loading: false, originalItems});
     });
-  }, []);
+  }, [props.iconPackage]);
 
   return (
     <>
@@ -88,7 +88,7 @@ export default function IconTable(props: {iconPackage: string}) {
         <TableBody items={tableState.items} isLoading={tableState.loading} itemKey="name">
           {item => <Row>{key => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
-    </Table>
+      </Table>
     </>
   );
 }

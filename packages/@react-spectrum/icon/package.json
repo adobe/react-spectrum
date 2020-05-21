@@ -36,7 +36,9 @@
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
     "@adobe/spectrum-css-workflow-icons": "^1.0.0",
     "@react-spectrum/searchfield": "^3.0.0-rc.2",
+    "@react-spectrum/table": "3.0.0-alpha.1",
     "@spectrum-icons/workflow": "^3.0.0-rc.2",
+    "highlight.js": "9.18.1",
     "react-lowlight": "^2.0.0"
   },
   "peerDependencies": {
