@@ -74,6 +74,7 @@ export default function IconTable(props: {iconPackage: string}) {
   return (
     <>
       <SearchField
+        aria-label="Find an icon"
         defaultValue=""
         placeholder="Find an icon"
         onClear={onSearchClear}
