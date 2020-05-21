@@ -59,19 +59,10 @@ import {Link as RouterLink} from 'react-router-dom';
 
 If the content is plain text, it will be styled and exposed to assistive technologies as a link.
 Events will need to be handled in JavaScript with the `onPress` prop.
-Note, this will not bring up link context menus in mobile, it's recommended that you use an anchor tag or something that will render one.
+Note: this will not behave like a native link. Browser features like context menus and open in new tab will not apply.
 
 ```tsx example
-function TrackLink () {
-  let [visited, setVisited] = React.useState(false)
-  return (
-    <>
-        <Link onPress={() => setVisited(true)}>A label</Link>
-        <br />
-        {visited && 'You visited the link!'}
-    </>
-  );
-}
+<Link onPress={() => alert('pressed!')}>A label</Link>
 ```
 
 
@@ -84,19 +75,9 @@ In order to internationalize a link, a localized string should be passed to the 
 For string-typed `children`, the link component will expose the accessible role to assistive technology as a "link".
 
 ```tsx example
-function GetPressTarget () {
-  let [text, setText] = React.useState('')
-
-  return (
-    <>
-        <Link onPress={e => setText(`clicked "${e.target.textContent}" Link`)}>
-          I forgot my password
-        </Link>
-        {text.length > 0 && <br />}
-        {text}
-    </>
-  );
-}
+<Link onPress={e => alert(`clicked "${e.target.textContent}" Link`)}>
+  I forgot my password
+</Link>
 ```
 
 For other children, use an element of semantic meaning, or use a [role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles) where appropriate.
