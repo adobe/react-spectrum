@@ -330,7 +330,7 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       }
 
       // Create a DOM tree walker that matches all tabbable elements
-      let walker = getFocusableTreeWalker(document.body);
+      let walker = getFocusableTreeWalker(document.body, {tabbable: true});
 
       // Find the next tabbable element after the currently focused element
       walker.currentNode = focusedElement;
@@ -343,6 +343,7 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
         nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
 
         e.preventDefault();
+        e.stopPropagation();
         if (nextElement) {
           nextElement.focus();
         } else {
@@ -353,12 +354,12 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
     };
 
     if (!contain) {
-      document.addEventListener('keydown', onKeyDown, false);
+      document.addEventListener('keydown', onKeyDown, true);
     }
 
     return () => {
       if (!contain) {
-        document.removeEventListener('keydown', onKeyDown, false);
+        document.removeEventListener('keydown', onKeyDown, true);
       }
 
       if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scope)) {
@@ -372,14 +373,20 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
   }, [scopeRef, restoreFocus, contain]);
 }
 
-export function getFocusableTreeWalker(root: HTMLElement) {
-  // Create a DOM tree walker that matches all tabbable elements
+export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOptions) {
+  // Create a DOM tree walker that matches all focusable/tabbable elements
+  let selector = opts?.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
   let walker = document.createTreeWalker(
     root,
     NodeFilter.SHOW_ELEMENT,
     {
       acceptNode(node) {
-        if ((node as HTMLElement).matches(TABBABLE_ELEMENT_SELECTOR)) {
+        // Skip nodes inside the starting node.
+        if (opts?.from?.contains(node)) {
+          return NodeFilter.FILTER_REJECT;
+        }
+
+        if ((node as HTMLElement).matches(selector)) {
           return NodeFilter.FILTER_ACCEPT;
         }
 
@@ -388,6 +395,10 @@ export function getFocusableTreeWalker(root: HTMLElement) {
     },
     false
   );
+
+  if (opts?.from) {
+    walker.currentNode = opts.from;
+  }
 
   return walker;
 }

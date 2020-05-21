@@ -15,6 +15,7 @@ governing permissions and limitations under the License.
 .spectrum-Table {
   border-collapse: separate;
   border-spacing: 0;
+  outline: none;
 }
 
 .spectrum-Table-sortedIcon {

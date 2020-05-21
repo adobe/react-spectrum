@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
+import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/typography';
 import {HidingColumns} from './HidingColumns';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
@@ -177,25 +178,29 @@ storiesOf('Table', module)
   .add(
     'focusable cells',
     () => (
-      <Table width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
-        <TableHeader>
-          <Column key="foo">Foo</Column>
-          <Column key="bar">Bar</Column>
-          <Column key="baz">baz</Column>
-        </TableHeader>
-        <TableBody>
-          <Row>
-            <Cell><Switch aria-label="Foo" /></Cell>
-            <Cell><Link><a href="https://google.com" target="_blank">Google</a></Link></Cell>
-            <Cell>Three</Cell>
-          </Row>
-          <Row>
-            <Cell><Switch aria-label="Foo" /></Cell>
-            <Cell><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
-            <Cell>Three</Cell>
-          </Row>
-        </TableBody>
-      </Table>
+      <Flex flexDirection="column">
+        <input placeholder="Focusable before" />
+        <Table width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+          <TableHeader>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
+            <Column key="baz">baz</Column>
+          </TableHeader>
+          <TableBody>
+            <Row>
+              <Cell><Switch aria-label="Foo" /></Cell>
+              <Cell><Link><a href="https://google.com" target="_blank">Google</a></Link></Cell>
+              <Cell>Three</Cell>
+            </Row>
+            <Row>
+              <Cell><Switch aria-label="Foo" /></Cell>
+              <Cell><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
+              <Cell>Three</Cell>
+            </Row>
+          </TableBody>
+        </Table>
+        <input placeholder="Focusable after" />
+      </Flex>
     )
   )
   .add(
@@ -460,7 +465,7 @@ function AsyncLoadingExample() {
   });
 
   return (
-    <Table width={1000} height={500} isQuiet selectionMode="none" sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+    <Table width={1000} height={500} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
       <TableHeader>
         <Column uniqueKey="score" width={100} allowsSorting>Score</Column>
         <Column uniqueKey="title" isRowHeader allowsSorting>Title</Column>
