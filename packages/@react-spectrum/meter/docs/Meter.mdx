@@ -91,7 +91,7 @@ Value labels are shown by default on top, but they can also be moved to the side
 The label should be in sentence case.
 
 ```tsx example
-<Flex flexDirection="column" maxWidth="275px">
+<Flex direction="column" maxWidth="275px">
   <Meter label="Label" marginBottom="25px" value={25} variant="warning" />
   <Meter label="Label" marginBottom="25px" labelPosition="side" value={25} variant="warning" />
   <Meter label="Label" showValueLabel={false} value={25} variant="warning" />
@@ -107,7 +107,7 @@ The value label can be updated via the `valueLabel` prop in cases where showing 
 [View guidelines](https://spectrum.adobe.com/page/meter/#Size)
 
 ```tsx example
-<Flex flexDirection="column">
+<Flex direction="column">
   <Meter label="Meter" marginBottom="25px" size="S" value={90} variant="critical" />
   <Meter label="Meter" size="L" value={90} variant="critical" />
 </Flex>
@@ -117,7 +117,7 @@ The value label can be updated via the `valueLabel` prop in cases where showing 
 [View guidelines](https://spectrum.adobe.com/page/meter/#Semantic-colors)
 
 ```tsx example
-<Flex flexDirection="column">
+<Flex direction="column">
   <Meter label="Label" marginBottom="25px" value={25} variant="positive" />
   <Meter label="Label" marginBottom="25px" value={25} variant="critical" />
   <Meter label="Label" value={25} variant="warning" />

@@ -72,7 +72,7 @@ export function CRUDExample() {
   let selectedCount = list.selectedKeys === 'all' ? list.items.length : list.selectedKeys.size;
 
   return (
-    <Flex flexDirection="column">
+    <Flex direction="column">
       <ActionGroup selectionMode="none" marginBottom={8}>
         <DialogTrigger>
           <Item aria-label="Add item"><Add /></Item>

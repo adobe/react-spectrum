@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+/** See the [Styling docs](styling.html#dimension-values) for a visualization of these values. */
 export type DimensionValue =
   | 'size-0'
   | 'size-10'
@@ -88,7 +89,9 @@ export type DimensionValue =
   | 'static-size-6000'
   | 'single-line-height'
   | 'single-line-width'
-  | string
+  // This allows autocomplete to work properly and not collapse the above options into just `string`.
+  // See https://github.com/microsoft/TypeScript/issues/29729.
+  | (string & {})
   | number;
 
 export type ColorValue =

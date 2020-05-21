@@ -10,12 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, dimensionValue, filterDOMProps, flexStyleProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, dimensionValue, filterDOMProps, passthroughStyle, StyleHandlers, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {FlexProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 import styles from './flex.css';
 
+export const flexStyleProps: StyleHandlers = {
+  direction: ['flexDirection', passthroughStyle],
+  wrap: ['flexWrap', flexWrapValue],
+  justifyContent: ['justifyContent', flexAlignValue],
+  alignItems: ['alignItems', flexAlignValue],
+  alignContent: ['alignContent', flexAlignValue]
+};
+
+/**
+ * A layout container using flexbox. Provides Spectrum dimension values, and supports the gap
+ * property to define consistent spacing between items.
+ */
 function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
@@ -62,6 +74,28 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
       {children}
     </div>
   );
+}
+
+// Normalize 'start' and 'end' alignment values to 'flex-start' and 'flex-end'
+// in flex containers for browser compatibility.
+function flexAlignValue(value) {
+  if (value === 'start') {
+    return 'flex-start';
+  }
+
+  if (value === 'end') {
+    return 'flex-end';
+  }
+
+  return value;
+}
+
+function flexWrapValue(value) {
+  if (typeof value === 'boolean') {
+    return value ? 'wrap' : 'nowrap';
+  }
+
+  return value;
 }
 
 // Copied from Modernizr.

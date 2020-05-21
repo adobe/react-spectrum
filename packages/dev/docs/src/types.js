@@ -249,7 +249,7 @@ export function LinkRenderer() {
   let links = useContext(LinkContext);
   return [...links.values()].map(({type, links}) => (
     <section key={type.id} id={type.id} data-title={type.name} hidden>
-      {type.description && <Markdown options={{forceBlock: true}} className={styles['type-description']}>{type.description}</Markdown>}
+      {type.description && <Markdown options={{forceBlock: true, overrides: {a: {component: SpectrumLink}}}} className={styles['type-description']}>{type.description}</Markdown>}
       <TypeContext.Provider value={links}>
         {type.type === 'interface' || type.type === 'alias' || type.type === 'component'
           ? <Type type={type} />

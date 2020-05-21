@@ -41,7 +41,7 @@ category: Content
 Horizontal Dividers can be used as is because of how CSS Layout works. They may also be used in Flex and Grid containers.
 
 ```tsx example
-<Flex flexDirection="column">
+<Flex direction="column">
   Content above
   <Divider marginTop="10px" marginBottom="10px" />
   Content below
@@ -55,7 +55,7 @@ It is recommended to only use vertical Dividers in Flex or Grid containers. CSS 
 ```tsx example
 <Flex>
   Content left
-  <Divider orientation="vertical" marginLeft="10px" marginRight="10px" />
+  <Divider orientation="vertical" marginStart="10px" marginEnd="10px" />
   Content right
 </Flex>
 ```

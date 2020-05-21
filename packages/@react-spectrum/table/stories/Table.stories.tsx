@@ -178,7 +178,7 @@ storiesOf('Table', module)
   .add(
     'focusable cells',
     () => (
-      <Flex flexDirection="column">
+      <Flex direction="column">
         <input placeholder="Focusable before" />
         <Table width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
           <TableHeader>
