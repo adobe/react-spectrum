@@ -27,6 +27,7 @@ let columns = [
 
 const icons = {
   workflow: {
+    // @ts-ignore
     import: () => import('@adobe/spectrum-css-workflow-icons'),
     importTemplate: name => `import Icon from '@spectrum-icons/workflow/${name.toLowerCase()}';`,
     srcTemplate: name => `https://spectrum.adobe.com/static/icons/workflow_18/Smock_${name}_18_N.svg`

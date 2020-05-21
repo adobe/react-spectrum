@@ -27,9 +27,7 @@
       "dom"
     ],
     // Skip type checking of all declaration files (*.d.ts).
-    "skipLibCheck": true,
-
-    "module": "ESNext"
+    "skipLibCheck": true
   },
   "include": [
     "packages"
