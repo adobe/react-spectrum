@@ -26,7 +26,7 @@ export function useActionGroupState<T extends object>(props: ActionGroupProps<T>
   let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
   let collection = useMemo(() => {
     let nodes = builder.build(props);
-    return new TreeCollection(nodes, disabledKeys);
+    return new TreeCollection(nodes, {disabledKeys});
   }, [builder, props, disabledKeys]);
 
   return {
