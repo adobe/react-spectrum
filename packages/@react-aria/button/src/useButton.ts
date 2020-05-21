@@ -38,7 +38,7 @@ interface ButtonAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions, 
+ * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions,
  * focus behavior, and ARIA props for both native button elements and custom element types.
  * @param props - props to be applied to the button
  * @param ref - a ref to a DOM element for the button
@@ -93,6 +93,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   let {focusableProps} = useFocusable(props, ref);
   let handlers = mergeProps(pressProps, focusableProps);
   let interactions = mergeProps(contextProps, handlers);
+  let ariaPressed = isSelected ? true : undefined;
 
   return {
     isPressed, // Used to indicate press state for visual
@@ -100,11 +101,14 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
       id,
       'aria-label': ariaLabel,
       'aria-labelledby': ariaLabelledby,
-      'aria-describedby': ariaDescribedBy,  
+      'aria-describedby': ariaDescribedBy,
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
       'aria-controls': ariaControls,
-      'aria-checked': isSelected,
+      // if an explicit aria-pressed false has been passed int, then use that but as undefined
+      // otherwise, decide for ourselves
+      'aria-pressed': props['aria-pressed'] === false ? undefined : ariaPressed,
+      'aria-checked': props['aria-pressed'] === false ? isSelected : undefined,
       'aria-invalid': validationState === 'invalid' ? true : null,
       disabled: isDisabled,
       type,

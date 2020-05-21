@@ -74,7 +74,8 @@ export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroup
       ...mergeProps(focusWithinProps, collectionProps)
     },
     buttonProps: {
-      role: BUTTON_ROLES[selectionMode]
+      role: BUTTON_ROLES[selectionMode],
+      'aria-pressed': false
     }
   };
 }
