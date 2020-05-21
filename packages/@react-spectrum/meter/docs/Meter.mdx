@@ -44,54 +44,54 @@ Meters are controlled with the `value` prop.
 In this default case, the `value` props can be thought of as representing current percentage of progress as the minimum and maxiumum values default to 0 and 100, respectively.
 
 ```tsx example
-<Meter label="Storage space" value={25} variant="positive" />
+<Meter
+  label="Storage
+  space"
+  value={25}
+  variant="positive" />
 ```
 
 Alternatively, a different scale can be used by setting the `minValue` and `maxValue`.
 
 ```tsx example
-<Meter label="Widgets Used" minValue={50} maxValue={150} value={100} variant="positive" />
+<Meter
+  label="Widgets Used"
+  minValue={50}
+  maxValue={150}
+  value={100}
+  variant="positive" />
 ```
 
 Values are formatted as a percentage by default, but can be modified by using the `formatOptions` for different formats.
 `formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied to the current locale.
 
 ```tsx example
-<Meter label="Currency" formatOptions={{style: 'currency', currency: 'JPY'}} value={60} variant="positive" />
+<Meter
+  label="Currency"
+  formatOptions={{style: 'currency', currency: 'JPY'}}
+  value={60}
+  variant="positive" />
 ```
 
 ### Accessibility
 
 Depending on the visualization being used (i.e. depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` attribute are required.
 
-```tsx example
-<div>
-  <Meter aria-labelledby="pc-label" showValueLabel={false} value={10} variant="positive" />
-  <label id="pc-label" style={{display: 'block'}}>Meter</label>
-</div>
-```
-
 ### Internationalization
 
 To internationalize a Meter, a localized string should be passed to the `label` prop, `aria-label` prop, or value of the associated `aria-labelledby` element.
 
-For languages that are read right to left (e.g. Hebrew and Arabic), the layout of the bar loader is mirrored.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the bar loader is automatically flipped.
 
 If the prop `formatOptions` is used, Meter will utilize current locale to format the value string.
 
-## Props
-
-<PropTable component={docs.exports.Meter} links={docs.links} />
-
-## Visual Options
-
-### Labels
+## Labeling
 
 Value labels are shown by default on top, but they can also be moved to the side or hidden as needed.
 The label should be in sentence case.
 
 ```tsx example
-<Flex flexDirection="column" maxWidth="275px">
+<Flex flexDirection="column" maxWidth="250px">
   <Meter label="Label" marginBottom="25px" value={25} variant="warning" />
   <Meter label="Label" marginBottom="25px" labelPosition="side" value={25} variant="warning" />
   <Meter label="Label" showValueLabel={false} value={25} variant="warning" />
@@ -102,6 +102,40 @@ The value label can be updated via the `valueLabel` prop in cases where showing 
 ```tsx example
 <Meter label="Progress" marginBottom="25px" value={25} valueLabel="1 of 4" variant="warning" />
 ```
+
+Value labels by default show the percentage of progress in a determinate ProgressBar. These can be customized using the following props.
+
+* `showValueLabel`: Hides the value label
+* `formatOptions`: Allows you to customize the format of the percentage
+* `valueLabel`: Allows you to customize the value label to any string.
+
+```tsx example
+<Flex flexDirection="column" maxWidth="250px">
+  <Meter
+    label="Space used"
+    marginBottom="25px"
+    showValueLabel={false}
+    value={90}
+    variant="critical" />
+
+  <Meter
+    label="Space used"
+    marginBottom="25px"
+    valueLabel="54 of 60GB"
+    value={90} variant="critical" />
+
+  <Meter
+    label="Space used"
+    formatOptions={{style: 'percent', minimumFractionDigits: 2}}
+    value={89.123}
+    variant="critical" />
+</Flex>
+```
+## Props
+
+<PropTable component={docs.exports.Meter} links={docs.links} />
+
+## Visual Options
 
 ### Size
 [View guidelines](https://spectrum.adobe.com/page/meter/#Size)

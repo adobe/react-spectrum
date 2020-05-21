@@ -36,7 +36,7 @@ category: Overlays
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Dialog']}
+  componentNames={['Dialog', 'DialogTrigger']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/dialog/'}
   ]} />
@@ -109,14 +109,11 @@ A typical Dialog with a title, contents, and action buttons can be created like 
 </DialogTrigger>
 ```
 
-A dismissable Dialog forgoes its ButtonGroup in favor of rendering a close button at the top right of the Dialog. 
-If your Dialog is dismissable, make sure that you do not include a ButtonGroup in the render. 
-While the Dialog will hide any elements occupying the ButtonGroup section, it will not remove them from the DOM, 
-resulting in possible tab order issues.
+A dismissable Dialog forgoes its ButtonGroup in favor of rendering a close button at the top right of the Dialog.
 
 ```tsx example
 <DialogTrigger isDismissable>
-  <ActionButton>Status</ActionButton> 
+  <ActionButton>Status</ActionButton>
   <Dialog>
     <Heading>Status</Heading>
     <Divider />
@@ -125,13 +122,13 @@ resulting in possible tab order issues.
 </DialogTrigger>
 ```
 
-It is important to note that the `Heading`, `Header`, `Content`, and `Footer` content elements accept any renderable 
+It is important to note that the `Heading`, `Header`, `Content`, and `Footer` content elements accept any renderable
 node, not just strings. This allows you to create Dialogs for more complex workflows, such as including a form
 for the user to fill out or adding confirmation checkboxes.
 
 ```tsx example
 <DialogTrigger>
-  <ActionButton>Register</ActionButton> 
+  <ActionButton>Register</ActionButton>
   {(close) => (
     <Dialog>
       <Heading>
@@ -160,7 +157,7 @@ for the user to fill out or adding confirmation checkboxes.
         <Checkbox>
           I want to receive updates for exclusive offers in my area.
         </Checkbox>
-      </Footer> 
+      </Footer>
       <ButtonGroup>
         <Button variant="secondary" onPress={close}>Cancel</Button>
         <Button variant="cta" onPress={close}>Register</Button>
@@ -192,14 +189,14 @@ The example below illustrates how a Dialog with a hero image could be rendered v
 
 ### Accessibility
 
-Keep in mind when creating your Dialog that the tab order within the Dialog follows the order of the children provided. 
+Keep in mind when creating your Dialog that the tab order within the Dialog follows the order of the children provided.
 You are also responsible for determining what component, if any, should be automatically focused on Dialog render.
 
 ## Labeling
 
 ### Accessibility
 
-The title of a Dialog is typically provided via its heading. By default, the Dialog sets its 
+The title of a Dialog is typically provided via its heading. By default, the Dialog sets its
 `aria-labelledby` to match the heading id, but this can be overridden by providing an `aria-labelledby` prop
 to the Dialog directly. If a visible label isn't specified, an `aria-label` must be provided instead.
 
@@ -208,7 +205,7 @@ to the Dialog directly. If a visible label isn't specified, an `aria-label` must
   <ActionButton>See Terms and Conditions</ActionButton>
   {(close) => (
     <Dialog aria-labelledby="heading-id">
-      <Text slot="header" id="heading-id">Terms and Conditions</Text> 
+      <Text slot="header" id="heading-id">Terms and Conditions</Text>
       <Divider />
       <Content>
         <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mi proin sed libero enim. Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Sed enim ut sem viverra aliquet eget sit amet tellus. Diam quis enim lobortis scelerisque fermentum dui faucibus in ornare. Diam quam nulla porttitor massa id. Eleifend mi in nulla posuere sollicitudin. Turpis nunc eget lorem dolor sed viverra ipsum nunc. Faucibus in ornare quam viverra. Risus commodo viverra maecenas accumsan lacus vel facilisis volutpat est. Nam libero justo laoreet sit amet cursus sit. Netus et malesuada fames ac. Dictum fusce ut placerat orci nulla pellentesque dignissim enim sit. Eros donec ac odio tempor orci. Ut etiam sit amet nisl purus in mollis nunc. Nisl rhoncus mattis rhoncus urna neque viverra. Convallis aenean et tortor at risus. Diam phasellus vestibulum lorem sed risus ultricies.</Text>
@@ -254,7 +251,7 @@ function Example() {
               <TextField label="Name" />
               <Checkbox>Make private</Checkbox>
             </Form>
-          </Content>    
+          </Content>
         </Dialog>
       )}
     </DialogTrigger>
@@ -262,7 +259,7 @@ function Example() {
 }
 ```
 
-Additionally, DialogTrigger accepts an `onOpenChange` prop which is triggered whenever the Dialog is opened or closed. 
+Additionally, DialogTrigger accepts an `onOpenChange` prop which is triggered whenever the Dialog is opened or closed.
 For more information on the `onOpenChange` prop see the [DialogTrigger docs](./DialogTrigger.html#events).
 
 ### Dismissable Dialogs
@@ -289,7 +286,7 @@ function Example() {
             <Text>
               Version 1.0.0, Copyright 2020
             </Text>
-          </Content>    
+          </Content>
         </Dialog>
       )}
     </DialogTrigger>
@@ -307,7 +304,6 @@ the wrapping `close` function surrounding the Dialog. An example of this can be 
 ## Visual Options
 
 ### Dialog Type
-
 Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger docs](./DialogTrigger.html#dialog-types) for more information.
 
 ```tsx example
@@ -320,10 +316,11 @@ Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger do
       <Text>
         This is a modal.
       </Text>
-    </Content>    
+    </Content>
   </Dialog>
 </DialogTrigger>
-
+```
+```tsx example
 <DialogTrigger type="popover">
   <ActionButton>Trigger Popover</ActionButton>
   <Dialog>
@@ -333,10 +330,11 @@ Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger do
       <Text>
         This is a popover.
       </Text>
-    </Content>    
+    </Content>
   </Dialog>
 </DialogTrigger>
-
+```
+```tsx example
 <DialogTrigger type="tray">
   <ActionButton>Trigger Tray</ActionButton>
   <Dialog>
@@ -346,14 +344,13 @@ Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger do
       <Text>
         This is a tray.
       </Text>
-    </Content>    
+    </Content>
   </Dialog>
 </DialogTrigger>
 ```
 
 ### Size
-
-Only `modal` type Dialogs support a user defined size prop. Note that the `fullscreen` and `fullscreenTakeover` sizes 
+Only `modal` type Dialogs support a user defined size prop. Note that the `fullscreen` and `fullscreenTakeover` sizes
 require the [DialogTrigger `type`](./DialogTrigger.html#dialog-types) prop to be set as `fullscreen` and `fullscreenTakeover`
 respectively for container sizing considerations. Modal sizes on mobile devices are also unaffected by this prop due to screen constraints.
 
@@ -373,11 +370,12 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
           <TextField label="Name" />
           <Checkbox>Make private</Checkbox>
         </Form>
-      </Content>    
+      </Content>
     </Dialog>
   )}
 </DialogTrigger>
-
+```
+```tsx example
 <DialogTrigger>
   <ActionButton>Medium</ActionButton>
   {(close) => (
@@ -393,11 +391,12 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
           <TextField label="Name" />
           <Checkbox>Make private</Checkbox>
         </Form>
-      </Content>    
+      </Content>
     </Dialog>
   )}
 </DialogTrigger>
-
+```
+```tsx example
 <DialogTrigger>
   <ActionButton>Large</ActionButton>
   {(close) => (
@@ -413,7 +412,7 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
           <TextField label="Name" />
           <Checkbox>Make private</Checkbox>
         </Form>
-      </Content>    
+      </Content>
     </Dialog>
   )}
 </DialogTrigger>

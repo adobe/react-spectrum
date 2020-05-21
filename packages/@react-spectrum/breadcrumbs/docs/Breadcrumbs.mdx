@@ -85,7 +85,7 @@ function Example() {
       <Breadcrumbs onAction={(a) => setFolderId(a)}>
         {folders.map(f => <Item key={f.id} uniqueKey={f.id}>{f.label}</Item>)}
       </Breadcrumbs>
-      <p>Last Selected Folder: {folderId}</p>
+      <p>You pressed folder ID: {folderId}</p>
     </div>
   );
 }

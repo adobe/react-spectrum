@@ -28,28 +28,28 @@ export interface PositionProps {
    * @default "bottom"
    */
   placement?: Placement,
-  /** 
-   * The placement padding that should be applied between the element and its 
-   * surrounding container. 
-   * @default "12px"
+  /**
+   * The placement padding that should be applied between the element and its
+   * surrounding container.
+   * @default 12
    */
   containerPadding?: number,
-  /** 
-   * The additional offset applied along the main axis between the element and its 
+  /**
+   * The additional offset applied along the main axis between the element and its
    * anchor element.
-   * @default "0px"
+   * @default 0
    */
   offset?: number,
   /**
    * The additional offset applied along the cross axis between the element and its
    * anchor element.
-   * @default "0px"
+   * @default 0
    */
   crossOffset?: number,
-  /** 
-   * Whether the element should flip its orientation (e.g. top to bottom or left to right) when 
+  /**
+   * Whether the element should flip its orientation (e.g. top to bottom or left to right) when
    * there is insufficient room for it to render completely.
-   * @default "true"
+   * @default true
    */
   shouldFlip?: boolean,
   // /**
