@@ -165,8 +165,4 @@ governing permissions and limitations under the License.
       inline-size: auto;
     }
   }
-
-  &.spectrum-Dropdown-fieldWrapper--positionSide {
-    flex-direction: row;
-  }
 }
