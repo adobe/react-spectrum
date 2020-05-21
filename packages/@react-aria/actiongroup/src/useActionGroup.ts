@@ -48,7 +48,10 @@ export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroup
   } = props;
 
   let {direction} = useLocale();
-  let keyboardDelegate = useMemo(() => new ActionGroupKeyboardDelegate(state.collection, direction, orientation), [state.collection, direction, orientation]);
+  // eslint-disable-next-line arrow-body-style
+  let keyboardDelegate = useMemo(() => {
+    return new ActionGroupKeyboardDelegate(state.collection, direction, orientation, state.disabledKeys);
+  }, [state.collection, direction, orientation, state.disabledKeys]);
 
   let {collectionProps} = useSelectableCollection({
     ref,

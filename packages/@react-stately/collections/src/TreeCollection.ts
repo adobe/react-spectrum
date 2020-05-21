@@ -18,11 +18,9 @@ export class TreeCollection<T> implements Collection<Node<T>> {
   private iterable: Iterable<Node<T>>;
   private firstKey: Key;
   private lastKey: Key;
-  private disabledKeys: Set<Key>
 
-  constructor(nodes: Iterable<Node<T>>, {expandedKeys, disabledKeys}: {expandedKeys?: Set<Key>, disabledKeys?: Set<Key>} = {}) {
+  constructor(nodes: Iterable<Node<T>>, {expandedKeys}: {expandedKeys?: Set<Key>} = {}) {
     this.iterable = nodes;
-    this.disabledKeys = disabledKeys || new Set();
     expandedKeys = expandedKeys || new Set();
 
     let visit = (node: Node<T>) => {
@@ -75,46 +73,20 @@ export class TreeCollection<T> implements Collection<Node<T>> {
 
   getKeyBefore(key: Key) {
     let node = this.keyMap.get(key);
-    if (!node) {
-      return null;
-    }
-    while (node.prevKey && this.disabledKeys.has(node.prevKey)) {
-      node = this.keyMap.get(node.prevKey);
-    }
-    if (node.prevKey) {
-      return node.prevKey;
-    }
-    return null;
+    return node ? node.prevKey : null;
   }
 
   getKeyAfter(key: Key) {
     let node = this.keyMap.get(key);
-    if (!node) {
-      return null;
-    }
-    while (node.nextKey && this.disabledKeys.has(node.nextKey)) {
-      node = this.keyMap.get(node.nextKey);
-    }
-    if (node.nextKey) {
-      return node.nextKey;
-    }
-    return null;
+    return node ? node.nextKey : null;
   }
 
   getFirstKey() {
-    let firstKey = this.firstKey;
-    if (this.disabledKeys.has(firstKey)) {
-      firstKey = this.getKeyAfter(firstKey);
-    }
-    return firstKey;
+    return this.firstKey;
   }
 
   getLastKey() {
-    let lastKey = this.lastKey;
-    if (this.disabledKeys.has(lastKey)) {
-      lastKey = this.getKeyBefore(lastKey);
-    }
-    return lastKey;
+    return this.lastKey;
   }
 
   getItem(key: Key) {
