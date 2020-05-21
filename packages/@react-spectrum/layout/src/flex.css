@@ -12,7 +12,7 @@
 
 .flex-container {
   /* this is necessary so that the inner margins don't affect anything outside */
-  overflow: hidden;
+  display: flex;
 }
 
 .flex {
