@@ -14,7 +14,7 @@ governing permissions and limitations under the License.
   /* Overridden because of the way we draw focus rings */
   --spectrum-actionbutton-quiet-border-size-key-focus: 1px;
   
-  /* RSP stopgap since we don't have button-css vars */
+  /* RSP stopgap since we don't have spectrum-button css vars */
   --spectrum-button-cta-focus-ring-gap-key-focus: var(--spectrum-alias-focus-ring-gap);
   --spectrum-button-cta-focus-ring-size-key-focus: var(--spectrum-alias-focus-ring-size);
   --spectrum-button-cta-focus-ring-color-key-focus: var(--spectrum-alias-focus-ring-color);
