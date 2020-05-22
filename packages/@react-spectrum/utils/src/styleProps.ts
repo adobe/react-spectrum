@@ -163,10 +163,10 @@ function anyValue(value: any) {
 
 function flexValue(value: boolean | number | string) {
   if (typeof value === 'boolean') {
-    return value ? 1 : undefined;
+    return value ? '1' : undefined;
   }
 
-  return value;
+  return '' + value;
 }
 
 export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers, direction: Direction) {
