@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
   /* todo: fix in DNA */
   --spectrum-radio-emphasized-circle-border-color-selected-key-focus: var(--spectrum-radio-emphasized-circle-border-color-selected-hover);
 
-  /* RSP stopgap since we don't have spectrum-checkbox css vars file */
+  /* RSP stopgap since we don't have spectrum-radio css vars file */
   --spectrum-radio-circle-border-color-key-focus: var(--spectrum-global-color-gray-700);
   --spectrum-radio-circle-border-size-key-focus: var(--spectrum-alias-border-size-thick);
   --spectrum-radio-focus-ring-gap-key-focus: var(--spectrum-alias-focus-ring-gap);
