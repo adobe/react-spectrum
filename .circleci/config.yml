@@ -16,7 +16,9 @@ jobs:
       - run:
           name: Write npmrc
           command: |
-            cp .circleci/.npmrc .npmrc
+            if [ $NPM_PASSWORD ]; then
+              cp .circleci/.npmrc .npmrc
+            fi
 
       - run:
           name: build
