@@ -41,3 +41,42 @@ information.
 ## API
 
 <FunctionAPI function={docs.exports.useCollator} links={docs.links} />
+
+## Example
+
+This example includes two textfields and compares the values of the two fields using a collator according to the current locale.
+
+```tsx example
+function Example() {
+  let [first, setFirst] = React.useState('');
+  let [second, setSecond] = React.useState('');
+
+  let collator = useCollator();
+  let result = collator.compare(first, second);
+
+  return (
+    <>
+      <div>
+        <input 
+          aria-label="First string"
+          placeholder="First string"
+          value={first}
+          onChange={e => setFirst(e.target.value)} />
+        <input 
+          aria-label="Second string"
+          placeholder="Second string"
+          value={second}
+          onChange={e => setSecond(e.target.value)} />
+      </div>
+      <p>
+        {result === 0 
+          ? 'The strings are the same' 
+          : result < 0 
+            ? 'First comes before second' 
+            : 'Second comes before first'
+        }
+      </p>
+    </>
+  );
+}
+```
