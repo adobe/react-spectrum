@@ -201,7 +201,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           {contents}
         </SlotProvider>
         {isLoadingInitial &&
-          <ProgressCircle 
+          <ProgressCircle
             isIndeterminate
             size="S"
             aria-label={formatMessage('loading')}
@@ -261,6 +261,9 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   }));
 }
 
+/**
+  * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
+  */
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
 const _Picker = React.forwardRef(Picker) as <T>(props: SpectrumPickerProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
