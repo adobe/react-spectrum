@@ -19,10 +19,9 @@ export class TreeCollection<T> implements Collection<Node<T>> {
   private firstKey: Key;
   private lastKey: Key;
 
-  constructor(nodes: Iterable<Node<T>>, expandedKeys: Set<Key>) {
+  constructor(nodes: Iterable<Node<T>>, expandedKeys?: Set<Key>) {
     this.iterable = nodes;
     expandedKeys = expandedKeys || new Set();
-    console.log(expandedKeys);
 
     let visit = (node: Node<T>) => {
       this.keyMap.set(node.key, node);
