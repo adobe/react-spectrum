@@ -105,8 +105,6 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
       'aria-controls': ariaControls,
-      // if an explicit aria-pressed false has been passed int, then use that but as undefined
-      // otherwise, decide for ourselves
       [ariaSelected]: isSelected,
       'aria-invalid': validationState === 'invalid' ? true : null,
       disabled: isDisabled,
