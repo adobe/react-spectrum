@@ -27,7 +27,7 @@ interface FocusableContextProps extends HTMLAttributes<HTMLElement> {
 
 export const FocusableContext = React.createContext<FocusableContextProps>(null);
 
-export function useFocsuableContext(ref: RefObject<HTMLElement>): FocusableContextProps {
+export function useFocusableContext(ref: RefObject<HTMLElement>): FocusableContextProps {
   let context = useContext(FocusableContext) || {} as FocusableContextProps;
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export const FocusableProvider = React.forwardRef(({children, ...props}: Focusab
 export function useFocusable(props: FocusableProps, domRef?: RefObject<HTMLElement>) {
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
-  let domProps = useFocsuableContext(domRef);
+  let domProps = useFocusableContext(domRef);
 
   useEffect(() => {
     if (props.autoFocus && domRef && domRef.current) {
