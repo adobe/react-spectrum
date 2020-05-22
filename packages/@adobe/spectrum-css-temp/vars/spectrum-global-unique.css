@@ -151,7 +151,8 @@
   --spectrum-alias-code-text-font-weight-regular: var(--spectrum-global-font-weight-regular);
   --spectrum-alias-code-text-font-weight-strong: var(--spectrum-global-font-weight-bold);
   --spectrum-alias-code-text-line-height: var(--spectrum-global-font-line-height-medium);
-
+  --spectrum-alias-focus-ring-gap: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-alias-focus-ring-size: var(--spectrum-global-dimension-static-size-25);
 }
 
 .spectrum--medium,
