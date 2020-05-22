@@ -11,6 +11,7 @@
  */
 
 import {ActionGroup} from '../';
+import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {fireEvent, render} from '@testing-library/react';
 import {Item} from '@react-stately/collections';
@@ -116,6 +117,19 @@ function renderComponent(props) {
         <Item uniqueKey="1">Click me 1</Item>
         <Item uniqueKey="2">Click me 2</Item>
       </ActionGroup>
+    </Provider>
+  );
+}
+
+function renderComponentWithExtraInputs(props) {
+  return render(
+    <Provider theme={theme} locale="de-DE">
+      <Button variant="primary" aria-label="ButtonBefore" />
+      <ActionGroup {...props}>
+        <Item uniqueKey="1">Click me 1</Item>
+        <Item uniqueKey="2">Click me 2</Item>
+      </ActionGroup>
+      <Button variant="primary" aria-label="ButtonAfter" />
     </Provider>
   );
 }
@@ -278,6 +292,57 @@ describe('ActionGroup', function () {
       action(document.activeElement);
       verifyResult(buttons, result(), index);
     });
+  });
+
+  it('should be focusable from Tab', async function () {
+    let tree = renderComponentWithExtraInputs({});
+
+    let buttonBefore = tree.getByLabelText('ButtonBefore');
+    let buttonAfter = tree.getByLabelText('ButtonAfter');
+    let buttons = tree.getAllByRole('radio');
+    buttonBefore.focus();
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttons[0]);
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttonAfter);
+  });
+
+  it('should be focusable from Shift + Tab', function () {
+    let tree = renderComponentWithExtraInputs({});
+
+    let buttonBefore = tree.getByLabelText('ButtonBefore');
+    let buttonAfter = tree.getByLabelText('ButtonAfter');
+    let buttons = tree.getAllByRole('radio');
+    buttonAfter.focus();
+
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(buttons[1]);
+
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(buttonBefore);
+  });
+
+  it('should remember last focused item', function () {
+    let tree = renderComponentWithExtraInputs({});
+
+    let buttonBefore = tree.getByLabelText('ButtonBefore');
+    let buttonAfter = tree.getByLabelText('ButtonAfter');
+    let buttons = tree.getAllByRole('radio');
+    buttonBefore.focus();
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttons[0]);
+
+    pressArrowRight(buttons[0]);
+    expect(document.activeElement).toBe(buttons[1]);
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttonAfter);
+
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(buttons[1]);
   });
 
   it('ActionGroup handles single selection', function () {
