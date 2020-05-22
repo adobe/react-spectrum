@@ -11,8 +11,9 @@
  */
 
 import Asterisk from '@spectrum-icons/workflow/Asterisk';
+import {getAnchorProps, getUsedLinks} from './utils';
 import {getDoc} from 'globals-docs';
-import {getUsedLinks} from './utils';
+import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import Lowlight from 'react-lowlight';
 import Markdown from 'markdown-to-jsx';
 import React, {useContext} from 'react';
@@ -125,7 +126,7 @@ function BooleanLiteral({value}) {
 function Keyword({type}) {
   let link = getDoc(type);
   if (link) {
-    return <a href={link} className={`${styles.colorLink} token hljs-keyword`} target="_blank">{type}</a>;
+    return <a href={link} className={`${styles.colorLink} token hljs-keyword`} rel="noreferrer" target="_blank">{type}</a>;
   }
 
   return <span className="token hljs-keyword">{type}</span>;
@@ -134,7 +135,7 @@ function Keyword({type}) {
 function Identifier({name}) {
   let link = getDoc(name) || DOC_LINKS[name];
   if (link) {
-    return <a href={link} className={`${styles.colorLink} token hljs-name`} target="_blank">{name}</a>;
+    return <a href={link} className={`${styles.colorLink} token hljs-name`} rel="noreferrer" target="_blank">{name}</a>;
   }
 
   return <span className="token hljs-name">{name}</span>;
@@ -277,12 +278,16 @@ export function LinkType({id}) {
   return <a href={'#' + id} data-link={id} className={`${styles.colorLink} token hljs-name`}>{value.name}</a>;
 }
 
+function SpectrumLink({href, children, title}) {
+  return <a className={linkStyle['spectrum-Link']} href={href} title={title} {...getAnchorProps(href)}>{children}</a>;
+}
+
 export function renderHTMLfromMarkdown(description) {
   if (description) {
-    return <Markdown options={{forceInline: true}}>{description}</Markdown>;
-  } else {
-    return '';
+    const options = {forceInline: true, overrides: {a: {component: SpectrumLink}}};
+    return <Markdown options={options}>{description}</Markdown>;
   }
+  return '';
 }
 
 export function InterfaceType({description, properties: props, showRequired, showDefault}) {
