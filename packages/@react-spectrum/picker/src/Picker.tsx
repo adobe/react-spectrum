@@ -227,7 +227,10 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       classNames(
         styles,
         'spectrum-Field',
-        {'spectrum-Dropdown-fieldWrapper--quiet': isQuiet}
+        {
+          'spectrum-Dropdown-fieldWrapper--quiet': isQuiet,
+          'spectrum-Dropdown-fieldWrapper--positionSide': labelPosition === 'side'
+        }
       ),
       styleProps.className
     );
