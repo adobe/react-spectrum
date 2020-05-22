@@ -27,83 +27,61 @@ export class ActionGroupKeyboardDelegate<T> implements KeyboardDelegate {
 
   getKeyLeftOf(key: Key) {
     if (this.flipDirection) {
-      key = this.collection.getKeyAfter(key);
-      while (key) {
-        if (!this.disabledKeys.has(key)) {
-          return key;
-        }
-        key = this.collection.getKeyAfter(key);
-      }
-      return key || this.getFirstKey();
+      return this.getNextKey(key);
     } else {
-      key = this.collection.getKeyBefore(key);
-      while (key) {
-        if (!this.disabledKeys.has(key)) {
-          return key;
-        }
-        key = this.collection.getKeyBefore(key);
-      }
-      return key || this.getLastKey();
+      return this.getPreviousKey(key);
     }
   }
 
   getKeyRightOf(key: Key) {
     if (this.flipDirection) {
-      key = this.collection.getKeyBefore(key);
-      while (key) {
-        if (!this.disabledKeys.has(key)) {
-          return key;
-        }
-        key = this.collection.getKeyBefore(key);
-      }
-      return key || this.getLastKey();
+      return this.getPreviousKey(key);
     } else {
-      key = this.collection.getKeyAfter(key);
-      while (key) {
-        if (!this.disabledKeys.has(key)) {
-          return key;
-        }
-        key = this.collection.getKeyAfter(key);
-      }
-      return key || this.getFirstKey();
+      return this.getNextKey(key);
     }
   }
 
   getKeyAbove(key: Key) {
-    key = this.collection.getKeyBefore(key);
-    while (key) {
-      if (!this.disabledKeys.has(key)) {
-        return key;
-      }
-      key = this.collection.getKeyBefore(key);
-    }
-    return key || this.getLastKey();
+    return this.getPreviousKey(key);
   }
 
   getKeyBelow(key: Key) {
-    key = this.collection.getKeyAfter(key);
-    while (key) {
-      if (!this.disabledKeys.has(key)) {
-        return key;
-      }
-      key = this.collection.getKeyAfter(key);
-    }
-    return key || this.getFirstKey();
+    return this.getNextKey(key);
   }
 
   getFirstKey() {
     let key = this.collection.getFirstKey();
-    while (this.disabledKeys.has(key)) {
-      key = this.collection.getKeyAfter(key);
+    if (this.disabledKeys.has(key)) {
+      key = this.getNextKey(key);
     }
     return key;
   }
 
   getLastKey() {
     let key = this.collection.getLastKey();
-    while (this.disabledKeys.has(key)) {
-      key = this.collection.getKeyBefore(key);
+    if (this.disabledKeys.has(key)) {
+      key = this.getPreviousKey(key);
     }
+    return key;
+  }
+
+  getNextKey(key) {
+    do {
+      key = this.collection.getKeyAfter(key);
+      if (!key) {
+        key = this.collection.getFirstKey();
+      }
+    } while (this.disabledKeys.has(key));
+    return key;
+  }
+
+  getPreviousKey(key) {
+    do {
+      key = this.collection.getKeyBefore(key);
+      if (!key) {
+        key = this.collection.getLastKey();
+      }
+    } while (this.disabledKeys.has(key));
     return key;
   }
 }
