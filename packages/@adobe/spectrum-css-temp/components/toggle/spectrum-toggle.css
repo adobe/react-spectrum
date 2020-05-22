@@ -1,0 +1,107 @@
+:root {
+  /* RSP stopgap since we don't have spectrum-switch css vars file */
+  --spectrum-switch-handle-border-color-key-focus: var(--spectrum-global-color-gray-700);
+  --spectrum-switch-handle-border-size-key-focus: var(--spectrum-alias-border-size-thick);
+
+  --spectrum-switch-focus-ring-gap-key-focus: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-switch-focus-ring-size-key-focus: var(--spectrum-alias-focus-ring-size);
+  --spectrum-switch-focus-ring-color-key-focus: var(--spectrum-alias-focus-ring-color);
+  --spectrum-switch-focus-ring-gap-color-key-focus: var(--spectrum-alias-focus-ring-gap-color);
+
+  --spectrum-switch-handle-border-color-selected-key-focus: var(--spectrum-global-color-gray-800);
+  --spectrum-switch-handle-border-size-selected-key-focus: var(--spectrum-alias-border-size-thick);
+  --spectrum-switch-track-color-selected-key-focus: var(--spectrum-global-color-gray-800);
+  --spectrum-switch-focus-ring-gap-selected-key-focus: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-switch-focus-ring-size-selected-key-focus: var(--spectrum-alias-focus-ring-size);
+  --spectrum-switch-focus-ring-color-selected-key-focus: var(--spectrum-alias-focus-ring-color);
+  --spectrum-switch-focus-ring-gap-color-selected-key-focus: var(--spectrum-alias-focus-ring-gap-color);
+
+  --spectrum-switch-track-color-error-key-focus: var(--spectrum-global-color-red-600);
+  --spectrum-switch-handle-border-size-error-key-focus: var(--spectrum-alias-border-size-thick);
+  --spectrum-switch-handle-border-color-error-key-focus: var(--spectrum-global-color-red-600);
+
+  --spectrum-switch-focus-ring-gap-error-key-focus: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-switch-focus-ring-size-error-key-focus: var(--spectrum-alias-focus-ring-size);
+  --spectrum-switch-focus-ring-color-error-key-focus: var(--spectrum-alias-focus-ring-color);
+  --spectrum-switch-focus-ring-gap-color-error-key-focus: var(--spectrum-alias-focus-ring-gap-color);
+
+  --spectrum-switch-track-color-error-selected-key-focus: var(--spectrum-global-color-red-600);
+  --spectrum-switch-handle-border-size-error-selected-key-focus: var(--spectrum-alias-border-size-thick);
+  --spectrum-switch-handle-border-color-error-selected-key-focus: var(--spectrum-global-color-red-600);
+
+  --spectrum-switch-focus-ring-gap-error-selected-key-focus: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-switch-focus-ring-size-error-selected-key-focus: var(--spectrum-alias-focus-ring-size);
+  --spectrum-switch-focus-ring-color-error-selected-key-focus: var(--spectrum-alias-focus-ring-color);
+  --spectrum-switch-focus-ring-gap-color-error-selected-key-focus: var(--spectrum-alias-focus-ring-gap-color);
+
+  --spectrum-switch-emphasized-handle-border-color-key-focus: var(--spectrum-global-color-gray-700);
+  --spectrum-switch-emphasized-handle-border-size-key-focus: var(--spectrum-alias-border-size-thick);
+
+  --spectrum-switch-emphasized-focus-ring-gap-key-focus: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-switch-emphasized-focus-ring-size-key-focus: var(--spectrum-alias-focus-ring-size);
+  --spectrum-switch-emphasized-focus-ring-color-key-focus: var(--spectrum-alias-focus-ring-color);
+  --spectrum-switch-emphasized-focus-ring-gap-color-key-focus: var(--spectrum-alias-focus-ring-gap-color);
+
+  --spectrum-switch-emphasized-handle-border-color-selected-key-focus: var(--spectrum-global-color-blue-600);
+
+  --spectrum-switch-emphasized-handle-border-size-selected-key-focus: var(--spectrum-alias-border-size-thick);
+  --spectrum-switch-emphasized-track-color-selected-key-focus: var(--spectrum-global-color-blue-600);
+  --spectrum-switch-emphasized-focus-ring-gap-selected-key-focus: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-switch-emphasized-focus-ring-size-selected-key-focus: var(--spectrum-alias-focus-ring-size);
+  --spectrum-switch-emphasized-focus-ring-color-selected-key-focus: var(--spectrum-alias-focus-ring-color);
+  --spectrum-switch-emphasized-focus-ring-gap-color-selected-key-focus: var(--spectrum-alias-focus-ring-gap-color);
+
+  --spectrum-switch-emphasized-track-color-error-key-focus: var(--spectrum-global-color-red-600);
+  --spectrum-switch-emphasized-handle-border-size-error-key-focus: var(--spectrum-alias-border-size-thick);
+  --spectrum-switch-emphasized-handle-border-color-error-key-focus: var(--spectrum-global-color-red-600);
+
+  --spectrum-switch-emphasized-focus-ring-gap-error-key-focus: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-switch-emphasized-focus-ring-size-error-key-focus: var(--spectrum-alias-focus-ring-size);
+  --spectrum-switch-emphasized-focus-ring-color-error-key-focus: var(--spectrum-alias-focus-ring-color);
+  --spectrum-switch-emphasized-focus-ring-gap-color-error-key-focus: var(--spectrum-alias-focus-ring-gap-color);
+
+  --spectrum-switch-emphasized-track-color-error-selected-key-focus: var(--spectrum-global-color-red-600);
+  --spectrum-switch-emphasized-handle-border-size-error-selected-key-focus: var(--spectrum-alias-border-size-thick);
+  --spectrum-switch-emphasized-handle-border-color-error-selected-key-focus: var(--spectrum-global-color-red-600);
+
+  --spectrum-switch-emphasized-focus-ring-gap-error-selected-key-focus: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-switch-emphasized-focus-ring-size-error-selected-key-focus: var(--spectrum-alias-focus-ring-size);
+  --spectrum-switch-emphasized-focus-ring-color-error-selected-key-focus: var(--spectrum-alias-focus-ring-color);
+  --spectrum-switch-emphasized-focus-ring-gap-color-error-selected-key-focus: var(--spectrum-alias-focus-ring-gap-color);
+
+  --spectrum-switch-quiet-handle-border-color-key-focus: var(--spectrum-global-color-gray-700);
+
+  --spectrum-switch-quiet-handle-border-size-key-focus: var(--spectrum-alias-border-size-thick);  --spectrum-switch-quiet-handle-border-size-key-focus: var(--spectrum-alias-border-size-thick);
+
+  --spectrum-switch-quiet-focus-ring-gap-key-focus: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-switch-quiet-focus-ring-size-key-focus: var(--spectrum-alias-focus-ring-size);
+  --spectrum-switch-quiet-focus-ring-color-key-focus: var(--spectrum-alias-focus-ring-color);
+  --spectrum-switch-quiet-focus-ring-gap-color-key-focus: var(--spectrum-alias-focus-ring-gap-color);
+
+  --spectrum-switch-quiet-handle-border-color-selected-key-focus: var(--spectrum-global-color-gray-800);
+
+  --spectrum-switch-quiet-handle-border-size-selected-key-focus: var(--spectrum-alias-border-size-thick);
+  --spectrum-switch-quiet-track-color-selected-key-focus: var(--spectrum-global-color-gray-800);
+  --spectrum-switch-quiet-focus-ring-gap-selected-key-focus: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-switch-quiet-focus-ring-size-selected-key-focus: var(--spectrum-alias-focus-ring-size);
+  --spectrum-switch-quiet-focus-ring-color-selected-key-focus: var(--spectrum-alias-focus-ring-color);
+  --spectrum-switch-quiet-focus-ring-gap-color-selected-key-focus: var(--spectrum-alias-focus-ring-gap-color);
+
+  --spectrum-switch-quiet-track-color-error-key-focus: var(--spectrum-global-color-red-600);
+  --spectrum-switch-quiet-handle-border-size-error-key-focus: var(--spectrum-alias-border-size-thick);
+  --spectrum-switch-quiet-handle-border-color-error-key-focus: var(--spectrum-global-color-red-600);
+
+  --spectrum-switch-quiet-focus-ring-gap-error-key-focus: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-switch-quiet-focus-ring-size-error-key-focus: var(--spectrum-alias-focus-ring-size);
+  --spectrum-switch-quiet-focus-ring-color-error-key-focus: var(--spectrum-alias-focus-ring-color);
+  --spectrum-switch-quiet-focus-ring-gap-color-error-key-focus: var(--spectrum-alias-focus-ring-gap-color);
+
+  --spectrum-switch-quiet-track-color-error-selected-key-focus: var(--spectrum-global-color-red-600);
+  --spectrum-switch-quiet-handle-border-size-error-selected-key-focus: var(--spectrum-alias-border-size-thick);
+  --spectrum-switch-quiet-handle-border-color-error-selected-key-focus: var(--spectrum-global-color-red-600);
+
+  --spectrum-switch-quiet-focus-ring-gap-error-selected-key-focus: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-switch-quiet-focus-ring-size-error-selected-key-focus: var(--spectrum-alias-focus-ring-size);
+  --spectrum-switch-quiet-focus-ring-color-error-selected-key-focus: var(--spectrum-alias-focus-ring-color);
+  --spectrum-switch-quiet-focus-ring-gap-color-error-selected-key-focus: var(--spectrum-alias-focus-ring-gap-color);
+}
