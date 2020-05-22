@@ -47,7 +47,7 @@ All of these options are available as props on each React Spectrum component. Th
 a text field and a button. The text field has a custom width set on it, and the button has a margin before it.
 
 ```tsx example
-<TextField label="Name" labelPosition="side" placeholder="John Smith" />
+<TextField label="Name" labelPosition="side" placeholder="John Smith" width="size-2000" />
 <ActionButton marginStart="size-150">Submit</ActionButton>
 ```
 
@@ -117,8 +117,8 @@ you can ensure consistency with other Spectrum components by utilizing existing 
 there are Spectrum variables for colors, border sizes, paddings, etc.
 
 These variables could be consumed in CSS directly, but if you're building something simple, you could consider
-using the `View` component from React Spectrum. `View` is like a `div` or `span`, but with additional style properties that
-map to Spectrum defined variables in addition to the ones covered above.
+using the `View` component from React Spectrum. `View` is like a `div` or `span` (depending on the `elementType` prop),
+but with additional style properties that map to Spectrum defined variables in addition to the ones covered above.
 
 The following example shows how you might build a container element using Spectrum defined variables for the border
 and padding. Use the color scheme and scale pickers to see how the view changes automatically based on these variables.
