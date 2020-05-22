@@ -11,6 +11,7 @@
  */
 
 import {ActionGroup} from '../';
+import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {fireEvent, render} from '@testing-library/react';
 import {Item} from '@react-stately/collections';
@@ -19,6 +20,7 @@ import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 import V2Button from '@react/react-spectrum/Button';
 import V2ButtonGroup from '@react/react-spectrum/ButtonGroup';
 
@@ -115,6 +117,19 @@ function renderComponent(props) {
         <Item uniqueKey="1">Click me 1</Item>
         <Item uniqueKey="2">Click me 2</Item>
       </ActionGroup>
+    </Provider>
+  );
+}
+
+function renderComponentWithExtraInputs(props) {
+  return render(
+    <Provider theme={theme} locale="de-DE">
+      <Button variant="primary" aria-label="ButtonBefore" />
+      <ActionGroup {...props}>
+        <Item uniqueKey="1">Click me 1</Item>
+        <Item uniqueKey="2">Click me 2</Item>
+      </ActionGroup>
+      <Button variant="primary" aria-label="ButtonAfter" />
     </Provider>
   );
 }
@@ -224,6 +239,57 @@ describe('ActionGroup', function () {
     });
   });
 
+  it('should be focusable from Tab', async function () {
+    let tree = renderComponentWithExtraInputs({});
+
+    let buttonBefore = tree.getByLabelText('ButtonBefore');
+    let buttonAfter = tree.getByLabelText('ButtonAfter');
+    let buttons = tree.getAllByRole('radio');
+    buttonBefore.focus();
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttons[0]);
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttonAfter);
+  });
+
+  it('should be focusable from Shift + Tab', function () {
+    let tree = renderComponentWithExtraInputs({});
+
+    let buttonBefore = tree.getByLabelText('ButtonBefore');
+    let buttonAfter = tree.getByLabelText('ButtonAfter');
+    let buttons = tree.getAllByRole('radio');
+    buttonAfter.focus();
+
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(buttons[1]);
+
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(buttonBefore);
+  });
+
+  it('should remember last focused item', function () {
+    let tree = renderComponentWithExtraInputs({});
+
+    let buttonBefore = tree.getByLabelText('ButtonBefore');
+    let buttonAfter = tree.getByLabelText('ButtonAfter');
+    let buttons = tree.getAllByRole('radio');
+    buttonBefore.focus();
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttons[0]);
+
+    pressArrowRight(buttons[0]);
+    expect(document.activeElement).toBe(buttons[1]);
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttonAfter);
+
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(buttons[1]);
+  });
+
   it('ActionGroup handles single selection', function () {
     let {getAllByRole} = renderComponent({});
 
@@ -268,6 +334,8 @@ describe('ActionGroup', function () {
     triggerPress(button1);
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'false');
+    expect(button1).not.toHaveAttribute('aria-pressed');
+    expect(button2).not.toHaveAttribute('aria-pressed');
 
     fireEvent.keyDown(button1, {key: 'ArrowRight', shiftKey: true});
     expect(button1).toHaveAttribute('aria-checked', 'true');
