@@ -21,6 +21,8 @@ export class TreeCollection<T> implements Collection<Node<T>> {
 
   constructor(nodes: Iterable<Node<T>>, expandedKeys: Set<Key>) {
     this.iterable = nodes;
+    expandedKeys = expandedKeys || new Set();
+    console.log(expandedKeys);
 
     let visit = (node: Node<T>) => {
       this.keyMap.set(node.key, node);
@@ -87,7 +89,7 @@ export class TreeCollection<T> implements Collection<Node<T>> {
   getLastKey() {
     return this.lastKey;
   }
-  
+
   getItem(key: Key) {
     return this.keyMap.get(key);
   }
