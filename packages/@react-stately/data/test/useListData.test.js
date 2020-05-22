@@ -245,6 +245,20 @@ describe('useListData', function () {
     expect(result.current.selectedKeys).toEqual(new Set());
   });
 
+  it('should remove the selected items with select all', function () {
+    let {result} = renderHook(() => useListData({initialItems: initial, getKey, initialSelectedKeys: 'all'}));
+    let initialResult = result.current;
+
+    act(() => {
+      result.current.removeSelectedItems();
+    });
+
+    expect(result.current.items).not.toBe(initialResult.items);
+    expect(result.current.items).toHaveLength(0);
+    expect(result.current.selectedKeys).not.toBe(initialResult.selectedKeys);
+    expect(result.current.selectedKeys).toEqual(new Set());
+  });
+
   it('should update an item', function () {
     let {result} = renderHook(() => useListData({initialItems: initial, getKey}));
     let initialResult = result.current;

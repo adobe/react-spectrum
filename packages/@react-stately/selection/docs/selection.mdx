@@ -25,7 +25,7 @@ Many [collection components](collections.html) support selecting items by clicki
 This page discusses how to handle selection events, how to control selection programmatically, and the
 data structures used to represent a selection.
 
-## Multiple Selection
+## Multiple selection
 
 Selection is handled by the `onSelectionChange` event, which is supported on most collection components. Controlled
 behavior is supported by the `selectedKeys` prop, and uncontrolled behavior is supported by the `defaultSelectedKeys`
@@ -85,7 +85,7 @@ let [selectedKeys, setSelectedKeys] = useState(new Set());
 </ListBox>
 ```
 
-## Select All
+## Select all
 
 Some components support a checkbox to select all items in the collection, or a keyboard shortcut like <kbd>⌘ Cmd</kbd> + <kbd>A</kbd>.
 This represents a selection of all items in the collection, regardless of whether or not all items have been loaded from the network.
