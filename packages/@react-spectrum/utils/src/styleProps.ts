@@ -47,7 +47,7 @@ export const baseStyleProps: StyleHandlers = {
   end: [rtl('right', 'left'), dimensionValue],
   left: ['left', dimensionValue],
   right: ['right', dimensionValue],
-  flex: ['flex', passthroughStyle],
+  flex: ['flex', flexValue],
   flexGrow: ['flexGrow', passthroughStyle],
   flexShrink: ['flexShrink', passthroughStyle],
   flexBasis: ['flexBasis', passthroughStyle],
@@ -158,6 +158,14 @@ function hiddenValue(value: boolean) {
 }
 
 function anyValue(value: any) {
+  return value;
+}
+
+function flexValue(value: boolean | number | string) {
+  if (typeof value === 'boolean') {
+    return value ? 1 : undefined;
+  }
+
   return value;
 }
 

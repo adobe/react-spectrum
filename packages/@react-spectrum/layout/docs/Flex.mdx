@@ -72,14 +72,15 @@ This example shows a horizontal stack.
 
 ### Nesting
 
-This example shows how you can nest flexboxes to create more complicated layouts.
+This example shows how you can nest flexboxes to create more complicated layouts. It also uses the `flex`
+prop on one of the children to expand it to fill the repaining space.
 
 ```tsx example
 <Flex direction="column" gap="size-100">
   <View backgroundColor="celery-600" height="size-800" />
   <Flex direction="row" height="size-3000" gap="size-100">
     <View backgroundColor="indigo-600" width="size-2000" />
-    <View backgroundColor="seafoam-600" flex={1} />
+    <View backgroundColor="seafoam-600" flex />
   </Flex>
   <View backgroundColor="magenta-600" height="size-800" />
 </Flex>

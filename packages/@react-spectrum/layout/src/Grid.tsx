@@ -24,6 +24,7 @@ import {GridProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 
 export const gridStyleProps: StyleHandlers = {
+  ...baseStyleProps,
   autoFlow: ['gridAutoFlow', passthroughStyle],
   autoColumns: ['gridAutoColumns', gridDimensionValue],
   autoRows: ['gridAutoRows', gridDimensionValue],
@@ -48,7 +49,7 @@ function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
     children,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(otherProps, {...baseStyleProps, ...gridStyleProps});
+  let {styleProps} = useStyleProps(otherProps, gridStyleProps);
   styleProps.style.display = 'grid'; // inline-grid?
   let domRef = useDOMRef(ref);
 
