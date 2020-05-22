@@ -1,8 +1,19 @@
-import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, StyleProps, ViewStyleProps} from '@react-types/shared';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {BackgroundColorValue, BorderColorValue, BorderRadiusValue, BorderSizeValue, ColorValue, DimensionValue, Direction, StyleProps, ViewStyleProps} from '@react-types/shared';
 import {CSSProperties, HTMLAttributes} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
-type Direction = 'ltr' | 'rtl';
 type StyleName = string | string[] | ((dir: Direction) => string);
 type StyleHandler = (value: any) => string;
 export interface StyleHandlers {
@@ -25,7 +36,21 @@ export const baseStyleProps: StyleHandlers = {
   minHeight: ['minHeight', dimensionValue],
   maxWidth: ['maxWidth', dimensionValue],
   maxHeight: ['maxHeight', dimensionValue],
-  isHidden: ['display', hiddenValue]
+  isHidden: ['display', hiddenValue],
+  alignSelf: ['alignSelf', passthroughStyle],
+  justifySelf: ['justifySelf', passthroughStyle],
+  position: ['position', anyValue],
+  zIndex: ['zIndex', anyValue],
+  top: ['top', dimensionValue],
+  bottom: ['bottom', dimensionValue],
+  start: [rtl('left', 'right'), dimensionValue],
+  end: [rtl('right', 'left'), dimensionValue],
+  left: ['left', dimensionValue],
+  right: ['right', dimensionValue],
+  flex: ['flex', passthroughStyle],
+  flexGrow: ['flexGrow', passthroughStyle],
+  flexShrink: ['flexShrink', passthroughStyle],
+  flexBasis: ['flexBasis', passthroughStyle]
 };
 
 export const viewStyleProps: StyleHandlers = {
@@ -83,12 +108,12 @@ function rtl(ltr: string, rtl: string) {
   );
 }
 
-function dimensionValue(value: DimensionValue) {
+export function dimensionValue(value: DimensionValue) {
   if (typeof value === 'number') {
     return value + 'px';
   }
 
-  if (/(%|px|em|rem)$/.test(value)) {
+  if (/(%|px|em|rem|vw)$/.test(value)) {
     return value;
   }
 
@@ -122,6 +147,10 @@ function borderRadiusValue(value: BorderRadiusValue) {
 
 function hiddenValue(value: boolean) {
   return value ? 'none' : undefined;
+}
+
+function anyValue(value: any) {
+  return value;
 }
 
 export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers, direction: Direction) {
@@ -198,3 +227,54 @@ export function useStyleProps(props: StyleProps, handlers: StyleHandlers = baseS
     styleProps
   };
 }
+
+export function passthroughStyle(value) {
+  return value;
+}
+
+// Normalize 'start' and 'end' alignment values to 'flex-start' and 'flex-end'
+// in flex containers for browser compatibility.
+function flexAlignValue(value) {
+  if (value === 'start') {
+    return 'flex-start';
+  }
+
+  if (value === 'end') {
+    return 'flex-end';
+  }
+
+  return value;
+}
+
+export const flexStyleProps: StyleHandlers = {
+  flexDirection: ['flexDirection', passthroughStyle],
+  flexWrap: ['flexWrap', passthroughStyle],
+  justifyContent: ['justifyContent', flexAlignValue],
+  alignItems: ['alignItems', flexAlignValue],
+  alignContent: ['alignContent', flexAlignValue]
+};
+
+export const gridStyleProps: StyleHandlers = {
+  grid: ['grid', passthroughStyle],
+  gridArea: ['gridArea', passthroughStyle],
+  gridAutoColumns: ['gridAutoColumns', passthroughStyle],
+  gridAutoFlow: ['gridAutoFlow', passthroughStyle],
+  gridAutoRows: ['gridAutoRows', passthroughStyle],
+  gridColumn: ['gridColumn', passthroughStyle],
+  gridColumnEnd: ['gridColumnEnd', passthroughStyle],
+  gridColumnStart: ['gridColumnStart', passthroughStyle],
+  gridRow: ['gridRow', passthroughStyle],
+  gridRowEnd: ['gridRowEnd', passthroughStyle],
+  gridRowStart: ['gridRowStart', passthroughStyle],
+  gridTemplate: ['gridTemplate', passthroughStyle],
+  gridTemplateAreas: ['gridTemplateAreas', passthroughStyle],
+  gridTemplateColumns: ['gridTemplateColumns', passthroughStyle],
+  gridTemplateRows: ['gridTemplateRows', passthroughStyle],
+  gap: ['gap', dimensionValue],
+  rowGap: ['rowGap', dimensionValue],
+  columnGap: ['rowGap', dimensionValue],
+  justifyItems: ['justifyItems', passthroughStyle],
+  justifyContent: ['justifyContent', passthroughStyle],
+  alignItems: ['alignItems', passthroughStyle],
+  alignContent: ['alignContent', passthroughStyle]
+};

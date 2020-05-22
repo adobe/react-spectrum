@@ -32,3 +32,7 @@ Search open/closed issues before submitting since someone might have asked the s
 | react-spectrum   |
 | Browser          |
 | Operating System |
+
+## 🧢 Your Company/Team
+
+<!--- Which product team are you a part of? (i.e. Adobe/Photoshop) -->

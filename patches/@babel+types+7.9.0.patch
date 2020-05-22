@@ -1,0 +1,18 @@
+diff --git a/node_modules/@babel/types/lib/retrievers/getBindingIdentifiers.js b/node_modules/@babel/types/lib/retrievers/getBindingIdentifiers.js
+index 189f4b8..b8b6967 100644
+--- a/node_modules/@babel/types/lib/retrievers/getBindingIdentifiers.js
++++ b/node_modules/@babel/types/lib/retrievers/getBindingIdentifiers.js
+@@ -72,6 +72,13 @@ getBindingIdentifiers.keys = {
+   InterfaceDeclaration: ["id"],
+   TypeAlias: ["id"],
+   OpaqueType: ["id"],
++  TSDeclareFunction: ["id"],
++  TSEnumDeclaration: ["id"],
++  TSImportEqualsDeclaration: ["id"],
++  TSInterfaceDeclaration: ["id"],
++  TSModuleDeclaration: ["id"],
++  TSNamespaceExportDeclaration: ["id"],
++  TSTypeAliasDeclaration: ["id"],
+   CatchClause: ["param"],
+   LabeledStatement: ["label"],
+   UnaryExpression: ["argument"],

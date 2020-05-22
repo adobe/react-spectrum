@@ -1,21 +1,45 @@
-import {ButtonHTMLAttributes, InputHTMLAttributes, RefObject} from 'react';
-import {chain} from '@react-aria/utils';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {ButtonHTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {PressProps} from '@react-aria/interactions';
 import {SearchFieldProps} from '@react-types/searchfield';
 import {SearchFieldState} from '@react-stately/searchfield';
 import {TextInputDOMProps} from '@react-types/shared';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useTextField} from '@react-aria/textfield';
 
+interface SearchFieldAriaProps extends SearchFieldProps, TextInputDOMProps {}
 interface SearchFieldAria {
-  searchFieldProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Props for the text field's visible label element (if any). */
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  /** Props for the input element. */
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Props for the clear button. */
   clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement> & PressProps
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a search field.
+ * @param props - props for the search field
+ * @param state - state for the search field, as returned by `useSearchFieldState`
+ * @param inputRef - a ref to the input element
+ */
 export function useSearchField(
-  props: SearchFieldProps & TextInputDOMProps,
+  props: SearchFieldAriaProps,
   state: SearchFieldState,
-  searchFieldRef: RefObject<HTMLInputElement & HTMLTextAreaElement>
+  inputRef: RefObject<HTMLInputElement & HTMLTextAreaElement>
 ): SearchFieldAria {
   let formatMessage = useMessageFormatter(intlMessages);
   let {
@@ -50,18 +74,28 @@ export function useSearchField(
 
   let onClearButtonClick = () => {
     state.setValue('');
-    searchFieldRef.current.focus();
+    inputRef.current.focus();
+   
+    if (onClear) {
+      onClear();
+    }
   };
 
+  let {labelProps, inputProps} = useTextField({
+    ...props,
+    value: state.value,
+    onChange: state.setValue,
+    onKeyDown,
+    type
+  }, inputRef);
+
   return {
-    searchFieldProps: {
-      value: state.value,
-      onKeyDown,
-      type
-    },
+    labelProps,
+    inputProps,
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),
-      onPress: chain(onClearButtonClick, props.onClear)
+      tabIndex: -1,
+      onPress: onClearButtonClick
     }
   };
 }

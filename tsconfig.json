@@ -25,7 +25,9 @@
     "lib": [
       "es6",
       "dom"
-    ]
+    ],
+    // Skip type checking of all declaration files (*.d.ts).
+    "skipLibCheck": true
   },
   "include": [
     "packages"

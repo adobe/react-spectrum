@@ -31,15 +31,15 @@ governing permissions and limitations under the License.
 
   &:before,
   &:after {
-    top: calc(-1 * var(--spectrum-dropindicator-circle-size) / 2 + var(--spectrum-dropindicator-border-size) / 2);
+    top: calc(var(--spectrum-dropindicator-circle-size) * -1 / 2 + var(--spectrum-dropindicator-border-size) / 2);
   }
 
   &:before {
-    left: calc(-1 * var(--spectrum-dropindicator-circle-size));
+    left: calc(var(--spectrum-dropindicator-circle-size) * -1);
   }
 
   &:after {
-    right: calc(-1 * var(--spectrum-dropindicator-circle-size));
+    right: calc(var(--spectrum-dropindicator-circle-size) * -1);
   }
 }
 
@@ -49,14 +49,14 @@ governing permissions and limitations under the License.
 
   &:before,
   &:after {
-    left: calc(-1 * var(--spectrum-dropindicator-circle-size) / 2 + var(--spectrum-dropindicator-border-size) / 2);
+    left: calc(var(--spectrum-dropindicator-circle-size) * -1 / 2 + var(--spectrum-dropindicator-border-size) / 2);
   }
 
   &:before {
-    top: calc(-1 * var(--spectrum-dropindicator-circle-size));
+    top: calc(var(--spectrum-dropindicator-circle-size) * -1);
   }
 
   &:after {
-    bottom: calc(-1 * var(--spectrum-dropindicator-circle-size));
+    bottom: calc(var(--spectrum-dropindicator-circle-size) * -1);
   }
 }

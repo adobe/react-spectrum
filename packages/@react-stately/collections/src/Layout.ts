@@ -1,3 +1,15 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {CollectionManager} from './CollectionManager';
 import {InvalidationContext} from './types';
 import {Key} from 'react';
@@ -30,11 +42,10 @@ export abstract class Layout<T extends object> {
    * when the collection view's size changes. Return true always
    * to make the layout invalidate while scrolling (e.g. sticky headers).
    */
-  shouldInvalidate(rect: Rect): boolean {
+  shouldInvalidate(newRect: Rect, oldRect: Rect): boolean {
     // By default, invalidate when the size changes
-    let size = this.collectionManager.visibleRect;
-    return rect.width !== size.width
-        || rect.height !== size.height;
+    return newRect.width !== oldRect.width
+        || newRect.height !== oldRect.height;
   }
 
   /**
@@ -53,12 +64,11 @@ export abstract class Layout<T extends object> {
   abstract getVisibleLayoutInfos(rect: Rect): LayoutInfo[];
 
   /**
-   * Returns a {@link LayoutInfo} for the given type, section, and index.
+   * Returns a {@link LayoutInfo} for the given key.
    * Should be implemented by subclasses.
-   * @param type The type of the LayoutInfo to retrieve
    * @param key The key of the LayoutInfo to retrieve
    */
-  abstract getLayoutInfo(type: string, key: Key): LayoutInfo;
+  abstract getLayoutInfo(key: Key): LayoutInfo;
 
   /**
    * Returns size of the content. By default, it returns collectionView's size.

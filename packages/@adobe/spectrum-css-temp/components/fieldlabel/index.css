@@ -71,7 +71,7 @@ governing permissions and limitations under the License.
   }
 
   /* The side label variant of Field is inline, and fills as much space as needed
-  * by default. If an explicit width is set, then the field flexes to fill available space. */
+   * by default. If an explicit width is set, then the field flexes to fill available space. */
   &.spectrum-Field--positionSide {
     display: inline-flex;
     align-items: flex-start;
@@ -99,16 +99,16 @@ governing permissions and limitations under the License.
     .spectrum-Field {
       display: table-row;
       width: 100%;
+    }
 
-      .spectrum-FieldLabel {
-        display: table-cell;
-      }
+    .spectrum-FieldLabel {
+      display: table-cell;
+    }
 
-      .spectrum-Field-field {
-        display: table-cell;
-        width: auto;
-        min-width: var(--spectrum-component-single-line-width);
-      }
+    .spectrum-Field-field {
+      display: table-cell;
+      width: auto;
+      min-width: var(--spectrum-component-single-line-width);
     }
   }
 
@@ -120,8 +120,8 @@ governing permissions and limitations under the License.
     min-width: var(--spectrum-component-single-line-width);
 
     /* Users may want to make multiple fields appear next to each other.
-    * We want to ensure that all items inside the form get the proper
-    * margin and widths applied, even if wrapped in extra divs for example. */
+     * We want to ensure that all items inside the form get the proper
+     * margin and widths applied, even if wrapped in extra divs for example. */
     > * {
       margin-top: var(--spectrum-fieldlabel-margin);
       width: 100%;

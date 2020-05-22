@@ -23,10 +23,6 @@ governing permissions and limitations under the License.
 
   margin: 0;
   padding: 0;
-
-  &.is-hidden {
-    visibility: hidden;
-  }
 }
 
 .spectrum-Breadcrumbs-itemSeparator {
@@ -123,10 +119,6 @@ governing permissions and limitations under the License.
 
   content: '';
   pointer-events: none;
-}
-
-.spectrum-Breadcrumbs-dropdown {
-  position: absolute;
 }
 
 .spectrum-Breadcrumbs--compact {

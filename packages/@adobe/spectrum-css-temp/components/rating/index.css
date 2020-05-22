@@ -41,7 +41,7 @@ governing permissions and limitations under the License.
 
   border-radius: var(--spectrum-rating-border-radius);
 
-  cursor: pointer;
+  cursor: default;
 
   &.is-disabled,
   &.is-readOnly {

@@ -1,53 +1,74 @@
-import {AllHTMLAttributes, SyntheticEvent} from 'react';
-import {DOMProps, PressEvent} from '@react-types/shared';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {DOMProps} from '@react-types/shared';
+import {HTMLAttributes, RefObject} from 'react';
 import {LinkProps} from '@react-types/link';
-import {useId} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
 
 export interface AriaLinkProps extends LinkProps, DOMProps {
+  /** Whether the link is disabled. */
   isDisabled?: boolean,
-  href?: string,
-  tabIndex?: number,
-  onPress?: (e: PressEvent) => void,
-  onClick?: (e: SyntheticEvent) => void
+  /**
+   * The HTML element used to render the link, e.g. "a", or "span".
+   * @default "a"
+   */
+  elementType?: string,
+  /** A ref to the link element. */
+  ref?: RefObject<HTMLElement | null>
 }
 
 export interface LinkAria {
-  linkProps: AllHTMLAttributes<HTMLDivElement>
+  /** Props for the link element. */
+  linkProps: HTMLAttributes<HTMLDivElement>
 }
 
+/**
+ * Provides the behavior and accessibility implementation for a link component.
+ * A link allows a user to navigate to another page or resource within a web page
+ * or application.
+ */
 export function useLink(props: AriaLinkProps): LinkAria {
   let {
     id,
-    href,
     tabIndex = 0,
-    children,
+    elementType = 'a',
     onPress,
+    onPressStart,
+    onPressEnd,
+    // @ts-ignore
     onClick: deprecatedOnClick,
-    isDisabled
+    isDisabled,
+    ref
   } = props;
 
-  let linkProps: AllHTMLAttributes<HTMLDivElement>;
-  if (typeof children === 'string') {
+  let linkProps: HTMLAttributes<HTMLDivElement>;
+  if (elementType !== 'a') {
     linkProps = {
       role: 'link',
-      tabIndex: !isDisabled ? tabIndex : undefined,
-      'aria-disabled': isDisabled || undefined
+      tabIndex: !isDisabled ? tabIndex : undefined
     };
   }
 
-  if (href) {
-    console.warn('href is deprecated, please use an anchor element as children');
-  }
-
-  let {pressProps} = usePress({onPress, isDisabled});
+  let {pressProps} = usePress({onPress, onPressStart, onPressEnd, isDisabled, ref});
 
   return {
     linkProps: {
       ...pressProps,
       ...linkProps,
-      id: useId(id),
+      id,
+      'aria-disabled': isDisabled || undefined,
       onClick: (e) => {
+        pressProps.onClick(e);
         if (deprecatedOnClick) {
           deprecatedOnClick(e);
           console.warn('onClick is deprecated, please use onPress');

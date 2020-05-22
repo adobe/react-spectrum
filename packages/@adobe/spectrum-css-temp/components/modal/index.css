@@ -20,7 +20,8 @@ governing permissions and limitations under the License.
   --spectrum-dialog-exit-animation-delay: 0ms;
 
   /* Distance between top and bottom of dialog and edge of window for fullscreen dialog */
-  --spectrum-dialog-fullscreen-margin: 32px;
+  --spectrum-dialog-fullscreen-margin: 40px;
+  --spectrum-dialog-max-height: 90vh;
 }
 
 /* Used to position the modal */
@@ -58,14 +59,13 @@ governing permissions and limitations under the License.
 
   /* Start offset by the animation distance */
   transform: translateY(var(--spectrum-dialog-entry-animation-distance));
-  margin-top: var(--spectrum-dialog-vertical-offset);
 
   /* Appear above underlay */
   z-index: 2;
 
   /* Don't be bigger than the screen */
-  max-width: var(--spectrum-dialog-max-width);
   max-height: var(--spectrum-dialog-max-height);
+  max-width: 90vw;
 
   border-radius: var(--spectrum-dialog-border-radius);
   outline: none; /* Firefox shows outline */

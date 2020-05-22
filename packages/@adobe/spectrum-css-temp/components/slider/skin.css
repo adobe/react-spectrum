@@ -119,8 +119,8 @@ governing permissions and limitations under the License.
     background-position:
       0 0,
       0 var(--spectrum-global-dimension-static-size-100),
-      var(--spectrum-global-dimension-static-size-100) calc(-1 * var(--spectrum-global-dimension-static-size-100)),
-      calc(-1 * var(--spectrum-global-dimension-static-size-100)) 0;
+      var(--spectrum-global-dimension-static-size-100) calc(var(--spectrum-global-dimension-static-size-100) * -1),
+      calc(var(--spectrum-global-dimension-static-size-100) * -1) 0;
     z-index: 0;
   }
   .spectrum-Slider-track {

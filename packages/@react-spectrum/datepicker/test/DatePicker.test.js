@@ -1,5 +1,17 @@
-import {cleanup, fireEvent, render} from '@testing-library/react';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {DatePicker} from '../';
+import {fireEvent, render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
@@ -12,8 +24,6 @@ let theme = {
 };
 
 describe('DatePicker', function () {
-  afterEach(cleanup);
-
   describe('basics', function () {
     it('should render a datepicker with a specified date', function () {
       let {getByRole, getAllByRole} = render(<DatePicker value={new Date(2019, 1, 3)} />);
@@ -268,7 +278,7 @@ describe('DatePicker', function () {
         };
 
         // Test controlled mode
-        let {getByLabelText} = render(<DatePicker value={value} onChange={onChange} formatOptions={format} />);
+        let {getByLabelText, unmount} = render(<DatePicker value={value} onChange={onChange} formatOptions={format} />);
         let segment = getByLabelText(label);
         let textContent = segment.textContent;
         segment.focus();
@@ -282,11 +292,11 @@ describe('DatePicker', function () {
         expect(onChange).toHaveBeenCalledTimes(2);
         expect(onChange).toHaveBeenCalledWith(decremented);
         expect(segment.textContent).toBe(textContent);
-        cleanup();
+        unmount();
 
         // Test uncontrolled mode (increment)
         onChange = jest.fn();
-        ({getByLabelText} = render(<DatePicker defaultValue={value} onChange={onChange} formatOptions={format} />));
+        ({getByLabelText, unmount} = render(<DatePicker defaultValue={value} onChange={onChange} formatOptions={format} />));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         segment.focus();
@@ -295,11 +305,11 @@ describe('DatePicker', function () {
         expect(onChange).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenCalledWith(incremented);
         expect(segment.textContent).not.toBe(textContent);
-        cleanup();
+        unmount();
 
         // Test uncontrolled mode (decrement)
         onChange = jest.fn();
-        ({getByLabelText} = render(<DatePicker defaultValue={value} onChange={onChange} formatOptions={format} />));
+        ({getByLabelText, unmount} = render(<DatePicker defaultValue={value} onChange={onChange} formatOptions={format} />));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         segment.focus();
@@ -308,11 +318,11 @@ describe('DatePicker', function () {
         expect(onChange).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenCalledWith(decremented);
         expect(segment.textContent).not.toBe(textContent);
-        cleanup();
+        unmount();
 
         // Test read only mode (increment)
         onChange = jest.fn();
-        ({getByLabelText} = render(<DatePicker defaultValue={value} isReadOnly onChange={onChange} formatOptions={format} />));
+        ({getByLabelText, unmount} = render(<DatePicker defaultValue={value} isReadOnly onChange={onChange} formatOptions={format} />));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         segment.focus();
@@ -320,11 +330,11 @@ describe('DatePicker', function () {
         fireEvent.keyDown(segment, {key: options.upKey || 'ArrowUp'});
         expect(onChange).not.toHaveBeenCalled();
         expect(segment.textContent).toBe(textContent);
-        cleanup();
+        unmount();
 
         // Test read only mode (decrement)
         onChange = jest.fn();
-        ({getByLabelText} = render(<DatePicker defaultValue={value} isReadOnly onChange={onChange} formatOptions={format} />));
+        ({getByLabelText, unmount} = render(<DatePicker defaultValue={value} isReadOnly onChange={onChange} formatOptions={format} />));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         segment.focus();
@@ -332,7 +342,7 @@ describe('DatePicker', function () {
         fireEvent.keyDown(segment, {key: options.downKey || 'ArrowDown'});
         expect(onChange).not.toHaveBeenCalled();
         expect(segment.textContent).toBe(textContent);
-        cleanup();
+        unmount();
       }
 
       describe('month', function () {
@@ -481,7 +491,7 @@ describe('DatePicker', function () {
         };
 
         // Test controlled mode
-        let {getByLabelText, getAllByRole} = render(<DatePicker value={value} onChange={onChange} formatOptions={format} />);
+        let {getByLabelText, getAllByRole, unmount} = render(<DatePicker value={value} onChange={onChange} formatOptions={format} />);
         let segment = getByLabelText(label);
         let textContent = segment.textContent;
         segment.focus();
@@ -507,11 +517,11 @@ describe('DatePicker', function () {
           expect(segment).toHaveFocus();
         }
 
-        cleanup();
+        unmount();
 
         // Test uncontrolled mode
         onChange = jest.fn();
-        ({getByLabelText, getAllByRole} = render(<DatePicker defaultValue={value} onChange={onChange} formatOptions={format} />));
+        ({getByLabelText, getAllByRole, unmount} = render(<DatePicker defaultValue={value} onChange={onChange} formatOptions={format} />));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         segment.focus();
@@ -537,11 +547,11 @@ describe('DatePicker', function () {
           expect(segment).toHaveFocus();
         }
 
-        cleanup();
+        unmount();
 
         // Test read only mode
         onChange = jest.fn();
-        ({getByLabelText, getAllByRole} = render(<DatePicker defaultValue={value} isReadOnly onChange={onChange} formatOptions={format} />));
+        ({getByLabelText, getAllByRole, unmount} = render(<DatePicker defaultValue={value} isReadOnly onChange={onChange} formatOptions={format} />));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         segment.focus();
@@ -555,7 +565,7 @@ describe('DatePicker', function () {
 
         expect(onChange).not.toHaveBeenCalled();
         expect(segment).toHaveFocus();
-        cleanup();
+        unmount();
       }
 
       it('should support typing into the month segment', function () {
@@ -634,7 +644,7 @@ describe('DatePicker', function () {
         };
 
         // Test controlled mode
-        let {getByLabelText} = render(<DatePicker value={value} onChange={onChange} formatOptions={format} />);
+        let {getByLabelText, unmount} = render(<DatePicker value={value} onChange={onChange} formatOptions={format} />);
         let segment = getByLabelText(label);
         let textContent = segment.textContent;
         segment.focus();
@@ -643,11 +653,11 @@ describe('DatePicker', function () {
         expect(onChange).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenCalledWith(newValue);
         expect(segment.textContent).toBe(textContent);
-        cleanup();
+        unmount();
 
         // Test uncontrolled mode
         onChange = jest.fn();
-        ({getByLabelText} = render(<DatePicker defaultValue={value} onChange={onChange} formatOptions={format} />));
+        ({getByLabelText, unmount} = render(<DatePicker defaultValue={value} onChange={onChange} formatOptions={format} />));
         segment = getByLabelText(label);
         textContent = segment.textContent;
         segment.focus();
@@ -656,7 +666,7 @@ describe('DatePicker', function () {
         expect(onChange).toHaveBeenCalledTimes(1);
         expect(onChange).toHaveBeenCalledWith(newValue);
         expect(segment.textContent).not.toBe(textContent);
-        cleanup();
+        unmount();
       }
 
       it('should support backspace in the month segment', function () {

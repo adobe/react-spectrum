@@ -1,20 +1,35 @@
-import {createEventHandler} from './createEventHandler';
-import {FocusEvent} from '@react-types/shared';
-import {HTMLAttributes, useRef} from 'react';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import {FocusEvent, HTMLAttributes, useRef} from 'react';
 
 interface FocusWithinProps {
+  /** Whether the focus within events should be disabled. */
   isDisabled?: boolean,
+  /** Handler that is called when the target element or a descendant receives focus. */
   onFocusWithin?: (e: FocusEvent) => void,
+  /** Handler that is called when the target element and all descendants lose focus. */
   onBlurWithin?: (e: FocusEvent) => void,
+  /** Handler that is called when the the focus within state changes. */
   onFocusWithinChange?: (isFocusWithin: boolean) => void
 }
 
 interface FocusWithinResult {
+  /** Props to spread onto the target element. */
   focusWithinProps: HTMLAttributes<HTMLElement>
 }
 
 /**
- * Handles focus events for the target and all children
+ * Handles focus events for the target and its descendants.
  */
 export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
   let state = useRef({
@@ -25,41 +40,36 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
     return {focusWithinProps: {}};
   }
 
-  let onFocus, onBlur;
-  if (props.onFocusWithin || props.onFocusWithinChange) {
-    onFocus = createEventHandler((e: FocusEvent) => {
+  let onFocus = (e: FocusEvent) => {
+    if (!state.isFocusWithin) {
       if (props.onFocusWithin) {
         props.onFocusWithin(e);
       }
-
-      if (!state.isFocusWithin) {
-        if (props.onFocusWithinChange) {
-          props.onFocusWithinChange(true);
-        }
-
-        state.isFocusWithin = true;
+  
+      if (props.onFocusWithinChange) {
+        props.onFocusWithinChange(true);
       }
-    });
-  }
 
-  if (props.onBlurWithin || props.onFocusWithinChange) {
-    onBlur = createEventHandler((e: FocusEvent) => {
-      // We don't want to trigger onBlurWithin and then immediately onFocusWithin again 
-      // when moving focus inside the element. Only trigger if the currentTarget doesn't 
-      // include the relatedTarget (where focus is moving).
-      if (state.isFocusWithin && !e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
-        if (props.onBlurWithin) {
-          props.onBlurWithin(e);
-        }
+      state.isFocusWithin = true;
+    }
+  };
 
-        if (props.onFocusWithinChange) {
-          props.onFocusWithinChange(false);
-        }
-
-        state.isFocusWithin = false;
+  let onBlur = (e: FocusEvent) => {
+    // We don't want to trigger onBlurWithin and then immediately onFocusWithin again 
+    // when moving focus inside the element. Only trigger if the currentTarget doesn't 
+    // include the relatedTarget (where focus is moving).
+    if (state.isFocusWithin && !e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
+      if (props.onBlurWithin) {
+        props.onBlurWithin(e);
       }
-    });
-  }
+
+      if (props.onFocusWithinChange) {
+        props.onFocusWithinChange(false);
+      }
+
+      state.isFocusWithin = false;
+    }
+  };
   
   return {
     focusWithinProps: {

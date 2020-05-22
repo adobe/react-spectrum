@@ -1,3 +1,15 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames, filterDOMProps} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
@@ -13,7 +25,7 @@ import {useSelectableCollection, useSelectableItem} from '@react-aria/selection'
 
 export {Item, Section};
 
-export function Tree<T>(props: CollectionBase<T> & Expandable & MultipleSelection) {
+export function Tree<T extends object>(props: CollectionBase<T> & Expandable & MultipleSelection) {
   let state = useTreeState(props);
   let layout = useMemo(() => 
     new ListLayout({
@@ -25,18 +37,21 @@ export function Tree<T>(props: CollectionBase<T> & Expandable & MultipleSelectio
     })
   , []);
 
-  let {listProps} = useSelectableCollection({
+  let ref = useRef();
+  let {collectionProps} = useSelectableCollection({
+    ref,
     selectionManager: state.selectionManager,
     keyboardDelegate: layout
   });
 
   return (
     <CollectionView
-      {...listProps}
+      {...collectionProps}
+      ref={ref}
       focusedKey={state.selectionManager.focusedKey}
       className={classNames(styles, 'spectrum-TreeView')}
       layout={layout}
-      collection={state.tree}>
+      collection={state.collection}>
       {(type, item) => {
         if (type === 'section') {
           return <TreeHeading item={item} />;
@@ -58,11 +73,13 @@ interface TreeItemProps<T> {
 function TreeItem<T>(props: TreeItemProps<T>) {
   let {item, state} = props;
   let {
+    key,
     rendered,
-    hasChildNodes,
-    isExpanded,
-    isSelected
+    hasChildNodes
   } = item;
+
+  let isExpanded = state.expandedKeys.has(key);
+  let isSelected = state.selectionManager.isSelected(key);
   
   let itemClassName = classNames(styles, 'spectrum-TreeView-item', {
     'is-open': isExpanded

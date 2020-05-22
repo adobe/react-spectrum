@@ -36,7 +36,7 @@ let TOAST_POSITIONS = [
 ];
 
 function ProviderFieldSetter({api}) {
-  let [values, setValues] = useState({locale: providerValuesFromUrl.locale || undefined, theme: providerValuesFromUrl.theme || undefined, scale: providerValuesFromUrl.scale || undefined, toastPosition: providerValuesFromUrl.toastPosition || 'top'});
+  let [values, setValues] = useState({locale: providerValuesFromUrl.locale || undefined, theme: providerValuesFromUrl.theme || undefined, scale: providerValuesFromUrl.scale || undefined, toastPosition: providerValuesFromUrl.toastPosition || 'bottom'});
   let channel = addons.getChannel();
   let onLocaleChange = (e) => {
     let newValue = e.target.value || undefined;
@@ -94,7 +94,7 @@ function ProviderFieldSetter({api}) {
       <div style={{marginRight: '10px'}}>
         <label htmlFor="locale">Locale: </label>
         <select id="locale" name="locale" onChange={onLocaleChange} value={values.locale}>
-          {locales.map(locale => <option key={locale} value={locale.value}>{locale.label}</option>)}
+          {locales.map(locale => <option key={locale.label} value={locale.value}>{locale.label}</option>)}
         </select>
       </div>
       <div style={{marginRight: '10px'}}>

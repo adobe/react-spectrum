@@ -1,18 +1,89 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {DOMProps, StyleProps} from '@react-types/shared';
 import {PositionProps} from '@react-types/overlays';
 import {ReactElement, ReactNode, RefObject} from 'react';
 
-export interface SpectrumDialogTriggerProps extends PositionProps {
-  children: ReactElement[],
-  type?: 'modal' | 'popover' | 'tray',
-  mobileType?: 'modal' | 'tray',
-  hideArrow?: boolean,
-  targetRef?: RefObject<HTMLElement>,
+export type SpectrumDialogClose = (close: () => void) => ReactElement;
+
+export interface DialogTriggerProps {
+  /** Whether the Dialog is open by default (controlled). */
   isOpen?: boolean,
+  /** Whether the Dialog is open by default (uncontrolled). */
   defaultOpen?: boolean,
+  /** Handler that is called when the Dialog's open state changes. */
   onOpenChange?: (isOpen: boolean) => void
 }
 
+export interface SpectrumDialogTriggerProps extends DialogTriggerProps, PositionProps {
+  /** The Dialog and its trigger element. See the DialogTrigger [Content section](#content) for more information on what to provide as children. */
+  children: [ReactElement, SpectrumDialogClose | ReactElement],
+  /** 
+   * The type of Dialog that should be rendered. See the DialogTrigger [types section](#dialog-types) for an explaination on each. 
+   * @default "modal"
+   */
+  type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  /** The type of Dialog that should be rendered when on a mobile device. See DialogTrigger [types section](#dialog-types) for an explaination on each. */
+  mobileType?: 'modal' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  /**
+   * Whether a popover type Dialog's arrow should be hidden.
+   * @default "false"
+   */
+  hideArrow?: boolean,
+  /** The ref of the element the Dialog should visually attach itself to. Defaults to the trigger button if not defined. */
+  targetRef?: RefObject<HTMLElement>,
+  /** Whether a modal type Dialog should be dismissable. */
+  isDismissable?: boolean
+}
+
 export interface SpectrumDialogProps extends DOMProps, StyleProps {
-  children: ReactNode
+  /** The contents of the Dialog. */
+  children: ReactNode,
+  /** The size of the Dialog. Only applies to "modal" type Dialogs. */
+  size?: 'S' | 'M' | 'L',
+  /** Whether the Dialog is dismissable. See the [examples](#examples) for more details. */
+  isDismissable?: boolean,
+  /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
+  onDismiss?: () => void,
+  /** The role of the Dialog. */
+  role?: 'dialog' | 'alertdialog'
+}
+
+export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
+  /** The [visual style](https://spectrum.adobe.com/page/dialog/#Options) of the AlertDialog.  */
+  variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning'
+  /** The title of the AlertDialog. */
+  title: string,
+  /** The contents of the AlertDialog. */
+  children: ReactNode,
+  /** The label to display within the cancel button. */
+  cancelLabel?: string,
+  /** The label to display within the confirm button. */
+  primaryActionLabel: string,
+  /** The label to display within the secondary button. */
+  secondaryActionLabel?: string,
+  /** Whether the primary button is disabled. */
+  isPrimaryActionDisabled?: boolean,
+  /** Whether the secondary button is disabled. */
+  isSecondaryActionDisabled?: boolean,
+  /** Handler that is called when the cancel button is pressed. */
+  onCancel?: () => void,
+  /** Handler that is called when the primary button is pressed. */
+  onPrimaryAction?: () => void,
+  /** Handler that is called when the secondary button is pressed. */
+  onSecondaryAction?: () => void,
+  /** Button to focus by default upon render. */
+  autoFocusButton?: 'cancel' | 'primary' | 'secondary',
+  // allowsKeyboardConfirmation?: boolean, // triggers primary action
+  // isKeyboardCancelDisabled?: boolean // needed?
 }

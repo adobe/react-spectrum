@@ -1,5 +1,17 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {Calendar, RangeCalendar} from '../';
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import {getDaysInMonth} from 'date-fns';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -18,8 +30,6 @@ let headingFormatter = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'n
 let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40};
 
 describe('CalendarBase', () => {
-  afterEach(cleanup);
-
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
@@ -260,10 +270,10 @@ describe('CalendarBase', () => {
         defaultValue = [defaultValue, defaultValue];
       }
 
-      let {getByRole, getByLabelText} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
-      let grid = getByRole('grid');
+      let {getByRole, getAllByRole, getByLabelText, getAllByLabelText, unmount} = render(<Calendar defaultValue={defaultValue} autoFocus {...props} />);
+      let grid = getAllByRole('grid')[0]; // get by role will see two, role=grid and implicit <table> which also has role=grid
 
-      let cell = getByLabelText('selected', {exact: false});
+      let cell = getAllByLabelText('selected', {exact: false})[0];
       expect(grid).toHaveAttribute('aria-activedescendant', cell.id);
 
       fireEvent.keyDown(document.activeElement, {key, keyCode: keyCodes[key], ...opts});
@@ -273,7 +283,7 @@ describe('CalendarBase', () => {
       let heading = getByRole('heading');
       expect(heading).toHaveTextContent(month);
 
-      cleanup();
+      unmount();
     }
 
     it.each`

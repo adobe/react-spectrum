@@ -61,7 +61,7 @@ governing permissions and limitations under the License.
 
   line-height: var(--spectrum-button-line-height);
 
-  cursor: pointer;
+  cursor: default;
   user-select: none;
   -webkit-user-select: none;
   touch-action: none; /* prevent touch scrolling on buttons */
@@ -91,6 +91,7 @@ governing permissions and limitations under the License.
   .spectrum-Icon {
     max-block-size: 100%;
     flex-shrink: 0;
+    order: 0; /* always be before the label, regardless of DOM order */
   }
 }
 
@@ -119,12 +120,13 @@ governing permissions and limitations under the License.
     box-shadow: none;
   }
 
+  /* there should be space between the icon and text no matter the DOM order */ 
   .spectrum-Icon + .spectrum-Button-label {
     margin-inline-start: var(--spectrum-button-primary-text-gap);
   }
 
   .spectrum-Button-label + .spectrum-Icon {
-    margin-inline-start: calc(var(--spectrum-button-primary-text-gap) / 2);
+    margin-inline-end: var(--spectrum-button-primary-text-gap);
   }
 }
 
@@ -134,6 +136,7 @@ a.spectrum-ActionButton {
   -webkit-appearance: none;
   /* Make link text not selectable  */
   user-select: none;
+  cursor: pointer;
 }
 
 .spectrum-ActionButton {
@@ -142,9 +145,7 @@ a.spectrum-ActionButton {
 
   height: var(--spectrum-actionbutton-height);
   min-width: var(--spectrum-actionbutton-min-width);
-
-  /* Use icon padding by default as it's smaller */
-  padding: 0 calc(var(--spectrum-actionbutton-icon-padding-x) - var(--spectrum-actionbutton-border-size));
+  padding: 0;
 
   border-width: var(--spectrum-actionbutton-border-size);
   border-radius: var(--spectrum-actionbutton-border-radius);
@@ -152,37 +153,53 @@ a.spectrum-ActionButton {
   font-size: var(--spectrum-actionbutton-text-size);
   font-weight: var(--spectrum-actionbutton-text-font-weight);
 
-  .spectrum-Icon + .spectrum-ActionButton-label {
-    /* Have icon padding on the left */
+  /* icon should always have padding at the start */
+  .spectrum-Icon {
     padding-inline-start: var(--spectrum-actionbutton-icon-padding-x);
-
-    /* Have text padding on the right */
-    padding-inline-end: calc(var(--spectrum-actionbutton-text-padding-x) - var(--spectrum-actionbutton-icon-padding-x));
   }
 
-  .spectrum-Icon--sizeS:only-child {
-    /* Position absolutely to avoid layout errors introduced by padding */
-    position: absolute;
-    top: calc(50% - calc(var(--spectrum-actionbutton-icon-size) / 2));
-    left: calc(50% - calc(var(--spectrum-actionbutton-icon-size) / 2));
+  /* label should always have padding at the end */
+  .spectrum-ActionButton-label {
+    padding-inline-end: var(--spectrum-actionbutton-text-padding-x);
   }
 
-  .spectrum-ActionButton-label:only-child {
-    /* Add padding for text only buttons */
-    padding: 0 calc(var(--spectrum-actionbutton-text-padding-x) - var(--spectrum-actionbutton-icon-padding-x));
+  /* icon + text buttons should have padding between the text and icon no matter the order */
+  .spectrum-Icon + .spectrum-ActionButton-label {
+    padding-inline-start: var(--spectrum-actionbutton-icon-padding-x);
+  }
+
+  .spectrum-ActionButton-label + .spectrum-Icon {
+    padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
+  }
+
+  /* text only buttons should have padding at the start */
+  .spectrum-ActionButton-label:only-child,
+  .spectrum-ActionButton-hold + .spectrum-ActionButton-label:last-child {
+    padding-inline-start: var(--spectrum-actionbutton-text-padding-x);
+  }
+
+  /* icon only buttons should have padding at the end */
+  .spectrum-Icon:only-child,
+  .spectrum-ActionButton-hold + .spectrum-Icon:last-child {
+    padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
   }
 }
 
 .spectrum-ActionButton-hold {
   position: absolute;
-  right: var(--spectrum-actionbutton-hold-icon-padding-right);
-  bottom: var(--spectrum-actionbutton-hold-icon-padding-bottom);
+  inset-inline-end: var(--spectrum-actionbutton-hold-icon-padding-right);
+  inset-block-end: var(--spectrum-actionbutton-hold-icon-padding-bottom);
+}
+
+[dir='rtl'] .spectrum-ActionButton-hold {
+  transform: rotate(90deg);
 }
 
 .spectrum-ActionButton-label,
 .spectrum-Button-label {
   align-self: center;
   justify-self: center;
+  order: 1; /* always be after the icon, regardless of DOM order */
 
   /* Fixes horizontal alignment of text in anchor buttons */
   text-align: center;
@@ -237,7 +254,7 @@ a.spectrum-ActionButton {
   line-height: normal;
   -webkit-font-smoothing: initial;
 
-  cursor: pointer;
+  cursor: default;
   outline: none;
 }
 
@@ -312,4 +329,66 @@ a.spectrum-ActionButton {
 
 .spectrum-ActionButton + .spectrum-ActionButton {
   margin-inline-start: var(--spectrum-actionbuttongroup-text-button-gap-x);
+}
+
+.spectrum-ButtonGroup--vertical {
+  display: inline-flex;
+  flex-direction: column;
+
+  .spectrum-ButtonGroup-item {
+    .spectrum-ActionButton-label {
+      flex-grow: 1;
+      text-align: start;
+    }
+
+    &.spectrum-ActionButton + .spectrum-ActionButton {
+      margin-block-start: var(--spectrum-actionbuttongroup-text-button-gap-y);
+      margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
+    }
+  }
+}
+
+.spectrum-ButtonGroup--connected .spectrum-ButtonGroup-item {
+  &:hover {
+    z-index: 1;
+  }
+
+  /* Appear above hovered border */
+  &:focus-ring {
+    z-index: 2;
+  }
+
+  &.spectrum-ActionButton--emphasized.is-selected {
+    z-index: 2;
+  }
+
+  &.spectrum-ActionButton + .spectrum-ActionButton {
+    margin-inline-start: calc(var(--spectrum-actionbutton-border-size) * -1 / 2);
+    margin-inline-end: calc(var(--spectrum-actionbutton-border-size) * -1 / 2);
+  }
+
+  &.spectrum-ActionButton {
+    border-radius: 0;
+
+    &:first-child {
+      border-start-start-radius: var(--spectrum-actionbutton-border-radius);
+      border-end-start-radius: var(--spectrum-actionbutton-border-radius);
+      margin-inline-end: calc(var(--spectrum-actionbutton-border-size) * -1 / 2);
+    }
+
+    &:last-child {
+      border-start-end-radius: var(--spectrum-actionbutton-border-radius);
+      border-end-end-radius: var(--spectrum-actionbutton-border-radius);
+      margin-inline-start: calc(var(--spectrum-actionbutton-border-size) * -1 / 2);
+      margin-inline-end: 0;
+    }
+  }
+
+  .spectrum-ActionButton-label {
+    inline-size: auto;
+  }
+}
+
+.spectrum-ButtonGroup--justified .spectrum-ButtonGroup-item{
+  flex: 1;
 }

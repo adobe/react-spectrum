@@ -1,73 +1,79 @@
-import {DOMRefValue} from '@react-types/shared';
-import {Overlay} from '@react-spectrum/overlays';
-import {PositionProps, useOverlayPosition} from '@react-aria/overlays';
-import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, ReactElement, RefObject, useRef} from 'react';
-import {unwrapDOMRef} from '@react-spectrum/utils';
-import {useControlledState} from '@react-stately/utils';
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 
-interface TooltipTriggerProps extends PositionProps {
-  children: ReactElement[],
-  type?: 'click',
-  targetRef?: RefObject<HTMLElement>,
-  isOpen?: boolean,
-  defaultOpen?: boolean,
-  onOpenChange?: (isOpen: boolean) => void
+import {DOMPropsResponder} from '@react-aria/interactions';
+import {Overlay} from '@react-spectrum/overlays';
+import {PlacementAxis} from '@react-types/overlays';
+import React, {RefObject, useContext, useRef} from 'react';
+import {StyleProps} from '@react-types/shared';
+import {TooltipTriggerProps} from '@react-types/tooltip';
+import {useOverlayPosition} from '@react-aria/overlays';
+import {useTooltipTrigger} from '@react-aria/tooltip';
+import {useTooltipTriggerState} from '@react-stately/tooltip';
+
+interface TooltipContextProps extends StyleProps {
+  ref?: RefObject<HTMLDivElement>,
+  placement?: PlacementAxis,
+  isOpen?: boolean
+}
+
+const TooltipContext = React.createContext<TooltipContextProps>({});
+
+export function useTooltipProvider(): TooltipContextProps {
+  return useContext(TooltipContext);
 }
 
 export function TooltipTrigger(props: TooltipTriggerProps) {
   let {
     children,
-    type,
-    targetRef,
-    isOpen,
-    defaultOpen,
-    onOpenChange
+    isDisabled
   } = props;
 
-  let [trigger, content] = React.Children.toArray(children);
+  let [trigger, tooltip] = React.Children.toArray(children);
 
-  let [open, setOpen] = useControlledState(isOpen, defaultOpen || false, onOpenChange);
+  let state = useTooltipTriggerState();
 
-  let onInteraction = () => {
-    setOpen(!open);
-  };
-
-  let containerRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<HTMLElement>();
   let overlayRef = useRef<HTMLDivElement>();
 
-  let {overlayProps, placement, arrowProps} = useOverlayPosition({
-    placement: props.placement,
-    containerRef: unwrapDOMRef(containerRef),
-    targetRef: targetRef || triggerRef,
-    overlayRef,
-    isOpen
+  let {triggerProps, tooltipProps} = useTooltipTrigger({
+    tooltipProps: tooltip.props,
+    triggerProps: trigger.props,
+    isDisabled
+  }, state, triggerRef);
+
+  let {overlayProps, placement} = useOverlayPosition({
+    placement: props.placement || 'right',
+    targetRef: triggerRef,
+    overlayRef
   });
 
-  delete overlayProps.style.position;
-
-  let triggerPropsWithRef = {
-    ref: triggerRef
-  };
-
-  let overlay = (
-    <Overlay isOpen={open} ref={containerRef}>
-      {React.cloneElement(content, {placement: placement, arrowProps: arrowProps, ref: overlayRef, ...overlayProps, isOpen: open})}
-    </Overlay>
+  return (
+    <DOMPropsResponder
+      {...triggerProps}
+      ref={triggerRef}
+      isDisabled={isDisabled}>
+      {trigger}
+      <TooltipContext.Provider
+        value={{
+          placement,
+          ref: overlayRef,
+          UNSAFE_style: overlayProps.style,
+          ...tooltipProps
+        }}>
+        <Overlay isOpen={state.open}>
+          {tooltip}
+        </Overlay>
+      </TooltipContext.Provider>
+    </DOMPropsResponder>
   );
-
-  if (type === 'click') {
-    return (
-      <Fragment>
-        <PressResponder
-          {...triggerPropsWithRef}
-          isPressed={isOpen}
-          onPress={onInteraction}>
-          {trigger}
-        </PressResponder>
-        {overlay}
-      </Fragment>
-    );
-  }
 }

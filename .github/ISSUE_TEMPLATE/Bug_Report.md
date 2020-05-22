@@ -47,10 +47,10 @@ Search open/closed issues before submitting since someone might have asked the s
 | Browser          |
 | Operating System |
 
-## 🧢 Your Team
+## 🧢 Your Company/Team
 
-<!--- Which product is this bug impacting? (i.e. Photoshop) -->
+<!--- Which product team is this bug impacting? (i.e. Adobe/Photoshop) -->
 
 ## 🕷 Tracking Issue
 
-<!--- Link to the issue in your system, if applicable (JIRA, Github, etc.) -->
+<!--- Link to the issue in your system, if available (JIRA, Github, etc.) -->

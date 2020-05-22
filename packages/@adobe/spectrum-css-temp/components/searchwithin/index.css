@@ -42,7 +42,7 @@ governing permissions and limitations under the License.
 
   .spectrum-Textfield {
     flex: 1;
-    margin-left: calc(-1 * var(--spectrum-textfield-border-size)); /* hides left border */
+    margin-left: calc(var(--spectrum-textfield-border-size) * -1); /* hides left border */
     border-top-left-radius: var(--spectrum-searchwithin-border-radius);
     border-bottom-left-radius: var(--spectrum-searchwithin-border-radius);
 
