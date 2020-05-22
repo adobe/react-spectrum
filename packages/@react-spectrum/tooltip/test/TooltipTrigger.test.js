@@ -23,7 +23,7 @@ let theme = {
   medium: scaleMedium
 };
 
-describe.skip('TooltipTrigger', function () {
+describe('TooltipTrigger', function () {
   let onOpen = jest.fn();
   let onClose = jest.fn();
 
@@ -47,7 +47,7 @@ describe.skip('TooltipTrigger', function () {
       let button = getByText('Trigger');
       fireEvent.mouseOver(button);
 
-      await new Promise((b) => setTimeout(b, 300));
+      await new Promise((b) => setTimeout(b, 360));
 
       let tooltip = getByText('content');
       expect(tooltip).toBeInTheDocument();
@@ -76,7 +76,7 @@ describe.skip('TooltipTrigger', function () {
       let button = getByText('Trigger');
       fireEvent.mouseOver(button);
 
-      await new Promise((c) => setTimeout(c, 300));
+      await new Promise((c) => setTimeout(c, 360));
 
       let tooltip = getByText('content');
       expect(tooltip).toBeInTheDocument();
@@ -95,12 +95,12 @@ describe.skip('TooltipTrigger', function () {
       let button = getByText('Trigger');
       fireEvent.mouseOver(button);
 
-      await new Promise((c) => setTimeout(c, 300));
+      await new Promise((c) => setTimeout(c, 360));
 
       let tooltip = getByText('content');
       expect(tooltip).toBeInTheDocument();
 
-      fireEvent.mouseOver(button);
+      fireEvent.mouseOut(button);
 
       await wait(() => {
         expect(tooltip).not.toBeInTheDocument();

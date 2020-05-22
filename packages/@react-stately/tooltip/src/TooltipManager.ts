@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {MultipleTolltipManager, TooltipState} from './types';
+import {MultipleTooltipManager, TooltipState} from './types';
 
 const CLOSE_DELAY = 220; // --spectrum-global-animation-duration-400
 const WARMUP_DELAY = 350;  // --spectrum-global-animation-duration-700
@@ -22,7 +22,7 @@ let cooldownTimer: null | ReturnType<typeof setTimeout> = null;
 let closeTimer: null | ReturnType<typeof setTimeout> = null;
 let warmedup: boolean = false;
 
-export class TooltipManager implements MultipleTolltipManager {
+export class TooltipManager implements MultipleTooltipManager {
   private state: TooltipState;
 
   constructor(state: TooltipState) {
@@ -31,6 +31,14 @@ export class TooltipManager implements MultipleTolltipManager {
 
   get isOpen(): boolean {
     return this.state.isOpen;
+  }
+
+  get warmedup(): boolean {
+    return warmedup;
+  }
+
+  get visibleTooltip(): null | TooltipState {
+    return visibleTooltip;
   }
 
   openTooltip() {

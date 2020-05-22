@@ -28,7 +28,7 @@ export interface TooltipTriggerState {
   tooltipManager: TooltipManager
 }
 
-export interface MultipleTolltipManager {
+export interface MultipleTooltipManager {
   openTooltip(): void,
   closeTooltip(): void,
   openTooltipDelayed(): void,
