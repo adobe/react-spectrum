@@ -147,7 +147,7 @@ function Example() {
 ## Sections
 Picker supports sections in order to group options. Sections can be used by wrapping groups of Items in a `Section` component. Each `Section` takes a `title` and `uniqueKey` prop.
 
-### Static Items
+### Static items
 ```tsx example
 <Picker label="Pick your favorite">
   <Section title="Animals">
@@ -162,7 +162,7 @@ Picker supports sections in order to group options. Sections can be used by wrap
   </Section>
 </Picker>
 ```
-### Dynamic Items
+### Dynamic items
 Sections used with dynamic items are populated from a hierarchical data structure. Similarly to the props on `Picker`, `Section` takes an array of data using the `items` prop.
 
 ```tsx example
@@ -245,7 +245,7 @@ function DynamicExample() {
 }
 ```
 
-## Complex Items
+## Complex items
 Items within Picker also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
 
 ```tsx example
@@ -274,9 +274,9 @@ Items within Picker also allow for additional content used to better communicate
 
 <PropTable component={docs.exports.Picker} links={docs.links} />
 
-## Visual Options
+## Visual options
 
-### Label Alignment
+### Label alignment
 ```tsx example
 <Picker label="Choose frequency" labelAlign="end">
   <Item uniqueKey="rarely">Rarely</Item>
@@ -284,7 +284,7 @@ Items within Picker also allow for additional content used to better communicate
   <Item uniqueKey="always">Always</Item>
 </Picker>
 ```
-### Label Position
+### Label position
 ```tsx example
 <Picker label="Choose frequency" labelPosition="side">
   <Item uniqueKey="rarely">Rarely</Item>

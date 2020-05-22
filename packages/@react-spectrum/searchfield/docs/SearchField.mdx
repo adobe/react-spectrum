@@ -133,7 +133,7 @@ function Example() {
 
 <PropTable component={docs.exports.SearchField} links={docs.links} />
 
-## Visual Options
+## Visual options
 
 ### Quiet
 
@@ -147,7 +147,7 @@ function Example() {
 <SearchField label="Email" placeholder="Email Address" isDisabled />
 ```
 
-### Read Only
+### Read only
 
 The `isReadOnly` boolean prop makes the SearchField's text content immutable. Unlike `isDisabled` the SearchField remains focusable
 and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
@@ -156,7 +156,7 @@ and the contents can still be copied. See [the MDN docs](https://developer.mozil
 <SearchField label="Email" defaultValue="abc@adobe.com" isReadOnly />
 ```
 
-### Label Alignment
+### Label alignment
 
 Labels can be aligned to the "start" or the "end" of the SearchField. For left-to-right (LTR) languages, "start" refers to the left most edge
 of the SearchField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
@@ -166,20 +166,20 @@ of the SearchField and "end" refers to the right most edge. For right-to-left (R
 <SearchField label="Email" labelAlign="end" />
 ```
 
-### Label Position
+### Label position
 
 ```tsx example
 <SearchField label="Email" labelPosition="top" marginEnd="20px" />
 <SearchField label="Email" labelPosition="side" />
 ```
 
-### Custom Width
+### Custom width
 
 ```tsx example
 <SearchField label="Email" width="400px" />
 ```
 
-### Custom Icon
+### Custom icon
 
 ```tsx example
 <SearchField label="Refresh" icon={<Refresh />} />

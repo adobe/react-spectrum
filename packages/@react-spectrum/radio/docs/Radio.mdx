@@ -125,15 +125,15 @@ Implement your own validation logic in your app and pass `"invalid"` to the Radi
 </RadioGroup>
 ```
 
-## RadioGroup Props
+## RadioGroup props
 
 <PropTable component={docs.exports.RadioGroup} links={docs.links} />
 
-## Radio Props
+## Radio props
 
 <PropTable component={docs.exports.Radio} links={docs.links} />
 
-## Visual Options
+## Visual options
 
 ### Orientation
 
@@ -147,10 +147,12 @@ The `orientation` prop can be used to change the orientation to horizontal.
 </RadioGroup>
 ```
 
-### Label Position and Alignment
-
+### Label position and alignment
 By default, the label is positioned above the RadioGroup.
-The `labelPosition` prop can be used to position the label to the side.
+The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can
+be used to align the label as "start" or "end".
+For left-to-right (LTR) languages, "start" refers to the left most edge of the RadioGroup
+and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
 
 ```tsx example
 <RadioGroup label="Example Options" labelPosition="side" labelAlign="end">
@@ -176,7 +178,7 @@ The `labelPosition` prop can be used to position the label to the side.
 </RadioGroup>
 ```
 
-### Read Only
+### Read only
 
 The isReadOnly prop makes the selection immutable. Unlike isDisabled, the RadioGroup remains focusable.
 See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.

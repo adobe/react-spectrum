@@ -134,7 +134,7 @@ for the user to fill out or adding confirmation checkboxes.
       <Heading>
         <Flex alignItems="center">
           <Book size="S" />
-          <Text>
+          <Text marginLeft={10}>
             Register for newsletter
           </Text>
         </Flex>
@@ -174,7 +174,7 @@ The example below illustrates how a Dialog with a hero image could be rendered v
   <ActionButton>Upload</ActionButton>
   {(close) => (
     <Dialog>
-      <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+      <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" alt="Upload"/>
       <Heading>Upload file</Heading>
       <Divider />
       <Content>Are you sure you want to upload this file?</Content>
@@ -200,24 +200,6 @@ The title of a Dialog is typically provided via its heading. By default, the Dia
 `aria-labelledby` to match the heading id, but this can be overridden by providing an `aria-labelledby` prop
 to the Dialog directly. If a visible label isn't specified, an `aria-label` must be provided instead.
 
-```tsx example
-<DialogTrigger>
-  <ActionButton>See Terms and Conditions</ActionButton>
-  {(close) => (
-    <Dialog aria-labelledby="heading-id">
-      <Text slot="header" id="heading-id">Terms and Conditions</Text>
-      <Divider />
-      <Content>
-        <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mi proin sed libero enim. Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Sed enim ut sem viverra aliquet eget sit amet tellus. Diam quis enim lobortis scelerisque fermentum dui faucibus in ornare. Diam quam nulla porttitor massa id. Eleifend mi in nulla posuere sollicitudin. Turpis nunc eget lorem dolor sed viverra ipsum nunc. Faucibus in ornare quam viverra. Risus commodo viverra maecenas accumsan lacus vel facilisis volutpat est. Nam libero justo laoreet sit amet cursus sit. Netus et malesuada fames ac. Dictum fusce ut placerat orci nulla pellentesque dignissim enim sit. Eros donec ac odio tempor orci. Ut etiam sit amet nisl purus in mollis nunc. Nisl rhoncus mattis rhoncus urna neque viverra. Convallis aenean et tortor at risus. Diam phasellus vestibulum lorem sed risus ultricies.</Text>
-      </Content>
-      <ButtonGroup>
-        <Button autoFocus variant="cta" onPress={close}>Acknowledge</Button>
-      </ButtonGroup>
-    </Dialog>
-  )}
-</DialogTrigger>
-```
-
 ## Events
 
 For Dialogs, user defined callbacks should be chained with the DialogTrigger's `close` function in the press/click handler
@@ -225,13 +207,13 @@ of the Dialog's action buttons. The following example alerts if the Dialog's sav
 
 ```tsx example
 function Example() {
-  let alertSave = (cb) => {
-    cb();
+  let alertSave = (close) => {
+    close();
     alert('Profile saved!');
   }
 
-  let alertCancel = (cb) => {
-    cb();
+  let alertCancel = (close) => {
+    close();
     alert('Profile not saved!');
   }
 
@@ -262,7 +244,7 @@ function Example() {
 Additionally, DialogTrigger accepts an `onOpenChange` prop which is triggered whenever the Dialog is opened or closed.
 For more information on the `onOpenChange` prop see the [DialogTrigger docs](./DialogTrigger.html#events).
 
-### Dismissable Dialogs
+### Dismissable dialogs
 
 Dismissable Dialogs support an `onDismiss` prop which is triggered whenever the Dialog's close button is clicked.
 Similar to non-dismissable dialogs, you must chain the DialogTrigger's `close` function with whatever callback you provide as
@@ -270,8 +252,8 @@ Similar to non-dismissable dialogs, you must chain the DialogTrigger's `close` f
 
 ```tsx example
 function Example() {
-  let alertDismiss = (cb) => {
-    cb();
+  let alertDismiss = (close) => {
+    close();
     alert('Dialog dismissed.');
   }
 
@@ -301,9 +283,9 @@ the wrapping `close` function surrounding the Dialog. An example of this can be 
 
 <PropTable component={docs.exports.Dialog} links={docs.links} />
 
-## Visual Options
+## Visual options
 
-### Dialog Type
+### Dialog types
 Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger docs](./DialogTrigger.html#dialog-types) for more information.
 
 ```tsx example
