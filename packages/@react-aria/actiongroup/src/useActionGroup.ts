@@ -61,20 +61,17 @@ export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroup
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setFocusWithin
   });
-
   let tabIndex = isFocusWithin ? -1 : 0;
 
   return {
     actionGroupProps: {
       id: useId(id),
       role,
-      tabIndex: isDisabled ? null : tabIndex,
       'aria-orientation': role === 'toolbar' ? orientation : null,
       'aria-disabled': isDisabled,
-      ...mergeProps(focusWithinProps, collectionProps)
+      ...mergeProps(focusWithinProps, collectionProps),
+      tabIndex: isDisabled ? null : tabIndex
     },
-    buttonProps: {
-      role: BUTTON_ROLES[selectionMode]
-    }
+    buttonProps: {role: BUTTON_ROLES[selectionMode]}
   };
 }
