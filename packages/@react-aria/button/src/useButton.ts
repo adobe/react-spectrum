@@ -28,6 +28,7 @@ interface AriaButtonProps extends ButtonProps {
   'aria-label'?: string,
   'aria-labelledby'?: string,
   'aria-describedby'?: string,
+  role?: 'checkbox' | 'radio'
 }
 
 interface ButtonAria {
