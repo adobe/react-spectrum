@@ -132,7 +132,7 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-button-primary-border-radius);
 
   min-block-size: var(--spectrum-button-primary-height);
-  block-size: auto;
+  block-size: 0%;
   min-inline-size: var(--spectrum-button-primary-min-width);
 
   padding: var(--spectrum-button-padding-y) calc(var(--spectrum-button-primary-padding-x) - var(--spectrum-button-primary-border-size));
