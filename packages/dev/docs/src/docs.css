@@ -131,7 +131,7 @@ article {
   width: 100%;
 }
 
-footer {
+footer.pageFooter {
   max-width: 967px;
   width: 100%
 }
@@ -141,7 +141,7 @@ footer ul {
 }
 
 @media (min-width: 1020px) {
-  footer {
+  footer.pageFooter {
     text-align: right;
   }
 }

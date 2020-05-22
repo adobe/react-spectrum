@@ -15,6 +15,7 @@ import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
+import {Flex} from '@react-spectrum/layout';
 import {Image} from '@react-spectrum/image';
 ```
 
@@ -38,10 +39,11 @@ category: Content
 
 ## Content
 
-The Image component is used as a child to other components providing formatting
-and semantic meaning.
-
-An Image is used to add images to components. Example of usage [Dialog](Dialog.html#examples).
+The Image component is used to add images as a child to other components.
+Based on the component it is used within, it gets Spectrum styling and may
+have a preassigned slot for positioning. By virtue of its name, the Keyboard
+component provides semantic meaning in the context they are placed. An example
+of this is the hero image in [Dialog](Dialog.html#examples)
 
 See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img) for more information.
 
@@ -60,11 +62,18 @@ To internationalize an Image, a localized string should be passed to the `alt` p
 ### Decorative
 
 ```tsx example
-<Image src="https://i.imgur.com/Z7AzH2c.png" decorative />
+<Flex width="200px">
+  <Image src="https://scontent-sjc3-1.cdninstagram.com/v/t51.2885-15/e35/99120553_176571270346133_73156360171041206_n.jpg?_nc_ht=scontent-sjc3-1.cdninstagram.com&_nc_cat=105&_nc_ohc=QqfjoiATImoAX9-GZ7A&oh=a2523e59f8af2de64755e6b2f4dff0af&oe=5EF06CC7" decorative />
+</Flex>
 ```
 
 ### Object Fit
 
 ```tsx example
-<Image src="https://i.imgur.com/Z7AzH2c.png" alt="Sky and roof" objectFit="cover" />
+<Flex width="100%" height="200px">
+  <Image
+    src="https://scontent-sjc3-1.cdninstagram.com/v/t51.2885-15/e35/99120553_176571270346133_73156360171041206_n.jpg?_nc_ht=scontent-sjc3-1.cdninstagram.com&_nc_cat=105&_nc_ohc=QqfjoiATImoAX9-GZ7A&oh=a2523e59f8af2de64755e6b2f4dff0af&oe=5EF06CC7"
+    alt="Illustration of grains"
+    objectFit="cover" />
+</Flex>
 ```

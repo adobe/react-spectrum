@@ -151,7 +151,7 @@ function Nav({currentPageName, pages}) {
   let isIndex = /index\.html$/;
   let currentParts = currentPageName.split('/');
   let currentDir = currentParts[0];
-    
+
   pages = pages.filter(p => {
     let pageParts = p.name.split('/');
     let pageDir = pageParts[0];
@@ -233,7 +233,7 @@ function Nav({currentPageName, pages}) {
 function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer>
+    <footer className={docStyles.pageFooter}>
       <hr className={classNames(ruleStyles['spectrum-Rule'], ruleStyles['spectrum-Rule--small'], ruleStyles['spectrum-Rule--horizontal'])} />
       <ul>
         <li>Copyright © {year} Adobe. All rights reserved.</li>
