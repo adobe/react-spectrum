@@ -348,7 +348,8 @@
   --spectrum-alias-code-text-line-height: var(--spectrum-global-font-line-height-medium);
   --spectrum-alias-heading-margin-bottom: var(--spectrum-global-font-multiplier-25);
   --spectrum-alias-body-margin-bottom: var(--spectrum-global-font-multiplier-75);
-
+  --spectrum-alias-focus-ring-gap: var(--spectrum-global-dimension-static-size-25);
+  --spectrum-alias-focus-ring-size: var(--spectrum-global-dimension-static-size-25);
 }
 
 .spectrum--medium,
@@ -444,6 +445,8 @@
   --spectrum-alias-border-color-translucent-dark: rgba(0,0,0,0.05);
   --spectrum-alias-border-color-translucent-darker: rgba(0,0,0,0.1);
   --spectrum-alias-focus-color: var(--spectrum-global-color-blue-400);
+  --spectrum-alias-focus-ring-color: var(--spectrum-alias-focus-color);
+  --spectrum-alias-focus-ring-gap-color: var(--spectrum-global-color-gray-75);
   --spectrum-alias-track-color-default: var(--spectrum-global-color-gray-300);
   --spectrum-alias-track-color-disabled: var(--spectrum-global-color-gray-300);
   --spectrum-alias-track-color-over-background: rgba(255,255,255,0.2);

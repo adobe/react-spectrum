@@ -209,6 +209,8 @@
   --spectrum-alias-border-color-transparent: transparent;
   --spectrum-alias-border-color-translucent-dark: rgba(0,0,0,0.05);
   --spectrum-alias-focus-color: var(--spectrum-global-color-blue-400);
+  --spectrum-alias-focus-ring-color: var(--spectrum-alias-focus-color);
+  --spectrum-alias-focus-ring-gap-color: var(--spectrum-global-color-gray-75);
   --spectrum-alias-track-color-default: var(--spectrum-global-color-gray-300);
   --spectrum-alias-track-color-over-background: rgba(255,255,255,0.2);
   --spectrum-alias-icon-color: var(--spectrum-global-color-gray-700);
