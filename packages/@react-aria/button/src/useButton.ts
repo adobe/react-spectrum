@@ -93,7 +93,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   let {focusableProps} = useFocusable(props, ref);
   let handlers = mergeProps(pressProps, focusableProps);
   let interactions = mergeProps(contextProps, handlers);
-  let ariaPressed = isSelected ? true : undefined;
+  let ariaSelected = props['role'] === 'checkbox' || props['role'] === 'radio' ? 'aria-checked' : 'aria-pressed';
 
   return {
     isPressed, // Used to indicate press state for visual
@@ -107,8 +107,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
       'aria-controls': ariaControls,
       // if an explicit aria-pressed false has been passed int, then use that but as undefined
       // otherwise, decide for ourselves
-      'aria-pressed': props['aria-pressed'] === false ? undefined : ariaPressed,
-      'aria-checked': props['aria-pressed'] === false ? isSelected : undefined,
+      [ariaSelected]: isSelected,
       'aria-invalid': validationState === 'invalid' ? true : null,
       disabled: isDisabled,
       type,
