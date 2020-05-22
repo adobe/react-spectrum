@@ -11,7 +11,6 @@
  */
 
 import {ButtonHTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
-import {chain} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {PressProps} from '@react-aria/interactions';
@@ -76,6 +75,10 @@ export function useSearchField(
   let onClearButtonClick = () => {
     state.setValue('');
     inputRef.current.focus();
+   
+    if (onClear) {
+      onClear();
+    }
   };
 
   let {labelProps, inputProps} = useTextField({
@@ -92,7 +95,7 @@ export function useSearchField(
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),
       tabIndex: -1,
-      onPress: chain(onClearButtonClick, props.onClear)
+      onPress: onClearButtonClick
     }
   };
 }
