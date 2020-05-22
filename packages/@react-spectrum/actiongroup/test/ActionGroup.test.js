@@ -389,6 +389,8 @@ describe('ActionGroup', function () {
     triggerPress(button1);
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'false');
+    expect(button1).not.toHaveAttribute('aria-pressed');
+    expect(button2).not.toHaveAttribute('aria-pressed');
 
     fireEvent.keyDown(button1, {key: 'ArrowRight', shiftKey: true});
     expect(button1).toHaveAttribute('aria-checked', 'true');
