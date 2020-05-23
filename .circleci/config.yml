@@ -152,7 +152,10 @@ jobs:
 
       - run:
           name: comment on pr
-          command: node .circleci/comment.js
+          command: |
+            if [ $GITHUB_TOKEN ]; then
+              node .circleci/comment.js
+            fi
 
 workflows:
   version: 2
