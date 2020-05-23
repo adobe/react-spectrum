@@ -83,7 +83,7 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
   };
 
   if (isVirtualized) {
-    optionProps['aria-posinset'] = state.collection.getItem(key).index;
+    optionProps['aria-posinset'] = state.collection.getItem(key).index + 1;
     optionProps['aria-setsize'] = state.collection.size;
   }
 
