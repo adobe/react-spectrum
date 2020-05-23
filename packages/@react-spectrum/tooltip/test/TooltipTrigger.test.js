@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {fireEvent, render, wait} from '@testing-library/react';
+import {fireEvent, render, waitFor} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
@@ -55,7 +55,7 @@ describe('TooltipTrigger', function () {
       fireEvent.focus(button);
       fireEvent.keyDown(button, {key: 'Escape'});
 
-      await wait(() => {
+      await waitFor(() => {
         expect(tooltip).not.toBeInTheDocument();
       });
     });
@@ -102,7 +102,7 @@ describe('TooltipTrigger', function () {
 
       fireEvent.mouseOver(button);
 
-      await wait(() => {
+      await waitFor(() => {
         expect(tooltip).not.toBeInTheDocument();
       });
     });

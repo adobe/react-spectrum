@@ -12,3 +12,56 @@
 
 // setup file
 import '@testing-library/jest-dom';
+
+const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
+  'An update to %s inside a test was not wrapped in act',
+  'Unknown event handler property `%s`',
+  'Not implemented: navigation',
+  'React does not recognize the `%s` prop on a DOM element',
+  'Received NaN for the `%s` attribute',
+  'Can\'t perform a React state update on an unmounted component',
+  '%s contains an input of type %s with both value and defaultValue props',
+  '<%s /> is using incorrect casing',
+  'The tag <%s> is unrecognized in this browser',
+  'The above error occurred in the <TestHook> component'
+];
+
+const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
+  '`waitForDomChange` has been deprecated.',
+  'The style prop is unsafe and is unsupported in React Spectrum v3.',
+  'The className prop is unsafe and is unsupported in React Spectrum v3.',
+  'If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility'
+];
+
+function failTestOnConsoleError() {
+  const error = console.error;
+
+  console.error = function (message) {
+    const allowedPattern = ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => message.indexOf(pattern) > -1);
+
+    if (allowedPattern) {
+      return;
+    }
+
+    error.apply(console, arguments);
+    throw message instanceof Error ? message : new Error(message);
+  };
+}
+
+function failTestOnConsoleWarn() {
+  const warn = console.warn;
+
+  console.warn = function (message) {
+    const allowedPattern = WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW.find(pattern => message.indexOf(pattern) > -1);
+
+    if (allowedPattern) {
+      return;
+    }
+
+    warn.apply(console, arguments);
+    throw message instanceof Error ? message : new Error(message);
+  };
+}
+
+failTestOnConsoleWarn();
+failTestOnConsoleError();

@@ -530,7 +530,7 @@ describe('ListBox', function () {
     let tree = render(
       <Provider theme={theme}>
         <ListBox>
-          <Item>
+          <Item textValue="Label">
             <Bell />
             <Text>Label</Text>
             <Text slot="description">Description</Text>
