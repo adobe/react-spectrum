@@ -1,0 +1,25 @@
+diff --git a/node_modules/@spectrum-css/component-builder/node_modules/autoprefixer/lib/processor.js b/node_modules/@spectrum-css/component-builder/node_modules/autoprefixer/lib/processor.js
+index d72a8ec..15a3fcb 100644
+--- a/node_modules/@spectrum-css/component-builder/node_modules/autoprefixer/lib/processor.js
++++ b/node_modules/@spectrum-css/component-builder/node_modules/autoprefixer/lib/processor.js
+@@ -89,10 +89,16 @@
+               result.warn('Replace fill-available to stretch, ' + 'because spec had been changed', {
+                 node: decl
+               });
+-            } else if (decl.value.indexOf('fill') !== -1) {
+-              result.warn('Replace fill to stretch, because spec had been changed', {
+-                node: decl
+-              });
++            } else if (decl.value.includes('fill')) {
++              var _ast = parser(value);
++
++              if (_ast.nodes.some(function (i) {
++                return i.type === 'word' && i.value === 'fill';
++              })) {
++                result.warn('Replace fill to stretch, because spec had been changed', {
++                  node: decl
++                });
++              }
+             }
+           }
+           if (_this.prefixes.options.flexbox !== false) {

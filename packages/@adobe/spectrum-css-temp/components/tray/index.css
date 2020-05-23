@@ -28,13 +28,8 @@
   justify-content: center;
   width: 100%;
 
-  /* On mobile browsers, vh units are fixed based on the maximum height of the screen.
-   * However, when you scroll, the toolbar and address bar shrink, making the viewport resize.
-   * We use the fill-available value to counteract this where supported. */
   height: 100vh;
-  height: -moz-available;
-  height: -webkit-fill-available;
-  height: fill-available;
+  height: stretch;
 
   /* Appear above underlay */
   z-index: 2;
