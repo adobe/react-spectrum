@@ -29,7 +29,7 @@ category: Data
 ## Introduction
 
 `useAsyncList` extends on [useListData](useListData.html), adding support for async loading, pagination, and sorting.
-It manages loading and error states, supports abortable requests, and works with any data fetching library or the builtin
+It manages loading and error states, supports abortable requests, and works with any data fetching library or the built-in
 browser [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) API.
 
 ## API
@@ -171,7 +171,7 @@ let list = useAsyncList({
 
 ## Pre-selecting items
 
-`useAsyncList` manages selection state for the list in addition to its data. If you need to automatically select items
+`useAsyncList` manages selection state for the list in addition to its data. If you need to programmatically select items
 during the initial load, you can do so using the `initialSelectedKeys` option or by returning `selectedKeys` from the
 `load` function in addition to `items`.
 
@@ -210,5 +210,5 @@ let list = useAsyncList({
 
 ## Client side updates
 
-All client side updating methods supported by [useListData](useListData.html) are also supported by `useAsyncList`.
-See the docs for `useListData` for more details.
+All client side updating methods supported by `useListData` are also supported by `useAsyncList`.
+See the docs for [useListData](useListData.html) for more details.
