@@ -39,3 +39,15 @@ export function getUsedLinks(obj, links, usedLinks = {}) {
 
   return usedLinks;
 }
+
+export function getAnchorProps(href) {
+  if (!/^http/.test(href) || /localhost|reactspectrum\.blob\.core\.windows\.net|react-spectrum\.(corp\.)?adobe\.com|^#/.test(href)) {
+    return {};
+  }
+
+  if (/^\//.test(href)) {
+    return {};
+  }
+
+  return {target: '_blank', rel: 'noreferrer'};
+}

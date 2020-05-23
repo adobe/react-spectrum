@@ -14,8 +14,8 @@ import {fireEvent} from '@testing-library/react';
 
 // Triggers a "press" event on an element.
 // TODO: move to somewhere more common
-export function triggerPress(element) {
-  fireEvent.mouseDown(element, {detail: 1});
-  fireEvent.mouseUp(element, {detail: 1});
-  fireEvent.click(element, {detail: 1});
+export function triggerPress(element, opts = {}) {
+  fireEvent.mouseDown(element, {detail: 1, ...opts});
+  fireEvent.mouseUp(element, {detail: 1, ...opts});
+  fireEvent.click(element, {detail: 1, ...opts});
 }

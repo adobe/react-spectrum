@@ -87,6 +87,12 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   );
 }
 
+/**
+ * The Menu allow users to choose from a list of options which can change based
+ * on the content. Menus are used to display transient content such as options,
+ * additional actions, and more. They stand out visually through stroke and drop
+ * shadow and float on top of the interface.
+ */
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
 const _Menu = React.forwardRef(Menu) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLUListElement>}) => ReactElement;
