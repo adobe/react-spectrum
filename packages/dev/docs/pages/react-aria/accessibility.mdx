@@ -40,7 +40,7 @@ user productivity.
 React Aria implements accessibility support according to the [WAI-ARIA](https://www.w3.org/TR/wai-aria-1.2/)
 specification, published by the W3C. ARIA specifies **semantics** for many common UI controls so that assistive
 technology like screen readers can understand what our DOM nodes represent. When we cannot use native HTML elements
-with builtin semantics (e.g. `<button>` or `<select>`) for styling reasons, or if there isn't a native element available,
+with built-in semantics (e.g. `<button>` or `<select>`) for styling reasons, or if there isn't a native element available,
 ARIA is required to make presentational elements (e.g. `<div>`) have semantic meaning. This allows screen readers and 
 other assistive technology to understand these elements and announce them properly to the user.
 
@@ -62,7 +62,7 @@ a textual label for each control. This gives a screen reader user context about 
 Form inputs like text fields, checkboxes, and selects should usually have a visible label, and in this case, React Aria
 will automatically associate the visible label with the control to so that assistive technology can describe it properly.
 
-In case a visible label is not desired for some reason, or you're using a control that doesn't have a builtin label,
+In case a visible label is not desired for some reason, or you're using a control that doesn't have a built-in label,
 you must use the `aria-label` or `aria-labelledby` props to identify it to assistive technology. Most React Aria 
 hooks will display a console warning if you are missing both a visible label and an ARIA label.
 
