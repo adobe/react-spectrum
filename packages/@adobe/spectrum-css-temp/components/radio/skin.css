@@ -149,6 +149,9 @@ governing permissions and limitations under the License.
   & .spectrum-Radio-input:focus-ring,
   &:hover .spectrum-Radio-input:focus-ring {
     & + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-circle-border-color-key-focus);
+      }
       &:after {
         box-shadow: 0 0 0 var(--spectrum-radio-focus-ring-size-key-focus) var(--spectrum-radio-focus-ring-color-key-focus);
       }
