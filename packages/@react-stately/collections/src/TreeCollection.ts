@@ -19,7 +19,7 @@ export class TreeCollection<T> implements Collection<Node<T>> {
   private firstKey: Key;
   private lastKey: Key;
 
-  constructor(nodes: Iterable<Node<T>>, expandedKeys?: Set<Key>) {
+  constructor(nodes: Iterable<Node<T>>, {expandedKeys}: {expandedKeys?: Set<Key>} = {}) {
     this.iterable = nodes;
     expandedKeys = expandedKeys || new Set();
 
