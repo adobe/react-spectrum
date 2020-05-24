@@ -7,6 +7,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. -->
 
+import style from '@react-spectrum/docs/src/docs.css';
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
@@ -81,10 +82,12 @@ You can learn more about the architecture that React Aria is a part of on the [a
 In addition, the following talk from React Europe discusses how React Aria came to be, its architecture, high quality 
 cross-device interactions, and how we can share behavior between design systems.
 
-<iframe
-  width="840"
-  height="471"
-  src="https://www.youtube.com/embed/dxDcBB7Xoxs"
-  frameborder="0"
-  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-  allowfullscreen />
+<div className={style.responsiveVideo}>
+  <iframe
+    width="840"
+    height="471"
+    src="https://www.youtube.com/embed/dxDcBB7Xoxs"
+    frameborder="0"
+    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen />
+</div>
