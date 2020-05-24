@@ -72,6 +72,10 @@ function isFlexGapSupported() {
     return _isFlexGapSupported;
   }
 
+  if (typeof document === 'undefined') {
+    return false;
+  }
+
   // create flex container with row-gap set
   var flex = document.createElement('div');
   flex.style.display = 'flex';
