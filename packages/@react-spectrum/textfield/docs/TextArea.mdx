@@ -43,56 +43,62 @@ A TextArea's `value` is empty by default, but an initial, uncontrolled, value ca
 Alternatively, a controlled value can be provided using the `value` prop.
 
 ```tsx example
-<TextArea defaultValue="Default text" label="Uncontrolled TextArea" marginEnd="20px" />
-<TextArea value="Default text" label="Controlled TextArea" />
+function Example() {
+  let [value, setValue] = React.useState('This is on a wait list');
+
+  return (
+    <>
+      <TextArea
+        label="Notes (Uncontrolled)"
+        defaultValue="This is on a wait list"
+        marginEnd="20px" />
+
+      <TextArea
+        label="Notes (Controlled)"
+        value={value}
+        onChange={setValue} />
+    </>
+  );
+}
 ```
 
-Placeholder text that describes the expected value or formatting for the TextArea can be provided using the `placeholder` prop. 
+Placeholder text that describes the expected value or formatting for the TextArea can be provided using the `placeholder` prop.
 Placeholder text will only appear when the TextArea is empty, and should not be used as a substitute for labeling the component with a visible label.
 
 ```tsx example
-<TextArea placeholder="abc@adobe.com" label="Email" />
+<TextArea placeholder="abc@adobe.com, def@adobe.com" label="List of emails" />
 ```
 
 ## Labeling
 
-A visual label should be provided for the TextArea using the `label` prop. If the TextArea is required, the `isRequired` and 
+A visual label should be provided for the TextArea using the `label` prop. If the TextArea is required, the `isRequired` and
 `necessityIndicator` props can be used to show a required state.
 
 ```tsx example
-<TextArea label="Street address" marginEnd="20px" />
-<TextArea label="Street address" isRequired necessityIndicator="icon" marginEnd="20px" />
-<TextArea label="Street address" isRequired necessityIndicator="label" marginEnd="20px" />
-<TextArea label="Street address" necessityIndicator="label" />
+<TextArea label="Address" marginEnd="20px" />
+<TextArea label="Address" isRequired necessityIndicator="icon" marginEnd="20px" />
+<TextArea label="Address" isRequired necessityIndicator="label" marginEnd="20px" />
+<TextArea label="Address" necessityIndicator="label" />
 ```
 
 ### Accessibility
 
-If a visible label isn't specified, an `aria-label` must be provided to the TextArea for 
-accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using 
+If a visible label isn't specified, an `aria-label` must be provided to the TextArea for
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using
 the `id` of the labeling element instead.
 
-```tsx example
-<label id="label-1">Name</label>
-<TextArea aria-labelledby="label-1" marginStart="10px" />
-```
 
 ### Internationalization
 
 In order to internationalize a TextArea, a localized string should be passed to the `label` or `aria-label` prop.
 When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
 
-```tsx example
-<TextArea label="Street address" isRequired necessityIndicator="label" marginEnd="20px" />
-<TextArea label="Street address" necessityIndicator="label" />
-```
-
 ## Events
 
-TextArea accepts an `onChange` prop which is triggered whenever the value is edited by the user. 
+TextArea accepts an `onChange` prop which is triggered whenever the value is edited by the user.
 For a full list of supported events, see the [Props](#props) table below.
 
-The example below uses `onChange` to update a separate `span` element with the same text entered into the TextArea.
+The example below uses `onChange` to update a separate `pre` element with the same text entered into the TextArea.
 ```tsx example
 function Example() {
   let [text, setText] = React.useState();
@@ -102,10 +108,10 @@ function Example() {
       <TextArea
         placeholder="Enter some text"
         onChange={setText}
-        label="Text Mirror"
+        label="Your text"
         marginEnd="20px"
       />
-      <span>Mirrored text: {text}</span>
+      <pre>Mirrored text: {text}</pre>
     </div>
   );
 }
@@ -113,24 +119,24 @@ function Example() {
 
 ## Validation
 
-TextAreas can display a validation state to communicate to the user whether the current value is valid or invalid. 
+TextAreas can display a validation state to communicate to the user whether the current value is valid or invalid.
 Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the TextArea via the `validationState` prop.
 
-The example below illustrates how one would validate if the user entered more than 30 characters into the TextArea.
+The example below illustrates how one would validate if the user entered more than 20 characters into the TextArea.
 ```tsx example
 function Example() {
-  let defaultValue = '';
-  let [isValid, setValid] = React.useState(false);
-  let [value, setValue] = React.useState(defaultValue);
+  let [isValid, setValid] = React.useState(true);
+  let [value, setValue] = React.useState('Lorem ipsum dolor sit');
+
   React.useEffect(() => {
-    setValid(value.length > 30)
+    setValid(value.length <= 20)
   }, [setValid, value]);
 
   return (
     <TextArea
       validationState={isValid ? 'valid' : 'invalid'}
+      value={value}
       placeholder="Enter a description"
-      defaultValue={defaultValue}
       onChange={setValue}
       label="Description"
     />
@@ -144,7 +150,7 @@ function Example() {
 
 ## Visual options
 
-### Quiet 
+### Quiet
 
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Quiet)
 
@@ -165,7 +171,7 @@ To compensate, the TextArea automatically adjusts its own height to accommodate 
 
 ### Read only
 
-The `isReadOnly` boolean prop makes the TextArea's text content immutable. Unlike `isDisabled` the TextArea remains focusable 
+The `isReadOnly` boolean prop makes the TextArea's text content immutable. Unlike `isDisabled` the TextArea remains focusable
 and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
 
 ```tsx example

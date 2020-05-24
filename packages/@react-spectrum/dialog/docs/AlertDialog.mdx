@@ -55,6 +55,7 @@ Unlike Dialog, the layout in AlertDialog is very deliberate. The body of an Aler
 children to the component. The AlertDialog also supports having up to three buttons in its footer: a primary button,
 a secondary button, and a cancel button. Each button can be rendered by providing a string to the `primaryActionLabel`, `secondaryActionLabel`,
 and `cancelLabel` respectively. Be sure to localize any strings provided to the AlertDialog and to the button labels as well.
+
 ActionDialogs should always have a visible title, specified by passing a string as the `title` prop. This string should be localized
 so that the ActionDialog is properly internationalized.
 
@@ -133,6 +134,7 @@ function Example() {
 ### Variant
 [View guidelines](https://spectrum.adobe.com/page/dialog/#Options)
 
+Confirmation
 ```tsx example
 <DialogTrigger marginEnd="20px">
   <ActionButton>Exit</ActionButton>
@@ -144,7 +146,9 @@ function Example() {
     Exit dungeon instance and return to main hub?
   </AlertDialog>
 </DialogTrigger>
-
+```
+Information
+```tsx example
 <DialogTrigger marginEnd="20px">
   <ActionButton>New file</ActionButton>
   <AlertDialog
@@ -155,7 +159,9 @@ function Example() {
     Please connect an existing account to sync any new files.
   </AlertDialog>
 </DialogTrigger>
-
+```
+Destructive
+```tsx example
 <DialogTrigger marginEnd="20px">
   <ActionButton>Delete</ActionButton>
   <AlertDialog
@@ -166,7 +172,9 @@ function Example() {
     This will permanently delete the selected file. Continue?
   </AlertDialog>
 </DialogTrigger>
-
+```
+Error
+```tsx example
 <DialogTrigger marginEnd="20px">
   <ActionButton>Login</ActionButton>
   <AlertDialog
@@ -178,7 +186,9 @@ function Example() {
     Please try again in a couple minutes.
   </AlertDialog>
 </DialogTrigger>
-
+```
+Warning
+```tsx example
 <DialogTrigger>
   <ActionButton>Enter</ActionButton>
   <AlertDialog
