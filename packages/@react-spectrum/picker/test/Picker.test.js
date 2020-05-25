@@ -370,7 +370,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -407,7 +407,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -442,7 +442,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -479,7 +479,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -519,7 +519,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -556,7 +556,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -593,7 +593,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -635,7 +635,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -701,7 +701,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(false);

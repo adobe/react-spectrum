@@ -51,7 +51,7 @@ export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
     }
 
     return (
-      <CollectionItem 
+      <CollectionItem
         key={reusableView.key}
         reusableView={reusableView}
         parent={parent} />

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMEventPropNames, filterDOMProps} from '@react-spectrum/utils';
 // @ts-ignore
 import {flushSync} from 'react-dom';
 import {getScrollLeft} from './utils';
@@ -165,8 +166,9 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     style.overflow = 'auto';
   }
 
+  let {focusedKey, isLoading, ...otherotherProps} = otherProps;
   return (
-    <div {...otherProps} style={style} ref={ref} onScroll={onScroll}>
+    <div {...otherotherProps} style={style} ref={ref} onScroll={onScroll}>
       <div role="presentation" style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', position: 'relative', ...innerStyle}}>
         {children}
       </div>

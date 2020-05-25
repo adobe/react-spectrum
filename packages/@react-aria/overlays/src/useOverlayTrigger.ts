@@ -41,7 +41,7 @@ interface OverlayTriggerAria {
  */
 export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAria {
   let {ref, type, onClose, isOpen} = props;
-  
+
   // When scrolling a parent scrollable region of the trigger (other than the body),
   // we hide the popover. Otherwise, its position would be incorrect.
   useEffect(() => {
@@ -69,7 +69,7 @@ export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAri
 
   // Aria 1.1 supports multiple values for aria-haspopup other than just menus.
   // https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup
-  // However, we only add it for menus for now because screen readers often 
+  // However, we only add it for menus for now because screen readers often
   // announce it as a menu even for other values.
   let ariaHasPopup = undefined;
   if (type === 'menu') {

@@ -14,6 +14,7 @@ import {DOMProps, PointerType, PressEvents} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {PressResponderContext} from './context';
+import {DOMEventPropNames, filterDOMProps} from "@react-spectrum/utils";
 
 export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
@@ -236,7 +237,7 @@ export function usePress(props: PressHookProps): PressResult {
       if (state.isPressed && isValidKeyboardEvent(e)) {
         e.preventDefault();
         e.stopPropagation();
-        
+
         state.isPressed = false;
         triggerPressEnd(createEvent(state.target, e), 'keyboard', e.target === state.target);
         document.removeEventListener('keyup', onKeyUp, false);
@@ -259,7 +260,7 @@ export function usePress(props: PressHookProps): PressResult {
     };
 
     let restoreTextSelection = () => {
-      // There appears to be a delay on iOS where selection still might occur 
+      // There appears to be a delay on iOS where selection still might occur
       // after pointer up, so wait a bit before removing user-select.
       setTimeout(() => {
         // Avoid race conditions
@@ -426,7 +427,7 @@ export function usePress(props: PressHookProps): PressResult {
         if (e.button !== 0) {
           return;
         }
-        
+
         state.isPressed = false;
         document.removeEventListener('mouseup', onMouseUp, false);
 
@@ -545,7 +546,7 @@ export function usePress(props: PressHookProps): PressResult {
 
   return {
     isPressed: isPressedProp || isPressed,
-    pressProps: mergeProps(domProps, pressProps)
+    pressProps: mergeProps(filterDOMProps(domProps, DOMEventPropNames), pressProps)
   };
 }
 
@@ -627,8 +628,8 @@ interface EventPoint {
 
 function isOverTarget(point: EventPoint, target: HTMLElement) {
   let rect = target.getBoundingClientRect();
-  return (point.clientX || 0) >= (rect.left || 0) && 
-    (point.clientX || 0) <= (rect.right || 0) && 
-    (point.clientY || 0) >= (rect.top || 0) && 
+  return (point.clientX || 0) >= (rect.left || 0) &&
+    (point.clientX || 0) <= (rect.right || 0) &&
+    (point.clientY || 0) >= (rect.top || 0) &&
     (point.clientY || 0) <= (rect.bottom || 0);
 }
