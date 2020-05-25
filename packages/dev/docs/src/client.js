@@ -45,7 +45,17 @@ function updateTitleFontSize() {
 }
 
 updateTitleFontSize();
-window.addEventListener('resize', updateTitleFontSize);
+
+// Use ResizeObserver where available to detect size changes not related to window resizing, e.g. font loading.
+if (typeof ResizeObserver !== 'undefined') {
+  let observer = new ResizeObserver(() => {
+    // Avoid updating the layout during the resize event and creating circular notifications.
+    requestAnimationFrame(updateTitleFontSize);
+  });
+  observer.observe(title);
+} else {
+  window.addEventListener('resize', updateTitleFontSize);
+}
 
 function Hamburger() {
   let onPress = () => {
