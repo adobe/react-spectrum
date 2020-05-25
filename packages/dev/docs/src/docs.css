@@ -247,9 +247,9 @@ footer li:last-child:after {
 
 article h1.articleHeader {
   margin-top: 0 !important;
-  /* scale font size between 24px and 58px
-   * 7.5vw is 24px at 320px viewport size. */
-  font-size: min(58px, max(24px, 7.5vw));
+  /* scale font size between 32px and 58px
+   * 10vw is 32px at 320px viewport size. */
+  font-size: min(58px, max(32px, 10vw));
   /* This is a hack to get Safari to repaint when the viewport resizes, 
    * otherwise the font size does not update. */
   width: 100vw;

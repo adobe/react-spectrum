@@ -17,6 +17,36 @@ import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
 
+let title = document.querySelector('h1');
+
+// Size the title to fit the available space.
+function updateTitleFontSize() {
+  let fontSize = parseInt(window.getComputedStyle(title).fontSize, 10);
+  
+  // Constrain font size to 58px, or 10% of the window width, whichever is smaller.
+  let maxFontSize = Math.min(58, window.innerWidth * 0.1);
+  if (fontSize > maxFontSize) {
+    fontSize = maxFontSize;
+    title.style.fontSize = maxFontSize + 'px';
+  }
+
+  // If the font size is less than the maximum font size,
+  // increase the font size until it overflows.
+  while (fontSize < maxFontSize && title.scrollWidth <= title.clientWidth) {
+    fontSize++;
+    title.style.fontSize = fontSize + 'px';
+  }
+
+  // Reduce the font size until it doesn't overflow.
+  while (title.scrollWidth > title.clientWidth) {
+    fontSize--;
+    title.style.fontSize = fontSize + 'px';
+  }
+}
+
+updateTitleFontSize();
+window.addEventListener('resize', updateTitleFontSize);
+
 function Hamburger() {
   let onPress = () => {
     document.querySelector('.' + docsStyle.nav).classList.toggle(docsStyle.visible);
