@@ -24,7 +24,7 @@ function updateTitleFontSize() {
   let fontSize = parseInt(window.getComputedStyle(title).fontSize, 10);
   
   // Constrain font size to 58px, or 10% of the window width, whichever is smaller.
-  let maxFontSize = Math.min(58, window.innerWidth * 0.1);
+  let maxFontSize = Math.min(58, Math.round(window.innerWidth * 0.1));
   if (fontSize > maxFontSize) {
     fontSize = maxFontSize;
     title.style.fontSize = maxFontSize + 'px';
