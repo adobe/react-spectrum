@@ -29,10 +29,14 @@ function PopoverWithDialog({children}) {
 describe('Popover', function () {
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({
+      getPropertyValue: () => '20'
+    }));
   });
 
   afterEach(() => {
     window.requestAnimationFrame.mockRestore();
+    window.getComputedStyle.mockRestore();
   });
 
   describe('parity', function () {
