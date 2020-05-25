@@ -27,6 +27,16 @@ let theme = {
 
 function renderRadioGroup(ComponentGroup, Component, groupProps, radioProps) {
   return render(
+    <ComponentGroup aria-label="favorite pet" {...groupProps}>
+      <Component {...radioProps[0]} value="dogs">Dogs</Component>
+      <Component {...radioProps[1]} value="cats">Cats</Component>
+      <Component {...radioProps[2]} value="dragons">Dragons</Component>
+    </ComponentGroup>
+  );
+}
+
+function renderRadioGroupNoLabel(ComponentGroup, Component, groupProps, radioProps) {
+  return render(
     <ComponentGroup {...groupProps}>
       <Component {...radioProps[0]} value="dogs">Dogs</Component>
       <Component {...radioProps[1]} value="cats">Cats</Component>
@@ -82,7 +92,7 @@ describe('Radios', function () {
     ${'V2Radio'} | ${V2RadioGroup} | ${V2Radio} | ${{}}      | ${[{}, {}, {}]}
   `('$Name renders without labels', function ({Name, ComponentGroup, Component, groupProps, radioProps}) {
     let {getByRole, getAllByRole} = render(
-      <ComponentGroup {...groupProps}>
+      <ComponentGroup aria-label="favorite pet" {...groupProps}>
         <Component {...radioProps[0]} value="dogs" aria-label="dogs" />
         <Component {...radioProps[1]} value="cats" aria-label="cats" />
         <Component {...radioProps[2]} value="dragons" aria-label="dragons" />
@@ -123,7 +133,7 @@ describe('Radios', function () {
   `('$Name can be disabled via the Provider', function ({ComponentGroup, Component, groupProps, radioProps}) {
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme} isDisabled>
-        <ComponentGroup {...groupProps}>
+        <ComponentGroup aria-label="favorite pet" {...groupProps}>
           <Component {...radioProps[0]} value="dogs">Dogs</Component>
           <Component {...radioProps[1]} value="cats">Cats</Component>
           <Component {...radioProps[2]} value="dragons">Dragons</Component>
@@ -267,7 +277,7 @@ describe('Radios', function () {
   // for the browser to handle it for us
 
   it('v3 RadioGroup supports labeling', () => {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet'}, {});
+    let {getByRole} = renderRadioGroupNoLabel(RadioGroup, Radio, {label: 'Favorite Pet'}, {});
     let radioGroup = getByRole('radiogroup');
 
     let labelId = radioGroup.getAttribute('aria-labelledby');
