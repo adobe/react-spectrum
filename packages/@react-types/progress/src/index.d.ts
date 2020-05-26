@@ -58,7 +58,7 @@ export interface ProgressCircleProps extends ProgressBaseProps {
   isIndeterminate?: boolean
 }
 
-export interface SpectrumProgressCircleProps extends ProgressCircleProps, DOMProps, StyleProps {
+export interface SpectrumProgressCircleProps extends ProgressCircleProps, Omit<DOMProps, 'aria-owns' | 'aria-current'>, StyleProps {
   /**
    * What the ProgressCircle's diameter should be.
    * @default "M"
@@ -68,7 +68,7 @@ export interface SpectrumProgressCircleProps extends ProgressCircleProps, DOMPro
   variant?: 'overBackground'
 }
 
-export interface SpectrumProgressBarBaseProps extends ProgressBarBaseProps, DOMProps, StyleProps {
+export interface SpectrumProgressBarBaseProps extends ProgressBarBaseProps, Omit<DOMProps, 'aria-owns' | 'aria-current'>, StyleProps {
   /**
    * How thick the ProgressBar should be.
    * @default "L"

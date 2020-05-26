@@ -31,6 +31,11 @@ function StatusLight(props: SpectrumStatusLightProps, ref: DOMRef<HTMLDivElement
     console.warn('If no children are provided, an aria-label must be specified');
   }
 
+  // should this be in an aria hook?
+  if (!props.role && (props['aria-label'] || props['aria-labelledby'] || props['aria-roledescription'])) {
+    console.warn('A labelled StatusLight must have a role.');
+  }
+
   return (
     <div
       {...filterDOMProps(otherProps)}

@@ -13,6 +13,6 @@
 import {DOMProps, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface SpectrumWellProps extends DOMProps, StyleProps {
+export interface SpectrumWellProps extends Omit<DOMProps, 'aria-current'>, StyleProps {
   children: ReactNode
 }

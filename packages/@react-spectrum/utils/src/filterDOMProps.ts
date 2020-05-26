@@ -22,11 +22,15 @@ const DOMPropNames = {
   'aria-describedby': 1,
   'aria-controls': 1,
   'aria-owns': 1,
-  'aria-hidden': 1
+  'aria-hidden': 1,
+  'aria-atomic': 1,
+  'aria-live': 1,
+  'aria-details': 1,
+  'aria-roledescription': 1
 };
 
 // Based on DOMAttributes from react types
-export const DOMEventPropNames = {  
+export const DOMEventPropNames = {
   // Focus events
   onFocus: 1,
   onBlur: 1,

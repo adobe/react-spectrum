@@ -20,7 +20,7 @@ export interface LabelProps {
   elementType?: ElementType
 }
 
-export interface SpectrumLabelProps extends LabelProps, DOMProps, StyleProps {
+export interface SpectrumLabelProps extends LabelProps, Omit<DOMProps, 'aria-owns' | 'aria-current'>, StyleProps {
   labelPosition?: LabelPosition, // default top
   labelAlign?: Alignment, // default start
   isRequired?: boolean,

@@ -61,6 +61,11 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     ...otherProps
   } = props;
 
+  // should this be in an aria hook?
+  if (!props.role && (props['aria-label'] || props['aria-labelledby'] || props['aria-roledescription'])) {
+    console.warn('A labelled provider must have a role.');
+  }
+
   // select only the props with values so undefined props don't overwrite prevContext values
   let currentProps = {
     version,

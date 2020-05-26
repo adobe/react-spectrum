@@ -52,8 +52,16 @@ export interface DOMProps {
 
   /**
    * Indicates that the element is perceivable but disabled, so it is not editable or otherwise operable.
+   * false is not allowed, use undefined.
+   * TODO: early comment has it as boolean | 'false' | 'true', follow up says `If possible do not allow aria-hidden=false as an allowed value`
    */
-  'aria-hidden'?: boolean | 'false' | 'true'
+  'aria-hidden'?: true | 'true'
+
+  /**
+   Indicates the element that represents the current item within a container or set of related elements.
+   TODO: is this actually supposed to be in here? one comment had it, the more recent one did not
+   */
+  'aria-current'?: 'page' | 'step' | 'location' | 'date' | 'time' | boolean | 'true' | 'false'
 }
 
 // DOM props that apply to all text inputs

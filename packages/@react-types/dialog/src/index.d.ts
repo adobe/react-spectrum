@@ -28,8 +28,8 @@ export interface DialogTriggerProps {
 export interface SpectrumDialogTriggerProps extends DialogTriggerProps, PositionProps {
   /** The Dialog and its trigger element. See the DialogTrigger [Content section](#content) for more information on what to provide as children. */
   children: [ReactElement, SpectrumDialogClose | ReactElement],
-  /** 
-   * The type of Dialog that should be rendered. See the DialogTrigger [types section](#dialog-types) for an explaination on each. 
+  /**
+   * The type of Dialog that should be rendered. See the DialogTrigger [types section](#dialog-types) for an explaination on each.
    * @default "modal"
    */
   type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
@@ -46,7 +46,8 @@ export interface SpectrumDialogTriggerProps extends DialogTriggerProps, Position
   isDismissable?: boolean
 }
 
-export interface SpectrumDialogProps extends DOMProps, StyleProps {
+// TODO: why would we exclude aria-hidden? nested dialogs?
+export interface SpectrumDialogProps extends Omit<DOMProps, 'aria-owns'>, StyleProps {
   /** The contents of the Dialog. */
   children: ReactNode,
   /** The size of the Dialog. Only applies to "modal" type Dialogs. */

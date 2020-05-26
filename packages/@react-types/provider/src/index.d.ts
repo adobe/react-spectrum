@@ -51,7 +51,7 @@ interface ContextProps {
   validationState?: ValidationState
 }
 
-export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
+export interface ProviderProps extends ContextProps, Omit<DOMProps, 'aria-owns'>, StyleProps {
   /** The children components to receive Provider props and context. */
   children: ReactNode,
   /**

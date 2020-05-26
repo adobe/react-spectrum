@@ -24,5 +24,5 @@ export interface CalendarPropsBase {
 export interface CalendarProps extends CalendarPropsBase, ValueBase<DateValue> {}
 export interface RangeCalendarProps extends CalendarPropsBase, ValueBase<RangeValue<DateValue>> {}
 
-export interface SpectrumCalendarProps extends CalendarProps, DOMProps, StyleProps {}
+export interface SpectrumCalendarProps extends CalendarProps, Omit<DOMProps, 'aria-owns' | 'aria-current'>, StyleProps {}
 export interface SpectrumRangeCalendarProps extends RangeCalendarProps, DOMProps, StyleProps {}

@@ -18,7 +18,7 @@ import {useProvider} from '@react-spectrum/provider';
 
 type Scale = 'M' | 'L'
 
-interface IconProps extends DOMProps, StyleProps {
+interface IconProps extends Omit<DOMProps, 'aria-owns'>, StyleProps {
   /**
    * Alternate text for assistive technologies
    */
@@ -81,7 +81,7 @@ export function Icon(props: IconProps) {
   if (color === undefined) {
     color = pcolor;
   }
-  if (!ariaHidden || ariaHidden === 'false') {
+  if (!ariaHidden) { // do i even need this check anymore?? the type is now undefined, true, or 'true', nothing else. if i need it here and i need to check 'false', then do i need it in other places?
     ariaHidden = undefined;
   }
 

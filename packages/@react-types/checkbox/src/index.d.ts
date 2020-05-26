@@ -30,7 +30,7 @@ export interface CheckboxProps extends CheckboxBase {
   isIndeterminate?: boolean
 }
 
-export interface SpectrumCheckboxProps extends CheckboxProps, DOMProps, StyleProps {
+export interface SpectrumCheckboxProps extends CheckboxProps, Omit<DOMProps, 'aria-owns'>, StyleProps {
   /**
    * This prop sets the emphasized style which provides visual prominence.
    */

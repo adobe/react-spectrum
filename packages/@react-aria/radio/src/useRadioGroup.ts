@@ -20,7 +20,7 @@ interface RadioGroupAria {
   /** Props for the radio group wrapper element. */
   radioGroupProps: HTMLAttributes<HTMLElement>,
   /** Props for the radio group's visible label (if any). */
-  labelProps: HTMLAttributes<HTMLElement>
+  labelProps: HTMLAttributes<HTMLElement> // this includes aria-hidden Type 'boolean | "false" | "true"' is not assignable to type 'true | "true"'.
 }
 
 /**

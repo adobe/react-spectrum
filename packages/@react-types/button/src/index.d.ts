@@ -29,7 +29,7 @@ export interface ButtonProps extends PressEvents, FocusableProps {
   target?: string
 }
 
-export interface SpectrumButtonProps extends ButtonProps, DOMProps, StyleProps {
+export interface SpectrumButtonProps extends ButtonProps, Omit<DOMProps, 'aria-owns'>, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
   variant: 'cta' | 'overBackground' | 'primary' | 'secondary' | 'negative',
   /** Whether the button should be displayed with a quiet style. */

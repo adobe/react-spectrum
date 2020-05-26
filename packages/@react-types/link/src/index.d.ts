@@ -18,7 +18,7 @@ export interface LinkProps extends PressEvents {
   children: ReactNode
 }
 
-export interface SpectrumLinkProps extends LinkProps, DOMProps, StyleProps {
+export interface SpectrumLinkProps extends LinkProps, Omit<DOMProps, 'aria-owns'>, StyleProps {
   /**
    * The [visual style](https://spectrum.adobe.com/page/link/#Options) of the link.
    * @default "primary"

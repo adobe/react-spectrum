@@ -40,7 +40,7 @@ export interface RadioProps extends FocusableProps {
   isDisabled?: boolean
 }
 
-export interface SpectrumRadioGroupProps extends RadioGroupProps, SpectrumLabelableProps, DOMProps, StyleProps {
+export interface SpectrumRadioGroupProps extends RadioGroupProps, SpectrumLabelableProps, Omit<DOMProps, 'aria-current'>, StyleProps {
   /**
    * The axis the Radio Button(s) should align with.
    * @default 'vertical'
@@ -53,4 +53,4 @@ export interface SpectrumRadioGroupProps extends RadioGroupProps, SpectrumLabela
   isEmphasized?: boolean
 }
 
-export interface SpectrumRadioProps extends RadioProps, DOMProps, StyleProps {}
+export interface SpectrumRadioProps extends RadioProps, Omit<DOMProps, 'aria-owns'>, StyleProps {}

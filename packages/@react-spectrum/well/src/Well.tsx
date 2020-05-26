@@ -24,6 +24,11 @@ function Well(props: SpectrumWellProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
+  // should this be in an aria hook?
+  if (!props.role && (props['aria-label'] || props['aria-labelledby'] || props['aria-roledescription'])) {
+    console.warn('A labelled Well must have a role.');
+  }
+
   return (
     <div
       {...filterDOMProps(otherProps)}

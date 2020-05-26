@@ -20,7 +20,7 @@ export interface TooltipTriggerProps extends PositionProps {
   onOpenChange?: (isOpen: boolean) => void
 }
 
-export interface TooltipProps extends DOMProps {
+export interface TooltipProps extends Omit<DOMProps, 'aria-owns'> {
   children: ReactNode,
   isOpen?: boolean,
   role?: 'tooltip'
