@@ -17,22 +17,39 @@ export type FocusStrategy = 'first' | 'last';
 
 export interface MenuTriggerProps {
   // trigger?: 'press' | 'longPress',
+  /** Where the Menu aligns with its trigger. */
   align?: Alignment,
-  direction?: 'bottom' | 'top', // left right?
+  /** Where the Menu opens relative to its trigger. */
+  direction?: 'bottom' | 'top',
+  /** Whether the Menu closes when a selection is made. */
   closeOnSelect?: boolean,
+  /** Whether the Menu loads open (controlled). */
   isOpen?: boolean,
+  /** Whether the Menu loads open (uncontrolled). */
   defaultOpen?: boolean,
+  /** Handler that is called when the Menu opens or closes. */
   onOpenChange?: (isOpen: boolean) => void,
+  /**
+   * Whether the element should flip its orientation when there is insufficient
+   * space for it to render within the view.
+   */
   shouldFlip?: boolean
 }
 
 export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
+  /**
+   * The contents of the MenuTrigger, a trigger and a Menu. See the MenuTrigger
+   * [Content section](#content) for more information on what to provide as children.
+   */
   children: ReactElement[]
 }
 
 export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
+  /** Where the focus should be set. */
   autoFocus?: boolean | FocusStrategy,
+  /** Whether keyboard navigation is circular. */
   shouldFocusWrap?: boolean,
+  /** Handler that is called when an item is selected. */
   onAction?: (key: Key) => void
 }
 
