@@ -31,5 +31,8 @@ function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   );
 }
 
+/**
+ * Heading is used to create various levels of typographic hierarchies.
+ */
 const _Heading = forwardRef(Heading);
 export {_Heading as Heading};
