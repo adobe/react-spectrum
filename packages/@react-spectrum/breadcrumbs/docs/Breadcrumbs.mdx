@@ -11,7 +11,8 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/breadcrumbs';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import collectionsDocs from 'docs:@react-stately/collections';
+import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
@@ -46,7 +47,7 @@ category: Navigation
 
 Breadcrumbs accept as list of `children`, each with a `uniqueKey` prop.
 
-It is required that the `children` are Item components from the `@react-stately/collections` library.
+It is required that the `children` are <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Item} /> components from the `@react-stately/collections` library.
 
 ```tsx example
 function Example() {
@@ -95,7 +96,7 @@ function Example() {
 
 <PropTable component={docs.exports.Breadcrumbs} links={docs.links} />
 
-## Visual Options
+## Visual options
 
 ### Size
 
@@ -138,7 +139,7 @@ If a change to the aria-level is required, use the `headingAriaLevel` prop.
 </Breadcrumbs>
 ```
 
-### Visible Items
+### Visible items
 
 Breadcrumbs truncate by default to a maximum of 4 items visible.
 
@@ -155,7 +156,7 @@ In order to manually control the truncation, use the `maxVisibleItems` prop.
 </Breadcrumbs>
 ```
 
-### Root Context
+### Root context
 
 Some applications find that displaying the root item is useful for orienting users.
 This variation keeps the root visible when other items are truncated into the menu.

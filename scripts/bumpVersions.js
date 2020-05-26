@@ -65,20 +65,49 @@ let blackList = new Set([
 let info = JSON.parse(exec('yarn workspaces info --json').toString().split('\n').slice(1, -2).join('\n'));
 let releasedPackages = new Map();
 
-for (let pkg in publicPackages) {
-  addPackage(pkg);
-}
-
-function addPackage(pkg) {
-  if (blackList.has(pkg) || releasedPackages.has(pkg)) {
-    return;
+// If releasing an individual package, bump that package and all packages that depend on it.
+// Otherwise, add all public packages and their dependencies.
+let arg = process.argv[process.argv.length - 1];
+if (arg.startsWith('@')) {
+  if (!info[arg]) {
+    throw new Error('Invalid package ' + arg);
   }
 
-  releasedPackages.set(pkg, info[pkg].location);
+  let addPackage = (pkg) => {
+    if (blackList.has(pkg) || releasedPackages.has(pkg)) {
+      return;
+    }
+  
+    releasedPackages.set(pkg, info[pkg].location);
+  
+    for (let p in info) {
+      if (releasedPackages.has(p)) {
+        continue;
+      }
+  
+      if (info[p].workspaceDependencies.includes(pkg)) {
+        addPackage(p);
+      }
+    }
+  };
 
-  for (let dep of info[pkg].workspaceDependencies) {
-    addPackage(dep);
-  }
+  addPackage(arg);
+} else {
+  let addPackage = (pkg) => {
+    if (blackList.has(pkg) || releasedPackages.has(pkg)) {
+      return;
+    }
+  
+    releasedPackages.set(pkg, info[pkg].location);
+  
+    for (let dep of info[pkg].workspaceDependencies) {
+      addPackage(dep);
+    }
+  };
+
+  for (let pkg in publicPackages) {
+    addPackage(pkg);
+  }  
 }
 
 run();

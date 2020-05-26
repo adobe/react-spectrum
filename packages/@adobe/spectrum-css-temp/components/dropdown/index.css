@@ -123,6 +123,12 @@ governing permissions and limitations under the License.
   }
 }
 
+.spectrum-Dropdown-trigger {
+  .spectrum-Dropdown-progressCircle {
+    margin-inline-start: var(--spectrum-dropdown-icon-margin-left);
+  }
+}
+
 .spectrum-Icon + .spectrum-Dropdown-chevron {
   margin-inline-start: var(--spectrum-dropdown-icon-gap);
 }
@@ -158,5 +164,9 @@ governing permissions and limitations under the License.
     .spectrum-Dropdown-trigger {
       inline-size: auto;
     }
+  }
+
+  &.spectrum-Dropdown-fieldWrapper--positionSide {
+    flex-direction: row;
   }
 }

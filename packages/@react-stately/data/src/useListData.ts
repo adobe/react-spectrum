@@ -11,10 +11,11 @@
  */
 
 import {Key, useState} from 'react';
+import {Selection} from '@react-types/shared';
 
 interface ListOptions<T> {
   initialItems?: T[],
-  initialSelectedKeys?: Iterable<Key>,
+  initialSelectedKeys?: 'all' | Iterable<Key>,
   getKey?: (item: T) => Key
 }
 
@@ -23,10 +24,10 @@ export interface ListData<T> {
   items: T[],
 
   /** The keys of the currently selected items in the list. */
-  selectedKeys: Set<Key>,
+  selectedKeys: Selection,
 
   /** Sets the selected keys. */
-  setSelectedKeys(keys: Set<Key>): void,
+  setSelectedKeys(keys: Selection): void,
 
   /**
    * Gets an item from the list by key.
@@ -96,7 +97,7 @@ export interface ListData<T> {
 
 export interface ListState<T> {
   items: T[],
-  selectedKeys: Set<Key>
+  selectedKeys: Selection
 }
 
 /**
@@ -111,7 +112,7 @@ export function useListData<T>(opts: ListOptions<T>): ListData<T> {
   } = opts;
   let [state, setState] = useState<ListState<T>>({
     items: initialItems,
-    selectedKeys: new Set<Key>(initialSelectedKeys || [])
+    selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys || [])
   });
 
   return {
@@ -137,7 +138,7 @@ function insert<T>(state: ListState<T>, index: number, ...values: T[]): ListStat
 export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem'> {
   let {getKey} = opts;
   return {
-    setSelectedKeys(selectedKeys: Set<Key>) {
+    setSelectedKeys(selectedKeys: Selection) {
       dispatch(state => ({
         ...state,
         selectedKeys
@@ -191,7 +192,16 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
     },
     removeSelectedItems() {
       dispatch(state => {
-        let items = state.items.filter(item => !state.selectedKeys.has(getKey(item)));
+        if (state.selectedKeys === 'all') {
+          return {
+            ...state,
+            items: [],
+            selectedKeys: new Set()
+          };
+        }
+
+        let selectedKeys = state.selectedKeys;
+        let items = state.items.filter(item => !selectedKeys.has(getKey(item)));
         return {
           ...state,
           items,

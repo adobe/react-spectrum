@@ -33,13 +33,13 @@ category: Base
 </Provider>
 ```
 
-## Global Settings
+## Global settings
 
 Props such as `colorScheme`, `locale`, `scale`, and `theme` are applied to all
 children components, including nested Providers. The `theme` allows the
 definition of custom CSS variables for the `colorScheme` and `scale` prop values.
 
-### Color Scheme and Scale
+### Color scheme and scale
 
 ```tsx example
 <Provider colorScheme="dark" scale="large">
@@ -50,7 +50,7 @@ definition of custom CSS variables for the `colorScheme` and `scale` prop values
     <Checkbox>
       Checkbox Label
     </Checkbox>
-    <div style={{'margin-bottom': '15px'}}>
+    <div style={{'marginBottom': '15px'}}>
       <Button variant="primary">Button</Button>
     </div>
   </Form>
@@ -97,7 +97,7 @@ The default for the locale prop is based on the system/browser settings.
 </Provider>
 ```
 
-## Provider Nesting
+## Provider nesting
 
 Providers can be nested. The parent Provider passes its props down to the
 children Providers.
@@ -111,7 +111,7 @@ children Providers.
 </Provider>
 ```
 
-## Children Props
+## Children props
 
 As a convenience, Provider supports passing common props to all components
 within it. For example, an entire group of components could be disabled by

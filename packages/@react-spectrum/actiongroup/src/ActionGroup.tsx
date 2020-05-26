@@ -25,6 +25,9 @@ import {useActionGroup} from '@react-aria/actiongroup';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSelectableItem} from '@react-aria/selection';
 
+/**
+* An ActionGroup is a grouping of ActionButtons that are related to one another.
+*/
 function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
@@ -40,12 +43,12 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
     ...otherProps
   } = props;
 
+  let domRef = useDOMRef(ref);
   let state = useActionGroupState({...props, selectionMode});
-  let {actionGroupProps, buttonProps} = useActionGroup(props, state);
+  let {actionGroupProps, buttonProps} = useActionGroup(props, state, domRef);
   let isVertical = orientation === 'vertical';
   let providerProps = {isEmphasized, isDisabled, isQuiet};
   let {styleProps} = useStyleProps(props);
-  let domRef = useDOMRef(ref);
 
   return (
     <div

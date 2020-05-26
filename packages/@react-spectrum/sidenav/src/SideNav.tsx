@@ -13,7 +13,7 @@
 import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
 import {CollectionItem, CollectionView} from '@react-aria/collections';
 import {ListLayout, Node} from '@react-stately/collections';
-import React, {ReactElement, useMemo} from 'react';
+import React, {ReactElement, useMemo, useRef} from 'react';
 import {ReusableView} from '@react-stately/collections';
 import {SideNavContext} from './SideNavContext';
 import {SideNavItem} from './SideNavItem';
@@ -28,7 +28,8 @@ export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
   let state = useTreeState({...props, selectionMode: 'single', disallowEmptySelection: true});
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() => new ListLayout({rowHeight: 40, collator}), [collator]);
-  let {navProps, listProps} = useSideNav(props, state, layout);
+  let ref = useRef();
+  let {navProps, listProps} = useSideNav({...props, layout}, state, ref);
   let {styleProps} = useStyleProps(props);
 
   layout.collection = state.collection;
@@ -65,6 +66,7 @@ export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
       <SideNavContext.Provider value={state}>
         <CollectionView
           {...listProps}
+          ref={ref}
           focusedKey={state.selectionManager.focusedKey}
           className={classNames(styles, 'spectrum-SideNav')}
           layout={layout}

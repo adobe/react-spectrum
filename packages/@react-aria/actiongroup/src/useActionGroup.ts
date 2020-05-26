@@ -13,7 +13,7 @@
 import {ActionGroupKeyboardDelegate} from './ActionGroupKeyboardDelegate';
 import {ActionGroupProps} from '@react-types/actiongroup';
 import {ActionGroupState} from '@react-stately/actiongroup';
-import {HTMLAttributes, useMemo, useState} from 'react';
+import {HTMLAttributes, RefObject, useMemo, useState} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {Orientation} from '@react-types/shared';
 import {useFocusWithin} from '@react-aria/interactions';
@@ -37,7 +37,8 @@ export interface ActionGroupAria {
   actionGroupProps: HTMLAttributes<HTMLElement>,
   buttonProps: HTMLAttributes<HTMLElement>,
 }
-export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroupState<T>): ActionGroupAria {
+
+export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroupState<T>, ref: RefObject<HTMLElement>): ActionGroupAria {
   let {
     id,
     selectionMode = 'single',
@@ -47,9 +48,13 @@ export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroup
   } = props;
 
   let {direction} = useLocale();
-  let keyboardDelegate = useMemo(() => new ActionGroupKeyboardDelegate(state.collection, direction, orientation), [state.collection, direction, orientation]);
+  // eslint-disable-next-line arrow-body-style
+  let keyboardDelegate = useMemo(() => {
+    return new ActionGroupKeyboardDelegate(state.collection, direction, orientation, state.disabledKeys);
+  }, [state.collection, direction, orientation, state.disabledKeys]);
 
   let {collectionProps} = useSelectableCollection({
+    ref,
     selectionManager: state.selectionManager,
     keyboardDelegate,
     disallowSelectAll: true
@@ -59,20 +64,17 @@ export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroup
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setFocusWithin
   });
-
   let tabIndex = isFocusWithin ? -1 : 0;
 
   return {
     actionGroupProps: {
       id: useId(id),
       role,
-      tabIndex: isDisabled ? null : tabIndex,
       'aria-orientation': role === 'toolbar' ? orientation : null,
       'aria-disabled': isDisabled,
-      ...mergeProps(focusWithinProps, collectionProps)
+      ...mergeProps(focusWithinProps, collectionProps),
+      tabIndex: isDisabled ? null : tabIndex
     },
-    buttonProps: {
-      role: BUTTON_ROLES[selectionMode]
-    }
+    buttonProps: {role: BUTTON_ROLES[selectionMode]}
   };
 }

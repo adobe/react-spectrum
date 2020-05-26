@@ -11,10 +11,14 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import {Highlights, Hero} from '@react-spectrum/docs';
-import heroNarrow from 'url:../assets/hero-narrow.png';
-import heroNarrow2x from 'url:../assets/hero-narrow@2x.png';
-import heroWide from 'url:../assets/hero-wide.png';
-import heroWide2x from 'url:../assets/hero-wide@2x.png';
+import heroNarrow from 'url:../assets/ReactAria_Mobile_976x1025_1x.png';
+import heroNarrow2x from 'url:../assets/ReactAria_Mobile_976x1025_2x.png';
+import heroWide from 'url:../assets/ReactAria_976x445_1x.png';
+import heroWide2x from 'url:../assets/ReactAria_976x445_2x.png';
+
+---
+description: A library of React Hooks that provides accessible UI primitives for your design system.
+---
 
 # React Aria
 
@@ -30,18 +34,18 @@ A library of React Hooks that provides accessible UI primitives for your design 
 <Highlights items={[
   {
     title: 'Accessible',
-    description: 'React Aria provides accessibility and behavior according to WAI-ARIA Authoring Practices, including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users.',
+    description: <>React Aria provides accessibility and behavior according to <a href="https://www.w3.org/TR/wai-aria-practices-1.1/" target="_blank">WAI-ARIA Authoring Practices</a>, including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users.</>
   },
   {
     title: 'Adaptive',
-    description: 'React Aria supports mouse, touch, keyboard, and screen reader interactions, which have been tested across a wide variety of browsers, devices, and platforms. We ensure consistent behavior across browsers and devices so you don’t have to!',
+    description: 'React Aria ensures consistent behavior, no matter the UI. It supports mouse, touch, keyboard, and screen reader interactions that have been tested across a wide variety of browsers, devices, and platforms.',
   },
   {
-    title: 'Internationalized',
-    description: 'React Aria supports over 30 languages, including right to left specific behavior, internationalized date and number formatting, and more.'
+    title: 'International',
+    description: 'React Aria supports over 30 languages, including right-to-left-specific behavior, internationalized date and number formatting, and more.'
   },
   {
-    title: '100% Customizable',
-    description: 'React Aria doesn’t implement any rendering or impose a DOM structure, styling methodology, or design specific details. It provides behavior, accessibility, and interactions and lets you focus on your design.'
+    title: 'Fully customizable',
+    description: 'React Aria doesn’t implement any rendering or impose a DOM structure, styling methodology, or design-specific details. It provides behavior, accessibility, and interactions and lets you focus on your design.'
   }
 ]} />

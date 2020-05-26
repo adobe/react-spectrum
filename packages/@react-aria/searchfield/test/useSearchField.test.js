@@ -27,7 +27,7 @@ describe('useSearchField hook', () => {
   let onClear = jest.fn();
 
   let renderSearchHook = (props, wrapper) => {
-    let {result} = renderHook(() => useSearchField(props, state, ref), {wrapper});
+    let {result} = renderHook(() => useSearchField({...props, 'aria-label': 'testLabel'}, state, ref), {wrapper});
     return result.current;
   };
 
@@ -134,6 +134,7 @@ describe('useSearchField hook', () => {
         expect(ref.current.focus).toHaveBeenCalledTimes(1);
         // Verify that props.onClear is triggered as well with the same event
         expect(onClear).toHaveBeenCalledTimes(1);
+        expect(onClear).toHaveBeenCalledWith();
       });
     });
   });
