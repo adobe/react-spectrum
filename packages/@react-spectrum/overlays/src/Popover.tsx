@@ -119,7 +119,7 @@ function Arrow(props) {
 
       let spectrumBorderWidth = window.getComputedStyle(ref.current)
         .getPropertyValue('--spectrum-popover-tip-borderWidth');
-      if (spectrumTipWidth !== '') {
+      if (spectrumBorderWidth !== '') {
         setBorderWidth(parseInt(spectrumBorderWidth, 10));
       }
     }
