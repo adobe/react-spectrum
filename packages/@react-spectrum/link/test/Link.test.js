@@ -27,7 +27,6 @@ describe('Link', function () {
   let onPressSpy = jest.fn();
 
   afterEach(() => {
-    cleanup();
     onPressSpy.mockClear();
   });
 
