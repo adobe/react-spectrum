@@ -15,7 +15,7 @@ import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import {getAnchorProps} from './utils';
-import heroImage from 'url:../pages/assets/hero-narrow.png';
+import heroImage from 'url:../pages/assets/ReactSpectrumHome_Mobile_976x1025_2x.png';
 import highlightCss from './syntax-highlight.css';
 import {ImageContext} from './Image';
 import {LinkProvider} from './types';
