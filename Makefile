@@ -90,3 +90,4 @@ website:
 
 website-master:
 	yarn build:docs --dist-dir dist/master/docs
+	cp packages/dev/docs/pages/robots.txt dist/master/docs/robots.txt
