@@ -87,10 +87,6 @@ storiesOf('MenuTrigger', module)
     () => render({isDisabled: true})
   )
   .add(
-    'menu with role=listbox',
-    () => render({}, {role: 'listbox'})
-  )
-  .add(
     'multiselect menu',
     () => render({}, {selectionMode: 'multiple'})
   )

@@ -113,7 +113,7 @@ export function dimensionValue(value: DimensionValue) {
     return value + 'px';
   }
 
-  if (/(%|px|em|rem|vw)$/.test(value)) {
+  if (/(%|px|em|rem|vw|vh|auto|cm|mm|in|pt|pc|ex|ch|rem|vmin|vmax)$/.test(value)) {
     return value;
   }
 
@@ -232,19 +232,26 @@ export function passthroughStyle(value) {
   return value;
 }
 
-const boxAlignmentStyleProps: StyleHandlers = {
-  justifyItems: ['justifyItems', passthroughStyle],
-  justifyContent: ['justifyContent', passthroughStyle],
-  alignItems: ['alignItems', passthroughStyle],
-  alignContent: ['alignContent', passthroughStyle],
-  ...baseStyleProps
-};
+// Normalize 'start' and 'end' alignment values to 'flex-start' and 'flex-end'
+// in flex containers for browser compatibility.
+function flexAlignValue(value) {
+  if (value === 'start') {
+    return 'flex-start';
+  }
+
+  if (value === 'end') {
+    return 'flex-end';
+  }
+
+  return value;
+}
 
 export const flexStyleProps: StyleHandlers = {
   flexDirection: ['flexDirection', passthroughStyle],
   flexWrap: ['flexWrap', passthroughStyle],
-  flexFlow: ['flexFlow', passthroughStyle],
-  ...boxAlignmentStyleProps
+  justifyContent: ['justifyContent', flexAlignValue],
+  alignItems: ['alignItems', flexAlignValue],
+  alignContent: ['alignContent', flexAlignValue]
 };
 
 export const gridStyleProps: StyleHandlers = {
@@ -263,7 +270,11 @@ export const gridStyleProps: StyleHandlers = {
   gridTemplateAreas: ['gridTemplateAreas', passthroughStyle],
   gridTemplateColumns: ['gridTemplateColumns', passthroughStyle],
   gridTemplateRows: ['gridTemplateRows', passthroughStyle],
+  gap: ['gap', dimensionValue],
   rowGap: ['rowGap', dimensionValue],
   columnGap: ['rowGap', dimensionValue],
-  ...boxAlignmentStyleProps
+  justifyItems: ['justifyItems', passthroughStyle],
+  justifyContent: ['justifyContent', passthroughStyle],
+  alignItems: ['alignItems', passthroughStyle],
+  alignContent: ['alignContent', passthroughStyle]
 };
