@@ -113,7 +113,7 @@ export function dimensionValue(value: DimensionValue) {
     return value + 'px';
   }
 
-  if (/(%|px|em|rem|vw)$/.test(value)) {
+  if (/(%|px|em|rem|vw|vh|auto|cm|mm|in|pt|pc|ex|ch|rem|vmin|vmax)$/.test(value)) {
     return value;
   }
 
