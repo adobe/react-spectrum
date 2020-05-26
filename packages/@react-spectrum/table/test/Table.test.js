@@ -13,6 +13,7 @@
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {CRUDExample} from '../stories/CRUDExample';
+import {getFocusableTreeWalker} from '@react-aria/focus';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
@@ -1058,6 +1059,21 @@ describe('Table', function () {
         expect(document.activeElement).toBe(tree.getAllByRole('checkbox')[0]);
       });
 
+      it('should support keyboard navigation after pressing focusable element inside a cell', function () {
+        let tree = renderFocusable();
+        act(() => triggerPress(tree.getAllByRole('switch')[0]));
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
+
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
+      });
+
+      it('should marshall focus to the child on press of the cell', function () {
+        let tree = renderFocusable();
+        act(() => triggerPress(tree.getAllByRole('rowheader')[0]));
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
+      });
+
       it('should move focus to the first row when tabbing into the table from the start', function () {
         let tree = renderFocusable();
 
@@ -1139,10 +1155,31 @@ describe('Table', function () {
       it('should move focus after the table when tabbing', function () {
         let tree = renderFocusable();
 
-        tree.getAllByRole('switch')[1].focus();
+        act(() => triggerPress(tree.getAllByRole('switch')[1]));
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         // Simulate tabbing within the table
         fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+        walker.currentNode = document.activeElement;
+        walker.nextNode().focus();
+        fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+
+        let after = tree.getByTestId('after');
+        expect(document.activeElement).toBe(after);
+      });
+
+      it('should move focus after the table when tabbing from the last row', function () {
+        let tree = renderFocusable();
+
+        tree.getAllByRole('row')[2].focus();
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
+
+        // Simulate tabbing within the table
+        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+        walker.currentNode = document.activeElement;
+        walker.nextNode().focus();
         fireEvent.keyUp(document.activeElement, {key: 'Tab'});
 
         let after = tree.getByTestId('after');
@@ -1152,10 +1189,14 @@ describe('Table', function () {
       it('should move focus before the table when shift tabbing', function () {
         let tree = renderFocusable();
 
-        tree.getAllByRole('switch')[1].focus();
+        act(() => triggerPress(tree.getAllByRole('switch')[1]));
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         // Simulate shift tabbing within the table
         fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+        walker.currentNode = document.activeElement;
+        walker.previousNode().focus();
         fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
 
         let before = tree.getByTestId('before');
@@ -1854,6 +1895,97 @@ describe('Table', function () {
       let rowHeaders = within(rows[2]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Jessica');
       expect(rowHeaders[1]).toHaveTextContent('Jones');
+    });
+
+    it('keyboard navigation works as expected with menu buttons', function () {
+      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+
+      act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+
+      expect(() => {
+        tree.getByRole('menu');
+      }).toThrow();
+
+      expect(document.activeElement).toBe(within(rows[2]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+
+      expect(() => {
+        tree.getByRole('menu');
+      }).toThrow();
+
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+
+      let menu = tree.getByRole('menu');
+      expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
+    });
+
+    it('menu buttons can be opened with Alt + ArrowDown', function () {
+      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+
+      act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeInTheDocument();
+      expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
+    });
+
+    it('menu buttons can be opened with Alt + ArrowUp', function () {
+      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+
+      act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', altKey: true});
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeInTheDocument();
+      expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem').pop());
+    });
+
+    it('menu keyboard navigation does not affect table', function () {
+      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+
+      act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeInTheDocument();
+      expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[1]);
+
+      table.focus();
+
+      expect(menu).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
     });
   });
 
