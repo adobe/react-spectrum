@@ -176,7 +176,10 @@ governing permissions and limitations under the License.
 }
 .spectrum-Menu-icon {
   grid-area: icon;
-  align-self: center;
+  /* This is a bandaid fix to align the icons with the top of multiline text items. */
+  /* It will need to be revisited when we actually pull in typography. */
+  vertical-align: top;
+  padding-block-start: 2px;
   padding-inline-end: 5px;
 }
 .spectrum-Menu-description {
