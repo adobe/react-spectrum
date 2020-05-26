@@ -38,6 +38,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
+  let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
@@ -73,8 +74,8 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
               UNSAFE_className: classNames(styles, 'spectrum-ActionButton-label')
             }
           }}>
-          {typeof children === 'string' 
-            ? <Text>{children}</Text> 
+          {typeof children === 'string' || isTextOnly
+            ? <Text>{children}</Text>
             : children}
         </SlotProvider>
       </ElementType>

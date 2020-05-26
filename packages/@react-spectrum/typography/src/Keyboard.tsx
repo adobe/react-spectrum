@@ -31,5 +31,8 @@ function Keyboard(props: KeyboardProps, ref: DOMRef) {
   );
 }
 
+/**
+ * Keyboard is used to define text as keyboard input.
+ */
 const _Keyboard = forwardRef(Keyboard);
 export {_Keyboard as Keyboard};

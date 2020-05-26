@@ -16,12 +16,16 @@ jobs:
       - run:
           name: Write npmrc
           command: |
-            cp .circleci/.npmrc .npmrc
+            if [ $NPM_PASSWORD ]; then
+              cp .circleci/.npmrc .npmrc
+            fi
 
       - run:
           name: build
           command: |
-            make adobe_setup
+            if [ $NPM_PASSWORD ]; then
+              make adobe_setup
+            fi
             yarn --pure-lockfile
 
       - save_cache:
@@ -123,7 +127,10 @@ jobs:
           at: /tmp/dist
       - run:
           name: deploy
-          command: az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
+          command: |
+            if [ $AZURE_STORAGE_SAS_TOKEN ]; then
+              az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
+            fi
 
   deploy-master:
     executor: azure-cli/azure-docker
@@ -145,7 +152,10 @@ jobs:
 
       - run:
           name: comment on pr
-          command: node .circleci/comment.js
+          command: |
+            if [ $GITHUB_TOKEN ]; then
+              node .circleci/comment.js
+            fi
 
 workflows:
   version: 2

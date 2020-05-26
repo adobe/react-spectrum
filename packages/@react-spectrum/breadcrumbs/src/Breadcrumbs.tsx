@@ -120,7 +120,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     let selectedKey = selectedItem.props.uniqueKey || selectedItem.key;
     let onMenuAction = (key: Key) => {
       // Don't fire onAction when clicking on the last item
-      if (key !== selectedKey) {
+      if (key !== selectedKey && onAction) {
         onAction(key);
       }
     };

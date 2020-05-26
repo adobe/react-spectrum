@@ -23,6 +23,10 @@ import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 
+/**
+ * The MenuTrigger serves as a wrapper around a Menu and its associated trigger,
+ * linking the Menu's open state with the trigger's press state.
+ */
 export function MenuTrigger(props: SpectrumMenuTriggerProps) {
   let menuPopoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let menuTriggerRef = useRef<HTMLElement>();
