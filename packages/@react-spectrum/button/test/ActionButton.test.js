@@ -33,6 +33,8 @@ describe('ActionButton', function () {
     let button = getByRole('button');
     triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
+    expect(button).not.toHaveAttribute('aria-pressed');
+    expect(button).not.toHaveAttribute('aria-checked');
   });
 
   it.each`
@@ -67,5 +69,16 @@ describe('ActionButton', function () {
     }
     triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it.each`
+    Name              | Component        | props
+    ${'ActionButton'} | ${ActionButton}  | ${{onPress: onPressSpy, isSelected: true}}
+  `('$Name isSelected', function ({Component, props}) {
+    let {getByRole} = render(<Component {...props}>Click Me</Component>);
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-pressed', 'true');
+    expect(button).not.toHaveAttribute('aria-checked');
   });
 });
