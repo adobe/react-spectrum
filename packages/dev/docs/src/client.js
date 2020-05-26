@@ -36,7 +36,7 @@ function Hamburger() {
   }, []);
 
   return (
-    <ActionButton onPress={onPress}>
+    <ActionButton onPress={onPress} aria-label="Open navigation panel">
       <ShowMenu />
     </ActionButton>
   );
