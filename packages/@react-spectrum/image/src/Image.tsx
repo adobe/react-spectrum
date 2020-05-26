@@ -63,5 +63,8 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * Image is used to insert and display an image within a component.
+ */
 const _Image = React.forwardRef(Image);
 export {_Image as Image};
