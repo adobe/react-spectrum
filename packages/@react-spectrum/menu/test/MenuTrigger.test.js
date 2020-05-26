@@ -334,8 +334,7 @@ describe('MenuTrigger', function () {
       tree = null;
     });
 
-    function triggerMenuItem(Component, triggerProps = {}, menuProps = {}, triggerEvent) {
-      tree = renderComponent(Component, triggerProps, menuProps);
+    function openAndTriggerMenuItem(tree, isV3, role, selectionMode, triggerEvent) {
       let triggerButton = tree.getByRole('button');
       act(() => triggerPress(triggerButton));
       act(() => jest.runAllTimers());
@@ -344,12 +343,12 @@ describe('MenuTrigger', function () {
       expect(menu).toBeTruthy();
 
       let menuItemRole = 'menuitem';
-      if (Component === MenuTrigger) {
-        if (menuProps.role === 'listbox') {
+      if (isV3) {
+        if (role === 'listbox') {
           menuItemRole = 'option';
-        } else if (menuProps.selectionMode === 'single') {
+        } else if (selectionMode === 'single') {
           menuItemRole = 'menuitemradio';
-        } else if (menuProps.selectionMode === 'multiple') {
+        } else if (selectionMode === 'multiple') {
           menuItemRole = 'menuitemcheckbox';
         }
       }
@@ -360,7 +359,6 @@ describe('MenuTrigger', function () {
         triggerEvent(itemToAction);
       });
       act(() => jest.runAllTimers());
-      return tree;
     }
 
     // New functionality in v3
@@ -492,61 +490,60 @@ describe('MenuTrigger', function () {
     });
 
     it.each`
-      Name             | Component      | props
-      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
-      ${'V2Dropdown'}  | ${V2Dropdown}  | ${{}}
-    `('$Name closes on menu item selection if toggled by mouse click', function ({Component, props}) {
-      let selectionModes = ['single', 'multiple', 'none'];
-      for (let mode of selectionModes) {
-        tree = triggerMenuItem(Component, {}, {...props, selectionMode: mode}, (item) => triggerPress(item));
-        jest.runAllTimers();
-        let menu = tree.queryByRole('menu');
-        expect(menu).toBeNull();
-        expect(document.activeElement).toBe(tree.getByRole('button'));
-        tree.unmount();
-        tree = null;
-      }
+      Name                      | Component      | props | menuProps
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+      ${'V2Dropdown single'}    | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'single'}}
+      ${'V2Dropdown multiple'}  | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'V2Dropdown none'}      | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'none'}}
+    `('$Name closes on menu item selection if toggled by mouse click', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => triggerPress(item));
+
+      let menu = tree.queryByRole('menu');
+      expect(menu).toBeNull();
+      expect(document.activeElement).toBe(tree.getByRole('button'));
     });
 
     it.each`
-    Name             | Component      | props
-      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
-      ${'V2Dropdown'}  | ${V2Dropdown}  | ${{}}
-    `('$Name closes on menu item selection if toggled by ENTER key', function ({Component, props}) {
-      let selectionModes = ['single', 'multiple', 'none'];
-      for (let mode of selectionModes) {
-        tree = triggerMenuItem(Component, {}, {...props, selectionMode: mode}, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13}));
-        jest.runAllTimers();
-        let menu = tree.queryByRole('menu');
-        expect(menu).toBeNull();
-        expect(document.activeElement).toBe(tree.getByRole('button'));
-        tree.unmount();
-        tree = null;
-      }
+      Name                      | Component      | props | menuProps
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+      ${'V2Dropdown single'}    | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'single'}}
+      ${'V2Dropdown multiple'}  | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'V2Dropdown none'}      | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'none'}}
+    `('$Name closes on menu item selection if toggled by ENTER key', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13}));
+
+      let menu = tree.queryByRole('menu');
+      expect(menu).toBeNull();
+      expect(document.activeElement).toBe(tree.getByRole('button'));
     });
 
     // V3 exclusive
     it.each`
-      Name             | Component      | props
-      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
-    `('$Name doesn\'t close on menu item selection if toggled by SPACE key (all selection modes except "none")', function ({Component, props}) {
-      let selectionModes = ['single', 'multiple'];
-      for (let mode of selectionModes) {
-        tree = triggerMenuItem(Component, {}, {...props, selectionMode: mode}, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
-        let menu = tree.queryByRole('menu');
-        expect(menu).toBeTruthy();
-        tree.unmount();
-        tree = null;
-      }
+      Name                      | Component      | props | menuProps
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+    `('$Name doesn\'t close on menu item selection if toggled by SPACE key (all selection modes except "none")', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, true, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
+
+      let menu = tree.queryByRole('menu');
+      expect(menu).toBeTruthy();
     });
 
     it.each`
-      Name             | Component      | props
-      ${'MenuTrigger'} | ${MenuTrigger} | ${{selectionMode: 'none'}}
-      ${'V2Dropdown'}  | ${V2Dropdown}  | ${{}}
-    `('$Name closes on menu item selection if toggled by SPACE key (selectionMode=none)', function ({Component, props}) {
-      triggerMenuItem(Component, {}, props, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
-      jest.runAllTimers();
+      Name                  | Component      | props | menuProps
+      ${'MenuTrigger none'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+      ${'V2Dropdown none'}  | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'none'}}
+    `('$Name closes on menu item selection if toggled by SPACE key (selectionMode=none)', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
+
       let menu = tree.queryByRole('menu');
       expect(menu).toBeNull();
       expect(document.activeElement).toBe(tree.getByRole('button'));

@@ -32,7 +32,8 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref
     children,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
-    validationState = 'valid'
+    validationState = 'valid',
+    tabIndex
   } = props;
 
   let onChange = (e) => {
@@ -69,6 +70,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref
       value,
       name,
       type: 'checkbox',
+      tabIndex,
       ...interactions
     }
   };

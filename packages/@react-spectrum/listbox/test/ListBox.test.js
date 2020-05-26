@@ -52,12 +52,13 @@ function renderComponent(props) {
 }
 
 describe('ListBox', function () {
-  let offsetWidth, offsetHeight;
+  let offsetWidth, offsetHeight, scrollHeight;
   let onSelectionChange = jest.fn();
 
   beforeAll(function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+    scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 48);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     jest.useFakeTimers();
   });
@@ -69,6 +70,7 @@ describe('ListBox', function () {
   afterAll(function () {
     offsetWidth.mockReset();
     offsetHeight.mockReset();
+    scrollHeight.mockReset();
   });
 
   it('renders properly', function () {
@@ -91,7 +93,7 @@ describe('ListBox', function () {
 
     let items = within(listbox).getAllByRole('option');
     expect(items.length).toBe(5);
-    let i = 0;
+    let i = 1;
     for (let item of items) {
       expect(item).toHaveAttribute('tabindex');
       expect(item).toHaveAttribute('aria-selected');
@@ -564,5 +566,97 @@ describe('ListBox', function () {
     expect(option).toHaveAttribute('aria-label', 'Item');
     expect(option).not.toHaveAttribute('aria-labelledby');
     expect(option).not.toHaveAttribute('aria-describedby');
+  });
+
+  describe('async loading', function () {
+    it('should display a spinner while loading', function () {
+      let {getByRole, rerender} = render(
+        <Provider theme={theme}>
+          <ListBox items={[]} isLoading>
+            {item => <Item>{item.name}</Item>}
+          </ListBox>
+        </Provider>
+      );
+
+      let listbox = getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+      expect(options.length).toBe(1);
+
+      let progressbar = within(options[0]).getByRole('progressbar');
+      expect(progressbar).toHaveAttribute('aria-label', 'Loading…');
+      expect(progressbar).not.toHaveAttribute('aria-valuenow');
+
+      rerender(
+        <Provider theme={theme}>
+          <ListBox items={[]}>
+            {item => <Item>{item.name}</Item>}
+          </ListBox>
+        </Provider>
+      );
+
+      expect(progressbar).not.toBeInTheDocument();
+    });
+
+    it('should display a spinner inside the listbox when loading more', function () {
+      let items = [{name: 'Foo'}, {name: 'Bar'}];
+      let {getByRole, rerender} = render(
+        <Provider theme={theme}>
+          <ListBox items={items} isLoading>
+            {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+          </ListBox>
+        </Provider>
+      );
+
+      let listbox = getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+      expect(options.length).toBe(3);
+
+      let progressbar = within(options[2]).getByRole('progressbar');
+      expect(progressbar).toHaveAttribute('aria-label', 'Loading more…');
+      expect(progressbar).not.toHaveAttribute('aria-valuenow');
+
+      rerender(
+        <Provider theme={theme}>
+          <ListBox items={items}>
+            {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+          </ListBox>
+        </Provider>
+      );
+
+      options = within(listbox).getAllByRole('option');
+      expect(options.length).toBe(2);
+      expect(progressbar).not.toBeInTheDocument();
+    });
+
+    it('should fire onLoadMore when scrolling near the bottom', function () {
+      let onLoadMore = jest.fn();
+      let items = [];
+      for (let i = 1; i <= 100; i++) {
+        items.push({name: 'Test ' + i});
+      }
+
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <ListBox items={items} maxHeight={200} onLoadMore={onLoadMore}>
+            {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+          </ListBox>
+        </Provider>
+      );
+
+      let listbox = getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+      expect(options.length).toBe(5); // each row is 48px tall, listbox is 200px. 5 rows fit.
+
+      listbox.scrollTop = 250;
+      fireEvent.scroll(listbox);
+
+      listbox.scrollTop = 1500;
+      fireEvent.scroll(listbox);
+
+      listbox.scrollTop = 4000;
+      fireEvent.scroll(listbox);
+
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
   });
 });
