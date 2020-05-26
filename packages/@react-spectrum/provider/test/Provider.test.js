@@ -74,6 +74,9 @@ describe('Provider', () => {
     let checkbox = getByLabelText('Test Checkbox');
     let switchComponent = getByLabelText('Test Switch');
 
+    expect(switchComponent).toHaveAttribute('readonly');
+    expect(checkbox).toHaveAttribute('readonly');
+
     act(() => {
       userEvent.click(checkbox);
       userEvent.click(switchComponent);
@@ -187,7 +190,10 @@ describe('Provider', () => {
     expect(provider1.classList.contains('spectrum--light')).toBeTruthy();
     expect(provider2.classList.contains('spectrum--light')).toBeTruthy();
 
-    matchMedia.useMediaQuery(mediaQueryDark);
+    act(() => {
+      matchMedia.useMediaQuery(mediaQueryDark);
+    });
+    
     expect(provider1.classList.contains('spectrum--dark')).toBeTruthy();
     expect(provider2.classList.contains('spectrum--dark')).toBeTruthy();
   });
