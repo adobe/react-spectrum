@@ -21,7 +21,6 @@ import {Heading, Text} from '@react-spectrum/typography';
 import isChromatic from 'storybook-chromatic/isChromatic';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('DialogTrigger', module)
@@ -115,7 +114,7 @@ storiesOf('DialogTrigger', module)
         {(close) => (
           <Dialog>
             <Heading>The Heading</Heading>
-            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+            <Header>The Header</Header>
             <Divider />
             <Content>
               <DialogTrigger isDismissable>
@@ -270,7 +269,7 @@ function render({width = 'auto', ...props}) {
         {(close) => (
           <Dialog>
             <Heading>The Heading</Heading>
-            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+            <Header>The Header</Header>
             <Divider />
             <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
             {!props.isDismissable &&
@@ -292,7 +291,7 @@ function renderPopover({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         <Dialog>
           <Heading>The Heading</Heading>
-          <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+          <Header>The Header</Header>
           <Divider />
           <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
         </Dialog>
@@ -309,7 +308,7 @@ let TriggerWithRef = (props) => {
         <ActionButton>Trigger</ActionButton>
         <Dialog>
           <Heading>The Heading</Heading>
-          <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+          <Header>The Header</Header>
           <Divider />
           <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
         </Dialog>

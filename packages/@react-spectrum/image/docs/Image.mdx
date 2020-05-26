@@ -1,0 +1,79 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/image';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+```jsx import
+import {Flex} from '@react-spectrum/layout';
+import {Image} from '@react-spectrum/image';
+```
+
+---
+category: Content
+---
+
+# Image
+
+<p>{docs.exports.Image.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Image']} />
+
+## Examples
+
+```tsx example
+<Image src="https://i.imgur.com/Z7AzH2c.png" alt="Sky and roof" />
+```
+
+## Content
+
+The Image component is used to add images as a child to other components.
+Based on the component it is used within, it gets Spectrum styling and may
+have a preassigned slot for positioning. By virtue of its name, the Image
+component provides semantic meaning in the context they are placed. An example
+of this is the hero image in [Dialog](Dialog.html#examples)
+
+See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img) for more information.
+
+Note: An image must either have the `decorative` prop or have the `alt` prop set.
+
+### Internationalization
+
+To internationalize an Image, a localized string should be passed to the `alt` prop.
+
+## Props
+
+<PropTable component={docs.exports.Image} links={docs.links} />
+
+## Visual Options
+
+### Decorative
+
+```tsx example
+<Flex width="200px">
+  <Image src="https://scontent-sjc3-1.cdninstagram.com/v/t51.2885-15/e35/99120553_176571270346133_73156360171041206_n.jpg?_nc_ht=scontent-sjc3-1.cdninstagram.com&_nc_cat=105&_nc_ohc=QqfjoiATImoAX9-GZ7A&oh=a2523e59f8af2de64755e6b2f4dff0af&oe=5EF06CC7" decorative />
+</Flex>
+```
+
+### Object Fit
+
+```tsx example
+<Flex width="100%" height="200px">
+  <Image
+    src="https://scontent-sjc3-1.cdninstagram.com/v/t51.2885-15/e35/99120553_176571270346133_73156360171041206_n.jpg?_nc_ht=scontent-sjc3-1.cdninstagram.com&_nc_cat=105&_nc_ohc=QqfjoiATImoAX9-GZ7A&oh=a2523e59f8af2de64755e6b2f4dff0af&oe=5EF06CC7"
+    alt="Illustration of grains"
+    objectFit="cover" />
+</Flex>
+```

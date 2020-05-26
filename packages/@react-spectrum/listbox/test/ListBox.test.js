@@ -93,7 +93,7 @@ describe('ListBox', function () {
 
     let items = within(listbox).getAllByRole('option');
     expect(items.length).toBe(5);
-    let i = 0;
+    let i = 1;
     for (let item of items) {
       expect(item).toHaveAttribute('tabindex');
       expect(item).toHaveAttribute('aria-selected');
