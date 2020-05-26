@@ -1830,6 +1830,10 @@ describe('Table', function () {
 
       let rowHeaders = within(rows[1]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Sam');
+
+      // focus gets reset
+      table.focus();
+      expect(document.activeElement).toBe(rows[1]);
     });
 
     it('can bulk remove items', function () {
