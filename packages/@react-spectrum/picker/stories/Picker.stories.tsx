@@ -22,6 +22,7 @@ import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/typography';
+import {useAsyncList} from '@react-stately/data';
 
 let flatOptions = [
   {id: 1, name: 'Aardvark'},
@@ -446,4 +447,60 @@ storiesOf('Picker', module)
         </div>
       </>
     )
+  )
+  .add(
+    'isLoading',
+    () => (
+      <Picker label="Test" isLoading items={[]}>
+        {item => <Item>{item.name}</Item>}
+      </Picker>
+    )
+  )
+  .add(
+    'isLoading, isQuiet',
+    () => (
+      <Picker label="Test" isLoading isQuiet items={[]}>
+        {item => <Item>{item.name}</Item>}
+      </Picker>
+    )
+  )
+  .add(
+    'isLoading more',
+    () => (
+      <Picker label="Test" isLoading items={flatOptions}>
+        {item => <Item>{item.name}</Item>}
+      </Picker>
+    )
+  )
+  .add(
+    'async loading',
+    () => (
+      <AsyncLoadingExample />
+    )
   );
+
+function AsyncLoadingExample() {
+  interface Pokemon {
+    name: string,
+    url: string
+  }
+
+  let list = useAsyncList<Pokemon>({
+    async load({signal, cursor}) {
+      let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
+      let json = await res.json();
+      // The API is too fast sometimes, so make it take longer so we can see the spinner
+      await new Promise(resolve => setTimeout(resolve, cursor ? 500 : 1000));
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Picker label="Pick a Pokemon" items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
+      {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+    </Picker>
+  );
+}

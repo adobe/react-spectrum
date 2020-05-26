@@ -4106,10 +4106,10 @@
     "@testing-library/dom" "^7.2.2"
     "@types/testing-library__react" "^10.0.1"
 
-"@testing-library/user-event@^4.1.0":
-  version "4.2.4"
-  resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-4.2.4.tgz#9029bdf35d7f0557954452916f22ba0e9f11eff9"
-  integrity sha512-Hi74+nCCjTM+HFRmN1CASq3Y1DC8XZk/oF0Ov/sIRXS5izvXCXtjxJcpPNzyi7YL5jGjWuldzsQTiPPtYbudwg==
+"@testing-library/user-event@^10.3.1":
+  version "10.3.1"
+  resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-10.3.1.tgz#8ed6fbfa40fbb866fa4666c9a62d7f7ff151f93b"
+  integrity sha512-HozvWlr/xHmkoJrrDdZBbUOXAC/STAeXGyNU+g5KgEwWBpLJi1RPCHJKbTjwz8hp2jDFsk/jjfD0530eZjcFEg==
 
 "@types/babel-types@*", "@types/babel-types@^7.0.0":
   version "7.0.7"

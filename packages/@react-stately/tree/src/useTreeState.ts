@@ -52,7 +52,7 @@ export function useTreeState<T extends object>(props: CollectionBase<T> & Expand
   let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
   let tree = useMemo(() => {
     let nodes = builder.build(props);
-    return new TreeCollection(nodes, expandedKeys);
+    return new TreeCollection(nodes, {expandedKeys});
   }, [builder, expandedKeys, props]);
 
   let onToggle = (key: Key) => {
