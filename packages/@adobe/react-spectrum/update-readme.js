@@ -34,6 +34,8 @@ function updateReadme() {
     const versionRegex = new RegExp(`\\| (${packageName}[ ]+)\\| ([^ ]+)[ ]+\\|`);
     readmeContent = readmeContent.replace(versionRegex, `| $1| ${packageVersion.padEnd(15, ' ')}|`);
   }
+
+  fs.writeFileSync('README.md', readmeContent, 'utf-8');
 }
 
 updateReadme();
