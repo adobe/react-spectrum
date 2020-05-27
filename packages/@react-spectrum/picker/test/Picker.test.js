@@ -50,7 +50,7 @@ describe('Picker', function () {
   it('renders correctly', function () {
     let {getAllByText, getByText, getByRole} = render(
       <Provider theme={theme}>
-        <Picker label="Test" onSelectionChange={onSelectionChange}>
+        <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange}>
           <Item>One</Item>
           <Item>Two</Item>
           <Item>Three</Item>
@@ -60,6 +60,7 @@ describe('Picker', function () {
 
     let picker = getByRole('button');
     expect(picker).toHaveAttribute('aria-haspopup', 'listbox');
+    expect(picker).toHaveAttribute('data-testid', 'test');
 
     let label = getAllByText('Test')[0];
     let value = getByText('Select an option…');

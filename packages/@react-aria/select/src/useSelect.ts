@@ -10,17 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaSelectProps} from '@react-types/select';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
-import {mergeProps, useId} from '@react-aria/utils';
 import {PressProps} from '@react-aria/interactions';
 import {SelectState} from '@react-stately/select';
 import {useCollator} from '@react-aria/i18n';
 import {useLabel} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
 
-interface SelectProps {
+interface AriaSelectOptions<T> extends AriaSelectProps<T> {
   /** A ref to the trigger element. */
   triggerRef: RefObject<HTMLElement>,
 
@@ -51,7 +52,7 @@ interface SelectAria {
  * @param props - props for the select
  * @param state - state for the select, as returned by `useListState`
  */
-export function useSelect<T>(props: SelectProps, state: SelectState<T>): SelectAria {
+export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>): SelectAria {
   let {
     triggerRef,
     keyboardDelegate
@@ -83,12 +84,13 @@ export function useSelect<T>(props: SelectProps, state: SelectState<T>): SelectA
     labelElementType: 'span'
   });
 
+  let domProps = filterDOMProps(props, {labelable: true});
   let triggerProps = mergeProps(mergeProps(menuTriggerProps, fieldProps), typeSelectProps);
   let valueId = useId();
 
   return {
     labelProps,
-    triggerProps: {
+    triggerProps: mergeProps(domProps, {
       ...triggerProps,
       'aria-labelledby': [
         triggerProps['aria-labelledby'],
@@ -101,7 +103,7 @@ export function useSelect<T>(props: SelectProps, state: SelectState<T>): SelectA
       onBlur() {
         state.setFocused(false);
       }
-    },
+    }),
     valueProps: {
       id: valueId
     },

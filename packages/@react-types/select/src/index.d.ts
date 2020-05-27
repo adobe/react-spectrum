@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, CollectionBase, DimensionValue, DOMProps, InputBase, LabelableProps, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase} from '@react-types/shared';
+import {Alignment, CollectionBase, DimensionValue, DOMProps, InputBase, LabelableProps, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, AriaLabelingProps} from '@react-types/shared';
 
 export interface SelectProps<T> extends CollectionBase<T>, InputBase, LabelableProps, TextInputBase, SingleSelection {
   /** Sets the open state of the menu */
@@ -23,7 +23,9 @@ export interface SelectProps<T> extends CollectionBase<T>, InputBase, LabelableP
   shouldFlip?: boolean
 }
 
-export interface SpectrumPickerProps<T> extends SelectProps<T>, SpectrumLabelableProps, DOMProps, StyleProps {
+export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabelableProps, StyleProps {
   /** Whether the textfield should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Alignment of the menu relative to the input target
