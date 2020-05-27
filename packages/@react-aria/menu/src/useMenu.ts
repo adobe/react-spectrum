@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaMenuProps} from '@react-types/menu';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
-import {MenuProps} from '@react-types/menu';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 
@@ -21,7 +22,7 @@ interface MenuAria {
   menuProps: HTMLAttributes<HTMLElement>
 }
 
-interface AriaMenuProps<T> extends MenuProps<T> {
+interface AriaMenuOptions<T> extends AriaMenuProps<T> {
   /** A ref to the menu container element. */
   ref?: RefObject<HTMLElement>,
 
@@ -41,12 +42,13 @@ interface AriaMenuProps<T> extends MenuProps<T> {
  * @param props - props for the menu
  * @param state - state for the menu, as returned by `useListState`
  */
-export function useMenu<T>(props: AriaMenuProps<T>, state: TreeState<T>): MenuAria {
+export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>): MenuAria {
   let {
     shouldFocusWrap = true,
     ...otherProps
   } = props;
 
+  let domProps = filterDOMProps(props, {labelable: true});
   let {listProps} = useSelectableList({
     ...otherProps,
     selectionManager: state.selectionManager,
@@ -56,9 +58,9 @@ export function useMenu<T>(props: AriaMenuProps<T>, state: TreeState<T>): MenuAr
   });
 
   return {
-    menuProps: {
+    menuProps: mergeProps(domProps, {
       role: 'menu',
       ...listProps
-    }
+    })
   };
 }

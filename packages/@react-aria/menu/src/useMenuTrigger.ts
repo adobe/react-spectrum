@@ -91,13 +91,7 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
     },
     menuProps: {
       ...overlayProps,
-      'aria-labelledby': menuTriggerId,
-      onMouseDown(e) {
-        // Safari blurs the focused item on mousedown on the scrollbar, when the menu is inside an iframe,
-        // which casues the menu to close (see onBlurWithin above).
-        // Preventing default on the event solves this.
-        e.preventDefault();
-      }
+      'aria-labelledby': menuTriggerId
     }
   };
 }

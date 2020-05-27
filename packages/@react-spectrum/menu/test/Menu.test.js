@@ -74,8 +74,9 @@ function renderComponent(Component, contextProps = {}, props = {}) {
   } else {
     return render(
       <Provider theme={theme}>
+        <span id="label">Label</span>
         <MenuContext.Provider value={contextProps}>
-          <Menu id={menuId} items={withSection} itemKey="name" {...props}>
+          <Menu id={menuId} items={withSection} itemKey="name" aria-labelledby="label" {...props}>
             {item => (
               <Section items={item.children} title={item.name}>
                 {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -119,6 +120,8 @@ describe('Menu', function () {
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
     if (Component === Menu) {
+      expect(menu).toHaveAttribute('aria-labelledby', 'label');
+
       let sections = within(menu).getAllByRole('group');
       expect(sections.length).toBe(2);
 
