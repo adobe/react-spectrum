@@ -270,6 +270,43 @@ Items within Picker also allow for additional content used to better communicate
 </Picker>
 ```
 
+## Asynchronous loading
+
+Picker supports loading data asynchronously, and will display a progress circle when the `isLoading` prop is set.
+It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data.
+See the docs for more information.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncLoadingExample() {
+  let list = useAsyncList({
+    async load({signal, cursor}) {
+      // If no cursor is available, then we're loading the first page.
+      // Otherwise, the cursor is the next URL to load, as returned from the previous page.
+      let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Picker
+      label="Pick a Pokemon"
+      items={list.items}
+      isLoading={list.isLoading}
+      onLoadMore={list.loadMore}>
+      {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+    </Picker>
+  );
+}
+```
+
 ## Props
 
 <PropTable component={docs.exports.Picker} links={docs.links} />

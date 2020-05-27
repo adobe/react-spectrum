@@ -13,9 +13,12 @@
 import React, {forwardRef, RefObject, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
 function TextField(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
+  props = useProviderProps(props);
+
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
   let {labelProps, inputProps} = useTextField(props, inputRef);
   return (
