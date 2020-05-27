@@ -647,7 +647,7 @@ describe('ListBox', function () {
       listbox.scrollTop = 1500;
       fireEvent.scroll(listbox);
 
-      listbox.scrollTop = 4000;
+      listbox.scrollTop = 5000;
       fireEvent.scroll(listbox);
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
