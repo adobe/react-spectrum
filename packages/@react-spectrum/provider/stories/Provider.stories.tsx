@@ -97,7 +97,11 @@ function render(props = {}) {
         <div> {/* Extra div so that the button does not expand to 100% width */}
           <Button variant="primary">I am a button</Button>
         </div>
-        <TextField label="A text field" placeholder="Something" marginTop="size-100" />
+        <TextField
+          label="A text field"
+          placeholder="Something"
+          marginTop="size-100"
+          necessityIndicator="label" />
         <Checkbox>Cats!</Checkbox>
         <Switch>Dogs!</Switch>
         <RadioGroup label="A radio group">
