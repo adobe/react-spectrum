@@ -10,12 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableRefValue, InputBase, LabelableProps, SpectrumLabelableProps, StyleProps, TextInputBase, TextInputDOMProps, ValueBase} from '@react-types/shared';
+import {FocusableRefValue, FocusableProps, InputBase, LabelableProps, SpectrumLabelableProps, StyleProps, TextInputBase, TextInputDOMProps, ValueBase, AriaLabelingProps} from '@react-types/shared';
 import {ReactElement} from 'react';
 
-export interface TextFieldProps extends InputBase, TextInputBase, ValueBase<string>, LabelableProps {}
+export interface TextFieldProps extends InputBase, FocusableProps, TextInputBase, ValueBase<string>, LabelableProps {}
 
-export interface SpectrumTextFieldProps extends TextFieldProps, SpectrumLabelableProps, TextInputDOMProps, StyleProps {
+export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps {}
+
+export interface SpectrumTextFieldProps extends AriaTextFieldProps, SpectrumLabelableProps, StyleProps {
   /** An icon to display at the start of the textfield. */
   icon?: ReactElement,
   /** Whether the textfield should be displayed with a quiet style. */

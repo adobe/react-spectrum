@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, InputBase, RangeInputBase, StyleProps, TextInputBase, ValueBase} from '@react-types/shared';
+import {DOMProps, FocusableProps, InputBase, RangeInputBase, StyleProps, TextInputBase, ValueBase} from '@react-types/shared';
 
-export interface NumberFieldProps extends InputBase, TextInputBase, ValueBase<number>, RangeInputBase<number> {
+export interface NumberFieldProps extends InputBase, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number> {
   decrementAriaLabel?: string,
   incrementAriaLabel?: string,
   formatOptions?: Intl.NumberFormatOptions

@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps} from '@react-types/shared';
+import {AriaCheckboxBase} from '@react-types/checkbox';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
-import {mergeProps, useLabels} from '@react-aria/utils';
-import {SwitchProps} from '@react-types/switch';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
@@ -22,7 +21,7 @@ export interface ToggleAria {
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref: RefObject<HTMLElement>): ToggleAria {
+export function useToggle(props: AriaCheckboxBase, state: ToggleState, ref: RefObject<HTMLElement>): ToggleAria {
   let {
     isDisabled = false,
     isRequired,
@@ -33,7 +32,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
     validationState = 'valid',
-    tabIndex
+    ...otherProps
   } = props;
 
   let onChange = (e) => {
@@ -57,11 +56,10 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref
 
   let {focusableProps} = useFocusable(props, ref);
   let interactions = mergeProps(pressProps, focusableProps);
-  let labelProps = useLabels(props);
+  let domProps = filterDOMProps(props, {labelable: true});
 
   return {
-    inputProps: {
-      ...labelProps,
+    inputProps: mergeProps(domProps, {
       'aria-invalid': isInvalid,
       onChange,
       disabled: isDisabled,
@@ -70,8 +68,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref
       value,
       name,
       type: 'checkbox',
-      tabIndex,
       ...interactions
-    }
+    })
   };
 }

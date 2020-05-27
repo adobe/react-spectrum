@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, InputBase, StyleProps} from '@react-types/shared';
+import {DOMProps, FocusableProps, InputBase, StyleProps, AriaLabelingProps, FocusableDOMProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface CheckboxBase extends InputBase {
+export interface CheckboxBase extends InputBase, FocusableProps {
   children?: ReactNode, // pass in children to render label
   defaultSelected?: boolean,
   isSelected?: boolean,
@@ -21,6 +21,8 @@ export interface CheckboxBase extends InputBase {
   value?: string, // dom prop for input element
   name?: string
 }
+
+export interface AriaCheckboxBase extends CheckboxBase, FocusableDOMProps, AriaLabelingProps {}
 
 export interface CheckboxProps extends CheckboxBase {
   /**
@@ -30,7 +32,9 @@ export interface CheckboxProps extends CheckboxBase {
   isIndeterminate?: boolean
 }
 
-export interface SpectrumCheckboxProps extends CheckboxProps, DOMProps, StyleProps {
+export interface AriaCheckboxProps extends CheckboxProps, AriaCheckboxBase {}
+
+export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
   /**
    * This prop sets the emphasized style which provides visual prominence.
    */
