@@ -166,9 +166,13 @@ governing permissions and limitations under the License.
   font-weight: var(--spectrum-dialog-content-text-font-weight);
   line-height: var(--spectrum-dialog-content-text-line-height);
 
-  /* this is kinda dumb, but needed for the keyboard focus rings so they don't get clipped. is there a better way to treat this */
-  padding: 0 var(--spectrum-global-dimension-size-25);
-  margin: 0 calc(var(--spectrum-global-dimension-size-25) * -1);
+  /*
+  this is kinda dumb, but needed for the keyboard focus rings so they don't get clipped.
+  is there a better way to treat this
+  it's needed in every instance of overflow being set to anything other than visible
+  */
+  padding: var(--spectrum-global-dimension-size-25);
+  margin: calc(var(--spectrum-global-dimension-size-25) * -1);
 }
 
 

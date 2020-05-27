@@ -80,7 +80,9 @@ module.exports = new Packager({
           category: mainAsset.meta.category,
           name: bundle.name,
           title: mainAsset.meta.title,
-          url: urlJoin(bundle.target.publicUrl, bundle.name)
+          url: urlJoin(bundle.target.publicUrl, bundle.name),
+          description: mainAsset.meta.description,
+          keywords: mainAsset.meta.keywords
         },
         toc: mainAsset.meta.toc,
         publicUrl: bundle.target.publicUrl
