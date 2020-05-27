@@ -51,7 +51,7 @@ function Example() {
       <TextArea
         label="Notes (Uncontrolled)"
         defaultValue="This is on a wait list"
-        marginEnd="20px" />
+        marginEnd="size-300" />
 
       <TextArea
         label="Notes (Controlled)"
@@ -75,9 +75,9 @@ A visual label should be provided for the TextArea using the `label` prop. If th
 `necessityIndicator` props can be used to show a required state.
 
 ```tsx example
-<TextArea label="Address" marginEnd="20px" />
-<TextArea label="Address" isRequired necessityIndicator="icon" marginEnd="20px" />
-<TextArea label="Address" isRequired necessityIndicator="label" marginEnd="20px" />
+<TextArea label="Address" marginEnd="size-300" />
+<TextArea label="Address" isRequired necessityIndicator="icon" marginEnd="size-300" />
+<TextArea label="Address" isRequired necessityIndicator="label" marginEnd="size-300" />
 <TextArea label="Address" necessityIndicator="label" />
 ```
 
@@ -109,7 +109,7 @@ function Example() {
         placeholder="Enter some text"
         onChange={setText}
         label="Your text"
-        marginEnd="20px"
+        marginEnd="size-300"
       />
       <pre>Mirrored text: {text}</pre>
     </div>
@@ -184,7 +184,7 @@ Labels can be aligned to the "start" or the "end" of the TextArea. For left-to-r
 of the TextArea and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
 
 ```tsx example
-<TextArea label="Email" labelAlign="start" marginEnd="20px" />
+<TextArea label="Email" labelAlign="start" marginEnd="size-300" />
 <TextArea label="Email" labelAlign="end" />
 ```
 
@@ -193,7 +193,7 @@ of the TextArea and "end" refers to the right most edge. For right-to-left (RTL)
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
 
 ```tsx example
-<TextArea label="Email" labelPosition="top" marginEnd="20px" />
+<TextArea label="Email" labelPosition="top" marginEnd="size-300" />
 <TextArea label="Email" labelPosition="side" />
 ```
 

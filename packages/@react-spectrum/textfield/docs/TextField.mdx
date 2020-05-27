@@ -53,7 +53,7 @@ function Example() {
       <TextField
         label="Email (Uncontrolled)"
         defaultValue="me@email.com"
-        marginEnd="20px" />
+        marginEnd="size-300" />
 
       <TextField
         label="Email (Controlled)"
@@ -78,9 +78,9 @@ A visual label should be provided for the TextField using the `label` prop. If t
 `necessityIndicator` props can be used to show a required state.
 
 ```tsx example
-<TextField label="Street address" marginEnd="20px" />
-<TextField label="Street address" isRequired necessityIndicator="icon" marginEnd="20px" />
-<TextField label="Street address" isRequired necessityIndicator="label" marginEnd="20px" />
+<TextField label="Street address" marginEnd="size-300" />
+<TextField label="Street address" isRequired necessityIndicator="icon" marginEnd="size-300" />
+<TextField label="Street address" isRequired necessityIndicator="label" marginEnd="size-300" />
 <TextField label="Street address" necessityIndicator="label" />
 ```
 
@@ -111,7 +111,7 @@ function Example() {
         placeholder="Enter some text"
         onChange={setText}
         label="Your text"
-        marginEnd="20px"
+        marginEnd="size-300"
       />
       <pre>Mirrored text: {text}</pre>
     </div>
@@ -186,7 +186,7 @@ Labels can be aligned to the "start" or the "end" of the TextField. For left-to-
 of the TextField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
 
 ```tsx example
-<TextField label="Email" labelAlign="start" marginEnd="20px" />
+<TextField label="Email" labelAlign="start" marginEnd="size-300" />
 <TextField label="Email" labelPosition="side" labelAlign="end" />
 ```
 
