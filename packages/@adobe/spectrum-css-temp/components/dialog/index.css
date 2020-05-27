@@ -171,8 +171,8 @@ governing permissions and limitations under the License.
   is there a better way to treat this
   it's needed in every instance of overflow being set to anything other than visible
   */
-  padding: var(--spectrum-global-dimension-size-25);
-  margin: calc(var(--spectrum-global-dimension-size-25) * -1);
+  padding: calc(var(--spectrum-global-dimension-size-25) * 2);
+  margin: calc(var(--spectrum-global-dimension-size-25) * -2);
 }
 
 
