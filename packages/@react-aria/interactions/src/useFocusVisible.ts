@@ -81,6 +81,12 @@ function handleFocusEvent(e: FocusEvent) {
   hasEventBeforeFocus = false;
 }
 
+function handleWindowBlur() {
+  // When the window is blurred, reset state. This is necessary when tabbing out of the window, 
+  // for example, since a subsequent focus event won't be fired.
+  hasEventBeforeFocus = false;
+}
+
 // Setup global event listeners to control when keyboard focus style should be visible
 function setupGlobalFocusEvents() {
   if (hasSetupGlobalListeners) {
@@ -100,6 +106,7 @@ function setupGlobalFocusEvents() {
   document.addEventListener('keydown', handleKeyboardEvent, true);
   document.addEventListener('keyup', handleKeyboardEvent, true);
   document.addEventListener('focus', handleFocusEvent, true);
+  window.addEventListener('blur', handleWindowBlur, false);
   
   if (typeof PointerEvent !== 'undefined') {
     document.addEventListener('pointerdown', handlePointerEvent, true);
@@ -112,6 +119,10 @@ function setupGlobalFocusEvents() {
   }
 
   hasSetupGlobalListeners = true;
+}
+
+export function isFocusVisible(): boolean {
+  return isGlobalFocusVisible;
 }
 
 /**
