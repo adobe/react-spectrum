@@ -15,15 +15,9 @@ import {fireEvent, render} from '@testing-library/react';
 import {getDaysInMonth} from 'date-fns';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import V2Calendar from '@react/react-spectrum/Calendar';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
 let headingFormatter = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'numeric'});

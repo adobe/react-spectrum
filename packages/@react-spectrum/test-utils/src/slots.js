@@ -14,13 +14,7 @@ import {Grid} from '@react-spectrum/layout';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {render} from '@testing-library/react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
+import {theme} from '@react-spectrum/theme-default';
 
 export function testSlotsAPI(Component) {
   let {getByTestId} = render(

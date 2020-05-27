@@ -15,15 +15,9 @@ import {fireEvent, render, within} from '@testing-library/react';
 import {Item, ListBox, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import {Text} from '@react-spectrum/typography';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 let withSection = [
   {name: 'Heading 1', children: [
