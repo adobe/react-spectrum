@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, getWrappedElement, useStyleProps} from '@react-spectrum/utils';
+import {classNames, getWrappedElement, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {useRef} from 'react';
 import {SpectrumLinkProps} from '@react-types/link';
