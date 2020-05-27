@@ -13,7 +13,6 @@
 import {Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import customTheme from './custom-theme.css';
-import {DatePicker} from '@react-spectrum/datepicker';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '../';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
@@ -106,7 +105,6 @@ function render(props = {}) {
           <Radio value="cats">Cats</Radio>
           <Radio value="horses">Horses</Radio>
         </RadioGroup>
-        <DatePicker label="A date picker" marginTop="size-100" />
       </Form>
     </Provider>
   );
