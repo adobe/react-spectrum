@@ -13,17 +13,18 @@
 import {ActionButton} from '@react-spectrum/button';
 import {ActionGroupState, useActionGroupState} from '@react-stately/actiongroup';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {classNames, filterDOMProps, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, DOMRef, SelectionMode, StyleProps} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-stately/collections';
+import {PressResponder} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
 import React, {forwardRef, Key, ReactElement, useRef} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {useActionGroup} from '@react-aria/actiongroup';
+import {useActionGroupItem} from '@react-aria/actiongroup/src/useActionGroupItem';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useSelectableItem} from '@react-aria/selection';
 
 /**
 * An ActionGroup is a grouping of ActionButtons that are related to one another.
@@ -45,14 +46,13 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
 
   let domRef = useDOMRef(ref);
   let state = useActionGroupState({...props, selectionMode});
-  let {actionGroupProps, buttonProps} = useActionGroup(props, state, domRef);
+  let {actionGroupProps} = useActionGroup(props, state, domRef);
   let isVertical = orientation === 'vertical';
   let providerProps = {isEmphasized, isDisabled, isQuiet};
   let {styleProps} = useStyleProps(props);
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...actionGroupProps}
       {...styleProps}
       ref={domRef}
@@ -72,10 +72,9 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
         {[...state.collection].map((item) => (
           <ActionGroupItem
             key={item.key}
-            {...buttonProps}
             onAction={onAction}
             isDisabled={isDisabled}
-            UNSAFE_className={classNames(buttonStyles, 'spectrum-ButtonGroup-item')}
+            isEmphasized={isEmphasized}
             item={item}
             state={state} />
         ))}
@@ -91,18 +90,13 @@ interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
   item: Node<T>,
   state: ActionGroupState<T>,
   isDisabled: boolean,
+  isEmphasized: boolean,
   onAction: (key: Key) => void
 }
 
-function ActionGroupItem<T>({item, state, isDisabled, onAction, ...otherProps}: ActionGroupItemProps<T>) {
+function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: ActionGroupItemProps<T>) {
   let ref = useRef();
-  let {itemProps} = useSelectableItem({
-    selectionManager: state && state.selectionManager,
-    itemKey: item && item.key,
-    itemRef: unwrapDOMRef(ref)
-  });
-
-  let buttonProps = mergeProps(itemProps, otherProps);
+  let {buttonProps} = useActionGroupItem({key: item.key}, state, unwrapDOMRef(ref));
   isDisabled = isDisabled || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
 
@@ -113,14 +107,26 @@ function ActionGroupItem<T>({item, state, isDisabled, onAction, ...otherProps}: 
   }
 
   let button = (
-    <ActionButton
-      {...buttonProps}
-      ref={ref}
-      isSelected={state.selectionManager.selectionMode !== 'none' ? isSelected : null}
-      isDisabled={isDisabled}
-      aria-label={item['aria-label']}>
-      {item.rendered}
-    </ActionButton>
+    // Use a PressResponder to send DOM props through.
+    // ActionButton doesn't allow overriding the role by default.
+    <PressResponder {...buttonProps}>
+      <ActionButton
+        ref={ref}
+        UNSAFE_className={
+          classNames(
+            buttonStyles,
+            'spectrum-ButtonGroup-item',
+            {
+              'spectrum-ActionButton--emphasized': isEmphasized,
+              'is-selected': isSelected
+            }
+          )
+        }
+        isDisabled={isDisabled}
+        aria-label={item['aria-label']}>
+        {item.rendered}
+      </ActionButton>
+    </PressResponder>
   );
 
   if (item.wrapper) {

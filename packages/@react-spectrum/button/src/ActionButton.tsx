@@ -26,9 +26,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
   let {
     elementType: ElementType = 'button',
     isQuiet,
-    isSelected,
     isDisabled,
-    isEmphasized,
     children,
     holdAffordance,
     autoFocus,
@@ -43,7 +41,6 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
-        {...filterDOMProps(otherProps)}
         {...styleProps}
         {...buttonProps}
         ref={domRef}
@@ -53,9 +50,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
             'spectrum-ActionButton',
             {
               'spectrum-ActionButton--quiet': isQuiet,
-              'spectrum-ActionButton--emphasized': isEmphasized,
               'is-active': isPressed,
-              'is-selected': isSelected,
               'is-disabled': isDisabled
             },
             styleProps.className

@@ -60,6 +60,7 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
 
   return {
     inputProps: {
+      ...interactions,
       type: 'radio',
       name: state.name,
       tabIndex: state.focusableRadio === value || state.focusableRadio == null ? 0 : -1,
@@ -68,8 +69,7 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
       required: isRequired,
       checked,
       'aria-checked': checked,
-      onChange,
-      ...interactions
+      onChange
     }
   };
 }

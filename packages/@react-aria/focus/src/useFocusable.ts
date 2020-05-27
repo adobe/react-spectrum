@@ -10,19 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvents, KeyboardEvents} from '@react-types/shared';
+import {FocusableProps, FocusableDOMProps} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {RefObject, useEffect} from 'react';
 import {useFocus, useKeyboard} from '@react-aria/interactions';
 
-interface FocusableProps extends FocusEvents, KeyboardEvents {
-  isDisabled?: boolean,
-  autoFocus?: boolean
+interface FocusableOptions extends FocusableProps, FocusableDOMProps {
+  isDisabled?: boolean
 }
 
-export function useFocusable(props: FocusableProps, domRef?: RefObject<HTMLElement>) {
+export function useFocusable(props: FocusableOptions, domRef?: RefObject<HTMLElement>) {
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
+  let interactions = mergeProps(focusProps, keyboardProps);
 
   useEffect(() => {
     if (props.autoFocus && domRef && domRef.current) {
@@ -31,6 +31,9 @@ export function useFocusable(props: FocusableProps, domRef?: RefObject<HTMLEleme
   }, [props.autoFocus, domRef]);
 
   return {
-    focusableProps: mergeProps(focusProps, keyboardProps)
+    focusableProps: {
+      ...interactions,
+      tabIndex: props.tabIndex
+    }
   };
 }
