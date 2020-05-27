@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaRadioProps} from '@react-types/radio';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
-import {mergeProps} from '@react-aria/utils';
 import {RadioGroupState} from '@react-stately/radio';
-import {RadioProps} from '@react-types/radio';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
-interface RadioAriaProps extends RadioProps {
+interface RadioAriaProps extends AriaRadioProps {
   isRequired?: boolean,
   isReadOnly?: boolean
 }
@@ -57,9 +57,10 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
     onFocus: () => state.setFocusableRadio(value)
   }), ref);
   let interactions = mergeProps(pressProps, focusableProps);
+  let domProps = filterDOMProps(props, {labelable: true});
 
   return {
-    inputProps: {
+    inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',
       name: state.name,
@@ -70,6 +71,6 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
       checked,
       'aria-checked': checked,
       onChange
-    }
+    })
   };
 }

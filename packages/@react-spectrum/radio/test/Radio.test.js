@@ -276,6 +276,30 @@ describe('Radios', function () {
     expect(label).toHaveTextContent('Favorite Pet');
   });
 
+  it('v3 RadioGroup supports aria-label', () => {
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {'aria-label': 'Favorite Pet'}, {});
+    let radioGroup = getByRole('radiogroup');
+    expect(radioGroup).toHaveAttribute('aria-label', 'Favorite Pet');
+  });
+
+  it('v3 RadioGroup supports custom props', () => {
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {'data-testid': 'test'}, {});
+    let radioGroup = getByRole('radiogroup');
+    expect(radioGroup).toHaveAttribute('data-testid', 'test');
+  });
+
+  it('v3 Radio supports aria-label', () => {
+    let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet'}, [{'aria-label': 'Favorite Pet'}]);
+    let radios = getAllByRole('radio');
+    expect(radios[0]).toHaveAttribute('aria-label', 'Favorite Pet');
+  });
+
+  it('v3 RadioGroup supports custom props', () => {
+    let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet'}, [{'data-testid': 'test'}]);
+    let radios = getAllByRole('radio');
+    expect(radios[0]).toHaveAttribute('data-testid', 'test');
+  });
+
   describe('V3 Radio group supports roving tabIndex ', function () {
     it('v3 RadioGroup deafult roving tabIndex', async () => {
       let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {}, {});

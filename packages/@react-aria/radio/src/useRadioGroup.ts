@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaRadioGroupProps} from '@react-types/radio';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes} from 'react';
-import {RadioGroupProps} from '@react-types/radio';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
@@ -29,8 +30,9 @@ interface RadioGroupAria {
  * @param props - props for the radio group
  * @param state - state for the radio group, as returned by `useRadioGroupState`
  */
-export function useRadioGroup(props: RadioGroupProps, state: RadioGroupState): RadioGroupAria {
+export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState): RadioGroupAria {
   let {labelProps, fieldProps} = useLabel(props);
+  let domProps = filterDOMProps(props, {labelable: true});
 
   // When the radio group loses focus, reset the focusable radio to null if
   // there is no selection. This allows tabbing into the group from either
@@ -44,11 +46,11 @@ export function useRadioGroup(props: RadioGroupProps, state: RadioGroupState): R
   });
 
   return {
-    radioGroupProps: {
+    radioGroupProps: mergeProps(domProps, {
       role: 'radiogroup',
       ...fieldProps,
       ...focusWithinProps
-    },
+    }),
     labelProps
   };
 }

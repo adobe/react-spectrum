@@ -169,7 +169,6 @@ describe('Checkbox', function () {
     expect(checkbox).toHaveAttribute('aria-label', props['aria-label']);
   });
 
-  /* This one is different, aria-hidden is getting applied to the label, not to the input, because it's the root */
   it.each`
     Name                       | Component      | props
     ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, 'data-testid': 'target'}}

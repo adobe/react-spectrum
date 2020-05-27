@@ -18,7 +18,8 @@ import {
   Orientation,
   SpectrumLabelableProps,
   StyleProps,
-  ValueBase
+  ValueBase,
+  AriaLabelingProps
 } from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
@@ -40,7 +41,8 @@ export interface RadioProps extends FocusableProps {
   isDisabled?: boolean
 }
 
-export interface SpectrumRadioGroupProps extends RadioGroupProps, SpectrumLabelableProps, DOMProps, StyleProps {
+export interface AriaRadioGroupProps extends RadioGroupProps, DOMProps, AriaLabelingProps {}
+export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLabelableProps, StyleProps {
   /**
    * The axis the Radio Button(s) should align with.
    * @default 'vertical'
@@ -53,4 +55,5 @@ export interface SpectrumRadioGroupProps extends RadioGroupProps, SpectrumLabela
   isEmphasized?: boolean
 }
 
-export interface SpectrumRadioProps extends RadioProps, DOMProps, StyleProps {}
+export interface AriaRadioProps extends RadioProps, DOMProps, AriaLabelingProps {}
+export interface SpectrumRadioProps extends AriaRadioProps, StyleProps {}
