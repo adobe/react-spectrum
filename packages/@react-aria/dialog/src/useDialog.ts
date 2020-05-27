@@ -10,16 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {focusWithoutScrolling, useSlotId} from '@react-aria/utils';
+import {AriaDialogProps} from '@react-types/dialog';
+import {focusWithoutScrolling, useSlotId, filterDOMProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
-
-export interface DialogProps {
-  /** A ref to the dialog container element. */
-  ref: RefObject<HTMLElement | null>,
-
-  /** The accessibility role for the dialog. */
-  role?: 'dialog' | 'alertdialog'
-}
 
 interface DialogAria {
   /** Props for the dialog container element. */
@@ -33,8 +26,8 @@ interface DialogAria {
  * Provides the behavior and accessibility implementation for a dialog component.
  * A dialog is an overlay shown above other content in an application.
  */
-export function useDialog(props: DialogProps): DialogAria {
-  let {ref, role = 'dialog'} = props;
+export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement | null>): DialogAria {
+  let {role = 'dialog'} = props;
   let titleId = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;
 
@@ -61,6 +54,7 @@ export function useDialog(props: DialogProps): DialogAria {
 
   return {
     dialogProps: {
+      ...filterDOMProps(props, {labelable: true}),
       role,
       tabIndex: -1,
       'aria-labelledby': props['aria-labelledby'] || titleId,

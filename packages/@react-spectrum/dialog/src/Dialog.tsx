@@ -44,7 +44,6 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     children,
     isDismissable = contextProps.isDismissable,
     onDismiss = contextProps.onClose,
-    role,
     size,
     ...otherProps
   } = props;
@@ -56,7 +55,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
   let gridRef = useRef();
   let sizeVariant = sizeMap[type] || sizeMap[size];
-  let {dialogProps, titleProps} = useDialog({ref: domRef, role, ...otherProps});
+  let {dialogProps, titleProps} = useDialog(mergeProps(contextProps, props), domRef);
 
   let hasHeader = useHasChild(`.${styles['spectrum-Dialog-header']}`, unwrapDOMRef(gridRef));
   let hasFooter = useHasChild(`.${styles['spectrum-Dialog-footer']}`, unwrapDOMRef(gridRef));
@@ -82,16 +81,8 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   return (
     <FocusScope contain restoreFocus>
       <section
-        {...mergeProps(
-          mergeProps(
-            mergeProps(
-              filterDOMProps(otherProps),
-              filterDOMProps(contextProps)
-            ),
-            styleProps
-          ),
-          dialogProps
-        )}
+        {...styleProps}
+        {...dialogProps}
         className={classNames(
           styles,
           'spectrum-Dialog',
