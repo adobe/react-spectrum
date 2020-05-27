@@ -38,7 +38,6 @@ export function useTagGroup(props: AriaTagGroupProps): TagGroupAria {
       'aria-relevant': 'additions',
       'aria-live': isFocusWithin ? 'polite' : 'off',
       'aria-disabled': isDisabled,
-      'aria-invalid': validationState === 'invalid',
       ...focusWithinProps
     }
   };

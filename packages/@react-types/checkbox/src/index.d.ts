@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, FocusableProps, InputBase, StyleProps, AriaLabelingProps, FocusableDOMProps} from '@react-types/shared';
+import {DOMProps, FocusableProps, InputBase, StyleProps, AriaLabelingProps, FocusableDOMProps, AriaValidationProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 export interface CheckboxBase extends InputBase, FocusableProps {
@@ -22,7 +22,7 @@ export interface CheckboxBase extends InputBase, FocusableProps {
   name?: string
 }
 
-export interface AriaCheckboxBase extends CheckboxBase, FocusableDOMProps, AriaLabelingProps {}
+export interface AriaCheckboxBase extends CheckboxBase, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {}
 
 export interface CheckboxProps extends CheckboxBase {
   /**

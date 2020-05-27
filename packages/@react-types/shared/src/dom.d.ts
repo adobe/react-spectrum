@@ -34,6 +34,14 @@ export interface AriaLabelingProps {
   'aria-details'?: string
 }
 
+export interface AriaValidationProps {
+  // https://www.w3.org/TR/wai-aria-1.2/#aria-errormessage
+  /**
+   * Identifies the element that provides an error message for the object.
+   */
+  'aria-errormessage'?: string
+}
+
 // A set of common DOM props that are allowed on any component
 // Ensure this is synced with DOMPropNames in filterDOMProps
 export interface DOMProps {

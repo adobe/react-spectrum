@@ -136,6 +136,17 @@ describe('Checkbox', function () {
 
   it.each`
     Name                       | Component      | props
+    ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, validationState: 'invalid', 'aria-errormessage': 'test'}}
+  `('$Name passes through aria-errormessage', function ({Component, props}) {
+    let {getByRole} = render(<Component {...props}>Click Me</Component>);
+
+    let checkbox = getByRole('checkbox');
+    expect(checkbox).toHaveAttribute('aria-invalid', 'true');
+    expect(checkbox).toHaveAttribute('aria-errormessage', 'test');
+  });
+
+  it.each`
+    Name                       | Component      | props
     ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, isIndeterminate: true}}
     ${'Checkbox isEmphasized'} | ${Checkbox}    | ${{onChange: onChangeSpy, isIndeterminate: true, isEmphasized: true}}
     ${'V2Checkbox'}            | ${V2Checkbox}  | ${{onChange: onChangeSpy, indeterminate: true}}

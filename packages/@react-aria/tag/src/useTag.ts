@@ -61,6 +61,7 @@ export function useTag(props: AriaTagProps): TagAria {
     tagProps: {
       'aria-selected': !isDisabled && isSelected,
       'aria-invalid': validationState === 'invalid' || undefined,
+      'aria-errormessage': props['aria-errormessage'],
       onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
       role: role === 'gridcell' ? 'row' : null,
       tabIndex: isDisabled ? -1 : 0

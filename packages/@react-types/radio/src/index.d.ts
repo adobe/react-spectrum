@@ -19,7 +19,8 @@ import {
   SpectrumLabelableProps,
   StyleProps,
   ValueBase,
-  AriaLabelingProps
+  AriaLabelingProps,
+  AriaValidationProps
 } from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
@@ -46,7 +47,7 @@ export interface RadioProps extends FocusableProps {
   isDisabled?: boolean
 }
 
-export interface AriaRadioGroupProps extends RadioGroupProps, DOMProps, AriaLabelingProps {}
+export interface AriaRadioGroupProps extends RadioGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
 export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLabelableProps, StyleProps {
   /**
    * By default, radio buttons are not emphasized (gray).

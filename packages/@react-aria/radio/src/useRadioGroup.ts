@@ -57,6 +57,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       // https://www.w3.org/TR/wai-aria-1.2/#radiogroup
       role: 'radiogroup',
       'aria-invalid': validationState === 'invalid' || undefined,
+      'aria-errormessage': props['aria-errormessage'],
       'aria-readonly': isReadOnly || undefined,
       'aria-required': isRequired || undefined,
       'aria-disabled': isDisabled || undefined,

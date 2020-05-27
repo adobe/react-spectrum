@@ -318,6 +318,13 @@ describe('Radios', function () {
     expect(radioGroup).toHaveAttribute('aria-invalid', 'true');
   });
 
+  it('v3 RadioGroup passes through aria-errormessage', () => {
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', validationState: 'invalid', 'aria-errormessage': 'test'}, []);
+    let radioGroup = getByRole('radiogroup');
+    expect(radioGroup).toHaveAttribute('aria-invalid', 'true');
+    expect(radioGroup).toHaveAttribute('aria-errormessage', 'test');
+  });
+
   it('v3 RadioGroup sets aria-required when isRequired is true', () => {
     let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', isRequired: true}, []);
     let radioGroup = getByRole('radiogroup');

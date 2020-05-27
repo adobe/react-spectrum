@@ -64,6 +64,7 @@ export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState
       'aria-expanded': state.isOpen,
       'aria-owns': state.isOpen ? dialogId : null,
       'aria-invalid': state.validationState === 'invalid' || null,
+      'aria-errormessage': props['aria-errormessage'],
       'aria-disabled': props.isDisabled || null,
       'aria-readonly': props.isReadOnly || null,
       'aria-required': props.isRequired || null,
