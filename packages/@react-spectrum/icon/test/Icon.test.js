@@ -87,7 +87,7 @@ describe('Icon', function () {
     expect(icon).toHaveAttribute('aria-label', 'explicitly hidden alt');
     expect(icon).toHaveAttribute('aria-hidden', 'true');
 
-    rerender(<Component aria-label="explicitly not hidden aria-label" aria-hidden="false"><FakeIcon /></Component>);
+    rerender(<Component aria-label="explicitly not hidden aria-label"><FakeIcon /></Component>);
     icon = getByRole('img');
     expect(icon).toHaveAttribute('aria-label', 'explicitly not hidden aria-label');
     expect(icon).not.toHaveAttribute('aria-hidden');

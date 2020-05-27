@@ -266,14 +266,28 @@ describe('Radios', function () {
   // don't need to test keyboard interactions, the above tests ensure that all the right things are in place
   // for the browser to handle it for us
 
-  it('v3 RadioGroup supports labeling', () => {
-    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet'}, {});
+  it('Radios supports labeling', () => {
+    let {getByRole, getAllByRole, getByLabelText} = render(
+      <>
+        <RadioGroup label="Favorite Pet">
+          <Radio value="dogs" aria-label="dogs" />
+          <Radio value="cats" aria-labelledby="cat-label" />
+          <Radio value="dragons" aria-describedby="dragon-description">Dragons</Radio>
+        </RadioGroup>
+        <div id="cat-label">cats</div>
+        <div id="dragon-description">dragons are magic</div>
+      </>
+    );
     let radioGroup = getByRole('radiogroup');
+    let radios = getAllByRole('radio');
 
     let labelId = radioGroup.getAttribute('aria-labelledby');
     expect(labelId).toBeDefined();
     let label = document.getElementById(labelId);
     expect(label).toHaveTextContent('Favorite Pet');
+    expect(radios[0]).toBe(getByLabelText('dogs'));
+    expect(radios[1]).toBe(getByLabelText('cats'));
+    expect(radios[2]).toHaveAttribute('aria-describedby', 'dragon-description');
   });
 
   describe('V3 Radio group supports roving tabIndex ', function () {
