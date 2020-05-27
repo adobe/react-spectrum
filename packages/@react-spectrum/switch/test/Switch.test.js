@@ -121,12 +121,12 @@ describe('Switch', function () {
   /* This one is different, aria-hidden is getting applied to the label, not to the input, because it's the root */
   it.each`
     Name                     | Component    | props
-    ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, 'aria-hidden': true, 'data-testid': 'target'}}
+    ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, 'data-testid': 'target'}}
   `('$Name supports additional props', function ({Component, props}) {
     let {getByTestId} = render(<Component {...props}>Click Me</Component>);
 
     let checkboxLabel = getByTestId('target');
-    expect(checkboxLabel).toHaveAttribute('aria-hidden', 'true');
+    expect(checkboxLabel).toBeInTheDocument();
   });
 
   it.each`

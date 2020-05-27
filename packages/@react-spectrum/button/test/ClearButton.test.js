@@ -47,7 +47,6 @@ describe('ClearButton', function () {
 
     let button = getByRole('button', {hidden: true});
     expect(button).toHaveAttribute('data-foo', 'bar');
-    expect(button).toHaveAttribute('aria-hidden', 'true');
   });
 
   // Current v3 implementation that diverges from v2

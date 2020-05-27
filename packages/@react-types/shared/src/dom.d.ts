@@ -37,12 +37,7 @@ export interface AriaLabelingProps {
 // A set of common DOM props that are allowed on any component
 // Ensure this is synced with DOMPropNames in filterDOMProps
 export interface DOMProps {
-  id?: string,
-
-  /**
-   * Indicates that the element is perceivable but disabled, so it is not editable or otherwise operable.
-   */
-  'aria-hidden'?: boolean
+  id?: string
 }
 
 export interface FocusableDOMProps extends DOMProps {

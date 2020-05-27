@@ -14,8 +14,7 @@ import {HTMLAttributes} from "react";
 import { DOMProps, AriaLabelingProps } from "@react-types/shared";
 
 const DOMPropNames = new Set([
-  'id',
-  'aria-hidden'
+  'id'
 ]);
 
 const labelablePropNames = new Set([

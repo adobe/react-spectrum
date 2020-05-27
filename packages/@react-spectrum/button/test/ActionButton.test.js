@@ -46,7 +46,6 @@ describe('ActionButton', function () {
 
     let button = getByRole('button', {hidden: true});
     expect(button).toHaveAttribute('data-foo', 'bar');
-    expect(button).toHaveAttribute('aria-hidden', 'true');
   });
 
   it.each`
