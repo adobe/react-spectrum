@@ -63,18 +63,6 @@ describe('Search', () => {
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
     ${'v2 SearchField'} | ${V2SearchField}
-  `('$Name supports overriding role and type of search input', ({Component}) => {
-    let tree = renderComponent(Component, {role: 'menuitem'});
-    let outerDiv = tree.getByRole('menuitem');
-    expect(outerDiv).toBeTruthy();
-
-    expect(tree.queryByRole('search')).toBeNull();
-  });
-
-  it.each`
-    Name                | Component
-    ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name should support custom icons', ({Component}) => {
     let icon = <Checkmark data-testid="testicon" />;
     let tree = renderComponent(Component, {icon});

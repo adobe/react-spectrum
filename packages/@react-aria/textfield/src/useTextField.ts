@@ -11,6 +11,7 @@
  */
 
 import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {TextFieldProps} from '@react-types/textfield';
 import {TextInputDOMProps} from '@react-types/shared';
 import {useFocusable} from '@react-aria/focus';
@@ -43,10 +44,11 @@ export function useTextField(
   } = props;
   let {focusableProps} = useFocusable(props, ref);
   let {labelProps, fieldProps} = useLabel(props);
+  let domProps = filterDOMProps(props, {labelable: true});
 
   return {
     labelProps,
-    inputProps: {
+    inputProps: mergeProps(domProps, {
       type,
       disabled: isDisabled,
       readOnly: isReadOnly,
@@ -81,6 +83,6 @@ export function useTextField(
       onInput: props.onInput,
       ...focusableProps,
       ...fieldProps
-    }
+    })
   };
 }
