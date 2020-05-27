@@ -35,7 +35,8 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
   return (
     <Flex
       {...filterDOMProps(otherProps)}
-      {...styleProps}
+      UNSAFE_style={styleProps.style}
+      isHidden={styleProps.hidden}
       UNSAFE_className={classNames(
         styles,
         'spectrum-IllustratedMessage',

@@ -61,6 +61,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
           styles,
           'spectrum-Checkbox',
           {
+            'is-checked': state.isSelected,
             'is-indeterminate': isIndeterminate,
             'spectrum-Checkbox--quiet': !isEmphasized,
             'is-invalid': inputProps['aria-invalid'],
