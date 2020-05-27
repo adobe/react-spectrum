@@ -72,7 +72,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
         ref={targetRef}>
         <FocusScope autoFocus={autoFocus}>
           <DatePickerField
-            {...startFieldProps}
+            {...startFieldProps as any}
             isQuiet={props.isQuiet}
             isDisabled={isDisabled}
             isReadOnly={isReadOnly}
@@ -84,7 +84,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             UNSAFE_className={classNames(styles, 'spectrum-Datepicker-startField')} />
           <DateRangeDash />
           <DatePickerField
-            {...endFieldProps}
+            {...endFieldProps as any}
             isQuiet={props.isQuiet}
             isDisabled={isDisabled}
             isReadOnly={isReadOnly}

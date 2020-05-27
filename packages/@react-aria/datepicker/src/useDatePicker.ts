@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps} from '@react-types/button';
+import {AriaDialogProps} from '@react-types/dialog';
 import {DatePickerProps, DateRangePickerProps} from '@react-types/datepicker';
 import {DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
 import {DOMProps} from '@react-types/shared';
@@ -22,9 +24,9 @@ import {usePress} from '@react-aria/interactions';
 
 interface DatePickerAria {
   comboboxProps: HTMLAttributes<HTMLElement>,
-  fieldProps: DOMProps,
-  buttonProps: HTMLAttributes<HTMLElement>,
-  dialogProps: HTMLAttributes<HTMLElement> & {role?: 'dialog' | 'alertdialog'}
+  fieldProps: HTMLAttributes<HTMLElement>,
+  buttonProps: AriaButtonProps,
+  dialogProps: AriaDialogProps
 }
 
 type DatePickerAriaProps = (DatePickerProps | DateRangePickerProps) & DOMProps;

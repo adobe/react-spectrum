@@ -11,15 +11,19 @@
  */
 
 import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {DOMProps, StyleProps, AriaLabelingProps} from '@react-types/shared';
 import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
 
-interface IconProps extends DOMProps, StyleProps {
+interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   alt?: string,
   children: ReactElement,
-  slot?: string
+  slot?: string,
+  /**
+   * Indicates whether the element is exposed to an accessibility API.
+   */
+  'aria-hidden'?: boolean
 }
 
 export function UIIcon(props: IconProps) {
@@ -29,7 +33,6 @@ export function UIIcon(props: IconProps) {
     children,
     'aria-label': ariaLabel,
     'aria-hidden': ariaHidden,
-    role = 'img',
     ...otherProps
   } = props;
 
@@ -40,7 +43,7 @@ export function UIIcon(props: IconProps) {
     scale = provider.scale === 'large' ? 'L' : 'M';
   }
 
-  if (!ariaHidden || ariaHidden === 'false') {
+  if (!ariaHidden) {
     ariaHidden = undefined;
   }
 
@@ -51,7 +54,7 @@ export function UIIcon(props: IconProps) {
     focusable: 'false',
     'aria-label': ariaLabel || alt,
     'aria-hidden': (ariaLabel || alt ? ariaHidden : true),
-    role,
+    role: 'img',
     className: classNames(
       styles,
       children.props.className,

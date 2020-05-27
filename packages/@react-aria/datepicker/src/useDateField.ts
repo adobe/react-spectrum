@@ -21,7 +21,7 @@ import {useMessageFormatter} from '@react-aria/i18n';
 
 interface DateFieldAria {
   fieldProps: HTMLAttributes<HTMLElement>,
-  segmentProps: DOMProps
+  segmentProps: HTMLAttributes<HTMLElement>
 }
 
 export function useDateField(props: DatePickerProps & DOMProps): DateFieldAria {

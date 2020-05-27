@@ -11,14 +11,14 @@
  */
 
 import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {DOMProps, StyleProps, AriaLabelingProps} from '@react-types/shared';
 import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
 
 type Scale = 'M' | 'L'
 
-interface IconProps extends DOMProps, StyleProps {
+interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Alternate text for assistive technologies
    */
@@ -45,9 +45,9 @@ interface IconProps extends DOMProps, StyleProps {
    */
   slot?: string,
   /**
-   * @default 'img'
+   * Indicates whether the element is exposed to an accessibility API.
    */
-  role?: string
+  'aria-hidden'?: boolean
 }
 
 /**
@@ -63,7 +63,6 @@ export function Icon(props: IconProps) {
     size,
     'aria-label': ariaLabel,
     'aria-hidden': ariaHidden,
-    role = 'img',
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -81,7 +80,7 @@ export function Icon(props: IconProps) {
   if (color === undefined) {
     color = pcolor;
   }
-  if (!ariaHidden || ariaHidden === 'false') {
+  if (!ariaHidden) {
     ariaHidden = undefined;
   }
 
@@ -96,7 +95,7 @@ export function Icon(props: IconProps) {
     focusable: 'false',
     'aria-label': ariaLabel || alt,
     'aria-hidden': (ariaLabel || alt ? ariaHidden : true),
-    role,
+    role: 'img',
     className: classNames(
       styles,
       children.props.className,

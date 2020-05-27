@@ -71,7 +71,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
         ref={targetRef}>
         <FocusScope autoFocus={autoFocus}>
           <DatePickerField
-            {...fieldProps}
+            {...fieldProps as any}
             data-testid="date-field"
             isQuiet={isQuiet}
             validationState={state.validationState}

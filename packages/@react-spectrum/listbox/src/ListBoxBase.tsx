@@ -122,7 +122,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
         renderWrapper={renderWrapper}
         isLoading={props.isLoading}
         onLoadMore={props.onLoadMore}>
-        {(type, item) => {
+        {(type, item: Node<T>) => {
           if (type === 'item') {
             return (
               <ListBoxOption

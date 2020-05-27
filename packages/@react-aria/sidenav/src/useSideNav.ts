@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaSideNavProps} from '@react-types/sidenav';
 import {HTMLAttributes, RefObject} from 'react';
 import {ListLayout} from '@react-stately/collections';
-import {SideNavProps} from '@react-types/sidenav';
 import {TreeState} from '@react-stately/tree';
 import {useId} from '@react-aria/utils';
 import {useSelectableCollection} from '@react-aria/selection';
 
-interface SideNavAriaProps<T> extends SideNavProps<T> {
+interface SideNavAriaOptions<T> extends AriaSideNavProps<T> {
   layout?: ListLayout<T>
 }
 
@@ -26,7 +26,7 @@ interface SideNavAria {
   listProps: HTMLAttributes<HTMLUListElement>
 }
 
-export function useSideNav<T>(props: SideNavAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): SideNavAria {
+export function useSideNav<T>(props: SideNavAriaOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): SideNavAria {
   let {
     id,
     'aria-label': ariaLabel,

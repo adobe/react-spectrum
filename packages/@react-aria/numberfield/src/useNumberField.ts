@@ -18,18 +18,20 @@ import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
+import { AriaButtonProps } from '@react-types/button';
 
 interface NumberFieldProps extends SpinButtonProps {
   decrementAriaLabel?: string,
-  incrementAriaLabel?: string
+  incrementAriaLabel?: string,
+  autoFocus?: boolean
 }
 
 interface NumberFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   inputFieldProps: HTMLAttributes<HTMLInputElement>,
   numberFieldProps: HTMLAttributes<HTMLDivElement>,
-  incrementButtonProps: HTMLAttributes<HTMLButtonElement>,
-  decrementButtonProps: HTMLAttributes<HTMLButtonElement>
+  incrementButtonProps: AriaButtonProps,
+  decrementButtonProps: AriaButtonProps
 }
 
 export function useNumberField(props: NumberFieldProps, state: NumberFieldState, ref: RefObject<HTMLInputElement>): NumberFieldAria {
