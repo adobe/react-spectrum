@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy} from '@react-types/listbox';
+import {AriaListBoxProps} from '@react-types/listbox';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListState} from '@react-stately/list';
@@ -21,7 +22,7 @@ interface ListBoxAria {
   listBoxProps: HTMLAttributes<HTMLElement>
 }
 
-interface AriaListBoxProps {
+interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'children'> {
   /** A ref to the listbox container element. */
   ref?: RefObject<HTMLDivElement>,
 
@@ -32,13 +33,7 @@ interface AriaListBoxProps {
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate,
-
-  /** Whether the auto focus the listbox or an option. */
-  autoFocus?: boolean | FocusStrategy,
-
-  /** Whether focus should wrap around when the end/start is reached. */
-  shouldFocusWrap?: boolean
+  keyboardDelegate?: KeyboardDelegate
 }
 
 /**
@@ -47,7 +42,8 @@ interface AriaListBoxProps {
  * @param props - props for the listbox
  * @param state - state for the listbox, as returned by `useListState`
  */
-export function useListBox<T>(props: AriaListBoxProps, state: ListState<T>): ListBoxAria {
+export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>): ListBoxAria {
+  let domProps = filterDOMProps(props, {labelable: true});
   let {listProps} = useSelectableList({
     ...props,
     selectionManager: state.selectionManager,
@@ -56,10 +52,10 @@ export function useListBox<T>(props: AriaListBoxProps, state: ListState<T>): Lis
   });
 
   return {
-    listBoxProps: {
+    listBoxProps: mergeProps(domProps, {
       role: 'listbox',
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
       ...listProps
-    }
+    })
   };
 }

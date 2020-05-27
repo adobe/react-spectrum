@@ -40,7 +40,8 @@ let withSection = [
 function renderComponent(props) {
   return render(
     <Provider theme={theme}>
-      <ListBox items={withSection} itemKey="name" {...props}>
+      <span id="label">Choose an item</span>
+      <ListBox items={withSection} itemKey="name" aria-labelledby="label" {...props}>
         {item => (
           <Section items={item.children} title={item.name}>
             {item => <Item childItems={item.children}>{item.name}</Item>}
@@ -77,6 +78,7 @@ describe('ListBox', function () {
     let tree = renderComponent();
     let listbox = tree.getByRole('listbox');
     expect(listbox).toBeTruthy();
+    expect(listbox).toHaveAttribute('aria-labelledby', 'label');
 
     let sections = within(listbox).getAllByRole('group');
     expect(sections.length).toBe(2);

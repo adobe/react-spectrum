@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {CollectionItem, CollectionView} from '@react-aria/collections';
-import {DOMProps, StyleProps} from '@react-types/shared';
 import {FocusStrategy} from '@react-types/menu';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -30,7 +30,7 @@ import {useCollator, useMessageFormatter} from '@react-aria/i18n';
 import {useListBox} from '@react-aria/listbox';
 import {useProvider} from '@react-spectrum/provider';
 
-interface ListBoxBaseProps<T> extends DOMProps, StyleProps {
+interface ListBoxBaseProps<T> extends DOMProps, AriaLabelingProps, StyleProps {
   layout: ListLayout<T>,
   state: ListState<T>,
   autoFocus?: boolean | FocusStrategy,
@@ -103,7 +103,6 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
   return (
     <ListBoxContext.Provider value={state}>
       <CollectionView
-        {...filterDOMProps(props)}
         {...styleProps}
         {...mergeProps(listBoxProps, domProps)}
         ref={ref}
