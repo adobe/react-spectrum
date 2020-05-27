@@ -14,16 +14,10 @@ import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../';
 import React from 'react';
 import {render} from '@testing-library/react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 import V2Radio from '@react/react-spectrum/Radio';
 import V2RadioGroup from '@react/react-spectrum/RadioGroup';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 function renderRadioGroup(ComponentGroup, Component, groupProps, radioProps) {
   return render(

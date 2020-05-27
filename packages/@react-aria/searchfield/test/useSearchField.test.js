@@ -15,8 +15,7 @@ import intlMessages from '../intl/*.json';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {useSearchField} from '../';
 
 describe('useSearchField hook', () => {
@@ -99,11 +98,6 @@ describe('useSearchField hook', () => {
   describe('should return clearButtonProps', () => {
     it('with a localized aria-label', () => {
       let locale = 'de-DE';
-      let theme = {
-        light: themeLight,
-        medium: scaleMedium
-      };
-
       let wrapper = ({children}) => <Provider locale={locale} theme={theme}>{children}</Provider>;
       let expectedIntl = intlMessages[locale]['Clear search'];
       let {clearButtonProps} = renderSearchHook({}, wrapper);

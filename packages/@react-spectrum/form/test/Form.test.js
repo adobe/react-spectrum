@@ -14,14 +14,8 @@ import {Form} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {render} from '@testing-library/react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import {TextField} from '@react-spectrum/textfield';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
+import {theme} from '@react-spectrum/theme-default';
 
 describe('Form', function () {
   it('should render a form', () => {
