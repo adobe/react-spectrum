@@ -51,6 +51,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
           id: false,
           'aria-label': false,
           'aria-labelledby': false,
+          'aria-describedby': false,
           tabIndex: false
         }
       )}

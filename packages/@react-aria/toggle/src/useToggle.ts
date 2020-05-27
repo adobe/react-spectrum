@@ -22,7 +22,7 @@ export interface ToggleAria {
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref: RefObject<HTMLElement>): ToggleAria {
+export function useToggle(props: SwitchProps & Omit<DOMProps, 'aria-owns'>, state: ToggleState, ref: RefObject<HTMLElement>): ToggleAria {
   let {
     isDisabled = false,
     isRequired,
@@ -71,6 +71,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref
       name,
       type: 'checkbox',
       tabIndex,
+      'aria-describedby': props['aria-describedby'],
       ...interactions
     }
   };
