@@ -813,6 +813,40 @@ describe('Picker', function () {
       expect(listbox).toBeVisible();
       expect(listbox).toHaveAttribute('aria-labelledby', `foo ${picker.id}`);
     });
+
+    describe('isRequired', function () {
+      it('supports labeling with a visible label that includes the necessity indicator', function () {
+        let {getByText, getByRole} = render(
+          <Provider theme={theme}>
+            <Picker label="Test 2" isRequired necessityIndicator="label" onSelectionChange={onSelectionChange}>
+              <Item>One</Item>
+              <Item>Two</Item>
+              <Item>Three</Item>
+            </Picker>
+          </Provider>
+        );
+  
+        let picker = getByRole('button');
+        expect(picker).toHaveAttribute('aria-haspopup', 'listbox');
+
+
+        let span = getByText('(required)');
+        expect(span).not.toHaveAttribute('aria-hidden');
+  
+        let label = span.parentElement;
+        let value = getByText('Select an option…');
+        expect(label).toHaveAttribute('id');
+        expect(value).toHaveAttribute('id');
+        expect(picker).toHaveAttribute('aria-labelledby', `${label.id} ${value.id}`);
+  
+        act(() => triggerPress(picker));
+        act(() => jest.runAllTimers());
+  
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(listbox).toHaveAttribute('aria-labelledby', label.id);
+      });
+    });
   });
 
   describe('selection', function () {

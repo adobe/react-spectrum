@@ -250,6 +250,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           labelAlign={labelAlign}
           isRequired={isRequired}
           necessityIndicator={necessityIndicator}
+          includeNecessityIndicatorInAccessibilityName
           elementType="span">
           {label}
         </Label>
