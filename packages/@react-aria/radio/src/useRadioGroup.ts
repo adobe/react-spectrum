@@ -31,6 +31,13 @@ interface RadioGroupAria {
  * @param state - state for the radio group, as returned by `useRadioGroupState`
  */
 export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState): RadioGroupAria {
+  let {
+    validationState,
+    isReadOnly,
+    isRequired,
+    isDisabled,
+    orientation = 'vertical'
+  } = props;
   let {labelProps, fieldProps} = useLabel(props);
   let domProps = filterDOMProps(props, {labelable: true});
 
@@ -47,7 +54,13 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
 
   return {
     radioGroupProps: mergeProps(domProps, {
+      // https://www.w3.org/TR/wai-aria-1.2/#radiogroup
       role: 'radiogroup',
+      'aria-invalid': validationState === 'invalid' || undefined,
+      'aria-readonly': isReadOnly || undefined,
+      'aria-required': isRequired || undefined,
+      'aria-disabled': isDisabled || undefined,
+      'aria-orientation': orientation,
       ...fieldProps,
       ...focusWithinProps
     }),

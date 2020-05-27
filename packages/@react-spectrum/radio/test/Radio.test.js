@@ -62,18 +62,18 @@ describe('Radios', function () {
       });
     }
 
-    expect(radios[0]).toHaveAttribute('aria-checked', 'false');
-    expect(radios[1]).toHaveAttribute('aria-checked', 'false');
-    expect(radios[2]).toHaveAttribute('aria-checked', 'false');
+    expect(radios[0].checked).toBe(false);
+    expect(radios[1].checked).toBe(false);
+    expect(radios[2].checked).toBe(false);
 
     let dogs = getByLabelText('Dogs');
     userEvent.click(dogs);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
 
-    expect(radios[0]).toHaveAttribute('aria-checked', 'true');
-    expect(radios[1]).toHaveAttribute('aria-checked', 'false');
-    expect(radios[2]).toHaveAttribute('aria-checked', 'false');
+    expect(radios[0].checked).toBe(true);
+    expect(radios[1].checked).toBe(false);
+    expect(radios[2].checked).toBe(false);
   });
 
   it.each`
@@ -160,15 +160,15 @@ describe('Radios', function () {
     let cats = getByLabelText('Cats');
     userEvent.click(cats);
     expect(onChangeSpy).not.toHaveBeenCalled();
-    expect(radios[0]).toHaveAttribute('aria-checked', 'false');
-    expect(radios[1]).toHaveAttribute('aria-checked', 'false');
-    expect(radios[2]).toHaveAttribute('aria-checked', 'false');
+    expect(radios[0].checked).toBe(false);
+    expect(radios[1].checked).toBe(false);
+    expect(radios[2].checked).toBe(false);
     userEvent.click(dogs);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
-    expect(radios[0]).toHaveAttribute('aria-checked', 'true');
-    expect(radios[1]).toHaveAttribute('aria-checked', 'false');
-    expect(radios[2]).toHaveAttribute('aria-checked', 'false');
+    expect(radios[0].checked).toBe(true);
+    expect(radios[1].checked).toBe(false);
+    expect(radios[2].checked).toBe(false);
   });
 
   // V2 can't readonly
@@ -224,18 +224,18 @@ describe('Radios', function () {
     expect(radioGroup).toBeTruthy();
     expect(radios.length).toBe(3);
     expect(onChangeSpy).not.toHaveBeenCalled();
-    expect(radios[0]).toHaveAttribute('aria-checked', 'false');
-    expect(radios[1]).toHaveAttribute('aria-checked', 'false');
-    expect(radios[2]).toHaveAttribute('aria-checked', 'true');
+    expect(radios[0].checked).toBe(false);
+    expect(radios[1].checked).toBe(false);
+    expect(radios[2].checked).toBe(true);
 
     // have to click label or it won't work
     let dogs = getByLabelText('Dogs');
     userEvent.click(dogs);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
-    expect(radios[0]).toHaveAttribute('aria-checked', 'true');
-    expect(radios[1]).toHaveAttribute('aria-checked', 'false');
-    expect(radios[2]).toHaveAttribute('aria-checked', 'false');
+    expect(radios[0].checked).toBe(true);
+    expect(radios[1].checked).toBe(false);
+    expect(radios[2].checked).toBe(false);
   });
 
   it.each`
@@ -250,17 +250,17 @@ describe('Radios', function () {
     expect(radioGroup).toBeTruthy();
     expect(radios.length).toBe(3);
     expect(onChangeSpy).not.toHaveBeenCalled();
-    expect(radios[0]).toHaveAttribute('aria-checked', 'false');
-    expect(radios[1]).toHaveAttribute('aria-checked', 'false');
-    expect(radios[2]).toHaveAttribute('aria-checked', 'true');
+    expect(radios[0].checked).toBe(false);
+    expect(radios[1].checked).toBe(false);
+    expect(radios[2].checked).toBe(true);
 
     let dogs = getByLabelText('Dogs');
     userEvent.click(dogs);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
-    expect(radios[0]).toHaveAttribute('aria-checked', 'false');
-    expect(radios[1]).toHaveAttribute('aria-checked', 'false');
-    expect(radios[2]).toHaveAttribute('aria-checked', 'true');
+    expect(radios[0].checked).toBe(false);
+    expect(radios[1].checked).toBe(false);
+    expect(radios[2].checked).toBe(true);
   });
 
   // don't need to test keyboard interactions, the above tests ensure that all the right things are in place
@@ -298,6 +298,36 @@ describe('Radios', function () {
     let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet'}, [{'data-testid': 'test'}]);
     let radios = getAllByRole('radio');
     expect(radios[0]).toHaveAttribute('data-testid', 'test');
+  });
+
+  it('v3 RadioGroup sets aria-orientation by default', () => {
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet'}, []);
+    let radioGroup = getByRole('radiogroup');
+    expect(radioGroup).toHaveAttribute('aria-orientation', 'vertical');
+  });
+
+  it('v3 RadioGroup sets aria-orientation based on the orientation prop', () => {
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', orientation: 'horizontal'}, []);
+    let radioGroup = getByRole('radiogroup');
+    expect(radioGroup).toHaveAttribute('aria-orientation', 'horizontal');
+  });
+
+  it('v3 RadioGroup sets aria-invalid when validationState="invalid"', () => {
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', validationState: 'invalid'}, []);
+    let radioGroup = getByRole('radiogroup');
+    expect(radioGroup).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it('v3 RadioGroup sets aria-required when isRequired is true', () => {
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', isRequired: true}, []);
+    let radioGroup = getByRole('radiogroup');
+    expect(radioGroup).toHaveAttribute('aria-required', 'true');
+  });
+
+  it('v3 RadioGroup sets aria-disabled when isDisabled is true', () => {
+    let {getByRole} = renderRadioGroup(RadioGroup, Radio, {label: 'Favorite Pet', isDisabled: true}, []);
+    let radioGroup = getByRole('radiogroup');
+    expect(radioGroup).toHaveAttribute('aria-disabled', 'true');
   });
 
   describe('V3 Radio group supports roving tabIndex ', function () {

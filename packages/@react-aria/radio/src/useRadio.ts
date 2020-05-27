@@ -39,8 +39,17 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
     value,
     isRequired,
     isReadOnly,
-    isDisabled
+    isDisabled,
+    children,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby
   } = props;
+
+  let hasChildren = children != null;
+  let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
+  if (!hasChildren && !hasAriaLabel) {
+    console.warn('If you do not provide children, you must specify an aria-label for accessibility');
+  }
 
   let checked = state.selectedValue === value;
 
@@ -69,7 +78,6 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
       readOnly: isReadOnly,
       required: isRequired,
       checked,
-      'aria-checked': checked,
       onChange
     })
   };
