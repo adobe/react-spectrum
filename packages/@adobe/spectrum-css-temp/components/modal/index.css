@@ -35,8 +35,14 @@ governing permissions and limitations under the License.
   justify-content: center;
 
   box-sizing: border-box;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  /* On mobile browsers, vh units are fixed based on the maximum height of the screen.
+   * However, when you scroll, the toolbar and address bar shrink, making the viewport resize.
+   * We use the fill-available value to counteract this where supported. */
+  height: 100vh;
+  height: -moz-available;
+  height: -webkit-fill-available;
+  height: fill-available;
 
   visibility: hidden;
 
