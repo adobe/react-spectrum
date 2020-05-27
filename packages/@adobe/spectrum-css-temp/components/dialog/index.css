@@ -243,11 +243,11 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dialog--fullscreen {
-  width: calc(100vw - calc(2 * var(--spectrum-dialog-fullscreen-margin)));
-  height: calc(100% - calc(2 * var(--spectrum-dialog-fullscreen-margin)));
+  width: 100%;
+  height: 100%;
 }
 .spectrum-Dialog--fullscreenTakeover {
-  width: 100vw;
+  width: 100%;
   height: 100%;
 
   border-radius: 0;
