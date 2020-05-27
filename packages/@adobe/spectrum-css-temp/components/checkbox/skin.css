@@ -35,7 +35,7 @@ governing permissions and limitations under the License.
   color: var(--spectrum-checkbox-emphasized-text-color);
 }
 
-/* Indetermiate is basically a checked state, so handle colors for checked state here */
+/* Indeterminate is basically a checked state, so handle colors for checked state here */
 .spectrum-Checkbox.is-indeterminate .spectrum-Checkbox-box,
 .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
   &:before {
