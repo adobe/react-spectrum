@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
@@ -184,10 +184,8 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   return (
     <nav
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       {...breadcrumbsProps}
-      className={classNames({}, styleProps.className)}
       ref={domRef}>
       <ul
         ref={listRef}

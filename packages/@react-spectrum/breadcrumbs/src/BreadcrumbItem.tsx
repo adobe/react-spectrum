@@ -12,7 +12,7 @@
 
 import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
 import ChevronRightSmall from '@spectrum-icons/ui/ChevronRightSmall';
-import {classNames, filterDOMProps, getWrappedElement} from '@react-spectrum/utils';
+import {classNames, getWrappedElement} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {Fragment} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
@@ -24,7 +24,6 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
     children,
     isCurrent,
     isDisabled,
-  ...otherProps
   } = props;
 
   let {direction} = useLocale();
@@ -36,7 +35,6 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
   let element = React.cloneElement(
     getWrappedElement(children),
     {
-      ...filterDOMProps(otherProps),
       ...breadcrumbItemProps,
       className:
         classNames(

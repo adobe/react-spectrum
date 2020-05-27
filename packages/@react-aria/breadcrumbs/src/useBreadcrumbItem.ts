@@ -21,7 +21,7 @@ interface AriaBreadcrumbItemProps extends BreadcrumbItemProps, DOMProps {
    * The HTML element used to render the breadcrumb link, e.g. "a", or "span".
    * @default "a"
    */
-  elementType?: string,
+  elementType?: string
 }
 
 interface BreadcrumbItemAria {
@@ -35,7 +35,6 @@ interface BreadcrumbItemAria {
  */
 export function useBreadcrumbItem(props: AriaBreadcrumbItemProps): BreadcrumbItemAria {
   let {
-    id,
     isCurrent,
     isDisabled,
     isHeading,
@@ -62,7 +61,6 @@ export function useBreadcrumbItem(props: AriaBreadcrumbItemProps): BreadcrumbIte
 
   return {
     breadcrumbItemProps: {
-      id: useId(id),
       'aria-disabled': isDisabled,
       ...itemProps,
       ...breadcrumbItemHeadingProps

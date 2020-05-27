@@ -29,8 +29,7 @@ export function Link(props: SpectrumLinkProps) {
     isQuiet,
     children,
     // @ts-ignore
-    href,
-    ...otherProps
+    href
   } = props;
   let {styleProps} = useStyleProps(props);
 
@@ -50,7 +49,6 @@ export function Link(props: SpectrumLinkProps) {
       {React.cloneElement(
         getWrappedElement(children),
         {
-          ...filterDOMProps(otherProps),
           ...styleProps,
           ...linkProps,
           ref,
