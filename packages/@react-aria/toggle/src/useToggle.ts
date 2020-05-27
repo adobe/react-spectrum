@@ -31,8 +31,7 @@ export function useToggle(props: AriaCheckboxBase, state: ToggleState, ref: RefO
     children,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
-    validationState = 'valid',
-    ...otherProps
+    validationState = 'valid'
   } = props;
 
   let onChange = (e) => {
@@ -47,7 +46,6 @@ export function useToggle(props: AriaCheckboxBase, state: ToggleState, ref: RefO
   if (!hasChildren && !hasAriaLabel) {
     console.warn('If you do not provide children, you must specify an aria-label for accessibility');
   }
-  let isInvalid = validationState === 'invalid';
 
   // This handles focusing the input on pointer down, which Safari does not do by default.
   let {pressProps} = usePress({
@@ -60,7 +58,7 @@ export function useToggle(props: AriaCheckboxBase, state: ToggleState, ref: RefO
 
   return {
     inputProps: mergeProps(domProps, {
-      'aria-invalid': isInvalid,
+      'aria-invalid': validationState === 'invalid',
       onChange,
       disabled: isDisabled,
       required: isRequired,

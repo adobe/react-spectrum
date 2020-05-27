@@ -42,7 +42,7 @@ export interface ProgressBarBaseProps extends ProgressBaseProps {
   valueLabel?: ReactNode // custom value label (e.g. 1 of 4)
 }
 
-export interface AriaProgressBarBaseProps extends ProgressBaseProps, DOMProps, AriaLabelingProps {}
+export interface AriaProgressBarBaseProps extends ProgressBarBaseProps, DOMProps, AriaLabelingProps {}
 
 export interface ProgressBarProps extends ProgressBarBaseProps {
   /**

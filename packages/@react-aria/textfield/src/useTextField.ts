@@ -12,12 +12,10 @@
 
 import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {TextFieldProps} from '@react-types/textfield';
-import {TextInputDOMProps} from '@react-types/shared';
+import {AriaTextFieldProps} from '@react-types/textfield';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
 
-interface TextFieldAriaProps extends TextFieldProps, TextInputDOMProps {}
 interface TextFieldAria {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>
@@ -31,7 +29,7 @@ interface TextFieldAria {
  * @param ref - ref to the HTML input element
  */
 export function useTextField(
-  props: TextFieldAriaProps,
+  props: AriaTextFieldProps,
   ref: RefObject<HTMLInputElement>
 ): TextFieldAria {
   let {

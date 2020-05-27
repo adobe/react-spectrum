@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableRefValue, FocusableProps, InputBase, LabelableProps, SpectrumLabelableProps, StyleProps, TextInputBase, TextInputDOMProps, ValueBase, AriaLabelingProps} from '@react-types/shared';
+import {FocusableRefValue, FocusableProps, InputBase, LabelableProps, SpectrumLabelableProps, StyleProps, TextInputBase, TextInputDOMProps, ValueBase, AriaLabelingProps, FocusableDOMProps} from '@react-types/shared';
 import {ReactElement} from 'react';
 
 export interface TextFieldProps extends InputBase, FocusableProps, TextInputBase, ValueBase<string>, LabelableProps {}

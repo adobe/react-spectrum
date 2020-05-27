@@ -22,7 +22,7 @@ interface ListBoxAria {
   listBoxProps: HTMLAttributes<HTMLElement>
 }
 
-interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'children'> {
+interface AriaListBoxOptions<T> extends AriaListBoxProps<T> {
   /** A ref to the listbox container element. */
   ref?: RefObject<HTMLDivElement>,
 
