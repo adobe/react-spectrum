@@ -11,6 +11,8 @@
  */
 
 .spectrum--light {
+  --spectrum-global-color-status: Verified;
+  --spectrum-global-color-version: 5.0.1;
   --spectrum-global-color-celery-400: rgb(68, 181, 86);
   --spectrum-global-color-celery-500: rgb(61, 167, 78);
   --spectrum-global-color-celery-600: rgb(55, 153, 71);
@@ -112,4 +114,5 @@
   --spectrum-tabs-quiet-vertical-emphasized-selection-indicator-color: var(--spectrum-global-color-blue-500);
   --spectrum-well-background-color: rgba(75,75,75,0.02);
   --spectrum-well-border-color: rgba(44,44,44,0.05);
+  --spectrum-tray-background-color: var(--spectrum-global-color-gray-50);
 }
