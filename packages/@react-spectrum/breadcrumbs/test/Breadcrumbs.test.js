@@ -70,7 +70,7 @@ describe('Breadcrumbs', function () {
 
   it('Handles multiple items', () => {
     let {getByText} = render(
-      <Breadcrumbs className="test-class">
+      <Breadcrumbs UNSAFE_className="test-class">
         <Item>Folder 1</Item>
         <Item>Folder 2</Item>
         <Item>Folder 3</Item>
