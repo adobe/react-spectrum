@@ -28,7 +28,7 @@ interface RadioAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for an individual 
+ * Provides the behavior and accessibility implementation for an individual
  * radio button in a radio group.
  * @param props - props for the radio
  * @param state - state for the radio group, as returned by `useRadioGroupState`
@@ -68,6 +68,9 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
       required: isRequired,
       checked,
       'aria-checked': checked,
+      'aria-label': props['aria-label'],
+      'aria-labelledby': props['aria-labelledby'],
+      'aria-describedby': props['aria-describedby'],
       onChange,
       ...interactions
     }

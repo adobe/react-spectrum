@@ -76,7 +76,7 @@ storiesOf('RadioGroup', module)
   )
   .add(
     'no visible label',
-    () => render({label: null, 'aria-label': 'Favorite pet'})
+    () => renderNoLabels({})
   )
   .add(
     'long radio label',
@@ -103,6 +103,16 @@ function render(props, radioProps = [{}, {}, {}]) {
       <Radio value="dragons" {...radioProps[2]}>
         Dragons
       </Radio>
+    </RadioGroup>
+  );
+}
+
+function renderNoLabels(props, radioProps = [{}, {}, {}]) {
+  return (
+    <RadioGroup aria-label="Favorite pet" {...props} onChange={action('onChange')} name="favorite-pet-group">
+      <Radio value="dogs" aria-label="dogs" {...radioProps[0]} />
+      <Radio value="cats" aria-label="cats" {...radioProps[1]} />
+      <Radio value="dragons" aria-label="dragons" {...radioProps[2]} />
     </RadioGroup>
   );
 }

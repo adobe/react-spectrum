@@ -18,9 +18,9 @@ import {SpectrumRadioProps} from '@react-types/radio';
 import styles from '@adobe/spectrum-css-temp/components/radio/vars.css';
 import {useRadio} from '@react-aria/radio';
 import {useRadioProvider} from './context';
-// TODO: something about aria-label not working
+
 function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
-  if (!props.children && !props['aria-label']) {
+  if (!props.children && !props['aria-label'] && !props['aria-labelledby']) {
     console.warn('If no children are provided, an aria-label must be specified');
   }
 
@@ -54,7 +54,9 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
       {...filterDOMProps(
         otherProps,
         {
-          'aria-label': false
+          'aria-label': false,
+          'aria-labelledby': false,
+          'aria-describedby': false
         }
       )}
       {...styleProps}
