@@ -71,20 +71,10 @@ governing permissions and limitations under the License.
   &:disabled {
     cursor: default;
   }
-
-  &:checked + .spectrum-Checkbox-box {
-    border-width: calc(var(--spectrum-checkbox-box-size) / 2);
-
-    .spectrum-Checkbox-checkmark {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
 }
 
 .spectrum-Checkbox.is-indeterminate {
-  .spectrum-Checkbox-box,
-  .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
+  .spectrum-Checkbox-box {
     border-width: calc(var(--spectrum-checkbox-box-size) / 2);
 
     .spectrum-Checkbox-checkmark {
@@ -94,6 +84,17 @@ governing permissions and limitations under the License.
     .spectrum-Checkbox-partialCheckmark {
       display: block;
 
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+
+.spectrum-Checkbox.is-checked {
+  .spectrum-Checkbox-box {
+    border-width: calc(var(--spectrum-checkbox-box-size) / 2);
+
+    .spectrum-Checkbox-checkmark {
       transform: scale(1);
       opacity: 1;
     }
