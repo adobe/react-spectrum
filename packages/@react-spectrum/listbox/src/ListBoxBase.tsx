@@ -132,6 +132,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
             );
           } else if (type === 'loader') {
             return (
+              // aria-selected isn't needed here since this option is not selectable.
               // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
               <div role="option" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
                 <ProgressCircle 

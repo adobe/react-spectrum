@@ -228,14 +228,16 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
 // This is a custom CollectionView that also has a header that syncs its scroll position with the body.
 function TableCollectionView({layout, collection, focusedKey, renderView, renderWrapper, domRef, isQuiet, ...otherProps}) {
   let {direction} = useLocale();
+  let headerRef = useRef<HTMLDivElement>();
+  let bodyRef = useRef<HTMLDivElement>();
   let collectionState = useCollectionState({
     layout,
     collection,
     renderView,
     renderWrapper,
     onVisibleRectChange(rect) {
-      domRef.current.scrollTop = rect.y;
-      setScrollLeft(domRef.current, direction, rect.x);
+      bodyRef.current.scrollTop = rect.y;
+      setScrollLeft(bodyRef.current, direction, rect.x);
     }
   });
 
@@ -245,10 +247,9 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
   let visibleRect = collectionState.collectionManager.visibleRect;
 
   // Sync the scroll position from the table body to the header container.
-  let headerRef = useRef<HTMLDivElement>();
   let onScroll = useCallback(() => {
-    headerRef.current.scrollLeft = domRef.current.scrollLeft;
-  }, [domRef]);
+    headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
+  }, [bodyRef]);
 
   let onVisibleRectChange = useCallback((rect: Rect) => {
     collectionState.setVisibleRect(rect);
@@ -264,6 +265,7 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
   return (
     <div
       {...mergeProps(otherProps, collectionViewProps)}
+      ref={domRef}
       className={
         classNames(
           styles,
@@ -295,7 +297,7 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
         className={classNames(styles, 'spectrum-Table-body')}
         style={{flex: 1}}
         innerStyle={{overflow: 'visible', transition: collectionState.isAnimating ? `none ${collectionState.collectionManager.transitionDuration}ms` : undefined}}
-        ref={domRef}
+        ref={bodyRef}
         contentSize={collectionState.contentSize}
         onVisibleRectChange={onVisibleRectChange}
         onScrollStart={collectionState.startScrolling}
