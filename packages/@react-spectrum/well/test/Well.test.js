@@ -64,4 +64,18 @@ describe('Well', () => {
     expect(ref.current.UNSAFE_getDOMNode()).toHaveAttribute('data-testid', 'wellForwardRef');
     expect(ref.current.UNSAFE_getDOMNode().textContent.includes('Well Text')).toBeTruthy();
   });
+
+  it('v3 supports aria-label with a role', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let {getByText} = render(<Well role="region" aria-label="well">Well</Well>);
+    let well = getByText('Well');
+    expect(well).toHaveAttribute('role', 'region');
+    expect(well).toHaveAttribute('aria-label', 'well');
+  });
+
+  it('v3 warns user if label is provided without a role', function () {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    render(<Well aria-label="well">Well</Well>);
+    expect(spyWarn).toHaveBeenCalledWith('A labelled Well must have a role.');
+  });
 });
