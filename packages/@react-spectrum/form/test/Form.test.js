@@ -14,6 +14,7 @@ import {Form} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {render} from '@testing-library/react';
+import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 
 describe('Form', function () {
@@ -51,5 +52,22 @@ describe('Form', function () {
 
     let form = getByRole('form');
     expect(form).toBe(ref.current.UNSAFE_getDOMNode());
+  });
+
+  it('should context props should be overridden by child', () => {
+    let testId = 'tfid4';
+    let tree = render(
+      <Provider theme={theme}>
+        <Form necessityIndicator={undefined}>
+          <TextField label="A text field" necessityIndicator="label" data-testid={testId} />
+        </Form>
+      </Provider>
+    );
+
+    let input = tree.getByTestId(testId);
+    let labelId = input.getAttribute('aria-labelledby');
+    expect(labelId).toBeDefined();
+    let label = document.getElementById(labelId);
+    expect(label).toHaveTextContent('A text field ​(optional)');
   });
 });
