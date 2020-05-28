@@ -468,7 +468,7 @@ function AsyncLoadingExample() {
 
   return (
     <div>
-      <ActionButton onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
+      <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
       <Table width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
         <TableHeader>
           <Column uniqueKey="score" width={100} allowsSorting>Score</Column>
