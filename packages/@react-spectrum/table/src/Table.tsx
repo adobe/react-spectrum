@@ -260,7 +260,7 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
         collection.body.props.onLoadMore();
       }
     }
-  }, [collection.body.props, collectionState]);
+  }, [collection.body.props, collectionState.setVisibleRect, collectionState.collectionManager]);
 
   return (
     <div
