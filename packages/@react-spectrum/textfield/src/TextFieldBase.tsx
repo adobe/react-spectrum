@@ -150,7 +150,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
                 'spectrum-Textfield-inputIcon': icon,
                 'spectrum-Textfield--resizableX': isResizeableWidth,
                 'spectrum-Textfield--resizableY': isResizeableHeight
-          },
+              },
               inputClassName,
               classNames(formFieldStyles, {'spectrum-Form-input': isInForm})
             )
