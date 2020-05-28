@@ -40,8 +40,7 @@ interface ListBoxBaseProps<T> extends DOMProps, StyleProps {
   domProps?: HTMLAttributes<HTMLElement>,
   disallowEmptySelection?: boolean,
   isLoading?: boolean,
-  onLoadMore?: () => void,
-  transitionDuration?: number
+  onLoadMore?: () => void
 }
 
 /** @private */
@@ -64,7 +63,7 @@ export function useListBoxLayout<T>(state: ListState<T>) {
 
 /** @private */
 function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
-  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, domProps = {}, transitionDuration} = props;
+  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, domProps = {}} = props;
   let {listBoxProps} = useListBox({
     ...props,
     ...domProps,
@@ -123,7 +122,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
         renderWrapper={renderWrapper}
         isLoading={props.isLoading}
         onLoadMore={props.onLoadMore}
-        transitionDuration={transitionDuration}>
+        transitionDuration={0}>
         {(type, item) => {
           if (type === 'item') {
             return (
