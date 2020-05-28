@@ -20,6 +20,7 @@
 
 .tocContainer {
   border-left: 1px solid var(--spectrum-global-color-gray-200);
+  padding-left: 16px;
 }
 
 @media (max-width: 1200px) {
