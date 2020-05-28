@@ -100,8 +100,8 @@ function getContainerDimensions(containerNode: Element): Dimensions {
   let scroll: Position = {};
 
   if (containerNode.tagName === 'BODY') {
-    width = window.innerWidth;
-    height = window.innerHeight;
+    width = document.documentElement.clientWidth;
+    height = document.documentElement.clientHeight;
 
     scroll.top =
       getScrollTop(ownerDocument(containerNode).documentElement) ||
