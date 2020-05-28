@@ -17,7 +17,7 @@ import {Item, Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {TextField} from '@react-spectrum/textfield';
+import {TextArea, TextField} from '@react-spectrum/textfield';
 
 storiesOf('Form', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -89,6 +89,14 @@ storiesOf('Form', module)
     () => render({isQuiet: true, labelPosition: 'side'})
   )
   .add(
+    'isQuiet, labelPosition: side, invalid',
+    () => render({isQuiet: true, labelPosition: 'side', validationState: 'invalid'})
+  )
+  .add(
+    'labelPosition: side, invalid',
+    () => render({labelPosition: 'side', validationState: 'invalid'})
+  )
+  .add(
     'isEmphasized',
     () => render({isEmphasized: true})
   )
@@ -128,6 +136,7 @@ function render(props: any = {}) {
         <Item>Blue</Item>
         <Item>Purple</Item>
       </Picker>
+      <TextArea label="Comments" />
     </Form>
   );
 }

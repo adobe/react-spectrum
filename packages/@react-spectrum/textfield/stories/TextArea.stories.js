@@ -109,8 +109,20 @@ storiesOf('TextArea', module)
   .add('custom width',
     () => render({icon: <Info />, validationState: 'invalid', width: '300px'})
   )
+  .add('custom width, label side',
+    () => render({icon: <Info />, labelPosition: 'side', validationState: 'invalid', width: '300px'})
+  )
   .add('custom width, quiet',
     () => render({icon: <Info />, validationState: 'invalid', width: '300px', isQuiet: true})
+  )
+  .add('custom height, invalid',
+    () => render({icon: <Info />, validationState: 'invalid', height: '300px'})
+  )
+  .add('custom height, invalid, label side',
+    () => render({icon: <Info />, validationState: 'invalid', height: '300px', labelPosition: 'side'})
+  )
+  .add('custom height and width, invalid',
+    () => render({icon: <Info />, validationState: 'invalid', height: '300px', width: '300px'})
   );
 
 function render(props = {}) {

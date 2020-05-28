@@ -63,6 +63,8 @@ governing permissions and limitations under the License.
   /* Remove the margin for input in Firefox and Safari. */
   margin: 0;
 
+  resize: none;
+  
   /* Show the overflow for input in Edge. */
   overflow: visible;
 
@@ -178,6 +180,16 @@ governing permissions and limitations under the License.
     /* Treat all quiet inputs and textareas the same */
     resize: none;
     overflow-y: hidden;
+  }
+
+  &.spectrum-Textfield--resizableX {
+    resize: horizontal;
+  }
+  &.spectrum-Textfield--resizableY {
+    resize: vertical;
+  }
+  &.spectrum-Textfield--resizableX.spectrum-Textfield--resizableY {
+    resize: both;
   }
 }
 

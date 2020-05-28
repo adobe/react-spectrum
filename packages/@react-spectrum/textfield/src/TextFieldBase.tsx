@@ -21,7 +21,7 @@ import {
 import {FocusRing} from '@react-aria/focus';
 import {Label} from '@react-spectrum/label';
 import {LabelPosition} from '@react-types/shared';
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import formFieldStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import React, {cloneElement, forwardRef, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
@@ -58,6 +58,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     labelProps,
     inputProps,
     inputRef,
+    isInForm,
     ...otherProps
   } = props;
   let domRef = useRef<HTMLDivElement>(null);
@@ -80,6 +81,14 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   let {styleProps} = useStyleProps(otherProps);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
   let isInvalid = validationState === 'invalid';
+  let isResizeableWidth = false;
+  let isResizeableHeight = false;
+  if (!styleProps.style.width && multiLine && !isQuiet && !isInForm) {
+    isResizeableWidth = true;
+  }
+  if (!styleProps.style.height && multiLine && !isQuiet && !isInForm) {
+    isResizeableHeight = true;
+  }
 
   if (icon) {
     let UNSAFE_className = classNames(
@@ -122,7 +131,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
             'spectrum-Textfield--multiline': multiLine
           }
         )
-      }>
+      }
+      style={{width: 'fit-content'}} >
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
         <ElementType
           {...mergeProps(
@@ -136,9 +146,12 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
               styles,
               'spectrum-Textfield-input',
               {
-                'spectrum-Textfield-inputIcon': icon
-              },
-              inputClassName
+                'spectrum-Textfield-inputIcon': icon,
+                'spectrum-Textfield--resizableX': isResizeableWidth,
+                'spectrum-Textfield--resizableY': isResizeableHeight
+          },
+              inputClassName,
+              classNames(formFieldStyles, {'spectrum-Form-input': isInForm})
             )
           } />
       </FocusRing>
@@ -150,7 +163,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
 
   if (label) {
     let labelWrapperClass = classNames(
-      labelStyles,
+      formFieldStyles,
       'spectrum-Field',
       {
         'spectrum-Field--positionTop': labelPosition === 'top',
@@ -160,7 +173,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     );
 
     textField = React.cloneElement(textField, mergeProps(textField.props, {
-      className: classNames(labelStyles, 'spectrum-Field-field')
+      className: classNames(formFieldStyles, 'spectrum-Field-field')
     }));
 
     return (
