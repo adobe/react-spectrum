@@ -19,9 +19,9 @@ import {
   useStyleProps
 } from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
+import formFieldStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {Label} from '@react-spectrum/label';
 import {LabelPosition} from '@react-types/shared';
-import formFieldStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
 import React, {cloneElement, forwardRef, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
@@ -35,7 +35,8 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps {
   multiLine?: boolean,
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>,
-  inputRef?: RefObject<HTMLInputElement & HTMLTextAreaElement>
+  inputRef?: RefObject<HTMLInputElement & HTMLTextAreaElement>,
+  isInForm?: boolean
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
