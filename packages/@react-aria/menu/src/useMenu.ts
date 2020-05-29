@@ -48,6 +48,10 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>): Menu
     ...otherProps
   } = props;
 
+  if (!props['aria-label'] && !props['aria-labelledby']) {
+    console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
+  }
+
   let domProps = filterDOMProps(props, {labelable: true});
   let {listProps} = useSelectableList({
     ...otherProps,

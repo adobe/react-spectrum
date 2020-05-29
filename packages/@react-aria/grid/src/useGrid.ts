@@ -39,6 +39,10 @@ export function useGrid<T>(props: GridProps<T>, state: GridState<T>): GridAria {
     layout
   } = props;
 
+  if (!props['aria-label'] && !props['aria-labelledby']) {
+    console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
+  }
+
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});

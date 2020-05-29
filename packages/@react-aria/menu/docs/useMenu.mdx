@@ -183,7 +183,7 @@ function MenuItem({item, state, onAction}) {
   );
 }
 
-<Menu onAction={alert}>
+<Menu onAction={alert} aria-label="Actions">
   <Item uniqueKey="one">One</Item>
   <Item uniqueKey="two">Two</Item>
   <Item uniqueKey="three">Three</Item>
@@ -312,7 +312,7 @@ function MenuItem({item, state, onAction}) {
 ///- end collapse -///
 }
 
-<Menu onAction={alert}>
+<Menu onAction={alert} aria-label="Actions">
   <Section title="Section 1">
     <Item uniqueKey="section1-item1">One</Item>
     <Item uniqueKey="section1-item2">Two</Item>
@@ -419,7 +419,7 @@ function MenuItem({item, state, onAction}) {
   );
 }
 
-<Menu onAction={alert}>
+<Menu onAction={alert} aria-label="Actions">
   <Item textValue="Copy" uniqueKey="copy">
     <div><strong>Copy</strong></div>
     <div>Copy the selected text</div>
