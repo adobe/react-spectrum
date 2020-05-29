@@ -38,7 +38,11 @@ export interface AriaButtonProps extends ButtonProps, FocusableDOMProps, AriaLab
   'aria-controls'?: string,
   /** Indicates the current "pressed" state of toggle buttons. */
   'aria-pressed'?: boolean,
-  type?: 'button' | 'submit'
+  /** 
+   * The behavior of the button when used in an HTML form.
+   * @default "button"
+   */
+  type?: 'button' | 'submit' | 'reset'
 }
 
 export interface SpectrumButtonProps extends AriaButtonProps, StyleProps {
