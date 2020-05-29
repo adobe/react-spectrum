@@ -121,7 +121,8 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
         collection={state.collection}
         renderWrapper={renderWrapper}
         isLoading={props.isLoading}
-        onLoadMore={props.onLoadMore}>
+        onLoadMore={props.onLoadMore}
+        transitionDuration={0}>
         {(type, item) => {
           if (type === 'item') {
             return (

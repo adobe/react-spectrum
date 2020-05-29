@@ -66,13 +66,14 @@ describe('Link', function () {
   it('Wraps custom child element', () => {
     let {getByRole} = render(
       <Link UNSAFE_className="test-class" onPress={onPressSpy} >
-        <a href="http://example.com" >Click me </a>
+        <a href="#only-hash-in-jsdom" >Click me </a>
       </Link>
     );
     let link = getByRole('link');
     expect(link).toBeDefined();
     expect(link.nodeName).toBe('A');
     expect(link).toHaveAttribute('class', expect.stringContaining('test-class'));
+    expect(link).toHaveAttribute('href', '#only-hash-in-jsdom');
     triggerPress(link);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
