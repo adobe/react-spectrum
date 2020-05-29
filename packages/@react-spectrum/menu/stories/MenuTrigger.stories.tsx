@@ -137,7 +137,6 @@ storiesOf('MenuTrigger', module)
                 <AlignCenter size="S" />
                 <Text>Doggo with really really really long long long text</Text>
                 <Text slot="end">Value</Text>
-                <ChevronRightMedium slot="keyboard" />
               </Item>
               <Item>
                 <AlignRight size="S" />
