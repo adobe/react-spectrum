@@ -14,9 +14,9 @@ governing permissions and limitations under the License.
 
 :root {
   /* Hardcoded for wrapping study.
-  Will be a DNA token in https://jira.corp.adobe.com/browse/SDS-4466
-  */
+  Will be a DNA token in https://jira.corp.adobe.com/browse/SDS-4466 */
   --spectrum-switch-label-margin-top: var(--spectrum-global-dimension-size-65);
+  
   /* Fix for inconsistent line-height between browsers that would push the label 1px below the intended baseline */
   /* more info: https://stackoverflow.com/questions/47700568/css-fonts-render-differently-in-firefox-and-chrome */
   --spectrum-switch-label-line-height: 1.49;
@@ -52,15 +52,14 @@ governing permissions and limitations under the License.
   inset-block-start: 0;
   inset-inline-start: 0;
   opacity: .0001;
-  z-index: 1;
 
   cursor: default;
 
   &:checked + .spectrum-ToggleSwitch-switch {
-    [dir='ltr'] &::after {
+    [dir='ltr'] &::before {
       transform: translateX(var(--spectrum-switch-handle-transform-x-ltr));
     }
-    [dir='rtl'] &::after {
+    [dir='rtl'] &::before {
       transform: translateX(var(--spectrum-switch-handle-transform-x-rtl));
     }
   }
@@ -68,6 +67,14 @@ governing permissions and limitations under the License.
   &:disabled,
   &[disabled] {
     cursor: default;
+  }
+
+  &:focus-ring {
+    + .spectrum-ToggleSwitch-switch {
+      &:after {
+        margin: calc(var(--spectrum-alias-focus-ring-gap) * -1);
+      }
+    }
   }
 }
 
@@ -82,10 +89,10 @@ governing permissions and limitations under the License.
 
 .spectrum-ToggleSwitch-switch {
   display: inline-block;
+  box-sizing: border-box;
   /* positions the pseudo elements relative to this one */
   position: relative;
 
-  block-size: var(--spectrum-switch-track-height);
   inline-size: var(--spectrum-switch-track-width);
 
   /* Fix vertical alignment when not wrapping since we're flex-start */
@@ -100,28 +107,24 @@ governing permissions and limitations under the License.
   Fix for scaling all elemetns with transform property equally on browser zoom */
   will-change: transform;
 
-  &::before,
-  &::after {
+  transition: background var(--spectrum-global-animation-duration-100) ease-in-out, border var(--spectrum-global-animation-duration-100) ease-in-out;
+
+  block-size: var(--spectrum-switch-track-height);
+
+  inset-inline-start: 0;
+  inset-inline-end: 0;
+
+  border-radius: calc(var(--spectrum-switch-track-height) / 2);
+
+  &:before {
     display: block;
     position: absolute;
     content: "";
     box-sizing: border-box;
   }
 
-  /* ::before is used for the track of the switch */
-  &::before {
-    transition: background var(--spectrum-global-animation-duration-100) ease-in-out, border var(--spectrum-global-animation-duration-100) ease-in-out;
-
-    block-size: var(--spectrum-switch-track-height);
-
-    inset-inline-start: 0;
-    inset-inline-end: 0;
-
-    border-radius: calc(var(--spectrum-switch-track-height) / 2);
-  }
-
-  /* ::after is used for the handle of the switch */
-  &::after {
+  /* :before is used for the handle of the switch */
+  &:before {
     transition: background var(--spectrum-global-animation-duration-100) ease-in-out, border var(--spectrum-global-animation-duration-100) ease-in-out, transform var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 
     inline-size: var(--spectrum-switch-handle-size);
@@ -133,5 +136,21 @@ governing permissions and limitations under the License.
     border-width: var(--spectrum-switch-handle-border-size);
     border-radius: var(--spectrum-switch-handle-border-radius);
     border-style: solid;
+  }
+
+  /* :after is used for the focus halo */
+  &:after {
+    border-radius: calc(calc(var(--spectrum-switch-track-height) / 2) + var(--spectrum-alias-focus-ring-gap) * 2);
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    margin: 0;
+
+    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
+                margin var(--spectrum-global-animation-duration-100) ease-out;
   }
 }

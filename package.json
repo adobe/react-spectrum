@@ -53,7 +53,7 @@
     "@parcel/babel-preset-env": "nightly",
     "@parcel/transformer-inline": "nightly",
     "@parcel/transformer-svg-react": "nightly",
-    "@spectrum-css/vars": "^2.0.0",
+    "@spectrum-css/vars": "^2.3.0",
     "@storybook/addon-a11y": "^5.2.1",
     "@storybook/addon-actions": "^5.2.1",
     "@storybook/addon-info": "^5.2.1",
