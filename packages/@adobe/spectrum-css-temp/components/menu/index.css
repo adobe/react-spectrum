@@ -22,7 +22,9 @@ governing permissions and limitations under the License.
   --spectrum-selectlist-heading-padding-left: var(--spectrum-global-dimension-size-150);
   --spectrum-selectlist-heading-padding-right: var(--spectrum-global-dimension-size-450);
 
-
+  /* OVERRIDE: DNA uses a static size which doesn't properly adjust on large scale */
+  /* Remove once https://git.corp.adobe.com/Spectrum/spectrum-dna/pull/409 is released. */
+  --spectrum-selectlist-option-padding: var(--spectrum-global-dimension-size-150);
   --spectrum-selectlist-option-padding-y: var(--spectrum-global-dimension-size-85);
 
   --spectrum-selectlist-option-selectable-padding-right: calc(var(--spectrum-global-dimension-size-100) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-selectlist-option-icon-padding-x));
