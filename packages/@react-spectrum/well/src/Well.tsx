@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
 import {SpectrumWellProps} from '@react-types/well';
 import styles from '@adobe/spectrum-css-temp/components/well/vars.css';
@@ -19,15 +20,21 @@ import styles from '@adobe/spectrum-css-temp/components/well/vars.css';
 function Well(props: SpectrumWellProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
+    role,
     ...otherProps
   } = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
+  if (!role && (props['aria-label'] || props['aria-labelledby'])) {
+    console.warn('A labelled Well must have a role.');
+  }
+
   return (
     <div
-      {...filterDOMProps(otherProps)}
+      {...filterDOMProps(otherProps, {labelable: !!role})}
       {...styleProps}
+      role={role}
       ref={domRef}
       className={classNames(
         styles,

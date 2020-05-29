@@ -12,48 +12,44 @@
 
 import {ClipboardEventHandler, CompositionEventHandler, FormEventHandler, ReactEventHandler} from 'react';
 
-// A set of common DOM props that are allowed on any component
-// Ensure this is synced with DOMPropNames in filterDOMProps
-export interface DOMProps {
-  id?: string,
-  tabIndex?: number,
-  role?: string,
-
+export interface AriaLabelingProps {
   /**
    * Defines a string value that labels the current element.
-   * @see aria-labelledby.
    */
   'aria-label'?: string,
 
   /**
    * Identifies the element (or elements) that labels the current element.
-   * @see aria-describedby.
    */
   'aria-labelledby'?: string,
 
   /**
    * Identifies the element (or elements) that describes the object.
-   * @see aria-labelledby
    */
   'aria-describedby'?: string,
 
   /**
-   * Identifies the element (or elements) whose contents or presence are controlled by the current element.
-   * @see aria-owns.
+   * Identifies the element (or elements) that provide a detailed, extended description for the object.
    */
-  'aria-controls'?: string,
+  'aria-details'?: string
+}
 
+export interface AriaValidationProps {
+  // https://www.w3.org/TR/wai-aria-1.2/#aria-errormessage
   /**
-   * Identifies an element (or elements) in order to define a visual, functional, or contextual parent/child relationship
-   * between DOM elements where the DOM hierarchy cannot be used to represent the relationship.
-   * @see aria-controls.
+   * Identifies the element that provides an error message for the object.
    */
-  'aria-owns'?: string,
+  'aria-errormessage'?: string
+}
 
-  /**
-   * Indicates that the element is perceivable but disabled, so it is not editable or otherwise operable.
-   */
-  'aria-hidden'?: boolean | 'false' | 'true'
+// A set of common DOM props that are allowed on any component
+// Ensure this is synced with DOMPropNames in filterDOMProps
+export interface DOMProps {
+  id?: string
+}
+
+export interface FocusableDOMProps extends DOMProps {
+  tabIndex?: number
 }
 
 // DOM props that apply to all text inputs

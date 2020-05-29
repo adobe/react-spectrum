@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {mergeProps} from '@react-aria/utils';
 import {PressProps} from './usePress';
 import {PressResponderContext} from './context';
-import React, {ReactNode, RefObject, useEffect, useRef} from 'react';
+import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 
 interface PressResponderProps extends PressProps {
   children: ReactNode
@@ -20,13 +21,17 @@ interface PressResponderProps extends PressProps {
 
 export const PressResponder = React.forwardRef(({children, ...props}: PressResponderProps, ref: RefObject<HTMLElement>) => {
   let isRegistered = useRef(false);
-  let context = {
+  let prevContext = useContext(PressResponderContext);
+  let context = mergeProps(prevContext || {}, {
     ...props,
     ref,
     register() {
       isRegistered.current = true;
+      if (prevContext) {
+        prevContext.register();
+      }
     }
-  };
+  });
 
   useEffect(() => {
     if (!isRegistered.current) {

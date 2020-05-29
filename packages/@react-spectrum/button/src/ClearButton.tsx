@@ -11,7 +11,7 @@
  */
 
 import {ButtonProps} from '@react-types/button';
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import CrossSmall from '@spectrum-icons/ui/CrossSmall';
 import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -39,7 +39,6 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusClassName)} autoFocus={autoFocus}>
       <button
-        {...filterDOMProps(otherProps)}
         {...styleProps}
         {...buttonProps}
         ref={domRef}

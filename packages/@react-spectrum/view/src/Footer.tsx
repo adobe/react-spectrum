@@ -11,9 +11,10 @@
  */
 
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {FooterProps} from '@react-types/view';
 import React, {forwardRef} from 'react';
+import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
 function Footer(props: FooterProps, ref: DOMRef) {
   props = useSlotProps(props, 'footer');

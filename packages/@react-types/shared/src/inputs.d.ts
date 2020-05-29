@@ -10,10 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableProps} from './events';
-
 export type ValidationState = 'valid' | 'invalid';
-export interface InputBase extends FocusableProps {
+export interface InputBase {
   /** Whether the input is disabled. */
   isDisabled?: boolean,
   /** 
