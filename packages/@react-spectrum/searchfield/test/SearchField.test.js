@@ -22,7 +22,7 @@ let testId = 'test-id';
 let inputText = 'blah';
 
 function renderComponent(Component, props) {
-  return render(<Component {...props} data-testid={testId} />);
+  return render(<Component aria-label="the label" {...props} data-testid={testId} />);
 }
 
 // Note: Running this test suite will result in some warnings of the following class:
@@ -132,7 +132,7 @@ describe('Search', () => {
   it.each`
     Name                | Component        | props
     ${'v3 SearchField'} | ${SearchField}   | ${{isDisabled: true}}
-  `('$Name doesn\'t submits the textfield value when enter is pressed but field is disabled', ({Component, props}) => {
+  `('$Name doesn\'t submit the textfield value when enter is pressed but field is disabled', ({Component, props}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onSubmit, ...props});
     let input = tree.getByTestId(testId);
     fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
@@ -274,9 +274,8 @@ describe('Search', () => {
   });
 
   it('SearchField doesn\'t show clear button if isReadOnly is true', () => {
-    let tree = render(<SearchField isReadOnly value="puppy" />);
+    let tree = renderComponent(SearchField, {isReadOnly: true, value: 'puppy'});
     let clearButton = tree.queryByLabelText('Clear search');
     expect(clearButton).toBe(null);
-
   });
 });
