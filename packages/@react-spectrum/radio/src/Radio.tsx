@@ -20,10 +20,6 @@ import {useRadio} from '@react-aria/radio';
 import {useRadioProvider} from './context';
 
 function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
-  if (!props.children && !props['aria-label']) {
-    console.warn('If no children are provided, an aria-label must be specified');
-  }
-
   let {
     isDisabled,
     children,

@@ -15,10 +15,10 @@ import {AriaDialogProps} from '@react-types/dialog';
 import {DatePickerProps, DateRangePickerProps} from '@react-types/datepicker';
 import {DatePickerState, DateRangePickerState} from '@react-stately/datepicker';
 import {DOMProps} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useId, useLabels} from '@react-aria/utils';
 import {HTMLAttributes, KeyboardEvent} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useId, useLabels} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 
@@ -37,6 +37,7 @@ export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState
   let formatMessage = useMessageFormatter(intlMessages);
   let labels = useLabels(props, formatMessage('date'));
   let labelledBy = labels['aria-labelledby'] || labels.id;
+  let domProps = filterDOMProps(props, {labelable: true});
 
   // When a touch event occurs on the date field, open the calendar instead.
   // The date segments are too small to interact with on a touch device.
@@ -60,7 +61,7 @@ export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState
   };
 
   return {
-    comboboxProps: {
+    comboboxProps: mergeProps(domProps, {
       role: 'combobox',
       'aria-haspopup': 'dialog',
       'aria-expanded': state.isOpen,
@@ -72,7 +73,7 @@ export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState
       'aria-required': props.isRequired || null,
       ...mergeProps(pressProps, {onKeyDown}),
       ...labels
-    },
+    }),
     fieldProps: {
       'aria-labelledby': labelledBy
     },

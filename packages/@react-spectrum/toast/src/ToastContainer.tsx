@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement} from 'react';
 import {Toast} from './';
 import toastContainerStyles from './toastContainer.css';
@@ -41,7 +41,6 @@ export function ToastContainer(props: ToastState): ReactElement {
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       className={classNames(
         toastContainerStyles,
         'react-spectrum-ToastContainer',

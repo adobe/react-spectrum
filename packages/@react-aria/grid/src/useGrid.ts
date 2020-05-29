@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {gridIds} from './utils';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, KeyboardDelegate} from '@react-types/shared';
 import {Layout, Node} from '@react-stately/collections';
 import {useCollator, useLocale} from '@react-aria/i18n';
-import {useId} from '@react-aria/utils';
 import {useSelectableCollection} from '@react-aria/selection';
 
-interface GridProps<T> {
+interface GridProps<T> extends DOMProps, AriaLabelingProps {
   ref: RefObject<HTMLElement>,
   isVirtualized?: boolean,
   keyboardDelegate?: KeyboardDelegate,
@@ -60,12 +60,13 @@ export function useGrid<T>(props: GridProps<T>, state: GridState<T>): GridAria {
   let id = useId();
   gridIds.set(state, id);
   
-  let gridProps: HTMLAttributes<HTMLElement> = {
+  let domProps = filterDOMProps(props, {labelable: true});
+  let gridProps: HTMLAttributes<HTMLElement> = mergeProps(domProps, {
     role: 'grid',
     id,
     'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
     ...collectionProps
-  };
+  });
 
   if (isVirtualized) {
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;

@@ -12,11 +12,11 @@
 
 import {DatePickerProps} from '@react-types/datepicker';
 import {DOMProps} from '@react-types/shared';
+import {filterDOMProps, useLabels} from '@react-aria/utils';
 import {HTMLAttributes, MouseEvent} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useFocusManager} from '@react-aria/focus';
-import {useLabels} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface DateFieldAria {
@@ -25,6 +25,7 @@ interface DateFieldAria {
 }
 
 export function useDateField(props: DatePickerProps & DOMProps): DateFieldAria {
+  let domProps = filterDOMProps(props, {labelable: true});
   let formatMessage = useMessageFormatter(intlMessages);
   let fieldProps = useLabels(props, formatMessage('date'));
   let focusManager = useFocusManager();
@@ -39,6 +40,7 @@ export function useDateField(props: DatePickerProps & DOMProps): DateFieldAria {
 
   return {
     fieldProps: {
+      ...domProps,
       ...fieldProps,
       onMouseDown
     },

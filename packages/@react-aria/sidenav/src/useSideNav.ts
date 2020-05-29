@@ -11,10 +11,10 @@
  */
 
 import {AriaSideNavProps} from '@react-types/sidenav';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {HTMLAttributes, RefObject} from 'react';
 import {ListLayout} from '@react-stately/collections';
 import {TreeState} from '@react-stately/tree';
-import {useId} from '@react-aria/utils';
 import {useSelectableCollection} from '@react-aria/selection';
 
 interface SideNavAriaOptions<T> extends AriaSideNavProps<T> {
@@ -44,13 +44,13 @@ export function useSideNav<T>(props: SideNavAriaOptions<T>, state: TreeState<T>,
     shouldFocusWrap
   });
 
+  let domProps = filterDOMProps(props, {labelable: true});
+
   return {
-    navProps: {
-      'aria-label': ariaLabel,
-      'aria-labelledby': ariaLabeldBy,
+    navProps: mergeProps(domProps, {
       role: 'navigation',
       id
-    },
+    }),
     listProps: {
       'aria-labelledby': ariaLabeldBy || (ariaLabel ? id : null),
       role: 'list',

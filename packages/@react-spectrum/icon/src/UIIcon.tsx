@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps, AriaLabelingProps} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
@@ -53,7 +54,7 @@ export function UIIcon(props: IconProps) {
     scale,
     focusable: 'false',
     'aria-label': ariaLabel || alt,
-    'aria-hidden': (ariaLabel || alt ? ariaHidden : true),
+    'aria-hidden': (ariaLabel || alt ? (ariaHidden || undefined) : true),
     role: 'img',
     className: classNames(
       styles,

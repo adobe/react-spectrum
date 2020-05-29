@@ -11,8 +11,8 @@
  */
 
 import {DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import {
-  filterDOMProps,
   gridStyleProps,
   useDOMRef,
   useStyleProps

@@ -18,7 +18,9 @@ export interface NumberFieldProps extends InputBase, FocusableProps, TextInputBa
   formatOptions?: Intl.NumberFormatOptions
 }
 
-export interface SpectrumNumberFieldProps extends NumberFieldProps, DOMProps, StyleProps {
+export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumNumberFieldProps extends AriaNumberFieldProps, StyleProps {
   isQuiet?: boolean,
   showStepper?: boolean
 }

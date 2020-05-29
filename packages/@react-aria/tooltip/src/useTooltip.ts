@@ -10,29 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaTooltipProps} from '@react-types/tooltip';
 import {DOMPropsResponderContext} from '@react-aria/interactions';
 import {HTMLAttributes, useContext} from 'react';
-import {SpectrumTooltipProps} from '@react-types/tooltip';
-import {useId} from '@react-aria/utils';
+import {useId, filterDOMProps, mergeProps} from '@react-aria/utils';
 
 interface TooltipAria {
   tooltipProps: HTMLAttributes<HTMLElement>
 }
 
-export function useTooltip(props: SpectrumTooltipProps): TooltipAria {
+export function useTooltip(props: AriaTooltipProps): TooltipAria {
   let {
-    id,
     role = 'tooltip'
   } = props;
 
   let {onPointerLeave, onPointerEnter} = useContext(DOMPropsResponderContext) || {};
+  let domProps = filterDOMProps(props, {labelable: true});
 
   return {
-    tooltipProps: {
+    tooltipProps: mergeProps(domProps, {
       role,
-      id: useId(id),
       onPointerEnter,
       onPointerLeave
-    }
+    })
   };
 }

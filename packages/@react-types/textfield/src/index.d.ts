@@ -17,7 +17,6 @@ export interface TextFieldProps extends InputBase, FocusableProps, TextInputBase
 
 export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps, AriaValidationProps {
   // https://www.w3.org/TR/wai-aria-1.2/#textbox
-  // aria-activedescendant, aria-autocomplete, aria-haspopup
   /** Identifies the currently active element when DOM focus is on a composite widget, textbox, group, or application. */
   'aria-activedescendant'?: string,
   /**

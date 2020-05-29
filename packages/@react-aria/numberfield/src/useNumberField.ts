@@ -13,17 +13,17 @@
 import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useId} from '@react-aria/utils';
+import {mergeProps, useId, filterDOMProps} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 import { AriaButtonProps } from '@react-types/button';
+import { AriaNumberFieldProps } from '@react-types/numberfield';
 
-interface NumberFieldProps extends SpinButtonProps {
+interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
   decrementAriaLabel?: string,
-  incrementAriaLabel?: string,
-  autoFocus?: boolean
+  incrementAriaLabel?: string
 }
 
 interface NumberFieldAria {
@@ -125,6 +125,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     };
   }, [inputId, isReadOnly, isDisabled, decrement, increment]);
 
+  let domProps = filterDOMProps(props, {labelable: true});
   let {labelProps, inputProps} = useTextField(mergeProps(spinButtonProps, {
     autoFocus,
     value: '' + value,
@@ -145,13 +146,11 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   }), ref);
 
   return {
-    numberFieldProps: {
+    numberFieldProps: mergeProps(domProps, {
       role: 'group',
-      'aria-label': props['aria-label'] || null,
-      'aria-labelledby': props['aria-labelledby'] || null,
       'aria-disabled': isDisabled,
       'aria-invalid': validationState === 'invalid'
-    },
+    }),
     labelProps,
     inputFieldProps: inputProps,
     incrementButtonProps,

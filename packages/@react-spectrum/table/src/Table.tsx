@@ -12,7 +12,7 @@
 
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {CollectionItem, layoutInfoToStyle, ScrollView, setScrollLeft, useCollectionView} from '@react-aria/collections';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
@@ -211,7 +211,6 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   return (
     <TableContext.Provider value={state}>
       <TableCollectionView
-        {...filterDOMProps(props)}
         {...gridProps}
         {...styleProps}
         isQuiet={isQuiet}
