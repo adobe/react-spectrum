@@ -87,7 +87,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   if (!styleProps.style.width && multiLine && !isQuiet && !isInForm) {
     isResizeableWidth = true;
   }
-  if (!styleProps.style.height && multiLine && !isQuiet && !isInForm) {
+  if (!styleProps.style.height && multiLine && !isQuiet || isInForm) {
     isResizeableHeight = true;
   }
 
@@ -133,7 +133,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           }
         )
       }
-      style={{width: 'fit-content'}} >
+      style={isInForm ? undefined : {width: 'fit-content'}} >
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
         <ElementType
           {...mergeProps(
@@ -151,8 +151,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
                 'spectrum-Textfield--resizableX': isResizeableWidth,
                 'spectrum-Textfield--resizableY': isResizeableHeight
               },
-              inputClassName,
-              classNames(formFieldStyles, {'spectrum-Form-input': isInForm})
+              inputClassName
             )
           } />
       </FocusRing>
