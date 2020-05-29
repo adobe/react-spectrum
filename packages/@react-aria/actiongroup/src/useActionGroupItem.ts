@@ -11,7 +11,7 @@
  */
 
 import {ActionGroupState} from '@react-stately/actiongroup';
-import {Key, HTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes, Key, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useSelectableItem} from '@react-aria/selection';
 

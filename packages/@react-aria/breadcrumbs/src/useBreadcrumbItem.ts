@@ -13,7 +13,6 @@
 import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
 import {DOMProps} from '@react-types/shared';
 import {HTMLAttributes, useRef} from 'react';
-import {useId} from '@react-aria/utils';
 import {useLink} from '@react-aria/link';
 
 interface AriaBreadcrumbItemProps extends BreadcrumbItemProps, DOMProps {

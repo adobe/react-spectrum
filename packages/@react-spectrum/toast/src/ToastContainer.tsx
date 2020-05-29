@@ -20,8 +20,7 @@ import {ToastState} from '@react-types/toast';
 export function ToastContainer(props: ToastState): ReactElement {
   let {
     onRemove,
-    toasts,
-    ...otherProps
+    toasts
   } = props;
   // let providerProps = useProvider();
   let toastPlacement = 'bottom'; /* providerProps && providerProps.toastPlacement && providerProps.toastPlacement.split(' '); */

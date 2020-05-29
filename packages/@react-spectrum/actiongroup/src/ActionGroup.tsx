@@ -23,7 +23,7 @@ import React, {forwardRef, Key, ReactElement, useRef} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {useActionGroup} from '@react-aria/actiongroup';
-import {useActionGroupItem} from '@react-aria/actiongroup/src/useActionGroupItem';
+import {useActionGroupItem} from '@react-aria/actiongroup';
 import {useProviderProps} from '@react-spectrum/provider';
 
 /**

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes} from "react";
-import { DOMProps, AriaLabelingProps } from "@react-types/shared";
+import {AriaLabelingProps, DOMProps} from '@react-types/shared';
+import {HTMLAttributes} from 'react';
 
 const DOMPropNames = new Set([
   'id'

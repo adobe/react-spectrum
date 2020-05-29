@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
 import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps, AriaLabelingProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';

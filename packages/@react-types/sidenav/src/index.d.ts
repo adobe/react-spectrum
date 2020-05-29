@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, DOMProps, Expandable, MultipleSelection, StyleProps, AriaLabelingProps} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, DOMProps, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
 import {HTMLAttributes, ReactNode} from 'react';
 import {Node, ReusableView} from '@react-stately/collections';
 

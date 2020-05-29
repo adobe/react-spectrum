@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableProps, FocusableDOMProps} from '@react-types/shared';
+import {FocusableDOMProps, FocusableProps} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {RefObject, useEffect} from 'react';
 import {useFocus, useKeyboard} from '@react-aria/interactions';

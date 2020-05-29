@@ -11,6 +11,8 @@
  */
 
 import {
+  AriaLabelingProps,
+  AriaValidationProps,
   DOMProps,
   FocusableProps,
   InputBase,
@@ -18,9 +20,7 @@ import {
   Orientation,
   SpectrumLabelableProps,
   StyleProps,
-  ValueBase,
-  AriaLabelingProps,
-  AriaValidationProps
+  ValueBase
 } from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 

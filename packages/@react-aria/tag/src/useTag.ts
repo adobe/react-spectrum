@@ -11,10 +11,10 @@
  */
 
 import {ButtonHTMLAttributes, HTMLAttributes, KeyboardEvent, ReactNode} from 'react';
+import {DOMProps, Removable} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useId, filterDOMProps} from '@react-aria/utils';
-import {DOMProps, Removable} from '@react-types/shared';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 

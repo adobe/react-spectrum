@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaTextFieldProps} from '@react-types/textfield';
 import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {AriaTextFieldProps} from '@react-types/textfield';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
 

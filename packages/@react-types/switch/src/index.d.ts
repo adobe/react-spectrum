@@ -11,7 +11,7 @@
  */
 
 import {AriaCheckboxBase, CheckboxBase} from '@react-types/checkbox';
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {StyleProps} from '@react-types/shared';
 
 export interface SwitchProps extends CheckboxBase {}
 export interface AriaSwitchProps extends AriaCheckboxBase {}

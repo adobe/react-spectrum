@@ -23,7 +23,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
   let {
     children,
     isCurrent,
-    isDisabled,
+    isDisabled
   } = props;
 
   let {direction} = useLocale();

@@ -11,7 +11,7 @@
  */
 
 import {AriaDialogProps} from '@react-types/dialog';
-import {focusWithoutScrolling, useSlotId, filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, focusWithoutScrolling, useSlotId} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 
 interface DialogAria {

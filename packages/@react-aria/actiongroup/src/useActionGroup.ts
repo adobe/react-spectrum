@@ -11,8 +11,8 @@
  */
 
 import {ActionGroupKeyboardDelegate} from './ActionGroupKeyboardDelegate';
-import {AriaActionGroupProps} from '@react-types/actiongroup';
 import {ActionGroupState} from '@react-stately/actiongroup';
+import {AriaActionGroupProps} from '@react-types/actiongroup';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useMemo, useState} from 'react';
 import {Orientation} from '@react-types/shared';

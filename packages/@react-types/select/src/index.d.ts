@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, CollectionBase, DimensionValue, DOMProps, InputBase, LabelableProps, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, AriaLabelingProps} from '@react-types/shared';
+import {Alignment, AriaLabelingProps, CollectionBase, DimensionValue, DOMProps, InputBase, LabelableProps, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase} from '@react-types/shared';
 
 export interface SelectProps<T> extends CollectionBase<T>, InputBase, LabelableProps, TextInputBase, SingleSelection {
   /** Sets the open state of the menu */

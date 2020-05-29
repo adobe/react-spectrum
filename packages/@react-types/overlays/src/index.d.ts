@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
 import {HTMLAttributes, ReactElement, ReactNode} from 'react';
+import {StyleProps} from '@react-types/shared';
 
 export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
     'top' | 'top left' | 'top right' | 'top start' | 'top end' |

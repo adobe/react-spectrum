@@ -16,7 +16,6 @@ import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared
 import {CollectionView} from '@react-aria/collections';
 import {FocusRing} from '@react-aria/focus';
 import {Item, ListLayout, Node, Section, TreeCollection} from '@react-stately/collections';
-import {mergeProps} from '@react-aria/utils';
 import React, {Key, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';

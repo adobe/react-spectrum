@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, LabelPosition, StyleProps, AriaLabelingProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, LabelPosition, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 interface ProgressBaseProps {

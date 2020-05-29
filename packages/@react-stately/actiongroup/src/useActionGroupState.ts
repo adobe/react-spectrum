@@ -27,7 +27,7 @@ export function useActionGroupState<T extends object>(props: ActionGroupProps<T>
   let collection = useMemo(() => {
     let nodes = builder.build(props);
     return new TreeCollection(nodes);
-  }, [builder, props, disabledKeys]);
+  }, [builder, props]);
 
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {

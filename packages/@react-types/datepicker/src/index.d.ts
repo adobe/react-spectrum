@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, InputBase, LabelableProps, RangeValue, SpectrumLabelableProps, StyleProps, ValueBase, FocusableProps} from '@react-types/shared';
+import {DOMProps, FocusableProps, InputBase, LabelableProps, RangeValue, SpectrumLabelableProps, StyleProps, ValueBase} from '@react-types/shared';
 
 export type DateValue = string | number | Date;
 interface DatePickerBase extends InputBase, FocusableProps, LabelableProps {

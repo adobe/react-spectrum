@@ -66,7 +66,6 @@ describe('Well', () => {
   });
 
   it('v3 supports aria-label with a role', function () {
-    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByText} = render(<Well role="region" aria-label="well">Well</Well>);
     let well = getByText('Well');
     expect(well).toHaveAttribute('role', 'region');

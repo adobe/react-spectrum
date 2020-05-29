@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMProps, MultipleSelectionBase} from '@react-types/shared';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, useState} from 'react';
-import {MultipleSelectionBase, DOMProps} from '@react-types/shared';
 import {useFocusWithin} from '@react-aria/interactions';
-import { filterDOMProps, mergeProps } from '@react-aria/utils';
 
 interface AriaTagGroupProps extends MultipleSelectionBase, DOMProps {
   isDisabled?: boolean,
@@ -26,7 +26,7 @@ interface TagGroupAria {
 }
 
 export function useTagGroup(props: AriaTagGroupProps): TagGroupAria {
-  const {isDisabled, validationState} = props;
+  const {isDisabled} = props;
   let [isFocusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setFocusWithin

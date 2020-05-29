@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, RefObject} from 'react';
 import {AriaLinkProps} from '@react-types/link';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {HTMLAttributes, RefObject} from 'react';
 import {usePress} from '@react-aria/interactions';
 
 export interface AriaLinkOptions extends AriaLinkProps {

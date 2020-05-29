@@ -18,7 +18,7 @@ interface UnderlayProps {
   isOpen?: boolean
 }
 
-export function Underlay({isOpen, ...props}: UnderlayProps) {
+export function Underlay({isOpen}: UnderlayProps) {
   return (
     <div className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen})} />
   );

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, FocusableProps, FocusableDOMProps, PressEvents, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, FocusableDOMProps, FocusableProps, PressEvents, StyleProps} from '@react-types/shared';
 import {JSXElementConstructor, ReactNode} from 'react';
 
 export interface ButtonProps extends PressEvents, FocusableProps {

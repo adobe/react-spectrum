@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, LabelableProps, AriaLabelingProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, LabelableProps} from '@react-types/shared';
 import {ElementType, HTMLAttributes, LabelHTMLAttributes} from 'react';
 import {useId, useLabels} from '@react-aria/utils';
 
