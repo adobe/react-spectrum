@@ -150,6 +150,10 @@ governing permissions and limitations under the License.
   margin-inline-start: calc(var(--spectrum-dropdown-quiet-offset) * -1);
 }
 
+.spectrum-Dropdown-popover .spectrum-Dropdown-menu {
+  max-width: initial;
+}
+
 /* When used with a label or inside a Form, we need to override some things from .spectrum-Field
  * so quiet dropdowns still collapse properly. */
 .spectrum-Field.spectrum-Dropdown-fieldWrapper--quiet {
