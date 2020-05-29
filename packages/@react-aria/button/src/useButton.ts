@@ -38,7 +38,7 @@ interface AriaButtonProps extends ButtonProps {
    */
   'aria-controls'?: string,
   /**
-   * The type of the button.
+   * The type of the button. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button) for more info.
    */
   type?: 'button' | 'submit',
   /**
