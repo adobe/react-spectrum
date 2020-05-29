@@ -84,10 +84,10 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   let isInvalid = validationState === 'invalid';
   let isResizeableWidth = false;
   let isResizeableHeight = false;
-  if (!styleProps.style.width && multiLine && !isQuiet && !isInForm) {
+  if ((!styleProps.style.width && multiLine && !isInForm) && !isQuiet) {
     isResizeableWidth = true;
   }
-  if (!styleProps.style.height && multiLine && !isQuiet || isInForm) {
+  if ((!styleProps.style.height && multiLine || isInForm) && !isQuiet) {
     isResizeableHeight = true;
   }
 
