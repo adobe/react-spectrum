@@ -30,6 +30,7 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
     labelAlign = labelPosition === 'side' ? 'start' : null,
     isRequired,
     necessityIndicator = isRequired != null ? 'icon' : null,
+    includeNecessityIndicatorInAccessibilityName = false,
     htmlFor,
     for: labelFor,
     elementType: ElementType = 'label',
@@ -44,6 +45,7 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   let icon = (
     <Asterisk
       UNSAFE_className={classNames(styles, 'spectrum-FieldLabel-requiredIcon')}
+      alt={includeNecessityIndicatorInAccessibilityName ? formatMessage('(required)') : undefined}
       size="S" />
   );
 
@@ -69,7 +71,7 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
       {/* necessityLabel is hidden to screen readers if the field is required because
         * aria-required is set on the field in that case. That will already be announced,
         * so no need to duplicate it here. If optional, we do want it to be announced here. */}
-      {necessityIndicator === 'label' && <span aria-hidden={isRequired}>{necessityLabel}</span>}
+      {necessityIndicator === 'label' && <span aria-hidden={!includeNecessityIndicatorInAccessibilityName ? isRequired : undefined}>{necessityLabel}</span>}
       {necessityIndicator === 'icon' && isRequired && icon}
     </ElementType>
   );
