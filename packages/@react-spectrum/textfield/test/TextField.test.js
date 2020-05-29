@@ -430,4 +430,15 @@ describe('Shared TextField behavior', () => {
     expect(input).toHaveAttribute('aria-autocomplete', 'list');
     expect(input).toHaveAttribute('aria-haspopup', 'menu');
   });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name supports tabIndex', ({Name, Component}) => {
+    let tree = renderComponent(Component, {tabIndex: -1});
+    let input = tree.getByTestId(testId);
+    expect(input).toHaveAttribute('tabIndex', '-1');
+  });
 });

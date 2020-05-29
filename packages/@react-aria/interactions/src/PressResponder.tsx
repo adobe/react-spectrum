@@ -21,12 +21,15 @@ interface PressResponderProps extends PressProps {
 
 export const PressResponder = React.forwardRef(({children, ...props}: PressResponderProps, ref: RefObject<HTMLElement>) => {
   let isRegistered = useRef(false);
-  let prevContext = useContext(PressResponderContext) || {};
-  let context = mergeProps(prevContext, {
+  let prevContext = useContext(PressResponderContext);
+  let context = mergeProps(prevContext || {}, {
     ...props,
     ref,
     register() {
       isRegistered.current = true;
+      if (prevContext) {
+        prevContext.register();
+      }
     }
   });
 

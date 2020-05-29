@@ -265,6 +265,23 @@ describe('Search', () => {
     let tree = render(<SearchField isReadOnly value="puppy" />);
     let clearButton = tree.queryByLabelText('Clear search');
     expect(clearButton).toBe(null);
+  });
 
+  it.each`
+    Name                | Component
+    ${'v3 SearchField'} | ${SearchField}
+    ${'v2 SearchField'} | ${V2SearchField}
+  `('$Name should support aria-label', ({Component}) => {
+    let tree = renderComponent(Component, {'aria-label': 'Test'});
+    expect(tree.getByRole('searchbox')).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 SearchField'} | ${SearchField}
+    ${'v2 SearchField'} | ${V2SearchField}
+  `('$Name should support tabIndex', ({Component}) => {
+    let tree = renderComponent(Component, {tabIndex: -1});
+    expect(tree.getByRole('searchbox')).toHaveAttribute('tabIndex', '-1');
   });
 });

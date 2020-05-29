@@ -58,4 +58,50 @@ describe('Form', function () {
     let form = getByRole('form');
     expect(form).toBe(ref.current.UNSAFE_getDOMNode());
   });
+
+  it('supports aria-label', () => {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <Form aria-label="Test" />
+      </Provider>
+    );
+
+    let form = getByRole('form');
+    expect(form).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it('supports aria-labelledby', () => {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <span id="test">Test</span>
+        <Form aria-labelledby="test" />
+      </Provider>
+    );
+
+    let form = getByRole('form');
+    expect(form).toHaveAttribute('aria-labelledby', 'test');
+  });
+
+  it('supports aria-describedby', () => {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <span id="test">Test</span>
+        <Form aria-label="Test" aria-describedby="test" />
+      </Provider>
+    );
+
+    let form = getByRole('form');
+    expect(form).toHaveAttribute('aria-describedby', 'test');
+  });
+
+  it('supports custom data attributes', () => {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <Form aria-label="Test" data-testid="test" />
+      </Provider>
+    );
+
+    let form = getByRole('form');
+    expect(form).toHaveAttribute('data-testid', 'test');
+  });
 });

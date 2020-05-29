@@ -481,6 +481,47 @@ describe('ActionGroup', function () {
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
+  it('ActionGroup allows aria-label', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup aria-label="Test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it('ActionGroup allows aria-labelledby', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <span id="test">Test</span>
+        <ActionGroup aria-labelledby="test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('aria-labelledby', 'test');
+  });
+
+  it('ActionGroup allows aria-describedby', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <span id="test">Test</span>
+        <ActionGroup aria-describedby="test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('aria-describedby', 'test');
+  });
+
   it('ActionGroup allow aria-label on Item', function () {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
@@ -492,6 +533,19 @@ describe('ActionGroup', function () {
 
     let button1 = getByRole('radio');
     expect(button1).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it('ActionGroup allows custom props', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup data-testid="test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('data-testid', 'test');
   });
 
   it('fires onAction when a button is pressed', function () {
