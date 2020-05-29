@@ -270,7 +270,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     sort(sortDescriptor: SortDescriptor) {
       dispatchFetch({type: 'sorting', sortDescriptor}, sort || load);
     },
-    ...createListActions(options, fn => {
+    ...createListActions({...options, getKey}, fn => {
       dispatch({type: 'update', updater: fn});
     })
   };
