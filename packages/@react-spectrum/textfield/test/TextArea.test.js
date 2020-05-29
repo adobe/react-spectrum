@@ -19,7 +19,7 @@ let testId = 'test-id';
 let mockScrollHeight = 500;
 
 function renderComponent(Component, props) {
-  return render(<Component {...props} data-testid={testId} />);
+  return render(<Component aria-label="megatron" {...props} data-testid={testId} />);
 }
 
 describe('TextArea', () => {
