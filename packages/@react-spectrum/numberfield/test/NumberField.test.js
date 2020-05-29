@@ -25,7 +25,7 @@ describe('NumberField', function () {
   });
 
   function renderNumberField(Component, props = {}) {
-    let {container} = render(<Component {...props} />);
+    let {container} = render(<Component aria-label="labelled" {...props} />);
 
     container = within(container).queryByRole('group');
     let textField = container.firstChild;
