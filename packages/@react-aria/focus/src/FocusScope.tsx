@@ -20,8 +20,8 @@ interface FocusScopeProps {
   /** The contents of the focus scope. */
   children: ReactNode,
 
-  /** 
-   * Whether to contain focus inside the scope, so users cannot 
+  /**
+   * Whether to contain focus inside the scope, so users cannot
    * move focus outside, for example in a modal dialog.
    */
   contain?: boolean,
@@ -222,7 +222,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
 
       e.preventDefault();
       if (nextElement) {
-        focusElement(nextElement);
+        focusElement(nextElement, true);
       }
     };
 
@@ -235,7 +235,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
           focusedNode.current.focus();
         } else if (activeScope) {
           focusFirstInScope(activeScope.current);
-        } 
+        }
       } else {
         e.stopPropagation();
         activeScope = scopeRef;
@@ -250,7 +250,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       if (!isInAnyScope) {
         activeScope = scopeRef;
         focusedNode.current = e.target;
-        // Firefox doesn't shift focus back to the Dialog properly without this 
+        // Firefox doesn't shift focus back to the Dialog properly without this
         requestAnimationFrame(() => {
           focusedNode.current.focus();
         });
@@ -272,10 +272,10 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
 
 function isElementInAnyScope(element: Element, scopes: Set<RefObject<HTMLElement[]>>) {
   for (let scope of scopes.values()) {
-    if (isElementInScope(element, scope.current)) { 
-      return true; 
+    if (isElementInScope(element, scope.current)) {
+      return true;
     }
-  }  
+  }
   return false;
 }
 
@@ -283,10 +283,16 @@ function isElementInScope(element: Element, scope: HTMLElement[]) {
   return scope.some(node => node.contains(element));
 }
 
-function focusElement(element: HTMLElement | null) {
-  if (element != null) {
+function focusElement(element: HTMLElement | null, scroll = false) {
+  if (element != null && !scroll) {
     try {
       focusWithoutScrolling(element);
+    } catch (err) {
+      // ignore
+    }
+  } else if (element != null) {
+    try {
+      element.focus();
     } catch (err) {
       // ignore
     }
