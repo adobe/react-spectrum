@@ -23,12 +23,21 @@ import {
 import {ReactElement, ReactNode} from 'react';
 
 export interface RadioGroupProps extends ValueBase<string>, InputBase, LabelableProps {
+  /**
+   * The Radio(s) contained within the RadioGroup.
+   */
   children: ReactElement<RadioProps> | ReactElement<RadioProps>[],
-  name?: string // HTML form name. Not displayed.
+  /**
+   * The unique identifying name of the RadioGroup. Is not displayed to the user.
+   */
+  name?: string
 }
 
 export interface RadioProps extends FocusableProps {
-  value: string, // HTML form value. Not displayed.
+  /**
+   * The value of the radio button, used to identify it in a RadioGroup. Is not displayed to the user.
+   */
+  value: string,
   /**
    * The label for the Radio. Accepts any renderable node.
    */

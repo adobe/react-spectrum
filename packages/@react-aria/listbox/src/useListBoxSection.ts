@@ -14,7 +14,13 @@ import {HTMLAttributes, ReactNode} from 'react';
 import {useId} from '@react-aria/utils';
 
 interface ListBoxSectionProps {
+  /**
+   * The node that the ListBoxSection will render. 
+   */
   heading?: ReactNode,
+  /**
+   * Defines a string value that labels the ListBoxSection.
+   */
   'aria-label'?: string
 }
 

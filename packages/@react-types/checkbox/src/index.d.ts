@@ -14,11 +14,31 @@ import {DOMProps, InputBase, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 export interface CheckboxBase extends InputBase {
-  children?: ReactNode, // pass in children to render label
+  /**
+   * The content to render as the Checkbox's label.
+   */
+  children?: ReactNode,
+  /**
+   * Whether the Checkbox should be selected (uncontrolled).
+   */
   defaultSelected?: boolean,
+  /**
+   * Whether the Checkbox should be selected (controlled).
+   */
   isSelected?: boolean,
+  /**
+   * Handler that is called when the Checkbox's selection state changes.
+   */
   onChange?: (isSelected: boolean) => void,
-  value?: string, // dom prop for input element
+  /**
+   * The value of the Checkbox input element.
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox
+   */
+  value?: string,
+  /**
+   * The name of the Checkbox input element.
+   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox
+   */
   name?: string
 }
 

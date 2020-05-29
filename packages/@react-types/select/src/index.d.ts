@@ -37,5 +37,8 @@ export interface SpectrumPickerProps<T> extends SelectProps<T>, SpectrumLabelabl
   direction?: 'bottom' | 'top',
   /** Width of the menu */
   menuWidth?: DimensionValue,
+  /**
+   * The name of the Picker control.
+   */
   name?: string
 }

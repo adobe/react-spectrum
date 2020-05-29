@@ -17,17 +17,54 @@ import {useDOMPropsResponder, usePress} from '@react-aria/interactions';
 import {useFocusable} from '@react-aria/focus';
 
 interface AriaButtonProps extends ButtonProps {
+  /**
+   * Whether the Button is selected.
+   */
   isSelected?: boolean,
+  /**
+   * Whether the Button is valid or invalid.
+   */
   validationState?: 'valid' | 'invalid', // used by FieldButton (e.g. DatePicker, ComboBox)
+  /**
+   * Indicates whether or not the element (or elements) controlled by the Button is expanded or not.
+   */
   'aria-expanded'?: boolean | 'false' | 'true',
+  /**
+   * Indicates whether or not the Button opens another element and what kind of element it is.
+   */
   'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
+  /**
+   * Identifies the element (or elements) whose contents or presence are controlled by the Button.
+   */
   'aria-controls'?: string,
+  /**
+   * The type of the button.
+   */
   type?: 'button' | 'submit',
+  /**
+   * The tab index to apply to the Button.
+   */
   tabIndex?: number,
+  /**
+   * The unique identifier to apply to the Button.
+   */
   id?: string,
+  /** 
+   * Defines a string value that labels the Button.
+   */
   'aria-label'?: string,
+  /**
+   * Identifies the element (or elements) that labels the Button.
+   */
   'aria-labelledby'?: string,
+  /**
+   * Identifies the element (or elements) that describes the Button.
+   * @see aria-labelledby
+   */
   'aria-describedby'?: string,
+  /**
+   * Defines the role of the Button.
+   */
   role?: 'button' | 'checkbox' | 'radio' | string
 }
 

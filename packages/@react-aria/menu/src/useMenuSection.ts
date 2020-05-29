@@ -14,7 +14,13 @@ import {HTMLAttributes, ReactNode} from 'react';
 import {useId} from '@react-aria/utils';
 
 interface MenuSectionProps {
+  /**
+   * The node that the MenuSection will render. 
+   */
   heading?: ReactNode,
+  /**
+   * Defines a string value that labels the MenuSection.
+   */
   'aria-label'?: string
 }
 
