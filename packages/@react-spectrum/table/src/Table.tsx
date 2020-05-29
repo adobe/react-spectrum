@@ -239,7 +239,7 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
       bodyRef.current.scrollTop = rect.y;
       setScrollLeft(bodyRef.current, direction, rect.x);
     },
-    transitionDuration: collection.body.props.isLoading && collection.body.props.items.length > 0 ? 0 : 500
+    transitionDuration: collection.body.props.isLoading && collection.body.props.items?.length > 0 ? 0 : 500
   });
 
   let {collectionViewProps} = useCollectionView({focusedKey}, collectionState, domRef);
