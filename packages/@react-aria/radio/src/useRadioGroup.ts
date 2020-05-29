@@ -38,7 +38,14 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     isDisabled,
     orientation = 'vertical'
   } = props;
-  let {labelProps, fieldProps} = useLabel(props);
+  
+  let {labelProps, fieldProps} = useLabel({
+    ...props,
+    // Radio group is not an HTML input element so it
+    // shouldn't be labeled by a <label> element.
+    labelElementType: 'span'
+  });
+
   let domProps = filterDOMProps(props, {labelable: true});
 
   // When the radio group loses focus, reset the focusable radio to null if
