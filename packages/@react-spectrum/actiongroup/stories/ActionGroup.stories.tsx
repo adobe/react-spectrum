@@ -121,7 +121,7 @@ storiesOf('ActionGroup', module)
   .add(
     'dynamic',
     () => (
-      <ActionGroup onSelectionChange={action('onSelect')} items={items} itemKey="name">
+      <ActionGroup onSelectionChange={s => onSelectionChange([...s])} items={items} itemKey="name">
         {item => <Item textValue={item.name}>{item.children}</Item>}
       </ActionGroup>
     )
@@ -144,9 +144,10 @@ const toolIcons =
     {children: <RegionSelect />, 'aria-label': 'RegionSelect'}
   ];
 
+let onSelectionChange = action('onSelectionChange');
 function render(props = {}, items: any = itemsWithIcons) {
   return (
-    <ActionGroup onSelectionChange={action('onSelect')} {...props}>
+    <ActionGroup onSelectionChange={s => onSelectionChange([...s])} {...props}>
       {
         items.map((itemProps, index) => (
           <Item uniqueKey={itemProps.name} key={index} textValue={itemProps.name} {...itemProps} />

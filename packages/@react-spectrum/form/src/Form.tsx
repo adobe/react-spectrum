@@ -21,7 +21,7 @@ import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 let FormContext = React.createContext<SpectrumLabelableProps>({});
 export function useFormProps<T extends SpectrumLabelableProps>(props: T): T {
   let ctx = useContext(FormContext);
-  return {...props, ...ctx};
+  return {...ctx, ...props};
 }
 
 function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {

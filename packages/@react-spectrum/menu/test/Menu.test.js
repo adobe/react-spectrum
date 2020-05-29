@@ -18,17 +18,11 @@ import {Keyboard, Text} from '@react-spectrum/typography';
 import {MenuContext} from '../src/context';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {Menu as V2Menu, MenuDivider as V2MenuDivider, MenuHeading as V2MenuHeading, MenuItem as V2MenuItem} from '@react/react-spectrum/Menu';
 
 let menuId = 'menu-id';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 let withSection = [
   {name: 'Heading 1', children: [

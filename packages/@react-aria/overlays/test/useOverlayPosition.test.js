@@ -43,6 +43,11 @@ HTMLElement.prototype.getBoundingClientRect = function () {
 };
 
 describe('useOverlayPosition', function () {
+  beforeEach(() => {
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {configurable: true, value: 768});
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', {configurable: true, value: 500});
+  });
+
   it('should position the overlay relative to the trigger', function () {
     let res = render(<Example />);
     let overlay = res.getByTestId('overlay');
@@ -74,8 +79,7 @@ describe('useOverlayPosition', function () {
 
     expect(overlay).toHaveTextContent('placement: bottom');
 
-    let innerHeight = window.innerHeight;
-    window.innerHeight = 1000;
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {configurable: true, value: 1000});
     fireEvent(window, new Event('resize'));
 
     expect(overlay).toHaveStyle(`
@@ -85,7 +89,6 @@ describe('useOverlayPosition', function () {
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
-    window.innerHeight = innerHeight;
   });
 
   it('should update the position on props change', function () {
