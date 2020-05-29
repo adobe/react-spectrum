@@ -12,14 +12,17 @@
 
 import {AriaListBoxProps} from '@react-types/listbox';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes, ReactNode, RefObject} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListState} from '@react-stately/list';
+import {useLabel} from '@react-aria/label';
 import {useSelectableList} from '@react-aria/selection';
 
 interface ListBoxAria {
   /** Props for the listbox element. */
   listBoxProps: HTMLAttributes<HTMLElement>
+  /** Props for the listbox's visual label element (if any). */
+  labelProps: HTMLAttributes<HTMLElement>,
 }
 
 interface AriaListBoxOptions<T> extends AriaListBoxProps<T> {
@@ -33,7 +36,12 @@ interface AriaListBoxOptions<T> extends AriaListBoxProps<T> {
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+
+  /**
+   * An optional visual label for the listbox.
+   */
+  label?: ReactNode
 }
 
 /**
@@ -51,11 +59,19 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>)
     disabledKeys: state.disabledKeys
   });
 
+  let {labelProps, fieldProps} = useLabel({
+    ...props,
+    // listbox is not an HTML input element so it
+    // shouldn't be labeled by a <label> element.
+    labelElementType: 'span'
+  });
+
   return {
+    labelProps,
     listBoxProps: mergeProps(domProps, {
       role: 'listbox',
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
-      ...listProps
+      ...mergeProps(fieldProps, listProps)
     })
   };
 }
