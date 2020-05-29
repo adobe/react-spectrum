@@ -14,8 +14,18 @@ import {Key, useState} from 'react';
 import {Selection} from '@react-types/shared';
 
 interface ListOptions<T> {
+  /**
+   * The initial items in the list.
+   */
   initialItems?: T[],
+  /**
+   * The initial selected items in the list, specified by their keys. 
+   */
   initialSelectedKeys?: 'all' | Iterable<Key>,
+  /**
+   * Function that when provided a item, returns that item's unique key. Used for internal
+   * key mapping and key -> item lookup.  
+   */
   getKey?: (item: T) => Key
 }
 

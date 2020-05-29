@@ -16,7 +16,13 @@ import {CSSProperties} from 'react';
 export interface StyleProps {
   // For backward compatibility!
   /** @deprecated */
+  /**
+   * The className to apply to the element. Do not use unless completely necessary as it may break component styling.
+   */
   UNSAFE_className?: string,
+  /**
+   * The inline styles to apply to the element. Do not use unless completely necessary as it may break component styling.
+   */
   UNSAFE_style?: CSSProperties,
 
   margin?: DimensionValue,

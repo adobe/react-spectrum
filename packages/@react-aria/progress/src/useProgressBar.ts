@@ -25,6 +25,9 @@ interface ProgressBarAria {
 }
 
 interface ProgressBarAriaProps extends ProgressBarProps, DOMProps {
+  /**
+   * The string representing the value or metric displayed by the ProgressBar. 
+   */
   textValue?: string
 }
 

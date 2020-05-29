@@ -13,9 +13,22 @@
 import {Key, useMemo, useState} from 'react';
 
 interface TreeOptions<T extends object> {
+  /**
+   * The initial items in the tree.
+   */
   initialItems?: T[],
+  /**
+   * The initial selected items in the tree, specified by their keys. 
+   */
   initialSelectedKeys?: Iterable<Key>,
+  /**
+   * Function that returns a item's unique key. Used for internal
+   * key mapping and key -> item lookup.  
+   */
   getKey?: (item: T) => Key,
+  /**
+   * Function that returns a item's children.
+   */
   getChildren?: (item: T) => T[]
 }
 

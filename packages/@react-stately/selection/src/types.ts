@@ -14,9 +14,21 @@ import {Key} from 'react';
 import {Selection, SelectionMode} from '@react-types/shared';
 
 export interface FocusState {
+  /**
+   * Whether the collection is currently focused.
+   */
   isFocused: boolean,
+  /**
+   * Sets whether the collection is focused.
+   */
   setFocused(isFocused: boolean): void,
+  /**
+   * The current focused key in the collection.
+   */
   focusedKey: Key,
+  /**
+   * Sets the focused key.
+   */
   setFocusedKey(key: Key): void,
 }
 
@@ -27,9 +39,21 @@ export interface SingleSelectionState extends FocusState {
 }
 
 export interface MultipleSelectionState extends FocusState {
+  /**
+   * The type of selection that is allowed in the collection.
+   */
   selectionMode: SelectionMode,
+  /**
+   * Whether the collection allows empty selection.
+   */
   disallowEmptySelection?: boolean,
+  /**
+   * The currently selected keys in the collection.
+   */
   selectedKeys: Selection,
+  /**
+   * Sets the selected keys.
+   */
   setSelectedKeys(keys: Selection | ((v: Selection) => Selection)): void
 }
 

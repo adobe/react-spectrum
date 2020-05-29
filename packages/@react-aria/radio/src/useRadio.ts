@@ -18,7 +18,13 @@ import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
 interface RadioAriaProps extends RadioProps {
+  /**
+   * Whether the Radio control is required. Only one Radio must be required in a RadioGroup.
+   */
   isRequired?: boolean,
+  /**
+   * Whether the Radio can be interacted with but cannot have its selection state changed.
+   */
   isReadOnly?: boolean
 }
 

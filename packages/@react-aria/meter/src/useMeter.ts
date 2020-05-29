@@ -23,6 +23,9 @@ interface MeterAria {
 }
 
 interface MeterAriaProps extends ProgressBarBaseProps, DOMProps {
+  /**
+   * The string representing the value or metric displayed by the Meter. 
+   */
   textValue?: string
 }
 
