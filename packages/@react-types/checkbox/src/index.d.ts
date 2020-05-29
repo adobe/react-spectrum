@@ -22,7 +22,12 @@ export interface CheckboxBase extends InputBase, FocusableProps {
   name?: string
 }
 
-export interface AriaCheckboxBase extends CheckboxBase, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {}
+export interface AriaCheckboxBase extends CheckboxBase, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {
+  /**
+   * Identifies the element (or elements) whose contents or presence are controlled by the current element.
+   */
+  'aria-controls'?: string
+}
 
 export interface CheckboxProps extends CheckboxBase {
   /**

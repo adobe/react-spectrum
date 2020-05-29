@@ -60,6 +60,7 @@ export function useToggle(props: AriaCheckboxBase, state: ToggleState, ref: RefO
     inputProps: mergeProps(domProps, {
       'aria-invalid': validationState === 'invalid' || undefined,
       'aria-errormessage': props['aria-errormessage'],
+      'aria-controls': props['aria-controls'],
       onChange,
       disabled: isDisabled,
       required: isRequired,
