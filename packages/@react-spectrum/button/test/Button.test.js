@@ -170,16 +170,16 @@ describe('Button', function () {
 
   it.each`
     Name              | Component      | props
-    ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, elementType: 'a', href: 'https://adobe.com'}}
-    ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, elementType: 'a', href: 'https://adobe.com'}}
-    ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, elementType: 'a', href: 'https://adobe.com'}}
-    ${'V2Button'}     | ${V2Button}    | ${{onClick: onPressSpy, element: 'a', href: 'https://adobe.com'}}
+    ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
+    ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
+    ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
+    ${'V2Button'}     | ${V2Button}    | ${{onClick: onPressSpy, element: 'a', href: '#only-hash-in-jsdom'}}
   `('$Name can have elementType=a with an href', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('tabindex', '0');
-    expect(button).toHaveAttribute('href', 'https://adobe.com');
+    expect(button).toHaveAttribute('href', '#only-hash-in-jsdom');
     triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });

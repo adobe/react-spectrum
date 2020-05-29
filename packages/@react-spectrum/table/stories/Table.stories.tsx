@@ -11,6 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
@@ -441,6 +442,7 @@ function AsyncLoadingExample() {
   }
 
   let list = useAsyncList<Item>({
+    getKey: (item) => item.data.id,
     async load({signal, cursor}) {
       let url = new URL('https://www.reddit.com/r/news.json');
       if (cursor) {
@@ -465,24 +467,27 @@ function AsyncLoadingExample() {
   });
 
   return (
-    <Table aria-label="Top news from Reddit" width={1000} height={500} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
-      <TableHeader>
-        <Column uniqueKey="score" width={100} allowsSorting>Score</Column>
-        <Column uniqueKey="title" isRowHeader allowsSorting>Title</Column>
-        <Column uniqueKey="author" width={200} allowsSorting>Author</Column>
-        <Column uniqueKey="num_comments" width={100} allowsSorting>Comments</Column>
-      </TableHeader>
-      <TableBody items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
-        {item =>
-          (<Row uniqueKey={item.data.id}>
-            {key => 
-              key === 'title'
-                ? <Cell textValue={item.data.title}><Link isQuiet><a href={item.data.url} target="_blank">{item.data.title}</a></Link></Cell>
-                : <Cell>{item.data[key]}</Cell>
-            }
-          </Row>)
-        }
-      </TableBody>
-    </Table>
+    <div>
+      <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
+      <Table aria-label="Top news from Reddit" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+        <TableHeader>
+          <Column uniqueKey="score" width={100} allowsSorting>Score</Column>
+          <Column uniqueKey="title" isRowHeader allowsSorting>Title</Column>
+          <Column uniqueKey="author" width={200} allowsSorting>Author</Column>
+          <Column uniqueKey="num_comments" width={100} allowsSorting>Comments</Column>
+        </TableHeader>
+        <TableBody items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
+          {item =>
+            (<Row uniqueKey={item.data.id}>
+              {key => 
+                key === 'title'
+                  ? <Cell textValue={item.data.title}><Link isQuiet><a href={item.data.url} target="_blank">{item.data.title}</a></Link></Cell>
+                  : <Cell>{item.data[key]}</Cell>
+              }
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    </div>
   );
 }
