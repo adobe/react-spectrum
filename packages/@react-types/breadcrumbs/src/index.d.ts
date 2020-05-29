@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, PressEvents, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, PressEvents, StyleProps} from '@react-types/shared';
 import {ItemProps} from '@react-types/shared';
 import {Key, ReactElement, ReactNode} from 'react';
 
@@ -51,7 +51,9 @@ export interface BreadcrumbsProps<T> {
   onAction?: (key: Key) => void
 }
 
-export interface SpectrumBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps, StyleProps {
+export interface AriaBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, StyleProps {
   /**
    * What the Breadcrumbs's size should be.
    * @default "M"

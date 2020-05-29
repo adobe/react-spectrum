@@ -18,7 +18,6 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/progress": "^3.0.0-rc.2",
-    "@react-types/progress": "^3.0.0-rc.2",
     "@react-types/shared": "^3.0.0-rc.2",
     "@react-types/meter": "^3.0.0-rc.2"
   },

@@ -116,28 +116,8 @@ storiesOf('Button/ActionButton', module)
     )
   )
   .add(
-    'selected',
-    () => render({isSelected: true})
-  )
-  .add(
-    'selected, isEmphasized',
-    () => render({isEmphasized: true, isSelected: true})
-  )
-  .add(
     'quiet,',
     () => render({isQuiet: true})
-  )
-  .add(
-    'quiet, selected',
-    () => render({isQuiet: true, isSelected: true})
-  )
-  .add(
-    'quiet, isEmphasized',
-    () => render({isQuiet: true, isEmphasized: true})
-  )
-  .add(
-    'quiet, selected, isEmphasized',
-    () => render({isQuiet: true, isEmphasized: true, isSelected: true})
   )
   .add(
     'autoFocus',

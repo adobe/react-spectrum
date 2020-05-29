@@ -309,4 +309,50 @@ describe('Breadcrumbs', function () {
     triggerPress(item);
     expect(onAction).not.toHaveBeenCalled();
   });
+
+  it('supports aria-label', function () {
+    let {getByRole} = render(
+      <Breadcrumbs aria-label="Test">
+        <Item>Folder 1</Item>
+      </Breadcrumbs>
+    );
+    let breadcrumbs = getByRole('navigation');
+    expect(breadcrumbs).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it('supports aria-labelledby', function () {
+    let {getByRole} = render(
+      <>
+        <span id="test">Test</span>
+        <Breadcrumbs aria-labelledby="test">
+          <Item>Folder 1</Item>
+        </Breadcrumbs>
+      </>
+    );
+    let breadcrumbs = getByRole('navigation');
+    expect(breadcrumbs).toHaveAttribute('aria-labelledby', 'test');
+  });
+
+  it('supports aria-describedby', function () {
+    let {getByRole} = render(
+      <>
+        <span id="test">Test</span>
+        <Breadcrumbs aria-describedby="test">
+          <Item>Folder 1</Item>
+        </Breadcrumbs>
+      </>
+    );
+    let breadcrumbs = getByRole('navigation');
+    expect(breadcrumbs).toHaveAttribute('aria-describedby', 'test');
+  });
+
+  it('supports custom props', function () {
+    let {getByRole} = render(
+      <Breadcrumbs data-testid="test">
+        <Item>Folder 1</Item>
+      </Breadcrumbs>
+    );
+    let breadcrumbs = getByRole('navigation');
+    expect(breadcrumbs).toHaveAttribute('data-testid', 'test');
+  });
 });

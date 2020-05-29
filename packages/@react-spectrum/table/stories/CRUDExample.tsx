@@ -87,7 +87,7 @@ export function CRUDExample() {
           </DialogTrigger>
         }
       </ActionGroup>
-      <Table width={500} height={300} isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+      <Table aria-label="People" width={500} height={300} isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
           <Column isRowHeader uniqueKey="firstName">First Name</Column>
           <Column isRowHeader uniqueKey="lastName">Last Name</Column>

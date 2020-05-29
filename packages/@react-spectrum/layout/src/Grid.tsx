@@ -11,13 +11,13 @@
  */
 
 import {DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
+import {GridProps} from '@react-types/layout';
 import {
-  filterDOMProps,
   gridStyleProps,
   useDOMRef,
   useStyleProps
 } from '@react-spectrum/utils';
-import {GridProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 
 function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
