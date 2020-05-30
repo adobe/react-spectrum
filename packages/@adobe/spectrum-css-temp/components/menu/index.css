@@ -38,6 +38,10 @@ governing permissions and limitations under the License.
   --spectrum-menu-max-width: 320px;
 }
 
+.spectrum-Menu-Popover {
+  max-width: var(--spectrum-menu-max-width);
+}
+
 .spectrum-Menu {
   text-align: start;
   display: block;
@@ -53,7 +57,6 @@ governing permissions and limitations under the License.
   user-select: none;
 
   max-height: inherit; /* inherit from parent popover */
-  max-width: var(--spectrum-menu-max-width);
 
   & .spectrum-Menu-sectionHeading {
     /* Support headings as LI */

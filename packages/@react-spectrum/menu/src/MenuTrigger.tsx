@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {classNames, unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
@@ -19,7 +20,7 @@ import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
-import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
+import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 
@@ -67,7 +68,8 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     autoFocus: state.focusStrategy || true,
     UNSAFE_style: {
       width: isMobile ? '100%' : undefined
-    }
+    },
+    UNSAFE_className: classNames(styles, {'spectrum-Menu-Popover': !isMobile})
   };
 
   let contents = (
