@@ -20,15 +20,9 @@ import {Item, Picker, Section} from '../src';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import {Text} from '@react-spectrum/typography';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
@@ -50,7 +44,7 @@ describe('Picker', function () {
   it('renders correctly', function () {
     let {getAllByText, getByText, getByRole} = render(
       <Provider theme={theme}>
-        <Picker label="Test" onSelectionChange={onSelectionChange}>
+        <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange}>
           <Item>One</Item>
           <Item>Two</Item>
           <Item>Three</Item>
@@ -60,6 +54,7 @@ describe('Picker', function () {
 
     let picker = getByRole('button');
     expect(picker).toHaveAttribute('aria-haspopup', 'listbox');
+    expect(picker).toHaveAttribute('data-testid', 'test');
 
     let label = getAllByText('Test')[0];
     let value = getByText('Select an option…');
@@ -370,7 +365,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -407,7 +402,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -442,7 +437,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -479,7 +474,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -519,7 +514,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -556,7 +551,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -593,7 +588,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -635,7 +630,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -701,7 +696,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -812,6 +807,40 @@ describe('Picker', function () {
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
       expect(listbox).toHaveAttribute('aria-labelledby', `foo ${picker.id}`);
+    });
+
+    describe('isRequired', function () {
+      it('supports labeling with a visible label that includes the necessity indicator', function () {
+        let {getByText, getByRole} = render(
+          <Provider theme={theme}>
+            <Picker label="Test 2" isRequired necessityIndicator="label" onSelectionChange={onSelectionChange}>
+              <Item>One</Item>
+              <Item>Two</Item>
+              <Item>Three</Item>
+            </Picker>
+          </Provider>
+        );
+  
+        let picker = getByRole('button');
+        expect(picker).toHaveAttribute('aria-haspopup', 'listbox');
+
+
+        let span = getByText('(required)');
+        expect(span).not.toHaveAttribute('aria-hidden');
+  
+        let label = span.parentElement;
+        let value = getByText('Select an option…');
+        expect(label).toHaveAttribute('id');
+        expect(value).toHaveAttribute('id');
+        expect(picker).toHaveAttribute('aria-labelledby', `${label.id} ${value.id}`);
+  
+        act(() => triggerPress(picker));
+        act(() => jest.runAllTimers());
+  
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(listbox).toHaveAttribute('aria-labelledby', label.id);
+      });
     });
   });
 

@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMProps, Orientation} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import {HTMLAttributes} from 'react';
-import {Orientation} from '@react-types/shared';
 
-export interface SeparatorProps {
+export interface SeparatorProps extends DOMProps, AriaLabelingProps {
   /**
    * The orientation of the separator.
    * @default 'horizontal'
@@ -34,6 +35,7 @@ export interface SeparatorAria {
  * e.g. groups of menu items or sections of a page.
  */
 export function useSeparator(props: SeparatorProps): SeparatorAria {
+  let domProps = filterDOMProps(props, {labelable: true});
   let ariaOrientation;
   // if orientation is horizontal, aria-orientation default is horizontal, so we leave it undefined
   // if it's vertical, we need to specify it
@@ -44,10 +46,11 @@ export function useSeparator(props: SeparatorProps): SeparatorAria {
   if (props.elementType !== 'hr') {
     return {
       separatorProps: {
+        ...domProps,
         role: 'separator',
         'aria-orientation': ariaOrientation
       }
     };
   }
-  return {separatorProps: {}};
+  return {separatorProps: domProps};
 }

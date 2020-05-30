@@ -33,7 +33,7 @@ describe('StatusLight', function () {
     ${'StatusLight'}   | ${StatusLight}   | ${{variant: 'celery'}}
     ${'V2StatusLight'} | ${V2StatusLight} | ${{variant: 'celery'}}
   `('$Name supports variant and aria-label', function ({Component, props}) {
-    let {getByLabelText} = render(<Component {...props} id="status-light" aria-label="StatusLight of Love" />);
+    let {getByLabelText} = render(<Component {...props} id="status-light" role="status" aria-label="StatusLight of Love" />);
 
     let statuslight = getByLabelText('StatusLight of Love');
     expect(statuslight).toHaveAttribute('id', 'status-light');
@@ -47,6 +47,15 @@ describe('StatusLight', function () {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<Component {...props} id="status-light" />);
     expect(spyWarn).toHaveBeenCalledWith('If no children are provided, an aria-label must be specified');
+  });
+
+  it.each`
+    Name               | Component        | props
+    ${'StatusLight'}   | ${StatusLight}   | ${{variant: 'celery'}}
+  `('$Name warns user if label is provided without a role', function ({Component, props}) {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    render(<Component {...props} aria-label="test" id="status-light" />);
+    expect(spyWarn).toHaveBeenCalledWith('A labelled StatusLight must have a role.');
   });
 
   it.each`

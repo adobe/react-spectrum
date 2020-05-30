@@ -13,6 +13,7 @@
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {CRUDExample} from '../stories/CRUDExample';
+import {getFocusableTreeWalker} from '@react-aria/focus';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
@@ -80,7 +81,7 @@ describe('Table', function () {
 
   it('renders a static table', function () {
     let {getByRole} = render(
-      <Table>
+      <Table aria-label="Table" data-testid="test">
         <TableHeader>
           <Column>Foo</Column>
           <Column>Bar</Column>
@@ -103,6 +104,8 @@ describe('Table', function () {
 
     let grid = getByRole('grid');
     expect(grid).toBeVisible();
+    expect(grid).toHaveAttribute('aria-label', 'Table');
+    expect(grid).toHaveAttribute('data-testid', 'test');
     expect(grid).toHaveAttribute('aria-multiselectable', 'true');
     expect(grid).toHaveAttribute('aria-rowcount', '3');
     expect(grid).toHaveAttribute('aria-colcount', '4');
@@ -173,7 +176,7 @@ describe('Table', function () {
 
   it('renders a dynamic table', function () {
     let {getByRole} = render(
-      <Table>
+      <Table aria-label="Table">
         <TableHeader columns={columns} columnKey="key">
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -253,7 +256,7 @@ describe('Table', function () {
 
   it('renders a static table with nested columns', function () {
     let {getByRole} = render(
-      <Table>
+      <Table aria-label="Table">
         <TableHeader>
           <Column key="test">Test</Column>
           <Column title="Group 1">
@@ -358,7 +361,7 @@ describe('Table', function () {
 
   it('renders a dynamic table with nested columns', function () {
     let {getByRole} = render(
-      <Table>
+      <Table aria-label="Table">
         <TableHeader columns={nestedColumns} columnKey="key">
           {column =>
             <Column childColumns={column.children}>{column.name}</Column>
@@ -461,7 +464,7 @@ describe('Table', function () {
 
   it('renders a table with multiple row headers', function () {
     let {getByRole} = render(
-      <Table>
+      <Table aria-label="Table">
         <TableHeader>
           <Column isRowHeader>First Name</Column>
           <Column isRowHeader>Last Name</Column>
@@ -512,7 +515,7 @@ describe('Table', function () {
   describe('keyboard focus', function () {
     let renderTable = (locale = 'en-US') => render(
       <Provider locale={locale} theme={theme}>
-        <Table selectionMode="none">
+        <Table aria-label="Table" selectionMode="none">
           <TableHeader columns={columns} columnKey="key">
             {column => <Column>{column.name}</Column>}
           </TableHeader>
@@ -529,7 +532,7 @@ describe('Table', function () {
 
     let renderNested = (locale = 'en-US') => render(
       <Provider locale={locale} theme={theme}>
-        <Table selectionMode="none">
+        <Table aria-label="Table" selectionMode="none">
           <TableHeader columns={nestedColumns} columnKey="key">
             {column =>
               <Column childColumns={column.children}>{column.name}</Column>
@@ -547,7 +550,7 @@ describe('Table', function () {
     );
 
     let renderMany = () => render(
-      <Table selectionMode="none">
+      <Table aria-label="Table" selectionMode="none">
         <TableHeader columns={columns} columnKey="key">
           {column =>
             <Column>{column.name}</Column>
@@ -894,7 +897,7 @@ describe('Table', function () {
 
     describe('type to select', function () {
       let renderTypeSelect = () => render(
-        <Table selectionMode="none">
+        <Table aria-label="Table" selectionMode="none">
           <TableHeader>
             <Column isRowHeader>First Name</Column>
             <Column isRowHeader>Last Name</Column>
@@ -1013,7 +1016,7 @@ describe('Table', function () {
       let renderFocusable = () => render(
         <>
           <input data-testid="before" />
-          <Table>
+          <Table aria-label="Table">
             <TableHeader>
               <Column>Foo</Column>
               <Column>Bar</Column>
@@ -1056,6 +1059,21 @@ describe('Table', function () {
 
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(tree.getAllByRole('checkbox')[0]);
+      });
+
+      it('should support keyboard navigation after pressing focusable element inside a cell', function () {
+        let tree = renderFocusable();
+        act(() => triggerPress(tree.getAllByRole('switch')[0]));
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
+
+        moveFocus('ArrowDown');
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
+      });
+
+      it('should marshall focus to the child on press of the cell', function () {
+        let tree = renderFocusable();
+        act(() => triggerPress(tree.getAllByRole('rowheader')[0]));
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
       });
 
       it('should move focus to the first row when tabbing into the table from the start', function () {
@@ -1139,10 +1157,31 @@ describe('Table', function () {
       it('should move focus after the table when tabbing', function () {
         let tree = renderFocusable();
 
-        tree.getAllByRole('switch')[1].focus();
+        act(() => triggerPress(tree.getAllByRole('switch')[1]));
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         // Simulate tabbing within the table
         fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+        walker.currentNode = document.activeElement;
+        walker.nextNode().focus();
+        fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+
+        let after = tree.getByTestId('after');
+        expect(document.activeElement).toBe(after);
+      });
+
+      it('should move focus after the table when tabbing from the last row', function () {
+        let tree = renderFocusable();
+
+        tree.getAllByRole('row')[2].focus();
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
+
+        // Simulate tabbing within the table
+        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+        walker.currentNode = document.activeElement;
+        walker.nextNode().focus();
         fireEvent.keyUp(document.activeElement, {key: 'Tab'});
 
         let after = tree.getByTestId('after');
@@ -1152,10 +1191,14 @@ describe('Table', function () {
       it('should move focus before the table when shift tabbing', function () {
         let tree = renderFocusable();
 
-        tree.getAllByRole('switch')[1].focus();
+        act(() => triggerPress(tree.getAllByRole('switch')[1]));
+        expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         // Simulate shift tabbing within the table
         fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+        walker.currentNode = document.activeElement;
+        walker.previousNode().focus();
         fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
 
         let before = tree.getByTestId('before');
@@ -1166,7 +1209,7 @@ describe('Table', function () {
 
   describe('selection', function () {
     let renderJSX = (onSelectionChange, items = manyItems) => (
-      <Table onSelectionChange={onSelectionChange}>
+      <Table aria-label="Table" onSelectionChange={onSelectionChange}>
         <TableHeader columns={columns} columnKey="key">
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -1789,6 +1832,10 @@ describe('Table', function () {
 
       let rowHeaders = within(rows[1]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Sam');
+
+      // focus gets reset
+      table.focus();
+      expect(document.activeElement).toBe(rows[1]);
     });
 
     it('can bulk remove items', function () {
@@ -1855,11 +1902,102 @@ describe('Table', function () {
       expect(rowHeaders[0]).toHaveTextContent('Jessica');
       expect(rowHeaders[1]).toHaveTextContent('Jones');
     });
+
+    it('keyboard navigation works as expected with menu buttons', function () {
+      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+
+      act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+
+      expect(() => {
+        tree.getByRole('menu');
+      }).toThrow();
+
+      expect(document.activeElement).toBe(within(rows[2]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+
+      expect(() => {
+        tree.getByRole('menu');
+      }).toThrow();
+
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+
+      let menu = tree.getByRole('menu');
+      expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
+    });
+
+    it('menu buttons can be opened with Alt + ArrowDown', function () {
+      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+
+      act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeInTheDocument();
+      expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
+    });
+
+    it('menu buttons can be opened with Alt + ArrowUp', function () {
+      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+
+      act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', altKey: true});
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeInTheDocument();
+      expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem').pop());
+    });
+
+    it('menu keyboard navigation does not affect table', function () {
+      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+
+      act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeInTheDocument();
+      expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[1]);
+
+      table.focus();
+
+      expect(menu).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+    });
   });
 
   describe('async loading', function () {
     let defaultTable = (
-      <Table>
+      <Table aria-label="Table">
         <TableHeader>
           <Column uniqueKey="foo">Foo</Column>
           <Column uniqueKey="bar">Bar</Column>
@@ -1879,7 +2017,7 @@ describe('Table', function () {
 
     it('should display a spinner when loading', function () {
       let tree = render(
-        <Table>
+        <Table aria-label="Table">
           <TableHeader>
             <Column uniqueKey="foo">Foo</Column>
             <Column uniqueKey="bar">Bar</Column>
@@ -1913,7 +2051,7 @@ describe('Table', function () {
 
     it('should display a spinner at the bottom when loading more', function () {
       let tree = render(
-        <Table>
+        <Table aria-label="Table">
           <TableHeader>
             <Column uniqueKey="foo">Foo</Column>
             <Column uniqueKey="bar">Bar</Column>
@@ -1960,7 +2098,7 @@ describe('Table', function () {
 
       let onLoadMore = jest.fn();
       let tree = render(
-        <Table>
+        <Table aria-label="Table">
           <TableHeader>
             <Column uniqueKey="foo">Foo</Column>
             <Column uniqueKey="bar">Bar</Column>
@@ -1998,7 +2136,7 @@ describe('Table', function () {
 
     it('should display an empty state when there are no items', function () {
       let tree = render(
-        <Table renderEmptyState={() => <h3>No results</h3>}>
+        <Table aria-label="Table" renderEmptyState={() => <h3>No results</h3>}>
           <TableHeader>
             <Column uniqueKey="foo">Foo</Column>
             <Column uniqueKey="bar">Bar</Column>
@@ -2033,7 +2171,7 @@ describe('Table', function () {
   describe('sorting', function () {
     it('should set aria-sort="none" on sortable column headers', function () {
       let tree = render(
-        <Table selectionMode="none">
+        <Table aria-label="Table" selectionMode="none">
           <TableHeader>
             <Column uniqueKey="foo" allowsSorting>Foo</Column>
             <Column uniqueKey="bar" allowsSorting>Bar</Column>
@@ -2059,7 +2197,7 @@ describe('Table', function () {
 
     it('should set aria-sort="ascending" on sorted column header', function () {
       let tree = render(
-        <Table selectionMode="none" sortDescriptor={{column: 'bar', direction: 'ascending'}}>
+        <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'bar', direction: 'ascending'}}>
           <TableHeader>
             <Column uniqueKey="foo" allowsSorting>Foo</Column>
             <Column uniqueKey="bar" allowsSorting>Bar</Column>
@@ -2085,7 +2223,7 @@ describe('Table', function () {
 
     it('should set aria-sort="descending" on sorted column header', function () {
       let tree = render(
-        <Table selectionMode="none" sortDescriptor={{column: 'bar', direction: 'descending'}}>
+        <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'bar', direction: 'descending'}}>
           <TableHeader>
             <Column uniqueKey="foo" allowsSorting>Foo</Column>
             <Column uniqueKey="bar" allowsSorting>Bar</Column>
@@ -2112,7 +2250,7 @@ describe('Table', function () {
     it('should fire onSortChange when there is no existing sortDescriptor', function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <Table selectionMode="none" onSortChange={onSortChange}>
+        <Table aria-label="Table" selectionMode="none" onSortChange={onSortChange}>
           <TableHeader>
             <Column uniqueKey="foo" allowsSorting>Foo</Column>
             <Column uniqueKey="bar" allowsSorting>Bar</Column>
@@ -2144,7 +2282,7 @@ describe('Table', function () {
     it('should toggle the sort direction from ascending to descending', function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <Table selectionMode="none" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
+        <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
           <TableHeader>
             <Column uniqueKey="foo" allowsSorting>Foo</Column>
             <Column uniqueKey="bar" allowsSorting>Bar</Column>
@@ -2176,7 +2314,7 @@ describe('Table', function () {
     it('should toggle the sort direction from descending to ascending', function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <Table selectionMode="none" sortDescriptor={{column: 'foo', direction: 'descending'}} onSortChange={onSortChange}>
+        <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'foo', direction: 'descending'}} onSortChange={onSortChange}>
           <TableHeader>
             <Column uniqueKey="foo" allowsSorting>Foo</Column>
             <Column uniqueKey="bar" allowsSorting>Bar</Column>
@@ -2208,7 +2346,7 @@ describe('Table', function () {
     it('should trigger sorting on a different column', function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <Table selectionMode="none" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
+        <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
           <TableHeader>
             <Column uniqueKey="foo" allowsSorting>Foo</Column>
             <Column uniqueKey="bar" allowsSorting>Bar</Column>
@@ -2241,7 +2379,7 @@ describe('Table', function () {
   describe('layout', function () {
     describe('row heights', function () {
       let renderTable = (props, scale) => render(
-        <Table {...props}>
+        <Table aria-label="Table" {...props}>
           <TableHeader columns={columns} columnKey="key">
             {column => <Column>{column.name}</Column>}
           </TableHeader>
@@ -2344,7 +2482,7 @@ describe('Table', function () {
           });
         
         let tree = render(
-          <Table rowHeight="auto">
+          <Table aria-label="Table" rowHeight="auto">
             <TableHeader columns={nestedColumns} columnKey="key">
               {column => <Column childColumns={column.children}>{column.name}</Column>}
             </TableHeader>
@@ -2389,7 +2527,7 @@ describe('Table', function () {
     describe('column widths', function () {
       it('should divide the available width by default', function () {
         let tree = render(
-          <Table>
+          <Table aria-label="Table">
             <TableHeader columns={columns} columnKey="key">
               {column => <Column>{column.name}</Column>}
             </TableHeader>
@@ -2415,7 +2553,7 @@ describe('Table', function () {
 
       it('should support explicitly sized columns', function () {
         let tree = render(
-          <Table>
+          <Table aria-label="Table">
             <TableHeader>
               <Column uniqueKey="foo" width={200}>Foo</Column>
               <Column uniqueKey="bar" width={500}>Bar</Column>
@@ -2443,7 +2581,7 @@ describe('Table', function () {
 
       it('should divide remaining width amoung remaining columns', function () {
         let tree = render(
-          <Table>
+          <Table aria-label="Table">
             <TableHeader>
               <Column uniqueKey="foo" width={200}>Foo</Column>
               <Column uniqueKey="bar">Bar</Column>
@@ -2471,7 +2609,7 @@ describe('Table', function () {
 
       it('should support percentage widths', function () {
         let tree = render(
-          <Table>
+          <Table aria-label="Table">
             <TableHeader>
               <Column uniqueKey="foo" width="10%">Foo</Column>
               <Column uniqueKey="bar" width={500}>Bar</Column>
@@ -2499,7 +2637,7 @@ describe('Table', function () {
 
       it('should support minWidth', function () {
         let tree = render(
-          <Table>
+          <Table aria-label="Table">
             <TableHeader>
               <Column uniqueKey="foo" width={200}>Foo</Column>
               <Column uniqueKey="bar" minWidth={500}>Bar</Column>
@@ -2527,7 +2665,7 @@ describe('Table', function () {
 
       it('should support maxWidth', function () {
         let tree = render(
-          <Table>
+          <Table aria-label="Table">
             <TableHeader>
               <Column uniqueKey="foo" width={200}>Foo</Column>
               <Column uniqueKey="bar" maxWidth={300}>Bar</Column>
@@ -2555,7 +2693,7 @@ describe('Table', function () {
 
       it('should compute the correct widths for tiered headings', function () {
         let tree = render(
-          <Table>
+          <Table aria-label="Table">
             <TableHeader columns={nestedColumns} columnKey="key">
               {column => <Column childColumns={column.children}>{column.name}</Column>}
             </TableHeader>

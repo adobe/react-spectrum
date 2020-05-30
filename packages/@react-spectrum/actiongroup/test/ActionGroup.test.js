@@ -17,17 +17,11 @@ import {fireEvent, render} from '@testing-library/react';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 import V2Button from '@react/react-spectrum/Button';
 import V2ButtonGroup from '@react/react-spectrum/ButtonGroup';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 // Describes the tabIndex values of button 1 (column 1), 2, and 3 as focus is moved forward or back.
 // e.g. button2Focused describes button 2 having tabindex=0 while all other buttons have -1
@@ -481,6 +475,47 @@ describe('ActionGroup', function () {
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
+  it('ActionGroup allows aria-label', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup aria-label="Test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it('ActionGroup allows aria-labelledby', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <span id="test">Test</span>
+        <ActionGroup aria-labelledby="test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('aria-labelledby', 'test');
+  });
+
+  it('ActionGroup allows aria-describedby', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <span id="test">Test</span>
+        <ActionGroup aria-describedby="test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('aria-describedby', 'test');
+  });
+
   it('ActionGroup allow aria-label on Item', function () {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
@@ -492,6 +527,19 @@ describe('ActionGroup', function () {
 
     let button1 = getByRole('radio');
     expect(button1).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it('ActionGroup allows custom props', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup data-testid="test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('data-testid', 'test');
   });
 
   it('fires onAction when a button is pressed', function () {

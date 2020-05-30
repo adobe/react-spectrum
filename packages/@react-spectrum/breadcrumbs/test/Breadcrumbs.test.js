@@ -15,15 +15,9 @@ import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
 import {render, within} from '@testing-library/react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 describe('Breadcrumbs', function () {
   beforeEach(() => {
@@ -70,7 +64,7 @@ describe('Breadcrumbs', function () {
 
   it('Handles multiple items', () => {
     let {getByText} = render(
-      <Breadcrumbs className="test-class">
+      <Breadcrumbs UNSAFE_className="test-class">
         <Item>Folder 1</Item>
         <Item>Folder 2</Item>
         <Item>Folder 3</Item>
@@ -314,5 +308,51 @@ describe('Breadcrumbs', function () {
     expect(item).toHaveAttribute('aria-checked', 'true');
     triggerPress(item);
     expect(onAction).not.toHaveBeenCalled();
+  });
+
+  it('supports aria-label', function () {
+    let {getByRole} = render(
+      <Breadcrumbs aria-label="Test">
+        <Item>Folder 1</Item>
+      </Breadcrumbs>
+    );
+    let breadcrumbs = getByRole('navigation');
+    expect(breadcrumbs).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it('supports aria-labelledby', function () {
+    let {getByRole} = render(
+      <>
+        <span id="test">Test</span>
+        <Breadcrumbs aria-labelledby="test">
+          <Item>Folder 1</Item>
+        </Breadcrumbs>
+      </>
+    );
+    let breadcrumbs = getByRole('navigation');
+    expect(breadcrumbs).toHaveAttribute('aria-labelledby', 'test');
+  });
+
+  it('supports aria-describedby', function () {
+    let {getByRole} = render(
+      <>
+        <span id="test">Test</span>
+        <Breadcrumbs aria-describedby="test">
+          <Item>Folder 1</Item>
+        </Breadcrumbs>
+      </>
+    );
+    let breadcrumbs = getByRole('navigation');
+    expect(breadcrumbs).toHaveAttribute('aria-describedby', 'test');
+  });
+
+  it('supports custom props', function () {
+    let {getByRole} = render(
+      <Breadcrumbs data-testid="test">
+        <Item>Folder 1</Item>
+      </Breadcrumbs>
+    );
+    let breadcrumbs = getByRole('navigation');
+    expect(breadcrumbs).toHaveAttribute('data-testid', 'test');
   });
 });

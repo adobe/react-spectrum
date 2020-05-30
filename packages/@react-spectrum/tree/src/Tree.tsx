@@ -11,12 +11,11 @@
  */
 
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
 import {FocusRing} from '@react-aria/focus';
 import {Item, ListLayout, Node, Section, TreeCollection} from '@react-stately/collections';
-import {mergeProps} from '@react-aria/utils';
 import React, {Key, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
@@ -103,7 +102,7 @@ function TreeItem<T>(props: TreeItemProps<T>) {
     <div className={itemClassName} role="presentation">
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
         <div 
-          {...mergeProps(pressProps, filterDOMProps(itemProps))}
+          {...pressProps}
           ref={ref}
           className={linkClassName}>
           {hasChildNodes &&

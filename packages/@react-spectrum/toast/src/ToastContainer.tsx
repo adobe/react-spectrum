@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement} from 'react';
 import {Toast} from './';
 import toastContainerStyles from './toastContainer.css';
@@ -20,8 +20,7 @@ import {ToastState} from '@react-types/toast';
 export function ToastContainer(props: ToastState): ReactElement {
   let {
     onRemove,
-    toasts,
-    ...otherProps
+    toasts
   } = props;
   // let providerProps = useProvider();
   let toastPlacement = 'bottom'; /* providerProps && providerProps.toastPlacement && providerProps.toastPlacement.split(' '); */
@@ -41,7 +40,6 @@ export function ToastContainer(props: ToastState): ReactElement {
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       className={classNames(
         toastContainerStyles,
         'react-spectrum-ToastContainer',

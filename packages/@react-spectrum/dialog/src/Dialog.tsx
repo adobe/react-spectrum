@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, SlotProvider, unwrapDOMRef, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {DismissButton} from '@react-aria/overlays';
@@ -44,7 +44,6 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     children,
     isDismissable = contextProps.isDismissable,
     onDismiss = contextProps.onClose,
-    role,
     size,
     ...otherProps
   } = props;
@@ -56,7 +55,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
   let gridRef = useRef();
   let sizeVariant = sizeMap[type] || sizeMap[size];
-  let {dialogProps, titleProps} = useDialog({ref: domRef, role, ...otherProps});
+  let {dialogProps, titleProps} = useDialog(mergeProps(contextProps, props), domRef);
 
   let hasHeader = useHasChild(`.${styles['spectrum-Dialog-header']}`, unwrapDOMRef(gridRef));
   let hasFooter = useHasChild(`.${styles['spectrum-Dialog-footer']}`, unwrapDOMRef(gridRef));
@@ -82,16 +81,8 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   return (
     <FocusScope contain restoreFocus>
       <section
-        {...mergeProps(
-          mergeProps(
-            mergeProps(
-              filterDOMProps(otherProps),
-              filterDOMProps(contextProps)
-            ),
-            styleProps
-          ),
-          dialogProps
-        )}
+        {...styleProps}
+        {...dialogProps}
         className={classNames(
           styles,
           'spectrum-Dialog',
@@ -123,7 +114,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
 }
 
 /**
- * Dialogs are windows containing contextual information, tasks, or workflows that appear over the user interface. 
+ * Dialogs are windows containing contextual information, tasks, or workflows that appear over the user interface.
  * Depending on the kind of Dialog, further interactions may be blocked until the Dialog is acknowledged.
  */
 let _Dialog = React.forwardRef(Dialog);

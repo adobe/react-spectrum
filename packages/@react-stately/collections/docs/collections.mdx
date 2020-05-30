@@ -292,6 +292,8 @@ function addPerson(name) {
 </ListBox>
 ```
 
+<!--
+
 ## Heirarchical data
 
 Sections only allow a single level of heirarchy. Some components like trees allow arbitrary heirarchical
@@ -338,37 +340,76 @@ let [items, setItems] = useState([
 </Tree>
 ```
 
+-->
+
 ## Asynchronous loading
 
 Many collection components support loading data asynchronously. This is supported by passing an `isLoading` prop,
 which is `true` while the data is loading. Once the data is loaded, `isLoading` should be set to `false`, and the
 `items` prop should be set to the loaded data.
 
-TODO: useAsyncList/useAsyncTree
+The <TypeLink links={dataDocs.links} type={dataDocs.exports.useAsyncList} /> hook from `@react-stately/data` can be
+used to manage async data loading from an API. Pass a `load` function to `useAsyncList`, which returns the items
+to render. You can use whatever data fetching library you want, or the built-in
+[fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) API.
+
+This example fetches a list of Pokemon from an API and displays them in a Picker.
 
 ```tsx
-let [items, setItems] = useState([]);
-let [isLoading, setLoading] = useState(true);
+import {useAsyncList} from '@react-stately/data';
 
-// Load data once the component mounts.
-useEffect(() => {
-  fetch('http://example.com/api')
-    .then(res => res.json())
-    .then(json => {
-      // Update items and set isLoading to false.
-      setItems(json.data);
-      setLoading(false);
-    });
-}, []);
+let list = useAsyncList({
+  async load({signal}) {
+    let res = await fetch('https://pokeapi.co/api/v2/pokemon', {signal});
+    let json = await res.json();
+    return {items: json.results};
+  }
+});
 
-<Picker items={items} isLoading={isLoading}>
-  {item => <Item>{item.name}</Item>}
+<Picker
+  label="Pick a Pokemon"
+  items={list.items}
+  isLoading={list.isLoading}>
+  {item => <Item uniqueKey={item.name}>{item.name}</Item>}
 </Picker>
 ```
 
 ### Infinite loading
 
-TODO
+The <TypeLink links={dataDocs.links} type={dataDocs.exports.useAsyncList} /> hook also supports paginated data,
+which is common in many APIs to avoid loading too many items at once. This is accomplished by returning a `cursor`
+in addition to `items` from the `load` function. When the `loadMore` method is called, the cursor is passed back to your 
+`load` function, which you can use to determine the URL for the next page. The `onLoadMore` prop supported by many
+collection components notifies you when you should load more data as the user scrolls.
+
+This example expands on the previous one to support infinite scrolling through all known Pokemon.
+
+```tsx
+import {useAsyncList} from '@react-stately/data';
+
+let list = useAsyncList({
+  async load({signal, cursor}) {
+    // If no cursor is available, then we're loading the first page.
+    // Otherwise, the cursor is the next URL to load, as returned from the previous page.
+    let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
+    let json = await res.json();
+    return {
+      items: json.results,
+      cursor: json.next
+    };
+  }
+});
+
+<Picker
+  label="Pick a Pokemon"
+  items={list.items}
+  isLoading={list.isLoading}
+  onLoadMore={list.loadMore}>
+  {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+</Picker>
+```
+
+<!--
 
 ### Sections with separate data sources
 
@@ -390,3 +431,5 @@ TODO
   </Section>
 </Tree>
 ```
+
+-->

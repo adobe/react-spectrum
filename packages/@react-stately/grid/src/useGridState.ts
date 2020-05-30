@@ -13,7 +13,7 @@
 import {CollectionBase, MultipleSelection, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {CollectionBuilder, Node} from '@react-stately/collections';
 import {GridCollection} from './GridCollection';
-import {Key, useMemo, useRef} from 'react';
+import {Key, useEffect, useMemo, useRef} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
 export interface GridState<T> {
@@ -61,6 +61,13 @@ export function useGridState<T extends object>(props: GridStateProps<T>): GridSt
     return collectionRef.current;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.children, props.showSelectionCheckboxes, selectionState.selectionMode, builder]);
+
+  // Reset focused key if that item is deleted from the collection.
+  useEffect(() => {
+    if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
+      selectionState.setFocusedKey(null);
+    }
+  }, [collection, selectionState.focusedKey]);
 
   return {
     collection,

@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, ItemElement, ItemRenderer, MultipleSelection, Orientation, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, ItemElement, ItemRenderer, MultipleSelection, Orientation, StyleProps} from '@react-types/shared';
 import {Key} from 'react';
 
 // Not extending CollectionBase to avoid async loading props
-export interface ActionGroupProps<T> extends DOMProps, StyleProps, MultipleSelection {
+export interface ActionGroupProps<T> extends MultipleSelection {
   /**
    * The axis the ActionGroup should align with.
    * @default 'horizontal'
@@ -40,7 +40,9 @@ export interface ActionGroupProps<T> extends DOMProps, StyleProps, MultipleSelec
   onAction?: (key: Key) => void
 }
 
-export interface SpectrumActionGroupProps<T> extends ActionGroupProps<T> {
+export interface AriaActionGroupProps<T> extends ActionGroupProps<T>, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumActionGroupProps<T> extends AriaActionGroupProps<T>, StyleProps {
   /** Whether the ActionButtons should be displayed with a [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
   isEmphasized?: boolean,
   /** Whether the ActionButtons should be connected together, without default space between. */

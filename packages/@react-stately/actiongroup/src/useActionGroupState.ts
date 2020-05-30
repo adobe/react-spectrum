@@ -13,7 +13,7 @@
 import {ActionGroupProps} from '@react-types/actiongroup';
 import {ActionGroupState} from './types';
 import {CollectionBuilder, TreeCollection} from '@react-stately/collections';
-import {Key, useMemo} from 'react';
+import {Key, useEffect, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
 export function useActionGroupState<T extends object>(props: ActionGroupProps<T>): ActionGroupState<T> {
@@ -27,7 +27,14 @@ export function useActionGroupState<T extends object>(props: ActionGroupProps<T>
   let collection = useMemo(() => {
     let nodes = builder.build(props);
     return new TreeCollection(nodes);
-  }, [builder, props, disabledKeys]);
+  }, [builder, props]);
+
+  // Reset focused key if that item is deleted from the collection.
+  useEffect(() => {
+    if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
+      selectionState.setFocusedKey(null);
+    }
+  }, [collection, selectionState.focusedKey]);
 
   return {
     collection,

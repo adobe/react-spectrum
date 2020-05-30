@@ -11,7 +11,7 @@
  */
 
 import Alert from '@spectrum-icons/workflow/Alert';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
@@ -53,7 +53,6 @@ export const Tag = ((props: SpectrumTagProps) => {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...filterDOMProps(otherProps)}
         {...styleProps}
         {...tagProps}
         className={classNames(
