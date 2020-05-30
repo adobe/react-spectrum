@@ -102,7 +102,6 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         layout={layout}
         state={state}
         width={isMobile ? '100%' : undefined}
-        UNSAFE_className={classNames(styles, 'spectrum-Dropdown-menu')}
         isLoading={isLoadingMore}
         onLoadMore={props.onLoadMore} />
       <DismissButton onDismiss={() => state.setOpen(false)} />
