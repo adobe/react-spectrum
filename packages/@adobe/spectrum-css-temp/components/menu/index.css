@@ -38,7 +38,7 @@ governing permissions and limitations under the License.
   --spectrum-menu-max-width: 320px;
 }
 
-.spectrum-Menu-Popover {
+.spectrum-Menu-popover {
   max-width: var(--spectrum-menu-max-width);
 }
 

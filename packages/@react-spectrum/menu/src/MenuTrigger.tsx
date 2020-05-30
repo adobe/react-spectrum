@@ -69,7 +69,7 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     UNSAFE_style: {
       width: isMobile ? '100%' : undefined
     },
-    UNSAFE_className: classNames(styles, {'spectrum-Menu-Popover': !isMobile})
+    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile})
   };
 
   let contents = (
