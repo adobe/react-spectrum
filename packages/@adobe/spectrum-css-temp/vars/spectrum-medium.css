@@ -228,6 +228,10 @@
   --spectrum-selectlist-option-icon-padding-y: var(--spectrum-global-dimension-static-size-125);
   --spectrum-selectlist-option-icon-margin-top: var(--spectrum-global-dimension-static-size-65);
   --spectrum-selectlist-option-height: var(--spectrum-global-dimension-static-size-400);
+  /* BEGIN RSP PATCH */
+  /* This is not correct in DNA. */
+  --spectrum-selectlist-option-padding-y: var(--spectrum-global-dimension-static-size-75);
+  /* END RSP PATCH */
   --spectrum-selectlist-thumbnail-option-icon-padding-y: var(--spectrum-global-dimension-static-size-125);
   --spectrum-loader-bar-large-border-radius: 3px;
   --spectrum-loader-bar-large-over-background-border-radius: 3px;
