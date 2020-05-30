@@ -19,6 +19,7 @@ const frontmatter = require('remark-frontmatter');
 const slug = require('remark-slug');
 const util = require('mdast-util-toc');
 const yaml = require('js-yaml');
+const prettier = require('prettier');
 
 module.exports = new Transformer({
   async transform({asset, options}) {
@@ -61,7 +62,7 @@ module.exports = new Transformer({
             node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*\/\/\/- end collapse -\/\/\//g, '').trim();
 
             return [
-              node,
+              ...responsiveCode(node),
               {
                 type: 'jsx',
                 value: `<div id="${id}" />`
@@ -71,13 +72,15 @@ module.exports = new Transformer({
 
           if (node.lang === 'css') {
             return [
-              node,
+              ...responsiveCode(node),
               {
                 type: 'jsx',
                 value: '<style>{`' + node.value + '`}</style>'
               }
             ];
           }
+
+          return responsiveCode(node);
         }
 
         return [node];
@@ -150,8 +153,8 @@ module.exports = new Transformer({
     function wrapExamples() {
       return (tree) => (
         flatMap(tree, node => {
-          if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].properties.metastring === 'example') {
-            node.properties.className = ['example'];
+          if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].properties.metastring) {
+            node.properties.className = node.children[0].properties.metastring.split(' ');
           }
 
           return [node];
@@ -270,3 +273,53 @@ ${compiled}
     return assets;
   }
 });
+
+function responsiveCode(node) {
+  let large = {
+    ...node,
+    meta: node.meta ? `${node.meta} large` : 'large',
+    value: formatCode(node, 80)
+  };
+
+  let medium = {
+    ...node,
+    meta: node.meta ? `${node.meta} medium` : 'medium',
+    value: formatCode(large, 60)
+  };
+
+  let small = {
+    ...node,
+    meta: node.meta ? `${node.meta} small` : 'small',
+    value: formatCode(medium, 25)
+  };
+
+  return [
+    large,
+    medium,
+    small
+  ];
+}
+
+function formatCode(node, printWidth = 80) {
+  let code = node.value;
+  if (code.split('\n').every(line => line.length <= printWidth)) {
+    return code;
+  }
+
+  if (/^<(.|\n)*>$/m.test(code)) {
+    code = code.replace(/^(<(.|\n)*>)$/m, '<WRAPPER>$1</WRAPPER>');
+  }
+
+  code = prettier.format(code, {
+    parser: node.lang === 'css' ? 'css' : 'babel-ts',
+    singleQuote: true,
+    jsxBracketSameLine: true,
+    bracketSpacing: false,
+    trailingComma: 'none',
+    printWidth
+  });
+
+  return code.replace(/^<WRAPPER>((?:.|\n)*)<\/WRAPPER>;?\s*$/m, (str, contents) =>
+    contents.replace(/^\s{2}/gm, '').trim()
+  );
+}
