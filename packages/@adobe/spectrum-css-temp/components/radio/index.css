@@ -40,6 +40,8 @@ governing permissions and limitations under the License.
   margin-inline-end: calc(var(--spectrum-radio-cursor-hit-x) * 2);
 
   vertical-align: top;
+
+  isolation: isolate;
 }
 
 .spectrum-Radio-input {
@@ -68,6 +70,7 @@ governing permissions and limitations under the License.
   block-size: 100%;
 
   opacity: .0001;
+  z-index: 1;
 
   cursor: default;
 
