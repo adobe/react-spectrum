@@ -36,7 +36,7 @@ export function useListState<T extends object>(props: CollectionBase<T> & Multip
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
+  let builder = useMemo(() => new CollectionBuilder<T>(), []);
   let collection = useMemo(() => {
     let nodes = builder.build(props);
     return new TreeCollection(nodes);
