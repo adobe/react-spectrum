@@ -22,10 +22,8 @@ describe('useActionGroup', function () {
   };
 
   it('handles defaults', function () {
-    let {actionGroupProps, buttonProps} = renderActionGroupHook({});
+    let {actionGroupProps} = renderActionGroupHook({});
     expect(actionGroupProps.role).toBe('radiogroup');
-    expect(actionGroupProps.id).toBeDefined();
-    expect(buttonProps.role).toBe('radio');
   });
 
   it('handles vertical orientation', function () {
@@ -34,33 +32,20 @@ describe('useActionGroup', function () {
   });
 
   it('handles selection mode none', function () {
-    let {actionGroupProps, buttonProps} = renderActionGroupHook({selectionMode: 'none'});
+    let {actionGroupProps} = renderActionGroupHook({selectionMode: 'none'});
     expect(actionGroupProps.role).toBe('toolbar');
-    expect(actionGroupProps.id).toBeDefined();
-    expect(buttonProps.role).toBeNull();
     expect(actionGroupProps['aria-orientation']).toBe('horizontal');
   });
 
   it('handles selection mode single', function () {
-    let {actionGroupProps, buttonProps} = renderActionGroupHook({selectionMode: 'single'});
+    let {actionGroupProps} = renderActionGroupHook({selectionMode: 'single'});
     expect(actionGroupProps.role).toBe('radiogroup');
-    expect(actionGroupProps.id).toBeDefined();
-    expect(buttonProps.role).toBe('radio');
   });
 
   it('handles selection mode multiple', function () {
-    let {actionGroupProps, buttonProps} = renderActionGroupHook({selectionMode: 'multiple'});
+    let {actionGroupProps} = renderActionGroupHook({selectionMode: 'multiple'});
     expect(actionGroupProps.role).toBe('toolbar');
-    expect(actionGroupProps.id).toBeDefined();
-    expect(buttonProps.role).toBe('checkbox');
     expect(actionGroupProps['aria-orientation']).toBe('horizontal');
-  });
-
-  it('handles custom role', function () {
-    let {actionGroupProps, buttonProps} = renderActionGroupHook({role: 'group', selectionMode: 'multiple'});
-    expect(actionGroupProps.role).toBe('group');
-    expect(actionGroupProps.id).toBeDefined();
-    expect(buttonProps.role).toBe('checkbox');
   });
 
   it('handles isDisabled', function () {

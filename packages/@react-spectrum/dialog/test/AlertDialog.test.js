@@ -14,14 +14,8 @@ import {AlertDialog} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {render} from '@testing-library/react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 describe('AlertDialog', function () {
   it('renders alert dialog with onPrimaryAction', function () {

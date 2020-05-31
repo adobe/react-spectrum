@@ -18,6 +18,7 @@ const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
 const frontmatter = require('remark-frontmatter');
 const slug = require('remark-slug');
 const util = require('mdast-util-toc');
+const yaml = require('js-yaml');
 
 module.exports = new Transformer({
   async transform({asset, options}) {
@@ -36,13 +37,13 @@ module.exports = new Transformer({
 
             // TODO: Parsing code with regex is bad. Replace with babel transform or something.
             let code = node.value;
-            code = code.replace(/import (\{(?:.|\n)*?\}) from (['"].*?['"])/g, (m) => {
+            code = code.replace(/import (\{(?:.|\n)*?\}) from (['"].*?['"]);?/g, (m) => {
               exampleCode.push(m);
               return '';
             });
 
-            if (/^function (.|\n)*}\s*$/.test(code)) {
-              let name = code.match(/^function (.*?)\s*\(/)[1];
+            if (/^\s*function (.|\n)*}\s*$/.test(code)) {
+              let name = code.match(/^\s*function (.*?)\s*\(/)[1];
               code = `(function () {
                 ${code}
                 ReactDOM.render(<ExampleProvider><${name} /></ExampleProvider>, document.getElementById("${id}"));
@@ -86,6 +87,8 @@ module.exports = new Transformer({
     let toc = [];
     let title = '';
     let category = '';
+    let keywords = [];
+    let description = '';
     const extractToc = (options) => {
       const settings = options || {};
       const depth = settings.maxDepth || 6;
@@ -126,12 +129,13 @@ module.exports = new Transformer({
 
         /*
          * Piggy back here to grab additional metadata.
-         * Should probably use js-yaml at some point.
-         */ 
+         */
         let metadata = node.children.find(c => c.type === 'yaml');
         if (metadata) {
-          let matches = /^category:\s(\w+)$/.exec(metadata.value);
-          category = matches ? matches[1] : '';
+          let yamlData = yaml.safeLoad(metadata.value);
+          category = yamlData.category || '';
+          keywords = yamlData.keywords || [];
+          description = yamlData.description || '';
         }
 
         return node;
@@ -193,6 +197,8 @@ export default {};
     asset.meta.toc = toc;
     asset.meta.title = title;
     asset.meta.category = category;
+    asset.meta.description = description;
+    asset.meta.keywords = keywords;
 
     let assets = [
       asset,

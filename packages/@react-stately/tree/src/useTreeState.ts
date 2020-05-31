@@ -12,7 +12,7 @@
 
 import {Collection, CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
 import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
-import {Key, useMemo} from 'react';
+import {Key, useEffect, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {useControlledState} from '@react-stately/utils';
 
@@ -49,11 +49,18 @@ export function useTreeState<T extends object>(props: CollectionBase<T> & Expand
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
+  let builder = useMemo(() => new CollectionBuilder<T>(), []);
   let tree = useMemo(() => {
     let nodes = builder.build(props);
     return new TreeCollection(nodes, {expandedKeys});
   }, [builder, expandedKeys, props]);
+
+  // Reset focused key if that item is deleted from the collection.
+  useEffect(() => {
+    if (selectionState.focusedKey != null && !tree.getItem(selectionState.focusedKey)) {
+      selectionState.setFocusedKey(null);
+    }
+  }, [tree, selectionState.focusedKey]);
 
   let onToggle = (key: Key) => {
     setExpandedKeys(expandedKeys => toggleKey(expandedKeys, key));

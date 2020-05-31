@@ -66,3 +66,7 @@ governing permissions and limitations under the License.
 .spectrum-Menu-divider {
   background-color: var(--spectrum-selectlist-divider-color);
 }
+
+.spectrum-Menu-description {
+  color: var(--spectrum-global-color-gray-700);
+}

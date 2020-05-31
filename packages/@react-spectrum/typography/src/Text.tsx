@@ -11,9 +11,10 @@
  */
 
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
 import {TextProps} from '@react-types/typography';
+import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
 function Text(props: TextProps, ref: DOMRef) {
   props = useSlotProps(props, 'text');
@@ -31,5 +32,8 @@ function Text(props: TextProps, ref: DOMRef) {
   );
 }
 
+/**
+ * Text is used to define label or option text in components.
+ */
 const _Text = forwardRef(Text);
 export {_Text as Text};

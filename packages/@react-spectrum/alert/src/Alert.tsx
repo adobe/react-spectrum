@@ -11,7 +11,7 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import HelpMedium from '@spectrum-icons/ui/HelpMedium';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import intlMessages from '../intl';
@@ -48,7 +48,6 @@ export function Alert(props: SpectrumAlertProps) {
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       className={
         classNames(

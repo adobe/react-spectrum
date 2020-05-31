@@ -23,6 +23,7 @@ import {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
 
 ---
 category: Collections
+keywords: [listbox, aria]
 ---
 
 # useListBox
@@ -70,7 +71,8 @@ A listbox consists of a container element, with a list of options or groups insi
 technology using ARIA, along with handling keyboard, mouse, and interactions to support
 selection and focus behavior.
 
-`useListBox` returns props that you should spread onto the list container element:
+`useListBox` returns props that you should spread onto the list container element,
+along with props for an optional visual label:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useListBox.return.id].properties} />
@@ -131,25 +133,29 @@ function ListBox(props) {
 
   // Get props for the listbox element
   let ref = React.useRef();
-  let {listBoxProps} = useListBox({...props, ref}, state);
+  let {listBoxProps, labelProps} = useListBox({...props, ref}, state);
 
   return (
-    <ul
-      {...listBoxProps}
-      ref={ref}
-      style={{
-        padding: 0,
-        listStyle: 'none',
-        border: '1px solid gray',
-        maxWidth: 250
-      }}>
-      {[...state.collection].map(item => (
-        <Option
-          key={item.key}
-          item={item}
-          state={state} />
-      ))}
-    </ul>
+    <>
+      <div {...labelProps}>{props.label}</div>
+      <ul
+        {...listBoxProps}
+        ref={ref}
+        style={{
+          padding: 0,
+          margin: '5px 0',
+          listStyle: 'none',
+          border: '1px solid gray',
+          maxWidth: 250
+        }}>
+        {[...state.collection].map(item => (
+          <Option
+            key={item.key}
+            item={item}
+            state={state} />
+        ))}
+      </ul>
+    </>
   );
 }
 
@@ -186,7 +192,7 @@ function Option({item, state}) {
   );
 }
 
-<ListBox>
+<ListBox label="Choose an option">
   <Item>One</Item>
   <Item>Two</Item>
   <Item>Three</Item>
@@ -209,26 +215,29 @@ import {useSeparator} from '@react-aria/separator';
 function ListBox(props) {
   let state = useListState(props);
   let ref = React.useRef();
-  let {listBoxProps} = useListBox({...props, ref}, state);
+  let {listBoxProps, labelProps} = useListBox({...props, ref}, state);
 
   return (
-    <ul
-      {...listBoxProps}
-      ref={ref}
-      style={{
-        margin: 0,
-        padding: 0,
-        listStyle: 'none',
-        border: '1px solid gray',
-        maxWidth: 250
-      }}>
-      {[...state.collection].map(item => (
-        <ListBoxSection
-          key={item.key}
-          section={item}
-          state={state} />
-      ))}
-    </ul>
+    <>
+      <div {...labelProps}>{props.label}</div>
+      <ul
+        {...listBoxProps}
+        ref={ref}
+        style={{
+          padding: 0,
+          margin: '5px 0',
+          listStyle: 'none',
+          border: '1px solid gray',
+          maxWidth: 250
+        }}>
+        {[...state.collection].map(item => (
+          <ListBoxSection
+            key={item.key}
+            section={item}
+            state={state} />
+        ))}
+      </ul>
+    </>
   );
 }
 
@@ -315,7 +324,7 @@ function Option({item, state}) {
 ///- end collapse -///
 }
 
-<ListBox>
+<ListBox label="Choose an option">
   <Section title="Section 1">
     <Item>One</Item>
     <Item>Two</Item>
@@ -351,25 +360,29 @@ function ListBox(props) {
 ///- begin collapse -///
   let state = useListState(props);
   let ref = React.useRef();
-  let {listBoxProps} = useListBox({...props, ref}, state);
+  let {listBoxProps, labelProps} = useListBox({...props, ref}, state);
 
   return (
-    <ul
-      {...listBoxProps}
-      ref={ref}
-      style={{
-        padding: 0,
-        listStyle: 'none',
-        border: '1px solid gray',
-        maxWidth: 250
-      }}>
-      {[...state.collection].map(item => (
-        <Option
-          key={item.key}
-          item={item}
-          state={state} />
-      ))}
-    </ul>
+    <>
+      <div {...labelProps}>{props.label}</div>
+      <ul
+        {...listBoxProps}
+        ref={ref}
+        style={{
+          padding: 0,
+          margin: '5px 0',
+          listStyle: 'none',
+          border: '1px solid gray',
+          maxWidth: 250
+        }}>
+        {[...state.collection].map(item => (
+          <Option
+            key={item.key}
+            item={item}
+            state={state} />
+        ))}
+      </ul>
+    </>
   );
 ///- end collapse -///
 }
@@ -408,7 +421,7 @@ function Option({item, state}) {
   );
 }
 
-<ListBox>
+<ListBox label="Text alignment">
   <Item textValue="Align Left">
     <div><strong>Align Left</strong></div>
     <div>Align the selected text to the left</div>

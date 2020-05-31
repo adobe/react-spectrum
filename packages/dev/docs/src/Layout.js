@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import {getAnchorProps} from './utils';
+import heroImage from 'url:../pages/assets/ReactSpectrumHome_Mobile_976x1025_2x.png';
 import highlightCss from './syntax-highlight.css';
 import {ImageContext} from './Image';
 import {LinkProvider} from './types';
@@ -26,6 +27,8 @@ import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css'
 import {theme} from '@react-spectrum/theme-default';
 import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+
+const TLD = 'react-spectrum.adobe.com';
 
 const mdxComponents = {
   h1: ({children, ...props}) => (
@@ -59,11 +62,25 @@ const mdxComponents = {
   a: ({children, ...props}) => <a {...props} className={linkStyle['spectrum-Link']} {...getAnchorProps(props.href)}>{children}</a>
 };
 
-function Page({children, title, styles, scripts}) {
+function dirToTitle(dir) {
+  return dir
+    .split('/')[0]
+    .split('-')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+function Page({children, currentPage, publicUrl, styles, scripts}) {
+  let isSubpage = currentPage.name.split('/').length > 1 && !/index\.html$/.test(currentPage.name);
+  let pageSection = isSubpage ? dirToTitle(currentPage.name) : 'React Spectrum';
+  let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
+  let description = currentPage.description || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
+  let title = currentPage.title + (!/index\.html$/.test(currentPage.name) ? ` - ${pageSection}` : '');
   return (
     <html
       lang="en-US"
       dir="ltr"
+      prefix="og: http://ogp.me/ns#"
       className={classNames(
         theme.global.spectrum,
         theme.light['spectrum--light'],
@@ -90,11 +107,11 @@ function Page({children, title, styles, scripts}) {
             let update = () => {
               if (localStorage.theme === "dark" || (!localStorage.theme && dark.matches)) {
                 classList.remove("${theme.light['spectrum--light']}");
-                classList.add("${theme.dark['spectrum--dark']}");
+                classList.add("${theme.dark['spectrum--darkest']}", "${docStyles.dark}");
                 style.colorScheme = 'dark';
               } else {
                 classList.add("${theme.light['spectrum--light']}");
-                classList.remove("${theme.dark['spectrum--dark']}");
+                classList.remove("${theme.dark['spectrum--darkest']}", "${docStyles.dark}");
                 style.colorScheme = 'light';
               }
 
@@ -119,6 +136,14 @@ function Page({children, title, styles, scripts}) {
         <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
         {scripts.map(s => <script type={s.type} src={s.url} defer />)}
+        <meta name="description" content={description} />
+        <meta name="keywords" content={keywords} />
+        <meta property="og:title" content={currentPage.title} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://${TLD}${currentPage.url}`} />
+        <meta property="og:image" content={`https://${TLD}${heroImage}`} />
+        <meta property="og:description" content={description} />
+        <meta property="og:locale" content="en_US" />
       </head>
       <body>
         {children}
@@ -127,19 +152,11 @@ function Page({children, title, styles, scripts}) {
   );
 }
 
-function dirToTitle(dir) {
-  return dir
-    .split('/')[0]
-    .split('-')
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
-}
-
 function Nav({currentPageName, pages}) {
   let isIndex = /index\.html$/;
   let currentParts = currentPageName.split('/');
   let currentDir = currentParts[0];
-    
+
   pages = pages.filter(p => {
     let pageParts = p.name.split('/');
     let pageDir = pageParts[0];
@@ -221,7 +238,7 @@ function Nav({currentPageName, pages}) {
 function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer>
+    <footer className={docStyles.pageFooter}>
       <hr className={classNames(ruleStyles['spectrum-Rule'], ruleStyles['spectrum-Rule--small'], ruleStyles['spectrum-Rule--horizontal'])} />
       <ul>
         <li>Copyright © {year} Adobe. All rights reserved.</li>
@@ -236,7 +253,7 @@ function Footer() {
 export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
 
   return (
-    <Page title={currentPage.title} scripts={scripts} styles={styles}>
+    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage}>
       <div className={docStyles.pageHeader} id="header" />
       <Nav currentPageName={currentPage.name} pages={pages} />
       <main>

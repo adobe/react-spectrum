@@ -66,8 +66,13 @@ html, body {
 .provider {
   min-width: 100vw;
   min-height: 100vh;
-  background: var(--spectrum-global-color-gray-50) !important;
+  --page-background: var(--spectrum-global-color-gray-50);
+  background: var(--page-background) !important;
   color-scheme: light dark;
+}
+
+.dark {
+  --page-background: var(--spectrum-global-color-gray-100);
 }
 
 .exampleImage {
@@ -180,7 +185,7 @@ article {
   width: 100%;
 }
 
-footer {
+footer.pageFooter {
   max-width: 967px;
   width: 100%
 }
@@ -190,7 +195,7 @@ footer ul {
 }
 
 @media (min-width: 1020px) {
-  footer {
+  footer.pageFooter {
     text-align: right;
   }
 }
@@ -518,7 +523,7 @@ h2.sectionHeader {
   /* Show the toolbar at the top with the hamburger and theme switcher buttons */
   .pageHeader {
     border-bottom: 1px solid var(--spectrum-global-color-gray-200);
-    background: var(--spectrum-global-color-gray-50);
+    background: var(--page-background);
     z-index: 50;
   }
 

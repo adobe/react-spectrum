@@ -161,4 +161,10 @@ describe('ProgressCircle', function () {
     render(<ProgressCircle value={25} />);
     expect(spyWarn).toHaveBeenCalledWith('ProgressCircle requires an aria-label or aria-labelledby attribute for accessibility');
   });
+
+  it('supports custom DOM props', function () {
+    let {getByTestId} = render(<ProgressCircle value={25} aria-label="Progress" data-testid="test" />);
+    let progressBar = getByTestId('test');
+    expect(progressBar).toBeInTheDocument();
+  });
 });
