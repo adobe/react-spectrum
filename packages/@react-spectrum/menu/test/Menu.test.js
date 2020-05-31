@@ -70,10 +70,10 @@ function renderComponent(Component, contextProps = {}, props = {}) {
       <Provider theme={theme}>
         <span id="label">Label</span>
         <MenuContext.Provider value={contextProps}>
-          <Menu id={menuId} items={withSection} itemKey="name" aria-labelledby="label" {...props}>
+          <Menu id={menuId} items={withSection} aria-labelledby="label" {...props}>
             {item => (
-              <Section items={item.children} title={item.name}>
-                {item => <Item childItems={item.children}>{item.name}</Item>}
+              <Section key={item.name} items={item.children} title={item.name}>
+                {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
               </Section>
             )}
           </Menu>
@@ -652,9 +652,9 @@ describe('Menu', function () {
       let tree = render(
         <Provider theme={theme}>
           <Menu aria-label="menu" onSelectionChange={onSelectionChange} onAction={onAction}>
-            <Item uniqueKey="One">One</Item>
-            <Item uniqueKey="Two">Two</Item>
-            <Item uniqueKey="Three">Three</Item>
+            <Item key="One">One</Item>
+            <Item key="Two">Two</Item>
+            <Item key="Three">Three</Item>
           </Menu>
         </Provider>
       );
@@ -692,8 +692,8 @@ describe('Menu', function () {
       ];
       let tree = render(
         <Provider theme={theme}>
-          <Menu aria-label="menu" onSelectionChange={onSelectionChange} items={flatItems} itemKey="name" onAction={onAction}>
-            {item => <Item>{item.name}</Item>}
+          <Menu aria-label="menu" onSelectionChange={onSelectionChange} items={flatItems} onAction={onAction}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Menu>
         </Provider>
       );

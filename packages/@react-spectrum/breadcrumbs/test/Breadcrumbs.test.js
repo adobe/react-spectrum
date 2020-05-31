@@ -249,7 +249,7 @@ describe('Breadcrumbs', function () {
     let {getAllByText, getByRole, getAllByRole} = render(
       <Provider theme={theme}>
         <Breadcrumbs maxVisibleItems="auto" showRoot onAction={onAction}>
-          <Item uniqueKey="Folder 1">Folder 1</Item>
+          <Item key="Folder 1">Folder 1</Item>
           <Item>Folder 2</Item>
           <Item>Folder 3</Item>
           <Item>Folder 4</Item>
@@ -285,11 +285,11 @@ describe('Breadcrumbs', function () {
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme}>
         <Breadcrumbs maxVisibleItems="auto" showRoot onAction={onAction}>
-          <Item uniqueKey="Folder 1">Folder 1</Item>
-          <Item uniqueKey="Folder 2">Folder 2</Item>
-          <Item uniqueKey="Folder 3">Folder 3</Item>
-          <Item uniqueKey="Folder 4">Folder 4</Item>
-          <Item uniqueKey="Folder 5">Folder 5</Item>
+          <Item key="Folder 1">Folder 1</Item>
+          <Item key="Folder 2">Folder 2</Item>
+          <Item key="Folder 3">Folder 3</Item>
+          <Item key="Folder 4">Folder 4</Item>
+          <Item key="Folder 5">Folder 5</Item>
         </Breadcrumbs>
       </Provider>
     );

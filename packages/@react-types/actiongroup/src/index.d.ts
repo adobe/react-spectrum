@@ -24,9 +24,7 @@ export interface ActionGroupProps<T> extends MultipleSelection {
   children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>,
   /** A list of items to iterate through and display as children. Must be used with an `ItemRenderer` as the sole child. */
   items?: Iterable<T>,
-  /** A field used as the `uniqueKey` if providing a list of items as a prop. */
-  itemKey?: string,
-  /** A list of `uniqueKeys` to disable. */
+  /** A list of keys to disable. */
   disabledKeys?: Iterable<Key>,
   /**
    * Whether the ActionGroup is disabled.
@@ -35,7 +33,7 @@ export interface ActionGroupProps<T> extends MultipleSelection {
   isDisabled?: boolean,
   /**
    * Invoked when an action is taken on a child. Especially useful when `selectionMode` is none.
-   * The sole argument `key` is the uniqueKey for the item.
+   * The sole argument `key` is the key for the item.
    */
   onAction?: (key: Key) => void
 }
