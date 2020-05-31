@@ -16,6 +16,7 @@ import packageData from '../package.json';
 
 ```jsx import
 import {TextField} from '@react-spectrum/textfield';
+import {Flex} from '@react-spectrum/layout';
 ```
 
 ---
@@ -182,18 +183,15 @@ and the contents can still be copied. See [the MDN docs](https://developer.mozil
 ### Label alignment and position
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
 
-Labels can be aligned to the "start" or the "end" of the TextField. For left-to-right (LTR) languages, "start" refers to the left most edge
-of the TextField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+By default, the label is positioned above the TextField. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the TextField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
 
 ```tsx example
-<TextField label="Email" labelAlign="start" marginEnd="size-300" />
-<TextField label="Email" labelPosition="side" labelAlign="end" />
+<TextField label="Search" labelPosition="side" labelAlign="end" />
 ```
-
 ### Custom width
 
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
 
 ```tsx example
-<TextField label="Email" width={'400px'} />
+<TextField label="Email" width="size-3600" />
 ```

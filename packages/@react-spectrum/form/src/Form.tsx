@@ -80,7 +80,7 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
 }
 
 /**
- * Form provides alignment and styling for form fields.
+ * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
  */
 const _Form = React.forwardRef(Form);
 export {_Form as Form};

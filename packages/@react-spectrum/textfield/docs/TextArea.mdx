@@ -178,23 +178,13 @@ and the contents can still be copied. See [the MDN docs](https://developer.mozil
 <TextArea label="Email" defaultValue="abc@adobe.com" isReadOnly />
 ```
 
-### Label alignment
-
-Labels can be aligned to the "start" or the "end" of the TextArea. For left-to-right (LTR) languages, "start" refers to the left most edge
-of the TextArea and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
-
-```tsx example
-<TextArea label="Email" labelAlign="start" marginEnd="size-300" />
-<TextArea label="Email" labelAlign="end" />
-```
-
-### Label position
-
+### Label alignment and position
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
 
+By default, the label is positioned above the TextArea. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the TextArea and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
 ```tsx example
-<TextArea label="Email" labelPosition="top" marginEnd="size-300" />
-<TextArea label="Email" labelPosition="side" />
+<TextArea label="Search" labelPosition="side" labelAlign="end" />
 ```
 
 ### Custom width
@@ -202,5 +192,5 @@ of the TextArea and "end" refers to the right most edge. For right-to-left (RTL)
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
 
 ```tsx example
-<TextArea label="Email" width={'400px'} />
+<TextArea label="Email" width="size-3600" />
 ```

@@ -36,7 +36,7 @@ category: Forms
 ## Example
 
 ```tsx example
-<Form maxWidth={400}>
+<Form maxWidth="size-3600">
   <TextField label="Email" placeholder="abc@adobe.com" />
   <TextField label="Password" placeholder="1234" />
   <Checkbox>Remember me</Checkbox>
@@ -50,7 +50,7 @@ are set on the Form itself and propagated to its children to generate a cohesive
 set them directly on the child instead.
 
 ```tsx example
-<Form maxWidth={400} isRequired necessityIndicator="label">
+<Form maxWidth="size-3600" isRequired necessityIndicator="label">
   <TextField label="Name" placeholder="Jane Smith" />
   <TextField label="Email" placeholder="abc@adobe.com" />
   <TextField label="Address" placeholder="123 Any Street" isRequired={false} />
@@ -66,7 +66,7 @@ technology as a form landmark region to which assistive technology can navigate 
 
 ```tsx example
 <h3 id="label-3">Personal Information</h3>
-<Form width={400} aria-labelledby="label-3">
+<Form maxWidth="size-3600" aria-labelledby="label-3">
   <TextField label="First Name" placeholder="John" />
   <TextField label="Last Name" placeholder="Smith" />
   <RadioGroup label="Favorite pet">
@@ -83,27 +83,43 @@ technology as a form landmark region to which assistive technology can navigate 
 <PropTable component={docs.exports.Form} links={docs.links} />
 
 ## Visual options
+
 ### Label position and alignment
-
+Top label position, start label alignment example
 ```tsx example
-<h3 id="label-1">Form example: label position=top, label alignment=start</h3>
-<Form labelPosition="top" labelAlign="start" width={400} marginBottom="20px">
+<Form
+  labelPosition="top"
+  labelAlign="start"
+  aria-label="Top position, start alignment example"
+  maxWidth="size-3600">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
   </RadioGroup>
 </Form>
-
-<Form labelPosition="side" labelAlign="start" aria-label="Form example: label position=side, label alignment=start" width={400} marginBottom="20px">
+```
+Side label position, start label alignment example
+```tsx example
+<Form
+  labelPosition="side"
+  labelAlign="start"
+  aria-label="Side position, start alignment example"
+  maxWidth="size-3600">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
   </RadioGroup>
 </Form>
-
-<Form labelPosition="side" labelAlign="end" aria-label="Form example: label position=side, label alignment=end" width={400}>
+```
+Side label position, end label alignment example
+```tsx example
+<Form
+  labelPosition="side"
+  labelAlign="end"
+  aria-label="Side position, end alignment example"
+  maxWidth="size-3600">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
@@ -115,7 +131,7 @@ technology as a form landmark region to which assistive technology can navigate 
 ### Quiet
 
 ```tsx example
-<Form isQuiet aria-label="Form example: isQuiet" width={400}>
+<Form isQuiet aria-label="Form example: isQuiet" maxWidth="size-3600">
   <TextField label="Name" placeholder="John Smith" />
   <TextField label="Address" placeholder="123 Any Street" />
 </Form>
@@ -124,7 +140,7 @@ technology as a form landmark region to which assistive technology can navigate 
 ### Emphasized
 
 ```tsx example
-<Form isEmphasized aria-label="Form example: isEmphasized" width={400}>
+<Form isEmphasized aria-label="Form example: isEmphasized" maxWidth="size-3600">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
@@ -136,7 +152,7 @@ technology as a form landmark region to which assistive technology can navigate 
 ### Disabled
 
 ```tsx example
-<Form isDisabled aria-label="Form example: isDisabled" width={400}>
+<Form isDisabled aria-label="Form example: isDisabled" maxWidth="size-3600">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
@@ -147,24 +163,40 @@ technology as a form landmark region to which assistive technology can navigate 
 
 ### Required and necessity indicator
 
+Optional label
 ```tsx example
-<Form necessityIndicator="label" aria-label="Form example: optional with necessityIndicator=label" width={400} marginBottom="20px">
+<Form
+  necessityIndicator="label"
+  aria-label="Optional with label example"
+  maxWidth="size-3600">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
   </RadioGroup>
 </Form>
-
-<Form isRequired necessityIndicator="label" aria-label="Form example: isRequired with necessityIndicator=label" width={400} marginBottom="20px">
+```
+Required label
+```tsx example
+<Form
+  isRequired
+  necessityIndicator="label"
+  aria-label="Required with label example"
+  maxWidth="size-3600">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
     <Radio value="cats">Cats</Radio>
   </RadioGroup>
 </Form>
-
-<Form isRequired necessityIndicator="icon" aria-label="Form example: isRequired with necessityIndicator=icon" width={400} >
+```
+Required with asterisk
+```tsx example
+<Form
+  isRequired
+  necessityIndicator="icon"
+  aria-label="Required with asterisk example"
+  maxWidth="size-3600">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
@@ -176,7 +208,7 @@ technology as a form landmark region to which assistive technology can navigate 
 ### Read only
 
 ```tsx example
-<Form isReadOnly aria-label="Form example: isReadOnly" width={400}>
+<Form isReadOnly aria-label="Form example: isReadOnly" maxWidth="size-3600">
   <TextField label="Name" value="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
@@ -188,7 +220,7 @@ technology as a form landmark region to which assistive technology can navigate 
 ### Validation state
 
 ```tsx example
-<Form validationState="invalid" aria-label="Form example: validationState=invalid" width={400} marginBottom="20px">
+<Form validationState="invalid" aria-label="Form example: validationState=invalid" maxWidth="size-3600" marginBottom="20px">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
@@ -196,7 +228,7 @@ technology as a form landmark region to which assistive technology can navigate 
   </RadioGroup>
 </Form>
 
-<Form validationState="valid" aria-label="Form example: validationState=valid" width={400}>
+<Form validationState="valid" aria-label="Form example: validationState=valid" maxWidth="size-3600">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>

@@ -37,6 +37,7 @@ category: Forms
 ```tsx example
 function Example() {
   let [submittedText, setSubmittedText] = React.useState();
+
   return (
     <>
       <SearchField
@@ -65,8 +66,8 @@ function Example() {
         marginEnd="size-300" />
 
       <SearchField
-        onChange={setSearchValue}
         value={searchValue}
+        onChange={setSearchValue}
         label="Search (controlled)" />
     </>
   );
@@ -115,8 +116,8 @@ The example below uses `onChange`, `onSubmit`, and `onClear` to update two separ
 
 ```tsx example
 function Example() {
-  let [currentText, setCurrentText] = React.useState();
-  let [submittedText, setSubmittedText] = React.useState();
+  let [currentText, setCurrentText] = React.useState('');
+  let [submittedText, setSubmittedText] = React.useState('');
 
   return (
     <div>
@@ -162,27 +163,18 @@ and the contents can still be copied. See [the MDN docs](https://developer.mozil
 <SearchField label="Search" defaultValue="abc@adobe.com" isReadOnly />
 ```
 
-### Label alignment
+### Label alignment and position
 
-Labels can be aligned to the "start" or the "end" of the SearchField. For left-to-right (LTR) languages, "start" refers to the left most edge
-of the SearchField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
-
-```tsx example
-<SearchField label="Search" labelAlign="start" marginEnd="size-300" />
-<SearchField label="Search" labelAlign="end" />
-```
-
-### Label position
+By default, the label is positioned above the SearchField. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the SearchField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
 
 ```tsx example
-<SearchField label="Search" labelPosition="top" marginEnd="size-300" />
-<SearchField label="Search" labelPosition="side" />
+<SearchField label="Search" labelPosition="side" labelAlign="end" />
 ```
 
 ### Custom width
 
 ```tsx example
-<SearchField label="Search" width="400px" />
+<SearchField label="Search" width="size-3600" />
 ```
 
 ### Custom icon
