@@ -77,7 +77,9 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
     // If the cell itself is focused, wait a frame so that focus finishes propagatating 
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
-      focus();
+      if (document.activeElement === ref.current) {
+        focus();
+      }
     });
   };
 
