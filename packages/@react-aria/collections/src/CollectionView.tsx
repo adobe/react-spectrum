@@ -85,21 +85,29 @@ function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, r
 }
 
 interface CollectionViewOpts {
-  focusedKey?: Key
+  focusedKey?: Key,
+  shouldScrollToItem?: (key: Key) => boolean
 }
 
 export function useCollectionView<T extends object, V, W>(props: CollectionViewOpts, state: CollectionState<T, V, W>, ref: RefObject<HTMLElement>) {
-  let {focusedKey} = props;
+  let {focusedKey, shouldScrollToItem} = props;
   let {collectionManager} = state;
 
   // Scroll to the focusedKey when it changes. Actually focusing the focusedKey
   // is up to the implementation using CollectionView since we don't have refs
   // to all of the item DOM nodes.
+  let lastFocusedKey = useRef(null);
   useEffect(() => {
-    if (focusedKey && collectionManager.visibleRect.height > 0) {
+    if (collectionManager.visibleRect.height === 0) {
+      return;
+    }
+
+    if (focusedKey !== lastFocusedKey.current && (!shouldScrollToItem || shouldScrollToItem(focusedKey))) {
       collectionManager.scrollToItem(focusedKey, 0);
     }
-  }, [focusedKey, collectionManager.visibleRect.height, collectionManager]);
+
+    lastFocusedKey.current = focusedKey;
+  }, [focusedKey, collectionManager.visibleRect.height, collectionManager, lastFocusedKey, shouldScrollToItem]);
 
   let isFocusWithin = useRef(false);
   let onFocus = useCallback((e: FocusEvent) => {

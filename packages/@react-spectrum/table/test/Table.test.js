@@ -566,8 +566,8 @@ describe('Table', function () {
       </Table>
     );
 
-    let focusCell = (tree, text) => tree.getByText(text).focus();
-    let moveFocus = (key, opts = {}) => fireEvent.keyDown(document.activeElement, {key, ...opts});
+    let focusCell = (tree, text) => act(() => tree.getByText(text).focus());
+    let moveFocus = (key, opts = {}) => act(() => {fireEvent.keyDown(document.activeElement, {key, ...opts});});
 
     describe('ArrowRight', function () {
       it('should move focus to the next cell in a row with ArrowRight', function () {
@@ -1215,6 +1215,58 @@ describe('Table', function () {
 
         let before = tree.getByTestId('before');
         expect(document.activeElement).toBe(before);
+      });
+    });
+
+    describe('scrolling', function () {
+      it('should scroll to a cell when it is focused', function () {
+        let tree = renderMany();
+        let body = tree.getByRole('grid').childNodes[1];
+        expect(body.scrollTop).toBe(0);
+
+        focusCell(tree, 'Baz 21');
+        expect(body.scrollTop).toBe(28);
+      });
+
+      it('should scroll to a cell when it is focused off screen', function () {
+        let tree = renderMany();
+        let body = tree.getByRole('grid').childNodes[1];
+
+        let cell = tree.getByText('Baz 5');
+        act(() => cell.focus());
+        expect(document.activeElement).toBe(cell);
+        expect(body.scrollTop).toBe(0);
+
+        // When scrolling the focused item out of view, focus should move to the table itself
+        body.scrollTop = 1000;
+        act(() => {fireEvent.scroll(body);});
+
+        expect(body.scrollTop).toBe(1000);
+        expect(document.activeElement).toBe(tree.getByRole('grid'));
+        expect(cell).not.toBeInTheDocument();
+
+        // Moving focus should scroll the new focused item into view
+        moveFocus('ArrowLeft');
+        expect(body.scrollTop).toBe(196);
+        expect(document.activeElement).toBe(tree.getByText('Bar 5'));
+      });
+
+      it('should not scroll when a column header receives focus', function () {
+        let tree = renderMany();
+        let body = tree.getByRole('grid').childNodes[1];
+
+        focusCell(tree, 'Baz 5');
+
+        body.scrollTop = 1000;
+        act(() => {fireEvent.scroll(body);});
+
+        expect(body.scrollTop).toBe(1000);
+        expect(document.activeElement).toBe(tree.getByRole('grid'));
+
+        focusCell(tree, 'Bar');
+        expect(document.activeElement).toHaveAttribute('role', 'columnheader');
+        expect(document.activeElement).toHaveTextContent('Bar');
+        expect(body.scrollTop).toBe(1000);
       });
     });
   });

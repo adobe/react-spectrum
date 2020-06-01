@@ -241,7 +241,14 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
     transitionDuration: collection.body.props.isLoading && collection.size > 0 ? 0 : 500
   });
 
-  let {collectionViewProps} = useCollectionView({focusedKey}, collectionState, domRef);
+  let {collectionViewProps} = useCollectionView({
+    focusedKey,
+    shouldScrollToItem(key) {
+      // Prevent scrolling to the top when clicking on column headers.
+      let item = collection.getItem(key);
+      return item?.type !== 'column';
+    }
+  }, collectionState, domRef);
 
   let headerHeight = layout.getLayoutInfo('header')?.rect.height || 0;
   let visibleRect = collectionState.collectionManager.visibleRect;
