@@ -116,11 +116,11 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
               }
 
               if (!fine.matches) {
-                classList.remove("${theme.medium['spectrum--medium']}");
-                classList.add("${theme.large['spectrum--large']}");
+                classList.remove("${theme.medium['spectrum--medium']}", "${docStyles.medium}");
+                classList.add("${theme.large['spectrum--large']}", "${docStyles.large}");
               } else {
-                classList.add("${theme.medium['spectrum--medium']}");
-                classList.remove("${theme.large['spectrum--large']}");
+                classList.add("${theme.medium['spectrum--medium']}", "${docStyles.medium}");
+                classList.remove("${theme.large['spectrum--large']}", "${docStyles.large}");
               }
             };
 
