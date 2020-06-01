@@ -16,6 +16,7 @@ import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 
 ```jsx import
  import {Checkbox} from '@react-spectrum/checkbox';
+ import {View} from '@react-spectrum/view';
  ```
 
 ---
@@ -57,7 +58,7 @@ For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout o
 ## Value
 
 Checkboxes are not selected by default. The `defaultSelected` prop can be used to set the default state (uncontrolled).
-Alternatively, the `isSelected` prop can be used to make the selected state controlled. See [uncontrolled components](https://reactjs.org/docs/uncontrolled-components.html) for more.
+Alternatively, the `isSelected` prop can be used to make the selected state controlled. See React's documentation on [uncontrolled components](https://reactjs.org/docs/uncontrolled-components.html) for more info.
 
 ```tsx example
 function Example() {
@@ -93,12 +94,12 @@ function Example() {
   let [selected, setSelection] = React.useState(false);
 
   return (
-    <div>
+    <>
       <Checkbox onChange={setSelection}>
         Subscribe
       </Checkbox>
-      <div>{`You are ${selected ? 'subscribed' : 'unsubscribed'}`}</div>
-    </div>
+      <View>{`You are ${selected ? 'subscribed' : 'unsubscribed'}`}</View>
+    </>
   );
  }
 ```

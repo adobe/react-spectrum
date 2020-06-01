@@ -16,6 +16,7 @@ import packageData from '../package.json';
 
 ```jsx import
 import {TextArea} from '@react-spectrum/textfield';
+import {Flex} from '@react-spectrum/layout';
 ```
 
 ---
@@ -47,17 +48,16 @@ function Example() {
   let [value, setValue] = React.useState('This is on a wait list');
 
   return (
-    <>
+    <Flex gap="size-300">
       <TextArea
         label="Notes (Uncontrolled)"
-        defaultValue="This is on a wait list"
-        marginEnd="size-300" />
+        defaultValue="This is on a wait list" />
 
       <TextArea
         label="Notes (Controlled)"
         value={value}
         onChange={setValue} />
-    </>
+    </Flex>
   );
 }
 ```
@@ -75,10 +75,12 @@ A visual label should be provided for the TextArea using the `label` prop. If th
 `necessityIndicator` props can be used to show a required state.
 
 ```tsx example
-<TextArea label="Address" marginEnd="size-300" />
-<TextArea label="Address" isRequired necessityIndicator="icon" marginEnd="size-300" />
-<TextArea label="Address" isRequired necessityIndicator="label" marginEnd="size-300" />
-<TextArea label="Address" necessityIndicator="label" />
+<Flex gap="size-300" wrap>
+  <TextArea label="Address" />
+  <TextArea label="Address" isRequired necessityIndicator="icon" />
+  <TextArea label="Address" isRequired necessityIndicator="label" />
+  <TextArea label="Address" necessityIndicator="label" />
+</Flex>
 ```
 
 ### Accessibility
@@ -104,15 +106,14 @@ function Example() {
   let [text, setText] = React.useState();
 
   return (
-    <div>
+    <Flex flexDirection="column">
       <TextArea
         placeholder="Enter some text"
         onChange={setText}
         label="Your text"
-        marginEnd="size-300"
       />
       <pre>Mirrored text: {text}</pre>
-    </div>
+    </Flex>
   );
 }
 ```
@@ -138,8 +139,7 @@ function Example() {
       value={value}
       placeholder="Enter a description"
       onChange={setValue}
-      label="Description"
-    />
+      label="Description" />
   );
 }
 ```

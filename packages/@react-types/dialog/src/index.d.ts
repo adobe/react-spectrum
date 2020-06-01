@@ -29,11 +29,11 @@ export interface SpectrumDialogTriggerProps extends DialogTriggerProps, Position
   /** The Dialog and its trigger element. See the DialogTrigger [Content section](#content) for more information on what to provide as children. */
   children: [ReactElement, SpectrumDialogClose | ReactElement],
   /**
-   * The type of Dialog that should be rendered. See the DialogTrigger [types section](#dialog-types) for an explaination on each.
+   * The type of Dialog that should be rendered. See the DialogTrigger [types section](#dialog-types) for an explanation on each.
    * @default "modal"
    */
   type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
-  /** The type of Dialog that should be rendered when on a mobile device. See DialogTrigger [types section](#dialog-types) for an explaination on each. */
+  /** The type of Dialog that should be rendered when on a mobile device. See DialogTrigger [types section](#dialog-types) for an explanation on each. */
   mobileType?: 'modal' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   /**
    * Whether a popover type Dialog's arrow should be hidden.

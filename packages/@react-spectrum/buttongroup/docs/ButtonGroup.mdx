@@ -69,10 +69,11 @@ Setting this to 'vertical' will prevent any dynamic orientation changes, the But
 
 ### Alignment
 [View guidelines](https://spectrum.adobe.com/page/button-group/#Align-button-groups-based-on-content)
+
 Button groups are aligned contextually. Generally, button groups should be start-aligned to follow content. However, they should be end-aligned inside container components, such as in dialogs, popovers, or cards. Center alignment should be used in the context of an empty state. In right-to-left languages, alignment is flipped automatically.
 
 ```tsx example
-<ButtonGroup align="end">
+<ButtonGroup orientation="vertical" align="end">
   <Button variant="secondary">No, thanks</Button>
   <Button variant="secondary">Remind me later</Button>
   <Button variant="primary">Rate Now</Button>
@@ -80,7 +81,7 @@ Button groups are aligned contextually. Generally, button groups should be start
 ```
 
 ```tsx example
-<ButtonGroup align="center">
+<ButtonGroup orientation="vertical" align="center">
   <Button variant="secondary">No, thanks</Button>
   <Button variant="secondary">Remind me later</Button>
   <Button variant="primary">Rate Now</Button>
