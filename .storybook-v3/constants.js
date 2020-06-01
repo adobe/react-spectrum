@@ -22,7 +22,7 @@ export const scales = {
 export let defaultTheme = {
   global: themeGlobal,
   light: THEME.light,
-  dark: THEME.dark,
+  dark: THEME.darkest,
   medium: scales.medium,
   large: scales.large
 };
@@ -30,16 +30,16 @@ export let defaultTheme = {
 export let altTheme = {
   global: themeGlobal,
   light: THEME.lightest,
-  dark: THEME.darkest,
+  dark: THEME.dark,
   medium: scales.medium,
   large: scales.large
 };
 
 export let themes = {
   light: defaultTheme,
-  dark: defaultTheme,
+  dark: altTheme,
   lightest: altTheme,
-  darkest: altTheme
+  darkest: defaultTheme
 };
 
 // Based on https://adobe.sharepoint.com/sites/global/SitePages/Languages%20Supported.aspx

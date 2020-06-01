@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
 import {HTMLAttributes, ReactElement, ReactNode} from 'react';
+import {StyleProps} from '@react-types/shared';
 
 export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
     'top' | 'top left' | 'top right' | 'top start' | 'top end' |
@@ -73,7 +73,7 @@ export interface OverlayProps {
   onExited?: () => void
 }
 
-export interface ModalProps extends DOMProps, StyleProps, OverlayProps {
+export interface ModalProps extends StyleProps, OverlayProps {
   children: ReactElement,
   isOpen?: boolean,
   onClose?: () => void,
@@ -81,7 +81,7 @@ export interface ModalProps extends DOMProps, StyleProps, OverlayProps {
   isDismissable?: boolean
 }
 
-export interface PopoverProps extends DOMProps, StyleProps, OverlayProps {
+export interface PopoverProps extends StyleProps, OverlayProps {
   children: ReactNode,
   placement?: PlacementAxis,
   arrowProps?: HTMLAttributes<HTMLElement>,
@@ -91,7 +91,7 @@ export interface PopoverProps extends DOMProps, StyleProps, OverlayProps {
   shouldCloseOnBlur?: boolean
 }
 
-export interface TrayProps extends DOMProps, StyleProps, OverlayProps {
+export interface TrayProps extends StyleProps, OverlayProps {
   children: ReactElement,
   isOpen?: boolean,
   onClose?: () => void,

@@ -18,17 +18,11 @@ import {Keyboard, Text} from '@react-spectrum/typography';
 import {MenuContext} from '../src/context';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {Menu as V2Menu, MenuDivider as V2MenuDivider, MenuHeading as V2MenuHeading, MenuItem as V2MenuItem} from '@react/react-spectrum/Menu';
 
 let menuId = 'menu-id';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 let withSection = [
   {name: 'Heading 1', children: [
@@ -74,11 +68,12 @@ function renderComponent(Component, contextProps = {}, props = {}) {
   } else {
     return render(
       <Provider theme={theme}>
+        <span id="label">Label</span>
         <MenuContext.Provider value={contextProps}>
-          <Menu id={menuId} items={withSection} itemKey="name" {...props}>
+          <Menu id={menuId} items={withSection} aria-labelledby="label" {...props}>
             {item => (
-              <Section items={item.children} title={item.name}>
-                {item => <Item childItems={item.children}>{item.name}</Item>}
+              <Section key={item.name} items={item.children} title={item.name}>
+                {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
               </Section>
             )}
           </Menu>
@@ -119,6 +114,8 @@ describe('Menu', function () {
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
     if (Component === Menu) {
+      expect(menu).toHaveAttribute('aria-labelledby', 'label');
+
       let sections = within(menu).getAllByRole('group');
       expect(sections.length).toBe(2);
 
@@ -627,7 +624,7 @@ describe('Menu', function () {
   it('supports DialogTrigger as a wrapper around items', function () {
     let tree = render(
       <Provider theme={theme}>
-        <Menu id={menuId} selectionMode="none">
+        <Menu aria-label="menu" id={menuId} selectionMode="none">
           <Section title="Test">
             <DialogTrigger>
               <Item>Hi</Item>
@@ -654,10 +651,10 @@ describe('Menu', function () {
       let onSelectionChange = jest.fn();
       let tree = render(
         <Provider theme={theme}>
-          <Menu onSelectionChange={onSelectionChange} onAction={onAction}>
-            <Item uniqueKey="One">One</Item>
-            <Item uniqueKey="Two">Two</Item>
-            <Item uniqueKey="Three">Three</Item>
+          <Menu aria-label="menu" onSelectionChange={onSelectionChange} onAction={onAction}>
+            <Item key="One">One</Item>
+            <Item key="Two">Two</Item>
+            <Item key="Three">Three</Item>
           </Menu>
         </Provider>
       );
@@ -695,8 +692,8 @@ describe('Menu', function () {
       ];
       let tree = render(
         <Provider theme={theme}>
-          <Menu onSelectionChange={onSelectionChange} items={flatItems} itemKey="name" onAction={onAction}>
-            {item => <Item>{item.name}</Item>}
+          <Menu aria-label="menu" onSelectionChange={onSelectionChange} items={flatItems} onAction={onAction}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Menu>
         </Provider>
       );
@@ -730,7 +727,7 @@ describe('Menu', function () {
   it('supports complex menu items with aria-labelledby and aria-describedby', function () {
     let tree = render(
       <Provider theme={theme}>
-        <Menu id={menuId} selectionMode="none">
+        <Menu id={menuId} aria-label="menu" selectionMode="none">
           <Item textValue="Label">
             <Bell />
             <Text>Label</Text>
@@ -754,7 +751,7 @@ describe('Menu', function () {
   it('supports aria-label on sections and items', function () {
     let tree = render(
       <Provider theme={theme}>
-        <Menu>
+        <Menu aria-label="menu">
           <Section aria-label="Section">
             <Item aria-label="Item"><Bell /></Item>
           </Section>
@@ -769,5 +766,23 @@ describe('Menu', function () {
     expect(menuItem).toHaveAttribute('aria-label', 'Item');
     expect(menuItem).not.toHaveAttribute('aria-labelledby');
     expect(menuItem).not.toHaveAttribute('aria-describedby');
+  });
+
+  it('supports aria-label', function () {
+    let tree = renderComponent(Menu, {}, {'aria-label': 'Test'});
+    let menu = tree.getByRole('menu');
+    expect(menu).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it('warns user if no aria-label is provided', () => {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    renderComponent(Menu, {}, {'aria-labelledby': undefined});
+    expect(spyWarn).toHaveBeenCalledWith('An aria-label or aria-labelledby prop is required for accessibility.');
+  });
+
+  it('supports custom data attributes', function () {
+    let tree = renderComponent(Menu, {}, {'data-testid': 'test'});
+    let menu = tree.getByRole('menu');
+    expect(menu).toHaveAttribute('data-testid', 'test');
   });
 });

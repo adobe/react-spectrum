@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
 import {PositionProps} from '@react-types/overlays';
 import {ReactElement, ReactNode, RefObject} from 'react';
 
@@ -45,7 +45,12 @@ export interface SpectrumDialogTriggerProps extends DialogTriggerProps, Position
   isDismissable?: boolean
 }
 
-export interface SpectrumDialogProps extends DOMProps, StyleProps {
+export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
+  /** The accessibility role for the dialog. */
+  role?: 'dialog' | 'alertdialog'
+}
+
+export interface SpectrumDialogProps extends AriaDialogProps, StyleProps {
   /** The contents of the Dialog. */
   children: ReactNode,
   /** The size of the Dialog. Only applies to "modal" type Dialogs. */
@@ -53,9 +58,7 @@ export interface SpectrumDialogProps extends DOMProps, StyleProps {
   /** Whether the Dialog is dismissable. See the [examples](#examples) for more details. */
   isDismissable?: boolean,
   /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
-  onDismiss?: () => void,
-  /** The role of the Dialog. */
-  role?: 'dialog' | 'alertdialog'
+  onDismiss?: () => void
 }
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {

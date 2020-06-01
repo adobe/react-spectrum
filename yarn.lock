@@ -3533,10 +3533,10 @@
     replace-ext "^1.0.0"
     through2 "^3.0.1"
 
-"@spectrum-css/vars@^2.0.0":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@spectrum-css/vars/-/vars-2.0.2.tgz#235ae6965a4e3ffff4884617e583425e382776f6"
-  integrity sha512-BKzC3a+gdhsC9tBjenXUmv/lpmrLLYNV6KO0f67HIVJLKcY9Va4uaO0BfWaS3FCEm7msB4R8ANJkZtqNq5NbTg==
+"@spectrum-css/vars@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@spectrum-css/vars/-/vars-2.3.0.tgz#0ce716fb5ee65f4af9e2d2a7aaae55e8ba4d4c8f"
+  integrity sha512-k4YwFbv9+7QzBrc3ezvGuHxI3nDTG/6qJsAmhYS1vEyxpxjKmRfiz59P+fqT12PQNjxeNYHyVz1kRgaLA6gw2w==
 
 "@storybook/addon-a11y@^5.2.1":
   version "5.3.14"

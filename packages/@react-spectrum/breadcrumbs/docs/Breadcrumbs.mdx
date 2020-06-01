@@ -39,21 +39,20 @@ category: Navigation
 
 ```tsx example
 <Breadcrumbs>
-  <Item uniqueKey="home">Home</Item>
-  <Item uniqueKey="trendy">Trendy</Item>
-  <Item uniqueKey="march 2020 assets">March 2020 Assets</Item>
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
+  <Item key="march 2020 assets">March 2020 Assets</Item>
 </Breadcrumbs>
 ```
 
 ## Content
-Breadcrumbs follow the [Collection Components](../react-stately/collections.html) API, accepting only static children. Similar to the Menu, Breadcrumbs accept an `<Item>` component, each with a `uniqueKey` prop which is passed to the `onAction` handler to identify the selected item. Basic usage of Breadcrumbs, seen in the example above, shows a list of Items, populated with a string. See [Events](#events) for more information.
+Breadcrumbs follow the [Collection Components](../react-stately/collections.html) API, accepting only static children. Similar to the Menu, Breadcrumbs accept an `<Item>` component, each with a `key` prop which is passed to the `onAction` handler to identify the selected item. Basic usage of Breadcrumbs, seen in the example above, shows a list of <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Item} /> components, populated with a string. See [Events](#events) for more information.
 
 ### Internationalization
 In order to internationalize Breadcrumbs, the strings of all child items should be localized.
 
 ## Events
 Use the `onAction` prop as a callback to handle press events on items.
-The `uniqueKey` prop from the pressed item will be passed to the callback.
 
 ```tsx example
 function Example() {
@@ -66,7 +65,7 @@ function Example() {
   return (
     <div>
       <Breadcrumbs onAction={(a) => setFolderId(a)}>
-        {folders.map(f => <Item key={f.id} uniqueKey={f.id}>{f.label}</Item>)}
+        {folders.map(f => <Item key={f.id}>{f.label}</Item>)}
       </Breadcrumbs>
       <p>You pressed folder ID: {folderId}</p>
     </div>
@@ -87,16 +86,21 @@ The small size is useful when available space is limited.
 
 ```tsx example
 <Breadcrumbs size="S">
-  <Item uniqueKey="home">Home</Item>
-  <Item uniqueKey="trendy">Trendy</Item>
+<<<<<<< HEAD
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
+=======
+  <Item key="Folder 1">Folder 1</Item>
+  <Item key="Folder 2">Folder 2</Item>
+>>>>>>> 147f775b8831349c9e302c7bbc379abe24cf07d0
 </Breadcrumbs>
 ```
 
 The medium size is the default.
 ```tsx example
 <Breadcrumbs size="M">
-  <Item uniqueKey="home">Home</Item>
-  <Item uniqueKey="trendy">Trendy</Item>
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
 </Breadcrumbs>
 ```
 
@@ -104,8 +108,8 @@ The large size places emphasis on the selected item as a page title or heading.
 
 ```tsx example
 <Breadcrumbs size="L">
-  <Item uniqueKey="home">Home</Item>
-  <Item uniqueKey="trendy">Trendy</Item>
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
 </Breadcrumbs>
 ```
 
@@ -116,9 +120,9 @@ If a change to the aria-level is required, use the `headingAriaLevel` prop.
 
 ```tsx example
 <Breadcrumbs isHeading headingAriaLevel={2}>
-  <Item uniqueKey="home">Home</Item>
-  <Item uniqueKey="trendy">Trendy</Item>
-  <Item uniqueKey="march 2020 assets">March 2020 Assets</Item>
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
+  <Item key="march 2020 assets">March 2020 Assets</Item>
 </Breadcrumbs>
 ```
 
@@ -134,9 +138,9 @@ In order to manually control the overflow, use the `maxVisibleItems` prop.
 
 ```tsx example
 <Breadcrumbs maxVisibleItems={2}>
-  <Item uniqueKey="home">Home</Item>
-  <Item uniqueKey="trendy">Trendy</Item>
-  <Item uniqueKey="march 2020 assets">March 2020 Assets</Item>
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
+  <Item key="march 2020 assets">March 2020 Assets</Item>
 </Breadcrumbs>
 ```
 
@@ -148,11 +152,11 @@ This variation keeps the root visible when other items are truncated into the me
 ```tsx example
 <View overflow="hidden" width="200px">
   <Breadcrumbs showRoot maxVisibleItems="auto">
-    <Item uniqueKey="home">Home</Item>
-    <Item uniqueKey="trendy">Trendy</Item>
-    <Item uniqueKey="2020 assets">March 2020 Assets</Item>
-    <Item uniqueKey="winter">Winter</Item>
-    <Item uniqueKey="holiday">Holiday</Item>
+    <Item key="home">Home</Item>
+    <Item key="trendy">Trendy</Item>
+    <Item key="2020 assets">March 2020 Assets</Item>
+    <Item key="winter">Winter</Item>
+    <Item key="holiday">Holiday</Item>
   </Breadcrumbs>
 </View>
 ```
@@ -164,8 +168,8 @@ This can be used to maintain layout continuity.
 
 ```tsx example
 <Breadcrumbs isDisabled>
-  <Item uniqueKey="home">Home</Item>
-  <Item uniqueKey="trendy">Trendy</Item>
-  <Item uniqueKey="march 2020 assets">March 2020 Assets</Item>
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
+  <Item key="march 2020 assets">March 2020 Assets</Item>
 </Breadcrumbs>
 ```
