@@ -116,15 +116,13 @@
 
 :global(.source) {
   display: block;
-  overflow-x: auto;
   padding: 0.5em;
   color: var(--hljs-color);
   background: var(--hljs-background);
 
   text-align: left;
-  white-space: pre;
   word-spacing: normal;
-  word-break: normal;
+  word-break: break-all;
   line-height: 1.5;
 
   -moz-tab-size: 4;
