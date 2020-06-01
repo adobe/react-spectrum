@@ -110,9 +110,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
 }
 
 /**
- * ButtonGroup handles overflow for a group of Buttons. When there isn't enough horizontal space
- * for every Button, then it switches to a vertical layout. Anytime there are two or more
- * Buttons next to each other, a ButtonGroup should be used.
+ * ButtonGroup handles overflow for a grouping of buttons whose actions are related to each other.
  */
 let _ButtonGroup = React.forwardRef(ButtonGroup);
 export {_ButtonGroup as ButtonGroup};

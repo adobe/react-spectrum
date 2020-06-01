@@ -15,8 +15,6 @@ import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
-import {Button} from '@react-spectrum/button';
-import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {View} from '@react-spectrum/view';
 ```
 
@@ -32,13 +30,15 @@ category: Buttons
   packageData={packageData}
   componentNames={['ButtonGroup']}
   sourceData={[
-    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/button/#Button-group-overflow'}
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/button-group/'}
   ]} />
 
 ## Example
-To see the orientation switch, reduce the width of your window.
 ```tsx example
-<ButtonGroup width="50%">
+import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {Button} from '@react-spectrum/button';
+
+<ButtonGroup>
   <Button variant="primary">Rate Now</Button>
   <Button variant="secondary">No, thanks</Button>
   <Button variant="secondary">Remind me later</Button>
@@ -46,8 +46,8 @@ To see the orientation switch, reduce the width of your window.
 ```
 
 ## Content
-
-ButtonGroup expects [Buttons](./Button.html) as children.
+ButtonGroup expects [Buttons](./Button.html) as children and are used to handle overflow. When horizontal space is limited, the ButtonGroup switches to a vertical layout. ButtonGroup should be used when there are two or more related Buttons in a group.
+To see the orientation switch, resize the width of your window.
 
 ## Props
 
@@ -56,6 +56,7 @@ ButtonGroup expects [Buttons](./Button.html) as children.
 ## Visual options
 
 ### Orientation
+[View guidelines](https://spectrum.adobe.com/page/button-group/#Orientation)
 
 Setting this to 'vertical' will prevent any dynamic orientation changes, the ButtonGroup will remain in vertical regardless of the available width.
 ```tsx example
@@ -67,25 +68,32 @@ Setting this to 'vertical' will prevent any dynamic orientation changes, the But
 ```
 
 ### Alignment
+[View guidelines](https://spectrum.adobe.com/page/button-group/#Align-button-groups-based-on-content)
+Button groups are aligned contextually. Generally, button groups should be start-aligned to follow content. However, they should be end-aligned inside container components, such as in dialogs, popovers, or cards. Center alignment should be used in the context of an empty state. In right-to-left languages, alignment is flipped automatically.
 
-Button groups are aligned contextually. Generally (in LTR languages), button groups should be left-aligned to follow content. However, they should be right-aligned inside container components, such as in dialogs, popovers, or cards. They should be center-aligned in the context of an empty state. In RTL, left and right should be flipped.
-To see the orientation switch, reduce the width of your window.
 ```tsx example
-<View width="50%">
-  <ButtonGroup align="end" width="100%">
-    <Button variant="secondary">No, thanks</Button>
-    <Button variant="secondary">Remind me later</Button>
-    <Button variant="primary">Rate Now</Button>
-  </ButtonGroup>
-</View>
+<ButtonGroup align="end">
+  <Button variant="secondary">No, thanks</Button>
+  <Button variant="secondary">Remind me later</Button>
+  <Button variant="primary">Rate Now</Button>
+</ButtonGroup>
 ```
 
 ```tsx example
-<View width="50%">
-  <ButtonGroup align="center" width="100%">
-    <Button variant="secondary">No, thanks</Button>
-    <Button variant="secondary">Remind me later</Button>
-    <Button variant="primary">Rate Now</Button>
-  </ButtonGroup>
-</View>
+<ButtonGroup align="center">
+  <Button variant="secondary">No, thanks</Button>
+  <Button variant="secondary">Remind me later</Button>
+  <Button variant="primary">Rate Now</Button>
+</ButtonGroup>
+```
+
+### Disabled
+[View guidelines](https://spectrum.adobe.com/page/button-group/#Disabled)
+
+```tsx example
+<ButtonGroup isDisabled>
+  <Button variant="secondary">No, thanks</Button>
+  <Button variant="secondary">Remind me later</Button>
+  <Button variant="primary">Rate Now</Button>
+</ButtonGroup>
 ```
