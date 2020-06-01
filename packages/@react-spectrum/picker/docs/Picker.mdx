@@ -129,13 +129,8 @@ function Example() {
         label="Pick an animal (uncontrolled)"
         items={options}
         defaultSelectedKey="Bison"
-<<<<<<< HEAD
         marginEnd="size-300">
-        {item => <Item uniqueKey={item.name}>{item.name}</Item>}
-=======
-        marginEnd="20px">
         {item => <Item key={item.name}>{item.name}</Item>}
->>>>>>> 147f775b8831349c9e302c7bbc379abe24cf07d0
       </Picker>
 
       <Picker
@@ -385,7 +380,6 @@ function AsyncLoadingExample() {
 ### Menu state
 The open state of the menu can be controlled via the `defaultOpen` and `isOpen` props
 ```tsx example
-<<<<<<< HEAD
 function Example() {
   let [open, setOpen] = React.useState(false);
   let [frequency, setfrequency] = React.useState("always");
@@ -397,17 +391,10 @@ function Example() {
       selectedKey={frequency}
       onOpenChange={setOpen}
       onSelectionChange={selected => setfrequency(selected)}>
-      <Item uniqueKey="rarely">Rarely</Item>
-      <Item uniqueKey="sometimes">Sometimes</Item>
-      <Item uniqueKey="always">Always</Item>
+      <Item key="rarely">Rarely</Item>
+      <Item key="sometimes">Sometimes</Item>
+      <Item key="always">Always</Item>
     </Picker>
   );
 }
-=======
-<Picker label="Choose frequency" isOpen>
-  <Item key="rarely">Rarely</Item>
-  <Item key="sometimes">Sometimes</Item>
-  <Item key="always">Always</Item>
-</Picker>
->>>>>>> 147f775b8831349c9e302c7bbc379abe24cf07d0
 ```
