@@ -19,9 +19,9 @@ import NotFound from '@spectrum-icons/illustrations/src/NotFound';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import Timeout from '@spectrum-icons/illustrations/Timeout';
-import Upload from '@spectrum-icons/illustrations/Upload';
 import Unauthorized from '@spectrum-icons/illustrations/Unauthorized';
 import Unavailable from '@spectrum-icons/illustrations/Unavailable';
+import Upload from '@spectrum-icons/illustrations/Upload';
 
 storiesOf('IllustratedMessage', module)
   .add(
