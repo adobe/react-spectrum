@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
@@ -49,7 +49,6 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
-        {...filterDOMProps(otherProps)}
         {...styleProps}
         {...buttonProps}
         ref={domRef}

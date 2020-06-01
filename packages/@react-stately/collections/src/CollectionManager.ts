@@ -76,7 +76,7 @@ export class CollectionManager<T extends object, V, W> {
   /** The duration of animated layout changes, in milliseconds. Default is 500ms. */
   transitionDuration: number;
 
-  /** 
+  /**
    * Whether to enable scroll anchoring. This will attempt to restore the scroll position
    * after layout changes outside the viewport. Default is off.
    */
@@ -85,12 +85,12 @@ export class CollectionManager<T extends object, V, W> {
   /** Whether to anchor the scroll position when at the top of the content. Default is off. */
   anchorScrollPositionAtTop: boolean;
 
-  /** 
-   * Whether to overscan the visible area to pre-render items slightly outside and 
+  /**
+   * Whether to overscan the visible area to pre-render items slightly outside and
    * improve performance. Default is on.
    */
   shouldOverscan: boolean;
-  
+
   private _collection: Collection<T>;
   private _layout: Layout<T>;
   private _contentSize: Size;
@@ -133,7 +133,7 @@ export class CollectionManager<T extends object, V, W> {
     this._transactionQueue = [];
 
     // Set options from passed object if given
-    this.transitionDuration = options.transitionDuration || 500;
+    this.transitionDuration = options.transitionDuration ?? 500;
     this.anchorScrollPosition = options.anchorScrollPosition || false;
     this.anchorScrollPositionAtTop = options.anchorScrollPositionAtTop || false;
     this.shouldOverscan = options.shouldOverscan !== false;
@@ -218,7 +218,7 @@ export class CollectionManager<T extends object, V, W> {
     if (this._collection) {
       this._runTransaction(() => {
         this._collection = data;
-      }, true);
+      }, this.transitionDuration > 0);
     } else {
       this._collection = data;
       this.reloadData();
@@ -496,7 +496,7 @@ export class CollectionManager<T extends object, V, W> {
     // Wait for animations, and apply the afterAnimation hook, if provided
     if (context.animated && hasLayoutUpdates) {
       this._enableTransitions();
-      
+
       let done = () => {
         this._disableTransitions();
 

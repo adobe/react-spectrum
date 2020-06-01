@@ -22,14 +22,15 @@ import {useMessageFormatter} from '@react-aria/i18n';
 
 interface DateRangePickerAria {
   comboboxProps: HTMLAttributes<HTMLElement>,
-  startFieldProps: DOMProps,
-  endFieldProps: DOMProps,
+  startFieldProps: HTMLAttributes<HTMLElement>,
+  endFieldProps: HTMLAttributes<HTMLElement>,
   buttonProps: HTMLAttributes<HTMLElement>,
   dialogProps: HTMLAttributes<HTMLElement> & {role?: 'dialog' | 'alertdialog'}
 }
 
 export function useDateRangePicker(props: DateRangePickerProps & DOMProps, state: DateRangePickerState): DateRangePickerAria {
   let formatMessage = useMessageFormatter(intlMessages);
+  // @ts-ignore
   let {comboboxProps, buttonProps, fieldProps, dialogProps} = useDatePicker({
     ...props,
     ...useLabels(props, formatMessage('dateRange'))

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {CollectionItem, CollectionView} from '@react-aria/collections';
 import {ListLayout, Node} from '@react-stately/collections';
 import React, {ReactElement, useMemo, useRef} from 'react';
@@ -60,7 +60,6 @@ export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
 
   return (
     <nav
-      {...filterDOMProps(props)}
       {...navProps}
       {...styleProps}>
       <SideNavContext.Provider value={state}>

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import React, {useContext} from 'react';
 import {Removable} from '@react-types/shared';
 import {SpectrumTagGroupProps} from '@react-types/tag';
@@ -53,7 +53,6 @@ export const TagGroup = ((props: SpectrumTagGroupProps) => {
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       className={
         classNames(

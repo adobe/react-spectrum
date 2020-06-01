@@ -12,7 +12,7 @@
 
 import {Calendar} from '@react-spectrum/calendar';
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -64,14 +64,13 @@ export function DatePicker(props: SpectrumDatePickerProps) {
       focusRingClass={classNames(styles, 'focus-ring')}
       autoFocus={autoFocus}>
       <div
-        {...filterDOMProps(otherProps)}
         {...styleProps}
         {...comboboxProps}
         className={className}
         ref={targetRef}>
         <FocusScope autoFocus={autoFocus}>
           <DatePickerField
-            {...fieldProps}
+            {...fieldProps as any}
             data-testid="date-field"
             isQuiet={isQuiet}
             validationState={state.validationState}

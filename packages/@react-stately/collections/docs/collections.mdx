@@ -134,9 +134,8 @@ returns an &lt;<TypeLink links={docs.links} type={docs.exports.Item} />&gt;.
 
 All items in a collection must have a unique key or id, which is used to determine what items in the collection changed
 when updates occur. By default, React Spectrum looks for an `id` or `key` property on each item, which is often returned 
-from a database. You can also specify a custom key on each item that should be used as the unique key for the item with 
-the `itemKey` prop. For example, if all animals in the example had a unique `name` property, then `itemKey` could be set 
-to `"name"` to use it as the unique key.
+from a database. You can also specify a custom key on each item using the `key` prop. For example, if all animals in the 
+example had a unique `name` property, then each item's `key` could be set to `item.name` to use it as the unique key.
 
 ```tsx
 let [animals, setAnimals] = useState([
@@ -145,8 +144,8 @@ let [animals, setAnimals] = useState([
   {name: 'Snake'}
 ]);
 
-<ListBox items={animals} itemKey="name">
-  {item => <Item>{item.name}</Item>}
+<ListBox items={animals}>
+  {item => <Item key={item.name}>{item.name}</Item>}
 </ListBox>
 ```
 
@@ -203,8 +202,8 @@ function addAnimal(name) {
   list.append({name});
 }
 
-<ListBox items={list.items} itemKey="name">
-  {item => <Item>{item.name}</Item>}
+<ListBox items={list.items}>
+  {item => <Item key={item.name}>{item.name}</Item>}
 </ListBox>
 ```
 
@@ -212,7 +211,7 @@ function addAnimal(name) {
 
 Sections can be built by returning a &lt;<TypeLink links={docs.links} type={docs.exports.Section} />&gt; instead of
 an &lt;<TypeLink links={docs.links} type={docs.exports.Item} />&gt; item from the top-level item renderer. Sections
-also support an `items` prop with `itemKey` and a renderer function for their children.
+also support an `items` prop and a renderer function for their children.
 
 ```tsx
 let [sections, setSections] = useState([
@@ -234,10 +233,10 @@ let [sections, setSections] = useState([
   }
 ]);
 
-<Picker items={sections} itemKey="name">
+<Picker items={sections}>
   {section =>
-    <Section title={section.name} items={section.items} itemKey="name">
-      {item => <Item>{item.name}</Item>}
+    <Section key={item.name} title={section.name} items={section.items}>
+      {item => <Item key={item.name}>{item.name}</Item>}
     </Section>
   }
 </Picker>
@@ -333,9 +332,9 @@ let [items, setItems] = useState([
   ]}
 ]);
 
-<Tree items={items} itemKey="name">
+<Tree items={items}>
   {item =>
-    <Item childItems={item.children}>{item.name}</Item>
+    <Item key={item.name} childItems={item.children}>{item.name}</Item>
   }
 </Tree>
 ```
@@ -370,7 +369,7 @@ let list = useAsyncList({
   label="Pick a Pokemon"
   items={list.items}
   isLoading={list.isLoading}>
-  {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+  {item => <Item key={item.name}>{item.name}</Item>}
 </Picker>
 ```
 
@@ -405,7 +404,7 @@ let list = useAsyncList({
   items={list.items}
   isLoading={list.isLoading}
   onLoadMore={list.loadMore}>
-  {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+  {item => <Item key={item.name}>{item.name}</Item>}
 </Picker>
 ```
 

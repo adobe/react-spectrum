@@ -71,6 +71,14 @@ governing permissions and limitations under the License.
       color: var(--spectrum-radio-emphasized-text-color-down);
     }
   }
+  & .spectrum-Radio-input:focus-ring,
+  &:hover .spectrum-Radio-input:focus-ring {
+    &:checked + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-emphasized-circle-border-color-selected-key-focus);
+      }
+    }
+  }
 }
 
 .spectrum-Radio--quiet {
@@ -90,6 +98,14 @@ governing permissions and limitations under the License.
     .spectrum-Radio-input:checked + .spectrum-Radio-button {
       &:before {
         border-color: var(--spectrum-radio-quiet-circle-border-color-selected-down);
+      }
+    }
+  }
+  & .spectrum-Radio-input:focus-ring,
+  &:hover .spectrum-Radio-input:focus-ring {
+    &:checked + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-quiet-circle-border-color-selected-key-focus);
       }
     }
   }
@@ -126,6 +142,19 @@ governing permissions and limitations under the License.
     }
     .spectrum-Radio-label {
       color: var(--spectrum-radio-emphasized-circle-border-color-error);
+    }
+  }
+  &.is-invalid .spectrum-Radio-input:focus-ring,
+  &.is-invalid:hover .spectrum-Radio-input:focus-ring {
+    &:not(:checked) + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-circle-border-color-error-key-focus);
+      }
+    }
+    &:checked + .spectrum-Radio-button {
+      &:before {
+        border-color: var(--spectrum-radio-circle-border-color-error-selected-key-focus);
+      }
     }
   }
 }
