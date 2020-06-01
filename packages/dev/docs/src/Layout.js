@@ -136,6 +136,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
         {scripts.map(s => <script type={s.type} src={s.url} defer />)}
+        <script src="//assets.adobedtm.com/a7d65461e54e/01d650a3ee55/launch-4d5498348926.min.js" async />
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
         <meta property="og:title" content={currentPage.title} />
@@ -245,6 +246,7 @@ function Footer() {
         <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy.html">Privacy</a></li>
         <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/legal/terms.html">Terms of Use</a></li>
         <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy/cookies.html">Cookies</a></li>
+        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy/ca-rights.html">Do not sell my personal information</a></li>
       </ul>
     </footer>
   );
