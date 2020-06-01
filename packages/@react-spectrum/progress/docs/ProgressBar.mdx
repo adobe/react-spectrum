@@ -97,9 +97,9 @@ Labels and value labels are shown by default on top, but they can also be moved 
 The label should be in sentence case.
 
 ```tsx example
-<Flex flexDirection="column" maxWidth="250px">
-  <ProgressBar label="Loading…" marginBottom="25px" value={30} />
-  <ProgressBar label="Loading…" marginBottom="25px" labelPosition="side" value={30} />
+<Flex flexDirection="column" maxWidth="size-3000">
+  <ProgressBar label="Loading…" marginBottom="size-300" value={30} />
+  <ProgressBar label="Loading…" marginBottom="size-300" labelPosition="side" value={30} />
   <ProgressBar label="Loading…" showValueLabel={false} value={30} />
 </Flex>
 ```
@@ -111,9 +111,9 @@ Value labels by default show the percentage of progress in a determinate Progres
 * `valueLabel`: Allows you to customize the value label to any string.
 
 ```tsx example
-<Flex flexDirection="column" maxWidth="250px">
-  <ProgressBar label="Loading…" marginBottom="25px" showValueLabel={false} value={30} />
-  <ProgressBar label="Loading…" marginBottom="25px" valueLabel="30 of 60 dogs" value={30} />
+<Flex flexDirection="column" maxWidth="size-3000">
+  <ProgressBar label="Loading…" marginBottom="size-300" showValueLabel={false} value={30} />
+  <ProgressBar label="Loading…" marginBottom="size-300" valueLabel="30 of 60 dogs" value={30} />
   <ProgressBar label="Loading…" formatOptions={{style: 'percent', minimumFractionDigits: 2}} value={30.123} />
 </Flex>
 ```
@@ -140,7 +140,7 @@ When a ProgressBar needs to be placed on top of a colored background, use the `o
 
 ```tsx example
 <Flex flexDirection="column">
-  <ProgressBar label="Small" marginBottom="25px" size="S" value={70} />
+  <ProgressBar label="Small" marginBottom="size-300" size="S" value={70} />
   <ProgressBar label="Large" size="L" value={70} />
 </Flex>
 ```
