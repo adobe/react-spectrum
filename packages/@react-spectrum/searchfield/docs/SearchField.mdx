@@ -15,9 +15,9 @@ import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
-import Refresh from '@spectrum-icons/workflow/Refresh';
 import {Flex} from '@react-spectrum/layout';
 import {SearchField} from '@react-spectrum/searchfield';
+import User from '@spectrum-icons/workflow/User';
 ```
 
 ---
@@ -178,7 +178,7 @@ By default, the label is positioned above the SearchField. The `labelPosition` p
 ```
 
 ### Custom icon
-
+The icon in the SearchField can be changed to suit the theme of a search. For instance, if the SearchField was for searching users users, an icon relating to that would help convey meaning. See the [Icons page](./Icon.html) for more.
 ```tsx example
-<SearchField label="Refresh" icon={<Refresh />} />
+<SearchField label="Search for users" icon={<User />} />
 ```
