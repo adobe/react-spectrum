@@ -91,6 +91,10 @@ export class SelectionManager implements MultipleSelectionManager {
    * Returns whether a key is selected.
    */
   isSelected(key: Key) {
+    if (this.state.selectionMode === 'none') {
+      return false;
+    }
+    
     return this.state.selectedKeys === 'all' || this.state.selectedKeys.has(key);
   }
 

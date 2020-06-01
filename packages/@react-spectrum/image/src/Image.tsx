@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import React from 'react';
 import {SpectrumImageProps} from '@react-types/image';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -63,5 +64,8 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * Image is used to insert and display an image within a component.
+ */
 const _Image = React.forwardRef(Image);
 export {_Image as Image};

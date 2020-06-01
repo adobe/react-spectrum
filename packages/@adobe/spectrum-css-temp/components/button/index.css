@@ -25,6 +25,9 @@ governing permissions and limitations under the License.
 }
 
 %spectrum-BaseButton {
+  /* Contain halo */
+  position: relative;
+
   display: inline-flex;
   box-sizing: border-box;
 
@@ -61,10 +64,11 @@ governing permissions and limitations under the License.
 
   line-height: var(--spectrum-button-line-height);
 
-  cursor: default;
   user-select: none;
   -webkit-user-select: none;
   touch-action: none; /* prevent touch scrolling on buttons */
+
+  cursor: default;
 
   &:focus {
     outline: none;
@@ -93,24 +97,49 @@ governing permissions and limitations under the License.
     flex-shrink: 0;
     order: 0; /* always be before the label, regardless of DOM order */
   }
+
+}
+
+%spectrum-ButtonWithFocusRing {
+  &:after {
+    border-radius: calc(var(--spectrum-button-primary-border-radius) + var(--spectrum-alias-focus-ring-gap));
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    margin: calc(var(--spectrum-alias-focus-ring-gap) * -1);
+
+    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
+                margin var(--spectrum-global-animation-duration-100) ease-out;
+  }
+
+  &:focus-ring {
+    &:after {
+      margin: calc(var(--spectrum-alias-focus-ring-gap) * -2);
+    }
+  }
 }
 
 .spectrum-Button {
   @inherit: %spectrum-BaseButton;
+  @inherit: %spectrum-ButtonWithFocusRing;
 
   border-width: var(--spectrum-button-primary-border-size);
   border-style: solid;
   border-radius: var(--spectrum-button-primary-border-radius);
 
-  min-height: var(--spectrum-button-primary-height);
-  height: 0%;
+  min-block-size: var(--spectrum-button-primary-height);
+  block-size: 0%;
   min-inline-size: var(--spectrum-button-primary-min-width);
 
   padding: var(--spectrum-button-padding-y) calc(var(--spectrum-button-primary-padding-x) - var(--spectrum-button-primary-border-size));
 
   /* @hack: fix button text vertical alignment at 14px */
-  padding-block-end: calc(var(--spectrum-button-padding-y) + 0.5px);
-  padding-block-end: calc(var(--spectrum-button-padding-y) - 0.5px);
+  padding-block-end: calc(var(--spectrum-button-padding-y) + 1px);
+  padding-block-start: calc(var(--spectrum-button-padding-y) - 1px);
 
   font-size: var(--spectrum-button-primary-text-size);
   font-weight: var(--spectrum-button-primary-text-font-weight);
@@ -143,8 +172,10 @@ a.spectrum-ActionButton {
   @inherit: %spectrum-BaseButton;
   position: relative;
 
-  height: var(--spectrum-actionbutton-height);
-  min-width: var(--spectrum-actionbutton-min-width);
+  block-size: var(--spectrum-actionbutton-height);
+  min-inline-size: var(--spectrum-actionbutton-min-width);
+
+  /* Use icon padding by default as it's smaller */
   padding: 0;
 
   border-width: var(--spectrum-actionbutton-border-size);
@@ -229,6 +260,7 @@ a.spectrum-ActionButton {
 
 .spectrum-LogicButton {
   @inherit: %spectrum-BaseButton;
+  @inherit: %spectrum-ButtonWithFocusRing;
 
   block-size: var(--spectrum-logicbutton-and-height);
   padding: var(--spectrum-logicbutton-and-padding-x);
@@ -239,6 +271,11 @@ a.spectrum-ActionButton {
   font-size: var(--spectrum-logicbutton-and-text-size);
   font-weight: var(--spectrum-logicbutton-and-text-font-weight);
   line-height: 0;
+
+  &:after {
+    /* Override border-radius set in %spectrum-ButtonWithFocusRing since this is not a pill button */
+    border-radius: calc(var(--spectrum-logicbutton-and-border-radius) + var(--spectrum-alias-focus-ring-gap));
+  }
 }
 
 .spectrum-FieldButton {
@@ -260,7 +297,8 @@ a.spectrum-ActionButton {
 
 .spectrum-FieldButton {
   margin: 0;
-  padding: 0 var(--spectrum-dropdown-padding-x);
+  padding-block: 0;
+  padding-inline: var(--spectrum-dropdown-padding-x);
 
   border-width: var(--spectrum-dropdown-border-size);
   border-style: solid;
@@ -287,10 +325,17 @@ a.spectrum-ActionButton {
 
   border-width: var(--spectrum-fieldbutton-quiet-border-size);
   border-radius: var(--spectrum-fieldbutton-quiet-border-radius);
+  &:disabled,
+  &.is-disabled {
+    &:focus-ring {
+      box-shadow: none;
+    }
+  }
 }
 
 .spectrum-ClearButton {
   @inherit: %spectrum-BaseButton;
+  @inherit: %spectrum-ButtonWithFocusRing;
 
   inline-size: var(--spectrum-clearbutton-medium-width);
   block-size: var(--spectrum-clearbutton-medium-height);
@@ -304,7 +349,17 @@ a.spectrum-ActionButton {
 
   > .spectrum-Icon {
     /* @safari10 Workaround for https://bugs.webkit.org/show_bug.cgi?id=169700 */
-    margin: 0 auto;
+    margin-block: 0;
+    margin-inline: auto;
+  }
+}
+
+.spectrum-ClearButton--overBackground {
+  &:focus-ring {
+    &:after {
+      /* Adjust margin because ClearButton does not have a border */
+      margin: calc(var(--spectrum-alias-focus-ring-gap) * -1);
+    }
   }
 }
 
@@ -312,7 +367,7 @@ a.spectrum-ActionButton {
   .spectrum-ClearButton {
     > .spectrum-Icon {
       /* @ie11 Workaround for regression caused by fix for https://bugs.webkit.org/show_bug.cgi?id=169700 */
-      margin: 0
+      margin: 0;
     }
   }
 }

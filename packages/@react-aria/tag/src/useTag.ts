@@ -11,14 +11,14 @@
  */
 
 import {ButtonHTMLAttributes, HTMLAttributes, KeyboardEvent, ReactNode} from 'react';
+import {DOMProps, Removable} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useId} from '@react-aria/utils';
-import {Removable} from '@react-types/shared';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 
-export interface AriaTagProps extends Removable<ReactNode, void> {
+export interface AriaTagProps extends Removable<ReactNode, void>, DOMProps {
   children?: ReactNode,
   isDisabled?: boolean,
   validationState?: 'invalid' | 'valid',
@@ -57,14 +57,16 @@ export function useTag(props: AriaTagProps): TagAria {
     onPress: e => onRemove(children, e)
   };
 
+  let domProps = filterDOMProps(props);
   return {
-    tagProps: {
+    tagProps: mergeProps(domProps, {
       'aria-selected': !isDisabled && isSelected,
       'aria-invalid': validationState === 'invalid' || undefined,
+      'aria-errormessage': props['aria-errormessage'],
       onKeyDown: !isDisabled && isRemovable ? onKeyDown : null,
       role: role === 'gridcell' ? 'row' : null,
       tabIndex: isDisabled ? -1 : 0
-    },
+    }),
     labelProps: {
       id: tagId,
       role
