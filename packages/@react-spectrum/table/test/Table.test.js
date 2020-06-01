@@ -931,6 +931,9 @@ describe('Table', function () {
         expect(document.activeElement).toBe(tree.getByText('Julia'));
 
         moveFocus('o');
+        expect(document.activeElement).toBe(tree.getByText('Jones'));
+
+        moveFocus('h');
         expect(document.activeElement).toBe(tree.getByText('John'));
       });
 
@@ -958,6 +961,9 @@ describe('Table', function () {
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
 
         moveFocus('o');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
+
+        moveFocus('h');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[3]);
       });
 
@@ -979,7 +985,7 @@ describe('Table', function () {
         jest.runAllTimers();
         
         moveFocus('J');
-        expect(document.activeElement).toBe(tree.getByText('John'));
+        expect(document.activeElement).toBe(tree.getByText('Julia'));
       });
 
       it('wraps around when reaching the end of the collection', function () {
@@ -990,11 +996,17 @@ describe('Table', function () {
         expect(document.activeElement).toBe(tree.getByText('Julia'));
 
         moveFocus('o');
+        expect(document.activeElement).toBe(tree.getByText('Jones'));
+
+        moveFocus('h');
         expect(document.activeElement).toBe(tree.getByText('John'));
 
         jest.runAllTimers();
 
         moveFocus('J');
+        expect(document.activeElement).toBe(tree.getByText('John'));
+
+        moveFocus('u');
         expect(document.activeElement).toBe(tree.getByText('Julia'));
       });
 
