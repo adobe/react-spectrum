@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, InputBase, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AriaValidationProps, FocusableDOMProps, FocusableProps, InputBase, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface CheckboxBase extends InputBase {
+export interface CheckboxBase extends InputBase, FocusableProps {
   /**
    * The content to render as the Checkbox's label.
    */
-  children?: ReactNode,
+  children?: ReactNode, // pass in children to render label
   /**
    * Whether the Checkbox should be selected (uncontrolled).
    */
@@ -42,6 +42,13 @@ export interface CheckboxBase extends InputBase {
   name?: string
 }
 
+export interface AriaCheckboxBase extends CheckboxBase, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {
+  /**
+   * Identifies the element (or elements) whose contents or presence are controlled by the current element.
+   */
+  'aria-controls'?: string
+}
+
 export interface CheckboxProps extends CheckboxBase {
   /**
    * Indeterminism is presentational, when a checkbox is indeterminate, it overrides the selection state.
@@ -50,7 +57,9 @@ export interface CheckboxProps extends CheckboxBase {
   isIndeterminate?: boolean
 }
 
-export interface SpectrumCheckboxProps extends CheckboxProps, DOMProps, StyleProps {
+export interface AriaCheckboxProps extends CheckboxProps, AriaCheckboxBase {}
+
+export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
   /**
    * This prop sets the emphasized style which provides visual prominence.
    */

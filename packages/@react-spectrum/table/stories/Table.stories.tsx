@@ -11,6 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
@@ -87,7 +88,7 @@ storiesOf('Table', module)
   .add(
     'static',
     () => (
-      <Table width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+      <Table aria-label="Table with static contents" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column key="foo">Foo</Column>
           <Column key="bar">Bar</Column>
@@ -111,13 +112,13 @@ storiesOf('Table', module)
   .add(
     'dynamic',
     () => (
-      <Table width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
-        <TableHeader columns={columns} columnKey="key">
+      <Table aria-label="Table with dynamic contents" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
-        <TableBody items={items} itemKey="foo">
+        <TableBody items={items}>
           {item =>
-            (<Row>
+            (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
@@ -128,7 +129,7 @@ storiesOf('Table', module)
   .add(
     'static with nested columns',
     () => (
-      <Table width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+      <Table aria-label="Table with nested columns" width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column key="test">Test</Column>
           <Column title="Group 1">
@@ -159,15 +160,15 @@ storiesOf('Table', module)
   .add(
     'dynamic with nested columns',
     () => (
-      <Table width={700} height={300} rowHeight="auto" onSelectionChange={s => onSelectionChange([...s])}>
-        <TableHeader columns={nestedColumns} columnKey="key">
+      <Table aria-label="Table with nested columns" width={700} height={300} rowHeight="auto" onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={nestedColumns}>
           {column =>
             <Column childColumns={column.children}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={items} itemKey="foo">
+        <TableBody items={items}>
           {item =>
-            (<Row>
+            (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
@@ -180,7 +181,7 @@ storiesOf('Table', module)
     () => (
       <Flex flexDirection="column">
         <input placeholder="Focusable before" />
-        <Table width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <Table aria-label="Table with focusable cells" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
           <TableHeader>
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
@@ -206,15 +207,15 @@ storiesOf('Table', module)
   .add(
     'many columns and rows',
     () => (
-      <Table width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
-        <TableHeader columns={manyColunns} columnKey="key">
+      <Table aria-label="Table with many columns and rows" width={700} height={500} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={manyColunns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={manyRows} itemKey="key">
+        <TableBody items={manyRows}>
           {item =>
-            (<Row>
+            (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
@@ -225,15 +226,15 @@ storiesOf('Table', module)
   .add(
     'isQuiet, many columns and rows',
     () => (
-      <Table width={700} height={500} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
-        <TableHeader columns={manyColunns} columnKey="key">
+      <Table aria-label="Quiet table with many columns and rows" width={700} height={500} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={manyColunns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={manyRows} itemKey="key">
+        <TableBody items={manyRows}>
           {item =>
-            (<Row>
+            (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
@@ -244,7 +245,7 @@ storiesOf('Table', module)
   .add(
     'column widths and dividers',
     () => (
-      <Table width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+      <Table aria-label="Table with column widths and dividers" width={500} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>
@@ -268,7 +269,7 @@ storiesOf('Table', module)
   .add(
     'isQuiet, column widths and dividers',
     () => (
-      <Table width={500} height={200} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
+      <Table aria-label="Quiet table with column widths and dividers" width={500} height={200} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>
@@ -292,7 +293,7 @@ storiesOf('Table', module)
   .add(
     'rowHeight=72',
     () => (
-      <Table width={500} height={200} isQuiet rowHeight={80} onSelectionChange={s => onSelectionChange([...s])}>
+      <Table aria-label="Table with custom row height" width={500} height={200} isQuiet rowHeight={80} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>
@@ -316,7 +317,7 @@ storiesOf('Table', module)
   .add(
     'rowHeight=auto',
     () => (
-      <Table width={500} height={300} isQuiet rowHeight="auto" onSelectionChange={s => onSelectionChange([...s])}>
+      <Table aria-label="Table with variable row heights" width={500} height={300} isQuiet rowHeight="auto" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>
@@ -340,7 +341,7 @@ storiesOf('Table', module)
   .add(
     'custom isRowHeader labeling',
     () => (
-      <Table width={500} height={200} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
+      <Table aria-label="Table with custom row header labeling" width={500} height={200} isQuiet onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column isRowHeader>First Name</Column>
           <Column isRowHeader>Last Name</Column>
@@ -376,15 +377,15 @@ storiesOf('Table', module)
   .add(
     'isLoading',
     () => (
-      <Table width={700} height={200} onSelectionChange={s => onSelectionChange([...s])}>
-        <TableHeader columns={manyColunns} columnKey="key">
+      <Table aria-label="Table loading" width={700} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={manyColunns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={[]} isLoading itemKey="key">
+        <TableBody items={[]} isLoading>
           {item =>
-            (<Row>
+            (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
@@ -395,15 +396,15 @@ storiesOf('Table', module)
   .add(
     'isLoading more',
     () => (
-      <Table width={700} height={200} onSelectionChange={s => onSelectionChange([...s])}>
-        <TableHeader columns={columns} columnKey="key">
+      <Table aria-label="Table loading more" width={700} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={items} isLoading itemKey="foo">
+        <TableBody items={items} isLoading>
           {item =>
-            (<Row>
+            (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
@@ -414,8 +415,8 @@ storiesOf('Table', module)
   .add(
     'renderEmptyState',
     () => (
-      <Table width={700} height={400} isQuiet renderEmptyState={renderEmptyState} onSelectionChange={s => onSelectionChange([...s])}>
-        <TableHeader columns={manyColunns} columnKey="key">
+      <Table aria-label="Table with empty state" width={700} height={400} isQuiet renderEmptyState={renderEmptyState} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={manyColunns}>
           {column =>
             <Column minWidth={100}>{column.name}</Column>
           }
@@ -441,6 +442,7 @@ function AsyncLoadingExample() {
   }
 
   let list = useAsyncList<Item>({
+    getKey: (item) => item.data.id,
     async load({signal, cursor}) {
       let url = new URL('https://www.reddit.com/r/news.json');
       if (cursor) {
@@ -465,24 +467,27 @@ function AsyncLoadingExample() {
   });
 
   return (
-    <Table width={1000} height={500} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
-      <TableHeader>
-        <Column uniqueKey="score" width={100} allowsSorting>Score</Column>
-        <Column uniqueKey="title" isRowHeader allowsSorting>Title</Column>
-        <Column uniqueKey="author" width={200} allowsSorting>Author</Column>
-        <Column uniqueKey="num_comments" width={100} allowsSorting>Comments</Column>
-      </TableHeader>
-      <TableBody items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
-        {item =>
-          (<Row uniqueKey={item.data.id}>
-            {key => 
-              key === 'title'
-                ? <Cell textValue={item.data.title}><Link isQuiet><a href={item.data.url} target="_blank">{item.data.title}</a></Link></Cell>
-                : <Cell>{item.data[key]}</Cell>
-            }
-          </Row>)
-        }
-      </TableBody>
-    </Table>
+    <div>
+      <ActionButton marginBottom={10} onPress={() => list.remove(list.items[0].data.id)}>Remove first item</ActionButton>
+      <Table aria-label="Top news from Reddit" width={1000} height={400} isQuiet sortDescriptor={list.sortDescriptor} onSortChange={list.sort}>
+        <TableHeader>
+          <Column key="score" width={100} allowsSorting>Score</Column>
+          <Column key="title" isRowHeader allowsSorting>Title</Column>
+          <Column key="author" width={200} allowsSorting>Author</Column>
+          <Column key="num_comments" width={100} allowsSorting>Comments</Column>
+        </TableHeader>
+        <TableBody items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
+          {item =>
+            (<Row key={item.data.id}>
+              {key => 
+                key === 'title'
+                  ? <Cell textValue={item.data.title}><Link isQuiet><a href={item.data.url} target="_blank">{item.data.title}</a></Link></Cell>
+                  : <Cell>{item.data[key]}</Cell>
+              }
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    </div>
   );
 }

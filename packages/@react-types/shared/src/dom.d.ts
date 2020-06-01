@@ -12,60 +12,51 @@
 
 import {ClipboardEventHandler, CompositionEventHandler, FormEventHandler, ReactEventHandler} from 'react';
 
+export interface AriaLabelingProps {
+  /**
+   * Defines a string value that labels the current element.
+   */
+  'aria-label'?: string,
+
+  /**
+   * Identifies the element (or elements) that labels the current element.
+   */
+  'aria-labelledby'?: string,
+
+  /**
+   * Identifies the element (or elements) that describes the object.
+   */
+  'aria-describedby'?: string,
+
+  /**
+   * Identifies the element (or elements) that provide a detailed, extended description for the object.
+   */
+  'aria-details'?: string
+}
+
+export interface AriaValidationProps {
+  // https://www.w3.org/TR/wai-aria-1.2/#aria-errormessage
+  /**
+   * Identifies the element that provides an error message for the object.
+   */
+  'aria-errormessage'?: string
+}
+
 // A set of common DOM props that are allowed on any component
 // Ensure this is synced with DOMPropNames in filterDOMProps
 export interface DOMProps {
   /**
    * The element's unique identifier.
    */
-  id?: string,
+  id?: string
+}
 
+export interface FocusableDOMProps extends DOMProps {
   /**
    * Indicates whether an element is focusable, allows or prevents them from being sequentially focusable, 
    * and determines their relative ordering for sequential focus navigation.
    */
-  tabIndex?: number,
-
-  /**
-   * Defines the type of user interface element.
-   */
-  role?: string,
-
-  /**
-   * Defines a string value that labels the current element.
-   * @see aria-labelledby.
-   */
-  'aria-label'?: string,
-
-  /**
-   * Identifies the element (or elements) that labels the current element.
-   * @see aria-describedby.
-   */
-  'aria-labelledby'?: string,
-
-  /**
-   * Identifies the element (or elements) that describes the object.
-   * @see aria-labelledby
-   */
-  'aria-describedby'?: string,
-
-  /**
-   * Identifies the element (or elements) whose contents or presence are controlled by the current element.
-   * @see aria-owns.
-   */
-  'aria-controls'?: string,
-
-  /**
-   * Identifies an element (or elements) in order to define a visual, functional, or contextual parent/child relationship
-   * between DOM elements where the DOM hierarchy cannot be used to represent the relationship.
-   * @see aria-controls.
-   */
-  'aria-owns'?: string,
-
-  /**
-   * Indicates that the element is perceivable but disabled, so it is not editable or otherwise operable.
-   */
-  'aria-hidden'?: boolean | 'false' | 'true'
+  tabIndex?: number
 }
 
 // DOM props that apply to all text inputs

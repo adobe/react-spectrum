@@ -10,20 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, DOMProps, MultipleSelection, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, DOMProps, MultipleSelection, StyleProps} from '@react-types/shared';
 
 type FocusStrategy = 'first' | 'last';
 
 export interface ListBoxProps<T> extends CollectionBase<T>, MultipleSelection {
-  /**
-   * Whether the listbox, or its first or last element, should be autofocused on render.
-   */
+  /** Whether to auto focus the listbox or an option. */
   autoFocus?: boolean | FocusStrategy,
-  /**
-   * Whether focus within the listbox should wrap from bottom to top and vice versa when using keyboard navigation.
-   */
+  /** Whether focus should wrap around when the end/start is reached. */
   shouldFocusWrap?: boolean
 }
 
-export interface SpectrumListBoxProps<T> extends ListBoxProps<T>, DOMProps, StyleProps {
+export interface AriaListBoxProps<T> extends ListBoxProps<T>, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumListBoxProps<T> extends AriaListBoxProps<T>, StyleProps {
 }

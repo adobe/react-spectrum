@@ -46,7 +46,7 @@ export function useGridState<T extends object>(props: GridStateProps<T>): GridSt
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
   
-  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
+  let builder = useMemo(() => new CollectionBuilder<T>(), []);
   let collectionRef = useRef<GridCollection<T>>();
   let collection = useMemo(() => {
     let context = {

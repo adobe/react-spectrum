@@ -15,7 +15,6 @@ import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {
   classNames,
   createFocusableRef,
-  filterDOMProps,
   useStyleProps
 } from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
@@ -125,10 +124,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
         <ElementType
-          {...mergeProps(
-            inputProps,
-            filterDOMProps(otherProps)
-          )}
+          {...inputProps}
           ref={inputRef}
           rows={multiLine ? 1 : undefined}
           className={

@@ -34,10 +34,11 @@ let withSection = [
 function renderComponent(props) {
   return render(
     <Provider theme={theme}>
-      <ListBox items={withSection} itemKey="name" {...props}>
+      <span id="label">Choose an item</span>
+      <ListBox items={withSection} aria-labelledby="label" {...props}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item childItems={item.children}>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
           </Section>
         )}
       </ListBox>
@@ -71,6 +72,7 @@ describe('ListBox', function () {
     let tree = renderComponent();
     let listbox = tree.getByRole('listbox');
     expect(listbox).toBeTruthy();
+    expect(listbox).toHaveAttribute('aria-labelledby', 'label');
 
     let sections = within(listbox).getAllByRole('group');
     expect(sections.length).toBe(2);
@@ -523,7 +525,7 @@ describe('ListBox', function () {
   it('supports complex options with aria-labelledby and aria-describedby', function () {
     let tree = render(
       <Provider theme={theme}>
-        <ListBox>
+        <ListBox aria-label="listbox">
           <Item>
             <Bell />
             <Text>Label</Text>
@@ -542,10 +544,22 @@ describe('ListBox', function () {
     expect(option).toHaveAttribute('aria-describedby', description.id);
   });
 
+  it('supports aria-label', function () {
+    let tree = renderComponent({'aria-label': 'Test'});
+    let listbox = tree.getByRole('listbox');
+    expect(listbox).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it('warns user if no aria-label is provided', () => {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    renderComponent({'aria-labelledby': undefined});
+    expect(spyWarn).toHaveBeenCalledWith('If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility');
+  });
+
   it('supports aria-label on sections and items', function () {
     let tree = render(
       <Provider theme={theme}>
-        <ListBox>
+        <ListBox aria-label="listbox">
           <Section aria-label="Section">
             <Item aria-label="Item"><Bell /></Item>
           </Section>
@@ -562,11 +576,17 @@ describe('ListBox', function () {
     expect(option).not.toHaveAttribute('aria-describedby');
   });
 
+  it('supports custom data attributes', function () {
+    let tree = renderComponent({'data-testid': 'test'});
+    let listbox = tree.getByRole('listbox');
+    expect(listbox).toHaveAttribute('data-testid', 'test');
+  });
+
   describe('async loading', function () {
     it('should display a spinner while loading', function () {
       let {getByRole, rerender} = render(
         <Provider theme={theme}>
-          <ListBox items={[]} isLoading>
+          <ListBox aria-label="listbox" items={[]} isLoading>
             {item => <Item>{item.name}</Item>}
           </ListBox>
         </Provider>
@@ -582,7 +602,7 @@ describe('ListBox', function () {
 
       rerender(
         <Provider theme={theme}>
-          <ListBox items={[]}>
+          <ListBox aria-label="listbox" items={[]}>
             {item => <Item>{item.name}</Item>}
           </ListBox>
         </Provider>
@@ -595,8 +615,8 @@ describe('ListBox', function () {
       let items = [{name: 'Foo'}, {name: 'Bar'}];
       let {getByRole, rerender} = render(
         <Provider theme={theme}>
-          <ListBox items={items} isLoading>
-            {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+          <ListBox aria-label="listbox" items={items} isLoading>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </ListBox>
         </Provider>
       );
@@ -611,8 +631,8 @@ describe('ListBox', function () {
 
       rerender(
         <Provider theme={theme}>
-          <ListBox items={items}>
-            {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+          <ListBox aria-label="listbox" items={items}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </ListBox>
         </Provider>
       );
@@ -631,8 +651,8 @@ describe('ListBox', function () {
 
       let {getByRole} = render(
         <Provider theme={theme}>
-          <ListBox items={items} maxHeight={200} onLoadMore={onLoadMore}>
-            {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+          <ListBox aria-label="listbox" items={items} maxHeight={200} onLoadMore={onLoadMore}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </ListBox>
         </Provider>
       );

@@ -10,63 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-types/button';
+import {filterDOMProps} from '@react-aria/utils';
 import {mergeProps} from '@react-aria/utils';
 import {RefObject} from 'react';
 import {useDOMPropsResponder, usePress} from '@react-aria/interactions';
 import {useFocusable} from '@react-aria/focus';
-
-interface AriaButtonProps extends ButtonProps {
-  /**
-   * Whether the Button is selected.
-   */
-  isSelected?: boolean,
-  /**
-   * Whether the Button is valid or invalid.
-   */
-  validationState?: 'valid' | 'invalid', // used by FieldButton (e.g. DatePicker, ComboBox)
-  /**
-   * Indicates whether or not the element (or elements) controlled by the Button is expanded or not.
-   */
-  'aria-expanded'?: boolean | 'false' | 'true',
-  /**
-   * Indicates whether or not the Button opens another element and what kind of element it is.
-   */
-  'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
-  /**
-   * Identifies the element (or elements) whose contents or presence are controlled by the Button.
-   */
-  'aria-controls'?: string,
-  /**
-   * The type of the button. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button) for more info.
-   */
-  type?: 'button' | 'submit',
-  /**
-   * The tab index to apply to the Button.
-   */
-  tabIndex?: number,
-  /**
-   * The unique identifier to apply to the Button.
-   */
-  id?: string,
-  /** 
-   * Defines a string value that labels the Button.
-   */
-  'aria-label'?: string,
-  /**
-   * Identifies the element (or elements) that labels the Button.
-   */
-  'aria-labelledby'?: string,
-  /**
-   * Identifies the element (or elements) that describes the Button.
-   * @see aria-labelledby
-   */
-  'aria-describedby'?: string,
-  /**
-   * Defines the role of the Button.
-   */
-  role?: 'button' | 'checkbox' | 'radio' | string
-}
 
 interface ButtonAria {
   /** Props for the button element. */
@@ -93,23 +42,13 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onClick: deprecatedOnClick,
     href,
     target,
-    tabIndex,
-    isSelected,
-    validationState,
-    'aria-expanded': ariaExpanded,
-    'aria-haspopup': ariaHasPopup,
-    'aria-controls': ariaControls,
-    id,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby,
-    'aria-describedby': ariaDescribedBy,
     type = 'button'
   } = props;
   let additionalProps;
   if (elementType !== 'button') {
     additionalProps = {
       role: 'button',
-      tabIndex: isDisabled ? undefined : (tabIndex || 0),
+      tabIndex: isDisabled ? undefined : 0,
       href: elementType === 'a' && isDisabled ? undefined : href,
       target: elementType === 'a' ? target : undefined,
       type: elementType === 'input' ? type : undefined,
@@ -129,22 +68,17 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
 
   let {contextProps} = useDOMPropsResponder(ref);
   let {focusableProps} = useFocusable(props, ref);
-  let handlers = mergeProps(pressProps, focusableProps);
-  let interactions = mergeProps(contextProps, handlers);
-  let ariaSelected = (props.role === 'checkbox' || props.role === 'radio') ? 'aria-checked' : 'aria-pressed';
+  let buttonProps = mergeProps(pressProps, focusableProps);
+  buttonProps = mergeProps(buttonProps, contextProps);
+  buttonProps = mergeProps(buttonProps, filterDOMProps(props, {labelable: true}));
 
   return {
     isPressed, // Used to indicate press state for visual
-    buttonProps: mergeProps(interactions, {
-      id,
-      'aria-label': ariaLabel,
-      'aria-labelledby': ariaLabelledby,
-      'aria-describedby': ariaDescribedBy,
-      'aria-haspopup': ariaHasPopup,
-      'aria-expanded': ariaExpanded || (ariaHasPopup && isSelected),
-      'aria-controls': ariaControls,
-      [ariaSelected]: isSelected,
-      'aria-invalid': validationState === 'invalid' ? true : null,
+    buttonProps: mergeProps(buttonProps, {
+      'aria-haspopup': props['aria-haspopup'],
+      'aria-expanded': props['aria-expanded'],
+      'aria-controls': props['aria-controls'],
+      'aria-pressed': props['aria-pressed'],
       disabled: isDisabled,
       type,
       ...(additionalProps || {}),

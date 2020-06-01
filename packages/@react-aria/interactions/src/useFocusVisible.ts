@@ -71,6 +71,12 @@ function handlePointerEvent(e: PointerEvent | MouseEvent) {
 }
 
 function handleFocusEvent(e: FocusEvent) {
+  // Firefox fires a focus event with the document as the target when the user first clicks into
+  // an iframe. We ignore this event so it doesn't cause keyboard focus rings to appear.
+  if (e.target === document) {
+    return;
+  }
+
   // If a focus event occurs without a preceding keyboard or pointer event, switch to keyboard modality.
   // This occurs, for example, when navigating a form with the next/previous buttons on iOS.
   if (!hasEventBeforeFocus) {
