@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMProps, KeyboardDelegate} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {gridIds} from './utils';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
 import {Layout, Node} from '@react-stately/collections';
 import {useCollator, useLocale} from '@react-aria/i18n';
-import {useId} from '@react-aria/utils';
 import {useSelectableCollection} from '@react-aria/selection';
 
-interface GridProps<T> {
+interface GridProps<T> extends DOMProps, AriaLabelingProps {
   ref: RefObject<HTMLElement>,
   isVirtualized?: boolean,
   keyboardDelegate?: KeyboardDelegate,
@@ -38,6 +38,10 @@ export function useGrid<T>(props: GridProps<T>, state: GridState<T>): GridAria {
     keyboardDelegate,
     layout
   } = props;
+
+  if (!props['aria-label'] && !props['aria-labelledby']) {
+    console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
+  }
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
@@ -60,12 +64,13 @@ export function useGrid<T>(props: GridProps<T>, state: GridState<T>): GridAria {
   let id = useId();
   gridIds.set(state, id);
   
-  let gridProps: HTMLAttributes<HTMLElement> = {
+  let domProps = filterDOMProps(props, {labelable: true});
+  let gridProps: HTMLAttributes<HTMLElement> = mergeProps(domProps, {
     role: 'grid',
     id,
     'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
     ...collectionProps
-  };
+  });
 
   if (isVirtualized) {
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;

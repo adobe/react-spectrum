@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps} from '@react-types/shared';
+import {HTMLAttributes} from 'react';
 import {useId} from './useId';
 
-export function useLabels(props: DOMProps, defaultLabel?: string): DOMProps {
+export function useLabels(props: DOMProps & AriaLabelingProps, defaultLabel?: string): HTMLAttributes<HTMLElement> {
   let {
     id,
     'aria-label': label,

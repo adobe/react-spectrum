@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {CollectionItem, CollectionView} from '@react-aria/collections';
-import {DOMProps, StyleProps} from '@react-types/shared';
 import {FocusStrategy} from '@react-types/menu';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -30,7 +30,7 @@ import {useCollator, useMessageFormatter} from '@react-aria/i18n';
 import {useListBox} from '@react-aria/listbox';
 import {useProvider} from '@react-spectrum/provider';
 
-interface ListBoxBaseProps<T> extends DOMProps, StyleProps {
+interface ListBoxBaseProps<T> extends DOMProps, AriaLabelingProps, StyleProps {
   layout: ListLayout<T>,
   state: ListState<T>,
   autoFocus?: boolean | FocusStrategy,
@@ -49,8 +49,8 @@ export function useListBoxLayout<T>(state: ListState<T>) {
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() =>
     new ListLayout<T>({
-      estimatedRowHeight: scale === 'large' ? 48 : 35,
-      estimatedHeadingHeight: scale === 'large' ? 37 : 30,
+      estimatedRowHeight: scale === 'large' ? 48 : 32,
+      estimatedHeadingHeight: scale === 'large' ? 33 : 26,
       padding: scale === 'large' ? 5 : 4, // TODO: get from DNA
       collator
     })
@@ -64,6 +64,7 @@ export function useListBoxLayout<T>(state: ListState<T>) {
 /** @private */
 function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
   let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, domProps = {}} = props;
+  // @ts-ignore
   let {listBoxProps} = useListBox({
     ...props,
     ...domProps,
@@ -103,7 +104,6 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
   return (
     <ListBoxContext.Provider value={state}>
       <CollectionView
-        {...filterDOMProps(props)}
         {...styleProps}
         {...mergeProps(listBoxProps, domProps)}
         ref={ref}
@@ -121,8 +121,9 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
         collection={state.collection}
         renderWrapper={renderWrapper}
         isLoading={props.isLoading}
-        onLoadMore={props.onLoadMore}>
-        {(type, item) => {
+        onLoadMore={props.onLoadMore}
+        transitionDuration={0}>
+        {(type, item: Node<T>) => {
           if (type === 'item') {
             return (
               <ListBoxOption
@@ -132,6 +133,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
             );
           } else if (type === 'loader') {
             return (
+              // aria-selected isn't needed here since this option is not selectable.
               // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
               <div role="option" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
                 <ProgressCircle 

@@ -11,6 +11,8 @@
  */
 
 import {
+  AriaLabelingProps,
+  AriaValidationProps,
   DOMProps,
   FocusableProps,
   InputBase,
@@ -24,6 +26,11 @@ import {ReactElement, ReactNode} from 'react';
 
 export interface RadioGroupProps extends ValueBase<string>, InputBase, LabelableProps {
   children: ReactElement<RadioProps> | ReactElement<RadioProps>[],
+  /**
+   * The axis the Radio Button(s) should align with.
+   * @default 'vertical'
+   */
+  orientation?: Orientation,
   name?: string // HTML form name. Not displayed.
 }
 
@@ -40,12 +47,8 @@ export interface RadioProps extends FocusableProps {
   isDisabled?: boolean
 }
 
-export interface SpectrumRadioGroupProps extends RadioGroupProps, SpectrumLabelableProps, DOMProps, StyleProps {
-  /**
-   * The axis the Radio Button(s) should align with.
-   * @default 'vertical'
-   */
-  orientation?: Orientation,
+export interface AriaRadioGroupProps extends RadioGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
+export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLabelableProps, StyleProps {
   /**
    * By default, radio buttons are not emphasized (gray).
    * The emphasized (blue) version provides visual prominence.
@@ -53,4 +56,5 @@ export interface SpectrumRadioGroupProps extends RadioGroupProps, SpectrumLabela
   isEmphasized?: boolean
 }
 
-export interface SpectrumRadioProps extends RadioProps, DOMProps, StyleProps {}
+export interface AriaRadioProps extends RadioProps, DOMProps, AriaLabelingProps {}
+export interface SpectrumRadioProps extends AriaRadioProps, StyleProps {}

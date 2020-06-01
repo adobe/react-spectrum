@@ -19,7 +19,7 @@ function Section<T>(props: SectionProps<T>): ReactElement { // eslint-disable-li
 }
 
 Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T>): Generator<PartialNode<T>> {
-  let {children, title, items, itemKey} = props;
+  let {children, title, items} = props;
   yield {
     type: 'section',
     hasChildNodes: true,
@@ -35,18 +35,19 @@ Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T
           yield {
             type: 'item',
             value: item,
-            childKey: itemKey,
             renderer: children
           };
         }
       } else {
-        let items = React.Children.toArray(children);
-        for (let item of items) {
-          yield {
+        let items: PartialNode<T>[] = [];
+        React.Children.forEach(children, child => {
+          items.push({
             type: 'item',
-            element: item
-          };
-        }
+            element: child
+          });
+        });
+
+        yield* items;
       }
     }
   };

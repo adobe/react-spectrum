@@ -19,3 +19,4 @@ export * from './useDrag1D';
 export * from './useLabels';
 export * from './useUpdateEffect';
 export * from './focusWithoutScrolling';
+export * from './filterDOMProps';

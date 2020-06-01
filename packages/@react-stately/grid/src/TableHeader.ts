@@ -18,8 +18,8 @@ function TableHeader<T>(props: TableHeaderProps<T>): ReactElement { // eslint-di
   return null;
 }
 
-TableHeader.getCollectionNode = function* getCollectionNode<T>(props: TableHeaderProps<T>): Generator<PartialNode<T>> {
-  let {children, columns, columnKey} = props;
+TableHeader.getCollectionNode = function* getCollectionNode<T>(props: TableHeaderProps<T>): Generator<PartialNode<T>, void, any> {
+  let {children, columns} = props;
   if (typeof children === 'function') {
     if (!columns) {
       throw new Error('props.children was a function but props.columns is missing');
@@ -29,18 +29,19 @@ TableHeader.getCollectionNode = function* getCollectionNode<T>(props: TableHeade
       yield {
         type: 'column',
         value: column,
-        childKey: columnKey,
         renderer: children
       };
     }
   } else {
-    let columns = React.Children.toArray(children);
-    for (let column of columns) {
-      yield {
+    let columns: PartialNode<T>[] = [];
+    React.Children.forEach(children, column => {
+      columns.push({
         type: 'column',
         element: column
-      };
-    }
+      });
+    });
+
+    yield* columns;
   }
 };
 

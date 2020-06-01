@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, LabelPosition, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, LabelPosition, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 interface ProgressBaseProps {
@@ -42,6 +42,8 @@ export interface ProgressBarBaseProps extends ProgressBaseProps {
   valueLabel?: ReactNode // custom value label (e.g. 1 of 4)
 }
 
+export interface AriaProgressBarBaseProps extends ProgressBarBaseProps, DOMProps, AriaLabelingProps {}
+
 export interface ProgressBarProps extends ProgressBarBaseProps {
   /**
    * Whether presentation is indeterminate when progress isn't known.
@@ -49,6 +51,8 @@ export interface ProgressBarProps extends ProgressBarBaseProps {
    */
   isIndeterminate?: boolean
 }
+
+export interface AriaProgressBarProps extends ProgressBarProps, DOMProps, AriaLabelingProps {}
 
 export interface ProgressCircleProps extends ProgressBaseProps {
   /**
@@ -58,7 +62,8 @@ export interface ProgressCircleProps extends ProgressBaseProps {
   isIndeterminate?: boolean
 }
 
-export interface SpectrumProgressCircleProps extends ProgressCircleProps, DOMProps, StyleProps {
+export interface AriaProgressCircleProps extends ProgressCircleProps, DOMProps, AriaLabelingProps {}
+export interface SpectrumProgressCircleProps extends AriaProgressCircleProps, StyleProps {
   /**
    * What the ProgressCircle's diameter should be.
    * @default "M"
@@ -68,7 +73,7 @@ export interface SpectrumProgressCircleProps extends ProgressCircleProps, DOMPro
   variant?: 'overBackground'
 }
 
-export interface SpectrumProgressBarBaseProps extends ProgressBarBaseProps, DOMProps, StyleProps {
+export interface SpectrumProgressBarBaseProps extends AriaProgressBarBaseProps, StyleProps {
   /**
    * How thick the ProgressBar should be.
    * @default "L"
