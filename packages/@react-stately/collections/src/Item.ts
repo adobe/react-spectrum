@@ -43,13 +43,15 @@ Item.getCollectionNode = function* getCollectionNode<T>(props: ItemProps<T>): Ge
           };
         }
       } else if (title) {
-        let items = React.Children.toArray(children) as ItemElement<T>[];
-        for (let item of items) {
-          yield {
+        let items: PartialNode<T>[] = [];
+        React.Children.forEach(children, child => {
+          items.push({
             type: 'item',
-            element: item
-          };
-        }
+            element: child as ItemElement<T>
+          });
+        });
+
+        yield* items;
       }
     }
   };

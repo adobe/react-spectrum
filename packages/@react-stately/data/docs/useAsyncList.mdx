@@ -63,7 +63,7 @@ let list = useAsyncList({
   label="Pick a Pokemon"
   items={list.items}
   isLoading={list.isLoading}>
-  {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+  {item => <Item key={item.name}>{item.name}</Item>}
 </Picker>
 ```
 
@@ -98,7 +98,7 @@ let list = useAsyncList({
   items={list.items}
   isLoading={list.isLoading}
   onLoadMore={list.loadMore}>
-  {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+  {item => <Item key={item.name}>{item.name}</Item>}
 </Picker>
 ```
 

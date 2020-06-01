@@ -35,10 +35,10 @@ function renderComponent(props) {
   return render(
     <Provider theme={theme}>
       <span id="label">Choose an item</span>
-      <ListBox items={withSection} itemKey="name" aria-labelledby="label" {...props}>
+      <ListBox items={withSection} aria-labelledby="label" {...props}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item childItems={item.children}>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
           </Section>
         )}
       </ListBox>
@@ -616,7 +616,7 @@ describe('ListBox', function () {
       let {getByRole, rerender} = render(
         <Provider theme={theme}>
           <ListBox aria-label="listbox" items={items} isLoading>
-            {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+            {item => <Item key={item.name}>{item.name}</Item>}
           </ListBox>
         </Provider>
       );
@@ -632,7 +632,7 @@ describe('ListBox', function () {
       rerender(
         <Provider theme={theme}>
           <ListBox aria-label="listbox" items={items}>
-            {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+            {item => <Item key={item.name}>{item.name}</Item>}
           </ListBox>
         </Provider>
       );
@@ -652,7 +652,7 @@ describe('ListBox', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <ListBox aria-label="listbox" items={items} maxHeight={200} onLoadMore={onLoadMore}>
-            {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+            {item => <Item key={item.name}>{item.name}</Item>}
           </ListBox>
         </Provider>
       );

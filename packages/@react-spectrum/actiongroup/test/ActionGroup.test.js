@@ -108,8 +108,8 @@ function renderComponent(props) {
   return render(
     <Provider theme={theme} locale="de-DE">
       <ActionGroup {...props}>
-        <Item uniqueKey="1">Click me 1</Item>
-        <Item uniqueKey="2">Click me 2</Item>
+        <Item key="1">Click me 1</Item>
+        <Item key="2">Click me 2</Item>
       </ActionGroup>
     </Provider>
   );
@@ -120,8 +120,8 @@ function renderComponentWithExtraInputs(props) {
     <Provider theme={theme} locale="de-DE">
       <Button variant="primary" aria-label="ButtonBefore" />
       <ActionGroup {...props}>
-        <Item uniqueKey="1">Click me 1</Item>
-        <Item uniqueKey="2">Click me 2</Item>
+        <Item key="1">Click me 1</Item>
+        <Item key="2">Click me 2</Item>
       </ActionGroup>
       <Button variant="primary" aria-label="ButtonAfter" />
     </Provider>
@@ -245,9 +245,9 @@ describe('ActionGroup', function () {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
         <ActionGroup disabledKeys={disabledKeys}>
-          <Item uniqueKey="0" data-testid="button-1">Click me 1</Item>
-          <Item uniqueKey="1" data-testid="button-2">Click me 2</Item>
-          <Item uniqueKey="2" data-testid="button-3">Click me 3</Item>
+          <Item key="0" data-testid="button-1">Click me 1</Item>
+          <Item key="1" data-testid="button-2">Click me 2</Item>
+          <Item key="2" data-testid="button-3">Click me 3</Item>
         </ActionGroup>
       </Provider>
     );
@@ -270,10 +270,10 @@ describe('ActionGroup', function () {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
         <ActionGroup disabledKeys={disabledKeys}>
-          <Item uniqueKey="0" data-testid="button-1">Click me 1</Item>
-          <Item uniqueKey="1" data-testid="button-2">Click me 2</Item>
-          <Item uniqueKey="2" data-testid="button-3">Click me 3</Item>
-          <Item uniqueKey="3" data-testid="button-4">Click me 4</Item>
+          <Item key="0" data-testid="button-1">Click me 1</Item>
+          <Item key="1" data-testid="button-2">Click me 2</Item>
+          <Item key="2" data-testid="button-3">Click me 3</Item>
+          <Item key="3" data-testid="button-4">Click me 4</Item>
         </ActionGroup>
       </Provider>
     );
@@ -547,7 +547,7 @@ describe('ActionGroup', function () {
     let tree = render(
       <Provider theme={theme} locale="de-DE">
         <ActionGroup selectionMode="none" onAction={onAction}>
-          <Item uniqueKey="test">Click me</Item>
+          <Item key="test">Click me</Item>
         </ActionGroup>
       </Provider>
     );
@@ -564,7 +564,7 @@ describe('ActionGroup', function () {
     let tree = render(
       <Provider theme={theme} locale="de-DE">
         <ActionGroup selectionMode="none" onAction={onAction} isDisabled>
-          <Item uniqueKey="test">Click me</Item>
+          <Item key="test">Click me</Item>
         </ActionGroup>
       </Provider>
     );
@@ -580,7 +580,7 @@ describe('ActionGroup', function () {
     let tree = render(
       <Provider theme={theme} locale="de-DE">
         <ActionGroup selectionMode="none" onAction={onAction} disabledKeys={['test']}>
-          <Item uniqueKey="test">Click me</Item>
+          <Item key="test">Click me</Item>
         </ActionGroup>
       </Provider>
     );

@@ -89,10 +89,10 @@ export function CRUDExample() {
       </ActionGroup>
       <Table aria-label="People" width={500} height={300} isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
-          <Column isRowHeader uniqueKey="firstName">First Name</Column>
-          <Column isRowHeader uniqueKey="lastName">Last Name</Column>
-          <Column uniqueKey="birthday">Birthday</Column>
-          <Column uniqueKey="actions" align="end">Actions</Column>
+          <Column isRowHeader key="firstName">First Name</Column>
+          <Column isRowHeader key="lastName">Last Name</Column>
+          <Column key="birthday">Birthday</Column>
+          <Column key="actions" align="end">Actions</Column>
         </TableHeader>
         <TableBody items={list.items}>
           {item =>
@@ -103,8 +103,8 @@ export function CRUDExample() {
                     ? <MenuTrigger align="end">
                       <ActionButton isQuiet aria-label="Actions"><More /></ActionButton>
                       <Menu onAction={action => onAction(action, item)}>
-                        <Item uniqueKey="edit">Edit...</Item>
-                        <Item uniqueKey="delete">Delete...</Item>
+                        <Item key="edit">Edit...</Item>
+                        <Item key="delete">Delete...</Item>
                       </Menu>
                     </MenuTrigger>
                     : item[column]

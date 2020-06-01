@@ -25,7 +25,6 @@ governing permissions and limitations under the License.
   /* OVERRIDE: DNA uses a static size which doesn't properly adjust on large scale */
   /* Remove once https://git.corp.adobe.com/Spectrum/spectrum-dna/pull/409 is released. */
   --spectrum-selectlist-option-padding: var(--spectrum-global-dimension-size-150);
-  --spectrum-selectlist-option-padding-y: var(--spectrum-global-dimension-size-75);
 
   --spectrum-selectlist-option-selectable-padding-right: calc(var(--spectrum-global-dimension-size-100) + var(--spectrum-icon-checkmark-medium-width) + var(--spectrum-selectlist-option-icon-padding-x));
 
@@ -36,6 +35,10 @@ governing permissions and limitations under the License.
 
   /* From spectrum: this value should be the same for both medium and large scale. */
   --spectrum-menu-max-width: 320px;
+}
+
+.spectrum-Menu-popover {
+  max-width: var(--spectrum-menu-max-width);
 }
 
 .spectrum-Menu {
@@ -53,7 +56,6 @@ governing permissions and limitations under the License.
   user-select: none;
 
   max-height: inherit; /* inherit from parent popover */
-  max-width: var(--spectrum-menu-max-width);
 
   & .spectrum-Menu-sectionHeading {
     /* Support headings as LI */
@@ -69,8 +71,7 @@ governing permissions and limitations under the License.
 .spectrum-Menu-checkmark {
   transform: scale(1);
   opacity: 1;
-  /* Should be 10px from the top according to XD. Margin around whole menu item is 6px in medium scale, so 4px left. */
-  padding-block-start: var(--spectrum-global-dimension-size-50);
+  padding-block-start: calc(var(--spectrum-selectlist-option-icon-padding-y) - var(--spectrum-selectlist-option-padding-y));
 }
 
 .spectrum-Menu-item {
@@ -106,6 +107,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Menu-itemLabel {
   grid-area: text;
+  line-height: var(--spectrum-global-font-line-height-small);
 }
 
 .spectrum-Menu-itemLabel--wrapping {
@@ -187,7 +189,7 @@ governing permissions and limitations under the License.
 }
 .spectrum-Menu-description {
   grid-area: description;
-  line-height: 1.3;
+  line-height: var(--spectrum-global-font-line-height-small);
   font-size: var(--spectrum-global-dimension-size-150);
 }
 .spectrum-Menu-keyboard {
