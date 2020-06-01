@@ -90,15 +90,15 @@ The label should be in sentence case.
 
 ```tsx example
 <Flex flexDirection="column" maxWidth="size-3000">
-  <Meter label="Label" marginBottom="25px" value={25} variant="warning" />
-  <Meter label="Label" marginBottom="25px" labelPosition="side" value={25} variant="warning" />
+  <Meter label="Label" marginBottom="size-300" value={25} variant="warning" />
+  <Meter label="Label" marginBottom="size-300" labelPosition="side" value={25} variant="warning" />
   <Meter label="Label" showValueLabel={false} value={25} variant="warning" />
 </Flex>
 ```
 
 The value label can be updated via the `valueLabel` prop in cases where showing a different scale makes sense.
 ```tsx example
-<Meter label="Progress" marginBottom="25px" value={25} valueLabel="1 of 4" variant="warning" />
+<Meter label="Progress" marginBottom="size-300" value={25} valueLabel="1 of 4" variant="warning" />
 ```
 
 Value labels by default show the percentage of progress in a determinate ProgressBar. These can be customized using the following props.
@@ -108,17 +108,17 @@ Value labels by default show the percentage of progress in a determinate Progres
 * `valueLabel`: Allows you to customize the value label to any string.
 
 ```tsx example
-<Flex flexDirection="column" maxWidth="250px">
+<Flex flexDirection="column" maxWidth="size-3000">
   <Meter
     label="Space used"
-    marginBottom="25px"
+    marginBottom="size-300"
     showValueLabel={false}
     value={90}
     variant="critical" />
 
   <Meter
     label="Space used"
-    marginBottom="25px"
+    marginBottom="size-300"
     valueLabel="54 of 60GB"
     value={90} variant="critical" />
 
@@ -140,7 +140,7 @@ Value labels by default show the percentage of progress in a determinate Progres
 
 ```tsx example
 <Flex flexDirection="column">
-  <Meter label="Space used" marginBottom="25px" size="S" value={90} variant="critical" />
+  <Meter label="Space used" marginBottom="size-300" size="S" value={90} variant="critical" />
   <Meter label="Space used" size="L" value={90} variant="critical" />
 </Flex>
 ```
@@ -150,8 +150,8 @@ Value labels by default show the percentage of progress in a determinate Progres
 
 ```tsx example
 <Flex flexDirection="column">
-  <Meter label="Space used" marginBottom="25px" value={25} variant="positive" />
-  <Meter label="Space used" marginBottom="25px" value={90} variant="critical" />
+  <Meter label="Space used" marginBottom="size-300" value={25} variant="positive" />
+  <Meter label="Space used" marginBottom="size-300" value={90} variant="critical" />
   <Meter label="Space used" value={70} variant="warning" />
 </Flex>
 ```
