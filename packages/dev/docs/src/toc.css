@@ -13,14 +13,13 @@
 .toc {
   position: fixed;
   top: 80px;
-  right: 8px;
-  bottom: 0;
+  right: 0;
   overflow-y: auto;
 }
 
 .tocContainer {
   border-left: 1px solid var(--spectrum-global-color-gray-200);
-  padding-left: 16px;
+  padding-left: 20px;
 }
 
 @media (max-width: 1200px) {
