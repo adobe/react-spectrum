@@ -21,7 +21,7 @@ category: Collections
 
 # Collection components
 
-Many components display a collection of items, and provide functionality such as keyboard 
+Many components display a collection of items, and provide functionality such as keyboard
 navigation, selection, and more. React Spectrum has a unified API to define the items
 displayed in these components.
 
@@ -33,7 +33,7 @@ many have some form of selection. Many support loading data asynchronously, upda
 virtualized scrolling for performance with large collections, and more.
 
 There are many ways one could design an API for components like this: JSX children, a
-list of option objects, or a datasource object. Selection, and 
+list of option objects, or a datasource object. Selection, and
 other states like disabled, could be passed in to each item, or as a top-level prop.
 Each of these has various tradeoffs. This page describes how we do it in React Spectrum, and covers some
 of these tradeoffs in detail.
@@ -41,7 +41,7 @@ of these tradeoffs in detail.
 ## Design goals
 
 Our main design goal was to provide a consistent API across many types of collection components that is
-easy to learn, performant on large collections, and extensible for advanced features. Some of the usecases
+easy to learn, performant on large collections, and extensible for advanced features. Some of the use-cases
 we considered were:
 
 - Static data
@@ -59,7 +59,7 @@ we considered were:
 ## Static collections
 
 React Spectrum implements a JSX-based API for defining collections. This allows an intuitive way to provide
-items, which can contain rich rendering, and various options as props. Building heirarchical
+items, which can contain rich rendering, and various options as props. Building hierarchical
 collections, e.g. sections, or a tree of items is also very natural in JSX.
 
 A **static collection** is a collection that does not change over time (e.g. hard coded). This is common for
@@ -94,14 +94,14 @@ Sections or groups of items can be constructed by wrapping the items as needed.
 </ListBox>
 ```
 
-The &lt;<TypeLink links={docs.links} type={docs.exports.Item} />&gt; and 
+The &lt;<TypeLink links={docs.links} type={docs.exports.Item} />&gt; and
 &lt;<TypeLink links={docs.links} type={docs.exports.Section} />&gt; components
 are shared between many collection components. This ensures that they have a consistent
 interface that can be learned once and applied everywhere.
 
-&lt;<TypeLink links={docs.links} type={docs.exports.Item} />&gt; and 
-&lt;<TypeLink links={docs.links} type={docs.exports.Section} />&gt; only define the data for 
-the items and sections, not the rendering, visual appearance, or behavior. This is up to 
+&lt;<TypeLink links={docs.links} type={docs.exports.Item} />&gt; and
+&lt;<TypeLink links={docs.links} type={docs.exports.Section} />&gt; only define the data for
+the items and sections, not the rendering, visual appearance, or behavior. This is up to
 the individual collection component (e.g. Menu or ListBox) to implement.
 
 ## Dynamic collections
@@ -111,7 +111,7 @@ is a collection that is based on data, for example from an API. In addition, it 
 items are added, updated, or removed from the collection by a user.
 
 React Spectrum implements a JSX-based interface for dynamic collections, which maps over your data and
-applies a function for each item to render it. The following example shows how a collection can be 
+applies a function for each item to render it. The following example shows how a collection can be
 rendered based on dynamic data, stored in React state.
 
 ```tsx
@@ -126,15 +126,15 @@ let [animals, setAnimals] = useState([
 </ListBox>
 ```
 
-As you can see, the items are passed to the `items` prop of the top-level component, which iterates over each 
+As you can see, the items are passed to the `items` prop of the top-level component, which iterates over each
 item and calls the function passed as children to the component. The item object is passed to the function, which
 returns an &lt;<TypeLink links={docs.links} type={docs.exports.Item} />&gt;.
 
 ### Unique keys
 
 All items in a collection must have a unique key or id, which is used to determine what items in the collection changed
-when updates occur. By default, React Spectrum looks for an `id` or `key` property on each item, which is often returned 
-from a database. You can also specify a custom key on each item using the `key` prop. For example, if all animals in the 
+when updates occur. By default, React Spectrum looks for an `id` or `key` property on each item, which is often returned
+from a database. You can also specify a custom key on each item using the `key` prop. For example, if all animals in the
 example had a unique `name` property, then each item's `key` could be set to `item.name` to use it as the unique key.
 
 ```tsx
@@ -162,24 +162,24 @@ let [animals, setAnimals] = useState([
 ]);
 
 <ListBox>
-  {animals.map(item => 
+  {animals.map(item =>
     <Item key={item.name}>{item.name}</Item>
   )}
 </ListBox>
 ```
 
 Using the `items` prop and providing a render function allows React Spectrum to automatically cache the results
-of rendering each item and avoid re-rendering all items in the collection when only one of them changes. This 
+of rendering each item and avoid re-rendering all items in the collection when only one of them changes. This
 has big performance benefits for large collections.
 
 ### Updating data
 
 When you need to update the data to add, remove, or change an item, you can do so using a standard React state update.
 
-**IMPORTANT: all items passed to a collection component must be immutable. Changing a property on an item, or calling 
+**IMPORTANT: all items passed to a collection component must be immutable. Changing a property on an item, or calling
 `array.push()` or other mutating methods will not work as expected.**
 
-The <TypeLink links={dataDocs.links} type={dataDocs.exports.useListData} /> hook can be used to manage the 
+The <TypeLink links={dataDocs.links} type={dataDocs.exports.useListData} /> hook can be used to manage the
 data and state for a list of items, and update it over time. It will also handle removing items from the selection
 state when they are removed from the list. See the [useListBox docs](useListBox.html) for more details.
 
@@ -248,7 +248,7 @@ the items that changed as needed.
 
 The <TypeLink links={dataDocs.links} type={dataDocs.exports.useTreeData} /> hook can be used to
 manage data and state for a tree of items. This is similar to `useListData`, but with support for
-heirarchical data. Like `useListData`, `useTreeData` will also handle automatically 
+heirarchical data. Like `useListData`, `useTreeData` will also handle automatically
 removing items from the selection when they are removed from the list. See the
 [useTreeData docs](useTreeData.html) for more details.
 
@@ -293,11 +293,11 @@ function addPerson(name) {
 
 <!--
 
-## Heirarchical data
+## Hierarchical data
 
-Sections only allow a single level of heirarchy. Some components like trees allow arbitrary heirarchical
-data of any depth to be displayed. This can be accomplished by nesting 
-&lt;<TypeLink links={docs.links} type={docs.exports.Item} />&gt; components, and using the `title` prop 
+Sections only allow a single level of hierarchy. Some components like trees allow arbitrary hierarchical
+data of any depth to be displayed. This can be accomplished by nesting
+&lt;<TypeLink links={docs.links} type={docs.exports.Item} />&gt; components, and using the `title` prop
 to specify the contents of items with children.
 
 ```tsx
@@ -377,7 +377,7 @@ let list = useAsyncList({
 
 The <TypeLink links={dataDocs.links} type={dataDocs.exports.useAsyncList} /> hook also supports paginated data,
 which is common in many APIs to avoid loading too many items at once. This is accomplished by returning a `cursor`
-in addition to `items` from the `load` function. When the `loadMore` method is called, the cursor is passed back to your 
+in addition to `items` from the `load` function. When the `loadMore` method is called, the cursor is passed back to your
 `load` function, which you can use to determine the URL for the next page. The `onLoadMore` prop supported by many
 collection components notifies you when you should load more data as the user scrolls.
 
@@ -416,15 +416,15 @@ TODO
 
 ```tsx
 <Tree>
-  <Section 
+  <Section
     title="Local Files"
     items={local.items}
     isLoading={local.isLoading}>
     {item => <Item>{item.name}</Item>}
   </Section>
-  <Section 
-    title="In the Cloud" 
-    items={cloud.items} 
+  <Section
+    title="In the Cloud"
+    items={cloud.items}
     isLoading={cloud.isLoading}>
     {item => <Item>{item.name}</Item>}
   </Section>
