@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {GridNode, GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {isFocusVisible, usePress} from '@react-aria/interactions';
-import {mergeProps} from '@react-aria/utils';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface GridCellProps {
@@ -40,9 +40,9 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
     let treeWalker = getFocusableTreeWalker(ref.current);
     let focusable = treeWalker.firstChild() as HTMLElement;
     if (focusable) {
-      focusable.focus();
+      focusWithoutScrolling(focusable);
     } else {
-      ref.current.focus();
+      focusWithoutScrolling(ref.current);
     }
   };
 
