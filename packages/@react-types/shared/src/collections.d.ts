@@ -25,8 +25,6 @@ export interface ItemProps<T> {
   childItems?: Iterable<T>,
   /** Whether this item has children, even if not loaded yet. */
   hasChildItems?: boolean,
-  /** A unique key for this item. */
-  uniqueKey?: Key
 }
 
 export type ItemElement<T> = ReactElement<ItemProps<T>>;
@@ -35,8 +33,6 @@ export type ItemRenderer<T> = (item: T) => ItemElement<T>;
 interface AsyncLoadable<T> {
   /** Item objects in the collection or section. */
   items?: Iterable<T>,
-  /** Property name on each item object to use as the unique key. `id` or `key` by default. */
-  itemKey?: string,
   /** Whether the items are currently loading. */
   isLoading?: boolean, // possibly isLoadingMore
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
@@ -49,9 +45,7 @@ export interface SectionProps<T> extends AsyncLoadable<T> {
   /** An accessibility label for the section. */
   'aria-label'?: string,
   /** Static child items or a function to render children. */
-  children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>,
-  /** A unique key for the section. */
-  uniqueKey?: Key
+  children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>
 }
 
 export type SectionElement<T> = ReactElement<SectionProps<T>>;

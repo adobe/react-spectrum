@@ -49,7 +49,7 @@ export function useTreeState<T extends object>(props: CollectionBase<T> & Expand
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
+  let builder = useMemo(() => new CollectionBuilder<T>(), []);
   let tree = useMemo(() => {
     let nodes = builder.build(props);
     return new TreeCollection(nodes, {expandedKeys});

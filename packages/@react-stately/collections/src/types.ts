@@ -63,7 +63,6 @@ export interface PartialNode<T> {
   'aria-label'?: string,
   index?: number,
   renderer?: ItemRenderer<T>,
-  childKey?: string,
   hasChildNodes?: boolean,
   childNodes?: () => IterableIterator<PartialNode<T>>,
   props?: any,
