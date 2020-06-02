@@ -38,12 +38,11 @@ platform scales and color schemes.
 ## Style props
 
 All React Spectrum components support a limited set of styling options, including layout, spacing, sizing,
-and positioning options. These options only affect things external to the component, not internal styles.
-For example, margins can be set on all components since it is external to the component, but not padding,
-which is internal to the the component (and included in the Spectrum design). Additionally, options like
-colors, borders, text styles, etc. are not available to override.
+and positioning options. While internal component styles such as padding, colors, borders and text styles
+are included in Spectrum and not available to override, external styles like margins and sizes can be set
+on all components.
 
-All of these options are available as props on each React Spectrum component. The following example shows 
+Supported styling options are available as props on every React Spectrum component. The following example shows 
 a text field and a button. The text field has a custom width set on it, and the button has a margin before it.
 
 ```tsx example
@@ -182,21 +181,17 @@ ReactDOM.render(<ColorViewer />, document.getElementById('color-viewer'));
 
 ## Escape hatches
 
-While we encourage teams to utilize Spectrum design as it is, we do realize that sometimes it is too limited and some
-product specific customizations may be needed. In these cases, we encourage you or your designers to **talk to us**.
+While we encourage teams to utilize Spectrum design as it is, we do realize that sometimes product specific 
+customizations may be needed. In these cases, we encourage you or your designers to **talk to us**.
 We may be able to suggest an alternative implementation strategy, or perhaps your design can help inform future
 Spectrum additions.
 
 While the traditional `className` and `style` props are not supported in React Spectrum components, there are two
-escape hatches you can **use at your own risk**. These are `UNSAFE_className` and `UNSAFE_style`. Use of these props
+escape hatches that you can **use at your own risk**. These are `UNSAFE_className` and `UNSAFE_style`. Use of these props
 should be considered a **last resort**. They can be used to work around bugs or limitations in React Spectrum,
 but should not be used in the long term.
 
-The reasoning behind this is that `className` and `style` are too flexible. The goal of Spectrum is to unify the 
-design of Adobe products,  and ensure consistency. Full access to the internal CSS implementation details allows 
-too much flexibility to change the Spectrum design without taking changes through the proper channels.
-
-In addition, future updates to Spectrum design may cause unintended breaking changes in products if the internal 
-DOM structure or CSS properties of a React Spectrum component change, leading to conflicts with CSS overrides in 
-products. For this reason, these properties are unsafe, and if you use them know that you are doing so at your own
-risk.
+The reasoning behind this is that future updates to Spectrum design may cause unintended breaking changes in products. 
+If the internal DOM structure or CSS properties of a React Spectrum component change, this may lead to conflicts with CSS 
+overrides in products. For this reason, `className` and `style` are unsafe, and if you use them know that you are doing so at 
+your own risk.
