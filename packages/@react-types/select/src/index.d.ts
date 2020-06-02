@@ -22,10 +22,10 @@ import {
   SpectrumLabelableProps,
   StyleProps,
   TextInputBase,
-  ValidationState
+  Validation
 } from '@react-types/shared';
 
-export interface SelectProps<T> extends CollectionBase<T>, InputBase, LabelableProps, TextInputBase, SingleSelection {
+export interface SelectProps<T> extends CollectionBase<T>, InputBase, Validation, LabelableProps, TextInputBase, SingleSelection {
   /** Sets the open state of the menu */
   isOpen?: boolean,
   /** Sets the default open state of the menu */
@@ -33,9 +33,7 @@ export interface SelectProps<T> extends CollectionBase<T>, InputBase, LabelableP
   /** Method that is called when the open state of the menu changes */
   onOpenChange?: (isOpen: boolean) => void,
   /** Whether the menu should automatically flip direction when space is limited */
-  shouldFlip?: boolean,
-  /** Whether the input should display its "valid" or "invalid" visual styling. */
-  validationState?: ValidationState
+  shouldFlip?: boolean
 }
 
 export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabelingProps {}

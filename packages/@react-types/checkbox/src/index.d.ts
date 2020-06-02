@@ -17,19 +17,17 @@ import {
   FocusableProps,
   InputBase,
   StyleProps,
-  ValidationState
+  Validation
 } from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface CheckboxBase extends InputBase, FocusableProps {
+export interface CheckboxBase extends InputBase, Validation, FocusableProps {
   children?: ReactNode, // pass in children to render label
   defaultSelected?: boolean,
   isSelected?: boolean,
   onChange?: (isSelected: boolean) => void,
   value?: string, // dom prop for input element
   name?: string
-  /** Whether the input should display its "valid" or "invalid" visual styling. */
-  validationState?: ValidationState
 }
 
 export interface AriaCheckboxBase extends CheckboxBase, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {

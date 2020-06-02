@@ -18,18 +18,16 @@ import {
   RangeValue,
   SpectrumLabelableProps,
   StyleProps,
-  ValidationState,
+  Validation,
   ValueBase
 } from '@react-types/shared';
 
 export type DateValue = string | number | Date;
-interface DatePickerBase extends InputBase, FocusableProps, LabelableProps {
+interface DatePickerBase extends InputBase, Validation, FocusableProps, LabelableProps {
   minValue?: DateValue,
   maxValue?: DateValue,
   formatOptions?: Intl.DateTimeFormatOptions,
-  placeholderDate?: DateValue,
-  /** Whether the input should display its "valid" or "invalid" visual styling. */
-  validationState?: ValidationState
+  placeholderDate?: DateValue
 }
 
 export interface DatePickerProps extends DatePickerBase, ValueBase<DateValue> {}

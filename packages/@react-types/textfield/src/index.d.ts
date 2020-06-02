@@ -22,15 +22,12 @@ import {
   StyleProps,
   TextInputBase,
   TextInputDOMProps,
-  ValidationState,
+  Validation,
   ValueBase
 } from '@react-types/shared';
 import {ReactElement} from 'react';
 
-export interface TextFieldProps extends InputBase, FocusableProps, TextInputBase, ValueBase<string>, LabelableProps {
-  /** Whether the input should display its "valid" or "invalid" visual styling. */
-  validationState?: ValidationState
-}
+export interface TextFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<string>, LabelableProps {}
 
 export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps, AriaValidationProps {
   // https://www.w3.org/TR/wai-aria-1.2/#textbox

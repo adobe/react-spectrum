@@ -19,21 +19,19 @@ import {
   LabelableProps,
   Orientation,
   SpectrumLabelableProps,
-  StyleProps, 
-  ValidationState,
+  StyleProps,
+  Validation,
   ValueBase
 } from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
-export interface RadioGroupProps extends ValueBase<string>, InputBase, LabelableProps {
+export interface RadioGroupProps extends ValueBase<string>, InputBase, Validation, LabelableProps {
   children: ReactElement<RadioProps> | ReactElement<RadioProps>[],
   /**
    * The axis the Radio Button(s) should align with.
    * @default 'vertical'
    */
   orientation?: Orientation,
-  /** Whether the input should display its "valid" or "invalid" visual styling. */
-  validationState?: ValidationState,
   name?: string // HTML form name. Not displayed.
 }
 

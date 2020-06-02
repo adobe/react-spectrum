@@ -17,16 +17,14 @@ import {
   RangeInputBase,
   StyleProps,
   TextInputBase,
-  ValidationState,
+  Validation,
   ValueBase
 } from '@react-types/shared';
 
-export interface NumberFieldProps extends InputBase, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number> {
+export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number> {
   decrementAriaLabel?: string,
   incrementAriaLabel?: string,
-  formatOptions?: Intl.NumberFormatOptions,
-  /** Whether the input should display its "valid" or "invalid" visual styling. */
-  validationState?: ValidationState
+  formatOptions?: Intl.NumberFormatOptions
 }
 
 export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps {}
