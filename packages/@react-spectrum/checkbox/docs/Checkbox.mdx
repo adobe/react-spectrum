@@ -66,7 +66,7 @@ function Example() {
   let [selected, setSelected] = React.useState(true);
 
   return (
-    <Flex flexDirection="row">
+    <Flex direction="row">
       <Checkbox defaultSelected>Subscribe (uncontrolled)</Checkbox>
       <Checkbox isSelected={selected} onChange={setSelected}>Subscribe (controlled)</Checkbox>
     </Flex>
@@ -95,7 +95,7 @@ function Example() {
   let [selected, setSelection] = React.useState(false);
 
   return (
-    <Flex flexDirection="column">
+    <Flex direction="column">
       <Checkbox isSelected={selected} onChange={setSelection}>
         Subscribe
       </Checkbox>
