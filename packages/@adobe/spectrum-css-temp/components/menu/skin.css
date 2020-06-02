@@ -39,8 +39,6 @@ governing permissions and limitations under the License.
   }
 
   &.is-selected {
-    color: var(--spectrum-menu-selected-color);
-
     .spectrum-Menu-checkmark {
       color: var(--spectrum-selectlist-option-icon-color-selected);
     }

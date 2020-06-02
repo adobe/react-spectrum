@@ -54,10 +54,10 @@ function renderComponent(Component, triggerProps = {}, menuProps = {}, buttonPro
             <Button {...buttonProps}>
               {triggerText}
             </Button>
-            <Menu items={withSection} itemKey="name" {...menuProps}>
+            <Menu items={withSection} {...menuProps}>
               {item => (
-                <Section items={item.children} title={item.name}>
-                  {item => <Item childItems={item.children}>{item.name}</Item>}
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
                 </Section>
               )}
             </Menu>
@@ -575,10 +575,10 @@ describe('MenuTrigger', function () {
             <Button>
               {triggerText}
             </Button>
-            <Menu items={withSection} itemKey="name">
+            <Menu items={withSection}>
               {item => (
-                <Section items={item.children} title={item.name}>
-                  {item => <Item childItems={item.children}>{item.name}</Item>}
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
                 </Section>
               )}
             </Menu>
@@ -613,10 +613,10 @@ describe('MenuTrigger', function () {
             <Button>
               {triggerText}
             </Button>
-            <Menu items={withSection} itemKey="name">
+            <Menu items={withSection}>
               {item => (
-                <Section items={item.children} title={item.name}>
-                  {item => <Item childItems={item.children}>{item.name}</Item>}
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
                 </Section>
               )}
             </Menu>

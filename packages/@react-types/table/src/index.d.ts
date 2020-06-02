@@ -11,7 +11,7 @@
  */
 
 import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, MultipleSelection, SectionProps, Sortable, StyleProps} from '@react-types/shared';
-import {Key, ReactElement} from 'react';
+import {Key, ReactElement, ReactNode} from 'react';
 
 export interface TableProps<T> extends MultipleSelection, Sortable {
   children: ReactElement<TableHeaderProps | TableBodyProps | SectionProps | RowProps>[],
@@ -26,7 +26,6 @@ export interface SpectrumTableProps<T> extends TableProps<T>, DOMProps, AriaLabe
 
 export interface TableHeaderProps<T> {
   columns?: T[],
-  columnKey?: string,
   children: ColumnElement<T> | ColumnElement<T>[] | ColumnRenderer<T>
 }
 
@@ -36,8 +35,7 @@ export interface ColumnProps<T> {
   title?: ReactNode,
   children: ReactNode | ColumnElement<T> | ColumnElement<T>[],
   childColumns?: T[],
-  'aria-label'?: string,
-  uniqueKey?: Key
+  'aria-label'?: string
 }
 
 // TODO: how to support these in CollectionBuilder...
@@ -65,8 +63,7 @@ export interface RowProps<T> {
   hasChildItems?: boolean,
   children: CellElement | CellElement[] | CellRenderer,
   textValue?: string, // ???
-  'aria-label'?: string, // ???
-  uniqueKey?: Key
+  'aria-label'?: string // ???
 }
 
 export interface CellProps {

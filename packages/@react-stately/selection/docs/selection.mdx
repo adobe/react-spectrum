@@ -45,9 +45,9 @@ behavior on a static collection, but could be applied to a dynamic collection th
 let [selectedKeys, setSelectedKeys] = useState(new Set());
 
 <ListBox selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
-  <Item uniqueKey="one">One</Item>
-  <Item uniqueKey="two">Two</Item>
-  <Item uniqueKey="three">Three</Item>
+  <Item key="one">One</Item>
+  <Item key="two">Two</Item>
+  <Item key="three">Three</Item>
 </ListBox>
 ```
 
@@ -62,9 +62,9 @@ single key instead of a Set as their value, and `onSelectionChange` is also call
 let [selectedKey, setSelectedKey] = useState(null);
 
 <ComboBox selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
-  <Item uniqueKey="one">One</Item>
-  <Item uniqueKey="two">Two</Item>
-  <Item uniqueKey="three">Three</Item>
+  <Item key="one">One</Item>
+  <Item key="two">Two</Item>
+  <Item key="three">Three</Item>
 </ComboBox>
 ```
 
@@ -79,9 +79,9 @@ let [selectedKeys, setSelectedKeys] = useState(new Set());
   selectionMode="single"
   selectedKeys={selectedKeys}
   onSelectionChange={setSelectedKeys}>
-  <Item uniqueKey="one">One</Item>
-  <Item uniqueKey="two">Two</Item>
-  <Item uniqueKey="three">Three</Item>
+  <Item key="one">One</Item>
+  <Item key="two">Two</Item>
+  <Item key="three">Three</Item>
 </ListBox>
 ```
 
@@ -109,10 +109,9 @@ function removeItem() {
 
 <ListBox
   items={list.items}
-  itemKey="name"
   selectedKeys={list.selectedKeys}
   onSelectionChange={list.setSelectedKeys}>
-  {item => <Item>{item.name}</Item>}
+  {item => <Item key={item.name}>{item.name}</Item>}
 </ListBox>
 ```
 
