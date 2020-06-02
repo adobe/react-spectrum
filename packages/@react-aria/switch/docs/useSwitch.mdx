@@ -47,7 +47,7 @@ There is no native HTML element with switch styling. `<input type="checkbox">`
 is the closest semantically, but isn't styled or exposed to assistive technology
 as a switch. `useSwitch` helps achieve accessible switches that can be styled as needed.
 
-* Built with a native HTML `<input>` element, which can be optionally visually 
+* Built with a native HTML `<input>` element, which can be optionally visually
   hidden to allow custom styling
 * Full support for browser features like form autofill
 * Keyboard focus management and cross browser normalization
@@ -69,13 +69,13 @@ Selection state is managed by the <TypeLink links={statelyDocs.links} type={stat
 hook in `@react-stately/toggle`. The state object should be passed as an option to `useSwitch`.
 
 In most cases, switches should have a visual label. If the switch does not have a visible label,
-an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assisitive 
+an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive
 technology.
 
 ## Example
 
 This example uses SVG to build the switch, with a visually hidden native input to represent
-the switch for accessibility. This is possible using 
+the switch for accessibility. This is possible using
 the &lt;<TypeLink links={hiddenDocs.links} type={hiddenDocs.exports.VisuallyHidden} />&gt;
 from `@react-aria/visually-hidden`. It is still in the DOM and accessible to assistive technology,
 but invisible. The SVG element is the visual representation, and is hidden from screen readers
@@ -83,7 +83,7 @@ with `aria-hidden`.
 
 For keyboard accessibility, a focus ring is important to indicate which element has keyboard focus.
 This is implemented with the <TypeLink links={focusDocs.links} type={focusDocs.exports.useFocusRing} />
-hook from `@react-aria/focus`. When `isFocusVisible` is true, an extra SVG element is rendered to 
+hook from `@react-aria/focus`. When `isFocusVisible` is true, an extra SVG element is rendered to
 indicate focus. The focus ring is only visible when the user is interacting with a keyboard,
 not with a mouse or touch.
 

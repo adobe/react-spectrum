@@ -45,7 +45,7 @@ browser [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) API.
 To construct an async list, pass a `load` function to `useAsyncList` that returns the items to render.
 You can use the state returned by `useAsyncList` to render a [collection component](collections.html).
 
-This example fetches a list of Pokemon from an API and displays them in a Picker. It uses 
+This example fetches a list of Pokemon from an API and displays them in a Picker. It uses
 [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) to load the data, passing through the abort signal
 given by `useAsyncList` and returning the results from the API. The `isLoading` prop is passed to the Picker
 to tell it to render the loading spinner while data is loading.
@@ -63,7 +63,7 @@ let list = useAsyncList({
   label="Pick a Pokemon"
   items={list.items}
   isLoading={list.isLoading}>
-  {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+  {item => <Item key={item.name}>{item.name}</Item>}
 </Picker>
 ```
 
@@ -71,8 +71,8 @@ let list = useAsyncList({
 
 `useAsyncList` also supports paginated data, which is common in many APIs to avoid loading too many items at once.
 This is accomplished by returning a cursor in addition to `items` from the load function. When the `loadMore` method
-is called, the cursor is passed back to your `load` function, which you can use to determine the URL for the next 
-page. The `onLoadMore` prop supported by many collection components notifies you when you should load more data 
+is called, the cursor is passed back to your `load` function, which you can use to determine the URL for the next
+page. The `onLoadMore` prop supported by many collection components notifies you when you should load more data
 as the user scrolls.
 
 This example expands on the previous one to support infinite scrolling through all known Pokemon. It returns the
@@ -98,7 +98,7 @@ let list = useAsyncList({
   items={list.items}
   isLoading={list.isLoading}
   onLoadMore={list.loadMore}>
-  {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+  {item => <Item key={item.name}>{item.name}</Item>}
 </Picker>
 ```
 
@@ -148,7 +148,7 @@ let list = useAsyncList({
 
 ### Server side sorting
 
-Server side sorting could be implemented by using the `sortDescriptor` in the `load` function, and passing a 
+Server side sorting could be implemented by using the `sortDescriptor` in the `load` function, and passing a
 parameter to the API.
 
 ```tsx

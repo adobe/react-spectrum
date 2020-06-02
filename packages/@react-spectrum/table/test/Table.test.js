@@ -177,12 +177,12 @@ describe('Table', function () {
   it('renders a dynamic table', function () {
     let {getByRole} = render(
       <Table aria-label="Table">
-        <TableHeader columns={columns} columnKey="key">
+        <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
-        <TableBody items={items} itemKey="foo">
+        <TableBody items={items}>
           {item =>
-            (<Row>
+            (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
@@ -362,14 +362,14 @@ describe('Table', function () {
   it('renders a dynamic table with nested columns', function () {
     let {getByRole} = render(
       <Table aria-label="Table">
-        <TableHeader columns={nestedColumns} columnKey="key">
+        <TableHeader columns={nestedColumns}>
           {column =>
             <Column childColumns={column.children}>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={items} itemKey="foo">
+        <TableBody items={items}>
           {item =>
-            (<Row>
+            (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
@@ -516,12 +516,12 @@ describe('Table', function () {
     let renderTable = (locale = 'en-US') => render(
       <Provider locale={locale} theme={theme}>
         <Table aria-label="Table" selectionMode="none">
-          <TableHeader columns={columns} columnKey="key">
+          <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
           </TableHeader>
-          <TableBody items={items} itemKey="foo">
+          <TableBody items={items}>
             {item =>
-              (<Row>
+              (<Row key={item.foo}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>)
             }
@@ -533,14 +533,14 @@ describe('Table', function () {
     let renderNested = (locale = 'en-US') => render(
       <Provider locale={locale} theme={theme}>
         <Table aria-label="Table" selectionMode="none">
-          <TableHeader columns={nestedColumns} columnKey="key">
+          <TableHeader columns={nestedColumns}>
             {column =>
               <Column childColumns={column.children}>{column.name}</Column>
             }
           </TableHeader>
-          <TableBody items={items} itemKey="foo">
+          <TableBody items={items}>
             {item =>
-              (<Row>
+              (<Row key={item.foo}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>)
             }
@@ -551,14 +551,14 @@ describe('Table', function () {
 
     let renderMany = () => render(
       <Table aria-label="Table" selectionMode="none">
-        <TableHeader columns={columns} columnKey="key">
+        <TableHeader columns={columns}>
           {column =>
             <Column>{column.name}</Column>
           }
         </TableHeader>
-        <TableBody items={manyItems} itemKey="foo">
+        <TableBody items={manyItems}>
           {item =>
-            (<Row>
+            (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
@@ -1210,12 +1210,12 @@ describe('Table', function () {
   describe('selection', function () {
     let renderJSX = (onSelectionChange, items = manyItems) => (
       <Table aria-label="Table" onSelectionChange={onSelectionChange}>
-        <TableHeader columns={columns} columnKey="key">
+        <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
-        <TableBody items={items} itemKey="foo">
+        <TableBody items={items}>
           {item =>
-            (<Row>
+            (<Row key={item.foo}>
               {key => <Cell>{item[key]}</Cell>}
             </Row>)
           }
@@ -1765,6 +1765,8 @@ describe('Table', function () {
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
+      expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
 
       let button = tree.getByLabelText('Add item');
       act(() => triggerPress(button));
@@ -1790,6 +1792,10 @@ describe('Table', function () {
 
       rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(4);
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
+      expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
+      expect(rows[3]).toHaveAttribute('aria-rowindex', '4');
+
 
       let rowHeaders = within(rows[1]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Devon');
@@ -1836,6 +1842,45 @@ describe('Table', function () {
       // focus gets reset
       table.focus();
       expect(document.activeElement).toBe(rows[1]);
+    });
+
+    it('resets row indexes after deleting a row', function () {
+      let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
+
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
+      expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
+
+      let button = within(rows[1]).getByRole('button');
+      act(() => triggerPress(button));
+
+      let menu = tree.getByRole('menu');
+      expect(document.activeElement).toBe(menu);
+
+      let menuItems = within(menu).getAllByRole('menuitem');
+      expect(menuItems.length).toBe(2);
+
+      act(() => triggerPress(menuItems[1]));
+      expect(menu).not.toBeInTheDocument();
+
+      let dialog = tree.getByRole('alertdialog', {hidden: true});
+      let deleteButton = within(dialog).getByRole('button', {hidden: true});
+
+      act(() => triggerPress(deleteButton));
+      expect(dialog).not.toBeInTheDocument();
+
+      act(() => jest.runAllTimers());
+      expect(rows[1]).not.toBeInTheDocument();
+
+      rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(2);
+
+      let rowHeaders = within(rows[1]).getAllByRole('rowheader');
+      expect(rowHeaders[0]).toHaveTextContent('Julia');
+
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
     });
 
     it('can bulk remove items', function () {
@@ -1999,8 +2044,8 @@ describe('Table', function () {
     let defaultTable = (
       <Table aria-label="Table">
         <TableHeader>
-          <Column uniqueKey="foo">Foo</Column>
-          <Column uniqueKey="bar">Bar</Column>
+          <Column key="foo">Foo</Column>
+          <Column key="bar">Bar</Column>
         </TableHeader>
         <TableBody>
           <Row>
@@ -2019,8 +2064,8 @@ describe('Table', function () {
       let tree = render(
         <Table aria-label="Table">
           <TableHeader>
-            <Column uniqueKey="foo">Foo</Column>
-            <Column uniqueKey="bar">Bar</Column>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
           </TableHeader>
           <TableBody isLoading>
             {[]}
@@ -2053,8 +2098,8 @@ describe('Table', function () {
       let tree = render(
         <Table aria-label="Table">
           <TableHeader>
-            <Column uniqueKey="foo">Foo</Column>
-            <Column uniqueKey="bar">Bar</Column>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
           </TableHeader>
           <TableBody isLoading>
             <Row>
@@ -2100,8 +2145,8 @@ describe('Table', function () {
       let tree = render(
         <Table aria-label="Table">
           <TableHeader>
-            <Column uniqueKey="foo">Foo</Column>
-            <Column uniqueKey="bar">Bar</Column>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
           </TableHeader>
           <TableBody items={items} onLoadMore={onLoadMore}>
             {row => (
@@ -2138,8 +2183,8 @@ describe('Table', function () {
       let tree = render(
         <Table aria-label="Table" renderEmptyState={() => <h3>No results</h3>}>
           <TableHeader>
-            <Column uniqueKey="foo">Foo</Column>
-            <Column uniqueKey="bar">Bar</Column>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
           </TableHeader>
           <TableBody>
             {[]}
@@ -2173,9 +2218,9 @@ describe('Table', function () {
       let tree = render(
         <Table aria-label="Table" selectionMode="none">
           <TableHeader>
-            <Column uniqueKey="foo" allowsSorting>Foo</Column>
-            <Column uniqueKey="bar" allowsSorting>Bar</Column>
-            <Column uniqueKey="baz">Baz</Column>
+            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -2199,9 +2244,9 @@ describe('Table', function () {
       let tree = render(
         <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'bar', direction: 'ascending'}}>
           <TableHeader>
-            <Column uniqueKey="foo" allowsSorting>Foo</Column>
-            <Column uniqueKey="bar" allowsSorting>Bar</Column>
-            <Column uniqueKey="baz">Baz</Column>
+            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -2225,9 +2270,9 @@ describe('Table', function () {
       let tree = render(
         <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'bar', direction: 'descending'}}>
           <TableHeader>
-            <Column uniqueKey="foo" allowsSorting>Foo</Column>
-            <Column uniqueKey="bar" allowsSorting>Bar</Column>
-            <Column uniqueKey="baz">Baz</Column>
+            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -2252,9 +2297,9 @@ describe('Table', function () {
       let tree = render(
         <Table aria-label="Table" selectionMode="none" onSortChange={onSortChange}>
           <TableHeader>
-            <Column uniqueKey="foo" allowsSorting>Foo</Column>
-            <Column uniqueKey="bar" allowsSorting>Bar</Column>
-            <Column uniqueKey="baz">Baz</Column>
+            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -2284,9 +2329,9 @@ describe('Table', function () {
       let tree = render(
         <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
           <TableHeader>
-            <Column uniqueKey="foo" allowsSorting>Foo</Column>
-            <Column uniqueKey="bar" allowsSorting>Bar</Column>
-            <Column uniqueKey="baz">Baz</Column>
+            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -2316,9 +2361,9 @@ describe('Table', function () {
       let tree = render(
         <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'foo', direction: 'descending'}} onSortChange={onSortChange}>
           <TableHeader>
-            <Column uniqueKey="foo" allowsSorting>Foo</Column>
-            <Column uniqueKey="bar" allowsSorting>Bar</Column>
-            <Column uniqueKey="baz">Baz</Column>
+            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -2348,9 +2393,9 @@ describe('Table', function () {
       let tree = render(
         <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
           <TableHeader>
-            <Column uniqueKey="foo" allowsSorting>Foo</Column>
-            <Column uniqueKey="bar" allowsSorting>Bar</Column>
-            <Column uniqueKey="baz">Baz</Column>
+            <Column key="foo" allowsSorting>Foo</Column>
+            <Column key="bar" allowsSorting>Bar</Column>
+            <Column key="baz">Baz</Column>
           </TableHeader>
           <TableBody>
             <Row>
@@ -2380,12 +2425,12 @@ describe('Table', function () {
     describe('row heights', function () {
       let renderTable = (props, scale) => render(
         <Table aria-label="Table" {...props}>
-          <TableHeader columns={columns} columnKey="key">
+          <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
           </TableHeader>
-          <TableBody items={items} itemKey="foo">
+          <TableBody items={items}>
             {item =>
-              (<Row>
+              (<Row key={item.foo}>
                 {key => <Cell>{item[key]}</Cell>}
               </Row>)
             }
@@ -2483,12 +2528,12 @@ describe('Table', function () {
         
         let tree = render(
           <Table aria-label="Table" rowHeight="auto">
-            <TableHeader columns={nestedColumns} columnKey="key">
+            <TableHeader columns={nestedColumns}>
               {column => <Column childColumns={column.children}>{column.name}</Column>}
             </TableHeader>
-            <TableBody items={items} itemKey="foo">
+            <TableBody items={items}>
               {item =>
-                (<Row>
+                (<Row key={item.foo}>
                   {key => <Cell>{item[key]}</Cell>}
                 </Row>)
               }
@@ -2528,12 +2573,12 @@ describe('Table', function () {
       it('should divide the available width by default', function () {
         let tree = render(
           <Table aria-label="Table">
-            <TableHeader columns={columns} columnKey="key">
+            <TableHeader columns={columns}>
               {column => <Column>{column.name}</Column>}
             </TableHeader>
-            <TableBody items={items} itemKey="foo">
+            <TableBody items={items}>
               {item =>
-                (<Row>
+                (<Row key={item.foo}>
                   {key => <Cell>{item[key]}</Cell>}
                 </Row>)
               }
@@ -2555,13 +2600,13 @@ describe('Table', function () {
         let tree = render(
           <Table aria-label="Table">
             <TableHeader>
-              <Column uniqueKey="foo" width={200}>Foo</Column>
-              <Column uniqueKey="bar" width={500}>Bar</Column>
-              <Column uniqueKey="baz" width={300}>Baz</Column>
+              <Column key="foo" width={200}>Foo</Column>
+              <Column key="bar" width={500}>Bar</Column>
+              <Column key="baz" width={300}>Baz</Column>
             </TableHeader>
-            <TableBody items={items} itemKey="foo">
+            <TableBody items={items}>
               {item =>
-                (<Row>
+                (<Row key={item.foo}>
                   {key => <Cell>{item[key]}</Cell>}
                 </Row>)
               }
@@ -2583,13 +2628,13 @@ describe('Table', function () {
         let tree = render(
           <Table aria-label="Table">
             <TableHeader>
-              <Column uniqueKey="foo" width={200}>Foo</Column>
-              <Column uniqueKey="bar">Bar</Column>
-              <Column uniqueKey="baz">Baz</Column>
+              <Column key="foo" width={200}>Foo</Column>
+              <Column key="bar">Bar</Column>
+              <Column key="baz">Baz</Column>
             </TableHeader>
-            <TableBody items={items} itemKey="foo">
+            <TableBody items={items}>
               {item =>
-                (<Row>
+                (<Row key={item.foo}>
                   {key => <Cell>{item[key]}</Cell>}
                 </Row>)
               }
@@ -2611,13 +2656,13 @@ describe('Table', function () {
         let tree = render(
           <Table aria-label="Table">
             <TableHeader>
-              <Column uniqueKey="foo" width="10%">Foo</Column>
-              <Column uniqueKey="bar" width={500}>Bar</Column>
-              <Column uniqueKey="baz">Baz</Column>
+              <Column key="foo" width="10%">Foo</Column>
+              <Column key="bar" width={500}>Bar</Column>
+              <Column key="baz">Baz</Column>
             </TableHeader>
-            <TableBody items={items} itemKey="foo">
+            <TableBody items={items}>
               {item =>
-                (<Row>
+                (<Row key={item.foo}>
                   {key => <Cell>{item[key]}</Cell>}
                 </Row>)
               }
@@ -2639,13 +2684,13 @@ describe('Table', function () {
         let tree = render(
           <Table aria-label="Table">
             <TableHeader>
-              <Column uniqueKey="foo" width={200}>Foo</Column>
-              <Column uniqueKey="bar" minWidth={500}>Bar</Column>
-              <Column uniqueKey="baz">Baz</Column>
+              <Column key="foo" width={200}>Foo</Column>
+              <Column key="bar" minWidth={500}>Bar</Column>
+              <Column key="baz">Baz</Column>
             </TableHeader>
-            <TableBody items={items} itemKey="foo">
+            <TableBody items={items}>
               {item =>
-                (<Row>
+                (<Row key={item.foo}>
                   {key => <Cell>{item[key]}</Cell>}
                 </Row>)
               }
@@ -2667,13 +2712,13 @@ describe('Table', function () {
         let tree = render(
           <Table aria-label="Table">
             <TableHeader>
-              <Column uniqueKey="foo" width={200}>Foo</Column>
-              <Column uniqueKey="bar" maxWidth={300}>Bar</Column>
-              <Column uniqueKey="baz">Baz</Column>
+              <Column key="foo" width={200}>Foo</Column>
+              <Column key="bar" maxWidth={300}>Bar</Column>
+              <Column key="baz">Baz</Column>
             </TableHeader>
-            <TableBody items={items} itemKey="foo">
+            <TableBody items={items}>
               {item =>
-                (<Row>
+                (<Row key={item.foo}>
                   {key => <Cell>{item[key]}</Cell>}
                 </Row>)
               }
@@ -2694,12 +2739,12 @@ describe('Table', function () {
       it('should compute the correct widths for tiered headings', function () {
         let tree = render(
           <Table aria-label="Table">
-            <TableHeader columns={nestedColumns} columnKey="key">
+            <TableHeader columns={nestedColumns}>
               {column => <Column childColumns={column.children}>{column.name}</Column>}
             </TableHeader>
-            <TableBody items={items} itemKey="foo">
+            <TableBody items={items}>
               {item =>
-                (<Row>
+                (<Row key={item.foo}>
                   {key => <Cell>{item[key]}</Cell>}
                 </Row>)
               }
