@@ -86,11 +86,11 @@ function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, r
 
 interface CollectionViewOpts {
   focusedKey?: Key,
-  shouldScrollToItem?: (key: Key) => boolean
+  scrollToItem?: (key: Key) => void
 }
 
 export function useCollectionView<T extends object, V, W>(props: CollectionViewOpts, state: CollectionState<T, V, W>, ref: RefObject<HTMLElement>) {
-  let {focusedKey, shouldScrollToItem} = props;
+  let {focusedKey, scrollToItem} = props;
   let {collectionManager} = state;
 
   // Scroll to the focusedKey when it changes. Actually focusing the focusedKey
@@ -102,12 +102,16 @@ export function useCollectionView<T extends object, V, W>(props: CollectionViewO
       return;
     }
 
-    if (focusedKey !== lastFocusedKey.current && (!shouldScrollToItem || shouldScrollToItem(focusedKey))) {
-      collectionManager.scrollToItem(focusedKey, 0);
+    if (focusedKey !== lastFocusedKey.current) {
+      if (scrollToItem) {
+        scrollToItem(focusedKey);
+      } else {
+        collectionManager.scrollToItem(focusedKey, {duration: 0});
+      }
     }
 
     lastFocusedKey.current = focusedKey;
-  }, [focusedKey, collectionManager.visibleRect.height, collectionManager, lastFocusedKey, shouldScrollToItem]);
+  }, [focusedKey, collectionManager.visibleRect.height, collectionManager, lastFocusedKey, scrollToItem]);
 
   let isFocusWithin = useRef(false);
   let onFocus = useCallback((e: FocusEvent) => {
@@ -116,7 +120,7 @@ export function useCollectionView<T extends object, V, W>(props: CollectionViewO
     // We only want to do this if the CollectionView itself is receiving focus, not a child
     // element, and we aren't moving focus to the CollectionView from within (see below).
     if (e.target === ref.current && !isFocusWithin.current) {
-      collectionManager.scrollToItem(focusedKey, 0);
+      collectionManager.scrollToItem(focusedKey, {duration: 0});
     }
 
     isFocusWithin.current = e.target !== ref.current;

@@ -243,10 +243,19 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
 
   let {collectionViewProps} = useCollectionView({
     focusedKey,
-    shouldScrollToItem(key) {
-      // Prevent scrolling to the top when clicking on column headers.
+    scrollToItem(key) {
       let item = collection.getItem(key);
-      return item?.type !== 'column';
+      let column = collection.columns[0];
+      collectionState.collectionManager.scrollToItem(key, {
+        duration: 0,
+        // Prevent scrolling to the top when clicking on column headers.
+        shouldScrollY: item?.type !== 'column',
+        // Offset scroll position by width of selection cell 
+        // (which is sticky and will overlap the cell we're scrolling to).
+        offsetX: column.props.isSelectionCell
+          ? layout.columnWidths.get(column.key)
+          : 0
+      });
     }
   }, collectionState, domRef);
 
