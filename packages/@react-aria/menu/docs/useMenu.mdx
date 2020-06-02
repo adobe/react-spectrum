@@ -45,7 +45,7 @@ keywords: [menu, mutli-select menu, aria]
 
 ## Features
 
-There is no native element to implement a menu in HTML that is widely supported. `useMenu` 
+There is no native element to implement a menu in HTML that is widely supported. `useMenu`
 helps achieve accessible menu components that can be styled as needed.
 
 Note: `useMenu` only handles the menu itself. For a dropdown menu, combine with [useMenuTrigger](useMenuTrigger.html).
@@ -88,21 +88,21 @@ selection and focus behavior.
 </TypeContext.Provider>
 
 State is managed by the <TypeLink links={treeDocs.links} type={treeDocs.exports.useTreeState} />
-hook from `@react-stately/tree`. The state object should be passed as an option 
+hook from `@react-stately/tree`. The state object should be passed as an option
 to each of the above hooks.
 
 If a menu, menu item, or group does not have a visible label, an `aria-label` or `aria-labelledby`
-prop must be passed instead to identify the element to assisitive technology.
+prop must be passed instead to identify the element to assistive technology.
 
 ## State management
 
 `useMenu` requires knowledge of the items in the menu in order to handle keyboard
 navigation and other interactions. It does this using the <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} />
-interface, which is a generic interface to access sequential unique keyed data. You can 
-implement this interface yourself, e.g. by using a prop to pass a list of item objects, 
-but <TypeLink links={treeDocs.links} type={treeDocs.exports.useTreeState} /> from 
+interface, which is a generic interface to access sequential unique keyed data. You can
+implement this interface yourself, e.g. by using a prop to pass a list of item objects,
+but <TypeLink links={treeDocs.links} type={treeDocs.exports.useTreeState} /> from
 `@react-stately/tree` implements a JSX based interface for building collections instead.
-See [Collection Components](/react-stately/collections.html) for more information, 
+See [Collection Components](/react-stately/collections.html) for more information,
 and [Collection Interface](/react-stately/Collection.html) for internal details.
 
 In addition, <TypeLink links={treeDocs.links} type={treeDocs.exports.useTreeState} />
@@ -162,7 +162,7 @@ function MenuItem({item, state, onAction}) {
     onAction
   }, state);
 
-  // Handle focus events so we can apply highlighted 
+  // Handle focus events so we can apply highlighted
   // style to the focused menu item
   let [isFocused, setFocused] = React.useState(false);
   let {focusProps} = useFocus({onFocusChange: setFocused});
@@ -194,9 +194,9 @@ function MenuItem({item, state, onAction}) {
 
 This example shows how a menu can support sections with separators and headings
 using props from <TypeLink links={docs.links} type={docs.exports.useMenuSection} />.
-This is accomplished using four extra elements: an `<li>` between the sections to 
-represent the separator, an `<li>` to contain the heading `<span>` element, and a 
-`<ul>` to contain the child items. This structure is necessary to ensure HTML 
+This is accomplished using four extra elements: an `<li>` between the sections to
+represent the separator, an `<li>` to contain the heading `<span>` element, and a
+`<ul>` to contain the child items. This structure is necessary to ensure HTML
 semantics are correct.
 
 ```tsx example
@@ -235,7 +235,7 @@ function MenuSection({section, state, onAction}) {
     heading: section.rendered,
     'aria-label': section['aria-label']
   });
-  
+
   let {separatorProps} = useSeparator({
     elementType: 'li'
   });
@@ -270,7 +270,7 @@ function MenuSection({section, state, onAction}) {
           padding: 0,
           listStyle: 'none'
         }}>
-        {[...section.childNodes].map(node => 
+        {[...section.childNodes].map(node =>
           <MenuItem
             key={node.key}
             item={node}
@@ -328,18 +328,18 @@ function MenuItem({item, state, onAction}) {
 
 ## Complex menu items
 
-By default, menu items that only contain text will be labelled by the contents of the item. 
+By default, menu items that only contain text will be labeled by the contents of the item.
 For items that have more complex content (e.g. icons, multiple lines of text, keyboard shortcuts, etc.),
-use `labelProps`, `descriptionProps`, and `keyboardShortcutProps` 
+use `labelProps`, `descriptionProps`, and `keyboardShortcutProps`
 from <TypeLink links={docs.links} type={docs.exports.useMenuItem} />
-as needed to apply to the main text element of the menu item, its description, and keyboard 
+as needed to apply to the main text element of the menu item, its description, and keyboard
 shortcut text. This improves screen reader announcement.
 
 **NOTE: menu items cannot contain interactive content (e.g. buttons, checkboxes, etc.).**
 
-This example shows how `labelProps`, `descriptionProps`, and `keyboardShortcutProps` can be applied to 
-child elements of the item to apply ARIA properties returned 
-by <TypeLink links={docs.links} type={docs.exports.useMenuItem} />. This is done using 
+This example shows how `labelProps`, `descriptionProps`, and `keyboardShortcutProps` can be applied to
+child elements of the item to apply ARIA properties returned
+by <TypeLink links={docs.links} type={docs.exports.useMenuItem} />. This is done using
 `React.cloneElement` in this example, but you can use context or other approaches for this as well.
 
 ```tsx example
@@ -387,7 +387,7 @@ function MenuItem({item, state, onAction}) {
     onAction
   }, state);
 
-  // Handle focus events so we can apply highlighted 
+  // Handle focus events so we can apply highlighted
   // style to the focused menu item
   let [isFocused, setFocused] = React.useState(false);
   let {focusProps} = useFocus({onFocusChange: setFocused});
@@ -441,13 +441,13 @@ function MenuItem({item, state, onAction}) {
 ## Internationalization
 
 `useMenu` handles some aspects of internationalization automatically.
-For example, type to select is implemented with an 
+For example, type to select is implemented with an
 [Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Collator)
-for internationalized string matching. You are responsible for localizing all menu item labels for 
+for internationalized string matching. You are responsible for localizing all menu item labels for
 content that is passed into the menu.
 
 ### RTL
 
 In right-to-left languages, the menu items should be mirrored. The text content should be
-aligned to the right, and keyboard shortcuts should be aligned left. Ensure that your CSS 
+aligned to the right, and keyboard shortcuts should be aligned left. Ensure that your CSS
 accounts for this.

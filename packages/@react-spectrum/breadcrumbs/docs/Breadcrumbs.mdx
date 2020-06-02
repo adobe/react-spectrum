@@ -16,8 +16,7 @@ import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
-import {Breadcrumbs} from '@react-spectrum/breadcrumbs';
-import {Item} from '@react-stately/collections';
+import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {View} from '@react-spectrum/view';
 ```
 
@@ -31,62 +30,44 @@ category: Navigation
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Breadcrumbs']} />
+  componentNames={['Breadcrumbs', 'Item']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/breadcrumbs/'}
+  ]} />
 
 ## Example
 
 ```tsx example
 <Breadcrumbs>
-  <Item key="Folder 1">Folder 1</Item>
-  <Item key="Folder 2">Folder 2</Item>
-  <Item key="Folder 3">Folder 3</Item>
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
+  <Item key="march 2020 assets">March 2020 Assets</Item>
 </Breadcrumbs>
 ```
 
 ## Content
-
-Breadcrumbs accept as list of `children`, each with a `key` prop.
-
-It is required that the `children` are <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Item} /> components from the `@react-stately/collections` library.
-
-```tsx example
-function Example() {
-  return (
-    <Breadcrumbs>
-      <Item key="Folder 1">Folder 1</Item>
-      <Item key="Folder 2">Folder 2</Item>
-      <Item key="Folder 3">Folder 3</Item>
-    </Breadcrumbs>
-  );
-}
-```
-
-In order to identify children when a user takes an action on a item,
-each child needs to have a `key` prop. See [Events](#events) for more information.
+Breadcrumbs follow the [Collection Components](../react-stately/collections.html) API, accepting only static children. Similar to the Menu, Breadcrumbs accept an `<Item>` component, each with a `key` prop which is passed to the `onAction` handler to identify the selected item. Basic usage of Breadcrumbs, seen in the example above, shows a list of <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Item} /> components, populated with a string. See [Events](#events) for more information.
 
 ### Internationalization
-
 In order to internationalize Breadcrumbs, the strings of all child items should be localized.
 
 ## Events
-
 Use the `onAction` prop as a callback to handle press events on items.
-The `key` prop from the selected item will be passed into the callback.
 
 ```tsx example
 function Example() {
   let folders = [
-    {id: 1, label: 'Folder 1'},
-    {id: 2, label: 'Folder 2'},
-    {id: 3, label: 'Folder 3'}
+    {id: 1, label: 'Home'},
+    {id: 2, label: 'Trendy'},
+    {id: 3, label: 'March 2020 Assets'}
   ];
   let [folderId, setFolderId] = React.useState();
   return (
     <div>
       <Breadcrumbs onAction={(a) => setFolderId(a)}>
-        {folders.map(f => <Item key={f.id} key={f.id}>{f.label}</Item>)}
+        {folders.map(f => <Item key={f.id}>{f.label}</Item>)}
       </Breadcrumbs>
-      <p>Last Selected Folder: {folderId}</p>
+      <p>You pressed folder ID: {folderId}</p>
     </div>
   );
 }
@@ -99,21 +80,22 @@ function Example() {
 ## Visual options
 
 ### Size
+[View guidelines](https://spectrum.adobe.com/page/breadcrumbs/#Options)
 
 The small size is useful when available space is limited.
 
 ```tsx example
 <Breadcrumbs size="S">
-  <Item key="Folder 1">Folder 1</Item>
-  <Item key="Folder 2">Folder 2</Item>
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
 </Breadcrumbs>
 ```
 
 The medium size is the default.
 ```tsx example
 <Breadcrumbs size="M">
-  <Item key="Folder 1">Folder 1</Item>
-  <Item key="Folder 2">Folder 2</Item>
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
 </Breadcrumbs>
 ```
 
@@ -121,8 +103,8 @@ The large size places emphasis on the selected item as a page title or heading.
 
 ```tsx example
 <Breadcrumbs size="L">
-  <Item key="Folder 1">Folder 1</Item>
-  <Item key="Folder 2">Folder 2</Item>
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
 </Breadcrumbs>
 ```
 
@@ -133,30 +115,32 @@ If a change to the aria-level is required, use the `headingAriaLevel` prop.
 
 ```tsx example
 <Breadcrumbs isHeading headingAriaLevel={2}>
-  <Item key="Folder 1">Folder 1</Item>
-  <Item key="Folder 2">Folder 2</Item>
-  <Item key="Folder 3">Folder 3</Item>
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
+  <Item key="march 2020 assets">March 2020 Assets</Item>
 </Breadcrumbs>
 ```
 
-### Visible items
+### Visible items (overflow behavior)
+[View guidelines](https://spectrum.adobe.com/page/breadcrumbs/#Truncation-and-overflow)
 
-Breadcrumbs truncate by default to a maximum of 4 items visible.
+Breadcrumbs collapse into a menu by default, showing only a maximum of visible 4 items.
 
-If using `maxVisibleItems="auto"`, truncation of breadcrumb items begins when there is not enough room to display all items
+If using `maxVisibleItems="auto"`, overflow of breadcrumb items begins when there is not enough room to display all items
 in the parent container.
 
-In order to manually control the truncation, use the `maxVisibleItems` prop.
+In order to manually control the overflow, use the `maxVisibleItems` prop.
 
 ```tsx example
 <Breadcrumbs maxVisibleItems={2}>
-  <Item key="Folder 1">Folder 1</Item>
-  <Item key="Folder 2">Folder 2</Item>
-  <Item key="Folder 3">Folder 3</Item>
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
+  <Item key="march 2020 assets">March 2020 Assets</Item>
 </Breadcrumbs>
 ```
 
 ### Root context
+[View guidelines](https://spectrum.adobe.com/page/breadcrumbs/#With-root-context)
 
 Some applications find that displaying the root item is useful for orienting users.
 This variation keeps the root visible when other items are truncated into the menu.
@@ -164,11 +148,11 @@ This variation keeps the root visible when other items are truncated into the me
 ```tsx example
 <View overflow="hidden" width="200px">
   <Breadcrumbs showRoot maxVisibleItems="auto">
-    <Item key="Folder 1">Folder 1</Item>
-    <Item key="Folder 2">Folder 2</Item>
-    <Item key="Folder 3">Folder 3</Item>
-    <Item key="Folder 4">Folder 4</Item>
-    <Item key="Folder 5">Folder 5</Item>
+    <Item key="home">Home</Item>
+    <Item key="trendy">Trendy</Item>
+    <Item key="2020 assets">March 2020 Assets</Item>
+    <Item key="winter">Winter</Item>
+    <Item key="holiday">Holiday</Item>
   </Breadcrumbs>
 </View>
 ```
@@ -180,8 +164,8 @@ This can be used to maintain layout continuity.
 
 ```tsx example
 <Breadcrumbs isDisabled>
-  <Item key="Folder 1">Folder 1</Item>
-  <Item key="Folder 2">Folder 2</Item>
-  <Item key="Folder 3">Folder 3</Item>
+  <Item key="home">Home</Item>
+  <Item key="trendy">Trendy</Item>
+  <Item key="march 2020 assets">March 2020 Assets</Item>
 </Breadcrumbs>
 ```

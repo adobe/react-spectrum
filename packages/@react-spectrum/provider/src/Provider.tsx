@@ -11,10 +11,9 @@
  */
 
 import classNames from 'classnames';
-import configureTypekit from './configureTypekit';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
+import {I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/overlays';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext, useEffect, useRef} from 'react';
@@ -50,7 +49,6 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let {
     colorScheme = usePrevColorScheme ? prevColorScheme : autoColorScheme,
     scale = prevContext ? prevContext.scale : autoScale,
-    typekitId,
     locale = prevContext ? prevLocale : null,
     children,
     isQuiet,
@@ -80,10 +78,6 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
 
   // Merge options with parent provider
   let context = Object.assign({}, prevContext, filteredProps);
-
-  useEffect(() => {
-    configureTypekit(typekitId);
-  }, [typekitId]);
 
   // Only wrap in a DOM node if the theme, colorScheme, or scale changed
   let contents = children;

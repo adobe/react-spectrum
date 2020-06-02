@@ -16,17 +16,17 @@ import {ReactNode} from 'react';
 interface ProgressBaseProps {
   /**
    * The current value (controlled).
-   * @default "0"
+   * @default 0
    */
   value?: number,
   /**
    * The smallest value allowed for the input.
-   * @default "0"
+   * @default 0
    */
   minValue?: number,
   /**
    * The largest value allowed for the input.
-   * @default "100"
+   * @default 100
    */
   maxValue?: number
 }
@@ -47,7 +47,6 @@ export interface AriaProgressBarBaseProps extends ProgressBarBaseProps, DOMProps
 export interface ProgressBarProps extends ProgressBarBaseProps {
   /**
    * Whether presentation is indeterminate when progress isn't known.
-   * @default "false"
    */
   isIndeterminate?: boolean
 }
@@ -57,7 +56,6 @@ export interface AriaProgressBarProps extends ProgressBarProps, DOMProps, AriaLa
 export interface ProgressCircleProps extends ProgressBaseProps {
   /**
    * Whether presentation is indeterminate when progress isn't known.
-   * @default "false"
    */
   isIndeterminate?: boolean
 }

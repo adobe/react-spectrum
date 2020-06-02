@@ -275,6 +275,10 @@ ${compiled}
 });
 
 function responsiveCode(node) {
+  if (!node.lang) {
+    return [node];
+  }
+
   let large = {
     ...node,
     meta: node.meta ? `${node.meta} large` : 'large',
