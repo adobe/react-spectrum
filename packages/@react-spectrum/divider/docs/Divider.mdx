@@ -17,6 +17,7 @@ import packageData from '../package.json';
 ```jsx import
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
+import {Text} from '@react-spectrum/typography';
 ```
 
 ---
@@ -31,35 +32,45 @@ category: Content
   packageData={packageData}
   componentNames={['Divider']}
   sourceData={[
-    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/rule/'}
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/divider/'}
   ]} />
 
 ## Example
 
 ### Horizontal
-
-Horizontal Dividers can be used as is because of how CSS Layout works. They may also be used in Flex and Grid containers.
+[View guidelines](https://spectrum.adobe.com/page/divider/#Orientation)
 
 ```tsx example
-<Flex direction="column">
-  Content above
-  <Divider marginTop="10px" marginBottom="10px" />
-  Content below
+<Flex direction="column" gap="size-125">
+  <Text>Content above</Text>
+  <Divider />
+  <Text>Content below</Text>
 </Flex>
 ```
 
 ### Vertical
 
-It is recommended to only use vertical Dividers in Flex or Grid containers. CSS Layout otherwise makes displaying a vertical Divider very difficult.
-
 ```tsx example
-<Flex>
-  Content left
-  <Divider orientation="vertical" marginStart="10px" marginEnd="10px" />
-  Content right
+<Flex gap="size-125">
+  <Text>Content left</Text>
+  <Divider orientation="vertical" />
+  <Text>Content right</Text>
 </Flex>
 ```
 
+### Size
+[View guidelines](https://spectrum.adobe.com/page/divider/#Size)
+
+```tsx example
+<Flex flexDirection="column" gap="size-125">
+  <Text>Content above large Divider</Text>
+  <Divider size="L" />
+  <Text>Content above medium Divider</Text>
+  <Divider size="M" />
+  <Text>Content above small Divider</Text>
+  <Divider size="S" />
+</Flex>
+```
 ## Props
 
 <PropTable component={docs.exports.Divider} links={docs.links} />

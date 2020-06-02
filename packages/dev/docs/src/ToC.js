@@ -23,8 +23,10 @@ export function ToC(props) {
 
   return (
     <nav className={styles['toc']} id="toc">
-      <h3 className={typographyStyles['spectrum-Heading4']}>Contents</h3>
-      <SideNav node={toc} />
+      <div className={styles['tocContainer']}>
+        <h3 aria-label="Table of contents" className={typographyStyles['spectrum-Heading4']}>Contents</h3>
+        <SideNav node={toc} />
+      </div>
     </nav>
   );
 }
