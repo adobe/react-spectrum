@@ -12,16 +12,19 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
+import {AlertDialog, Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
+import {Content, Header} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
+import {Divider} from '@react-spectrum/divider';
+import {Heading, Keyboard, Text} from '@react-spectrum/typography';
 import isChromatic from 'storybook-chromatic/isChromatic';
 import {Item, Menu, MenuTrigger, Section} from '../';
-import {Keyboard, Text} from '@react-spectrum/typography';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -154,6 +157,33 @@ storiesOf('MenuTrigger', module)
     )
   )
   .add(
+    'Static with dialog trigger',
+    () => render(
+      <Menu>
+        <Section title="Actions">
+          <DialogTrigger isDismissable>
+            <Item>Edit...</Item>
+            <Dialog>
+              <Header>
+                <Heading>Edit</Heading>
+              </Header>
+              <Divider size="M" />
+              <Content>
+                Testing
+              </Content>
+            </Dialog>
+          </DialogTrigger>
+          <DialogTrigger>
+            <Item>Delete...</Item>
+            <AlertDialog title="Delete" variant="destructive" primaryActionLabel="Delete" cancelLabel="Cancel">
+              Are you sure?
+            </AlertDialog>
+          </DialogTrigger>
+        </Section>
+      </Menu>
+    , {isOpen: true})
+  )
+  .add(
     'single selected key (controlled, static)',
     () => render(
       <Menu selectionMode="single" onAction={action('onAction')} selectedKeys={['2']}>
@@ -226,7 +256,36 @@ storiesOf('MenuTrigger', module)
     () => render(null, {}, {defaultSelectedKeys: ['Kangaroo'], selectionMode: 'single'})
   )
   .add(
-    'multiple selected key (controlled)',
+    'multiple default selected key (controlled, static)',
+    () => render(
+      <Menu onAction={action('onAction')} selectionMode="multiple" selectedKeys={['2', '5']} disabledKeys={['1', '3']}>
+        <Section title="Section 1">
+          <Item key="1">
+            One
+          </Item>
+          <Item key="2">
+            Two
+          </Item>
+          <Item key="3">
+            Three
+          </Item>
+        </Section>
+        <Section title="Section 2">
+          <Item key="4">
+            Four
+          </Item>
+          <Item key="5">
+            Five
+          </Item>
+          <Item key="6">
+            Six
+          </Item>
+        </Section>
+      </Menu>
+    )
+  )
+  .add(
+    'multiple selected key (controlled, generative)',
     () => render(null, {}, {selectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
   )
   .add(
