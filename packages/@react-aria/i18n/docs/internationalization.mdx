@@ -36,8 +36,8 @@ Localization is the process of adapting an application for a particular language
 as well as adapting date formatting, number formatting, collation and sorting, text search, and more.
 
 React Aria includes translations for all builtin strings in over 30 locales. However, because React Aria provides no rendering,
-most of the builtin strings are for non-visible things like accessibility labels. All application provided content must be localized
-and passed in to components. This can be done with many libraries, e.g. [react-intl](https://formatjs.io/docs/react-intl) or others.
+most of the builtin strings are for non-visible content to provide accessible labels. All application provided content must be localized
+and passed in to components. This can be done libraries such as [react-intl](https://formatjs.io/docs/react-intl).
 Internally, React Aria uses the same [intl-messageformat](https://formatjs.io/docs/intl-messageformat) library used by react-intl.
 
 React Aria also formats numbers and dates according to the current locale, and uses internationalized algorithms for collation, 
@@ -60,8 +60,8 @@ opposite side of the interface. For example, a button that would be displayed on
 would appear on the left side of the screen in a right-to-left language. In addition, elements within a component are also expected to
 mirror. For example, in a checkbox component, the label would be placed on the left side of the checkmark rather than the right.
 
-Since React Aria provides no rendering, it is up to you to implement RTL support in your design. The documentation for individual components
-calls out when you need to be aware of this this, so you can account for it in your CSS using 
+Since React Aria provides no rendering, it is up to you to implement RTL support in your design. The documentation for individual react-aria hooks
+calls out when you need to be aware of this, so you can account for it in your CSS using 
 [logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Logical_Properties) or other means. For example, flexbox and CSS grid
 both automatically flip their layouts depending on the direction.
 

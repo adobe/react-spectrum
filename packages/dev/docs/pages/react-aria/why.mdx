@@ -53,19 +53,19 @@ but get most of the [behavior](interactions.html), [accessibility](accessibility
 [internationalization](internationalization.html) support for free.
 
 Rather than starting with only divs and building everything yourself, you start with elements that have semantic meaning,
-behavior, and interactions built in. This allows you to **build components much more quickly**, and ensures that they work well
+behavior, and interactions built in. This allows you to **build components more quickly**, and ensures that they work well
 across mouse, touch, and keyboard interactions, as well as with screen readers and other assistive technology.
 
-## Customizability
+## Customization
 
 The main reason developers need to create their own component libraries from scratch is styling. Built-in browser UI controls
-are not customizable enough, and in many cases do not exist at all. Given this, React Aria is intentionally very low level:
+are not customizable enough, and in many cases do not exist at all. Because of this, React Aria is intentionally very low level:
 unlike many open source component libraries, it provides **no rendering at all**, just behavior and accessibility.
-We impose no specific DOM structure or styling methodology. You can use CSS classes, CSS-in-JS, etc.
+We impose no specific DOM structure or styling methodology.
 The hooks are small and **composable**, which allows you to combine them together and achieve your design with only the 
 features you need in your component.
 
-In terms of behavior, most components have behavior that is very well understood. The 
+Most components have behavior that is consistent even across design systems. The 
 [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/) published by the W3C specifies
 the expected keyboard and accessibility behavior for most common components. In addition, touch and mouse behavior
 is usually quite consistent regardless of the design. A button is still a button, even if it looks a little different.
