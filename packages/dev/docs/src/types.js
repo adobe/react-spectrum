@@ -206,14 +206,29 @@ function TypeParameter({name, default: defaultType}) {
   );
 }
 
-function FunctionType({name, parameters, return: returnType, typeParameters, rest}) {  
+export function Indent({params, small, large}) {
+  if (params.length > 2) {
+    return small;
+  }
+
+  return (
+    <>
+      <span className="small">{small}</span>
+      <span className="large">{large}</span>
+    </>
+  );
+}
+
+function FunctionType({name, parameters, return: returnType, typeParameters, rest}) {
   return (
     <>
       {name && <span className="token hljs-function">{name}</span>}
       <TypeParameters typeParameters={typeParameters} />
-      <span className="token punctuation">{parameters.length > 2 ? '(\n  ' : '('}</span>
-      <JoinList elements={parameters} joiner={parameters.length > 2 ? ',\n  ' : ', '} />
-      <span className="token punctuation">{parameters.length > 2 ? '\n)' : ')'}</span>
+      <span className="token punctuation"><Indent params={parameters} small={'(\n  '} large="(" /></span>
+      <JoinList
+        elements={parameters}
+        joiner={<Indent params={parameters} small={',\n  '} large=", " />} />
+      <Indent params={parameters} small={'\n)'} large=")" />
       <span className="token punctuation">{name ? ': ' : ' => '}</span>
       <Type type={returnType} />
     </>
@@ -275,7 +290,7 @@ export function LinkType({id}) {
   }
 
   registered.set(id, {type: value, links});
-  
+
   let used = getUsedLinks(value, links);
   for (let id in used) {
     registered.set(id, {type: used[id], links});
@@ -302,7 +317,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
 
   return (
     <>
-      {methods.length > 0 && properties.length > 0 && 
+      {methods.length > 0 && properties.length > 0 &&
         <h3 className={typographyStyles['spectrum-Heading4']}>Properties</h3>
       }
       {properties.length > 0 &&
@@ -310,9 +325,9 @@ export function InterfaceType({description, properties: props, showRequired, sho
           <thead>
             <tr>
               <td className={tableStyles['spectrum-Table-headCell']}>Name</td>
-              <td className={tableStyles['spectrum-Table-headCell']}>Type</td>
+              <td className={tableStyles['spectrum-Table-headCell']} style={{'width': '30%'}}>Type</td>
               {showDefault && <td className={tableStyles['spectrum-Table-headCell']}>Default</td>}
-              <td className={tableStyles['spectrum-Table-headCell']}>Description</td>
+              <td className={tableStyles['spectrum-Table-headCell']} style={{'width': '40%'}}>Description</td>
             </tr>
           </thead>
           <tbody className={tableStyles['spectrum-Table-body']}>
@@ -346,7 +361,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
           </tbody>
         </table>
       }
-      {methods.length > 0 && properties.length > 0 && 
+      {methods.length > 0 && properties.length > 0 &&
         <h3 className={typographyStyles['spectrum-Heading4']}>Methods</h3>
       }
       {methods.length > 0 &&
@@ -364,9 +379,9 @@ export function InterfaceType({description, properties: props, showRequired, sho
                   <code className={`${typographyStyles['spectrum-Code4']}`}>
                     <span className="token hljs-function">{prop.name}</span>
                     <TypeParameters typeParameters={prop.value.typeParameters} />
-                    <span className="token punctuation">{prop.value.parameters.length > 2 ? '(\n  ' : '('}</span>
-                    <JoinList elements={prop.value.parameters} joiner={prop.value.parameters.length > 2 ? ',\n  ' : ', '} />
-                    <span className="token punctuation">{prop.value.parameters.length > 2 ? '\n)' : ')'}</span>
+                    <span className="token punctuation"><Indent params={prop.value.parameters} small={'(\n  '} large="(" /></span>
+                    <JoinList elements={prop.value.parameters} joiner={<Indent params={prop.value.parameters} small={',\n  '} large=",  " />} />
+                    <span className="token punctuation"><Indent params={prop.value.parameters} small={'\n)'} large=")" /></span>
                     <span className="token punctuation">{': '}</span>
                     <Type type={prop.value.return} />
                   </code>

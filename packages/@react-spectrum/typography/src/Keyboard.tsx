@@ -11,9 +11,10 @@
  */
 
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {KeyboardProps} from '@react-types/typography';
 import React, {forwardRef} from 'react';
+import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
 function Keyboard(props: KeyboardProps, ref: DOMRef) {
   props = useSlotProps(props, 'keyboard');
@@ -31,5 +32,8 @@ function Keyboard(props: KeyboardProps, ref: DOMRef) {
   );
 }
 
+/**
+ * Keyboard is used to define text as keyboard input.
+ */
 const _Keyboard = forwardRef(Keyboard);
 export {_Keyboard as Keyboard};

@@ -92,4 +92,10 @@ describe('ProgressBar', function () {
     render(<ProgressBar value={25} />);
     expect(spyWarn).toHaveBeenCalledWith('If you do not provide a visible label via children, you must specify an aria-label or aria-labelledby attribute for accessibility');
   });
+
+  it('supports custom DOM props', function () {
+    let {getByTestId} = render(<ProgressBar label="Meter" data-testid="test" />);
+    let progressBar = getByTestId('test');
+    expect(progressBar).toBeInTheDocument();
+  });
 });

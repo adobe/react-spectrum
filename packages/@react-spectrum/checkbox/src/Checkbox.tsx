@@ -11,7 +11,7 @@
  */
 
 import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import DashSmall from '@spectrum-icons/ui/DashSmall';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -45,15 +45,6 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
 
   return (
     <label
-      {...filterDOMProps(
-        otherProps,
-        {
-          id: false,
-          'aria-label': false,
-          'aria-labelledby': false,
-          tabIndex: false
-        }
-      )}
       {...styleProps}
       ref={domRef}
       className={
@@ -61,6 +52,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
           styles,
           'spectrum-Checkbox',
           {
+            'is-checked': state.isSelected,
             'is-indeterminate': isIndeterminate,
             'spectrum-Checkbox--quiet': !isEmphasized,
             'is-invalid': inputProps['aria-invalid'],

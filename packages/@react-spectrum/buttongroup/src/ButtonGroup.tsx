@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, SlotProvider, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import {SpectrumButtonGroupProps} from '@react-types/buttongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
@@ -61,6 +62,8 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
     if (!dirty) {
       setDirty(true);
     }
+  // Don't add dirty to dep array since it will cause infinite loop
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children, scale]);
 
   // Check for overflow on window resize

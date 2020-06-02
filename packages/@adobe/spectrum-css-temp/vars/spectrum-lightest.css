@@ -11,6 +11,8 @@
  */
 
 .spectrum--lightest {
+  --spectrum-global-color-status: Verified;
+  --spectrum-global-color-version: 5.0.1;
   --spectrum-global-color-celery-400: rgb(75, 195, 95);
   --spectrum-global-color-celery-500: rgb(68, 181, 86);
   --spectrum-global-color-celery-600: rgb(61, 167, 78);
@@ -112,4 +114,8 @@
   --spectrum-miller-column-item-background-color-selected-hover: rgba(38,128,235,0.2);
   --spectrum-well-background-color: rgba(80,80,80,0.02);
   --spectrum-well-border-color: rgba(50,50,50,0.05);
+  /* BEGIN RSP PATCH */
+  /* missing in spectrum-css */
+  --spectrum-tray-background-color: var(--spectrum-global-color-gray-50);
+  /* END RSP PATCH */
 }

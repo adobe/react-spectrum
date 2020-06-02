@@ -16,7 +16,7 @@ import {useDialog} from '../';
 
 function Example(props) {
   let ref = useRef();
-  let {dialogProps} = useDialog({ref, ...props});
+  let {dialogProps} = useDialog(props, ref);
   return <div ref={ref} {...dialogProps} data-testid="test">{props.children}</div>;
 }
 

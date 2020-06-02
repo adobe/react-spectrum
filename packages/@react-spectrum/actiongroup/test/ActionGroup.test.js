@@ -11,21 +11,17 @@
  */
 
 import {ActionGroup} from '../';
+import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {fireEvent, render} from '@testing-library/react';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 import V2Button from '@react/react-spectrum/Button';
 import V2ButtonGroup from '@react/react-spectrum/ButtonGroup';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 // Describes the tabIndex values of button 1 (column 1), 2, and 3 as focus is moved forward or back.
 // e.g. button2Focused describes button 2 having tabindex=0 while all other buttons have -1
@@ -112,9 +108,22 @@ function renderComponent(props) {
   return render(
     <Provider theme={theme} locale="de-DE">
       <ActionGroup {...props}>
-        <Item uniqueKey="1">Click me 1</Item>
-        <Item uniqueKey="2">Click me 2</Item>
+        <Item key="1">Click me 1</Item>
+        <Item key="2">Click me 2</Item>
       </ActionGroup>
+    </Provider>
+  );
+}
+
+function renderComponentWithExtraInputs(props) {
+  return render(
+    <Provider theme={theme} locale="de-DE">
+      <Button variant="primary" aria-label="ButtonBefore" />
+      <ActionGroup {...props}>
+        <Item key="1">Click me 1</Item>
+        <Item key="2">Click me 2</Item>
+      </ActionGroup>
+      <Button variant="primary" aria-label="ButtonAfter" />
     </Provider>
   );
 }
@@ -191,37 +200,143 @@ describe('ActionGroup', function () {
   });
 
   it.each`
-    Name                                                   | ComponentGroup   | Component | props                                         | orders
-    ${'(left/right arrows, ltr + horizontal) ActionGroup'} | ${ActionGroup}   | ${Item}   | ${{locale: 'de-DE'}}                          | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(left/right arrows, rtl + horizontal) ActionGroup'} | ${ActionGroup}   | ${Item}   | ${{locale: 'ar-AE'}}                          | ${[{action: pressArrowRight, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.forward}]}
-    ${'(up/down arrows, ltr + horizontal) ActionGroup'}    | ${ActionGroup}   | ${Item}   | ${{locale: 'de-DE'}}                          | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(up/down arrows, rtl + horizontal) ActionGroup'}    | ${ActionGroup}   | ${Item}   | ${{locale: 'ar-AE'}}                          | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(left/right arrows, ltr + vertical) ActionGroup'}   | ${ActionGroup}   | ${Item}   | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(left/right arrows, rtl + vertical) ActionGroup'}   | ${ActionGroup}   | ${Item}   | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(up/down arrows, ltr + vertical) ActionGroup'}      | ${ActionGroup}   | ${Item}   | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(up/down arrows, rtl + vertical) ActionGroup'}      | ${ActionGroup}   | ${Item}   | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-  `('$Name shifts button focus in the correct direction on key press', function ({Name, ComponentGroup, Component, props, orders}) {
+    Name                                                   | props                                         | orders
+    ${'(left/right arrows, ltr + horizontal) ActionGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(left/right arrows, rtl + horizontal) ActionGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.forward}]}
+    ${'(up/down arrows, ltr + horizontal) ActionGroup'}    | ${{locale: 'de-DE'}}                          | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(up/down arrows, rtl + horizontal) ActionGroup'}    | ${{locale: 'ar-AE'}}                          | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(left/right arrows, ltr + vertical) ActionGroup'}   | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(left/right arrows, rtl + vertical) ActionGroup'}   | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(up/down arrows, ltr + vertical) ActionGroup'}      | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(up/down arrows, rtl + vertical) ActionGroup'}      | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+  `('$Name shifts button focus in the correct direction on key press', function ({Name, props, orders}) {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
-        <ComponentGroup orientation={props.orientation} >
-          <Component data-testid="button-1">Click me 1</Component>
-          <Component data-testid="button-2">Click me 2</Component>
-          <Component data-testid="button-3">Click me 3</Component>
-        </ComponentGroup>
+        <ActionGroup orientation={props.orientation} >
+          <Item data-testid="button-1">Click me 1</Item>
+          <Item data-testid="button-2">Click me 2</Item>
+          <Item data-testid="button-3">Click me 3</Item>
+        </ActionGroup>
       </Provider>
     );
 
     let buttons = tree.getAllByRole('radio');
     let buttonGroup = tree.getByRole('radiogroup');
     buttonGroup.focus();
-    fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-
-    verifyResult(buttons, expectedButtonIndices.button1Focused);
 
     orders.forEach(({action, result}, index) => {
       action(document.activeElement);
       verifyResult(buttons, result(), index);
     });
+  });
+
+  it.each`
+    Name                     | props                | disabledKeys   | orders
+    ${'middle disabled'}     | ${{locale: 'de-DE'}} | ${['1']}       | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'first disabled'}      | ${{locale: 'de-DE'}} | ${['0']}       | ${[{action: () => userEvent.tab(), result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}]}
+    ${'last disabled'}       | ${{locale: 'de-DE'}} | ${['2']}       | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'1&2 disabled'}        | ${{locale: 'de-DE'}} | ${['0', '1']}  | ${[{action: () => userEvent.tab(), result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}]}
+    ${'rtl middle disabled'} | ${{locale: 'ar-AE'}} | ${['1']}       | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'rtl first disabled'}  | ${{locale: 'ar-AE'}} | ${['0']}       | ${[{action: () => userEvent.tab(), result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}]}
+    ${'rtl last disabled'}   | ${{locale: 'ar-AE'}} | ${['2']}       | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'rtl 1&2 disabled'}    | ${{locale: 'ar-AE'}} | ${['0', '1']}  | ${[{action: () => userEvent.tab(), result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}]}
+
+  `('$Name skips disabled keys', function ({Name, props, disabledKeys, orders}) {
+    let tree = render(
+      <Provider theme={theme} locale={props.locale}>
+        <ActionGroup disabledKeys={disabledKeys}>
+          <Item key="0" data-testid="button-1">Click me 1</Item>
+          <Item key="1" data-testid="button-2">Click me 2</Item>
+          <Item key="2" data-testid="button-3">Click me 3</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let buttons = tree.getAllByRole('radio');
+    let buttonGroup = tree.getByRole('radiogroup');
+    buttonGroup.focus();
+
+    orders.forEach(({action, result}, index) => {
+      action(document.activeElement);
+      verifyResult(buttons, result(), index);
+    });
+  });
+
+  it.each`
+    Name                         | props                | disabledKeys   | orders
+    ${'middle two disabled'}     | ${{locale: 'de-DE'}} | ${['1', '2']}  | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
+    ${'rtl middle two disabled'} | ${{locale: 'de-DE'}} | ${['1', '2']}  | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
+  `('$Name skips multiple disabled keys', function ({Name, props, disabledKeys, orders}) {
+    let tree = render(
+      <Provider theme={theme} locale={props.locale}>
+        <ActionGroup disabledKeys={disabledKeys}>
+          <Item key="0" data-testid="button-1">Click me 1</Item>
+          <Item key="1" data-testid="button-2">Click me 2</Item>
+          <Item key="2" data-testid="button-3">Click me 3</Item>
+          <Item key="3" data-testid="button-4">Click me 4</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let buttons = tree.getAllByRole('radio');
+    let buttonGroup = tree.getByRole('radiogroup');
+    buttonGroup.focus();
+
+    orders.forEach(({action, result}, index) => {
+      action(document.activeElement);
+      verifyResult(buttons, result(), index);
+    });
+  });
+
+  it('should be focusable from Tab', async function () {
+    let tree = renderComponentWithExtraInputs({});
+
+    let buttonBefore = tree.getByLabelText('ButtonBefore');
+    let buttonAfter = tree.getByLabelText('ButtonAfter');
+    let buttons = tree.getAllByRole('radio');
+    buttonBefore.focus();
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttons[0]);
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttonAfter);
+  });
+
+  it('should be focusable from Shift + Tab', function () {
+    let tree = renderComponentWithExtraInputs({});
+
+    let buttonBefore = tree.getByLabelText('ButtonBefore');
+    let buttonAfter = tree.getByLabelText('ButtonAfter');
+    let buttons = tree.getAllByRole('radio');
+    buttonAfter.focus();
+
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(buttons[1]);
+
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(buttonBefore);
+  });
+
+  it('should remember last focused item', function () {
+    let tree = renderComponentWithExtraInputs({});
+
+    let buttonBefore = tree.getByLabelText('ButtonBefore');
+    let buttonAfter = tree.getByLabelText('ButtonAfter');
+    let buttons = tree.getAllByRole('radio');
+    buttonBefore.focus();
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttons[0]);
+
+    pressArrowRight(buttons[0]);
+    expect(document.activeElement).toBe(buttons[1]);
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttonAfter);
+
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(buttons[1]);
   });
 
   it('ActionGroup handles single selection', function () {
@@ -268,6 +383,8 @@ describe('ActionGroup', function () {
     triggerPress(button1);
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'false');
+    expect(button1).not.toHaveAttribute('aria-pressed');
+    expect(button2).not.toHaveAttribute('aria-pressed');
 
     fireEvent.keyDown(button1, {key: 'ArrowRight', shiftKey: true});
     expect(button1).toHaveAttribute('aria-checked', 'true');
@@ -358,6 +475,47 @@ describe('ActionGroup', function () {
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
+  it('ActionGroup allows aria-label', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup aria-label="Test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it('ActionGroup allows aria-labelledby', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <span id="test">Test</span>
+        <ActionGroup aria-labelledby="test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('aria-labelledby', 'test');
+  });
+
+  it('ActionGroup allows aria-describedby', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <span id="test">Test</span>
+        <ActionGroup aria-describedby="test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('aria-describedby', 'test');
+  });
+
   it('ActionGroup allow aria-label on Item', function () {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
@@ -371,12 +529,25 @@ describe('ActionGroup', function () {
     expect(button1).toHaveAttribute('aria-label', 'Test');
   });
 
+  it('ActionGroup allows custom props', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup data-testid="test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('data-testid', 'test');
+  });
+
   it('fires onAction when a button is pressed', function () {
     let onAction = jest.fn();
     let tree = render(
       <Provider theme={theme} locale="de-DE">
         <ActionGroup selectionMode="none" onAction={onAction}>
-          <Item uniqueKey="test">Click me</Item>
+          <Item key="test">Click me</Item>
         </ActionGroup>
       </Provider>
     );
@@ -393,7 +564,7 @@ describe('ActionGroup', function () {
     let tree = render(
       <Provider theme={theme} locale="de-DE">
         <ActionGroup selectionMode="none" onAction={onAction} isDisabled>
-          <Item uniqueKey="test">Click me</Item>
+          <Item key="test">Click me</Item>
         </ActionGroup>
       </Provider>
     );
@@ -409,7 +580,7 @@ describe('ActionGroup', function () {
     let tree = render(
       <Provider theme={theme} locale="de-DE">
         <ActionGroup selectionMode="none" onAction={onAction} disabledKeys={['test']}>
-          <Item uniqueKey="test">Click me</Item>
+          <Item key="test">Click me</Item>
         </ActionGroup>
       </Provider>
     );

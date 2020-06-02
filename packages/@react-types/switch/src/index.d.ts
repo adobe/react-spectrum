@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {CheckboxBase} from '@react-types/checkbox';
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {AriaCheckboxBase, CheckboxBase} from '@react-types/checkbox';
+import {StyleProps} from '@react-types/shared';
 
 export interface SwitchProps extends CheckboxBase {}
-export interface SpectrumSwitchProps extends SwitchProps, DOMProps, StyleProps {
+export interface AriaSwitchProps extends AriaCheckboxBase {}
+export interface SpectrumSwitchProps extends AriaSwitchProps, StyleProps {
   /**
    * This prop sets the emphasized style which provides visual prominence.
    * @default "false"

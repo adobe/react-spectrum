@@ -12,7 +12,7 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, dimensionValue, filterDOMProps, SlotProvider, unwrapDOMRef, useDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
+import {classNames, dimensionValue, SlotProvider, unwrapDOMRef, useDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
@@ -175,7 +175,6 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         label={label}
         name={name} />
       <FieldButton
-        {...filterDOMProps(props)}
         {...triggerProps}
         ref={triggerRef}
         isActive={state.isOpen}
@@ -201,7 +200,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           {contents}
         </SlotProvider>
         {isLoadingInitial &&
-          <ProgressCircle 
+          <ProgressCircle
             isIndeterminate
             size="S"
             aria-label={formatMessage('loading')}
@@ -227,7 +226,10 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       classNames(
         styles,
         'spectrum-Field',
-        {'spectrum-Dropdown-fieldWrapper--quiet': isQuiet}
+        {
+          'spectrum-Dropdown-fieldWrapper--quiet': isQuiet,
+          'spectrum-Dropdown-fieldWrapper--positionSide': labelPosition === 'side'
+        }
       ),
       styleProps.className
     );
@@ -247,6 +249,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           labelAlign={labelAlign}
           isRequired={isRequired}
           necessityIndicator={necessityIndicator}
+          includeNecessityIndicatorInAccessibilityName
           elementType="span">
           {label}
         </Label>

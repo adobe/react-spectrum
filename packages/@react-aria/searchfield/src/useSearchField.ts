@@ -10,18 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaSearchFieldProps} from '@react-types/searchfield';
 import {ButtonHTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
-import {chain} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {PressProps} from '@react-aria/interactions';
-import {SearchFieldProps} from '@react-types/searchfield';
 import {SearchFieldState} from '@react-stately/searchfield';
-import {TextInputDOMProps} from '@react-types/shared';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
-interface SearchFieldAriaProps extends SearchFieldProps, TextInputDOMProps {}
 interface SearchFieldAria {
   /** Props for the text field's visible label element (if any). */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
@@ -38,7 +35,7 @@ interface SearchFieldAria {
  * @param inputRef - a ref to the input element
  */
 export function useSearchField(
-  props: SearchFieldAriaProps,
+  props: AriaSearchFieldProps,
   state: SearchFieldState,
   inputRef: RefObject<HTMLInputElement & HTMLTextAreaElement>
 ): SearchFieldAria {
@@ -76,6 +73,10 @@ export function useSearchField(
   let onClearButtonClick = () => {
     state.setValue('');
     inputRef.current.focus();
+   
+    if (onClear) {
+      onClear();
+    }
   };
 
   let {labelProps, inputProps} = useTextField({
@@ -92,7 +93,7 @@ export function useSearchField(
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),
       tabIndex: -1,
-      onPress: chain(onClearButtonClick, props.onClear)
+      onPress: onClearButtonClick
     }
   };
 }

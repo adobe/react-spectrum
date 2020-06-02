@@ -12,7 +12,7 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button, ClearButton} from '@react-spectrum/button';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
 import {DOMRef} from '@react-types/shared';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
@@ -51,7 +51,6 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       {...toastProps}
       ref={domRef}

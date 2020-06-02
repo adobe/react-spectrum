@@ -10,16 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps} from '@react-types/button';
+import {AriaNumberFieldProps} from '@react-types/numberfield';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
 
-interface NumberFieldProps extends SpinButtonProps {
+interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
   decrementAriaLabel?: string,
   incrementAriaLabel?: string
 }
@@ -28,8 +30,8 @@ interface NumberFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   inputFieldProps: HTMLAttributes<HTMLInputElement>,
   numberFieldProps: HTMLAttributes<HTMLDivElement>,
-  incrementButtonProps: HTMLAttributes<HTMLButtonElement>,
-  decrementButtonProps: HTMLAttributes<HTMLButtonElement>
+  incrementButtonProps: AriaButtonProps,
+  decrementButtonProps: AriaButtonProps
 }
 
 export function useNumberField(props: NumberFieldProps, state: NumberFieldState, ref: RefObject<HTMLInputElement>): NumberFieldAria {
@@ -123,6 +125,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     };
   }, [inputId, isReadOnly, isDisabled, decrement, increment]);
 
+  let domProps = filterDOMProps(props, {labelable: true});
   let {labelProps, inputProps} = useTextField(mergeProps(spinButtonProps, {
     autoFocus,
     value: '' + value,
@@ -143,13 +146,11 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   }), ref);
 
   return {
-    numberFieldProps: {
+    numberFieldProps: mergeProps(domProps, {
       role: 'group',
-      'aria-label': props['aria-label'] || null,
-      'aria-labelledby': props['aria-labelledby'] || null,
       'aria-disabled': isDisabled,
       'aria-invalid': validationState === 'invalid'
-    },
+    }),
     labelProps,
     inputFieldProps: inputProps,
     incrementButtonProps,

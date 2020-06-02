@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
+import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import underlayStyles from '@adobe/spectrum-css-temp/components/underlay/vars.css';
 
@@ -18,10 +18,8 @@ interface UnderlayProps {
   isOpen?: boolean
 }
 
-export function Underlay({isOpen, ...props}: UnderlayProps) {
+export function Underlay({isOpen}: UnderlayProps) {
   return (
-    <div 
-      {...filterDOMProps(props)}
-      className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen})} />
+    <div className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen})} />
   );
 }
