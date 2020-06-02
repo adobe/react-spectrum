@@ -89,7 +89,7 @@ Value labels are shown by default on top, but they can also be moved to the side
 The label should be in sentence case.
 
 ```tsx example
-<Flex flexDirection="column" maxWidth="size-3000" gap="size-300">
+<Flex direction="column" maxWidth="size-3000" gap="size-300">
   <Meter label="Label" value={25} variant="warning" />
   <Meter label="Label" labelPosition="side" value={25} variant="warning" />
   <Meter label="Label" showValueLabel={false} value={25} variant="warning" />
@@ -108,7 +108,7 @@ Value labels by default show the percentage of progress in a determinate Progres
 * `valueLabel`: Allows you to customize the value label to any string.
 
 ```tsx example
-<Flex flexDirection="column" maxWidth="size-3000" gap="size-300">
+<Flex direction="column" maxWidth="size-3000" gap="size-300">
   <Meter
     label="Space used"
     showValueLabel={false}
@@ -137,7 +137,7 @@ Value labels by default show the percentage of progress in a determinate Progres
 [View guidelines](https://spectrum.adobe.com/page/meter/#Size)
 
 ```tsx example
-<Flex flexDirection="column" gap="size-300">
+<Flex direction="column" gap="size-300">
   <Meter label="Space used" size="S" value={90} variant="critical" />
   <Meter label="Space used" size="L" value={90} variant="critical" />
 </Flex>
@@ -147,7 +147,7 @@ Value labels by default show the percentage of progress in a determinate Progres
 [View guidelines](https://spectrum.adobe.com/page/meter/#Semantic-colors)
 
 ```tsx example
-<Flex flexDirection="column" gap="size-300">
+<Flex direction="column" gap="size-300">
   <Meter label="Space used" value={25} variant="positive" />
   <Meter label="Space used" value={90} variant="critical" />
   <Meter label="Space used" value={70} variant="warning" />
