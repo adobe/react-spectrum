@@ -17,7 +17,7 @@ import {Picker, Item} from '@react-spectrum/picker';
 import Book from '@spectrum-icons/workflow/Book';
 import BulkEditUsers from '@spectrum-icons/workflow/BulkEditUsers';
 import Draw from '@spectrum-icons/workflow/Draw';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 ```
 
 ---
@@ -33,7 +33,7 @@ as well as how to integrate with pre-defined Spectrum layouts using slots.
 
 React Spectrum includes layout components to help build Spectrum compliant applications more easily.
 The [Flex](Flex.html) and [Grid](Grid.html) components are containers, which are responsible for
-the layout of their children. `Flex` follows the 
+the layout of their children. `Flex` follows the
 [CSS flexbox](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox)
 algorithm, while `Grid` implements
 [CSS grid](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout).
@@ -45,10 +45,10 @@ In general, you should prefer using flex and grid over other CSS layout models. 
 should be left to parent layout components rather than added as via margins to specific children. This helps
 ensure components are composable when reused in different places, and ensures that spacing is consistent.
 
-In addition to `Flex` and `Grid`, some React Spectrum components include pre-built layouts which you can 
+In addition to `Flex` and `Grid`, some React Spectrum components include pre-built layouts which you can
 insert your content into via slots. This often happens automatically through the use of semantic elements,
-but can also be configured through props. For example, the [Dialog](Dialog.html) component accepts 
-[Heading](Heading.html), [Content](Content.html), and [Footer](Footer.html) elements as children and 
+but can also be configured through props. For example, the [Dialog](Dialog.html) component accepts
+[Heading](Heading.html), [Content](Content.html), and [Footer](Footer.html) elements as children and
 will handle the layout automatically.
 
 ## Flex
@@ -57,7 +57,7 @@ The [flexbox](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_
 layout model is a simple yet versatile method of laying out components in rows and columns.
 You can use it to build vertical or horizontal stacks, simple wrapping grids, and more. The [Flex](Flex.html)
 component can be used to create flexbox containers, and any React Spectrum component can be used as a child.
-Flex layouts are also automatically mirrored in right-to-left languages, and can be nested to create 
+Flex layouts are also automatically mirrored in right-to-left languages, and can be nested to create
 more complex layouts.
 
 In addition to the properties widely supported by CSS, React Spectrum also shims the `gap` property, along
@@ -89,9 +89,9 @@ properties supported by flexbox.
 
 ## Grid
 
-[CSS grid](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout) 
+[CSS grid](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout/Basic_Concepts_of_Grid_Layout)
 is a powerful way to lay out elements in two dimensions. It can be used to to build full page application
-layouts, or smaller user interface elements. It is especially powerful because it allows you to build many types of 
+layouts, or smaller user interface elements. It is especially powerful because it allows you to build many types of
 layouts without extra presentational elements, keeping your code clean and semantic. In addition, grid layouts
 are automatically mirrored in right-to-left languages.
 
@@ -108,7 +108,7 @@ you specify space separated names for grid areas. The children of the `Grid` can
 places them into these named regions.
 
 In addition, you can define the `columns` and `rows`
-props on the `Grid` container to specify the widths and heights of the columns and rows respectively. This can be 
+props on the `Grid` container to specify the widths and heights of the columns and rows respectively. This can be
 done using Spectrum dimension values to ensure they are adaptive on various devices.
 
 The following example shows how you could use `Grid` to declare a common application layout, with a header, sidebar,
@@ -153,13 +153,13 @@ often occurs automatically through the use of semantic elements like [Header](He
 and [Footer](Footer.html), which include default slots out of the box.
 
 Slots and semantic elements allow you to let Spectrum define the complex layouts required by many components according
-to design requirements automatically. You just provide the proper child elements, and the container component handles the 
+to design requirements automatically. You just provide the proper child elements, and the container component handles the
 layout and styling of the children for you.
 
 For example, the [Dialog](Dialog.html) component accepts many types of children, e.g. a [Heading](Heading.html)
 for the title, a [Content](Content.html) element for the body, a [ButtonGroup](ButtonGroup.html) for the buttons, etc.,
-and `Dialog` takes care of positioning and styling them properly for the dialog context. In addition, the layout of 
-these items can change depending on the screen size. For example, the buttons in full screen dialogs move from the 
+and `Dialog` takes care of positioning and styling them properly for the dialog context. In addition, the layout of
+these items can change depending on the screen size. For example, the buttons in full screen dialogs move from the
 top to the bottom on mobile.
 
 Another example of this is the complex items supported by [Picker](Picker.html) and [Menu](Menu.html). These components allow
