@@ -15,6 +15,8 @@ import {ActionButton} from '@react-spectrum/button';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import Blower from '@spectrum-icons/workflow/Blower';
+import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Menu, MenuTrigger, Section} from '../';
@@ -22,6 +24,46 @@ import {Keyboard, Text} from '@react-spectrum/typography';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+
+let iconMap = {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
+  Blower,
+  Book,
+  Copy,
+  Cut,
+  Paste
+};
+
+let hardModeProgrammatic = [
+  {name: 'Section 1', children: [
+    {name: 'Copy', icon: 'Copy', shortcut: '⌘C'},
+    {name: 'Cut', icon: 'Cut', shortcut: '⌘X'},
+    {name: 'Paste', icon: 'Paste', shortcut: '⌘V'}
+  ]},
+  {name: 'Section 2', children: [
+    {name: 'Puppy', icon: 'AlignLeft', shortcut: '⌘P'},
+    {name: 'Doggo', icon: 'AlignCenter', shortcut: '⌘D'},
+    {name: 'Floof', icon: 'AlignRight', shortcut: '⌘F'},
+    {name: 'hasChildren', children: [
+      {name: 'Thailand', icon: 'Blower', shortcut: '⌘T'},
+      {name: 'Germany', icon: 'Book', shortcut: '⌘G'}
+    ]}
+  ]}
+];
+
+let flatMenu = [
+  {name: 'Aardvark'},
+  {name: 'Kangaroo'},
+  {name: 'Snake'},
+  {name: 'Danni'},
+  {name: 'Devon'},
+  {name: 'Ross'},
+  {name: 'Puppy'},
+  {name: 'Doggo'},
+  {name: 'Floof'}
+];
 
 let withSection = [
   {name: 'Animals', children: [
@@ -42,63 +84,242 @@ let withSection = [
 
 storiesOf('MenuTrigger', module)
   .add(
-    'default',
-    () => render()
+    'default menu (static)',
+    () => render(
+      <Menu onAction={action('onAction')}>
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Menu>
+    )
   )
   .add(
-    'single selected key (controlled)',
-    () => render({}, {selectedKeys: ['Kangaroo'], selectionMode: 'single'})
+    'default menu (generative)',
+    () => render(
+      <Menu items={flatMenu} onAction={action('onAction')}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </Menu>
+    )
   )
   .add(
-    'single default selected key (uncontrolled)',
-    () => render({}, {defaultSelectedKeys: ['Kangaroo'], selectionMode: 'single'})
+    'default menu w/ section (static)',
+    () => render(
+      <Menu onAction={action('onAction')}>
+        <Section title="Section 1">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+        <Section title="Section 2">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+      </Menu>
+    )
+  )
+  .add(
+    'default menu w/ section (generative)',
+    () => render(null)
+  )
+  .add(
+    'default menu w/ titleless sections (static)',
+    () => render(
+      <Menu onAction={action('onAction')}>
+        <Section aria-label="Section 1">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+        <Section aria-label="Section 2">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Section>
+      </Menu>
+    )
+  )
+  .add(
+    'default menu w/ titleless sections (generative)',
+    () => render(
+      <Menu items={withSection} onAction={action('onAction')}>
+        {item => (
+          <Section key={item.name} items={item.children} aria-label={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
+          </Section>
+        )}
+      </Menu>
+    )
+  )
+  .add(
+    'single selected key (controlled, static)',
+    () => render(
+      <Menu selectionMode="single" onAction={action('onAction')} selectedKeys={['2']}>
+        <Section title="Section 1">
+          <Item key="1">
+            One
+          </Item>
+          <Item key="2">
+            Two
+          </Item>
+          <Item key="3">
+            Three
+          </Item>
+        </Section>
+        <Section title="Section 2">
+          <Item key="4">
+            Four
+          </Item>
+          <Item key="5">
+            Five
+          </Item>
+          <Item key="6">
+            Six
+          </Item>
+          <Item key="7">
+            Seven
+          </Item>
+        </Section>
+      </Menu>
+    )
+  )
+  .add(
+    'single selected key (controlled, generative)',
+    () => render(null, {}, {selectedKeys: ['Kangaroo'], selectionMode: 'single'})
+  )
+  .add(
+    'single default selected key (uncontrolled, static)',
+    () => render(
+      <Menu selectionMode="single" onAction={action('onAction')} defaultSelectedKeys={['2']}>
+        <Section title="Section 1">
+          <Item key="1">
+            One
+          </Item>
+          <Item key="2">
+            Two
+          </Item>
+          <Item key="3">
+            Three
+          </Item>
+        </Section>
+        <Section title="Section 2">
+          <Item key="4">
+            Four
+          </Item>
+          <Item key="5">
+            Five
+          </Item>
+          <Item key="6">
+            Six
+          </Item>
+          <Item key="7">
+            Seven
+          </Item>
+        </Section>
+      </Menu>
+    )
+  )
+  .add(
+    'single default selected key (uncontrolled, generative)',
+    () => render(null, {}, {defaultSelectedKeys: ['Kangaroo'], selectionMode: 'single'})
   )
   .add(
     'multiple selected key (controlled)',
-    () => render({}, {selectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
+    () => render(null, {}, {selectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
   )
   .add(
-    'multiple default selected key (uncontrolled)',
-    () => render({}, {defaultSelectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
+    'multiple default selected key (uncontrolled, static)',
+    () => render(
+      <Menu onAction={action('onAction')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
+        <Section title="Section 1">
+          <Item key="1">
+            One
+          </Item>
+          <Item key="2">
+            Two
+          </Item>
+          <Item key="3">
+            Three
+          </Item>
+        </Section>
+        <Section title="Section 2">
+          <Item key="4">
+            Four
+          </Item>
+          <Item key="5">
+            Five
+          </Item>
+          <Item key="6">
+            Six
+          </Item>
+        </Section>
+      </Menu>
+    )
+  )
+  .add(
+    'multiple default selected key (uncontrolled, generative)',
+    () => render(null, {}, {defaultSelectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
+  )
+  .add(
+    'Menu with autoFocus=true',
+    () => render(null, {}, {autoFocus: true})
+  )
+  .add(
+    'Menu with autoFocus="first"',
+    () => render(null, {}, {autoFocus: 'first'})
+  )
+  .add(
+    'Menu with autoFocus="last"',
+    () => render(null, {}, {autoFocus: 'last'})
+  )
+  .add(
+    'Menu with keyboard selection wrapping false',
+    () => render(null, {}, {shouldFocusWrap: false})
   )
   .add(
     'align="end"',
-    () => render({align: 'end'})
+    () => render(
+      <Menu onAction={action('onAction')}>
+        <Item>One</Item>
+        <Item>Two</Item>
+        <Item>Three</Item>
+      </Menu>
+    , {align: 'end'})
   )
   .add(
     'direction="top"',
-    () => render({direction: 'top'})
+    () => render(null, {direction: 'top'})
   )
   .add(
     'shouldFlip',
-    () => render({shouldFlip: true})
+    () => render(null, {shouldFlip: true})
   )
   .add(
     'isOpen',
-    () => render({isOpen: true})
+    () => render(null, {isOpen: true})
   )
   .add(
     'defaultOpen',
-    () => render({defaultOpen: true})
+    () => render(null, {defaultOpen: true})
   )
   .add(
     'disabled button',
-    () => render({isDisabled: true})
+    () => render(null, {isDisabled: true})
   )
   .add(
     'multiselect menu',
-    () => render({}, {selectionMode: 'multiple'})
+    () => render(null, {}, {selectionMode: 'multiple'})
   )
   .add(
     'no selection allowed menu',
-    () => render({}, {selectionMode: 'none'})
+    () => render(null, {}, {selectionMode: 'none'})
   )
   .add(
     'closeOnSelect=false',
-    () => render({closeOnSelect: false}, {})
+    () => render(null, {closeOnSelect: false}, {})
   )
   .add(
-    'menu with semantic elements',
+    'menu with semantic elements (static)',
     () => (
       <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
         <MenuTrigger onOpenChange={action('onOpenChange')}>
@@ -148,6 +369,18 @@ storiesOf('MenuTrigger', module)
           </Menu>
         </MenuTrigger>
       </div>
+    )
+  )
+  .add(
+    'menu with semantic elements (generative)',
+    () => render(
+      <Menu items={hardModeProgrammatic} onAction={action('onAction')}>
+        {item => (
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => customMenuItem(item)}
+          </Section>
+        )}
+      </Menu>
     )
   )
   .add(
@@ -209,7 +442,18 @@ storiesOf('MenuTrigger', module)
     )
   );
 
-function render({isDisabled, ...props}: any = {}, menuProps = {}) {
+let customMenuItem = (item) => {
+  let Icon = iconMap[item.icon];
+  return (
+    <Item childItems={item.children} textValue={item.name} key={item.name}>
+      {item.icon && <Icon size="S" />}
+      <Text>{item.name}</Text>
+      {item.shortcut && <Keyboard>{item.shortcut}</Keyboard>}
+    </Item>
+  );	
+};
+
+function render(menu, {isDisabled, ...props}: any = {}, menuProps = {}) {
   return (
     <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
       <MenuTrigger onOpenChange={action('onOpenChange')} {...props}>
@@ -220,13 +464,15 @@ function render({isDisabled, ...props}: any = {}, menuProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </ActionButton>
-        <Menu items={withSection} onAction={action('action')} disabledKeys={['Snake', 'Ross']} {...menuProps}>
-          {item => (
-            <Section key={item.name} items={item.children} title={item.name}>
-              {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
-            </Section>
-          )}
-        </Menu>
+        {menu || (
+          <Menu items={withSection} onAction={action('action')} disabledKeys={['Snake', 'Ross']} {...menuProps}>
+            {item => (
+              <Section key={item.name} items={item.children} title={item.name}>
+                {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+              </Section>
+            )}
+          </Menu>
+        )}
       </MenuTrigger>
     </div>
   );
