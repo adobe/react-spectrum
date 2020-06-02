@@ -14,6 +14,7 @@
     "@parcel/plugin": "nightly",
     "js-yaml": "^3.13.1",
     "mdast-util-toc": "^5.0.1",
+    "prettier": "^2.0.5",
     "remark-frontmatter": "^2.0.0",
     "remark-slug": "5.1.2",
     "remark-toc": "^7.0.0",

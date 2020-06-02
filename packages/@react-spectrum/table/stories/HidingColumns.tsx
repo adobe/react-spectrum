@@ -53,7 +53,7 @@ export function HidingColumns() {
           <Checkbox key={c.key} isSelected={visibleColumns.has(c.key)} onChange={() => toggleColumn(c.key)}>{c.title}</Checkbox>
         )}
       </Form>
-      <Table width={900} height={500} isQuiet>
+      <Table aria-label="Table with hideable columns" width={900} height={500} isQuiet>
         <TableHeader columns={columns.filter(c => visibleColumns.has(c.key))}>
           {column => <Column>{column.title}</Column>}
         </TableHeader>

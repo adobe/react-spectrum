@@ -11,9 +11,10 @@
  */
 
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {HeadingProps} from '@react-types/typography';
 import React, {forwardRef} from 'react';
+import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
 function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   props = useSlotProps(props, 'heading');

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, PressEvents, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, PressEvents, StyleProps} from '@react-types/shared';
 import {ItemProps} from '@react-types/shared';
 import {Key, ReactElement, ReactNode} from 'react';
 
@@ -44,16 +44,18 @@ export interface BreadcrumbsProps<T> {
    * Sets the aria-level attribute of the last item, but only if `isHeading` is true.
    * @default 1
    */
-  headingAriaLevel?: number,  
+  headingAriaLevel?: number,
   /** Whether the Breadcrumbs are disabled. */
   isDisabled?: boolean,
   /** Called when an item is acted upon (usually selection via press). */
   onAction?: (key: Key) => void
 }
 
-export interface SpectrumBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps, StyleProps {
+export interface AriaBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, StyleProps {
   /**
-   * What the Breadcrumbs's size should be.
+   * Size of the Breadcrumbs including spacing and layout.
    * @default "M"
    */
   size?: 'S' | 'M' | 'L',

@@ -46,8 +46,8 @@ keywords: [listbox, aria]
 ## Features
 
 A listbox can be built using the [&lt;select&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select)
-and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option) HTML elements, but this is 
-not possible to style consistently cross browser. `useListBox` helps achieve accessible 
+and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option) HTML elements, but this is
+not possible to style consistently cross browser. `useListBox` helps achieve accessible
 listbox components that can be styled as needed.
 
 Note: `useListBox` only handles the list itself. For a dropdown similar to a `<select>`, see [useSelect](useSelect.html).
@@ -71,7 +71,8 @@ A listbox consists of a container element, with a list of options or groups insi
 technology using ARIA, along with handling keyboard, mouse, and interactions to support
 selection and focus behavior.
 
-`useListBox` returns props that you should spread onto the list container element:
+`useListBox` returns props that you should spread onto the list container element,
+along with props for an optional visual label:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useListBox.return.id].properties} />
@@ -90,22 +91,22 @@ selection and focus behavior.
 </TypeContext.Provider>
 
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} />
-hook from `@react-stately/list`. The state object should be passed as an option to 
+hook from `@react-stately/list`. The state object should be passed as an option to
 each of the above hooks.
 
 If a listbox, options, or group does not have a visible label, an `aria-label` or `aria-labelledby`
-prop must be passed instead to identify the element to assisitive technology.
+prop must be passed instead to identify the element to assistive technology.
 
 ## State management
 
 `useListBox` requires knowledge of the options in the listbox in order to handle keyboard
-navigation and other interactions. It does this using 
+navigation and other interactions. It does this using
 the <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} />
-interface, which is a generic interface to access sequential unique keyed data. You can 
-implement this interface yourself, e.g. by using a prop to pass a list of item objects, 
+interface, which is a generic interface to access sequential unique keyed data. You can
+implement this interface yourself, e.g. by using a prop to pass a list of item objects,
 but <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} /> from
 `@react-stately/list` implements a JSX based interface for building collections instead.
-See [Collection Components](/react-stately/collections.html) for more information, 
+See [Collection Components](/react-stately/collections.html) for more information,
 and [Collection Interface](/react-stately/Collection.html) for internal details.
 
 In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useListState} />
@@ -132,25 +133,29 @@ function ListBox(props) {
 
   // Get props for the listbox element
   let ref = React.useRef();
-  let {listBoxProps} = useListBox({...props, ref}, state);
+  let {listBoxProps, labelProps} = useListBox({...props, ref}, state);
 
   return (
-    <ul
-      {...listBoxProps}
-      ref={ref}
-      style={{
-        padding: 0,
-        listStyle: 'none',
-        border: '1px solid gray',
-        maxWidth: 250
-      }}>
-      {[...state.collection].map(item => (
-        <Option
-          key={item.key}
-          item={item}
-          state={state} />
-      ))}
-    </ul>
+    <>
+      <div {...labelProps}>{props.label}</div>
+      <ul
+        {...listBoxProps}
+        ref={ref}
+        style={{
+          padding: 0,
+          margin: '5px 0',
+          listStyle: 'none',
+          border: '1px solid gray',
+          maxWidth: 250
+        }}>
+        {[...state.collection].map(item => (
+          <Option
+            key={item.key}
+            item={item}
+            state={state} />
+        ))}
+      </ul>
+    </>
   );
 }
 
@@ -166,7 +171,7 @@ function Option({item, state}) {
     isSelected
   }, state);
 
-  // Determine whether we should show a keyboard 
+  // Determine whether we should show a keyboard
   // focus ring for accessibility
   let {isFocusVisible, focusProps} = useFocusRing();
 
@@ -178,7 +183,7 @@ function Option({item, state}) {
         background: isSelected ? 'blueviolet' : 'transparent',
         color: isSelected ? 'white' : null,
         padding: '2px 5px',
-        outline: isFocusVisible 
+        outline: isFocusVisible
           ? '2px solid orange'
           : 'none',
       }}>
@@ -187,7 +192,7 @@ function Option({item, state}) {
   );
 }
 
-<ListBox>
+<ListBox label="Choose an option">
   <Item>One</Item>
   <Item>Two</Item>
   <Item>Three</Item>
@@ -198,8 +203,8 @@ function Option({item, state}) {
 
 This example shows how a listbox can support sections with separators and headings
 using props from <TypeLink links={docs.links} type={docs.exports.useListBoxSection} />.
-This is accomplished using four extra elements: an `<li>` between the sections to 
-represent the separator, an `<li>` to contain the heading `<span>` element, and a 
+This is accomplished using four extra elements: an `<li>` between the sections to
+represent the separator, an `<li>` to contain the heading `<span>` element, and a
 `<ul>` to contain the child items. This structure is necessary to ensure HTML semantics
 are correct.
 
@@ -210,26 +215,29 @@ import {useSeparator} from '@react-aria/separator';
 function ListBox(props) {
   let state = useListState(props);
   let ref = React.useRef();
-  let {listBoxProps} = useListBox({...props, ref}, state);
+  let {listBoxProps, labelProps} = useListBox({...props, ref}, state);
 
   return (
-    <ul
-      {...listBoxProps}
-      ref={ref}
-      style={{
-        margin: 0,
-        padding: 0,
-        listStyle: 'none',
-        border: '1px solid gray',
-        maxWidth: 250
-      }}>
-      {[...state.collection].map(item => (
-        <ListBoxSection
-          key={item.key}
-          section={item}
-          state={state} />
-      ))}
-    </ul>
+    <>
+      <div {...labelProps}>{props.label}</div>
+      <ul
+        {...listBoxProps}
+        ref={ref}
+        style={{
+          padding: 0,
+          margin: '5px 0',
+          listStyle: 'none',
+          border: '1px solid gray',
+          maxWidth: 250
+        }}>
+        {[...state.collection].map(item => (
+          <ListBoxSection
+            key={item.key}
+            section={item}
+            state={state} />
+        ))}
+      </ul>
+    </>
   );
 }
 
@@ -238,7 +246,7 @@ function ListBoxSection({section, state}) {
     heading: section.rendered,
     'aria-label': section['aria-label']
   });
-  
+
   let {separatorProps} = useSeparator({
     elementType: 'li'
   });
@@ -273,7 +281,7 @@ function ListBoxSection({section, state}) {
           padding: 0,
           listStyle: 'none'
         }}>
-        {[...section.childNodes].map(node => 
+        {[...section.childNodes].map(node =>
           <Option
             key={node.key}
             item={node}
@@ -306,7 +314,7 @@ function Option({item, state}) {
         background: isSelected ? 'blueviolet' : 'transparent',
         color: isSelected ? 'white' : null,
         padding: '2px 5px',
-        outline: isFocusVisible 
+        outline: isFocusVisible
           ? '2px solid orange'
           : 'none',
       }}>
@@ -316,7 +324,7 @@ function Option({item, state}) {
 ///- end collapse -///
 }
 
-<ListBox>
+<ListBox label="Choose an option">
   <Section title="Section 1">
     <Item>One</Item>
     <Item>Two</Item>
@@ -332,18 +340,18 @@ function Option({item, state}) {
 
 ## Complex options
 
-By default, options that only contain text will be labelled by the contents of the option. 
-For options that have more complex content (e.g. icons, multiple lines of text, etc.), use 
+By default, options that only contain text will be labeled by the contents of the option.
+For options that have more complex content (e.g. icons, multiple lines of text, etc.), use
 `labelProps` and `descriptionProps` from <TypeLink links={docs.links} type={docs.exports.useOption} />
 as needed to apply to the main text element of the option and its description. This improves screen
 reader announcement.
 
-**NOTE: listbox options cannot contain interactive content (e.g. buttons, checkboxes, etc.). 
+**NOTE: listbox options cannot contain interactive content (e.g. buttons, checkboxes, etc.).
 For these cases, see `useGrid` instead.**
 
 This example shows how `labelProps` and `descriptionProps` can be applied to child elements of
 the item to apply ARIA properties returned by <TypeLink links={docs.links} type={docs.exports.useOption} />.
-This is done using `React.cloneElement` in this example, but you can use context or other 
+This is done using `React.cloneElement` in this example, but you can use context or other
 approaches for this as well.
 
 ```tsx example
@@ -352,25 +360,29 @@ function ListBox(props) {
 ///- begin collapse -///
   let state = useListState(props);
   let ref = React.useRef();
-  let {listBoxProps} = useListBox({...props, ref}, state);
+  let {listBoxProps, labelProps} = useListBox({...props, ref}, state);
 
   return (
-    <ul
-      {...listBoxProps}
-      ref={ref}
-      style={{
-        padding: 0,
-        listStyle: 'none',
-        border: '1px solid gray',
-        maxWidth: 250
-      }}>
-      {[...state.collection].map(item => (
-        <Option
-          key={item.key}
-          item={item}
-          state={state} />
-      ))}
-    </ul>
+    <>
+      <div {...labelProps}>{props.label}</div>
+      <ul
+        {...listBoxProps}
+        ref={ref}
+        style={{
+          padding: 0,
+          margin: '5px 0',
+          listStyle: 'none',
+          border: '1px solid gray',
+          maxWidth: 250
+        }}>
+        {[...state.collection].map(item => (
+          <Option
+            key={item.key}
+            item={item}
+            state={state} />
+        ))}
+      </ul>
+    </>
   );
 ///- end collapse -///
 }
@@ -399,7 +411,7 @@ function Option({item, state}) {
         background: isSelected ? 'blueviolet' : 'transparent',
         color: isSelected ? 'white' : null,
         padding: '2px 5px',
-        outline: isFocusVisible 
+        outline: isFocusVisible
           ? '2px solid orange'
           : 'none',
       }}>
@@ -409,7 +421,7 @@ function Option({item, state}) {
   );
 }
 
-<ListBox>
+<ListBox label="Text alignment">
   <Item textValue="Align Left">
     <div><strong>Align Left</strong></div>
     <div>Align the selected text to the left</div>
@@ -428,9 +440,9 @@ function Option({item, state}) {
 ## Internationalization
 
 `useListBox` handles some aspects of internationalization automatically.
-For example, type to select is implemented with an 
+For example, type to select is implemented with an
 [Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Collator)
-for internationalized string matching. You are responsible for localizing all labels and option 
+for internationalized string matching. You are responsible for localizing all labels and option
 content that is passed into the listbox.
 
 ### RTL

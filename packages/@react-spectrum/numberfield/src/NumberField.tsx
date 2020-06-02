@@ -13,7 +13,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import ChevronDownSmall from '@spectrum-icons/ui/ChevronDownSmall';
 import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import React, {RefObject, useRef} from 'react';
@@ -68,7 +68,6 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
       focusRingClass={classNames(inputgroupStyles, 'focus-ring', classNames(stepperStyle, 'focus-ring'))}
       autoFocus={autoFocus}>
       <div
-        {...filterDOMProps(props)}
         {...styleProps}
         {...numberFieldProps}
         ref={ref}

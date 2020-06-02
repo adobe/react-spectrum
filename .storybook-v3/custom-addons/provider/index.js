@@ -48,7 +48,7 @@ function ProviderUpdater(props) {
   }
 
   return (
-    <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue} typekitId="pbi5ojv">
+    <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue}>
       <div style={{position: 'absolute', paddingTop: '20px', paddingLeft: '20px', paddingRight: '20px'}}><div style={{fontSize: '18px', paddingLeft: '10px', paddingRight: '10px'}}><strong>Status</strong></div><StatusLight variant={props.options.status || 'negative'}>{statusMap[props.options.status || 'negative']}</StatusLight></div>
       {storyReady && props.children}
     </Provider>

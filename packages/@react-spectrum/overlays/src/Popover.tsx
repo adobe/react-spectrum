@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {Overlay} from './Overlay';
@@ -52,7 +52,6 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   return (
     <Overlay {...otherProps}>
       <PopoverWrapper
-        {...filterDOMProps(otherProps)}
         {...styleProps}
         ref={domRef}
         placement={placement}

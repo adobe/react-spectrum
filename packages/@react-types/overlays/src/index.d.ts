@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
 import {HTMLAttributes, ReactElement, ReactNode} from 'react';
+import {StyleProps} from '@react-types/shared';
 
 export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom start' | 'bottom end' |
     'top' | 'top left' | 'top right' | 'top start' | 'top end' |
@@ -28,28 +28,28 @@ export interface PositionProps {
    * @default "bottom"
    */
   placement?: Placement,
-  /** 
-   * The placement padding that should be applied between the element and its 
-   * surrounding container. 
-   * @default "12px"
+  /**
+   * The placement padding that should be applied between the element and its
+   * surrounding container.
+   * @default 12
    */
   containerPadding?: number,
-  /** 
-   * The additional offset applied along the main axis between the element and its 
+  /**
+   * The additional offset applied along the main axis between the element and its
    * anchor element.
-   * @default "0px"
+   * @default 0
    */
   offset?: number,
   /**
    * The additional offset applied along the cross axis between the element and its
    * anchor element.
-   * @default "0px"
+   * @default 0
    */
   crossOffset?: number,
-  /** 
-   * Whether the element should flip its orientation (e.g. top to bottom or left to right) when 
+  /**
+   * Whether the element should flip its orientation (e.g. top to bottom or left to right) when
    * there is insufficient room for it to render completely.
-   * @default "true"
+   * @default true
    */
   shouldFlip?: boolean,
   // /**
@@ -73,7 +73,7 @@ export interface OverlayProps {
   onExited?: () => void
 }
 
-export interface ModalProps extends DOMProps, StyleProps, OverlayProps {
+export interface ModalProps extends StyleProps, OverlayProps {
   children: ReactElement,
   isOpen?: boolean,
   onClose?: () => void,
@@ -81,7 +81,7 @@ export interface ModalProps extends DOMProps, StyleProps, OverlayProps {
   isDismissable?: boolean
 }
 
-export interface PopoverProps extends DOMProps, StyleProps, OverlayProps {
+export interface PopoverProps extends StyleProps, OverlayProps {
   children: ReactNode,
   placement?: PlacementAxis,
   arrowProps?: HTMLAttributes<HTMLElement>,
@@ -91,7 +91,7 @@ export interface PopoverProps extends DOMProps, StyleProps, OverlayProps {
   shouldCloseOnBlur?: boolean
 }
 
-export interface TrayProps extends DOMProps, StyleProps, OverlayProps {
+export interface TrayProps extends StyleProps, OverlayProps {
   children: ReactElement,
   isOpen?: boolean,
   onClose?: () => void,

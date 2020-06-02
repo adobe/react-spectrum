@@ -40,15 +40,15 @@ category: Buttons
 
 ```tsx example
 <ActionGroup>
-  <Item uniqueKey="add">Add</Item>
-  <Item uniqueKey="delete">Delete</Item>
-  <Item uniqueKey="edit">Edit</Item>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
 </ActionGroup>
 ```
 
 ## Content
 
-ActionGroups accepts a list of `children`, each with a `uniqueKey` prop. It is required that the `children` are <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Item} /> components from the `@react-stately/collections` library.
+ActionGroups accepts a list of `children`, each with a `key` prop. It is required that the `children` are <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Item} /> components from the `@react-stately/collections` library.
 
 However, a function that returns `Item` components is also accepted.
 
@@ -58,13 +58,13 @@ const items = [
   {children: 'Add', name: 'Add'},
   {children: 'Delete', name: 'Delete'}
 ];
-<ActionGroup items={items} itemKey="name">
-  {item => <Item>{item.children}</Item>}
+<ActionGroup items={items}>
+  {item => <Item key={item.name}>{item.children}</Item>}
 </ActionGroup>
 ```
 
 
-Each child needs to have a `uniqueKey` prop so it can be identified when actioned upon by a user. If using a function, an `itemKey` prop is required on the ActionGroup.
+Each item needs to have a `key` prop so it can be identified when actioned upon by a user.
 
 See [Events](#events) for more information.
 
@@ -72,13 +72,13 @@ See [Events](#events) for more information.
 
 ActionGroups are uncontrolled by default. 
 
-Use `defaultSelectedKeys` to provide a default set of selected items. The value of the selected keys must match the `uniqueKey` prop of the items.
+Use `defaultSelectedKeys` to provide a default set of selected items. The value of the selected keys must match the `key` prop of the items.
 
 ```tsx example
 <ActionGroup defaultSelectedKeys={['delete']}>
-  <Item uniqueKey="add">Add</Item>
-  <Item uniqueKey="delete">Delete</Item>
-  <Item uniqueKey="edit">Edit</Item>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
 </ActionGroup>
 ```
 
@@ -86,9 +86,9 @@ The `selectedKeys` prop can be used to make the selected state controlled.
 
 ```tsx example
 <ActionGroup selectedKeys={['delete']}>
-  <Item uniqueKey="add">Add</Item>
-  <Item uniqueKey="delete">Delete</Item>
-  <Item uniqueKey="edit">Edit</Item>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
 </ActionGroup>
 ```
 
@@ -99,9 +99,9 @@ This should be added using the `aria-label` prop to each Item.
 
 ```tsx example
 <ActionGroup>
-  <Item uniqueKey="brush" aria-label="Brush"><Brush /></Item>
-  <Item uniqueKey="select" aria-label="Select"><Select /></Item>
-  <Item uniqueKey="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
+  <Item key="brush" aria-label="Brush"><Brush /></Item>
+  <Item key="select" aria-label="Select"><Select /></Item>
+  <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
 </ActionGroup>
 ```
 
@@ -112,7 +112,7 @@ In order to internationalize an ActionGroup, the strings of all child items shou
 ## Events
 
 Use the `onSelectionChange` prop as a callback to handle press events on items.
-The `uniqueKey` prop from the selected item will be passed into the callback.
+The `key` prop from the selected item will be passed into the callback.
 
 The following example uses the `onSelectionChange` prop to update a string stored in React state.
 
@@ -122,9 +122,9 @@ function Example() {
   return (
     <div>
       <ActionGroup onSelectionChange={setLastKey}>
-        <Item uniqueKey="add">Add</Item>
-        <Item uniqueKey="delete">Delete</Item>
-        <Item uniqueKey="edit">Edit</Item>
+        <Item key="add">Add</Item>
+        <Item key="delete">Delete</Item>
+        <Item key="edit">Edit</Item>
       </ActionGroup>
       <p>Current selection: {lastKey}</p>
     </div>
@@ -139,9 +139,9 @@ function Example() {
   return (
     <div>
       <ActionGroup selectionMode="multiple" onSelectionChange={setSelectedKeys}>
-        <Item uniqueKey="add">Add</Item>
-        <Item uniqueKey="delete">Delete</Item>
-        <Item uniqueKey="edit">Edit</Item>
+        <Item key="add">Add</Item>
+        <Item key="delete">Delete</Item>
+        <Item key="edit">Edit</Item>
       </ActionGroup>
       <p>Selected: {[...selectedKeys].toString()}</p>
     </div>
@@ -156,9 +156,9 @@ function Example() {
   return (
     <div>
       <ActionGroup selectionMode="none" onAction={setActedKey}>
-        <Item uniqueKey="add">Add</Item>
-        <Item uniqueKey="delete">Delete</Item>
-        <Item uniqueKey="edit">Edit</Item>
+        <Item key="add">Add</Item>
+        <Item key="delete">Delete</Item>
+        <Item key="edit">Edit</Item>
       </ActionGroup>
       <p>Last action: {actedKey}</p>
     </div>
@@ -176,9 +176,9 @@ function Example() {
 
 ```tsx example
 <ActionGroup isQuiet>
-  <Item uniqueKey="add">Add</Item>
-  <Item uniqueKey="delete">Delete</Item>
-  <Item uniqueKey="edit">Edit</Item>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
 </ActionGroup>
 ```
 
@@ -188,9 +188,9 @@ The additional styling provided by the `isEmphasized` prop is only applied when 
 
 ```tsx example
 <ActionGroup isEmphasized defaultSelectedKeys={['add']}>
-  <Item uniqueKey="add">Add</Item>
-  <Item uniqueKey="delete">Delete</Item>
-  <Item uniqueKey="edit">Edit</Item>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
 </ActionGroup>
 ```
 
@@ -200,9 +200,9 @@ To disable the entire ActionGroup, use the `isDisabled` prop on the root.
 
 ```tsx example
 <ActionGroup isDisabled>
-  <Item uniqueKey="add">Add</Item>
-  <Item uniqueKey="delete">Delete</Item>
-  <Item uniqueKey="edit">Edit</Item>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
 </ActionGroup>
 ```
 
@@ -210,9 +210,9 @@ To disable individual items, a list of `disabledKeys` can be provided.
 
 ```tsx example
 <ActionGroup disabledKeys={['add', 'delete']}>
-  <Item uniqueKey="add">Add</Item>
-  <Item uniqueKey="delete">Delete</Item>
-  <Item uniqueKey="edit">Edit</Item>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
 </ActionGroup>
 ```
 
@@ -222,8 +222,8 @@ Using the `orientation` prop with value `vertical` changes the alignment of the 
 
 ```tsx example
 <ActionGroup orientation="vertical" maxWidth="32px">
-  <Item uniqueKey="brush" aria-label="Brush"><Brush /></Item>
-  <Item uniqueKey="select" aria-label="Select"><Select /></Item>
-  <Item uniqueKey="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
+  <Item key="brush" aria-label="Brush"><Brush /></Item>
+  <Item key="select" aria-label="Select"><Select /></Item>
+  <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
 </ActionGroup>
 ```

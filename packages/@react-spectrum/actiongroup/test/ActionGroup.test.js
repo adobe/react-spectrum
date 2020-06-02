@@ -108,8 +108,8 @@ function renderComponent(props) {
   return render(
     <Provider theme={theme} locale="de-DE">
       <ActionGroup {...props}>
-        <Item uniqueKey="1">Click me 1</Item>
-        <Item uniqueKey="2">Click me 2</Item>
+        <Item key="1">Click me 1</Item>
+        <Item key="2">Click me 2</Item>
       </ActionGroup>
     </Provider>
   );
@@ -120,8 +120,8 @@ function renderComponentWithExtraInputs(props) {
     <Provider theme={theme} locale="de-DE">
       <Button variant="primary" aria-label="ButtonBefore" />
       <ActionGroup {...props}>
-        <Item uniqueKey="1">Click me 1</Item>
-        <Item uniqueKey="2">Click me 2</Item>
+        <Item key="1">Click me 1</Item>
+        <Item key="2">Click me 2</Item>
       </ActionGroup>
       <Button variant="primary" aria-label="ButtonAfter" />
     </Provider>
@@ -245,9 +245,9 @@ describe('ActionGroup', function () {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
         <ActionGroup disabledKeys={disabledKeys}>
-          <Item uniqueKey="0" data-testid="button-1">Click me 1</Item>
-          <Item uniqueKey="1" data-testid="button-2">Click me 2</Item>
-          <Item uniqueKey="2" data-testid="button-3">Click me 3</Item>
+          <Item key="0" data-testid="button-1">Click me 1</Item>
+          <Item key="1" data-testid="button-2">Click me 2</Item>
+          <Item key="2" data-testid="button-3">Click me 3</Item>
         </ActionGroup>
       </Provider>
     );
@@ -270,10 +270,10 @@ describe('ActionGroup', function () {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
         <ActionGroup disabledKeys={disabledKeys}>
-          <Item uniqueKey="0" data-testid="button-1">Click me 1</Item>
-          <Item uniqueKey="1" data-testid="button-2">Click me 2</Item>
-          <Item uniqueKey="2" data-testid="button-3">Click me 3</Item>
-          <Item uniqueKey="3" data-testid="button-4">Click me 4</Item>
+          <Item key="0" data-testid="button-1">Click me 1</Item>
+          <Item key="1" data-testid="button-2">Click me 2</Item>
+          <Item key="2" data-testid="button-3">Click me 3</Item>
+          <Item key="3" data-testid="button-4">Click me 4</Item>
         </ActionGroup>
       </Provider>
     );
@@ -475,6 +475,47 @@ describe('ActionGroup', function () {
     expect(button2).toHaveAttribute('aria-checked', 'true');
   });
 
+  it('ActionGroup allows aria-label', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup aria-label="Test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it('ActionGroup allows aria-labelledby', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <span id="test">Test</span>
+        <ActionGroup aria-labelledby="test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('aria-labelledby', 'test');
+  });
+
+  it('ActionGroup allows aria-describedby', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <span id="test">Test</span>
+        <ActionGroup aria-describedby="test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('aria-describedby', 'test');
+  });
+
   it('ActionGroup allow aria-label on Item', function () {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
@@ -488,12 +529,25 @@ describe('ActionGroup', function () {
     expect(button1).toHaveAttribute('aria-label', 'Test');
   });
 
+  it('ActionGroup allows custom props', function () {
+    let {getByRole} = render(
+      <Provider theme={theme} locale="de-DE">
+        <ActionGroup data-testid="test">
+          <Item>Click me</Item>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button1 = getByRole('radiogroup');
+    expect(button1).toHaveAttribute('data-testid', 'test');
+  });
+
   it('fires onAction when a button is pressed', function () {
     let onAction = jest.fn();
     let tree = render(
       <Provider theme={theme} locale="de-DE">
         <ActionGroup selectionMode="none" onAction={onAction}>
-          <Item uniqueKey="test">Click me</Item>
+          <Item key="test">Click me</Item>
         </ActionGroup>
       </Provider>
     );
@@ -510,7 +564,7 @@ describe('ActionGroup', function () {
     let tree = render(
       <Provider theme={theme} locale="de-DE">
         <ActionGroup selectionMode="none" onAction={onAction} isDisabled>
-          <Item uniqueKey="test">Click me</Item>
+          <Item key="test">Click me</Item>
         </ActionGroup>
       </Provider>
     );
@@ -526,7 +580,7 @@ describe('ActionGroup', function () {
     let tree = render(
       <Provider theme={theme} locale="de-DE">
         <ActionGroup selectionMode="none" onAction={onAction} disabledKeys={['test']}>
-          <Item uniqueKey="test">Click me</Item>
+          <Item key="test">Click me</Item>
         </ActionGroup>
       </Provider>
     );

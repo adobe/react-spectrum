@@ -29,7 +29,13 @@ const DOC_LINKS = {
   Iterator: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols',
   Iterable: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols',
   DataTransfer: 'https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer',
-  CSSProperties: 'https://reactjs.org/docs/dom-elements.html#style'
+  CSSProperties: 'https://reactjs.org/docs/dom-elements.html#style',
+  'Intl.NumberFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat',
+  'Intl.NumberFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat',
+  'Intl.DateTimeFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat',
+  'Intl.DateTimeFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat',
+  'Intl.Collator': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator',
+  'Intl.CollatorOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator'
 };
 
 export const TypeContext = React.createContext();
@@ -200,14 +206,29 @@ function TypeParameter({name, default: defaultType}) {
   );
 }
 
+export function Indent({params, small, large}) {
+  if (params.length > 2) {
+    return small;
+  }
+
+  return (
+    <>
+      <span className="small">{small}</span>
+      <span className="large">{large}</span>
+    </>
+  );
+}
+
 function FunctionType({name, parameters, return: returnType, typeParameters, rest}) {
   return (
     <>
       {name && <span className="token hljs-function">{name}</span>}
       <TypeParameters typeParameters={typeParameters} />
-      <span className="token punctuation">{parameters.length > 2 ? '(\n  ' : '('}</span>
-      <JoinList elements={parameters} joiner={parameters.length > 2 ? ',\n  ' : ', '} />
-      <span className="token punctuation">{parameters.length > 2 ? '\n)' : ')'}</span>
+      <span className="token punctuation"><Indent params={parameters} small={'(\n  '} large="(" /></span>
+      <JoinList
+        elements={parameters}
+        joiner={<Indent params={parameters} small={',\n  '} large=", " />} />
+      <Indent params={parameters} small={'\n)'} large=")" />
       <span className="token punctuation">{name ? ': ' : ' => '}</span>
       <Type type={returnType} />
     </>
@@ -358,9 +379,9 @@ export function InterfaceType({description, properties: props, showRequired, sho
                   <code className={`${typographyStyles['spectrum-Code4']}`}>
                     <span className="token hljs-function">{prop.name}</span>
                     <TypeParameters typeParameters={prop.value.typeParameters} />
-                    <span className="token punctuation">{prop.value.parameters.length > 2 ? '(\n  ' : '('}</span>
-                    <JoinList elements={prop.value.parameters} joiner={prop.value.parameters.length > 2 ? ',\n  ' : ', '} />
-                    <span className="token punctuation">{prop.value.parameters.length > 2 ? '\n)' : ')'}</span>
+                    <span className="token punctuation"><Indent params={prop.value.parameters} small={'(\n  '} large="(" /></span>
+                    <JoinList elements={prop.value.parameters} joiner={<Indent params={prop.value.parameters} small={',\n  '} large=",  " />} />
+                    <span className="token punctuation"><Indent params={prop.value.parameters} small={'\n)'} large=")" /></span>
                     <span className="token punctuation">{': '}</span>
                     <Type type={prop.value.return} />
                   </code>
@@ -411,7 +432,11 @@ function ObjectType({properties, exact}) {
         let punc = optional ? '?: ' : ': ';
         return (
           <div key={property.key} style={{paddingLeft: '1.5em'}}>
+            {property.indexType && <span className="token punctuation">[</span>}
             <span className={`token ${token}`}>{k}</span>
+            {property.indexType && <span className="token punctuation">{': '}</span>}
+            {property.indexType && <Type type={property.indexType} />}
+            {property.indexType && <span className="token punctuation">]</span>}
             <span className="token punctuation">{punc}</span>
             <Type type={value} />
             {i < arr.length - 1 ? ',' : ''}
