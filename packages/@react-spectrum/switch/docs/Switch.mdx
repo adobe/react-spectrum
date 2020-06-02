@@ -29,19 +29,22 @@ category: Forms
 <HeaderInfo
   packageData={packageData}
   componentNames={['Switch']}
-  sourceData={[{type: 'Spectrum', url: 'https://spectrum.adobe.com/page/switch/'}]} />
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/switch/'}
+  ]} />
 
 ## Example
 
 ```tsx example
-<Switch>Switch it up</Switch>
+<Switch>Low power mode</Switch>
+
 ```
 
 ## Content
 
 Switches accept children, which are rendered as the label.
 
-Switches are best used for communicating activation (e.g., on/off states), while [checkboxes](./Checkbox.html) are best used for communicating selection (e.g. multiple table rows).
+Switches are best used for communicating activation (e.g. on/off states), while [checkboxes](./Checkbox.html) are best used for communicating selection (e.g. multiple table rows).
 Switches, unlike checkboxes, can't have an error state.
 
 ### Accessibility
@@ -51,13 +54,13 @@ If a visible label isn't specified, an `aria-label` must be provided to the Swit
 If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
 
 ```tsx example
-<Switch aria-label="Activate Setting" />
+<Switch aria-label="Low power mode" />
 ```
 
 ### Internationalization
 
 To internationalize a Switch, a localized label should be passed to the `children` or `aria-label` prop.
-For languages that are read right to left (e.g. Hebrew and Arabic), the layout of the switch is flipped.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the switch is automatically flipped.
 
 ## Value
 
@@ -65,8 +68,24 @@ Switches are not selected by default. The `defaultSelected` prop can be used to 
 Alternatively, the `isSelected` prop can be used to make the selected state controlled.
 
 ```tsx example
-<Switch defaultSelected>Uncontrolled</Switch>
-<Switch isSelected>Controlled</Switch>
+function Example() {
+  let [selected, setSelection] = React.useState(false);
+
+  return (
+    <>
+      <Switch
+        defaultSelected>
+        Low power mode (uncontrolled)
+      </Switch>
+
+      <Switch
+        isSelected={selected}
+        onChange={setSelection}>
+        Low power mode (controlled)
+      </Switch>
+    </>
+  )
+}
 ```
 
 ## Events
@@ -76,19 +95,15 @@ The example below uses `onChange` to alert the user to changes in state.
 
 ```tsx example
 function Example() {
-  let [selected, setSelection] = React.useState('false');
-
-  let toggle = (value) => {
-    value ? setSelection('true') : setSelection('false');
-  }
+  let [selected, setSelection] = React.useState(false);
 
   return (
-    <div>
-      <div> The Switch is on: {selected} </div>
-      <Switch onChange={toggle}>
+    <>
+      <Switch onChange={setSelection}>
         Switch Label
       </Switch>
-    </div>
+      <div>The Switch is on: {selected.toString()}</div>
+    </>
   );
  }
 ```
@@ -110,7 +125,7 @@ function Example() {
 [View guidelines](https://spectrum.adobe.com/page/switch/#Emphasized-or-not?)
 
 ```tsx example
-<Switch isEmphasized>Switch Label</Switch>
+<Switch isEmphasized defaultSelected>Switch Label</Switch>
 ```
 
 ### Read only

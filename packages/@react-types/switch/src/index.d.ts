@@ -18,7 +18,6 @@ export interface AriaSwitchProps extends AriaCheckboxBase {}
 export interface SpectrumSwitchProps extends AriaSwitchProps, StyleProps {
   /**
    * This prop sets the emphasized style which provides visual prominence.
-   * @default "false"
    */
   isEmphasized?: boolean
 }

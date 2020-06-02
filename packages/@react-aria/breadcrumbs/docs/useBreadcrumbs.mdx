@@ -52,7 +52,7 @@ Breadcrumbs provide a list of links to parent pages of the current page in heira
 ## Anatomy
 
 Breadcrumbs consist of a navigation landmark element and a list of links. The last link
-represents the current page in the heirarchy, with the previous links representing the
+represents the current page in the hierarchy, with the previous links representing the
 parent pages of the current page. Each of these parent links can be clicked, tapped, or
 triggered via the Enter key to navigate to that page. Optionally, breadcrumbs can be used
 in place of a page title, in which case the last breadcrumb acts as a heading.
@@ -71,7 +71,7 @@ in place of a page title, in which case the last breadcrumb acts as a heading.
 
 ## Example
 
-This example displays a basic list of breadcrumbs using an HTML 
+This example displays a basic list of breadcrumbs using an HTML
 [&lt;nav&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/nav)
 element, and a [&lt;ol&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol)
 for the list of links. Each link is a span because we are handling the interactions
@@ -94,7 +94,7 @@ function Breadcrumbs(props) {
   return (
     <nav {...breadcrumbsProps}>
       <ol style={{display: 'flex', listStyle: 'none'}}>
-        {children.map((child, i) => 
+        {children.map((child, i) =>
           React.cloneElement(child, {isCurrent: i === children.length - 1})
         )}
       </ol>
@@ -145,7 +145,7 @@ function Breadcrumbs(props) {
   return (
     <nav {...breadcrumbsProps}>
       <ol style={{display: 'flex', listStyle: 'none'}}>
-        {children.map((child, i) => 
+        {children.map((child, i) =>
           React.cloneElement(child, {isCurrent: i === children.length - 1})
         )}
       </ol>
@@ -197,7 +197,7 @@ function Breadcrumbs(props) {
   return (
     <nav {...breadcrumbsProps}>
       <ol style={{display: 'flex', listStyle: 'none'}}>
-        {children.map((child, i) => 
+        {children.map((child, i) =>
           React.cloneElement(child, {
             isCurrent: i === children.length - 1,
             isHeading: true,
