@@ -39,12 +39,11 @@ category: Content
 
 ## Content
 
-Wells can have children. They can be nested.
+Wells accept any renderable children.
 
 ```tsx example
-<Well>Well</Well>
+<Well>Well, well, well</Well>
 
-<Well>Well <Well>oh well.</Well></Well>
 ```
 
 ### Internationalization
@@ -59,8 +58,8 @@ However, if the Well does convey semantic meaning then a role must be specified 
 
 ```tsx example
 <Well role="region" aria-labelledby="wellLabel">
-    <h3 id="wellLabel">Shipping Address</h3>
-    <p>601 Townsend Street<br /> San Francisco, CA 94103</p>
+  <h3 id="wellLabel">Shipping Address</h3>
+  <p>601 Townsend Street<br /> San Francisco, CA 94103</p>
 </Well>
 ```
 

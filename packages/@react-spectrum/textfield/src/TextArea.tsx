@@ -59,7 +59,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
 }
 
 /**
- * Text areas are multiline text inputs, useful for cases where users have 
+ * TextAreas are multiline text inputs, useful for cases where users have
  * a sizable amount of text to enter. They allow for all customizations that
  * are available to text fields.
  */
