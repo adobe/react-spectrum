@@ -157,34 +157,6 @@ storiesOf('MenuTrigger', module)
     )
   )
   .add(
-    'Static with dialog trigger',
-    () => render(
-      <Menu>
-        <Section title="Actions">
-          <DialogTrigger isDismissable>
-            <Item>Edit...</Item>
-            <Dialog>
-              <Header>
-                <Heading>Edit</Heading>
-              </Header>
-              <Divider size="M" />
-              <Content>
-                Testing
-              </Content>
-            </Dialog>
-          </DialogTrigger>
-          <DialogTrigger>
-            <Item>Delete...</Item>
-            <AlertDialog title="Delete" variant="destructive" primaryActionLabel="Delete" cancelLabel="Cancel">
-              Are you sure?
-            </AlertDialog>
-          </DialogTrigger>
-        </Section>
-      </Menu>
-    , {isOpen: true}),
-    {chromatic: {disable: true}}
-  )
-  .add(
     'single selected key (controlled, static)',
     () => render(
       <Menu selectionMode="single" onAction={action('onAction')} selectedKeys={['2']}>
