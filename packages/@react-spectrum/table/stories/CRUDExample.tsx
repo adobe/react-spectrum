@@ -21,7 +21,7 @@ import Delete from '@spectrum-icons/workflow/Delete';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Heading} from '@react-spectrum/typography';
+import {Heading} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Modal} from '@react-spectrum/overlays';
 import More from '@spectrum-icons/workflow/More';

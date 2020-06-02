@@ -16,7 +16,7 @@ import {Divider} from '@react-spectrum/divider';
 import {Flex, Grid} from '@react-spectrum/layout';
 import {Footer, View} from '@react-spectrum/view';
 import {GridProps} from '@react-types/layout';
-import {Heading} from '@react-spectrum/typography';
+import {Heading} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import More from '@spectrum-icons/workflow/More';
 import React from 'react';
