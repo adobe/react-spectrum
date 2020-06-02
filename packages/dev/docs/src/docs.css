@@ -65,7 +65,6 @@ html, body {
 }
 
 .provider {
-  min-width: 100vw;
   min-height: 100vh;
   --page-background: var(--spectrum-global-color-gray-50);
   background: var(--page-background) !important;
@@ -170,7 +169,7 @@ html, body {
 
 main {
   margin-left: 256px;
-  margin-right: 160px;
+  margin-right: 180px;
   padding: 40px 52px 0 52px;
   box-sizing: border-box;
   display: flex;
@@ -439,13 +438,13 @@ h2.sectionHeader {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 8px;
   box-sizing: border-box;
   height: var(--spectrum-global-dimension-size-600);
+  width: 100%;
 }
 
 @media (max-width: 1200px) {
