@@ -16,6 +16,7 @@ import packageData from '../package.json';
 
 ```jsx import
 import {TextField} from '@react-spectrum/textfield';
+import {Flex} from '@react-spectrum/layout';
 ```
 
 ---
@@ -45,11 +46,26 @@ A TextField's `value` is empty by default, but an initial, uncontrolled, value c
 Alternatively, a controlled value can be provided using the `value` prop.
 
 ```tsx example
-<TextField defaultValue="Default text" label="Uncontrolled TextField" marginEnd="20px" />
-<TextField value="Default text" label="Controlled TextField" />
+function Example() {
+  let [value, setValue] = React.useState('me@email.com');
+
+  return (
+    <Flex gap="size-300">
+      <TextField
+        label="Email (Uncontrolled)"
+        defaultValue="me@email.com" />
+
+      <TextField
+        label="Email (Controlled)"
+        value={value}
+        onChange={setValue} />
+    </Flex>
+  );
+}
+
 ```
 
-Placeholder text that describes the expected value or formatting for the TextField can be provided using the `placeholder` prop. 
+Placeholder text that describes the expected value or formatting for the TextField can be provided using the `placeholder` prop.
 Placeholder text will only appear when the TextField is empty, and should not be used as a substitute for labeling the component with a visible label.
 
 ```tsx example
@@ -58,84 +74,75 @@ Placeholder text will only appear when the TextField is empty, and should not be
 
 ## Labeling
 
-A visual label should be provided for the TextField using the `label` prop. If the TextField is required, the `isRequired` and 
+A visual label should be provided for the TextField using the `label` prop. If the TextField is required, the `isRequired` and
 `necessityIndicator` props can be used to show a required state.
 
 ```tsx example
-<TextField label="Street address" marginEnd="20px" />
-<TextField label="Street address" isRequired necessityIndicator="icon" marginEnd="20px" />
-<TextField label="Street address" isRequired necessityIndicator="label" marginEnd="20px" />
-<TextField label="Street address" necessityIndicator="label" />
+<Flex gap="size-300">
+  <TextField label="Street address" />
+  <TextField label="Street address" isRequired necessityIndicator="icon" />
+  <TextField label="Street address" isRequired necessityIndicator="label" />
+  <TextField label="Street address" necessityIndicator="label" />
+</Flex>
 ```
 
 ### Accessibility
 
-If a visible label isn't specified, an `aria-label` must be provided to the TextField for 
-accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using 
+If a visible label isn't specified, an `aria-label` must be provided to the TextField for
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using
 the `id` of the labeling element instead.
-
-```tsx example
-<label id="label-1">Name</label>
-<TextField aria-labelledby="label-1" marginStart="10px" />
-```
 
 ### Internationalization
 
 In order to internationalize a TextField, a localized string should be passed to the `label` or `aria-label` prop.
 When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
 
-```tsx example
-<TextField label="Street address" isRequired necessityIndicator="label" marginEnd="20px" />
-<TextField label="Street address" necessityIndicator="label" />
-```
-
 ## Events
 
-TextField accepts an `onChange` prop which is triggered whenever the value is edited by the user. 
+TextField accepts an `onChange` prop which is triggered whenever the value is edited by the user.
 For a full list of supported events, see the [Props](#props) table below.
 
-The example below uses `onChange` to update a separate `span` element with the same text entered into the TextField.
+The example below uses `onChange` to update a separate `pre` element with the same text entered into the TextField.
 ```tsx example
 function Example() {
   let [text, setText] = React.useState();
 
   return (
-    <div>
+    <Flex gap="size-300">
       <TextField
         placeholder="Enter some text"
         onChange={setText}
-        label="Text Mirror"
-        marginEnd="20px"
-      />
-      <span>Mirrored text: {text}</span>
-    </div>
+        label="Your text" />
+      <pre>Mirrored text: {text}</pre>
+    </Flex>
   );
 }
 ```
 
 ## Validation
 
-TextFields can display a validation state to communicate to the user whether the current value is valid or invalid. 
+TextFields can display a validation state to communicate to the user whether the current value is valid or invalid.
 Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the TextField via the `validationState` prop.
 
-The example below illustrates how one would validate if the user has entered a number larger than 15 into the TextField.
+The example below illustrates how one would validate if the user has entered a valid email into the TextField.
 ```tsx example
 function Example() {
-  let defaultValue = '16';
+  let defaultEmail = 'me@email.com';
   let [isValid, setValid] = React.useState(true);
-  let [value, setValue] = React.useState(defaultValue);
+  let [value, setValue] = React.useState(defaultEmail);
+
   React.useEffect(() => {
-    let newValue = Number(value);
-    setValid(!isNaN(newValue) && newValue > 15)
+    let valid = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value)
+    setValid(valid)
   }, [setValid, value]);
 
   return (
     <TextField
       validationState={isValid ? 'valid' : 'invalid'}
-      placeholder="Enter a number"
-      defaultValue={defaultValue}
+      placeholder="Enter your email"
+      defaultValue={defaultEmail}
       onChange={setValue}
-      label="Number Field"
+      label="Email"
     />
   );
 }
@@ -147,7 +154,7 @@ function Example() {
 
 ## Visual options
 
-### Quiet 
+### Quiet
 
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Quiet)
 
@@ -165,36 +172,25 @@ function Example() {
 
 ### Read only
 
-The `isReadOnly` boolean prop makes the TextField's text content immutable. Unlike `isDisabled` the TextField remains focusable 
+The `isReadOnly` boolean prop makes the TextField's text content immutable. Unlike `isDisabled` the TextField remains focusable
 and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
 
 ```tsx example
 <TextField label="Email" defaultValue="abc@adobe.com" isReadOnly />
 ```
 
-### Label alignment
-
-Labels can be aligned to the "start" or the "end" of the TextField. For left-to-right (LTR) languages, "start" refers to the left most edge
-of the TextField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
-
-```tsx example
-<TextField label="Email" labelAlign="start" marginEnd="20px" />
-<TextField label="Email" labelAlign="end" />
-```
-
-### Label position
-
+### Label alignment and position
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
 
-```tsx example
-<TextField label="Email" labelPosition="top" marginEnd="20px" />
-<TextField label="Email" labelPosition="side" />
-```
+By default, the label is positioned above the TextField. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the TextField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
 
+```tsx example
+<TextField label="Search" labelPosition="side" labelAlign="end" />
+```
 ### Custom width
 
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
 
 ```tsx example
-<TextField label="Email" width={'400px'} />
+<TextField label="Email" width="size-3600" />
 ```
