@@ -19,7 +19,7 @@ import {
   LabelableProps,
   Orientation,
   SpectrumLabelableProps,
-  StyleProps,
+  StyleProps, ValidationState,
   ValueBase
 } from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
@@ -31,6 +31,8 @@ export interface RadioGroupProps extends ValueBase<string>, InputBase, Labelable
    * @default 'vertical'
    */
   orientation?: Orientation,
+  /** Whether the input should display its "valid" or "invalid" visual styling. */
+  validationState?: ValidationState,
   name?: string // HTML form name. Not displayed.
 }
 

@@ -10,12 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, FocusableProps, InputBase, RangeInputBase, StyleProps, TextInputBase, ValueBase} from '@react-types/shared';
+import {
+  DOMProps,
+  FocusableProps,
+  InputBase,
+  RangeInputBase,
+  StyleProps,
+  TextInputBase,
+  ValidationState,
+  ValueBase
+} from '@react-types/shared';
 
 export interface NumberFieldProps extends InputBase, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number> {
   decrementAriaLabel?: string,
   incrementAriaLabel?: string,
-  formatOptions?: Intl.NumberFormatOptions
+  formatOptions?: Intl.NumberFormatOptions,
+  /** Whether the input should display its "valid" or "invalid" visual styling. */
+  validationState?: ValidationState
 }
 
 export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps {}

@@ -10,14 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, FocusableProps, InputBase, LabelableProps, RangeValue, SpectrumLabelableProps, StyleProps, ValueBase} from '@react-types/shared';
+import {
+  DOMProps,
+  FocusableProps,
+  InputBase,
+  LabelableProps,
+  RangeValue,
+  SpectrumLabelableProps,
+  StyleProps,
+  ValidationState,
+  ValueBase
+} from '@react-types/shared';
 
 export type DateValue = string | number | Date;
 interface DatePickerBase extends InputBase, FocusableProps, LabelableProps {
   minValue?: DateValue,
   maxValue?: DateValue,
   formatOptions?: Intl.DateTimeFormatOptions,
-  placeholderDate?: DateValue
+  placeholderDate?: DateValue,
+  /** Whether the input should display its "valid" or "invalid" visual styling. */
+  validationState?: ValidationState
 }
 
 export interface DatePickerProps extends DatePickerBase, ValueBase<DateValue> {}

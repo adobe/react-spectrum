@@ -10,7 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, AriaLabelingProps, CollectionBase, DimensionValue, DOMProps, InputBase, LabelableProps, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase} from '@react-types/shared';
+import {
+  Alignment,
+  AriaLabelingProps,
+  CollectionBase,
+  DimensionValue,
+  DOMProps,
+  InputBase,
+  LabelableProps,
+  SingleSelection,
+  SpectrumLabelableProps,
+  StyleProps,
+  TextInputBase,
+  ValidationState
+} from '@react-types/shared';
 
 export interface SelectProps<T> extends CollectionBase<T>, InputBase, LabelableProps, TextInputBase, SingleSelection {
   /** Sets the open state of the menu */
@@ -20,7 +33,9 @@ export interface SelectProps<T> extends CollectionBase<T>, InputBase, LabelableP
   /** Method that is called when the open state of the menu changes */
   onOpenChange?: (isOpen: boolean) => void,
   /** Whether the menu should automatically flip direction when space is limited */
-  shouldFlip?: boolean
+  shouldFlip?: boolean,
+  /** Whether the input should display its "valid" or "invalid" visual styling. */
+  validationState?: ValidationState
 }
 
 export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabelingProps {}

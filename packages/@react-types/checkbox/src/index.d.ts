@@ -10,7 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AriaValidationProps, FocusableDOMProps, FocusableProps, InputBase, StyleProps} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  AriaValidationProps,
+  FocusableDOMProps,
+  FocusableProps,
+  InputBase,
+  StyleProps,
+  ValidationState
+} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 export interface CheckboxBase extends InputBase, FocusableProps {
@@ -20,6 +28,8 @@ export interface CheckboxBase extends InputBase, FocusableProps {
   onChange?: (isSelected: boolean) => void,
   value?: string, // dom prop for input element
   name?: string
+  /** Whether the input should display its "valid" or "invalid" visual styling. */
+  validationState?: ValidationState
 }
 
 export interface AriaCheckboxBase extends CheckboxBase, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {
