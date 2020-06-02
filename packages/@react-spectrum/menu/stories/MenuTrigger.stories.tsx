@@ -19,6 +19,7 @@ import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
+import isChromatic from 'storybook-chromatic/isChromatic';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/typography';
 import Paste from '@spectrum-icons/workflow/Paste';
@@ -83,6 +84,7 @@ let withSection = [
 ];
 
 storiesOf('MenuTrigger', module)
+  .addParameters({chromaticProvider: {colorSchemes: ['light']}, chromatic: {pauseAnimationAtEnd: true}})
   .add(
     'default menu (static)',
     () => render(
@@ -322,7 +324,7 @@ storiesOf('MenuTrigger', module)
     'menu with semantic elements (static)',
     () => (
       <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
-        <MenuTrigger onOpenChange={action('onOpenChange')}>
+        <MenuTrigger onOpenChange={action('onOpenChange')} defaultOpen={isChromatic()}>
           <ActionButton
             onPress={action('press')}
             onPressStart={action('pressstart')}
@@ -413,7 +415,8 @@ storiesOf('MenuTrigger', module)
           </div>
         </div>
       </div>
-    )
+    ),
+    {chromatic: {disable: true}}
   )
   .add(
     'menu closes on blur',
@@ -439,7 +442,8 @@ storiesOf('MenuTrigger', module)
           <input placeholder="Tab here" />
         </div>
       </>
-    )
+    ),
+    {chromatic: {disable: true}}
   );
 
 let customMenuItem = (item) => {
@@ -456,7 +460,7 @@ let customMenuItem = (item) => {
 function render(menu, {isDisabled, ...props}: any = {}, menuProps = {}) {
   return (
     <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
-      <MenuTrigger onOpenChange={action('onOpenChange')} {...props}>
+      <MenuTrigger onOpenChange={action('onOpenChange')} defaultOpen={isChromatic()} {...props}>
         <ActionButton
           isDisabled={isDisabled}
           onPress={action('press')}
