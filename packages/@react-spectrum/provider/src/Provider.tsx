@@ -155,7 +155,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
 
   let hasWarned = useRef(false);
   useEffect(() => {
-    if (locale && domRef.current && process.env.NODE_ENV !== 'development') {
+    if (locale && domRef.current && process.env.NODE_ENV !== 'production') {
       let closestLang = domRef.current.parentElement.closest('[lang]');
       let lang = closestLang && closestLang.getAttribute('lang');
       if (lang && lang !== locale && !hasWarned.current) {
