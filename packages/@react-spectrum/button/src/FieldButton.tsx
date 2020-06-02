@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonProps} from '@react-types/button';
+import {ButtonProps, LinkButtonProps} from '@react-types/button';
 import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -18,7 +18,7 @@ import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 
-interface FieldButtonProps extends ButtonProps, DOMProps, StyleProps {
+interface FieldButtonProps extends ButtonProps, LinkButtonProps, DOMProps, StyleProps {
   isQuiet?: boolean,
   isActive?: boolean,
   validationState?: 'valid' | 'invalid'
