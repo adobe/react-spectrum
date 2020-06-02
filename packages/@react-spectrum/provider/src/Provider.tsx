@@ -27,7 +27,6 @@ import typographyStyles from '@adobe/spectrum-css-temp/components/typography/ind
 import {useColorScheme, useScale} from './mediaQueries';
 // @ts-ignore
 import {version} from '../package.json';
-import has = Reflect.has;
 
 const Context = React.createContext<ProviderContext | null>(null);
 
