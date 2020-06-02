@@ -180,6 +180,21 @@ function Nav({currentPageName, pages}) {
     return !isIndex.test(p.name) && pageParts.length === 1;
   });
 
+  if (currentParts.length === 1) {
+    pages.push({
+      category: 'Spectrum Ecosystem',
+      name: 'spectrum-design',
+      title: 'Spectrum Design',
+      url: 'https://spectrum.adobe.com'
+    });
+    pages.push({
+      category: 'Spectrum Ecosystem',
+      name: 'spectrum-css',
+      title: 'Spectrum CSS',
+      url: 'https://opensource.adobe.com/spectrum-css/'
+    });
+  }
+
   // Key by category
   let pageMap = {};
   let rootPages = [];
@@ -215,7 +230,7 @@ function Nav({currentPageName, pages}) {
   function SideNavItem({name, url, title}) {
     return (
       <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: name === currentPageName})}>
-        <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={url}>{title}</a>
+        <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={url} {...getAnchorProps(url)}>{title}</a>
       </li>
     );
   }

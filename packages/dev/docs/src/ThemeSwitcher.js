@@ -60,12 +60,15 @@ export function ThemeSwitcher() {
     localStorage.theme = (colorScheme === 'dark' ? 'light' : 'dark');
     window.dispatchEvent(new Event('storage'));
   };
+  let label = colorScheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
 
   return (
-    <ActionButton 
-      aria-label={colorScheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-      onPress={onPress}>
-      {colorScheme === 'dark' ? <Light /> : <Moon />}
-    </ActionButton>
+    <div title={label}>
+      <ActionButton 
+        aria-label={label}
+        onPress={onPress}>
+        {colorScheme === 'dark' ? <Light /> : <Moon />}
+      </ActionButton>
+    </div>
   );
 }
