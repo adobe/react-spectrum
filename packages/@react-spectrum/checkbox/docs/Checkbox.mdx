@@ -17,6 +17,7 @@ import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 ```jsx import
  import {Checkbox} from '@react-spectrum/checkbox';
  import {View} from '@react-spectrum/view';
+ import {Flex} from '@react-spectrum/layout';
  ```
 
 ---
@@ -65,10 +66,10 @@ function Example() {
   let [selected, setSelected] = React.useState(true);
 
   return (
-    <>
+    <Flex flexDirection="row">
       <Checkbox defaultSelected>Subscribe (uncontrolled)</Checkbox>
       <Checkbox isSelected={selected} onChange={setSelected}>Subscribe (controlled)</Checkbox>
-    </>
+    </Flex>
   );
 }
 ```
@@ -94,12 +95,12 @@ function Example() {
   let [selected, setSelection] = React.useState(false);
 
   return (
-    <>
-      <Checkbox value={selected} onChange={setSelection}>
+    <Flex flexDirection="column">
+      <Checkbox isSelected={selected} onChange={setSelection}>
         Subscribe
       </Checkbox>
       <View>{`You are ${selected ? 'subscribed' : 'unsubscribed'}`}</View>
-    </>
+    </Flex>
   );
  }
 ```
