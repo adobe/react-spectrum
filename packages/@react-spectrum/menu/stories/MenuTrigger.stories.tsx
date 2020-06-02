@@ -125,7 +125,7 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'default menu w/ section (generative)',
-    () => render(null)
+    () => render(defaultMenu)
   )
   .add(
     'default menu w/ titleless sections (static)',
@@ -181,7 +181,8 @@ storiesOf('MenuTrigger', module)
           </DialogTrigger>
         </Section>
       </Menu>
-    , {isOpen: true})
+    , {isOpen: true}),
+    {chromatic: {disable: true}}
   )
   .add(
     'single selected key (controlled, static)',
@@ -217,7 +218,7 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'single selected key (controlled, generative)',
-    () => render(null, {}, {selectedKeys: ['Kangaroo'], selectionMode: 'single'})
+    () => render(defaultMenu, {}, {selectedKeys: ['Kangaroo'], selectionMode: 'single'})
   )
   .add(
     'single default selected key (uncontrolled, static)',
@@ -253,7 +254,7 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'single default selected key (uncontrolled, generative)',
-    () => render(null, {}, {defaultSelectedKeys: ['Kangaroo'], selectionMode: 'single'})
+    () => render(defaultMenu, {}, {defaultSelectedKeys: ['Kangaroo'], selectionMode: 'single'})
   )
   .add(
     'multiple default selected key (controlled, static)',
@@ -286,7 +287,7 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'multiple selected key (controlled, generative)',
-    () => render(null, {}, {selectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
+    () => render(defaultMenu, {}, {selectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
   )
   .add(
     'multiple default selected key (uncontrolled, static)',
@@ -319,23 +320,24 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'multiple default selected key (uncontrolled, generative)',
-    () => render(null, {}, {defaultSelectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
+    () => render(defaultMenu, {}, {defaultSelectedKeys: ['Kangaroo', 'Devon'], selectionMode: 'multiple'})
   )
   .add(
     'Menu with autoFocus=true',
-    () => render(null, {}, {autoFocus: true})
+    () => render(defaultMenu, {}, {autoFocus: true})
   )
   .add(
     'Menu with autoFocus="first"',
-    () => render(null, {}, {autoFocus: 'first'})
+    () => render(defaultMenu, {}, {autoFocus: 'first'})
   )
   .add(
     'Menu with autoFocus="last"',
-    () => render(null, {}, {autoFocus: 'last'})
+    () => render(defaultMenu, {}, {autoFocus: 'last'})
   )
   .add(
     'Menu with keyboard selection wrapping false',
-    () => render(null, {}, {shouldFocusWrap: false})
+    () => render(defaultMenu, {}, {shouldFocusWrap: false}),
+    {chromatic: {disable: true}}
   )
   .add(
     'align="end"',
@@ -349,35 +351,40 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'direction="top"',
-    () => render(null, {direction: 'top'})
+    () => render(defaultMenu, {direction: 'top'})
   )
   .add(
     'shouldFlip',
-    () => render(null, {shouldFlip: true})
+    () => render(defaultMenu, {shouldFlip: true}),
+    {chromatic: {disable: true}}
   )
   .add(
     'isOpen',
-    () => render(null, {isOpen: true})
+    () => render(defaultMenu, {isOpen: true})
   )
   .add(
     'defaultOpen',
-    () => render(null, {defaultOpen: true})
+    () => render(defaultMenu, {defaultOpen: true}),
+    {chromatic: {disable: true}}
   )
   .add(
     'disabled button',
-    () => render(null, {isDisabled: true})
+    () => render(defaultMenu, {isDisabled: true})
   )
   .add(
     'multiselect menu',
-    () => render(null, {}, {selectionMode: 'multiple'})
+    () => render(defaultMenu, {}, {selectionMode: 'multiple'}),
+    {chromatic: {disable: true}}
   )
   .add(
     'no selection allowed menu',
-    () => render(null, {}, {selectionMode: 'none'})
+    () => render(defaultMenu, {}, {selectionMode: 'none'}),
+    {chromatic: {disable: true}}
   )
   .add(
     'closeOnSelect=false',
-    () => render(null, {closeOnSelect: false}, {})
+    () => render(defaultMenu, {closeOnSelect: false}, {}),
+    {chromatic: {disable: true}}
   )
   .add(
     'menu with semantic elements (static)',
@@ -517,6 +524,7 @@ let customMenuItem = (item) => {
 };
 
 function render(menu, {isDisabled, ...props}: any = {}, menuProps = {}) {
+  let menuRender = React.cloneElement(menu, menuProps);
   return (
     <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
       <MenuTrigger onOpenChange={action('onOpenChange')} defaultOpen={isChromatic()} {...props}>
@@ -527,16 +535,18 @@ function render(menu, {isDisabled, ...props}: any = {}, menuProps = {}) {
           onPressEnd={action('pressend')}>
             Menu Button
         </ActionButton>
-        {menu || (
-          <Menu items={withSection} onAction={action('action')} disabledKeys={['Snake', 'Ross']} {...menuProps}>
-            {item => (
-              <Section key={item.name} items={item.children} title={item.name}>
-                {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
-              </Section>
-            )}
-          </Menu>
-        )}
+        {menuRender}
       </MenuTrigger>
     </div>
   );
 }
+
+let defaultMenu = (
+  <Menu items={withSection} onAction={action('action')} disabledKeys={['Snake', 'Ross']}>
+    {(item: any) => (
+      <Section key={item.name} items={item.children} title={item.name}>
+        {(item: any) => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+      </Section>
+    )}
+  </Menu>
+);
