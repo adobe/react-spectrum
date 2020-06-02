@@ -29,7 +29,13 @@ const DOC_LINKS = {
   Iterator: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols',
   Iterable: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols',
   DataTransfer: 'https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer',
-  CSSProperties: 'https://reactjs.org/docs/dom-elements.html#style'
+  CSSProperties: 'https://reactjs.org/docs/dom-elements.html#style',
+  'Intl.NumberFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat',
+  'Intl.NumberFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat',
+  'Intl.DateTimeFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat',
+  'Intl.DateTimeFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat',
+  'Intl.Collator': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator',
+  'Intl.CollatorOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator'
 };
 
 export const TypeContext = React.createContext();
@@ -426,7 +432,11 @@ function ObjectType({properties, exact}) {
         let punc = optional ? '?: ' : ': ';
         return (
           <div key={property.key} style={{paddingLeft: '1.5em'}}>
+            {property.indexType && <span className="token punctuation">[</span>}
             <span className={`token ${token}`}>{k}</span>
+            {property.indexType && <span className="token punctuation">{': '}</span>}
+            {property.indexType && <Type type={property.indexType} />}
+            {property.indexType && <span className="token punctuation">]</span>}
             <span className="token punctuation">{punc}</span>
             <Type type={value} />
             {i < arr.length - 1 ? ',' : ''}
