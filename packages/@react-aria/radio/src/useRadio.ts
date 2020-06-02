@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaRadioProps} from '@react-types/radio';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
-import {mergeProps} from '@react-aria/utils';
 import {RadioGroupState} from '@react-stately/radio';
-import {RadioProps} from '@react-types/radio';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
-interface RadioAriaProps extends RadioProps {
+interface RadioAriaProps extends AriaRadioProps {
   isRequired?: boolean,
   isReadOnly?: boolean
 }
@@ -39,8 +39,17 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
     value,
     isRequired,
     isReadOnly,
-    isDisabled
+    isDisabled,
+    children,
+    'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby
   } = props;
+
+  let hasChildren = children != null;
+  let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
+  if (!hasChildren && !hasAriaLabel) {
+    console.warn('If you do not provide children, you must specify an aria-label for accessibility');
+  }
 
   let checked = state.selectedValue === value;
 
@@ -57,9 +66,11 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
     onFocus: () => state.setFocusableRadio(value)
   }), ref);
   let interactions = mergeProps(pressProps, focusableProps);
+  let domProps = filterDOMProps(props, {labelable: true});
 
   return {
-    inputProps: {
+    inputProps: mergeProps(domProps, {
+      ...interactions,
       type: 'radio',
       name: state.name,
       tabIndex: state.focusableRadio === value || state.focusableRadio == null ? 0 : -1,
@@ -67,9 +78,7 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
       readOnly: isReadOnly,
       required: isRequired,
       checked,
-      'aria-checked': checked,
-      onChange,
-      ...interactions
-    }
+      onChange
+    })
   };
 }

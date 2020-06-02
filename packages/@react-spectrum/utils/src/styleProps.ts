@@ -115,7 +115,7 @@ function rtl(ltr: string, rtl: string) {
   );
 }
 
-const UNIT_RE = /(%|px|em|rem|vw|fr)$/;
+const UNIT_RE = /(%|px|em|rem|vw|vh|auto|cm|mm|in|pt|pc|ex|ch|rem|vmin|vmax|fr)$/;
 export function dimensionValue(value: DimensionValue) {
   if (typeof value === 'number') {
     return value + 'px';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
 import React, {RefObject, useRef} from 'react';
 import {SpectrumTooltipProps} from '@react-types/tooltip';
@@ -32,7 +32,6 @@ export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefOb
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       {...tooltipProps}
       className={classNames(

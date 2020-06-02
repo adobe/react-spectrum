@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, dimensionValue, filterDOMProps, passthroughStyle, StyleHandlers, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, dimensionValue, passthroughStyle, StyleHandlers, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import {FlexProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 import styles from './flex.css';

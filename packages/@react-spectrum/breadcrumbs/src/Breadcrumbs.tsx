@@ -12,11 +12,11 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {Key, useEffect, useRef, useState} from 'react';
+import React, {Key, ReactElement, useEffect, useRef, useState} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
@@ -45,7 +45,14 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     ...otherProps
   } = props;
 
-  let childArray = React.Children.toArray(children);
+  // Not using React.Children.toArray because it mutates the key prop.
+  let childArray: ReactElement[] = [];
+  React.Children.forEach(children, child => {
+    if (React.isValidElement(child)) {
+      childArray.push(child);
+    }
+  });
+
   let isCollapsible = maxVisibleItems === 'auto';
 
   let domRef = useDOMRef(ref);
@@ -117,10 +124,10 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   if (childArray.length > visibleItems) {
     let selectedItem = childArray[childArray.length - 1];
-    let selectedKey = selectedItem.props.uniqueKey || selectedItem.key;
+    let selectedKey = selectedItem.key ?? childArray.length - 1;
     let onMenuAction = (key: Key) => {
       // Don't fire onAction when clicking on the last item
-      if (key !== selectedKey) {
+      if (key !== selectedKey && onAction) {
         onAction(key);
       }
     };
@@ -154,7 +161,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   let lastIndex = childArray.length - 1;
   let breadcrumbItems = childArray.map((child, index) => {
     let isCurrent = index === lastIndex;
-    let key = child.props.uniqueKey || child.key;
+    let key = child.key ?? index;
     let onPress = () => {
       if (onAction) {
         onAction(key);
@@ -184,10 +191,8 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   return (
     <nav
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       {...breadcrumbsProps}
-      className={classNames({}, styleProps.className)}
       ref={domRef}>
       <ul
         ref={listRef}

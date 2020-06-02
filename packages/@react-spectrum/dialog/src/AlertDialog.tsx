@@ -66,8 +66,9 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
 
   return (
     <Dialog
-      {...styleProps}
+      UNSAFE_style={styleProps.style}
       UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)}
+      isHidden={styleProps.hidden}
       size="M"
       role="alertdialog"
       ref={ref}>

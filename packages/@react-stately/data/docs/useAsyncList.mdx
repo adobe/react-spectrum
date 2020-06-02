@@ -1,0 +1,214 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-stately/data';
+import {HeaderInfo, TypeContext, ClassAPI, FunctionAPI, TypeLink} from '@react-spectrum/docs';
+import packageData from '../package.json';
+
+---
+category: Data
+---
+
+# useAsyncList
+
+<p>{docs.exports.useAsyncList.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useAsyncList']} />
+
+## Introduction
+
+`useAsyncList` extends on [useListData](useListData.html), adding support for async loading, pagination, and sorting.
+It manages loading and error states, supports abortable requests, and works with any data fetching library or the built-in
+browser [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) API.
+
+## API
+
+<FunctionAPI function={docs.exports.useAsyncList} links={docs.links} />
+
+## Interface
+
+<ClassAPI links={docs.links} class={docs.links[docs.exports.useAsyncList.return.base.id]} />
+
+## Example
+
+To construct an async list, pass a `load` function to `useAsyncList` that returns the items to render.
+You can use the state returned by `useAsyncList` to render a [collection component](collections.html).
+
+This example fetches a list of Pokemon from an API and displays them in a Picker. It uses 
+[fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) to load the data, passing through the abort signal
+given by `useAsyncList` and returning the results from the API. The `isLoading` prop is passed to the Picker
+to tell it to render the loading spinner while data is loading.
+
+```tsx
+let list = useAsyncList({
+  async load({signal}) {
+    let res = await fetch('https://pokeapi.co/api/v2/pokemon', {signal});
+    let json = await res.json();
+    return {items: json.results};
+  }
+});
+
+<Picker
+  label="Pick a Pokemon"
+  items={list.items}
+  isLoading={list.isLoading}>
+  {item => <Item key={item.name}>{item.name}</Item>}
+</Picker>
+```
+
+### Infinite loading
+
+`useAsyncList` also supports paginated data, which is common in many APIs to avoid loading too many items at once.
+This is accomplished by returning a cursor in addition to `items` from the load function. When the `loadMore` method
+is called, the cursor is passed back to your `load` function, which you can use to determine the URL for the next 
+page. The `onLoadMore` prop supported by many collection components notifies you when you should load more data 
+as the user scrolls.
+
+This example expands on the previous one to support infinite scrolling through all known Pokemon. It returns the
+`next` property from the API response as the `cursor`, and uses it instead of the original API URL for subsequent
+page loads. It passes the `onLoadMore` prop to Picker, which triggers loading more items as the user scrolls down.
+
+```tsx
+let list = useAsyncList({
+  async load({signal, cursor}) {
+    // If no cursor is available, then we're loading the first page.
+    // Otherwise, the cursor is the next URL to load, as returned from the previous page.
+    let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
+    let json = await res.json();
+    return {
+      items: json.results,
+      cursor: json.next
+    };
+  }
+});
+
+<Picker
+  label="Pick a Pokemon"
+  items={list.items}
+  isLoading={list.isLoading}
+  onLoadMore={list.loadMore}>
+  {item => <Item key={item.name}>{item.name}</Item>}
+</Picker>
+```
+
+### Reloading data
+
+Data can be reloaded by calling the `reload` method of the list.
+
+```tsx
+list.reload();
+```
+
+## Sorting
+
+Some components like tables support sorting data. You may also have custom UI to implement this in other components.
+This can be implemented by passing a `sort` function to `useAsyncList`, or by using the `sortDescriptor` passed to
+`load` if no `sort` function is given. Passing a separate `sort` function could be useful when implementing client side
+sorting. Using the `sortDescriptor` in `load` is useful when you need to implement server side sorting, which might be
+an API parameter.
+
+### Client side sorting
+
+This example shows how to implement client side sorting by passing a `sort` function to `useAsyncList` and sorting the
+items array.
+
+```tsx
+let list = useAsyncList({
+  async load({signal}) {
+    // Same load function as before
+  },
+  sort({items, sortDescriptor}) {
+    return {
+      items: items.sort((a, b) => {
+        // Compare the items by the sorted column
+        let cmp = a[sortDescriptor.column] < b[sortDescriptor.column] ? -1 : 1;
+
+        // Flip the direction if descending order is specified.
+        if (sortDescriptor.direction === 'descending') {
+          cmp *= -1;
+        }
+
+        return cmp;
+      })
+    };
+  }
+});
+```
+
+### Server side sorting
+
+Server side sorting could be implemented by using the `sortDescriptor` in the `load` function, and passing a 
+parameter to the API.
+
+```tsx
+let list = useAsyncList({
+  async load({signal, sortDescriptor}) {
+    let url = new URL('http://example.com/api');
+    if (sortDescriptor) {
+      url.searchParams.append('sort_key', sortDescriptor.column);
+      url.searchParams.append('sort_direction', sortDescriptor.direction);
+    }
+
+    let res = await fetch(url, {signal});
+    let json = await res.json();
+    return {
+      items: json.results
+    };
+  }
+});
+```
+
+## Pre-selecting items
+
+`useAsyncList` manages selection state for the list in addition to its data. If you need to programmatically select items
+during the initial load, you can do so using the `initialSelectedKeys` option or by returning `selectedKeys` from the
+`load` function in addition to `items`.
+
+### Selecting before loading
+
+If you know what keys to select before items are loaded from the server, use the `initialSelectedKeys` option.
+
+```tsx
+let list = useAsyncList({
+  initialSelectedKeys: ['foo', 'bar'],
+  async load({signal}) {
+    // Same load function as before
+  }
+});
+```
+
+### Selecting based on loaded data
+
+If you need to compute which keys to select based on the loaded data, return `selectedKeys` from the `load` function
+in addition to the `items`.
+
+```tsx
+let list = useAsyncList({
+  async load({signal}) {
+    let res = await fetch('http://example.com/api', {signal});
+    let json = await res.json();
+
+    // Return items and compute selectedKeys based on the data and return a list of ids.
+    return {
+      items: json.results,
+      selectedKeys: json.results.filter(item => item.isSelected).map(item => item.id)
+    };
+  }
+});
+```
+
+## Client side updates
+
+All client side updating methods supported by `useListData` are also supported by `useAsyncList`.
+See the docs for [useListData](useListData.html) for more details.

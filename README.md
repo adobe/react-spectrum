@@ -56,7 +56,7 @@ ReactDOM.render(
 ## Development
 
 #### General
-We use Yarn, please run `yarn install` instead of `npm install` to get started. If you do not have yarn, you can follow these [instructions](https://yarnpkg.com/lang/en/docs/install/#mac-stable)
+We use Yarn, please run `yarn` (synonymous for `yarn install`) instead of `npm install` to get started. If you do not have yarn, you can follow these [instructions](https://yarnpkg.com/lang/en/docs/install/#mac-stable)
 
 #### Storybook
 We use [Storybooks](https://storybooks.js.org) for local development. Run `yarn start` and open [http://localhost:9003](http://localhost:9003) in your browser to play around with the components and test your changes.
@@ -90,8 +90,8 @@ yarn jest --coverage
 
 ### TypeScript
 
-The code for React Spectrum is written in [TypeScript](https://www.typescriptlang.org/). The type checker will usually run in your editor, but also runs when you run `make lint`.
+The code for React Spectrum is written in [TypeScript](https://www.typescriptlang.org/). The type checker will usually run in your editor, but also runs when you run `yarn lint`.
 
 ### Linting
 
-The code is linted with [eslint](https://eslint.org/). The linter runs whenever you run the tests, but you can also run it with `make lint`.
+The code is linted with [eslint](https://eslint.org/). The linter runs whenever you run the tests, but you can also run it with `yarn lint`.

@@ -33,6 +33,8 @@ describe('ActionButton', function () {
     let button = getByRole('button');
     triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
+    expect(button).not.toHaveAttribute('aria-pressed');
+    expect(button).not.toHaveAttribute('aria-checked');
   });
 
   it.each`
@@ -40,11 +42,10 @@ describe('ActionButton', function () {
     ${'ActionButton'} | ${ActionButton}  | ${{}}
     ${'V2Button'}     | ${V2Button}      | ${{variant: 'action'}}
   `('$Name allows custom props to be passed through to the button', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} data-foo="bar" aria-hidden>Click Me</Component>);
+    let {getByRole} = render(<Component {...props} data-foo="bar">Click Me</Component>);
 
     let button = getByRole('button', {hidden: true});
     expect(button).toHaveAttribute('data-foo', 'bar');
-    expect(button).toHaveAttribute('aria-hidden', 'true');
   });
 
   it.each`

@@ -13,7 +13,6 @@
 import {
   baseStyleProps,
   dimensionValue,
-  filterDOMProps,
   passthroughStyle,
   StyleHandlers,
   useDOMRef,
@@ -21,6 +20,7 @@ import {
 } from '@react-spectrum/utils';
 import {DimensionValue, DOMRef} from '@react-types/shared';
 import {GridProps} from '@react-types/layout';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
 
 export const gridStyleProps: StyleHandlers = {
