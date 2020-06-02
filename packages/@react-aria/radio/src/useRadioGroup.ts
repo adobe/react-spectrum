@@ -12,10 +12,12 @@
 
 import {AriaRadioGroupProps} from '@react-types/radio';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {getFocusableTreeWalker} from '@react-aria/focus';
 import {HTMLAttributes} from 'react';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
+import {useLocale} from '@react-aria/i18n';
 
 interface RadioGroupAria {
   /** Props for the radio group wrapper element. */
@@ -38,7 +40,8 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     isDisabled,
     orientation = 'vertical'
   } = props;
-  
+  let {direction} = useLocale();
+
   let {labelProps, fieldProps} = useLabel({
     ...props,
     // Radio group is not an HTML input element so it
@@ -59,10 +62,56 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     }
   });
 
+  let onKeyDown = (e) => {
+    e.preventDefault();
+    let walker = getFocusableTreeWalker(e.currentTarget, {from: e.target});
+    let nextDir;
+    switch (e.key) {
+      case 'ArrowRight':
+        if (direction === 'rtl' && orientation !== 'vertical') {
+          nextDir = 'prev';
+        } else {
+          nextDir = 'next';
+        }
+        break;
+      case 'ArrowLeft':
+        if (direction === 'rtl' && orientation !== 'vertical') {
+          nextDir = 'next';
+        } else {
+          nextDir = 'prev';
+        }
+        break;
+      case 'ArrowDown':
+        nextDir = 'next';
+        break;
+      case 'ArrowUp':
+        nextDir = 'prev';
+        break;
+    }
+    let nextElem;
+    if (nextDir === 'next') {
+      nextElem = walker.nextNode();
+      if (!nextElem) {
+        walker.currentNode = e.currentTarget;
+        nextElem = walker.firstChild();
+      }
+    } else {
+      nextElem = walker.previousNode();
+      if (!nextElem) {
+        walker.currentNode = e.currentTarget;
+        nextElem = walker.lastChild();
+      }
+    }
+    if (nextElem) {
+      nextElem.click();
+    }
+  };
+
   return {
     radioGroupProps: mergeProps(domProps, {
       // https://www.w3.org/TR/wai-aria-1.2/#radiogroup
       role: 'radiogroup',
+      onKeyDown,
       'aria-invalid': validationState === 'invalid' || undefined,
       'aria-errormessage': props['aria-errormessage'],
       'aria-readonly': isReadOnly || undefined,
