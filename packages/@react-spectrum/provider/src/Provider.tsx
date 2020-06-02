@@ -28,6 +28,7 @@ import typographyStyles from '@adobe/spectrum-css-temp/components/typography/ind
 import {useColorScheme, useScale} from './mediaQueries';
 // @ts-ignore
 import {version} from '../package.json';
+import has = Reflect.has;
 
 const Context = React.createContext<ProviderContext | null>(null);
 
@@ -154,15 +155,14 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
 
   let hasWarned = useRef(false);
   useEffect(() => {
-    if (locale && process.env.NODE_ENV !== 'development') {
+    if (locale && domRef.current && process.env.NODE_ENV !== 'development') {
       let closestLang = domRef.current.parentElement.closest('[lang]');
-      let lang = closestLang.getAttribute('lang');
-      if (lang !== locale && !hasWarned.current) {
-        console.warn('Locales cannot be nested.');
-        hasWarned.current = true;
+      let lang = closestLang && closestLang.getAttribute('lang');
+      if (lang && lang !== locale && !hasWarned.current) {
+        console.warn(`Locales cannot be nested. ${locale} inside ${lang}.`);
       }
     }
-  });
+  }, [locale, domRef, hasWarned]);
 
 
   return (
