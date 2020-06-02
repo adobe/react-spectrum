@@ -31,13 +31,11 @@ export interface CheckboxBase extends InputBase, FocusableProps {
    */
   onChange?: (isSelected: boolean) => void,
   /**
-   * The value of the Checkbox input element.
-   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox
+   * The value of the Checkbox input element. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox).
    */
   value?: string,
   /**
-   * The name of the Checkbox input element.
-   * @see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox
+   * The name of the Checkbox input element. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox).
    */
   name?: string
 }
