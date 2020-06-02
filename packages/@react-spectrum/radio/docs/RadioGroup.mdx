@@ -80,7 +80,7 @@ A visual label should be provided for the RadioGroup using the `label` prop. If 
 `necessityIndicator` props can be used to show a required state.
 
 ```tsx example
-<Flex gap="size-300">
+<Flex gap="size-300" wrap>
   <RadioGroup label="Favorite avatar">
     <Radio value="wizard">Wizard</Radio>
     <Radio value="dragon">Dragon</Radio>
@@ -104,7 +104,8 @@ A visual label should be provided for the RadioGroup using the `label` prop. If 
 ```
 ### Accessibility
 
-If a visible label isn't specified, an `aria-label` must be provided to the RadioGroup for accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+If a visible label isn't specified for a RadioGroup, an `aria-label` must be provided for accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
 Radio elements should always have a visible label.
 
 ### Internationalization

@@ -428,7 +428,7 @@ function Example() {
   let [state, setState] = React.useState(false);
 
   return (
-    <Flex alignItems="center">
+    <Flex alignItems="center" gap="size-100">
       <DialogTrigger type="popover" placement="top" onOpenChange={(isOpen) => setState(isOpen)}>
         <ActionButton>Whispers</ActionButton>
         <Dialog>
@@ -441,7 +441,7 @@ function Example() {
           </Content>
         </Dialog>
       </DialogTrigger>
-      <Text marginLeft="size-100">Current open state: {state.toString()}</Text>
+      <Text>Current open state: {state.toString()}</Text>
     </Flex>
   );
 }

@@ -108,15 +108,13 @@ function Example() {
   let [text, setText] = React.useState();
 
   return (
-    <>
+    <Flex gap="size-300">
       <TextField
         placeholder="Enter some text"
         onChange={setText}
-        label="Your text"
-        marginEnd="size-300"
-      />
+        label="Your text" />
       <pre>Mirrored text: {text}</pre>
-    </>
+    </Flex>
   );
 }
 ```
@@ -129,7 +127,7 @@ Implement your own validation logic in your app and pass either `"valid"` or `"i
 The example below illustrates how one would validate if the user has entered a valid email into the TextField.
 ```tsx example
 function Example() {
-  let defaultEmail = "me@email.com";
+  let defaultEmail = 'me@email.com';
   let [isValid, setValid] = React.useState(true);
   let [value, setValue] = React.useState(defaultEmail);
 

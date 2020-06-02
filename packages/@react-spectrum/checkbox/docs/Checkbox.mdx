@@ -95,7 +95,7 @@ function Example() {
 
   return (
     <>
-      <Checkbox onChange={setSelection}>
+      <Checkbox value={selected} onChange={setSelection}>
         Subscribe
       </Checkbox>
       <View>{`You are ${selected ? 'subscribed' : 'unsubscribed'}`}</View>
