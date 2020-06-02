@@ -99,6 +99,10 @@ storiesOf('TextArea', module)
     () => render({labelAlign: 'end'})
   )
   .add(
+    'labelAlign: end, validationState: invalid',
+    () => render({labelAlign: 'end', validationState: 'invalid'})
+  )
+  .add(
     'labelPosition: side',
     () => render({labelPosition: 'side'})
   )

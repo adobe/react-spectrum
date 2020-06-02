@@ -23,7 +23,18 @@ import formFieldStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars
 import {Label} from '@react-spectrum/label';
 import {LabelPosition} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import React, {cloneElement, forwardRef, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, useImperativeHandle, useRef} from 'react';
+import React, {
+  cloneElement,
+  forwardRef,
+  InputHTMLAttributes,
+  LabelHTMLAttributes,
+  ReactElement,
+  Ref,
+  RefObject,
+  useEffect,
+  useImperativeHandle,
+  useRef, useState
+} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFormProps} from '@react-spectrum/form';
@@ -91,6 +102,34 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     isResizeableHeight = true;
   }
 
+  let [validationIconPos, setValidationIconPos] = useState({left: styleProps.style.width, top: styleProps.style.height});
+  let prevValue = useRef(validationIconPos);
+  let wrapperRef = useRef(null);
+  useEffect(() => {
+    let iconSize;
+    if (wrapperRef.current) {
+      let iconNodes = wrapperRef.current.querySelectorAll(`.${styles['spectrum-Textfield-validationIcon']}`);
+      if (iconNodes.length === 1) {
+        let iconRect = iconNodes[0].getBoundingClientRect();
+        iconSize = {height: iconRect.height, width: iconRect.width};
+      }
+    }
+    let observer = new MutationObserver(mutations => {
+      mutations.forEach(() => {
+        let newClientRect = inputRef.current.getBoundingClientRect();
+        let newValue = {left: newClientRect.width, top: newClientRect.height};
+        if (prevValue.current && (prevValue.current.left !== newValue.left || prevValue.current.top !== newValue.top) && iconSize) {
+          setValidationIconPos({left: `${newValue.left - iconSize.width - 10}px`, top: `${newValue.top - iconSize.height - 10}px`});
+          prevValue.current = newValue;
+        }
+      });
+    });
+    observer.observe(inputRef.current, {attributes: true, attributeFilter: ['style']});
+    return () => {
+      observer.disconnect();
+    };
+  }, [wrapperRef.current, prevValue.current, validationState]);
+
   if (icon) {
     let UNSAFE_className = classNames(
       styles,
@@ -116,7 +155,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
         'is-invalid': isInvalid,
         'is-valid': validationState === 'valid'
       }
-    )
+    ),
+    UNSAFE_style: validationIconPos
   });
 
   let textField = (
@@ -133,7 +173,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           }
         )
       }
-      style={isInForm ? undefined : {width: 'fit-content'}} >
+      ref={wrapperRef}>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
         <ElementType
           {...mergeProps(
