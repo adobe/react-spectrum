@@ -27,13 +27,14 @@ module.exports = new Transformer({
     const extractExamples = () => (tree, file) => (
       flatMap(tree, node => {
         if (node.type === 'code') {
-          if (node.meta === 'import') {
+          let [meta, ...options] = (node.meta || '').split(' ');
+          if (meta === 'import') {
             exampleCode.push(node.value);
             node.meta = null;
             return [];
           }
 
-          if (node.meta === 'example') {
+          if (meta === 'example') {
             let id = `example-${exampleCode.length}`;
 
             // TODO: Parsing code with regex is bad. Replace with babel transform or something.
@@ -43,15 +44,21 @@ module.exports = new Transformer({
               return '';
             });
 
+            let provider = 'ExampleProvider';
+            if (options.includes('themeSwitcher=true')) {
+              exampleCode.push('import {ExampleThemeSwitcher} from "@react-spectrum/docs/src/ExampleThemeSwitcher";\n');
+              provider = 'ExampleThemeSwitcher';
+            }
+
             if (/^\s*function (.|\n)*}\s*$/.test(code)) {
               let name = code.match(/^\s*function (.*?)\s*\(/)[1];
               code = `(function () {
                 ${code}
-                ReactDOM.render(<ExampleProvider><${name} /></ExampleProvider>, document.getElementById("${id}"));
+                ReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));
               })();`;
             } else if (/^<(.|\n)*>$/m.test(code)) {
               code = `(function () {
-                ${code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<ExampleProvider>$1</ExampleProvider>, document.getElementById("${id}"));`)}
+                ${code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`)}
               })();`;
             }
 
@@ -60,6 +67,7 @@ module.exports = new Transformer({
             // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actuall
             // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
             node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*\/\/\/- end collapse -\/\/\//g, '').trim();
+            node.meta = 'example';
 
             return [
               ...responsiveCode(node),
@@ -275,6 +283,10 @@ ${compiled}
 });
 
 function responsiveCode(node) {
+  if (!node.lang) {
+    return [node];
+  }
+
   let large = {
     ...node,
     meta: node.meta ? `${node.meta} large` : 'large',

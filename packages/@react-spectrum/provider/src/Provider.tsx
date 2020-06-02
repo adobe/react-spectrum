@@ -13,7 +13,7 @@
 import classNames from 'classnames';
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {Provider as I18nProvider, useLocale} from '@react-aria/i18n';
+import {I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/overlays';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
 import React, {useContext} from 'react';

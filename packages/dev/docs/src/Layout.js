@@ -152,6 +152,11 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
   );
 }
 
+const CATEGORY_ORDER = [
+  'Introduction',
+  'Concepts'
+];
+
 function Nav({currentPageName, pages}) {
   let isIndex = /index\.html$/;
   let currentParts = currentPageName.split('/');
@@ -206,6 +211,20 @@ function Nav({currentPageName, pages}) {
     }
   });
 
+  // Order categories so specific ones come first, then all the others in sorted order.
+  let categories = [];
+  for (let category of CATEGORY_ORDER) {
+    if (pageMap[category]) {
+      categories.push(category);
+    }
+  }
+
+  for (let category of Object.keys(pageMap).sort()) {
+    if (!CATEGORY_ORDER.includes(category)) {
+      categories.push(category);
+    }
+  }
+
   let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
 
   function SideNavItem({name, url, title}) {
@@ -237,7 +256,7 @@ function Nav({currentPageName, pages}) {
       </header>
       <ul className={sideNavStyles['spectrum-SideNav']}>
         {rootPages.map(p => <SideNavItem {...p} />)}
-        {Object.keys(pageMap).sort().map(key => (
+        {categories.map(key => (
           <li className={sideNavStyles['spectrum-SideNav-item']}>
             <h3 className={sideNavStyles['spectrum-SideNav-heading']}>{key}</h3>
             <ul className={sideNavStyles['spectrum-SideNav']}>

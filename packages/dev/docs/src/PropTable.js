@@ -20,9 +20,8 @@ const GROUPS = {
     /^on[A-Z]/
   ],
   Layout: [
-    'flex', 'flexGrow', 'flexShrink', 'flexDirection', 'flexWrap', 'flexBasis', 'alignItems', 'alignContent', 'alignSelf', 'justifyItems', 'justifyContent', 'justifySelf', 'order', 'flexOrder',
-    'gridTemplateColumns', 'gridTemplateRows', 'gridTemplateAreas', 'gridArea', 'gridColumn', 'gridRow', 'gridGap', 'gridColumnGap', 'gridRowGap', 'gridAutoFlow', 'gridAutoColumns', 'gridAutoRows',
-    'gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd', 'slot',
+    'flex', 'flexGrow', 'flexShrink', 'flexBasis', 'alignSelf', 'justifySelf', 'order', 'flexOrder',
+    'gridArea', 'gridColumn', 'gridRow', 'gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd', 'slot',
     'overflow'
   ],
   Spacing: [
@@ -70,6 +69,9 @@ const GROUPS = {
   ],
   Accessibility: [
     'role', 'id', 'tabIndex', /^aria-/
+  ],
+  Advanced: [
+    'UNSAFE_className', 'UNSAFE_style'
   ]
 };
 

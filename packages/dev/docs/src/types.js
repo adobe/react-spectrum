@@ -29,7 +29,13 @@ const DOC_LINKS = {
   Iterator: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols',
   Iterable: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols',
   DataTransfer: 'https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer',
-  CSSProperties: 'https://reactjs.org/docs/dom-elements.html#style'
+  CSSProperties: 'https://reactjs.org/docs/dom-elements.html#style',
+  'Intl.NumberFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat',
+  'Intl.NumberFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat',
+  'Intl.DateTimeFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat',
+  'Intl.DateTimeFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat',
+  'Intl.Collator': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator',
+  'Intl.CollatorOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator'
 };
 
 export const TypeContext = React.createContext();
@@ -264,7 +270,7 @@ export function LinkRenderer() {
   let links = useContext(LinkContext);
   return [...links.values()].map(({type, links}) => (
     <section key={type.id} id={type.id} data-title={type.name} hidden>
-      {type.description && <Markdown options={{forceBlock: true}} className={styles['type-description']}>{type.description}</Markdown>}
+      {type.description && <Markdown options={{forceBlock: true, overrides: {a: {component: SpectrumLink}}}} className={styles['type-description']}>{type.description}</Markdown>}
       <TypeContext.Provider value={links}>
         {type.type === 'interface' || type.type === 'alias' || type.type === 'component'
           ? <Type type={type} />
@@ -426,7 +432,11 @@ function ObjectType({properties, exact}) {
         let punc = optional ? '?: ' : ': ';
         return (
           <div key={property.key} style={{paddingLeft: '1.5em'}}>
+            {property.indexType && <span className="token punctuation">[</span>}
             <span className={`token ${token}`}>{k}</span>
+            {property.indexType && <span className="token punctuation">{': '}</span>}
+            {property.indexType && <Type type={property.indexType} />}
+            {property.indexType && <span className="token punctuation">]</span>}
             <span className="token punctuation">{punc}</span>
             <Type type={value} />
             {i < arr.length - 1 ? ',' : ''}
