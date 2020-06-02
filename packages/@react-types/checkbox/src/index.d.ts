@@ -51,8 +51,8 @@ export interface AriaCheckboxBase extends CheckboxBase, FocusableDOMProps, AriaL
 
 export interface CheckboxProps extends CheckboxBase {
   /**
-   * Indeterminism is presentational, when a checkbox is indeterminate, it overrides the selection state.
-   * The indeterminate visual representation remains even after subsequent clicks.
+   * Indeterminism is presentational only.
+   * The indeterminate visual representation remains regardless of user interaction.
    */
   isIndeterminate?: boolean
 }

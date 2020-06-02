@@ -34,7 +34,7 @@ interface RadioAria {
 }
 
 /**
- * Provides the behavior and accessibility implementation for an individual 
+ * Provides the behavior and accessibility implementation for an individual
  * radio button in a radio group.
  * @param props - props for the radio
  * @param state - state for the radio group, as returned by `useRadioGroupState`
@@ -73,13 +73,17 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
   }), ref);
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
+  let tabIndex = state.focusableRadio === value || state.focusableRadio == null ? 0 : -1;
+  if (isDisabled) {
+    tabIndex = undefined;
+  }
 
   return {
     inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',
       name: state.name,
-      tabIndex: state.focusableRadio === value || state.focusableRadio == null ? 0 : -1,
+      tabIndex,
       disabled: isDisabled,
       readOnly: isReadOnly,
       required: isRequired,
