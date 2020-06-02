@@ -19,7 +19,8 @@ import {
   LabelableProps,
   Orientation,
   SpectrumLabelableProps,
-  StyleProps, ValidationState,
+  StyleProps, 
+  ValidationState,
   ValueBase
 } from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
