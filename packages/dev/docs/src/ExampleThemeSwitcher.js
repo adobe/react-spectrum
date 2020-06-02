@@ -25,12 +25,12 @@ export function ExampleThemeSwitcher({children}) {
       <Flex direction="column">
         <Flex marginBottom="size-250">
           <Picker label="Color Scheme" selectedKey={colorScheme} onSelectionChange={setColorScheme} marginEnd="size-250">
-            <Item uniqueKey="light">Light</Item>
-            <Item uniqueKey="dark">Dark</Item>
+            <Item key="light">Light</Item>
+            <Item key="dark">Dark</Item>
           </Picker>
           <Picker label="Scale" selectedKey={scale} onSelectionChange={setScale}>
-            <Item uniqueKey="medium">Medium (desktop)</Item>
-            <Item uniqueKey="large">Large (mobile)</Item>
+            <Item key="medium">Medium (desktop)</Item>
+            <Item key="large">Large (mobile)</Item>
           </Picker>
         </Flex>
         <Provider scale={scale}>

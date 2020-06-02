@@ -85,12 +85,11 @@ function DimensionViewer() {
   return (
     <Example>
       <Picker label="Scale" selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
-        <Item uniqueKey="medium">Medium (desktop)</Item>
-        <Item uniqueKey="large">Large (mobile)</Item>
+        <Item key="medium">Medium (desktop)</Item>
+        <Item key="large">Large (mobile)</Item>
       </Picker>
       <Provider scale={selectedKey}>
         <ul style={{listStyle: 'none', padding: 0, overflow: 'auto'}}>
-          {console.log(dnaDocs.links[dnaDocs.exports.DimensionValue.id])}
           {dnaDocs.links[dnaDocs.exports.DimensionValue.id].value.elements.filter(v => v.value && !v.value.startsWith('static')).map(v =>
             <li key={v.value}>
               <Flex alignItems="center" marginBottom="size-25">
@@ -159,11 +158,10 @@ function ColorViewer() {
   return (
     <Example colorScheme={selectedKey}>
       <Picker label="Color Scheme" selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
-        <Item uniqueKey="light">Light</Item>
-        <Item uniqueKey="dark">Dark</Item>
+        <Item key="light">Light</Item>
+        <Item key="dark">Dark</Item>
       </Picker>
       <ul style={{columnWidth: 160, listStyle: 'none', padding: 0}}>
-        {console.log(dnaDocs.links[dnaDocs.exports.DimensionValue.id])}
         {dnaDocs.links[dnaDocs.exports.ColorValue.id].value.elements.filter(v => v.value && !v.value.startsWith('static')).map(v =>
           <li key={v.value}>
             <Flex alignItems="center" marginBottom="size-25">

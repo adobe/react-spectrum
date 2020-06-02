@@ -169,17 +169,17 @@ placed using the `slot` prop to specify a named area.
 
 ```tsx example
 <Picker label="Permission" defaultSelectedKey="read">
-  <Item textValue="Read" uniqueKey="read">
+  <Item textValue="Read" key="read">
     <Book size="S" />
     <Text>Read</Text>
     <Text slot="description">Read only</Text>
   </Item>
-  <Item textValue="Write" uniqueKey="write">
+  <Item textValue="Write" key="write">
     <Draw size="S" />
     <Text>Write</Text>
     <Text slot="description">Read and write only</Text>
   </Item>
-  <Item textValue="Admin" uniqueKey="admin">
+  <Item textValue="Admin" key="admin">
     <BulkEditUsers size="S" />
     <Text>Admin</Text>
     <Text slot="description">Full access</Text>
