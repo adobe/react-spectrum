@@ -71,9 +71,10 @@ function handlePointerEvent(e: PointerEvent | MouseEvent) {
 }
 
 function handleFocusEvent(e: FocusEvent) {
-  // Firefox fires a focus event with the document as the target when the user first clicks into
-  // an iframe. We ignore this event so it doesn't cause keyboard focus rings to appear.
-  if (e.target === document) {
+  // Firefox fires two extra focus events when the user first clicks into an iframe:
+  // first on the window, then on the document. We ignore these events so they don't
+  // cause keyboard focus rings to appear.
+  if (e.target === window || e.target === document) {
     return;
   }
 
@@ -111,7 +112,10 @@ function setupGlobalFocusEvents() {
 
   document.addEventListener('keydown', handleKeyboardEvent, true);
   document.addEventListener('keyup', handleKeyboardEvent, true);
-  document.addEventListener('focus', handleFocusEvent, true);
+  
+  // Register focus events on the window so they are sure to happen 
+  // before React's event listeners (registered on the document).
+  window.addEventListener('focus', handleFocusEvent, true);
   window.addEventListener('blur', handleWindowBlur, false);
   
   if (typeof PointerEvent !== 'undefined') {

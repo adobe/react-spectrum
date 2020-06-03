@@ -230,6 +230,21 @@ module.exports = new Transformer({
         return base;
       }
 
+      if (path.isTSQualifiedName()) {
+        let left = processExport(path.get('left'));
+        if (left.type === 'interface' || left.type === 'object') {
+          let property = left.properties[path.node.right.name];
+          if (property) {
+            return property.value;
+          }
+        }
+
+        return Object.assign(node, {
+          type: 'identifier',
+          name: left.name + '.' + path.node.right.name
+        });
+      }
+
       if (path.isImportSpecifier()) {
         asset.addDependency({
           moduleSpecifier: path.parent.source.value,
@@ -326,6 +341,17 @@ module.exports = new Transformer({
               ? path.get('typeParameters.params').map(p => processExport(p))
               : []
           }
+        }, docs));
+      }
+
+      if (path.isTSIndexSignature()) {
+        let name = path.node.parameters[0].name;
+        let docs = getJSDocs(path);
+        return Object.assign(node, addDocs({
+          type: 'property',
+          name,
+          indexType: processExport(path.get('parameters.0.typeAnnotation.typeAnnotation')),
+          value: processExport(path.get('typeAnnotation.typeAnnotation'))
         }, docs));
       }
 

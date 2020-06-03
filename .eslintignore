@@ -1,5 +1,6 @@
 packages/@spectrum-icons/color/**
 packages/@spectrum-icons/ui/**
 packages/@spectrum-icons/workflow/**
+packages/@spectrum-icons/illustrations/**
 node_modules
 packages/*/*/dist

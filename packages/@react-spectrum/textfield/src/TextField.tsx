@@ -32,8 +32,8 @@ function TextField(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) 
 }
 
 /**
- * Text fields are text inputs that allow users to input custom text entries
- * with a keyboard. Various decorations can be displayed around the field to 
+ * TextFields are text inputs that allow users to input custom text entries
+ * with a keyboard. Various decorations can be displayed around the field to
  * communicate the entry requirements.
  */
 const _TextField = forwardRef(TextField);

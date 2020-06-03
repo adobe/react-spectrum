@@ -23,7 +23,7 @@ import React from 'react';
 import RegionSelect  from '@spectrum-icons/workflow/RegionSelect';
 import Select  from '@spectrum-icons/workflow/Select';
 import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 import Undo from '@spectrum-icons/workflow/Undo';
 
 const items =

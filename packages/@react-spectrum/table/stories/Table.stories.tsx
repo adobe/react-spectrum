@@ -3,7 +3,7 @@
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
@@ -16,7 +16,7 @@ import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
 import {Flex} from '@react-spectrum/layout';
-import {Heading} from '@react-spectrum/typography';
+import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
@@ -179,7 +179,7 @@ storiesOf('Table', module)
   .add(
     'focusable cells',
     () => (
-      <Flex flexDirection="column">
+      <Flex direction="column">
         <input placeholder="Focusable before" />
         <Table aria-label="Table with focusable cells" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
           <TableHeader>
@@ -551,7 +551,7 @@ function AsyncLoadingExample() {
         <TableBody items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
           {item =>
             (<Row key={item.data.id}>
-              {key => 
+              {key =>
                 key === 'title'
                   ? <Cell textValue={item.data.title}><Link isQuiet><a href={item.data.url} target="_blank">{item.data.title}</a></Link></Cell>
                   : <Cell>{item.data[key]}</Cell>
