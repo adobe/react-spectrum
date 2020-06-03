@@ -737,7 +737,6 @@ describe('Table', function () {
 
       it('should move to the first column header when focus is on the last column with ArrowLeft in RTL', function () {
         let tree = renderTable('ar-AE');
-        console.log(tree.debug());
         focusCell(tree, 'Baz');
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(tree.getByText('Foo'));
