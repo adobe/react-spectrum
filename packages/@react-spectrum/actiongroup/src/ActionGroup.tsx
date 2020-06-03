@@ -19,7 +19,7 @@ import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-stately/collections';
 import {PressResponder} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
-import React, {forwardRef, Key, ReactElement, useRef} from 'react';
+import React, {forwardRef, Key, ReactElement, useRef, useState} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {useActionGroup} from '@react-aria/actiongroup';
@@ -107,6 +107,9 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: A
     });
   }
 
+  // can't seem to use <FocusRing>, so hook up to onFocus/Blur events
+  let [isFocused, setFocus] = useState(false);
+
   let button = (
     // Use a PressResponder to send DOM props through.
     // ActionButton doesn't allow overriding the role by default.
@@ -118,7 +121,8 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: A
             styles,
             'spectrum-ActionGroup-item',
             {
-              'is-selected': isSelected
+              'is-selected': isSelected,
+              'focus-ring': isFocused
             },
             classNames(
               buttonStyles,
@@ -130,7 +134,9 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: A
           )
         }
         isDisabled={isDisabled}
-        aria-label={item['aria-label']}>
+        aria-label={item['aria-label']}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}>
         {item.rendered}
       </ActionButton>
     </PressResponder>
