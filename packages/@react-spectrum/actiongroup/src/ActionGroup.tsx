@@ -118,8 +118,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: A
             styles,
             'spectrum-ActionGroup-item',
             {
-              'is-selected': isSelected,
-              'focus-ring': item.key === state.selectionManager.focusedKey
+              'is-selected': isSelected
             },
             classNames(
               buttonStyles,
