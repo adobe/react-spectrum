@@ -221,129 +221,129 @@ function renderIcons(props, items: any = itemsWithIcons) {
 
 function renderBigOne() {
   return (
-    <Flex direction="column" gap="size-100" width="1600px" margin="size-300" marginTop="size-900">
-      <Flex>
+    <Flex direction="column" gap="size-300" width="1600px" margin="size-300" marginTop="size-900">
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal</div>
         <div style={{flex: '1'}}>{render({}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Compact</div>
         <div style={{flex: '1'}}>{render({density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Justified</div>
         <div style={{flex: '1'}}>{render({isJustified: true}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({isJustified: true}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({isJustified: true}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Compact / Justified</div>
         <div style={{flex: '1'}}>{render({isJustified: true, density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({isJustified: true, density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({isJustified: true, density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Quiet</div>
         <div style={{flex: '1'}}>{render({isQuiet: true}, [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'}, {children: 'Delete', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({isQuiet: true}, [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'}, {children: 'Delete', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({isQuiet: true}, [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'}, {children: 'Delete', name: '3'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Compact / Quiet</div>
         <div style={{flex: '1'}}>{render({density: 'compact', isQuiet: true}, [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'}, {children: 'Delete', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({density: 'compact', isQuiet: true}, [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'}, {children: 'Delete', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({density: 'compact', isQuiet: true}, [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'}, {children: 'Delete', name: '3'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Single</div>
         <div style={{flex: '1'}}>{render({selectedKeys: ['1']}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({selectedKeys: ['1']}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({selectedKeys: ['1']}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Compact / Single</div>
         <div style={{flex: '1'}}>{render({selectedKeys: ['1'], density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({selectedKeys: ['1'], density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({selectedKeys: ['1'], density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Justified / Single</div>
         <div style={{flex: '1'}}>{render({selectedKeys: ['1'], isJustified: true}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({selectedKeys: ['1'], isJustified: true}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({selectedKeys: ['1'], isJustified: true}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Justified / Compact / Single</div>
         <div style={{flex: '1'}}>{render({selectedKeys: ['1'], density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({selectedKeys: ['1'], density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({selectedKeys: ['1'], density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Quiet / Single</div>
         <div style={{flex: '1'}}>{render({selectedKeys: ['1'], isQuiet: true}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({selectedKeys: ['1'], isQuiet: true}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({selectedKeys: ['1'], isQuiet: true}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Compact / Quiet / Single</div>
         <div style={{flex: '1'}}>{render({selectedKeys: ['1'], isQuiet: true, density: 'compact'}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({selectedKeys: ['1'], isQuiet: true, density: 'compact'}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({selectedKeys: ['1'], isQuiet: true, density: 'compact'}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
       </Flex>
 
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Emphasis / Single</div>
         <div style={{flex: '1'}}>{render({selectedKeys: ['1'], isEmphasized: true}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({selectedKeys: ['1'], isEmphasized: true}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({selectedKeys: ['1'], isEmphasized: true}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Compact / Emphasis / Single</div>
         <div style={{flex: '1'}}>{render({selectedKeys: ['1'], isEmphasized: true, density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({selectedKeys: ['1'], isEmphasized: true, density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({selectedKeys: ['1'], isEmphasized: true, density: 'compact'}, [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Quiet / Emphasis / Single</div>
         <div style={{flex: '1'}}>{render({selectedKeys: ['1'], isEmphasized: true, isQuiet: true}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({selectedKeys: ['1'], isEmphasized: true, isQuiet: true}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({selectedKeys: ['1'], isEmphasized: true, isQuiet: true}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Quiet / Multi</div>
         <div style={{flex: '1'}}>{render({selectedKeys: ['1', '2'], isQuiet: true, selectionMode: 'multiple'}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({selectedKeys: ['1', '2'], isQuiet: true, selectionMode: 'multiple'}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({selectedKeys: ['1', '2'], isQuiet: true, selectionMode: 'multiple'}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Horizontal / Quiet / Emphasis / Multi</div>
         <div style={{flex: '1'}}>{render({selectedKeys: ['1', '2'], isQuiet: true, selectionMode: 'multiple', isEmphasized: true}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({selectedKeys: ['1', '2'], isQuiet: true, selectionMode: 'multiple', isEmphasized: true}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({selectedKeys: ['1', '2'], isQuiet: true, selectionMode: 'multiple', isEmphasized: true}, [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Vertical</div>
         <div style={{flex: '1'}}>{render({orientation: 'vertical'}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({orientation: 'vertical'}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({orientation: 'vertical'}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Vertical / Justified</div>
         <div style={{flex: '1'}}>{render({orientation: 'vertical', isJustified: true}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({orientation: 'vertical', isJustified: true}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({orientation: 'vertical', isJustified: true}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Vertical / Compact / Justified</div>
         <div style={{flex: '1'}}>{render({orientation: 'vertical', isJustified: true, density: 'compact'}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({orientation: 'vertical', isJustified: true, density: 'compact'}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderIcons({orientation: 'vertical', isJustified: true, density: 'compact'}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
       </Flex>
-      <Flex>
+      <Flex gap="size-100" >
         <div style={{flex: '1'}}>Vertical / Quiet</div>
         <div style={{flex: '1'}}>{render({orientation: 'vertical', isQuiet: true}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>
         <div style={{flex: '1'}}>{renderBoth({orientation: 'vertical', isQuiet: true}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div>

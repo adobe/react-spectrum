@@ -61,6 +61,7 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
           styles,
           'spectrum-ActionGroup',
           {
+            'spectrum-ActionGroup--quiet': isQuiet,
             'spectrum-ActionGroup--vertical': isVertical,
             'spectrum-ActionGroup--compact': density === 'compact',
             'spectrum-ActionGroup--justified': isJustified
