@@ -10,10 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AriaValidationProps, FocusableDOMProps, FocusableProps, InputBase, StyleProps} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  AriaValidationProps,
+  FocusableDOMProps,
+  FocusableProps,
+  InputBase,
+  StyleProps,
+  Validation
+} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface CheckboxBase extends InputBase, FocusableProps {
+export interface CheckboxBase extends InputBase, Validation, FocusableProps {
   children?: ReactNode, // pass in children to render label
   defaultSelected?: boolean,
   isSelected?: boolean,

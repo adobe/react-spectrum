@@ -1,5 +1,5 @@
 {
-  "name": "@react-spectrum/typography",
+  "name": "@react-spectrum/text",
   "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
@@ -31,7 +31,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/utils": "^3.0.0-rc.2",
     "@react-spectrum/utils": "^3.0.0-rc.2",
-    "@react-types/typography": "^3.0.0-alpha.1"
+    "@react-types/text": "^3.0.0-alpha.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
