@@ -16,7 +16,7 @@ category: Concepts
 
 # Testing
 
-This page describes how to test an application built with with React Spectrum, including how to 
+This page describes how to test an application built with with React Spectrum, including how to
 query the DOM tree for elements and simulate user interactions.
 
 ## Introduction
@@ -24,17 +24,17 @@ query the DOM tree for elements and simulate user interactions.
 Running automated tests on your application helps ensure that it continues to work as expected over time.
 You can use testing tools like [Enzyme](https://enzymejs.github.io/enzyme/) or
 [React Testing Library](https://testing-library.com/docs/react-testing-library/intro) along with test runners like
-[Jest](https://jestjs.io) or [Mocha](https://mochajs.org) to test React Spectrum applications. These generally 
+[Jest](https://jestjs.io) or [Mocha](https://mochajs.org) to test React Spectrum applications. These generally
 work quite well out of the box but there are a few things to consider to ensure your tests are the best they
 can be.
 
 ## Testing semantics
 
-Many testing libraries expect you to query for elements in the DOM tree. For example, you might have a test 
-that renders a login page, finds the username and password fields, and simulates filling them out and 
+Many testing libraries expect you to query for elements in the DOM tree. For example, you might have a test
+that renders a login page, finds the username and password fields, and simulates filling them out and
 submitting the form.
 
-Querying for these elements can be done in many ways. It's common to use CSS selectors for this, 
+Querying for these elements can be done in many ways. It's common to use CSS selectors for this,
 but this can be problematic if you rely on implementation details of the component in these queries.
 For example, if you query by a CSS class name that may change in a future update of React Spectrum, your
 test will be brittle.
@@ -43,12 +43,12 @@ This also applies if you query for internal elements within a React Spectrum com
 that React Spectrum renders should be considered a black box, and it may change at any time, so you should
 avoid relying on it.
 
-The correct way to query for React Spectrum components and their internals is by semantics. React Spectrum
+The recommended way to query for React Spectrum components and their internals is by semantics. React Spectrum
 components implement [ARIA patterns](https://www.w3.org/TR/wai-aria-practices-1.2/). ARIA is a W3C standard
 that specifies the semantics for many UI components. This is used to expose them to assistive technology
-like screen readers, but can also be used in tests to operate the application programmatically. These semantics
+such as screen readers, but can also be used in tests to operate the application programmatically. These semantics
 are much less likely to change over time, and while other DOM nodes may be added or removed, and CSS classes
-changed, the semantics will stay stable.
+changed, the semantics are more likely to stay stable.
 
 The main attribute to look for when querying is the [role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques).
 This attribute represents the type of element a DOM node represents, e.g. a button, list option, or tab.
@@ -58,7 +58,7 @@ communicate the element's semantics.
 
 ### React Testing Library
 
-[React Testing Library](https://testing-library.com/docs/react-testing-library/intro) is great because it
+[React Testing Library](https://testing-library.com/docs/react-testing-library/intro) is useful because it
 enforces that you write tests using semantics instead of implementation details. We use React Testing Library
 to test React Spectrum itself, and it's quite easy to [query](https://testing-library.com/docs/dom-testing-library/api-queries)
 elements by role, text, label, etc.
@@ -84,10 +84,10 @@ let option = wrapper.find('[role="option"]');
 
 ## Test ids
 
-Querying by semantics is great, but what if you have many buttons on a page? How do you find the specific button
-you're looking for in a test? In many cases this could be done by querying by the text in the button or an 
-accessibility label associated with it, but sometimes this might change over time or may be affected by things like 
-translations in different languages. In these cases, you may need a way to identify specific elements in tests, and that's 
+Querying by semantics covers many scenarios, but what if you have many buttons on a page? How do you find the specific button
+you're looking for in a test? In many cases this could be done by querying by the text in the button or an
+accessibility label associated with it, but sometimes this might change over time or may be affected by things like
+translations in different languages. In these cases, you may need a way to identify specific elements in tests, and that's
 where test ids come in.
 
 React Spectrum components pass all [data attributes](https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto/Use_data_attributes)
@@ -95,7 +95,7 @@ through to their underlying DOM nodes, which allows you to use an attribute like
 a particular instance of a component. For example, you could add test ids to the two input elements
 in a login form and use them to find the username and password fields.
 
-This example uses React Testing Library, but the idea could be applied in a similar way with Enzyme or other 
+This example uses React Testing Library, but the idea could be applied in a similar way with Enzyme or other
 testing libraries.
 
 ```tsx
@@ -123,7 +123,7 @@ many different browser events to support different devices and platforms, so it'
 these correctly in your tests. For example, rather than only simulating a click event, the tests should
 simulate all of the events that would occur if a real user were interacting with the component.
 
-For example, a click is really a `mousemove` and `mouseover` the target, followed 
+For example, a click is really a `mousemove` and `mouseover` the target, followed
 by `mousedown`, `focus`, and `mouseup` events, and finally a `click` event. If you only simulated the `click`
 event, you would be missing all of these other preceding events that occur in real-world situations and this
 may make your test not work correctly. The implementation of the component may also change in the future to
