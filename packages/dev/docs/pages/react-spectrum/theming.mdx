@@ -29,22 +29,22 @@ to operating system dark mode and touch scale.
 
 React Spectrum is built to support theming. Colors, sizing, and spacing options can be customized
 through the use of CSS variables which are defined using the [Provider](Provider.html) component. Themes
-consist of definitions for these variables for light and dark [color schemes](https://spectrum.adobe.com/page/color/#Color-themes-and-modes),
+consist of variable definitions for light and dark [color schemes](https://spectrum.adobe.com/page/color/#Color-themes-and-modes),
 along with medium and large [platform scales](https://spectrum.adobe.com/page/platform-scale/).
 Themes can also be nested to allow different parts of an application to adopt a different appearance.
 
 ## Color schemes
 
 React Spectrum supports multiple [color schemes](https://spectrum.adobe.com/page/color/#Color-themes-and-modes)
-within a theme, including light and dark mode. These correspond to color schemes found in popular operating systems. 
+within a theme, including light and dark mode. These correspond to color schemes found in popular operating systems.
 By default, React Spectrum automatically switches between color schemes according to the operating system setting using the
 [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme)
 media query. This even updates automatically, so if a user changes their system's color scheme or it changes
-automatically (e.g. based on time of day), React Spectrum applications will update accordingly.
+automatically (e.g. based on time of day), React Spectrum components will update accordingly.
 
-We recommend that all React Spectrum applications support both light and dark mode. It can be very jarring to 
-use a light themed application when the rest of your applications are in dark mode, and visa versa. This is
-generally quite simple to support if you use Spectrum color variables rather than hard coded color values.
+We recommend that all React Spectrum applications support both light and dark mode. It can be very jarring to
+use a light themed application when the rest of your applications are in dark mode, and visa versa. This can
+be accomplished by using Spectrum color variables rather than hard coded color values.
 All React Spectrum components adapt to color scheme out of the box. See the [styling](styling.html) page
 for details on how to use Spectrum color variables in your own custom components.
 
