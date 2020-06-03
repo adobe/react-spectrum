@@ -19,7 +19,7 @@ import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-stately/collections';
 import {PressResponder} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
-import React, {forwardRef, Key, ReactElement, useRef, useState} from 'react';
+import React, {forwardRef, Key, ReactElement, useRef} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {useActionGroup} from '@react-aria/actiongroup';
