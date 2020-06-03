@@ -98,13 +98,12 @@ we recommend reading the documentation linked above first.
 
 At the bottom is the state hook. This hook is shared across platforms —
 it could work on the web, react-native, or any other platform, and makes
-not assumption about the view system it is running on. It also has no
+no assumptions about the view system it is running on. It also has no
 theme or design system specific logic.
 
 The state hook accepts common props from the component and provides
-state management. It returns an interface for reading and updating
-component state, with methods that implement much of the core logic
-for the component.
+state management. It implements the core logic for the component and
+returns an interface for reading and updating the component state.
 
 Not all components have a state hook. For example, many components are
 read-only — they display something to the user but don't allow them
@@ -115,8 +114,8 @@ data entry, or have some kind of visual state that the user can update
 ### Behavior hook
 
 In the middle is the behavior hook. This hook is platform specific, and
-depends on the platform API (e.g. the DOM or react-native). It still has
-no theme or design system specific logic in it though. It implements event
+depends on the platform API (e.g. the DOM or react-native). It also has
+no theme or design system specific logic. It implements event
 handling, accessibility, internationalization, etc. — all the parts of a
 component that could be shared across multiple design systems.
 
@@ -143,7 +142,7 @@ be implemented in many different ways (e.g. CSS classes, CSS-in-JS, etc.).
 The component uses props returned by the behavior hook and state from the state
 hook to implement the visual appearance. It spreads props returned from the behavior
 hook onto elements that it renders to apply semantics and interactions, and can use
-the state from the state hook to adjust its visual appearance based on the state.
+the state from the state hook to adjust its visual appearance.
 This allows complete control over the rendering of the component, including
 things like adding extra elements as needed for styling or layout control.
 
