@@ -20,7 +20,7 @@ import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
+function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
   let {
     isQuiet,
@@ -30,7 +30,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
     ...otherProps
   } = props;
 
-  let domRef = useFocusableRef(ref) as RefObject<HTMLButtonElement>;
+  let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
   let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));
