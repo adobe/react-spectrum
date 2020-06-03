@@ -15,7 +15,7 @@ import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 
 storiesOf('Button', module)
   .addParameters({providerSwitcher: {status: 'positive'}})

@@ -21,7 +21,7 @@ import {Item, Picker, Section} from '../';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
 
 let flatOptions = [

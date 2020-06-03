@@ -18,7 +18,7 @@ import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Menu, MenuTrigger, Section} from '../';
-import {Keyboard, Text} from '@react-spectrum/typography';
+import {Keyboard, Text} from '@react-spectrum/text';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
