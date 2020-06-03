@@ -107,9 +107,6 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: A
     });
   }
 
-  // can't seem to use <FocusRing>, so hook up to onFocus/Blur events
-  let [isFocused, setFocus] = useState(false);
-
   let button = (
     // Use a PressResponder to send DOM props through.
     // ActionButton doesn't allow overriding the role by default.
@@ -122,7 +119,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: A
             'spectrum-ActionGroup-item',
             {
               'is-selected': isSelected,
-              'focus-ring': isFocused
+              'focus-ring': item.key === state.selectionManager.focusedKey
             },
             classNames(
               buttonStyles,
@@ -134,9 +131,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: A
           )
         }
         isDisabled={isDisabled}
-        aria-label={item['aria-label']}
-        onFocus={() => setFocus(true)}
-        onBlur={() => setFocus(false)}>
+        aria-label={item['aria-label']}>
         {item.rendered}
       </ActionButton>
     </PressResponder>
