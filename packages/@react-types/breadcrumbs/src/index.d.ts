@@ -67,7 +67,7 @@ export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, St
   /** Whether to always show the root item if the items are collapsed. */
   showRoot?: boolean,
   /**
-   * Whether to place the last Breadcrumb onto a new line.
+   * Whether to place the last Breadcrumb item onto a new line.
    */
   multiline?: boolean
 }

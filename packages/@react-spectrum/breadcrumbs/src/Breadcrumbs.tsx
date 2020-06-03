@@ -76,8 +76,8 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     // Only run the resize logic if the menu is collapsible to avoid the risk of performance problems.
     if (isCollapsible && listRef.current) {
       let listItems = [...listRef.current.children];
-      // Ignore the last item when the size is large because it wraps onto a new line and doesn't take up horizontal space.
-      let listItemsToMeasure = size === 'L' ? listItems.slice(0, listItems.length - 1) : listItems;
+      // Ignore the last item when the multiline is true because it wraps onto a new line and doesn't take up horizontal space.
+      let listItemsToMeasure = multiline ? listItems.slice(0, listItems.length - 1) : listItems;
       let childrenWidths = listItemsToMeasure.map((item) => item.getBoundingClientRect().width);
 
       let onResize = () => {
