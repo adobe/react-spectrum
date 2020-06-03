@@ -133,12 +133,6 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Breadcrumbs--large {
-  .spectrum-Breadcrumbs-item {
-    font-size: var(--spectrum-breadcrumb-item-text-size);
-  }
-}
-
 .spectrum-Breadcrumbs--multiline {
   flex-wrap: wrap;
 

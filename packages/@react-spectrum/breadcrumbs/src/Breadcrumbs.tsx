@@ -204,7 +204,6 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
             {
               'spectrum-Breadcrumbs--small': size === 'S',
               'spectrum-Breadcrumbs--medium': size === 'M',
-              'spectrum-Breadcrumbs--large': size === 'L',
               'spectrum-Breadcrumbs--multiline': multiline,
               'is-disabled': isDisabled
             },

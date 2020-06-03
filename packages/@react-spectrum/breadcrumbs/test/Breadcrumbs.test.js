@@ -116,16 +116,6 @@ describe('Breadcrumbs', function () {
     expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('--medium'));
   });
 
-  it('Handles size="L"', () => {
-    let {getByRole} = render(
-      <Breadcrumbs size="L">
-        <Item>Folder 1</Item>
-      </Breadcrumbs>
-    );
-    let breadcrumbs = getByRole('list');
-    expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('--large'));
-  });
-
   it('Handles isHeading and headingAriaLevel', () => {
     let {getByRole} = render(
       <Breadcrumbs headingAriaLevel={2} isHeading>
