@@ -21,7 +21,7 @@ import {Content, Header} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Divider} from '@react-spectrum/divider';
-import {Heading, Keyboard, Text} from '@react-spectrum/typography';
+import {Heading, Keyboard, Text} from '@react-spectrum/text';
 import {Item, Menu, Section} from '../';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
@@ -480,7 +480,7 @@ storiesOf('Menu', module)
       </Menu>
     )
   );
-  
+
 let customMenuItem = (item) => {
   let Icon = iconMap[item.icon];
   return (
@@ -489,5 +489,5 @@ let customMenuItem = (item) => {
       <Text>{item.name}</Text>
       {item.shortcut && <Keyboard>{item.shortcut}</Keyboard>}
     </Item>
-  );	
+  );
 };

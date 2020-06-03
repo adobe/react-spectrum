@@ -16,5 +16,6 @@ import {ReactElement} from 'react';
 export type Slots = {[key: string]: any};
 
 export interface FlexProps extends DOMProps, FlexStyleProps {
+  /** Children of the flex container. */
   children: ReactElement | ReactElement[]
 }

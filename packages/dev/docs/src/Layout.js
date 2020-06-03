@@ -136,6 +136,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
         {scripts.map(s => <script type={s.type} src={s.url} defer />)}
+        <script src="https://assets.adobedtm.com/a7d65461e54e/01d650a3ee55/launch-4d5498348926.min.js" async />
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
         <meta property="og:title" content={currentPage.title} />
@@ -151,6 +152,11 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
     </html>
   );
 }
+
+const CATEGORY_ORDER = [
+  'Introduction',
+  'Concepts'
+];
 
 function Nav({currentPageName, pages}) {
   let isIndex = /index\.html$/;
@@ -206,6 +212,20 @@ function Nav({currentPageName, pages}) {
     }
   });
 
+  // Order categories so specific ones come first, then all the others in sorted order.
+  let categories = [];
+  for (let category of CATEGORY_ORDER) {
+    if (pageMap[category]) {
+      categories.push(category);
+    }
+  }
+
+  for (let category of Object.keys(pageMap).sort()) {
+    if (!CATEGORY_ORDER.includes(category)) {
+      categories.push(category);
+    }
+  }
+
   let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
 
   function SideNavItem({name, url, title}) {
@@ -237,7 +257,7 @@ function Nav({currentPageName, pages}) {
       </header>
       <ul className={sideNavStyles['spectrum-SideNav']}>
         {rootPages.map(p => <SideNavItem {...p} />)}
-        {Object.keys(pageMap).sort().map(key => (
+        {categories.map(key => (
           <li className={sideNavStyles['spectrum-SideNav-item']}>
             <h3 className={sideNavStyles['spectrum-SideNav-heading']}>{key}</h3>
             <ul className={sideNavStyles['spectrum-SideNav']}>
@@ -260,6 +280,7 @@ function Footer() {
         <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy.html">Privacy</a></li>
         <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/legal/terms.html">Terms of Use</a></li>
         <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy/cookies.html">Cookies</a></li>
+        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy/ca-rights.html">Do not sell my personal information</a></li>
       </ul>
     </footer>
   );

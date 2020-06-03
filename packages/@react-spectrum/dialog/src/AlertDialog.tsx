@@ -20,7 +20,7 @@ import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
 import {DOMRef} from '@react-types/shared';
-import {Heading} from '@react-spectrum/typography';
+import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {forwardRef, useContext} from 'react';

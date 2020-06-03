@@ -20,7 +20,7 @@ import {Item, Picker, Section} from '../src';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 
@@ -820,23 +820,23 @@ describe('Picker', function () {
             </Picker>
           </Provider>
         );
-  
+
         let picker = getByRole('button');
         expect(picker).toHaveAttribute('aria-haspopup', 'listbox');
 
 
         let span = getByText('(required)');
         expect(span).not.toHaveAttribute('aria-hidden');
-  
+
         let label = span.parentElement;
         let value = getByText('Select an option…');
         expect(label).toHaveAttribute('id');
         expect(value).toHaveAttribute('id');
         expect(picker).toHaveAttribute('aria-labelledby', `${label.id} ${value.id}`);
-  
+
         act(() => triggerPress(picker));
         act(() => jest.runAllTimers());
-  
+
         let listbox = getByRole('listbox');
         expect(listbox).toBeVisible();
         expect(listbox).toHaveAttribute('aria-labelledby', label.id);

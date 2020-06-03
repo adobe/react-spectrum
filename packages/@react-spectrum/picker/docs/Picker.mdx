@@ -22,7 +22,7 @@ import BulkEditUsers from '@spectrum-icons/workflow/BulkEditUsers';
 import Draw from '@spectrum-icons/workflow/Draw';
 import ColorPalette from '@spectrum-icons/workflow/ColorPalette';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 ```
 
 ---
@@ -347,7 +347,7 @@ function AsyncLoadingExample() {
 ```
 ### Custom widths
 ```tsx example
-<Flex flexDirection="column">
+<Flex direction="column">
   <Picker label="Choose frequency" width="size-6000">
     <Item key="rarely">Rarely</Item>
     <Item key="sometimes">Sometimes</Item>
@@ -363,7 +363,7 @@ function AsyncLoadingExample() {
 ```
 ### Align and direction
 ```tsx example
-<Flex flexDirection="column">
+<Flex direction="column">
   <Picker label="Choose frequency" align="end" menuWidth="size-3000">
     <Item key="rarely">Rarely</Item>
     <Item key="sometimes">Sometimes</Item>

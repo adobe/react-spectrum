@@ -12,12 +12,12 @@
 
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {HeadingProps} from '@react-types/typography';
 import React, {forwardRef} from 'react';
+import {TextProps} from '@react-types/text';
 import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
-function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
-  props = useSlotProps(props, 'heading');
+function Text(props: TextProps, ref: DOMRef) {
+  props = useSlotProps(props, 'text');
   let {
     children,
     ...otherProps
@@ -26,14 +26,14 @@ function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   let domRef = useDOMRef(ref);
 
   return (
-    <h1 {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+    <span {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       {children}
-    </h1>
+    </span>
   );
 }
 
 /**
- * Heading is used to create various levels of typographic hierarchies.
+ * Text is used to define label or option text in components.
  */
-const _Heading = forwardRef(Heading);
-export {_Heading as Heading};
+const _Text = forwardRef(Text);
+export {_Text as Text};

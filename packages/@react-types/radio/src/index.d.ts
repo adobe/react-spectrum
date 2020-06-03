@@ -20,11 +20,12 @@ import {
   Orientation,
   SpectrumLabelableProps,
   StyleProps,
+  Validation,
   ValueBase
 } from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
-export interface RadioGroupProps extends ValueBase<string>, InputBase, LabelableProps {
+export interface RadioGroupProps extends ValueBase<string>, InputBase, Validation, LabelableProps {
   children: ReactElement<RadioProps> | ReactElement<RadioProps>[],
   /**
    * The axis the Radio Button(s) should align with.

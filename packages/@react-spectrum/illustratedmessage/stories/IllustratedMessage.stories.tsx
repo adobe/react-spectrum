@@ -11,7 +11,7 @@
  */
 
 import {Content} from '@react-spectrum/view';
-import {Heading} from '@react-spectrum/typography';
+import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
