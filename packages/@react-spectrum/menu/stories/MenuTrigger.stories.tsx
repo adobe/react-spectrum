@@ -12,19 +12,16 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
-import {AlertDialog, Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
-import {Content, Header} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
-import {Divider} from '@react-spectrum/divider';
-import {Heading, Keyboard, Text} from '@react-spectrum/typography';
 import isChromatic from 'storybook-chromatic/isChromatic';
 import {Item, Menu, MenuTrigger, Section} from '../';
+import {Keyboard, Text} from '@react-spectrum/typography';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -492,7 +489,7 @@ let customMenuItem = (item) => {
       <Text>{item.name}</Text>
       {item.shortcut && <Keyboard>{item.shortcut}</Keyboard>}
     </Item>
-  );	
+  );
 };
 
 function render(menu, {isDisabled, ...props}: any = {}, menuProps = {}) {
