@@ -25,6 +25,7 @@ import Select  from '@spectrum-icons/workflow/Select';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import Undo from '@spectrum-icons/workflow/Undo';
+import {Flex} from "@react-spectrum/layout";
 
 const items =
   [
@@ -59,20 +60,20 @@ storiesOf('ActionGroup', module)
     () => render({isDisabled: true})
   )
   .add(
-    'isConnected',
-    () => render({isConnected: true})
+    'density: compact',
+    () => render({density: 'compact'})
   )
   .add(
-    'isConected, isJustified',
+    'density: compact, isJustified',
     () => (
       <div style={{width: '600px'}}>
-        {render({isConnected: true, isJustified: true})}
+        {render({density: 'compact', isJustified: true})}
       </div>
     )
   )
   .add(
-    'isConnected, isEmphasized',
-    () => render({isConnected: true, isEmphasized: true})
+    'density: compact, isEmphasized',
+    () => render({density: 'compact', isEmphasized: true})
   )
   .add(
     'selectionMode: none',
@@ -83,8 +84,8 @@ storiesOf('ActionGroup', module)
     () => render({selectionMode: 'multiple'})
   )
   .add(
-    'selectionMode: multiple, isConnected, isEmphasized',
-    () => render({isConnected: true, isEmphasized: true, selectionMode: 'multiple'})
+    'selectionMode: multiple, density: compact, isEmphasized',
+    () => render({density: 'compact', isEmphasized: true, selectionMode: 'multiple'})
   )
   .add(
     'orientation: vertical',
@@ -117,6 +118,10 @@ storiesOf('ActionGroup', module)
   .add(
     'disabledKeys',
     () => render({disabledKeys: ['Add', 'Delete'], selectionMode: 'multiple'})
+  )
+  .add(
+    'the big one',
+    () => renderBigOne()
   )
   .add(
     'dynamic',
@@ -154,5 +159,21 @@ function render(props = {}, items: any = itemsWithIcons) {
         ))
       }
     </ActionGroup>
+  );
+}
+
+function renderBigOne() {
+  return (
+    <Flex direction="column" gap="size-100" width="600px">
+      <Flex><div style={{flex: '1'}}>Horizontal</div><div style={{flex: '1'}}>{render({}, [{children: 'Document setup'}, {children: 'Settings'}])}</div></Flex>
+      <Flex><div style={{flex: '1'}}>Horizontal / Compact</div><div style={{flex: '1'}}>{render({density: 'compact'}, [{children: 'Grid View'}, {children: 'List view'}, {children: 'Gallery view'}])}</div></Flex>
+      <Flex><div style={{flex: '1'}}>Horizontal / Justified</div><div style={{flex: '1'}}>{render({isJustified: true}, [{children: 'Grid View'}, {children: 'List view'}])}</div></Flex>
+      <Flex><div style={{flex: '1'}}>Horizontal / Compact / Justified</div><div style={{flex: '1'}}>{render({isJustified: true, density: 'compact'}, [{children: 'Grid View'}, {children: 'List view'}])}</div></Flex>
+      <Flex><div style={{flex: '1'}}>Horizontal / Quiet</div><div style={{flex: '1'}}>{render({isQuiet: true}, [{children: 'Edit'}, {children: 'Copy'}, {children: 'Delete'}])}</div></Flex>
+      <Flex><div style={{flex: '1'}}>Horizontal / Compact / Quiet</div><div style={{flex: '1'}}>{render({density: 'compact', isQuiet: true}, [{children: 'Edit'}, {children: 'Copy'}, {children: 'Delete'}])}</div></Flex>
+      <Flex><div style={{flex: '1'}}>Horizontal / Single</div><div style={{flex: '1'}}>{render({selectedKeys: ['1']}, [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}])}</div></Flex>
+      <Flex><div style={{flex: '1'}}>Horizontal / Compact / Single</div><div style={{flex: '1'}}>{render({selectedKeys: ['1']}, [{children: 'Grid View', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}])}</div></Flex>
+
+    </Flex>
   );
 }

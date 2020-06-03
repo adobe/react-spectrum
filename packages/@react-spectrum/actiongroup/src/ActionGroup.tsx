@@ -34,7 +34,7 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
 
   let {
     isEmphasized,
-    isConnected, // no quiet option available in this mode
+    density,
     isJustified,
     isDisabled,
     selectionMode = 'single' as SelectionMode,
@@ -59,12 +59,12 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
       className={
         classNames(
           styles,
-          'spectrum-ActionButtonGroup',
-          classNames(buttonStyles, {
-            'spectrum-ButtonGroup--vertical': isVertical,
-            'spectrum-ButtonGroup--connected': isConnected && !isQuiet,
-            'spectrum-ButtonGroup--justified': isJustified
-          }),
+          'spectrum-ActionGroup',
+          {
+            'spectrum-ActionGroup--vertical': isVertical,
+            'spectrum-ActionGroup--compact': density === 'compact',
+            'spectrum-ActionGroup--justified': isJustified
+          },
           otherProps.UNSAFE_className
         )
       }>
@@ -114,12 +114,18 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: A
         ref={ref}
         UNSAFE_className={
           classNames(
-            buttonStyles,
-            'spectrum-ButtonGroup-item',
+            styles,
+            'spectrum-ActionGroup-item',
             {
-              'spectrum-ActionButton--emphasized': isEmphasized,
               'is-selected': isSelected
-            }
+            },
+            classNames(
+              buttonStyles,
+              {
+                'spectrum-ActionButton--emphasized': isEmphasized,
+                'is-selected': isSelected
+              }
+            )
           )
         }
         isDisabled={isDisabled}
