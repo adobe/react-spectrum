@@ -10,11 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaCheckboxBase, CheckboxBase} from '@react-types/checkbox';
-import {StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, FocusableDOMProps, FocusableProps, InputBase, StyleProps} from '@react-types/shared';
+import {ReactNode} from 'react';
 
-export interface SwitchProps extends CheckboxBase {}
-export interface AriaSwitchProps extends AriaCheckboxBase {}
+interface SwitchBase extends InputBase, FocusableProps {
+  children?: ReactNode, // pass in children to render label
+  defaultSelected?: boolean,
+  isSelected?: boolean,
+  onChange?: (isSelected: boolean) => void,
+  value?: string, // dom prop for input element
+  name?: string
+}
+export interface SwitchProps extends SwitchBase {}
+export interface AriaSwitchBase extends SwitchBase, FocusableDOMProps, AriaLabelingProps {
+  /**
+   * Identifies the element (or elements) whose contents or presence are controlled by the current element.
+   */
+  'aria-controls'?: string
+}
+export interface AriaSwitchProps extends SwitchProps, AriaSwitchBase {}
+
 export interface SpectrumSwitchProps extends AriaSwitchProps, StyleProps {
   /**
    * This prop sets the emphasized style which provides visual prominence.
