@@ -101,7 +101,7 @@ governing permissions and limitations under the License.
       }
 
       /* Appear above hovered and selected borders */
-      &.focus-ring {
+      &:focus-ring {
         z-index: 3;
       }
 
