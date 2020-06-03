@@ -153,6 +153,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
       let lang = closestLang && closestLang.getAttribute('lang');
       if (lang && lang !== locale && !hasWarned.current) {
         console.warn(`Locales cannot be nested. ${locale} inside ${lang}.`);
+        hasWarned.current = true;
       }
     }
   }, [locale, domRef, hasWarned]);
