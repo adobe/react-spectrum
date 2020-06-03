@@ -160,7 +160,7 @@ storiesOf('Table', module)
   .add(
     'dynamic with nested columns',
     () => (
-      <Table aria-label="Table with nested columns" width={700} height={300} rowHeight="auto" onSelectionChange={s => onSelectionChange([...s])}>
+      <Table aria-label="Table with nested columns" width={700} height={300} overflowMode="wrap" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={nestedColumns}>
           {column =>
             <Column childColumns={column.children}>{column.name}</Column>
@@ -291,9 +291,9 @@ storiesOf('Table', module)
     )
   )
   .add(
-    'rowHeight=72',
+    'density="compact"',
     () => (
-      <Table aria-label="Table with custom row height" width={500} height={200} isQuiet rowHeight={80} onSelectionChange={s => onSelectionChange([...s])}>
+      <Table aria-label="Table with custom row height" width={500} height={200} isQuiet density="compact" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>
@@ -315,9 +315,81 @@ storiesOf('Table', module)
     )
   )
   .add(
-    'rowHeight=auto',
+    'density="spacious"',
     () => (
-      <Table aria-label="Table with variable row heights" width={500} height={300} isQuiet rowHeight="auto" onSelectionChange={s => onSelectionChange([...s])}>
+      <Table aria-label="Table with custom row height" width={500} height={200} isQuiet density="spacious" onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column width={250} showDivider>File Name</Column>
+          <Column>Type</Column>
+          <Column align="end">Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'overflowMode="wrap"',
+    () => (
+      <Table aria-label="Table with variable row heights" width={500} height={300} isQuiet overflowMode="wrap" onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column width={250} showDivider>File Name</Column>
+          <Column>Type</Column>
+          <Column align="end">Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal with very very very very very very long long long long long filename</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'overflowMode="wrap", density="compact"',
+    () => (
+      <Table aria-label="Table with variable row heights" width={500} height={300} isQuiet overflowMode="wrap" density="compact" onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column width={250} showDivider>File Name</Column>
+          <Column>Type</Column>
+          <Column align="end">Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal with very very very very very very long long long long long filename</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'overflowMode="wrap", density="spacious"',
+    () => (
+      <Table aria-label="Table with variable row heights" width={500} height={300} isQuiet overflowMode="wrap" density="spacious" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>

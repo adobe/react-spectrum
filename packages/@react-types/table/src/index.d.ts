@@ -19,7 +19,8 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
 }
 
 export interface SpectrumTableProps<T> extends TableProps<T>, DOMProps, AriaLabelingProps, StyleProps {
-  rowHeight?: number | 'auto',
+  density?: 'compact' | 'regular' | 'spacious',
+  overflowMode?: 'wrap' | 'truncate',
   isQuiet?: boolean,
   renderEmptyState?: () => JSX.Element
 }
