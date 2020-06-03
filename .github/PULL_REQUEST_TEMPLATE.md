@@ -13,6 +13,6 @@ Closes <!-- Github issue # here -->
 
 <!--- Include instructions to test this pull request -->
 
-## 🧢 Your Team:
+## 🧢 Your Project:
 
-<!--- Which product/company is this pull request for? -->
+<!--- Company/project for pull request -->
