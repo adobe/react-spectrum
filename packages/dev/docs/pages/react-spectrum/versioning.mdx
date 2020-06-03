@@ -26,7 +26,7 @@ package ensures that your app includes only a single version of each component,
 and that all components are compatible with one another.
 
 However, there are some cases where it may be useful to use separate
-packages for some components. For example, you may need to temporarily upgrade a 
+packages for some components. For example, you may need to temporarily upgrade a
 single component to a newer version without upgrading another. Or you may wish to
 test out a pre-release version of a component, or a brand new component that's not
 yet stable. In these cases, you can use the individually versioned packages that
@@ -34,10 +34,10 @@ we publish for each component in addition to the mono-package.
 
 ## Installing individual packages
 
-All of the individually versioned component packages are published under the 
+All of the individually versioned component packages are published under the
 [@react-spectrum](https://www.npmjs.com/org/react-spectrum) scope on npm.
 
-You can install any React Spectrum package using a package manager like 
+You can install any React Spectrum package using a package manager like
 [npm](https://docs.npmjs.com/cli/npm) or [yarn](https://classic.yarnpkg.com/lang/en/).
 
 ```
@@ -83,26 +83,26 @@ that component to also be updated to ensure compatibility.
 
 ### Avoid duplicate versions
 
-You should ensure that you do not unintentionally introduce multiple versions of 
-the same component into your app. While this does technically work, it will 
-cause your application to include more code than necessary, so it should only 
+You should ensure that you do not unintentionally introduce multiple versions of
+the same component into your app. While this does technically work, it will
+cause your application to include more code than necessary, so it should only
 be used as a temporary fix if at all.
 
 ### Provider version
 
 You must ensure that the version of the [Provider](Provider.html) component
-and the [theme](theming.html) that you use is greater than or equal to the 
+and the [theme](theming.html) that you use is greater than or equal to the
 newest version of any component in your app.
 
 The theme provides the CSS variables that each component depends on, so if you
-have an old theme that's missing a variable from a newer component somewhere 
-in your app, it will likely not look correct. This case should be rare since 
-variables are added infrequently, but it's good practice to ensure the theme 
-is up to date whenever you install and individually versioned component.
+have an old theme that's missing a variable from a newer component somewhere
+in your app, it will likely not look correct. This case should be rare since
+variables are added infrequently, but it's good practice to ensure the theme
+is up to date whenever you install an individually versioned component.
 
 ## Breaking changes
 
-While we try to avoid them as much as we can, sometimes breaking changes to 
+While we try to avoid them as much as we can, sometimes breaking changes to
 components are necessary. React Spectrum strictly follows [semver](https://semver.org).
 When a breaking change occurs, it will be done in a major version release
 to avoid breaking existing applications depending on the old version.
