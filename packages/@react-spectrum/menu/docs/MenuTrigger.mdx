@@ -61,19 +61,16 @@ category: Collections
 The Menu accepts Items and [`Sections`](#sections) as children. Items can be
 statically populated (initial example above) or dynamically (below). The dynamic
 method would be better suited to use if the actions within a Menu came from a
-data object such as values returned via an API call. The `uniqueKey` prop needs
-to be set on an Item when statically defining Items and the `itemKey` prop in
-the Menu when its Items are dynamically populated.
+data object such as values returned via an API call. A unique `key` prop must be set
+on each item.
 
 ```tsx example
 <MenuTrigger>
   <ActionButton>
       Edit
   </ActionButton>
-  <Menu
-    items={[{name: 'Cut'}, {name: 'Copy'}, {name: 'Paste'}]}
-    itemKey="name">
-    {item => <Item>{item.name}</Item>}
+  <Menu items={[{name: 'Cut'}, {name: 'Copy'}, {name: 'Paste'}]}>
+    {item => <Item key={item.name}>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
 ```
@@ -99,9 +96,9 @@ controlled state.
       Edit (Controlled)
   </ActionButton>
   <Menu selectionMode="single" selectedKeys={['copy']}>
-    <Item uniqueKey="cut">Cut</Item>
-    <Item uniqueKey="copy">Copy</Item>
-    <Item uniqueKey="paste">Paste</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </Menu>
 </MenuTrigger>
 <MenuTrigger closeOnSelect={false}>
@@ -109,9 +106,9 @@ controlled state.
       Edit (Uncontrolled)
   </ActionButton>
   <Menu selectionMode="single" defaultSelectedKeys={['paste']}>
-    <Item uniqueKey="cut">Cut</Item>
-    <Item uniqueKey="copy">Copy</Item>
-    <Item uniqueKey="paste">Paste</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </Menu>
 </MenuTrigger>
 ```
@@ -126,10 +123,10 @@ entirely (default).
       Show (Multiple)
   </ActionButton>
   <Menu selectionMode="multiple" defaultSelectedKeys={['Sidebar', 'Console']}>
-    <Item uniqueKey='Sidebar'>Sidebar</Item>
-    <Item uniqueKey='Searchbar'>Searchbar</Item>
-    <Item uniqueKey='Tools'>Tools</Item>
-    <Item uniqueKey='Console'>Console</Item>
+    <Item key='Sidebar'>Sidebar</Item>
+    <Item key='Searchbar'>Searchbar</Item>
+    <Item key='Tools'>Tools</Item>
+    <Item key='Console'>Console</Item>
   </Menu>
 </MenuTrigger>
 <MenuTrigger closeOnSelect={false}>
@@ -137,9 +134,9 @@ entirely (default).
       Edit (Selection Mode None)
   </ActionButton>
   <Menu selectionMode="none">
-    <Item uniqueKey="cut">Cut</Item>
-    <Item uniqueKey="copy">Copy</Item>
-    <Item uniqueKey="paste">Paste</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </Menu>
 </MenuTrigger>
 ```
@@ -147,7 +144,7 @@ entirely (default).
 ### Sections
 
 Menus may have Sections which can be used to wrap groups of Items. Each
-`Section` takes a `title` and `uniqueKey` prop.
+`Section` takes a `title` and `key` prop.
 
 #### Static Items
 
@@ -157,14 +154,14 @@ Menus may have Sections which can be used to wrap groups of Items. Each
       Edit
   </ActionButton>
   <Menu>
-    <Section uniqueKey="rollback" title="Rollback Options">
-      <Item uniqueKey="undo">Undo</Item>
-      <Item uniqueKey="redo">Redo</Item>
+    <Section key="rollback" title="Rollback Options">
+      <Item key="undo">Undo</Item>
+      <Item key="redo">Redo</Item>
     </Section>
-    <Section uniqueKey="select" title="Selected Text Options">
-      <Item uniqueKey="cut">Cut</Item>
-      <Item uniqueKey="copy">Copy</Item>
-      <Item uniqueKey="paste">Paste</Item>
+    <Section key="select" title="Selected Text Options">
+      <Item key="cut">Cut</Item>
+      <Item key="copy">Copy</Item>
+      <Item key="paste">Paste</Item>
     </Section>
   </Menu>
 </MenuTrigger>
@@ -181,11 +178,10 @@ structure. Section takes an array of data using the `items` prop.
       File Types
   </ActionButton>
   <Menu
-    items={[{name: 'Docs', children: [{name: 'PDF'}]}, {name: 'Images', children: [{name: 'jpeg'}, {name: 'png'}, {name: 'tiff'}]}]}
-    itemKey="name">
+    items={[{name: 'Docs', children: [{name: 'PDF'}]}, {name: 'Images', children: [{name: 'jpeg'}, {name: 'png'}, {name: 'tiff'}]}]}>
     {item => (
-      <Section items={item.children} title={item.name}>
-        {item => <Item>{item.name}</Item>}
+      <Section key={item.name} items={item.children} title={item.name}>
+        {item => <Item key={item.name}>{item.name}</Item>}
       </Section>
     )}
   </Menu>
@@ -199,14 +195,13 @@ A Menu Item's content may be any renderable node, not just strings.
 [View guidelines](https://spectrum.adobe.com/page/popovers/#Content-types)
 
 ```tsx example
-import {Keyboard, Text} from '@react-spectrum/typography';
+import {Keyboard, Text} from '@react-spectrum/text';
 
 <MenuTrigger>
   <ActionButton>
       Edit
   </ActionButton>
   <Menu
-    itemKey="name"
     items={[
       {name: 'Copy', icon: 'Copy', shortcut: '⌘C'},
       {name: 'Cut', icon: 'Cut', shortcut: '⌘X'},
@@ -220,7 +215,7 @@ import {Keyboard, Text} from '@react-spectrum/typography';
       };
       let Icon = iconMap[item.icon];
       return (
-        <Item childItems={item.children} textValue={item.name}>
+        <Item key={item.name} childItems={item.children} textValue={item.name}>
           <Icon size="S" />
           <Text>{item.name}</Text>
           <Keyboard>{item.shortcut}</Keyboard>
@@ -235,21 +230,21 @@ import {Keyboard, Text} from '@react-spectrum/typography';
 
 To internationalize a Menu, a localized string should be passed to the `children`
 prop of each Menu Item or to a Section's `title` prop. For languages that are
-read right to left (e.g. Hebrew and Arabic), the layout of the Menu is flipped.
+read right-to-left (e.g. Hebrew and Arabic), the layout of the Menu is flipped.
 
 ### Accessibility
 
-Titleless Menu Sections must be provided with an `aria-label` for accessibility.
+Title-less Menu Sections must be provided with an `aria-label` for accessibility.
 
 ```tsx example
 <MenuTrigger>
   <ActionButton>
       Edit
   </ActionButton>
-  <Menu items={[{name: 'Rollback Options', children: [{name: 'Undo'}, {name: 'Redo'}]}, {name: 'Selected Text Options', children: [{name: 'Cut'}, {name: 'Copy'}, {name: 'Paste'}]}]} itemKey="name">
+  <Menu items={[{name: 'Rollback Options', children: [{name: 'Undo'}, {name: 'Redo'}]}, {name: 'Selected Text Options', children: [{name: 'Cut'}, {name: 'Copy'}, {name: 'Paste'}]}]}>
     {item => (
-      <Section items={item.children} aria-label={item.name}>
-        {item => <Item>{item.name}</Item>}
+      <Section key={item.name} items={item.children} aria-label={item.name}>
+        {item => <Item key={item.name}>{item.name}</Item>}
       </Section>
     )}
   </Menu>
@@ -277,9 +272,9 @@ function Example() {
             Edit
         </ActionButton>
         <Menu>
-          <Item uniqueKey="cut">Cut</Item>
-          <Item uniqueKey="copy">Copy</Item>
-          <Item uniqueKey="paste">Paste</Item>
+          <Item key="cut">Cut</Item>
+          <Item key="copy">Copy</Item>
+          <Item key="paste">Paste</Item>
         </Menu>
       </MenuTrigger>
       <span style={{'margin-left': '8px'}}>Current open state: {state.toString()}</span>
@@ -305,9 +300,9 @@ function Example() {
             Edit
         </ActionButton>
         <Menu onAction={(value) => setState(value)}>
-          <Item uniqueKey="cut">Cut</Item>
-          <Item uniqueKey="copy">Copy</Item>
-          <Item uniqueKey="paste">Paste</Item>
+          <Item key="cut">Cut</Item>
+          <Item key="copy">Copy</Item>
+          <Item key="paste">Paste</Item>
         </Menu>
       </MenuTrigger>
       <span style={{'margin-left': '8px'}}>onAction: {state.toString()}</span>
@@ -338,9 +333,9 @@ function Example() {
     placement align=start
   </ActionButton>
   <Menu>
-    <Item uniqueKey="cut">Cut</Item>
-    <Item uniqueKey="copy">Copy</Item>
-    <Item uniqueKey="paste">Paste</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </Menu>
 </MenuTrigger>
 <MenuTrigger align="end">
@@ -348,9 +343,9 @@ function Example() {
     placement align=end
   </ActionButton>
   <Menu>
-    <Item uniqueKey="cut">Cut</Item>
-    <Item uniqueKey="copy">Copy</Item>
-    <Item uniqueKey="paste">Paste</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </Menu>
 </MenuTrigger>
 ```
@@ -365,9 +360,9 @@ function Example() {
     placement direction=bottom
   </ActionButton>
   <Menu>
-    <Item uniqueKey="cut">Cut</Item>
-    <Item uniqueKey="copy">Copy</Item>
-    <Item uniqueKey="paste">Paste</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </Menu>
 </MenuTrigger>
 <MenuTrigger direction="top" shouldFlip={false}>
@@ -375,9 +370,9 @@ function Example() {
     placement direction=top
   </ActionButton>
   <Menu>
-    <Item uniqueKey="cut">Cut</Item>
-    <Item uniqueKey="copy">Copy</Item>
-    <Item uniqueKey="paste">Paste</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </Menu>
 </MenuTrigger>
 ```
@@ -399,9 +394,9 @@ selected Menu Item when the Menu is opened.
     selectionMode="single"
     selectedKeys={['copy']}
     autoFocus>
-    <Item uniqueKey="cut">Cut</Item>
-    <Item uniqueKey="copy">Copy</Item>
-    <Item uniqueKey="paste">Paste</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </Menu>
 </MenuTrigger>
 ```
@@ -415,9 +410,9 @@ first Menu Item or last Menu Item is focused when the Menu is opened.
       autofocus=first
   </ActionButton>
   <Menu autoFocus="first">
-    <Item uniqueKey="cut">Cut</Item>
-    <Item uniqueKey="copy">Copy</Item>
-    <Item uniqueKey="paste">Paste</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </Menu>
 </MenuTrigger>
 <MenuTrigger>
@@ -425,9 +420,9 @@ first Menu Item or last Menu Item is focused when the Menu is opened.
     autofocus=last
   </ActionButton>
   <Menu autoFocus="last">
-    <Item uniqueKey="cut">Cut</Item>
-    <Item uniqueKey="copy">Copy</Item>
-    <Item uniqueKey="paste">Paste</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </Menu>
 </MenuTrigger>
 ```
@@ -445,9 +440,9 @@ selections at once.
     closeOnSelect=true
   </ActionButton>
   <Menu>
-    <Item uniqueKey="cut">Cut</Item>
-    <Item uniqueKey="copy">Copy</Item>
-    <Item uniqueKey="paste">Paste</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </Menu>
 </MenuTrigger>
 <MenuTrigger closeOnSelect={false}>
@@ -455,9 +450,9 @@ selections at once.
     closeOnSelect=false
   </ActionButton>
   <Menu selectionMode="multiple">
-    <Item uniqueKey="jpg">jpg</Item>
-    <Item uniqueKey="png">png</Item>
-    <Item uniqueKey="tiff">tiff</Item>
+    <Item key="jpg">jpg</Item>
+    <Item key="png">png</Item>
+    <Item key="tiff">tiff</Item>
   </Menu>
 </MenuTrigger>
 ```
@@ -476,9 +471,8 @@ selections at once.
       {name: 'jpg', dataId: 'p8k3i4'},
       {name: 'PDF', dataId: 'j7i3a0'}
     ]}
-    itemKey="dataId"
     disabledKeys={['a1b2c3', 'p8k3i4']}>
-    {item => <Item>{item.name}</Item>}
+    {item => <Item key={item.dataId}>{item.name}</Item>}
   </Menu>
 </MenuTrigger>
 ```
@@ -494,9 +488,9 @@ main axis in situations where the original placement would cause it to render ou
     shouldFlip=true
   </ActionButton>
   <Menu>
-    <Item uniqueKey="cut">Cut</Item>
-    <Item uniqueKey="copy">Copy</Item>
-    <Item uniqueKey="paste">Paste</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </Menu>
 </MenuTrigger>
 <MenuTrigger shouldFlip={false}>
@@ -504,9 +498,9 @@ main axis in situations where the original placement would cause it to render ou
     shouldFlip=false
   </ActionButton>
   <Menu>
-    <Item uniqueKey="cut">Cut</Item>
-    <Item uniqueKey="copy">Copy</Item>
-    <Item uniqueKey="paste">Paste</Item>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
   </Menu>
 </MenuTrigger>
 ```

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, CollectionBase, DOMProps, MultipleSelection, StyleProps} from '@react-types/shared';
+import {Alignment, AriaLabelingProps, CollectionBase, DOMProps, MultipleSelection, StyleProps} from '@react-types/shared';
 import {Key, ReactElement} from 'react';
 
 export type FocusStrategy = 'first' | 'last';
@@ -53,5 +53,5 @@ export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
   onAction?: (key: Key) => void
 }
 
-export interface SpectrumMenuProps<T> extends MenuProps<T>, DOMProps, StyleProps {
-}
+export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingProps {}
+export interface SpectrumMenuProps<T> extends AriaMenuProps<T>, StyleProps {}

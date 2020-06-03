@@ -26,7 +26,9 @@ export interface TooltipProps extends DOMProps {
   role?: 'tooltip'
 }
 
-export interface SpectrumTooltipProps extends TooltipProps, StyleProps {
+export interface AriaTooltipProps extends TooltipProps, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumTooltipProps extends AriaTooltipProps, StyleProps {
   variant?: 'neutral' | 'positive' | 'negative' | 'info',
   placement?: 'right' | 'left' | 'top' | 'bottom'
 }

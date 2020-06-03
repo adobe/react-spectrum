@@ -15,10 +15,18 @@ import {Key, Reducer, useEffect, useReducer} from 'react';
 import {Selection, SortDescriptor} from '@react-types/shared';
 
 interface AsyncListOptions<T, C> {
+  /** The keys for the initially selected items. */
   initialSelectedKeys?: Iterable<Key>,
+  /** The initial sort descriptor. */
   initialSortDescriptor?: SortDescriptor,
+  /** A function that returns a unique key for an item object. */
   getKey?: (item: T) => Key,
+  /** A function that loads the data for the items in the list. */
   load: AsyncListLoadFunction<T, C>,
+  /** 
+   * An optional function that performs sorting. If not provided, 
+   * then `sortDescriptor` is passed to the `load` function.
+   */
   sort?: AsyncListLoadFunction<T, C>
 }
 
@@ -64,15 +72,21 @@ interface Action<T, C> {
 }
 
 interface AsyncListData<T> extends ListData<T> {
+  /** Whether data is currently being loaded. */
   isLoading: boolean,
+  /** If loading data failed, then this contains the error that occurred. */
   error?: Error,
   // disabledKeys?: Set<Key>,
   // selectedKey?: Key,
   // expandedKeys?: Set<Key>,
+  /** The current sort descriptor for the list. */
   sortDescriptor?: SortDescriptor,
 
+  /** Reloads the data in the list. */
   reload(): void,
+  /** Loads the next page of data in the list. */
   loadMore(): void,
+  /** Triggers sorting for the list. */
   sort(desc: SortDescriptor): void
 }
 
@@ -189,6 +203,10 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
   }
 }
 
+/**
+ * Manages state for an immutable async loaded list data structure, and provides convenience methods to
+ * update the data over time. Manages loading and error states, pagination, and sorting.
+ */
 export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): AsyncListData<T> {
   const {
     load,
@@ -212,7 +230,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       dispatch({...action, abortController});
 
       let response = await fn({
-        items: data.items,
+        items: data.items.slice(),
         selectedKeys: data.selectedKeys,
         sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
         signal: abortController.signal,
@@ -252,7 +270,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     sort(sortDescriptor: SortDescriptor) {
       dispatchFetch({type: 'sorting', sortDescriptor}, sort || load);
     },
-    ...createListActions(options, fn => {
+    ...createListActions({...options, getKey}, fn => {
       dispatch({type: 'update', updater: fn});
     })
   };

@@ -42,13 +42,13 @@ future as new platforms and interaction models are developed.
 While each design system is unique, there is often more in common between
 components than different. Most components typically found in a design
 system, like buttons, checkboxes, selects, and even
-tables, usually have very similar behavior and logic. There are even 
+tables, usually have very similar behavior and logic. There are even
 specifications that describe how many of the most common components should
 behave in terms of [accessibility semantics](https://www.w3.org/TR/wai-aria-1.2/)
 and [keyboard interactions](https://www.w3.org/TR/wai-aria-practices-1.2/).
 The main difference between design systems is the styling.
 
-This opens up to the possibility of sharing much of the behavior and 
+This opens up to the possibility of sharing much of the behavior and
 component logic between design systems and across platforms. For example,
 user interactions, accessibility, internationalization, and behavior
 can be reused, while allowing custom styling and rendering to live
@@ -59,7 +59,7 @@ and time, and reducing duplicated effort across the industry.
 ## Architecture
 
 <figure className={style.float}>
-  <Flex flexDirection="column" gap="size-125">
+  <Flex direction="column" gap="size-125">
     <View backgroundColor="orange-400" height="size-900">
       <Flex alignItems="center" justifyContent="center" height="100%">
         <span style={{color: 'white', fontSize: 18}}>Component</span>
@@ -82,12 +82,12 @@ In order to allow reusing component behavior between design systems,
 React Spectrum splits each component into three parts: state, behavior,
 and the rendered component.
 
-Some components don't have all of these pieces. For example, some simple 
-components do not require any state, and others are only compositions of 
-other components, so each component has the pieces of this architecture 
+Some components don't have all of these pieces. For example, some simple
+components do not require any state, and others are only compositions of
+other components, so each component has the pieces of this architecture
 that make sense for their purpose.
 
-This architecture is made possible by 
+This architecture is made possible by
 [React Hooks](https://reactjs.org/docs/hooks-intro.html), which enable
 the ability to reuse behavior between multiple components. Hooks allow
 accessing React features like state and effects from functions which
@@ -98,10 +98,10 @@ we recommend reading the documentation linked above first.
 
 At the bottom is the state hook. This hook is shared across platforms —
 it could work on the web, react-native, or any other platform, and makes
-not assumption about the view system it is running on. It also has no 
+not assumption about the view system it is running on. It also has no
 theme or design system specific logic.
 
-The state hook accepts common props from the component and provides 
+The state hook accepts common props from the component and provides
 state management. It returns an interface for reading and updating
 component state, with methods that implement much of the core logic
 for the component.
@@ -117,30 +117,30 @@ data entry, or have some kind of visual state that the user can update
 In the middle is the behavior hook. This hook is platform specific, and
 depends on the platform API (e.g. the DOM or react-native). It still has
 no theme or design system specific logic in it though. It implements event
-handling, accessibility, internationalization, etc. — all the parts of a 
+handling, accessibility, internationalization, etc. — all the parts of a
 component that could be shared across multiple design systems.
 
 The behavior hook uses the state hook in order to implement component behavior.
-It returns one or more sets of platform specific props (e.g. DOM props) that 
-can be spread onto the elements rendered by the component. These include 
-semantic properties like [ARIA](https://www.w3.org/TR/wai-aria-1.2/), and 
+It returns one or more sets of platform specific props (e.g. DOM props) that
+can be spread onto the elements rendered by the component. These include
+semantic properties like [ARIA](https://www.w3.org/TR/wai-aria-1.2/), and
 event handlers. The event handlers in turn call methods on
 the state interface to implement the behavior for the component.
 
 Some components may not have any user interactions, but still have a behavior
 hook. Most components have some kind of semantics that they need to expose
 for accessibility (a form of behavior). The only components that won't have
-a behavior hook of their own are those that only compose together other 
+a behavior hook of their own are those that only compose together other
 components.
 
 ### Component
 
-At the top is the component, which lives in each design system and composes 
+At the top is the component, which lives in each design system and composes
 all of these pieces together. It provides the theme and design system specific
 logic, and renders the actual platform elements. It applies styles, which could
 be implemented in many different ways (e.g. CSS classes, CSS-in-JS, etc.).
 
-The component uses props returned by the behavior hook and state from the state 
+The component uses props returned by the behavior hook and state from the state
 hook to implement the visual appearance. It spreads props returned from the behavior
 hook onto elements that it renders to apply semantics and interactions, and can use
 the state from the state hook to adjust its visual appearance based on the state.
@@ -152,7 +152,7 @@ things like adding extra elements as needed for styling or layout control.
 ## Implementation
 
 <figure className={style.float}>
-  <Flex flexDirection="column" gap="size-125">
+  <Flex direction="column" gap="size-125">
     <View backgroundColor="orange-400" height="size-900">
       <Flex alignItems="center" justifyContent="center" height="100%">
         <span style={{color: 'white', fontSize: 18}}>@react-spectrum</span>
@@ -172,13 +172,13 @@ things like adding extra elements as needed for styling or layout control.
 </figure>
 
 Our implementation of this architecture splits each piece into three npm
-scopes, with individually versioned packages for each component. This 
+scopes, with individually versioned packages for each component. This
 allows you **incrementally adopt** this approach in your own design system
 and reuse as much or as little as makes sense for your usecases.
 
 Within a component, the hooks are designed to be **highly composable**,
-with individual features split into many hooks. This allows you to combine 
-them together and achieve your design with only the features you need in 
+with individual features split into many hooks. This allows you to combine
+them together and achieve your design with only the features you need in
 your design system.
 
 The overall goal for the project is to make reusing behavior across design
@@ -195,8 +195,8 @@ like [collections](react-stately/collections.html) and [selection](react-stately
 in a fully cross-platform way that you could reuse on the web, in
 react-native, etc.
 
-React Stately hooks can be used independently in your own components, 
-or paired with React Aria hooks to get more of the behavior and user 
+React Stately hooks can be used independently in your own components,
+or paired with React Aria hooks to get more of the behavior and user
 interactions for web applications out of the box. We do not yet have
 behavior hooks for other platforms however, so if you're working in
 react-native or another view system, you'll need to use React Stately
@@ -207,23 +207,23 @@ by reading the docs.
 
 ### React Aria
 
-[React Aria](react-aria/index.html) implements behavior and [accessibility](react-aria/accessibility.html) 
+[React Aria](react-aria/index.html) implements behavior and [accessibility](react-aria/accessibility.html)
 for the web according to [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/).
 It includes full screen reader and keyboard navigation support, along with
-mouse and touch [interactions](react-aria/interactions.html) that have been 
+mouse and touch [interactions](react-aria/interactions.html) that have been
 tested across a wide variety of devices and browsers. It also implements
 [internationalization](react-aria/internationalization.html) for over 30
-languages, including right-to-left specific behavior, localized date and 
+languages, including right-to-left specific behavior, localized date and
 number formatting, and more.
 
-Most importantly, React Aria is **fully customizable**, since it doesn't 
+Most importantly, React Aria is **fully customizable**, since it doesn't
 implement any rendering or impose a DOM structure or styling methodology.
 You just need to spread the props returned by each React Aria hook onto
 the appropriate DOM elements, and you get high quality interactions,
 behavior, and accessibility pretty much for free. All you need to do is
 provide the styling.
 
-[Read more](react-aria/why.html) about React Aria and 
+[Read more](react-aria/why.html) about React Aria and
 the problems it solves, and check out the docs to [get started](react-aria/getting-started.html)
 building your own design system.
 
@@ -239,7 +239,7 @@ devices.
 If you're integrating with Adobe software, React Spectrum is a great way to
 make your UI consistent. It's also a really great example of how to use
 React Aria and React Stately to build a full design system, so if you're
-developing your own component library, you can check out the 
+developing your own component library, you can check out the
 [source code](https://github.com/adobe-private/react-spectrum-v3) for
 inspiration.
 
@@ -248,7 +248,7 @@ with React Spectrum, and read the docs for each component to learn more.
 
 ## Learn more
 
-The following talk from React Europe discusses how this project came to be, its architecture, high quality 
+The following talk from React Europe discusses how this project came to be, its architecture, high quality
 cross-device interactions, and how we can share behavior between design systems.
 
 <div className={style.responsiveVideo}>

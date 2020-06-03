@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps} from '@react-types/shared';
+import {AriaCheckboxBase} from '@react-types/checkbox';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
-import {mergeProps, useLabels} from '@react-aria/utils';
-import {SwitchProps} from '@react-types/switch';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
@@ -22,7 +21,7 @@ export interface ToggleAria {
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref: RefObject<HTMLElement>): ToggleAria {
+export function useToggle(props: AriaCheckboxBase, state: ToggleState, ref: RefObject<HTMLElement>): ToggleAria {
   let {
     isDisabled = false,
     isRequired,
@@ -32,8 +31,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref
     children,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
-    validationState = 'valid',
-    tabIndex
+    validationState = 'valid'
   } = props;
 
   let onChange = (e) => {
@@ -48,7 +46,6 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref
   if (!hasChildren && !hasAriaLabel) {
     console.warn('If you do not provide children, you must specify an aria-label for accessibility');
   }
-  let isInvalid = validationState === 'invalid';
 
   // This handles focusing the input on pointer down, which Safari does not do by default.
   let {pressProps} = usePress({
@@ -57,12 +54,13 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref
 
   let {focusableProps} = useFocusable(props, ref);
   let interactions = mergeProps(pressProps, focusableProps);
-  let labelProps = useLabels(props);
+  let domProps = filterDOMProps(props, {labelable: true});
 
   return {
-    inputProps: {
-      ...labelProps,
-      'aria-invalid': isInvalid,
+    inputProps: mergeProps(domProps, {
+      'aria-invalid': validationState === 'invalid' || undefined,
+      'aria-errormessage': props['aria-errormessage'],
+      'aria-controls': props['aria-controls'],
       onChange,
       disabled: isDisabled,
       required: isRequired,
@@ -70,8 +68,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState, ref
       value,
       name,
       type: 'checkbox',
-      tabIndex,
       ...interactions
-    }
+    })
   };
 }

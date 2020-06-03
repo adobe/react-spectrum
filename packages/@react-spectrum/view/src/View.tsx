@@ -11,8 +11,9 @@
  */
 
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
+import {useDOMRef, useSlotProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
 import {ViewProps} from '@react-types/view';
 
 function View(props: ViewProps, ref: DOMRef) {

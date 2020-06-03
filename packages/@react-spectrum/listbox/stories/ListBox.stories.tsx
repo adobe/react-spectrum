@@ -23,7 +23,7 @@ import {Label} from '@react-spectrum/label';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
 
 let iconMap = {
@@ -97,18 +97,18 @@ storiesOf('ListBox', module)
   .add(
     'Default ListBox',
     () => (
-      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={flatOptions} itemKey="name">
-        {item => <Item>{item.name}</Item>}
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={flatOptions}>
+        {item => <Item key={item.name}>{item.name}</Item>}
       </ListBox>
     )
   )
   .add(
     'ListBox w/ sections',
     () => (
-      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+      <ListBox width={200} aria-labelledby="label" items={withSection} onSelectionChange={action('onSelectionChange')}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ListBox>
@@ -117,10 +117,10 @@ storiesOf('ListBox', module)
   .add(
     'ListBox w/ many sections',
     () => (
-      <ListBox width={200} aria-labelledby="label" items={lotsOfSections} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+      <ListBox width={200} aria-labelledby="label" items={lotsOfSections} onSelectionChange={action('onSelectionChange')}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {(item: any) => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {(item: any) => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ListBox>
@@ -129,10 +129,10 @@ storiesOf('ListBox', module)
   .add(
     'ListBox w/ sections and no title',
     () => (
-      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')}>
+      <ListBox width={200} aria-labelledby="label" items={withSection} onSelectionChange={action('onSelectionChange')}>
         {item => (
-          <Section items={item.children} aria-label={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} aria-label={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ListBox>
@@ -185,10 +185,10 @@ storiesOf('ListBox', module)
   .add(
     'with default selected options',
     () => (
-      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} defaultSelectedKeys={['Kangaroo']}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ListBox>
@@ -199,27 +199,27 @@ storiesOf('ListBox', module)
     () => (
       <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
         <Section title="Section 1">
-          <Item uniqueKey="1">
+          <Item key="1">
             One
           </Item>
-          <Item uniqueKey="2">
+          <Item key="2">
             Two
           </Item>
-          <Item uniqueKey="3">
+          <Item key="3">
             Three
           </Item>
         </Section>
         <Section title="Section 2">
-          <Item uniqueKey="4">
+          <Item key="4">
             Four
           </Item>
-          <Item uniqueKey="5">
+          <Item key="5">
             Five
           </Item>
-          <Item uniqueKey="6">
+          <Item key="6">
             Six
           </Item>
-          <Item uniqueKey="7">
+          <Item key="7">
             Seven
           </Item>
         </Section>
@@ -229,10 +229,10 @@ storiesOf('ListBox', module)
   .add(
     'with selected options (controlled)',
     () => (
-      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} selectedKeys={['Kangaroo']}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ListBox>
@@ -243,27 +243,27 @@ storiesOf('ListBox', module)
     () => (
       <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
         <Section title="Section 1">
-          <Item uniqueKey="1">
+          <Item key="1">
             One
           </Item>
-          <Item uniqueKey="2">
+          <Item key="2">
             Two
           </Item>
-          <Item uniqueKey="3">
+          <Item key="3">
             Three
           </Item>
         </Section>
         <Section title="Section 2">
-          <Item uniqueKey="4">
+          <Item key="4">
             Four
           </Item>
-          <Item uniqueKey="5">
+          <Item key="5">
             Five
           </Item>
-          <Item uniqueKey="6">
+          <Item key="6">
             Six
           </Item>
-          <Item uniqueKey="7">
+          <Item key="7">
             Seven
           </Item>
         </Section>
@@ -273,10 +273,10 @@ storiesOf('ListBox', module)
   .add(
     'with disabled options',
     () => (
-      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']}>
+      <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} items={withSection} disabledKeys={['Kangaroo', 'Ross']}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ListBox>
@@ -287,27 +287,27 @@ storiesOf('ListBox', module)
     () => (
       <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} disabledKeys={['3', '5']}>
         <Section title="Section 1">
-          <Item uniqueKey="1">
+          <Item key="1">
             One
           </Item>
-          <Item uniqueKey="2">
+          <Item key="2">
             Two
           </Item>
-          <Item uniqueKey="3">
+          <Item key="3">
             Three
           </Item>
         </Section>
         <Section title="Section 2">
-          <Item uniqueKey="4">
+          <Item key="4">
             Four
           </Item>
-          <Item uniqueKey="5">
+          <Item key="5">
             Five
           </Item>
-          <Item uniqueKey="6">
+          <Item key="6">
             Six
           </Item>
-          <Item uniqueKey="7">
+          <Item key="7">
             Seven
           </Item>
         </Section>
@@ -317,10 +317,10 @@ storiesOf('ListBox', module)
   .add(
     'Multiple selection',
     () => (
-      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
+      <ListBox width={200} aria-labelledby="label" items={withSection} onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ListBox>
@@ -331,24 +331,24 @@ storiesOf('ListBox', module)
     () => (
       <ListBox width={200} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
         <Section title="Section 1">
-          <Item uniqueKey="1">
+          <Item key="1">
             One
           </Item>
-          <Item uniqueKey="2">
+          <Item key="2">
             Two
           </Item>
-          <Item uniqueKey="3">
+          <Item key="3">
             Three
           </Item>
         </Section>
         <Section title="Section 2">
-          <Item uniqueKey="4">
+          <Item key="4">
             Four
           </Item>
-          <Item uniqueKey="5">
+          <Item key="5">
             Five
           </Item>
-          <Item uniqueKey="6">
+          <Item key="6">
             Six
           </Item>
         </Section>
@@ -358,10 +358,10 @@ storiesOf('ListBox', module)
   .add(
     'No selection allowed',
     () => (
-      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="none">
+      <ListBox width={200} aria-labelledby="label" items={withSection} onSelectionChange={action('onSelectionChange')} selectionMode="none">
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ListBox>
@@ -387,10 +387,10 @@ storiesOf('ListBox', module)
   .add(
     'ListBox with autoFocus=true',
     () => (
-      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus>
+      <ListBox width={200} aria-labelledby="label" items={withSection} onSelectionChange={action('onSelectionChange')} autoFocus>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ListBox>
@@ -399,10 +399,10 @@ storiesOf('ListBox', module)
   .add(
     'ListBox with autoFocus="first"',
     () => (
-      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus="first">
+      <ListBox width={200} aria-labelledby="label" items={withSection} onSelectionChange={action('onSelectionChange')} autoFocus="first">
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ListBox>
@@ -411,10 +411,10 @@ storiesOf('ListBox', module)
   .add(
     'ListBox with autoFocus="last"',
     () => (
-      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} autoFocus="last">
+      <ListBox width={200} aria-labelledby="label" items={withSection} onSelectionChange={action('onSelectionChange')} autoFocus="last">
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ListBox>
@@ -423,10 +423,10 @@ storiesOf('ListBox', module)
   .add(
     'ListBox with keyboard selection wrapping',
     () => (
-      <ListBox width={200} aria-labelledby="label" items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} shouldFocusWrap>
+      <ListBox width={200} aria-labelledby="label" items={withSection} onSelectionChange={action('onSelectionChange')} shouldFocusWrap>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ListBox>
@@ -474,9 +474,9 @@ storiesOf('ListBox', module)
   .add(
     'with semantic elements (generative)',
     () => (
-      <ListBox width={200} aria-labelledby="label" items={hardModeProgrammatic} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
+      <ListBox width={200} aria-labelledby="label" items={hardModeProgrammatic}onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
         {item => (
-          <Section items={item.children} title={item.name}>
+          <Section key={item.name} items={item.children} title={item.name}>
             {item => customOption(item)}
           </Section>
         )}
@@ -495,7 +495,7 @@ storiesOf('ListBox', module)
     'isLoading more',
     () => (
       <ListBox aria-labelledby="label" width={200} items={flatOptions} isLoading>
-        {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+        {item => <Item key={item.name}>{item.name}</Item>}
       </ListBox>
     )
   )
@@ -509,7 +509,7 @@ storiesOf('ListBox', module)
 let customOption = (item) => {
   let Icon = iconMap[item.icon];
   return (
-    <Item textValue={item.name}>
+    <Item textValue={item.name} key={item.name}>
       {item.icon && <Icon size="S" />}
       <Text>{item.name}</Text>
     </Item>
@@ -535,7 +535,7 @@ function AsyncLoadingExample() {
 
   return (
     <ListBox aria-labelledby="label" width={200} items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
-      {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+      {item => <Item key={item.name}>{item.name}</Item>}
     </ListBox>
   );
 }

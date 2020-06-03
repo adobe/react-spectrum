@@ -61,13 +61,18 @@
 
 html, body {
   margin: 0;
+  text-size-adjust: none;
 }
 
 .provider {
-  min-width: 100vw;
   min-height: 100vh;
-  background: var(--spectrum-global-color-gray-50) !important;
+  --page-background: var(--spectrum-global-color-gray-50);
+  background: var(--page-background) !important;
   color-scheme: light dark;
+}
+
+.dark {
+  --page-background: var(--spectrum-global-color-gray-100);
 }
 
 .exampleImage {
@@ -164,7 +169,7 @@ html, body {
 
 main {
   margin-left: 256px;
-  margin-right: 160px;
+  margin-right: 180px;
   padding: 40px 52px 0 52px;
   box-sizing: border-box;
   display: flex;
@@ -180,7 +185,7 @@ article {
   width: 100%;
 }
 
-footer {
+footer.pageFooter {
   max-width: 967px;
   width: 100%
 }
@@ -190,7 +195,7 @@ footer ul {
 }
 
 @media (min-width: 1020px) {
-  footer {
+  footer.pageFooter {
     text-align: right;
   }
 }
@@ -268,7 +273,7 @@ article.inCategory h2.sectionHeader + hr {
 
 .example {
   padding: 40px;
-  border-radius: 0 0 4px 4px;
+  border-radius: 4px;
   margin-bottom: var(--spectrum-global-dimension-size-150);
 }
 
@@ -283,6 +288,7 @@ article pre {
   padding: 18px;
   border-radius: 4px;
   overflow-x: auto;
+  white-space: pre-wrap;
 }
 
 article pre:global(.example) {
@@ -290,12 +296,40 @@ article pre:global(.example) {
   margin-bottom: 0;
 }
 
+/* Display large width code examples by default */
+article pre:global(.small),
+article pre:global(.medium) {
+  display: none;
+}
+
+article pre + div > .example {
+  border-radius: 0 0 4px 4px;
+}
+
 code {
   white-space: pre-wrap;
 }
 
+/* Override spectrum font size for code in large scale */
+.medium code {
+  font-size: var(--spectrum-global-dimension-static-font-size-100);
+}
+
+.large code {
+  font-size: var(--spectrum-global-dimension-static-font-size-150);
+}
+
 article > code {
   display: block;
+}
+
+/* Display large width API types by default */
+code :global(.small) {
+  display: none;
+}
+
+code :global(.large) {
+  display: inline;
 }
 
 article kbd {
@@ -408,13 +442,13 @@ h2.sectionHeader {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 8px;
   box-sizing: border-box;
   height: var(--spectrum-global-dimension-size-600);
+  width: 100%;
 }
 
 .responsiveVideo {
@@ -550,7 +584,7 @@ h2.sectionHeader {
   /* Show the toolbar at the top with the hamburger and theme switcher buttons */
   .pageHeader {
     border-bottom: 1px solid var(--spectrum-global-color-gray-200);
-    background: var(--spectrum-global-color-gray-50);
+    background: var(--page-background);
     z-index: 50;
   }
 
@@ -559,7 +593,47 @@ h2.sectionHeader {
     max-width: initial !important;
   }
 
+  /* Swap to displaying the medium width code examples */
+  article pre:global(.small),
+  article pre:global(.large) {
+    display: none;
+  }
+
+  article pre:global(.medium) {
+    display: block;
+  }
+
+  /* Reduce example padding so more fits on small screens. */
+  .example {
+    padding: 14px;
+  }
+
+  article pre {
+    padding: 8px;
+  }
+
   @mixin small-propTable;
+}
+
+@media (max-width: 500px) {
+  /* Swap to displaying the small width code examples */
+  article pre:global(.medium),
+  article pre:global(.large) {
+    display: none;
+  }
+
+  article pre:global(.small) {
+    display: block;
+  }
+
+  /* Swap to displaying the medium width API types. */
+  code :global(.large) {
+    display: none;
+  }
+
+  code :global(.small) {
+    display: inline;
+  }
 }
 
 .popover {

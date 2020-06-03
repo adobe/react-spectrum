@@ -14,7 +14,7 @@ import {Dialog} from '../';
 import {DialogContext} from '../src/context';
 import {fireEvent, render} from '@testing-library/react';
 import {Header} from '@react-spectrum/view';
-import {Heading} from '@react-spectrum/typography';
+import {Heading} from '@react-spectrum/text';
 import {ModalProvider} from '@react-aria/overlays';
 import React from 'react';
 
@@ -188,5 +188,21 @@ describe('Dialog', function () {
 
     fireEvent.click(button);
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support custom data attributes', function () {
+    let onClose = jest.fn();
+    let {getByRole} = render(
+      <ModalProvider>
+        <DialogContext.Provider value={{type: 'tray', onClose}}>
+          <Dialog data-testid="test">
+            <Heading><Header>The Title</Header></Heading>
+          </Dialog>
+        </DialogContext.Provider>
+      </ModalProvider>
+    );
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveAttribute('data-testid', 'test');
   });
 });

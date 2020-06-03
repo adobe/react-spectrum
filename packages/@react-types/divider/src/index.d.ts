@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, Orientation, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, Orientation, StyleProps} from '@react-types/shared';
 
-export interface SpectrumDividerProps extends DOMProps, StyleProps {
+export interface SpectrumDividerProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
    * How thick the Divider should be.
    * @default 'L'

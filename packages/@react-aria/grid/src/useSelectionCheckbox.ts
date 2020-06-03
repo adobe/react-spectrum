@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CheckboxProps} from '@react-types/checkbox';
-import {DOMProps} from '@react-types/shared';
+import {AriaCheckboxProps} from '@react-types/checkbox';
 import {getRowLabelledBy} from './utils';
 import {GridState} from '@react-stately/grid';
 import {Key} from 'react';
@@ -22,7 +21,7 @@ interface SelectionCheckboxProps {
 }
 
 interface SelectionCheckboxAria {
-  checkboxProps: CheckboxProps & DOMProps,
+  checkboxProps: AriaCheckboxProps
 }
 
 export function useSelectionCheckbox<T>(props: SelectionCheckboxProps, state: GridState<T>): SelectionCheckboxAria {
@@ -39,8 +38,7 @@ export function useSelectionCheckbox<T>(props: SelectionCheckboxProps, state: Gr
       'aria-label': 'Select',
       'aria-labelledby': `${checkboxId} ${getRowLabelledBy(state, key)}`,
       isSelected,
-      onChange: () => state.selectionManager.toggleSelection(key),
-      tabIndex: -1
+      onChange: () => state.selectionManager.toggleSelection(key)
     }
   };
 }
@@ -52,8 +50,7 @@ export function useSelectAllCheckbox<T>(state: GridState<T>): SelectionCheckboxA
       'aria-label': 'Select All',
       isSelected: isSelectAll,
       isIndeterminate: !isEmpty && !isSelectAll,
-      onChange: () => state.selectionManager.toggleSelectAll(),
-      tabIndex: -1
+      onChange: () => state.selectionManager.toggleSelectAll()
     }
   };
 }

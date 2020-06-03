@@ -11,7 +11,7 @@
  */
 
 import CalendarIcon from '@spectrum-icons/workflow/Calendar';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DatePickerField} from './DatePickerField';
 import datepickerStyles from './index.css';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -65,14 +65,13 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
       focusRingClass={classNames(styles, 'focus-ring')}
       autoFocus={autoFocus}>
       <div
-        {...filterDOMProps(otherProps)}
         {...styleProps}
         {...comboboxProps}
         className={className}
         ref={targetRef}>
         <FocusScope autoFocus={autoFocus}>
           <DatePickerField
-            {...startFieldProps}
+            {...startFieldProps as any}
             isQuiet={props.isQuiet}
             isDisabled={isDisabled}
             isReadOnly={isReadOnly}
@@ -84,7 +83,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
             UNSAFE_className={classNames(styles, 'spectrum-Datepicker-startField')} />
           <DateRangeDash />
           <DatePickerField
-            {...endFieldProps}
+            {...endFieldProps as any}
             isQuiet={props.isQuiet}
             isDisabled={isDisabled}
             isReadOnly={isReadOnly}

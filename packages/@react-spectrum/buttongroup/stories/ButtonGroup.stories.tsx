@@ -16,7 +16,7 @@ import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '../';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 
 storiesOf('ButtonGroup', module)
   .add(
