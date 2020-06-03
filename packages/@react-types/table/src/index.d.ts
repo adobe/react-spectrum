@@ -10,23 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {AsyncLoadable, CollectionChildren, DOMProps, MultipleSelection, SectionProps, Sortable, StyleProps} from '@react-types/shared';
-import {Key, ReactElement} from 'react';
+import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, MultipleSelection, SectionProps, Sortable, StyleProps} from '@react-types/shared';
+import {Key, ReactElement, ReactNode} from 'react';
 
 export interface TableProps<T> extends MultipleSelection, Sortable {
   children: ReactElement<TableHeaderProps | TableBodyProps | SectionProps | RowProps>[],
   disabledKeys?: Iterable<Key>
 }
 
-export interface SpectrumTableProps<T> extends TableProps<T>, DOMProps, StyleProps {
-  rowHeight?: number | 'auto',
+export interface SpectrumTableProps<T> extends TableProps<T>, DOMProps, AriaLabelingProps, StyleProps {
+  density?: 'compact' | 'regular' | 'spacious',
+  overflowMode?: 'wrap' | 'truncate',
   isQuiet?: boolean,
   renderEmptyState?: () => JSX.Element
 }
 
 export interface TableHeaderProps<T> {
   columns?: T[],
-  columnKey?: string,
   children: ColumnElement<T> | ColumnElement<T>[] | ColumnRenderer<T>
 }
 
@@ -36,8 +36,7 @@ export interface ColumnProps<T> {
   title?: ReactNode,
   children: ReactNode | ColumnElement<T> | ColumnElement<T>[],
   childColumns?: T[],
-  'aria-label'?: string,
-  uniqueKey?: Key
+  'aria-label'?: string
 }
 
 // TODO: how to support these in CollectionBuilder...
@@ -65,8 +64,7 @@ export interface RowProps<T> {
   hasChildItems?: boolean,
   children: CellElement | CellElement[] | CellRenderer,
   textValue?: string, // ???
-  'aria-label'?: string, // ???
-  uniqueKey?: Key
+  'aria-label'?: string // ???
 }
 
 export interface CellProps {

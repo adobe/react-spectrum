@@ -54,7 +54,7 @@ describe('useProgressBar', function () {
   });
 
   it('with custom text value', () => {
-    let props = {value: 25, textValue: '¥25'};
+    let props = {value: 25, valueLabel: '¥25'};
     let {progressBarProps} = renderProgressBarHook(props);
     expect(progressBarProps['aria-valuenow']).toBe(25);
     expect(progressBarProps['aria-valuetext']).toBe('¥25');

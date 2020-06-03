@@ -11,9 +11,10 @@
  */
 
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {HeaderProps} from '@react-types/view';
 import React, {forwardRef} from 'react';
+import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
 function Header(props: HeaderProps, ref: DOMRef) {
   props = useSlotProps(props, 'header');
@@ -31,5 +32,8 @@ function Header(props: HeaderProps, ref: DOMRef) {
   );
 }
 
+/**
+ * Header is used to position additional heading or title information.
+ */
 const _Header = forwardRef(Header);
 export {_Header as Header};

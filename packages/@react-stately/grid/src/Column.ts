@@ -35,13 +35,15 @@ Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>,
           };
         }
       } else if (title) {
-        let childColumns = React.Children.toArray(children) as ReactElement<ColumnProps<T>>[];
-        for (let child of childColumns) {
-          yield {
+        let childColumns: PartialNode<T>[] = [];
+        React.Children.forEach(children, child => {
+          childColumns.push({
             type: 'column',
-            element: child
-          };
-        }
+            element: child as ReactElement<ColumnProps<T>>
+          });
+        });
+
+        yield* childColumns;
       }
     },
     shouldInvalidate(newContext: CollectionBuilderContext<T>) {

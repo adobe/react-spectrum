@@ -11,14 +11,14 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
+import {DatePickerBase} from '@react-types/datepicker';
 import {DatePickerFieldState, DateSegment} from '@react-stately/datepicker';
 import React from 'react';
-import {SpectrumDatePickerProps} from '@react-types/datepicker';
 import styles from './index.css';
 import {useDateSegment} from '@react-aria/datepicker';
 import {useFocusManager} from '@react-aria/focus';
 
-interface DatePickerSegmentProps extends SpectrumDatePickerProps {
+interface DatePickerSegmentProps extends DatePickerBase {
   segment: DateSegment,
   state: DatePickerFieldState
 }

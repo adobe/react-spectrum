@@ -18,6 +18,8 @@ const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
 const frontmatter = require('remark-frontmatter');
 const slug = require('remark-slug');
 const util = require('mdast-util-toc');
+const yaml = require('js-yaml');
+const prettier = require('prettier');
 
 module.exports = new Transformer({
   async transform({asset, options}) {
@@ -25,31 +27,38 @@ module.exports = new Transformer({
     const extractExamples = () => (tree, file) => (
       flatMap(tree, node => {
         if (node.type === 'code') {
-          if (node.meta === 'import') {
+          let [meta, ...options] = (node.meta || '').split(' ');
+          if (meta === 'import') {
             exampleCode.push(node.value);
             node.meta = null;
             return [];
           }
 
-          if (node.meta === 'example') {
+          if (meta === 'example') {
             let id = `example-${exampleCode.length}`;
 
             // TODO: Parsing code with regex is bad. Replace with babel transform or something.
             let code = node.value;
-            code = code.replace(/import (\{(?:.|\n)*?\}) from (['"].*?['"])/g, (m) => {
+            code = code.replace(/import ((?:.|\n)*?) from (['"].*?['"]);?/g, (m) => {
               exampleCode.push(m);
               return '';
             });
 
-            if (/^function (.|\n)*}\s*$/.test(code)) {
-              let name = code.match(/^function (.*?)\s*\(/)[1];
+            let provider = 'ExampleProvider';
+            if (options.includes('themeSwitcher=true')) {
+              exampleCode.push('import {ExampleThemeSwitcher} from "@react-spectrum/docs/src/ExampleThemeSwitcher";\n');
+              provider = 'ExampleThemeSwitcher';
+            }
+
+            if (/^\s*function (.|\n)*}\s*$/.test(code)) {
+              let name = code.match(/^\s*function (.*?)\s*\(/)[1];
               code = `(function () {
                 ${code}
-                ReactDOM.render(<ExampleProvider><${name} /></ExampleProvider>, document.getElementById("${id}"));
+                ReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));
               })();`;
             } else if (/^<(.|\n)*>$/m.test(code)) {
               code = `(function () {
-                ${code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<ExampleProvider>$1</ExampleProvider>, document.getElementById("${id}"));`)}
+                ${code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`)}
               })();`;
             }
 
@@ -58,9 +67,10 @@ module.exports = new Transformer({
             // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actuall
             // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
             node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*\/\/\/- end collapse -\/\/\//g, '').trim();
+            node.meta = 'example';
 
             return [
-              node,
+              ...responsiveCode(node),
               {
                 type: 'jsx',
                 value: `<div id="${id}" />`
@@ -70,13 +80,15 @@ module.exports = new Transformer({
 
           if (node.lang === 'css') {
             return [
-              node,
+              ...responsiveCode(node),
               {
                 type: 'jsx',
                 value: '<style>{`' + node.value + '`}</style>'
               }
             ];
           }
+
+          return responsiveCode(node);
         }
 
         return [node];
@@ -86,6 +98,8 @@ module.exports = new Transformer({
     let toc = [];
     let title = '';
     let category = '';
+    let keywords = [];
+    let description = '';
     const extractToc = (options) => {
       const settings = options || {};
       const depth = settings.maxDepth || 6;
@@ -126,12 +140,13 @@ module.exports = new Transformer({
 
         /*
          * Piggy back here to grab additional metadata.
-         * Should probably use js-yaml at some point.
-         */ 
+         */
         let metadata = node.children.find(c => c.type === 'yaml');
         if (metadata) {
-          let matches = /^category:\s(\w+)$/.exec(metadata.value);
-          category = matches ? matches[1] : '';
+          let yamlData = yaml.safeLoad(metadata.value);
+          category = yamlData.category || '';
+          keywords = yamlData.keywords || [];
+          description = yamlData.description || '';
         }
 
         return node;
@@ -146,8 +161,8 @@ module.exports = new Transformer({
     function wrapExamples() {
       return (tree) => (
         flatMap(tree, node => {
-          if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].properties.metastring === 'example') {
-            node.properties.className = ['example'];
+          if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].properties.metastring) {
+            node.properties.className = node.children[0].properties.metastring.split(' ');
           }
 
           return [node];
@@ -193,6 +208,8 @@ export default {};
     asset.meta.toc = toc;
     asset.meta.title = title;
     asset.meta.category = category;
+    asset.meta.description = description;
+    asset.meta.keywords = keywords;
 
     let assets = [
       asset,
@@ -264,3 +281,57 @@ ${compiled}
     return assets;
   }
 });
+
+function responsiveCode(node) {
+  if (!node.lang) {
+    return [node];
+  }
+
+  let large = {
+    ...node,
+    meta: node.meta ? `${node.meta} large` : 'large',
+    value: formatCode(node, 80)
+  };
+
+  let medium = {
+    ...node,
+    meta: node.meta ? `${node.meta} medium` : 'medium',
+    value: formatCode(large, 60)
+  };
+
+  let small = {
+    ...node,
+    meta: node.meta ? `${node.meta} small` : 'small',
+    value: formatCode(medium, 25)
+  };
+
+  return [
+    large,
+    medium,
+    small
+  ];
+}
+
+function formatCode(node, printWidth = 80) {
+  let code = node.value;
+  if (code.split('\n').every(line => line.length <= printWidth)) {
+    return code;
+  }
+
+  if (/^<(.|\n)*>$/m.test(code)) {
+    code = code.replace(/^(<(.|\n)*>)$/m, '<WRAPPER>$1</WRAPPER>');
+  }
+
+  code = prettier.format(code, {
+    parser: node.lang === 'css' ? 'css' : 'babel-ts',
+    singleQuote: true,
+    jsxBracketSameLine: true,
+    bracketSpacing: false,
+    trailingComma: 'none',
+    printWidth
+  });
+
+  return code.replace(/^<WRAPPER>((?:.|\n)*)<\/WRAPPER>;?\s*$/m, (str, contents) =>
+    contents.replace(/^\s{2}/gm, '').trim()
+  );
+}

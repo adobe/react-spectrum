@@ -20,15 +20,9 @@ import {Item, Picker, Section} from '../src';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import {Text} from '@react-spectrum/typography';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {Text} from '@react-spectrum/text';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
@@ -50,7 +44,7 @@ describe('Picker', function () {
   it('renders correctly', function () {
     let {getAllByText, getByText, getByRole} = render(
       <Provider theme={theme}>
-        <Picker label="Test" onSelectionChange={onSelectionChange}>
+        <Picker label="Test" data-testid="test" onSelectionChange={onSelectionChange}>
           <Item>One</Item>
           <Item>Two</Item>
           <Item>Three</Item>
@@ -60,6 +54,7 @@ describe('Picker', function () {
 
     let picker = getByRole('button');
     expect(picker).toHaveAttribute('aria-haspopup', 'listbox');
+    expect(picker).toHaveAttribute('data-testid', 'test');
 
     let label = getAllByText('Test')[0];
     let value = getByText('Select an option…');
@@ -370,7 +365,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -407,7 +402,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -442,7 +437,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -479,7 +474,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -519,7 +514,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -556,7 +551,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -593,7 +588,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -635,7 +630,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -701,7 +696,7 @@ describe('Picker', function () {
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
-      expect(picker).not.toHaveAttribute('aria-expanded');
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
       expect(picker).not.toHaveAttribute('aria-controls');
       expect(onOpenChange).toBeCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -813,6 +808,40 @@ describe('Picker', function () {
       expect(listbox).toBeVisible();
       expect(listbox).toHaveAttribute('aria-labelledby', `foo ${picker.id}`);
     });
+
+    describe('isRequired', function () {
+      it('supports labeling with a visible label that includes the necessity indicator', function () {
+        let {getByText, getByRole} = render(
+          <Provider theme={theme}>
+            <Picker label="Test 2" isRequired necessityIndicator="label" onSelectionChange={onSelectionChange}>
+              <Item>One</Item>
+              <Item>Two</Item>
+              <Item>Three</Item>
+            </Picker>
+          </Provider>
+        );
+
+        let picker = getByRole('button');
+        expect(picker).toHaveAttribute('aria-haspopup', 'listbox');
+
+
+        let span = getByText('(required)');
+        expect(span).not.toHaveAttribute('aria-hidden');
+
+        let label = span.parentElement;
+        let value = getByText('Select an option…');
+        expect(label).toHaveAttribute('id');
+        expect(value).toHaveAttribute('id');
+        expect(picker).toHaveAttribute('aria-labelledby', `${label.id} ${value.id}`);
+
+        act(() => triggerPress(picker));
+        act(() => jest.runAllTimers());
+
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+        expect(listbox).toHaveAttribute('aria-labelledby', label.id);
+      });
+    });
   });
 
   describe('selection', function () {
@@ -820,9 +849,9 @@ describe('Picker', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
-            <Item uniqueKey="one">One</Item>
-            <Item uniqueKey="two">Two</Item>
-            <Item uniqueKey="three">Three</Item>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
           </Picker>
         </Provider>
       );
@@ -855,9 +884,9 @@ describe('Picker', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
-            <Item uniqueKey="one">One</Item>
-            <Item uniqueKey="two">Two</Item>
-            <Item uniqueKey="three">Three</Item>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
           </Picker>
         </Provider>
       );
@@ -896,9 +925,9 @@ describe('Picker', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
-            <Item uniqueKey="one">One</Item>
-            <Item uniqueKey="two">Two</Item>
-            <Item uniqueKey="three">Three</Item>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
           </Picker>
         </Provider>
       );
@@ -936,9 +965,9 @@ describe('Picker', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
-            <Item uniqueKey="one">One</Item>
-            <Item uniqueKey="two">Two</Item>
-            <Item uniqueKey="three">Three</Item>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
           </Picker>
         </Provider>
       );
@@ -1035,9 +1064,9 @@ describe('Picker', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" selectedKey="two" onSelectionChange={onSelectionChange}>
-            <Item uniqueKey="one">One</Item>
-            <Item uniqueKey="two">Two</Item>
-            <Item uniqueKey="three">Three</Item>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
           </Picker>
         </Provider>
       );
@@ -1075,9 +1104,9 @@ describe('Picker', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" defaultSelectedKey="two" onSelectionChange={onSelectionChange}>
-            <Item uniqueKey="one">One</Item>
-            <Item uniqueKey="two">Two</Item>
-            <Item uniqueKey="three">Three</Item>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
           </Picker>
         </Provider>
       );
@@ -1115,9 +1144,9 @@ describe('Picker', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange} disabledKeys={['two']}>
-            <Item uniqueKey="one">One</Item>
-            <Item uniqueKey="two">Two</Item>
-            <Item uniqueKey="three">Three</Item>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
           </Picker>
         </Provider>
       );
@@ -1158,30 +1187,30 @@ describe('Picker', function () {
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
             <Section title="Section 1">
-              <Item textValue="Copy" uniqueKey="copy">
+              <Item textValue="Copy" key="copy">
                 <Copy size="S" />
                 <Text>Copy</Text>
               </Item>
-              <Item textValue="Cut" uniqueKey="cut">
+              <Item textValue="Cut" key="cut">
                 <Cut size="S" />
                 <Text>Cut</Text>
               </Item>
-              <Item textValue="Paste" uniqueKey="paste">
+              <Item textValue="Paste" key="paste">
                 <Paste size="S" />
                 <Text>Paste</Text>
               </Item>
             </Section>
             <Section title="Section 2">
-              <Item textValue="Puppy" uniqueKey="puppy">
+              <Item textValue="Puppy" key="puppy">
                 <AlignLeft size="S" />
                 <Text>Puppy</Text>
                 <Text slot="description">Puppy description super long as well geez</Text>
               </Item>
-              <Item textValue="Doggo with really really really long long long text" uniqueKey="doggo">
+              <Item textValue="Doggo with really really really long long long text" key="doggo">
                 <AlignCenter size="S" />
                 <Text>Doggo with really really really long long long text</Text>
               </Item>
-              <Item textValue="Floof" uniqueKey="floof">
+              <Item textValue="Floof" key="floof">
                 <AlignRight size="S" />
                 <Text>Floof</Text>
               </Item>
@@ -1273,9 +1302,9 @@ describe('Picker', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
-            <Item uniqueKey="one">One</Item>
-            <Item uniqueKey="two">Two</Item>
-            <Item uniqueKey="three">Three</Item>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
           </Picker>
         </Provider>
       );
@@ -1315,9 +1344,9 @@ describe('Picker', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" defaultSelectedKey="two" onSelectionChange={onSelectionChange}>
-            <Item uniqueKey="one">One</Item>
-            <Item uniqueKey="two">Two</Item>
-            <Item uniqueKey="three">Three</Item>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
           </Picker>
         </Provider>
       );
@@ -1347,9 +1376,9 @@ describe('Picker', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
-            <Item uniqueKey="one">One</Item>
-            <Item uniqueKey="two">Two</Item>
-            <Item uniqueKey="three">Three</Item>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
           </Picker>
         </Provider>
       );
@@ -1373,9 +1402,9 @@ describe('Picker', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
-            <Item uniqueKey="one">One</Item>
-            <Item uniqueKey="two">Two</Item>
-            <Item uniqueKey="three">Three</Item>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
           </Picker>
         </Provider>
       );
@@ -1400,9 +1429,9 @@ describe('Picker', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
-            <Item uniqueKey="one">One</Item>
-            <Item uniqueKey="two">Two</Item>
-            <Item uniqueKey="three">Three</Item>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
           </Picker>
         </Provider>
       );
@@ -1429,9 +1458,9 @@ describe('Picker', function () {
       let {getByText, getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
-            <Item uniqueKey="one">One</Item>
-            <Item uniqueKey="two">Two</Item>
-            <Item uniqueKey="three">Three</Item>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
           </Picker>
         </Provider>
       );
@@ -1526,7 +1555,7 @@ describe('Picker', function () {
       let {getByRole, rerender} = render(
         <Provider theme={theme}>
           <Picker label="Test" items={items} isLoading>
-            {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Picker>
         </Provider>
       );
@@ -1546,7 +1575,7 @@ describe('Picker', function () {
       rerender(
         <Provider theme={theme}>
           <Picker label="Test" items={items}>
-            {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Picker>
         </Provider>
       );

@@ -12,9 +12,9 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {HTMLAttributes, useEffect, useRef} from 'react';
-import {InputBase, RangeInputBase, ValueBase} from '@react-types/shared';
+import {InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
 
-export interface SpinButtonProps extends InputBase, ValueBase<number>, RangeInputBase<number> {
+export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
   textValue?: string,
   onIncrement?: () => void,
   onIncrementPage?: () => void,

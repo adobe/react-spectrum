@@ -11,7 +11,8 @@
  */
 
 import {Alignment, DOMRef, LabelPosition, SpectrumLabelableProps} from '@react-types/shared';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React, {useContext} from 'react';
 import {SpectrumFormProps} from '@react-types/form';
@@ -20,7 +21,7 @@ import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 let FormContext = React.createContext<SpectrumLabelableProps>({});
 export function useFormProps<T extends SpectrumLabelableProps>(props: T): T {
   let ctx = useContext(FormContext);
-  return {...props, ...ctx};
+  return {...ctx, ...props};
 }
 
 function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
@@ -50,7 +51,7 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
 
   return (
     <form
-      {...filterDOMProps(otherProps)}
+      {...filterDOMProps(otherProps, {labelable: true})}
       {...styleProps}
       ref={domRef}
       className={
@@ -80,7 +81,7 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
 }
 
 /**
- * Form provides unified structure, alignment, and styling for a user's form fields.
+ * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
  */
 const _Form = React.forwardRef(Form);
 export {_Form as Form};

@@ -19,7 +19,7 @@ function TableBody<T>(props: TableBodyProps<T>): ReactElement { // eslint-disabl
 }
 
 TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyProps<T>): Generator<PartialNode<T>> {
-  let {children, items, itemKey} = props;
+  let {children, items} = props;
   yield {
     type: 'body',
     hasChildNodes: true,
@@ -34,18 +34,19 @@ TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyPro
           yield {
             type: 'item',
             value: item,
-            childKey: itemKey,
             renderer: children
           };
         }
       } else {
-        let items = React.Children.toArray(children);
-        for (let item of items) {
-          yield {
+        let items: PartialNode<T>[] = [];
+        React.Children.forEach(children, item => {
+          items.push({
             type: 'item',
             element: item
-          };
-        }
+          });
+        });
+
+        yield* items;
       }
     }
   };

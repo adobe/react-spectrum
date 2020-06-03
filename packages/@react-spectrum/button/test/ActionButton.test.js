@@ -42,43 +42,9 @@ describe('ActionButton', function () {
     ${'ActionButton'} | ${ActionButton}  | ${{}}
     ${'V2Button'}     | ${V2Button}      | ${{variant: 'action'}}
   `('$Name allows custom props to be passed through to the button', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} data-foo="bar" aria-hidden>Click Me</Component>);
+    let {getByRole} = render(<Component {...props} data-foo="bar">Click Me</Component>);
 
     let button = getByRole('button', {hidden: true});
     expect(button).toHaveAttribute('data-foo', 'bar');
-    expect(button).toHaveAttribute('aria-hidden', 'true');
-  });
-
-  it.each`
-    Name              | Component        | props
-    ${'ActionButton'} | ${ActionButton}  | ${{onPress: onPressSpy, holdAffordance: true}}
-    ${'V2Button'}     | ${V2Button}      | ${{variant: 'action', onClick: onPressSpy, holdAffordance: true}}
-  `('$Name hold affordance', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props}>Click Me</Component>);
-
-    let button = getByRole('button');
-    let holdAffordance;
-    if (Component === V2Button) {
-      holdAffordance = getByRole('presentation');
-      expect(holdAffordance).toBeTruthy();
-      expect(holdAffordance).not.toHaveAttribute('aria-hidden');
-    } else {
-      holdAffordance = getByRole('img', {hidden: true});
-      expect(holdAffordance).toBeTruthy();
-      expect(holdAffordance).toHaveAttribute('aria-hidden');
-    }
-    triggerPress(button);
-    expect(onPressSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it.each`
-    Name              | Component        | props
-    ${'ActionButton'} | ${ActionButton}  | ${{onPress: onPressSpy, isSelected: true}}
-  `('$Name isSelected', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props}>Click Me</Component>);
-
-    let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-pressed', 'true');
-    expect(button).not.toHaveAttribute('aria-checked');
   });
 });
