@@ -125,7 +125,10 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
             };
 
             update();
-            dark.addListener(update);
+            dark.addListener(() => {
+              delete localStorage.theme;
+              update();
+            });
             fine.addListener(update);
             window.addEventListener('storage', update);
           })();
