@@ -22,7 +22,7 @@ import BulkEditUsers from '@spectrum-icons/workflow/BulkEditUsers';
 import Draw from '@spectrum-icons/workflow/Draw';
 import ColorPalette from '@spectrum-icons/workflow/ColorPalette';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 ```
 
 ---
@@ -43,18 +43,18 @@ category: Pickers
 ## Example
 ```tsx example
 <Picker label="Choose frequency" onSelectionChange={selected => console.log(selected)}>
-  <Item uniqueKey="rarely">Rarely</Item>
-  <Item uniqueKey="sometimes">Sometimes</Item>
-  <Item uniqueKey="always">Always</Item>
+  <Item key="rarely">Rarely</Item>
+  <Item key="sometimes">Sometimes</Item>
+  <Item key="always">Always</Item>
 </Picker>
 ```
 
 ## Content
-Picker follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic forms of children. Similar to the Menu, Picker accepts an `<Item>` component, each with a `uniqueKey` prop. Basic usage of the Picker, seen in the example above, shows multiple options populated with a string. This implementation would be used when the list of options is finite and known.
+Picker follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic forms of children. Similar to the Menu, Picker accepts an `<Item>` component, each with a `key` prop. Basic usage of the Picker, seen in the example above, shows multiple options populated with a string. This implementation would be used when the list of options is finite and known.
 
 The dynamic method (shown below) would be better suited to use if the options came from a data object such as values returned from an API call. Providing the data in this way allows for Picker to automatically cache the rendering of each item, which dramatically improves performance.
 
-As seen below, an iterable list of options is passed to the Picker using the `items` prop. Each item accepts a uniqueKey prop, which is passed to the onSelectionChange handler to identify the selected item. Alternatively, if the item objects contain an id property, as shown in the example below, then this is used automatically and a uniqueKey prop is not required. See the <a href="#events" title="Events">events</a> section for more detail on selection.
+As seen below, an iterable list of options is passed to the Picker using the `items` prop. Each item accepts a key prop, which is passed to the onSelectionChange handler to identify the selected item. Alternatively, if the item objects contain an id property, as shown in the example below, then this is used automatically and a key prop is not required. See the <a href="#events" title="Events">events</a> section for more detail on selection.
 
 ```tsx example
 function Example() {
@@ -81,31 +81,35 @@ function Example() {
 
 ### Internationalization
 To internationalize a Picker, a localized string should be passed to the `children` of each `Item`.
-For languages that are read right to left (e.g. Hebrew and Arabic), the layout of the Picker is flipped.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the Picker is flipped.
 
 ## Labeling
 Picker can be labeled using the `label` prop. If no label is provided, an alternative text label must be provided to identify the control for accessibility. This should be added using the `aria-label` prop. If the Picker is a required field, the `isRequired` and `necessityIndicator` props can be used to show a required state.
 
 ```tsx example
-<Picker label="Choose frequency" isRequired necessityIndicator="icon" marginEnd="10px">
-  <Item uniqueKey="rarely">Rarely</Item>
-  <Item uniqueKey="sometimes">Sometimes</Item>
-  <Item uniqueKey="always">Always</Item>
+<Picker label="Choose frequency" isRequired necessityIndicator="icon">
+  <Item key="rarely">Rarely</Item>
+  <Item key="sometimes">Sometimes</Item>
+  <Item key="always">Always</Item>
 </Picker>
-<Picker label="Choose frequency" isRequired necessityIndicator="label" marginEnd="10px">
-  <Item uniqueKey="rarely">Rarely</Item>
-  <Item uniqueKey="sometimes">Sometimes</Item>
-  <Item uniqueKey="always">Always</Item>
+```
+```tsx example
+<Picker label="Choose frequency" isRequired necessityIndicator="label">
+  <Item key="rarely">Rarely</Item>
+  <Item key="sometimes">Sometimes</Item>
+  <Item key="always">Always</Item>
 </Picker>
+```
+```tsx example
 <Picker label="Choose frequency" necessityIndicator="label">
-  <Item uniqueKey="rarely">Rarely</Item>
-  <Item uniqueKey="sometimes">Sometimes</Item>
-  <Item uniqueKey="always">Always</Item>
+  <Item key="rarely">Rarely</Item>
+  <Item key="sometimes">Sometimes</Item>
+  <Item key="always">Always</Item>
 </Picker>
 ```
 
 ## Selection
-Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `uniqueKey` of an item. See <a href="#events" title="Events">Events</a> for more details on selection events.
+Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `key` of an item. See <a href="#events" title="Events">Events</a> for more details on selection events.
 
 ```tsx example
 function Example() {
@@ -125,8 +129,8 @@ function Example() {
         label="Pick an animal (uncontrolled)"
         items={options}
         defaultSelectedKey="Bison"
-        marginEnd="20px">
-        {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+        marginEnd="size-300">
+        {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
 
       <Picker
@@ -134,27 +138,27 @@ function Example() {
         items={options}
         selectedKey={animal}
         onSelectionChange={selected => setAnimal(selected)}>
-        {item => <Item uniqueKey={item.name}>{item.name}</Item>}
+        {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
     </>
   );
 }
 ```
 ## Sections
-Picker supports sections in order to group options. Sections can be used by wrapping groups of Items in a `Section` component. Each `Section` takes a `title` and `uniqueKey` prop.
+Picker supports sections in order to group options. Sections can be used by wrapping groups of Items in a `Section` component. Each `Section` takes a `title` and `key` prop.
 
 ### Static items
 ```tsx example
 <Picker label="Pick your favorite">
   <Section title="Animals">
-    <Item uniqueKey="Aardvark">Aardvark</Item>
-    <Item uniqueKey="Kangaroo">Kangaroo</Item>
-    <Item uniqueKey="Snake">Snake</Item>
+    <Item key="Aardvark">Aardvark</Item>
+    <Item key="Kangaroo">Kangaroo</Item>
+    <Item key="Snake">Snake</Item>
   </Section>
   <Section title="People">
-    <Item uniqueKey="Danni">Danni</Item>
-    <Item uniqueKey="Devon">Devon</Item>
-    <Item uniqueKey="Ross">Ross</Item>
+    <Item key="Danni">Danni</Item>
+    <Item key="Devon">Devon</Item>
+    <Item key="Ross">Ross</Item>
   </Section>
 </Picker>
 ```
@@ -180,7 +184,7 @@ function Example() {
     <>
       <Picker label="Pick an animal" items={options} onSelectionChange={selected => alert(selected)}>
         {item => (
-          <Section uniqueKey={item.name} items={item.children} title={item.name}>
+          <Section key={item.name} items={item.children} title={item.name}>
             {item => <Item>{item.name}</Item>}
           </Section>
         )}
@@ -192,7 +196,7 @@ function Example() {
 
 ## Events
 Picker supports selection via mouse, keyboard, and touch. You can handle all of these via the `onSelectionChange`
-prop. Picker will pass the selected `uniqueKey` to the `onSelectionChange` handler.
+prop. Picker will pass the selected `key` to the `onSelectionChange` handler.
 
 The following example uses an `onSelectionChange` handler to update the selection stored in React state.
 
@@ -203,9 +207,9 @@ function StaticExample() {
   return (
     <>
       <Picker label="Choose frequency" onSelectionChange={selected => setFrequency(selected)}>
-        <Item uniqueKey="Rarely">Rarely</Item>
-        <Item uniqueKey="Sometimes">Sometimes</Item>
-        <Item uniqueKey="Always">Always</Item>
+        <Item key="Rarely">Rarely</Item>
+        <Item key="Sometimes">Sometimes</Item>
+        <Item key="Always">Always</Item>
       </Picker>
       <p>You selected {frequency}</p>
     </>
@@ -213,7 +217,7 @@ function StaticExample() {
 }
 ```
 
-When using Picker with dynamic items, selection works much the same way using `uniqueKey`. However, if your data already has an `id` property (as is common with many data sets), Picker can use that id without needing to specify a `uniqueKey` prop. The below example shows Picker using the id of each item from the `items` array as the selected value without the need for `uniqueKey`. Note that `uniqueKey` will always take precedence if set.
+When using Picker with dynamic items, selection works much the same way using `key`. However, if your data already has an `id` property (as is common with many data sets), Picker can use that id without needing to specify a `key` prop. The below example shows Picker using the id of each item from the `items` array as the selected value without the need for `key`. Note that `key` will always take precedence if set.
 
 ```tsx example
 function DynamicExample() {
@@ -266,6 +270,43 @@ Items within Picker also allow for additional content used to better communicate
 </Picker>
 ```
 
+## Asynchronous loading
+
+Picker supports loading data asynchronously, and will display a progress circle when the `isLoading` prop is set.
+It also supports infinite scrolling to load more data on demand as the user scrolls, via the `onLoadMore` prop.
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle loading the data.
+See the docs for more information.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+function AsyncLoadingExample() {
+  let list = useAsyncList({
+    async load({signal, cursor}) {
+      // If no cursor is available, then we're loading the first page.
+      // Otherwise, the cursor is the next URL to load, as returned from the previous page.
+      let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
+      let json = await res.json();
+      return {
+        items: json.results,
+        cursor: json.next
+      };
+    }
+  });
+
+  return (
+    <Picker
+      label="Pick a Pokemon"
+      items={list.items}
+      isLoading={list.isLoading}
+      onLoadMore={list.loadMore}>
+      {item => <Item key={item.name}>{item.name}</Item>}
+    </Picker>
+  );
+}
+```
+
 ## Props
 
 <PropTable component={docs.exports.Picker} links={docs.links} />
@@ -275,73 +316,85 @@ Items within Picker also allow for additional content used to better communicate
 ### Label alignment
 ```tsx example
 <Picker label="Choose frequency" labelAlign="end">
-  <Item uniqueKey="rarely">Rarely</Item>
-  <Item uniqueKey="sometimes">Sometimes</Item>
-  <Item uniqueKey="always">Always</Item>
+  <Item key="rarely">Rarely</Item>
+  <Item key="sometimes">Sometimes</Item>
+  <Item key="always">Always</Item>
 </Picker>
 ```
 ### Label position
 ```tsx example
 <Picker label="Choose frequency" labelPosition="side">
-  <Item uniqueKey="rarely">Rarely</Item>
-  <Item uniqueKey="sometimes">Sometimes</Item>
-  <Item uniqueKey="always">Always</Item>
+  <Item key="rarely">Rarely</Item>
+  <Item key="sometimes">Sometimes</Item>
+  <Item key="always">Always</Item>
 </Picker>
 ```
 ### Quiet
 ```tsx example
 <Picker label="Choose frequency" isQuiet labelPosition="side">
-  <Item uniqueKey="rarely">Rarely</Item>
-  <Item uniqueKey="sometimes">Sometimes</Item>
-  <Item uniqueKey="always">Always</Item>
+  <Item key="rarely">Rarely</Item>
+  <Item key="sometimes">Sometimes</Item>
+  <Item key="always">Always</Item>
 </Picker>
 ```
 ### Disabled
 ```tsx example
 <Picker label="Choose frequency" isDisabled>
-  <Item uniqueKey="rarely">Rarely</Item>
-  <Item uniqueKey="sometimes">Sometimes</Item>
-  <Item uniqueKey="always">Always</Item>
+  <Item key="rarely">Rarely</Item>
+  <Item key="sometimes">Sometimes</Item>
+  <Item key="always">Always</Item>
 </Picker>
 ```
 ### Custom widths
 ```tsx example
-<Flex flexDirection="column">
+<Flex direction="column">
   <Picker label="Choose frequency" width="size-6000">
-    <Item uniqueKey="rarely">Rarely</Item>
-    <Item uniqueKey="sometimes">Sometimes</Item>
-    <Item uniqueKey="always">Always</Item>
+    <Item key="rarely">Rarely</Item>
+    <Item key="sometimes">Sometimes</Item>
+    <Item key="always">Always</Item>
   </Picker>
 
   <Picker label="Choose animal" menuWidth="size-6000">
-    <Item uniqueKey="Emu">Emu</Item>
-    <Item uniqueKey="Kangaroo">Kangaroo</Item>
-    <Item uniqueKey="Platypus">Platypus</Item>
+    <Item key="Emu">Emu</Item>
+    <Item key="Kangaroo">Kangaroo</Item>
+    <Item key="Platypus">Platypus</Item>
   </Picker>
 </Flex>
 ```
 ### Align and direction
 ```tsx example
-<Flex flexDirection="column">
+<Flex direction="column">
   <Picker label="Choose frequency" align="end" menuWidth="size-3000">
-    <Item uniqueKey="rarely">Rarely</Item>
-    <Item uniqueKey="sometimes">Sometimes</Item>
-    <Item uniqueKey="always">Always</Item>
+    <Item key="rarely">Rarely</Item>
+    <Item key="sometimes">Sometimes</Item>
+    <Item key="always">Always</Item>
   </Picker>
 
   <Picker label="Choose animal" direction="top">
-    <Item uniqueKey="Emu">Emu</Item>
-    <Item uniqueKey="Kangaroo">Kangaroo</Item>
-    <Item uniqueKey="Platypus">Platypus</Item>
+    <Item key="Emu">Emu</Item>
+    <Item key="Kangaroo">Kangaroo</Item>
+    <Item key="Platypus">Platypus</Item>
   </Picker>
 </Flex>
 ```
 ### Menu state
 The open state of the menu can be controlled via the `defaultOpen` and `isOpen` props
 ```tsx example
-<Picker label="Choose frequency" isOpen>
-  <Item uniqueKey="rarely">Rarely</Item>
-  <Item uniqueKey="sometimes">Sometimes</Item>
-  <Item uniqueKey="always">Always</Item>
-</Picker>
+function Example() {
+  let [open, setOpen] = React.useState(false);
+  let [frequency, setfrequency] = React.useState("always");
+
+  return (
+    <Picker
+      label="Frequency"
+      isOpen={open}
+      selectedKey={frequency}
+      onOpenChange={setOpen}
+      onSelectionChange={selected => setfrequency(selected)}>
+      <Item key="rarely">Rarely</Item>
+      <Item key="sometimes">Sometimes</Item>
+      <Item key="always">Always</Item>
+    </Picker>
+  );
+}
 ```

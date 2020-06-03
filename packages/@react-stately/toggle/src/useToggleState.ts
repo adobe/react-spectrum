@@ -32,10 +32,12 @@ export function useToggleState(props: CheckboxBase): ToggleState {
   let [isSelected, setSelected] = useControlledState(props.isSelected, props.defaultSelected || false, () => {});
 
   function updateSelected(value) {
-    setSelected(value);
-    if (onChange && !isReadOnly) {
-      onChange(value);
-    }
+    if (!isReadOnly) {
+      setSelected(value);
+      if (onChange) {
+        onChange(value);
+      }
+    } 
   }
 
   return {

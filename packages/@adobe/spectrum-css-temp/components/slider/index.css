@@ -207,12 +207,13 @@ governing permissions and limitations under the License.
   transition: border-width var(--spectrum-slider-animation-duration) ease-in-out;
 
   outline: none;
+  cursor: pointer;
   cursor: grab;
 
   &:active,
   &.is-focused,
   &.is-dragged {
-    border-width: var(--spectrum-slider-handle-border-size-down);
+    /*border-width: var(--spectrum-slider-handle-border-size-down);*/
     cursor: ns-resize;
     cursor: grabbing;
   }
@@ -222,6 +223,32 @@ governing permissions and limitations under the License.
   &.is-dragged,
   &.is-tophandle {
     z-index: 3;
+  }
+
+  &:before {
+    content: ' ';
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
+                width var(--spectrum-global-animation-duration-100) ease-out,
+                height var(--spectrum-global-animation-duration-100) ease-out;
+
+    width: var(--spectrum-slider-handle-width);
+    height: var(--spectrum-slider-handle-height);
+
+    transform: translate(-50%, -50%);
+
+    border-radius: 100%;
+  }
+
+  &.is-focused {
+    &:before {
+      width: calc(var(--spectrum-slider-handle-width) + var(--spectrum-alias-focus-ring-gap) * 2);
+      height: calc(var(--spectrum-slider-handle-height) + var(--spectrum-alias-focus-ring-gap) * 2);
+    }
   }
 }
 

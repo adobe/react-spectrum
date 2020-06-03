@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
 import {SpectrumStatusLightProps} from '@react-types/statuslight';
 import styles from '@adobe/spectrum-css-temp/components/statuslight/vars.css';
@@ -22,19 +23,25 @@ function StatusLight(props: SpectrumStatusLightProps, ref: DOMRef<HTMLDivElement
     variant,
     children,
     isDisabled,
+    role,
     ...otherProps
   } = useProviderProps(props);
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
-  if (!props.children && !props['aria-label']) {
+  if (!children && !props['aria-label']) {
     console.warn('If no children are provided, an aria-label must be specified');
+  }
+
+  if (!role && (props['aria-label'] || props['aria-labelledby'])) {
+    console.warn('A labelled StatusLight must have a role.');
   }
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
+      {...filterDOMProps(otherProps, {labelable: !!role})}
       {...styleProps}
+      role={role}
       className={classNames(
         styles,
         'spectrum-StatusLight',

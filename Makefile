@@ -73,7 +73,7 @@ ci-test:
 	yarn jest --maxWorkers=2
 
 storybook:
-	NODE_ENV=storybook yarn build-storybook
+	NODE_ENV=production yarn build-storybook
 
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
@@ -90,3 +90,4 @@ website:
 
 website-master:
 	yarn build:docs --dist-dir dist/master/docs
+	cp packages/dev/docs/pages/robots.txt dist/master/docs/robots.txt

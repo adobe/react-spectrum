@@ -12,7 +12,7 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, dimensionValue, filterDOMProps, SlotProvider, unwrapDOMRef, useDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
+import {classNames, dimensionValue, SlotProvider, unwrapDOMRef, useDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
@@ -30,7 +30,7 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 import {useFormProps} from '@react-spectrum/form';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
@@ -175,7 +175,6 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         label={label}
         name={name} />
       <FieldButton
-        {...filterDOMProps(props)}
         {...triggerProps}
         ref={triggerRef}
         isActive={state.isOpen}
@@ -250,6 +249,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           labelAlign={labelAlign}
           isRequired={isRequired}
           necessityIndicator={necessityIndicator}
+          includeNecessityIndicatorInAccessibilityName
           elementType="span">
           {label}
         </Label>
@@ -264,6 +264,9 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   }));
 }
 
+/**
+  * Pickers allow users to choose a single option from a collapsible list of options when space is limited.
+  */
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
 const _Picker = React.forwardRef(Picker) as <T>(props: SpectrumPickerProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;

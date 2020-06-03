@@ -13,11 +13,29 @@
 import {DOMProps, StyleProps} from '@react-types/shared';
 
 export interface ImageProps {
-  loaded?: boolean, // not real, just makes ts happy for now
-  isPlaceholder?: boolean, // same thing
+  /**
+   * Whether the Image should be displayed with a loaded style.
+   */
+  loaded?: boolean,
+  /**
+   * Whether the Image should be displayed with a placeholder style.
+   */
+  isPlaceholder?: boolean,
+  /**
+   * Sets the Image [object-fit](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit) style.
+   */
   objectFit?: any, // move to styleProps for images and type better
+  /**
+   * The URL of the image.
+   */
   src?: string,
+  /**
+   * Whether the Image should be decorative and not have an `alt` property.
+   */
   decorative?: boolean,
+  /**
+   * Text description of the image.
+   */
   alt?: string,
 }
 

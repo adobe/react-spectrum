@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, SpectrumLabelableProps, StyleProps, ValidationState} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, SpectrumLabelableProps, StyleProps, ValidationState} from '@react-types/shared';
 import {ReactElement} from 'react';
 
-export interface SpectrumFormProps extends DOMProps, StyleProps, SpectrumLabelableProps {
+export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StyleProps, SpectrumLabelableProps {
   /** The contents of the Form. */
   children: ReactElement<SpectrumLabelableProps> | ReactElement<SpectrumLabelableProps>[],
   /** Whether the Form elements are displayed with their quiet style. */

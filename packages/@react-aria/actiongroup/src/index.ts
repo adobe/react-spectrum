@@ -11,3 +11,4 @@
  */
 
 export * from './useActionGroup';
+export * from './useActionGroupItem';

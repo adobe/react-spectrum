@@ -81,12 +81,6 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
    */
   scale?: Scale,
   /**
-   * A Typekit ID is required to use the suggested fonts.
-   * Visit https://typekit.com/account/kits to create one.
-   * The default is only intended for prototyping work.
-   */
-  typekitId?: string,
-  /**
    * Locale (language specific format) of this provider and its children.
    * Using the format primary-region, ex. en-US, fr-CA, ar-AE.
    * @default "en-US"
