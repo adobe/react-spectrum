@@ -116,16 +116,6 @@ describe('Breadcrumbs', function () {
     expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('--medium'));
   });
 
-  it('Handles isHeading and headingAriaLevel', () => {
-    let {getByRole} = render(
-      <Breadcrumbs headingAriaLevel={2} isHeading>
-        <Item>Folder 1</Item>
-      </Breadcrumbs>
-    );
-    let heading = getByRole('heading');
-    expect(heading).toHaveAttribute('aria-level', '2');
-  });
-
   it('Handles max visible items', () => {
     let {getByText, getByRole} = render(
       <Provider theme={theme}>

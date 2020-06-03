@@ -12,7 +12,7 @@
 
 import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
 import ChevronRightSmall from '@spectrum-icons/ui/ChevronRightSmall';
-import {classNames, getWrappedElement} from '@react-spectrum/utils';
+import {classNames, getWrappedElement, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {Fragment} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
@@ -49,21 +49,28 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
 
   return (
     <Fragment>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-        {element}
-      </FocusRing>
-      {isCurrent === false &&
-        <ChevronRightSmall
-          UNSAFE_className={
-            classNames(
-              styles,
-              'spectrum-Breadcrumbs-itemSeparator',
-              {
-                'is-reversed': direction === 'rtl'
-              }
-            )
-          } />
-      }
+      <SlotProvider
+        slots={{
+          heading: {
+            UNSAFE_className: classNames(styles, 'spectrum-Breadcrumbs-itemLink')
+          }
+        }}>
+        <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+          {element}
+        </FocusRing>
+        {isCurrent === false &&
+          <ChevronRightSmall
+            UNSAFE_className={
+              classNames(
+                styles,
+                'spectrum-Breadcrumbs-itemSeparator',
+                {
+                  'is-reversed': direction === 'rtl'
+                }
+              )
+            } />
+        }
+      </SlotProvider>
     </Fragment>
   );
 }

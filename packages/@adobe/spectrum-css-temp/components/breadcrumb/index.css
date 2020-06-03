@@ -89,6 +89,10 @@ governing permissions and limitations under the License.
   outline: none;
 
   text-decoration: none;
+  /* override webkit and user agent h1 */
+  margin-block-start: 0;
+  margin-block-end: 0;
+  font-size: inherit;
 
   &[href],
   &[tabindex="0"] {
@@ -150,7 +154,6 @@ governing permissions and limitations under the License.
 
       .spectrum-Breadcrumbs-itemLink {
         height: auto;
-
         text-decoration: none;
       }
     }

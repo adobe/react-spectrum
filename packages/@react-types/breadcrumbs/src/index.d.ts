@@ -38,13 +38,6 @@ export interface BreadcrumbItemProps extends PressEvents {
 export interface BreadcrumbsProps<T> {
   /** The breadcrumb items. */
   children: ReactElement<ItemProps<T>> | ReactElement<ItemProps<T>>[],
-  /** Whether the breadcrumbs are used as a heading element. */
-  isHeading?: boolean,
-  /**
-   * Sets the aria-level attribute of the last item, but only if `isHeading` is true.
-   * @default 1
-   */
-  headingAriaLevel?: number,
   /** Whether the Breadcrumbs are disabled. */
   isDisabled?: boolean,
   /** Called when an item is acted upon (usually selection via press). */
@@ -69,5 +62,5 @@ export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, St
   /**
    * Whether to place the last Breadcrumb item onto a new line.
    */
-  multiline?: boolean
+  isMultiline?: boolean
 }

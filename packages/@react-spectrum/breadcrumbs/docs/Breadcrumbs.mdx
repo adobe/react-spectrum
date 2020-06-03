@@ -17,6 +17,7 @@ import packageData from '../package.json';
 
 ```jsx import
 import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
+import {Heading} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
 ```
 
@@ -50,6 +51,25 @@ Breadcrumbs follow the [Collection Components](../react-stately/collections.html
 
 ### Internationalization
 In order to internationalize Breadcrumbs, the strings of all child items should be localized.
+
+### Breadcrumb as heading
+To make the selected Breadcrumb a heading, simply include the Heading component inside your Item.
+
+```tsx example
+<Breadcrumbs>
+  <Item key="home">
+    Home
+  </Item>
+  <Item key="trendy">
+    Trendy
+  </Item>
+  <Item key="march 2020 assets">
+    <Heading>
+      March 2020 Assets
+    </Heading>
+  </Item>
+</Breadcrumbs>
+```
 
 ## Events
 Use the `onAction` prop as a callback to handle press events on items.
@@ -110,26 +130,13 @@ Large (default)
 
 ### Multiline
 
-Use the `multiline` prop to place the selected item below the other items.
+Use the `isMultiline` prop to place the selected item below the other items.
 This adds emphasis to the selected item as a page title or heading.
 
 ```tsx example
-<Breadcrumbs multiline>
+<Breadcrumbs isMultiline>
   <Item key="home">Home</Item>
   <Item key="trendy">Trendy</Item>
-</Breadcrumbs>
-```
-
-### Heading
-
-Use the `isHeading` prop to add a role of "heading" to the highlighted item.
-If a change to the aria-level is required, use the `headingAriaLevel` prop.
-
-```tsx example
-<Breadcrumbs isHeading headingAriaLevel={2}>
-  <Item key="home">Home</Item>
-  <Item key="trendy">Trendy</Item>
-  <Item key="march 2020 assets">March 2020 Assets</Item>
 </Breadcrumbs>
 ```
 
