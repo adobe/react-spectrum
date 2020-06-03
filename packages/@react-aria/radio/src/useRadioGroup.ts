@@ -63,7 +63,6 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   });
 
   let onKeyDown = (e) => {
-    e.preventDefault();
     let walker = getFocusableTreeWalker(e.currentTarget, {from: e.target});
     let nextDir;
     switch (e.key) {
@@ -87,7 +86,10 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       case 'ArrowUp':
         nextDir = 'prev';
         break;
+      default:
+        return;
     }
+    e.preventDefault();
     let nextElem;
     if (nextDir === 'next') {
       nextElem = walker.nextNode();

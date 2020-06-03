@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../';
 import React from 'react';
@@ -18,6 +18,7 @@ import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 import V2Radio from '@react/react-spectrum/Radio';
 import V2RadioGroup from '@react/react-spectrum/RadioGroup';
+import {Button} from '@react-spectrum/button';
 
 function renderRadioGroup(ComponentGroup, Component, groupProps, radioProps) {
   return render(
@@ -422,12 +423,54 @@ describe('Radios', function () {
     expect(radioGroup).toHaveAttribute('aria-disabled', 'true');
   });
 
-  describe('V3 Radio group supports roving tabIndex ', function () {
+  describe('Radio group supports roving tabIndex ', function () {
     afterEach(() => {
       radioBehavior.reset();
     });
 
-    it('v3 RadioGroup default roving tabIndex', async () => {
+
+    it('does not tab through individual radios', () => {
+      // this test gives a false sense of security, it doesn't catch the problem
+      // where all keydown events were being stopped in the radio group
+      let {getByRole, getAllByRole} = render(
+        <Provider theme={theme} locale="en-US">
+          <Button variant="primary" aria-label="extra button" />
+          <RadioGroup aria-label="favorite pet" orientation="horizontal">
+            <Radio value="dogs">Dogs</Radio>
+            <Radio value="cats">Cats</Radio>
+            <Radio value="dragons">Dragons</Radio>
+          </RadioGroup>
+        </Provider>
+      );
+      let radios = getAllByRole('radio');
+      let button = getByRole('button');
+
+      act(() => {
+        userEvent.tab();
+      });
+      expect(document.activeElement).toBe(button);
+      expect(document.activeElement).not.toBe(radios[0]);
+      expect(document.activeElement).not.toBe(radios[1]);
+      expect(document.activeElement).not.toBe(radios[2]);
+
+      act(() => {
+        userEvent.tab();
+      });
+      expect(document.activeElement).not.toBe(button);
+      expect(document.activeElement).toBe(radios[0]);
+      expect(document.activeElement).not.toBe(radios[1]);
+      expect(document.activeElement).not.toBe(radios[2]);
+
+      act(() => {
+        userEvent.tab();
+      });
+      expect(document.activeElement).toBe(button);
+      expect(document.activeElement).not.toBe(radios[0]);
+      expect(document.activeElement).not.toBe(radios[1]);
+      expect(document.activeElement).not.toBe(radios[2]);
+    });
+
+    it('RadioGroup default roving tabIndex', async () => {
       let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {}, {});
       let radios = getAllByRole('radio');
       expect(radios[0]).toHaveAttribute('tabIndex', '0');
@@ -444,7 +487,7 @@ describe('Radios', function () {
       expect(radios[2]).toHaveAttribute('tabIndex', '-1');
     });
 
-    it('v3 RadioGroup roving tabIndex for autoFocus', async () => {
+    it('RadioGroup roving tabIndex for autoFocus', async () => {
       let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {}, [{}, {autoFocus: true}, {}]);
       let radios = getAllByRole('radio');
       expect(radios[0]).toHaveAttribute('tabIndex', '-1');
