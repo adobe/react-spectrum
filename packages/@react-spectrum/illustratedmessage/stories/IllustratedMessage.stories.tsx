@@ -12,7 +12,7 @@
 
 import {Content} from '@react-spectrum/view';
 import Error from '@spectrum-icons/illustrations/src/Error';
-import {Heading} from '@react-spectrum/typography';
+import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '../';
 import {Link} from '@react-spectrum/link';
 import NotFound from '@spectrum-icons/illustrations/src/NotFound';

@@ -90,7 +90,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
 }
 
 /**
- * SearchFields are decorated text inputs that allow users to submit text.
+ * A SearchField is a text field designed for searches.
  */
 let _SearchField = forwardRef(SearchField);
 export {_SearchField as SearchField};

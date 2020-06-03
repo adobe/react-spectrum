@@ -38,8 +38,7 @@ export function useSelectionCheckbox<T>(props: SelectionCheckboxProps, state: Gr
       'aria-label': 'Select',
       'aria-labelledby': `${checkboxId} ${getRowLabelledBy(state, key)}`,
       isSelected,
-      onChange: () => state.selectionManager.toggleSelection(key),
-      tabIndex: -1
+      onChange: () => state.selectionManager.toggleSelection(key)
     }
   };
 }
@@ -51,8 +50,7 @@ export function useSelectAllCheckbox<T>(state: GridState<T>): SelectionCheckboxA
       'aria-label': 'Select All',
       isSelected: isSelectAll,
       isIndeterminate: !isEmpty && !isSelectAll,
-      onChange: () => state.selectionManager.toggleSelectAll(),
-      tabIndex: -1
+      onChange: () => state.selectionManager.toggleSelectAll()
     }
   };
 }

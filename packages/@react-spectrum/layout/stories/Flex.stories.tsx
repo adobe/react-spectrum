@@ -27,7 +27,7 @@ storiesOf('Flex', module)
   .add(
     'Vertical stack with gap',
     () => (
-      <Flex flexDirection="column" width="size-2000" gap="size-100">
+      <Flex direction="column" width="size-2000" gap="size-100">
         <View backgroundColor="celery-600" height="size-800" />
         <View backgroundColor="blue-600" height="size-800" />
         <View backgroundColor="magenta-600" height="size-800" />
@@ -37,7 +37,7 @@ storiesOf('Flex', module)
   .add(
     'Horizontal stack with gap',
     () => (
-      <Flex flexDirection="row" height="size-800" gap="size-100">
+      <Flex direction="row" height="size-800" gap="size-100">
         <View backgroundColor="celery-600" width="size-800" />
         <View backgroundColor="blue-600" width="size-800" />
         <View backgroundColor="magenta-600" width="size-800" />
@@ -48,7 +48,7 @@ storiesOf('Flex', module)
     'Wrapping with gap',
     () => (
       <View maxWidth="80%" borderWidth="thin" borderColor="dark">
-        <Flex flexDirection="row" gap="size-100" flexWrap="wrap">
+        <Flex direction="row" gap="size-100" wrap>
           {colors.map(color =>
             <View key={color} backgroundColor={color} width="size-800" height="size-800" />
           )}
@@ -59,9 +59,9 @@ storiesOf('Flex', module)
   .add(
     'Nested flex with gap',
     () => (
-      <Flex flexDirection="column" gap="size-150">
+      <Flex direction="column" gap="size-150">
         <View backgroundColor="celery-600" height="size-800" />
-        <Flex flexDirection="row" height="size-800" gap="size-100">
+        <Flex direction="row" height="size-800" gap="size-100">
           <View backgroundColor="indigo-600" width="size-800" />
           <View backgroundColor="seafoam-600" width="size-800" />
           <View backgroundColor="blue-600" width="size-800" />
@@ -73,7 +73,7 @@ storiesOf('Flex', module)
   .add(
     'Align center',
     () => (
-      <Flex flexDirection="row" gap="size-100" alignItems="center">
+      <Flex direction="row" gap="size-100" alignItems="center">
         <View backgroundColor="celery-600"  width="size-800" height="size-800" />
         <View backgroundColor="blue-600"  width="size-800" height="size-2000" />
         <View backgroundColor="magenta-600" width="size-800" height="size-800" />
@@ -83,7 +83,7 @@ storiesOf('Flex', module)
   .add(
     'Align end',
     () => (
-      <Flex flexDirection="row" gap="size-100" alignItems="end">
+      <Flex direction="row" gap="size-100" alignItems="end">
         <View backgroundColor="celery-600"  width="size-800" height="size-800" />
         <View backgroundColor="blue-600"  width="size-800" height="size-2000" />
         <View backgroundColor="magenta-600" width="size-800" height="size-800" />
@@ -93,7 +93,7 @@ storiesOf('Flex', module)
   .add(
     'Justify start',
     () => (
-      <Flex flexDirection="row" gap="size-100" justifyContent="start" width="80%">
+      <Flex direction="row" gap="size-100" justifyContent="start" width="80%">
         <View backgroundColor="celery-600"  width="size-800" height="size-800" />
         <View backgroundColor="blue-600"  width="size-800" height="size-800" />
         <View backgroundColor="magenta-600" width="size-800" height="size-800" />
@@ -103,7 +103,7 @@ storiesOf('Flex', module)
   .add(
     'Justify center',
     () => (
-      <Flex flexDirection="row" gap="size-100" justifyContent="center" width="80%">
+      <Flex direction="row" gap="size-100" justifyContent="center" width="80%">
         <View backgroundColor="celery-600"  width="size-800" height="size-800" />
         <View backgroundColor="blue-600"  width="size-800" height="size-800" />
         <View backgroundColor="magenta-600" width="size-800" height="size-800" />
@@ -113,7 +113,7 @@ storiesOf('Flex', module)
   .add(
     'Justify end',
     () => (
-      <Flex flexDirection="row" gap="size-100" justifyContent="end" width="80%">
+      <Flex direction="row" gap="size-100" justifyContent="end" width="80%">
         <View backgroundColor="celery-600"  width="size-800" height="size-800" />
         <View backgroundColor="blue-600"  width="size-800" height="size-800" />
         <View backgroundColor="magenta-600" width="size-800" height="size-800" />
@@ -123,7 +123,7 @@ storiesOf('Flex', module)
   .add(
     'Justify space-around',
     () => (
-      <Flex flexDirection="row" gap="size-100" justifyContent="space-around" width="80%">
+      <Flex direction="row" gap="size-100" justifyContent="space-around" width="80%">
         <View backgroundColor="celery-600"  width="size-800" height="size-800" />
         <View backgroundColor="blue-600"  width="size-800" height="size-800" />
         <View backgroundColor="magenta-600" width="size-800" height="size-800" />
@@ -133,7 +133,7 @@ storiesOf('Flex', module)
   .add(
     'Justify space-between',
     () => (
-      <Flex flexDirection="row" gap="size-100" justifyContent="space-between" width="80%">
+      <Flex direction="row" gap="size-100" justifyContent="space-between" width="80%">
         <View backgroundColor="celery-600"  width="size-800" height="size-800" />
         <View backgroundColor="blue-600"  width="size-800" height="size-800" />
         <View backgroundColor="magenta-600" width="size-800" height="size-800" />
@@ -143,7 +143,7 @@ storiesOf('Flex', module)
   .add(
     'Justify space-evenly',
     () => (
-      <Flex flexDirection="row" gap="size-100" justifyContent="space-evenly" width="80%">
+      <Flex direction="row" gap="size-100" justifyContent="space-evenly" width="80%">
         <View backgroundColor="celery-600"  width="size-800" height="size-800" />
         <View backgroundColor="blue-600"  width="size-800" height="size-800" />
         <View backgroundColor="magenta-600" width="size-800" height="size-800" />

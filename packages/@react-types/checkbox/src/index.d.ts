@@ -10,10 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AriaValidationProps, FocusableDOMProps, FocusableProps, InputBase, StyleProps} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  AriaValidationProps,
+  FocusableDOMProps,
+  FocusableProps,
+  InputBase,
+  StyleProps,
+  Validation
+} from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface CheckboxBase extends InputBase, FocusableProps {
+export interface CheckboxBase extends InputBase, Validation, FocusableProps {
   children?: ReactNode, // pass in children to render label
   defaultSelected?: boolean,
   isSelected?: boolean,
@@ -31,8 +39,8 @@ export interface AriaCheckboxBase extends CheckboxBase, FocusableDOMProps, AriaL
 
 export interface CheckboxProps extends CheckboxBase {
   /**
-   * Indeterminism is presentational, when a checkbox is indeterminate, it overrides the selection state.
-   * The indeterminate visual representation remains even after subsequent clicks.
+   * Indeterminism is presentational only.
+   * The indeterminate visual representation remains regardless of user interaction.
    */
   isIndeterminate?: boolean
 }
