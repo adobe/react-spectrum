@@ -47,26 +47,4 @@ describe('ActionButton', function () {
     let button = getByRole('button', {hidden: true});
     expect(button).toHaveAttribute('data-foo', 'bar');
   });
-
-  it.each`
-    Name              | Component        | props
-    ${'ActionButton'} | ${ActionButton}  | ${{onPress: onPressSpy, holdAffordance: true}}
-    ${'V2Button'}     | ${V2Button}      | ${{variant: 'action', onClick: onPressSpy, holdAffordance: true}}
-  `('$Name hold affordance', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props}>Click Me</Component>);
-
-    let button = getByRole('button');
-    let holdAffordance;
-    if (Component === V2Button) {
-      holdAffordance = getByRole('presentation');
-      expect(holdAffordance).toBeTruthy();
-      expect(holdAffordance).not.toHaveAttribute('aria-hidden');
-    } else {
-      holdAffordance = getByRole('img', {hidden: true});
-      expect(holdAffordance).toBeTruthy();
-      expect(holdAffordance).toHaveAttribute('aria-hidden');
-    }
-    triggerPress(button);
-    expect(onPressSpy).toHaveBeenCalledTimes(1);
-  });
 });

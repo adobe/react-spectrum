@@ -10,12 +10,12 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-spectrum/typography';
+import docs from 'docs:@react-spectrum/text';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
-import {Heading} from '@react-spectrum/typography';
+import {Heading} from '@react-spectrum/text';
 ```
 
 ---
@@ -29,9 +29,7 @@ category: Content
 <HeaderInfo
   packageData={packageData}
   componentNames={['Heading']}
-  sourceData={[
-    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/typography/'}
-  ]} />
+  sourceData={[]} />
 
 ## Example
 
@@ -41,19 +39,14 @@ category: Content
 
 ## Content
 
-[View guidelines](https://spectrum.adobe.com/page/typography/#Heading)
-
-Heading is a [Typography](https://spectrum.adobe.com/page/typography)
-component which is a child to other components. Heading provides
-hierarchical information, like a title within a Dialog, based on placement
+Heading is a Text component which is a child to other components. Heading provides
+style information, like a title within a Dialog, based on placement
 within a parent component. Based on the component Heading is used within, it
 gets Spectrum styling and may have a preassigned slot for positioning. By
 virtue of its name, the Heading component provides semantic meaning in the
 context they are placed. Examples of their usage in [Dialog](Dialog.html#example) and
 [IllustratedMessage](IllustratedMessage.html#example). It is important to note
 that the Heading component accepts any renderable node, not just strings.
-
-See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Heading_Elements) for more information.
 
 ## Props
 

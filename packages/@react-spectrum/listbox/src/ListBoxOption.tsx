@@ -18,7 +18,7 @@ import {ListBoxContext} from './ListBoxContext';
 import {Node} from '@react-stately/collections';
 import React, {useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 import {useOption} from '@react-aria/listbox';
 import {useRef} from 'react';
 
@@ -92,12 +92,12 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
               description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps}
             }}>
             {contents}
-            {isSelected && 
+            {isSelected &&
               <CheckmarkMedium
                 slot="checkmark"
                 UNSAFE_className={
                       classNames(
-                        styles, 
+                        styles,
                         'spectrum-Menu-checkmark'
                       )
                     } />

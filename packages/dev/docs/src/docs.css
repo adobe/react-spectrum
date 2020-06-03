@@ -273,7 +273,7 @@ article.inCategory h2.sectionHeader + hr {
 
 .example {
   padding: 40px;
-  border-radius: 0 0 4px 4px;
+  border-radius: 4px;
   margin-bottom: var(--spectrum-global-dimension-size-150);
 }
 
@@ -300,6 +300,10 @@ article pre:global(.example) {
 article pre:global(.small),
 article pre:global(.medium) {
   display: none;
+}
+
+article pre + div > .example {
+  border-radius: 0 0 4px 4px;
 }
 
 code {
@@ -580,6 +584,15 @@ h2.sectionHeader {
 
   article pre:global(.medium) {
     display: block;
+  }
+
+  /* Reduce example padding so more fits on small screens. */
+  .example {
+    padding: 14px;
+  }
+
+  article pre {
+    padding: 8px;
   }
 
   @mixin small-propTable;

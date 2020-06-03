@@ -21,7 +21,7 @@ import Delete from '@spectrum-icons/workflow/Delete';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Heading} from '@react-spectrum/typography';
+import {Heading} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Modal} from '@react-spectrum/overlays';
 import More from '@spectrum-icons/workflow/More';
@@ -72,7 +72,7 @@ export function CRUDExample() {
   let selectedCount = list.selectedKeys === 'all' ? list.items.length : list.selectedKeys.size;
 
   return (
-    <Flex flexDirection="column">
+    <Flex direction="column">
       <ActionGroup selectionMode="none" marginBottom={8}>
         <DialogTrigger>
           <Item aria-label="Add item"><Add /></Item>

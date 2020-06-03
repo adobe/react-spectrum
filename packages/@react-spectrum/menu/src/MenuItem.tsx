@@ -17,7 +17,7 @@ import {Grid} from '@react-spectrum/layout';
 import {Node} from '@react-stately/collections';
 import React, {Key, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';
 import {useMenuContext} from './context';
 import {useMenuItem} from '@react-aria/menu';
@@ -63,7 +63,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       ref,
       isVirtualized,
       onAction
-    }, 
+    },
     state
   );
 
@@ -101,12 +101,12 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
               keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps}
             }}>
             {contents}
-            {isSelected && 
-              <CheckmarkMedium 
-                slot="checkmark" 
+            {isSelected &&
+              <CheckmarkMedium
+                slot="checkmark"
                 UNSAFE_className={
                       classNames(
-                        styles, 
+                        styles,
                         'spectrum-Menu-checkmark'
                       )
                     } />
