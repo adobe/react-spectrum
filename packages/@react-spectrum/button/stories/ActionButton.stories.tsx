@@ -15,7 +15,7 @@ import {ActionButton} from '../';
 import Add from '@spectrum-icons/workflow/Add';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 
 storiesOf('Button/ActionButton', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -66,78 +66,8 @@ storiesOf('Button/ActionButton', module)
     )
   )
   .add(
-    'holdAffordance',
-    () => render({holdAffordance: true})
-  )
-  .add(
-    'icon, holdAffordance',
-    () => (
-      <div>
-        <ActionButton
-          holdAffordance
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}>
-          <Add />
-          <Text>Default</Text>
-        </ActionButton>
-        <ActionButton
-          holdAffordance
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled>
-          <Text>Disabled</Text>
-          <Add />
-        </ActionButton>
-      </div>
-    )
-  )
-  .add(
-    'icon only, holdAffordance',
-    () => (
-      <div>
-        <ActionButton
-          holdAffordance
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}>
-          <Add />
-        </ActionButton>
-        <ActionButton
-          holdAffordance
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled>
-          <Add />
-        </ActionButton>
-      </div>
-    )
-  )
-  .add(
-    'selected',
-    () => render({isSelected: true})
-  )
-  .add(
-    'selected, isEmphasized',
-    () => render({isEmphasized: true, isSelected: true})
-  )
-  .add(
     'quiet,',
     () => render({isQuiet: true})
-  )
-  .add(
-    'quiet, selected',
-    () => render({isQuiet: true, isSelected: true})
-  )
-  .add(
-    'quiet, isEmphasized',
-    () => render({isQuiet: true, isEmphasized: true})
-  )
-  .add(
-    'quiet, selected, isEmphasized',
-    () => render({isQuiet: true, isEmphasized: true, isSelected: true})
   )
   .add(
     'autoFocus',

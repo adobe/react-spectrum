@@ -10,40 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
+import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import React from 'react';
+import React, {RefObject} from 'react';
 import {SpectrumActionButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
   props = useProviderProps(props);
   let {
-    elementType: ElementType = 'button',
     isQuiet,
-    isSelected,
     isDisabled,
-    isEmphasized,
     children,
-    holdAffordance,
     autoFocus,
     ...otherProps
   } = props;
 
-  let domRef = useFocusableRef(ref);
+  let domRef = useFocusableRef(ref) as RefObject<HTMLButtonElement>;
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
   let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
-      <ElementType
-        {...filterDOMProps(otherProps)}
+      <button
         {...styleProps}
         {...buttonProps}
         ref={domRef}
@@ -53,17 +47,12 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
             'spectrum-ActionButton',
             {
               'spectrum-ActionButton--quiet': isQuiet,
-              'spectrum-ActionButton--emphasized': isEmphasized,
               'is-active': isPressed,
-              'is-selected': isSelected,
               'is-disabled': isDisabled
             },
             styleProps.className
           )
         }>
-        {holdAffordance &&
-          <CornerTriangle UNSAFE_className={classNames(styles, 'spectrum-ActionButton-hold')} />
-        }
         <SlotProvider
           slots={{
             icon: {
@@ -78,7 +67,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
             ? <Text>{children}</Text>
             : children}
         </SlotProvider>
-      </ElementType>
+      </button>
     </FocusRing>
   );
 }

@@ -21,7 +21,7 @@ import {Content, Header} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Divider} from '@react-spectrum/divider';
-import {Heading, Keyboard, Text} from '@react-spectrum/typography';
+import {Heading, Keyboard, Text} from '@react-spectrum/text';
 import {Item, Menu, Section} from '../';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
@@ -91,18 +91,18 @@ storiesOf('Menu', module)
   .add(
     'Default Menu',
     () => (
-      <Menu items={flatMenu} itemKey="name" onAction={action('onAction')}>
-        {item => <Item>{item.name}</Item>}
+      <Menu items={flatMenu} onAction={action('onAction')}>
+        {item => <Item key={item.name}>{item.name}</Item>}
       </Menu>
     )
   )
   .add(
     'Menu w/ sections',
     () => (
-      <Menu items={withSection} itemKey="name" onAction={action('onAction')}>
+      <Menu items={withSection} onAction={action('onAction')}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </Menu>
@@ -111,10 +111,10 @@ storiesOf('Menu', module)
   .add(
     'Menu w/ sections and no title',
     () => (
-      <Menu items={withSection} itemKey="name" onAction={action('onAction')}>
+      <Menu items={withSection} onAction={action('onAction')}>
         {item => (
-          <Section items={item.children} aria-label={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} aria-label={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </Menu>
@@ -194,10 +194,10 @@ storiesOf('Menu', module)
   .add(
     'with single selection',
     () => (
-      <Menu selectionMode="single" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name">
+      <Menu selectionMode="single" onSelectionChange={action('onSelectionChange')} items={withSection}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item childItems={item.children}>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
           </Section>
         )}
       </Menu>
@@ -206,10 +206,10 @@ storiesOf('Menu', module)
   .add(
     'with default selected menu items',
     () => (
-      <Menu selectionMode="single" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" defaultSelectedKeys={['Kangaroo']}>
+      <Menu selectionMode="single" onSelectionChange={action('onSelectionChange')} items={withSection} defaultSelectedKeys={['Kangaroo']}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item childItems={item.children}>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
           </Section>
         )}
       </Menu>
@@ -220,27 +220,27 @@ storiesOf('Menu', module)
     () => (
       <Menu selectionMode="single" onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2']}>
         <Section title="Section 1">
-          <Item uniqueKey="1">
+          <Item key="1">
             One
           </Item>
-          <Item uniqueKey="2">
+          <Item key="2">
             Two
           </Item>
-          <Item uniqueKey="3">
+          <Item key="3">
             Three
           </Item>
         </Section>
         <Section title="Section 2">
-          <Item uniqueKey="4">
+          <Item key="4">
             Four
           </Item>
-          <Item uniqueKey="5">
+          <Item key="5">
             Five
           </Item>
-          <Item uniqueKey="6">
+          <Item key="6">
             Six
           </Item>
-          <Item uniqueKey="7">
+          <Item key="7">
             Seven
           </Item>
         </Section>
@@ -250,10 +250,10 @@ storiesOf('Menu', module)
   .add(
     'with selected menu items (controlled)',
     () => (
-      <Menu selectionMode="single" onSelectionChange={action('onSelectionChange')} items={withSection} itemKey="name" selectedKeys={['Kangaroo']}>
+      <Menu selectionMode="single" onSelectionChange={action('onSelectionChange')} items={withSection} selectedKeys={['Kangaroo']}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item childItems={item.children}>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
           </Section>
         )}
       </Menu>
@@ -264,27 +264,27 @@ storiesOf('Menu', module)
     () => (
       <Menu selectionMode="single" onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
         <Section title="Section 1">
-          <Item uniqueKey="1">
+          <Item key="1">
             One
           </Item>
-          <Item uniqueKey="2">
+          <Item key="2">
             Two
           </Item>
-          <Item uniqueKey="3">
+          <Item key="3">
             Three
           </Item>
         </Section>
         <Section title="Section 2">
-          <Item uniqueKey="4">
+          <Item key="4">
             Four
           </Item>
-          <Item uniqueKey="5">
+          <Item key="5">
             Five
           </Item>
-          <Item uniqueKey="6">
+          <Item key="6">
             Six
           </Item>
-          <Item uniqueKey="7">
+          <Item key="7">
             Seven
           </Item>
         </Section>
@@ -294,10 +294,10 @@ storiesOf('Menu', module)
   .add(
     'with disabled menu items',
     () => (
-      <Menu items={withSection} itemKey="name" disabledKeys={['Kangaroo', 'Ross']} onAction={action('onAction')}>
+      <Menu items={withSection} disabledKeys={['Kangaroo', 'Ross']} onAction={action('onAction')}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </Menu>
@@ -308,27 +308,27 @@ storiesOf('Menu', module)
     () => (
       <Menu disabledKeys={['3', '5']} onAction={action('onAction')}>
         <Section title="Section 1">
-          <Item uniqueKey="1">
+          <Item key="1">
             One
           </Item>
-          <Item uniqueKey="2">
+          <Item key="2">
             Two
           </Item>
-          <Item uniqueKey="3">
+          <Item key="3">
             Three
           </Item>
         </Section>
         <Section title="Section 2">
-          <Item uniqueKey="4">
+          <Item key="4">
             Four
           </Item>
-          <Item uniqueKey="5">
+          <Item key="5">
             Five
           </Item>
-          <Item uniqueKey="6">
+          <Item key="6">
             Six
           </Item>
-          <Item uniqueKey="7">
+          <Item key="7">
             Seven
           </Item>
         </Section>
@@ -338,10 +338,10 @@ storiesOf('Menu', module)
   .add(
     'Multiselect menu',
     () => (
-      <Menu items={withSection} itemKey="name" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
+      <Menu items={withSection} onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item childItems={item.children}>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
           </Section>
         )}
       </Menu>
@@ -352,24 +352,24 @@ storiesOf('Menu', module)
     () => (
       <Menu onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
         <Section title="Section 1">
-          <Item uniqueKey="1">
+          <Item key="1">
             One
           </Item>
-          <Item uniqueKey="2">
+          <Item key="2">
             Two
           </Item>
-          <Item uniqueKey="3">
+          <Item key="3">
             Three
           </Item>
         </Section>
         <Section title="Section 2">
-          <Item uniqueKey="4">
+          <Item key="4">
             Four
           </Item>
-          <Item uniqueKey="5">
+          <Item key="5">
             Five
           </Item>
-          <Item uniqueKey="6">
+          <Item key="6">
             Six
           </Item>
         </Section>
@@ -379,10 +379,10 @@ storiesOf('Menu', module)
   .add(
     'Menu with autoFocus=true',
     () => (
-      <Menu items={withSection} itemKey="name" autoFocus onAction={action('onAction')}>
+      <Menu items={withSection} autoFocus onAction={action('onAction')}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </Menu>
@@ -391,10 +391,10 @@ storiesOf('Menu', module)
   .add(
     'Menu with autoFocus="first"',
     () => (
-      <Menu items={withSection} itemKey="name" autoFocus="first" onAction={action('onAction')}>
+      <Menu items={withSection} autoFocus="first" onAction={action('onAction')}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </Menu>
@@ -403,10 +403,10 @@ storiesOf('Menu', module)
   .add(
     'Menu with autoFocus="last"',
     () => (
-      <Menu items={withSection} itemKey="name" autoFocus="last" onAction={action('onAction')}>
+      <Menu items={withSection} autoFocus="last" onAction={action('onAction')}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </Menu>
@@ -415,10 +415,10 @@ storiesOf('Menu', module)
   .add(
     'Menu with keyboard selection wrapping',
     () => (
-      <Menu items={withSection} itemKey="name" shouldFocusWrap onAction={action('onAction')}>
+      <Menu items={withSection} shouldFocusWrap onAction={action('onAction')}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </Menu>
@@ -471,23 +471,23 @@ storiesOf('Menu', module)
   .add(
     'with semantic elements (generative)',
     () => (
-      <Menu items={hardModeProgrammatic} itemKey="name" onAction={action('onAction')}>
+      <Menu items={hardModeProgrammatic} onAction={action('onAction')}>
         {item => (
-          <Section items={item.children} title={item.name}>
+          <Section key={item.name} items={item.children} title={item.name}>
             {item => customMenuItem(item)}
           </Section>
         )}
       </Menu>
     )
   );
-  
+
 let customMenuItem = (item) => {
   let Icon = iconMap[item.icon];
   return (
-    <Item childItems={item.children} textValue={item.name}>
+    <Item childItems={item.children} textValue={item.name} key={item.name}>
       {item.icon && <Icon size="S" />}
       <Text>{item.name}</Text>
       {item.shortcut && <Keyboard>{item.shortcut}</Keyboard>}
     </Item>
-  );	
+  );
 };

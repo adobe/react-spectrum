@@ -59,7 +59,7 @@ function LinkPopover({id}) {
       <View slot="heading">
         <Breadcrumbs isHeading headingAriaLevel={3} onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}>
           {breadcrumbs.map((b, i) => (
-            <Item uniqueKey={i + 1}>
+            <Item key={i + 1}>
               {b.dataset.title}
             </Item>
           ))}

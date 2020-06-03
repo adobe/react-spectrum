@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CheckboxProps} from '@react-types/checkbox';
-import {DOMProps} from '@react-types/shared';
+import {AriaCheckboxProps} from '@react-types/checkbox';
 import {getRowLabelledBy} from './utils';
 import {GridState} from '@react-stately/grid';
 import {Key} from 'react';
@@ -22,7 +21,7 @@ interface SelectionCheckboxProps {
 }
 
 interface SelectionCheckboxAria {
-  checkboxProps: CheckboxProps & DOMProps,
+  checkboxProps: AriaCheckboxProps
 }
 
 export function useSelectionCheckbox<T>(props: SelectionCheckboxProps, state: GridState<T>): SelectionCheckboxAria {

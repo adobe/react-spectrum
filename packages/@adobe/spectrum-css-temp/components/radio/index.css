@@ -20,8 +20,7 @@ governing permissions and limitations under the License.
   --spectrum-radio-labelbelow-height: auto;
 
   /* Hardcoded for wrapping study.
-  Will be a DNA token in https://jira.corp.adobe.com/browse/SDS-4466
-  */
+  Will be a DNA token in https://jira.corp.adobe.com/browse/SDS-4466 */
   --spectrum-radio-label-margin-top: var(--spectrum-global-dimension-size-65);
 
   /* Fix for inconsistent line-height between browsers that would push the label 1px below the intended baseline */
@@ -41,6 +40,8 @@ governing permissions and limitations under the License.
   margin-inline-end: calc(var(--spectrum-radio-cursor-hit-x) * 2);
 
   vertical-align: top;
+
+  isolation: isolate;
 }
 
 .spectrum-Radio-input {
@@ -78,7 +79,17 @@ governing permissions and limitations under the License.
   }
 
   &:checked + .spectrum-Radio-button {
-    border-width: var(--spectrum-radio-border-width-checked);
+    &:before {
+      border-width: var(--spectrum-radio-border-width-checked);
+    }
+  }
+
+  &:focus-ring {
+    + .spectrum-Radio-button {
+      &:after {
+        margin: calc(var(--spectrum-alias-focus-ring-gap) * -1);
+      }
+    }
   }
 }
 
@@ -103,12 +114,38 @@ governing permissions and limitations under the License.
 
   flex-grow: 0;
   flex-shrink: 0;
+  &:before {
+    display: block;
+    z-index: 0;
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
 
-  border-radius: var(--spectrum-radio-radius);
-  border-width: var(--spectrum-radio-circle-border-size);
-  border-style: solid;
+    width: var(--spectrum-radio-circle-diameter);
+    height: var(--spectrum-radio-circle-diameter);
 
-  transition: border var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+    border-radius: var(--spectrum-radio-radius);
+    border-width: var(--spectrum-radio-circle-border-size);
+    border-style: solid;
+
+    transition: border var(--spectrum-global-animation-duration-100) ease-in-out,
+                box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+  }
+
+  &:after {
+    border-radius: 100%;
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    margin: var(--spectrum-alias-focus-ring-gap);
+
+    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
+                margin var(--spectrum-global-animation-duration-100) ease-out;
+  }
 }
 
 .spectrum-Radio--labelBelow {

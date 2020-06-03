@@ -17,6 +17,7 @@ import packageData from '../package.json';
 ```jsx import
 import {Button} from '@react-spectrum/button';
 import Bell from '@spectrum-icons/workflow/Bell';
+import {View} from '@react-spectrum/view';
 ```
 
 ---
@@ -37,7 +38,7 @@ category: Buttons
 ## Example
 
 ```tsx example
-<Button variant="cta">Test</Button>
+<Button variant="cta">Save</Button>
 ```
 
 ## Content
@@ -46,7 +47,7 @@ Buttons can have a label, and icon, or both. An icon is provided by passing an i
 A visible label can be provided by passing children.
 
 ```tsx example
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 
 <Button variant="primary">Label only</Button>
 <Button variant="primary">
@@ -95,39 +96,39 @@ function Example() {
 [View guidelines](https://spectrum.adobe.com/page/button/#Call-to-action)
 
 ```tsx example
-<Button variant="cta">Test</Button>
+<Button variant="cta">Save</Button>
 ```
 
 ### Primary
 [View guidelines](https://spectrum.adobe.com/page/button/#Primary)
 
 ```tsx example
-<Button variant="primary">Test</Button>
-<Button variant="primary" isQuiet>Test</Button>
+<Button variant="primary">Save</Button>
+<Button variant="primary" isQuiet>Save</Button>
 ```
 
 ### Secondary
 [View guidelines](https://spectrum.adobe.com/page/button/#Secondary)
 
 ```tsx example
-<Button variant="secondary">Test</Button>
-<Button variant="secondary" isQuiet>Test</Button>
+<Button variant="secondary">Save</Button>
+<Button variant="secondary" isQuiet>Save</Button>
 ```
 
 ### Over background
 [View guidelines](https://spectrum.adobe.com/page/button/#Over-background)
 
 ```tsx example
-<div style={{backgroundColor: 'rgb(15, 121, 125)', padding: '15px 20px'}}>
-  <Button variant="overBackground">Test</Button>
-  <Button variant="overBackground" isQuiet>Test</Button>
-</div>
+<View backgroundColor="positive" padding="size-300">
+  <Button variant="overBackground">Save</Button>
+  <Button variant="overBackground" isQuiet>Save</Button>
+</View>
 ```
 
 ### Negative
 [View guidelines](https://spectrum.adobe.com/page/button/#Negative)
 
 ```tsx example
-<Button variant="negative">Test</Button>
-<Button variant="negative" isQuiet>Test</Button>
+<Button variant="negative">Save</Button>
+<Button variant="negative" isQuiet>Save</Button>
 ```

@@ -19,7 +19,7 @@ import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Heading, Text} from '@react-spectrum/typography';
+import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';

@@ -13,9 +13,12 @@
 import React, {forwardRef, RefObject, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
+import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
 function TextField(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
+  props = useProviderProps(props);
+
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
   let {labelProps, inputProps} = useTextField(props, inputRef);
   return (
@@ -29,8 +32,8 @@ function TextField(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) 
 }
 
 /**
- * Text fields are text inputs that allow users to input custom text entries
- * with a keyboard. Various decorations can be displayed around the field to 
+ * TextFields are text inputs that allow users to input custom text entries
+ * with a keyboard. Various decorations can be displayed around the field to
  * communicate the entry requirements.
  */
 const _TextField = forwardRef(TextField);

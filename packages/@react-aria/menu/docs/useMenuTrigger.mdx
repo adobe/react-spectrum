@@ -25,6 +25,7 @@ import {useMenuTrigger} from '@react-aria/menu';
 
 ---
 category: Overlays
+keywords: [menu trigger, mutli-select menu, aria]
 ---
 
 # useMenuTrigger
@@ -44,12 +45,12 @@ category: Overlays
 
 ## Features
 
-There is no native element to implement a menu in HTML that is widely supported. `useMenuTrigger` 
+There is no native element to implement a menu in HTML that is widely supported. `useMenuTrigger`
 combined with [useMenu](useMenu.html) helps achieve accessible menu components that can be styled as needed.
 
-* Exposed to assistive technology as a button with a `menu` popup using ARIA (combined with [useMenu](useMeun.html))
+* Exposed to assistive technology as a button with a `menu` popup using ARIA (combined with [useMenu](useMenu.html))
 * Support for mouse, touch, and keyboard interactions
-* Keyboard support for opening the menu using the arrow keys, including automatically focusing 
+* Keyboard support for opening the menu using the arrow keys, including automatically focusing
   the first or last item accordingly
 
 ## Anatomy
@@ -76,7 +77,7 @@ and <TypeLink links={menuDocs.links} type={menuDocs.exports.useMenu} />.
 The menu popup uses <TypeLink links={menuDocs.links} type={menuDocs.exports.useMenu} />
 and <TypeLink links={menuDocs.links} type={menuDocs.exports.useMenuItem} /> to render the menu and
 its items. In addition, a &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;
-is used to automatically restore focus to the trigger when the menu closes. A 
+is used to automatically restore focus to the trigger when the menu closes. A
 hidden &lt;<TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.DismissButton} />&gt;
 is added at the start and end of the menu to allow screen reader users to dismiss it easily.
 
@@ -110,7 +111,7 @@ function MenuButton(props) {
 
   return (
     <div style={{position: 'relative', display: 'inline-block'}}>
-      <button 
+      <button
         {...buttonProps}
         ref={ref}
         style={{height: 30, fontSize: 14}}>
@@ -118,7 +119,7 @@ function MenuButton(props) {
         <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
       </button>
       {state.isOpen &&
-        <MenuPopup 
+        <MenuPopup
           {...props}
           domProps={menuProps}
           autoFocus={state.focusStrategy}
@@ -193,7 +194,7 @@ function MenuItem({item, state, onAction, onClose}) {
     onClose
   }, state);
 
-  // Handle focus events so we can apply highlighted 
+  // Handle focus events so we can apply highlighted
   // style to the focused menu item
   let [isFocused, setFocused] = React.useState(false);
   let {focusProps} = useFocus({onFocusChange: setFocused});
@@ -215,9 +216,9 @@ function MenuItem({item, state, onAction, onClose}) {
 }
 
 <MenuButton label="Actions" onAction={alert}>
-  <Item uniqueKey="copy">Copy</Item>
-  <Item uniqueKey="cut">Cut</Item>
-  <Item uniqueKey="paste">Paste</Item>
+  <Item key="copy">Copy</Item>
+  <Item key="cut">Cut</Item>
+  <Item key="paste">Paste</Item>
 </MenuButton>
 ```
 

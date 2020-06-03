@@ -30,13 +30,10 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
     hasChildNodes: true,
     *childNodes() {
       // Process cells first
-      let index = 0;
-
       if (context.showSelectionCheckboxes && context.selectionMode !== 'none') {
         yield {
           type: 'cell',
           key: 'header', // this is combined with the row key by CollectionBuilder
-          index: index++,
           props: {
             isSelectionCell: true
           }
@@ -48,23 +45,23 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
           yield {
             type: 'cell',
             element: children(column.key),
-            key: column.key, // this is combined with the row key by CollectionBuilder
-            index: index++
+            key: column.key // this is combined with the row key by CollectionBuilder
           };
         }
       } else {
-        let cells = React.Children.toArray(children);
+        let cells: PartialNode<T>[] = [];
+        React.Children.forEach(children, cell => {
+          cells.push({
+            type: 'cell',
+            element: cell
+          });
+        });
+
         if (cells.length !== context.columns.length) {
           throw new Error(`Cell count must match column count. Found ${cells.length} cells and ${context.columns.length} columns.`);
         }
 
-        for (let cell of cells) {
-          yield {
-            type: 'cell',
-            element: cell,
-            index: index++
-          };
-        }
+        yield* cells;
       }
 
       // Then process child rows (e.g. treeble)
