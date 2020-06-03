@@ -33,12 +33,24 @@ storiesOf('Breadcrumbs', module)
     () => renderMany({})
   )
   .add(
+    'multiline',
+    () => render({multiline: true})
+  )
+  .add(
     'size: S',
     () => render({size: 'S'})
   )
   .add(
-    'size: L',
-    () => render({size: 'L'})
+    'size: S, multiline',
+    () => render({size: 'S', multiline: true})
+  )
+  .add(
+    'size: M',
+    () => render({size: 'M'})
+  )
+  .add(
+    'size: M, multiline',
+    () => render({size: 'M', multiline: true})
   )
   .add(
     'maxVisibleItems: 4',
@@ -61,10 +73,10 @@ storiesOf('Breadcrumbs', module)
     )
   )
   .add(
-    'collapsed, maxVisibleItems: auto, size: L',
+    'collapsed, maxVisibleItems: auto, multiline',
     () => (
       <div style={{width: '100px'}}>
-        {renderMany({maxVisibleItems: 'auto', size: 'L'})}
+        {renderMany({maxVisibleItems: 'auto', multiline: true})}
       </div>
     )
   )
@@ -73,20 +85,20 @@ storiesOf('Breadcrumbs', module)
     () => renderMany({maxVisibleItems: 'auto', showRoot: true})
   )
   .add(
-    'maxVisibleItems: auto, size: L',
-    () => renderMany({maxVisibleItems: 'auto', size: 'L'})
+    'maxVisibleItems: auto, multiline',
+    () => renderMany({maxVisibleItems: 'auto', multiline: true})
   )
   .add(
-    'maxVisibleItems: auto, size: L, showRoot: true',
-    () => renderMany({maxVisibleItems: 'auto', size: 'L', showRoot: true})
+    'maxVisibleItems: auto, multiline, showRoot: true',
+    () => renderMany({maxVisibleItems: 'auto', multiline: true, showRoot: true})
   )
   .add(
     'isDisabled: true',
     () => render({isDisabled: true})
   )
   .add(
-    'isDisabled: true, size: L',
-    () => render({isDisabled: true, size: 'L'})
+    'isDisabled: true, multiline',
+    () => render({isDisabled: true, multiline: true})
   )
   .add(
     'isDisabled: true, maxVisibleItems: 4',
@@ -97,8 +109,8 @@ storiesOf('Breadcrumbs', module)
     () => render({isHeading: true})
   )
   .add(
-    'isHeading: true, size: L',
-    () => render({isHeading: true, size: 'L'})
+    'isHeading: true, multiline',
+    () => render({isHeading: true, multiline: true})
   );
 
 function render(props = {}) {

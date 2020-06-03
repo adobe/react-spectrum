@@ -121,9 +121,21 @@ governing permissions and limitations under the License.
   pointer-events: none;
 }
 
-.spectrum-Breadcrumbs--compact {
+.spectrum-Breadcrumbs--small {
+  .spectrum-Breadcrumbs-item {
+    font-size: var(--spectrum-breadcrumb-multiline-item-text-size);
+  }
+}
+
+.spectrum-Breadcrumbs--medium {
   .spectrum-Breadcrumbs-item {
     font-size: var(--spectrum-breadcrumb-compact-item-text-size);
+  }
+}
+
+.spectrum-Breadcrumbs--large {
+  .spectrum-Breadcrumbs-item {
+    font-size: var(--spectrum-breadcrumb-item-text-size);
   }
 }
 
@@ -131,10 +143,6 @@ governing permissions and limitations under the License.
   flex-wrap: wrap;
 
   .spectrum-Breadcrumbs-item {
-    font-size: var(--spectrum-breadcrumb-multiline-item-text-size);
-    font-weight: var(--spectrum-breadcrumb-multiline-item-text-font-weight);
-    line-height: var(--spectrum-breadcrumb-multiline-item-text-line-height);
-
     &:last-of-type {
       height: auto;
 

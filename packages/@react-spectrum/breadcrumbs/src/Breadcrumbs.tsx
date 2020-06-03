@@ -34,7 +34,8 @@ const MAX_VISIBLE_ITEMS = 5;
 function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   props = useProviderProps(props);
   let {
-    size = 'M',
+    size = 'L',
+    multiline,
     children,
     isHeading,
     headingAriaLevel,
@@ -201,8 +202,10 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
             styles,
             'spectrum-Breadcrumbs',
             {
-              'spectrum-Breadcrumbs--compact': size === 'S',
-              'spectrum-Breadcrumbs--multiline': size === 'L',
+              'spectrum-Breadcrumbs--small': size === 'S',
+              'spectrum-Breadcrumbs--medium': size === 'M',
+              'spectrum-Breadcrumbs--large': size === 'L',
+              'spectrum-Breadcrumbs--multiline': multiline,
               'is-disabled': isDisabled
             },
             styleProps.className

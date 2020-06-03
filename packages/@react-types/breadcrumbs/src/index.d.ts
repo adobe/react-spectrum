@@ -56,7 +56,7 @@ export interface AriaBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps, 
 export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, StyleProps {
   /**
    * Size of the Breadcrumbs including spacing and layout.
-   * @default "M"
+   * @default "L"
    */
   size?: 'S' | 'M' | 'L',
   /**
@@ -65,5 +65,9 @@ export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, St
    */
   maxVisibleItems?: 'auto' | number,
   /** Whether to always show the root item if the items are collapsed. */
-  showRoot?: boolean
+  showRoot?: boolean,
+  /**
+   * Whether to place the last Breadcrumb onto a new line.
+   */
+  multiline?: boolean
 }
