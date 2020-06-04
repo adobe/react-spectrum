@@ -22,5 +22,9 @@ export interface HeadingProps extends DOMProps, StyleProps {
    * A slot to place the heading in.
    * @default "heading"
    */
-  slot?: string
+  slot?: string,
+  /**
+   * Sets aria-level on the heading.
+   */
+  level?: number
 }

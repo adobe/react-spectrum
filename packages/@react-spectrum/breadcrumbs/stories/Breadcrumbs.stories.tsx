@@ -150,7 +150,7 @@ function renderHeading(props = {}) {
         My Documents
       </Item>
       <Item key="Folder 3">
-        <Heading>
+        <Heading level={1}>
           Kangaroos jump high
         </Heading>
       </Item>

@@ -20,15 +20,16 @@ function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   props = useSlotProps(props, 'heading');
   let {
     children,
+    level,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
   return (
-    <h1 {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+    <h3 {...filterDOMProps(otherProps)} {...styleProps} ref={domRef} aria-level={level}>
       {children}
-    </h1>
+    </h3>
   );
 }
 

@@ -53,7 +53,7 @@ Breadcrumbs follow the [Collection Components](../react-stately/collections.html
 In order to internationalize Breadcrumbs, the strings of all child items should be localized.
 
 ### Breadcrumb as heading
-To make the selected Breadcrumb a heading, simply include the Heading component inside your Item.
+To make the selected Breadcrumb a heading, simply include the Heading component inside your Item. You may change the `aria-level` of the Heading by providing the `level` prop to the Heading.
 
 ```tsx example
 <Breadcrumbs>
@@ -64,7 +64,7 @@ To make the selected Breadcrumb a heading, simply include the Heading component 
     Trendy
   </Item>
   <Item key="march 2020 assets">
-    <Heading>
+    <Heading level={2}>
       March 2020 Assets
     </Heading>
   </Item>
@@ -102,8 +102,6 @@ function Example() {
 ### Size
 [View guidelines](https://spectrum.adobe.com/page/breadcrumbs/#Options)
 
-Breadcrumb supports small, medium, and large sizes.
-
 Small
 ```tsx example
 <Breadcrumbs size="S">
@@ -137,6 +135,7 @@ This adds emphasis to the selected item as a page title or heading.
 <Breadcrumbs isMultiline>
   <Item key="home">Home</Item>
   <Item key="trendy">Trendy</Item>
+  <Item key="march 2020 assets">March 2020 Assets</Item>
 </Breadcrumbs>
 ```
 
