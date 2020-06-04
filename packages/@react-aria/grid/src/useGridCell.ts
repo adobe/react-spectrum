@@ -56,7 +56,6 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
 
   // TODO: move into useSelectableItem?
   let {pressProps} = usePress(itemProps);
-  let interactions = mergeProps(itemProps, pressProps);
 
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
@@ -81,7 +80,7 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
     });
   };
 
-  let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(interactions, {
+  let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {
     role: 'gridcell',
     onFocus
   });

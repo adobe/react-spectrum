@@ -37,7 +37,7 @@ category: Buttons
 ## Example
 
 ```tsx example
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 
 <ActionButton>
   <Edit />
@@ -101,31 +101,6 @@ function Example() {
 
 ```tsx example
 <ActionButton isQuiet>Action!</ActionButton>
-```
-
-### Selected
-[View guidelines](https://spectrum.adobe.com/page/action-button/#Selected)
-
-```tsx example
-<ActionButton isSelected>Action!</ActionButton>
-```
-
-### Emphasis
-[View guidelines](https://spectrum.adobe.com/page/action-button/#Emphasis)
-
-Note that the styling provided by the `isEmphasized` prop is only applied when the `isSelected` prop is true.
-
-```tsx example
-<ActionButton isEmphasized isSelected>Action!</ActionButton>
-```
-
-### Hold affordance
-[View guidelines](https://spectrum.adobe.com/page/action-button/#Hold-icon)
-
-```tsx example
-<ActionButton holdAffordance aria-label="Edit">
-  <Edit />
-</ActionButton>
 ```
 
 ### Disabled

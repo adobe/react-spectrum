@@ -42,7 +42,7 @@ describe('useAsyncList', () => {
     let args = load.mock.calls[0][0];
     expect(args.items).toEqual([]);
     expect(args.selectedKeys).toEqual(new Set());
-    
+
     expect(result.current.isLoading).toBe(true);
     expect(result.current.items).toEqual([]);
 
@@ -144,7 +144,7 @@ describe('useAsyncList', () => {
       sort,
       initialSortDescriptor: {direction: 'ASC'}
     }));
-    
+
     expect(load).toHaveBeenCalledTimes(1);
     let args = load.mock.calls[0][0];
     expect(args.sortDescriptor).toEqual({direction: 'ASC'});
@@ -278,7 +278,7 @@ describe('useAsyncList', () => {
         isAborted = true;
         reject();
       });
-  
+
       setTimeout(() => resolve({items: ITEMS}), 100);
     }));
 
@@ -462,7 +462,7 @@ describe('useAsyncList', () => {
         isAborted = true;
         reject();
       });
-  
+
       setTimeout(() => resolve({items: ITEMS}), 100);
     }));
 
@@ -632,26 +632,40 @@ describe('useAsyncList', () => {
     expect(result.current.items).toEqual([ITEMS[0], {name: 'Test', id: 5}, ...ITEMS.slice(1)]);
   });
 
-  it('should throw if updating the list while loading', async () => {
-    let load = jest.fn().mockImplementation(getItems);
-    let {result} = renderHook(
-      () => useAsyncList({load})
-    );
+  describe('unwanted error', function () {
+    // temporarily disable console error https://github.com/facebook/react/issues/15520
+    // https://github.com/testing-library/react-hooks-testing-library/issues/43
+    const consoleError = console.error;
+    beforeEach(() => {
+      console.error = () => {};
+    });
 
-    expect(load).toHaveBeenCalledTimes(1);
-    expect(result.current.isLoading).toBe(true);
-    expect(result.current.items).toEqual([]);
+    afterEach(() => {
+      console.error = consoleError;
+    });
 
-    // Ignore fewer hooks than expected error from react
-    try {
-      act(() => {
-        result.current.insert(1, {name: 'Test', id: 5});
-      });
-    } catch (err) {
-      // ignore
-    }
+    it('should throw if updating the list while loading', async () => {
+      let load = jest.fn().mockImplementation(getItems);
+      let {result} = renderHook(
+        () => useAsyncList({load})
+      );
 
-    expect(result.error).toEqual(new Error('Invalid action "update" in state "loading"'));
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.items).toEqual([]);
+
+      // Ignore fewer hooks than expected error from react, it happens because we throw in the reducer
+      // and since we're testing that, we can safely ignore the react warning
+      try {
+        act(() => {
+          result.current.insert(1, {name: 'Test', id: 5});
+        });
+      } catch (err) {
+        // ignore
+      }
+
+      expect(result.error).toEqual(new Error('Invalid action "update" in state "loading"'));
+    });
   });
 
   it('should get an item by key', async function () {

@@ -21,7 +21,7 @@ import {Item, Picker, Section} from '../';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
 
 let flatOptions = [
@@ -317,7 +317,7 @@ storiesOf('Picker', module)
   .add(
     'custom widths',
     () => (
-      <Flex flexDirection="column">
+      <Flex direction="column">
         <Picker label="Test" width="size-1200" onSelectionChange={action('selectionChange')}>
           <Item>One</Item>
           <Item>Two</Item>
@@ -334,7 +334,7 @@ storiesOf('Picker', module)
   .add(
     'custom widths, labelPosition: side',
     () => (
-      <Flex flexDirection="column">
+      <Flex direction="column">
         <Picker label="Test" width="size-1200" labelPosition="side" onSelectionChange={action('selectionChange')}>
           <Item>One</Item>
           <Item>Two</Item>
@@ -351,7 +351,7 @@ storiesOf('Picker', module)
   .add(
     'custom menu widths',
     () => (
-      <Flex flexDirection="column">
+      <Flex direction="column">
         <Picker label="Test" menuWidth="size-1000" onSelectionChange={action('selectionChange')}>
           <Item>One</Item>
           <Item>Two</Item>
@@ -368,7 +368,7 @@ storiesOf('Picker', module)
   .add(
     'custom menu widths, isQuiet',
     () => (
-      <Flex flexDirection="column">
+      <Flex direction="column">
         <Picker label="Test" menuWidth="size-400" isQuiet onSelectionChange={action('selectionChange')}>
           <Item>One</Item>
           <Item>Two</Item>

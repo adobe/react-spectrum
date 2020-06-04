@@ -15,7 +15,7 @@ import {fireEvent, render, within} from '@testing-library/react';
 import {Item, ListBox, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 

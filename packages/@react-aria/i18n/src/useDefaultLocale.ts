@@ -10,25 +10,50 @@
  * governing permissions and limitations under the License.
  */
 
+import {Direction} from '@react-types/shared';
+import {isRTL} from './utils';
 import {useEffect, useState} from 'react';
 
-export function getDefaultLocale() {
+export interface Locale {
+  locale: string,
+  direction: Direction
+}
+
+export function getDefaultLocale(): Locale {
   // @ts-ignore
-  return (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || 'en-US';
+  let locale = (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || 'en-US';
+  return {
+    locale,
+    direction: isRTL(locale) ? 'rtl' : 'ltr'
+  };
+}
+
+let currentLocale = getDefaultLocale();
+let listeners = new Set<(locale: Locale) => void>();
+
+function updateLocale() {
+  currentLocale = getDefaultLocale();
+  for (let listener of listeners) {
+    listener(currentLocale);
+  }
 }
 
 // Returns the current browser/system language, and updates when it changes.
 export function useDefaultLocale() {
-  let [defaultLocale, setDefaultLocale] = useState(getDefaultLocale());
+  let [defaultLocale, setDefaultLocale] = useState(currentLocale);
 
   useEffect(() => {
-    let updateLocale = () => {
-      setDefaultLocale(getDefaultLocale());
-    };
+    if (listeners.size === 0) {
+      window.addEventListener('languagechange', updateLocale);
+    }
 
-    window.addEventListener('languagechange', updateLocale);
+    listeners.add(setDefaultLocale);
+
     return () => {
-      window.removeEventListener('languagechange', updateLocale);
+      listeners.delete(setDefaultLocale);
+      if (listeners.size === 0) {
+        window.removeEventListener('languagechange', updateLocale);
+      }
     };
   }, []);
 
