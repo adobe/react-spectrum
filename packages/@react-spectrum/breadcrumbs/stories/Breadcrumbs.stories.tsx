@@ -119,15 +119,15 @@ storiesOf('Breadcrumbs', module)
   )
   .add(
     'last item Heading, isMultiline',
-    () => renderHeading({isHeading: true, isMultiline: true})
+    () => renderHeading({isMultiline: true})
   )
   .add(
     'last item Heading, size: S, isMultiline',
-    () => renderHeading({isHeading: true, isMultiline: true, size: 'S'})
+    () => renderHeading({isMultiline: true, size: 'S'})
   )
   .add(
     'last item Heading, size: M, isMultiline',
-    () => renderHeading({isHeading: true, isMultiline: true, size: 'M'})
+    () => renderHeading({isMultiline: true, size: 'M'})
   );
 
 function render(props = {}) {
