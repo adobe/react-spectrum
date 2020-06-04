@@ -446,7 +446,9 @@ describe('Radios', function () {
       let button = getByRole('button');
 
       act(() => {
+        fireEvent.keyDown(button, {key: 'Tab'});
         userEvent.tab();
+        fireEvent.keyUp(button, {key: 'Tab'});
       });
       expect(document.activeElement).toBe(button);
       expect(document.activeElement).not.toBe(radios[0]);
@@ -454,7 +456,9 @@ describe('Radios', function () {
       expect(document.activeElement).not.toBe(radios[2]);
 
       act(() => {
+        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
         userEvent.tab();
+        fireEvent.keyUp(document.activeElement, {key: 'Tab'});
       });
       expect(document.activeElement).not.toBe(button);
       expect(document.activeElement).toBe(radios[0]);
@@ -462,7 +466,9 @@ describe('Radios', function () {
       expect(document.activeElement).not.toBe(radios[2]);
 
       act(() => {
+        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
         userEvent.tab();
+        fireEvent.keyUp(document.activeElement, {key: 'Tab'});
       });
       expect(document.activeElement).toBe(button);
       expect(document.activeElement).not.toBe(radios[0]);
