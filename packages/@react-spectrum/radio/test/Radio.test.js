@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, createEvent, fireEvent, render} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../';
@@ -445,10 +445,14 @@ describe('Radios', function () {
       let radios = getAllByRole('radio');
       let button = getByRole('button');
 
+      let preventDefault = jest.fn();
       act(() => {
-        fireEvent.keyDown(button, {key: 'Tab'});
-        userEvent.tab();
-        fireEvent.keyUp(button, {key: 'Tab'});
+        let tabEvent = createEvent.keyDown(button, {key: 'Tab'});
+        fireEvent(button, tabEvent);
+        if (!tabEvent.defaultPrevented) {
+          userEvent.tab();
+        }
+        fireEvent.keyUp(button, {key: 'Tab', preventDefault});
       });
       expect(document.activeElement).toBe(button);
       expect(document.activeElement).not.toBe(radios[0]);
@@ -456,9 +460,12 @@ describe('Radios', function () {
       expect(document.activeElement).not.toBe(radios[2]);
 
       act(() => {
-        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-        userEvent.tab();
-        fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+        let tabEvent = createEvent.keyDown(button, {key: 'Tab'});
+        fireEvent(document.activeElement, tabEvent);
+        if (!tabEvent.defaultPrevented) {
+          userEvent.tab();
+        }
+        fireEvent.keyUp(document.activeElement, {key: 'Tab', preventDefault});
       });
       expect(document.activeElement).not.toBe(button);
       expect(document.activeElement).toBe(radios[0]);
@@ -466,9 +473,12 @@ describe('Radios', function () {
       expect(document.activeElement).not.toBe(radios[2]);
 
       act(() => {
-        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-        userEvent.tab();
-        fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+        let tabEvent = createEvent.keyDown(button, {key: 'Tab'});
+        fireEvent(document.activeElement, tabEvent);
+        if (!tabEvent.defaultPrevented) {
+          userEvent.tab();
+        }
+        fireEvent.keyUp(document.activeElement, {key: 'Tab', preventDefault});
       });
       expect(document.activeElement).toBe(button);
       expect(document.activeElement).not.toBe(radios[0]);
