@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
@@ -35,7 +35,6 @@ export function Tab(props: TabProps) {
   let {tabProps} = useTab(props);
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       {...tabProps}
       className={classNames(

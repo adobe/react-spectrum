@@ -43,18 +43,18 @@ storiesOf('Tree', module)
   .add(
     'Default',
     () => (
-      <Tree items={items} itemKey="name" onSelectionChange={keys => console.log(keys)}>
-        {item => <Item childItems={item.children}>{item.name}</Item>}
+      <Tree items={items} onSelectionChange={keys => console.log(keys)}>
+        {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
       </Tree>
     )
   )
   .add(
     'Sections',
     () => (
-      <Tree items={items} itemKey="name">
+      <Tree items={items}>
         {item => (
-          <Section items={item.children} title={item.name}>
-            {item => <Item childItems={item.children}>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
           </Section>
         )}
       </Tree>
@@ -97,8 +97,8 @@ storiesOf('Tree', module)
     () => (
       <div>
         <input />
-        <Tree items={longList} itemKey="name">
-          {item => <Item>{item.name}</Item>}
+        <Tree items={longList}>
+          {item => <Item key={item.name}>{item.name}</Item>}
         </Tree>
         <input />
       </div>

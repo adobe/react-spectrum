@@ -19,15 +19,21 @@ type ToastPlacement = 'top' | 'top left' | 'top center' | 'top right'
 export type ColorScheme = 'light' | 'dark';
 export type Scale = 'medium' | 'large';
 
-export interface CSSModule {
+export type CSSModule = {
   [className: string]: string
-}
+};
 
+/** A theme object defines CSS variables for a theme, across multiple color schemes and scales. */
 export interface Theme {
+  /** CSS module defining the global variables, which do not change between color schemes/scales. */
   global?: CSSModule,
+  /** CSS module defining the variables for the light color scheme. */
   light?: CSSModule,
+  /** CSS module defining the variables for the dark color scheme. */
   dark?: CSSModule,
+  /** CSS module defining the variables for the medium scale. */
   medium?: CSSModule,
+  /** CSS module defining the variables for the large scale. */
   large?: CSSModule
 }
 
@@ -74,12 +80,6 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
    * By default this is selected based on touch or mouse pointer type of the OS.
    */
   scale?: Scale,
-  /**
-   * A Typekit ID is required to use the suggested fonts.
-   * Visit https://typekit.com/account/kits to create one.
-   * The default is only intended for prototyping work.
-   */
-  typekitId?: string,
   /**
    * Locale (language specific format) of this provider and its children.
    * Using the format primary-region, ex. en-US, fr-CA, ar-AE.

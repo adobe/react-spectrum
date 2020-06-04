@@ -12,7 +12,7 @@
 
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {CollectionItem, layoutInfoToStyle, ScrollView, setScrollLeft, useCollectionView} from '@react-aria/collections';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
@@ -31,16 +31,24 @@ import {useColumnHeader, useGrid, useGridCell, useRow, useRowGroup, useRowHeader
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
-const MIN_ROW_HEIGHT = 48;
-const MAX_ROW_HEIGHT = 72;
-const DEFAULT_ROW_HEIGHT = {
-  medium: 48,
-  large: 64
-};
-
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,
   large: 40
+};
+
+const ROW_HEIGHTS = {
+  compact: {
+    medium: 32,
+    large: 40
+  },
+  regular: {
+    medium: 40,
+    large: 50
+  },
+  spacious: {
+    medium: 48,
+    large: 60
+  }
 };
 
 const TableContext = React.createContext<GridState<unknown>>(null);
@@ -57,21 +65,22 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let formatMessage = useMessageFormatter(intlMessages);
 
   let {scale} = useProvider();
+  let density = props.density || 'regular';
   let layout = useMemo(() => new TableLayout({
     // If props.rowHeight is auto, then use estimated heights based on scale, otherwise use fixed heights.
-    rowHeight: props.rowHeight === 'auto' 
+    rowHeight: props.overflowMode === 'wrap' 
       ? null 
-      : Math.max(MIN_ROW_HEIGHT, Math.min(MAX_ROW_HEIGHT, props.rowHeight)) || DEFAULT_ROW_HEIGHT[scale],
-    estimatedRowHeight: props.rowHeight === 'auto' 
-      ? DEFAULT_ROW_HEIGHT[scale] 
+      : ROW_HEIGHTS[density][scale],
+    estimatedRowHeight: props.overflowMode === 'wrap' 
+      ? ROW_HEIGHTS[density][scale]
       : null,
-    headingHeight: props.rowHeight === 'auto' 
+    headingHeight: props.overflowMode === 'wrap' 
       ? null 
       : DEFAULT_HEADER_HEIGHT[scale],
-    estimatedHeadingHeight: props.rowHeight === 'auto' 
+    estimatedHeadingHeight: props.overflowMode === 'wrap' 
       ? DEFAULT_HEADER_HEIGHT[scale] 
       : null
-  }), [props.rowHeight, scale]);
+  }), [props.overflowMode, scale, density]);
   let {direction} = useLocale();
   layout.collection = state.collection;
 
@@ -211,10 +220,23 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   return (
     <TableContext.Provider value={state}>
       <TableCollectionView
-        {...filterDOMProps(props)}
         {...gridProps}
         {...styleProps}
-        isQuiet={isQuiet}
+        className={
+          classNames(
+            styles,
+            'spectrum-Table',
+            `spectrum-Table--${density}`,
+            {
+              'spectrum-Table--quiet': isQuiet,
+              'spectrum-Table--wrap': props.overflowMode === 'wrap'
+            },
+            classNames(
+              stylesOverrides,
+              'react-spectrum-Table'
+            )
+          )
+        }
         layout={layout}
         collection={state.collection}
         focusedKey={state.selectionManager.focusedKey}
@@ -226,17 +248,20 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
 }
 
 // This is a custom CollectionView that also has a header that syncs its scroll position with the body.
-function TableCollectionView({layout, collection, focusedKey, renderView, renderWrapper, domRef, isQuiet, ...otherProps}) {
+function TableCollectionView({layout, collection, focusedKey, renderView, renderWrapper, domRef, ...otherProps}) {
   let {direction} = useLocale();
+  let headerRef = useRef<HTMLDivElement>();
+  let bodyRef = useRef<HTMLDivElement>();
   let collectionState = useCollectionState({
     layout,
     collection,
     renderView,
     renderWrapper,
     onVisibleRectChange(rect) {
-      domRef.current.scrollTop = rect.y;
-      setScrollLeft(domRef.current, direction, rect.x);
-    }
+      bodyRef.current.scrollTop = rect.y;
+      setScrollLeft(bodyRef.current, direction, rect.x);
+    },
+    transitionDuration: collection.body.props.isLoading && collection.size > 0 ? 0 : 500
   });
 
   let {collectionViewProps} = useCollectionView({focusedKey}, collectionState, domRef);
@@ -245,10 +270,9 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
   let visibleRect = collectionState.collectionManager.visibleRect;
 
   // Sync the scroll position from the table body to the header container.
-  let headerRef = useRef<HTMLDivElement>();
   let onScroll = useCallback(() => {
-    headerRef.current.scrollLeft = domRef.current.scrollLeft;
-  }, [domRef]);
+    headerRef.current.scrollLeft = bodyRef.current.scrollLeft;
+  }, [bodyRef]);
 
   let onVisibleRectChange = useCallback((rect: Rect) => {
     collectionState.setVisibleRect(rect);
@@ -259,24 +283,12 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
         collection.body.props.onLoadMore();
       }
     }
-  }, [collection.body.props, collectionState]);
+  }, [collection.body.props, collectionState.setVisibleRect, collectionState.collectionManager]);
 
   return (
     <div
       {...mergeProps(otherProps, collectionViewProps)}
-      className={
-        classNames(
-          styles,
-          'spectrum-Table',
-          {
-            'spectrum-Table--quiet': isQuiet
-          },
-          classNames(
-            stylesOverrides,
-            'react-spectrum-Table'
-          )
-        )
-      }>
+      ref={domRef}>
       <div
         role="presentation"
         style={{
@@ -295,7 +307,7 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
         className={classNames(styles, 'spectrum-Table-body')}
         style={{flex: 1}}
         innerStyle={{overflow: 'visible', transition: collectionState.isAnimating ? `none ${collectionState.collectionManager.transitionDuration}ms` : undefined}}
-        ref={domRef}
+        ref={bodyRef}
         contentSize={collectionState.contentSize}
         onVisibleRectChange={onVisibleRectChange}
         onScrollStart={collectionState.startScrolling}
@@ -507,33 +519,12 @@ function TableCell({cell}) {
     ref,
     isVirtualized: true
   }, state);
-  let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
 
   return (
-    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div 
-        {...gridCellProps}
-        ref={ref}
-        className={
-          classNames(
-            styles,
-            'spectrum-Table-cell',
-            {
-              'spectrum-Table-cell--divider': columnProps.showDivider
-            },
-            classNames(
-              stylesOverrides,
-              'react-spectrum-Table-cell',
-              {
-                'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center',
-                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end'  
-              }
-            )
-          )
-        }>
-        {cell.rendered}
-      </div>
-    </FocusRing>
+    <TableCellBase
+      {...gridCellProps}
+      cell={cell}
+      cellRef={ref} />
   );
 }
 
@@ -545,13 +536,23 @@ function TableRowHeader({cell}) {
     ref,
     isVirtualized: true
   }, state);
+
+  return (
+    <TableCellBase
+      {...rowHeaderProps}
+      cell={cell}
+      cellRef={ref} />
+  );
+}
+
+function TableCellBase({cell, cellRef, ...otherProps}) {
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div 
-        {...rowHeaderProps}
-        ref={ref}
+        {...otherProps}
+        ref={cellRef}
         className={
           classNames(
             styles,
@@ -569,7 +570,9 @@ function TableRowHeader({cell}) {
             )
           )
         }>
-        {cell.rendered}
+        <span className={classNames(styles, 'spectrum-Table-cellContents')}>
+          {cell.rendered}
+        </span>
       </div>
     </FocusRing>
   );

@@ -26,6 +26,7 @@ import {useSelect} from '@react-aria/select';
 
 ---
 category: Forms
+keywords: [listbox, select, aria, form]
 ---
 
 # useSelect
@@ -46,8 +47,8 @@ category: Forms
 ## Features
 
 A select can be built using the [&lt;select&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/select)
-and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option) HTML elements, but this is 
-not possible to style consistently cross browser, especially the options. `useSelect` helps achieve accessible 
+and [&lt;option&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/option) HTML elements, but this is
+not possible to style consistently cross browser, especially the options. `useSelect` helps achieve accessible
 select components that can be styled as needed without compromising on high quality interactions.
 
 * Exposed to assistive technology as a button with a `listbox` popup using ARIA (combined with [useListBox](useListBox.html))
@@ -57,7 +58,7 @@ select components that can be styled as needed without compromising on high qual
 * Labeling support for accessibility
 * Support for mouse, touch, and keyboard interactions
 * Tab stop focus management
-* Keyboard support for opening the listbox using the arrow keys, including automatically focusing 
+* Keyboard support for opening the listbox using the arrow keys, including automatically focusing
   the first or last item accordingly
 * Typeahead to allow selecting options by typing text, even without opening the listbox
 * Browser autofill integration via a hidden native `<select>` element
@@ -82,17 +83,17 @@ State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.ex
 hook from `@react-stately/select`. The state object should be passed as an option to `useSelect`
 
 If a select not have a visible label, an `aria-label` or `aria-labelledby`
-prop must be passed instead to identify it to assisitive technology.
+prop must be passed instead to identify it to assistive technology.
 
 ## State management
 
 `useSelect` requires knowledge of the options in the select in order to handle keyboard
 navigation and other interactions. It does this using the <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} />
-interface, which is a generic interface to access sequential unique keyed data. You can 
-implement this interface yourself, e.g. by using a prop to pass a list of item objects, 
-but <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSelectState} /> from 
+interface, which is a generic interface to access sequential unique keyed data. You can
+implement this interface yourself, e.g. by using a prop to pass a list of item objects,
+but <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSelectState} /> from
 `@react-stately/select` implements a JSX based interface for building collections instead.
-See [Collection Components](/react-stately/collections.html) for more information, 
+See [Collection Components](/react-stately/collections.html) for more information,
 and [Collection Interface](/react-stately/Collection.html) for internal details.
 
 In addition, <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSelectState} />
@@ -106,13 +107,13 @@ For more information about selection, see [Selection](/react-stately/selection.h
 
 This example uses a `<button>` element for the trigger, with a `<span>` inside to hold the value,
 and another for the dropdown arrow icon (hidden from screen readers with `aria-hidden`).
-A &lt;<TypeLink links={docs.links} type={docs.exports.HiddenSelect} />&gt; is used to render a hidden native 
+A &lt;<TypeLink links={docs.links} type={docs.exports.HiddenSelect} />&gt; is used to render a hidden native
 `<select>`, which enables browser form autofill support.
 
 The listbox popup uses <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useListBox} />
-and <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useOption} /> to render the 
+and <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useOption} /> to render the
 list of options. In addition, a &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;
-is used to automatically restore focus to the trigger 
+is used to automatically restore focus to the trigger
 when the popup closes. A hidden &lt;<TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.DismissButton} />&gt;
 is added at the start and end of the popup to allow screen reader users to dismiss the popup.
 
@@ -158,12 +159,12 @@ function Select(props) {
         triggerRef={triggerRef}
         label={props.label}
         name={props.name} />
-      <button 
+      <button
         {...buttonProps}
         ref={triggerRef}
         style={{height: 30, fontSize: 14}}>
         <span {...valueProps}>
-          {state.selectedItem 
+          {state.selectedItem
             ? state.selectedItem.rendered
             : 'Select an option'
           }
@@ -175,7 +176,7 @@ function Select(props) {
         </span>
       </button>
       {state.isOpen &&
-        <ListBoxPopup 
+        <ListBoxPopup
           {...menuProps}
           state={state} />
       }
@@ -251,7 +252,7 @@ function Option({item, state}) {
     shouldFocusOnHover: true
   }, state);
 
-  // Handle focus events so we can apply highlighted 
+  // Handle focus events so we can apply highlighted
   // style to the focused option
   let [isFocused, setFocused] = React.useState(false);
   let {focusProps} = useFocus({onFocusChange: setFocused});
@@ -261,9 +262,9 @@ function Option({item, state}) {
       {...mergeProps(optionProps, focusProps)}
       ref={ref}
       style={{
-        background: isSelected 
-          ? 'blueviolet' 
-          : isFocused 
+        background: isSelected
+          ? 'blueviolet'
+          : isFocused
             ? 'gray'
             : 'transparent',
         color: isSelected || isFocused ? 'white' : 'black',
@@ -289,9 +290,9 @@ function Option({item, state}) {
 ## Internationalization
 
 `useSelect` and `useListBox` handle some aspects of internationalization automatically.
-For example, type to select is implemented with an 
+For example, type to select is implemented with an
 [Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Collator)
-for internationalized string matching. You are responsible for localizing all labels and option 
+for internationalized string matching. You are responsible for localizing all labels and option
 content that is passed into the select.
 
 ### RTL

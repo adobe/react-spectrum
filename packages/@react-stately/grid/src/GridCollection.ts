@@ -83,7 +83,6 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
 
       let childKeys = new Set();
       let last: GridNode<T>;
-      let index = 0;
       for (let child of node.childNodes) {
         childKeys.add(child.key);
 
@@ -94,7 +93,6 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
           child.prevKey = null;
         }
   
-        child.index = index++;
         visit(child);
         last = child;
       }
@@ -124,7 +122,6 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
     
     let bodyKeys = new Set();
     let last: GridNode<T>;
-    let index = 0;
     for (let node of nodes) {
       if (last) {
         last.nextKey = node.key;
@@ -133,7 +130,6 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
         node.prevKey = null;
       }
 
-      node.index = index++;
       visit(node);
       if (node.type !== 'column') {
         bodyKeys.add(node.key);

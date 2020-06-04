@@ -11,7 +11,7 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {ProgressBarProps} from '@react-types/progress';
 import React, {CSSProperties, HTMLAttributes} from 'react';
@@ -61,7 +61,6 @@ function ProgressBarBase(props: ProgressBarBaseProps, ref: DOMRef<HTMLDivElement
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       {...barProps}
       ref={domRef}

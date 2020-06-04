@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, Orientation, StyleProps} from '@react-types/shared';
 import React, {ReactElement, ReactNode} from 'react';
 import styles from '../style/index.css';
@@ -63,7 +63,6 @@ export function Tabs(props: TabsProps) {
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       className={classNames(
         styles,
