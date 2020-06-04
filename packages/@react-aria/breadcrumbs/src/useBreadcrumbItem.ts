@@ -36,8 +36,6 @@ export function useBreadcrumbItem(props: AriaBreadcrumbItemProps): BreadcrumbIte
   let {
     isCurrent,
     isDisabled,
-    isHeading,
-    headingAriaLevel = 1,
     children = '',
     'aria-current': ariaCurrent,
     ...otherProps
@@ -50,19 +48,10 @@ export function useBreadcrumbItem(props: AriaBreadcrumbItemProps): BreadcrumbIte
     ? {...linkProps, 'aria-current': ariaCurrent || 'page'}
     : linkProps;
 
-  let breadcrumbItemHeadingProps;
-  if (isHeading && isCurrent) {
-    breadcrumbItemHeadingProps = {
-      role: 'heading',
-      'aria-level': headingAriaLevel
-    };
-  }
-
   return {
     breadcrumbItemProps: {
       'aria-disabled': isDisabled,
-      ...itemProps,
-      ...breadcrumbItemHeadingProps
+      ...itemProps
     }
   };
 }

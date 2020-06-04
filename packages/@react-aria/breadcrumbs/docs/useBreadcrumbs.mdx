@@ -185,9 +185,8 @@ function BreadcrumbItem(props) {
 ## Breadcrumbs as a heading
 
 If you use breadcrumbs in the context where a heading would normally be used,
-you can pass the `isHeading` prop to the breadcrumb items and the last breadcrumb
-will be exposed as a heading to assistive technology. `headingAriaLevel` can also be
-used to set the level of that heading.
+you should extract `aria-current` from the props returned from `useBreadcrumbItem` and pass
+it to your heading element.
 
 ```tsx example
 function Breadcrumbs(props) {
@@ -199,9 +198,7 @@ function Breadcrumbs(props) {
       <ol style={{display: 'flex', listStyle: 'none'}}>
         {children.map((child, i) =>
           React.cloneElement(child, {
-            isCurrent: i === children.length - 1,
-            isHeading: true,
-            headingAriaLevel: 3
+            isCurrent: i === children.length - 1
           })
         )}
       </ol>
@@ -210,27 +207,44 @@ function Breadcrumbs(props) {
 }
 
 function BreadcrumbItem(props) {
-  // Same as in the previous example...
-///- begin collapse -///
   let {breadcrumbItemProps} = useBreadcrumbItem(props);
-  return (
-    <li>
-      <a
-        {...breadcrumbItemProps}
-        href={props.href}
+  let breadcrumbContent;
+  if (props.isCurrent) {
+    breadcrumbContent = (
+      <h3
+        aria-current={breadcrumbItemProps['aria-current']}
         style={{
-          color: props.isDisabled ? 'gray' : 'dodgerblue',
-          fontWeight: props.isCurrent ? 'bold' : null,
-          cursor: props.isCurrent ? 'default' : 'pointer'
+          'margin-block-end': '0px',
+          'margin-block-start': '0px',
+          'font-size': '1em',
+          color: 'dodgerblue'
         }}>
         {props.children}
-      </a>
-      {!props.isCurrent &&
+      </h3>
+    );
+  } else {
+    breadcrumbContent = (
+      <>
+        <a
+          {...breadcrumbItemProps}
+          href={props.href}
+          style={{
+            color: props.isDisabled ? 'gray' : 'dodgerblue',
+            fontWeight: props.isCurrent ? 'bold' : null,
+            cursor: props.isCurrent ? 'default' : 'pointer'
+          }}>
+          {props.children}
+        </a>
         <span aria-hidden="true" style={{padding: '0 5px'}}>{'›'}</span>
-      }
+       </>
+    );
+  }
+
+  return (
+    <li>
+      {breadcrumbContent}
     </li>
   );
-///- end collapse -///
 }
 
 <Breadcrumbs>
