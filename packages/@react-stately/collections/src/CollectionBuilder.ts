@@ -45,12 +45,12 @@ export class CollectionBuilder<T extends object> {
       React.Children.forEach(children, child => {
         items.push(child);
       });
-      
+
       let index = 0;
       for (let item of items) {
         let nodes = this.getFullNode({
           element: item,
-          index: index++
+          index: index
         }, {});
 
         for (let node of nodes) {
@@ -69,14 +69,14 @@ export class CollectionBuilder<T extends object> {
     if (partialNode.type === 'cell' && partialNode.key != null) {
       return `${parentKey}${partialNode.key}`;
     }
-  
+
     let v = partialNode.value as any;
     if (v != null) {
       let key = v.key ?? v.id;
       if (key == null) {
         throw new Error('No key found for item');
       }
-      
+
       return key;
     }
 
@@ -106,7 +106,7 @@ export class CollectionBuilder<T extends object> {
 
     // If there's an element with a getCollectionNode function on its type, then it's a supported component.
     // Call this function to get a partial node, and recursively build a full node from there.
-    if (React.isValidElement(element)) {      
+    if (React.isValidElement(element)) {
       let type = element.type as any;
       if (typeof type !== 'function' || typeof type.getCollectionNode !== 'function') {
         let name = typeof element.type === 'function' ? element.type.name : element.type;
@@ -118,7 +118,7 @@ export class CollectionBuilder<T extends object> {
       let result = childNodes.next();
       while (!result.done && result.value) {
         let childNode = result.value;
-        
+
         partialNode.index = index;
         let nodes = this.getFullNode({
           ...childNode,
