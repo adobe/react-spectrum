@@ -41,7 +41,7 @@ export function CRUDExample() {
   let [deletingItem, setDeletingItem] = useState(null);
 
   let createItem = (item) => {
-    list.prepend({...item, id: list.items.length + 1});
+    list.prepend({...item, id: Date.now()});
   };
 
   let editItem = (id, item) => {
