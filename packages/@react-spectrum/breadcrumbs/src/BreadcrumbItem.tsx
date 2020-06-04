@@ -52,7 +52,8 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
       <SlotProvider
         slots={{
           heading: {
-            UNSAFE_className: classNames(styles, 'spectrum-Breadcrumbs-itemLink')
+            UNSAFE_className: classNames(styles, 'spectrum-Breadcrumbs-itemLink'),
+            'aria-current': breadcrumbItemProps['aria-current']
           }
         }}>
         <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>

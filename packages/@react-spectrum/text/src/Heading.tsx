@@ -25,11 +25,10 @@ function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
-
   let HeadingTag = `h${level}` as ElementType;
 
   return (
-    <HeadingTag {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+    <HeadingTag {...filterDOMProps(otherProps, {propNames: new Set(['aria-current'])})} {...styleProps} ref={domRef}>
       {children}
     </HeadingTag>
   );
