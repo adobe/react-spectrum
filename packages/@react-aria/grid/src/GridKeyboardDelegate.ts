@@ -396,14 +396,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     let collection = this.collection;
-    let key: Key;
-    if (fromKey != null) {
-      key = this.getKeyBelow(fromKey);
-    }
-    
-    if (key == null) {
-      key = this.getFirstKey();
-    }
+    let key = fromKey ?? this.getFirstKey();
 
     // If the starting key is a cell, search from its parent row.
     let startItem = collection.getItem(key);
