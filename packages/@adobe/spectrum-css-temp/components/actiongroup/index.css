@@ -27,6 +27,10 @@ governing permissions and limitations under the License.
   .spectrum-ActionGroup-item + .spectrum-ActionGroup-item {
     margin-inline-start: var(--spectrum-actionbuttongroup-text-button-gap-x);
   }
+
+  &:focus {
+    outline: none;
+  }
 }
 
 .spectrum-ActionGroup--vertical {
