@@ -579,8 +579,8 @@ describe('Table', function () {
       </Table>
     );
 
-    let focusCell = (tree, text) => getCell(tree, text).focus();
-    let moveFocus = (key, opts = {}) => fireEvent.keyDown(document.activeElement, {key, ...opts});
+    let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
+    let moveFocus = (key, opts = {}) => act(() => {fireEvent.keyDown(document.activeElement, {key, ...opts});});
 
     describe('ArrowRight', function () {
       it('should move focus to the next cell in a row with ArrowRight', function () {
@@ -944,6 +944,9 @@ describe('Table', function () {
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
 
         moveFocus('o');
+        expect(document.activeElement).toBe(getCell(tree, 'Jones'));
+
+        moveFocus('h');
         expect(document.activeElement).toBe(getCell(tree, 'John'));
       });
 
@@ -971,6 +974,9 @@ describe('Table', function () {
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
 
         moveFocus('o');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
+
+        moveFocus('h');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[3]);
       });
 
@@ -992,7 +998,7 @@ describe('Table', function () {
         jest.runAllTimers();
 
         moveFocus('J');
-        expect(document.activeElement).toBe(getCell(tree, 'John'));
+        expect(document.activeElement).toBe(getCell(tree, 'Julia'));
       });
 
       it('wraps around when reaching the end of the collection', function () {
@@ -1003,11 +1009,17 @@ describe('Table', function () {
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
 
         moveFocus('o');
+        expect(document.activeElement).toBe(getCell(tree, 'Jones'));
+
+        moveFocus('h');
         expect(document.activeElement).toBe(getCell(tree, 'John'));
 
         jest.runAllTimers();
 
         moveFocus('J');
+        expect(document.activeElement).toBe(getCell(tree, 'John'));
+
+        moveFocus('u');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
       });
 
@@ -1216,6 +1228,58 @@ describe('Table', function () {
 
         let before = tree.getByTestId('before');
         expect(document.activeElement).toBe(before);
+      });
+    });
+
+    describe('scrolling', function () {
+      it('should scroll to a cell when it is focused', function () {
+        let tree = renderMany();
+        let body = tree.getByRole('grid').childNodes[1];
+        expect(body.scrollTop).toBe(0);
+
+        focusCell(tree, 'Baz 25');
+        expect(body.scrollTop).toBe(24);
+      });
+
+      it('should scroll to a cell when it is focused off screen', function () {
+        let tree = renderMany();
+        let body = tree.getByRole('grid').childNodes[1];
+
+        let cell = getCell(tree, 'Baz 5');
+        act(() => cell.focus());
+        expect(document.activeElement).toBe(cell);
+        expect(body.scrollTop).toBe(0);
+
+        // When scrolling the focused item out of view, focus should move to the table itself
+        body.scrollTop = 1000;
+        act(() => {fireEvent.scroll(body);});
+
+        expect(body.scrollTop).toBe(1000);
+        expect(document.activeElement).toBe(tree.getByRole('grid'));
+        expect(cell).not.toBeInTheDocument();
+
+        // Moving focus should scroll the new focused item into view
+        moveFocus('ArrowLeft');
+        expect(body.scrollTop).toBe(164);
+        expect(document.activeElement).toBe(getCell(tree, 'Bar 5'));
+      });
+
+      it('should not scroll when a column header receives focus', function () {
+        let tree = renderMany();
+        let body = tree.getByRole('grid').childNodes[1];
+
+        focusCell(tree, 'Baz 5');
+
+        body.scrollTop = 1000;
+        act(() => {fireEvent.scroll(body);});
+
+        expect(body.scrollTop).toBe(1000);
+        expect(document.activeElement).toBe(tree.getByRole('grid'));
+
+        focusCell(tree, 'Bar');
+        expect(document.activeElement).toHaveAttribute('role', 'columnheader');
+        expect(document.activeElement).toHaveTextContent('Bar');
+        expect(body.scrollTop).toBe(1000);
       });
     });
   });
