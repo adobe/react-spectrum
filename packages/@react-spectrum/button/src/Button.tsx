@@ -16,7 +16,7 @@ import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -75,8 +75,8 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
               UNSAFE_className: classNames(styles, 'spectrum-Button-label')
             }
           }}>
-          {typeof children === 'string' 
-            ? <Text>{children}</Text> 
+          {typeof children === 'string'
+            ? <Text>{children}</Text>
             : children}
         </SlotProvider>
       </ElementType>

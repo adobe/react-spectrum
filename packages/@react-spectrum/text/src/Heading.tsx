@@ -12,12 +12,12 @@
 
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {KeyboardProps} from '@react-types/typography';
+import {HeadingProps} from '@react-types/text';
 import React, {forwardRef} from 'react';
 import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
-function Keyboard(props: KeyboardProps, ref: DOMRef) {
-  props = useSlotProps(props, 'keyboard');
+function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
+  props = useSlotProps(props, 'heading');
   let {
     children,
     ...otherProps
@@ -26,14 +26,14 @@ function Keyboard(props: KeyboardProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
 
   return (
-    <kbd {...filterDOMProps(otherProps)} {...styleProps} dir="ltr" ref={domRef}>
+    <h1 {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       {children}
-    </kbd>
+    </h1>
   );
 }
 
 /**
- * Keyboard is used to define text as keyboard input.
+ * Heading is used to create various levels of typographic hierarchies.
  */
-const _Keyboard = forwardRef(Keyboard);
-export {_Keyboard as Keyboard};
+const _Heading = forwardRef(Heading);
+export {_Heading as Heading};

@@ -17,7 +17,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {Content, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
-import {Heading, Text} from '@react-spectrum/typography';
+import {Heading, Text} from '@react-spectrum/text';
 import isChromatic from 'storybook-chromatic/isChromatic';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

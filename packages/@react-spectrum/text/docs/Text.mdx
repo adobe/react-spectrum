@@ -10,45 +10,42 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-spectrum/typography';
+import docs from 'docs:@react-spectrum/text';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
-import {Heading, Keyboard, Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 ```
 
 ---
 category: Content
 ---
 
-# Keyboard
+# Text
 
-<p>{docs.exports.Keyboard.description}</p>
+<p>{docs.exports.Text.description}</p>
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Keyboard']} />
+  componentNames={['Text']} />
 
 ## Example
 
 ```tsx example
-<Keyboard>⌘V</Keyboard>
+<Text>Paste</Text>
 ```
 
 ## Content
 
-Keyboard is related to typography components and is a child to other
-components. Keyboard is used to format text indicating that is a keyboard
-command. Based on the component it is used within, it gets Spectrum styling
+Text is used to wrap text strings and elements within other
+components. Based on the component it is used within, it gets Spectrum styling
 and may have a preassigned slot for positioning. By virtue of its name, the
-Keyboard component provides semantic meaning in the context they are placed.
-An example of its usage in [Menu](MenuTrigger.html#complex-menu-items).
-It is important to note that the Keyboard component accepts any renderable
-node, not just strings.
-
-See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/kbd) for more information.
+Text component provides semantic meaning in the context they are placed.
+Examples of its usage in [Dialog](Dialog.html#example) and
+[Button](Button.html#content). It is important to note that the Text component
+accepts any renderable node, not just strings.
 
 ## Props
 
-<PropTable component={docs.exports.Keyboard} links={docs.links} />
+<PropTable component={docs.exports.Text} links={docs.links} />

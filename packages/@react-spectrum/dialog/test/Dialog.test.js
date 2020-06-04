@@ -14,7 +14,7 @@ import {Dialog} from '../';
 import {DialogContext} from '../src/context';
 import {fireEvent, render} from '@testing-library/react';
 import {Header} from '@react-spectrum/view';
-import {Heading} from '@react-spectrum/typography';
+import {Heading} from '@react-spectrum/text';
 import {ModalProvider} from '@react-aria/overlays';
 import React from 'react';
 

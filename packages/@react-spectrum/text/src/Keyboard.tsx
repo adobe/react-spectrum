@@ -12,12 +12,12 @@
 
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
+import {KeyboardProps} from '@react-types/text';
 import React, {forwardRef} from 'react';
-import {TextProps} from '@react-types/typography';
 import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
-function Text(props: TextProps, ref: DOMRef) {
-  props = useSlotProps(props, 'text');
+function Keyboard(props: KeyboardProps, ref: DOMRef) {
+  props = useSlotProps(props, 'keyboard');
   let {
     children,
     ...otherProps
@@ -26,14 +26,14 @@ function Text(props: TextProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
 
   return (
-    <span {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+    <kbd {...filterDOMProps(otherProps)} {...styleProps} dir="ltr" ref={domRef}>
       {children}
-    </span>
+    </kbd>
   );
 }
 
 /**
- * Text is used to define label or option text in components.
+ * Keyboard is used to define text as keyboard input.
  */
-const _Text = forwardRef(Text);
-export {_Text as Text};
+const _Keyboard = forwardRef(Keyboard);
+export {_Keyboard as Keyboard};

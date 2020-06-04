@@ -45,7 +45,7 @@ let publicPackages = {
   '@react-spectrum/switch': 'rc',
   '@react-spectrum/textfield': 'rc',
   '@react-spectrum/theme-default': 'rc',
-  '@react-spectrum/typography': 'alpha',
+  '@react-spectrum/text': 'alpha',
   '@react-spectrum/utils': 'rc',
   '@react-spectrum/view': 'alpha',
   '@react-spectrum/well': 'rc',
@@ -77,14 +77,14 @@ if (arg.startsWith('@')) {
     if (blackList.has(pkg) || releasedPackages.has(pkg)) {
       return;
     }
-  
+
     releasedPackages.set(pkg, info[pkg].location);
-  
+
     for (let p in info) {
       if (releasedPackages.has(p)) {
         continue;
       }
-  
+
       if (info[p].workspaceDependencies.includes(pkg)) {
         addPackage(p);
       }
@@ -97,9 +97,9 @@ if (arg.startsWith('@')) {
     if (blackList.has(pkg) || releasedPackages.has(pkg)) {
       return;
     }
-  
+
     releasedPackages.set(pkg, info[pkg].location);
-  
+
     for (let dep of info[pkg].workspaceDependencies) {
       addPackage(dep);
     }
@@ -107,7 +107,7 @@ if (arg.startsWith('@')) {
 
   for (let pkg in publicPackages) {
     addPackage(pkg);
-  }  
+  }
 }
 
 run();
@@ -193,21 +193,21 @@ function bumpVersions(versions) {
     let filePath = location + '/package.json';
     let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     pkg.version = versions.get(name)[1];
-  
+
     if (pkg.private) {
       console.warn(`${name} changed from private to public`);
       delete pkg.private;
     }
-  
+
     for (let dep in pkg.dependencies) {
       if (versions.has(dep)) {
         pkg.dependencies[dep] = '^' + versions.get(dep)[1];
       }
     }
-  
+
     fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
   }
-  
+
   for (let name in info) {
     if (!releasedPackages.has(name) && !blackList.has(name)) {
       let filePath = info[name].location + '/package.json';
@@ -218,7 +218,7 @@ function bumpVersions(versions) {
         fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
       }
     }
-  }  
+  }
 }
 
 function commit(versions) {
