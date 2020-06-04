@@ -30,7 +30,7 @@ export interface ItemProps<T> {
 export type ItemElement<T> = ReactElement<ItemProps<T>>;
 export type ItemRenderer<T> = (item: T) => ItemElement<T>;
 
-export interface AsyncLoadable<T> {
+export interface AsyncLoadable {
   /** Whether the items are currently loading. */
   isLoading?: boolean, // possibly isLoadingMore
   /** Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. */
@@ -43,7 +43,9 @@ export interface SectionProps<T> {
   /** An accessibility label for the section. */
   'aria-label'?: string,
   /** Static child items or a function to render children. */
-  children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>
+  children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>,
+  /** Item objects in the section. */
+  items?: Iterable<T>
 }
 
 export type SectionElement<T> = ReactElement<SectionProps<T>>;
@@ -53,7 +55,7 @@ export type CollectionChildren<T> = CollectionElement<T> | CollectionElement<T>[
 export interface CollectionBase<T> {
   /** The contents of the collection. */
   children: CollectionChildren<T>,
-  /** Item objects in the collection or section. */
+  /** Item objects in the collection. */
   items?: Iterable<T>,
   /** They item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with. */
   disabledKeys?: Iterable<Key>
