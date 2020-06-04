@@ -11,6 +11,7 @@
  */
 
 import {act, fireEvent, render} from '@testing-library/react';
+import {Button} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../';
 import React from 'react';
@@ -18,7 +19,6 @@ import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 import V2Radio from '@react/react-spectrum/Radio';
 import V2RadioGroup from '@react/react-spectrum/RadioGroup';
-import {Button} from '@react-spectrum/button';
 
 function renderRadioGroup(ComponentGroup, Component, groupProps, radioProps) {
   return render(
