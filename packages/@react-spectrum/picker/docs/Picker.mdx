@@ -22,7 +22,7 @@ import BulkEditUsers from '@spectrum-icons/workflow/BulkEditUsers';
 import Draw from '@spectrum-icons/workflow/Draw';
 import ColorPalette from '@spectrum-icons/workflow/ColorPalette';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 ```
 
 ---
@@ -81,22 +81,26 @@ function Example() {
 
 ### Internationalization
 To internationalize a Picker, a localized string should be passed to the `children` of each `Item`.
-For languages that are read right to left (e.g. Hebrew and Arabic), the layout of the Picker is flipped.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the Picker is flipped.
 
 ## Labeling
 Picker can be labeled using the `label` prop. If no label is provided, an alternative text label must be provided to identify the control for accessibility. This should be added using the `aria-label` prop. If the Picker is a required field, the `isRequired` and `necessityIndicator` props can be used to show a required state.
 
 ```tsx example
-<Picker label="Choose frequency" isRequired necessityIndicator="icon" marginEnd="10px">
+<Picker label="Choose frequency" isRequired necessityIndicator="icon">
   <Item key="rarely">Rarely</Item>
   <Item key="sometimes">Sometimes</Item>
   <Item key="always">Always</Item>
 </Picker>
-<Picker label="Choose frequency" isRequired necessityIndicator="label" marginEnd="10px">
+```
+```tsx example
+<Picker label="Choose frequency" isRequired necessityIndicator="label">
   <Item key="rarely">Rarely</Item>
   <Item key="sometimes">Sometimes</Item>
   <Item key="always">Always</Item>
 </Picker>
+```
+```tsx example
 <Picker label="Choose frequency" necessityIndicator="label">
   <Item key="rarely">Rarely</Item>
   <Item key="sometimes">Sometimes</Item>
@@ -125,7 +129,7 @@ function Example() {
         label="Pick an animal (uncontrolled)"
         items={options}
         defaultSelectedKey="Bison"
-        marginEnd="20px">
+        marginEnd="size-300">
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
 
@@ -343,7 +347,7 @@ function AsyncLoadingExample() {
 ```
 ### Custom widths
 ```tsx example
-<Flex flexDirection="column">
+<Flex direction="column">
   <Picker label="Choose frequency" width="size-6000">
     <Item key="rarely">Rarely</Item>
     <Item key="sometimes">Sometimes</Item>
@@ -359,7 +363,7 @@ function AsyncLoadingExample() {
 ```
 ### Align and direction
 ```tsx example
-<Flex flexDirection="column">
+<Flex direction="column">
   <Picker label="Choose frequency" align="end" menuWidth="size-3000">
     <Item key="rarely">Rarely</Item>
     <Item key="sometimes">Sometimes</Item>
@@ -376,9 +380,21 @@ function AsyncLoadingExample() {
 ### Menu state
 The open state of the menu can be controlled via the `defaultOpen` and `isOpen` props
 ```tsx example
-<Picker label="Choose frequency" isOpen>
-  <Item key="rarely">Rarely</Item>
-  <Item key="sometimes">Sometimes</Item>
-  <Item key="always">Always</Item>
-</Picker>
+function Example() {
+  let [open, setOpen] = React.useState(false);
+  let [frequency, setfrequency] = React.useState("always");
+
+  return (
+    <Picker
+      label="Frequency"
+      isOpen={open}
+      selectedKey={frequency}
+      onOpenChange={setOpen}
+      onSelectionChange={selected => setfrequency(selected)}>
+      <Item key="rarely">Rarely</Item>
+      <Item key="sometimes">Sometimes</Item>
+      <Item key="always">Always</Item>
+    </Picker>
+  );
+}
 ```

@@ -82,8 +82,8 @@ export interface PressEvents {
   onPress?: (e: PressEvent) => void,
   /** Handler that is called when a press interaction starts. */
   onPressStart?: (e: PressEvent) => void,
-  /** 
-   * Handler that is called when a press interation ends, either 
+  /**
+   * Handler that is called when a press interaction ends, either
    * over the target or when the pointer leaves the target.
    */
   onPressEnd?: (e: PressEvent) => void,

@@ -13,9 +13,22 @@
 import IntlMessageFormat from 'intl-messageformat';
 import {useLocale} from './context';
 
+type MessageFormatterStrings = {
+  [lang: string]: {
+    [key: string]: string
+  }
+};
+
+type FormatMessage = (key: string, variables?: {[key: string]: any}) => string;
+
 const formatterCache = new Map();
 
-export function useMessageFormatter(strings) {
+/**
+ * Handles formatting ICU Message strings to create localized strings for the current locale.
+ * Automatically updates when the locale changes, and handles caching of messages for performance.
+ * @param strings - a mapping of languages to strings by key
+ */
+export function useMessageFormatter(strings: MessageFormatterStrings): FormatMessage {
   let {locale: currentLocale} = useLocale();
 
   // Check the cache
@@ -35,7 +48,7 @@ export function useMessageFormatter(strings) {
 
   // Create a new message formatter
   let cache = {};
-  let formatMessage = (key, variables, formats) => {
+  let formatMessage = (key, variables) => {
     let message = cache[key + '.' + currentLocale];
     if (!message) {
       let msg = localeStrings[key];
@@ -43,7 +56,7 @@ export function useMessageFormatter(strings) {
         throw new Error(`Could not find intl message ${key} in ${currentLocale} locale`);
       }
 
-      message = new IntlMessageFormat(msg, currentLocale, formats);
+      message = new IntlMessageFormat(msg, currentLocale);
       cache[key] = message;
     }
 
