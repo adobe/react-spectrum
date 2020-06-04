@@ -24,7 +24,7 @@ export interface HeadingProps extends DOMProps, StyleProps {
    */
   slot?: string,
   /**
-   * Sets aria-level on the heading.
+   * Sets heading level, h1 through h6.
    */
-  level?: number
+  level?: 1 | 2 | 3 | 4 | 5 | 6
 }

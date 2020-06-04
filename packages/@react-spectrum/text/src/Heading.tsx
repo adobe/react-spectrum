@@ -13,23 +13,25 @@
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingProps} from '@react-types/text';
-import React, {forwardRef} from 'react';
+import React, {ElementType, forwardRef} from 'react';
 import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
 function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
   props = useSlotProps(props, 'heading');
   let {
     children,
-    level,
+    level = 3,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
+  let HeadingTag = `h${level}` as ElementType;
+
   return (
-    <h3 {...filterDOMProps(otherProps)} {...styleProps} ref={domRef} aria-level={level}>
+    <HeadingTag {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       {children}
-    </h3>
+    </HeadingTag>
   );
 }
 
