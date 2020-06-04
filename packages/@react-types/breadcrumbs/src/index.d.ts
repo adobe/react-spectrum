@@ -22,6 +22,8 @@ export interface BreadcrumbItemProps extends PressEvents {
    * @default "page"
    */
   'aria-current'?: 'page' | 'step' | 'location' | 'date' | 'time' | boolean | 'true' | 'false',
+  /** Whether the breadcrumbs are used as a heading element. */
+  isHeading?: boolean,
   /** Whether the breadcrumb item is disabled. */
   isDisabled?: boolean,
   /** The contents of the breadcrumb item. */

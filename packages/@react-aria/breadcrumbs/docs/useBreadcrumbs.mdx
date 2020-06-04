@@ -185,8 +185,8 @@ function BreadcrumbItem(props) {
 ## Breadcrumbs as a heading
 
 If you use breadcrumbs in the context where a heading would normally be used,
-you should extract `aria-current` from the props returned from `useBreadcrumbItem` and pass
-it to your heading element.
+you should pass the `isHeading` prop to `useBreadcrumbItem` for the last breadcrumb item
+that acts as a heading.
 
 ```tsx example
 function Breadcrumbs(props) {
@@ -198,7 +198,8 @@ function Breadcrumbs(props) {
       <ol style={{display: 'flex', listStyle: 'none'}}>
         {children.map((child, i) =>
           React.cloneElement(child, {
-            isCurrent: i === children.length - 1
+            isCurrent: i === children.length - 1,
+            isHeading: i === children.length - 1
           })
         )}
       </ol>

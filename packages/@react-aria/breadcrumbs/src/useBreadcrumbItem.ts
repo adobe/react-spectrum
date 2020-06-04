@@ -38,15 +38,22 @@ export function useBreadcrumbItem(props: AriaBreadcrumbItemProps): BreadcrumbIte
     isDisabled,
     children = '',
     'aria-current': ariaCurrent,
+    isHeading,
     ...otherProps
   } = props;
 
   let ref = useRef();
   let {linkProps} = useLink({children, isDisabled: isDisabled || isCurrent, ...otherProps, ref});
 
-  let itemProps: HTMLAttributes<HTMLDivElement> = isCurrent
-    ? {...linkProps, 'aria-current': ariaCurrent || 'page'}
-    : linkProps;
+  let itemProps: HTMLAttributes<HTMLDivElement> = {};
+
+  if (!isHeading) {
+    itemProps = {...linkProps};
+  }
+
+  if (isCurrent) {
+    itemProps = {...itemProps, 'aria-current': ariaCurrent || 'page'};
+  }
 
   return {
     breadcrumbItemProps: {
