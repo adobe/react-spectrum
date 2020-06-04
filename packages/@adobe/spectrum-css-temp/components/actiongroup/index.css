@@ -36,6 +36,7 @@ governing permissions and limitations under the License.
 .spectrum-ActionGroup--vertical {
   display: inline-flex;
   flex-direction: column;
+  align-items: flex-start;
 
   .spectrum-ActionGroup-item + .spectrum-ActionGroup-item {
     margin-block-start: var(--spectrum-actionbuttongroup-text-button-gap-y);
@@ -58,6 +59,11 @@ governing permissions and limitations under the License.
     .spectrum-ActionGroup-item {
       justify-content: flex-start;
     }
+  }
+
+  &.spectrum-ActionGroup--justified,
+  &.spectrum-ActionGroup--compact:not(.spectrum-ActionGroup--quiet) {
+    align-items: stretch;
   }
 }
 
