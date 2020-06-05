@@ -11,15 +11,15 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
+import {ButtonHTMLAttributes, RefObject} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {mergeProps} from '@react-aria/utils';
-import {RefObject} from 'react';
 import {useDOMPropsResponder, usePress} from '@react-aria/interactions';
 import {useFocusable} from '@react-aria/focus';
 
 interface ButtonAria {
   /** Props for the button element. */
-  buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>,
+  buttonProps: ButtonHTMLAttributes<HTMLButtonElement>,
   /** Whether the button is currently pressed. */
   isPressed: boolean
 }
