@@ -51,6 +51,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   let progressCircleProps: SpectrumProgressCircleProps = {
     isIndeterminate: true,
     size: 'S',
+    'aria-hidden': true,
     ...variant === 'overBackground' && {variant: 'overBackground'}
   };
 
