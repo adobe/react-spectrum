@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionGroup} from '../';
 import BookIcon from '@spectrum-icons/workflow/Book';
+import {classNames} from '@react-spectrum/utils';
 import CopyIcon from '@spectrum-icons/workflow/Copy';
 import DeleteIcon from '@spectrum-icons/workflow/Delete';
 import {Divider} from '@react-spectrum/divider';
@@ -30,7 +31,6 @@ import {Text} from '@react-spectrum/text';
 import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
 import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
 import ViewListIcon from '@spectrum-icons/workflow/ViewList';
-import {classNames} from "@react-spectrum/utils";
 
 const docItems = [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}];
 const editItems = [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'}, {children: 'Delete', name: '3'}];
