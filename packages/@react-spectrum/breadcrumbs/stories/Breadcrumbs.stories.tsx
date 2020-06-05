@@ -19,7 +19,7 @@ import {storiesOf} from '@storybook/react';
 
 let styles = {
   width: '100vw',
-  'padding': '0 30px'
+  padding: '0 30px'
 };
 const CenterDecorator = storyFn => <div style={styles}><div>{storyFn()}</div></div>;
 
