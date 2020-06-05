@@ -17,7 +17,6 @@ import packageData from '../package.json';
 
 ```jsx import
 import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
-import {Heading} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
 ```
 
@@ -53,9 +52,11 @@ Breadcrumbs follow the [Collection Components](../react-stately/collections.html
 In order to internationalize Breadcrumbs, the strings of all child items should be localized.
 
 ### Breadcrumb as heading
-To make the selected Breadcrumb a heading, simply include the Heading component inside your Item. You may set the Heading level by providing the `level` prop to the Heading.
+To use `Breadcrumbs` as a heading, render a [Heading](Heading.html) component inside your `Item`. You may set the heading level by providing the `level` prop.
 
 ```tsx example
+import {Heading} from '@react-spectrum/text';
+
 <Breadcrumbs>
   <Item key="home">
     Home

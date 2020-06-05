@@ -28,8 +28,6 @@ interface BreadcrumbItemAria {
   breadcrumbItemProps: HTMLAttributes<HTMLDivElement>
 }
 
-const validHeadings = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
-
 /**
  * Provides the behavior and accessibility implementation for an in a breadcrumbs component.
  * See `useBreadcrumbs` for details about breadcrumbs.
@@ -46,7 +44,7 @@ export function useBreadcrumbItem(props: AriaBreadcrumbItemProps): BreadcrumbIte
 
   let ref = useRef();
   let {linkProps} = useLink({children, isDisabled: isDisabled || isCurrent, elementType, ...otherProps, ref});
-  let isHeading = validHeadings.includes(elementType);
+  let isHeading = /^h[1-6]$/.test(elementType);
   let itemProps: HTMLAttributes<HTMLDivElement> = {};
 
   if (!isHeading) {
