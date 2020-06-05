@@ -294,7 +294,11 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       // to the cell below, and not open a menu.
       onKeyDownCapture: onKeyDown,
       onFocus,
-      onBlur
+      onBlur,
+      onMouseDown(e) {
+        // Prevent focus going to the collection when clicking on the scrollbar.
+        e.preventDefault();
+      }
     })
   };
 }
