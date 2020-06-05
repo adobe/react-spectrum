@@ -577,8 +577,8 @@ describe('Table', function () {
       </Table>
     );
 
-    let focusCell = (tree, text) => getCell(tree, text).focus();
-    let moveFocus = (key, opts = {}) => fireEvent.keyDown(document.activeElement, {key, ...opts});
+    let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
+    let moveFocus = (key, opts = {}) => act(() => {fireEvent.keyDown(document.activeElement, {key, ...opts});});
 
     describe('ArrowRight', function () {
       it('should move focus to the next cell in a row with ArrowRight', function () {
@@ -942,6 +942,9 @@ describe('Table', function () {
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
 
         moveFocus('o');
+        expect(document.activeElement).toBe(getCell(tree, 'Jones'));
+
+        moveFocus('h');
         expect(document.activeElement).toBe(getCell(tree, 'John'));
       });
 
@@ -969,6 +972,9 @@ describe('Table', function () {
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
 
         moveFocus('o');
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
+
+        moveFocus('h');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[3]);
       });
 
@@ -988,9 +994,9 @@ describe('Table', function () {
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
 
         jest.runAllTimers();
-        
+
         moveFocus('J');
-        expect(document.activeElement).toBe(getCell(tree, 'John'));
+        expect(document.activeElement).toBe(getCell(tree, 'Julia'));
       });
 
       it('wraps around when reaching the end of the collection', function () {
@@ -1001,11 +1007,17 @@ describe('Table', function () {
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
 
         moveFocus('o');
+        expect(document.activeElement).toBe(getCell(tree, 'Jones'));
+
+        moveFocus('h');
         expect(document.activeElement).toBe(getCell(tree, 'John'));
 
         jest.runAllTimers();
 
         moveFocus('J');
+        expect(document.activeElement).toBe(getCell(tree, 'John'));
+
+        moveFocus('u');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
       });
 
@@ -1214,6 +1226,58 @@ describe('Table', function () {
 
         let before = tree.getByTestId('before');
         expect(document.activeElement).toBe(before);
+      });
+    });
+
+    describe('scrolling', function () {
+      it('should scroll to a cell when it is focused', function () {
+        let tree = renderMany();
+        let body = tree.getByRole('grid').childNodes[1];
+        expect(body.scrollTop).toBe(0);
+
+        focusCell(tree, 'Baz 25');
+        expect(body.scrollTop).toBe(24);
+      });
+
+      it('should scroll to a cell when it is focused off screen', function () {
+        let tree = renderMany();
+        let body = tree.getByRole('grid').childNodes[1];
+
+        let cell = getCell(tree, 'Baz 5');
+        act(() => cell.focus());
+        expect(document.activeElement).toBe(cell);
+        expect(body.scrollTop).toBe(0);
+
+        // When scrolling the focused item out of view, focus should move to the table itself
+        body.scrollTop = 1000;
+        act(() => {fireEvent.scroll(body);});
+
+        expect(body.scrollTop).toBe(1000);
+        expect(document.activeElement).toBe(tree.getByRole('grid'));
+        expect(cell).not.toBeInTheDocument();
+
+        // Moving focus should scroll the new focused item into view
+        moveFocus('ArrowLeft');
+        expect(body.scrollTop).toBe(164);
+        expect(document.activeElement).toBe(getCell(tree, 'Bar 5'));
+      });
+
+      it('should not scroll when a column header receives focus', function () {
+        let tree = renderMany();
+        let body = tree.getByRole('grid').childNodes[1];
+
+        focusCell(tree, 'Baz 5');
+
+        body.scrollTop = 1000;
+        act(() => {fireEvent.scroll(body);});
+
+        expect(body.scrollTop).toBe(1000);
+        expect(document.activeElement).toBe(tree.getByRole('grid'));
+
+        focusCell(tree, 'Bar');
+        expect(document.activeElement).toHaveAttribute('role', 'columnheader');
+        expect(document.activeElement).toHaveTextContent('Bar');
+        expect(body.scrollTop).toBe(1000);
       });
     });
   });
@@ -1430,7 +1494,7 @@ describe('Table', function () {
           'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5', 'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10',
           'Foo 11', 'Foo 12', 'Foo 13', 'Foo 14', 'Foo 15', 'Foo 16', 'Foo 17', 'Foo 18', 'Foo 19', 'Foo 20'
         ]);
-        
+
         checkRowSelection(rows.slice(1, 21), true);
         checkRowSelection(rows.slice(21), false);
       });
@@ -1452,7 +1516,7 @@ describe('Table', function () {
           'Foo 10', 'Foo 11', 'Foo 12', 'Foo 13', 'Foo 14', 'Foo 15',
           'Foo 16', 'Foo 17', 'Foo 18', 'Foo 19', 'Foo 20'
         ]);
-        
+
         checkRowSelection(rows.slice(11, 21), true);
         checkRowSelection(rows.slice(21), false);
 
@@ -1463,7 +1527,7 @@ describe('Table', function () {
           'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5',
           'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10'
         ]);
-        
+
         checkRowSelection(rows.slice(1, 11), true);
         checkRowSelection(rows.slice(11), false);
       });
@@ -1641,7 +1705,7 @@ describe('Table', function () {
 
         onSelectionChange.mockReset();
         act(() => triggerPress(rows[4]));
-        
+
         let expected = [];
         for (let i = 1; i <= 100; i++) {
           if (i !== 4) {
@@ -1666,7 +1730,7 @@ describe('Table', function () {
 
         onSelectionChange.mockReset();
         act(() => triggerPress(rows[4], {shiftKey: true}));
-        
+
         checkSelection(onSelectionChange, ['Foo 4']);
         checkRowSelection(rows.slice(1, 4), false);
         expect(rows[4]).toHaveAttribute('aria-selected', 'true');
@@ -2445,7 +2509,7 @@ describe('Table', function () {
           </TableBody>
         </Table>
       , scale);
-  
+
       it('should layout rows with default height', function () {
         let tree = renderTable();
         let rows = tree.getAllByRole('row');
@@ -2559,7 +2623,7 @@ describe('Table', function () {
           .mockImplementation(function () {
             return this.textContent === 'Foo 1' ? 64 : 48;
           });
-        
+
         let tree = renderTable({overflowMode: 'wrap'});
         let rows = tree.getAllByRole('row');
         expect(rows).toHaveLength(3);
@@ -2587,7 +2651,7 @@ describe('Table', function () {
           .mockImplementation(function () {
             return this.textContent === 'Tier Two Header B' ? 48 : 34;
           });
-        
+
         let tree = render(
           <Table aria-label="Table" overflowMode="wrap">
             <TableHeader columns={nestedColumns}>
@@ -2654,7 +2718,7 @@ describe('Table', function () {
           expect(row.childNodes[0].style.width).toBe('55px');
           expect(row.childNodes[1].style.width).toBe('315px');
           expect(row.childNodes[2].style.width).toBe('315px');
-          expect(row.childNodes[3].style.width).toBe('315px');  
+          expect(row.childNodes[3].style.width).toBe('315px');
         }
       });
 
@@ -2675,14 +2739,14 @@ describe('Table', function () {
             </TableBody>
           </Table>
         );
-        
+
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('55px');
           expect(row.childNodes[1].style.width).toBe('200px');
           expect(row.childNodes[2].style.width).toBe('500px');
-          expect(row.childNodes[3].style.width).toBe('300px');  
+          expect(row.childNodes[3].style.width).toBe('300px');
         }
       });
 
@@ -2703,14 +2767,14 @@ describe('Table', function () {
             </TableBody>
           </Table>
         );
-        
+
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('55px');
           expect(row.childNodes[1].style.width).toBe('200px');
           expect(row.childNodes[2].style.width).toBe('372.5px');
-          expect(row.childNodes[3].style.width).toBe('372.5px');  
+          expect(row.childNodes[3].style.width).toBe('372.5px');
         }
       });
 
@@ -2731,14 +2795,14 @@ describe('Table', function () {
             </TableBody>
           </Table>
         );
-        
+
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('55px');
           expect(row.childNodes[1].style.width).toBe('100px');
           expect(row.childNodes[2].style.width).toBe('500px');
-          expect(row.childNodes[3].style.width).toBe('345px');  
+          expect(row.childNodes[3].style.width).toBe('345px');
         }
       });
 
@@ -2759,14 +2823,14 @@ describe('Table', function () {
             </TableBody>
           </Table>
         );
-        
+
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('55px');
           expect(row.childNodes[1].style.width).toBe('200px');
           expect(row.childNodes[2].style.width).toBe('500px');
-          expect(row.childNodes[3].style.width).toBe('245px');  
+          expect(row.childNodes[3].style.width).toBe('245px');
         }
       });
 
@@ -2787,14 +2851,14 @@ describe('Table', function () {
             </TableBody>
           </Table>
         );
-        
+
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
           expect(row.childNodes[0].style.width).toBe('55px');
           expect(row.childNodes[1].style.width).toBe('200px');
           expect(row.childNodes[2].style.width).toBe('300px');
-          expect(row.childNodes[3].style.width).toBe('445px');  
+          expect(row.childNodes[3].style.width).toBe('445px');
         }
       });
 
@@ -2856,7 +2920,7 @@ describe('Table', function () {
         expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
         expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
       }
-      
+
       act(() => {userEvent.click(checkbox);});
       expect(checkbox.checked).toBe(false);
 

@@ -43,8 +43,8 @@ export interface AriaActionGroupProps<T> extends ActionGroupProps<T>, DOMProps, 
 export interface SpectrumActionGroupProps<T> extends AriaActionGroupProps<T>, StyleProps {
   /** Whether the ActionButtons should be displayed with a [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
   isEmphasized?: boolean,
-  /** Whether the ActionButtons should be connected together, without default space between. */
-  isConnected?: boolean
+  /** Sets the amount of space between buttons. */
+  density?: 'compact'
   /** Whether the ActionButtons should be justified in their container. */
   isJustified?: boolean,
   /** Whether ActionButtons should use the [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
