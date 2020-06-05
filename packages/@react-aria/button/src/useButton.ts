@@ -14,8 +14,8 @@ import {AriaButtonProps} from '@react-types/button';
 import {ButtonHTMLAttributes, RefObject} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {mergeProps} from '@react-aria/utils';
-import {useDOMPropsResponder, usePress} from '@react-aria/interactions';
 import {useFocusable} from '@react-aria/focus';
+import {usePress} from '@react-aria/interactions';
 
 interface ButtonAria {
   /** Props for the button element. */
@@ -66,10 +66,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     ref
   });
 
-  let {contextProps} = useDOMPropsResponder(ref);
   let {focusableProps} = useFocusable(props, ref);
   let buttonProps = mergeProps(pressProps, focusableProps);
-  buttonProps = mergeProps(buttonProps, contextProps);
   buttonProps = mergeProps(buttonProps, filterDOMProps(props, {labelable: true}));
 
   return {

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMPropsResponder} from '@react-aria/interactions';
+// import {DOMPropsResponder} from '@react-aria/interactions';
 import {Overlay} from '@react-spectrum/overlays';
 import {PlacementAxis} from '@react-types/overlays';
 import React, {RefObject, useContext, useRef} from 'react';
@@ -57,23 +57,25 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     overlayRef
   });
 
-  return (
-    <DOMPropsResponder
-      {...triggerProps}
-      ref={triggerRef}
-      isDisabled={isDisabled}>
-      {trigger}
-      <TooltipContext.Provider
-        value={{
-          placement,
-          ref: overlayRef,
-          UNSAFE_style: overlayProps.style,
-          ...tooltipProps
-        }}>
-        <Overlay isOpen={state.open}>
-          {tooltip}
-        </Overlay>
-      </TooltipContext.Provider>
-    </DOMPropsResponder>
-  );
+  return null;
+
+  // return (
+  //   <DOMPropsResponder
+  //     {...triggerProps}
+  //     ref={triggerRef}
+  //     isDisabled={isDisabled}>
+  //     {trigger}
+  //     <TooltipContext.Provider
+  //       value={{
+  //         placement,
+  //         ref: overlayRef,
+  //         UNSAFE_style: overlayProps.style,
+  //         ...tooltipProps
+  //       }}>
+  //       <Overlay isOpen={state.open}>
+  //         {tooltip}
+  //       </Overlay>
+  //     </TooltipContext.Provider>
+  //   </DOMPropsResponder>
+  // );
 }

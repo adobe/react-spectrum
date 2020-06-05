@@ -11,7 +11,7 @@
  */
 
 import {AriaTooltipProps} from '@react-types/tooltip';
-import {DOMPropsResponderContext} from '@react-aria/interactions';
+// import {DOMPropsResponderContext} from '@react-aria/interactions';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, useContext} from 'react';
 
@@ -24,14 +24,14 @@ export function useTooltip(props: AriaTooltipProps): TooltipAria {
     role = 'tooltip'
   } = props;
 
-  let {onPointerLeave, onPointerEnter} = useContext(DOMPropsResponderContext) || {};
+  // let {onPointerLeave, onPointerEnter} = useContext(DOMPropsResponderContext) || {};
   let domProps = filterDOMProps(props);
 
   return {
     tooltipProps: mergeProps(domProps, {
       role,
-      onPointerEnter,
-      onPointerLeave
+      // onPointerEnter,
+      // onPointerLeave
     })
   };
 }
