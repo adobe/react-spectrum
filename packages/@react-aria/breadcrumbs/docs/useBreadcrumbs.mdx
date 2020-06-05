@@ -103,11 +103,13 @@ function Breadcrumbs(props) {
 }
 
 function BreadcrumbItem(props) {
-  let {itemProps} = useBreadcrumbItem({...props, elementType: 'span'});
+  let ref = React.useRef();
+  let {itemProps} = useBreadcrumbItem({...props, elementType: 'span'}, ref);
   return (
     <li>
       <span
         {...itemProps}
+        ref={ref}
         style={{
           color: 'dodgerblue',
           textDecoration: props.isCurrent ? null : 'underline',
@@ -155,11 +157,13 @@ function Breadcrumbs(props) {
 }
 
 function BreadcrumbItem(props) {
-  let {itemProps} = useBreadcrumbItem(props);
+  let ref = React.useRef();
+  let {itemProps} = useBreadcrumbItem(props, ref);
   return (
     <li>
       <a
         {...itemProps}
+        ref={ref}
         href={props.href}
         style={{
           color: 'dodgerblue',
@@ -210,12 +214,14 @@ function Breadcrumbs(props) {
 }
 
 function BreadcrumbItem(props) {
-  let {itemProps} = useBreadcrumbItem(props);
+  let ref = React.useRef();
+  let {itemProps} = useBreadcrumbItem(props, ref);
   let breadcrumbContent;
   if (props.isCurrent) {
     breadcrumbContent = (
       <h3
         {...itemProps}
+        ref={ref}
         style={{
           margin: 0,
           fontSize: '1em',
@@ -229,6 +235,7 @@ function BreadcrumbItem(props) {
       <>
         <a
           {...itemProps}
+          ref={ref}
           href={props.href}
           style={{
             color: props.isDisabled ? 'gray' : 'dodgerblue',

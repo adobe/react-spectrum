@@ -27,7 +27,7 @@ describe('useBreadcrumbs', function () {
 
   it('handles custom aria label', function () {
     let {navProps} = renderLinkHook({'aria-label': 'test-label'});
-    expect(breadcrumbsProps['aria-label']).toBe('test-label');
+    expect(navProps['aria-label']).toBe('test-label');
   });
 
 });

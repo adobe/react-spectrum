@@ -22,9 +22,7 @@ export interface AriaLinkOptions extends AriaLinkProps {
    * The HTML element used to render the link, e.g. 'a', or 'span'.
    * @default 'a'
    */
-  elementType?: string,
-  /** A ref to the link element. */
-  ref?: RefObject<HTMLElement | null>
+  elementType?: string
 }
 
 export interface LinkAria {
@@ -37,7 +35,7 @@ export interface LinkAria {
  * A link allows a user to navigate to another page or resource within a web page
  * or application.
  */
-export function useLink(props: AriaLinkOptions): LinkAria {
+export function useLink(props: AriaLinkOptions, ref: RefObject<HTMLElement>): LinkAria {
   let {
     tabIndex,
     elementType = 'a',
@@ -47,7 +45,6 @@ export function useLink(props: AriaLinkOptions): LinkAria {
     // @ts-ignore
     onClick: deprecatedOnClick,
     isDisabled,
-    ref,
     ...otherProps
   } = props;
 
