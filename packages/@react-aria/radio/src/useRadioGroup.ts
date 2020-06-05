@@ -105,6 +105,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       }
     }
     if (nextElem) {
+      nextElem.focus();
       nextElem.click();
     }
   };
