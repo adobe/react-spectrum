@@ -18,6 +18,9 @@ import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextArea, TextField} from '@react-spectrum/textfield';
+import {ButtonGroup} from "@react-spectrum/buttongroup";
+import {Button} from "@react-spectrum/button";
+import {action} from "@storybook/addon-actions";
 
 storiesOf('Form', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -103,7 +106,13 @@ storiesOf('Form', module)
 
 function render(props: any = {}) {
   return (
-    <Form onSubmit={e => e.preventDefault()} {...props}>
+    <Form
+      onSubmit={e => {
+        action('onSubmit')(e);
+        e.preventDefault();
+      }}
+      onReset={action('onReset')}
+      {...props}>
       <TextField label="First Name" placeholder="John" />
       <TextField label="Last Name" placeholder="Smith" />
       <TextField label="Street Address" placeholder="123 Any Street" />
@@ -129,6 +138,10 @@ function render(props: any = {}) {
         <Item>Purple</Item>
       </Picker>
       <TextArea label="Comments" placeholder="How do you feel?" />
+      <ButtonGroup>
+        <Button variant="secondary" type="reset">Reset</Button>
+        <Button variant="primary" type="submit">Submit</Button>
+      </ButtonGroup>
     </Form>
   );
 }
