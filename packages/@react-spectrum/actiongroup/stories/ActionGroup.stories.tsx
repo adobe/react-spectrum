@@ -55,7 +55,7 @@ storiesOf('ActionGroup', module)
     () => render({isJustified: true, defaultSelectedKeys: ['1']}, viewItems2)
   )
   .add(
-    'compact, justified',
+    'compact, isJustified',
     () => render({density: 'compact', isJustified: true, defaultSelectedKeys: ['1']}, viewItems2)
   )
   .add(
