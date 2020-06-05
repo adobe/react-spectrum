@@ -105,6 +105,8 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       }
     }
     if (nextElem) {
+      // Call focus on nextElem so that keyboard navigation scrolls the radio into view
+      nextElem.focus();
       nextElem.click();
     }
   };
