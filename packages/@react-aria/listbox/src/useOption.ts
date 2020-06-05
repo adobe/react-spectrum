@@ -40,9 +40,6 @@ interface OptionProps {
   /** The unique key for the option. */
   key?: Key,
 
-  /** A ref to the option element. */
-  ref?: RefObject<HTMLElement>,
-
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean,
 
@@ -59,12 +56,11 @@ interface OptionProps {
  * @param props - props for the option
  * @param state - state for the listbox, as returned by `useListState`
  */
-export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAria {
+export function useOption<T>(props: OptionProps, state: ListState<T>, ref: RefObject<HTMLElement>): OptionAria {
   let {
     isSelected,
     isDisabled,
     key,
-    ref,
     shouldSelectOnPressUp,
     shouldFocusOnHover,
     isVirtualized

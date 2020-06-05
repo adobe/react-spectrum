@@ -14,7 +14,9 @@ import {HTMLAttributes, ReactNode} from 'react';
 import {useId} from '@react-aria/utils';
 
 interface ListBoxSectionProps {
+  /** The heading for the section. */
   heading?: ReactNode,
+  /** An accessibility label for the section. Required if `heading` is not present. */
   'aria-label'?: string
 }
 
@@ -24,7 +26,7 @@ interface ListBoxSectionAria {
 
   /** Props for the heading element, if any. */
   headingProps: HTMLAttributes<HTMLElement>,
-  
+
   /** Props for the group element. */
   groupProps: HTMLAttributes<HTMLElement>
 }

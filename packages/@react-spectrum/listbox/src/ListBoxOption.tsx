@@ -52,12 +52,12 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
       isDisabled,
       'aria-label': item['aria-label'],
       key,
-      ref,
       shouldSelectOnPressUp,
       shouldFocusOnHover,
       isVirtualized: true
     },
-    state
+    state,
+    ref
   );
 
   let contents = typeof rendered === 'string'
