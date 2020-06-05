@@ -65,6 +65,8 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
           styleProps.className
         )
       }>
+      {/* https://stackoverflow.com/questions/895171/prevent-users-from-submitting-a-form-by-hitting-enter */}
+      <button type="submit" disabled style={{display: 'none'}} aria-hidden="true" />
       <FormContext.Provider value={ctx}>
         <Provider
           isQuiet={isQuiet}
