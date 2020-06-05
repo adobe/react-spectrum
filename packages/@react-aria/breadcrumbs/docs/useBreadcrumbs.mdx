@@ -185,8 +185,10 @@ function BreadcrumbItem(props) {
 ## Breadcrumbs as a heading
 
 If you use breadcrumbs in the context where a heading would normally be used,
-you should pass the `isHeading` prop to `useBreadcrumbItem` for the last breadcrumb item
-that acts as a heading.
+you should make sure that the proper `elementType` for each breadcrumb is communicated to
+`useBreadcrumbItem` so that you receive the correct `breadcrumbItemProps` to spread on your breadcrumb.
+This can be seen in the example below where we specify that the last breadcrumb has elementType `h3` and all other
+breadcrumbs are of type `a`.
 
 ```tsx example
 function Breadcrumbs(props) {
@@ -199,7 +201,7 @@ function Breadcrumbs(props) {
         {children.map((child, i) =>
           React.cloneElement(child, {
             isCurrent: i === children.length - 1,
-            isHeading: i === children.length - 1
+            elementType: i === children.length - 1 ? 'h3' : 'a'
           })
         )}
       </ol>
@@ -213,7 +215,7 @@ function BreadcrumbItem(props) {
   if (props.isCurrent) {
     breadcrumbContent = (
       <h3
-        aria-current={breadcrumbItemProps['aria-current']}
+        {...breadcrumbItemProps}
         style={{
           'margin-block-end': '0px',
           'margin-block-start': '0px',
