@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {GridNode, GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {isFocusVisible, usePress} from '@react-aria/interactions';
-import {mergeProps} from '@react-aria/utils';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface GridCellProps {
@@ -40,9 +40,9 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
     let treeWalker = getFocusableTreeWalker(ref.current);
     let focusable = treeWalker.firstChild() as HTMLElement;
     if (focusable) {
-      focusable.focus();
+      focusWithoutScrolling(focusable);
     } else {
-      ref.current.focus();
+      focusWithoutScrolling(ref.current);
     }
   };
 
@@ -56,7 +56,6 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
 
   // TODO: move into useSelectableItem?
   let {pressProps} = usePress(itemProps);
-  let interactions = mergeProps(itemProps, pressProps);
 
   // Grid cells can have focusable elements inside them. In this case, focus should
   // be marshalled to that element rather than focusing the cell itself.
@@ -77,11 +76,13 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
     // If the cell itself is focused, wait a frame so that focus finishes propagatating 
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
-      focus();
+      if (document.activeElement === ref.current) {
+        focus();
+      }
     });
   };
 
-  let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(interactions, {
+  let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {
     role: 'gridcell',
     onFocus
   });
