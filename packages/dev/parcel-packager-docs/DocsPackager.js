@@ -144,7 +144,8 @@ module.exports = new Packager({
         }
 
         if (t && t.type === 'alias') {
-          if (k === 'base') {
+          let lastKey = keyStack[keyStack.length - 1];
+          if (k === 'base' && (lastKey === 'props' || lastKey === 'extends')) {
             return t.value;
           }
 
