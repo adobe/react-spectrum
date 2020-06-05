@@ -63,8 +63,6 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   });
 
   let onKeyDown = (e) => {
-    e.preventDefault();
-    let walker = getFocusableTreeWalker(e.currentTarget, {from: e.target});
     let nextDir;
     switch (e.key) {
       case 'ArrowRight':
@@ -87,7 +85,11 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       case 'ArrowUp':
         nextDir = 'prev';
         break;
+      default:
+        return;
     }
+    e.preventDefault();
+    let walker = getFocusableTreeWalker(e.currentTarget, {from: e.target});
     let nextElem;
     if (nextDir === 'next') {
       nextElem = walker.nextNode();
@@ -103,6 +105,8 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       }
     }
     if (nextElem) {
+      // Call focus on nextElem so that keyboard navigation scrolls the radio into view
+      nextElem.focus();
       nextElem.click();
     }
   };

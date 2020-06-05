@@ -3,7 +3,7 @@
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
@@ -19,7 +19,8 @@ export interface TableProps<T> extends MultipleSelection, Sortable {
 }
 
 export interface SpectrumTableProps<T> extends TableProps<T>, DOMProps, AriaLabelingProps, StyleProps {
-  rowHeight?: number | 'auto',
+  density?: 'compact' | 'regular' | 'spacious',
+  overflowMode?: 'wrap' | 'truncate',
   isQuiet?: boolean,
   renderEmptyState?: () => JSX.Element
 }
@@ -53,8 +54,9 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   showDivider?: boolean
 }
 
-export interface TableBodyProps<T> extends AsyncLoadable<T> {
-  children: CollectionChildren<T>
+export interface TableBodyProps<T> extends AsyncLoadable {
+  children: CollectionChildren<T>,
+  items?: Iterable<T>
 }
 
 export interface RowProps<T> {

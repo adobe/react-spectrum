@@ -34,10 +34,9 @@ const MAX_VISIBLE_ITEMS = 5;
 function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   props = useProviderProps(props);
   let {
-    size = 'M',
+    size = 'L',
+    isMultiline,
     children,
-    isHeading,
-    headingAriaLevel,
     showRoot,
     isDisabled,
     maxVisibleItems = MAX_VISIBLE_ITEMS,
@@ -75,8 +74,8 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     // Only run the resize logic if the menu is collapsible to avoid the risk of performance problems.
     if (isCollapsible && listRef.current) {
       let listItems = [...listRef.current.children];
-      // Ignore the last item when the size is large because it wraps onto a new line and doesn't take up horizontal space.
-      let listItemsToMeasure = size === 'L' ? listItems.slice(0, listItems.length - 1) : listItems;
+      // Ignore the last item when the isMultiline is true because it wraps onto a new line and doesn't take up horizontal space.
+      let listItemsToMeasure = isMultiline ? listItems.slice(0, listItems.length - 1) : listItems;
       let childrenWidths = listItemsToMeasure.map((item) => item.getBoundingClientRect().width);
 
       let onResize = () => {
@@ -179,8 +178,6 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         }>
         <BreadcrumbItem
           isCurrent={isCurrent}
-          isHeading={isCurrent && isHeading}
-          headingAriaLevel={headingAriaLevel}
           isDisabled={isDisabled}
           onPress={onPress}>
           {child.props.children}
@@ -201,8 +198,9 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
             styles,
             'spectrum-Breadcrumbs',
             {
-              'spectrum-Breadcrumbs--compact': size === 'S',
-              'spectrum-Breadcrumbs--multiline': size === 'L',
+              'spectrum-Breadcrumbs--small': size === 'S',
+              'spectrum-Breadcrumbs--medium': size === 'M',
+              'spectrum-Breadcrumbs--multiline': isMultiline,
               'is-disabled': isDisabled
             },
             styleProps.className
