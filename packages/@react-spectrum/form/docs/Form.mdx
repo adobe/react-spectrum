@@ -36,7 +36,7 @@ category: Forms
 ## Example
 
 ```tsx example
-<Form maxWidth="size-3600">
+<Form onSubmit={e => e.preventDefault()} maxWidth="size-3600">
   <TextField label="Email" placeholder="abc@adobe.com" />
   <TextField label="Password" placeholder="1234" />
   <Checkbox>Remember me</Checkbox>
@@ -50,7 +50,7 @@ are set on the Form itself and propagated to its children to generate a cohesive
 set them directly on the child instead.
 
 ```tsx example
-<Form maxWidth="size-3600" isRequired necessityIndicator="label">
+<Form onSubmit={e => e.preventDefault()} maxWidth="size-3600" isRequired necessityIndicator="label">
   <TextField label="Name" placeholder="Jane Smith" />
   <TextField label="Email" placeholder="abc@adobe.com" />
   <TextField label="Address" placeholder="123 Any Street" isRequired={false} />
@@ -66,7 +66,7 @@ technology as a form landmark region to which assistive technology can navigate 
 
 ```tsx example
 <h3 id="label-3">Personal Information</h3>
-<Form maxWidth="size-3600" aria-labelledby="label-3">
+<Form onSubmit={e => e.preventDefault()} maxWidth="size-3600" aria-labelledby="label-3">
   <TextField label="First Name" placeholder="John" />
   <TextField label="Last Name" placeholder="Smith" />
   <RadioGroup label="Favorite pet">
@@ -88,6 +88,7 @@ technology as a form landmark region to which assistive technology can navigate 
 Top label position, start label alignment
 ```tsx example
 <Form
+  onSubmit={e => e.preventDefault()}
   labelPosition="top"
   labelAlign="start"
   aria-label="Top position, start alignment example"
@@ -102,6 +103,7 @@ Top label position, start label alignment
 Side label position, start label alignment
 ```tsx example
 <Form
+  onSubmit={e => e.preventDefault()}
   labelPosition="side"
   labelAlign="start"
   aria-label="Side position, start alignment example"
@@ -116,6 +118,7 @@ Side label position, start label alignment
 Side label position, end label alignment
 ```tsx example
 <Form
+  onSubmit={e => e.preventDefault()}
   labelPosition="side"
   labelAlign="end"
   aria-label="Side position, end alignment example"
@@ -131,7 +134,11 @@ Side label position, end label alignment
 ### Quiet
 
 ```tsx example
-<Form isQuiet aria-label="Quiet example" maxWidth="size-3600">
+<Form
+  onSubmit={e => e.preventDefault()}
+  isQuiet
+  aria-label="Quiet example"
+  maxWidth="size-3600">
   <TextField label="Name" placeholder="John Smith" />
   <TextField label="Address" placeholder="123 Any Street" />
 </Form>
@@ -140,7 +147,11 @@ Side label position, end label alignment
 ### Emphasized
 
 ```tsx example
-<Form isEmphasized aria-label="Emphasized example" maxWidth="size-3600">
+<Form
+  onSubmit={e => e.preventDefault()}
+  isEmphasized
+  aria-label="Emphasized example"
+  maxWidth="size-3600">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet" defaultValue="dogs">
     <Radio value="dogs">Dogs</Radio>
@@ -152,7 +163,11 @@ Side label position, end label alignment
 ### Disabled
 
 ```tsx example
-<Form isDisabled aria-label="Disabled example" maxWidth="size-3600">
+<Form
+  onSubmit={e => e.preventDefault()}
+  isDisabled
+  aria-label="Disabled example"
+  maxWidth="size-3600">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
@@ -166,6 +181,7 @@ Side label position, end label alignment
 Optional label
 ```tsx example
 <Form
+  onSubmit={e => e.preventDefault()}
   necessityIndicator="label"
   aria-label="Optional with label example"
   maxWidth="size-3600">
@@ -179,6 +195,7 @@ Optional label
 Required label
 ```tsx example
 <Form
+  onSubmit={e => e.preventDefault()}
   isRequired
   necessityIndicator="label"
   aria-label="Required with label example"
@@ -193,6 +210,7 @@ Required label
 Required with asterisk
 ```tsx example
 <Form
+  onSubmit={e => e.preventDefault()}
   isRequired
   necessityIndicator="icon"
   aria-label="Required with asterisk example"
@@ -208,7 +226,11 @@ Required with asterisk
 ### Read only
 
 ```tsx example
-<Form isReadOnly aria-label="isReadOnly example" maxWidth="size-3600">
+<Form
+  onSubmit={e => e.preventDefault()}
+  isReadOnly
+  aria-label="isReadOnly example"
+  maxWidth="size-3600">
   <TextField label="Name" value="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
@@ -220,7 +242,12 @@ Required with asterisk
 ### Validation state
 
 ```tsx example
-<Form validationState="invalid" aria-label="Invalid validationState example" maxWidth="size-3600" marginBottom="size-300">
+<Form
+  onSubmit={e => e.preventDefault()}
+  validationState="invalid"
+  aria-label="Invalid validationState example"
+  maxWidth="size-3600"
+  marginBottom="size-300">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>
@@ -229,7 +256,11 @@ Required with asterisk
 </Form>
 ```
 ```tsx example
-<Form validationState="valid" aria-label="Valid validationState example" maxWidth="size-3600">
+<Form
+  onSubmit={e => e.preventDefault()}
+  validationState="valid"
+  aria-label="Valid validationState example"
+  maxWidth="size-3600">
   <TextField label="Name" placeholder="John Smith" />
   <RadioGroup label="Favorite pet">
     <Radio value="dogs">Dogs</Radio>

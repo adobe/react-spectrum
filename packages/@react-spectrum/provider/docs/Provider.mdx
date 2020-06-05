@@ -43,7 +43,7 @@ definition of custom CSS variables for the `colorScheme` and `scale` prop values
 
 ```tsx example
 <Provider colorScheme="dark" scale="large">
-  <Form margin="15px">
+  <Form onSubmit={e => e.preventDefault()} margin="15px">
     <div>
       <TextField label="Email" />
     </div>
@@ -65,7 +65,7 @@ The Provider's `theme` is the CSS variables for `colorScheme` and `scale` values
 import {theme} from '@react-spectrum/theme-default';
 
 <Provider theme={theme} colorScheme="dark" scale="large">
-  <Form>
+  <Form onSubmit={e => e.preventDefault()}>
     <div>
       <TextField label="Email" />
     </div>
@@ -86,7 +86,7 @@ The default for the locale prop is based on the system/browser settings.
 
 ```tsx example
 <Provider locale="ar-AE">
-  <Form necessityIndicator="label">
+  <Form onSubmit={e => e.preventDefault()} necessityIndicator="label">
     <div>
       <TextField label="البريد الإلكتروني" />
     </div>
@@ -123,7 +123,7 @@ These props are `isDisabled`, `isEmphasized`, `isQuiet`, `isReadOnly`,
 
 ```tsx example
 <Provider isEmphasized>
-  <Form>
+  <Form onSubmit={e => e.preventDefault()}>
     <div>
       <TextField label="Email" placeholder="info@adobe.com" />
     </div>

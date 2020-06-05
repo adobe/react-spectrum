@@ -142,7 +142,7 @@ for the user to fill out or adding confirmation checkboxes.
       </Header>
       <Divider />
       <Content>
-        <Form>
+        <Form onSubmit={e => e.preventDefault()}>
           <TextField label="First Name" placeholder="John" autoFocus />
           <TextField label="Last Name" placeholder="Smith" />
           <TextField label="Street Address" placeholder="123 Any Street" />
@@ -225,7 +225,7 @@ function Example() {
             <Button variant="secondary" onPress={() => alertCancel(close)}>Cancel</Button>
           </ButtonGroup>
           <Content>
-            <Form>
+            <Form onSubmit={e => e.preventDefault()}>
               <TextField label="Name" />
               <Checkbox>Make private</Checkbox>
             </Form>
@@ -343,7 +343,7 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
         <Button variant="secondary" onPress={close}>Cancel</Button>
       </ButtonGroup>
       <Content>
-        <Form>
+        <Form onSubmit={e => e.preventDefault()}>
           <TextField label="Name" />
           <Checkbox>Make private</Checkbox>
         </Form>
@@ -364,7 +364,7 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
         <Button variant="secondary" onPress={close}>Cancel</Button>
       </ButtonGroup>
       <Content>
-        <Form>
+        <Form onSubmit={e => e.preventDefault()}>
           <TextField label="Name" />
           <Checkbox>Make private</Checkbox>
         </Form>
@@ -385,7 +385,7 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
         <Button variant="secondary" onPress={close}>Cancel</Button>
       </ButtonGroup>
       <Content>
-        <Form>
+        <Form onSubmit={e => e.preventDefault()}>
           <TextField label="Name" />
           <Checkbox>Make private</Checkbox>
         </Form>

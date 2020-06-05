@@ -189,7 +189,7 @@ function Example() {
           isOpen
           onClose={() => setOpen(false)}
           isDismissable>
-          <form style={{display: 'flex', flexDirection: 'column'}}>
+          <form onSubmit={e => e.preventDefault()} style={{display: 'flex', flexDirection: 'column'}}>
             <label>
               First Name: <input placeholder="John" />
             </label>

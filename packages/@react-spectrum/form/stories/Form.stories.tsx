@@ -48,7 +48,7 @@ storiesOf('Form', module)
   .add(
     'fields next to each other',
     () => (
-      <Form>
+      <Form onSubmit={e => e.preventDefault()}>
         <Flex>
           <TextField label="First Name" placeholder="John" marginEnd="size-100" flex={1} />
           <TextField label="Last Name" placeholder="Smith" flex={1} />
@@ -103,7 +103,7 @@ storiesOf('Form', module)
 
 function render(props: any = {}) {
   return (
-    <Form {...props}>
+    <Form onSubmit={e => e.preventDefault()} {...props}>
       <TextField label="First Name" placeholder="John" />
       <TextField label="Last Name" placeholder="Smith" />
       <TextField label="Street Address" placeholder="123 Any Street" />

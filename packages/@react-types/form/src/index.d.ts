@@ -11,9 +11,9 @@
  */
 
 import {AriaLabelingProps, DOMProps, SpectrumLabelableProps, StyleProps, ValidationState} from '@react-types/shared';
-import {ReactElement} from 'react';
+import {FormEventHandler, ReactElement} from 'react';
 
-export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StyleProps, SpectrumLabelableProps {
+export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StyleProps, SpectrumLabelableProps, HTMLFormElement {
   /** The contents of the Form. */
   children: ReactElement<SpectrumLabelableProps> | ReactElement<SpectrumLabelableProps>[],
   /** Whether the Form elements are displayed with their quiet style. */
@@ -26,9 +26,37 @@ export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StylePro
   isRequired?: boolean,
   /** Whether the Form elements can be selected but not changed by the user. */
   isReadOnly?: boolean,
-  /** 
-   * Whether the Form elements should display their "valid" or "invalid" visual styling. 
+  /**
+   * Whether the Form elements should display their "valid" or "invalid" visual styling.
    * @default "valid"
    */
-  validationState?: ValidationState
+  validationState?: ValidationState,
+  /**
+   * Sets or retrieves the URL to which the form content is sent for processing.
+   */
+  action?: string,
+  /**
+   * Specifies whether autocomplete is applied to an editable text field.
+   */
+  autoComplete?: 'on' | 'off',
+  /**
+   * Sets or retrieves the encoding type for the form.
+   */
+  encType?: 'application/x-www-form-urlencoded' | 'multipart/form-data' | 'text/plain' | string,
+  /**
+   * Sets or retrieves how to send the form data to the server.
+   */
+  method?: 'get' | 'post' | string,
+  /**
+   * Sets or retrieves the window or frame at which to target content.
+   */
+  target?: '_blank' | '_self' | '_parent' | '_top',
+  /**
+   * Fired on form submission.
+   */
+  onSubmit?: FormEventHandler,
+  /**
+   * Fired on form reset.
+   */
+  onReset?: FormEventHandler
 }
