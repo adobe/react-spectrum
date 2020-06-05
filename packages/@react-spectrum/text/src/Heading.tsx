@@ -11,24 +11,35 @@
  */
 
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HeadingProps} from '@react-types/text';
-import React, {forwardRef} from 'react';
+import React, {ElementType, forwardRef} from 'react';
 import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
+const slotDOMProps = new Set(['aria-current']);
+
 function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
-  props = useSlotProps(props, 'heading');
+  let slotProps = useSlotProps({}, 'heading');
+  props = mergeProps(slotProps, props);
+
+  let domProps = mergeProps(
+    filterDOMProps(props),
+    filterDOMProps(slotProps, {propNames: slotDOMProps})
+  );
+
   let {
     children,
+    level = 3,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
+  let HeadingTag = `h${level}` as ElementType;
 
   return (
-    <h1 {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
+    <HeadingTag {...domProps} {...styleProps} ref={domRef}>
       {children}
-    </h1>
+    </HeadingTag>
   );
 }
 
