@@ -16,8 +16,8 @@ import {HTMLAttributes, RefObject, useEffect} from 'react';
 
 interface DialogAria {
   /** Props for the dialog container element. */
-  dialogProps: HTMLAttributes<HTMLElement>
-  
+  dialogProps: HTMLAttributes<HTMLElement>,
+
   /** Props for the dialog title element. */
   titleProps: HTMLAttributes<HTMLElement>
 }
@@ -26,7 +26,7 @@ interface DialogAria {
  * Provides the behavior and accessibility implementation for a dialog component.
  * A dialog is an overlay shown above other content in an application.
  */
-export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement | null>): DialogAria {
+export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): DialogAria {
   let {role = 'dialog'} = props;
   let titleId = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;

@@ -16,10 +16,6 @@ import focusDocs from 'docs:@react-aria/focus';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
-```jsx import
-import {useDialog} from '@react-aria/dialog';
-```
-
 ---
 category: Overlays
 keywords: [overlays, dialog, modal, aria]
@@ -108,10 +104,13 @@ import {
   OverlayProvider,
   OverlayContainer
 } from '@react-aria/overlays';
+import {useDialog} from '@react-aria/dialog';
 import {FocusScope} from '@react-aria/focus';
 import {useButton} from '@react-aria/button';
 
-function ModalDialog({title, children, isOpen, onClose, isDismissable}) {
+function ModalDialog(props) {
+  let {title, children, isOpen, onClose, isDismissable} = props;
+
   // Handle interacting outside the dialog and pressing
   // the the Escape key to close the modal.
   let ref = React.useRef();
@@ -128,7 +127,7 @@ function ModalDialog({title, children, isOpen, onClose, isDismissable}) {
   useModal();
 
   // Get props for the dialog and its title
-  let {dialogProps, titleProps} = useDialog({ref});
+  let {dialogProps, titleProps} = useDialog(props, ref);
 
   return (
     <div
