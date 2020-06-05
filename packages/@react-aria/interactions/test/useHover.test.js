@@ -39,7 +39,7 @@ describe('useHover', function () {
         isDisabled
         onHoverEnd={addEvent}
         onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
-        onHover={addEvent} />
+        onHoverStart={addEvent} />
     );
 
     let el = res.getByText('test');
@@ -63,7 +63,7 @@ describe('useHover', function () {
       let addEvent = (e) => events.push(e);
       let res = render(
         <Example
-          onHover={addEvent}
+          onHoverStart={addEvent}
           onHoverEnd={addEvent}
           onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
       );
@@ -74,7 +74,7 @@ describe('useHover', function () {
 
       expect(events).toEqual([
         {
-          type: 'hover',
+          type: 'hoverstart',
           target: el,
           pointerType: 'mouse'
         },
@@ -99,7 +99,7 @@ describe('useHover', function () {
       let addEvent = (e) => events.push(e);
       let res = render(
         <Example
-          onHover={addEvent}
+          onHoverStart={addEvent}
           onHoverEnd={addEvent}
           onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
       );
@@ -120,7 +120,7 @@ describe('useHover', function () {
         <Example
           onHoverEnd={addEvent}
           onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
-          onHover={addEvent} />
+          onHoverStart={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -129,7 +129,7 @@ describe('useHover', function () {
 
       expect(events).toEqual([
         {
-          type: 'hover',
+          type: 'hoverstart',
           target: el,
           pointerType: 'mouse'
         },
@@ -158,7 +158,7 @@ describe('useHover', function () {
         <Example
           onHoverEnd={addEvent}
           onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
-          onHover={addEvent} />
+          onHoverStart={addEvent} />
       );
 
       let el = res.getByText('test');

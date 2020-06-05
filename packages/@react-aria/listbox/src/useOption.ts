@@ -19,7 +19,7 @@ import {useSlotId} from '@react-aria/utils';
 interface OptionAria {
   /** Props for the option element. */
   optionProps: HTMLAttributes<HTMLElement>,
-  
+
   /** Props for the main text element inside the option. */
   labelProps: HTMLAttributes<HTMLElement>,
 
@@ -98,7 +98,7 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
   let {pressProps} = usePress({...itemProps, isDisabled});
   let {hoverProps} = useHover({
     isDisabled: isDisabled || !shouldFocusOnHover,
-    onHover() {
+    onHoverStart() {
       state.selectionManager.setFocused(true);
       state.selectionManager.setFocusedKey(key);
     }

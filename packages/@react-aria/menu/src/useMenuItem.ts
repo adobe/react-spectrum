@@ -26,7 +26,7 @@ interface MenuItemAria {
 
   /** Props for the description text element inside the menu item, if any */
   descriptionProps: HTMLAttributes<HTMLElement>,
-  
+
   /** Props for the keyboard shortcut text element inside the item, if any */
   keyboardShortcutProps: HTMLAttributes<HTMLElement>
 }
@@ -50,7 +50,7 @@ interface MenuItemProps {
   /** Handler that is called when the menu should close after selecting an item. */
   onClose?: () => void,
 
-  /** 
+  /**
    * Whether the menu should close when the menu item is selected.
    * @default true
    */
@@ -152,7 +152,7 @@ export function useMenuItem<T>(props: MenuItemProps, state: TreeState<T>): MenuI
   let {pressProps} = usePress(mergeProps({onPressStart, onPressUp, onKeyDown, isDisabled}, itemProps));
   let {hoverProps} = useHover({
     isDisabled,
-    onHover() {
+    onHoverStart() {
       state.selectionManager.setFocused(true);
       state.selectionManager.setFocusedKey(key);
     }

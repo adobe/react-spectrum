@@ -29,7 +29,7 @@ interface HoverResult {
  */
 export function useHover(props: HoverProps): HoverResult {
   let {
-    onHover,
+    onHoverStart,
     onHoverChange,
     onHoverEnd,
     isDisabled
@@ -49,9 +49,9 @@ export function useHover(props: HoverProps): HoverResult {
       state.isHovered = true;
       let target = event.target;
 
-      if (onHover) {
-        onHover({
-          type: 'hover',
+      if (onHoverStart) {
+        onHoverStart({
+          type: 'hoverstart',
           target,
           pointerType
         });
@@ -112,7 +112,7 @@ export function useHover(props: HoverProps): HoverResult {
       };
     }
     return hoverProps;
-  }, [onHover, onHoverChange, onHoverEnd, isDisabled, state]);
+  }, [onHoverStart, onHoverChange, onHoverEnd, isDisabled, state]);
 
   return {
     hoverProps
