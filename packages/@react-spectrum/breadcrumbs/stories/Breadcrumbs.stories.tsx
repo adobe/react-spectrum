@@ -18,7 +18,8 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 let styles = {
-  width: '100vw'
+  width: '100vw',
+  'padding-inline-start': '30px'
 };
 const CenterDecorator = storyFn => <div style={styles}><div>{storyFn()}</div></div>;
 
@@ -68,7 +69,7 @@ storiesOf('Breadcrumbs', module)
   .add(
     'collapsed, maxVisibleItems: auto',
     () => (
-      <div style={{width: '100px'}}>
+      <div style={{width: '100px', border: '1px solid lightgray'}}>
         {renderMany({maxVisibleItems: 'auto'})}
       </div>
     )
@@ -76,7 +77,7 @@ storiesOf('Breadcrumbs', module)
   .add(
     'collapsed, maxVisibleItems: auto, isMultiline',
     () => (
-      <div style={{width: '100px'}}>
+      <div style={{width: '100px', border: '1px solid lightgray'}}>
         {renderMany({maxVisibleItems: 'auto', isMultiline: true})}
       </div>
     )
