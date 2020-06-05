@@ -17,15 +17,15 @@ import {useLink} from '@react-aria/link';
 
 interface AriaBreadcrumbItemProps extends BreadcrumbItemProps, DOMProps {
   /**
-   * The HTML element used to render the breadcrumb link, e.g. "a", or "span".
-   * @default "a"
+   * The HTML element used to render the breadcrumb link, e.g. 'a', or 'span'.
+   * @default 'a'
    */
   elementType?: string
 }
 
 interface BreadcrumbItemAria {
   /** Props for the breadcrumb item link element. */
-  breadcrumbItemProps: HTMLAttributes<HTMLDivElement>
+  itemProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -45,7 +45,7 @@ export function useBreadcrumbItem(props: AriaBreadcrumbItemProps): BreadcrumbIte
   let ref = useRef();
   let {linkProps} = useLink({children, isDisabled: isDisabled || isCurrent, elementType, ...otherProps, ref});
   let isHeading = /^h[1-6]$/.test(elementType);
-  let itemProps: HTMLAttributes<HTMLDivElement> = {};
+  let itemProps: HTMLAttributes<HTMLElement> = {};
 
   if (!isHeading) {
     itemProps = linkProps;
@@ -56,7 +56,7 @@ export function useBreadcrumbItem(props: AriaBreadcrumbItemProps): BreadcrumbIte
   }
 
   return {
-    breadcrumbItemProps: {
+    itemProps: {
       'aria-disabled': isDisabled,
       ...itemProps
     }

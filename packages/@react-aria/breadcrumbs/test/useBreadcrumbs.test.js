@@ -21,12 +21,12 @@ describe('useBreadcrumbs', function () {
   };
 
   it('handles defaults', function () {
-    let {breadcrumbsProps} = renderLinkHook({});
-    expect(breadcrumbsProps['aria-label']).toBe('Breadcrumbs');
+    let {navProps} = renderLinkHook({});
+    expect(navProps['aria-label']).toBe('Breadcrumbs');
   });
 
   it('handles custom aria label', function () {
-    let {breadcrumbsProps} = renderLinkHook({'aria-label': 'test-label'});
+    let {navProps} = renderLinkHook({'aria-label': 'test-label'});
     expect(breadcrumbsProps['aria-label']).toBe('test-label');
   });
 

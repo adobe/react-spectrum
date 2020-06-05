@@ -27,7 +27,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
   } = props;
 
   let {direction} = useLocale();
-  let {breadcrumbItemProps} = useBreadcrumbItem({
+  let {itemProps} = useBreadcrumbItem({
     ...props,
     elementType: typeof children === 'string' ? 'span' : 'a'
   });
@@ -35,7 +35,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
   let element = React.cloneElement(
     getWrappedElement(children),
     {
-      ...breadcrumbItemProps,
+      ...itemProps,
       className:
         classNames(
           styles,
@@ -53,7 +53,7 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
         slots={{
           heading: {
             UNSAFE_className: classNames(styles, 'spectrum-Breadcrumbs-itemLink'),
-            ...breadcrumbItemProps
+            ...itemProps
           }
         }}>
         <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
