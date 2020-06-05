@@ -22,7 +22,7 @@ export interface PressProps extends PressEvents {
   isDisabled?: boolean
 }
 
-export interface PressHookProps extends PressProps, DOMProps {
+export interface PressHookProps extends PressProps {
   /** A ref to the target element. */
   ref?: RefObject<HTMLElement>
 }
@@ -236,7 +236,7 @@ export function usePress(props: PressHookProps): PressResult {
       if (state.isPressed && isValidKeyboardEvent(e)) {
         e.preventDefault();
         e.stopPropagation();
-        
+
         state.isPressed = false;
         triggerPressEnd(createEvent(state.target, e), 'keyboard', e.target === state.target);
         document.removeEventListener('keyup', onKeyUp, false);
@@ -259,7 +259,7 @@ export function usePress(props: PressHookProps): PressResult {
     };
 
     let restoreTextSelection = () => {
-      // There appears to be a delay on iOS where selection still might occur 
+      // There appears to be a delay on iOS where selection still might occur
       // after pointer up, so wait a bit before removing user-select.
       setTimeout(() => {
         // Avoid race conditions
@@ -426,7 +426,7 @@ export function usePress(props: PressHookProps): PressResult {
         if (e.button !== 0) {
           return;
         }
-        
+
         state.isPressed = false;
         document.removeEventListener('mouseup', onMouseUp, false);
 
@@ -627,8 +627,8 @@ interface EventPoint {
 
 function isOverTarget(point: EventPoint, target: HTMLElement) {
   let rect = target.getBoundingClientRect();
-  return (point.clientX || 0) >= (rect.left || 0) && 
-    (point.clientX || 0) <= (rect.right || 0) && 
-    (point.clientY || 0) >= (rect.top || 0) && 
+  return (point.clientX || 0) >= (rect.left || 0) &&
+    (point.clientX || 0) <= (rect.right || 0) &&
+    (point.clientY || 0) >= (rect.top || 0) &&
     (point.clientY || 0) <= (rect.bottom || 0);
 }
