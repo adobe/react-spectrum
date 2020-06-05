@@ -152,7 +152,7 @@ governing permissions and limitations under the License.
     bottom: 0;
     top: 0;
     margin: 0;
-    transform: translateX(0);
+    transform: translateX(0); /* Forces FF to render on the pixel grid */
 
     transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
                 margin var(--spectrum-global-animation-duration-100) ease-out;
