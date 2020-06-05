@@ -62,7 +62,7 @@ export interface SpectrumActionButtonProps extends AriaBaseButtonProps, ButtonPr
   isQuiet?: boolean
 }
 
-export interface SpectrumLogicButtonProps extends AriaBaseButtonProps, ButtonProps, LinkButtonProps, StyleProps {
+export interface SpectrumLogicButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
   /** The type of boolean sequence to be represented by the LogicButton. */
   variant: 'and' | 'or'
 }

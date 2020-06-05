@@ -36,33 +36,29 @@ export function useBreadcrumbItem(props: AriaBreadcrumbItemProps): BreadcrumbIte
   let {
     isCurrent,
     isDisabled,
-    isHeading,
-    headingAriaLevel = 1,
     children = '',
     'aria-current': ariaCurrent,
+    elementType = 'a',
     ...otherProps
   } = props;
 
   let ref = useRef();
-  let {linkProps} = useLink({children, isDisabled: isDisabled || isCurrent, ...otherProps, ref});
+  let {linkProps} = useLink({children, isDisabled: isDisabled || isCurrent, elementType, ...otherProps, ref});
+  let isHeading = /^h[1-6]$/.test(elementType);
+  let itemProps: HTMLAttributes<HTMLDivElement> = {};
 
-  let itemProps: HTMLAttributes<HTMLDivElement> = isCurrent
-    ? {...linkProps, 'aria-current': ariaCurrent || 'page'}
-    : linkProps;
+  if (!isHeading) {
+    itemProps = linkProps;
+  }
 
-  let breadcrumbItemHeadingProps;
-  if (isHeading && isCurrent) {
-    breadcrumbItemHeadingProps = {
-      role: 'heading',
-      'aria-level': headingAriaLevel
-    };
+  if (isCurrent) {
+    itemProps['aria-current'] = ariaCurrent || 'page';
   }
 
   return {
     breadcrumbItemProps: {
       'aria-disabled': isDisabled,
-      ...itemProps,
-      ...breadcrumbItemHeadingProps
+      ...itemProps
     }
   };
 }
