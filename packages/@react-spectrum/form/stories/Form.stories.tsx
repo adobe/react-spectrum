@@ -10,6 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
+import {Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {Checkbox} from '@react-spectrum/checkbox';
 import {countries, states} from './data';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
@@ -18,10 +22,6 @@ import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextArea, TextField} from '@react-spectrum/textfield';
-import {ButtonGroup} from "@react-spectrum/buttongroup";
-import {Button} from "@react-spectrum/button";
-import {action} from "@storybook/addon-actions";
-import {Checkbox} from "@react-spectrum/checkbox";
 
 storiesOf('Form', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
