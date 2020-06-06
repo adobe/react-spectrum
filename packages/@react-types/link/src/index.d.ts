@@ -23,7 +23,7 @@ export interface AriaLinkProps extends LinkProps, FocusableDOMProps, AriaLabelin
 export interface SpectrumLinkProps extends AriaLinkProps, StyleProps {
   /**
    * The [visual style](https://spectrum.adobe.com/page/link/#Options) of the link.
-   * @default "primary"
+   * @default 'primary'
    */
   variant?: 'primary' | 'secondary' | 'overBackground',
   /** Whether the link should be displayed with a quiet style. */
