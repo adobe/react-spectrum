@@ -85,8 +85,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: key,
-    itemRef: ref,
+    key,
+    ref,
     shouldSelectOnPressUp,
     isVirtualized
   });

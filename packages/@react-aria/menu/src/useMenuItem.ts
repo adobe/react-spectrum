@@ -140,8 +140,8 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: key,
-    itemRef: ref,
+    key,
+    ref,
     shouldSelectOnPressUp: true
   });
 
