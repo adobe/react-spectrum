@@ -50,8 +50,6 @@ function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
 let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<HTMLDivElement>) {
   let {
     children,
-    onClose,
-    shouldCloseOnBlur,
     isOpen,
     ...otherProps
   } = props;

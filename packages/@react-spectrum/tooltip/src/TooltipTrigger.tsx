@@ -11,14 +11,14 @@
  */
 
 // import {DOMPropsResponder} from '@react-aria/interactions';
-import {Overlay} from '@react-spectrum/overlays';
+// import {Overlay} from '@react-spectrum/overlays';
 import {PlacementAxis} from '@react-types/overlays';
-import React, {RefObject, useContext, useRef} from 'react';
+import React, {RefObject, useContext} from 'react';
 import {StyleProps} from '@react-types/shared';
 import {TooltipTriggerProps} from '@react-types/tooltip';
-import {useOverlayPosition} from '@react-aria/overlays';
-import {useTooltipTrigger} from '@react-aria/tooltip';
-import {useTooltipTriggerState} from '@react-stately/tooltip';
+// import {useOverlayPosition} from '@react-aria/overlays';
+// import {useTooltipTrigger} from '@react-aria/tooltip';
+// import {useTooltipTriggerState} from '@react-stately/tooltip';
 
 interface TooltipContextProps extends StyleProps {
   ref?: RefObject<HTMLDivElement>,
@@ -32,30 +32,31 @@ export function useTooltipProvider(): TooltipContextProps {
   return useContext(TooltipContext);
 }
 
+// eslint-disable-next-line
 export function TooltipTrigger(props: TooltipTriggerProps) {
-  let {
-    children,
-    isDisabled
-  } = props;
+  // let {
+  //   children,
+  //   isDisabled
+  // } = props;
 
-  let [trigger, tooltip] = React.Children.toArray(children);
+  // let [trigger, tooltip] = React.Children.toArray(children);
 
-  let state = useTooltipTriggerState();
+  // let state = useTooltipTriggerState();
 
-  let triggerRef = useRef<HTMLElement>();
-  let overlayRef = useRef<HTMLDivElement>();
+  // let triggerRef = useRef<HTMLElement>();
+  // let overlayRef = useRef<HTMLDivElement>();
 
-  let {triggerProps, tooltipProps} = useTooltipTrigger({
-    tooltipProps: tooltip.props,
-    triggerProps: trigger.props,
-    isDisabled
-  }, state, triggerRef);
+  // let {triggerProps, tooltipProps} = useTooltipTrigger({
+  //   tooltipProps: tooltip.props,
+  //   triggerProps: trigger.props,
+  //   isDisabled
+  // }, state, triggerRef);
 
-  let {overlayProps, placement} = useOverlayPosition({
-    placement: props.placement || 'right',
-    targetRef: triggerRef,
-    overlayRef
-  });
+  // let {overlayProps, placement} = useOverlayPosition({
+  //   placement: props.placement || 'right',
+  //   targetRef: triggerRef,
+  //   overlayRef
+  // });
 
   return null;
 

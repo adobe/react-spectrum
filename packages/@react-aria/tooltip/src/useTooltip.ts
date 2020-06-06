@@ -13,7 +13,7 @@
 import {AriaTooltipProps} from '@react-types/tooltip';
 // import {DOMPropsResponderContext} from '@react-aria/interactions';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, useContext} from 'react';
+import {HTMLAttributes} from 'react';
 
 interface TooltipAria {
   tooltipProps: HTMLAttributes<HTMLElement>
@@ -29,7 +29,7 @@ export function useTooltip(props: AriaTooltipProps): TooltipAria {
 
   return {
     tooltipProps: mergeProps(domProps, {
-      role,
+      role
       // onPointerEnter,
       // onPointerLeave
     })

@@ -119,7 +119,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         window.removeEventListener('resize', onResize);
       };
     }
-  }, [isCollapsible, childArray.length, listRef, showRoot, size]);
+  }, [isCollapsible, childArray.length, listRef, showRoot, size, isMultiline]);
 
   if (childArray.length > visibleItems) {
     let selectedItem = childArray[childArray.length - 1];

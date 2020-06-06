@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, PointerType, PressEvents} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {PointerType, PressEvents} from '@react-types/shared';
 import {PressResponderContext} from './context';
 
 export interface PressProps extends PressEvents {

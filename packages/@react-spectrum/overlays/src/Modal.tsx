@@ -55,7 +55,7 @@ let typeMap = {
 };
 
 let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
-  let {children, onClose, isOpen, type, isDismissable = false, ...otherProps} = props;
+  let {children, isOpen, type, ...otherProps} = props;
   let typeVariant = typeMap[type];
 
   let {overlayProps} = useOverlay(props, ref);
