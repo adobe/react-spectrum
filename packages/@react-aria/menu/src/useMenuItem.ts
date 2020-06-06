@@ -31,7 +31,7 @@ interface MenuItemAria {
   keyboardShortcutProps: HTMLAttributes<HTMLElement>
 }
 
-interface MenuItemProps {
+interface AriaMenuItemProps {
   /** Whether the menu item is disabled. */
   isDisabled?: boolean,
 
@@ -43,9 +43,6 @@ interface MenuItemProps {
 
   /** The unique key for the menu item. */
   key?: Key,
-
-  /** A ref to the menu item element. */
-  ref?: RefObject<HTMLElement>,
 
   /** Handler that is called when the menu should close after selecting an item. */
   onClose?: () => void,
@@ -69,14 +66,13 @@ interface MenuItemProps {
  * @param props - props for the item
  * @param state - state for the menu, as returned by `useTreeState`
  */
-export function useMenuItem<T>(props: MenuItemProps, state: TreeState<T>): MenuItemAria {
+export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuItemAria {
   let {
     isSelected,
     isDisabled,
     key,
     onClose,
     closeOnSelect = true,
-    ref,
     isVirtualized,
     onAction
   } = props;
