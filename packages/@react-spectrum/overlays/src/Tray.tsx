@@ -55,7 +55,7 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
     isOpen,
     ...otherProps
   } = props;
-  let {overlayProps} = useOverlay({ref, onClose, shouldCloseOnBlur, isOpen, isDismissable: true});
+  let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
   usePreventScroll();
   useModal();
 

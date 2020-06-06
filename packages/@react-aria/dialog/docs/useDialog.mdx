@@ -109,17 +109,12 @@ import {FocusScope} from '@react-aria/focus';
 import {useButton} from '@react-aria/button';
 
 function ModalDialog(props) {
-  let {title, children, isOpen, onClose, isDismissable} = props;
+  let {title, children} = props;
 
   // Handle interacting outside the dialog and pressing
   // the the Escape key to close the modal.
   let ref = React.useRef();
-  let {overlayProps} = useOverlay({
-    ref,
-    onClose,
-    isOpen,
-    isDismissable
-  });
+  let {overlayProps} = useOverlay(props, ref);
 
   // Prevent scrolling while the modal is open, and hide content
   // outside the modal from screen readers.

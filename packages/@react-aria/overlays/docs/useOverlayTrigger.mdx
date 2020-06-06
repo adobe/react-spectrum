@@ -42,12 +42,12 @@ keywords: [overlays, dialog, modal, aria]
 
 ## Features
 
-There is no built in way to create popovers or other types of overlays in 
+There is no built in way to create popovers or other types of overlays in
 HTML. <TypeLink links={docs.links} type={docs.exports.useOverlayTrigger} />,
 combined with <TypeLink links={docs.links} type={docs.exports.useOverlayPosition} />,
 helps achieve accessible overlays that can be styled as needed.
 
-**Note: `useOverlayTrigger` only handles the overlay itself. It should be combined 
+**Note: `useOverlayTrigger` only handles the overlay itself. It should be combined
 with [useDialog](useDialog.html) to create fully accessible popovers. For menus,
 see [useMenuTrigger](useMenuTrigger.html), which builds on `useOverlayTrigger` and provides
 additional functionality specific to menus.**
@@ -68,7 +68,7 @@ to handle hiding content behind the overlay from screen readers, and optionally
 with <TypeLink links={docs.links} type={docs.exports.useOverlayPosition} /> to
 handle positioning the overlay relative to the trigger.
 
-`useOverlayTrigger` returns props that you should spread onto the trigger element and 
+`useOverlayTrigger` returns props that you should spread onto the trigger element and
 the overlay container element:
 
 <TypeContext.Provider value={docs.links}>
@@ -78,20 +78,20 @@ the overlay container element:
 ## Example
 
 This example shows how to build a typical popover overlay that is positioned relative to
-a trigger button. The content of the popover is a dialog, built 
+a trigger button. The content of the popover is a dialog, built
 with <TypeLink links={dialogDocs.links} type={dialogDocs.exports.useDialog} />.
 
 The popover can be closed by clicking or interacting outside the popover, or by pressing the Escape key.
 This is handled by <TypeLink links={docs.links} type={docs.exports.useOverlay} />.
-When the popover is closed, focus is restored back to its trigger button by a 
+When the popover is closed, focus is restored back to its trigger button by a
 &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;.
 
-Content outside the popover is hidden from screen readers 
+Content outside the popover is hidden from screen readers
 by <TypeLink links={docs.links} type={docs.exports.useModal} />.
 This improves the experience for screen reader users by ensuring that they don't
 navigate out of context. This is especially important when the popover is rendered
 into a portal at the end of the document, and the content just before it is
-unrelated to the original trigger. 
+unrelated to the original trigger.
 
 To allow screen reader users to more easily dismiss the popover, a visually hidden
 &lt;<TypeLink links={docs.links} type={docs.exports.DismissButton} />&gt;
@@ -127,19 +127,18 @@ const Popover = React.forwardRef(({
   ...otherProps
 }, ref) => {
   // Handle interacting outside the dialog and pressing
-  // the the Escape key to close the modal. 
+  // the the Escape key to close the modal.
   let {overlayProps} = useOverlay({
-    ref,
     onClose,
     isOpen,
     isDismissable: true
-  });
+  }, ref);
 
   // Hide content outside the modal from screen readers.
   useModal();
 
   // Get props for the dialog and its title
-  let {dialogProps, titleProps} = useDialog({ref});
+  let {dialogProps, titleProps} = useDialog({}, ref);
 
   return (
     <FocusScope restoreFocus>
@@ -197,7 +196,7 @@ function Example() {
   });
 
   return <>
-    <button 
+    <button
       {...buttonProps}
       {...triggerProps}
       ref={triggerRef}>
