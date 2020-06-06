@@ -14,7 +14,7 @@
   width: 224px;
   margin: 2px 16px 2px 2px;
   box-shadow: 0 0 0 1px var(--spectrum-global-color-gray-300);
-  transition: 125ms ease-in-out;
+  transition: 'box-shadow' 125ms ease-in-out;
   height: 64px;
   display: flex;
   flex-direction: row;
@@ -25,8 +25,13 @@
 
   &:hover {
     box-shadow: 0 0 0 1px var(--spectrum-global-color-gray-400);
-    transition: 125ms ease-in-out;
   }
+
+  &:focus {
+    box-shadow: 0 0 0 1px var(--spectrum-global-color-gray-400);
+    outline-color: var(--spectrum-alias-border-color-focus);
+  }
+
   @media screen and (max-width: 960px) {
     margin-bottom: 16px;
   }

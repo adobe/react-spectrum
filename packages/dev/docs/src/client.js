@@ -77,7 +77,7 @@ function Hamburger() {
   }, []);
 
   return (
-    <ActionButton onPress={onPress} aria-label="Open navigation panel">
+    <ActionButton UNSAFE_className={docsStyle.hamburgerButton} onPress={onPress} aria-label="Open navigation panel">
       <ShowMenu />
     </ActionButton>
   );

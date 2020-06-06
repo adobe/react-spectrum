@@ -159,12 +159,20 @@ html, body {
   margin-right: 10px;
 }
 
+.backBtn:focus {
+  outline-color: var(--spectrum-alias-border-color-focus);
+}
+
 .homeBtn svg {
   width: 36px;
   height: 32px;
   display: block;
   margin-right: 16px;
   padding-top: 1px;
+}
+
+.homeBtn:focus {
+  outline-color: var(--spectrum-alias-border-color-focus);
 }
 
 main {
@@ -247,6 +255,11 @@ footer li:last-child:after {
   text-decoration: none;
   &:hover {
     text-decoration: underline;
+  }
+  &:focus {
+    outline: none;
+    text-decoration: underline;
+    text-decoration-style: double;
   }
 }
 
@@ -377,14 +390,32 @@ summary {
   display: flex;
   align-items: center;
   cursor: pointer;
+  position: relative;
 }
 
 summary:focus {
   outline: none;
 }
 
+summary:focus.focus-ring::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: calc(-1 * var(--spectrum-tabs-focus-ring-size));
+
+  border: var(--spectrum-tabs-focus-ring-size) solid transparent;
+  border-radius: var(--spectrum-sidenav-item-border-radius);
+  border-color: var(--spectrum-sidenav-item-border-color-key-focus);
+}
+
 summary::-webkit-details-marker {
   display: none;
+}
+
+details summary svg {
+  transition: all 125ms ease-in-out;
 }
 
 details[open] summary svg {
@@ -455,6 +486,11 @@ h2.sectionHeader {
   box-sizing: border-box;
   height: var(--spectrum-global-dimension-size-600);
   width: 100%;
+}
+
+/* hamburger menu should be hidden so that it doesn't receive focus before the sidenav */
+.hamburgerButton {
+  visibility: hidden;
 }
 
 .responsiveVideo {
@@ -596,6 +632,10 @@ h2.sectionHeader {
     border-bottom: 1px solid var(--spectrum-global-color-gray-200);
     background: var(--page-background);
     z-index: 50;
+  }
+
+  .hamburgerButton {
+    visibility: visible;
   }
 
   /* Expand the component description to full width */
