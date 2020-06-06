@@ -265,14 +265,17 @@ function Nav({currentPageName, pages}) {
       </header>
       <ul className={sideNavStyles['spectrum-SideNav']}>
         {rootPages.map(p => <SideNavItem {...p} />)}
-        {categories.map(key => (
-          <li className={sideNavStyles['spectrum-SideNav-item']}>
-            <h3 className={sideNavStyles['spectrum-SideNav-heading']}>{key}</h3>
-            <ul className={sideNavStyles['spectrum-SideNav']}>
-              {pageMap[key].sort((a, b) => a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
-            </ul>
-          </li>
-        ))}
+        {categories.map(key => {
+          const headingId = `${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
+          return (
+            <li className={sideNavStyles['spectrum-SideNav-item']}>
+              <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
+              <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
+                {pageMap[key].sort((a, b) => a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
+              </ul>
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );
