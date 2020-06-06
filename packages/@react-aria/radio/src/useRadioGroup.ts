@@ -57,7 +57,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   let {focusWithinProps} = useFocusWithin({
     onBlurWithin() {
       if (!state.selectedValue) {
-        state.setFocusableRadio(null);
+        state.setLastFocusedValue(null);
       }
     }
   });
