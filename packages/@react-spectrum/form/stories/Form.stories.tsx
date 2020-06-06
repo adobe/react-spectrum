@@ -15,7 +15,7 @@ import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React from 'react';
+import React, {Key, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 import {ButtonGroup} from "@react-spectrum/buttongroup";
@@ -103,19 +103,17 @@ storiesOf('Form', module)
   .add(
     'validationState: valid',
     () => render({validationState: 'valid'})
+  )
+  .add(
+    'form with reset',
+    () => <FormWithControls />
   );
 
 function render(props: any = {}) {
   return (
-    <Form
-      onSubmit={e => {
-        action('onSubmit')(e);
-        e.preventDefault();
-      }}
-      onReset={action('onReset')}
-      {...props}>
-      <TextField label="First Name" placeholder="John" value="hello" />
-      <TextField label="Last Name" placeholder="Smith" defaultValue="world" />
+    <Form onSubmit={e => e.preventDefault()} {...props}>
+      <TextField label="First Name" placeholder="John" />
+      <TextField label="Last Name" placeholder="Smith" />
       <TextField label="Street Address" placeholder="123 Any Street" />
       <TextField label="City" placeholder="San Francisco" />
       <Picker label="State" placeholder="Select a state" items={states}>
@@ -125,14 +123,7 @@ function render(props: any = {}) {
       <Picker label="Country" placeholder="Select a country" items={countries}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
-      <Checkbox defaultSelected>I am a wizard!</Checkbox>
-      <Checkbox isSelected>I am a hunter!</Checkbox>
-      <RadioGroup label="Favorite pet" name="favorite-pet-group" value="cats">
-        <Radio value="dogs">Dogs</Radio>
-        <Radio value="cats">Cats</Radio>
-        <Radio value="dragons">Dragons</Radio>
-      </RadioGroup>
-      <RadioGroup label="Favorite pet" name="favorite-pet-group2" defaultValue="cats">
+      <RadioGroup label="Favorite pet" name="favorite-pet-group">
         <Radio value="dogs">Dogs</Radio>
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>
@@ -145,7 +136,58 @@ function render(props: any = {}) {
         <Item>Blue</Item>
         <Item>Purple</Item>
       </Picker>
-      <TextArea label="Comments" placeholder="How do you feel?" value="hello" />
+      <TextArea label="Comments" placeholder="How do you feel?" />
+    </Form>
+  );
+}
+
+function FormWithControls(props: any = {}) {
+  let [firstName, setFirstName] = useState('hello');
+  let [isHunter, setIsHunter] = useState(true);
+  let [favoritePet, setFavoritePet] = useState('cats' as Key);
+  let [favoriteColor, setFavoriteColor] = useState('green');
+  let [howIFeel, setHowIFeel] = useState('I feel good, o I feel so good!');
+
+  return (
+    <Form
+      onSubmit={e => {
+        action('onSubmit')(e);
+        e.preventDefault();
+      }}
+      onReset={action('onReset')}
+      {...props}>
+      <TextField label="First Name" placeholder="John" value={firstName} onChange={setFirstName} />
+      <TextField label="Last Name" placeholder="Smith" defaultValue="world" />
+      <TextField label="Street Address" placeholder="123 Any Street" />
+      <TextField label="City" placeholder="San Francisco" />
+      <Picker label="State" placeholder="Select a state" items={states}>
+        {item => <Item key={item.abbr}>{item.name}</Item>}
+      </Picker>
+      <TextField label="Zip code" placeholder="12345" />
+      <Picker label="Country" placeholder="Select a country" items={countries}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </Picker>
+      <Checkbox defaultSelected>I am a wizard!</Checkbox>
+      <Checkbox isSelected={isHunter} onChange={setIsHunter}>I am a hunter!</Checkbox>
+      <RadioGroup label="Favorite pet" name="favorite-pet-group" value={favoritePet} onChange={setFavoritePet}>
+        <Radio value="dogs">Dogs</Radio>
+        <Radio value="cats">Cats</Radio>
+        <Radio value="dragons">Dragons</Radio>
+      </RadioGroup>
+      <RadioGroup label="Favorite pet" name="favorite-pet-group2" defaultValue="cats">
+        <Radio value="dogs">Dogs</Radio>
+        <Radio value="cats">Cats</Radio>
+        <Radio value="dragons">Dragons</Radio>
+      </RadioGroup>
+      <Picker label="Favorite color" selectedKey={favoriteColor} onSelectionChange={setFavoriteColor}>
+        <Item key="red">Red</Item>
+        <Item key="orange">Orange</Item>
+        <Item key="yellow">Yellow</Item>
+        <Item key="green">Green</Item>
+        <Item key="blue">Blue</Item>
+        <Item key="purple">Purple</Item>
+      </Picker>
+      <TextArea label="Comments" placeholder="How do you feel?" value={howIFeel} onChange={setHowIFeel} />
       <TextArea label="Comments" placeholder="How do you feel?" defaultValue="hello" />
       <ButtonGroup>
         <Button variant="secondary" type="reset">Reset</Button>
