@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useId} from '@react-aria/utils';
 
@@ -26,7 +27,7 @@ interface OverlayTriggerProps {
 
 interface OverlayTriggerAria {
   /** Props for the trigger element. */
-  triggerProps: HTMLAttributes<HTMLElement>,
+  triggerProps: AriaButtonProps,
 
   /** Props for the overlay container element. */
   overlayProps: HTMLAttributes<HTMLElement>

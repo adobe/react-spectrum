@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, RefObject} from 'react';
 import {MenuTriggerState} from '@react-stately/menu';
 import {PressProps} from '@react-aria/interactions';
@@ -23,7 +24,7 @@ interface MenuTriggerAriaProps {
 
 interface MenuTriggerAria {
   /** Props for the menu trigger element. */
-  menuTriggerProps: HTMLAttributes<HTMLElement> & PressProps,
+  menuTriggerProps: AriaButtonProps,
 
   /** Props for the menu. */
   menuProps: HTMLAttributes<HTMLElement>

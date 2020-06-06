@@ -10,21 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps} from '@react-types/button';
 import {AriaSelectProps} from '@react-types/select';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
-import {PressProps} from '@react-aria/interactions';
 import {SelectState} from '@react-stately/select';
 import {useCollator} from '@react-aria/i18n';
 import {useLabel} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
 
 interface AriaSelectOptions<T> extends AriaSelectProps<T> {
-  /** A ref to the trigger element. */
-  triggerRef: RefObject<HTMLElement>,
-
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
@@ -37,7 +34,7 @@ interface SelectAria {
   labelProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the popup trigger element. */
-  triggerProps: HTMLAttributes<HTMLElement> & PressProps,
+  triggerProps: AriaButtonProps,
 
   /** Props for the element representing the selected value. */
   valueProps: HTMLAttributes<HTMLElement>,
@@ -52,9 +49,8 @@ interface SelectAria {
  * @param props - props for the select
  * @param state - state for the select, as returned by `useListState`
  */
-export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>): SelectAria {
+export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement>): SelectAria {
   let {
-    triggerRef,
     keyboardDelegate
   } = props;
 
@@ -68,7 +64,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>)
       type: 'listbox'
     },
     state,
-    triggerRef
+    ref
   );
 
   let {typeSelectProps} = useTypeSelect({
