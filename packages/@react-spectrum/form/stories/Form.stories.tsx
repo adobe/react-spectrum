@@ -144,8 +144,8 @@ function render(props: any = {}) {
 function FormWithControls(props: any = {}) {
   let [firstName, setFirstName] = useState('hello');
   let [isHunter, setIsHunter] = useState(true);
-  let [favoritePet, setFavoritePet] = useState('cats' as Key);
-  let [favoriteColor, setFavoriteColor] = useState('green');
+  let [favoritePet, setFavoritePet] = useState('cats');
+  let [favoriteColor, setFavoriteColor] = useState('green' as Key);
   let [howIFeel, setHowIFeel] = useState('I feel good, o I feel so good!');
 
   return (
