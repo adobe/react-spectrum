@@ -18,10 +18,7 @@ import {useOverlayTrigger} from '@react-aria/overlays';
 
 interface MenuTriggerAriaProps {
   /** The type of menu that the menu trigger opens. */
-  type?: 'menu' | 'listbox',
-
-  /** A ref to the trigger element. */
-  ref?: RefObject<HTMLElement | null>
+  type?: 'menu' | 'listbox'
 }
 
 interface MenuTriggerAria {
@@ -37,19 +34,17 @@ interface MenuTriggerAria {
  * @param props - props for the menu trigger
  * @param state - state for the menu trigger
  */
-export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerState): MenuTriggerAria {
+export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerState, ref: RefObject<HTMLElement>): MenuTriggerAria {
   let {
-    ref,
     type = 'menu' as MenuTriggerAriaProps['type']
   } = props;
 
   let menuTriggerId = useId();
   let {triggerProps, overlayProps} = useOverlayTrigger({
-    ref,
     type,
     onClose: state.close,
     isOpen: state.isOpen
-  });
+  }, ref);
 
   let onKeyDown = (e) => {
     if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {

@@ -104,7 +104,7 @@ function MenuButton(props) {
 
   // Get props for the menu trigger and menu elements
   let ref = React.useRef();
-  let {menuTriggerProps, menuProps} = useMenuTrigger({ref}, state);
+  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
 
   // Get props for the button based on the trigger props from useMenuTrigger
   let {buttonProps} = useButton(menuTriggerProps, ref);

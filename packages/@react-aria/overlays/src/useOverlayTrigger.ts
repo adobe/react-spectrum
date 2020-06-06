@@ -14,9 +14,6 @@ import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useId} from '@react-aria/utils';
 
 interface OverlayTriggerProps {
-  /** A ref to the trigger element. */
-  ref: RefObject<HTMLElement | null>,
-
   /** Type of overlay that is opened by the trigger. */
   type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
 
@@ -39,9 +36,9 @@ interface OverlayTriggerAria {
  * Handles the behavior and accessibility for an overlay trigger, e.g. a button
  * that opens a popover, menu, or other overlay that is positioned relative to the trigger.
  */
-export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAria {
-  let {ref, type, onClose, isOpen} = props;
-  
+export function useOverlayTrigger(props: OverlayTriggerProps, ref: RefObject<HTMLElement>): OverlayTriggerAria {
+  let {type, onClose, isOpen} = props;
+
   // When scrolling a parent scrollable region of the trigger (other than the body),
   // we hide the popover. Otherwise, its position would be incorrect.
   useEffect(() => {
@@ -69,7 +66,7 @@ export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAri
 
   // Aria 1.1 supports multiple values for aria-haspopup other than just menus.
   // https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup
-  // However, we only add it for menus for now because screen readers often 
+  // However, we only add it for menus for now because screen readers often
   // announce it as a menu even for other values.
   let ariaHasPopup = undefined;
   if (type === 'menu') {

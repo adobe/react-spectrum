@@ -173,11 +173,10 @@ function Example() {
   // hiding the overlay when a parent element of the trigger scrolls
   // (which invalidates the popover positioning).
   let {triggerProps, overlayProps} = useOverlayTrigger({
-    ref: triggerRef,
     type: 'dialog',
     onClose: () => setOpen(false),
     isOpen
-  });
+  }, triggerRef);
 
   // Get popover positioning props relative to the trigger
   let {overlayProps: positionProps} = useOverlayPosition({
