@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-
 .spectrum {
   --hljs-color: var(--spectrum-global-color-gray-800);
   --hljs-background: var(--spectrum-global-color-gray-75);
@@ -22,7 +21,21 @@
   --hljs-class-color: var(--spectrum-global-color-yellow-600);
   --hljs-function-color: var(--spectrum-global-color-blue-600);
   --hljs-variable-color: var(--spectrum-global-color-yellow-600);
-  --hljs-title-color: var(--spectrum-global-color-indigo-600);
+  --hljs-title-color: var(--spectrum-global-color-indigo-500);
+  --hljs-comment-color: var(--spectrum-global-color-gray-700)
+}
+
+[style*="color-scheme: light"] {
+  --hljs-string-color: #398241;
+  --hljs-literal-color:  #a9621b;
+  --hljs-attribute-color: #a9621b;
+  --hljs-class-color: #847323;
+  --hljs-variable-color: #847323;
+}
+
+[style*="color-scheme: dark"] {
+  --hljs-keyword-color: var(--spectrum-global-color-fuchsia-700);
+  --hljs-title-color: var(--spectrum-global-color-indigo-700); 
 }
 
 /** for now keep syntax highlighting different from prop table. we can join them later if need be,
@@ -40,7 +53,7 @@
 
 :global(.hljs-comment),
 :global(.hljs-quote) {
-  color: #a0a1a7;
+  color: var(--hljs-comment-color);
   font-style: italic;
 }
 
@@ -183,6 +196,6 @@
 }
 
 :global(.comment) {
-  color: #a0a1a7;
+  color: var(--hljs-comment-color);
   font-style: italic;
 }

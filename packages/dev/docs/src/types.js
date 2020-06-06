@@ -413,16 +413,16 @@ export function InterfaceType({description, properties: props, showRequired, sho
         <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
           <thead>
             <tr>
-              <td className={tableStyles['spectrum-Table-headCell']}>Name</td>
-              <td className={tableStyles['spectrum-Table-headCell']} style={{'width': '30%'}}>Type</td>
-              {showDefault && <td className={tableStyles['spectrum-Table-headCell']}>Default</td>}
-              <td className={tableStyles['spectrum-Table-headCell']} style={{'width': '40%'}}>Description</td>
+              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Name</td>
+              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={{'width': '30%'}}>Type</td>
+              {showDefault && <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Default</td>}
+              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={{'width': '40%'}}>Description</td>
             </tr>
           </thead>
           <tbody className={tableStyles['spectrum-Table-body']}>
             {properties.map((prop, index) => (
               <tr key={index} className={tableStyles['spectrum-Table-row']}>
-                <td className={tableStyles['spectrum-Table-cell']} data-column="Name">
+                <td role="rowheader" className={tableStyles['spectrum-Table-cell']} data-column="Name">
                   <code className={`${typographyStyles['spectrum-Code4']}`}>
                     <span className="token hljs-attr">{prop.name}</span>
                   </code>
@@ -457,14 +457,14 @@ export function InterfaceType({description, properties: props, showRequired, sho
         <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable} ${styles.methodTable}`}>
           <thead>
             <tr>
-              <td className={tableStyles['spectrum-Table-headCell']}>Method</td>
-              <td className={tableStyles['spectrum-Table-headCell']}>Description</td>
+              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Method</td>
+              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Description</td>
             </tr>
           </thead>
           <tbody className={tableStyles['spectrum-Table-body']}>
             {methods.map((prop, index) => (
               <tr key={index} className={tableStyles['spectrum-Table-row']}>
-                <td className={tableStyles['spectrum-Table-cell']} data-column="Name">
+                <td role="rowheader" className={tableStyles['spectrum-Table-cell']} data-column="Name">
                   <code className={`${typographyStyles['spectrum-Code4']}`}>
                     <span className="token hljs-function">{prop.name}</span>
                     <TypeParameters typeParameters={prop.value.typeParameters} />

@@ -22,9 +22,9 @@ export function ToC(props) {
   } = props;
 
   return (
-    <nav className={styles['toc']} id="toc">
+    <nav className={styles['toc']} id="toc" aria-labelledby="toc-heading">
       <div className={styles['tocContainer']}>
-        <h3 aria-label="Table of contents" className={typographyStyles['spectrum-Heading4']}>Contents</h3>
+        <h3 aria-label="Table of contents" id="toc-heading" className={typographyStyles['spectrum-Heading4']}>Contents</h3>
         <SideNav node={toc} />
       </div>
     </nav>

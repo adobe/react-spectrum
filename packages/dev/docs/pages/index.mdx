@@ -19,6 +19,7 @@ import heroWide from 'url:./assets/ReactSpectrumHome_976x445_1x.png';
 import heroWide2x from 'url:./assets/ReactSpectrumHome_976x445_2x.png';
 import heroWideWebp from 'url:./assets/ReactSpectrumHome_976x445_1x.webp';
 import heroWide2xWebp from 'url:./assets/ReactSpectrumHome_976x445_2x.webp';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 ---
 description: A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences.
@@ -44,18 +45,18 @@ A collection of libraries and tools that help you build adaptive, accessible, an
     title: 'React Spectrum',
     description: 'A React implementation of Spectrum, Adobe’s design system. Spectrum provides adaptive, accessible, and cohesive experiences for all Adobe applications.',
     url: './react-spectrum/index.html',
-    urlText: 'Explore'
+    urlText: <>Explore<VisuallyHidden elementType="span"> about the React Spectrum library</VisuallyHidden></>
   },
   {
     title: 'React Aria',
     description: 'A library of React Hooks that provides accessible UI primitives for your design system.',
     url: './react-aria/index.html',
-    urlText: 'Learn more'
+    urlText: <>Learn more<VisuallyHidden elementType="span"> about the React Aria library</VisuallyHidden></>
   },
   {
     title: 'React Stately',
     description: 'A library of React Hooks that provides cross-platform state management for your design system.',
     url: './react-stately/index.html',
-    urlText: 'Get started'
+    urlText: <>Get Started<VisuallyHidden elementType="span"> with the React Stately library</VisuallyHidden></>
   }
 ]} />
