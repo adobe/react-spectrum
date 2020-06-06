@@ -21,6 +21,7 @@ import {TextArea, TextField} from '@react-spectrum/textfield';
 import {ButtonGroup} from "@react-spectrum/buttongroup";
 import {Button} from "@react-spectrum/button";
 import {action} from "@storybook/addon-actions";
+import {Checkbox} from "@react-spectrum/checkbox";
 
 storiesOf('Form', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -113,8 +114,8 @@ function render(props: any = {}) {
       }}
       onReset={action('onReset')}
       {...props}>
-      <TextField label="First Name" placeholder="John" />
-      <TextField label="Last Name" placeholder="Smith" />
+      <TextField label="First Name" placeholder="John" value="hello" />
+      <TextField label="Last Name" placeholder="Smith" defaultValue="world" />
       <TextField label="Street Address" placeholder="123 Any Street" />
       <TextField label="City" placeholder="San Francisco" />
       <Picker label="State" placeholder="Select a state" items={states}>
@@ -124,7 +125,14 @@ function render(props: any = {}) {
       <Picker label="Country" placeholder="Select a country" items={countries}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
-      <RadioGroup label="Favorite pet" name="favorite-pet-group">
+      <Checkbox defaultSelected>I am a wizard!</Checkbox>
+      <Checkbox isSelected>I am a hunter!</Checkbox>
+      <RadioGroup label="Favorite pet" name="favorite-pet-group" value="cats">
+        <Radio value="dogs">Dogs</Radio>
+        <Radio value="cats">Cats</Radio>
+        <Radio value="dragons">Dragons</Radio>
+      </RadioGroup>
+      <RadioGroup label="Favorite pet" name="favorite-pet-group2" defaultValue="cats">
         <Radio value="dogs">Dogs</Radio>
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>
@@ -137,7 +145,8 @@ function render(props: any = {}) {
         <Item>Blue</Item>
         <Item>Purple</Item>
       </Picker>
-      <TextArea label="Comments" placeholder="How do you feel?" />
+      <TextArea label="Comments" placeholder="How do you feel?" value="hello" />
+      <TextArea label="Comments" placeholder="How do you feel?" defaultValue="hello" />
       <ButtonGroup>
         <Button variant="secondary" type="reset">Reset</Button>
         <Button variant="primary" type="submit">Submit</Button>
