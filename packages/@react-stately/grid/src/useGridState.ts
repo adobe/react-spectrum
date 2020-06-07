@@ -50,7 +50,7 @@ export function useGridState<T extends object>(props: GridStateProps<T>): GridSt
     showSelectionCheckboxes: props.showSelectionCheckboxes && selectionState.selectionMode !== 'none',
     selectionMode: selectionState.selectionMode,
     columns: []
-  }), [props.showSelectionCheckboxes, selectionState.selectionMode]);
+  }), [props.children, props.showSelectionCheckboxes, selectionState.selectionMode]);
 
   let collection = useCollection<T, GridCollection<T>>(
     props,

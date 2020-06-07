@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionVirtualizer} from './CollectionVirtualizer';
 import {InvalidationContext} from './types';
 import {Key} from 'react';
 import {LayoutInfo} from './LayoutInfo';
 // import {Point} from './Point';
 import {Rect} from './Rect';
 import {Size} from './Size';
+import {Virtualizer} from './Virtualizer';
 // import { DragTarget, DropTarget } from '@react-types/shared';
 
 /**
@@ -34,7 +34,7 @@ import {Size} from './Size';
  */
 export abstract class Layout<T extends object> {
   /** The CollectionView the layout is currently attached to */
-  virtualizer: CollectionVirtualizer<T, any, any>;
+  virtualizer: Virtualizer<T, any, any>;
 
   /**
    * Returns whether the layout should invalidate in response to

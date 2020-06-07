@@ -11,14 +11,14 @@
  */
 
 import {Collection} from '@react-types/shared';
-import {CollectionVirtualizer} from './CollectionVirtualizer';
 import {Key, useCallback, useLayoutEffect, useMemo, useState} from 'react';
 import {Layout} from './Layout';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
+import {Virtualizer} from './Virtualizer';
 
-interface CollectionVirtualizerProps<T extends object, V, W> {
+interface VirtualizerProps<T extends object, V, W> {
   renderView(type: string, content: T): V,
   renderWrapper(
     parent: ReusableView<T, V> | null,
@@ -33,23 +33,23 @@ interface CollectionVirtualizerProps<T extends object, V, W> {
   transitionDuration?: number
 }
 
-export interface CollectionVirtualizerState<T extends object, V, W> {
+export interface VirtualizerState<T extends object, V, W> {
   visibleViews: W[],
   setVisibleRect: (rect: Rect) => void,
   contentSize: Size,
   isAnimating: boolean,
-  virtualizer: CollectionVirtualizer<T, V, W>,
+  virtualizer: Virtualizer<T, V, W>,
   isScrolling: boolean,
   startScrolling: () => void,
   endScrolling: () => void
 }
 
-export function useCollectionVirtualizerState<T extends object, V, W>(opts: CollectionVirtualizerProps<T, V, W>): CollectionVirtualizerState<T, V, W> {
+export function useVirtualizerState<T extends object, V, W>(opts: VirtualizerProps<T, V, W>): VirtualizerState<T, V, W> {
   let [visibleViews, setVisibleViews] = useState<W[]>([]);
   let [contentSize, setContentSize] = useState(new Size());
   let [isAnimating, setAnimating] = useState(false);
   let [isScrolling, setScrolling] = useState(false);
-  let virtualizer = useMemo(() => new CollectionVirtualizer<T, V, W>(), []);
+  let virtualizer = useMemo(() => new Virtualizer<T, V, W>(), []);
 
   virtualizer.delegate = {
     setVisibleViews,

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './CollectionView';
-export * from './useCollectionItem';
-export * from './CollectionItem';
+export * from './Virtualizer';
+export * from './useVirtualizerItem';
+export * from './VirtualizerItem';
 export * from './ScrollView';
 export * from './utils';

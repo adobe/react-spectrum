@@ -13,11 +13,11 @@
 import {CancelablePromise, easeOut, tween} from './tween';
 import {Collection} from '@react-types/shared';
 import {
-  CollectionVirtualizerDelegate,
-  CollectionVirtualizerOptions,
   InvalidationContext,
   ScrollAnchor,
-  ScrollToItemOptions
+  ScrollToItemOptions,
+  VirtualizerDelegate,
+  VirtualizerOptions
 } from './types';
 import {concatIterators, difference} from './utils';
 import {Key} from 'react';
@@ -56,12 +56,12 @@ import {Transaction} from './Transaction';
  * views as needed by the collection view. Those views are then reused by the collection view as
  * the user scrolls through the content.
  */
-export class CollectionVirtualizer<T extends object, V, W> {
+export class Virtualizer<T extends object, V, W> {
   /**
    * The collection view delegate. The delegate is used by the collection view
    * to create and configure views.
    */
-  delegate: CollectionVirtualizerDelegate<T, V, W>;
+  delegate: VirtualizerDelegate<T, V, W>;
 
   /** The duration of animated layout changes, in milliseconds. Default is 500ms. */
   transitionDuration: number;
@@ -101,7 +101,7 @@ export class CollectionVirtualizer<T extends object, V, W> {
   private _nextTransaction: Transaction<T, V> | null;
   private _transactionQueue: Transaction<T, V>[];
 
-  constructor(options: CollectionVirtualizerOptions<T, V, W> = {}) {
+  constructor(options: VirtualizerOptions<T, V, W> = {}) {
     this._contentSize = new Size;
     this._visibleRect = new Rect;
 

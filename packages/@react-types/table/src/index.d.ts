@@ -36,15 +36,15 @@ export interface ColumnProps<T> {
   title?: ReactNode,
   children: ReactNode | ColumnElement<T> | ColumnElement<T>[],
   childColumns?: T[],
-  'aria-label'?: string
+  'aria-label'?: string,
+  width?: number | string,
+  minWidth?: number | string,
+  maxWidth?: number | string,
+  defaultWidth?: number | string
 }
 
 // TODO: how to support these in CollectionBuilder...
 export interface SpectrumColumnProps<T> extends ColumnProps<T> {
-  width?: number | string,
-  minWidth?: number | string,
-  maxWidth?: number | string,
-  defaultWidth?: number | string,
   align?: 'start' | 'center' | 'end',
   allowsResizing?: boolean,
   allowsReordering?: boolean,

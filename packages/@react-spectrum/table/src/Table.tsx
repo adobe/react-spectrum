@@ -13,8 +13,8 @@
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {CollectionItem, layoutInfoToStyle, ScrollView, setScrollLeft, useCollectionView} from '@react-aria/collections';
 import {DOMRef} from '@react-types/shared';
+import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {GridState, useGridState} from '@react-stately/grid';
 // @ts-ignore
@@ -23,7 +23,7 @@ import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-stately/collections';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef} from 'react';
-import {Rect, ReusableView, useCollectionVirtualizerState} from '@react-stately/virtualizer';
+import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
@@ -143,7 +143,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
     }
 
     return (
-      <CollectionItem
+      <VirtualizerItem
         key={reusableView.key}
         reusableView={reusableView}
         parent={parent}
@@ -220,7 +220,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
 
   return (
     <TableContext.Provider value={state}>
-      <TableCollectionView
+      <TableVirtualizer
         {...gridProps}
         {...styleProps}
         className={
@@ -248,12 +248,12 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
-// This is a custom CollectionView that also has a header that syncs its scroll position with the body.
-function TableCollectionView({layout, collection, focusedKey, renderView, renderWrapper, domRef, ...otherProps}) {
+// This is a custom Virtualizer that also has a header that syncs its scroll position with the body.
+function TableVirtualizer({layout, collection, focusedKey, renderView, renderWrapper, domRef, ...otherProps}) {
   let {direction} = useLocale();
   let headerRef = useRef<HTMLDivElement>();
   let bodyRef = useRef<HTMLDivElement>();
-  let state = useCollectionVirtualizerState({
+  let state = useVirtualizerState({
     layout,
     collection,
     renderView,
@@ -265,7 +265,7 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
     transitionDuration: collection.body.props.isLoading && collection.size > 0 ? 0 : 500
   });
 
-  let {collectionViewProps} = useCollectionView({
+  let {virtualizerProps} = useVirtualizer({
     focusedKey,
     scrollToItem(key) {
       let item = collection.getItem(key);
@@ -304,7 +304,7 @@ function TableCollectionView({layout, collection, focusedKey, renderView, render
 
   return (
     <div
-      {...mergeProps(otherProps, collectionViewProps)}
+      {...mergeProps(otherProps, virtualizerProps)}
       ref={domRef}>
       <div
         role="presentation"

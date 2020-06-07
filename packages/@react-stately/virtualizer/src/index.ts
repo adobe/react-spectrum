@@ -18,4 +18,4 @@ export * from './Size';
 export * from './ReusableView';
 export type {InvalidationContext} from './types';
 
-export * from './useCollectionVirtualizer';
+export * from './useVirtualizerState';

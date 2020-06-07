@@ -447,7 +447,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   // }
 
   // getDropTarget(point: Point): DropTarget {
-  //   let key = this.collectionManager.keyAtPoint(point);
+  //   let key = this.virtualizer.keyAtPoint(point);
   //   if (key) {
   //     return {
   //       type: 'item',

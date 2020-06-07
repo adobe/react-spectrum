@@ -11,7 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {layoutInfoToStyle, useCollectionItem} from '@react-aria/collections';
+import {layoutInfoToStyle, useVirtualizerItem} from '@react-aria/virtualizer';
 import {ListBoxContext} from './ListBoxContext';
 import {Node} from '@react-stately/collections';
 import React, {Fragment, ReactNode, useContext, useRef} from 'react';
@@ -41,7 +41,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
   });
 
   let headerRef = useRef();
-  useCollectionItem({
+  useVirtualizerItem({
     reusableView: header,
     ref: headerRef
   });

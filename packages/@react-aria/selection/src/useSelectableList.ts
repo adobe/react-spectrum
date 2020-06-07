@@ -54,7 +54,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
   let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(collection, disabledKeys, ref, collator), [keyboardDelegate, collection, disabledKeys, ref, collator]);
 
   // If not virtualized, scroll the focused element into view when the focusedKey changes.
-  // When virtualized, CollectionView handles this internally.
+  // When virtualized, Virtualizer handles this internally.
   useEffect(() => {
     if (!isVirtualized && selectionManager.focusedKey) {
       let element = ref.current.querySelector(`[data-key="${selectionManager.focusedKey}"]`) as HTMLElement;

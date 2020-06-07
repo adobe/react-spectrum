@@ -13,12 +13,12 @@
 import {RefObject, useCallback, useLayoutEffect} from 'react';
 import {ReusableView, Size} from '@react-stately/virtualizer';
 
-interface CollectionItemOptions<T extends object, V, W> {
+interface VirtualizerItemOptions<T extends object, V, W> {
   reusableView: ReusableView<T, V>,
   ref: RefObject<HTMLElement>
 }
 
-export function useCollectionItem<T extends object, V, W>(options: CollectionItemOptions<T, V, W>) {
+export function useVirtualizerItem<T extends object, V, W>(options: VirtualizerItemOptions<T, V, W>) {
   let {reusableView: {layoutInfo, virtualizer}, ref} = options;
 
   let updateSize = useCallback(() => {

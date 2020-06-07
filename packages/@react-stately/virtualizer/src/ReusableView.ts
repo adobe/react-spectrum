@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionVirtualizer} from './CollectionVirtualizer';
 import {Key} from 'react';
 import {LayoutInfo} from './LayoutInfo';
+import {Virtualizer} from './Virtualizer';
 
 let KEY = 0;
 
@@ -25,7 +25,7 @@ let KEY = 0;
  */
 export class ReusableView<T extends object, V> {
   /** The CollectionVirtualizer this view is a part of */
-  virtualizer: CollectionVirtualizer<T, V, unknown>;
+  virtualizer: Virtualizer<T, V, unknown>;
 
   /** The LayoutInfo this view is currently representing. */
   layoutInfo: LayoutInfo | null;
@@ -38,7 +38,7 @@ export class ReusableView<T extends object, V> {
   viewType: string;
   key: Key;
 
-  constructor(virtualizer: CollectionVirtualizer<T, V, unknown>) {
+  constructor(virtualizer: Virtualizer<T, V, unknown>) {
     this.virtualizer = virtualizer;
     this.key = ++KEY;
   }

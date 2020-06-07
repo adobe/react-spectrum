@@ -13,7 +13,6 @@
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
-import {CollectionView} from '@react-aria/collections';
 import {FocusRing} from '@react-aria/focus';
 import {Item, Node, Section} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
@@ -22,6 +21,7 @@ import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
+import {Virtualizer} from '@react-aria/virtualizer';
 
 export {Item, Section};
 
@@ -45,7 +45,7 @@ export function Tree<T extends object>(props: CollectionBase<T> & Expandable & M
   });
 
   return (
-    <CollectionView
+    <Virtualizer
       {...collectionProps}
       ref={ref}
       focusedKey={state.selectionManager.focusedKey}
@@ -61,7 +61,7 @@ export function Tree<T extends object>(props: CollectionBase<T> & Expandable & M
           <TreeItem item={item} state={state} />
         );
       }}
-    </CollectionView>
+    </Virtualizer>
   );
 }
 

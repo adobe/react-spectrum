@@ -12,7 +12,6 @@
 
 import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {CollectionItem, CollectionView} from '@react-aria/collections';
 import {FocusStrategy} from '@react-types/menu';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -30,6 +29,7 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useCollator, useMessageFormatter} from '@react-aria/i18n';
 import {useListBox} from '@react-aria/listbox';
 import {useProvider} from '@react-spectrum/provider';
+import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 
 interface ListBoxBaseProps<T> extends DOMProps, AriaLabelingProps, StyleProps {
   layout: ListLayout<T>,
@@ -94,7 +94,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
     }
 
     return (
-      <CollectionItem
+      <VirtualizerItem
         key={reusableView.key}
         reusableView={reusableView}
         parent={parent} />
@@ -103,7 +103,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
 
   return (
     <ListBoxContext.Provider value={state}>
-      <CollectionView
+      <Virtualizer
         {...styleProps}
         {...mergeProps(listBoxProps, domProps)}
         ref={ref}
@@ -145,7 +145,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
             );
           }
         }}
-      </CollectionView>
+      </Virtualizer>
     </ListBoxContext.Provider>
   );
 }

@@ -30,7 +30,7 @@ export interface InvalidationContext<T extends object, V> {
   transaction?: Transaction<T, V>
 }
 
-export interface CollectionVirtualizerDelegate<T extends object, V, W> {
+export interface VirtualizerDelegate<T extends object, V, W> {
   setVisibleViews(views: W[]): void,
   setContentSize(size: Size): void,
   setVisibleRect(rect: Rect): void,
@@ -62,10 +62,10 @@ export interface ScrollToItemOptions {
   offsetY?: number
 }
 
-export interface CollectionVirtualizerOptions<T extends object, V, W> {
+export interface VirtualizerOptions<T extends object, V, W> {
   collection?: Collection<T>,
   layout?: Layout<T>,
-  delegate?: CollectionVirtualizerDelegate<T, V, W>,
+  delegate?: VirtualizerDelegate<T, V, W>,
   transitionDuration?: number,
   anchorScrollPosition?: boolean,
   anchorScrollPositionAtTop?: boolean,

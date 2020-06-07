@@ -23,7 +23,7 @@ export function useCollection<T extends object, C extends Collection<Node<T>> = 
   let prev = useRef<C>(null);
   return useMemo(() => {
     let nodes = builder.build(props, context);
-    prev.current =  factory(nodes, prev.current);
+    prev.current = factory(nodes, prev.current);
     return prev.current;
   // Don't invalidate when any prop changes, just the two we care about.
   // eslint-disable-next-line react-hooks/exhaustive-deps

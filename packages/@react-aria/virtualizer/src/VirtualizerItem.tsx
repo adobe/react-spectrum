@@ -13,20 +13,20 @@
 import {Direction} from '@react-types/shared';
 import {LayoutInfo, ReusableView} from '@react-stately/virtualizer';
 import React, {CSSProperties, useRef} from 'react';
-import {useCollectionItem} from './useCollectionItem';
 import {useLocale} from '@react-aria/i18n';
+import {useVirtualizerItem} from './useVirtualizerItem';
 
-interface CollectionItemProps<T extends object, V> {
+interface VirtualizerItemProps<T extends object, V> {
   reusableView: ReusableView<T, V>,
   parent?: ReusableView<T, V>,
   className?: string
 }
 
-export function CollectionItem<T extends object, V>(props: CollectionItemProps<T, V>) {
+export function VirtualizerItem<T extends object, V>(props: VirtualizerItemProps<T, V>) {
   let {className, reusableView, parent} = props;
   let {direction} = useLocale();
   let ref = useRef();
-  useCollectionItem({
+  useVirtualizerItem({
     reusableView,
     ref
   });

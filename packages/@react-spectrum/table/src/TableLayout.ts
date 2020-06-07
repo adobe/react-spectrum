@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {ColumnProps} from '@react-types/table';
 import {GridCollection, GridNode} from '@react-stately/grid';
 import {Key} from 'react';
 import {LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 import {LayoutNode, ListLayout} from '@react-stately/layout';
 import {Node} from '@react-stately/collections';
-import {SpectrumColumnProps} from '@react-types/table';
 
 export class TableLayout<T> extends ListLayout<T> {
   collection: GridCollection<T>;
@@ -52,7 +52,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let remainingColumns = new Set<Node<T>>();
     let remainingSpace = this.virtualizer.visibleRect.width;
     for (let column of this.collection.columns) {
-      let props = column.props as SpectrumColumnProps<T>;
+      let props = column.props as ColumnProps<T>;
       let width = props.width ?? props.defaultWidth;
       if (width != null) {
         let w = this.parseWidth(width);
@@ -74,7 +74,7 @@ export class TableLayout<T> extends ListLayout<T> {
       let columnWidth = remainingSpace / (this.collection.columns.length - this.columnWidths.size);
 
       for (let column of remainingColumns) {
-        let props = column.props as SpectrumColumnProps<T>;
+        let props = column.props as ColumnProps<T>;
         let minWidth = props.minWidth != null ? this.parseWidth(props.minWidth) : 75;
         let maxWidth = props.maxWidth != null ? this.parseWidth(props.maxWidth) : Infinity;
         let width = Math.max(minWidth, Math.min(maxWidth, columnWidth));

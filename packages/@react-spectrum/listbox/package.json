@@ -29,12 +29,12 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/collections": "^3.0.0-alpha.1",
     "@react-aria/focus": "^3.0.0-rc.2",
     "@react-aria/i18n": "^3.0.0-rc.2",
     "@react-aria/listbox": "^3.0.0-alpha.1",
     "@react-aria/separator": "^3.0.0-rc.2",
     "@react-aria/utils": "^3.0.0-rc.2",
+    "@react-aria/virtualizer": "^3.0.0-alpha.1",
     "@react-spectrum/layout": "^3.0.0-alpha.1",
     "@react-spectrum/progress": "^3.0.0-rc.2",
     "@react-spectrum/provider": "^3.0.0-rc.2",
