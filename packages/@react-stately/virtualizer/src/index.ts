@@ -10,7 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Item';
-export * from './Section';
-export * from './types';
-export * from './useCollection';
+export * from './Layout';
+export * from './LayoutInfo';
+export * from './Point';
+export * from './Rect';
+export * from './Size';
+export * from './ReusableView';
+export type {InvalidationContext} from './types';
+
+export * from './useCollectionVirtualizer';

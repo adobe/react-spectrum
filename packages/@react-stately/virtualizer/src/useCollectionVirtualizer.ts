@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection} from './types';
-import {CollectionManager} from './CollectionManager';
+import {Collection} from '@react-types/shared';
+import {CollectionVirtualizer} from './CollectionVirtualizer';
 import {Key, useCallback, useLayoutEffect, useMemo, useState} from 'react';
 import {Layout} from './Layout';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
 
-interface CollectionProps<T extends object, V, W> {
+interface CollectionVirtualizerProps<T extends object, V, W> {
   renderView(type: string, content: T): V,
   renderWrapper(
     parent: ReusableView<T, V> | null,
@@ -33,28 +33,28 @@ interface CollectionProps<T extends object, V, W> {
   transitionDuration?: number
 }
 
-export interface CollectionState<T extends object, V, W> {
+export interface CollectionVirtualizerState<T extends object, V, W> {
   visibleViews: W[],
   setVisibleRect: (rect: Rect) => void,
   contentSize: Size,
   isAnimating: boolean,
-  collectionManager: CollectionManager<T, V, W>,
+  virtualizer: CollectionVirtualizer<T, V, W>,
   isScrolling: boolean,
   startScrolling: () => void,
   endScrolling: () => void
 }
 
-export function useCollectionState<T extends object, V, W>(opts: CollectionProps<T, V, W>): CollectionState<T, V, W> {
+export function useCollectionVirtualizerState<T extends object, V, W>(opts: CollectionVirtualizerProps<T, V, W>): CollectionVirtualizerState<T, V, W> {
   let [visibleViews, setVisibleViews] = useState<W[]>([]);
   let [contentSize, setContentSize] = useState(new Size());
   let [isAnimating, setAnimating] = useState(false);
   let [isScrolling, setScrolling] = useState(false);
-  let collectionManager = useMemo(() => new CollectionManager<T, V, W>(), []);
+  let virtualizer = useMemo(() => new CollectionVirtualizer<T, V, W>(), []);
 
-  collectionManager.delegate = {
+  virtualizer.delegate = {
     setVisibleViews,
     setVisibleRect(rect) {
-      collectionManager.visibleRect = rect;
+      virtualizer.visibleRect = rect;
       opts.onVisibleRectChange(rect);
     },
     setContentSize,
@@ -65,30 +65,30 @@ export function useCollectionState<T extends object, V, W>(opts: CollectionProps
     getScrollAnchor: opts.getScrollAnchor
   };
 
-  collectionManager.layout = opts.layout;
-  collectionManager.collection = opts.collection;
-  collectionManager.transitionDuration = opts.transitionDuration;
+  virtualizer.layout = opts.layout;
+  virtualizer.collection = opts.collection;
+  virtualizer.transitionDuration = opts.transitionDuration;
 
   useLayoutEffect(() => {
-    collectionManager.afterRender();
+    virtualizer.afterRender();
   });
 
   return {
-    collectionManager,
+    virtualizer,
     visibleViews,
     setVisibleRect: useCallback((rect) => {
-      collectionManager.visibleRect = rect;
-    }, [collectionManager]),
+      virtualizer.visibleRect = rect;
+    }, [virtualizer]),
     contentSize,
     isAnimating,
     isScrolling,
     startScrolling: useCallback(() => {
-      collectionManager.startScrolling();
+      virtualizer.startScrolling();
       setScrolling(true);
-    }, [collectionManager]),
+    }, [virtualizer]),
     endScrolling: useCallback(() => {
-      collectionManager.endScrolling();
+      virtualizer.endScrolling();
       setScrolling(false);
-    }, [collectionManager])
+    }, [virtualizer])
   };
 }

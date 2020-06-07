@@ -12,9 +12,10 @@
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {CollectionItem, CollectionView} from '@react-aria/collections';
-import {ListLayout, Node} from '@react-stately/collections';
+import {ListLayout} from '@react-stately/layout';
+import {Node} from '@react-stately/collections';
 import React, {ReactElement, useMemo, useRef} from 'react';
-import {ReusableView} from '@react-stately/collections';
+import {ReusableView} from '@react-stately/virtualizer';
 import {SideNavContext} from './SideNavContext';
 import {SideNavItem} from './SideNavItem';
 import {SideNavSection} from './SideNavSection';
@@ -51,7 +52,7 @@ export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
     }
 
     return (
-      <CollectionItem 
+      <CollectionItem
         key={reusableView.key}
         reusableView={reusableView}
         parent={parent} />

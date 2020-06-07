@@ -10,14 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, InvalidationContext, Node} from './types';
+import {Collection, KeyboardDelegate} from '@react-types/shared';
+import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
-import {Layout} from './Layout';
-import {LayoutInfo} from './LayoutInfo';
-// import {Point} from './Point';
-import {Rect} from './Rect';
-import {Size} from './Size';
+import {Node} from '@react-stately/collections';
 // import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
 
 type ListLayoutOptions<T> = {
@@ -126,10 +122,10 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       this.cache = new WeakMap();
     }
 
-    this.collection = this.collectionManager.collection;
+    this.collection = this.virtualizer.collection;
     this.rootNodes = this.buildCollection();
 
-    this.lastWidth = this.collectionManager.visibleRect.width;
+    this.lastWidth = this.virtualizer.visibleRect.width;
     this.lastCollection = this.collection;
   }
 
@@ -143,14 +139,14 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
 
     if (this.isLoading) {
-      let rect = new Rect(0, y, this.collectionManager.visibleRect.width, 40);
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, 40);
       let loader = new LayoutInfo('loader', 'loader', rect);
       this.layoutInfos.set('loader', loader);
       nodes.push({layoutInfo: loader});
       y = loader.rect.maxY;
     }
 
-    this.contentSize = new Size(this.collectionManager.visibleRect.width, y + this.padding);
+    this.contentSize = new Size(this.virtualizer.visibleRect.width, y + this.padding);
     return nodes;
   }
 
@@ -219,7 +215,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   buildSection(node: Node<T>, x: number, y: number): LayoutNode {
-    let width = this.collectionManager.visibleRect.width;
+    let width = this.virtualizer.visibleRect.width;
     let rectHeight = this.headingHeight;
     let isEstimated = false;
 
@@ -271,7 +267,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   buildItem(node: Node<T>, x: number, y: number): LayoutNode {
-    let width = this.collectionManager.visibleRect.width;
+    let width = this.virtualizer.visibleRect.width;
     let rectHeight = this.rowHeight;
     let isEstimated = false;
 
@@ -363,7 +359,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
   getKeyPageAbove(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
-    let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.collectionManager.visibleRect.height);
+    let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
     while (layoutInfo && layoutInfo.rect.y > pageY && layoutInfo) {
       let keyAbove = this.getKeyAbove(layoutInfo.key);
       layoutInfo = this.getLayoutInfo(keyAbove);
@@ -378,7 +374,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
   getKeyPageBelow(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
-    let pageY = Math.min(this.collectionManager.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.collectionManager.visibleRect.height);
+    let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
     while (layoutInfo && layoutInfo.rect.y < pageY) {
       let keyBelow = this.getKeyBelow(layoutInfo.key);
       layoutInfo = this.getLayoutInfo(keyBelow);

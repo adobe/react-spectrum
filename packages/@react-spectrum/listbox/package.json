@@ -41,7 +41,9 @@
     "@react-spectrum/text": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-rc.2",
     "@react-stately/collections": "^3.0.0-alpha.1",
+    "@react-stately/layout": "^3.0.0-alpha.1",
     "@react-stately/list": "^3.0.0-alpha.1",
+    "@react-stately/virtualizer": "^3.0.0-alpha.1",
     "@react-types/listbox": "^3.0.0-alpha.1",
     "@spectrum-icons/ui": "^3.0.0-rc.2"
   },

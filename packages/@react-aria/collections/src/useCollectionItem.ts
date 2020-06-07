@@ -11,8 +11,7 @@
  */
 
 import {RefObject, useCallback, useLayoutEffect} from 'react';
-import {ReusableView} from '@react-stately/collections';
-import {Size} from '@react-stately/collections';
+import {ReusableView, Size} from '@react-stately/virtualizer';
 
 interface CollectionItemOptions<T extends object, V, W> {
   reusableView: ReusableView<T, V>,
@@ -20,12 +19,12 @@ interface CollectionItemOptions<T extends object, V, W> {
 }
 
 export function useCollectionItem<T extends object, V, W>(options: CollectionItemOptions<T, V, W>) {
-  let {reusableView: {layoutInfo, collectionManager}, ref} = options;
+  let {reusableView: {layoutInfo, virtualizer}, ref} = options;
 
   let updateSize = useCallback(() => {
     let size = getSize(ref.current);
-    collectionManager.updateItemSize(layoutInfo.key, size);
-  }, [collectionManager, layoutInfo.key, ref]);
+    virtualizer.updateItemSize(layoutInfo.key, size);
+  }, [virtualizer, layoutInfo.key, ref]);
 
   useLayoutEffect(() => {
     if (layoutInfo.estimatedSize) {

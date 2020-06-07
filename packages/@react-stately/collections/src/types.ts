@@ -12,10 +12,6 @@
 
 import {ItemRenderer} from '@react-types/shared';
 import {Key, ReactElement, ReactNode} from 'react';
-import {Rect} from './Rect';
-import {ReusableView} from './ReusableView';
-import {Size} from './Size';
-import {Transaction} from './Transaction';
 
 export interface Node<T> {
   /** The type of item this node represents. */
@@ -67,59 +63,4 @@ export interface PartialNode<T> {
   childNodes?: () => IterableIterator<PartialNode<T>>,
   props?: any,
   shouldInvalidate?: (context: unknown) => boolean
-}
-
-/** 
- * A generic interface to access a readonly sequential 
- * collection of unique keyed items.
- */
-export interface Collection<T> extends Iterable<T> {
-  /** The number of items in the collection. */
-  readonly size: number;
-
-  /** Iterate over all keys in the collection. */
-  getKeys(): Iterable<Key>,
-
-  /** Get an item by its key. */
-  getItem(key: Key): T,
-
-  /** Get the key that comes before the given key in the collection. */
-  getKeyBefore(key: Key): Key | null,
-
-  /** Get the key that comes after the given key in the collection. */
-  getKeyAfter(key: Key): Key | null,
-
-  /** Get the first key in the collection. */
-  getFirstKey(): Key | null,
-
-  /** Get the last key in the collection. */
-  getLastKey(): Key | null
-}
-
-export interface InvalidationContext<T extends object, V> {
-  contentChanged?: boolean,
-  offsetChanged?: boolean,
-  sizeChanged?: boolean,
-  animated?: boolean,
-  beforeLayout?(): void,
-  afterLayout?(): void,
-  afterAnimation?(): void,
-  transaction?: Transaction<T, V>
-}
-
-export interface CollectionManagerDelegate<T extends object, V, W> {
-  setVisibleViews(views: W[]): void,
-  setContentSize(size: Size): void,
-  setVisibleRect(rect: Rect): void,
-  getType?(content: T): string,
-  renderView(type: string, content: T): V,
-  renderWrapper(
-    parent: ReusableView<T, V> | null,
-    reusableView: ReusableView<T, V>,
-    children: ReusableView<T, V>[],
-    renderChildren: (views: ReusableView<T, V>[]) => W[]
-  ): W,
-  beginAnimations(): void,
-  endAnimations(): void,
-  getScrollAnchor?(rect: Rect): Key
 }

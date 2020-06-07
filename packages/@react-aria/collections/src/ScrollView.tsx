@@ -14,7 +14,7 @@
 import {flushSync} from 'react-dom';
 import {getScrollLeft} from './utils';
 import React, {CSSProperties, HTMLAttributes, ReactNode, RefObject, useCallback, useLayoutEffect, useRef, useState} from 'react';
-import {Rect, Size} from '@react-stately/collections';
+import {Rect, Size} from '@react-stately/virtualizer';
 import {useLocale} from '@react-aria/i18n';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {

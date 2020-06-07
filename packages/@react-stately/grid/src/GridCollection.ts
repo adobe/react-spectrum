@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-stately/collections';
+import {Collection} from '@react-types/shared';
 import {Key} from 'react';
+import {Node} from '@react-stately/collections';
 
 export interface GridNode<T> extends Node<T> {
   column?: GridNode<T>,
@@ -53,9 +54,9 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
           width: 55 // TODO: spectrum??
         }
       };
-  
+
       this.keyMap.set(rowHeaderColumn.key, rowHeaderColumn);
-      this.columns.unshift(rowHeaderColumn);  
+      this.columns.unshift(rowHeaderColumn);
     }
 
     let visit = (node: GridNode<T>) => {
@@ -92,7 +93,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
         } else {
           child.prevKey = null;
         }
-  
+
         visit(child);
         last = child;
       }
@@ -119,7 +120,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
         }
       }
     };
-    
+
     let bodyKeys = new Set();
     let last: GridNode<T>;
     for (let node of nodes) {
@@ -158,7 +159,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
   buildHeaderRows() {
     let columns = [];
     let seen = new Map();
-    for (let column of this.columns) {      
+    for (let column of this.columns) {
       let parentKey = column.parentKey;
       let col = [column];
 
@@ -325,7 +326,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
     let rows = [...this.body.childNodes];
     return rows[rows.length - 1]?.key;
   }
-  
+
   getItem(key: Key) {
     return this.keyMap.get(key);
   }

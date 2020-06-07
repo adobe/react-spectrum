@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-stately/collections';
+import {Collection, SelectionMode} from '@react-types/shared';
 import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
+import {Node} from '@react-stately/collections';
 import {Selection} from './Selection';
-import {SelectionMode} from '@react-types/shared';
 
 interface SelectionManagerOptions {
   allowsCellSelection?: boolean

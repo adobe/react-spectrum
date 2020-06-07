@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionManager} from './CollectionManager';
+import {CollectionVirtualizer} from './CollectionVirtualizer';
 import {InvalidationContext} from './types';
 import {Key} from 'react';
 import {LayoutInfo} from './LayoutInfo';
@@ -34,7 +34,7 @@ import {Size} from './Size';
  */
 export abstract class Layout<T extends object> {
   /** The CollectionView the layout is currently attached to */
-  collectionManager: CollectionManager<T, any, any>;
+  virtualizer: CollectionVirtualizer<T, any, any>;
 
   /**
    * Returns whether the layout should invalidate in response to
@@ -81,7 +81,7 @@ export abstract class Layout<T extends object> {
    * @param point The point at which the drag occurred
    */
   // getDragTarget(point: Point): DragTarget | null {
-  //   let target = this.collectionManager.keyAtPoint(point);
+  //   let target = this.virtualizer.keyAtPoint(point);
   //   if (!target) {
   //     return null;
   //   }

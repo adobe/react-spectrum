@@ -12,7 +12,9 @@
 
 import {GridCollection, GridNode} from '@react-stately/grid';
 import {Key} from 'react';
-import {LayoutInfo, LayoutNode, ListLayout, Node, Point, Rect, Size} from '@react-stately/collections';
+import {LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
+import {LayoutNode, ListLayout} from '@react-stately/layout';
+import {Node} from '@react-stately/collections';
 import {SpectrumColumnProps} from '@react-types/table';
 
 export class TableLayout<T> extends ListLayout<T> {
@@ -48,7 +50,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
     // Pass 1: set widths for all explicitly defined columns.
     let remainingColumns = new Set<Node<T>>();
-    let remainingSpace = this.collectionManager.visibleRect.width;
+    let remainingSpace = this.virtualizer.visibleRect.width;
     for (let column of this.collection.columns) {
       let props = column.props as SpectrumColumnProps<T>;
       let width = props.width ?? props.defaultWidth;
@@ -93,7 +95,7 @@ export class TableLayout<T> extends ListLayout<T> {
         throw new Error('Only percentages are supported as column widths');
       }
 
-      return this.collectionManager.visibleRect.width * (parseInt(match[1], 10) / 100);
+      return this.virtualizer.visibleRect.width * (parseInt(match[1], 10) / 100);
     }
 
     return width;
@@ -102,7 +104,7 @@ export class TableLayout<T> extends ListLayout<T> {
   buildHeader(): LayoutNode {
     let rect = new Rect(0, 0, 0, 0);
     let layoutInfo = new LayoutInfo('header', 'header', rect);
-    
+
     let y = 0;
     let width = 0;
     let children: LayoutNode[] = [];
@@ -213,7 +215,7 @@ export class TableLayout<T> extends ListLayout<T> {
   buildBody(y: number): LayoutNode {
     let rect = new Rect(0, y, 0, 0);
     let layoutInfo = new LayoutInfo('rowgroup', 'body', rect);
-    
+
     let startY = y;
     let width = 0;
     let children: LayoutNode[] = [];
@@ -227,7 +229,7 @@ export class TableLayout<T> extends ListLayout<T> {
 
     // TODO: not show the spinner at the bottom when sorting?
     if (this.collection.body.props.isLoading) {
-      let rect = new Rect(0, y, width || this.collectionManager.visibleRect.width, children.length === 0 ? this.collectionManager.visibleRect.height : 60);
+      let rect = new Rect(0, y, width || this.virtualizer.visibleRect.width, children.length === 0 ? this.virtualizer.visibleRect.height : 60);
       let loader = new LayoutInfo('loader', 'loader', rect);
       loader.parentKey = 'body';
       loader.isSticky = children.length === 0;
@@ -236,7 +238,7 @@ export class TableLayout<T> extends ListLayout<T> {
       y = loader.rect.maxY;
       width = Math.max(width, rect.width);
     } else if (children.length === 0) {
-      let rect = new Rect(0, y, this.collectionManager.visibleRect.width, this.collectionManager.visibleRect.height);
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
       let empty = new LayoutInfo('empty', 'empty', rect);
       empty.parentKey = 'body';
       empty.isSticky = true;
@@ -359,7 +361,7 @@ export class TableLayout<T> extends ListLayout<T> {
               idx = this.stickyColumnIndices[stickyIndex++];
             }
           }
-          
+
           res.push(node.children[i].layoutInfo);
         }
 

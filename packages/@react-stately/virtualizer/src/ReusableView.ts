@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionManager} from './CollectionManager';
+import {CollectionVirtualizer} from './CollectionVirtualizer';
 import {Key} from 'react';
 import {LayoutInfo} from './LayoutInfo';
 
@@ -24,8 +24,8 @@ let KEY = 0;
  * minimum. Other methods can be overrided to customize behavior.
  */
 export class ReusableView<T extends object, V> {
-  /** The CollectionManager this view is a part of */
-  collectionManager: CollectionManager<T, V, unknown>;
+  /** The CollectionVirtualizer this view is a part of */
+  virtualizer: CollectionVirtualizer<T, V, unknown>;
 
   /** The LayoutInfo this view is currently representing. */
   layoutInfo: LayoutInfo | null;
@@ -38,8 +38,8 @@ export class ReusableView<T extends object, V> {
   viewType: string;
   key: Key;
 
-  constructor(collectionManager: CollectionManager<T, V, unknown>) {
-    this.collectionManager = collectionManager;
+  constructor(virtualizer: CollectionVirtualizer<T, V, unknown>) {
+    this.virtualizer = virtualizer;
     this.key = ++KEY;
   }
 

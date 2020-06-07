@@ -15,7 +15,8 @@ import {classNames} from '@react-spectrum/utils';
 import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
 import {CollectionView} from '@react-aria/collections';
 import {FocusRing} from '@react-aria/focus';
-import {Item, ListLayout, Node, Section, TreeCollection} from '@react-stately/collections';
+import {Item, Node, Section} from '@react-stately/collections';
+import {ListLayout} from '@react-stately/layout';
 import React, {Key, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
@@ -29,7 +30,7 @@ export function Tree<T extends object>(props: CollectionBase<T> & Expandable & M
   let layout = useMemo(() =>
     new ListLayout({
       rowHeight: 44,
-      indentationForItem(tree: TreeCollection<T>, key: Key) {
+      indentationForItem(tree, key: Key) {
         let level = tree.getItem(key).level;
         return 28 * level;
       }

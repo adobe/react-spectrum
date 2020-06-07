@@ -11,9 +11,8 @@
  */
 
 import {Direction} from '@react-types/shared';
-import {LayoutInfo} from '@react-stately/collections';
+import {LayoutInfo, ReusableView} from '@react-stately/virtualizer';
 import React, {CSSProperties, useRef} from 'react';
-import {ReusableView} from '@react-stately/collections';
 import {useCollectionItem} from './useCollectionItem';
 import {useLocale} from '@react-aria/i18n';
 

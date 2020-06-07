@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
-import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
+import {Collection, CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
 import {Key, useEffect, useMemo} from 'react';
+import {Node, useCollection} from '@react-stately/collections';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {TreeCollection} from './TreeCollection';
 import {useControlledState} from '@react-stately/utils';
 
 interface TreeProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {}
@@ -50,11 +51,7 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let builder = useMemo(() => new CollectionBuilder<T>(), []);
-  let tree = useMemo(() => {
-    let nodes = builder.build(props);
-    return new TreeCollection(nodes, {expandedKeys});
-  }, [builder, expandedKeys, props]);
+  let tree = useCollection(props, nodes => new TreeCollection(nodes, {expandedKeys}));
 
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {

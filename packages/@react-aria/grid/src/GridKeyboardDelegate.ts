@@ -13,7 +13,8 @@
 import {Direction, KeyboardDelegate} from '@react-types/shared';
 import {GridCollection} from '@react-stately/grid';
 import {Key, RefObject} from 'react';
-import {Layout, Node, Rect} from '@react-stately/collections';
+import {Layout, Rect} from '@react-stately/virtualizer';
+import {Node} from '@react-stately/collections';
 
 interface GridKeyboardDelegateOptions<T> {
   collection: GridCollection<T>,
@@ -46,8 +47,8 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   private findPreviousKey(pred: (item: Node<T>) => boolean, fromKey?: Key) {
-    let key = fromKey != null 
-      ? this.collection.getKeyBefore(fromKey) 
+    let key = fromKey != null
+      ? this.collection.getKeyBefore(fromKey)
       : this.collection.getLastKey();
 
     while (key != null) {
@@ -61,7 +62,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   private findNextKey(pred: (item: Node<T>) => boolean, fromKey?: Key) {
-    let key = fromKey != null 
+    let key = fromKey != null
       ? this.collection.getKeyAfter(fromKey)
       : this.collection.getFirstKey();
 
@@ -97,7 +98,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     if (this.isCell(startItem)) {
       key = startItem.parentKey;
     }
-    
+
     // Find the next enabled item
     key = this.findNextKey(item => item.type === 'item' && !this.disabledKeys.has(item.key), key);
     if (key != null) {
@@ -164,7 +165,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     // Wrap around to the first column
-    let row = this.collection.headerRows[column.level];     
+    let row = this.collection.headerRows[column.level];
     for (let item of row.childNodes) {
       if (item.type === 'column') {
         return item.key;
@@ -343,7 +344,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
 
   private getPageHeight(): number {
     if (this.layout) {
-      return this.layout.collectionManager?.visibleRect.height;
+      return this.layout.virtualizer?.visibleRect.height;
     }
 
     return this.ref?.current?.offsetHeight;
@@ -364,7 +365,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     let pageY = Math.max(0, itemRect.maxY - this.getPageHeight());
-    
+
     while (itemRect && itemRect.y > pageY) {
       key = this.getKeyAbove(key);
       itemRect = this.getItemRect(key);
@@ -416,7 +417,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
           if (this.collator.compare(substring, search) === 0) {
             // If we started on a cell, end on the matching cell. Otherwise, end on the row.
             let fromItem = fromKey != null ? collection.getItem(fromKey) : startItem;
-            return fromItem.type === 'cell' 
+            return fromItem.type === 'cell'
               ? cell.key
               : item.key;
           }

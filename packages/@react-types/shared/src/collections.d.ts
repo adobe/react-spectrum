@@ -140,3 +140,30 @@ export interface KeyboardDelegate {
   /** Returns the next key after `fromKey` that matches the given search string, or `null` for none. */
   getKeyForSearch?(search: string, fromKey?: Key): Key
 }
+
+/**
+ * A generic interface to access a readonly sequential
+ * collection of unique keyed items.
+ */
+export interface Collection<T> extends Iterable<T> {
+  /** The number of items in the collection. */
+  readonly size: number;
+
+  /** Iterate over all keys in the collection. */
+  getKeys(): Iterable<Key>,
+
+  /** Get an item by its key. */
+  getItem(key: Key): T,
+
+  /** Get the key that comes before the given key in the collection. */
+  getKeyBefore(key: Key): Key | null,
+
+  /** Get the key that comes after the given key in the collection. */
+  getKeyAfter(key: Key): Key | null,
+
+  /** Get the first key in the collection. */
+  getFirstKey(): Key | null,
+
+  /** Get the last key in the collection. */
+  getLastKey(): Key | null
+}

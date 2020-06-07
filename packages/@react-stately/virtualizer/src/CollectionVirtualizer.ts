@@ -11,42 +11,24 @@
  */
 
 import {CancelablePromise, easeOut, tween} from './tween';
-import {Collection, CollectionManagerDelegate, InvalidationContext} from './types';
+import {Collection} from '@react-types/shared';
+import {
+  CollectionVirtualizerDelegate,
+  CollectionVirtualizerOptions,
+  InvalidationContext,
+  ScrollAnchor,
+  ScrollToItemOptions
+} from './types';
 import {concatIterators, difference} from './utils';
 import {Key} from 'react';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
 import {OverscanManager} from './OverscanManager';
 import {Point} from './Point';
-import {Rect, RectCorner} from './Rect';
+import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
 import {Transaction} from './Transaction';
-
-interface ScrollAnchor {
-  key: Key,
-  layoutInfo: LayoutInfo,
-  corner: RectCorner,
-  offset: number
-}
-
-interface ScrollToItemOptions {
-  duration?: number,
-  shouldScrollX?: boolean,
-  shouldScrollY?: boolean,
-  offsetX?: number,
-  offsetY?: number
-}
-
-export interface CollectionManagerOptions<T extends object, V, W> {
-  collection?: Collection<T>,
-  layout?: Layout<T>,
-  delegate?: CollectionManagerDelegate<T, V, W>,
-  transitionDuration?: number,
-  anchorScrollPosition?: boolean,
-  anchorScrollPositionAtTop?: boolean,
-  shouldOverscan?: boolean
-}
 
 /**
  * The CollectionView class renders a scrollable collection of data using customizable layouts,
@@ -74,12 +56,12 @@ export interface CollectionManagerOptions<T extends object, V, W> {
  * views as needed by the collection view. Those views are then reused by the collection view as
  * the user scrolls through the content.
  */
-export class CollectionManager<T extends object, V, W> {
+export class CollectionVirtualizer<T extends object, V, W> {
   /**
    * The collection view delegate. The delegate is used by the collection view
    * to create and configure views.
    */
-  delegate: CollectionManagerDelegate<T, V, W>;
+  delegate: CollectionVirtualizerDelegate<T, V, W>;
 
   /** The duration of animated layout changes, in milliseconds. Default is 500ms. */
   transitionDuration: number;
@@ -119,7 +101,7 @@ export class CollectionManager<T extends object, V, W> {
   private _nextTransaction: Transaction<T, V> | null;
   private _transactionQueue: Transaction<T, V>[];
 
-  constructor(options: CollectionManagerOptions<T, V, W> = {}) {
+  constructor(options: CollectionVirtualizerOptions<T, V, W> = {}) {
     this._contentSize = new Size;
     this._visibleRect = new Rect;
 
@@ -279,10 +261,10 @@ export class CollectionManager<T extends object, V, W> {
     let applyLayout = () => {
       if (this._layout) {
         // @ts-ignore
-        this._layout.collectionManager = null;
+        this._layout.virtualizer = null;
       }
 
-      layout.collectionManager = this;
+      layout.virtualizer = this;
       this._layout = layout;
     };
 
@@ -784,7 +766,7 @@ export class CollectionManager<T extends object, V, W> {
   }
 
   private _flushVisibleViews() {
-    // CollectionManager deals with a flattened set of LayoutInfos, but they can represent heirarchy
+    // CollectionVirtualizer deals with a flattened set of LayoutInfos, but they can represent heirarchy
     // by referencing a parentKey. Just before rendering the visible views, we rebuild this heirarchy
     // by creating a mapping of views by parent key and recursively calling the delegate's renderWrapper
     // method to build the final tree.

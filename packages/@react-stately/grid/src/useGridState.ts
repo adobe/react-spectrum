@@ -3,7 +3,7 @@
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
@@ -11,9 +11,9 @@
  */
 
 import {CollectionBase, MultipleSelection, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
-import {CollectionBuilder, Node} from '@react-stately/collections';
 import {GridCollection} from './GridCollection';
-import {Key, useEffect, useMemo, useRef} from 'react';
+import {Key, useEffect, useMemo} from 'react';
+import {Node, useCollection} from '@react-stately/collections';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
 export interface GridState<T> {
@@ -45,22 +45,18 @@ export function useGridState<T extends object>(props: GridStateProps<T>): GridSt
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
-  
-  let builder = useMemo(() => new CollectionBuilder<T>(), []);
-  let collectionRef = useRef<GridCollection<T>>();
-  let collection = useMemo(() => {
-    let context = {
-      showSelectionCheckboxes: props.showSelectionCheckboxes && selectionState.selectionMode !== 'none',
-      selectionMode: selectionState.selectionMode,
-      columns: []
-    };
-  
-    let nodes = builder.build(props, context);
 
-    collectionRef.current = new GridCollection(nodes, collectionRef.current, context);
-    return collectionRef.current;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.children, props.showSelectionCheckboxes, selectionState.selectionMode, builder]);
+  let context = useMemo(() => ({
+    showSelectionCheckboxes: props.showSelectionCheckboxes && selectionState.selectionMode !== 'none',
+    selectionMode: selectionState.selectionMode,
+    columns: []
+  }), [props.showSelectionCheckboxes, selectionState.selectionMode]);
+
+  let collection = useCollection<T, GridCollection<T>>(
+    props,
+    (nodes, prev) => new GridCollection(nodes, prev, context),
+    context
+  );
 
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {
@@ -78,8 +74,8 @@ export function useGridState<T extends object>(props: GridStateProps<T>): GridSt
     sort(columnKey: Key) {
       props.onSortChange({
         column: columnKey,
-        direction: props.sortDescriptor?.column === columnKey 
-          ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction] 
+        direction: props.sortDescriptor?.column === columnKey
+          ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
           : 'ascending'
       });
     }

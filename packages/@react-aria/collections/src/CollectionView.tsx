@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Layout, Rect} from '@react-stately/collections';
+import {Collection} from '@react-types/shared';
 import {CollectionItem} from './CollectionItem';
-import {CollectionState, useCollectionState} from '@react-stately/collections';
+import {CollectionVirtualizerState, Layout, Rect, ReusableView, useCollectionVirtualizerState} from '@react-stately/virtualizer';
 import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
-import {ReusableView} from '@react-stately/collections';
 import {ScrollView} from './ScrollView';
 
 interface CollectionViewProps<T extends object, V> extends HTMLAttributes<HTMLElement> {
@@ -42,7 +41,7 @@ function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, r
   let fallbackRef = useRef<HTMLDivElement>();
   ref = ref || fallbackRef;
 
-  let state = useCollectionState({
+  let state = useCollectionVirtualizerState({
     transitionDuration,
     layout,
     collection,
@@ -61,18 +60,18 @@ function CollectionView<T extends object, V>(props: CollectionViewProps<T, V>, r
     state.setVisibleRect(rect);
 
     if (!props.isLoading && props.onLoadMore) {
-      let scrollOffset = state.collectionManager.contentSize.height - rect.height * 2;
+      let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
       if (rect.y > scrollOffset) {
         props.onLoadMore();
       }
     }
   }, [props.isLoading, props.onLoadMore, state]);
-  
+
   return (
     <ScrollView
       {...mergeProps(otherProps, collectionViewProps)}
       ref={ref}
-      innerStyle={state.isAnimating ? {transition: `none ${state.collectionManager.transitionDuration}ms`} : undefined}
+      innerStyle={state.isAnimating ? {transition: `none ${state.virtualizer.transitionDuration}ms`} : undefined}
       contentSize={state.contentSize}
       onVisibleRectChange={onVisibleRectChange}
       onScrollStart={state.startScrolling}
@@ -89,16 +88,16 @@ interface CollectionViewOpts {
   scrollToItem?: (key: Key) => void
 }
 
-export function useCollectionView<T extends object, V, W>(props: CollectionViewOpts, state: CollectionState<T, V, W>, ref: RefObject<HTMLElement>) {
+export function useCollectionView<T extends object, V, W>(props: CollectionViewOpts, state: CollectionVirtualizerState<T, V, W>, ref: RefObject<HTMLElement>) {
   let {focusedKey, scrollToItem} = props;
-  let {collectionManager} = state;
+  let {virtualizer} = state;
 
   // Scroll to the focusedKey when it changes. Actually focusing the focusedKey
   // is up to the implementation using CollectionView since we don't have refs
   // to all of the item DOM nodes.
   let lastFocusedKey = useRef(null);
   useEffect(() => {
-    if (collectionManager.visibleRect.height === 0) {
+    if (virtualizer.visibleRect.height === 0) {
       return;
     }
 
@@ -106,12 +105,12 @@ export function useCollectionView<T extends object, V, W>(props: CollectionViewO
       if (scrollToItem) {
         scrollToItem(focusedKey);
       } else {
-        collectionManager.scrollToItem(focusedKey, {duration: 0});
+        virtualizer.scrollToItem(focusedKey, {duration: 0});
       }
     }
 
     lastFocusedKey.current = focusedKey;
-  }, [focusedKey, collectionManager.visibleRect.height, collectionManager, lastFocusedKey, scrollToItem]);
+  }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem]);
 
   let isFocusWithin = useRef(false);
   let onFocus = useCallback((e: FocusEvent) => {
@@ -120,11 +119,11 @@ export function useCollectionView<T extends object, V, W>(props: CollectionViewO
     // We only want to do this if the CollectionView itself is receiving focus, not a child
     // element, and we aren't moving focus to the CollectionView from within (see below).
     if (e.target === ref.current && !isFocusWithin.current) {
-      collectionManager.scrollToItem(focusedKey, {duration: 0});
+      virtualizer.scrollToItem(focusedKey, {duration: 0});
     }
 
     isFocusWithin.current = e.target !== ref.current;
-  }, [ref, collectionManager, focusedKey]);
+  }, [ref, virtualizer, focusedKey]);
 
   let onBlur = useCallback((e: FocusEvent) => {
     isFocusWithin.current = ref.current.contains(e.relatedTarget as Element);
@@ -132,7 +131,7 @@ export function useCollectionView<T extends object, V, W>(props: CollectionViewO
 
   // When the focused item is scrolled out of view and is removed from the DOM,
   // move focus to the collection view as a whole if focus was within before.
-  let focusedView = collectionManager.getView(focusedKey);
+  let focusedView = virtualizer.getView(focusedKey);
   useEffect(() => {
     if (focusedKey && !focusedView && isFocusWithin.current && document.activeElement !== ref.current) {
       focusWithoutScrolling(ref.current);
