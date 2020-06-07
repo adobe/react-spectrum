@@ -11,13 +11,14 @@
  */
 
 import {getRowLabelledBy} from './utils';
-import {GridNode, GridState} from '@react-stately/grid';
+import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject} from 'react';
+import {Node} from '@react-types/shared';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface RowProps {
-  node: GridNode<unknown>,
+  node: Node<unknown>,
   ref?: RefObject<HTMLElement>,
   isVirtualized?: boolean,
   isSelected?: boolean

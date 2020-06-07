@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, Node, StyleProps} from '@react-types/shared';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {FocusStrategy} from '@react-types/menu';
 // @ts-ignore
@@ -21,7 +21,6 @@ import {ListBoxSection} from './ListBoxSection';
 import {ListLayout} from '@react-stately/layout';
 import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
-import {Node} from '@react-stately/collections';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, RefObject, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';

@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
+import {Collection, CollectionBase, Expandable, MultipleSelection, Node} from '@react-types/shared';
 import {Key, useEffect, useMemo} from 'react';
-import {Node, useCollection} from '@react-stately/collections';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {TreeCollection} from './TreeCollection';
+import {useCollection} from '@react-stately/collections';
 import {useControlledState} from '@react-stately/utils';
 
 interface TreeProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {}

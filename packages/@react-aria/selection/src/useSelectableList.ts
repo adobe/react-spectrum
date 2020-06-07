@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, KeyboardDelegate} from '@react-types/shared';
+import {Collection, KeyboardDelegate, Node} from '@react-types/shared';
 import {FocusStrategy} from '@react-types/menu';
 import {HTMLAttributes, Key, RefObject, useEffect, useMemo} from 'react';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {MultipleSelectionManager} from '@react-stately/selection';
-import {Node} from '@react-stately/collections';
 import {useCollator} from '@react-aria/i18n';
 import {useSelectableCollection} from './useSelectableCollection';
 

@@ -12,9 +12,9 @@
 
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '@react-spectrum/utils';
-import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
+import {CollectionBase, Expandable, MultipleSelection, Node} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import {Item, Node, Section} from '@react-stately/collections';
+import {Item, Section} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
 import React, {Key, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';

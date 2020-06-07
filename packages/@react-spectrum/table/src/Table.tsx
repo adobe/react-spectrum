@@ -14,20 +14,19 @@ import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
 import {GridState, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {mergeProps} from '@react-aria/utils';
-import {Node} from '@react-stately/collections';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
-import {SpectrumColumnProps, SpectrumTableProps} from '@react-types/table';
+import {SpectrumColumnProps, SpectrumTableProps, TableNode} from '@react-types/table';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
-import {TableLayout} from './TableLayout';
+import {TableLayout} from '@react-stately/layout';
 import {useColumnHeader, useGrid, useGridCell, useRow, useRowGroup, useRowHeader, useSelectAllCheckbox, useSelectionCheckbox} from '@react-aria/grid';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
@@ -93,7 +92,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   }, state);
 
   // This overrides collection view's renderWrapper to support DOM heirarchy.
-  type View = ReusableView<Node<T>, unknown>;
+  type View = ReusableView<TableNode<T>, unknown>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
     let style = layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo);
     if (style.overflow === 'hidden') {
@@ -162,7 +161,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
     );
   };
 
-  let renderView = (type, item) => {
+  let renderView = (type: string, item: TableNode<T>) => {
     switch (type) {
       case 'header':
       case 'rowgroup':

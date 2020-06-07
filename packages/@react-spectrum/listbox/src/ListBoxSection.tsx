@@ -13,7 +13,7 @@
 import {classNames} from '@react-spectrum/utils';
 import {layoutInfoToStyle, useVirtualizerItem} from '@react-aria/virtualizer';
 import {ListBoxContext} from './ListBoxContext';
-import {Node} from '@react-stately/collections';
+import {Node} from '@react-types/shared';
 import React, {Fragment, ReactNode, useContext, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';

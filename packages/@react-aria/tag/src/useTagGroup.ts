@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, MultipleSelectionBase} from '@react-types/shared';
+import {DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, useState} from 'react';
 import {useFocusWithin} from '@react-aria/interactions';
 
-interface AriaTagGroupProps extends MultipleSelectionBase, DOMProps {
+interface AriaTagGroupProps extends DOMProps {
   isDisabled?: boolean,
   isReadOnly?: boolean, // removes close button
   validationState?: 'valid' | 'invalid'

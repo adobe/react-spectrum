@@ -12,13 +12,14 @@
 
 import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {GridNode, GridState} from '@react-stately/grid';
+import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {isFocusVisible, usePress} from '@react-aria/interactions';
+import {Node} from '@react-types/shared';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface GridCellProps {
-  node: GridNode<unknown>,
+  node: Node<unknown>,
   ref: RefObject<HTMLElement>,
   isVirtualized?: boolean
 }

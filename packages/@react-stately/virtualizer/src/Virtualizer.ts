@@ -12,6 +12,7 @@
 
 import {CancelablePromise, easeOut, tween} from './tween';
 import {Collection} from '@react-types/shared';
+import {concatIterators, difference} from './utils';
 import {
   InvalidationContext,
   ScrollAnchor,
@@ -19,7 +20,6 @@ import {
   VirtualizerDelegate,
   VirtualizerOptions
 } from './types';
-import {concatIterators, difference} from './utils';
 import {Key} from 'react';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';

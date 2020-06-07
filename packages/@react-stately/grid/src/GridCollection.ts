@@ -9,15 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-import {Collection} from '@react-types/shared';
 import {Key} from 'react';
-import {Node} from '@react-stately/collections';
-
-export interface GridNode<T> extends Node<T> {
-  column?: GridNode<T>,
-  colspan?: number
-}
+import {TableCollection, TableNode} from '@react-types/table';
 
 interface GridCollectionOptions {
   showSelectionCheckboxes?: boolean
@@ -25,21 +18,21 @@ interface GridCollectionOptions {
 
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
 
-export class GridCollection<T> implements Collection<GridNode<T>> {
-  private keyMap: Map<Key, Node<T>>;
-  headerRows: GridNode<T>[];
-  columns: GridNode<T>[];
+export class GridCollection<T> implements TableCollection<T> {
+  private keyMap: Map<Key, TableNode<T>>;
+  headerRows: TableNode<T>[];
+  columns: TableNode<T>[];
   rowHeaderColumnKeys: Set<Key>;
-  body: GridNode<T>;
+  body: TableNode<T>;
 
-  constructor(nodes: Iterable<Node<T>>, prev?: GridCollection<T>, opts?: GridCollectionOptions) {
+  constructor(nodes: Iterable<TableNode<T>>, prev?: GridCollection<T>, opts?: GridCollectionOptions) {
     this.keyMap = new Map(prev?.keyMap) || new Map();
     this.columns = [];
     this.rowHeaderColumnKeys = new Set();
 
     // Add cell for selection checkboxes if needed.
     if (opts?.showSelectionCheckboxes) {
-      let rowHeaderColumn: GridNode<T> = {
+      let rowHeaderColumn: TableNode<T> = {
         type: 'column',
         key: ROW_HEADER_COLUMN_KEY,
         value: null,
@@ -59,7 +52,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
       this.columns.unshift(rowHeaderColumn);
     }
 
-    let visit = (node: GridNode<T>) => {
+    let visit = (node: TableNode<T>) => {
       // If the node is the same object as the previous node for the same key,
       // we can skip this node and its children. We always visit columns though,
       // because we depend on order to build the columns array.
@@ -83,7 +76,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
       }
 
       let childKeys = new Set();
-      let last: GridNode<T>;
+      let last: TableNode<T>;
       for (let child of node.childNodes) {
         childKeys.add(child.key);
 
@@ -112,7 +105,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
       }
     };
 
-    let remove = (node: GridNode<T>) => {
+    let remove = (node: TableNode<T>) => {
       this.keyMap.delete(node.key);
       for (let child of node.childNodes) {
         if (this.keyMap.get(child.key) === child) {
@@ -122,7 +115,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
     };
 
     let bodyKeys = new Set();
-    let last: GridNode<T>;
+    let last: TableNode<T>;
     for (let node of nodes) {
       if (last) {
         last.nextKey = node.key;
@@ -164,7 +157,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
       let col = [column];
 
       while (parentKey) {
-        let parent: GridNode<T> = this.keyMap.get(parentKey);
+        let parent: TableNode<T> = this.keyMap.get(parentKey);
 
         // If we've already seen this parent, than it is shared
         // with a previous column. If the current column is taller
@@ -214,7 +207,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
           let row = headerRows[i];
           let rowLength = row.reduce((p, c) => p + c.colspan, 0);
           if (rowLength < colIndex) {
-            let placeholder: GridNode<T> = {
+            let placeholder: TableNode<T> = {
               type: 'placeholder',
               key: 'placeholder-' + item.key,
               colspan: colIndex - rowLength,
@@ -257,7 +250,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
     for (let row of headerRows) {
       let rowLength = row.reduce((p, c) => p + c.colspan, 0);
       if (rowLength < this.columns.length) {
-        let placeholder: GridNode<T> = {
+        let placeholder: TableNode<T> = {
           type: 'placeholder',
           key: 'placeholder-' + row[row.length - 1].key,
           colspan: this.columns.length - rowLength,
@@ -279,7 +272,7 @@ export class GridCollection<T> implements Collection<GridNode<T>> {
     }
 
     return headerRows.map((childNodes, index) => {
-      let row: GridNode<T> = {
+      let row: TableNode<T> = {
         type: 'headerrow',
         key: 'headerrow-' + index,
         index,

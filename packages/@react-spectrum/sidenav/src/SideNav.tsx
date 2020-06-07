@@ -12,7 +12,7 @@
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {ListLayout} from '@react-stately/layout';
-import {Node} from '@react-stately/collections';
+import {Node} from '@react-types/shared';
 import React, {ReactElement, useMemo, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import {SideNavContext} from './SideNavContext';

@@ -10,14 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, MultipleSelection, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
+import {CollectionBase, MultipleSelection, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {GridCollection} from './GridCollection';
 import {Key, useEffect, useMemo} from 'react';
-import {Node, useCollection} from '@react-stately/collections';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {TableCollection} from '@react-types/table';
+import {useCollection} from '@react-stately/collections';
 
 export interface GridState<T> {
-  collection: GridCollection<T>,
+  collection: TableCollection<T>,
   disabledKeys: Set<Key>,
   selectionManager: SelectionManager,
   showSelectionCheckboxes: boolean,

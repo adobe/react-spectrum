@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, KeyboardDelegate} from '@react-types/shared';
+import {Collection, KeyboardDelegate, Node} from '@react-types/shared';
 import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
 import {Key} from 'react';
-import {Node} from '@react-stately/collections';
 // import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
 
 type ListLayoutOptions<T> = {

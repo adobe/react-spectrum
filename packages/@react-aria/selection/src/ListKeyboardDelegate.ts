@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, KeyboardDelegate} from '@react-types/shared';
+import {Collection, KeyboardDelegate, Node} from '@react-types/shared';
 import {Key, RefObject} from 'react';
-import {Node} from '@react-stately/collections';
 
 export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<Node<T>>;

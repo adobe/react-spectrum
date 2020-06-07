@@ -36,7 +36,18 @@ interface VirtualizerProps<T extends object, V> extends HTMLAttributes<HTMLEleme
 }
 
 function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: RefObject<HTMLDivElement>) {
-  let {children: renderView, renderWrapper, layout, collection, sizeToFit, scrollDirection, transitionDuration, ...otherProps} = props;
+  let {
+    children: renderView,
+    renderWrapper,
+    layout,
+    collection,
+    sizeToFit,
+    scrollDirection,
+    transitionDuration,
+    isLoading,
+    onLoadMore,
+    ...otherProps
+  } = props;
 
   let fallbackRef = useRef<HTMLDivElement>();
   ref = ref || fallbackRef;
@@ -59,13 +70,13 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
   let onVisibleRectChange = useCallback((rect: Rect) => {
     state.setVisibleRect(rect);
 
-    if (!props.isLoading && props.onLoadMore) {
+    if (!isLoading && onLoadMore) {
       let scrollOffset = state.virtualizer.contentSize.height - rect.height * 2;
       if (rect.y > scrollOffset) {
-        props.onLoadMore();
+        onLoadMore();
       }
     }
-  }, [props.isLoading, props.onLoadMore, state]);
+  }, [isLoading, onLoadMore, state]);
 
   return (
     <ScrollView

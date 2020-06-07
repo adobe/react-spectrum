@@ -11,15 +11,15 @@
  */
 
 import {CollectionBuilderContext} from './useGridState';
-import {ColumnProps} from '@react-types/table';
-import {Node, PartialNode} from '@react-stately/collections';
+import {ColumnProps, TableNode} from '@react-types/table';
+import {PartialNode} from '@react-stately/collections';
 import React, {ReactElement} from 'react';
 
 function Column<T>(props: ColumnProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
 }
 
-Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>, void, Node<T>[]> {
+Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>, void, TableNode<T>[]> {
   let {title, children, childColumns} = props;
   let fullNodes = yield {
     type: 'column',

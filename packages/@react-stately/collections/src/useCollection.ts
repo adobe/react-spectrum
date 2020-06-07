@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBase} from '@react-types/shared';
+import {Collection, CollectionBase, Node} from '@react-types/shared';
 import {CollectionBuilder} from './CollectionBuilder';
-import {Node} from './types';
 import {useMemo, useRef} from 'react';
 
 type CollectionFactory<T, C extends Collection<Node<T>>> = (node: Iterable<Node<T>>, prev: C | null) => C;

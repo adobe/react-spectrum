@@ -10,14 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Direction, KeyboardDelegate} from '@react-types/shared';
-import {GridCollection} from '@react-stately/grid';
+import {Direction, KeyboardDelegate, Node} from '@react-types/shared';
 import {Key, RefObject} from 'react';
 import {Layout, Rect} from '@react-stately/virtualizer';
-import {Node} from '@react-stately/collections';
+import {TableCollection} from '@react-types/table';
 
 interface GridKeyboardDelegateOptions<T> {
-  collection: GridCollection<T>,
+  collection: TableCollection<T>,
   disabledKeys: Set<Key>,
   ref?: RefObject<HTMLElement>,
   direction: Direction,
@@ -26,7 +25,7 @@ interface GridKeyboardDelegateOptions<T> {
 }
 
 export class GridKeyboardDelegate<T> implements KeyboardDelegate {
-  private collection: GridCollection<T>;
+  private collection: TableCollection<T>;
   private disabledKeys: Set<Key>;
   private ref: RefObject<HTMLElement>;
   private direction: Direction;

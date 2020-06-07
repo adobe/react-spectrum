@@ -13,10 +13,9 @@
 import {ActionButton} from '@react-spectrum/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, DOMRef, SelectionMode, StyleProps} from '@react-types/shared';
+import {DOMProps, DOMRef, Node, SelectionMode, StyleProps} from '@react-types/shared';
 import {ListState, useListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
-import {Node} from '@react-stately/collections';
 import {PressResponder} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
 import React, {forwardRef, Key, ReactElement, useRef} from 'react';

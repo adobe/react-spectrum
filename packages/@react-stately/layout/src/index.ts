@@ -11,3 +11,4 @@
  */
 
 export * from './ListLayout';
+export * from './TableLayout';
