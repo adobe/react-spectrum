@@ -314,8 +314,8 @@ export function renderHTMLfromMarkdown(description) {
 }
 
 export function InterfaceType({description, properties: props, showRequired, showDefault}) {
-  let properties = Object.values(props).filter(prop => prop.type === 'property');
-  let methods = Object.values(props).filter(prop => prop.type === 'method');
+  let properties = Object.values(props).filter(prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected');
+  let methods = Object.values(props).filter(prop => prop.type === 'method' && prop.access !== 'private' && prop.access !== 'protected');
 
   return (
     <>
