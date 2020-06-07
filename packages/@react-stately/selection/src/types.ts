@@ -37,7 +37,7 @@ export interface MultipleSelectionState extends FocusState {
   /** The type of selection that is allowed in the collection. */
   readonly selectionMode: SelectionMode,
   /** Whether the collection allows empty selection. */
-  readonly disallowEmptySelection?: boolean,
+  readonly disallowEmptySelection: boolean,
   /** The currently selected keys in the collection. */
   readonly selectedKeys: Selection,
   /** Sets the selected keys in the collection. */
