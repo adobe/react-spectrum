@@ -19,7 +19,7 @@ import {useSlotId} from '@react-aria/utils';
 interface OptionAria {
   /** Props for the option element. */
   optionProps: HTMLAttributes<HTMLElement>,
-  
+
   /** Props for the main text element inside the option. */
   labelProps: HTMLAttributes<HTMLElement>,
 
@@ -27,7 +27,7 @@ interface OptionAria {
   descriptionProps: HTMLAttributes<HTMLElement>
 }
 
-interface OptionProps {
+interface AriaOptionProps {
   /** Whether the option is disabled. */
   isDisabled?: boolean,
 
@@ -39,9 +39,6 @@ interface OptionProps {
 
   /** The unique key for the option. */
   key?: Key,
-
-  /** A ref to the option element. */
-  ref?: RefObject<HTMLElement>,
 
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean,
@@ -59,12 +56,11 @@ interface OptionProps {
  * @param props - props for the option
  * @param state - state for the listbox, as returned by `useListState`
  */
-export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAria {
+export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: RefObject<HTMLElement>): OptionAria {
   let {
     isSelected,
     isDisabled,
     key,
-    ref,
     shouldSelectOnPressUp,
     shouldFocusOnHover,
     isVirtualized
@@ -89,8 +85,8 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: key,
-    itemRef: ref,
+    key,
+    ref,
     shouldSelectOnPressUp,
     isVirtualized
   });
@@ -98,7 +94,7 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
   let {pressProps} = usePress({...itemProps, isDisabled});
   let {hoverProps} = useHover({
     isDisabled: isDisabled || !shouldFocusOnHover,
-    onHover() {
+    onHoverStart() {
       state.selectionManager.setFocused(true);
       state.selectionManager.setFocusedKey(key);
     }

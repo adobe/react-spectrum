@@ -11,7 +11,7 @@
  */
 
 import {HoverEvents} from '@react-types/shared';
-import {HTMLAttributes, useMemo} from 'react';
+import {HTMLAttributes, useMemo, useRef} from 'react';
 
 export interface HoverProps extends HoverEvents {
   /** Whether the hover events should be disabled. */
@@ -29,28 +29,29 @@ interface HoverResult {
  */
 export function useHover(props: HoverProps): HoverResult {
   let {
-    onHover,
+    onHoverStart,
     onHoverChange,
     onHoverEnd,
     isDisabled
   } = props;
 
+  let state = useRef({
+    isHovered: false,
+    ignoreEmulatedMouseEvents: false
+  }).current;
+
   let hoverProps = useMemo(() => {
-
     let triggerHoverStart = (event, pointerType) => {
-      if (isDisabled) {
+      if (isDisabled || pointerType === 'touch' || state.isHovered) {
         return;
       }
 
-      if (pointerType === 'touch') {
-        return;
-      }
-
+      state.isHovered = true;
       let target = event.target;
 
-      if (onHover) {
-        onHover({
-          type: 'hover',
+      if (onHoverStart) {
+        onHoverStart({
+          type: 'hoverstart',
           target,
           pointerType
         });
@@ -63,14 +64,11 @@ export function useHover(props: HoverProps): HoverResult {
 
 
     let triggerHoverEnd = (event, pointerType) => {
-      if (isDisabled) {
+      if (isDisabled || pointerType === 'touch' || !state.isHovered) {
         return;
       }
 
-      if (pointerType === 'touch') {
-        return;
-      }
-
+      state.isHovered = false;
       let target = event.target;
 
       if (onHoverEnd) {
@@ -96,10 +94,17 @@ export function useHover(props: HoverProps): HoverResult {
       hoverProps.onPointerLeave = (e) => {
         triggerHoverEnd(e, e.pointerType);
       };
-
     } else {
+      hoverProps.onTouchStart = () => {
+        state.ignoreEmulatedMouseEvents = true;
+      };
+
       hoverProps.onMouseEnter = (e) => {
-        triggerHoverStart(e, 'mouse');
+        if (!state.ignoreEmulatedMouseEvents) {
+          triggerHoverStart(e, 'mouse');
+        }
+
+        state.ignoreEmulatedMouseEvents = false;
       };
 
       hoverProps.onMouseLeave = (e) => {
@@ -107,7 +112,7 @@ export function useHover(props: HoverProps): HoverResult {
       };
     }
     return hoverProps;
-  }, [onHover, onHoverChange, onHoverEnd, isDisabled]);
+  }, [onHoverStart, onHoverChange, onHoverEnd, isDisabled, state]);
 
   return {
     hoverProps

@@ -18,8 +18,8 @@ import intlMessages from '../intl/*.json';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface BreadcrumbsAria {
-  /** Props for the bradcrumbs navigation element.  */
-  breadcrumbsProps: HTMLAttributes<HTMLDivElement>
+  /** Props for the breadcrumbs navigation element. */
+  navProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -34,7 +34,7 @@ export function useBreadcrumbs<T>(props: AriaBreadcrumbsProps<T>): BreadcrumbsAr
 
   let formatMessage = useMessageFormatter(intlMessages);
   return {
-    breadcrumbsProps: {
+    navProps: {
       ...filterDOMProps(otherProps, {labelable: true}),
       'aria-label': ariaLabel || formatMessage('breadcrumbs')
     }

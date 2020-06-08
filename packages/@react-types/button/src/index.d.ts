@@ -22,7 +22,7 @@ interface ButtonProps extends PressEvents, FocusableProps {
 
 export interface LinkButtonProps {
   /**
-   * The HTML element or React element used to render the button, e.g. "div", "a", or `RouterLink`.
+   * The HTML element or React element used to render the button, e.g. 'div', 'a', or `RouterLink`.
    * @default 'button'
    */
   elementType?: string | JSXElementConstructor<any>,

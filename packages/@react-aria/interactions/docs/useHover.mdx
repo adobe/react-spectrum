@@ -44,7 +44,7 @@ over an element, and ends when they move their pointer off of the element.
 * Uses pointer events where available, with fallbacks to mouse and touch events
 * Ignores emulated mouse events in mobile browsers
 
-`useHover` is similar to the [:hover](https://developer.mozilla.org/en-US/docs/Web/CSS/:hover) pseudo class in CSS, 
+`useHover` is similar to the [:hover](https://developer.mozilla.org/en-US/docs/Web/CSS/:hover) pseudo class in CSS,
 but `:hover` is problematic on touch devices due to mouse emulation in mobile browsers. Depending on the browser
 and device, `:hover` may never apply, or may apply continuously until the user touches another element.
 `useHover` only applies when the pointer is truly capable of hovering, and emulated mouse events are ignored.
@@ -76,14 +76,14 @@ Hover interactions should never be the only way to interact with an element beca
 supported across all devices. Alternative interactions should be provided on touch devices, for
 example a long press or an explicit button to tap.
 
-In addition, even on devices with hover support, users may be using a keyboard or screen reader 
+In addition, even on devices with hover support, users may be using a keyboard or screen reader
 to navigate your app, which also do not trigger hover events. Hover interactions should be paired
 with focus events in order to expose the content to keyboard users.
 
 ## Example
 
-This example shows a simple target that handles hover events with `useHover` and logs them to a 
-list below. It also tracks the `isHovered` state using `onHoverChange` to adjust the background 
+This example shows a simple target that handles hover events with `useHover` and logs them to a
+list below. It also tracks the `isHovered` state using `onHoverChange` to adjust the background
 color when the target is hovered.
 
 ```tsx example
@@ -91,7 +91,7 @@ function Example() {
   let [events, setEvents] = React.useState([]);
   let [isHovered, setHovered] = React.useState(false);
   let {hoverProps} = useHover({
-    onHover: e => setEvents(
+    onHoverStart: e => setEvents(
       events => [...events, `hover start with ${e.pointerType}`]
     ),
     onHoverEnd: e => setEvents(

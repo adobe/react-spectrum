@@ -10,23 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, RefObject} from 'react';
 import {MenuTriggerState} from '@react-stately/menu';
-import {PressProps} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
 interface MenuTriggerAriaProps {
   /** The type of menu that the menu trigger opens. */
-  type?: 'menu' | 'listbox',
-
-  /** A ref to the trigger element. */
-  ref?: RefObject<HTMLElement | null>
+  type?: 'menu' | 'listbox'
 }
 
 interface MenuTriggerAria {
   /** Props for the menu trigger element. */
-  menuTriggerProps: HTMLAttributes<HTMLElement> & PressProps,
+  menuTriggerProps: AriaButtonProps,
 
   /** Props for the menu. */
   menuProps: HTMLAttributes<HTMLElement>
@@ -37,19 +34,17 @@ interface MenuTriggerAria {
  * @param props - props for the menu trigger
  * @param state - state for the menu trigger
  */
-export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerState): MenuTriggerAria {
+export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerState, ref: RefObject<HTMLElement>): MenuTriggerAria {
   let {
-    ref,
     type = 'menu' as MenuTriggerAriaProps['type']
   } = props;
 
   let menuTriggerId = useId();
   let {triggerProps, overlayProps} = useOverlayTrigger({
-    ref,
     type,
     onClose: state.close,
     isOpen: state.isOpen
-  });
+  }, ref);
 
   let onKeyDown = (e) => {
     if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {
