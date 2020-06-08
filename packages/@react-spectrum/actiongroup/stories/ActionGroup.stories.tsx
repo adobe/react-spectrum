@@ -160,9 +160,9 @@ function render(props, items) {
   );
 }
 
-function renderText(props = {selectionMode: 'single'}, items: any = docItems) {
+function renderText(props, items: any = docItems) {
   return (
-    <ActionGroup onSelectionChange={s => onSelectionChange([...s])} {...props}>
+    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
       {
         items.map((itemProps) => (
           <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
@@ -184,9 +184,9 @@ let iconMap = {
   'Info': InfoIcon,
   'Keywords': BookIcon
 };
-function renderBoth(props = {selectionMode: 'single'}, items: any = docItems) {
+function renderBoth(props, items: any = docItems) {
   return (
-    <ActionGroup onSelectionChange={s => onSelectionChange([...s])} {...props}>
+    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
       {
         items.map((itemProps) => {
           let IconElement = iconMap[itemProps.children];
@@ -202,9 +202,9 @@ function renderBoth(props = {selectionMode: 'single'}, items: any = docItems) {
   );
 }
 
-function renderIcons(props = {selectionMode: 'single'}, items: any = docItems) {
+function renderIcons(props, items: any = docItems) {
   return (
-    <ActionGroup onSelectionChange={s => onSelectionChange([...s])} {...props}>
+    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
       {
         items.map((itemProps) => {
           let IconElement = iconMap[itemProps.children];
