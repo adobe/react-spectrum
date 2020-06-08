@@ -28,8 +28,8 @@ import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
 import {TableState, useTableState} from '@react-stately/table';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableRowGroup, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
+import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableRowGroup, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
 
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,
