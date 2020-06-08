@@ -15,7 +15,7 @@ import {Key, RefObject} from 'react';
 import {Layout, Rect} from '@react-stately/virtualizer';
 import {TableCollection} from '@react-types/table';
 
-interface GridKeyboardDelegateOptions<T> {
+interface TableKeyboardDelegateOptions<T> {
   collection: TableCollection<T>,
   disabledKeys: Set<Key>,
   ref?: RefObject<HTMLElement>,
@@ -24,7 +24,7 @@ interface GridKeyboardDelegateOptions<T> {
   layout?: Layout<Node<T>>
 }
 
-export class GridKeyboardDelegate<T> implements KeyboardDelegate {
+export class TableKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: TableCollection<T>;
   private disabledKeys: Set<Key>;
   private ref: RefObject<HTMLElement>;
@@ -32,7 +32,7 @@ export class GridKeyboardDelegate<T> implements KeyboardDelegate {
   private collator: Intl.Collator;
   private layout: Layout<Node<T>>;
 
-  constructor(options: GridKeyboardDelegateOptions<T>) {
+  constructor(options: TableKeyboardDelegateOptions<T>) {
     this.collection = options.collection;
     this.disabledKeys = options.disabledKeys;
     this.ref = options.ref;

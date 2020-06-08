@@ -15,8 +15,8 @@ import {HTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import {TableState} from '@react-stately/table';
-import {useGridCell} from './useGridCell';
 import {usePress} from '@react-aria/interactions';
+import {useTableCell} from './useTableCell';
 
 interface ColumnHeaderProps {
   node: Node<unknown>,
@@ -29,9 +29,9 @@ interface ColumnHeaderAria {
   columnHeaderProps: HTMLAttributes<HTMLElement>
 }
 
-export function useColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>): ColumnHeaderAria {
+export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>): ColumnHeaderAria {
   let {node, colspan} = props;
-  let {gridCellProps} = useGridCell(props, state);
+  let {gridCellProps} = useTableCell(props, state);
 
   let {pressProps} = usePress({
     isDisabled: !node.props.allowsSorting,

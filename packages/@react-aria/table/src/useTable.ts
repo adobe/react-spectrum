@@ -13,9 +13,9 @@
 import {AriaLabelingProps, DOMProps, KeyboardDelegate, Node} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {gridIds} from './utils';
-import {GridKeyboardDelegate} from './GridKeyboardDelegate';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {Layout} from '@react-stately/virtualizer';
+import {TableKeyboardDelegate} from './TableKeyboardDelegate';
 import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
@@ -31,7 +31,7 @@ interface GridAria {
   gridProps: HTMLAttributes<HTMLElement>
 }
 
-export function useGrid<T>(props: GridProps<T>, state: TableState<T>): GridAria {
+export function useTable<T>(props: GridProps<T>, state: TableState<T>): GridAria {
   let {
     ref,
     isVirtualized,
@@ -47,7 +47,7 @@ export function useGrid<T>(props: GridProps<T>, state: TableState<T>): GridAria 
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {direction} = useLocale();
-  let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate({
+  let delegate = useMemo(() => keyboardDelegate || new TableKeyboardDelegate({
     collection: state.collection,
     disabledKeys: state.disabledKeys,
     ref,

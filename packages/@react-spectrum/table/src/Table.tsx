@@ -27,8 +27,8 @@ import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
 import {TableState, useTableState} from '@react-stately/table';
-import {useColumnHeader, useGrid, useGridCell, useRow, useRowGroup, useRowHeader, useSelectAllCheckbox, useSelectionCheckbox} from '@react-aria/table';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableRowGroup, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 const DEFAULT_HEADER_HEIGHT = {
@@ -84,7 +84,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {direction} = useLocale();
   layout.collection = state.collection;
 
-  let {gridProps} = useGrid({
+  let {gridProps} = useTable({
     ...props,
     ref: domRef,
     isVirtualized: true,
@@ -336,7 +336,7 @@ function TableVirtualizer({layout, collection, focusedKey, renderView, renderWra
 }
 
 function TableHeader({children, ...otherProps}) {
-  let {rowGroupProps} = useRowGroup();
+  let {rowGroupProps} = useTableRowGroup();
 
   return (
     <div {...rowGroupProps} {...otherProps} className={classNames(styles, 'spectrum-Table-head')}>
@@ -348,7 +348,7 @@ function TableHeader({children, ...otherProps}) {
 function TableColumnHeader({column}) {
   let ref = useRef();
   let state = useTableContext();
-  let {columnHeaderProps} = useColumnHeader({
+  let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     ref,
     colspan: column.colspan,
@@ -393,14 +393,14 @@ function TableColumnHeader({column}) {
 function TableSelectAllCell({column}) {
   let ref = useRef();
   let state = useTableContext();
-  let {columnHeaderProps} = useColumnHeader({
+  let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     ref,
     colspan: column.colspan,
     isVirtualized: true
   }, state);
 
-  let {checkboxProps} = useSelectAllCheckbox(state);
+  let {checkboxProps} = useTableSelectAllCheckbox(state);
 
   return (
     <div
@@ -421,7 +421,7 @@ function TableSelectAllCell({column}) {
 }
 
 function TableRowGroup({children, ...otherProps}) {
-  let {rowGroupProps} = useRowGroup();
+  let {rowGroupProps} = useTableRowGroup();
 
   return (
     <div {...rowGroupProps} {...otherProps}>
@@ -434,7 +434,7 @@ function TableRow({item, children, ...otherProps}) {
   let ref = useRef();
   let state = useTableContext();
   let isSelected = state.selectionManager.isSelected(item.key);
-  let {rowProps} = useRow({
+  let {rowProps} = useTableRow({
     node: item,
     isSelected,
     ref,
@@ -491,13 +491,13 @@ function TableHeaderRow({item, children, ...otherProps}) {
 function TableCheckboxCell({cell}) {
   let ref = useRef();
   let state = useTableContext();
-  let {gridCellProps} = useGridCell({
+  let {gridCellProps} = useTableCell({
     node: cell,
     ref,
     isVirtualized: true
   }, state);
 
-  let {checkboxProps} = useSelectionCheckbox(
+  let {checkboxProps} = useTableSelectionCheckbox(
     {key: cell.parentKey},
     state
   );
@@ -530,7 +530,7 @@ function TableCheckboxCell({cell}) {
 function TableCell({cell}) {
   let ref = useRef();
   let state = useTableContext();
-  let {gridCellProps} = useGridCell({
+  let {gridCellProps} = useTableCell({
     node: cell,
     ref,
     isVirtualized: true
@@ -547,7 +547,7 @@ function TableCell({cell}) {
 function TableRowHeader({cell}) {
   let ref = useRef();
   let state = useTableContext();
-  let {rowHeaderProps} = useRowHeader({
+  let {rowHeaderProps} = useTableRowHeader({
     node: cell,
     ref,
     isVirtualized: true

@@ -28,7 +28,7 @@ interface GridCellAria {
   gridCellProps: HTMLAttributes<HTMLElement>
 }
 
-export function useGridCell<T>(props: GridCellProps, state: TableState<T>): GridCellAria {
+export function useTableCell<T>(props: GridCellProps, state: TableState<T>): GridCellAria {
   let {
     node,
     ref,

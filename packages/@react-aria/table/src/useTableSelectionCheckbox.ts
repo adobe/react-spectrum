@@ -24,7 +24,7 @@ interface SelectionCheckboxAria {
   checkboxProps: AriaCheckboxProps
 }
 
-export function useSelectionCheckbox<T>(props: SelectionCheckboxProps, state: TableState<T>): SelectionCheckboxAria {
+export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, state: TableState<T>): SelectionCheckboxAria {
   let {
     key
   } = props;
@@ -43,7 +43,7 @@ export function useSelectionCheckbox<T>(props: SelectionCheckboxProps, state: Ta
   };
 }
 
-export function useSelectAllCheckbox<T>(state: TableState<T>): SelectionCheckboxAria {
+export function useTableSelectAllCheckbox<T>(state: TableState<T>): SelectionCheckboxAria {
   let {isEmpty, isSelectAll} = state.selectionManager;
   return {
     checkboxProps: {

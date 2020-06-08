@@ -28,7 +28,7 @@ interface RowAria {
   rowProps: HTMLAttributes<HTMLElement>
 }
 
-export function useRow<T>(props: RowProps, state: TableState<T>): RowAria {
+export function useTableRow<T>(props: RowProps, state: TableState<T>): RowAria {
   let {
     node,
     ref,
