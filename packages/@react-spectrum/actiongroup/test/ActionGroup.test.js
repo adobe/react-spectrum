@@ -419,7 +419,7 @@ describe('ActionGroup', function () {
   });
 
   it('ActionGroup should pass className, role and tabIndex', function () {
-    let {getByRole, debug} = render(
+    let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
         <ActionGroup selectionMode="single">
           <Item UNSAFE_className={'test-class'}>Click me</Item>
@@ -428,8 +428,6 @@ describe('ActionGroup', function () {
     );
 
     let button1 = getByRole('radio');
-    // console.log(button1)
-    debug()
     expect(button1).not.toHaveAttribute('icon');
     expect(button1).not.toHaveAttribute('unsafe_classname');
     expect(button1).toHaveAttribute('class', expect.not.stringContaining('test-class'));
