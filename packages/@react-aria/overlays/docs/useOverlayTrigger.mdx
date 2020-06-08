@@ -13,6 +13,7 @@ export default Layout;
 import docs from 'docs:@react-aria/overlays';
 import focusDocs from 'docs:@react-aria/focus';
 import dialogDocs from 'docs:@react-aria/dialog';
+import statelyDocs from 'docs:@react-stately/overlays';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
@@ -75,6 +76,9 @@ the overlay container element:
   <InterfaceType properties={docs.links[docs.exports.useOverlayTrigger.return.id].properties} />
 </TypeContext.Provider>
 
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useOverlayTriggerState} />
+hook in `@react-stately/overlays`. The state object should be passed as an argument to `useOverlayTrigger`.
+
 ## Example
 
 This example shows how to build a typical popover overlay that is positioned relative to
@@ -105,6 +109,7 @@ end of the document body. If a nested overlay is opened, then the first overlay 
 to `aria-hidden`, so that only the top-most overlay is accessible to screen readers.
 
 ```tsx example
+import {useOverlayTriggerState} from '@react-stately/overlays';
 import {
   useOverlay,
   useOverlayPosition,
@@ -164,7 +169,7 @@ const Popover = React.forwardRef(({
 });
 
 function Example() {
-  let [isOpen, setOpen] = React.useState(false);
+  let state = useOverlayTriggerState({});
 
   let triggerRef = React.useRef();
   let overlayRef = React.useRef();
@@ -172,11 +177,7 @@ function Example() {
   // Get props for the trigger and overlay. This also handles
   // hiding the overlay when a parent element of the trigger scrolls
   // (which invalidates the popover positioning).
-  let {triggerProps, overlayProps} = useOverlayTrigger({
-    type: 'dialog',
-    onClose: () => setOpen(false),
-    isOpen
-  }, triggerRef);
+  let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
 
   // Get popover positioning props relative to the trigger
   let {overlayProps: positionProps} = useOverlayPosition({
@@ -184,14 +185,14 @@ function Example() {
     overlayRef,
     placement: 'top',
     offset: 5,
-    isOpen
+    isOpen: state.isOpen
   });
 
   // useButton ensures that focus management is handled correctly,
   // across all browsers. Focus is restored to the button once the
   // popover closes.
   let {buttonProps} = useButton({
-    onPress: () => setOpen(true)
+    onPress: () => state.open()
   });
 
   return <>
@@ -201,15 +202,15 @@ function Example() {
       ref={triggerRef}>
       Open Popover
     </button>
-    {isOpen &&
+    {state.isOpen &&
       <OverlayContainer>
         <Popover
           {...overlayProps}
           {...positionProps}
           ref={overlayRef}
           title="Popover title"
-          isOpen
-          onClose={() => setOpen(false)}>
+          isOpen={state.isOpen}
+          onClose={state.close}>
           This is the content of the popover.
         </Popover>
       </OverlayContainer>
