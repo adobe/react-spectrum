@@ -32,7 +32,6 @@ export interface ActionGroupAria {
 
 export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListState<T>, ref: RefObject<HTMLElement>): ActionGroupAria {
   let {
-    selectionMode = 'none',
     isDisabled,
     orientation = 'horizontal' as Orientation
   } = props;
@@ -56,7 +55,7 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
   });
   let tabIndex = isFocusWithin ? -1 : 0;
 
-  let role = BUTTON_GROUP_ROLES[selectionMode];
+  let role = BUTTON_GROUP_ROLES[state.selectionManager.selectionMode];
   return {
     actionGroupProps: {
       ...filterDOMProps(props, {labelable: true}),

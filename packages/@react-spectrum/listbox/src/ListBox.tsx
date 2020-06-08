@@ -18,10 +18,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useListState} from '@react-stately/list';
 
 function ListBox<T extends object>(props: SpectrumListBoxProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let state = useListState({
-    ...props,
-    selectionMode: props.selectionMode || 'none'
-  });
+  let state = useListState(props);
   let layout = useListBoxLayout(state);
   let domRef = useDOMRef(ref);
 

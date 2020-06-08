@@ -13,11 +13,11 @@
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useActionGroup} from '../';
+import {useListState} from '@react-stately/list';
 
 describe('useActionGroup', function () {
-  let state = {};
   let renderActionGroupHook = (props) => {
-    let {result} = renderHook(() => useActionGroup(props, state));
+    let {result} = renderHook(() => useActionGroup(props, useListState(props)));
     return result.current;
   };
 
