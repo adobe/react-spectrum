@@ -472,9 +472,9 @@ storiesOf('ListBox', module)
     )
   )
   .add(
-    'with semantic elements (generative)',
+    'with semantic elements (generative), multiple selection',
     () => (
-      <ListBox width={200} aria-labelledby="label" items={hardModeProgrammatic}onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
+      <ListBox width={200} aria-labelledby="label" items={hardModeProgrammatic} onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {item => customOption(item)}

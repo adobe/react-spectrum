@@ -20,7 +20,7 @@ export interface TextProps extends DOMProps, StyleProps {
   children: ReactNode,
   /**
    * A slot to place the text in.
-   * @default "text"
+   * @default 'text'
    */
   slot?: string
 }
