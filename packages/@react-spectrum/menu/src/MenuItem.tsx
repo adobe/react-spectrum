@@ -60,11 +60,11 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       key,
       onClose,
       closeOnSelect,
-      ref,
       isVirtualized,
       onAction
     },
-    state
+    state,
+    ref
   );
 
   let contents = typeof rendered === 'string'

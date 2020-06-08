@@ -48,8 +48,8 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: node.key,
-    itemRef: ref,
+    key: node.key,
+    ref,
     isVirtualized,
     focus
   });
@@ -65,7 +65,7 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
       // the focused element is the gridcell itself. We also want to
       // set the focused key when a child element receives focus.
       // If focus is currently visible (e.g. the user is navigating with the keyboard),
-      // then skip this. We want to restore focus to the previously focused row/cell 
+      // then skip this. We want to restore focus to the previously focused row/cell
       // in that case since the table should act like a single tab stop.
       if (!isFocusVisible()) {
         state.selectionManager.setFocusedKey(node.key);
@@ -73,7 +73,7 @@ export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridC
       return;
     }
 
-    // If the cell itself is focused, wait a frame so that focus finishes propagatating 
+    // If the cell itself is focused, wait a frame so that focus finishes propagatating
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
       if (document.activeElement === ref.current) {

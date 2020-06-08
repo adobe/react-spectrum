@@ -46,7 +46,10 @@ export interface SpectrumDialogTriggerProps extends DialogTriggerProps, Position
 }
 
 export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
-  /** The accessibility role for the dialog. */
+  /**
+   * The accessibility role for the dialog.
+   * @default 'dialog'
+   */
   role?: 'dialog' | 'alertdialog'
 }
 

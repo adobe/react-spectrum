@@ -68,10 +68,9 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
   let {listBoxProps} = useListBox({
     ...props,
     ...domProps,
-    ref,
     keyboardDelegate: layout,
     isVirtualized: true
-  }, state);
+  }, state, ref);
   let {styleProps} = useStyleProps(props);
   let formatMessage = useMessageFormatter(intlMessages);
 
@@ -136,7 +135,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
               // aria-selected isn't needed here since this option is not selectable.
               // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
               <div role="option" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%'}}>
-                <ProgressCircle 
+                <ProgressCircle
                   isIndeterminate
                   size="S"
                   aria-label={state.collection.size > 0 ? formatMessage('loadingMore') : formatMessage('loading')}

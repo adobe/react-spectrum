@@ -42,8 +42,8 @@ export function useActionGroupItem<T>(props: ActionGroupItemProps, state: Action
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: props.key,
-    itemRef: ref
+    key: props.key,
+    ref
   });
 
   return {

@@ -45,7 +45,7 @@ export interface PressEvent {
 
 export interface HoverEvent {
   /** The type of hover event being fired. */
-  type: 'hoverstart' | 'hoverend' | 'hover',
+  type: 'hoverstart' | 'hoverend',
   /** The pointer type that triggered the hover event. */
   pointerType: 'mouse' | 'pen',
   /** The target element of the hover event. */
@@ -70,7 +70,7 @@ export interface FocusEvents {
 
 export interface HoverEvents {
   /** Handler that is called when a hover interaction starts. */
-  onHover?: (e: HoverEvent) => void,
+  onHoverStart?: (e: HoverEvent) => void,
   /** Handler that is called when a hover interaction ends. */
   onHoverEnd?: (e: HoverEvent) => void,
   /** Handler that is called when the hover state changes. */
