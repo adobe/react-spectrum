@@ -25,9 +25,9 @@ export interface CheckboxBase extends InputBase, Validation, FocusableProps {
   /**
    * The content to render as the element's label.
    */
-  children?: ReactNode, // pass in children to render label
+  children?: ReactNode,
   /**
-   * Whether the elements should be selected (uncontrolled).
+   * Whether the element should be selected (uncontrolled).
    */
   defaultSelected?: boolean,
   /**
@@ -39,11 +39,11 @@ export interface CheckboxBase extends InputBase, Validation, FocusableProps {
    */
   onChange?: (isSelected: boolean) => void,
   /**
-   * The value of the input element. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox).
+   * The value of the input element. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
    */
   value?: string,
   /**
-   * The name of the input element. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox).
+   * The name of the input element. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
   name?: string
 }
