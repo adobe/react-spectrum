@@ -40,9 +40,8 @@ export function Link(props: SpectrumLinkProps) {
   let ref = useRef();
   let {linkProps} = useLink({
     ...props,
-    ref,
     elementType: typeof children === 'string' ? 'span' : 'a'
-  });
+  }, ref);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>

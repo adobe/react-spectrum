@@ -26,7 +26,7 @@ export {Item, Section};
 
 export function Tree<T extends object>(props: CollectionBase<T> & Expandable & MultipleSelection) {
   let state = useTreeState(props);
-  let layout = useMemo(() => 
+  let layout = useMemo(() =>
     new ListLayout({
       rowHeight: 44,
       indentationForItem(tree: TreeCollection<T>, key: Key) {
@@ -79,7 +79,7 @@ function TreeItem<T>(props: TreeItemProps<T>) {
 
   let isExpanded = state.expandedKeys.has(key);
   let isSelected = state.selectionManager.isSelected(key);
-  
+
   let itemClassName = classNames(styles, 'spectrum-TreeView-item', {
     'is-open': isExpanded
   });
@@ -92,16 +92,16 @@ function TreeItem<T>(props: TreeItemProps<T>) {
   let ref = useRef<HTMLDivElement>();
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: item.key,
-    itemRef: ref
+    key: item.key,
+    ref
   });
 
   let {pressProps} = usePress(itemProps);
-  
+
   return (
     <div className={itemClassName} role="presentation">
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-        <div 
+        <div
           {...pressProps}
           ref={ref}
           className={linkClassName}>

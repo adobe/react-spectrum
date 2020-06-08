@@ -16,7 +16,7 @@ import {useOverlayTrigger} from '../';
 
 function Example(props) {
   let ref = useRef();
-  useOverlayTrigger({ref, ...props});
+  useOverlayTrigger(props, ref);
   return <div ref={ref} data-testid={props['data-testid'] || 'test'}>{props.children}</div>;
 }
 

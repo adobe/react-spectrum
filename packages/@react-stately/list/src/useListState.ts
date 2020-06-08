@@ -15,6 +15,7 @@ import {CollectionBase, MultipleSelection} from '@react-types/shared';
 import {Key, useEffect, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 
+export interface ListProps<T> extends CollectionBase<T>, MultipleSelection {}
 export interface ListState<T> {
   /** A collection of items in the list. */
   collection: Collection<Node<T>>,
@@ -30,7 +31,7 @@ export interface ListState<T> {
  * Provides state management for list-like components. Handles building a collection
  * of items from props, and manages multiple selection state.
  */
-export function useListState<T extends object>(props: CollectionBase<T> & MultipleSelection): ListState<T>  {
+export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()

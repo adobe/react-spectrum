@@ -31,7 +31,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
 
   let domRef = useDOMRef(ref);
   let state = useTreeState(completeProps);
-  let {menuProps} = useMenu({...completeProps, ref: domRef}, state);
+  let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
 
   // Sync ref from <MenuTrigger> context with DOM ref.

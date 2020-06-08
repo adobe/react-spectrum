@@ -116,8 +116,8 @@ DialogTrigger.getCollectionNode = function* (props: SpectrumDialogTriggerProps) 
 };
 
 /**
- * The DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's 
- * open state with the trigger's press state. Additionally, it allows you to customize the type and 
+ * The DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's
+ * open state with the trigger's press state. Additionally, it allows you to customize the type and
  * positioning of the Dialog.
  */
 
@@ -141,11 +141,10 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
   });
 
   let {triggerProps, overlayProps} = useOverlayTrigger({
-    ref: triggerRef,
     type: 'dialog',
     onClose,
     isOpen
-  });
+  }, triggerRef);
 
   let triggerPropsWithRef = {
     ...triggerProps,

@@ -27,7 +27,7 @@ export interface SpectrumDividerProps extends DOMProps, AriaLabelingProps, Style
 
   /**
    * A slot to place the divider in.
-   * @default "divider"
+   * @default 'divider'
    */
   slot?: string
 }

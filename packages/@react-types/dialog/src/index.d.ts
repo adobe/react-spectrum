@@ -30,7 +30,7 @@ export interface SpectrumDialogTriggerProps extends DialogTriggerProps, Position
   children: [ReactElement, SpectrumDialogClose | ReactElement],
   /**
    * The type of Dialog that should be rendered. See the DialogTrigger [types section](#dialog-types) for an explanation on each.
-   * @default "modal"
+   * @default 'modal'
    */
   type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   /** The type of Dialog that should be rendered when on a mobile device. See DialogTrigger [types section](#dialog-types) for an explanation on each. */
@@ -46,7 +46,10 @@ export interface SpectrumDialogTriggerProps extends DialogTriggerProps, Position
 }
 
 export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
-  /** The accessibility role for the dialog. */
+  /**
+   * The accessibility role for the dialog.
+   * @default 'dialog'
+   */
   role?: 'dialog' | 'alertdialog'
 }
 

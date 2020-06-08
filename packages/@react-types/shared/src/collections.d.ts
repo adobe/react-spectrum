@@ -57,7 +57,7 @@ export interface CollectionBase<T> {
   children: CollectionChildren<T>,
   /** Item objects in the collection. */
   items?: Iterable<T>,
-  /** They item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with. */
+  /** The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with. */
   disabledKeys?: Iterable<Key>
 }
 

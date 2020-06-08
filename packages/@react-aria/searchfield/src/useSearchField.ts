@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps} from '@react-types/button';
 import {AriaSearchFieldProps} from '@react-types/searchfield';
-import {ButtonHTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {PressProps} from '@react-aria/interactions';
 import {SearchFieldState} from '@react-stately/searchfield';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
@@ -25,7 +25,7 @@ interface SearchFieldAria {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the clear button. */
-  clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement> & PressProps
+  clearButtonProps: AriaButtonProps
 }
 
 /**
@@ -73,7 +73,7 @@ export function useSearchField(
   let onClearButtonClick = () => {
     state.setValue('');
     inputRef.current.focus();
-   
+
     if (onClear) {
       onClear();
     }
