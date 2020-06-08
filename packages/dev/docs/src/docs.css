@@ -250,7 +250,7 @@ footer li:last-child:after {
   }
 }
 
-.colorLink[aria-expanded]:after {
+.colorLink[aria-haspopup="dialog"]:after {
   content: ' ▼';
   margin-left: -4px;
 }
