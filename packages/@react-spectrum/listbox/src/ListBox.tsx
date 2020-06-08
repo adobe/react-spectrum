@@ -20,7 +20,7 @@ import {useListState} from '@react-stately/list';
 function ListBox<T extends object>(props: SpectrumListBoxProps<T>, ref: DOMRef<HTMLDivElement>) {
   let state = useListState({
     ...props,
-    selectionMode: props.selectionMode || 'single'
+    selectionMode: props.selectionMode || 'none'
   });
   let layout = useListBoxLayout(state);
   let domRef = useDOMRef(ref);

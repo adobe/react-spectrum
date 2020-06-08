@@ -32,7 +32,7 @@ export interface ActionGroupAria {
 
 export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ActionGroupState<T>, ref: RefObject<HTMLElement>): ActionGroupAria {
   let {
-    selectionMode = 'single',
+    selectionMode = 'none',
     isDisabled,
     orientation = 'horizontal' as Orientation
   } = props;

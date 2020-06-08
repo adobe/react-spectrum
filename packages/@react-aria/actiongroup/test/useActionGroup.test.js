@@ -23,11 +23,11 @@ describe('useActionGroup', function () {
 
   it('handles defaults', function () {
     let {actionGroupProps} = renderActionGroupHook({});
-    expect(actionGroupProps.role).toBe('radiogroup');
+    expect(actionGroupProps.role).toBe('toolbar');
   });
 
   it('handles vertical orientation', function () {
-    let {actionGroupProps} = renderActionGroupHook({orientation: 'vertical', selectionMode: 'none'});
+    let {actionGroupProps} = renderActionGroupHook({orientation: 'vertical'});
     expect(actionGroupProps['aria-orientation']).toBe('vertical');
   });
 

@@ -37,7 +37,7 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
     density,
     isJustified,
     isDisabled,
-    selectionMode = 'single' as SelectionMode,
+    selectionMode = 'none' as SelectionMode,
     orientation = 'horizontal',
     isQuiet,
     onAction,

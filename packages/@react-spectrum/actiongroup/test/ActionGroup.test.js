@@ -145,8 +145,8 @@ describe('ActionGroup', function () {
         </ComponentGroup>
       </Provider>
     );
-    expect(getByRole('radiogroup')).toBeTruthy();
-    expect(getAllByRole('radio')).toBeTruthy();
+    expect(getByRole('toolbar')).toBeTruthy();
+    expect(getAllByRole('button')).toBeTruthy();
   });
 
   it.each`
@@ -157,8 +157,8 @@ describe('ActionGroup', function () {
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme} locale="de-DE">
         <ComponentGroup {...props} >
-          <Component >Click me</Component>
-          <Component >Click me</Component>
+          <Component>Click me</Component>
+          <Component>Click me</Component>
         </ComponentGroup>
       </Provider>
     );
@@ -169,7 +169,7 @@ describe('ActionGroup', function () {
 
   it.each`
     Name               | ComponentGroup   | Component   | props
-    ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{orientation: 'vertical', selectionMode: 'none'}}
+    ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{orientation: 'vertical'}}
     ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button} | ${{orientation: 'vertical', role: 'toolbar'}}
   `('$Name handles vertical', function ({ComponentGroup, Component, props}) {
     let {getByTestId} = render(
@@ -185,9 +185,9 @@ describe('ActionGroup', function () {
 
   it.each`
     Name               | ComponentGroup   | Component   | props
-    ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{isDisabled: true}}
+    ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{selectionMode: 'single', isDisabled: true}}
     ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button} | ${{disabled: true}}
-  `('$Name handles disabeld', function ({ComponentGroup, Component, props}) {
+  `('$Name handles disabled', function ({ComponentGroup, Component, props}) {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
         <ComponentGroup {...props} >
@@ -220,8 +220,8 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
-    let buttons = tree.getAllByRole('radio');
-    let buttonGroup = tree.getByRole('radiogroup');
+    let buttons = tree.getAllByRole('button');
+    let buttonGroup = tree.getByRole('toolbar');
     buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
@@ -252,8 +252,8 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
-    let buttons = tree.getAllByRole('radio');
-    let buttonGroup = tree.getByRole('radiogroup');
+    let buttons = tree.getAllByRole('button');
+    let buttonGroup = tree.getByRole('toolbar');
     buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
@@ -278,8 +278,8 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
-    let buttons = tree.getAllByRole('radio');
-    let buttonGroup = tree.getByRole('radiogroup');
+    let buttons = tree.getAllByRole('button');
+    let buttonGroup = tree.getByRole('toolbar');
     buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
@@ -289,7 +289,7 @@ describe('ActionGroup', function () {
   });
 
   it('should be focusable from Tab', async function () {
-    let tree = renderComponentWithExtraInputs({});
+    let tree = renderComponentWithExtraInputs({selectionMode: 'single'});
 
     let buttonBefore = tree.getByLabelText('ButtonBefore');
     let buttonAfter = tree.getByLabelText('ButtonAfter');
@@ -304,7 +304,7 @@ describe('ActionGroup', function () {
   });
 
   it('should be focusable from Shift + Tab', function () {
-    let tree = renderComponentWithExtraInputs({});
+    let tree = renderComponentWithExtraInputs({selectionMode: 'single'});
 
     let buttonBefore = tree.getByLabelText('ButtonBefore');
     let buttonAfter = tree.getByLabelText('ButtonAfter');
@@ -319,7 +319,7 @@ describe('ActionGroup', function () {
   });
 
   it('should remember last focused item', function () {
-    let tree = renderComponentWithExtraInputs({});
+    let tree = renderComponentWithExtraInputs({selectionMode: 'single'});
 
     let buttonBefore = tree.getByLabelText('ButtonBefore');
     let buttonAfter = tree.getByLabelText('ButtonAfter');
@@ -340,7 +340,7 @@ describe('ActionGroup', function () {
   });
 
   it('ActionGroup handles single selection', function () {
-    let {getAllByRole} = renderComponent({});
+    let {getAllByRole} = renderComponent({selectionMode: 'single'});
 
     let [button1, button2] = getAllByRole('radio');
     triggerPress(button1);
@@ -419,15 +419,17 @@ describe('ActionGroup', function () {
   });
 
   it('ActionGroup should pass className, role and tabIndex', function () {
-    let {getByRole} = render(
+    let {getByRole, debug} = render(
       <Provider theme={theme} locale="de-DE">
-        <ActionGroup>
+        <ActionGroup selectionMode="single">
           <Item UNSAFE_className={'test-class'}>Click me</Item>
         </ActionGroup>
       </Provider>
     );
 
     let button1 = getByRole('radio');
+    // console.log(button1)
+    debug()
     expect(button1).not.toHaveAttribute('icon');
     expect(button1).not.toHaveAttribute('unsafe_classname');
     expect(button1).toHaveAttribute('class', expect.not.stringContaining('test-class'));
@@ -438,7 +440,7 @@ describe('ActionGroup', function () {
 
   it('ActionGroup handles disabledKeys', function () {
     let onSelectionChange = jest.fn();
-    let {getAllByRole} = renderComponent({disabledKeys: ['1'], onSelectionChange});
+    let {getAllByRole} = renderComponent({selectionMode: 'single', disabledKeys: ['1'], onSelectionChange});
 
     let [button1, button2] = getAllByRole('radio');
     triggerPress(button1);
@@ -451,7 +453,7 @@ describe('ActionGroup', function () {
 
   it('ActionGroup handles selectedKeys (controlled)', function () {
     let onSelectionChange = jest.fn();
-    let {getAllByRole} = renderComponent({selectedKeys: ['1'], onSelectionChange});
+    let {getAllByRole} = renderComponent({selectionMode: 'single', selectedKeys: ['1'], onSelectionChange});
 
     let [button1, button2] = getAllByRole('radio');
     expect(button1).toHaveAttribute('aria-checked', 'true');
@@ -464,7 +466,7 @@ describe('ActionGroup', function () {
 
   it('ActionGroup handles selectedKeys (controlled)', function () {
     let onSelectionChange = jest.fn();
-    let {getAllByRole} = renderComponent({defaultSelectedKeys: ['1'], onSelectionChange});
+    let {getAllByRole} = renderComponent({selectionMode: 'single', defaultSelectedKeys: ['1'], onSelectionChange});
 
     let [button1, button2] = getAllByRole('radio');
     expect(button1).toHaveAttribute('aria-checked', 'true');
@@ -484,7 +486,7 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
-    let button1 = getByRole('radiogroup');
+    let button1 = getByRole('toolbar');
     expect(button1).toHaveAttribute('aria-label', 'Test');
   });
 
@@ -498,7 +500,7 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
-    let button1 = getByRole('radiogroup');
+    let button1 = getByRole('toolbar');
     expect(button1).toHaveAttribute('aria-labelledby', 'test');
   });
 
@@ -512,14 +514,14 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
-    let button1 = getByRole('radiogroup');
+    let button1 = getByRole('toolbar');
     expect(button1).toHaveAttribute('aria-describedby', 'test');
   });
 
   it('ActionGroup allow aria-label on Item', function () {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
-        <ActionGroup>
+        <ActionGroup selectionMode="single">
           <Item aria-label="Test">Click me</Item>
         </ActionGroup>
       </Provider>
@@ -538,7 +540,7 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
-    let button1 = getByRole('radiogroup');
+    let button1 = getByRole('toolbar');
     expect(button1).toHaveAttribute('data-testid', 'test');
   });
 
@@ -563,7 +565,7 @@ describe('ActionGroup', function () {
     let onAction = jest.fn();
     let tree = render(
       <Provider theme={theme} locale="de-DE">
-        <ActionGroup selectionMode="none" onAction={onAction} isDisabled>
+        <ActionGroup onAction={onAction} isDisabled>
           <Item key="test">Click me</Item>
         </ActionGroup>
       </Provider>
@@ -579,7 +581,7 @@ describe('ActionGroup', function () {
     let onAction = jest.fn();
     let tree = render(
       <Provider theme={theme} locale="de-DE">
-        <ActionGroup selectionMode="none" onAction={onAction} disabledKeys={['test']}>
+        <ActionGroup onAction={onAction} disabledKeys={['test']}>
           <Item key="test">Click me</Item>
         </ActionGroup>
       </Provider>
@@ -594,7 +596,7 @@ describe('ActionGroup', function () {
   it('supports DialogTrigger as a wrapper around items', function () {
     let tree = render(
       <Provider theme={theme}>
-        <ActionGroup selectionMode="none">
+        <ActionGroup>
           <DialogTrigger>
             <Item>Hi</Item>
             <Dialog>

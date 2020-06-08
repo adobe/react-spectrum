@@ -160,7 +160,7 @@ function render(props, items) {
   );
 }
 
-function renderText(props = {}, items: any = docItems) {
+function renderText(props = {selectionMode: 'single'}, items: any = docItems) {
   return (
     <ActionGroup onSelectionChange={s => onSelectionChange([...s])} {...props}>
       {
@@ -184,7 +184,7 @@ let iconMap = {
   'Info': InfoIcon,
   'Keywords': BookIcon
 };
-function renderBoth(props, items: any = docItems) {
+function renderBoth(props = {selectionMode: 'single'}, items: any = docItems) {
   return (
     <ActionGroup onSelectionChange={s => onSelectionChange([...s])} {...props}>
       {
@@ -202,7 +202,7 @@ function renderBoth(props, items: any = docItems) {
   );
 }
 
-function renderIcons(props, items: any = docItems) {
+function renderIcons(props = {selectionMode: 'single'}, items: any = docItems) {
   return (
     <ActionGroup onSelectionChange={s => onSelectionChange([...s])} {...props}>
       {
