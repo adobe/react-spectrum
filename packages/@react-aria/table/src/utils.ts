@@ -3,17 +3,17 @@
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
 
-import {GridState} from '@react-stately/grid';
 import {Key} from 'react';
+import {TableState} from '@react-stately/table';
 
-export const gridIds = new WeakMap<GridState<unknown>, string>();
+export const gridIds = new WeakMap<TableState<unknown>, string>();
 
 function normalizeKey(key: Key): string {
   if (typeof key === 'string') {
@@ -23,7 +23,7 @@ function normalizeKey(key: Key): string {
   return '' + key;
 }
 
-export function getColumnHeaderId<T>(state: GridState<T>, columnKey: Key): string {
+export function getColumnHeaderId<T>(state: TableState<T>, columnKey: Key): string {
   let gridId = gridIds.get(state);
   if (!gridId) {
     throw new Error('Unknown grid');
@@ -32,7 +32,7 @@ export function getColumnHeaderId<T>(state: GridState<T>, columnKey: Key): strin
   return `${gridId}-${normalizeKey(columnKey)}`;
 }
 
-export function getCellId<T>(state: GridState<T>, rowKey: Key, columnKey: Key) {
+export function getCellId<T>(state: TableState<T>, rowKey: Key, columnKey: Key) {
   let gridId = gridIds.get(state);
   if (!gridId) {
     throw new Error('Unknown grid');
@@ -41,9 +41,9 @@ export function getCellId<T>(state: GridState<T>, rowKey: Key, columnKey: Key) {
   return `${gridId}-${normalizeKey(rowKey)}-${normalizeKey(columnKey)}`;
 }
 
-export function getRowLabelledBy<T>(state: GridState<T>, rowKey: Key): string {
+export function getRowLabelledBy<T>(state: TableState<T>, rowKey: Key): string {
   // A row is labelled by it's row headers.
-  return [...state.collection.rowHeaderColumnKeys].map(columnKey => 
+  return [...state.collection.rowHeaderColumnKeys].map(columnKey =>
     getCellId(state, rowKey, columnKey)
   ).join(' ');
 }

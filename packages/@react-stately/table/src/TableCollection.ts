@@ -9,8 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {TableCollection as ITableCollection, TableNode} from '@react-types/table';
 import {Key} from 'react';
-import {TableCollection, TableNode} from '@react-types/table';
 
 interface GridCollectionOptions {
   showSelectionCheckboxes?: boolean
@@ -18,14 +18,14 @@ interface GridCollectionOptions {
 
 const ROW_HEADER_COLUMN_KEY = 'row-header-column-' + Math.random().toString(36).slice(2);
 
-export class GridCollection<T> implements TableCollection<T> {
+export class TableCollection<T> implements ITableCollection<T> {
   private keyMap: Map<Key, TableNode<T>>;
   headerRows: TableNode<T>[];
   columns: TableNode<T>[];
   rowHeaderColumnKeys: Set<Key>;
   body: TableNode<T>;
 
-  constructor(nodes: Iterable<TableNode<T>>, prev?: GridCollection<T>, opts?: GridCollectionOptions) {
+  constructor(nodes: Iterable<TableNode<T>>, prev?: TableCollection<T>, opts?: GridCollectionOptions) {
     this.keyMap = new Map(prev?.keyMap) || new Map();
     this.columns = [];
     this.rowHeaderColumnKeys = new Set();

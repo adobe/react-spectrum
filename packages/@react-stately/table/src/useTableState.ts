@@ -11,14 +11,14 @@
  */
 
 import {CollectionBase, MultipleSelection, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
-import {GridCollection} from './GridCollection';
+import {TableCollection as ITableCollection} from '@react-types/table';
 import {Key, useEffect, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
-import {TableCollection} from '@react-types/table';
+import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
 
-export interface GridState<T> {
-  collection: TableCollection<T>,
+export interface TableState<T> {
+  collection: ITableCollection<T>,
   disabledKeys: Set<Key>,
   selectionManager: SelectionManager,
   showSelectionCheckboxes: boolean,
@@ -32,7 +32,7 @@ export interface CollectionBuilderContext<T> {
   columns: Node<T>[]
 }
 
-export interface GridStateProps<T> extends CollectionBase<T>, MultipleSelection, Sortable {
+export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelection, Sortable {
   showSelectionCheckboxes?: boolean
 }
 
@@ -41,7 +41,7 @@ const OPPOSITE_SORT_DIRECTION = {
   descending: 'ascending' as SortDirection
 };
 
-export function useGridState<T extends object>(props: GridStateProps<T>): GridState<T>  {
+export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T>  {
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
@@ -53,9 +53,9 @@ export function useGridState<T extends object>(props: GridStateProps<T>): GridSt
     columns: []
   }), [props.children, props.showSelectionCheckboxes, selectionState.selectionMode]);
 
-  let collection = useCollection<T, GridCollection<T>>(
+  let collection = useCollection<T, TableCollection<T>>(
     props,
-    (nodes, prev) => new GridCollection(nodes, prev, context),
+    (nodes, prev) => new TableCollection(nodes, prev, context),
     context
   );
 

@@ -1,9 +1,9 @@
 {
-  "name": "@react-stately/grid",
+  "name": "@react-aria/table",
   "version": "3.0.0-alpha.1",
+  "private": true,
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
-  "private": true,
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
@@ -16,10 +16,14 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@react-aria/focus": "^3.0.0-rc.2",
+    "@react-aria/i18n": "^3.0.0-rc.2",
+    "@react-aria/interactions": "^3.0.0-rc.2",
+    "@react-aria/selection": "^3.0.0-alpha.1",
+    "@react-aria/utils": "^3.0.0-rc.2",
     "@react-stately/collections": "^3.0.0-alpha.1",
-    "@react-stately/selection": "^3.0.0-alpha.1",
-    "@react-stately/utils": "^3.0.0-alpha.1",
-    "@react-types/table": "^3.0.0-alpha.1"
+    "@react-stately/table": "^3.0.0-alpha.1",
+    "@react-stately/virtualizer": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"

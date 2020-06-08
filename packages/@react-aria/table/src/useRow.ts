@@ -11,9 +11,9 @@
  */
 
 import {getRowLabelledBy} from './utils';
-import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {Node} from '@react-types/shared';
+import {TableState} from '@react-stately/table';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -28,7 +28,7 @@ interface RowAria {
   rowProps: HTMLAttributes<HTMLElement>
 }
 
-export function useRow<T>(props: RowProps, state: GridState<T>): RowAria {
+export function useRow<T>(props: RowProps, state: TableState<T>): RowAria {
   let {
     node,
     ref,

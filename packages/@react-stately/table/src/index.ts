@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useGridState';
+export * from './useTableState';
 export * from './TableHeader';
 export * from './TableBody';
 export * from './Column';

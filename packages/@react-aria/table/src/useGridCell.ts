@@ -12,10 +12,10 @@
 
 import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {isFocusVisible, usePress} from '@react-aria/interactions';
 import {Node} from '@react-types/shared';
+import {TableState} from '@react-stately/table';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface GridCellProps {
@@ -28,7 +28,7 @@ interface GridCellAria {
   gridCellProps: HTMLAttributes<HTMLElement>
 }
 
-export function useGridCell<T>(props: GridCellProps, state: GridState<T>): GridCellAria {
+export function useGridCell<T>(props: GridCellProps, state: TableState<T>): GridCellAria {
   let {
     node,
     ref,

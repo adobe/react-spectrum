@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBuilderContext} from './useGridState';
+import {CollectionBuilderContext} from './useTableState';
 import {ColumnProps, TableNode} from '@react-types/table';
 import {PartialNode} from '@react-stately/collections';
 import React, {ReactElement} from 'react';

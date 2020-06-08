@@ -15,7 +15,6 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
-import {GridState, useGridState} from '@react-stately/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
@@ -27,7 +26,8 @@ import {SpectrumColumnProps, SpectrumTableProps, TableNode} from '@react-types/t
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
-import {useColumnHeader, useGrid, useGridCell, useRow, useRowGroup, useRowHeader, useSelectAllCheckbox, useSelectionCheckbox} from '@react-aria/grid';
+import {TableState, useTableState} from '@react-stately/table';
+import {useColumnHeader, useGrid, useGridCell, useRow, useRowGroup, useRowHeader, useSelectAllCheckbox, useSelectionCheckbox} from '@react-aria/table';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
@@ -51,7 +51,7 @@ const ROW_HEIGHTS = {
   }
 };
 
-const TableContext = React.createContext<GridState<unknown>>(null);
+const TableContext = React.createContext<TableState<unknown>>(null);
 function useTableContext() {
   return useContext(TableContext);
 }
@@ -60,7 +60,7 @@ function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {isQuiet} = props;
   let {styleProps} = useStyleProps(props);
-  let state = useGridState({...props, showSelectionCheckboxes: true});
+  let state = useTableState({...props, showSelectionCheckboxes: true});
   let domRef = useDOMRef(ref);
   let formatMessage = useMessageFormatter(intlMessages);
 

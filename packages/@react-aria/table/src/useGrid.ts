@@ -14,9 +14,9 @@ import {AriaLabelingProps, DOMProps, KeyboardDelegate, Node} from '@react-types/
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {gridIds} from './utils';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
-import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {Layout} from '@react-stately/virtualizer';
+import {TableState} from '@react-stately/table';
 import {useCollator, useLocale} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 
@@ -31,7 +31,7 @@ interface GridAria {
   gridProps: HTMLAttributes<HTMLElement>
 }
 
-export function useGrid<T>(props: GridProps<T>, state: GridState<T>): GridAria {
+export function useGrid<T>(props: GridProps<T>, state: TableState<T>): GridAria {
   let {
     ref,
     isVirtualized,

@@ -11,10 +11,10 @@
  */
 
 import {getColumnHeaderId} from './utils';
-import {GridState} from '@react-stately/grid';
 import {HTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
+import {TableState} from '@react-stately/table';
 import {useGridCell} from './useGridCell';
 import {usePress} from '@react-aria/interactions';
 
@@ -29,7 +29,7 @@ interface ColumnHeaderAria {
   columnHeaderProps: HTMLAttributes<HTMLElement>
 }
 
-export function useColumnHeader<T>(props: ColumnHeaderProps, state: GridState<T>): ColumnHeaderAria {
+export function useColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>): ColumnHeaderAria {
   let {node, colspan} = props;
   let {gridCellProps} = useGridCell(props, state);
 
