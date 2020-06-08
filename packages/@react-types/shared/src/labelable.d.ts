@@ -26,17 +26,17 @@ export interface LabelableProps {
 export interface SpectrumLabelableProps extends LabelableProps {
   /**
    * The label's overall position relative to the element it is labeling.
-   * @default "top"
+   * @default 'top'
    */
   labelPosition?: LabelPosition,
   /**
    * The label's horizontal alignment relative to the element it is labeling.
-   * @default "start"
+   * @default 'start'
    */
   labelAlign?: Alignment,
   /**
    * Whether the required state should be shown as an icon or text.
-   * @default "icon"
+   * @default 'icon'
    */
   necessityIndicator?: NecessityIndicator
 }
