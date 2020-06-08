@@ -147,52 +147,159 @@ function FormWithControls(props: any = {}) {
   let [favoritePet, setFavoritePet] = useState('cats');
   let [favoriteColor, setFavoriteColor] = useState('green' as Key);
   let [howIFeel, setHowIFeel] = useState('I feel good, o I feel so good!');
+  let [firstName2, setFirstName2] = useState('hello');
+  let [isHunter2, setIsHunter2] = useState(true);
+  let [favoritePet2, setFavoritePet2] = useState('cats');
+  let [favoriteColor2, setFavoriteColor2] = useState('green' as Key);
+  let [howIFeel2, setHowIFeel2] = useState('I feel good, o I feel so good!');
 
   return (
-    <Form
-      onSubmit={e => {
-        action('onSubmit')(e);
-        e.preventDefault();
-      }}
-      onReset={action('onReset')}
-      {...props}>
-      <TextField label="First Name" placeholder="John" value={firstName} onChange={setFirstName} />
-      <TextField label="Last Name" placeholder="Smith" defaultValue="world" />
-      <TextField label="Street Address" placeholder="123 Any Street" />
-      <TextField label="City" placeholder="San Francisco" />
-      <Picker label="State" placeholder="Select a state" items={states}>
-        {item => <Item key={item.abbr}>{item.name}</Item>}
-      </Picker>
-      <TextField label="Zip code" placeholder="12345" />
-      <Picker label="Country" placeholder="Select a country" items={countries}>
-        {item => <Item key={item.name}>{item.name}</Item>}
-      </Picker>
-      <Checkbox defaultSelected>I am a wizard!</Checkbox>
-      <Checkbox isSelected={isHunter} onChange={setIsHunter}>I am a hunter!</Checkbox>
-      <RadioGroup label="Favorite pet" name="favorite-pet-group" value={favoritePet} onChange={setFavoritePet}>
-        <Radio value="dogs">Dogs</Radio>
-        <Radio value="cats">Cats</Radio>
-        <Radio value="dragons">Dragons</Radio>
-      </RadioGroup>
-      <RadioGroup label="Favorite pet" name="favorite-pet-group2" defaultValue="cats">
-        <Radio value="dogs">Dogs</Radio>
-        <Radio value="cats">Cats</Radio>
-        <Radio value="dragons">Dragons</Radio>
-      </RadioGroup>
-      <Picker label="Favorite color" selectedKey={favoriteColor} onSelectionChange={setFavoriteColor}>
-        <Item key="red">Red</Item>
-        <Item key="orange">Orange</Item>
-        <Item key="yellow">Yellow</Item>
-        <Item key="green">Green</Item>
-        <Item key="blue">Blue</Item>
-        <Item key="purple">Purple</Item>
-      </Picker>
-      <TextArea label="Comments" placeholder="How do you feel?" value={howIFeel} onChange={setHowIFeel} />
-      <TextArea label="Comments" placeholder="How do you feel?" defaultValue="hello" />
-      <ButtonGroup>
-        <Button variant="secondary" type="reset">Reset</Button>
-        <Button variant="primary" type="submit">Submit</Button>
-      </ButtonGroup>
-    </Form>
+    <Flex>
+      <Form
+        onSubmit={e => {
+          action('onSubmit')(e);
+          e.preventDefault();
+        }}
+        onReset={action('onReset')}
+        {...props}>
+        <TextField label="First Name" placeholder="John" value={firstName} onChange={setFirstName} />
+        <TextField label="Last Name" placeholder="Smith" defaultValue="world" />
+        <TextField label="Street Address" placeholder="123 Any Street" />
+        <TextField label="City" placeholder="San Francisco" />
+        <Picker label="State" placeholder="Select a state" items={states}>
+          {item => <Item key={item.abbr}>{item.name}</Item>}
+        </Picker>
+        <TextField label="Zip code" placeholder="12345" />
+        <Picker label="Country" placeholder="Select a country" items={countries}>
+          {item => <Item key={item.name}>{item.name}</Item>}
+        </Picker>
+        <Checkbox defaultSelected>I am a wizard!</Checkbox>
+        <Checkbox isSelected={isHunter} onChange={setIsHunter}>I am a hunter!</Checkbox>
+        <RadioGroup label="Favorite pet" name="favorite-pet-group" value={favoritePet} onChange={setFavoritePet}>
+          <Radio value="dogs">Dogs</Radio>
+          <Radio value="cats">Cats</Radio>
+          <Radio value="dragons">Dragons</Radio>
+        </RadioGroup>
+        <RadioGroup label="Favorite pet" name="favorite-pet-group2" defaultValue="cats">
+          <Radio value="dogs">Dogs</Radio>
+          <Radio value="cats">Cats</Radio>
+          <Radio value="dragons">Dragons</Radio>
+        </RadioGroup>
+        <Picker label="Favorite color" selectedKey={favoriteColor} onSelectionChange={setFavoriteColor}>
+          <Item key="red">Red</Item>
+          <Item key="orange">Orange</Item>
+          <Item key="yellow">Yellow</Item>
+          <Item key="green">Green</Item>
+          <Item key="blue">Blue</Item>
+          <Item key="purple">Purple</Item>
+        </Picker>
+        <TextArea label="Comments" placeholder="How do you feel?" value={howIFeel} onChange={setHowIFeel} />
+        <TextArea label="Comments" placeholder="How do you feel?" defaultValue="hello" />
+        <ButtonGroup>
+          <Button variant="secondary" type="reset">Reset</Button>
+          <Button variant="primary" type="submit">Submit</Button>
+        </ButtonGroup>
+      </Form>
+      <form
+        onSubmit={e => {
+          action('onSubmit')(e);
+          e.preventDefault();
+        }}
+        {...props}>
+        <Flex direction="column" gap="size-500" marginTop="size-500">
+          <label>
+            First Name
+            <input type="text" placeholder="John" value={firstName2} onChange={e => setFirstName2(e.target.value)} />
+          </label>
+          <label>
+            Last Name
+            <input type="text" placeholder="Smith" defaultValue="world" />
+          </label>
+          <label>
+            Street Address
+            <input type="text" placeholder="123 Any Street" />
+          </label>
+          <label>
+            City
+            <input type="text" placeholder="San Francisco" />
+          </label>
+          <label>
+            State
+            <select placeholder="Select a state">
+              {states.map(item => <option value={item.abbr}>{item.name}</option>)}
+            </select>
+          </label>
+          <label>
+            First Name
+            <input type="text" placeholder="12345" />
+          </label>
+          <label>
+            Country
+            <select placeholder="Select a country">
+              {countries.map(item => <option value={item.name}>{item.name}</option>)}
+            </select>
+          </label>
+          <label>
+            I am a wizard!
+            <input type="checkbox" defaultChecked />
+          </label>
+          <label>
+            I am a hunter!
+            <input type="checkbox" checked={isHunter2} onChange={e => setIsHunter2(e.target.checked)} />
+          </label>
+          <div>
+            <label>
+              Dogs
+              <input type="radio" name="favorit-pet-group3" value="dogs" checked={favoritePet2 === 'dogs'} onChange={e => setFavoritePet2(e.target.value)} />
+            </label>
+            <label>
+              Cats
+              <input type="radio" name="favorit-pet-group3" value="cats" checked={favoritePet2 === 'cats'} onChange={e => setFavoritePet2(e.target.value)} />
+            </label>
+            <label>
+              Dragons
+              <input type="radio" name="favorit-pet-group3" value="dragons" checked={favoritePet2 === 'dragons'} onChange={e => setFavoritePet2(e.target.value)} />
+            </label>
+          </div>
+          <div>
+            <label>
+              Dogs
+              <input type="radio" name="favorit-pet-group4" value="dogs" />
+            </label>
+            <label>
+              Cats
+              <input type="radio" name="favorit-pet-group4" value="cats" defaultChecked />
+            </label>
+            <label>
+              Dragons
+              <input type="radio" name="favorit-pet-group4" value="dragons" />
+            </label>
+          </div>
+          <label>
+            Favorit Color
+            <select onChange={e => setFavoriteColor2(e.target.value)}>
+              <option value="red" selected={favoriteColor2 === 'red'}>Red</option>
+              <option value="orange" selected={favoriteColor2 === 'orange'}>Orange</option>
+              <option value="yellow" selected={favoriteColor2 === 'yellow'}>Yellow</option>
+              <option value="green" selected={favoriteColor2 === 'green'}>Green</option>
+              <option value="blue" selected={favoriteColor2 === 'blue'}>Blue</option>
+              <option value="purple" selected={favoriteColor2 === 'purple'}>Purple</option>
+            </select>
+          </label>
+          <label>
+            Comments
+            <textarea placeholder="How do you feel?" value={howIFeel2} onChange={e => setHowIFeel2(e.target.value)} />
+          </label>
+          <label>
+            Comments
+            <textarea placeholder="How do you feel?" defaultValue="hello" />
+          </label>
+          <ButtonGroup>
+            <Button variant="secondary" type="reset">Reset</Button>
+            <Button variant="primary" type="submit">Submit</Button>
+          </ButtonGroup>
+        </Flex>
+      </form>
+    </Flex>
   );
 }

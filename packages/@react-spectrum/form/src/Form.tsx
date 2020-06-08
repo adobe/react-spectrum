@@ -74,13 +74,7 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
           },
           styleProps.className
         )
-      }
-      onReset={(e) => {
-        e.preventDefault();
-        if (props.onReset) {
-          props.onReset(e);
-        }
-      }}>
+      }>
       <FormContext.Provider value={ctx}>
         <Provider
           isQuiet={isQuiet}
