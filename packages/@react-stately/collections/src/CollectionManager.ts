@@ -30,6 +30,14 @@ interface ScrollAnchor {
   offset: number
 }
 
+interface ScrollToItemOptions {
+  duration?: number,
+  shouldScrollX?: boolean,
+  shouldScrollY?: boolean,
+  offsetX?: number,
+  offsetY?: number
+}
+
 export interface CollectionManagerOptions<T extends object, V, W> {
   collection?: Collection<T>,
   layout?: Layout<T>,
@@ -933,7 +941,7 @@ export class CollectionManager<T extends object, V, W> {
    * @param key The key of the item to scroll into view
    * @param duration The duration of the scroll animation
    */
-  scrollToItem(key: Key, duration: number = 300) {
+  scrollToItem(key: Key, options?: ScrollToItemOptions) {
     if (!key) {
       return;
     }
@@ -943,22 +951,35 @@ export class CollectionManager<T extends object, V, W> {
       return;
     }
 
-    let offsetX = layoutInfo.rect.x;
-    let offsetY = layoutInfo.rect.y;
+    let {
+      duration = 300,
+      shouldScrollX = true,
+      shouldScrollY = true,
+      offsetX = 0,
+      offsetY = 0
+    } = options;
+
     let x = this.visibleRect.x;
     let y = this.visibleRect.y;
+    let minX = layoutInfo.rect.x - offsetX;
+    let minY = layoutInfo.rect.y - offsetY;
     let maxX = x + this.visibleRect.width;
     let maxY = y + this.visibleRect.height;
 
-    if (offsetX <= x || maxX === 0) {
-      x = offsetX;
-    } else if (offsetX + layoutInfo.rect.width > maxX) {
-      x += offsetX + layoutInfo.rect.width - maxX;
+    if (shouldScrollX) {
+      if (minX <= x || maxX === 0) {
+        x = minX;
+      } else if (layoutInfo.rect.maxX > maxX) {
+        x += layoutInfo.rect.maxX - maxX;
+      }
     }
-    if (offsetY <= y || maxY === 0) {
-      y = offsetY;
-    } else if (offsetY + layoutInfo.rect.height > maxY) {
-      y += offsetY + layoutInfo.rect.height - maxY;
+
+    if (shouldScrollY) {
+      if (minY <= y || maxY === 0) {
+        y = minY;
+      } else if (layoutInfo.rect.maxY > maxY) {
+        y += layoutInfo.rect.maxY - maxY;
+      }
     }
 
     return this.scrollTo(new Point(x, y), duration);

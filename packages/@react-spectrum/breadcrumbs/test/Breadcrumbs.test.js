@@ -96,24 +96,24 @@ describe('Breadcrumbs', function () {
     expect(breadcrumb).toBe(ref.current.UNSAFE_getDOMNode());
   });
 
-  it('Handles size="L"', () => {
+  it('Handles size="S"', () => {
     let {getByRole} = render(
-      <Breadcrumbs size="L">
+      <Breadcrumbs size="S">
         <Item>Folder 1</Item>
       </Breadcrumbs>
     );
     let breadcrumbs = getByRole('list');
-    expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('--multiline'));
+    expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('--small'));
   });
 
-  it('Handles isHeading and headingAriaLevel', () => {
+  it('Handles size="M"', () => {
     let {getByRole} = render(
-      <Breadcrumbs headingAriaLevel={2} isHeading>
+      <Breadcrumbs size="M">
         <Item>Folder 1</Item>
       </Breadcrumbs>
     );
-    let heading = getByRole('heading');
-    expect(heading).toHaveAttribute('aria-level', '2');
+    let breadcrumbs = getByRole('list');
+    expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('--medium'));
   });
 
   it('Handles max visible items', () => {

@@ -51,6 +51,27 @@ Breadcrumbs follow the [Collection Components](../react-stately/collections.html
 ### Internationalization
 In order to internationalize Breadcrumbs, the strings of all child items should be localized.
 
+### Breadcrumb as heading
+To use `Breadcrumbs` as a heading, render a [Heading](Heading.html) component inside your `Item`. You may set the heading level by providing the `level` prop.
+
+```tsx example
+import {Heading} from '@react-spectrum/text';
+
+<Breadcrumbs>
+  <Item key="home">
+    Home
+  </Item>
+  <Item key="trendy">
+    Trendy
+  </Item>
+  <Item key="march 2020 assets">
+    <Heading level={2}>
+      March 2020 Assets
+    </Heading>
+  </Item>
+</Breadcrumbs>
+```
+
 ## Events
 Use the `onAction` prop as a callback to handle press events on items.
 
@@ -82,8 +103,7 @@ function Example() {
 ### Size
 [View guidelines](https://spectrum.adobe.com/page/breadcrumbs/#Options)
 
-The small size is useful when available space is limited.
-
+Small
 ```tsx example
 <Breadcrumbs size="S">
   <Item key="home">Home</Item>
@@ -91,7 +111,7 @@ The small size is useful when available space is limited.
 </Breadcrumbs>
 ```
 
-The medium size is the default.
+Medium
 ```tsx example
 <Breadcrumbs size="M">
   <Item key="home">Home</Item>
@@ -99,8 +119,7 @@ The medium size is the default.
 </Breadcrumbs>
 ```
 
-The large size places emphasis on the selected item as a page title or heading.
-
+Large (default)
 ```tsx example
 <Breadcrumbs size="L">
   <Item key="home">Home</Item>
@@ -108,13 +127,13 @@ The large size places emphasis on the selected item as a page title or heading.
 </Breadcrumbs>
 ```
 
-### Heading
+### Multiline
 
-Use the `isHeading` prop to add a role of "heading" to the highlighted item.
-If a change to the aria-level is required, use the `headingAriaLevel` prop.
+Use the `isMultiline` prop to place the selected item below the other items.
+This adds emphasis to the selected item as a page title or heading.
 
 ```tsx example
-<Breadcrumbs isHeading headingAriaLevel={2}>
+<Breadcrumbs isMultiline>
   <Item key="home">Home</Item>
   <Item key="trendy">Trendy</Item>
   <Item key="march 2020 assets">March 2020 Assets</Item>
