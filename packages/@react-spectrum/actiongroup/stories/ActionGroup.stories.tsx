@@ -54,48 +54,50 @@ storiesOf('ActionGroup', module)
   .addParameters({providerSwitcher: {status: 'negative'}})
   .add(
     'default',
-    () => <Flex gap="size-200" width="100%" margin="size-100" justifyContent="center">
-            <Flex flex="3 0 auto" justifyContent="center">
-              <ActionGroup>
-                {
-                  docItems.map((itemProps) => (
-                    <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
-                  ))
-                }
-              </ActionGroup>
-            </Flex>
-            <Divider orientation="vertical" size="M" />
-            <Flex flex="3 0 auto" justifyContent="center">
-            <ActionGroup>
-              {
-                docItems.map((itemProps) => {
-                  let IconElement = iconMap[itemProps.children];
-                  return (
-                    <Item key={itemProps.name} textValue={itemProps.name}>
-                      <Text>{itemProps.children}</Text>
-                      <IconElement />
-                    </Item>
-                  );
-                })
-              }
-            </ActionGroup>
-            </Flex>
-            <Divider orientation="vertical" size="M" />
-            <Flex flex="1 0 auto" justifyContent="center">
-            <ActionGroup>
-              {
-                docItems.map((itemProps) => {
-                  let IconElement = iconMap[itemProps.children];
-                  return (
-                    <Item key={itemProps.name} textValue={itemProps.name}>
-                      <IconElement />
-                    </Item>
-                  );
-                })
-              }
-            </ActionGroup>
-            </Flex>
-          </Flex>
+    () => (
+      <Flex gap="size-200" width="100%" margin="size-100" justifyContent="center">
+        <Flex flex="3 0 auto" justifyContent="center">
+          <ActionGroup>
+            {
+              docItems.map((itemProps) => (
+                <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
+              ))
+            }
+          </ActionGroup>
+        </Flex>
+        <Divider orientation="vertical" size="M" />
+        <Flex flex="3 0 auto" justifyContent="center">
+          <ActionGroup>
+            {
+              docItems.map((itemProps) => {
+                let IconElement = iconMap[itemProps.children];
+                return (
+                  <Item key={itemProps.name} textValue={itemProps.name}>
+                    <Text>{itemProps.children}</Text>
+                    <IconElement />
+                  </Item>
+                );
+              })
+            }
+          </ActionGroup>
+        </Flex>
+        <Divider orientation="vertical" size="M" />
+        <Flex flex="1 0 auto" justifyContent="center">
+          <ActionGroup>
+            {
+              docItems.map((itemProps) => {
+                let IconElement = iconMap[itemProps.children];
+                return (
+                  <Item key={itemProps.name} textValue={itemProps.name}>
+                    <IconElement />
+                  </Item>
+                );
+              })
+            }
+          </ActionGroup>
+        </Flex>
+      </Flex>
+    )
   )
   .add(
     'isDisabled',
