@@ -15,9 +15,7 @@ import {useControlledState} from '@react-stately/utils';
 
 export interface DialogTriggerState {
   /** Whether the dialog is currently open. */
-  isOpen: boolean,
-  /** Sets whether the dialog is open. */
-  setOpen: (value: boolean) => void,
+  readonly isOpen: boolean,
   /** Opens the dialog. */
   open(): void,
   /** Closes the dialog. */
@@ -34,8 +32,7 @@ export function useDialogTriggerState(props: DialogTriggerProps): DialogTriggerS
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
 
   return {
-    isOpen, 
-    setOpen,
+    isOpen,
     open() {
       setOpen(true);
     },

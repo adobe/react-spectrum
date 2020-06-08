@@ -16,16 +16,10 @@ import {useState} from 'react';
 
 export interface MenuTriggerState {
   /** Whether the menu is currently open. */
-  isOpen: boolean,
-
-  /** Sets whether the menu is open. */
-  setOpen(value: boolean): void,
+  readonly isOpen: boolean,
 
   /** Controls which item will be auto focused when the menu opens. */
-  focusStrategy: FocusStrategy,
-
-  /** Sets which item will be auto focused when the menu opens. */
-  setFocusStrategy(value: FocusStrategy): void,
+  readonly focusStrategy: FocusStrategy,
 
   /** Opens the menu. */
   open(): void,
@@ -46,10 +40,8 @@ export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
 
   return {
-    isOpen, 
-    setOpen, 
-    focusStrategy, 
-    setFocusStrategy,
+    isOpen,
+    focusStrategy,
     open() {
       setOpen(true);
     },

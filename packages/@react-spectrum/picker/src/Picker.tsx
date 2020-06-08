@@ -90,7 +90,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let isMobile = useMediaQuery('(max-width: 700px)');
   let listbox = (
     <FocusScope restoreFocus>
-      <DismissButton onDismiss={() => state.setOpen(false)} />
+      <DismissButton onDismiss={() => state.close()} />
       <ListBoxBase
         ref={listboxRef}
         domProps={menuProps}
@@ -103,7 +103,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         width={isMobile ? '100%' : undefined}
         isLoading={isLoadingMore}
         onLoadMore={props.onLoadMore} />
-      <DismissButton onDismiss={() => state.setOpen(false)} />
+      <DismissButton onDismiss={() => state.close()} />
     </FocusScope>
   );
 

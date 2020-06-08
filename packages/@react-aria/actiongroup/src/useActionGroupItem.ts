@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionGroupState} from '@react-stately/actiongroup';
 import {HTMLAttributes, Key, RefObject} from 'react';
+import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {useSelectableItem} from '@react-aria/selection';
 
@@ -29,7 +29,7 @@ const BUTTON_ROLES = {
   'multiple': 'checkbox'
 };
 
-export function useActionGroupItem<T>(props: ActionGroupItemProps, state: ActionGroupState<T>, ref: RefObject<HTMLElement>): ActionGroupItemAria {
+export function useActionGroupItem<T>(props: ActionGroupItemProps, state: ListState<T>, ref: RefObject<HTMLElement>): ActionGroupItemAria {
   let selectionMode = state.selectionManager.selectionMode;
   let buttonProps = {
     role: BUTTON_ROLES[selectionMode]

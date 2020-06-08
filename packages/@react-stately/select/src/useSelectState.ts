@@ -3,7 +3,7 @@
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
@@ -19,19 +19,19 @@ import {useControlledState} from '@react-stately/utils';
 
 export interface SelectState<T> extends ListState<T>, MenuTriggerState {
   /** The key for the currently selected item. */
-  selectedKey: Key,
+  readonly selectedKey: Key,
 
   /** Sets the selected key. */
-  setSelectedKey: (key: Key) => void,
+  setSelectedKey(key: Key): void,
 
   /** The value of the currently selected item. */
-  selectedItem: Node<T>,
+  readonly selectedItem: Node<T>,
 
   /** Whether the select is currently focused. */
-  isFocused: boolean,
+  readonly isFocused: boolean,
 
   /** Sets whether the select is focused. */
-  setFocused: (isFocused: boolean) => void
+  setFocused(isFocused: boolean): void
 }
 
 /**
@@ -50,7 +50,7 @@ export function useSelectState<T extends object>(props: SelectProps<T>): SelectS
     selectedKeys,
     onSelectionChange: (keys: Set<Key>) => {
       setSelectedKey(keys.values().next().value);
-      triggerState.setOpen(false);
+      triggerState.close();
     }
   });
 
