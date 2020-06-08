@@ -136,7 +136,6 @@ describe('ActionGroup', function () {
   it.each`
   Name               | ComponentGroup   | Component
   ${'ActionGroup'}   | ${ActionGroup}   | ${Item}
-  ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button}
   `('$Name handles defaults', function ({ComponentGroup, Component}) {
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme} locale="de-DE">

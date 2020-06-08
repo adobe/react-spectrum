@@ -36,11 +36,66 @@ const viewItems2 = [{children: 'Grid view', name: '1'}, {children: 'List view', 
 const viewItems = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}];
 const dataItems = [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}];
 
+let iconMap = {
+  'Document setup': DocumentIcon,
+  'Settings': SettingsIcon,
+  'Grid view': ViewGridIcon,
+  'List view': ViewListIcon,
+  'Gallery view': ViewCardIcon,
+  'Edit': DrawIcon,
+  'Copy': CopyIcon,
+  'Delete': DeleteIcon,
+  'Properties': PropertiesIcon,
+  'Info': InfoIcon,
+  'Keywords': BookIcon
+};
+
 storiesOf('ActionGroup', module)
   .addParameters({providerSwitcher: {status: 'negative'}})
   .add(
     'default',
-    () => render({defaultSelectedKeys: ['1']}, docItems)
+    () => <Flex gap="size-200" width="100%" margin="size-100" justifyContent="center">
+            <Flex flex="3 0 auto" justifyContent="center">
+              <ActionGroup>
+                {
+                  docItems.map((itemProps) => (
+                    <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
+                  ))
+                }
+              </ActionGroup>
+            </Flex>
+            <Divider orientation="vertical" size="M" />
+            <Flex flex="3 0 auto" justifyContent="center">
+            <ActionGroup>
+              {
+                docItems.map((itemProps) => {
+                  let IconElement = iconMap[itemProps.children];
+                  return (
+                    <Item key={itemProps.name} textValue={itemProps.name}>
+                      <Text>{itemProps.children}</Text>
+                      <IconElement />
+                    </Item>
+                  );
+                })
+              }
+            </ActionGroup>
+            </Flex>
+            <Divider orientation="vertical" size="M" />
+            <Flex flex="1 0 auto" justifyContent="center">
+            <ActionGroup>
+              {
+                docItems.map((itemProps) => {
+                  let IconElement = iconMap[itemProps.children];
+                  return (
+                    <Item key={itemProps.name} textValue={itemProps.name}>
+                      <IconElement />
+                    </Item>
+                  );
+                })
+              }
+            </ActionGroup>
+            </Flex>
+          </Flex>
   )
   .add(
     'isDisabled',
@@ -171,19 +226,7 @@ function renderText(props, items: any = docItems) {
     </ActionGroup>
   );
 }
-let iconMap = {
-  'Document setup': DocumentIcon,
-  'Settings': SettingsIcon,
-  'Grid view': ViewGridIcon,
-  'List view': ViewListIcon,
-  'Gallery view': ViewCardIcon,
-  'Edit': DrawIcon,
-  'Copy': CopyIcon,
-  'Delete': DeleteIcon,
-  'Properties': PropertiesIcon,
-  'Info': InfoIcon,
-  'Keywords': BookIcon
-};
+
 function renderBoth(props, items: any = docItems) {
   return (
     <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>

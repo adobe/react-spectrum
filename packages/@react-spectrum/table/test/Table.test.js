@@ -321,7 +321,7 @@ describe('Table', function () {
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
     expect(cells).toHaveLength(4);
-    // ***** Why does this start at 2?
+
     expect(cells[0]).toHaveAttribute('aria-colindex', '2');
     expect(cells[1]).toHaveAttribute('aria-colindex', '3');
     expect(cells[2]).toHaveAttribute('aria-colindex', '2');
