@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-stately/selection';
-import collectionsDocs from 'docs:@react-stately/collections';
+import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import ariaDocs from 'docs:@react-aria/selection';
 import listDocs from 'docs:@react-stately/list';
 import treeDocs from 'docs:@react-stately/tree';
@@ -43,7 +43,7 @@ by a [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Glo
 is represented by a single item key.
 
 Focus state is updated when navigating a collection with the keyboard. Selection state is updated when a user
-clicks or taps an item, or uses the keyboard to select an item. These interactions are handled by 
+clicks or taps an item, or uses the keyboard to select an item. These interactions are handled by
 the <TypeLink links={ariaDocs.links} type={ariaDocs.exports.useSelectableCollection} /> hook in [react-aria](/react-aria/index.html).
 
 A `SelectionManager` wraps the state returned by <TypeLink links={docs.links} type={docs.exports.useMultipleSelectionState} />.
