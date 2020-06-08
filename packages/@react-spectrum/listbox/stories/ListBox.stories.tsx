@@ -23,7 +23,7 @@ import {Label} from '@react-spectrum/label';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
 
 let iconMap = {
@@ -472,9 +472,9 @@ storiesOf('ListBox', module)
     )
   )
   .add(
-    'with semantic elements (generative)',
+    'with semantic elements (generative), multiple selection',
     () => (
-      <ListBox width={200} aria-labelledby="label" items={hardModeProgrammatic}onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
+      <ListBox width={200} aria-labelledby="label" items={hardModeProgrammatic} onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {item => customOption(item)}

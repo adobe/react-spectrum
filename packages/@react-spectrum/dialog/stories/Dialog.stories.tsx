@@ -19,7 +19,7 @@ import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Heading, Text} from '@react-spectrum/typography';
+import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
@@ -261,7 +261,7 @@ function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+            <Image slot="hero" alt="" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
             <Heading>The Heading</Heading>
             <Header>The Header</Header>
             <Divider />

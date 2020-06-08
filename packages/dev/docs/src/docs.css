@@ -252,7 +252,13 @@ footer li:last-child:after {
 
 article h1.articleHeader {
   margin-top: 0 !important;
-  font-size: 58px;
+  /* scale font size between 32px and 58px
+   * 10vw is 32px at 320px viewport size. */
+  font-size: min(58px, max(32px, 10vw));
+  /* This is a hack to get Safari to repaint when the viewport resizes, 
+   * otherwise the font size does not update. */
+  width: 100vw;
+  max-width: 100%;
 }
 
 article h1.articleHeader + p {
@@ -452,19 +458,36 @@ h2.sectionHeader {
 }
 
 .responsiveVideo {
-   position: relative;
-   padding-bottom: 56.25%; /* 16:9 */
-   height: 0;
-   margin-top: var(--spectrum-global-dimension-size-200);
- }
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  margin-top: var(--spectrum-global-dimension-size-200);
+}
 
- .responsiveVideo iframe {
-   position: absolute;
-   top: 0;
-   left: 0;
-   width: 100%;
-   height: 100%;
- }
+.responsiveVideo iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.float {
+  float: left;
+  margin: 0;
+  margin-right: var(--spectrum-global-dimension-size-200);
+  margin-bottom: var(--spectrum-global-dimension-size-200);
+  width: var(--spectrum-global-dimension-size-3400);
+}
+
+@media (max-width: 750px) {
+  .float {
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+    width: auto
+  }
+}
 
 @media (max-width: 1200px) {
   /* Hide the table of contents */

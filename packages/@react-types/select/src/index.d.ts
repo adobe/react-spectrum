@@ -10,9 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, AriaLabelingProps, CollectionBase, DimensionValue, DOMProps, InputBase, LabelableProps, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase} from '@react-types/shared';
+import {
+  Alignment,
+  AriaLabelingProps,
+  AsyncLoadable,
+  CollectionBase,
+  DimensionValue,
+  DOMProps,
+  InputBase,
+  LabelableProps,
+  SingleSelection,
+  SpectrumLabelableProps,
+  StyleProps,
+  TextInputBase,
+  Validation
+} from '@react-types/shared';
 
-export interface SelectProps<T> extends CollectionBase<T>, InputBase, LabelableProps, TextInputBase, SingleSelection {
+export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, InputBase, Validation, LabelableProps, TextInputBase, SingleSelection {
   /** Sets the open state of the menu */
   isOpen?: boolean,
   /** Sets the default open state of the menu */

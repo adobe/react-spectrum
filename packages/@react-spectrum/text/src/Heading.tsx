@@ -11,29 +11,40 @@
  */
 
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import {KeyboardProps} from '@react-types/typography';
-import React, {forwardRef} from 'react';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {HeadingProps} from '@react-types/text';
+import React, {ElementType, forwardRef} from 'react';
 import {useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 
-function Keyboard(props: KeyboardProps, ref: DOMRef) {
-  props = useSlotProps(props, 'keyboard');
+const slotDOMProps = new Set(['aria-current']);
+
+function Heading(props: HeadingProps, ref: DOMRef<HTMLHeadingElement>) {
+  let slotProps = useSlotProps({}, 'heading');
+  props = mergeProps(slotProps, props);
+
+  let domProps = mergeProps(
+    filterDOMProps(props),
+    filterDOMProps(slotProps, {propNames: slotDOMProps})
+  );
+
   let {
     children,
+    level = 3,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
+  let HeadingTag = `h${level}` as ElementType;
 
   return (
-    <kbd {...filterDOMProps(otherProps)} {...styleProps} dir="ltr" ref={domRef}>
+    <HeadingTag {...domProps} {...styleProps} ref={domRef}>
       {children}
-    </kbd>
+    </HeadingTag>
   );
 }
 
 /**
- * Keyboard is used to define text as keyboard input.
+ * Heading is used to create various levels of typographic hierarchies.
  */
-const _Keyboard = forwardRef(Keyboard);
-export {_Keyboard as Keyboard};
+const _Heading = forwardRef(Heading);
+export {_Heading as Heading};

@@ -47,7 +47,8 @@ of this is the hero image in [Dialog](Dialog.html#examples)
 
 See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img) for more information.
 
-Note: An image must either have the `decorative` prop or have the `alt` prop set.
+Note: An image must either have the `alt` prop set. If the image is considered decorative and should
+not be announced by screen readers, then set `alt=""`.
 
 ### Internationalization
 
@@ -63,7 +64,7 @@ To internationalize an Image, a localized string should be passed to the `alt` p
 
 ```tsx example
 <Flex width="200px">
-  <Image src="https://scontent-sjc3-1.cdninstagram.com/v/t51.2885-15/e35/99120553_176571270346133_73156360171041206_n.jpg?_nc_ht=scontent-sjc3-1.cdninstagram.com&_nc_cat=105&_nc_ohc=QqfjoiATImoAX9-GZ7A&oh=a2523e59f8af2de64755e6b2f4dff0af&oe=5EF06CC7" decorative />
+  <Image src="https://scontent-sjc3-1.cdninstagram.com/v/t51.2885-15/e35/99120553_176571270346133_73156360171041206_n.jpg?_nc_ht=scontent-sjc3-1.cdninstagram.com&_nc_cat=105&_nc_ohc=QqfjoiATImoAX9-GZ7A&oh=a2523e59f8af2de64755e6b2f4dff0af&oe=5EF06CC7" alt="" />
 </Flex>
 ```
 

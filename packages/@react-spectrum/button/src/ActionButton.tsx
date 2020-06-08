@@ -11,24 +11,21 @@
  */
 
 import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
-import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import {SpectrumActionButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
+function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
   let {
-    elementType: ElementType = 'button',
     isQuiet,
     isDisabled,
     children,
-    holdAffordance,
     autoFocus,
     ...otherProps
   } = props;
@@ -40,7 +37,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
-      <ElementType
+      <button
         {...styleProps}
         {...buttonProps}
         ref={domRef}
@@ -56,9 +53,6 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
             styleProps.className
           )
         }>
-        {holdAffordance &&
-          <CornerTriangle UNSAFE_className={classNames(styles, 'spectrum-ActionButton-hold')} />
-        }
         <SlotProvider
           slots={{
             icon: {
@@ -73,7 +67,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef) {
             ? <Text>{children}</Text>
             : children}
         </SlotProvider>
-      </ElementType>
+      </button>
     </FocusRing>
   );
 }

@@ -49,7 +49,6 @@ export function useRow<T>(props: RowProps, state: GridState<T>): RowAria {
     role: 'row',
     'aria-selected': isSelected,
     'aria-labelledby': getRowLabelledBy(state, node.key),
-    ...itemProps,
     ...pressProps
   };
 

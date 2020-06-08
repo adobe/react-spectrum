@@ -3,7 +3,7 @@
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
@@ -16,7 +16,7 @@ import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
 import {Flex} from '@react-spectrum/layout';
-import {Heading} from '@react-spectrum/typography';
+import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Link} from '@react-spectrum/link';
@@ -160,7 +160,7 @@ storiesOf('Table', module)
   .add(
     'dynamic with nested columns',
     () => (
-      <Table aria-label="Table with nested columns" width={700} height={300} rowHeight="auto" onSelectionChange={s => onSelectionChange([...s])}>
+      <Table aria-label="Table with nested columns" width={700} height={300} overflowMode="wrap" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={nestedColumns}>
           {column =>
             <Column childColumns={column.children}>{column.name}</Column>
@@ -291,9 +291,9 @@ storiesOf('Table', module)
     )
   )
   .add(
-    'rowHeight=72',
+    'density="compact"',
     () => (
-      <Table aria-label="Table with custom row height" width={500} height={200} isQuiet rowHeight={80} onSelectionChange={s => onSelectionChange([...s])}>
+      <Table aria-label="Table with custom row height" width={500} height={200} isQuiet density="compact" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>
@@ -315,9 +315,81 @@ storiesOf('Table', module)
     )
   )
   .add(
-    'rowHeight=auto',
+    'density="spacious"',
     () => (
-      <Table aria-label="Table with variable row heights" width={500} height={300} isQuiet rowHeight="auto" onSelectionChange={s => onSelectionChange([...s])}>
+      <Table aria-label="Table with custom row height" width={500} height={200} isQuiet density="spacious" onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column width={250} showDivider>File Name</Column>
+          <Column>Type</Column>
+          <Column align="end">Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'overflowMode="wrap"',
+    () => (
+      <Table aria-label="Table with variable row heights" width={500} height={300} isQuiet overflowMode="wrap" onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column width={250} showDivider>File Name</Column>
+          <Column>Type</Column>
+          <Column align="end">Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal with very very very very very very long long long long long filename</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'overflowMode="wrap", density="compact"',
+    () => (
+      <Table aria-label="Table with variable row heights" width={500} height={300} isQuiet overflowMode="wrap" density="compact" onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader>
+          <Column width={250} showDivider>File Name</Column>
+          <Column>Type</Column>
+          <Column align="end">Size</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>2018 Proposal with very very very very very very long long long long long filename</Cell>
+            <Cell>PDF</Cell>
+            <Cell>214 KB</Cell>
+          </Row>
+          <Row>
+            <Cell>Budget</Cell>
+            <Cell>XLS</Cell>
+            <Cell>120 KB</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'overflowMode="wrap", density="spacious"',
+    () => (
+      <Table aria-label="Table with variable row heights" width={500} height={300} isQuiet overflowMode="wrap" density="spacious" onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader>
           <Column width={250} showDivider>File Name</Column>
           <Column>Type</Column>
@@ -479,7 +551,7 @@ function AsyncLoadingExample() {
         <TableBody items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
           {item =>
             (<Row key={item.data.id}>
-              {key => 
+              {key =>
                 key === 'title'
                   ? <Cell textValue={item.data.title}><Link isQuiet><a href={item.data.url} target="_blank">{item.data.title}</a></Link></Cell>
                   : <Cell>{item.data[key]}</Cell>

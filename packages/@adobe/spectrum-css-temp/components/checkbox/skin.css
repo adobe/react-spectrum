@@ -103,12 +103,18 @@ governing permissions and limitations under the License.
 
 /* Focus */
 .spectrum-Checkbox-input {
+  & + .spectrum-Checkbox-box {
+    &:after {
+      box-shadow: 0 0 0 var(--spectrum-checkbox-focus-ring-size-key-focus) var(--spectrum-checkbox-focus-ring-color-key-focus);
+      opacity: 0;
+    }
+  }
   &:focus-ring + .spectrum-Checkbox-box {
     &:before {
       border-color: var(--spectrum-checkbox-box-border-color-key-focus);
     }
     &:after {
-      box-shadow: 0 0 0 var(--spectrum-checkbox-focus-ring-size-key-focus) var(--spectrum-checkbox-focus-ring-color-key-focus);
+      opacity: 1;
     }
   }
   .spectrum-Checkbox.is-indeterminate &,

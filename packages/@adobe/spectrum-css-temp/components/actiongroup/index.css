@@ -11,19 +11,21 @@ governing permissions and limitations under the License.
 */
 
 :root {
-  --spectrum-buttongroup-button-gap-reset: 0;
+  --spectrum-actiongroup-button-gap-reset: 0;
+  --spectrum-actiongroup-quiet-compact-button-gap: var(--spectrum-global-dimension-size-25);
 }
 
-.spectrum-ActionButtonGroup {
+.spectrum-ActionGroup {
   display: flex;
+  flex-wrap: wrap;
+  isolation: isolate;
 
-
-  .spectrum-ActionButton {
+  .spectrum-ActionGroup-item {
     flex-shrink: 0;
   }
 
-  .spectrum-ActionButton + .spectrum-ActionButton {
-    margin-left: var(--spectrum-actionbuttongroup-text-button-gap-x);
+  .spectrum-ActionGroup-item + .spectrum-ActionGroup-item {
+    margin-inline-start: var(--spectrum-actionbuttongroup-text-button-gap-x);
   }
 
   &:focus {
@@ -31,17 +33,135 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-ActionButtonGroup--vertical {
+.spectrum-ActionGroup--vertical {
   display: inline-flex;
   flex-direction: column;
+  align-items: flex-start;
 
-  .spectrum-ActionButton-label {
-    flex-grow: 1;
-    text-align: left;
+  .spectrum-ActionGroup-item + .spectrum-ActionGroup-item {
+    margin-block-start: var(--spectrum-actionbuttongroup-text-button-gap-y);
+    margin-inline-start: var(--spectrum-actiongroup-button-gap-reset);
   }
 
-  .spectrum-ActionButton + .spectrum-ActionButton {
-    margin-top: var(--spectrum-actionbuttongroup-text-button-gap-y);
-    margin-left: var(--spectrum-buttongroup-button-gap-reset);
+  /* increase specificity (not sure why spectrum-css did this one) */
+  &.spectrum-ActionGroup--vertical {
+    margin-block-start: var(--spectrum-actionbuttongroup-text-button-gap-y);
+    margin-inline-start: var(--spectrum-actiongroup-button-gap-reset);
+  }
+
+  .spectrum-ActionGroup-item {
+    > :not(svg) {
+      inline-size: auto;
+    }
+  }
+
+  &.spectrum-ActionGroup--quiet {
+    .spectrum-ActionGroup-item {
+      justify-content: flex-start;
+    }
+  }
+
+  &.spectrum-ActionGroup--justified,
+  &.spectrum-ActionGroup--compact:not(.spectrum-ActionGroup--quiet) {
+    align-items: stretch;
+  }
+}
+
+.spectrum-ActionGroup--compact {
+  &.spectrum-ActionGroup--quiet {
+    .spectrum-ActionGroup-item + .spectrum-ActionGroup-item {
+      margin-inline-start: var(--spectrum-actiongroup-quiet-compact-button-gap);
+      margin-block-start: var(--spectrum-actiongroup-button-gap-reset);
+    }
+
+    &.spectrum-ActionGroup--vertical {
+      .spectrum-ActionGroup-item + .spectrum-ActionGroup-item {
+        margin-inline-start: var(--spectrum-actiongroup-button-gap-reset);
+        margin-block-start: var(--spectrum-actiongroup-quiet-compact-button-gap);
+      }
+    }
+  }
+
+  &:not(.spectrum-ActionGroup--quiet) {
+    flex-wrap: nowrap;
+
+    .spectrum-ActionGroup-item {
+      position: relative;
+      border-radius: 0;
+
+      &:first-child {
+        border-start-start-radius: var(--spectrum-actionbutton-border-radius);
+        border-end-start-radius: var(--spectrum-actionbutton-border-radius);
+        margin-inline-end: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+      }
+
+      &:last-child {
+        border-start-end-radius: var(--spectrum-actionbutton-border-radius);
+        border-end-end-radius: var(--spectrum-actionbutton-border-radius);
+        margin-inline-start: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+        margin-inline-end: 0;
+      }
+
+      &.is-selected {
+        z-index: 1;
+      }
+
+      &:hover {
+        z-index: 2;
+      }
+
+      & + .spectrum-ActionGroup-item {
+        margin-inline-start: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+        margin-inline-end: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+      }
+    }
+
+    &.spectrum-ActionGroup--vertical {
+      .spectrum-ActionGroup-item {
+        border-radius: 0;
+
+        & + .spectrum-ActionGroup-item {
+          margin-block-start: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+          margin-block-end: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+          margin-inline-start: 0;
+          margin-inline-end: 0;
+        }
+
+        &:first-child {
+          border-start-start-radius: var(--spectrum-actionbutton-border-radius);
+          border-start-end-radius: var(--spectrum-actionbutton-border-radius);
+          border-radius: 0;
+          margin-block-end: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+          margin-inline-start: 0;
+          margin-inline-end: 0;
+        }
+
+        &:last-child {
+          border-end-start-radius: var(--spectrum-actionbutton-border-radius);
+          border-end-end-radius: var(--spectrum-actionbutton-border-radius);
+          border-radius: 0;
+          margin-block-start: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+          margin-block-end: 0;
+          margin-inline-start: 0;
+          margin-inline-end: 0;
+        }
+      }
+    }
+  }
+}
+
+.spectrum-ActionGroup--justified {
+  .spectrum-ActionGroup-item {
+    flex: 1;
+
+    > :not(svg) {
+      inline-size: auto;
+    }
+  }
+
+  &.spectrum-ActionGroup--vertical {
+    .spectrum-ActionGroup-item {
+      flex: 1 0 auto;
+    }
   }
 }

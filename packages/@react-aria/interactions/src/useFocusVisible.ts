@@ -27,7 +27,7 @@ interface FocusVisibleResult {
   isFocusVisible: boolean
 }
 
-let isGlobalFocusVisible = true;
+let currentModality = null;
 let changeHandlers = new Set<Handler>();
 let hasSetupGlobalListeners = false;
 let hasEventBeforeFocus = false;
@@ -57,13 +57,13 @@ function isValidKey(e: KeyboardEvent) {
 function handleKeyboardEvent(e: KeyboardEvent) {
   hasEventBeforeFocus = true;
   if (isValidKey(e)) {
-    isGlobalFocusVisible = true;
+    currentModality = 'keyboard';
     triggerChangeHandlers('keyboard', e);
   }
 }
 
 function handlePointerEvent(e: PointerEvent | MouseEvent) {
-  isGlobalFocusVisible = false;
+  currentModality = 'pointer';
   if (e.type === 'mousedown' || e.type === 'pointerdown') {
     hasEventBeforeFocus = true;
     triggerChangeHandlers('pointer', e);
@@ -71,16 +71,17 @@ function handlePointerEvent(e: PointerEvent | MouseEvent) {
 }
 
 function handleFocusEvent(e: FocusEvent) {
-  // Firefox fires a focus event with the document as the target when the user first clicks into
-  // an iframe. We ignore this event so it doesn't cause keyboard focus rings to appear.
-  if (e.target === document) {
+  // Firefox fires two extra focus events when the user first clicks into an iframe:
+  // first on the window, then on the document. We ignore these events so they don't
+  // cause keyboard focus rings to appear.
+  if (e.target === window || e.target === document) {
     return;
   }
 
   // If a focus event occurs without a preceding keyboard or pointer event, switch to keyboard modality.
   // This occurs, for example, when navigating a form with the next/previous buttons on iOS.
   if (!hasEventBeforeFocus) {
-    isGlobalFocusVisible = true;
+    currentModality = 'keyboard';
     triggerChangeHandlers('keyboard', e);
   }
 
@@ -88,7 +89,7 @@ function handleFocusEvent(e: FocusEvent) {
 }
 
 function handleWindowBlur() {
-  // When the window is blurred, reset state. This is necessary when tabbing out of the window, 
+  // When the window is blurred, reset state. This is necessary when tabbing out of the window,
   // for example, since a subsequent focus event won't be fired.
   hasEventBeforeFocus = false;
 }
@@ -111,9 +112,12 @@ function setupGlobalFocusEvents() {
 
   document.addEventListener('keydown', handleKeyboardEvent, true);
   document.addEventListener('keyup', handleKeyboardEvent, true);
-  document.addEventListener('focus', handleFocusEvent, true);
+
+  // Register focus events on the window so they are sure to happen
+  // before React's event listeners (registered on the document).
+  window.addEventListener('focus', handleFocusEvent, true);
   window.addEventListener('blur', handleWindowBlur, false);
-  
+
   if (typeof PointerEvent !== 'undefined') {
     document.addEventListener('pointerdown', handlePointerEvent, true);
     document.addEventListener('pointermove', handlePointerEvent, true);
@@ -128,7 +132,25 @@ function setupGlobalFocusEvents() {
 }
 
 export function isFocusVisible(): boolean {
-  return isGlobalFocusVisible;
+  return currentModality !== 'pointer';
+}
+
+export function useInteractionModality(): Modality {
+  setupGlobalFocusEvents();
+
+  let [modality, setModality] = useState(currentModality);
+  useEffect(() => {
+    let handler = () => {
+      setModality(currentModality);
+    };
+
+    changeHandlers.add(handler);
+    return () => {
+      changeHandlers.delete(handler);
+    };
+  }, []);
+
+  return modality;
 }
 
 /**
@@ -138,23 +160,23 @@ export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResu
   setupGlobalFocusEvents();
 
   let {isTextInput, autoFocus} = props;
-  let [isFocusVisible, setFocusVisible] = useState(autoFocus || isGlobalFocusVisible);
+  let [isFocusVisibleState, setFocusVisible] = useState(autoFocus || isFocusVisible());
   useEffect(() => {
     let handler = (modality, e) => {
-      // If this is a text input component, don't update the focus visible style when 
+      // If this is a text input component, don't update the focus visible style when
       // typing except for when the Tab and Escape keys are pressed.
       if (isTextInput && modality === 'keyboard' && !FOCUS_VISIBLE_INPUT_KEYS[e.key]) {
         return;
       }
 
-      setFocusVisible(isGlobalFocusVisible);
+      setFocusVisible(isFocusVisible());
     };
-  
+
     changeHandlers.add(handler);
     return () => {
       changeHandlers.delete(handler);
     };
   }, [isTextInput]);
 
-  return {isFocusVisible};
+  return {isFocusVisible: isFocusVisibleState};
 }

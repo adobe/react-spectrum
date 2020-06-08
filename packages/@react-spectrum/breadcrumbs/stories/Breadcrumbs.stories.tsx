@@ -12,6 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Breadcrumbs} from '../';
+import {Heading} from '@react-spectrum/text';
 import {Item} from '@react-stately/collections';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -33,12 +34,24 @@ storiesOf('Breadcrumbs', module)
     () => renderMany({})
   )
   .add(
+    'isMultiline',
+    () => render({isMultiline: true})
+  )
+  .add(
     'size: S',
     () => render({size: 'S'})
   )
   .add(
-    'size: L',
-    () => render({size: 'L'})
+    'size: S, isMultiline',
+    () => render({size: 'S', isMultiline: true})
+  )
+  .add(
+    'size: M',
+    () => render({size: 'M'})
+  )
+  .add(
+    'size: M, isMultiline',
+    () => render({size: 'M', isMultiline: true})
   )
   .add(
     'maxVisibleItems: 4',
@@ -61,10 +74,10 @@ storiesOf('Breadcrumbs', module)
     )
   )
   .add(
-    'collapsed, maxVisibleItems: auto, size: L',
+    'collapsed, maxVisibleItems: auto, isMultiline',
     () => (
       <div style={{width: '100px'}}>
-        {renderMany({maxVisibleItems: 'auto', size: 'L'})}
+        {renderMany({maxVisibleItems: 'auto', isMultiline: true})}
       </div>
     )
   )
@@ -73,32 +86,48 @@ storiesOf('Breadcrumbs', module)
     () => renderMany({maxVisibleItems: 'auto', showRoot: true})
   )
   .add(
-    'maxVisibleItems: auto, size: L',
-    () => renderMany({maxVisibleItems: 'auto', size: 'L'})
+    'maxVisibleItems: auto, isMultiline',
+    () => renderMany({maxVisibleItems: 'auto', isMultiline: true})
   )
   .add(
-    'maxVisibleItems: auto, size: L, showRoot: true',
-    () => renderMany({maxVisibleItems: 'auto', size: 'L', showRoot: true})
+    'maxVisibleItems: auto, isMultiline, showRoot: true',
+    () => renderMany({maxVisibleItems: 'auto', isMultiline: true, showRoot: true})
   )
   .add(
     'isDisabled: true',
     () => render({isDisabled: true})
   )
   .add(
-    'isDisabled: true, size: L',
-    () => render({isDisabled: true, size: 'L'})
+    'isDisabled: true, isMultiline',
+    () => render({isDisabled: true, isMultiline: true})
   )
   .add(
     'isDisabled: true, maxVisibleItems: 4',
     () => renderMany({isDisabled: true, maxVisibleItems: 4})
   )
   .add(
-    'isHeading: true',
-    () => render({isHeading: true})
+    'last item Heading',
+    () => renderHeading()
   )
   .add(
-    'isHeading: true, size: L',
-    () => render({isHeading: true, size: 'L'})
+    'last item Heading, size: S',
+    () => renderHeading({size: 'S'})
+  )
+  .add(
+    'last item Heading, size: M',
+    () => renderHeading({size: 'M'})
+  )
+  .add(
+    'last item Heading, isMultiline',
+    () => renderHeading({isMultiline: true})
+  )
+  .add(
+    'last item Heading, size: S, isMultiline',
+    () => renderHeading({isMultiline: true, size: 'S'})
+  )
+  .add(
+    'last item Heading, size: M, isMultiline',
+    () => renderHeading({isMultiline: true, size: 'M'})
   );
 
 function render(props = {}) {
@@ -107,6 +136,24 @@ function render(props = {}) {
       <Item key="Folder 1">The quick brown fox jumps over</Item>
       <Item key="Folder 2">My Documents</Item>
       <Item key="Folder 3">Kangaroos jump high</Item>
+    </Breadcrumbs>
+  );
+}
+
+function renderHeading(props = {}) {
+  return (
+    <Breadcrumbs {...props} onAction={action('onAction')}>
+      <Item key="Folder 1">
+        The quick brown fox jumps over
+      </Item>
+      <Item key="Folder 2">
+        My Documents
+      </Item>
+      <Item key="Folder 3">
+        <Heading level={1}>
+          Kangaroos jump high
+        </Heading>
+      </Item>
     </Breadcrumbs>
   );
 }
