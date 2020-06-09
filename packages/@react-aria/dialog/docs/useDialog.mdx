@@ -16,10 +16,6 @@ import focusDocs from 'docs:@react-aria/focus';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
-```jsx import
-import {useDialog} from '@react-aria/dialog';
-```
-
 ---
 category: Overlays
 keywords: [overlays, dialog, modal, aria]
@@ -101,6 +97,7 @@ end of the document body. If a nested modal is opened, then the first modal will
 to `aria-hidden`, so that only the top-most modal is accessible.
 
 ```tsx example
+import {useOverlayTriggerState} from '@react-stately/overlays';
 import {
   useOverlay,
   usePreventScroll,
@@ -108,19 +105,17 @@ import {
   OverlayProvider,
   OverlayContainer
 } from '@react-aria/overlays';
+import {useDialog} from '@react-aria/dialog';
 import {FocusScope} from '@react-aria/focus';
 import {useButton} from '@react-aria/button';
 
-function ModalDialog({title, children, isOpen, onClose, isDismissable}) {
+function ModalDialog(props) {
+  let {title, children} = props;
+
   // Handle interacting outside the dialog and pressing
   // the the Escape key to close the modal.
   let ref = React.useRef();
-  let {overlayProps} = useOverlay({
-    ref,
-    onClose,
-    isOpen,
-    isDismissable
-  });
+  let {overlayProps} = useOverlay(props, ref);
 
   // Prevent scrolling while the modal is open, and hide content
   // outside the modal from screen readers.
@@ -128,7 +123,7 @@ function ModalDialog({title, children, isOpen, onClose, isDismissable}) {
   useModal();
 
   // Get props for the dialog and its title
-  let {dialogProps, titleProps} = useDialog({ref});
+  let {dialogProps, titleProps} = useDialog(props, ref);
 
   return (
     <div
@@ -167,27 +162,27 @@ function ModalDialog({title, children, isOpen, onClose, isDismissable}) {
 }
 
 function Example() {
-  let [isOpen, setOpen] = React.useState();
+  let state = useOverlayTriggerState({});
 
   // useButton ensures that focus management is handled correctly,
   // across all browsers. Focus is restored to the button once the
   // dialog closes.
   let {buttonProps: openButtonProps} = useButton({
-    onPress: () => setOpen(true)
+    onPress: () => state.open()
   });
 
   let {buttonProps: closeButtonProps} = useButton({
-    onPress: () => setOpen(false)
+    onPress: () => state.close()
   });
 
   return <>
     <button {...openButtonProps}>Open Dialog</button>
-    {isOpen &&
+    {state.isOpen &&
       <OverlayContainer>
         <ModalDialog
           title="Enter your name"
           isOpen
-          onClose={() => setOpen(false)}
+          onClose={state.close}
           isDismissable>
           <form onSubmit={e => e.preventDefault()} style={{display: 'flex', flexDirection: 'column'}}>
             <label>

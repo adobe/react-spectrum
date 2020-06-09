@@ -50,12 +50,10 @@ function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
 let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<HTMLDivElement>) {
   let {
     children,
-    onClose,
-    shouldCloseOnBlur,
     isOpen,
     ...otherProps
   } = props;
-  let {overlayProps} = useOverlay({ref, onClose, shouldCloseOnBlur, isOpen, isDismissable: true});
+  let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
   usePreventScroll();
   useModal();
 

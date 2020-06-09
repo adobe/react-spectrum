@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionChildren, DOMProps, MultipleSelection, SectionProps, Sortable, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, Collection, CollectionChildren, DOMProps, MultipleSelection, Node, SectionProps, Sortable, StyleProps} from '@react-types/shared';
 import {Key, ReactElement, ReactNode} from 'react';
 
 export interface TableProps<T> extends MultipleSelection, Sortable {
@@ -36,15 +36,15 @@ export interface ColumnProps<T> {
   title?: ReactNode,
   children: ReactNode | ColumnElement<T> | ColumnElement<T>[],
   childColumns?: T[],
-  'aria-label'?: string
+  'aria-label'?: string,
+  width?: number | string,
+  minWidth?: number | string,
+  maxWidth?: number | string,
+  defaultWidth?: number | string
 }
 
 // TODO: how to support these in CollectionBuilder...
 export interface SpectrumColumnProps<T> extends ColumnProps<T> {
-  width?: number | string,
-  minWidth?: number | string,
-  maxWidth?: number | string,
-  defaultWidth?: number | string,
   align?: 'start' | 'center' | 'end',
   allowsResizing?: boolean,
   allowsReordering?: boolean,
@@ -76,3 +76,15 @@ export interface CellProps {
 
 export type CellElement = ReactElement<CellProps>;
 export type CellRenderer = (columnKey: Key) => CellElement;
+
+export interface TableCollection<T> extends Collection<TableNode<T>> {
+  headerRows: TableNode<T>[];
+  columns: TableNode<T>[];
+  rowHeaderColumnKeys: Set<Key>;
+  body: TableNode<T>;
+}
+
+export interface TableNode<T> extends Node<T> {
+  column?: TableNode<T>,
+  colspan?: number
+}

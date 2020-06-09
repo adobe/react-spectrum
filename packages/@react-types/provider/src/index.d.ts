@@ -38,11 +38,6 @@ export interface Theme {
 }
 
 interface ContextProps {
-  /**
-   * Set the placement of the toast alerts.
-   * @default "bottom"
-   */
-  toastPlacement?: ToastPlacement,
   /** Whether children components should be displayed with the quiet style. */
   isQuiet?: boolean,
   /** Whether children components should be displayed with the emphasized style. */
@@ -72,7 +67,7 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
   colorScheme?: ColorScheme,
   /**
    * If there is not an OS/browser color scheme this is the default.
-   * @default "light"
+   * @default 'light'
    */
   defaultColorScheme?: ColorScheme,
   /**
@@ -83,7 +78,7 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
   /**
    * Locale (language specific format) of this provider and its children.
    * Using the format primary-region, ex. en-US, fr-CA, ar-AE.
-   * @default "en-US"
+   * @default 'en-US'
    */
   locale?: string
 }

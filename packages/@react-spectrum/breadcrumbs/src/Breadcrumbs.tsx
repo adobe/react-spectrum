@@ -67,7 +67,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   const [visibleItems, setVisibleItems] = useState(defaultVisibleItems);
 
-  let {breadcrumbsProps} = useBreadcrumbs(props);
+  let {navProps} = useBreadcrumbs(props);
   let {styleProps} = useStyleProps(otherProps);
 
   useEffect(() => {
@@ -119,7 +119,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         window.removeEventListener('resize', onResize);
       };
     }
-  }, [isCollapsible, childArray.length, listRef, showRoot, size]);
+  }, [isCollapsible, childArray.length, listRef, showRoot, size, isMultiline]);
 
   if (childArray.length > visibleItems) {
     let selectedItem = childArray[childArray.length - 1];
@@ -189,7 +189,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   return (
     <nav
       {...styleProps}
-      {...breadcrumbsProps}
+      {...navProps}
       ref={domRef}>
       <ul
         ref={listRef}

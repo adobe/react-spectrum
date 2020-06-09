@@ -17,7 +17,7 @@ import {useFocusRing} from './useFocusRing';
 
 interface FocusRingProps {
   /** Child element to apply CSS classes to. */
-  children?: ReactElement,
+  children: ReactElement,
   /** CSS class to apply when the element is focused. */
   focusClass?: string,
   /** CSS class to apply when the element has keyboard focus. */

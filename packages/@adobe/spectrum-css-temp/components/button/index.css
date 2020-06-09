@@ -116,7 +116,7 @@ governing permissions and limitations under the License.
     bottom: 0;
     top: 0;
     margin: calc(var(--spectrum-alias-focus-ring-gap) * -1);
-    transform: translateX(0);
+    transform: translateX(0); /* Forces FF to render on the pixel grid */
 
     transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
                 margin var(--spectrum-global-animation-duration-100) ease-out;
@@ -381,13 +381,4 @@ a.spectrum-ActionButton {
 .spectrum-ClearButton--small {
   inline-size: var(--spectrum-clearbutton-small-width);
   block-size: var(--spectrum-clearbutton-small-height);
-}
-
-/* Potentially temporary: Add back default margin between all buttons when adjacent */
-.spectrum-Button + .spectrum-Button {
-  margin-inline-start: var(--spectrum-buttongroup-button-gap-x);
-}
-
-.spectrum-ActionButton + .spectrum-ActionButton {
-  margin-inline-start: var(--spectrum-actionbuttongroup-text-button-gap-x);
 }

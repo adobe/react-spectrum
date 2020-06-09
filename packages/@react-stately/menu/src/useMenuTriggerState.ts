@@ -11,27 +11,12 @@
  */
 
 import {FocusStrategy, MenuTriggerProps} from '@react-types/menu';
-import {useControlledState} from '@react-stately/utils';
+import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useState} from 'react';
 
-export interface MenuTriggerState {
-  /** Whether the menu is currently open. */
-  isOpen: boolean,
-
-  /** Sets whether the menu is open. */
-  setOpen(value: boolean): void,
-
+export interface MenuTriggerState extends OverlayTriggerState {
   /** Controls which item will be auto focused when the menu opens. */
-  focusStrategy: FocusStrategy,
-
-  /** Sets which item will be auto focused when the menu opens. */
-  setFocusStrategy(value: FocusStrategy): void,
-
-  /** Opens the menu. */
-  open(): void,
-
-  /** Closes the menu. */
-  close(): void,
+  readonly focusStrategy: FocusStrategy,
 
   /** Toggles the menu. */
   toggle(focusStrategy?: FocusStrategy | null): void
@@ -42,23 +27,15 @@ export interface MenuTriggerState {
  * and controls which item will receive focus when it opens.
  */
 export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  {
-  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
+  let overlayTriggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
 
   return {
-    isOpen, 
-    setOpen, 
-    focusStrategy, 
-    setFocusStrategy,
-    open() {
-      setOpen(true);
-    },
-    close() {
-      setOpen(false);
-    },
+    focusStrategy,
+    ...overlayTriggerState,
     toggle(focusStrategy: FocusStrategy = null) {
       setFocusStrategy(focusStrategy);
-      setOpen(!isOpen);
+      overlayTriggerState.toggle();
     }
   };
 }

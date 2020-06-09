@@ -28,7 +28,7 @@ export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StylePro
   isReadOnly?: boolean,
   /**
    * Whether the Form elements should display their "valid" or "invalid" visual styling.
-   * @default "valid"
+   * @default 'valid'
    */
   validationState?: ValidationState,
   /**
