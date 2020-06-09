@@ -986,7 +986,10 @@ describe('Picker', function () {
 
       expect(document.activeElement).toBe(listbox);
 
-      act(() => {fireEvent.mouseEnter(items[1]);});
+      act(() => {
+        fireEvent.mouseEnter(items[1]);
+        fireEvent.mouseMove(items[1]);
+      });
       expect(document.activeElement).toBe(items[1]);
 
       act(() => {fireEvent.keyDown(listbox, {key: 'ArrowDown'});});
