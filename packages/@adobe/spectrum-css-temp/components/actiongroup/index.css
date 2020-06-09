@@ -115,6 +115,10 @@ governing permissions and limitations under the License.
       &:hover {
         z-index: 2;
       }
+
+      &:focus {
+        z-index: 3;
+      }
     }
 
     &.spectrum-ActionGroup--vertical {
