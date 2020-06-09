@@ -10,6 +10,7 @@
 @media only screen and (max-width: 800px) {
   .container > div {
     flex-direction: column;
+    align-items: center;
   }
   .container > div [role='separator'],
   .container > div hr {

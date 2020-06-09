@@ -59,7 +59,7 @@ storiesOf('ActionGroup', module)
     'default',
     () => (
       <Flex UNSAFE_className={styles['container']} gap="size-200" width="100%" margin="size-100" justifyContent="center">
-        <Flex UNSAFE_className={classNames(styles, 'item', 'large')} justifyContent="center">
+        <div className={classNames(styles, 'item', 'large')}>
           <ActionGroup onAction={action('onAction')}>
             {
               docItems.map((itemProps) => (
@@ -67,9 +67,9 @@ storiesOf('ActionGroup', module)
               ))
             }
           </ActionGroup>
-        </Flex>
+        </div>
         <Divider orientation="vertical" size="M" />
-        <Flex UNSAFE_className={classNames(styles, 'item', 'large')} justifyContent="center">
+        <div className={classNames(styles, 'item', 'large')}>
           <ActionGroup onAction={action('onAction')}>
             {
               docItems.map((itemProps) => {
@@ -83,9 +83,9 @@ storiesOf('ActionGroup', module)
               })
             }
           </ActionGroup>
-        </Flex>
+        </div>
         <Divider orientation="vertical" size="M" />
-        <Flex UNSAFE_className={classNames(styles, 'item')} justifyContent="center">
+        <div className={classNames(styles, 'item')}>
           <ActionGroup onAction={action('onAction')}>
             {
               docItems.map((itemProps) => {
@@ -98,7 +98,7 @@ storiesOf('ActionGroup', module)
               })
             }
           </ActionGroup>
-        </Flex>
+        </div>
       </Flex>
     )
   )
@@ -223,11 +223,11 @@ storiesOf('ActionGroup', module)
 function render(props, items) {
   return (
     <Flex UNSAFE_className={styles['container']} gap="size-200" width="100%" margin="size-100" justifyContent="center">
-      <Flex UNSAFE_className={classNames(styles, 'item', 'large')} justifyContent="center">{renderText(props, items)}</Flex>
+      <div className={classNames(styles, 'item', 'large')}>{renderText(props, items)}</div>
       <Divider orientation="vertical" size="M" />
-      <Flex UNSAFE_className={classNames(styles, 'item', 'large')} justifyContent="center">{renderBoth(props, items)}</Flex>
+      <div className={classNames(styles, 'item', 'large')}>{renderBoth(props, items)}</div>
       <Divider orientation="vertical" size="M" />
-      <Flex UNSAFE_className={classNames(styles, 'item')} justifyContent="center">{renderIcons(props, items)}</Flex>
+      <div className={classNames(styles, 'item')}>{renderIcons(props, items)}</div>
     </Flex>
   );
 }

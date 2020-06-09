@@ -382,12 +382,3 @@ a.spectrum-ActionButton {
   inline-size: var(--spectrum-clearbutton-small-width);
   block-size: var(--spectrum-clearbutton-small-height);
 }
-
-/* Potentially temporary: Add back default margin between all buttons when adjacent */
-.spectrum-Button + .spectrum-Button {
-  margin-inline-start: var(--spectrum-buttongroup-button-gap-x);
-}
-
-.spectrum-ActionButton + .spectrum-ActionButton {
-  margin-inline-start: var(--spectrum-actionbuttongroup-text-button-gap-x);
-}
