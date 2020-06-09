@@ -19,14 +19,14 @@ import {useEffect} from 'react';
  */
 export function usePreventScroll(): void {
   useEffect(() => {
-    let overflowX = document.body.style.overflow;
+    let overflow = document.body.style.overflow;
     let paddingRight = document.body.style.paddingRight;
     let position = document.body.style.position;
     document.body.style.paddingRight = window.innerWidth - document.documentElement.clientWidth + 'px';
-    document.body.style.overflowX = 'hidden';
-    document.body.style.position = 'relative';
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
     return () => {
-      document.body.style.overflowX = overflow;
+      document.body.style.overflow = overflow;
       document.body.style.paddingRight = paddingRight;
       document.body.style.position = position;
     };
