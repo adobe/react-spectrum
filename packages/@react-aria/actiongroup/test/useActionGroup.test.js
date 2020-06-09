@@ -13,21 +13,21 @@
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useActionGroup} from '../';
+import {useListState} from '@react-stately/list';
 
 describe('useActionGroup', function () {
-  let state = {};
   let renderActionGroupHook = (props) => {
-    let {result} = renderHook(() => useActionGroup(props, state));
+    let {result} = renderHook(() => useActionGroup(props, useListState(props)));
     return result.current;
   };
 
   it('handles defaults', function () {
     let {actionGroupProps} = renderActionGroupHook({});
-    expect(actionGroupProps.role).toBe('radiogroup');
+    expect(actionGroupProps.role).toBe('toolbar');
   });
 
   it('handles vertical orientation', function () {
-    let {actionGroupProps} = renderActionGroupHook({orientation: 'vertical', selectionMode: 'none'});
+    let {actionGroupProps} = renderActionGroupHook({orientation: 'vertical'});
     expect(actionGroupProps['aria-orientation']).toBe('vertical');
   });
 

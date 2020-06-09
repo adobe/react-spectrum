@@ -64,7 +64,7 @@ export interface AriaProgressCircleProps extends ProgressCircleProps, DOMProps, 
 export interface SpectrumProgressCircleProps extends AriaProgressCircleProps, StyleProps {
   /**
    * What the ProgressCircle's diameter should be.
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L',
   /** The [visual style](https://spectrum.adobe.com/page/circle-loader/#Over-background-variant) of the ProgressCircle. */
@@ -74,12 +74,12 @@ export interface SpectrumProgressCircleProps extends AriaProgressCircleProps, St
 export interface SpectrumProgressBarBaseProps extends AriaProgressBarBaseProps, StyleProps {
   /**
    * How thick the ProgressBar should be.
-   * @default "L"
+   * @default 'L'
    */
   size?: 'S' | 'L',
   /**
    * The label's overall position relative to the element it is labeling.
-   * @default "top"
+   * @default 'top'
    */
   labelPosition?: LabelPosition
 }

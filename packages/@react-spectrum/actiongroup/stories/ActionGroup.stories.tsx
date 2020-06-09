@@ -15,7 +15,6 @@ import {ActionGroup} from '../';
 import BookIcon from '@spectrum-icons/workflow/Book';
 import CopyIcon from '@spectrum-icons/workflow/Copy';
 import DeleteIcon from '@spectrum-icons/workflow/Delete';
-import {Divider} from '@react-spectrum/divider';
 import DocumentIcon from '@spectrum-icons/workflow/Document';
 import DrawIcon from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
@@ -35,12 +34,62 @@ const editItems = [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'},
 const viewItems2 = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}];
 const viewItems = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}];
 const dataItems = [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}];
+let onSelectionChange = action('onSelectionChange');
+
+let iconMap = {
+  'Document setup': DocumentIcon,
+  'Settings': SettingsIcon,
+  'Grid view': ViewGridIcon,
+  'List view': ViewListIcon,
+  'Gallery view': ViewCardIcon,
+  'Edit': DrawIcon,
+  'Copy': CopyIcon,
+  'Delete': DeleteIcon,
+  'Properties': PropertiesIcon,
+  'Info': InfoIcon,
+  'Keywords': BookIcon
+};
 
 storiesOf('ActionGroup', module)
   .addParameters({providerSwitcher: {status: 'negative'}})
   .add(
     'default',
-    () => render({defaultSelectedKeys: ['1']}, docItems)
+    () => (
+      <Flex direction="column" gap="size-200" margin="size-100">
+        <ActionGroup onAction={action('onAction')}>
+          {
+            docItems.map((itemProps) => (
+              <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
+            ))
+          }
+        </ActionGroup>
+        <ActionGroup onAction={action('onAction')}>
+          {
+            docItems.map((itemProps) => {
+              let IconElement = iconMap[itemProps.children];
+              return (
+                <Item key={itemProps.name} textValue={itemProps.name}>
+                  <Text>{itemProps.children}</Text>
+                  <IconElement />
+                </Item>
+              );
+            })
+          }
+        </ActionGroup>
+        <ActionGroup onAction={action('onAction')}>
+          {
+            docItems.map((itemProps) => {
+              let IconElement = iconMap[itemProps.children];
+              return (
+                <Item key={itemProps.name} textValue={itemProps.name}>
+                  <IconElement />
+                </Item>
+              );
+            })
+          }
+        </ActionGroup>
+      </Flex>
+    )
   )
   .add(
     'isDisabled',
@@ -55,7 +104,7 @@ storiesOf('ActionGroup', module)
     () => render({isJustified: true, defaultSelectedKeys: ['1']}, viewItems2)
   )
   .add(
-    'compact, justified',
+    'compact, isJustified',
     () => render({density: 'compact', isJustified: true, defaultSelectedKeys: ['1']}, viewItems2)
   )
   .add(
@@ -81,6 +130,10 @@ storiesOf('ActionGroup', module)
   .add(
     'selectionMode: multiple',
     () => render({selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
+  )
+  .add(
+    'selectionMode: single, disallowEmptySelection',
+    () => render({selectionMode: 'single', disallowEmptySelection: true, defaultSelectedKeys: ['1']}, dataItems)
   )
   .add(
     'selectionMode: multiple, isQuiet',
@@ -139,30 +192,36 @@ storiesOf('ActionGroup', module)
     () => render({disabledKeys: ['1', '2'], selectionMode: 'multiple'}, dataItems)
   )
   .add(
-    'dynamic',
+    'dynamic default',
     () => (
-      <ActionGroup onSelectionChange={s => onSelectionChange([...s])} items={viewItems}>
+      <ActionGroup onAction={action('onAction')} items={viewItems}>
+        {item => <Item key={item.name} textValue={item.name}>{item.children}</Item>}
+      </ActionGroup>
+    )
+  )
+  .add(
+    'dynamic single selection',
+    () => (
+      <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} items={viewItems}>
         {item => <Item key={item.name} textValue={item.name}>{item.children}</Item>}
       </ActionGroup>
     )
   );
 
-let onSelectionChange = action('onSelectionChange');
+
 function render(props, items) {
   return (
-    <Flex gap="size-200" width="100%" margin="size-100" justifyContent="center">
-      <Flex flex="3 0 auto" justifyContent="center">{renderText(props, items)}</Flex>
-      <Divider orientation="vertical" size="M" />
-      <Flex flex="3 0 auto" justifyContent="center">{renderBoth(props, items)}</Flex>
-      <Divider orientation="vertical" size="M" />
-      <Flex flex="1 0 auto" justifyContent="center">{renderIcons(props, items)}</Flex>
+    <Flex gap="size-300" margin="size-100" direction="column">
+      {renderText(props, items)}
+      {renderBoth(props, items)}
+      {renderIcons(props, items)}
     </Flex>
   );
 }
 
-function renderText(props = {}, items: any = docItems) {
+function renderText(props, items: any = docItems) {
   return (
-    <ActionGroup onSelectionChange={s => onSelectionChange([...s])} {...props}>
+    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
       {
         items.map((itemProps) => (
           <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
@@ -171,22 +230,10 @@ function renderText(props = {}, items: any = docItems) {
     </ActionGroup>
   );
 }
-let iconMap = {
-  'Document setup': DocumentIcon,
-  'Settings': SettingsIcon,
-  'Grid view': ViewGridIcon,
-  'List view': ViewListIcon,
-  'Gallery view': ViewCardIcon,
-  'Edit': DrawIcon,
-  'Copy': CopyIcon,
-  'Delete': DeleteIcon,
-  'Properties': PropertiesIcon,
-  'Info': InfoIcon,
-  'Keywords': BookIcon
-};
+
 function renderBoth(props, items: any = docItems) {
   return (
-    <ActionGroup onSelectionChange={s => onSelectionChange([...s])} {...props}>
+    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
       {
         items.map((itemProps) => {
           let IconElement = iconMap[itemProps.children];
@@ -204,7 +251,7 @@ function renderBoth(props, items: any = docItems) {
 
 function renderIcons(props, items: any = docItems) {
   return (
-    <ActionGroup onSelectionChange={s => onSelectionChange([...s])} {...props}>
+    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
       {
         items.map((itemProps) => {
           let IconElement = iconMap[itemProps.children];

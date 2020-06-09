@@ -42,7 +42,7 @@ interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   color?: string,
   /**
    * A slot to place the icon in.
-   * @default "icon"
+   * @default 'icon'
    */
   slot?: string,
   /**

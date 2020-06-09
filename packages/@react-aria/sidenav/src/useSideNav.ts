@@ -13,12 +13,12 @@
 import {AriaSideNavProps} from '@react-types/sidenav';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {HTMLAttributes, RefObject} from 'react';
-import {ListLayout} from '@react-stately/collections';
+import {KeyboardDelegate} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableCollection} from '@react-aria/selection';
 
 interface SideNavAriaOptions<T> extends AriaSideNavProps<T> {
-  layout?: ListLayout<T>
+  layout?: KeyboardDelegate
 }
 
 interface SideNavAria {

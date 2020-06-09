@@ -43,19 +43,15 @@ category: Buttons
 
 ## Content
 
-Buttons can have a label, and icon, or both. An icon is provided by passing an icon component to the `icon` prop.
-A visible label can be provided by passing children.
+Buttons must have a visible label, and can optionally have an icon. Text only buttons accept a string
+as children. Icons can also be added as children, with a sibling [Text](Text.html) element for the label.
 
 ```tsx example
 import {Text} from '@react-spectrum/text';
 
-<Button variant="primary">Label only</Button>
 <Button variant="primary">
   <Bell />
   <Text>Icon + Label</Text>
-</Button>
-<Button variant="primary" aria-label="Icon only">
-  <Bell />
 </Button>
 ```
 
@@ -93,42 +89,75 @@ function Example() {
 ## Visual options
 
 ### Call to action
-[View guidelines](https://spectrum.adobe.com/page/button/#Call-to-action)
+[View guidelines](https://spectrum.adobe.com/page/button/#Call-to-action-variant)
 
 ```tsx example
 <Button variant="cta">Save</Button>
 ```
 
 ### Primary
-[View guidelines](https://spectrum.adobe.com/page/button/#Primary)
+[View guidelines](https://spectrum.adobe.com/page/button/#Primary-variant)
 
 ```tsx example
 <Button variant="primary">Save</Button>
+```
+
+### Quiet primary
+[View guidelines](https://spectrum.adobe.com/page/button/#Quiet)
+
+```tsx example
 <Button variant="primary" isQuiet>Save</Button>
 ```
 
 ### Secondary
-[View guidelines](https://spectrum.adobe.com/page/button/#Secondary)
+[View guidelines](https://spectrum.adobe.com/page/button/#Secondary-variant)
 
 ```tsx example
 <Button variant="secondary">Save</Button>
+```
+
+### Quiet secondary
+[View guidelines](https://spectrum.adobe.com/page/button/#Quiet)
+
+```tsx example
 <Button variant="secondary" isQuiet>Save</Button>
 ```
 
 ### Over background
-[View guidelines](https://spectrum.adobe.com/page/button/#Over-background)
+[View guidelines](https://spectrum.adobe.com/page/button/#Over-background-variant)
 
 ```tsx example
 <View backgroundColor="positive" padding="size-300">
   <Button variant="overBackground">Save</Button>
+</View>
+```
+
+### Quiet over background
+[View guidelines](https://spectrum.adobe.com/page/button/#Quiet)
+
+```tsx example
+<View backgroundColor="positive" padding="size-300">
   <Button variant="overBackground" isQuiet>Save</Button>
 </View>
 ```
 
 ### Negative
-[View guidelines](https://spectrum.adobe.com/page/button/#Negative)
+[View guidelines](https://spectrum.adobe.com/page/button/#Negative-variant)
 
 ```tsx example
 <Button variant="negative">Save</Button>
+```
+
+### Quiet negative
+[View guidelines](https://spectrum.adobe.com/page/button/#Quiet)
+
+```tsx example
 <Button variant="negative" isQuiet>Save</Button>
+```
+
+### Disabled
+[View guidelines](https://spectrum.adobe.com/page/button/#Disabled)
+
+```tsx example
+<Button variant="cta" isDisabled>Save</Button>
 ```
