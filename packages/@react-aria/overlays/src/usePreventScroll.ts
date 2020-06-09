@@ -13,7 +13,7 @@
 import {useEffect} from 'react';
 
 /**
- * Prevents scrolling on the document body on mount, and 
+ * Prevents scrolling on the document body on mount, and
  * restores it on unmount. Also ensures that content does not
  * shift due to the scrollbars disappearing.
  */
@@ -23,6 +23,7 @@ export function usePreventScroll(): void {
     let paddingRight = document.body.style.paddingRight;
     document.body.style.paddingRight = window.innerWidth - document.documentElement.clientWidth + 'px';
     document.body.style.overflow = 'hidden';
+    document.body.style.position = 'relative';
     return () => {
       document.body.style.overflow = overflow;
       document.body.style.paddingRight = paddingRight;
