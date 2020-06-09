@@ -22,7 +22,7 @@ import {ListLayout} from '@react-stately/layout';
 import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, ReactElement, RefObject, useMemo, useState} from 'react';
+import React, {HTMLAttributes, ReactElement, RefObject, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useCollator, useMessageFormatter} from '@react-aria/i18n';
