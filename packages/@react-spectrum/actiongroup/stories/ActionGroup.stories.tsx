@@ -37,6 +37,7 @@ const editItems = [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'},
 const viewItems2 = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}];
 const viewItems = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}];
 const dataItems = [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}];
+let onSelectionChange = action('onSelectionChange');
 
 let iconMap = {
   'Document setup': DocumentIcon,
@@ -57,9 +58,9 @@ storiesOf('ActionGroup', module)
   .add(
     'default',
     () => (
-      <Flex gap="size-200" width="100%" margin="size-100" justifyContent="center">
-        <Flex flex="3 0 auto" justifyContent="center">
-          <ActionGroup>
+      <Flex UNSAFE_className={styles['container']} gap="size-200" width="100%" margin="size-100" justifyContent="center">
+        <Flex UNSAFE_className={classNames(styles, 'item', 'large')} justifyContent="center">
+          <ActionGroup onAction={action('onAction')}>
             {
               docItems.map((itemProps) => (
                 <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
@@ -68,8 +69,8 @@ storiesOf('ActionGroup', module)
           </ActionGroup>
         </Flex>
         <Divider orientation="vertical" size="M" />
-        <Flex flex="3 0 auto" justifyContent="center">
-          <ActionGroup>
+        <Flex UNSAFE_className={classNames(styles, 'item', 'large')} justifyContent="center">
+          <ActionGroup onAction={action('onAction')}>
             {
               docItems.map((itemProps) => {
                 let IconElement = iconMap[itemProps.children];
@@ -84,8 +85,8 @@ storiesOf('ActionGroup', module)
           </ActionGroup>
         </Flex>
         <Divider orientation="vertical" size="M" />
-        <Flex flex="1 0 auto" justifyContent="center">
-          <ActionGroup>
+        <Flex UNSAFE_className={classNames(styles, 'item')} justifyContent="center">
+          <ActionGroup onAction={action('onAction')}>
             {
               docItems.map((itemProps) => {
                 let IconElement = iconMap[itemProps.children];
@@ -140,6 +141,10 @@ storiesOf('ActionGroup', module)
   .add(
     'selectionMode: multiple',
     () => render({selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
+  )
+  .add(
+    'selectionMode: single, disallowEmptySelection',
+    () => render({selectionMode: 'single', disallowEmptySelection: true, defaultSelectedKeys: ['1']}, dataItems)
   )
   .add(
     'selectionMode: multiple, isQuiet',
@@ -198,15 +203,23 @@ storiesOf('ActionGroup', module)
     () => render({disabledKeys: ['1', '2'], selectionMode: 'multiple'}, dataItems)
   )
   .add(
-    'dynamic',
+    'dynamic default',
     () => (
-      <ActionGroup onSelectionChange={s => onSelectionChange([...s])} items={viewItems}>
+      <ActionGroup onAction={action('onAction')} items={viewItems}>
+        {item => <Item key={item.name} textValue={item.name}>{item.children}</Item>}
+      </ActionGroup>
+    )
+  )
+  .add(
+    'dynamic single selection',
+    () => (
+      <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} items={viewItems}>
         {item => <Item key={item.name} textValue={item.name}>{item.children}</Item>}
       </ActionGroup>
     )
   );
 
-let onSelectionChange = action('onSelectionChange');
+
 function render(props, items) {
   return (
     <Flex UNSAFE_className={styles['container']} gap="size-200" width="100%" margin="size-100" justifyContent="center">
