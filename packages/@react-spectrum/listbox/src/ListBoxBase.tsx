@@ -10,25 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, Node, StyleProps} from '@react-types/shared';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {CollectionItem, CollectionView} from '@react-aria/collections';
 import {FocusStrategy} from '@react-types/menu';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxContext} from './ListBoxContext';
 import {ListBoxOption} from './ListBoxOption';
 import {ListBoxSection} from './ListBoxSection';
-import {ListLayout, Node} from '@react-stately/collections';
+import {ListLayout} from '@react-stately/layout';
 import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, RefObject, useMemo} from 'react';
-import {ReusableView} from '@react-stately/collections';
+import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useCollator, useMessageFormatter} from '@react-aria/i18n';
 import {useListBox} from '@react-aria/listbox';
 import {useProvider} from '@react-spectrum/provider';
+import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 
 interface ListBoxBaseProps<T> extends DOMProps, AriaLabelingProps, StyleProps {
   layout: ListLayout<T>,
@@ -93,7 +93,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
     }
 
     return (
-      <CollectionItem
+      <VirtualizerItem
         key={reusableView.key}
         reusableView={reusableView}
         parent={parent} />
@@ -102,7 +102,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
 
   return (
     <ListBoxContext.Provider value={state}>
-      <CollectionView
+      <Virtualizer
         {...styleProps}
         {...mergeProps(listBoxProps, domProps)}
         ref={ref}
@@ -144,7 +144,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
             );
           }
         }}
-      </CollectionView>
+      </Virtualizer>
     </ListBoxContext.Provider>
   );
 }

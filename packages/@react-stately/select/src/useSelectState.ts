@@ -13,7 +13,7 @@
 import {Key, useMemo, useState} from 'react';
 import {ListState, useListState} from '@react-stately/list';
 import {MenuTriggerState, useMenuTriggerState} from '@react-stately/menu';
-import {Node} from '@react-stately/collections';
+import {Node} from '@react-types/shared';
 import {SelectProps} from '@react-types/select';
 import {useControlledState} from '@react-stately/utils';
 
