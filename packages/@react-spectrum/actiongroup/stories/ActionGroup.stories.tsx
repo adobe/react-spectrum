@@ -13,10 +13,8 @@
 import {action} from '@storybook/addon-actions';
 import {ActionGroup} from '../';
 import BookIcon from '@spectrum-icons/workflow/Book';
-import {classNames} from '@react-spectrum/utils';
 import CopyIcon from '@spectrum-icons/workflow/Copy';
 import DeleteIcon from '@spectrum-icons/workflow/Delete';
-import {Divider} from '@react-spectrum/divider';
 import DocumentIcon from '@spectrum-icons/workflow/Document';
 import DrawIcon from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
@@ -26,7 +24,6 @@ import PropertiesIcon from '@spectrum-icons/workflow/Properties';
 import React from 'react';
 import SettingsIcon from '@spectrum-icons/workflow/Settings';
 import {storiesOf} from '@storybook/react';
-import styles from './styles.css';
 import {Text} from '@react-spectrum/text';
 import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
 import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
@@ -58,47 +55,39 @@ storiesOf('ActionGroup', module)
   .add(
     'default',
     () => (
-      <Flex UNSAFE_className={styles['container']} gap="size-200" width="100%" margin="size-100" justifyContent="center">
-        <div className={classNames(styles, 'item', 'large')}>
-          <ActionGroup onAction={action('onAction')}>
-            {
-              docItems.map((itemProps) => (
-                <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
-              ))
-            }
-          </ActionGroup>
-        </div>
-        <Divider orientation="vertical" size="M" />
-        <div className={classNames(styles, 'item', 'large')}>
-          <ActionGroup onAction={action('onAction')}>
-            {
-              docItems.map((itemProps) => {
-                let IconElement = iconMap[itemProps.children];
-                return (
-                  <Item key={itemProps.name} textValue={itemProps.name}>
-                    <Text>{itemProps.children}</Text>
-                    <IconElement />
-                  </Item>
-                );
-              })
-            }
-          </ActionGroup>
-        </div>
-        <Divider orientation="vertical" size="M" />
-        <div className={classNames(styles, 'item')}>
-          <ActionGroup onAction={action('onAction')}>
-            {
-              docItems.map((itemProps) => {
-                let IconElement = iconMap[itemProps.children];
-                return (
-                  <Item key={itemProps.name} textValue={itemProps.name}>
-                    <IconElement />
-                  </Item>
-                );
-              })
-            }
-          </ActionGroup>
-        </div>
+      <Flex direction="column" gap="size-200" margin="size-100">
+        <ActionGroup onAction={action('onAction')}>
+          {
+            docItems.map((itemProps) => (
+              <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
+            ))
+          }
+        </ActionGroup>
+        <ActionGroup onAction={action('onAction')}>
+          {
+            docItems.map((itemProps) => {
+              let IconElement = iconMap[itemProps.children];
+              return (
+                <Item key={itemProps.name} textValue={itemProps.name}>
+                  <Text>{itemProps.children}</Text>
+                  <IconElement />
+                </Item>
+              );
+            })
+          }
+        </ActionGroup>
+        <ActionGroup onAction={action('onAction')}>
+          {
+            docItems.map((itemProps) => {
+              let IconElement = iconMap[itemProps.children];
+              return (
+                <Item key={itemProps.name} textValue={itemProps.name}>
+                  <IconElement />
+                </Item>
+              );
+            })
+          }
+        </ActionGroup>
       </Flex>
     )
   )
@@ -222,12 +211,10 @@ storiesOf('ActionGroup', module)
 
 function render(props, items) {
   return (
-    <Flex UNSAFE_className={styles['container']} gap="size-200" width="100%" margin="size-100" justifyContent="center">
-      <div className={classNames(styles, 'item', 'large')}>{renderText(props, items)}</div>
-      <Divider orientation="vertical" size="M" />
-      <div className={classNames(styles, 'item', 'large')}>{renderBoth(props, items)}</div>
-      <Divider orientation="vertical" size="M" />
-      <div className={classNames(styles, 'item')}>{renderIcons(props, items)}</div>
+    <Flex gap="size-300" margin="size-100" direction="column">
+      {renderText(props, items)}
+      {renderBoth(props, items)}
+      {renderIcons(props, items)}
     </Flex>
   );
 }
