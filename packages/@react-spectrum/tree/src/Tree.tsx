@@ -12,15 +12,16 @@
 
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '@react-spectrum/utils';
-import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
-import {CollectionView} from '@react-aria/collections';
+import {CollectionBase, Expandable, MultipleSelection, Node} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import {Item, ListLayout, Node, Section, TreeCollection} from '@react-stately/collections';
+import {Item, Section} from '@react-stately/collections';
+import {ListLayout} from '@react-stately/layout';
 import React, {Key, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
+import {Virtualizer} from '@react-aria/virtualizer';
 
 export {Item, Section};
 
@@ -29,7 +30,7 @@ export function Tree<T extends object>(props: CollectionBase<T> & Expandable & M
   let layout = useMemo(() =>
     new ListLayout({
       rowHeight: 44,
-      indentationForItem(tree: TreeCollection<T>, key: Key) {
+      indentationForItem(tree, key: Key) {
         let level = tree.getItem(key).level;
         return 28 * level;
       }
@@ -44,7 +45,7 @@ export function Tree<T extends object>(props: CollectionBase<T> & Expandable & M
   });
 
   return (
-    <CollectionView
+    <Virtualizer
       {...collectionProps}
       ref={ref}
       focusedKey={state.selectionManager.focusedKey}
@@ -60,7 +61,7 @@ export function Tree<T extends object>(props: CollectionBase<T> & Expandable & M
           <TreeItem item={item} state={state} />
         );
       }}
-    </CollectionView>
+    </Virtualizer>
   );
 }
 

@@ -97,3 +97,12 @@ export interface TrayProps extends StyleProps, OverlayProps {
   onClose?: () => void,
   shouldCloseOnBlur?: boolean
 }
+
+export interface OverlayTriggerProps {
+  /** Whether the overlay is open by default (controlled). */
+  isOpen?: boolean,
+  /** Whether the overlay is open by default (uncontrolled). */
+  defaultOpen?: boolean,
+  /** Handler that is called when the overlay's open state changes. */
+  onOpenChange?: (isOpen: boolean) => void
+}

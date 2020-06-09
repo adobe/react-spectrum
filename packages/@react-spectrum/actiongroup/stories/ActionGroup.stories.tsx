@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionGroup} from '../';
 import BookIcon from '@spectrum-icons/workflow/Book';
+import {classNames} from '@react-spectrum/utils';
 import CopyIcon from '@spectrum-icons/workflow/Copy';
 import DeleteIcon from '@spectrum-icons/workflow/Delete';
 import {Divider} from '@react-spectrum/divider';
@@ -25,6 +26,7 @@ import PropertiesIcon from '@spectrum-icons/workflow/Properties';
 import React from 'react';
 import SettingsIcon from '@spectrum-icons/workflow/Settings';
 import {storiesOf} from '@storybook/react';
+import styles from './styles.css';
 import {Text} from '@react-spectrum/text';
 import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
 import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
@@ -112,7 +114,7 @@ storiesOf('ActionGroup', module)
     () => render({isJustified: true, defaultSelectedKeys: ['1']}, viewItems2)
   )
   .add(
-    'compact, justified',
+    'compact, isJustified',
     () => render({density: 'compact', isJustified: true, defaultSelectedKeys: ['1']}, viewItems2)
   )
   .add(
@@ -207,12 +209,12 @@ storiesOf('ActionGroup', module)
 let onSelectionChange = action('onSelectionChange');
 function render(props, items) {
   return (
-    <Flex gap="size-200" width="100%" margin="size-100" justifyContent="center">
-      <Flex flex="3 0 auto" justifyContent="center">{renderText(props, items)}</Flex>
+    <Flex UNSAFE_className={styles['container']} gap="size-200" width="100%" margin="size-100" justifyContent="center">
+      <Flex UNSAFE_className={classNames(styles, 'item', 'large')} justifyContent="center">{renderText(props, items)}</Flex>
       <Divider orientation="vertical" size="M" />
-      <Flex flex="3 0 auto" justifyContent="center">{renderBoth(props, items)}</Flex>
+      <Flex UNSAFE_className={classNames(styles, 'item', 'large')} justifyContent="center">{renderBoth(props, items)}</Flex>
       <Divider orientation="vertical" size="M" />
-      <Flex flex="1 0 auto" justifyContent="center">{renderIcons(props, items)}</Flex>
+      <Flex UNSAFE_className={classNames(styles, 'item')} justifyContent="center">{renderIcons(props, items)}</Flex>
     </Flex>
   );
 }

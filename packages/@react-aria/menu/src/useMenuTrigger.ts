@@ -40,11 +40,7 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
   } = props;
 
   let menuTriggerId = useId();
-  let {triggerProps, overlayProps} = useOverlayTrigger({
-    type,
-    onClose: state.close,
-    isOpen: state.isOpen
-  }, ref);
+  let {triggerProps, overlayProps} = useOverlayTrigger({type}, state, ref);
 
   let onKeyDown = (e) => {
     if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {

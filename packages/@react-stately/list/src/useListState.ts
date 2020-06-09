@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
-import {CollectionBase, MultipleSelection} from '@react-types/shared';
+import {Collection, CollectionBase, MultipleSelection, Node} from '@react-types/shared';
 import {Key, useEffect, useMemo} from 'react';
+import {ListCollection} from './ListCollection';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {useCollection} from '@react-stately/collections';
 
 export interface ListProps<T> extends CollectionBase<T>, MultipleSelection {}
 export interface ListState<T> {
@@ -37,11 +38,7 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let builder = useMemo(() => new CollectionBuilder<T>(), []);
-  let collection = useMemo(() => {
-    let nodes = builder.build(props);
-    return new TreeCollection(nodes);
-  }, [builder, props]);
+  let collection = useCollection(props, nodes => new ListCollection(nodes));
 
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {

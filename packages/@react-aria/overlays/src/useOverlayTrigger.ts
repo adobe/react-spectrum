@@ -12,17 +12,12 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
+import {OverlayTriggerState} from '@react-stately/overlays';
 import {useId} from '@react-aria/utils';
 
 interface OverlayTriggerProps {
   /** Type of overlay that is opened by the trigger. */
-  type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
-
-  /** Whether the overlay is currently open. */
-  isOpen?: boolean,
-
-  /** Handler that is called when the overlay should close. */
-  onClose?: () => void
+  type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid'
 }
 
 interface OverlayTriggerAria {
@@ -37,8 +32,9 @@ interface OverlayTriggerAria {
  * Handles the behavior and accessibility for an overlay trigger, e.g. a button
  * that opens a popover, menu, or other overlay that is positioned relative to the trigger.
  */
-export function useOverlayTrigger(props: OverlayTriggerProps, ref: RefObject<HTMLElement>): OverlayTriggerAria {
-  let {type, onClose, isOpen} = props;
+export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTriggerState, ref: RefObject<HTMLElement>): OverlayTriggerAria {
+  let {type} = props;
+  let {isOpen} = state;
 
   // When scrolling a parent scrollable region of the trigger (other than the body),
   // we hide the popover. Otherwise, its position would be incorrect.
@@ -54,16 +50,14 @@ export function useOverlayTrigger(props: OverlayTriggerProps, ref: RefObject<HTM
         return;
       }
 
-      if (onClose) {
-        onClose();
-      }
+      state.close();
     };
 
     window.addEventListener('scroll', onScroll, true);
     return () => {
       window.removeEventListener('scroll', onScroll, true);
     };
-  }, [isOpen, onClose, ref]);
+  }, [isOpen, ref]);
 
   // Aria 1.1 supports multiple values for aria-haspopup other than just menus.
   // https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup
