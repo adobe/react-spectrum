@@ -23,10 +23,10 @@ export function usePreventScroll(): void {
     let paddingRight = document.body.style.paddingRight;
     let position = document.documentElement.style.position;
     document.body.style.paddingRight = window.innerWidth - document.documentElement.clientWidth + 'px';
-    document.body.style.overflowX = 'hidden';
+    document.body.style.overflow = 'hidden';
     document.documentElement.style.position = 'relative';
     return () => {
-      document.body.style.overflowX = overflowX;
+      document.body.style.overflow = overflow;
       document.body.style.paddingRight = paddingRight;
       document.documentElement.style.position = position;
     };
