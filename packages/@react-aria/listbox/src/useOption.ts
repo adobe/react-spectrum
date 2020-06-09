@@ -13,7 +13,7 @@
 import {HTMLAttributes, Key, RefObject} from 'react';
 import {ListState} from '@react-stately/list';
 import {mergeProps, useSlotId} from '@react-aria/utils';
-import {usePress} from '@react-aria/interactions';
+import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface OptionAria {
@@ -92,23 +92,21 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled});
-  // use mouse movement as opposed to hover to determine if we should focus the option
-  // hover can't distinguish between the mouse being moved over the object vs the object being moved under the mouse
-  // we only want the case where the mouse moved over the object
-  let onMovement = () => {
-    if (state.selectionManager.focusedKey !== key && !(isDisabled || !shouldFocusOnHover)) {
-      state.selectionManager.setFocused(true);
-      state.selectionManager.setFocusedKey(key);
+
+  let {hoverProps} = useHover({
+    isDisabled: isDisabled || !shouldFocusOnHover,
+    onHoverStart() {
+      if (!isFocusVisible()) {
+        state.selectionManager.setFocused(true);
+        state.selectionManager.setFocusedKey(key);
+      }
     }
-  };
+  });
 
   return {
     optionProps: {
       ...optionProps,
-      ...mergeProps(pressProps, {
-        onMouseMove: onMovement,
-        onPointerMove: onMovement
-      })
+      ...mergeProps(pressProps, hoverProps)
     },
     labelProps: {
       id: labelId
