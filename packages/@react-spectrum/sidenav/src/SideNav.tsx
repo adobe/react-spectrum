@@ -26,7 +26,7 @@ import {useTreeState} from '@react-stately/tree';
 import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 
 export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
-  let state = useTreeState({...props, selectionMode: 'single', disallowEmptySelection: true});
+  let state = useTreeState(props);
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() => new ListLayout({rowHeight: 40, collator}), [collator]);
   let ref = useRef();

@@ -121,7 +121,7 @@ function Example() {
   let [lastKey, setLastKey] = React.useState(new Set());
   return (
     <div>
-      <ActionGroup onSelectionChange={setLastKey}>
+      <ActionGroup selectionMode="single" onSelectionChange={setLastKey}>
         <Item key="add">Add</Item>
         <Item key="delete">Delete</Item>
         <Item key="edit">Edit</Item>
@@ -155,7 +155,7 @@ function Example() {
   let [actedKey, setActedKey] = React.useState('');
   return (
     <div>
-      <ActionGroup selectionMode="none" onAction={setActedKey}>
+      <ActionGroup onAction={setActedKey}>
         <Item key="add">Add</Item>
         <Item key="delete">Delete</Item>
         <Item key="edit">Edit</Item>

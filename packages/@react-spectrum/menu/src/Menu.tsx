@@ -25,8 +25,7 @@ import {useTreeState} from '@react-stately/tree';
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
   let contextProps = useContext(MenuContext);
   let completeProps = {
-    ...mergeProps(contextProps, props),
-    selectionMode: props.selectionMode || 'none'
+    ...mergeProps(contextProps, props)
   };
 
   let domRef = useDOMRef(ref);

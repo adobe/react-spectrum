@@ -13,7 +13,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, DOMRef, Node, SelectionMode, StyleProps} from '@react-types/shared';
+import {DOMProps, DOMRef, Node, StyleProps} from '@react-types/shared';
 import {ListState, useListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {PressResponder} from '@react-aria/interactions';
@@ -36,7 +36,6 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
     density,
     isJustified,
     isDisabled,
-    selectionMode = 'single' as SelectionMode,
     orientation = 'horizontal',
     isQuiet,
     onAction,
@@ -44,7 +43,7 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
   } = props;
 
   let domRef = useDOMRef(ref);
-  let state = useListState({...props, selectionMode});
+  let state = useListState(props);
   let {actionGroupProps} = useActionGroup(props, state, domRef);
   let isVertical = orientation === 'vertical';
   let providerProps = {isEmphasized, isDisabled, isQuiet};
