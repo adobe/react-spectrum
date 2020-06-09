@@ -54,7 +54,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-ActionGroup--vertical {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
   --column-gap: var(--spectrum-actiongroup-button-gap-reset);
