@@ -10,25 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {DialogTriggerProps} from '@react-types/dialog';
+import {OverlayTriggerProps} from '@react-types/overlays';
 import {useControlledState} from '@react-stately/utils';
 
-export interface DialogTriggerState {
-  /** Whether the dialog is currently open. */
+export interface OverlayTriggerState {
+  /** Whether the overlay is currently open. */
   readonly isOpen: boolean,
-  /** Opens the dialog. */
+  /** Opens the overlay. */
   open(): void,
-  /** Closes the dialog. */
+  /** Closes the overlay. */
   close(): void,
-  /** Toggles the dialog's visibility. */
+  /** Toggles the overlay's visibility. */
   toggle(): void
 }
 
 /**
- * Manages state for a dialog trigger. Tracks whether the dialog is open, and provides
+ * Manages state for an overlay trigger. Tracks whether the overlay is open, and provides
  * methods to toggle this state.
  */
-export function useDialogTriggerState(props: DialogTriggerProps): DialogTriggerState  {
+export function useOverlayTriggerState(props: OverlayTriggerProps): OverlayTriggerState  {
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
 
   return {
