@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
@@ -26,7 +27,7 @@ storiesOf('Button', module)
   .add(
     'with icon',
     () => (
-      <div>
+      <Flex gap="size-200">
         <Button
           onPress={action('press')}
           onPressStart={action('pressstart')}
@@ -53,7 +54,7 @@ storiesOf('Button', module)
           <Bell />
           <Text>Quiet</Text>
         </Button>
-      </div>
+      </Flex>
     )
   )
   .add(
@@ -87,7 +88,7 @@ storiesOf('Button', module)
 
 function render(props: any = {}) {
   return (
-    <div>
+    <Flex gap="size-200">
       <Button
         onPress={action('press')}
         onPressStart={action('pressstart')}
@@ -113,6 +114,6 @@ function render(props: any = {}) {
         Quiet
       </Button>
       )}
-    </div>
+    </Flex>
   );
 }

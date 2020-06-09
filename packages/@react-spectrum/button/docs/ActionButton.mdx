@@ -52,14 +52,8 @@ A visible label can be provided by passing a string or a Text component as a chi
 
 ```tsx example
 <ActionButton>
-  Label only
-</ActionButton>
-<ActionButton>
   <Edit />
   <Text>Icon + Label</Text>
-</ActionButton>
-<ActionButton aria-label="Icon only">
-  <Edit />
 </ActionButton>
 ```
 
@@ -68,6 +62,12 @@ A visible label can be provided by passing a string or a Text component as a chi
 If no visible label is provided (e.g. an icon only button),
 an alternative text label must be provided to identify the control for accessibility. This should be added using
 the `aria-label` prop.
+
+```tsx example
+<ActionButton aria-label="Icon only">
+  <Edit />
+</ActionButton>
+```
 
 ### Internationalization
 

@@ -50,34 +50,36 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
   let {styleProps} = useStyleProps(props);
 
   return (
-    <div
-      {...actionGroupProps}
-      {...styleProps}
-      ref={domRef}
-      className={
-        classNames(
-          styles,
-          'spectrum-ActionGroup',
-          {
-            'spectrum-ActionGroup--quiet': isQuiet,
-            'spectrum-ActionGroup--vertical': isVertical,
-            'spectrum-ActionGroup--compact': density === 'compact',
-            'spectrum-ActionGroup--justified': isJustified
-          },
-          otherProps.UNSAFE_className
-        )
-      }>
-      <Provider {...providerProps}>
-        {[...state.collection].map((item) => (
-          <ActionGroupItem
-            key={item.key}
-            onAction={onAction}
-            isDisabled={isDisabled}
-            isEmphasized={isEmphasized}
-            item={item}
-            state={state} />
-        ))}
-      </Provider>
+    <div {...styleProps} className={classNames(styles, 'flex-container', styleProps.className)}>
+      <div
+        {...actionGroupProps}
+        ref={domRef}
+        className={
+          classNames(
+            styles,
+            'flex-gap',
+            'spectrum-ActionGroup',
+            {
+              'spectrum-ActionGroup--quiet': isQuiet,
+              'spectrum-ActionGroup--vertical': isVertical,
+              'spectrum-ActionGroup--compact': density === 'compact',
+              'spectrum-ActionGroup--justified': isJustified
+            },
+            otherProps.UNSAFE_className
+          )
+        }>
+        <Provider {...providerProps}>
+          {[...state.collection].map((item) => (
+            <ActionGroupItem
+              key={item.key}
+              onAction={onAction}
+              isDisabled={isDisabled}
+              isEmphasized={isEmphasized}
+              item={item}
+              state={state} />
+          ))}
+        </Provider>
+      </div>
     </div>
   );
 }
