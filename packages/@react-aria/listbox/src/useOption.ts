@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, Key, RefObject} from 'react';
+import {HTMLAttributes, Key, RefObject, useState} from 'react';
+import {isFocusVisible} from '@react-aria/interactions';
 import {ListState} from '@react-stately/list';
+import {mergeProps, useSlotId} from '@react-aria/utils';
 import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
-import {useSlotId} from '@react-aria/utils';
 
 interface OptionAria {
   /** Props for the option element. */
@@ -94,17 +95,19 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   let {pressProps} = usePress({...itemProps, isDisabled});
   let {hoverProps} = useHover({
     isDisabled: isDisabled || !shouldFocusOnHover,
-    onHoverStart() {
-      state.selectionManager.setFocused(true);
-      state.selectionManager.setFocusedKey(key);
-    }
   });
 
   return {
     optionProps: {
       ...optionProps,
-      ...pressProps,
-      ...hoverProps
+      ...mergeProps(mergeProps(pressProps, hoverProps), {
+        onMouseMove() {
+          if (state.selectionManager.focusedKey !== key) {
+            state.selectionManager.setFocused(true);
+            state.selectionManager.setFocusedKey(key);
+          }
+        }
+      })
     },
     labelProps: {
       id: labelId
