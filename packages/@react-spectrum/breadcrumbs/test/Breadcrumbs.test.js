@@ -17,18 +17,15 @@ import React, {useRef} from 'react';
 import {render, within} from '@testing-library/react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
-import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
 
-describe.skip('Breadcrumbs', function () {
+describe('Breadcrumbs', function () {
   beforeEach(() => {
-    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
-      if (this.className === 'spectrum-Breadcrumbs-item') {
-        return {width: 100};
+    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+      if (this instanceof HTMLUListElement) {
+        return 500;
       }
-      if (this.className === 'spectrum-Breadcrumbs') {
-        return {width: 350};
-      }
-      return {top: 0, bottom: 0, left: 0, right: 0};
+
+      return 100;
     });
 
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
@@ -36,16 +33,15 @@ describe.skip('Breadcrumbs', function () {
   });
 
   afterEach(() => {
-    HTMLElement.prototype.getBoundingClientRect.mockRestore();
     HTMLElement.prototype.scrollIntoView.mockRestore();
   });
 
-  it.each`
-    Name               | Component        | props
-    ${'Breadcrumbs'}   | ${Breadcrumbs}   | ${{}}
-    ${'V2Breadcrumbs'} | ${V2Breadcrumbs} | ${{}}
-  `('$Name handles defaults', function ({Component, props}) {
-    let {getByLabelText} = render(<Component {...props} id="breadcrumbs-id" aria-label="breadcrumbs-test" />);
+  it('$Name handles defaults', function () {
+    let {getByLabelText} = render(
+      <Breadcrumbs id="breadcrumbs-id" aria-label="breadcrumbs-test">
+        <Item>Folder 1</Item>
+      </Breadcrumbs>
+    );
 
     let breadcrumbs = getByLabelText('breadcrumbs-test');
     expect(breadcrumbs).toHaveAttribute('id', 'breadcrumbs-id');
@@ -116,10 +112,29 @@ describe.skip('Breadcrumbs', function () {
     expect(breadcrumbs).toHaveAttribute('class', expect.stringContaining('--medium'));
   });
 
-  it('Handles max visible items', () => {
+  it('shows four items with no menu', () => {
     let {getByText, getByRole} = render(
       <Provider theme={theme}>
-        <Breadcrumbs maxVisibleItems="3">
+        <Breadcrumbs>
+          <Item>Folder 1</Item>
+          <Item>Folder 2</Item>
+          <Item>Folder 3</Item>
+          <Item>Folder 4</Item>
+        </Breadcrumbs>
+      </Provider>
+    );
+    let {children} = getByRole('list');
+    expect(() => within(children[0]).getByRole('button')).toThrow();
+    expect(getByText('Folder 1')).toBeTruthy();
+    expect(getByText('Folder 2')).toBeTruthy();
+    expect(getByText('Folder 3')).toBeTruthy();
+    expect(getByText('Folder 4')).toBeTruthy();
+  });
+
+  it('shows a maximum of 4 items', () => {
+    let {getByText, getByRole} = render(
+      <Provider theme={theme}>
+        <Breadcrumbs>
           <Item>Folder 1</Item>
           <Item>Folder 2</Item>
           <Item>Folder 3</Item>
@@ -137,10 +152,10 @@ describe.skip('Breadcrumbs', function () {
     expect(getByText('Folder 5')).toBeTruthy();
   });
 
-  it('Handles max visible items with showRoot', () => {
+  it('shows a maximum of 4 items with showRoot', () => {
     let {getByText, getByRole} = render(
       <Provider theme={theme}>
-        <Breadcrumbs maxVisibleItems="3" showRoot>
+        <Breadcrumbs showRoot>
           <Item>Folder 1</Item>
           <Item>Folder 2</Item>
           <Item>Folder 3</Item>
@@ -172,11 +187,18 @@ describe.skip('Breadcrumbs', function () {
     expect(item2).toHaveAttribute('aria-disabled', 'true');
   });
 
+  it('shows less than 4 items if they do not fit', () => {
+    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+      if (this instanceof HTMLUListElement) {
+        return 300;
+      }
 
-  it('Handles max visible items auto', () => {
+      return 100;
+    });
+
     let {getByText, getByRole} = render(
       <Provider theme={theme}>
-        <Breadcrumbs maxVisibleItems="auto">
+        <Breadcrumbs>
           <Item>Folder 1</Item>
           <Item>Folder 2</Item>
           <Item>Folder 3</Item>
@@ -190,15 +212,23 @@ describe.skip('Breadcrumbs', function () {
     expect(within(children[0]).getByRole('button')).toBeTruthy();
     expect(() => getByText('Folder 1')).toThrow();
     expect(() => getByText('Folder 2')).toThrow();
-    expect(getByText('Folder 3')).toBeTruthy();
-    expect(getByText('Folder 4')).toBeTruthy();
+    expect(() => getByText('Folder 3')).toThrow();
+    expect(() => getByText('Folder 4')).toThrow();
     expect(getByText('Folder 5')).toBeTruthy();
   });
 
-  it('Handles max visible items auto with showRoot', () => {
+  it('collapses root item if it does not fit', () => {
+    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+      if (this instanceof HTMLUListElement) {
+        return 300;
+      }
+
+      return 100;
+    });
+
     let {getByText, getByRole} = render(
       <Provider theme={theme}>
-        <Breadcrumbs maxVisibleItems="auto" showRoot>
+        <Breadcrumbs showRoot>
           <Item>Folder 1</Item>
           <Item>Folder 2</Item>
           <Item>Folder 3</Item>
@@ -209,21 +239,31 @@ describe.skip('Breadcrumbs', function () {
     );
 
     let {children} = getByRole('list');
-    expect(getByText('Folder 1')).toBeTruthy();
-    expect(within(children[1]).getByRole('button')).toBeTruthy();
+    expect(() => getByText('Folder 1')).toThrow();
+    expect(within(children[0]).getByRole('button')).toBeTruthy();
     expect(() => getByText('Folder 2')).toThrow();
     expect(() => getByText('Folder 3')).toThrow();
-    expect(getByText('Folder 4')).toBeTruthy();
+    expect(() => getByText('Folder 4')).toThrow();
     expect(getByText('Folder 5')).toBeTruthy();
   });
 
-  it('Handles max visible items auto with showRoot and folders of different widths', () => {
+  it('Handles showRoot and folders of different widths', () => {
     // Change the width of "Folder 1" from 100px to 200px, which means there's only room for 1 other breadcrumb.
-    HTMLElement.prototype.getBoundingClientRect.mockReturnValueOnce({width: 200});
+    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+      if (this instanceof HTMLUListElement) {
+        return 500;
+      }
+
+      if (this.textContent === 'Folder 1') {
+        return 200;
+      }
+
+      return 100;
+    });
 
     let {getByText, getByRole} = render(
       <Provider theme={theme}>
-        <Breadcrumbs maxVisibleItems="auto" showRoot>
+        <Breadcrumbs showRoot>
           <Item>Folder 1</Item>
           <Item>Folder 2</Item>
           <Item>Folder 3</Item>
@@ -236,7 +276,6 @@ describe.skip('Breadcrumbs', function () {
     let {children} = getByRole('list');
     expect(within(children[1]).getByRole('button')).toBeTruthy();
     expect(getByText('Folder 1')).toBeTruthy();
-    // expect(() => getByText('Folder 1')).toThrow();
     expect(() => getByText('Folder 2')).toThrow();
     expect(() => getByText('Folder 3')).toThrow();
     expect(() => getByText('Folder 4')).toThrow();
@@ -244,11 +283,11 @@ describe.skip('Breadcrumbs', function () {
   });
 
 
-  it('Handles max visible items auto with menu', () => {
+  it('can open the menu', () => {
     let onAction = jest.fn();
     let {getAllByText, getByRole, getAllByRole} = render(
       <Provider theme={theme}>
-        <Breadcrumbs maxVisibleItems="auto" showRoot onAction={onAction}>
+        <Breadcrumbs showRoot onAction={onAction}>
           <Item key="Folder 1">Folder 1</Item>
           <Item>Folder 2</Item>
           <Item>Folder 3</Item>
@@ -284,7 +323,7 @@ describe.skip('Breadcrumbs', function () {
     let onAction = jest.fn();
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme}>
-        <Breadcrumbs maxVisibleItems="auto" showRoot onAction={onAction}>
+        <Breadcrumbs showRoot onAction={onAction}>
           <Item key="Folder 1">Folder 1</Item>
           <Item key="Folder 2">Folder 2</Item>
           <Item key="Folder 3">Folder 3</Item>
