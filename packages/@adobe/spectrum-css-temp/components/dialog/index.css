@@ -199,11 +199,12 @@ governing permissions and limitations under the License.
   justify-content: flex-end;
   /* this padding should be safe as button group is always end aligned */
   padding-inline-start: var(--spectrum-dialog-gap-size);
-  padding: calc(var(--spectrum-global-dimension-size-25) * 2);
-  margin: calc(var(--spectrum-global-dimension-size-25) * -2);
-
+  /* account for halo focus ring */
+  padding: calc(var(--spectrum-alias-focus-ring-gap) * 2);
   /* this padding isn't built into the grid because it disappears with this buttonGroup */
-  padding-block-start: calc(calc(var(--spectrum-global-dimension-size-25) * 2) + var(--spectrum-global-dimension-static-size-500));
+  padding-block-start: calc(calc(var(--spectrum-alias-focus-ring-gap) * 2) + var(--spectrum-global-dimension-static-size-500));
+  margin: calc(var(--spectrum-alias-focus-ring-gap) * -2);
+  /* fix so Firefox buttongroups properly calculate overflow and switch from horizontal to vertical when not enough room to render */
   overflow: hidden;
 
   &.spectrum-Dialog-buttonGroup--noFooter {
