@@ -195,12 +195,16 @@ governing permissions and limitations under the License.
 
 .spectrum-Dialog-buttonGroup {
   grid-area: buttonGroup;
-  /* this padding isn't built into the grid because it disappears with this buttonGroup */
-  padding-block-start: var(--spectrum-global-dimension-static-size-500);
   display: flex;
   justify-content: flex-end;
   /* this padding should be safe as button group is always end aligned */
   padding-inline-start: var(--spectrum-dialog-gap-size);
+  padding: calc(var(--spectrum-global-dimension-size-25) * 2);
+  margin: calc(var(--spectrum-global-dimension-size-25) * -2);
+
+  /* this padding isn't built into the grid because it disappears with this buttonGroup */
+  padding-block-start: calc(calc(var(--spectrum-global-dimension-size-25) * 2) + var(--spectrum-global-dimension-static-size-500));
+  overflow: hidden;
 
   &.spectrum-Dialog-buttonGroup--noFooter {
     grid-area: footer-start / footer-start / buttonGroup-end / buttonGroup-end;
