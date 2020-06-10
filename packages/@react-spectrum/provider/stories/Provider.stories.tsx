@@ -62,10 +62,6 @@ storiesOf('Provider', module)
     )
   )
   .add(
-    'locale: cs-CZ',
-    () => render({locale: 'cs-CZ'})
-  )
-  .add(
     'isQuiet',
     () => render({isQuiet: true})
   )
