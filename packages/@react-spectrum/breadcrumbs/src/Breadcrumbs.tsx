@@ -16,7 +16,7 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {Key, ReactElement, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {Key, ReactElement, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
@@ -53,7 +53,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   let {navProps} = useBreadcrumbs(props);
   let {styleProps} = useStyleProps(otherProps);
 
-  let updateOverflow = () => {
+  let updateOverflow = useCallback(() => {
     let computeVisibleItems = (visibleItems: number) => {
       let listItems = Array.from(listRef.current.children) as HTMLLIElement[];
       let containerWidth = listRef.current.offsetWidth;
@@ -113,7 +113,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         yield computeVisibleItems(newVisibleItems);
       }
     });
-  };
+  }, [listRef, children, showRoot, isMultiline]);
 
   useEffect(() => {
     window.addEventListener('resize', updateOverflow, false);
@@ -122,7 +122,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     };
   }, [updateOverflow]);
 
-  useLayoutEffect(updateOverflow, childArray);
+  useLayoutEffect(updateOverflow, [children]);
 
   let contents = childArray;
   if (childArray.length > visibleItems) {
