@@ -54,7 +54,7 @@ export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabe
   /** Width of the menu */
   menuWidth?: DimensionValue,
   /**
-   * The name of the Picker control.
+   * The name of the Picker control input, applied to the hidden select element.
    */
   name?: string
 }
