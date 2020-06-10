@@ -667,7 +667,8 @@ describe('Table', function () {
   });
 
   describe('keyboard focus', function () {
-    let renderTable = (locale = 'en-US') => render(
+    // locale is being set here, since we can't nest them, use original render function
+    let renderTable = (locale = 'en-US') => renderComponent(
       <Provider locale={locale} theme={theme}>
         <Table aria-label="Table">
           <TableHeader columns={columns}>
@@ -684,7 +685,8 @@ describe('Table', function () {
       </Provider>
     );
 
-    let renderNested = (locale = 'en-US') => render(
+    // locale is being set here, since we can't nest them, use original render function
+    let renderNested = (locale = 'en-US') => renderComponent(
       <Provider locale={locale} theme={theme}>
         <Table aria-label="Table">
           <TableHeader columns={nestedColumns}>
