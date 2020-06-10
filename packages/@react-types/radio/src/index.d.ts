@@ -36,14 +36,15 @@ export interface RadioGroupProps extends ValueBase<string>, InputBase, Validatio
    */
   orientation?: Orientation,
   /**
-   * The unique identifying name of the RadioGroup. Is not displayed to the user.
+   * The unique identifying name of the RadioGroup that is applied to the Radios within the group. It is not a displayed value.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#name_and_radio_buttons).
    */
-  name?: string // HTML form name. Not displayed.
+  name?: string
 }
 
 export interface RadioProps extends FocusableProps {
   /**
-   * The value of the radio button, used to identify it in a RadioGroup. Is not displayed to the user.
+   * The value of the radio button, used to identify it in a RadioGroup. It is not a displayed value.
    */
   value: string,
   /**
