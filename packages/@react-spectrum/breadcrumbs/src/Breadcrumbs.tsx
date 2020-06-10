@@ -72,6 +72,10 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         maxVisibleItems--;
       }
 
+      if (showRoot && calculatedWidth >= containerWidth) {
+        newVisibleItems--;
+      }
+
       // TODO: what if multiline and only one breadcrumb??
       if (isMultiline) {
         listItems.pop();
