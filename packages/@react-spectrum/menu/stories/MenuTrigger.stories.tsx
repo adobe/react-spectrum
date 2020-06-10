@@ -293,6 +293,14 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'Menu with autoFocus=true',
+    () => render(defaultMenu, {}, {autoFocus: true})
+  )
+  .add(
+    'Menu with autoFocus=false',
+    () => render(defaultMenu, {}, {autoFocus: false})
+  )
+  .add(
+    'Menu with autoFocus=true, default selected key (uncontrolled)',
     () => render(defaultMenu, {}, {autoFocus: true, defaultSelectedKeys: ['Kangaroo']})
   )
   .add(

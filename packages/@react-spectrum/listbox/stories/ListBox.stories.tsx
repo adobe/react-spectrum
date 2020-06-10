@@ -395,6 +395,30 @@ storiesOf('ListBox', module)
   .add(
     'ListBox with autoFocus=true',
     () => (
+      <ListBox width={200} aria-labelledby="label" items={withSection} autoFocus>
+        {item => (
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
+    )
+  )
+  .add(
+    'ListBox with autoFocus=false',
+    () => (
+      <ListBox width={200} aria-labelledby="label" items={withSection} autoFocus={false}>
+        {item => (
+          <Section key={item.name} items={item.children} title={item.name}>
+            {item => <Item key={item.name}>{item.name}</Item>}
+          </Section>
+        )}
+      </ListBox>
+    )
+  )
+  .add(
+    'ListBox with autoFocus=true, selectionMode=single, default selected key (uncontrolled)',
+    () => (
       <ListBox width={200} aria-labelledby="label" items={withSection} autoFocus defaultSelectedKeys={['Snake']} selectionMode="single">
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
