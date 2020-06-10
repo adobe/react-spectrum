@@ -99,7 +99,7 @@ for (let pkg of packages) {
   let json = JSON.parse(fs.readFileSync(pkg));
   let [scope, basename] = json.name.split('/');
 
-  if (basename.includes('utils')) {
+  if (basename.includes('utils') || basename.includes('layout')) {
     continue;
   }
   if (scope === '@react-spectrum') {

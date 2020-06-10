@@ -88,11 +88,11 @@ prop.
 
 ```tsx example
 function Breadcrumbs(props) {
-  let {breadcrumbsProps} = useBreadcrumbs(props);
+  let {navProps} = useBreadcrumbs(props);
   let children = React.Children.toArray(props.children);
 
   return (
-    <nav {...breadcrumbsProps}>
+    <nav {...navProps}>
       <ol style={{display: 'flex', listStyle: 'none'}}>
         {children.map((child, i) =>
           React.cloneElement(child, {isCurrent: i === children.length - 1})
@@ -103,11 +103,13 @@ function Breadcrumbs(props) {
 }
 
 function BreadcrumbItem(props) {
-  let {breadcrumbItemProps} = useBreadcrumbItem({...props, elementType: 'span'});
+  let ref = React.useRef();
+  let {itemProps} = useBreadcrumbItem({...props, elementType: 'span'}, ref);
   return (
     <li>
       <span
-        {...breadcrumbItemProps}
+        {...itemProps}
+        ref={ref}
         style={{
           color: 'dodgerblue',
           textDecoration: props.isCurrent ? null : 'underline',
@@ -139,11 +141,11 @@ are native navigation links to other pages rather than handled by JavaScript.
 function Breadcrumbs(props) {
   // Same as in the previous example...
 ///- begin collapse -///
-  let {breadcrumbsProps} = useBreadcrumbs(props);
+  let {navProps} = useBreadcrumbs(props);
   let children = React.Children.toArray(props.children);
 
   return (
-    <nav {...breadcrumbsProps}>
+    <nav {...navProps}>
       <ol style={{display: 'flex', listStyle: 'none'}}>
         {children.map((child, i) =>
           React.cloneElement(child, {isCurrent: i === children.length - 1})
@@ -155,11 +157,13 @@ function Breadcrumbs(props) {
 }
 
 function BreadcrumbItem(props) {
-  let {breadcrumbItemProps} = useBreadcrumbItem(props);
+  let ref = React.useRef();
+  let {itemProps} = useBreadcrumbItem(props, ref);
   return (
     <li>
       <a
-        {...breadcrumbItemProps}
+        {...itemProps}
+        ref={ref}
         href={props.href}
         style={{
           color: 'dodgerblue',
@@ -192,11 +196,11 @@ breadcrumbs are of type `a`.
 
 ```tsx example
 function Breadcrumbs(props) {
-  let {breadcrumbsProps} = useBreadcrumbs(props);
+  let {navProps} = useBreadcrumbs(props);
   let children = React.Children.toArray(props.children);
 
   return (
-    <nav {...breadcrumbsProps}>
+    <nav {...navProps}>
       <ol style={{display: 'flex', listStyle: 'none'}}>
         {children.map((child, i) =>
           React.cloneElement(child, {
@@ -210,12 +214,14 @@ function Breadcrumbs(props) {
 }
 
 function BreadcrumbItem(props) {
-  let {breadcrumbItemProps} = useBreadcrumbItem(props);
+  let ref = React.useRef();
+  let {itemProps} = useBreadcrumbItem(props, ref);
   let breadcrumbContent;
   if (props.isCurrent) {
     breadcrumbContent = (
       <h3
-        {...breadcrumbItemProps}
+        {...itemProps}
+        ref={ref}
         style={{
           margin: 0,
           fontSize: '1em',
@@ -228,7 +234,8 @@ function BreadcrumbItem(props) {
     breadcrumbContent = (
       <>
         <a
-          {...breadcrumbItemProps}
+          {...itemProps}
+          ref={ref}
           href={props.href}
           style={{
             color: props.isDisabled ? 'gray' : 'dodgerblue',

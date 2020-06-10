@@ -64,11 +64,20 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   // If no gaps, or native support exists, then we only need to render a single div.
   let style = {
     ...styleProps.style,
-    ...flexStyle.style,
-    columnGap: props.columnGap != null ? dimensionValue(props.columnGap) : undefined,
-    rowGap: props.rowGap != null ? dimensionValue(props.rowGap) : undefined,
-    gap: props.gap != null ? dimensionValue(props.gap) : undefined
+    ...flexStyle.style
   };
+
+  if (props.gap != null) {
+    style.gap = dimensionValue(props.gap);
+  }
+
+  if (props.columnGap != null) {
+    style.columnGap = dimensionValue(props.columnGap);
+  }
+
+  if (props.rowGap != null) {
+    style.rowGap = dimensionValue(props.rowGap);
+  }
 
   return (
     <div className={classNames(styles, 'flex', styleProps.className)} style={style} ref={domRef}>

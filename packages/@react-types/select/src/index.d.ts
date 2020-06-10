@@ -43,12 +43,12 @@ export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabe
   /** Whether the textfield should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Alignment of the menu relative to the input target
-   * @default "start"
+   * @default 'start'
    */
   align?: Alignment,
   /**
    * Direction the menu will render relative to the Picker
-   * @default "bottom"
+   * @default 'bottom'
    */
   direction?: 'bottom' | 'top',
   /** Width of the menu */

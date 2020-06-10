@@ -19,7 +19,7 @@ export interface BreadcrumbItemProps extends PressEvents {
   isCurrent?: boolean,
   /**
    * The type of current location the breadcrumb item represents, if `isCurrent` is true.
-   * @default "page"
+   * @default 'page'
    */
   'aria-current'?: 'page' | 'step' | 'location' | 'date' | 'time' | boolean | 'true' | 'false',
   /** Whether the breadcrumb item is disabled. */
@@ -42,7 +42,7 @@ export interface AriaBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps, 
 export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, StyleProps {
   /**
    * Size of the Breadcrumbs including spacing and layout.
-   * @default "L"
+   * @default 'L'
    */
   size?: 'S' | 'M' | 'L',
   /**

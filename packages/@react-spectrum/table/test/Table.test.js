@@ -117,6 +117,86 @@ describe('Table', function () {
     expect(grid).toBeVisible();
     expect(grid).toHaveAttribute('aria-label', 'Table');
     expect(grid).toHaveAttribute('data-testid', 'test');
+
+    expect(grid).toHaveAttribute('aria-rowcount', '3');
+    expect(grid).toHaveAttribute('aria-colcount', '3');
+
+    let rowgroups = within(grid).getAllByRole('rowgroup');
+    expect(rowgroups).toHaveLength(2);
+
+    let headerRows = within(rowgroups[0]).getAllByRole('row');
+    expect(headerRows).toHaveLength(1);
+    expect(headerRows[0]).toHaveAttribute('aria-rowindex', '1');
+
+    let headers = within(grid).getAllByRole('columnheader');
+    expect(headers).toHaveLength(3);
+    expect(headers[0]).toHaveAttribute('aria-colindex', '1');
+    expect(headers[1]).toHaveAttribute('aria-colindex', '2');
+    expect(headers[2]).toHaveAttribute('aria-colindex', '3');
+
+    for (let header of headers) {
+      expect(header).not.toHaveAttribute('aria-sort');
+    }
+
+    expect(headers[0]).toHaveTextContent('Foo');
+    expect(headers[1]).toHaveTextContent('Bar');
+    expect(headers[2]).toHaveTextContent('Baz');
+
+    let rows = within(rowgroups[1]).getAllByRole('row');
+    expect(rows).toHaveLength(2);
+    expect(rows[0]).toHaveAttribute('aria-rowindex', '2');
+    expect(rows[1]).toHaveAttribute('aria-rowindex', '3');
+
+    let rowheader = within(rows[0]).getByRole('rowheader');
+    expect(rowheader).toHaveTextContent('Foo 1');
+    expect(rowheader).toHaveAttribute('aria-colindex', '1');
+
+    expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
+
+    rowheader = within(rows[1]).getByRole('rowheader');
+    expect(rowheader).toHaveTextContent('Foo 2');
+    expect(rowheader).toHaveAttribute('aria-colindex', '1');
+
+    expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+    expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
+
+
+    let cells = within(rowgroups[1]).getAllByRole('gridcell');
+    expect(cells).toHaveLength(4);
+
+    expect(cells[0]).toHaveAttribute('aria-colindex', '2');
+    expect(cells[1]).toHaveAttribute('aria-colindex', '3');
+    expect(cells[2]).toHaveAttribute('aria-colindex', '2');
+    expect(cells[3]).toHaveAttribute('aria-colindex', '3');
+  });
+
+  it('renders a static table with selection', function () {
+    let {getByRole} = render(
+      <Table aria-label="Table" data-testid="test" selectionMode="multiple">
+        <TableHeader>
+          <Column>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </Row>
+          <Row>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </Row>
+        </TableBody>
+      </Table>
+    );
+
+    let grid = getByRole('grid');
+    expect(grid).toBeVisible();
+    expect(grid).toHaveAttribute('aria-label', 'Table');
+    expect(grid).toHaveAttribute('data-testid', 'test');
     expect(grid).toHaveAttribute('aria-multiselectable', 'true');
     expect(grid).toHaveAttribute('aria-rowcount', '3');
     expect(grid).toHaveAttribute('aria-colcount', '4');
@@ -203,6 +283,69 @@ describe('Table', function () {
 
     let grid = getByRole('grid');
     expect(grid).toBeVisible();
+    expect(grid).toHaveAttribute('aria-rowcount', '3');
+    expect(grid).toHaveAttribute('aria-colcount', '3');
+
+    let rowgroups = within(grid).getAllByRole('rowgroup');
+    expect(rowgroups).toHaveLength(2);
+
+    let headerRows = within(rowgroups[0]).getAllByRole('row');
+    expect(headerRows).toHaveLength(1);
+    expect(headerRows[0]).toHaveAttribute('aria-rowindex', '1');
+
+    let headers = within(grid).getAllByRole('columnheader');
+    expect(headers).toHaveLength(3);
+    expect(headers[0]).toHaveAttribute('aria-colindex', '1');
+    expect(headers[1]).toHaveAttribute('aria-colindex', '2');
+    expect(headers[2]).toHaveAttribute('aria-colindex', '3');
+
+    expect(headers[0]).toHaveTextContent('Foo');
+    expect(headers[1]).toHaveTextContent('Bar');
+    expect(headers[2]).toHaveTextContent('Baz');
+
+    let rows = within(rowgroups[1]).getAllByRole('row');
+    expect(rows).toHaveLength(2);
+
+    let rowheader = within(rows[0]).getByRole('rowheader');
+    expect(rowheader).toHaveTextContent('Foo 1');
+    expect(rowheader).toHaveAttribute('aria-colindex', '1');
+
+    expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
+
+    rowheader = within(rows[1]).getByRole('rowheader');
+    expect(rowheader).toHaveTextContent('Foo 2');
+    expect(rowheader).toHaveAttribute('aria-colindex', '1');
+
+    expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+    expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
+
+    let cells = within(rowgroups[1]).getAllByRole('gridcell');
+    expect(cells).toHaveLength(4);
+
+    expect(cells[0]).toHaveAttribute('aria-colindex', '2');
+    expect(cells[1]).toHaveAttribute('aria-colindex', '3');
+    expect(cells[2]).toHaveAttribute('aria-colindex', '2');
+    expect(cells[3]).toHaveAttribute('aria-colindex', '3');
+  });
+
+  it('renders a dynamic table with selection', function () {
+    let {getByRole} = render(
+      <Table aria-label="Table" selectionMode="multiple">
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    );
+
+    let grid = getByRole('grid');
+    expect(grid).toBeVisible();
     expect(grid).toHaveAttribute('aria-multiselectable', 'true');
     expect(grid).toHaveAttribute('aria-rowcount', '3');
     expect(grid).toHaveAttribute('aria-colcount', '4');
@@ -267,7 +410,7 @@ describe('Table', function () {
 
   it('renders a static table with nested columns', function () {
     let {getByRole} = render(
-      <Table aria-label="Table">
+      <Table aria-label="Table" selectionMode="multiple">
         <TableHeader>
           <Column key="test">Test</Column>
           <Column title="Group 1">
@@ -372,7 +515,7 @@ describe('Table', function () {
 
   it('renders a dynamic table with nested columns', function () {
     let {getByRole} = render(
-      <Table aria-label="Table">
+      <Table aria-label="Table" selectionMode="multiple">
         <TableHeader columns={nestedColumns}>
           {column =>
             <Column childColumns={column.children}>{column.name}</Column>
@@ -475,7 +618,7 @@ describe('Table', function () {
 
   it('renders a table with multiple row headers', function () {
     let {getByRole} = render(
-      <Table aria-label="Table">
+      <Table aria-label="Table" selectionMode="multiple">
         <TableHeader>
           <Column isRowHeader>First Name</Column>
           <Column isRowHeader>Last Name</Column>
@@ -524,9 +667,10 @@ describe('Table', function () {
   });
 
   describe('keyboard focus', function () {
-    let renderTable = (locale = 'en-US') => render(
+    // locale is being set here, since we can't nest them, use original render function
+    let renderTable = (locale = 'en-US') => renderComponent(
       <Provider locale={locale} theme={theme}>
-        <Table aria-label="Table" selectionMode="none">
+        <Table aria-label="Table">
           <TableHeader columns={columns}>
             {column => <Column>{column.name}</Column>}
           </TableHeader>
@@ -541,9 +685,10 @@ describe('Table', function () {
       </Provider>
     );
 
-    let renderNested = (locale = 'en-US') => render(
+    // locale is being set here, since we can't nest them, use original render function
+    let renderNested = (locale = 'en-US') => renderComponent(
       <Provider locale={locale} theme={theme}>
-        <Table aria-label="Table" selectionMode="none">
+        <Table aria-label="Table">
           <TableHeader columns={nestedColumns}>
             {column =>
               <Column childColumns={column.children}>{column.name}</Column>
@@ -561,7 +706,7 @@ describe('Table', function () {
     );
 
     let renderMany = () => render(
-      <Table aria-label="Table" selectionMode="none">
+      <Table aria-label="Table">
         <TableHeader columns={columns}>
           {column =>
             <Column>{column.name}</Column>
@@ -1039,7 +1184,7 @@ describe('Table', function () {
       let renderFocusable = () => render(
         <>
           <input data-testid="before" />
-          <Table aria-label="Table">
+          <Table aria-label="Table" selectionMode="multiple">
             <TableHeader>
               <Column>Foo</Column>
               <Column>Bar</Column>
@@ -1284,7 +1429,7 @@ describe('Table', function () {
 
   describe('selection', function () {
     let renderJSX = (onSelectionChange, items = manyItems) => (
-      <Table aria-label="Table" onSelectionChange={onSelectionChange}>
+      <Table aria-label="Table" onSelectionChange={onSelectionChange} selectionMode="multiple">
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
         </TableHeader>
@@ -2137,7 +2282,7 @@ describe('Table', function () {
 
     it('should display a spinner when loading', function () {
       let tree = render(
-        <Table aria-label="Table">
+        <Table aria-label="Table" selectionMode="multiple">
           <TableHeader>
             <Column key="foo">Foo</Column>
             <Column key="bar">Bar</Column>
@@ -2195,7 +2340,7 @@ describe('Table', function () {
       expect(rows[3]).toHaveAttribute('aria-rowindex', '4');
 
       let cell = within(rows[3]).getByRole('rowheader');
-      expect(cell).toHaveAttribute('aria-colspan', '3');
+      expect(cell).toHaveAttribute('aria-colspan', '2');
 
       let spinner = within(cell).getByRole('progressbar');
       expect(spinner).toBeVisible();
@@ -2270,7 +2415,7 @@ describe('Table', function () {
       expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
 
       let cell = within(rows[1]).getByRole('rowheader');
-      expect(cell).toHaveAttribute('aria-colspan', '3');
+      expect(cell).toHaveAttribute('aria-colspan', '2');
 
       let heading = within(cell).getByRole('heading');
       expect(heading).toBeVisible();
@@ -2288,7 +2433,7 @@ describe('Table', function () {
   describe('sorting', function () {
     it('should set aria-sort="none" on sortable column headers', function () {
       let tree = render(
-        <Table aria-label="Table" selectionMode="none">
+        <Table aria-label="Table">
           <TableHeader>
             <Column key="foo" allowsSorting>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
@@ -2314,7 +2459,7 @@ describe('Table', function () {
 
     it('should set aria-sort="ascending" on sorted column header', function () {
       let tree = render(
-        <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'bar', direction: 'ascending'}}>
+        <Table aria-label="Table" sortDescriptor={{column: 'bar', direction: 'ascending'}}>
           <TableHeader>
             <Column key="foo" allowsSorting>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
@@ -2340,7 +2485,7 @@ describe('Table', function () {
 
     it('should set aria-sort="descending" on sorted column header', function () {
       let tree = render(
-        <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'bar', direction: 'descending'}}>
+        <Table aria-label="Table" sortDescriptor={{column: 'bar', direction: 'descending'}}>
           <TableHeader>
             <Column key="foo" allowsSorting>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
@@ -2367,7 +2512,7 @@ describe('Table', function () {
     it('should fire onSortChange when there is no existing sortDescriptor', function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <Table aria-label="Table" selectionMode="none" onSortChange={onSortChange}>
+        <Table aria-label="Table" onSortChange={onSortChange}>
           <TableHeader>
             <Column key="foo" allowsSorting>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
@@ -2399,7 +2544,7 @@ describe('Table', function () {
     it('should toggle the sort direction from ascending to descending', function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
+        <Table aria-label="Table" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
           <TableHeader>
             <Column key="foo" allowsSorting>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
@@ -2431,7 +2576,7 @@ describe('Table', function () {
     it('should toggle the sort direction from descending to ascending', function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'foo', direction: 'descending'}} onSortChange={onSortChange}>
+        <Table aria-label="Table" sortDescriptor={{column: 'foo', direction: 'descending'}} onSortChange={onSortChange}>
           <TableHeader>
             <Column key="foo" allowsSorting>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
@@ -2463,7 +2608,7 @@ describe('Table', function () {
     it('should trigger sorting on a different column', function () {
       let onSortChange = jest.fn();
       let tree = render(
-        <Table aria-label="Table" selectionMode="none" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
+        <Table aria-label="Table" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
           <TableHeader>
             <Column key="foo" allowsSorting>Foo</Column>
             <Column key="bar" allowsSorting>Bar</Column>
@@ -2698,7 +2843,7 @@ describe('Table', function () {
     describe('column widths', function () {
       it('should divide the available width by default', function () {
         let tree = render(
-          <Table aria-label="Table">
+          <Table aria-label="Table" selectionMode="multiple">
             <TableHeader columns={columns}>
               {column => <Column>{column.name}</Column>}
             </TableHeader>
@@ -2743,16 +2888,15 @@ describe('Table', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('55px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('500px');
-          expect(row.childNodes[3].style.width).toBe('300px');
+          expect(row.childNodes[0].style.width).toBe('200px');
+          expect(row.childNodes[1].style.width).toBe('500px');
+          expect(row.childNodes[2].style.width).toBe('300px');
         }
       });
 
       it('should divide remaining width amoung remaining columns', function () {
         let tree = render(
-          <Table aria-label="Table">
+          <Table aria-label="Table" selectionMode="multiple">
             <TableHeader>
               <Column key="foo" width={200}>Foo</Column>
               <Column key="bar">Bar</Column>
@@ -2799,16 +2943,15 @@ describe('Table', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('55px');
-          expect(row.childNodes[1].style.width).toBe('100px');
-          expect(row.childNodes[2].style.width).toBe('500px');
-          expect(row.childNodes[3].style.width).toBe('345px');
+          expect(row.childNodes[0].style.width).toBe('100px');
+          expect(row.childNodes[1].style.width).toBe('500px');
+          expect(row.childNodes[2].style.width).toBe('400px');
         }
       });
 
       it('should support minWidth', function () {
         let tree = render(
-          <Table aria-label="Table">
+          <Table aria-label="Table" selectionMode="multiple">
             <TableHeader>
               <Column key="foo" width={200}>Foo</Column>
               <Column key="bar" minWidth={500}>Bar</Column>
@@ -2855,16 +2998,16 @@ describe('Table', function () {
         let rows = tree.getAllByRole('row');
 
         for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('55px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('300px');
-          expect(row.childNodes[3].style.width).toBe('445px');
+          expect(row.childNodes[0].style.width).toBe('200px');
+          expect(row.childNodes[1].style.width).toBe('300px');
+          expect(row.childNodes[2].style.width).toBe('500px');
+
         }
       });
 
-      it('should compute the correct widths for tiered headings', function () {
+      it('should compute the correct widths for tiered headings with selection', function () {
         let tree = render(
-          <Table aria-label="Table">
+          <Table aria-label="Table" selectionMode="multiple">
             <TableHeader columns={nestedColumns}>
               {column => <Column childColumns={column.children}>{column.name}</Column>}
             </TableHeader>

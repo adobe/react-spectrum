@@ -20,7 +20,7 @@ export interface KeyboardProps extends DOMProps, StyleProps {
   children: ReactNode,
   /**
    * A slot to place the keyboard shortcut in.
-   * @default "keyboard"
+   * @default 'keyboard'
    */
   slot?: string
 }

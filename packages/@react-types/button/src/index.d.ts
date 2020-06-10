@@ -22,8 +22,8 @@ interface ButtonProps extends PressEvents, FocusableProps {
 
 export interface LinkButtonProps {
   /**
-   * The HTML element or React element used to render the button, e.g. "div", "a", or `RouterLink`.
-   * @default "button"
+   * The HTML element or React element used to render the button, e.g. 'div', 'a', or `RouterLink`.
+   * @default 'button'
    */
   elementType?: string | JSXElementConstructor<any>,
   /** A URL to link to if elementType="a". */
@@ -43,7 +43,7 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
   'aria-pressed'?: boolean,
   /**
    * The behavior of the button when used in an HTML form.
-   * @default "button"
+   * @default 'button'
    */
   type?: 'button' | 'submit' | 'reset'
 }

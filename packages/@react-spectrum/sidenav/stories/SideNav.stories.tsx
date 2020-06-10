@@ -48,7 +48,7 @@ storiesOf('SideNav', module)
   .add(
     'with default selected item',
     () => (
-      <SideNav defaultSelectedKeys={['Kangaroo']} items={flatItems} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
+      <SideNav selectionMode="single" defaultSelectedKeys={['Kangaroo']} items={flatItems} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </SideNav>
     )
@@ -56,7 +56,7 @@ storiesOf('SideNav', module)
   .add(
     'with selected item (controlled)',
     () => (
-      <SideNav selectedKeys={['Kangaroo']} items={flatItems} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
+      <SideNav selectionMode="single" selectedKeys={['Kangaroo']} items={flatItems} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </SideNav>
     )
@@ -64,7 +64,7 @@ storiesOf('SideNav', module)
   .add(
     'with disabled items',
     () => (
-      <SideNav disabledKeys={['Kangaroo']} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')} items={flatItems}>
+      <SideNav selectionMode="single" disabledKeys={['Kangaroo']} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')} items={flatItems}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </SideNav>
     )
@@ -72,7 +72,7 @@ storiesOf('SideNav', module)
   .add(
     'with keyboard selection wrapping',
     () => (
-      <SideNav items={flatItems} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')} shouldFocusWrap>
+      <SideNav selectionMode="single" items={flatItems} UNSAFE_className={snStyles['storybook-SideNav']} onSelectionChange={action('onSelectionChange')} shouldFocusWrap>
         {item => <Item key={item.name}>{item.name}</Item>}
       </SideNav>
     )

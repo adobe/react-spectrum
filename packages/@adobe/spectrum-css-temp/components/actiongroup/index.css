@@ -11,21 +11,41 @@ governing permissions and limitations under the License.
 */
 
 :root {
-  --spectrum-actiongroup-button-gap-reset: 0;
+  --spectrum-actiongroup-button-gap-reset: 0px;
   --spectrum-actiongroup-quiet-compact-button-gap: var(--spectrum-global-dimension-size-25);
 }
+
+/* This is copied from our Flex component for now. */
+.flex-container {
+  /* this is necessary so that the inner margins don't affect anything outside */
+  display: flex;
+}
+
+.flex-gap {
+  /* apply a negative margin to counteract the margin on each item at the edges */
+  margin: calc(var(--row-gap) / -2) calc(var(--column-gap) / -2);
+
+  /* increase the width and height to account for this margin */
+  /* Add 1px to fix rounding error in Safari (╯°□°)╯︵ ┻━┻ */
+  width: calc(100% + calc(var(--column-gap) + 1px));
+  height: calc(100% + var(--row-gap));
+}
+
+.flex-gap > * {
+  /* apply half of the gap to each side of every item */
+  margin: calc(var(--row-gap) / 2) calc(var(--column-gap) / 2);
+}
+
 
 .spectrum-ActionGroup {
   display: flex;
   flex-wrap: wrap;
   isolation: isolate;
+  --column-gap: var(--spectrum-actionbuttongroup-text-button-gap-x);
+  --row-gap: var(--spectrum-actionbuttongroup-text-button-gap-y);
 
   .spectrum-ActionGroup-item {
     flex-shrink: 0;
-  }
-
-  .spectrum-ActionGroup-item + .spectrum-ActionGroup-item {
-    margin-inline-start: var(--spectrum-actionbuttongroup-text-button-gap-x);
   }
 
   &:focus {
@@ -34,20 +54,11 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-ActionGroup--vertical {
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   align-items: flex-start;
-
-  .spectrum-ActionGroup-item + .spectrum-ActionGroup-item {
-    margin-block-start: var(--spectrum-actionbuttongroup-text-button-gap-y);
-    margin-inline-start: var(--spectrum-actiongroup-button-gap-reset);
-  }
-
-  /* increase specificity (not sure why spectrum-css did this one) */
-  &.spectrum-ActionGroup--vertical {
-    margin-block-start: var(--spectrum-actionbuttongroup-text-button-gap-y);
-    margin-inline-start: var(--spectrum-actiongroup-button-gap-reset);
-  }
+  --column-gap: var(--spectrum-actiongroup-button-gap-reset);
+  --row-gap: var(--spectrum-actionbuttongroup-text-button-gap-y);
 
   .spectrum-ActionGroup-item {
     > :not(svg) {
@@ -68,17 +79,15 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-ActionGroup--compact {
+  --column-gap: calc(-1 * var(--spectrum-actionbutton-border-size));
+  --row-gap: var(--spectrum-actiongroup-button-gap-reset);
+
   &.spectrum-ActionGroup--quiet {
-    .spectrum-ActionGroup-item + .spectrum-ActionGroup-item {
-      margin-inline-start: var(--spectrum-actiongroup-quiet-compact-button-gap);
-      margin-block-start: var(--spectrum-actiongroup-button-gap-reset);
-    }
+    --column-gap: var(--spectrum-actiongroup-quiet-compact-button-gap);
 
     &.spectrum-ActionGroup--vertical {
-      .spectrum-ActionGroup-item + .spectrum-ActionGroup-item {
-        margin-inline-start: var(--spectrum-actiongroup-button-gap-reset);
-        margin-block-start: var(--spectrum-actiongroup-quiet-compact-button-gap);
-      }
+      --column-gap: var(--spectrum-actiongroup-button-gap-reset);
+      --row-gap: var(--spectrum-actiongroup-quiet-compact-button-gap);
     }
   }
 
@@ -92,14 +101,11 @@ governing permissions and limitations under the License.
       &:first-child {
         border-start-start-radius: var(--spectrum-actionbutton-border-radius);
         border-end-start-radius: var(--spectrum-actionbutton-border-radius);
-        margin-inline-end: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
       }
 
       &:last-child {
         border-start-end-radius: var(--spectrum-actionbutton-border-radius);
         border-end-end-radius: var(--spectrum-actionbutton-border-radius);
-        margin-inline-start: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
-        margin-inline-end: 0;
       }
 
       &.is-selected {
@@ -110,40 +116,28 @@ governing permissions and limitations under the License.
         z-index: 2;
       }
 
-      & + .spectrum-ActionGroup-item {
-        margin-inline-start: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
-        margin-inline-end: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
+      &:focus {
+        z-index: 3;
       }
     }
 
     &.spectrum-ActionGroup--vertical {
+      --column-gap: var(--spectrum-actiongroup-button-gap-reset);
+      --row-gap: calc(-1 * var(--spectrum-actionbutton-border-size));
+
       .spectrum-ActionGroup-item {
         border-radius: 0;
-
-        & + .spectrum-ActionGroup-item {
-          margin-block-start: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
-          margin-block-end: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
-          margin-inline-start: 0;
-          margin-inline-end: 0;
-        }
 
         &:first-child {
           border-start-start-radius: var(--spectrum-actionbutton-border-radius);
           border-start-end-radius: var(--spectrum-actionbutton-border-radius);
           border-radius: 0;
-          margin-block-end: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
-          margin-inline-start: 0;
-          margin-inline-end: 0;
         }
 
         &:last-child {
           border-end-start-radius: var(--spectrum-actionbutton-border-radius);
           border-end-end-radius: var(--spectrum-actionbutton-border-radius);
           border-radius: 0;
-          margin-block-start: calc(-1 * var(--spectrum-actionbutton-border-size) / 2);
-          margin-block-end: 0;
-          margin-inline-start: 0;
-          margin-inline-end: 0;
         }
       }
     }
