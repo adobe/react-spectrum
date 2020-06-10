@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {Breadcrumbs} from '../';
-import {Heading} from '@react-spectrum/text';
+// import {Heading} from '@react-spectrum/text';
 import {Item} from '@react-stately/collections';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
