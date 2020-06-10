@@ -209,6 +209,7 @@ governing permissions and limitations under the License.
 
   &.spectrum-Dialog-buttonGroup--noFooter {
     grid-area: footer-start / footer-start / buttonGroup-end / buttonGroup-end;
+    padding-inline-start: calc(var(--spectrum-alias-focus-ring-gap) * 2);
   }
 }
 
