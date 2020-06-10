@@ -19,7 +19,7 @@ import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import V2Breadcrumbs from '@react/react-spectrum/Breadcrumbs';
 
-describe('Breadcrumbs', function () {
+describe.skip('Breadcrumbs', function () {
   beforeEach(() => {
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
       if (this.className === 'spectrum-Breadcrumbs-item') {
