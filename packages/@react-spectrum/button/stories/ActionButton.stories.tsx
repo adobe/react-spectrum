@@ -67,7 +67,7 @@ storiesOf('Button/ActionButton', module)
     )
   )
   .add(
-    'quiet,',
+    'isQuiet',
     () => render({isQuiet: true})
   )
   .add(
