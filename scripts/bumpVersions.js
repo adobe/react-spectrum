@@ -54,7 +54,7 @@ let publicPackages = {
 };
 
 // Packages never to release
-let blackList = new Set([
+let denyList = new Set([
   '@adobe/spectrum-css-temp',
   '@react-spectrum/test-utils',
   '@spectrum-icons/build-tools'
@@ -74,7 +74,7 @@ if (arg.startsWith('@')) {
   }
 
   let addPackage = (pkg) => {
-    if (blackList.has(pkg) || releasedPackages.has(pkg)) {
+    if (denyList.has(pkg) || releasedPackages.has(pkg)) {
       return;
     }
 
@@ -94,7 +94,7 @@ if (arg.startsWith('@')) {
   addPackage(arg);
 } else {
   let addPackage = (pkg) => {
-    if (blackList.has(pkg) || releasedPackages.has(pkg)) {
+    if (denyList.has(pkg) || releasedPackages.has(pkg)) {
       return;
     }
 
@@ -209,7 +209,7 @@ function bumpVersions(versions) {
   }
 
   for (let name in info) {
-    if (!releasedPackages.has(name) && !blackList.has(name)) {
+    if (!releasedPackages.has(name) && !denyList.has(name)) {
       let filePath = info[name].location + '/package.json';
       let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
       if (!pkg.private) {
