@@ -113,7 +113,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         yield computeVisibleItems(newVisibleItems);
       }
     });
-  }, [listRef, children, showRoot, isMultiline]);
+  }, [listRef, children, setVisibleItems, showRoot, isMultiline]);
 
   useEffect(() => {
     window.addEventListener('resize', updateOverflow, false);
@@ -219,32 +219,34 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
 function useValueEffect(defaultValue) {
   let [value, setValue] = useState(defaultValue);
+  let effect = useRef(null);
 
-  let next = () => {
+  let next = useCallback(() => {
     let newValue = effect.current.next();
     if (newValue.done) {
       effect.current = null;
       return;
     }
 
-    if (value === newValue.value) {
-      next();
-    } else {
-      setValue(newValue.value);
-    }
-  };
+    setValue(value => {
+      if (value === newValue.value) {
+        next();
+      }
 
-  let effect = useRef(null);
+      return newValue.value;
+    });
+  }, [effect, setValue]);
+
   useLayoutEffect(() => {
     if (effect.current) {
       next();
     }
   });
 
-  function queue(fn) {
+  let queue = useCallback(fn => {
     effect.current = fn();
     next();
-  }
+  }, [effect, next]);
 
   return [value, queue];
 }
