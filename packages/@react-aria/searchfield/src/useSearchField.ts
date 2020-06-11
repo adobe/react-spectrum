@@ -72,7 +72,6 @@ export function useSearchField(
 
   let onClearButtonClick = () => {
     state.setValue('');
-    inputRef.current.focus();
 
     if (onClear) {
       onClear();
