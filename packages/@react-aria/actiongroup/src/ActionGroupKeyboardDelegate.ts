@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection} from '@react-stately/collections';
-import {Direction, KeyboardDelegate, Orientation} from '@react-types/shared';
+import {Collection, Direction, KeyboardDelegate, Orientation} from '@react-types/shared';
 import {Key} from 'react';
 
 export class ActionGroupKeyboardDelegate<T> implements KeyboardDelegate {

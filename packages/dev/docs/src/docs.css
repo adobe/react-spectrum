@@ -252,7 +252,13 @@ footer li:last-child:after {
 
 article h1.articleHeader {
   margin-top: 0 !important;
-  font-size: 58px;
+  /* scale font size between 32px and 58px
+   * 10vw is 32px at 320px viewport size. */
+  font-size: min(58px, max(32px, 10vw));
+  /* This is a hack to get Safari to repaint when the viewport resizes,
+   * otherwise the font size does not update. */
+  width: 100vw;
+  max-width: 100%;
 }
 
 article h1.articleHeader + p {
@@ -510,7 +516,7 @@ h2.sectionHeader {
     display: inline-block;
     vertical-align: text-top;
     word-break: break-word;
-    width: calc(100% - 80px);
+    max-width: calc(100% - 80px);
   }
 
   .propTable td[data-column]:before {

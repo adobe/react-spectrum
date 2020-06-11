@@ -70,7 +70,7 @@ See [Events](#events) for more information.
 
 ## Value
 
-ActionGroups are uncontrolled by default. 
+ActionGroups are uncontrolled by default.
 
 Use `defaultSelectedKeys` to provide a default set of selected items. The value of the selected keys must match the `key` prop of the items.
 
@@ -121,7 +121,7 @@ function Example() {
   let [lastKey, setLastKey] = React.useState(new Set());
   return (
     <div>
-      <ActionGroup onSelectionChange={setLastKey}>
+      <ActionGroup selectionMode="single" onSelectionChange={setLastKey}>
         <Item key="add">Add</Item>
         <Item key="delete">Delete</Item>
         <Item key="edit">Edit</Item>
@@ -155,7 +155,7 @@ function Example() {
   let [actedKey, setActedKey] = React.useState('');
   return (
     <div>
-      <ActionGroup selectionMode="none" onAction={setActedKey}>
+      <ActionGroup onAction={setActedKey}>
         <Item key="add">Add</Item>
         <Item key="delete">Delete</Item>
         <Item key="edit">Edit</Item>
@@ -222,6 +222,29 @@ Using the `orientation` prop with value `vertical` changes the alignment of the 
 
 ```tsx example
 <ActionGroup orientation="vertical" maxWidth="32px">
+  <Item key="brush" aria-label="Brush"><Brush /></Item>
+  <Item key="select" aria-label="Select"><Select /></Item>
+  <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
+</ActionGroup>
+```
+
+### Density
+
+Using the `density` prop with value `compact` changes the margins between the buttons.
+In the default case, this merges the borders of neighboring ActionButtons. In the
+quiet case, it just reduces the margin size between the buttons.
+
+```tsx example
+<ActionGroup density="compact">
+  <Item key="brush" aria-label="Brush"><Brush /></Item>
+  <Item key="select" aria-label="Select"><Select /></Item>
+  <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
+</ActionGroup>
+```
+
+
+```tsx example
+<ActionGroup isQuiet density="compact">
   <Item key="brush" aria-label="Brush"><Brush /></Item>
   <Item key="select" aria-label="Select"><Select /></Item>
   <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>

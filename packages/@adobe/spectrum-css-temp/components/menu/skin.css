@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 :root {
   --spectrum-menu-selected-color: var(--spectrum-global-color-blue-600);
+  --spectrum-selectlist-divider-color: var(--spectrum-global-color-gray-300);
 }
 
 

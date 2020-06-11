@@ -162,7 +162,7 @@ describe('SideNav', function () {
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name can single select an item', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let spy = jest.fn();
-    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy});
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', onSelectionChange: spy});
 
     await waitForDomChange();
 
@@ -306,7 +306,7 @@ describe('SideNav', function () {
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name supports defaultSelectedKeys (uncontrolled)', async function ({Name, Component, ComponentSection, ComponentItem}) {
-    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {defaultSelectedKeys: ['Bar']});
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', defaultSelectedKeys: ['Bar']});
 
     await waitForDomChange();
 
@@ -333,7 +333,7 @@ describe('SideNav', function () {
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name supports defaultSelectedKeys (controlled)', async function ({Name, Component, ComponentSection, ComponentItem}) {
-    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectedKeys: ['Bar']});
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', selectedKeys: ['Bar']});
 
     await waitForDomChange();
 
@@ -391,7 +391,7 @@ describe('SideNav', function () {
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name does not allow empty selection', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let spy = jest.fn();
-    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy});
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', disallowEmptySelection: true, onSelectionChange: spy});
 
     await waitForDomChange();
 
@@ -424,7 +424,7 @@ describe('SideNav', function () {
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name with default key does not allow empty selection', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let spy = jest.fn();
-    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy, defaultSelectedKey: ['bar']});
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', disallowEmptySelection: true, onSelectionChange: spy, defaultSelectedKey: ['bar']});
 
     await waitForDomChange();
 

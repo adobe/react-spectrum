@@ -13,6 +13,7 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '../';
 import Add from '@spectrum-icons/workflow/Add';
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
@@ -26,7 +27,7 @@ storiesOf('Button/ActionButton', module)
   .add(
     'icon',
     () => (
-      <div>
+      <Flex gap="size-100">
         <ActionButton
           onPress={action('press')}
           onPressStart={action('pressstart')}
@@ -42,13 +43,13 @@ storiesOf('Button/ActionButton', module)
           <Text>Disabled</Text>
           <Add />
         </ActionButton>
-      </div>
+      </Flex>
     )
   )
   .add(
     'icon only',
     () => (
-      <div>
+      <Flex gap="size-100">
         <ActionButton
           onPress={action('press')}
           onPressStart={action('pressstart')}
@@ -62,11 +63,11 @@ storiesOf('Button/ActionButton', module)
           isDisabled>
           <Add />
         </ActionButton>
-      </div>
+      </Flex>
     )
   )
   .add(
-    'quiet,',
+    'isQuiet',
     () => render({isQuiet: true})
   )
   .add(
@@ -76,7 +77,7 @@ storiesOf('Button/ActionButton', module)
 
 function render(props = {}) {
   return (
-    <div>
+    <Flex gap="size-100">
       <ActionButton
         onPress={action('press')}
         onPressStart={action('pressstart')}
@@ -92,6 +93,6 @@ function render(props = {}) {
         {...props}>
         Disabled
       </ActionButton>
-    </div>
+    </Flex>
   );
 }

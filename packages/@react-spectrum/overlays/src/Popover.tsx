@@ -66,8 +66,8 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
 }
 
 const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
-  let {children, placement = 'bottom', arrowProps, isOpen, onClose, shouldCloseOnBlur, hideArrow, ...otherProps} = props;
-  let {overlayProps} = useOverlay({ref, onClose, shouldCloseOnBlur, isOpen, isDismissable: true});
+  let {children, placement = 'bottom', arrowProps, isOpen, hideArrow, ...otherProps} = props;
+  let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
   useModal();
 
   return (

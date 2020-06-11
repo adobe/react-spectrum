@@ -201,6 +201,8 @@ governing permissions and limitations under the License.
   justify-content: flex-end;
   /* this padding should be safe as button group is always end aligned */
   padding-inline-start: var(--spectrum-dialog-gap-size);
+  /* Fixes Firefox buttongroup overflow (switch from horizontal buttongroup to vertical buttongroup) */
+  max-width: 100%;
 
   &.spectrum-Dialog-buttonGroup--noFooter {
     grid-area: footer-start / footer-start / buttonGroup-end / buttonGroup-end;

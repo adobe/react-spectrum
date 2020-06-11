@@ -10,21 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
+import {SearchFieldProps} from '@react-types/searchfield';
 import {useControlledState} from '@react-stately/utils';
-import {ValueBase} from '@react-types/shared';
 
 export interface SearchFieldState {
   /** The current value of the search field. */
-  value: string,
+  readonly value: string,
 
   /** Sets the value of the search field. */
-  setValue: (val: string, ...args: any) => void
+  setValue(value: string): void
 }
 
 /**
  * Provides state management for a search field.
  */
-export function useSearchFieldState(props: ValueBase<string>): SearchFieldState {
+export function useSearchFieldState(props: SearchFieldProps): SearchFieldState {
   let [value, setValue] = useControlledState(toString(props.value), toString(props.defaultValue) || '', props.onChange);
 
   return {

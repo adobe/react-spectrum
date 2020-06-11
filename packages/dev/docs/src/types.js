@@ -35,7 +35,9 @@ const DOC_LINKS = {
   'Intl.DateTimeFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat',
   'Intl.DateTimeFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat',
   'Intl.Collator': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator',
-  'Intl.CollatorOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator'
+  'Intl.CollatorOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator',
+  'AbortSignal': 'https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal',
+  'Key': 'https://reactjs.org/docs/lists-and-keys.html'
 };
 
 export const TypeContext = React.createContext();
@@ -312,8 +314,29 @@ export function renderHTMLfromMarkdown(description) {
 }
 
 export function InterfaceType({description, properties: props, showRequired, showDefault}) {
-  let properties = Object.values(props).filter(prop => prop.type === 'property');
-  let methods = Object.values(props).filter(prop => prop.type === 'method');
+  let properties = Object.values(props).filter(prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected');
+  let methods = Object.values(props).filter(prop => prop.type === 'method' && prop.access !== 'private' && prop.access !== 'protected');
+
+  // Default to showing required indicators if some properties are optional but not all.
+  showRequired = showRequired || (!properties.every(p => p.optional) && !properties.every(p => !p.optional));
+
+  // Show default values by default if any of the properties have one defined.
+  showDefault = showDefault || properties.some(p => !!p.default);
+
+  // Sort props so required ones are shown first.
+  if (showRequired) {
+    properties.sort((a, b) => {
+      if (!a.optional && b.optional) {
+        return -1;
+      }
+
+      if (a.optional && !b.optional) {
+        return 1;
+      }
+
+      return 0;
+    });
+  }
 
   return (
     <>

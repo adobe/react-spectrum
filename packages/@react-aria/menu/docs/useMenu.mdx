@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/menu';
-import collectionsDocs from 'docs:@react-stately/collections';
+import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import selectionDocs from 'docs:@react-stately/selection';
 import treeDocs from 'docs:@react-stately/tree';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
@@ -129,7 +129,7 @@ function Menu(props) {
 
   // Get props for the menu element
   let ref = React.useRef();
-  let {menuProps} = useMenu({...props, ref}, state);
+  let {menuProps} = useMenu(props, state, ref);
 
   return (
     <ul
@@ -157,10 +157,9 @@ function MenuItem({item, state, onAction}) {
   let ref = React.useRef();
   let {menuItemProps} = useMenuItem({
     key: item.key,
-    ref,
     isDisabled: item.isDisabled,
     onAction
-  }, state);
+  }, state, ref);
 
   // Handle focus events so we can apply highlighted
   // style to the focused menu item
@@ -206,7 +205,7 @@ import {useSeparator} from '@react-aria/separator';
 function Menu(props) {
   let state = useTreeState({...props, selectionMode: 'none'});
   let ref = React.useRef();
-  let {menuProps} = useMenu({...props, ref}, state);
+  let {menuProps} = useMenu(props, state, ref);
 
   return (
     <ul
@@ -288,10 +287,9 @@ function MenuItem({item, state, onAction}) {
   let ref = React.useRef();
   let {menuItemProps} = useMenuItem({
     key: item.key,
-    ref,
     isDisabled: item.isDisabled,
     onAction
-  }, state);
+  }, state, ref);
   let [isFocused, setFocused] = React.useState(false);
   let {focusProps} = useFocus({onFocusChange: setFocused});
 
@@ -348,7 +346,7 @@ function Menu(props) {
 ///- begin collapse -///
   let state = useTreeState({...props, selectionMode: 'none'});
   let ref = React.useRef();
-  let {menuProps} = useMenu({...props, ref}, state);
+  let {menuProps} = useMenu(props, state, ref);
 
   return (
     <ul
@@ -382,10 +380,9 @@ function MenuItem({item, state, onAction}) {
     keyboardShortcutProps
   } = useMenuItem({
     key: item.key,
-    ref,
     isDisabled: item.isDisabled,
     onAction
-  }, state);
+  }, state, ref);
 
   // Handle focus events so we can apply highlighted
   // style to the focused menu item
