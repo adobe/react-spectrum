@@ -195,15 +195,21 @@ governing permissions and limitations under the License.
 
 .spectrum-Dialog-buttonGroup {
   grid-area: buttonGroup;
-  /* this padding isn't built into the grid because it disappears with this buttonGroup */
-  padding-block-start: var(--spectrum-global-dimension-static-size-500);
   display: flex;
   justify-content: flex-end;
   /* this padding should be safe as button group is always end aligned */
   padding-inline-start: var(--spectrum-dialog-gap-size);
+  /* account for halo focus ring */
+  padding: calc(var(--spectrum-alias-focus-ring-gap) * 2);
+  /* this padding isn't built into the grid because it disappears with this buttonGroup */
+  padding-block-start: calc(calc(var(--spectrum-alias-focus-ring-gap) * 2) + var(--spectrum-global-dimension-static-size-500));
+  margin: calc(var(--spectrum-alias-focus-ring-gap) * -2);
+  /* fix so Firefox buttongroups properly calculate overflow and switch from horizontal to vertical when not enough room to render */
+  overflow: hidden;
 
   &.spectrum-Dialog-buttonGroup--noFooter {
     grid-area: footer-start / footer-start / buttonGroup-end / buttonGroup-end;
+    padding-inline-start: calc(var(--spectrum-alias-focus-ring-gap) * 2);
   }
 }
 
