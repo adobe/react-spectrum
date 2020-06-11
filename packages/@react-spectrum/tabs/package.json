@@ -33,6 +33,7 @@
     "@react-aria/tabs": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.1",
     "@react-stately/tabs": "^3.0.0-alpha.1",
+    "@react-types/shared": "3.0.0-rc.2",
     "classnames": "^2.2.5"
   },
   "devDependencies": {

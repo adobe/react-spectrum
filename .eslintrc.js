@@ -5,7 +5,7 @@ let rulesDirPlugin = require('eslint-plugin-rulesdir');
 rulesDirPlugin.RULES_DIR = './bin';
 
 module.exports = {
-  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', 'import', 'monorepo'],
+  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', 'monorepo'],
   extends: ['eslint:recommended'],
   parser: 'babel-eslint',
   parserOptions: {
@@ -16,7 +16,7 @@ module.exports = {
   },
   overrides: [{
     files: ['packages/**/*.ts', 'packages/**/*.tsx'],
-    plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', '@typescript-eslint', 'import', 'monorepo'],
+    plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', '@typescript-eslint', 'monorepo'],
     parser: '@typescript-eslint/parser',
     parserOptions: {
       ecmaFeatures: {
@@ -34,7 +34,7 @@ module.exports = {
   }, {
     files: ['**/test/**', '**/stories/**'],
     rules: {
-      'import/no-extraneous-dependencies': OFF,
+      'rulesdir/imports': OFF,
       'monorepo/no-internal-import': OFF
     }
   }],
@@ -49,13 +49,6 @@ module.exports = {
     'importSpectrumCSS': 'readonly',
     'jest': true,
     'expect': true
-  },
-  settings: {
-    'import/resolver': {
-      node: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
-      }
-    }
   },
   rules: {
     'comma-dangle': ERROR,
@@ -132,6 +125,7 @@ module.exports = {
 
     // custom rules
     'rulesdir/sort-imports': [ERROR],
+    'rulesdir/imports': [ERROR],
 
     // jsx-a11y rules
     'jsx-a11y/accessible-emoji': ERROR,
@@ -172,12 +166,6 @@ module.exports = {
     'jsx-a11y/media-has-caption': ERROR,
     'jsx-a11y/mouse-events-have-key-events': ERROR,
     'jsx-a11y/no-access-key': ERROR,
-    // 'jsx-a11y/no-autofocus': [
-    //   ERROR,
-    //   {
-    //     ignoreNonDOM: true
-    //   }
-    // ],
     'jsx-a11y/no-distracting-elements': ERROR,
     'jsx-a11y/no-interactive-element-to-noninteractive-role': ERROR,
     'jsx-a11y/no-noninteractive-element-interactions': [
@@ -247,7 +235,6 @@ module.exports = {
     'jsx-a11y/tabindex-no-positive': ERROR,
 
     // importing rules
-    'import/no-extraneous-dependencies': ERROR,
     'monorepo/no-internal-import': [
       ERROR,
       {
