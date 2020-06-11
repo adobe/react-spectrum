@@ -35,6 +35,7 @@
     "@react-spectrum/utils": "^3.0.0-rc.2",
     "@react-stately/searchfield": "^3.0.0-rc.2",
     "@react-types/searchfield": "^3.0.0-rc.2",
+    "@react-types/textfield": "3.0.0-rc.2",
     "@spectrum-icons/ui": "^3.0.0-rc.2"
   },
   "devDependencies": {

@@ -24,7 +24,9 @@
     "@react-aria/spinbutton": "^3.0.0-alpha.1",
     "@react-aria/utils": "^3.0.0-alpha.1",
     "@react-stately/datepicker": "^3.0.0-alpha.1",
+    "@react-types/button": "3.0.0-rc.2",
     "@react-types/datepicker": "^3.0.0-alpha.1",
+    "@react-types/dialog": "3.0.0-alpha.1",
     "@react-types/shared": "^3.0.0-alpha.1"
   },
   "peerDependencies": {

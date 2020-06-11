@@ -45,6 +45,8 @@
     "@react-stately/list": "^3.0.0-alpha.1",
     "@react-stately/virtualizer": "^3.0.0-alpha.1",
     "@react-types/listbox": "^3.0.0-alpha.1",
+    "@react-types/menu": "3.0.0-alpha.1",
+    "@react-types/shared": "3.0.0-rc.2",
     "@spectrum-icons/ui": "^3.0.0-rc.2"
   },
   "devDependencies": {

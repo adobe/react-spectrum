@@ -31,7 +31,8 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/utils": "^3.0.0-rc.2",
     "@react-spectrum/utils": "^3.0.0-rc.2",
-    "@react-types/image": "^3.0.0-alpha.1"
+    "@react-types/image": "^3.0.0-alpha.1",
+    "@react-types/shared": "3.0.0-rc.2"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
