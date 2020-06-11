@@ -55,7 +55,7 @@ storiesOf('ActionGroup', module)
   .add(
     'default',
     () => (
-      <Flex direction="column" gap="size-200" margin="size-100">
+      <Flex direction="column" gap="size-200" width="100%" margin="size-100">
         <ActionGroup onAction={action('onAction')}>
           {
             docItems.map((itemProps) => (
@@ -211,7 +211,7 @@ storiesOf('ActionGroup', module)
 
 function render(props, items) {
   return (
-    <Flex gap="size-300" margin="size-100" direction="column">
+    <Flex gap="size-300" margin="size-100" width="100%" direction="column">
       {renderText(props, items)}
       {renderBoth(props, items)}
       {renderIcons(props, items)}
