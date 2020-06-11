@@ -45,11 +45,6 @@ export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, St
    * @default 'L'
    */
   size?: 'S' | 'M' | 'L',
-  /**
-   * The current number of visible items before items are collapsed.
-   * @default 4
-   */
-  maxVisibleItems?: 'auto' | number,
   /** Whether to always show the root item if the items are collapsed. */
   showRoot?: boolean,
   /**
