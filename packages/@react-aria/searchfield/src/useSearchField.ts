@@ -70,7 +70,9 @@ export function useSearchField(
     }
   };
 
-  let onClearButtonClick = () => {
+  let onClearButtonClick = (e) => {
+    // prevent default so that in mobile it doesn't take the user out of the input and close the keyboard
+    e.preventDefault();
     state.setValue('');
     inputRef.current.focus();
 
