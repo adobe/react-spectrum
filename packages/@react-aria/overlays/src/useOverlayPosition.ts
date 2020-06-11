@@ -12,29 +12,41 @@
 
 import {calculatePosition, PositionResult} from './calculatePosition';
 import {HTMLAttributes, RefObject, useEffect, useState} from 'react';
-import {Placement, PlacementAxis} from '@react-types/overlays';
+import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {useLocale} from '@react-aria/i18n';
 
-export interface PositionProps {
-  placement?: Placement,
-  containerPadding?: number,
-  offset?: number,
-  crossOffset?: number,
-  shouldFlip?: boolean,
-  boundaryElement?: HTMLElement,
-  isOpen?: boolean
-}
-
 interface AriaPositionProps extends PositionProps {
+  /**
+   * Element that that serves as the positioning boundary.
+   * @default document.body
+   */
+  boundaryElement?: HTMLElement,
+  /**
+   * The ref for the element which the overlay positions itself with respect to.
+   */
   targetRef: RefObject<HTMLElement>,
+  /**
+   * The ref for the overlay element.
+   */
   overlayRef: RefObject<HTMLElement>,
+  /**
+   * TODO come up with a good description
+   * @default overlayRef
+   */
   scrollRef?: RefObject<HTMLElement>,
+  /**
+   * Whether the overlay should update its position automatically.
+   * @default true
+   */
   shouldUpdatePosition?: boolean
 }
 
 interface PositionAria {
+  /** Props for the overlay container element. */
   overlayProps: HTMLAttributes<Element>,
+  /** Props for the overlay tip arrow if any. */
   arrowProps: HTMLAttributes<Element>,
+  /** Placement of the overlay with respect to the overlay trigger. */
   placement: PlacementAxis
 }
 

@@ -34,7 +34,7 @@ interface ProgressBaseProps {
 export interface ProgressBarBaseProps extends ProgressBaseProps {
   /** The content to display as the label. */
   label?: ReactNode,
-  /** Whether the value's label is displayed */
+  /** Whether the value's label is displayed. */
   showValueLabel?: boolean, // true by default if label, false by default if not
   /** The display format of the value label. */
   formatOptions?: Intl.NumberFormatOptions, // defaults to formatting as a percentage.
