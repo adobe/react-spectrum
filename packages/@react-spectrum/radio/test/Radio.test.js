@@ -148,6 +148,10 @@ describe('Radios', function () {
       });
     }
 
+    expect(radios[0].value).toBe('dogs');
+    expect(radios[1].value).toBe('cats');
+    expect(radios[2].value).toBe('dragons');
+
     expect(radios[0].checked).toBe(false);
     expect(radios[1].checked).toBe(false);
     expect(radios[2].checked).toBe(false);
