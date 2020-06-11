@@ -41,15 +41,14 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
       setHasOverflow(false);
       let buttonGroupChildren = Array.from(domRef.current.children) as HTMLElement[];
       // Calculate negative margin added by focus ring gap in css
-      let marginStart = (parseInt(window.getComputedStyle(domRef.current)
-      .getPropertyValue('--spectrum-alias-focus-ring-gap'), 10) || 0) * 2;
+      let marginStart = (parseInt(window.getComputedStyle(domRef.current).marginLeft, 10) || 0);
       // Accomodate for negative margin added to button group
-      let maxX = domRef.current.offsetWidth - (marginStart || -1); // + 1 to account for rounding errors when marginStart is undef/null
+      let maxX = domRef.current.offsetWidth + (marginStart || 1); // + 1 to account for rounding errors when marginStart is undef/null
 
       // If any buttons have negative X positions (align="end") or extend beyond
       // the width of the button group (align="start"), then switch to vertical.
       // Accomodate for negative margin when checking child.offsetLeft
-      if (buttonGroupChildren.some(child => child.offsetLeft < marginStart || child.offsetLeft + child.offsetWidth > maxX)) {
+      if (buttonGroupChildren.some(child => child.offsetLeft < (-1 * marginStart) || child.offsetLeft + child.offsetWidth > maxX)) {
         setHasOverflow(true);
       }
     }
