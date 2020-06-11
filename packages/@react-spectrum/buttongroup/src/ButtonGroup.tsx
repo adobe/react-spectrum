@@ -42,7 +42,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
       let buttonGroupChildren = Array.from(domRef.current.children) as HTMLElement[];
       // Calculate negative margin added by focus ring gap in css
       let marginStart = (parseInt(window.getComputedStyle(domRef.current)
-      .getPropertyValue('--spectrum-alias-focus-ring-gap')) || 0) * 2;
+      .getPropertyValue('--spectrum-alias-focus-ring-gap'), 10) || 0) * 2;
       // Accomodate for negative margin added to button group
       let maxX = domRef.current.offsetWidth - (marginStart || -1); // + 1 to account for rounding errors when marginStart is undef/null
 
