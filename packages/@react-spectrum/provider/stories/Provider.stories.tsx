@@ -13,6 +13,7 @@
 import {Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import customTheme from './custom-theme.css';
+import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '../';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
@@ -62,10 +63,6 @@ storiesOf('Provider', module)
     )
   )
   .add(
-    'locale: cs-CZ',
-    () => render({locale: 'cs-CZ'})
-  )
-  .add(
     'isQuiet',
     () => render({isQuiet: true})
   )
@@ -94,9 +91,9 @@ function render(props = {}) {
   return (
     <Provider {...props} UNSAFE_style={{padding: 50}}>
       <Form onSubmit={e => e.preventDefault()}>
-        <div> {/* Extra div so that the button does not expand to 100% width */}
+        <Flex> {/* Extra div via Flex so that the button does not expand to 100% width */}
           <Button variant="primary">I am a button</Button>
-        </div>
+        </Flex>
         <TextField
           label="A text field"
           placeholder="Something"

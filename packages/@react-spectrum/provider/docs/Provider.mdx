@@ -83,15 +83,17 @@ import {theme} from '@react-spectrum/theme-default';
 
 The `locale` prop can be set to specify a locale for children of the Provider.
 The default for the locale prop is based on the system/browser settings.
+The `locale` prop does not support nesting. It must be the same across the page and all `lang`/`dir` attributes in the dom must match.
+See this list of supported [locales](../react-aria/internationalization#supported-locales).
 
 ```tsx example
-<Provider locale="ar-AE">
+<Provider locale="en-US">
   <Form onSubmit={e => e.preventDefault()} necessityIndicator="label">
     <div>
-      <TextField label="البريد الإلكتروني" />
+      <TextField label="email" />
     </div>
     <div>
-      <Button variant="primary">حفظ</Button>
+      <Button variant="primary">Button</Button>
     </div>
   </Form>
 </Provider>

@@ -16,7 +16,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import {I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/overlays';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {
   shouldKeepSpectrumClassNames,
   useDOMRef,
@@ -145,6 +145,19 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
     // See https://web.dev/color-scheme/.
     colorScheme: props.colorScheme ?? Object.keys(theme).filter(k => k === 'light' || k === 'dark').join(' ')
   };
+
+  let hasWarned = useRef(false);
+  useEffect(() => {
+    if (locale && domRef.current) {
+      let closestLang = domRef.current.parentElement.closest('[lang]');
+      let lang = closestLang && closestLang.getAttribute('lang');
+      if (lang && lang !== locale && !hasWarned.current) {
+        console.warn(`Locales cannot be nested. ${locale} inside ${lang}.`);
+        hasWarned.current = true;
+      }
+    }
+  }, [locale, domRef, hasWarned]);
+
 
   return (
     <div

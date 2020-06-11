@@ -69,15 +69,23 @@ governing permissions and limitations under the License.
   > .spectrum-ActionButton {
     margin-inline-end: var(--spectrum-breadcrumb-button-gap);
   }
+
+  /* last breadcrumb should truncate with an ellipsis */
+  &:last-child {
+    overflow: hidden;
+    .spectrum-Breadcrumbs-itemLink {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
 }
 
 .spectrum-Breadcrumbs-itemLink {
   cursor: default;
   position: relative;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: start;
+  line-height: var(--spectrum-breadcrumb-list-height);
+  vertical-align: middle;
 
   padding: 0 var(--spectrum-breadcrumb-item-padding-x);
   height: var(--spectrum-breadcrumb-list-height);
