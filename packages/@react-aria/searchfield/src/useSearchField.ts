@@ -70,15 +70,17 @@ export function useSearchField(
     }
   };
 
-  let onClearButtonClick = (e) => {
-    // prevent default so that in mobile it doesn't take the user out of the input and close the keyboard
-    e.preventDefault();
+  let onClearButtonClick = () => {
     state.setValue('');
     inputRef.current.focus();
 
     if (onClear) {
       onClear();
     }
+  };
+
+  let onPressStart = () => {
+    inputRef.current.focus();
   };
 
   let {labelProps, inputProps} = useTextField({
@@ -95,7 +97,8 @@ export function useSearchField(
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),
       tabIndex: -1,
-      onPress: onClearButtonClick
+      onPress: onClearButtonClick,
+      onPressStart
     }
   };
 }
