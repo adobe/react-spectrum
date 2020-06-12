@@ -273,8 +273,15 @@ function bumpVersions(versions) {
       let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
       if (!pkg.private) {
         pkg = insertKey(pkg, 'license', 'private', true);
-        fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
       }
+
+      for (let dep in pkg.dependencies) {
+        if (versions.has(dep)) {
+          pkg.dependencies[dep] = versions.get(dep)[1];
+        }
+      }
+
+      fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
     }
   }
 }
