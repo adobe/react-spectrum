@@ -69,6 +69,7 @@ interface SelectableCollectionOptions {
 }
 
 interface SelectableCollectionAria {
+  /** Props for the collection element. */
   collectionProps: HTMLAttributes<HTMLElement>
 }
 
