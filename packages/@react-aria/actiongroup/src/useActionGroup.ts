@@ -11,10 +11,10 @@
  */
 
 import {ActionGroupKeyboardDelegate} from './ActionGroupKeyboardDelegate';
-import {ActionGroupState} from '@react-stately/actiongroup';
 import {AriaActionGroupProps} from '@react-types/actiongroup';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useMemo, useState} from 'react';
+import {ListState} from '@react-stately/list';
 import {Orientation} from '@react-types/shared';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
@@ -30,9 +30,8 @@ export interface ActionGroupAria {
   actionGroupProps: HTMLAttributes<HTMLElement>
 }
 
-export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ActionGroupState<T>, ref: RefObject<HTMLElement>): ActionGroupAria {
+export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListState<T>, ref: RefObject<HTMLElement>): ActionGroupAria {
   let {
-    selectionMode = 'single',
     isDisabled,
     orientation = 'horizontal' as Orientation
   } = props;
@@ -56,7 +55,7 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ActionG
   });
   let tabIndex = isFocusWithin ? -1 : 0;
 
-  let role = BUTTON_GROUP_ROLES[selectionMode];
+  let role = BUTTON_GROUP_ROLES[state.selectionManager.selectionMode];
   return {
     actionGroupProps: {
       ...filterDOMProps(props, {labelable: true}),

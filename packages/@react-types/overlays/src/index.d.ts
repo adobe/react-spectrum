@@ -25,7 +25,7 @@ export type PlacementAxis = Axis | 'center';
 export interface PositionProps {
   /**
    * The placement of the element with respect to its anchor element.
-   * @default "bottom"
+   * @default 'bottom'
    */
   placement?: Placement,
   /**
@@ -96,4 +96,13 @@ export interface TrayProps extends StyleProps, OverlayProps {
   isOpen?: boolean,
   onClose?: () => void,
   shouldCloseOnBlur?: boolean
+}
+
+export interface OverlayTriggerProps {
+  /** Whether the overlay is open by default (controlled). */
+  isOpen?: boolean,
+  /** Whether the overlay is open by default (uncontrolled). */
+  defaultOpen?: boolean,
+  /** Handler that is called when the overlay's open state changes. */
+  onOpenChange?: (isOpen: boolean) => void
 }

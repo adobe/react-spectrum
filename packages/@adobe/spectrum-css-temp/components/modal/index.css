@@ -72,6 +72,7 @@ governing permissions and limitations under the License.
   /* Don't be bigger than the screen */
   max-height: var(--spectrum-dialog-max-height);
   max-width: 90vw;
+  min-width: var(--spectrum-dialog-min-width);
 
   border-radius: var(--spectrum-dialog-border-radius);
   outline: none; /* Firefox shows outline */

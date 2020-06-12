@@ -23,8 +23,8 @@ interface AsyncListOptions<T, C> {
   getKey?: (item: T) => Key,
   /** A function that loads the data for the items in the list. */
   load: AsyncListLoadFunction<T, C>,
-  /** 
-   * An optional function that performs sorting. If not provided, 
+  /**
+   * An optional function that performs sorting. If not provided,
    * then `sortDescriptor` is passed to the `load` function.
    */
   sort?: AsyncListLoadFunction<T, C>
@@ -32,17 +32,26 @@ interface AsyncListOptions<T, C> {
 
 type AsyncListLoadFunction<T, C> = (state: AsyncListLoadOptions<T, C>) => Promise<AsyncListStateUpdate<T, C>>;
 interface AsyncListLoadOptions<T, C> {
+  /** The items currently in the list. */
   items: T[],
+  /** The keys of the currently selected items in the list. */
   selectedKeys: Selection,
+  /** The current sort descriptor for the list. */
   sortDescriptor: SortDescriptor,
+  /** An abort signal used to notify the load function that the request has been aborted. */
   signal: AbortSignal,
+  /** The pagination cursor returned from the last page load. */
   cursor?: C
 }
 
 interface AsyncListStateUpdate<T, C> {
+  /** The new items to append to the list. */
   items: Iterable<T>,
+  /** The keys to add to the selection. */
   selectedKeys?: Iterable<Key>,
+  /** The sort descriptor to set. */
   sortDescriptor?: SortDescriptor,
+  /** The pagination cursor to be used for the next page load. */
   cursor?: C
 }
 
@@ -87,7 +96,7 @@ interface AsyncListData<T> extends ListData<T> {
   /** Loads the next page of data in the list. */
   loadMore(): void,
   /** Triggers sorting for the list. */
-  sort(desc: SortDescriptor): void
+  sort(descriptor: SortDescriptor): void
 }
 
 function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncListState<T, C> {
@@ -116,7 +125,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           return data;
         default:
           throw new Error(`Invalid action "${action.type}" in state "${data.state}"`);
-      }  
+      }
     case 'loading':
     case 'sorting':
       switch (action.type) {
@@ -172,7 +181,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             ...data,
             state: 'idle',
             items: [...data.items, ...action.items],
-            selectedKeys: new Set(action.selectedKeys ?? data.selectedKeys),
+            selectedKeys: new Set([...data.selectedKeys, ...(action.selectedKeys ?? [])]),
             sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
             abortController: null,
             cursor: action.cursor

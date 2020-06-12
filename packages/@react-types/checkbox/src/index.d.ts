@@ -21,7 +21,7 @@ import {
 } from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface CheckboxBase extends InputBase, Validation, FocusableProps {
+export interface ToggleProps extends InputBase, Validation, FocusableProps {
   children?: ReactNode, // pass in children to render label
   defaultSelected?: boolean,
   isSelected?: boolean,
@@ -30,14 +30,14 @@ export interface CheckboxBase extends InputBase, Validation, FocusableProps {
   name?: string
 }
 
-export interface AriaCheckboxBase extends CheckboxBase, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {
+export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {
   /**
    * Identifies the element (or elements) whose contents or presence are controlled by the current element.
    */
   'aria-controls'?: string
 }
 
-export interface CheckboxProps extends CheckboxBase {
+export interface CheckboxProps extends ToggleProps {
   /**
    * Indeterminism is presentational only.
    * The indeterminate visual representation remains regardless of user interaction.
@@ -45,7 +45,7 @@ export interface CheckboxProps extends CheckboxBase {
   isIndeterminate?: boolean
 }
 
-export interface AriaCheckboxProps extends CheckboxProps, AriaCheckboxBase {}
+export interface AriaCheckboxProps extends CheckboxProps, AriaToggleProps {}
 
 export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
   /**

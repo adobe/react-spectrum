@@ -41,7 +41,6 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
       setHasOverflow(false);
       let buttonGroupChildren = Array.from(domRef.current.children) as HTMLElement[];
       let maxX = domRef.current.offsetWidth + 1; // + 1 to account for rounding errors
-
       // If any buttons have negative X positions (align="end") or extend beyond
       // the width of the button group (align="start"), then switch to vertical.
       if (buttonGroupChildren.some(child => child.offsetLeft < 0 || child.offsetLeft + child.offsetWidth > maxX)) {

@@ -15,8 +15,10 @@ import {Locale, useDefaultLocale} from './useDefaultLocale';
 import React, {ReactNode, useContext} from 'react';
 
 interface ProviderProps {
-  locale?: string,
-  children: ReactNode
+  /** Contents that should have the locale applied. */
+  children: ReactNode,
+  /** The locale to apply to the children. */
+  locale?: string
 }
 
 const I18nContext = React.createContext<Locale>(null);

@@ -63,11 +63,11 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
   });
 
   let {focusableProps} = useFocusable(mergeProps(props, {
-    onFocus: () => state.setFocusableRadio(value)
+    onFocus: () => state.setLastFocusedValue(value)
   }), ref);
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
-  let tabIndex = state.focusableRadio === value || state.focusableRadio == null ? 0 : -1;
+  let tabIndex = state.lastFocusedValue === value || state.lastFocusedValue == null ? 0 : -1;
   if (isDisabled) {
     tabIndex = undefined;
   }
@@ -82,6 +82,7 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
       readOnly: isReadOnly,
       required: isRequired,
       checked,
+      value,
       onChange
     })
   };
