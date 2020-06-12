@@ -61,7 +61,8 @@ let publicPackages = {
   '@react-spectrum/well': 'rc',
   '@spectrum-icons/color': 'rc',
   '@spectrum-icons/workflow': 'rc',
-  '@spectrum-icons/illustrations': 'rc'
+  '@spectrum-icons/illustrations': 'rc',
+  '@react-stately/data': 'rc'
 };
 
 // Packages never to release
@@ -80,16 +81,28 @@ let releasedPackages = new Map();
 // Otherwise, add all public packages and their dependencies.
 let arg = process.argv[process.argv.length - 1];
 if (arg.startsWith('@')) {
-  if (!info[arg]) {
+  if (!info[arg] || !publicPackages[arg]) {
     throw new Error('Invalid package ' + arg);
   }
 
-  let addPackage = (pkg) => {
-    if (excludedPackages.has(pkg) || releasedPackages.has(pkg)) {
+  let addPackage = (pkg, status) => {
+    if (excludedPackages.has(pkg)) {
       return;
     }
 
-    releasedPackages.set(pkg, info[pkg].location);
+    if (releasedPackages.has(pkg)) {
+      let cur = releasedPackages.get(pkg);
+      if (levels[status] > levels[cur.level]) {
+        cur.status = status;
+      }
+
+      return;
+    }
+
+    releasedPackages.set(pkg, {
+      location: info[pkg].location,
+      status
+    });
 
     for (let p in info) {
       if (releasedPackages.has(p)) {
@@ -97,12 +110,18 @@ if (arg.startsWith('@')) {
       }
 
       if (info[p].workspaceDependencies.includes(pkg)) {
-        addPackage(p);
+        addPackage(p, status);
       }
     }
   };
 
-  addPackage(arg);
+  addPackage(arg, publicPackages[arg]);
+
+  for (let pkg in info) {
+    if (!releasedPackages.has(pkg)) {
+      excludedPackages.add(pkg);
+    }
+  }
 } else {
   let addPackage = (pkg, status) => {
     if (excludedPackages.has(pkg)) {
