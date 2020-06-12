@@ -20,6 +20,7 @@ governing permissions and limitations under the License.
   align-items: center;
   width: var(--spectrum-barloader-large-width);
   vertical-align: top;
+  isolation: isolate;
 }
 
 .spectrum-BarLoader-track {
