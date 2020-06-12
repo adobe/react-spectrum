@@ -54,7 +54,7 @@ let publicPackages = {
 };
 
 // Packages never to release
-let blackList = new Set([
+let excludedPackages = new Set([
   '@adobe/spectrum-css-temp',
   '@react-spectrum/test-utils',
   '@spectrum-icons/build-tools'
@@ -74,7 +74,7 @@ if (arg.startsWith('@')) {
   }
 
   let addPackage = (pkg) => {
-    if (blackList.has(pkg) || releasedPackages.has(pkg)) {
+    if (excludedPackages.has(pkg) || releasedPackages.has(pkg)) {
       return;
     }
 

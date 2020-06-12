@@ -88,6 +88,7 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
       readOnly: isReadOnly,
       required: isRequired,
       checked,
+      value,
       onChange
     })
   };
