@@ -34,12 +34,37 @@ function isCtrlKeyPressed(e: KeyboardEvent) {
 }
 
 interface SelectableCollectionOptions {
+  /**
+   * An interface for reading and updating multiple selection state.
+   */
   selectionManager: MultipleSelectionManager,
+  /**
+   * A delegate that returns collection item keys with respect to visual layout.
+   */
   keyboardDelegate: KeyboardDelegate,
+  /**
+   * The ref attached to the element representing the collection.
+   */
   ref: RefObject<HTMLElement>,
+  /**
+   * Whether the collection or one of its items should be automatically focused upon render.
+   * @default false
+   */
   autoFocus?: boolean | FocusStrategy,
+  /**
+   * Whether focus should wrap around when the end/start is reached.
+   * @default false
+   */
   shouldFocusWrap?: boolean,
+  /**
+   * Whether the collection allows empty selection.
+   * @default false
+   */
   disallowEmptySelection?: boolean,
+  /**
+   * Whether the collection allows the user to select all items via keyboard shortcut.
+   * @default false
+   */
   disallowSelectAll?: boolean
 }
 
