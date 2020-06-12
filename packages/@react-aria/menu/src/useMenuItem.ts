@@ -11,10 +11,10 @@
  */
 
 import {HTMLAttributes, Key, RefObject} from 'react';
+import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {mergeProps, useSlotId} from '@react-aria/utils';
 import {PressEvent} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
-import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface MenuItemAria {
@@ -149,16 +149,17 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   let {hoverProps} = useHover({
     isDisabled,
     onHoverStart() {
-      state.selectionManager.setFocused(true);
-      state.selectionManager.setFocusedKey(key);
+      if (!isFocusVisible()) {
+        state.selectionManager.setFocused(true);
+        state.selectionManager.setFocusedKey(key);
+      }
     }
   });
 
   return {
     menuItemProps: {
       ...ariaProps,
-      ...pressProps,
-      ...hoverProps
+      ...mergeProps(pressProps, hoverProps)
     },
     labelProps: {
       id: labelId
