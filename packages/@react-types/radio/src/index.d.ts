@@ -36,7 +36,7 @@ export interface RadioGroupProps extends ValueBase<string>, InputBase, Validatio
    */
   orientation?: Orientation,
   /**
-   * The unique identifying name of the RadioGroup that is applied to the Radios within the group. It is not a displayed value.
+   * The unique identifying name of the RadioGroup that is applied to the Radios within the group.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#name_and_radio_buttons).
    */
   name?: string
@@ -44,13 +44,14 @@ export interface RadioGroupProps extends ValueBase<string>, InputBase, Validatio
 
 export interface RadioProps extends FocusableProps {
   /**
-   * The value of the radio button, used to identify it in a RadioGroup. It is not a displayed value.
+   * The value of the radio button, used to identify it in a RadioGroup.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio#Value).
    */
   value: string,
   /**
    * The label for the Radio. Accepts any renderable node.
    */
-  children?: ReactNode, // pass in children to render label
+  children?: ReactNode,
   /**
    * Whether the radio button is disabled or not.
    * Shows that a selection exists, but is not available in that circumstance.
