@@ -68,7 +68,7 @@ const GROUPS = {
     'color'
   ],
   Accessibility: [
-    'role', 'id', 'tabIndex', /^aria-/
+    'role', 'id', 'tabIndex', 'excludeFromTabOrder', /^aria-/
   ],
   Advanced: [
     'UNSAFE_className', 'UNSAFE_style'

@@ -37,7 +37,6 @@ export interface LinkAria {
  */
 export function useLink(props: AriaLinkOptions, ref: RefObject<HTMLElement>): LinkAria {
   let {
-    tabIndex,
     elementType = 'a',
     onPress,
     onPressStart,
@@ -52,7 +51,7 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<HTMLElement>): Li
   if (elementType !== 'a') {
     linkProps = {
       role: 'link',
-      tabIndex: !isDisabled ? (tabIndex || 0) : undefined
+      tabIndex: !isDisabled ? 0 : undefined
     };
   }
 
@@ -61,7 +60,6 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<HTMLElement>): Li
 
   return {
     linkProps: mergeProps(domProps, {
-      tabIndex,
       ...pressProps,
       ...linkProps,
       'aria-disabled': isDisabled || undefined,

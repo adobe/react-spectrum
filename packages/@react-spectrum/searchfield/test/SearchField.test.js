@@ -280,8 +280,8 @@ describe('Search', () => {
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
     ${'v2 SearchField'} | ${V2SearchField}
-  `('$Name should support tabIndex', ({Component}) => {
-    let tree = renderComponent(Component, {tabIndex: -1});
+  `('$Name should support excludeFromTabOrder', ({Component}) => {
+    let tree = renderComponent(Component, {excludeFromTabOrder: true});
     expect(tree.getByRole('searchbox')).toHaveAttribute('tabIndex', '-1');
   });
 });
