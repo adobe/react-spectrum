@@ -113,6 +113,7 @@ describe('useSearchField hook', () => {
       let mockEvent = {blah: 1};
       it('sets the state to "" and focuses the search field', () => {
         let {clearButtonProps} = renderSearchHook({});
+        clearButtonProps.onPressStart(mockEvent);
         clearButtonProps.onPress(mockEvent);
         expect(state.setValue).toHaveBeenCalledTimes(1);
         expect(state.setValue).toHaveBeenCalledWith('');
@@ -121,6 +122,7 @@ describe('useSearchField hook', () => {
 
       it('calls the user provided onClear if provided', () => {
         let {clearButtonProps} = renderSearchHook({onClear});
+        clearButtonProps.onPressStart(mockEvent);
         clearButtonProps.onPress(mockEvent);
         // Verify that onClearButtonClick stuff still triggers
         expect(state.setValue).toHaveBeenCalledTimes(1);

@@ -23,13 +23,10 @@ interface MenuAria {
 }
 
 interface AriaMenuOptions<T> extends AriaMenuProps<T> {
-  /** A ref to the menu container element. */
-  ref?: RefObject<HTMLElement>,
-
   /** Whether the menu uses virtual scrolling. */
   isVirtualized?: boolean,
 
-  /** 
+  /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
@@ -42,7 +39,7 @@ interface AriaMenuOptions<T> extends AriaMenuProps<T> {
  * @param props - props for the menu
  * @param state - state for the menu, as returned by `useListState`
  */
-export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>): MenuAria {
+export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuAria {
   let {
     shouldFocusWrap = true,
     ...otherProps
@@ -55,6 +52,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>): Menu
   let domProps = filterDOMProps(props, {labelable: true});
   let {listProps} = useSelectableList({
     ...otherProps,
+    ref,
     selectionManager: state.selectionManager,
     collection: state.collection,
     disabledKeys: state.disabledKeys,

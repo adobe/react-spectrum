@@ -83,13 +83,13 @@ storiesOf('DialogTrigger', module)
       <div style={{paddingTop: 100}}>
         <input />
         <Provider colorScheme="dark" UNSAFE_style={{padding: 40, marginTop: 10}}>
-          <DialogTrigger>
+          <DialogTrigger isDismissable>
             <ActionButton>Trigger</ActionButton>
             <Dialog>
               <Content>
                 <input />
                 <input />
-                <DialogTrigger>
+                <DialogTrigger isDismissable>
                   <ActionButton>Trigger</ActionButton>
                   <Dialog>
                     <Content>

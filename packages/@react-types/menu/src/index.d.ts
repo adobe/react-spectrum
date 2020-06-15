@@ -12,10 +12,11 @@
 
 import {Alignment, AriaLabelingProps, CollectionBase, DOMProps, MultipleSelection, StyleProps} from '@react-types/shared';
 import {Key, ReactElement} from 'react';
+import {OverlayTriggerProps} from '@react-types/overlays';
 
 export type FocusStrategy = 'first' | 'last';
 
-export interface MenuTriggerProps {
+export interface MenuTriggerProps extends OverlayTriggerProps {
   // trigger?: 'press' | 'longPress',
   /** Where the Menu aligns with its trigger. */
   align?: Alignment,
@@ -23,12 +24,6 @@ export interface MenuTriggerProps {
   direction?: 'bottom' | 'top',
   /** Whether the Menu closes when a selection is made. */
   closeOnSelect?: boolean,
-  /** Whether the Menu loads open (controlled). */
-  isOpen?: boolean,
-  /** Whether the Menu loads open (uncontrolled). */
-  defaultOpen?: boolean,
-  /** Handler that is called when the Menu opens or closes. */
-  onOpenChange?: (isOpen: boolean) => void,
   /**
    * Whether the element should flip its orientation when there is insufficient
    * space for it to render within the view.

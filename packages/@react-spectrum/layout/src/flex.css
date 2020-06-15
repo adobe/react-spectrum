@@ -28,7 +28,8 @@
   margin: calc(var(--row-gap) / -2) calc(var(--column-gap) / -2);
 
   /* increase the width and height to account for this margin */
-  width: calc(100% + var(--column-gap));
+  /* Add 1px to fix rounding error in Safari (╯°□°)╯︵ ┻━┻ */
+  width: calc(100% + calc(var(--column-gap) + 1px));
   height: calc(100% + var(--row-gap));
 }
 

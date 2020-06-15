@@ -21,7 +21,7 @@ import {useControlledState} from '@react-stately/utils';
  */
 export function useMultipleSelectionState(props: MultipleSelection): MultipleSelectionState {
   let {
-    selectionMode = 'multiple' as SelectionMode,
+    selectionMode = 'none' as SelectionMode,
     disallowEmptySelection
   } = props;
 

@@ -66,7 +66,7 @@ export function useToast(props: ToastAriaProps, state: ToastState): ToastAria {
   };
 
   let {hoverProps} = useHover({
-    onHover: pauseTimer,
+    onHoverStart: pauseTimer,
     onHoverEnd: resumeTimer
   });
 

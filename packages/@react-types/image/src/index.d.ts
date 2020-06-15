@@ -14,35 +14,23 @@ import {DOMProps, StyleProps} from '@react-types/shared';
 
 export interface ImageProps {
   /**
-   * Whether the Image should be displayed with a loaded style.
+   * The URL of the image.
    */
-  loaded?: boolean,
+  src: string,
   /**
-   * Whether the Image should be displayed with a placeholder style.
+   * Text description of the image.
    */
-  isPlaceholder?: boolean,
+  alt: string,
   /**
    * Sets the Image [object-fit](https://developer.mozilla.org/en-US/docs/Web/CSS/object-fit) style.
    */
   objectFit?: any, // move to styleProps for images and type better
-  /**
-   * The URL of the image.
-   */
-  src?: string,
-  /**
-   * Whether the Image should be decorative and not have an `alt` property.
-   */
-  decorative?: boolean,
-  /**
-   * Text description of the image.
-   */
-  alt?: string,
 }
 
 export interface SpectrumImageProps extends ImageProps, DOMProps, StyleProps {
   /**
    * A slot to place the image in.
-   * @default "image"
+   * @default 'image'
    */
   slot?: string
 }

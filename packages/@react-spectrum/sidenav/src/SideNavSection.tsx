@@ -11,7 +11,7 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {layoutInfoToStyle, useCollectionItem} from '@react-aria/collections';
+import {layoutInfoToStyle, useVirtualizerItem} from '@react-aria/virtualizer';
 import React, {Fragment, useRef} from 'react';
 import {SideNavSectionProps} from '@react-types/sidenav';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
@@ -27,7 +27,7 @@ export function SideNavSection<T>(props: SideNavSectionProps<T>) {
   });
 
   let headerRef = useRef();
-  useCollectionItem({
+  useVirtualizerItem({
     reusableView: header,
     ref: headerRef
   });

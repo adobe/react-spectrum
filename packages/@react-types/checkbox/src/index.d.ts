@@ -21,23 +21,41 @@ import {
 } from '@react-types/shared';
 import {ReactNode} from 'react';
 
-export interface CheckboxBase extends InputBase, Validation, FocusableProps {
-  children?: ReactNode, // pass in children to render label
+export interface ToggleProps extends InputBase, Validation, FocusableProps {
+  /**
+   * The content to render as the element's label.
+   */
+  children?: ReactNode,
+  /**
+   * Whether the element should be selected (uncontrolled).
+   */
   defaultSelected?: boolean,
+  /**
+   * Whether the element should be selected (controlled).
+   */
   isSelected?: boolean,
+  /**
+   * Handler that is called when the element's selection state changes.
+   */
   onChange?: (isSelected: boolean) => void,
-  value?: string, // dom prop for input element
+  /**
+   * The value of the input element. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
+   */
+  value?: string,
+  /**
+   * The name of the input element. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
   name?: string
 }
 
-export interface AriaCheckboxBase extends CheckboxBase, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {
+export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {
   /**
    * Identifies the element (or elements) whose contents or presence are controlled by the current element.
    */
   'aria-controls'?: string
 }
 
-export interface CheckboxProps extends CheckboxBase {
+export interface CheckboxProps extends ToggleProps {
   /**
    * Indeterminism is presentational only.
    * The indeterminate visual representation remains regardless of user interaction.
@@ -45,7 +63,7 @@ export interface CheckboxProps extends CheckboxBase {
   isIndeterminate?: boolean
 }
 
-export interface AriaCheckboxProps extends CheckboxProps, AriaCheckboxBase {}
+export interface AriaCheckboxProps extends CheckboxProps, AriaToggleProps {}
 
 export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
   /**

@@ -134,9 +134,12 @@ module.exports = new Transformer({
           return newTree;
         }
 
-        toc = treeConverter(fullToc, true);
-        title = toc[0].textContent;
-        toc = toc[0].children;
+        // Sometimes pages do not have any notable md structure -- just jsx
+        if (fullToc) {
+          toc = treeConverter(fullToc || {}, true);
+          title = toc[0].textContent;
+          toc = toc[0].children;
+        }
 
         /*
          * Piggy back here to grab additional metadata.
@@ -144,6 +147,8 @@ module.exports = new Transformer({
         let metadata = node.children.find(c => c.type === 'yaml');
         if (metadata) {
           let yamlData = yaml.safeLoad(metadata.value);
+          // title defined in yaml data will override
+          title = yamlData.title || title;
           category = yamlData.category || '';
           keywords = yamlData.keywords || [];
           description = yamlData.description || '';
