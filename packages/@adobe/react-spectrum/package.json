@@ -38,6 +38,7 @@
     "@react-spectrum/switch": "3.0.0-rc.3",
     "@react-spectrum/text": "3.0.0-rc.0",
     "@react-spectrum/textfield": "3.0.0-rc.3",
+    "@react-spectrum/theme-dark": "3.0.0-rc.0",
     "@react-spectrum/theme-default": "3.0.0-rc.3",
     "@react-spectrum/utils": "3.0.0-rc.3",
     "@react-spectrum/view": "3.0.0-rc.0",
