@@ -30,8 +30,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-spectrum/layout": "3.0.0-alpha.1",
-    "@react-spectrum/theme-default": "3.0.0-rc.2"
+    "@react-spectrum/layout": "3.0.0-rc.0",
+    "@react-spectrum/theme-default": "3.0.0-rc.3"
   },
   "peerDependencies": {
     "@react-spectrum/provider": "3.0.0-rc.2",
@@ -39,9 +39,9 @@
     "react": "^16.8.0"
   },
   "devDependencies": {
-    "@react-spectrum/layout": "^3.0.0-alpha.1",
+    "@react-spectrum/layout": "^3.0.0-rc.0",
     "@react-spectrum/provider": "^3.0.0-rc.1",
-    "@react-spectrum/theme-default": "^3.0.0-rc.2",
+    "@react-spectrum/theme-default": "^3.0.0-rc.3",
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
   },
   "publishConfig": {

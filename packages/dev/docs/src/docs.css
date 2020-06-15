@@ -447,14 +447,25 @@ h2.sectionHeader {
 .pageHeader {
   position: fixed;
   top: 0;
-  left: 0;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 8px;
   box-sizing: border-box;
   height: var(--spectrum-global-dimension-size-600);
-  width: 100%;
+  [dir='ltr'] & {
+    right: 0;
+  }
+  [dir='rtl'] & {
+    left: 0;
+  }
+}
+
+.themeSwitcher {
+
+}
+.hamburger {
+  display: none;
 }
 
 .responsiveVideo {
@@ -592,6 +603,11 @@ h2.sectionHeader {
     border-bottom: 1px solid var(--spectrum-global-color-gray-200);
     background: var(--page-background);
     z-index: 50;
+    display: flex;
+    width: 100%;
+  }
+  .hamburger {
+    display: inline-flex;
   }
 
   /* Expand the component description to full width */

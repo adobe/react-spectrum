@@ -22,7 +22,7 @@ let title = document.querySelector('h1');
 // Size the title to fit the available space.
 function updateTitleFontSize() {
   let fontSize = parseInt(window.getComputedStyle(title).fontSize, 10);
-  
+
   // Constrain font size to 58px, or 10% of the window width, whichever is smaller.
   let maxFontSize = Math.min(58, Math.round(window.innerWidth * 0.1));
   if (fontSize > maxFontSize) {
@@ -76,7 +76,7 @@ function Hamburger() {
   }, []);
 
   return (
-    <ActionButton onPress={onPress} aria-label="Open navigation panel">
+    <ActionButton onPress={onPress} UNSAFE_className={docsStyle.hamburger} aria-label="Open navigation panel">
       <ShowMenu />
     </ActionButton>
   );
