@@ -19,6 +19,17 @@ function Example(props) {
   return <div {...hoverProps}>test</div>;
 }
 
+function pointerEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true});
+  Object.assign(evt, {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    button: opts.button || 0
+  }, opts);
+  return evt;
+}
+
 describe('useHover', function () {
   it('does not handle hover events if disabled', function () {
     let events = [];
@@ -28,7 +39,7 @@ describe('useHover', function () {
         isDisabled
         onHoverEnd={addEvent}
         onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
-        onHover={addEvent} />
+        onHoverStart={addEvent} />
     );
 
     let el = res.getByText('test');
@@ -36,6 +47,69 @@ describe('useHover', function () {
     fireEvent.mouseLeave(el);
 
     expect(events).toEqual([]);
+  });
+
+  describe('pointer events', function () {
+    beforeEach(() => {
+      global.PointerEvent = {};
+    });
+
+    afterEach(() => {
+      delete global.PointerEvent;
+    });
+
+    it('should fire hover events based on pointer events', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
+
+      expect(events).toEqual([
+        {
+          type: 'hoverstart',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: true
+        },
+        {
+          type: 'hoverend',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: false
+        }
+      ]);
+    });
+
+    it('should not fire hover events when pointerType is touch', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerover', {pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerout', {pointerType: 'touch'}));
+
+      expect(events).toEqual([]);
+    });
   });
 
   describe('mouse events', function () {
@@ -46,7 +120,7 @@ describe('useHover', function () {
         <Example
           onHoverEnd={addEvent}
           onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
-          onHover={addEvent} />
+          onHoverStart={addEvent} />
       );
 
       let el = res.getByText('test');
@@ -55,7 +129,7 @@ describe('useHover', function () {
 
       expect(events).toEqual([
         {
-          type: 'hover',
+          type: 'hoverstart',
           target: el,
           pointerType: 'mouse'
         },
@@ -84,13 +158,15 @@ describe('useHover', function () {
         <Example
           onHoverEnd={addEvent}
           onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})}
-          onHover={addEvent} />
+          onHoverStart={addEvent} />
       );
 
       let el = res.getByText('test');
       fireEvent.touchStart(el);
       fireEvent.touchMove(el);
       fireEvent.touchEnd(el);
+      fireEvent.mouseEnter(el);
+      fireEvent.mouseLeave(el);
 
       expect(events).toEqual([]);
     });

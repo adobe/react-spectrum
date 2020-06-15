@@ -269,7 +269,7 @@ function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
             {!isDismissable &&
               <ButtonGroup>
                 <Button variant="secondary" onPress={close}>Cancel</Button>
-                <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+                <Button variant="cta" onPress={close}>Confirm</Button>
               </ButtonGroup>}
           </Dialog>
           )}

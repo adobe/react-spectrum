@@ -15,7 +15,7 @@ import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, MultipleSele
 type FocusStrategy = 'first' | 'last';
 
 export interface ListBoxProps<T> extends CollectionBase<T>, AsyncLoadable, MultipleSelection {
-  /** Whether the auto focus the listbox or an option. */
+  /** Whether to auto focus the listbox or an option. */
   autoFocus?: boolean | FocusStrategy,
   /** Whether focus should wrap around when the end/start is reached. */
   shouldFocusWrap?: boolean
