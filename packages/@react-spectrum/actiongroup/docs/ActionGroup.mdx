@@ -16,12 +16,12 @@ import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ```jsx import
-import {ActionGroup} from '@react-spectrum/actiongroup';
+import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import Brush from '@spectrum-icons/workflow/Brush';
 import Edit from '@spectrum-icons/workflow/Edit';
-import {Item} from '@react-stately/collections';
 import RegionSelect from '@spectrum-icons/workflow/RegionSelect';
 import Select from '@spectrum-icons/workflow/Select';
+import {Flex} from '@react-spectrum/layout';
 ```
 
 ---
@@ -34,12 +34,12 @@ category: Buttons
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['ActionGroup']} />
+  componentNames={['ActionGroup', 'Item']} />
 
 ## Example
 
 ```tsx example
-<ActionGroup>
+<ActionGroup onAction={(key) => console.log(key)}>
   <Item key="add">Add</Item>
   <Item key="delete">Delete</Item>
   <Item key="edit">Edit</Item>
@@ -48,49 +48,22 @@ category: Buttons
 
 ## Content
 
-ActionGroups accepts a list of `children`, each with a `key` prop. It is required that the `children` are <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Item} /> components from the `@react-stately/collections` library.
+ActionGroups accepts a list of `children`, each with a `key` prop. It is required that the `children` are <TypeLink links={docs.links} type={docs.exports.Item} /> components from the [Collection Components](../react-stately/collections.html) API.
 
 However, a function that returns `Item` components is also accepted.
 
 ```tsx example
 const items = [
-  {children: 'React', name: 'React'},
-  {children: 'Add', name: 'Add'},
-  {children: 'Delete', name: 'Delete'}
+  {label: 'React', name: 'React'},
+  {label: 'Add', name: 'Add'},
+  {label: 'Delete', name: 'Delete'}
 ];
-<ActionGroup items={items}>
-  {item => <Item key={item.name}>{item.children}</Item>}
+<ActionGroup items={items} onAction={(key) => console.log(key)}>
+  {item => <Item key={item.name}>{item.label}</Item>}
 </ActionGroup>
 ```
 
-
-Each item needs to have a `key` prop so it can be identified when actioned upon by a user.
-
-See [Events](#events) for more information.
-
-## Value
-
-ActionGroups are uncontrolled by default.
-
-Use `defaultSelectedKeys` to provide a default set of selected items. The value of the selected keys must match the `key` prop of the items.
-
-```tsx example
-<ActionGroup selectionMode="single" defaultSelectedKeys={['list']}>
-  <Item key="grid">Grid view</Item>
-  <Item key="list">List view</Item>
-  <Item key="gallery">Gallery view</Item>
-</ActionGroup>
-```
-
-The `selectedKeys` prop can be used to make the selected state controlled.
-
-```tsx example
-<ActionGroup selectionMode="single" selectedKeys={['list']}>
-  <Item key="grid">Grid view</Item>
-  <Item key="list">List view</Item>
-  <Item key="gallery">Gallery view</Item>
-</ActionGroup>
-```
+Each item needs to have a `key` prop so it can be identified when actioned upon by a user. See [Events](#events) for more information.
 
 ### Accessibility
 
@@ -98,7 +71,7 @@ If no visible label is provided (e.g. an icon only) to each item, an alternative
 This should be added using the `aria-label` prop to each Item.
 
 ```tsx example
-<ActionGroup>
+<ActionGroup onAction={(key) => console.log(key)}>
   <Item key="brush" aria-label="Brush"><Brush /></Item>
   <Item key="select" aria-label="Select"><Select /></Item>
   <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
@@ -109,9 +82,37 @@ This should be added using the `aria-label` prop to each Item.
 
 In order to internationalize an ActionGroup, the strings of all child items should be localized.
 
-## Events
+## Selection
+ActionGroup supports multiple selection modes. By default, selection is set to `none` however this can be changed using the `selectionMode` prop.
+Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
 
-Use the `onSelectionChange` prop as a callback to handle press events on items.
+```tsx example
+<ActionGroup selectionMode="single" defaultSelectedKeys={['list']} onSelectionChange={(selected) => console.log(selected)}>
+  <Item key="grid">Grid view</Item>
+  <Item key="list">List view</Item>
+  <Item key="gallery">Gallery view</Item>
+</ActionGroup>
+```
+
+The `selectedKeys` prop can be used to make the selected state controlled.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState(['list']);
+
+  return (
+    <ActionGroup selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected}>
+      <Item key="grid">Grid view</Item>
+      <Item key="list">List view</Item>
+      <Item key="gallery">Gallery view</Item>
+    </ActionGroup>
+  );
+}
+```
+
+
+## Events
+Use the `onSelectionChange` prop as a callback to handle press events on items when selectionMode is either `single` or `multiple`.
 The `key` prop from the selected item will be passed into the callback.
 
 The following example uses the `onSelectionChange` prop to update a string stored in React state.
@@ -137,14 +138,14 @@ For multiple selections, use the `selectionMode` prop with the `multiple` value.
 function Example() {
   let [selectedKeys, setSelectedKeys] = React.useState(new Set());
   return (
-    <div>
+    <>
       <ActionGroup selectionMode="multiple" onSelectionChange={setSelectedKeys}>
         <Item key="keywords">Keywords</Item>
         <Item key="info">Info</Item>
         <Item key="properties">Properties</Item>
       </ActionGroup>
-      <p>Selected: {[...selectedKeys].toString()}</p>
-    </div>
+      <p>Selected: {[...selectedKeys].join(', ')}</p>
+    </>
   );
 }
 ```
@@ -154,14 +155,14 @@ To continue to capturing actions when `selectionMode` is `none`, utilize the `on
 function Example() {
   let [actedKey, setActedKey] = React.useState('');
   return (
-    <div>
+    <>
       <ActionGroup onAction={setActedKey}>
         <Item key="add">Add</Item>
         <Item key="delete">Delete</Item>
         <Item key="edit">Edit</Item>
       </ActionGroup>
       <p>Last action: {actedKey}</p>
-    </div>
+    </>
   );
 }
 ```
@@ -170,24 +171,28 @@ function Example() {
 
 <PropTable component={docs.exports.ActionGroup} links={docs.links} />
 
-## Visual Options
+## Visual options
 
 ### Quiet
 
 ```tsx example
-<ActionGroup isQuiet>
+<ActionGroup isQuiet onAction={(key) => console.log(key)}>
   <Item key="add">Add</Item>
   <Item key="delete">Delete</Item>
   <Item key="edit">Edit</Item>
 </ActionGroup>
 ```
 
-### Emphasis
+### Emphasize
 
 The additional styling provided by the `isEmphasized` prop is only applied when items are selected.
 
 ```tsx example
-<ActionGroup isEmphasized selectionMode="single" defaultSelectedKeys={['list']}>
+<ActionGroup
+  isEmphasized
+  selectionMode="single"
+  defaultSelectedKeys={['list']}
+  onSelectionChange={(selected) => console.log(selected)}>
   <Item key="grid">Grid view</Item>
   <Item key="list">List view</Item>
   <Item key="gallery">Gallery view</Item>
@@ -199,7 +204,7 @@ The additional styling provided by the `isEmphasized` prop is only applied when 
 To disable the entire ActionGroup, use the `isDisabled` prop on the root.
 
 ```tsx example
-<ActionGroup isDisabled>
+<ActionGroup isDisabled onAction={(key) => console.log(key)}>
   <Item key="add">Add</Item>
   <Item key="delete">Delete</Item>
   <Item key="edit">Edit</Item>
@@ -209,7 +214,7 @@ To disable the entire ActionGroup, use the `isDisabled` prop on the root.
 To disable individual items, a list of `disabledKeys` can be provided.
 
 ```tsx example
-<ActionGroup disabledKeys={['add', 'delete']}>
+<ActionGroup disabledKeys={['add', 'delete']} onAction={(key) => console.log(key)}>
   <Item key="add">Add</Item>
   <Item key="delete">Delete</Item>
   <Item key="edit">Edit</Item>
@@ -221,7 +226,7 @@ To disable individual items, a list of `disabledKeys` can be provided.
 Using the `orientation` prop with value `vertical` changes the alignment of the items to follow the y-axis.
 
 ```tsx example
-<ActionGroup orientation="vertical" maxWidth="32px">
+<ActionGroup orientation="vertical" maxWidth="size-400" onAction={(key) => console.log(key)}>
   <Item key="brush" aria-label="Brush"><Brush /></Item>
   <Item key="select" aria-label="Select"><Select /></Item>
   <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
@@ -235,18 +240,30 @@ In the default case, this merges the borders of neighboring ActionButtons. In th
 quiet case, it just reduces the margin size between the buttons.
 
 ```tsx example
-<ActionGroup density="compact">
+<ActionGroup density="compact" onAction={(key) => console.log(key)}>
   <Item key="brush" aria-label="Brush"><Brush /></Item>
   <Item key="select" aria-label="Select"><Select /></Item>
   <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
 </ActionGroup>
 ```
-
 
 ```tsx example
-<ActionGroup isQuiet density="compact">
+<ActionGroup isQuiet density="compact" onAction={(key) => console.log(key)}>
   <Item key="brush" aria-label="Brush"><Brush /></Item>
   <Item key="select" aria-label="Select"><Select /></Item>
   <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
 </ActionGroup>
 ```
+
+### Justified
+
+```tsx example
+<Flex width="size-2000" direction="column">
+  <ActionGroup isJustified onAction={(key) => console.log(key)}>
+    <Item key="brush" aria-label="Brush"><Brush /></Item>
+    <Item key="select" aria-label="Select"><Select /></Item>
+    <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
+  </ActionGroup>
+</Flex>
+```
+

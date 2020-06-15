@@ -63,7 +63,7 @@ and the `aria-labelledby` attribute on the `<input>` element.
   <InterfaceType properties={docs.links[docs.exports.useTextField.return.id].properties} />
 </TypeContext.Provider>
 
-If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead 
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
 to identify the element to screen readers.
 
 ## Example
@@ -75,14 +75,14 @@ function TextField(props) {
   let {labelProps, inputProps} = useTextField(props, ref);
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', width: 200}}>
+    <div style={{display: 'flex', direction: 'column', width: 200}}>
       <label {...labelProps}>{label}</label>
       <input {...inputProps} ref={ref} />
     </div>
   );
 }
 
-<TextField 
+<TextField
   label="Email"
   placeholder="abc@example.com" />
 ```

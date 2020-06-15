@@ -49,7 +49,7 @@ accessible separators that can be styled as needed.
 
 ## Anatomy
 
-A separator consists of a single element that represents the divider. 
+A separator consists of a single element that represents the divider.
 `useSeparator` returns props to be spread onto the element:
 
 <TypeContext.Provider value={docs.links}>
@@ -66,7 +66,7 @@ function Separator(props) {
   let {separatorProps} = useSeparator(props);
 
   return (
-    <div 
+    <div
       {...separatorProps}
       style={{
         background: 'gray',
@@ -78,13 +78,13 @@ function Separator(props) {
 }
 
 <>
-  <div style={{display: 'flex', flexDirection: 'column'}}>
+  <div style={{display: 'flex', direction: 'column'}}>
     Content above
     <Separator />
     Content below
   </div>
 
-  <div style={{display: 'flex', flexDirection: 'row', marginTop: 20, height: 40, alignItems: 'center'}}>
+  <div style={{display: 'flex', direction: 'row', marginTop: 20, height: 40, alignItems: 'center'}}>
     Content left
     <Separator orientation="vertical" />
     Content right
