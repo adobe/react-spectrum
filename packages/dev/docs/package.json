@@ -10,6 +10,7 @@
     "@react-spectrum/breadcrumbs": "3.0.0-rc.0",
     "@react-spectrum/divider": "3.0.0-rc.3",
     "@react-spectrum/dialog": "3.0.0-rc.0",
+    "@react-spectrum/illustratedmessage": "3.0.0-rc.0",
     "@react-spectrum/layout": "3.0.0-rc.0",
     "@react-spectrum/picker": "3.0.0-rc.0",
     "@react-spectrum/text": "3.0.0-rc.0",
