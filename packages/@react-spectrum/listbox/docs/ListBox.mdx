@@ -159,20 +159,18 @@ function Example() {
   ];
 
   return (
-    <>
-      <ListBox
-        aria-label="Pick an animal"
-        items={options}
-        selectionMode="single"
-        onSelectionChange={selected => console.log(selected)}
-        width="size-2400">
-        {item => (
-          <Section key={item.name} items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
-          </Section>
-        )}
-      </ListBox>
-    </>
+    <ListBox
+      aria-label="Pick an animal"
+      items={options}
+      selectionMode="single"
+      onSelectionChange={selected => console.log(selected)}
+      width="size-2400">
+      {item => (
+        <Section key={item.name} items={item.children} title={item.name}>
+          {item => <Item>{item.name}</Item>}
+        </Section>
+      )}
+    </ListBox>
   );
 }
 ```
