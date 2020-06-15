@@ -36,7 +36,7 @@ function ListBox<T extends object>(props: SpectrumListBoxProps<T>, ref: DOMRef<H
 
 
 /**
- * A list of options that allows a user to select one or more of them.
+ * A list of options that can allow selection of one or more.
  */
 const _ListBox = React.forwardRef(ListBox) as <T>(props: SpectrumListBoxProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListBox as ListBox};
