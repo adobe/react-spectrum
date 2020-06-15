@@ -48,7 +48,7 @@ category: Collections
 ```
 
 ## Content
-Listbox is a common <a href="https://www.w3.org/TR/wai-aria-practices-1.1/#Listbox">ARIA role</a> used to display lists, with and without selection. This component follows that pattern using the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic forms of children. Similar to <a href="./Picker.html">Picker</a>, ListBox accepts an `<Item>` component, each with a `key` prop. Basic usage of the ListBox, seen in the example above, shows multiple options populated with a string. This implementation would be used when the list of options is finite and known.
+Listbox is a common <a href="https://www.w3.org/TR/wai-aria-practices-1.1/#Listbox">ARIA role</a> used to display lists, with and without selection. This component follows that pattern using the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic forms of children. Similar to [Picker](Picker.html), ListBox accepts an `<Item>` component, each with a `key` prop. Basic usage of the ListBox, seen in the example above, shows multiple options populated with a string. This implementation would be used when the list of options is finite and known.
 
 The dynamic method (shown below) would be better suited to use if the options came from a data object such as values returned from an API call. Providing the data in this way allows for ListBox to automatically cache the rendering of each item, which dramatically improves performance.
 
