@@ -42,8 +42,11 @@ function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
     return null;
   }
 
+  // need to put position relative on here to address if it has a sibling with a z-index and some position set, like static in our docs
+  // see https://www.freecodecamp.org/news/4-reasons-your-z-index-isnt-working-and-how-to-fix-it-coder-coder-6bc05f103e6c/
+  // still need to beat the sibling's z-index, so 999 for now...
   let contents = (
-    <Provider ref={ref} UNSAFE_style={{background: 'transparent', isolation: 'isolate'}}>
+    <Provider ref={ref} UNSAFE_style={{background: 'transparent', isolation: 'isolate', position: 'relative', zIndex: 999}}>
       <OpenTransition
         in={isOpen}
         appear
