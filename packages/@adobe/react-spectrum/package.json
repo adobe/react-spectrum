@@ -2,24 +2,22 @@
   "name": "@adobe/react-spectrum",
   "version": "3.0.0-rc.0",
   "description": "Spectrum UI components in React",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum"
-  },
-  "peerDependencies": {
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0"
-  },
+  "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "scripts": {
-    "prepublishOnly": "mkdir -p dist; cp src/index.ts dist/types.d.ts; cp src/index.ts dist/module.js; babel --root-mode upward src/index.ts -o dist/main.js"
-  },
   "files": [
     "dist"
   ],
+  "sideEffects": false,
+  "scripts": {
+    "prepublishOnly": "mkdir -p dist; cp src/index.ts dist/types.d.ts; cp src/index.ts dist/module.js; babel --root-mode upward src/index.ts -o dist/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe-private/react-spectrum-v3"
+  },
   "dependencies": {
     "@react-spectrum/actiongroup": "3.0.0-rc.0",
     "@react-spectrum/breadcrumbs": "3.0.0-rc.0",
@@ -52,5 +50,8 @@
     "@react-spectrum/theme-default": "3.0.0-rc.3",
     "@react-spectrum/view": "3.0.0-rc.0",
     "@react-spectrum/well": "3.0.0-rc.3"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
