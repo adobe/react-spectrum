@@ -33,7 +33,7 @@ export const gridStyleProps: StyleHandlers = {
   rows: ['gridTemplateRows', gridTemplateValue],
   gap: ['gap', dimensionValue],
   rowGap: ['rowGap', dimensionValue],
-  columnGap: ['rowGap', dimensionValue],
+  columnGap: ['columnGap', dimensionValue],
   justifyItems: ['justifyItems', passthroughStyle],
   justifyContent: ['justifyContent', passthroughStyle],
   alignItems: ['alignItems', passthroughStyle],

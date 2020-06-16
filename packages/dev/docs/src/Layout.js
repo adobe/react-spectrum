@@ -170,6 +170,11 @@ function Nav({currentPageName, pages}) {
     let pageParts = p.name.split('/');
     let pageDir = pageParts[0];
 
+    // Skip the error page, its only used for 404s
+    if (p.name === 'error.html') {
+      return false;
+    }
+
     // Pages within same directory (react-spectrum/Alert.html)
     if (currentParts.length > 1) {
       return currentDir === pageDir && !isIndex.test(p.name);
