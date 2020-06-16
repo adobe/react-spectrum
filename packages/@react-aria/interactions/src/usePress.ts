@@ -573,7 +573,10 @@ function isValidKeyboardEvent(event: KeyboardEvent): boolean {
   );
 }
 
-// Per: https://github.com/facebook/react/blob/3c713d513195a53788b3f8bb4b70279d68b15bcc/packages/react-interactions/events/src/dom/shared/index.js#L74-L87
+/*
+ * Original licensing for the following method can be found in the
+ * NOTICE file in the root directory of this source tree.
+ */
 // Keyboards, Assitive Technologies, and element.click() all produce a "virtual"
 // click event. This is a method of inferring such clicks. Every browser except
 // IE 11 only sets a zero value of "detail" for click events that are "virtual".

@@ -108,8 +108,10 @@ function flexWrapValue(value) {
   return value;
 }
 
-// Copied from Modernizr.
-// See https://github.com/Modernizr/Modernizr/blob/7efb9d0edd66815fb115fdce95fabaf019ce8db5/feature-detects/css/flexgap.js
+/*
+ * Original licensing for the following method can be found in the
+ * NOTICE file in the root directory of this source tree.
+ */
 let _isFlexGapSupported = null;
 function isFlexGapSupported() {
   if (_isFlexGapSupported != null) {

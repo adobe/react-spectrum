@@ -19,9 +19,11 @@ export type RTLOffsetType =
 
 let cachedRTLResult: RTLOffsetType | null = null;
 
-// This function is adapted from react-window (MIT).
-// See https://github.com/bvaughn/react-window/blob/master/src/createGridComponent.js
-//
+/*
+ * Original licensing for the following methods can be found in the
+ * NOTICE file in the root directory of this source tree.
+ */
+
 // According to the spec, scrollLeft should be negative for RTL aligned elements.
 // Chrome does not seem to adhere; its scrollLeft values are positive (measured relative to the left).
 // Safari's elastic bounce makes detecting this even more complicated wrt potential false positives.
