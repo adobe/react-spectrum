@@ -3,8 +3,7 @@
 The following is a list of sources from which code was used/modified in this codebase.
 
 -------------------------------------------------------------------------------
-This codebase contains a portion of code from react which has
-been derived from the works by trueadm, necolas, gaearon:
+This codebase contains a portion of code from react which can be obtained at:
   * LICENSE:
     MIT License
 
@@ -32,8 +31,7 @@ been derived from the works by trueadm, necolas, gaearon:
     * https://github.com/facebook/react/blob/3c713d513195a53788b3f8bb4b70279d68b15bcc/packages/react-interactions/events/src/dom/shared/index.js#L74-L87
 
 -------------------------------------------------------------------------------
-This codebase contains a modified portion of code from Modernizr which has
-been derived from the works by Chris Smith:
+This codebase contains a modified portion of code from Modernizr which can be obtained at:
   * LICENSE:
     * https://github.com/Modernizr/Modernizr/blob/master/LICENSE
 
@@ -41,8 +39,7 @@ been derived from the works by Chris Smith:
     * https://github.com/Modernizr/Modernizr/blob/7efb9d0edd66815fb115fdce95fabaf019ce8db5/feature-detects/css/flexgap.js
 
 -------------------------------------------------------------------------------
-This codebase contains a modified portion of code from react-window which has
-been derived from the works by bvaughn, jgoz, TrySound, nihgwu, MarkFalconbridge, nicholas-l, Andarist, kaykayehnn, souporserious, gaearon, Betree, andreypopp:
+This codebase contains a modified portion of code from react-window which can be obtained at:
   * LICENSE:
     The MIT License (MIT)
 
@@ -58,8 +55,7 @@ been derived from the works by bvaughn, jgoz, TrySound, nihgwu, MarkFalconbridge
     * https://github.com/bvaughn/react-window/blob/master/src/createGridComponent.js
 
 -------------------------------------------------------------------------------
-This codebase contains a modified portion of code from focus-options-polyfill which has
-been derived from the works by calvellido:
+This codebase contains a modified portion of code from focus-options-polyfill which can be obtained at:
   * LICENSE:
     MIT License
 
