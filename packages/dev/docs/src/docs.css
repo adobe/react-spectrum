@@ -65,7 +65,7 @@ html, body {
 }
 
 .provider {
-  min-height: 100vh;
+  min-height: calc(100vh - (100vh - 100%));
   --page-background: var(--spectrum-global-color-gray-50);
   background: var(--page-background) !important;
   color-scheme: light dark;
@@ -578,8 +578,8 @@ h2.sectionHeader {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: calc(100vw - (100vw - 100%));
+    height: calc(100vh - (100vh - 100%));
     content: '';
     z-index: 99;
     background: var(--spectrum-alias-background-color-modal-overlay);
