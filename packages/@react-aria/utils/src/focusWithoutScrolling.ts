@@ -15,10 +15,10 @@
 // https://caniuse.com/#feat=mdn-api_htmlelement_focus_preventscroll_option
 // See https://bugs.webkit.org/show_bug.cgi?id=178583
 //
-/*
- * Original licensing for the following methods can be found in the
- * NOTICE file in the root directory of this source tree.
- */
+
+// Original licensing for the following methods can be found in the
+// NOTICE file in the root directory of this source tree.
+// See https://github.com/calvellido/focus-options-polyfill
 
 interface ScrollableElement {
   element: HTMLElement,
