@@ -20,8 +20,6 @@ import {Flex} from '@react-spectrum/layout';
 import Book from '@spectrum-icons/workflow/Book';
 import BulkEditUsers from '@spectrum-icons/workflow/BulkEditUsers';
 import Draw from '@spectrum-icons/workflow/Draw';
-import ColorPalette from '@spectrum-icons/workflow/ColorPalette';
-import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import {Text} from '@react-spectrum/text';
 ```
 
@@ -52,7 +50,7 @@ Listbox is a common <a href="https://www.w3.org/TR/wai-aria-practices-1.1/#Listb
 
 The dynamic method (shown below) would be better suited to use if the options came from a data object such as values returned from an API call. Providing the data in this way allows for ListBox to automatically cache the rendering of each item, which dramatically improves performance.
 
-As seen below, an iterable list of options is passed to the Listbox using the `items` prop. Each item accepts a key prop, which is passed to the `onSelectionChange` handler, when present, to identify the selected item. Alternatively, if the item objects contain an id property, as shown in the example below, then this is used automatically and a key prop is not required. See the <a href="#events" title="Events">events</a> section for more detail on selection. By default, Listbox does not support selection however this can be changed using the `selectionMode` prop. See <a href="#selection">selection</a> for more information.
+As seen below, an iterable list of options is passed to the Listbox using the `items` prop. Each item accepts a key prop, which is passed to the `onSelectionChange` handler, when present, to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a key prop is not required. See the [Events](#events) section for more detail on selection. By default, Listbox does not support selection however this can be changed using the `selectionMode` prop. See [Selection](#selection) for more information.
 
 ```tsx example
 function Example() {
@@ -177,7 +175,7 @@ function Example() {
 
 ## Events
 ListBox supports selection via mouse, keyboard, and touch. You can handle all of these via the `onSelectionChange`
-prop. Picker will pass the selected `key` to the `onSelectionChange` handler.
+prop. ListBox will pass the selected `key` to the `onSelectionChange` handler.
 
 The following example uses an `onSelectionChange` handler to update the selection stored in React state.
 
