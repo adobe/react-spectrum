@@ -31,7 +31,7 @@ export function HeaderTable({name, version, importSnippet}) {
           <th className={typographyStyles['spectrum-Body--secondary']}>version</th>
           <td className={typographyStyles['spectrum-Body4']}>{version}</td>
         </tr>
-        {importSnippet ? 
+        {importSnippet ?
           <tr>
             <th className={typographyStyles['spectrum-Body--secondary']}>usage</th>
             <td className={typographyStyles['spectrum-Body4']}>
@@ -52,7 +52,7 @@ export function HeaderInfo(props) {
 
   return (
     <>
-      <HeaderTable name={packageData.name} version={packageData.version} importSnippet={`import {${componentNames.join(', ')}} from '${packageData.name}'`} />
+      <HeaderTable name={packageData.name} version={packageData.version} importSnippet={componentNames && `import {${componentNames.join(', ')}} from '${packageData.name}'`} />
       <div className={styles['resourceCardGroup']}>
         {sourceData.map((source) => (
           <ResourceCard type={source.type} url={source.url} />
