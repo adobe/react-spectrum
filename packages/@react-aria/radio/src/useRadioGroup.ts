@@ -57,7 +57,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   let {focusWithinProps} = useFocusWithin({
     onBlurWithin() {
       if (!state.selectedValue) {
-        state.setFocusableRadio(null);
+        state.setLastFocusedValue(null);
       }
     }
   });
@@ -107,7 +107,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     if (nextElem) {
       // Call focus on nextElem so that keyboard navigation scrolls the radio into view
       nextElem.focus();
-      nextElem.click();
+      state.setSelectedValue(nextElem.value);
     }
   };
 

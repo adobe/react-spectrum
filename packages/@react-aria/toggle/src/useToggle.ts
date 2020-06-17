@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaCheckboxBase} from '@react-types/checkbox';
+import {AriaToggleProps} from '@react-types/checkbox';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
 import {ToggleState} from '@react-stately/toggle';
@@ -21,7 +21,7 @@ export interface ToggleAria {
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-export function useToggle(props: AriaCheckboxBase, state: ToggleState, ref: RefObject<HTMLElement>): ToggleAria {
+export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefObject<HTMLElement>): ToggleAria {
   let {
     isDisabled = false,
     isRequired,

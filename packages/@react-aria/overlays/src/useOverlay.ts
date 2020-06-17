@@ -14,9 +14,6 @@ import {HTMLAttributes, RefObject, useEffect} from 'react';
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
 interface OverlayProps {
-  /** A ref to the overlay container element. */
-  ref: RefObject<HTMLElement | null>,
-
   /** Whether the overlay is currently open. */
   isOpen?: boolean,
 
@@ -43,11 +40,11 @@ const visibleOverlays: RefObject<HTMLElement>[] = [];
 /**
  * Provides the behavior for overlays such as dialogs, popovers, and menus.
  * Handles hiding the overlay when the user interacts outside it (if `isDismissible`),
- * when the Escape key is pressed, or optionally, on blur. Handles multiple overlays 
+ * when the Escape key is pressed, or optionally, on blur. Handles multiple overlays
  * open at once as a stack: only the top-most overlay will close at once.
  */
-export function useOverlay(props: OverlayProps): OverlayAria {
-  let {ref, onClose, shouldCloseOnBlur, isOpen, isDismissable = false} = props;
+export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): OverlayAria {
+  let {onClose, shouldCloseOnBlur, isOpen, isDismissable = false} = props;
 
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {

@@ -30,8 +30,8 @@ export function useSideNavItem<T>(props: SpectrumSideNavItemProps<T>, state: Tre
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: item.key,
-    itemRef: ref
+    key: item.key,
+    ref
   });
 
   let isDisabled = state.disabledKeys.has(item.key);

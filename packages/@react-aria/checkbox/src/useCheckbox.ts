@@ -22,7 +22,7 @@ export interface CheckboxAria {
 
 /**
  * Provides the behavior and accessibility implementation for a checkbox component.
- * Checkboxes allow users to select multiple items from a list of individual items, or 
+ * Checkboxes allow users to select multiple items from a list of individual items, or
  * to mark one individual item as selected.
  * @param props - props for the checkbox
  * @param state - state for the checkbox, as returned by `useToggleState`
@@ -39,7 +39,7 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
     if (inputRef.current) {
       inputRef.current.indeterminate = isIndeterminate;
     }
-  }, [inputRef, isIndeterminate]);
+  });
 
   return {
     inputProps: {

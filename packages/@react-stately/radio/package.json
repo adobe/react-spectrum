@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/radio",
-  "version": "3.0.0-rc.2",
+  "version": "3.0.0-rc.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -17,8 +17,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-stately/utils": "^3.0.0-rc.2",
-    "@react-types/radio": "^3.0.0-rc.2"
+    "@react-stately/utils": "3.0.0-rc.3",
+    "@react-types/radio": "3.0.0-rc.3"
   },
   "peerDependencies": {
     "react": "^16.8.0"

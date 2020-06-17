@@ -11,12 +11,11 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {ActionGroupState, useActionGroupState} from '@react-stately/actiongroup';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, DOMRef, SelectionMode, StyleProps} from '@react-types/shared';
+import {DOMProps, DOMRef, Node, StyleProps} from '@react-types/shared';
+import {ListState, useListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
-import {Node} from '@react-stately/collections';
 import {PressResponder} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
 import React, {forwardRef, Key, ReactElement, useRef} from 'react';
@@ -37,7 +36,6 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
     density,
     isJustified,
     isDisabled,
-    selectionMode = 'single' as SelectionMode,
     orientation = 'horizontal',
     isQuiet,
     onAction,
@@ -45,41 +43,43 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
   } = props;
 
   let domRef = useDOMRef(ref);
-  let state = useActionGroupState({...props, selectionMode});
+  let state = useListState(props);
   let {actionGroupProps} = useActionGroup(props, state, domRef);
   let isVertical = orientation === 'vertical';
   let providerProps = {isEmphasized, isDisabled, isQuiet};
   let {styleProps} = useStyleProps(props);
 
   return (
-    <div
-      {...actionGroupProps}
-      {...styleProps}
-      ref={domRef}
-      className={
-        classNames(
-          styles,
-          'spectrum-ActionGroup',
-          {
-            'spectrum-ActionGroup--quiet': isQuiet,
-            'spectrum-ActionGroup--vertical': isVertical,
-            'spectrum-ActionGroup--compact': density === 'compact',
-            'spectrum-ActionGroup--justified': isJustified
-          },
-          otherProps.UNSAFE_className
-        )
-      }>
-      <Provider {...providerProps}>
-        {[...state.collection].map((item) => (
-          <ActionGroupItem
-            key={item.key}
-            onAction={onAction}
-            isDisabled={isDisabled}
-            isEmphasized={isEmphasized}
-            item={item}
-            state={state} />
-        ))}
-      </Provider>
+    <div {...styleProps} className={classNames(styles, 'flex-container', styleProps.className)}>
+      <div
+        {...actionGroupProps}
+        ref={domRef}
+        className={
+          classNames(
+            styles,
+            'flex-gap',
+            'spectrum-ActionGroup',
+            {
+              'spectrum-ActionGroup--quiet': isQuiet,
+              'spectrum-ActionGroup--vertical': isVertical,
+              'spectrum-ActionGroup--compact': density === 'compact',
+              'spectrum-ActionGroup--justified': isJustified
+            },
+            otherProps.UNSAFE_className
+          )
+        }>
+        <Provider {...providerProps}>
+          {[...state.collection].map((item) => (
+            <ActionGroupItem
+              key={item.key}
+              onAction={onAction}
+              isDisabled={isDisabled}
+              isEmphasized={isEmphasized}
+              item={item}
+              state={state} />
+          ))}
+        </Provider>
+      </div>
     </div>
   );
 }
@@ -89,7 +89,7 @@ export {_ActionGroup as ActionGroup};
 
 interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
   item: Node<T>,
-  state: ActionGroupState<T>,
+  state: ListState<T>,
   isDisabled: boolean,
   isEmphasized: boolean,
   onAction: (key: Key) => void

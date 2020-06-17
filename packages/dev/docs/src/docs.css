@@ -255,7 +255,7 @@ article h1.articleHeader {
   /* scale font size between 32px and 58px
    * 10vw is 32px at 320px viewport size. */
   font-size: min(58px, max(32px, 10vw));
-  /* This is a hack to get Safari to repaint when the viewport resizes, 
+  /* This is a hack to get Safari to repaint when the viewport resizes,
    * otherwise the font size does not update. */
   width: 100vw;
   max-width: 100%;
@@ -516,7 +516,7 @@ h2.sectionHeader {
     display: inline-block;
     vertical-align: text-top;
     word-break: break-word;
-    width: calc(100% - 80px);
+    max-width: calc(100% - 80px);
   }
 
   .propTable td[data-column]:before {
@@ -544,6 +544,10 @@ h2.sectionHeader {
   .methodTable td > span {
     display: block;
     padding-top: 8px;
+  }
+
+  .methodTable td[data-column] code {
+    width: 100%;
   }
 }
 

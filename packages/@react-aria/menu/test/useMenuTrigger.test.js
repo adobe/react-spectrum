@@ -19,8 +19,8 @@ describe('useMenuTrigger', function () {
   let setOpen = jest.fn();
   let setFocusStrategy = jest.fn();
 
-  let renderMenuTriggerHook = (menuTriggerProps, menuTriggerState) => {
-    let {result} = renderHook(() => useMenuTrigger(menuTriggerProps, menuTriggerState));
+  let renderMenuTriggerHook = (menuTriggerProps, menuTriggerState, ref) => {
+    let {result} = renderHook(() => useMenuTrigger(menuTriggerProps, menuTriggerState, ref));
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     return result.current;
   };
@@ -87,14 +87,13 @@ describe('useMenuTrigger', function () {
   // Comprehensive onKeyDown functionality is tested in MenuTrigger test
   it('returns a onKeyDown that toggles the menu open state for specific key strokes', function () {
     let props = {
-      type: 'menu',
-      ref: {current: true}
+      type: 'menu'
     };
 
     let preventDefault = jest.fn();
     let stopPropagation = jest.fn();
 
-    let {menuTriggerProps} = renderMenuTriggerHook(props, state);
+    let {menuTriggerProps} = renderMenuTriggerHook(props, state, {current: true});
     expect(typeof menuTriggerProps.onKeyDown).toBe('function');
 
     // doesn't trigger event if isDefaultPrevented returns true

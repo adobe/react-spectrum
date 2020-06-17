@@ -13,16 +13,24 @@
 import {Key, useMemo, useState} from 'react';
 
 interface TreeOptions<T extends object> {
+  /** Initial root items in the tree. */
   initialItems?: T[],
+  /** The keys for the initially selected items. */
   initialSelectedKeys?: Iterable<Key>,
+  /** A function that returns a unique key for an item object. */
   getKey?: (item: T) => Key,
+  /** A function that returns the children for an item object. */
   getChildren?: (item: T) => T[]
 }
 
 interface TreeNode<T extends object> {
+  /** A unique key for the tree node. */
   key: Key,
+  /** The key of the parent node. */
   parentKey: Key,
+  /** The value object for the tree node. */
   value: T,
+  /** Children of the tree node. */
   children: TreeNode<T>[]
 }
 
@@ -85,7 +93,7 @@ interface TreeData<T extends object> {
   remove(...keys: Key[]): void,
 
   /**
-   * Removes all items from the tree that are currently 
+   * Removes all items from the tree that are currently
    * in the set of selected items.
    */
   removeSelectedItems(): void,
@@ -110,13 +118,13 @@ interface TreeData<T extends object> {
  * Manages state for an immutable tree data structure, and provides convenience methods to
  * update the data over time.
  */
-export function useTreeData<T extends object>(opts: TreeOptions<T>): TreeData<T> {
+export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData<T> {
   let {
     initialItems = [],
     initialSelectedKeys,
     getKey = (item: any) => item.id || item.key,
     getChildren = (item: any) => item.children
-  } = opts;
+  } = options;
   let map = useMemo(() => new Map<Key, TreeNode<T>>(), []);
 
   // We only want to compute this on initial render.
@@ -133,7 +141,7 @@ export function useTreeData<T extends object>(opts: TreeOptions<T>): TreeData<T>
         value: item,
         children: null
       };
-  
+
       node.children = buildTree(getChildren(item), node.key);
       map.set(node.key, node);
       return node;

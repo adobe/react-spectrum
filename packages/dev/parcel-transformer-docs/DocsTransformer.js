@@ -112,10 +112,6 @@ module.exports = new Transformer({
       if (path.isClassDeclaration()) {
         let properties = {};
         for (let propertyPath of path.get('body.body')) {
-          if (propertyPath.node.accessibility === 'private') {
-            continue;
-          }
-
           let property = processExport(propertyPath);
           if (property) {
             properties[property.name] = property;
@@ -146,7 +142,8 @@ module.exports = new Transformer({
           value: path.node.typeAnnotation
             ? processExport(path.get('typeAnnotation.typeAnnotation'))
             : {type: 'any'},
-          optional: path.node.optional || false
+          optional: path.node.optional || false,
+          access: path.node.accessibility
         }, docs));
       }
 
@@ -181,7 +178,8 @@ module.exports = new Transformer({
         return Object.assign(node, addDocs({
           type: value.type === 'function' ? 'method' : 'property',
           name,
-          value
+          value,
+          access: path.node.accessibility
         }, docs));
       }
 
@@ -460,6 +458,13 @@ module.exports = new Transformer({
         });
       }
 
+      if (path.isTSTupleType()) {
+        return Object.assign(node, {
+          type: 'tuple',
+          elements: path.get('elementTypes').map(t => processExport(t))
+        });
+      }
+
       console.log('UNKNOWN TYPE', path.node.type);
     }
 
@@ -551,7 +556,7 @@ module.exports = new Transformer({
           } else if (tag.title === 'protected') {
             result.access = 'protected';
           } else if (tag.title === 'public') {
-            result.access = 'private';
+            result.access = 'public';
           } else if (tag.title === 'return' || tag.title === 'returns') {
             result.return = tag.description;
           } else if (tag.title === 'param') {

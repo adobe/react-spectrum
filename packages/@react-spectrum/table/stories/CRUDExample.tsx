@@ -73,7 +73,7 @@ export function CRUDExample() {
 
   return (
     <Flex direction="column">
-      <ActionGroup selectionMode="none" marginBottom={8}>
+      <ActionGroup marginBottom={8}>
         <DialogTrigger>
           <Item aria-label="Add item"><Add /></Item>
           {onClose => <EditDialog item={null} onClose={onClose} onConfirm={createItem} />}
@@ -87,7 +87,7 @@ export function CRUDExample() {
           </DialogTrigger>
         }
       </ActionGroup>
-      <Table aria-label="People" width={500} height={300} isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+      <Table aria-label="People" width={500} height={300} selectionMode="multiple" isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
           <Column isRowHeader key="firstName">First Name</Column>
           <Column isRowHeader key="lastName">Last Name</Column>

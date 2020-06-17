@@ -17,7 +17,7 @@ import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '../';
 
-describe('TooltipTrigger', function () {
+describe.skip('TooltipTrigger', function () {
   let onOpen = jest.fn();
   let onClose = jest.fn();
 

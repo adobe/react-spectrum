@@ -75,20 +75,20 @@ ActionGroups are uncontrolled by default.
 Use `defaultSelectedKeys` to provide a default set of selected items. The value of the selected keys must match the `key` prop of the items.
 
 ```tsx example
-<ActionGroup defaultSelectedKeys={['delete']}>
-  <Item key="add">Add</Item>
-  <Item key="delete">Delete</Item>
-  <Item key="edit">Edit</Item>
+<ActionGroup selectionMode="single" defaultSelectedKeys={['list']}>
+  <Item key="grid">Grid view</Item>
+  <Item key="list">List view</Item>
+  <Item key="gallery">Gallery view</Item>
 </ActionGroup>
 ```
 
 The `selectedKeys` prop can be used to make the selected state controlled.
 
 ```tsx example
-<ActionGroup selectedKeys={['delete']}>
-  <Item key="add">Add</Item>
-  <Item key="delete">Delete</Item>
-  <Item key="edit">Edit</Item>
+<ActionGroup selectionMode="single" selectedKeys={['list']}>
+  <Item key="grid">Grid view</Item>
+  <Item key="list">List view</Item>
+  <Item key="gallery">Gallery view</Item>
 </ActionGroup>
 ```
 
@@ -121,10 +121,10 @@ function Example() {
   let [lastKey, setLastKey] = React.useState(new Set());
   return (
     <div>
-      <ActionGroup onSelectionChange={setLastKey}>
-        <Item key="add">Add</Item>
-        <Item key="delete">Delete</Item>
-        <Item key="edit">Edit</Item>
+      <ActionGroup selectionMode="single" onSelectionChange={setLastKey}>
+        <Item key="grid">Grid view</Item>
+        <Item key="list">List view</Item>
+        <Item key="gallery">Gallery view</Item>
       </ActionGroup>
       <p>Current selection: {lastKey}</p>
     </div>
@@ -139,9 +139,9 @@ function Example() {
   return (
     <div>
       <ActionGroup selectionMode="multiple" onSelectionChange={setSelectedKeys}>
-        <Item key="add">Add</Item>
-        <Item key="delete">Delete</Item>
-        <Item key="edit">Edit</Item>
+        <Item key="keywords">Keywords</Item>
+        <Item key="info">Info</Item>
+        <Item key="properties">Properties</Item>
       </ActionGroup>
       <p>Selected: {[...selectedKeys].toString()}</p>
     </div>
@@ -155,7 +155,7 @@ function Example() {
   let [actedKey, setActedKey] = React.useState('');
   return (
     <div>
-      <ActionGroup selectionMode="none" onAction={setActedKey}>
+      <ActionGroup onAction={setActedKey}>
         <Item key="add">Add</Item>
         <Item key="delete">Delete</Item>
         <Item key="edit">Edit</Item>
@@ -187,10 +187,10 @@ function Example() {
 The additional styling provided by the `isEmphasized` prop is only applied when items are selected.
 
 ```tsx example
-<ActionGroup isEmphasized defaultSelectedKeys={['add']}>
-  <Item key="add">Add</Item>
-  <Item key="delete">Delete</Item>
-  <Item key="edit">Edit</Item>
+<ActionGroup isEmphasized selectionMode="single" defaultSelectedKeys={['list']}>
+  <Item key="grid">Grid view</Item>
+  <Item key="list">List view</Item>
+  <Item key="gallery">Gallery view</Item>
 </ActionGroup>
 ```
 

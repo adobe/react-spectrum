@@ -16,7 +16,7 @@ import {useOverlay} from '../';
 
 function Example(props) {
   let ref = useRef();
-  let {overlayProps} = useOverlay({ref, ...props});
+  let {overlayProps} = useOverlay(props, ref);
   return <div ref={ref} {...overlayProps} data-testid={props['data-testid'] || 'test'}>{props.children}</div>;
 }
 
