@@ -10,6 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+// Portions of the code in this file are based on code from react.
+// Original licensing for the following can be found in the
+// NOTICE file in the root directory of this source tree.
+// See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
+
 import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {PointerType, PressEvents} from '@react-types/shared';
@@ -573,7 +578,10 @@ function isValidKeyboardEvent(event: KeyboardEvent): boolean {
   );
 }
 
-// Per: https://github.com/facebook/react/blob/3c713d513195a53788b3f8bb4b70279d68b15bcc/packages/react-interactions/events/src/dom/shared/index.js#L74-L87
+// Original licensing for the following method can be found in the
+// NOTICE file in the root directory of this source tree.
+// See https://github.com/facebook/react/blob/3c713d513195a53788b3f8bb4b70279d68b15bcc/packages/react-interactions/events/src/dom/shared/index.js#L74-L87
+
 // Keyboards, Assitive Technologies, and element.click() all produce a "virtual"
 // click event. This is a method of inferring such clicks. Every browser except
 // IE 11 only sets a zero value of "detail" for click events that are "virtual".

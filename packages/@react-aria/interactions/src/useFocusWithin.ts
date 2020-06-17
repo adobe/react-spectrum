@@ -10,6 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+// Portions of the code in this file are based on code from react.
+// Original licensing for the following can be found in the
+// NOTICE file in the root directory of this source tree.
+// See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
+
 import {FocusEvent, HTMLAttributes, useRef} from 'react';
 
 interface FocusWithinProps {
@@ -45,7 +50,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
       if (props.onFocusWithin) {
         props.onFocusWithin(e);
       }
-  
+
       if (props.onFocusWithinChange) {
         props.onFocusWithinChange(true);
       }
@@ -55,8 +60,8 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
   };
 
   let onBlur = (e: FocusEvent) => {
-    // We don't want to trigger onBlurWithin and then immediately onFocusWithin again 
-    // when moving focus inside the element. Only trigger if the currentTarget doesn't 
+    // We don't want to trigger onBlurWithin and then immediately onFocusWithin again
+    // when moving focus inside the element. Only trigger if the currentTarget doesn't
     // include the relatedTarget (where focus is moving).
     if (state.isFocusWithin && !e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
       if (props.onBlurWithin) {
@@ -70,7 +75,7 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
       state.isFocusWithin = false;
     }
   };
-  
+
   return {
     focusWithinProps: {
       onFocus: onFocus,
