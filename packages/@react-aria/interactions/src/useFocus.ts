@@ -10,6 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+// Portions of the code in this file are based on code from react.
+// Original licensing for the following can be found in the
+// NOTICE file in the root directory of this source tree.
+// See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
+
 import {FocusEvent, HTMLAttributes} from 'react';
 import {FocusEvents} from '@react-types/shared';
 
@@ -60,7 +65,7 @@ export function useFocus(props: FocusProps): FocusResult {
       }
     };
   }
-  
+
   return {
     focusProps: {
       onFocus,
