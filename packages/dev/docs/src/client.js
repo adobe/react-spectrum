@@ -11,6 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {addFocusRing} from './addFocusRing';
 import docsStyle from './docs.css';
 import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
@@ -86,3 +87,5 @@ ReactDOM.render(<>
   <Hamburger />
   <ThemeSwitcher />
 </>, document.getElementById('header'));
+
+addFocusRing();
