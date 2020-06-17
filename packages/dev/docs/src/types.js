@@ -101,6 +101,8 @@ export function Type({type}) {
       return <code className={typographyStyles['spectrum-Code4']}><Type type={type.value} /></code>;
     case 'array':
       return <ArrayType {...type} />;
+    case 'tuple':
+      return <TupleType {...type} />;
     case 'typeParameter':
       return <TypeParameter {...type} />;
     case 'component': {
@@ -149,7 +151,82 @@ function Identifier({name}) {
   return <span className="token hljs-name">{name}</span>;
 }
 
-export function JoinList({elements, joiner}) {
+const IndentContext = React.createContext({small: '', large: ''});
+
+export function Indent({params, open, close, children, alwaysIndent}) {
+  let {small, large} = useContext(IndentContext);
+
+  if (params.length === 0) {
+    open = <span className="token punctuation">{open}</span>;
+    close = <span className="token punctuation">{close}</span>;
+  } else if (params.length > 2 || alwaysIndent) {
+    // Always indent.
+    open =  <span className="token punctuation">{open.trimEnd() + '\n' + large + '  '}</span>;
+    close =  <span className="token punctuation">{'\n' + large + close.trimStart()}</span>;
+    large += '  ';
+    small += '  ';
+  } else {
+    // Indent on small screens. Don't indent on large screens.
+    open = (
+      <>
+        <span className="token punctuation small">{open.trimEnd() + '\n' + small + '  '}</span>
+        <span className="token punctuation large">{open}</span>
+      </>
+    );
+
+    close = (
+      <>
+        <span className="token punctuation small">{'\n' + small + close.trimStart()}</span>
+        <span className="token punctuation large">{close}</span>
+      </>
+    );
+
+    small += '  ';
+  }
+
+  return (
+    <IndentContext.Provider value={{small, large, alwaysIndent}}>
+      {open}
+      {children}
+      {close}
+    </IndentContext.Provider>
+  );
+}
+
+export function JoinList({elements, joiner, minIndent = 2, newlineBefore, neverIndent}) {
+  let {small, large, alwaysIndent} = useContext(IndentContext);
+
+  let contents;
+  if (neverIndent || (elements.length <= minIndent && small.length === 0)) {
+    contents = joiner;
+  } else if (elements.length > minIndent || alwaysIndent) {
+    // Always indent.
+    if (newlineBefore) {
+      large += '  ';
+      small += '  ';
+    }
+
+    contents = newlineBefore
+      ? '\n' + large + joiner.trimStart()
+      : joiner.trimEnd() + '\n' + large;
+  } else {
+    // Indent on small screens. Don't indent on large screens.
+    if (newlineBefore) {
+      small += '  ';
+    }
+
+    let indented = newlineBefore
+      ? '\n' + small + joiner.trimStart()
+      : joiner.trimEnd() + '\n' + small;
+
+    contents = (
+      <>
+        <span className="small">{indented}</span>
+        <span className="large">{joiner}</span>
+      </>
+    );
+  }
+
   return elements
     .filter(Boolean)
     .reduce((acc, v, i) => [
@@ -157,18 +234,22 @@ export function JoinList({elements, joiner}) {
       <span
         className="token punctuation"
         key={`join${v.name || v.raw}${i}`}>
-        {joiner}
+        {contents}
       </span>,
-      <Type type={v} key={`type${v.name || v.raw}${i}`} />
+      <IndentContext.Provider
+        value={{small, large, alwaysIndent}}
+        key={`type${v.name || v.raw}${i}`}>
+        <Type type={v} />
+      </IndentContext.Provider>
     ], []).slice(1);
 }
 
 function UnionType({elements}) {
-  return <JoinList elements={elements} joiner={elements.length > 3 ? '\n  | ' : ' |\u00a0'} />;
+  return <JoinList elements={elements} joiner={' |\u00a0'} newlineBefore />;
 }
 
 function IntersectionType({types}) {
-  return <JoinList elements={types} joiner=" & " />;
+  return <JoinList elements={types} joiner={' &\u00a0'} newlineBefore />;
 }
 
 function TypeApplication({base, typeParameters}) {
@@ -188,7 +269,7 @@ export function TypeParameters({typeParameters}) {
   return (
     <>
       <span className="token punctuation">&lt;</span>
-      <JoinList elements={typeParameters} joiner=", " />
+      <JoinList elements={typeParameters} joiner=", " neverIndent />
       <span className="token punctuation">&gt;</span>
     </>
   );
@@ -208,29 +289,14 @@ function TypeParameter({name, default: defaultType}) {
   );
 }
 
-export function Indent({params, small, large}) {
-  if (params.length > 2) {
-    return small;
-  }
-
-  return (
-    <>
-      <span className="small">{small}</span>
-      <span className="large">{large}</span>
-    </>
-  );
-}
-
 function FunctionType({name, parameters, return: returnType, typeParameters, rest}) {
   return (
     <>
       {name && <span className="token hljs-function">{name}</span>}
       <TypeParameters typeParameters={typeParameters} />
-      <span className="token punctuation"><Indent params={parameters} small={'(\n  '} large="(" /></span>
-      <JoinList
-        elements={parameters}
-        joiner={<Indent params={parameters} small={',\n  '} large=", " />} />
-      <Indent params={parameters} small={'\n)'} large=")" />
+      <Indent params={parameters} open="(" close=")">
+        <JoinList elements={parameters} joiner=", " />
+      </Indent>
       <span className="token punctuation">{name ? ': ' : ' => '}</span>
       <Type type={returnType} />
     </>
@@ -402,9 +468,9 @@ export function InterfaceType({description, properties: props, showRequired, sho
                   <code className={`${typographyStyles['spectrum-Code4']}`}>
                     <span className="token hljs-function">{prop.name}</span>
                     <TypeParameters typeParameters={prop.value.typeParameters} />
-                    <span className="token punctuation"><Indent params={prop.value.parameters} small={'(\n  '} large="(" /></span>
-                    <JoinList elements={prop.value.parameters} joiner={<Indent params={prop.value.parameters} small={',\n  '} large=",  " />} />
-                    <span className="token punctuation"><Indent params={prop.value.parameters} small={'\n)'} large=")" /></span>
+                    <Indent params={prop.value.parameters} open="(" close=")">
+                      <JoinList elements={prop.value.parameters} joiner=", " />
+                    </Indent>
                     <span className="token punctuation">{': '}</span>
                     <Type type={prop.value.return} />
                   </code>
@@ -476,6 +542,16 @@ function ArrayType({elementType}) {
     <>
       <Type type={elementType} />
       <span className="token punctuation">[]</span>
+    </>
+  );
+}
+
+function TupleType({elements}) {
+  return (
+    <>
+      <Indent params={elements} alwaysIndent open="[" close="]">
+        <JoinList elements={elements} joiner=", " alwaysIndent />
+      </Indent>
     </>
   );
 }
