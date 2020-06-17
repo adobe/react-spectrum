@@ -11,7 +11,6 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/breadcrumbs';
-import collectionsDocs from 'docs:@react-stately/collections';
 import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
@@ -48,7 +47,7 @@ category: Navigation
 ## Content
 Breadcrumbs follow the [Collection Components](../react-stately/collections.html) API, accepting only static children.
 Similar to the Menu, Breadcrumbs accept an `<Item>` component, each with a `key` prop which is passed to the `onAction` handler to identify the selected item.
-Basic usage of Breadcrumbs, seen in the example above, shows a list of <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Item} /> components,
+Basic usage of Breadcrumbs, seen in the example above, shows a list of <TypeLink links={docs.links} type={docs.exports.Item} /> components,
 populated with a string. See [Events](#events) for more information.
 
 ### Internationalization
@@ -168,7 +167,9 @@ Resize your browser window to see the above behavior in the examples below.
   <Item key="shared">My Shared Documents</Item>
   <Item key="catalogue">North America Spring Catalogue</Item>
   <Item key="march 2020">March 2020</Item>
-  <Item key="assets">Downloaded Screenshots and Assets (approval required) </Item>
+  <Item key="assets">Downloaded Screenshots and Assets (approval required)</Item>
+  <Item key="streetwear">Streetwear</Item>
+  <Item key="jackets">Jackets</Item>
 </Breadcrumbs>
 ```
 
