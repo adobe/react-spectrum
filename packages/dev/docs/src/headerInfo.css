@@ -24,34 +24,6 @@
   text-align: left;
 }
 
-.flex-container {
-  /* this is necessary so that the inner margins don't affect anything outside */
-  display: flex;
-}
-
-.flex {
-  display: flex;
-}
-
-.flex-gap {
-  --gap: 0px;
-  --column-gap: var(--gap);
-  --row-gap: var(--gap);
-
-  /* apply a negative margin to counteract the margin on each item at the edges */
-  margin: calc(var(--row-gap) / -2) calc(var(--column-gap) / -2);
-
-  /* increase the width and height to account for this margin */
-  /* Add 1px to fix rounding error in Safari (╯°□°)╯︵ ┻━┻ */
-  width: calc(100% + calc(var(--column-gap) + 1px));
-  height: calc(100% + var(--row-gap));
-}
-
-.flex-gap > * {
-  /* apply half of the gap to each side of every item */
-  margin: calc(var(--row-gap) / 2) calc(var(--column-gap) / 2);
-}
-
 @media (max-width: 400px) {
   .resourceCardGroup {
     justify-content: center;
