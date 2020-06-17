@@ -14,8 +14,11 @@ import {Key, useState} from 'react';
 import {Selection} from '@react-types/shared';
 
 interface ListOptions<T> {
+  /** Initial items in the list. */
   initialItems?: T[],
+  /** The keys for the initially selected items. */
   initialSelectedKeys?: 'all' | Iterable<Key>,
+  /** A function that returns a unique key for an item object. */
   getKey?: (item: T) => Key
 }
 
@@ -75,7 +78,7 @@ export interface ListData<T> {
   remove(...keys: Key[]): void,
 
   /**
-   * Removes all items from the list that are currently 
+   * Removes all items from the list that are currently
    * in the set of selected items.
    */
   removeSelectedItems(): void,
@@ -104,12 +107,12 @@ export interface ListState<T> {
  * Manages state for an immutable list data structure, and provides convenience methods to
  * update the data over time.
  */
-export function useListData<T>(opts: ListOptions<T>): ListData<T> {
+export function useListData<T>(options: ListOptions<T>): ListData<T> {
   let {
     initialItems = [],
     initialSelectedKeys,
     getKey = (item: any) => item.id || item.key
-  } = opts;
+  } = options;
   let [state, setState] = useState<ListState<T>>({
     items: initialItems,
     selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys || [])

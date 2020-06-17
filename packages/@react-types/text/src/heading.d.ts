@@ -20,7 +20,11 @@ export interface HeadingProps extends DOMProps, StyleProps {
   children: ReactNode,
   /**
    * A slot to place the heading in.
-   * @default "heading"
+   * @default 'heading'
    */
-  slot?: string
+  slot?: string,
+  /**
+   * Sets heading level, h1 through h6.
+   */
+  level?: 1 | 2 | 3 | 4 | 5 | 6
 }

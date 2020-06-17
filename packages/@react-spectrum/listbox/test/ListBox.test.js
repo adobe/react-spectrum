@@ -140,7 +140,7 @@ describe('ListBox', function () {
   describe('supports single selection', function () {
     it('supports defaultSelectedKeys (uncontrolled)', function () {
       // Check that correct menu item is selected by default
-      let tree = renderComponent({onSelectionChange, defaultSelectedKeys: ['Blah'], autoFocus: 'first'});
+      let tree = renderComponent({onSelectionChange, defaultSelectedKeys: ['Blah'], autoFocus: 'first', selectionMode: 'single'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       let selectedItem = options[3];
@@ -171,7 +171,7 @@ describe('ListBox', function () {
 
     it('supports selectedKeys (controlled)', function () {
       // Check that correct menu item is selected by default
-      let tree = renderComponent({onSelectionChange, selectedKeys: ['Blah'], autoFocus: 'first'});
+      let tree = renderComponent({onSelectionChange, selectedKeys: ['Blah'], autoFocus: 'first', selectionMode: 'single'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       let selectedItem = options[3];
@@ -200,7 +200,7 @@ describe('ListBox', function () {
     });
 
     it('supports using space key to change item selection', function () {
-      let tree = renderComponent({onSelectionChange});
+      let tree = renderComponent({onSelectionChange, selectionMode: 'single'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
 
@@ -221,7 +221,7 @@ describe('ListBox', function () {
     });
 
     it('supports using click to change item selection', function () {
-      let tree = renderComponent({onSelectionChange});
+      let tree = renderComponent({onSelectionChange, selectionMode: 'single'});
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
 

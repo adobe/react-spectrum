@@ -88,11 +88,11 @@ prop.
 
 ```tsx example
 function Breadcrumbs(props) {
-  let {breadcrumbsProps} = useBreadcrumbs(props);
+  let {navProps} = useBreadcrumbs(props);
   let children = React.Children.toArray(props.children);
 
   return (
-    <nav {...breadcrumbsProps}>
+    <nav {...navProps}>
       <ol style={{display: 'flex', listStyle: 'none'}}>
         {children.map((child, i) =>
           React.cloneElement(child, {isCurrent: i === children.length - 1})
@@ -103,11 +103,13 @@ function Breadcrumbs(props) {
 }
 
 function BreadcrumbItem(props) {
-  let {breadcrumbItemProps} = useBreadcrumbItem({...props, elementType: 'span'});
+  let ref = React.useRef();
+  let {itemProps} = useBreadcrumbItem({...props, elementType: 'span'}, ref);
   return (
     <li>
       <span
-        {...breadcrumbItemProps}
+        {...itemProps}
+        ref={ref}
         style={{
           color: 'dodgerblue',
           textDecoration: props.isCurrent ? null : 'underline',
@@ -139,11 +141,11 @@ are native navigation links to other pages rather than handled by JavaScript.
 function Breadcrumbs(props) {
   // Same as in the previous example...
 ///- begin collapse -///
-  let {breadcrumbsProps} = useBreadcrumbs(props);
+  let {navProps} = useBreadcrumbs(props);
   let children = React.Children.toArray(props.children);
 
   return (
-    <nav {...breadcrumbsProps}>
+    <nav {...navProps}>
       <ol style={{display: 'flex', listStyle: 'none'}}>
         {children.map((child, i) =>
           React.cloneElement(child, {isCurrent: i === children.length - 1})
@@ -155,11 +157,13 @@ function Breadcrumbs(props) {
 }
 
 function BreadcrumbItem(props) {
-  let {breadcrumbItemProps} = useBreadcrumbItem(props);
+  let ref = React.useRef();
+  let {itemProps} = useBreadcrumbItem(props, ref);
   return (
     <li>
       <a
-        {...breadcrumbItemProps}
+        {...itemProps}
+        ref={ref}
         href={props.href}
         style={{
           color: 'dodgerblue',
@@ -185,23 +189,23 @@ function BreadcrumbItem(props) {
 ## Breadcrumbs as a heading
 
 If you use breadcrumbs in the context where a heading would normally be used,
-you can pass the `isHeading` prop to the breadcrumb items and the last breadcrumb
-will be exposed as a heading to assistive technology. `headingAriaLevel` can also be
-used to set the level of that heading.
+you should make sure that the proper `elementType` for each breadcrumb is communicated to
+`useBreadcrumbItem` so that you receive the correct `breadcrumbItemProps` to spread on your breadcrumb.
+This can be seen in the example below where we specify that the last breadcrumb has elementType `h3` and all other
+breadcrumbs are of type `a`.
 
 ```tsx example
 function Breadcrumbs(props) {
-  let {breadcrumbsProps} = useBreadcrumbs(props);
+  let {navProps} = useBreadcrumbs(props);
   let children = React.Children.toArray(props.children);
 
   return (
-    <nav {...breadcrumbsProps}>
+    <nav {...navProps}>
       <ol style={{display: 'flex', listStyle: 'none'}}>
         {children.map((child, i) =>
           React.cloneElement(child, {
             isCurrent: i === children.length - 1,
-            isHeading: true,
-            headingAriaLevel: 3
+            elementType: i === children.length - 1 ? 'h3' : 'a'
           })
         )}
       </ol>
@@ -210,27 +214,46 @@ function Breadcrumbs(props) {
 }
 
 function BreadcrumbItem(props) {
-  // Same as in the previous example...
-///- begin collapse -///
-  let {breadcrumbItemProps} = useBreadcrumbItem(props);
-  return (
-    <li>
-      <a
-        {...breadcrumbItemProps}
-        href={props.href}
+  let ref = React.useRef();
+  let {itemProps} = useBreadcrumbItem(props, ref);
+  let breadcrumbContent;
+  if (props.isCurrent) {
+    breadcrumbContent = (
+      <h3
+        {...itemProps}
+        ref={ref}
         style={{
-          color: props.isDisabled ? 'gray' : 'dodgerblue',
-          fontWeight: props.isCurrent ? 'bold' : null,
-          cursor: props.isCurrent ? 'default' : 'pointer'
+          margin: 0,
+          fontSize: '1em',
+          color: 'dodgerblue'
         }}>
         {props.children}
-      </a>
-      {!props.isCurrent &&
+      </h3>
+    );
+  } else {
+    breadcrumbContent = (
+      <>
+        <a
+          {...itemProps}
+          ref={ref}
+          href={props.href}
+          style={{
+            color: props.isDisabled ? 'gray' : 'dodgerblue',
+            fontWeight: props.isCurrent ? 'bold' : null,
+            cursor: props.isCurrent ? 'default' : 'pointer'
+          }}>
+          {props.children}
+        </a>
         <span aria-hidden="true" style={{padding: '0 5px'}}>{'›'}</span>
-      }
+      </>
+    );
+  }
+
+  return (
+    <li>
+      {breadcrumbContent}
     </li>
   );
-///- end collapse -///
 }
 
 <Breadcrumbs>

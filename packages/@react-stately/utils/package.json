@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/utils",
-  "version": "3.0.0-rc.2",
+  "version": "3.0.0-rc.3",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",

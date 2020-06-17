@@ -15,7 +15,7 @@ import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {ListBoxContext} from './ListBoxContext';
-import {Node} from '@react-stately/collections';
+import {Node} from '@react-types/shared';
 import React, {useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
@@ -52,12 +52,12 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
       isDisabled,
       'aria-label': item['aria-label'],
       key,
-      ref,
       shouldSelectOnPressUp,
       shouldFocusOnHover,
       isVirtualized: true
     },
-    state
+    state,
+    ref
   );
 
   let contents = typeof rendered === 'string'

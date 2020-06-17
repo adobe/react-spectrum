@@ -17,7 +17,7 @@ import {Item, Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {TextField} from '@react-spectrum/textfield';
+import {TextArea, TextField} from '@react-spectrum/textfield';
 
 storiesOf('Form', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -128,6 +128,7 @@ function render(props: any = {}) {
         <Item>Blue</Item>
         <Item>Purple</Item>
       </Picker>
+      <TextArea label="Comments" placeholder="How do you feel?" />
     </Form>
   );
 }

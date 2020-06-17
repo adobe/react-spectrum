@@ -18,7 +18,13 @@ import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
 interface RadioAriaProps extends AriaRadioProps {
+  /**
+   * Whether the Radio control is required. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/required).
+   */
   isRequired?: boolean,
+  /**
+   * Whether the Radio can be interacted with but cannot have its selection state changed.
+   */
   isReadOnly?: boolean
 }
 
@@ -63,11 +69,11 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
   });
 
   let {focusableProps} = useFocusable(mergeProps(props, {
-    onFocus: () => state.setFocusableRadio(value)
+    onFocus: () => state.setLastFocusedValue(value)
   }), ref);
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
-  let tabIndex = state.focusableRadio === value || state.focusableRadio == null ? 0 : -1;
+  let tabIndex = state.lastFocusedValue === value || state.lastFocusedValue == null ? 0 : -1;
   if (isDisabled) {
     tabIndex = undefined;
   }
@@ -82,6 +88,7 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
       readOnly: isReadOnly,
       required: isRequired,
       checked,
+      value,
       onChange
     })
   };

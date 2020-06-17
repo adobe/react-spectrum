@@ -10,9 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, PointerType, PressEvents} from '@react-types/shared';
+// Portions of the code in this file are based on code from react.
+// Original licensing for the following can be found in the
+// NOTICE file in the root directory of this source tree.
+// See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
+
 import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {PointerType, PressEvents} from '@react-types/shared';
 import {PressResponderContext} from './context';
 
 export interface PressProps extends PressEvents {
@@ -22,7 +27,7 @@ export interface PressProps extends PressEvents {
   isDisabled?: boolean
 }
 
-export interface PressHookProps extends PressProps, DOMProps {
+export interface PressHookProps extends PressProps {
   /** A ref to the target element. */
   ref?: RefObject<HTMLElement>
 }
@@ -236,7 +241,7 @@ export function usePress(props: PressHookProps): PressResult {
       if (state.isPressed && isValidKeyboardEvent(e)) {
         e.preventDefault();
         e.stopPropagation();
-        
+
         state.isPressed = false;
         triggerPressEnd(createEvent(state.target, e), 'keyboard', e.target === state.target);
         document.removeEventListener('keyup', onKeyUp, false);
@@ -259,7 +264,7 @@ export function usePress(props: PressHookProps): PressResult {
     };
 
     let restoreTextSelection = () => {
-      // There appears to be a delay on iOS where selection still might occur 
+      // There appears to be a delay on iOS where selection still might occur
       // after pointer up, so wait a bit before removing user-select.
       setTimeout(() => {
         // Avoid race conditions
@@ -426,7 +431,7 @@ export function usePress(props: PressHookProps): PressResult {
         if (e.button !== 0) {
           return;
         }
-        
+
         state.isPressed = false;
         document.removeEventListener('mouseup', onMouseUp, false);
 
@@ -573,7 +578,10 @@ function isValidKeyboardEvent(event: KeyboardEvent): boolean {
   );
 }
 
-// Per: https://github.com/facebook/react/blob/3c713d513195a53788b3f8bb4b70279d68b15bcc/packages/react-interactions/events/src/dom/shared/index.js#L74-L87
+// Original licensing for the following method can be found in the
+// NOTICE file in the root directory of this source tree.
+// See https://github.com/facebook/react/blob/3c713d513195a53788b3f8bb4b70279d68b15bcc/packages/react-interactions/events/src/dom/shared/index.js#L74-L87
+
 // Keyboards, Assitive Technologies, and element.click() all produce a "virtual"
 // click event. This is a method of inferring such clicks. Every browser except
 // IE 11 only sets a zero value of "detail" for click events that are "virtual".
@@ -627,8 +635,8 @@ interface EventPoint {
 
 function isOverTarget(point: EventPoint, target: HTMLElement) {
   let rect = target.getBoundingClientRect();
-  return (point.clientX || 0) >= (rect.left || 0) && 
-    (point.clientX || 0) <= (rect.right || 0) && 
-    (point.clientY || 0) >= (rect.top || 0) && 
+  return (point.clientX || 0) >= (rect.left || 0) &&
+    (point.clientX || 0) <= (rect.right || 0) &&
+    (point.clientY || 0) >= (rect.top || 0) &&
     (point.clientY || 0) <= (rect.bottom || 0);
 }

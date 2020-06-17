@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {ListLayout} from '@react-stately/collections';
+import {ListLayout} from '@react-stately/layout';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useSideNav} from '../';
