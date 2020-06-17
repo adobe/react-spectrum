@@ -545,6 +545,10 @@ h2.sectionHeader {
     display: block;
     padding-top: 8px;
   }
+
+  .methodTable td[data-column] code {
+    width: 100%;
+  }
 }
 
 @media (max-width: 1020px) {
