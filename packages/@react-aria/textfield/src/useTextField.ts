@@ -30,7 +30,7 @@ interface TextFieldAria {
  */
 export function useTextField(
   props: AriaTextFieldProps,
-  ref: RefObject<HTMLInputElement>
+  ref?: RefObject<HTMLInputElement>
 ): TextFieldAria {
   let {
     isDisabled = false,
