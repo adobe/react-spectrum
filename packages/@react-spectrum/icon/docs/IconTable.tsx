@@ -29,7 +29,11 @@ const icons = {
   workflow: {
     // @ts-ignore
     import: () => import('@adobe/spectrum-css-workflow-icons'),
-    importTemplate: name => `import ${name} from '@spectrum-icons/workflow/${name.toLowerCase()}';`,
+    importTemplate: name => {
+      // Add _ to the icon name import if it starts with a number
+      let defaultExport = name.match(/^\d/) ? `_${name}` : name;
+      return `import ${defaultExport} from '@spectrum-icons/workflow/${name}';`;
+    },
     srcTemplate: name => `https://spectrum.adobe.com/static/icons/workflow_18/Smock_${name}_18_N.svg`
   }
 };
