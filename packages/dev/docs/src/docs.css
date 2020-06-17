@@ -250,11 +250,6 @@ footer li:last-child:after {
   }
 }
 
-.colorLink[aria-haspopup="dialog"]:after {
-  content: ' ▼';
-  margin-left: -4px;
-}
-
 article h1.articleHeader {
   margin-top: 0 !important;
   /* scale font size between 32px and 58px
