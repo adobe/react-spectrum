@@ -44,7 +44,13 @@ Spectrum workflow icons are graphical metaphors or symbols that users interact w
 They all appear at the same size within each platform, 18 px for desktop and 22 px for mobile. See [ActionButton](/react-spectrum/ActionButton.html#content)
 and [Picker](/react-spectrum/Picker.html#complex-items) for some examples of icon usage within React Spectrum components.
 
-See the table below for a full list of available workflow icons.
+See the table below for a full list of available workflow icons. Note that you are free to rename the imports, meaning the following
+two are equivalent:
+
+```tsx
+import Add from '@spectrum-icons/workflow/Add;
+import IconAdd from '@spectrum-icons/workflow/Add';
+```
 
 ```tsx snippet
 <IconTable iconPackage="workflow" />
