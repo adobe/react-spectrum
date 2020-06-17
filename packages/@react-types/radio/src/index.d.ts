@@ -36,7 +36,7 @@ export interface RadioGroupProps extends ValueBase<string>, InputBase, Validatio
    */
   orientation?: Orientation,
   /**
-   * The unique identifying name of the RadioGroup that is applied to the Radios within the group.
+   * The name of the RadioGroup, used when submitting an HTML form.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#name_and_radio_buttons).
    */
   name?: string
@@ -44,7 +44,7 @@ export interface RadioGroupProps extends ValueBase<string>, InputBase, Validatio
 
 export interface RadioProps extends FocusableProps {
   /**
-   * The value of the radio button, used to identify it in a RadioGroup.
+   * The value of the radio button, used when submitting an HTML form.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio#Value).
    */
   value: string,
