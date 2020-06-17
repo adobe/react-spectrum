@@ -11,7 +11,7 @@
  */
 
 let fs = require('fs');
-let packageJson = require('./package.json');
+let packageJson = require('../package.json');
 
 /***
  * Updates the table of components in README.md with the versions from the package.json.
