@@ -12,7 +12,7 @@
 
 .resourceCard {
   width: 224px;
-  margin: 2px 16px 2px 2px;
+  flex: 0 0 auto;
   box-shadow: 0 0 0 1px var(--spectrum-global-color-gray-300);
   transition: 125ms ease-in-out;
   height: 64px;

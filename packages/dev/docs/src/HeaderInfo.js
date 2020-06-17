@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import classNames from 'classnames';
 import js from 'highlight.js/lib/languages/javascript';
 import Lowlight from 'react-lowlight';
 import React from 'react';
@@ -46,12 +47,14 @@ export function HeaderInfo(props) {
           </tr>
         </tbody>
       </table>
-      <div className={styles['resourceCardGroup']}>
-        {sourceData.map((source) => (
-          <ResourceCard type={source.type} url={source.url} />
-        ))}
-        <ResourceCard type="GitHub" url={`https://github.com/adobe-private/react-spectrum-v3/tree/master/packages/${encodeURI(packageData.name)}`} />
-        <ResourceCard type="NPM" url={`https://www.npmjs.com/package/${encodeURI(packageData.name)}`} />
+      <div className={classNames(styles['flex-container'])}>
+        <div className={classNames(styles['flex'], styles['flex-gap'])} style={{'--gap': '16px', flexWrap: 'wrap'}}>
+          {sourceData.map((source) => (
+            <ResourceCard type={source.type} url={source.url} />
+          ))}
+          <ResourceCard type="GitHub" url={`https://github.com/adobe-private/react-spectrum-v3/tree/master/packages/${encodeURI(packageData.name)}`} />
+          <ResourceCard type="NPM" url={`https://www.npmjs.com/package/${encodeURI(packageData.name)}`} />
+        </div>
       </div>
     </>
   );
