@@ -26,21 +26,28 @@ import {
 import {ReactElement, ReactNode} from 'react';
 
 export interface RadioGroupProps extends ValueBase<string>, InputBase, Validation, LabelableProps {
-  children: ReactElement<RadioProps> | ReactElement<RadioProps>[],
   /**
    * The axis the Radio Button(s) should align with.
    * @default 'vertical'
    */
   orientation?: Orientation,
-  name?: string // HTML form name. Not displayed.
+  /**
+   * The unique identifying name of the RadioGroup that is applied to the Radios within the group.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#name_and_radio_buttons).
+   */
+  name?: string
 }
 
 export interface RadioProps extends FocusableProps {
-  value: string, // HTML form value. Not displayed.
+  /**
+   * The value of the radio button, used to identify it in a RadioGroup.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/radio#Value).
+   */
+  value: string,
   /**
    * The label for the Radio. Accepts any renderable node.
    */
-  children?: ReactNode, // pass in children to render label
+  children?: ReactNode,
   /**
    * Whether the radio button is disabled or not.
    * Shows that a selection exists, but is not available in that circumstance.
@@ -50,6 +57,10 @@ export interface RadioProps extends FocusableProps {
 
 export interface AriaRadioGroupProps extends RadioGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
 export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLabelableProps, StyleProps {
+  /**
+   * The Radio(s) contained within the RadioGroup.
+   */
+  children: ReactElement<RadioProps> | ReactElement<RadioProps>[],
   /**
    * By default, radio buttons are not emphasized (gray).
    * The emphasized (blue) version provides visual prominence.

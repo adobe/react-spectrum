@@ -14,11 +14,29 @@ import {AriaLabelingProps, FocusableDOMProps, FocusableProps, InputBase, StylePr
 import {ReactNode} from 'react';
 
 interface SwitchBase extends InputBase, FocusableProps {
-  children?: ReactNode, // pass in children to render label
+  /**
+   * The content to render as the Switch's label.
+   */
+  children?: ReactNode,
+  /**
+   * Whether the Switch should be selected (uncontrolled).
+   */
   defaultSelected?: boolean,
+  /**
+   * Whether the Switch should be selected (controlled).
+   */
   isSelected?: boolean,
+  /**
+   * Handler that is called when the Switch's selection state changes.
+   */
   onChange?: (isSelected: boolean) => void,
-  value?: string, // dom prop for input element
+  /**
+   * The value of the input element. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
+   */
+  value?: string,
+  /**
+   * The name of the input element. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
   name?: string
 }
 export interface SwitchProps extends SwitchBase {}
