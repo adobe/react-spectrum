@@ -31,7 +31,7 @@ for (let link of links) {
     <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <DialogTrigger type="popover">
         <Pressable>
-          <a href={link.href} data-link={link.dataset.link} className={link.className} aria-haspopup="dialog" onClick={e => e.preventDefault()}>{link.textContent}</a>
+          <a href={link.href} data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
         </Pressable>
         <LinkPopover id={link.dataset.link} />
       </DialogTrigger>
