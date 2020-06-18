@@ -59,7 +59,8 @@ const mdxComponents = {
   ul: ({children, ...props}) => <ul {...props} className={typographyStyles['spectrum-Body3']}>{children}</ul>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
-  a: ({children, ...props}) => <a {...props} className={linkStyle['spectrum-Link']} {...getAnchorProps(props.href)}>{children}</a>
+  a: ({children, ...props}) => <a {...props} className={linkStyle['spectrum-Link']} {...getAnchorProps(props.href)}>{children}</a>,
+  kbd: ({children, ...props}) => <kbd {...props} className={docStyles['keyboard']}>{children}</kbd>
 };
 
 function dirToTitle(dir) {
