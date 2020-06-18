@@ -338,7 +338,7 @@ code :global(.large) {
   display: inline;
 }
 
-article kbd {
+article p kbd {
   font-family: var(--spectrum-font-family-base);
   background: var(--spectrum-global-color-gray-300);
   padding: 2px 6px;
