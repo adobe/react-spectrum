@@ -46,11 +46,11 @@ category: Collections
 ```
 
 ## Content
-Listbox is a common <a href="https://www.w3.org/TR/wai-aria-practices-1.1/#Listbox">ARIA role</a> used to display lists, with and without selection. This component follows that pattern using the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic forms of children. Similar to [Picker](Picker.html), ListBox accepts an `<Item>` component, each with a `key` prop. Basic usage of the ListBox, seen in the example above, shows multiple options populated with a string. This implementation would be used when the list of options is finite and known.
+A ListBox displays a list of options, and allows users to select one or more of them. It follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. Similar to [Picker](Picker.html), ListBox accepts `<Item>` elements as children, each with a `key` prop. Basic usage of the ListBox, seen in the example above, shows multiple options populated with a string. Static collections, as in this example, can be used when the full list of options is known ahead of time.
 
-The dynamic method (shown below) would be better suited to use if the options came from a data object such as values returned from an API call. Providing the data in this way allows for ListBox to automatically cache the rendering of each item, which dramatically improves performance.
+Dynamic collections, as shown below, can be used when the options come from an external data source such as an API call, or update over time. Providing the data in this way allows for ListBox to automatically cache the rendering of each item, which dramatically improves performance.
 
-As seen below, an iterable list of options is passed to the Listbox using the `items` prop. Each item accepts a key prop, which is passed to the `onSelectionChange` handler, when present, to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a key prop is not required. See the [Events](#events) section for more detail on selection. By default, Listbox does not support selection however this can be changed using the `selectionMode` prop. See [Selection](#selection) for more information.
+As seen below, an iterable list of options is passed to the Listbox using the `items` prop. Each item accepts a key prop, which is passed to the `onSelectionChange` handler, when present, to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a key prop is not required. See the [Events](#events) section for more detail on selection. By default, selection is not enabled, however this can be changed using the `selectionMode` prop. See [Selection](#selection) for more information.
 
 ```tsx example
 function Example() {
@@ -82,7 +82,7 @@ To internationalize a ListBox, a localized string should be passed to the `child
 For languages that are read right to left (e.g. Hebrew and Arabic), the layout of the ListBox is flipped.
 
 ## Selection
-ListBox supports no selection, single and multiple selection modes using the prop `selectionMode`. Setting selected options can be done by using the `defaultSelectedKeys` or `selectedKeys` prop. The selected key corresponds to the `key` of an item. See <a href="#events" title="Events">Events</a> for more details on selection events.
+ListBox supports no selection, single and multiple selection modes using the `selectionMode` prop. Setting selected options can be done by using the `defaultSelectedKeys` or `selectedKeys` prop. The selected key corresponds to the `key` of an item. See <a href="#events" title="Events">Events</a> for more details on selection events.
 
 ```tsx example
 function Example() {
@@ -311,9 +311,6 @@ function AsyncLoadingExample() {
   selectionMode="single"
   onSelectionChange={selected => setFrequency(selected)}
   width="size-1200">
-  <Item key="Rarely">Rarely</Item>
-  <Item key="Sometimes">Sometimes</Item>
-  <Item key="Always">Always</Item>
 </ListBox>
 ```
 
