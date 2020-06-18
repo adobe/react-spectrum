@@ -307,7 +307,7 @@ function Parameter({name, value, default: defaultValue, rest}) {
   return (
     <>
       {rest && <span className="token punctuation">...</span>}
-      <span className="token hljs-attr">{name}</span>
+      <span className="token">{name}</span>
       {value &&
         <>
           <span className="token punctuation">: </span>
@@ -379,7 +379,7 @@ export function renderHTMLfromMarkdown(description) {
   return '';
 }
 
-export function InterfaceType({description, properties: props, showRequired, showDefault}) {
+export function InterfaceType({description, properties: props, showRequired, showDefault, isComponent}) {
   let properties = Object.values(props).filter(prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected');
   let methods = Object.values(props).filter(prop => prop.type === 'method' && prop.access !== 'private' && prop.access !== 'protected');
 
@@ -424,7 +424,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
               <tr key={index} className={tableStyles['spectrum-Table-row']}>
                 <td role="rowheader" className={tableStyles['spectrum-Table-cell']} data-column="Name">
                   <code className={`${typographyStyles['spectrum-Code4']}`}>
-                    <span className="token hljs-attr">{prop.name}</span>
+                    <span className={`token ${isComponent ? 'hljs-attr' : 'hljs-variable'}`}>{prop.name}</span>
                   </code>
                   {!prop.optional && showRequired
                     ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} alt="Required" />
@@ -507,7 +507,7 @@ function ObjectType({properties, exact}) {
         if (value && value.type === 'function' && !optional && token === 'method') {
           return (
             <div key={property.key} style={{paddingLeft: '1.5em'}}>
-              <span className="token hljs-attr">{k}</span>
+              <span className="token hljs-function">{k}</span>
               <span className="token punctuation">(</span>
               <JoinList elements={value.parameters} joiner=", " />
               <span className="token punctuation">)</span>
