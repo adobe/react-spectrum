@@ -247,6 +247,7 @@ footer li:last-child:after {
   text-decoration: none;
   &:hover {
     text-decoration: underline;
+    cursor: pointer;
   }
 }
 
