@@ -181,7 +181,7 @@ The following example uses an `onSelectionChange` handler to update the selectio
 
 ```tsx example
 function StaticExample() {
-  let [frequency, setFrequency] = React.useState();
+  let [frequency, setFrequency] = React.useState(new Set());
 
   return (
     <>
@@ -194,7 +194,7 @@ function StaticExample() {
         <Item key="Sometimes">Sometimes</Item>
         <Item key="Always">Always</Item>
       </ListBox>
-      <p>You selected: {frequency}</p>
+      <p>You selected: {[...frequency][0]}</p>
     </>
   );
 }
@@ -204,7 +204,7 @@ When using ListBox with dynamic items, selection works much the same way using `
 
 ```tsx example
 function DynamicExample() {
-  let [animalId, setAnimalId] = React.useState();
+  let [animalId, setAnimalId] = React.useState(new Set());
   let options = [
     {id: 1, name: 'Aardvark'},
     {id: 2, name: 'Cat'},
@@ -227,7 +227,7 @@ function DynamicExample() {
         width="size-2400">
         {item => <Item>{item.name}</Item>}
       </ListBox>
-      <p>Your favorite animal has id: {animalId}</p>
+      <p>Your favorite animal has id: {[...animalId][0]}</p>
     </>
   );
 }
