@@ -26,6 +26,7 @@ let levels = {
 
 // Packages to release
 let publicPackages = {
+  '@adobe/react-spectrum': 'rc',
   '@react-spectrum/actiongroup': 'rc',
   '@react-spectrum/breadcrumbs' : 'rc',
   '@react-spectrum/button': 'rc',
@@ -81,12 +82,18 @@ let releasedPackages = new Map();
 // Otherwise, add all public packages and their dependencies.
 let arg = process.argv[process.argv.length - 1];
 if (arg.startsWith('@')) {
-  if (!info[arg] || !publicPackages[arg]) {
+  if (!info[arg]) {
     throw new Error('Invalid package ' + arg);
   }
 
   let addPackage = (pkg, status) => {
     if (excludedPackages.has(pkg)) {
+      return;
+    }
+
+    let filePath = info[pkg].location + '/package.json';
+    let pkgJSON = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    if (pkgJSON.private) {
       return;
     }
 
