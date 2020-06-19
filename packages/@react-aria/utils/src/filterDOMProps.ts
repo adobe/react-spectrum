@@ -25,13 +25,21 @@ const labelablePropNames = new Set([
 ]);
 
 interface Options {
+  /**
+   * If labelling associated aria properties should be included in the filter.
+   */
   labelable?: boolean,
+  /**
+   * A Set of other property names that should be included in the filter.
+   */
   propNames?: Set<string>
 }
 
 const propRe = /^(data-.*)$/;
 
-// Filters out all props that aren't valid DOM props or are user defined via override prop obj.
+/**
+ * Filters out all props that aren't valid DOM props and aren't in the user defined propNames in options.
+ */
 export function filterDOMProps(props: DOMProps & AriaLabelingProps, opts: Options = {}): DOMProps & AriaLabelingProps {
   let {labelable, propNames} = opts;
   let filteredProps: HTMLAttributes<HTMLElement> = {};

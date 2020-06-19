@@ -13,6 +13,9 @@
 import {RefObject} from 'react';
 import {useDOMPropsResponderContext} from './DOMPropsContext';
 
+/**
+ * Pulls props off the DOMPropsResponderContext.
+ */
 export function useDOMPropsResponder(domRef: RefObject<HTMLElement>) {
 
   let domProps = useDOMPropsResponderContext({ref: domRef}) || {};

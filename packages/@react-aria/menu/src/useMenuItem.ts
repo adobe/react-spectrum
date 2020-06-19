@@ -18,16 +18,16 @@ import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface MenuItemAria {
-  /** Props for the menu item element */
+  /** Props for the menu item element. */
   menuItemProps: HTMLAttributes<HTMLElement>,
 
-  /** Props for the main text element inside the menu item */
+  /** Props for the main text element inside the menu item. */
   labelProps: HTMLAttributes<HTMLElement>,
 
-  /** Props for the description text element inside the menu item, if any */
+  /** Props for the description text element inside the menu item, if any. */
   descriptionProps: HTMLAttributes<HTMLElement>,
 
-  /** Props for the keyboard shortcut text element inside the item, if any */
+  /** Props for the keyboard shortcut text element inside the item, if any. */
   keyboardShortcutProps: HTMLAttributes<HTMLElement>
 }
 
@@ -63,8 +63,8 @@ interface AriaMenuItemProps {
 /**
  * Provides the behavior and accessibility implementation for an item in a menu.
  * See `useMenu` for more details about menus.
- * @param props - props for the item
- * @param state - state for the menu, as returned by `useTreeState`
+ * @param props - Props for the item.
+ * @param state - State for the menu, as returned by `useTreeState`.
  */
 export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuItemAria {
   let {

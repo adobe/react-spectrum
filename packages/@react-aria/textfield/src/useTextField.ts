@@ -25,8 +25,8 @@ interface TextFieldAria {
 
 /**
  * Provides the behavior and accessibility implementation for a text field.
- * @param props - props for the text field
- * @param ref - ref to the HTML input element
+ * @param props - Props for the text field.
+ * @param ref - Ref to the HTML input element.
  */
 export function useTextField(
   props: AriaTextFieldProps,

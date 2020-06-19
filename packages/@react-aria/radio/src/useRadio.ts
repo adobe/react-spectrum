@@ -29,16 +29,16 @@ interface RadioAriaProps extends AriaRadioProps {
 }
 
 interface RadioAria {
-  /** Props for the input element */
+  /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLElement>
 }
 
 /**
  * Provides the behavior and accessibility implementation for an individual
  * radio button in a radio group.
- * @param props - props for the radio
- * @param state - state for the radio group, as returned by `useRadioGroupState`
- * @param ref - ref to the HTML input element
+ * @param props - Props for the radio.
+ * @param state - State for the radio group, as returned by `useRadioGroupState`.
+ * @param ref - Ref to the HTML input element.
  */
 export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: RefObject<HTMLElement>): RadioAria {
   let {

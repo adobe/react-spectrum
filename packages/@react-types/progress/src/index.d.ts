@@ -34,12 +34,15 @@ interface ProgressBaseProps {
 export interface ProgressBarBaseProps extends ProgressBaseProps {
   /** The content to display as the label. */
   label?: ReactNode,
-  /** Whether the value's label is displayed */
-  showValueLabel?: boolean, // true by default if label, false by default if not
-  /** The display format of the value label. */
-  formatOptions?: Intl.NumberFormatOptions, // defaults to formatting as a percentage.
-  /** The content to display as the value's label. */
-  valueLabel?: ReactNode // custom value label (e.g. 1 of 4)
+  /** Whether the value's label is displayed. True by default if there's a label, false by default if not. */
+  showValueLabel?: boolean,
+  /**
+   * The display format of the value label.
+   * @default {style: 'percent'}
+   */
+  formatOptions?: Intl.NumberFormatOptions,
+  /** The content to display as the value's label (e.g. 1 of 4). */
+  valueLabel?: ReactNode
 }
 
 export interface AriaProgressBarBaseProps extends ProgressBarBaseProps, DOMProps, AriaLabelingProps {}

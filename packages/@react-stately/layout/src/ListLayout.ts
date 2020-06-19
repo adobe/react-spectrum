@@ -16,7 +16,7 @@ import {Key} from 'react';
 // import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
 
 type ListLayoutOptions<T> = {
-  /** the height of a row in px. */
+  /** The height of a row in px. */
   rowHeight?: number,
   estimatedRowHeight?: number,
   headingHeight?: number,
@@ -37,7 +37,7 @@ const DEFAULT_HEIGHT = 48;
 
 /**
  * The ListLayout class is an implementation of a collection view {@link Layout}
- * it is used for creating lists and lists with indented sub-lists
+ * it is used for creating lists and lists with indented sub-lists.
  *
  * To configure a ListLayout, you can use the properties to define the
  * layouts and/or use the method for defining indentation.

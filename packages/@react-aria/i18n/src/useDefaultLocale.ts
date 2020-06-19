@@ -21,6 +21,9 @@ export interface Locale {
   direction: Direction
 }
 
+/**
+ * Gets the locale setting of the browser.
+ */
 export function getDefaultLocale(): Locale {
   // @ts-ignore
   let locale = (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || 'en-US';
@@ -33,6 +36,7 @@ export function getDefaultLocale(): Locale {
 let currentLocale = getDefaultLocale();
 let listeners = new Set<(locale: Locale) => void>();
 
+/** @private */
 function updateLocale() {
   currentLocale = getDefaultLocale();
   for (let listener of listeners) {
@@ -40,7 +44,9 @@ function updateLocale() {
   }
 }
 
-// Returns the current browser/system language, and updates when it changes.
+/**
+ * Returns the current browser/system language, and updates when it changes.
+ */
 export function useDefaultLocale() {
   let [defaultLocale, setDefaultLocale] = useState(currentLocale);
 

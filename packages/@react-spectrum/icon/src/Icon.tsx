@@ -21,23 +21,24 @@ type Scale = 'M' | 'L'
 
 interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
-   * Alternate text for assistive technologies
+   * Alternate text for assistive technologies.
    */
   alt?: string,
   /**
-   * The content to display. Should be an SVG
+   * The content to display. Should be an SVG.
    */
   children: ReactElement,
   /**
-   * Size of Icon (changes based on scale)
+   * Size of Icon (changes based on scale).
    */
   size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL',
   /**
-   * TODO
+   * If size is not specified, it uses the scale to determine the size.
+   * If the scale is not provided, then the provider scale is used.
    */
   scale?: Scale,
   /**
-   * TODO
+   * Determines the theme color to use. If not provided, then the provider theme is used.
    */
   color?: string,
   /**

@@ -48,17 +48,22 @@ const FOCUS_VISIBLE_INPUT_KEYS = {
   Escape: true
 };
 
+/** @private */
 function triggerChangeHandlers(modality: Modality, e: HandlerEvent) {
   for (let handler of changeHandlers) {
     handler(modality, e);
   }
 }
 
-// Helper function to determine if a KeyboardEvent is unmodified and could make keyboard focus styles visible
+/**
+ * Helper function to determine if a KeyboardEvent is unmodified and could make keyboard focus styles visible
+ * @private
+ */
 function isValidKey(e: KeyboardEvent) {
   return !(e.metaKey || (!isMac && e.altKey) || e.ctrlKey);
 }
 
+/** @private */
 function handleKeyboardEvent(e: KeyboardEvent) {
   hasEventBeforeFocus = true;
   if (isValidKey(e)) {
@@ -67,6 +72,7 @@ function handleKeyboardEvent(e: KeyboardEvent) {
   }
 }
 
+/** @private */
 function handlePointerEvent(e: PointerEvent | MouseEvent) {
   currentModality = 'pointer';
   if (e.type === 'mousedown' || e.type === 'pointerdown') {
@@ -75,6 +81,7 @@ function handlePointerEvent(e: PointerEvent | MouseEvent) {
   }
 }
 
+/** @private */
 function handleFocusEvent(e: FocusEvent) {
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
@@ -93,13 +100,17 @@ function handleFocusEvent(e: FocusEvent) {
   hasEventBeforeFocus = false;
 }
 
+/** @private */
 function handleWindowBlur() {
   // When the window is blurred, reset state. This is necessary when tabbing out of the window,
   // for example, since a subsequent focus event won't be fired.
   hasEventBeforeFocus = false;
 }
 
-// Setup global event listeners to control when keyboard focus style should be visible
+/**
+ * Setup global event listeners to control when keyboard focus style should be visible.
+ * @private
+ */
 function setupGlobalFocusEvents() {
   if (hasSetupGlobalListeners) {
     return;
@@ -136,10 +147,16 @@ function setupGlobalFocusEvents() {
   hasSetupGlobalListeners = true;
 }
 
+/**
+ * If true, keyboard focus is visible.
+ */
 export function isFocusVisible(): boolean {
   return currentModality !== 'pointer';
 }
 
+/**
+ * Keeps state of the current modality.
+ */
 export function useInteractionModality(): Modality {
   setupGlobalFocusEvents();
 

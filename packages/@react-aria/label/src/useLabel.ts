@@ -15,14 +15,26 @@ import {ElementType, HTMLAttributes, LabelHTMLAttributes} from 'react';
 import {useId, useLabels} from '@react-aria/utils';
 
 interface LabelAriaProps extends LabelableProps, DOMProps, AriaLabelingProps {
+  /**
+   * The tag name of the rendered label. Determines if we can use htmlFor.
+   */
   labelElementType?: ElementType
 }
 
 interface LabelAria {
+  /**
+   * Props to be spread on the label element.
+   */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  /**
+   * Props to be spread on the field associated with the label.
+   */
   fieldProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Associates a label with a field.
+ */
 export function useLabel(props: LabelAriaProps): LabelAria {
   let {
     id,

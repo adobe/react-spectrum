@@ -57,7 +57,7 @@ export function TabList(props: TabListProps) {
     setTabsArray(tabs);
   }, [props.children]);
 
-  /** Defaults **/
+  /** Defaults. */
   let {
     orientation = 'horizontal',
     isQuiet = false,

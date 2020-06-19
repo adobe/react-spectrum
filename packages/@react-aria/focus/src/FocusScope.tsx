@@ -115,6 +115,7 @@ export function useFocusManager(): FocusManager {
   return useContext(FocusContext);
 }
 
+/** @private */
 function createFocusManager(scopeRef: React.RefObject<HTMLElement[]>): FocusManager {
   return {
     focusNext(opts: FocusManagerOptions = {}) {
@@ -169,6 +170,7 @@ const FOCUSABLE_ELEMENT_SELECTOR = focusableElements.join(',') + ',[tabindex]';
 focusableElements.push('[tabindex]:not([tabindex="-1"])');
 const TABBABLE_ELEMENT_SELECTOR = focusableElements.join(':not([tabindex="-1"]),');
 
+/** @private */
 function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOptions): HTMLElement[] {
   let res = [];
   let selector = opts.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
@@ -181,6 +183,7 @@ function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOpt
   return res;
 }
 
+/** @private */
 function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean) {
   let focusedNode = useRef<HTMLElement>();
 
@@ -270,6 +273,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
   }, [scopeRef, contain]);
 }
 
+/** @private */
 function isElementInAnyScope(element: Element, scopes: Set<RefObject<HTMLElement[]>>) {
   for (let scope of scopes.values()) {
     if (isElementInScope(element, scope.current)) {
@@ -279,10 +283,12 @@ function isElementInAnyScope(element: Element, scopes: Set<RefObject<HTMLElement
   return false;
 }
 
+/** @private */
 function isElementInScope(element: Element, scope: HTMLElement[]) {
   return scope.some(node => node.contains(element));
 }
 
+/** @private */
 function focusElement(element: HTMLElement | null, scroll = false) {
   if (element != null && !scroll) {
     try {
@@ -299,11 +305,13 @@ function focusElement(element: HTMLElement | null, scroll = false) {
   }
 }
 
+/** @private */
 function focusFirstInScope(scope: HTMLElement[]) {
   let elements = getFocusableElementsInScope(scope, {tabbable: true});
   focusElement(elements[0]);
 }
 
+/** @private */
 function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
   useEffect(() => {
     if (autoFocus) {
@@ -315,6 +323,7 @@ function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
   }, [scopeRef, autoFocus]);
 }
 
+/** @private */
 function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boolean, contain: boolean) {
   // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
   useLayoutEffect(() => {
@@ -379,8 +388,11 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
   }, [scopeRef, restoreFocus, contain]);
 }
 
+/**
+ * Create a [TreeWalker]{@link https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker}
+ * that matches all focusable/tabbable elements.
+ */
 export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOptions) {
-  // Create a DOM tree walker that matches all focusable/tabbable elements
   let selector = opts?.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
   let walker = document.createTreeWalker(
     root,

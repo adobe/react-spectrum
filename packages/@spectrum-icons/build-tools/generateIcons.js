@@ -13,11 +13,19 @@
 import fs from 'fs-extra';
 import path from 'path';
 
+/** @private */
 function writeToFile(filepath, data) {
   let buffer = Buffer.from(data);
   fs.writeFile(filepath, buffer);
 }
 
+/**
+ * Takes an icon directory and outputs React Spectrum wrapped icons to the output directory.
+ * @param iconDir Source directory.
+ * @param outputDir Output directory.
+ * @param nameRegex A regex to pull out the icon name from the filename.
+ * @param template Template for output file, should take a name from the regex.
+ */
 export function generateIcons(iconDir, outputDir, nameRegex, template) {
   fs.ensureDirSync(outputDir);
   fs.readdir(iconDir, (err, items) => {

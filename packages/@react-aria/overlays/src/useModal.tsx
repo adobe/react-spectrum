@@ -14,24 +14,41 @@ import React, {AriaAttributes, HTMLAttributes, ReactNode, useContext, useEffect,
 import ReactDOM from 'react-dom';
 
 interface ModalProviderProps extends HTMLAttributes<HTMLElement> {
+  /**
+   * Child to wrap in ModalProvider.
+   */
   children: ReactNode
 }
 
 interface ModalContext {
+  /**
+   * Parent modal context, used to track how many open modals there are recursively.
+   */
   parent: ModalContext | null,
+  /**
+   * How many modals are open in the subtree.
+   */
   modalCount: number,
+  /**
+   * Called when a modal is added.
+   */
   addModal: () => void,
+  /**
+   * Called when a modal is removed.
+   */
   removeModal: () => void
 }
 
 const Context = React.createContext<ModalContext | null>(null);
 
-// Each ModalProvider tracks how many modals are open in its subtree. On mount, the modals
-// trigger `addModal` to increment the count, and trigger `removeModal` on unmount to decrement it.
-// This is done recursively so that all parent providers are incremented and decremented.
-// If the modal count is greater than zero, we add `aria-hidden` to this provider to hide its
-// subtree from screen readers. This is done using React context in order to account for things
-// like portals, which can cause the React tree and the DOM tree to differ significantly in structure.
+/**
+ * Each ModalProvider tracks how many modals are open in its subtree. On mount, the modals
+ * trigger `addModal` to increment the count, and trigger `removeModal` on unmount to decrement it.
+ * This is done recursively so that all parent providers are incremented and decremented.
+ * If the modal count is greater than zero, we add `aria-hidden` to this provider to hide its
+ * subtree from screen readers. This is done using React context in order to account for things
+ * like portals, which can cause the React tree and the DOM tree to differ significantly in structure.
+ */
 export function ModalProvider(props: ModalProviderProps) {
   let {children} = props;
   let parent = useContext(Context);
@@ -61,9 +78,16 @@ export function ModalProvider(props: ModalProviderProps) {
 }
 
 interface ModalProviderAria {
+  /**
+   * Props to be spread on the container element.
+   */
   modalProviderProps: AriaAttributes
 }
 
+/**
+ * Used to determine if the tree should be aria-hidden based on how many
+ * modals are open.
+ */
 export function useModalProvider(): ModalProviderAria {
   let context = useContext(Context);
   return {
@@ -73,6 +97,9 @@ export function useModalProvider(): ModalProviderAria {
   };
 }
 
+/**
+ * Creates a root node that will be aria-hidden if there are other modals open.
+ */
 function OverlayContainerDOM(props: ModalProviderProps) {
   let {modalProviderProps} = useModalProvider();
   return <div {...props} {...modalProviderProps} />;

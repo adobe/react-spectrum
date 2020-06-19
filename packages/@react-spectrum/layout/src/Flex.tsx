@@ -86,8 +86,10 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
-// Normalize 'start' and 'end' alignment values to 'flex-start' and 'flex-end'
-// in flex containers for browser compatibility.
+/**
+ * Normalize 'start' and 'end' alignment values to 'flex-start' and 'flex-end'
+ * in flex containers for browser compatibility.
+ */
 function flexAlignValue(value) {
   if (value === 'start') {
     return 'flex-start';
@@ -100,6 +102,9 @@ function flexAlignValue(value) {
   return value;
 }
 
+/**
+ * Takes a boolean and translates it to flex wrap or nowrap.
+ */
 function flexWrapValue(value) {
   if (typeof value === 'boolean') {
     return value ? 'wrap' : 'nowrap';
@@ -114,6 +119,7 @@ function flexWrapValue(value) {
 // See https://github.com/Modernizr/Modernizr/blob/7efb9d0edd66815fb115fdce95fabaf019ce8db5/feature-detects/css/flexgap.js
 
 let _isFlexGapSupported = null;
+/** @private */
 function isFlexGapSupported() {
   if (_isFlexGapSupported != null) {
     return _isFlexGapSupported;

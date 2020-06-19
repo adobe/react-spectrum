@@ -15,6 +15,9 @@ import {HoverProps} from './useHover';
 import React, {ReactNode, RefObject, useEffect, useRef} from 'react';
 
 interface DOMPropsResponderProps extends HoverProps {
+  /**
+   * Children that should be wrapped in the DOMPropsResponderContext.
+   */
   children: ReactNode
 }
 
