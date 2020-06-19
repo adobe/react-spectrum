@@ -75,7 +75,7 @@ function TextField(props) {
   let {labelProps, inputProps} = useTextField(props, ref);
 
   return (
-    <div style={{display: 'flex', direction: 'column', width: 200}}>
+    <div style={{display: 'flex', flexDirection: 'column', width: 200}}>
       <label {...labelProps}>{label}</label>
       <input {...inputProps} ref={ref} />
     </div>
