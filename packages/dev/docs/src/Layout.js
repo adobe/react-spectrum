@@ -250,11 +250,11 @@ function Nav({currentPageName, pages}) {
       <header>
         {currentParts.length > 1 &&
           <a href="../index.html" className={docStyles.backBtn}>
-            <ChevronLeft />
+            <ChevronLeft alt="Back" />
           </a>
         }
         <a href="./index.html" className={docStyles.homeBtn}>
-          <svg viewBox="0 0 30 26" fill="#E1251B">
+          <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
             <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
@@ -266,14 +266,17 @@ function Nav({currentPageName, pages}) {
       </header>
       <ul className={sideNavStyles['spectrum-SideNav']}>
         {rootPages.map(p => <SideNavItem {...p} />)}
-        {categories.map(key => (
-          <li className={sideNavStyles['spectrum-SideNav-item']}>
-            <h3 className={sideNavStyles['spectrum-SideNav-heading']}>{key}</h3>
-            <ul className={sideNavStyles['spectrum-SideNav']}>
-              {pageMap[key].sort((a, b) => a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
-            </ul>
-          </li>
-        ))}
+        {categories.map(key => {
+          const headingId = `${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
+          return (
+            <li className={sideNavStyles['spectrum-SideNav-item']}>
+              <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
+              <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
+                {pageMap[key].sort((a, b) => a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
+              </ul>
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );
@@ -299,7 +302,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
 
   return (
     <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage}>
-      <div className={docStyles.pageHeader} id="header" />
+      <header className={docStyles.pageHeader} id="header" />
       <Nav currentPageName={currentPage.name} pages={pages} />
       <main>
         <article className={classNames(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>
