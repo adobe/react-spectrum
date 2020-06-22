@@ -27,10 +27,6 @@ import {ReactElement, ReactNode} from 'react';
 
 export interface RadioGroupProps extends ValueBase<string>, InputBase, Validation, LabelableProps {
   /**
-   * The Radio(s) contained within the RadioGroup.
-   */
-  children: ReactElement<RadioProps> | ReactElement<RadioProps>[],
-  /**
    * The axis the Radio Button(s) should align with.
    * @default 'vertical'
    */
@@ -61,6 +57,10 @@ export interface RadioProps extends FocusableProps {
 
 export interface AriaRadioGroupProps extends RadioGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
 export interface SpectrumRadioGroupProps extends AriaRadioGroupProps, SpectrumLabelableProps, StyleProps {
+  /**
+   * The Radio(s) contained within the RadioGroup.
+   */
+  children: ReactElement<RadioProps> | ReactElement<RadioProps>[],
   /**
    * By default, radio buttons are not emphasized (gray).
    * The emphasized (blue) version provides visual prominence.
