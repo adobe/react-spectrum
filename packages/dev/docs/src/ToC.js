@@ -23,9 +23,9 @@ export function ToC(props) {
   } = props;
 
   return (
-    <nav className={styles['toc']} id="toc">
+    <nav className={styles['toc']} id="toc" aria-labelledby="toc-heading">
       <div className={styles['tocContainer']}>
-        <h3 aria-label="Table of contents" className={typographyStyles['spectrum-Heading4']}>Contents</h3>
+        <h3 aria-label="Table of contents" id="toc-heading" className={typographyStyles['spectrum-Heading4']}>Contents</h3>
         <SideNav node={toc} />
       </div>
     </nav>
@@ -44,8 +44,8 @@ function SideNav(props) {
   if (node.children.length > 0) {
     return (
       <li className={classNames(sidenavstyles['spectrum-SideNav-item'])}>
-        <a className={classNames(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} href={`#${node.id}`}>{node.textContent}</a>
-        <ul className={classNames(sidenavstyles['spectrum-SideNav'], sidenavstyles['spectrum-SideNav--multiLevel'])}>
+        <a className={classNames(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} href={`#${node.id}`} id={`${node.id}-heading`}>{node.textContent}</a>
+        <ul className={classNames(sidenavstyles['spectrum-SideNav'], sidenavstyles['spectrum-SideNav--multiLevel'])} aria-labelledby={`${node.id}-heading`}>
           {node.children.map(child => <SideNav key={child.id} node={child} />)}
         </ul>
       </li>
