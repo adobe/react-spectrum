@@ -28,7 +28,7 @@ interface SelectableListOptions {
    */
   collection: Collection<Node<unknown>>,
   /**
-   * A set of keys corresponding to options that should not be interacted with.
+   * The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with.
    */
   disabledKeys: Set<Key>,
   /**

@@ -77,7 +77,7 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
   scale?: Scale,
   /**
    * Locale (language specific format) of this provider and its children.
-   * Uses the format primary-region, e.g. En-US, fr-CA, ar-AE.
+   * Uses the format primary-region, e.g. en-US, fr-CA, ar-AE.
    * @default 'en-US'
    */
   locale?: string
