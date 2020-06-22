@@ -119,7 +119,6 @@ function flexWrapValue(value) {
 // See https://github.com/Modernizr/Modernizr/blob/7efb9d0edd66815fb115fdce95fabaf019ce8db5/feature-detects/css/flexgap.js
 
 let _isFlexGapSupported = null;
-/** @private */
 function isFlexGapSupported() {
   if (_isFlexGapSupported != null) {
     return _isFlexGapSupported;

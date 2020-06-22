@@ -18,13 +18,7 @@
 import {RefObject, SyntheticEvent, useEffect, useRef} from 'react';
 
 interface InteractOutsideProps {
-  /**
-   * Element we want to track interactions outside of.
-   */
   ref: RefObject<Element>,
-  /**
-   * Event when there is an interaction outside the target ref.
-   */
   onInteractOutside?: (e: SyntheticEvent) => void
 }
 
@@ -96,7 +90,6 @@ export function useInteractOutside(props: InteractOutsideProps) {
   }, [onInteractOutside, ref, state.ignoreEmulatedMouseEvents, state.isPointerDown]);
 }
 
-/** @private */
 function isValidEvent(event, ref) {
   if (event.button > 0) {
     return false;

@@ -108,7 +108,6 @@ const LiveRegionAnnouncer = React.forwardRef((props, ref) => {
   );
 });
 
-/** @private */
 function MessageAlternator({message = '', 'aria-live': ariaLive}) {
   let messagesRef = useRef(['', '']);
   let indexRef = useRef(0);
@@ -127,7 +126,6 @@ function MessageAlternator({message = '', 'aria-live': ariaLive}) {
   );
 }
 
-/** @private */
 function MessageBlock({message = '', 'aria-live': ariaLive}) {
   return (
     <VisuallyHidden

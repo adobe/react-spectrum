@@ -16,9 +16,6 @@ import {PressResponderContext} from './context';
 import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 
 interface PressResponderProps extends PressProps {
-  /**
-   * Child to be wrapped in a PressResponderContext.
-   */
   children: ReactNode
 }
 

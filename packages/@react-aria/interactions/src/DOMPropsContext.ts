@@ -14,28 +14,16 @@ import {mergeProps} from '@react-aria/utils';
 import React, {HTMLAttributes, MutableRefObject, RefObject, useContext, useEffect} from 'react';
 
 interface DOMPropsResponderProps extends HTMLAttributes<HTMLElement> {
-  /**
-   * Element that the props are passed to.
-   */
   ref?: RefObject<HTMLElement>
 }
 
 interface DOMPropsResponderContext extends HTMLAttributes<HTMLElement> {
-  /**
-   * Prevents the context from being used multiple times.
-   */
   register(): void,
-  /**
-   * The element the props are being passed to.
-   */
   ref?: MutableRefObject<HTMLElement>
 }
 
 export const DOMPropsResponderContext = React.createContext<DOMPropsResponderContext>(null);
 
-/**
- * Gets props off the PropsResponderContext.
- */
 export function useDOMPropsResponderContext(props: DOMPropsResponderProps): DOMPropsResponderProps {
   // Consume context from <DOMPropsResponder> and merge with props.
   let context = useContext(DOMPropsResponderContext);

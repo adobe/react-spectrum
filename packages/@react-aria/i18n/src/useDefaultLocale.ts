@@ -36,7 +36,6 @@ export function getDefaultLocale(): Locale {
 let currentLocale = getDefaultLocale();
 let listeners = new Set<(locale: Locale) => void>();
 
-/** @private */
 function updateLocale() {
   currentLocale = getDefaultLocale();
   for (let listener of listeners) {

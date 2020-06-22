@@ -14,28 +14,13 @@ import React, {AriaAttributes, HTMLAttributes, ReactNode, useContext, useEffect,
 import ReactDOM from 'react-dom';
 
 interface ModalProviderProps extends HTMLAttributes<HTMLElement> {
-  /**
-   * Child to wrap in ModalProvider.
-   */
   children: ReactNode
 }
 
 interface ModalContext {
-  /**
-   * Parent modal context, used to track how many open modals there are recursively.
-   */
   parent: ModalContext | null,
-  /**
-   * How many modals are open in the subtree.
-   */
   modalCount: number,
-  /**
-   * Called when a modal is added.
-   */
   addModal: () => void,
-  /**
-   * Called when a modal is removed.
-   */
   removeModal: () => void
 }
 

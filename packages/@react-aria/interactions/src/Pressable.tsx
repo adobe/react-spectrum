@@ -15,9 +15,6 @@ import {PressProps, usePress} from './usePress';
 import React, {HTMLAttributes, ReactElement, RefObject, useRef} from 'react';
 
 interface PressableProps extends PressProps {
-  /**
-   * Child that should be made Pressable.
-   */
   children: ReactElement<HTMLAttributes<HTMLElement>, string>
 }
 

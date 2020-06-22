@@ -117,7 +117,6 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
  * Scrolls `scrollView` so that `element` is visible.
  * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
  * but doesn't affect parents above `scrollView`.
- * @private
  */
 function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
   let offsetX = element.offsetLeft - scrollView.offsetLeft;
