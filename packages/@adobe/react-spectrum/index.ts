@@ -10,20 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-import {Grid} from '@react-spectrum/layout';
-import {Provider} from '@react-spectrum/provider';
-import React from 'react';
-import {render} from '@testing-library/react';
-import {theme} from '@react-spectrum/theme-default';
-
-export function testSlotsAPI(Component) {
-  let {getByTestId} = render(
-    <Provider theme={theme}>
-      <Grid data-testid="grid" slots={{dummySlot: {UNSAFE_className: 'slotClassName'}}}>
-        <Component slot="dummySlot" />
-      </Grid>
-    </Provider>
-  );
-  let root = getByTestId('grid');
-  expect(root.firstChild).toHaveClass('slotClassName');
-}
+export * from './src';
