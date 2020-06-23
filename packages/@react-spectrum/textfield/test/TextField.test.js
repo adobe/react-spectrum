@@ -436,8 +436,8 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name supports tabIndex', ({Name, Component}) => {
-    let tree = renderComponent(Component, {tabIndex: -1});
+  `('$Name supports excludeFromTabOrder', ({Name, Component}) => {
+    let tree = renderComponent(Component, {excludeFromTabOrder: true});
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('tabIndex', '-1');
   });

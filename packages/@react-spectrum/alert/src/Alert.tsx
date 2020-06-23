@@ -58,7 +58,7 @@ export function Alert(props: SpectrumAlertProps) {
         )
       }
       role="alert">
-      <Icon UNSAFE_className={classNames(styles, 'spectrum-Alert-icon')} alt={iconAlt} />
+      <Icon UNSAFE_className={classNames(styles, 'spectrum-Alert-icon')} aria-label={iconAlt} />
       <div className={classNames(styles, 'spectrum-Alert-header')}>{title}</div>
       <div className={classNames(styles, 'spectrum-Alert-content')}>{children}</div>
     </div>
