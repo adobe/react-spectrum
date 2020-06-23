@@ -84,7 +84,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
 
   // Safari with VoiceOver on macOS misreads options with aria-labelledby or aria-label as simply "text".
   // We should not map slots to the label and description on Safari and instead just have VoiceOver read the textContent. 
-  // WebKit issue: https://bugs.webkit.org/show_bug.cgi?id=209279
+  // https://bugs.webkit.org/show_bug.cgi?id=209279
   if (!isSafariMacOS) {
     optionProps['aria-label'] = props['aria-label'];
     optionProps['aria-labelledby'] = labelId;
