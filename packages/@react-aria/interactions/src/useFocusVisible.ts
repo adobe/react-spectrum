@@ -55,7 +55,7 @@ function triggerChangeHandlers(modality: Modality, e: HandlerEvent) {
 }
 
 /**
- * Helper function to determine if a KeyboardEvent is unmodified and could make keyboard focus styles visible
+ * Helper function to determine if a KeyboardEvent is unmodified and could make keyboard focus styles visible.
  */
 function isValidKey(e: KeyboardEvent) {
   return !(e.metaKey || (!isMac && e.altKey) || e.ctrlKey);
