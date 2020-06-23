@@ -18,7 +18,6 @@ import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
 
 interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
-  alt?: string,
   children: ReactElement,
   slot?: string,
   /**
@@ -30,7 +29,6 @@ interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
 export function UIIcon(props: IconProps) {
   props = useSlotProps(props, 'icon');
   let {
-    alt,
     children,
     'aria-label': ariaLabel,
     'aria-hidden': ariaHidden,
@@ -53,8 +51,8 @@ export function UIIcon(props: IconProps) {
     ...styleProps,
     scale,
     focusable: 'false',
-    'aria-label': ariaLabel || alt,
-    'aria-hidden': (ariaLabel || alt ? (ariaHidden || undefined) : true),
+    'aria-label': ariaLabel,
+    'aria-hidden': (ariaLabel ? (ariaHidden || undefined) : true),
     role: 'img',
     className: classNames(
       styles,
