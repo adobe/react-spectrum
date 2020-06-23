@@ -30,7 +30,6 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
 }
 
 function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {
     contentSize,
     onVisibleRectChange,
@@ -40,6 +39,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     onScrollStart,
     onScrollEnd,
     scrollDirection = 'both',
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     focusedKey,
     ...otherProps
   } = props;
