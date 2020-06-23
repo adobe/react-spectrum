@@ -23,7 +23,9 @@ const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
   '%s contains an input of type %s with both value and defaultValue props',
   '<%s /> is using incorrect casing',
   'The tag <%s> is unrecognized in this browser',
-  'The above error occurred in the <TestHook> component'
+  'The above error occurred in the <TestHook> component',
+  'Function components cannot be given refs. Attempts to access this ref will fail.',
+  'Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.'
 ];
 
 const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
