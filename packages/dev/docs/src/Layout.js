@@ -249,7 +249,7 @@ function Nav({currentPageName, pages}) {
       <header>
         {currentParts.length > 1 &&
           <a href="../index.html" className={docStyles.backBtn}>
-            <ChevronLeft alt="Back" />
+            <ChevronLeft aria-label="Back" />
           </a>
         }
         <a href="./index.html" className={docStyles.homeBtn}>

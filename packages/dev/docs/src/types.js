@@ -427,7 +427,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
                     <span className={`token ${isComponent ? 'hljs-attr' : 'hljs-variable'}`}>{prop.name}</span>
                   </code>
                   {!prop.optional && showRequired
-                    ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} alt="Required" />
+                    ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} aria-label="Required" />
                     : null
                   }
                 </td>
