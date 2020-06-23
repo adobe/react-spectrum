@@ -97,7 +97,7 @@ export function useSearchField(
     inputProps,
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),
-      tabIndex: -1,
+      excludeFromTabOrder: true,
       onPress: onClearButtonClick,
       onPressStart
     }

@@ -37,7 +37,7 @@ export function useFocusable(props: FocusableOptions, domRef?: RefObject<HTMLEle
   return {
     focusableProps: {
       ...interactions,
-      tabIndex: props.tabIndex
+      tabIndex: props.excludeFromTabOrder && !props.isDisabled ? -1 : undefined
     }
   };
 }
