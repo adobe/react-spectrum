@@ -11,6 +11,7 @@
  */
 
 import {
+  AriaLabelingProps,
   DOMProps,
   FocusableProps,
   InputBase,
