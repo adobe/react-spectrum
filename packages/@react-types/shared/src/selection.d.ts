@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Key} from 'react';
+
 export interface SingleSelection {
   /** Whether the collection allows empty selection. */
   disallowEmptySelection?: boolean,
