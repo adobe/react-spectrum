@@ -56,6 +56,7 @@ let typeMap = {
 };
 
 let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {children, isOpen, type, isDismissable, shouldCloseOnBlur, ...otherProps} = props;
   let typeVariant = typeMap[type];
 
