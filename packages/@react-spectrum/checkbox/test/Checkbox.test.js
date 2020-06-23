@@ -229,9 +229,8 @@ describe('Checkbox', function () {
 
   it.each`
     Name                       | Component      | props
-    ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, tabIndex: -1}}
-    ${'V2Checkbox'}            | ${V2Checkbox}  | ${{onChange: onChangeSpy, tabIndex: -1}}
-  `('$Name supports tabIndex', function ({Component, props}) {
+    ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, excludeFromTabOrder: true}}
+  `('$Name supports excludeFromTabOrder', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Hi</Component>);
 
     let checkbox = getByRole('checkbox');
