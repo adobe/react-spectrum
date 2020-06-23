@@ -98,7 +98,8 @@ export const viewStyleProps: StyleHandlers = {
   paddingTop: ['paddingTop', dimensionValue],
   paddingBottom: ['paddingBottom', dimensionValue],
   paddingX: [['paddingLeft', 'paddingRight'], dimensionValue],
-  paddingY: [['paddingTop', 'paddingBottom'], dimensionValue]
+  paddingY: [['paddingTop', 'paddingBottom'], dimensionValue],
+  overflow: ['overflow', passthroughStyle]
 };
 
 const borderStyleProps = {

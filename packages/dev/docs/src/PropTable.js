@@ -68,7 +68,7 @@ const GROUPS = {
     'color'
   ],
   Accessibility: [
-    'role', 'id', 'tabIndex', /^aria-/
+    'role', 'id', 'tabIndex', 'excludeFromTabOrder', /^aria-/
   ],
   Advanced: [
     'UNSAFE_className', 'UNSAFE_style'
@@ -81,14 +81,14 @@ export function PropTable({component, links}) {
   return (
     <>
       <TypeContext.Provider value={links}>
-        <InterfaceType properties={ungrouped} showRequired showDefault />
+        <InterfaceType properties={ungrouped} showRequired showDefault isComponent />
         {Object.keys(groups).map(group => (
           <details>
             <summary className={typographyStyles['spectrum-Heading4']}>
               <ChevronRight size="S" />
               {group}
             </summary>
-            <InterfaceType properties={groups[group]} showRequired showDefault />
+            <InterfaceType properties={groups[group]} showRequired showDefault isComponent />
           </details>
         ))}
       </TypeContext.Provider>

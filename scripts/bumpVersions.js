@@ -15,42 +15,55 @@ const fs = require('fs');
 const fetch = require('node-fetch');
 const semver = require('semver');
 const readline = require("readline");
+const chalk = require('chalk');
+
+let levels = {
+  alpha: 1,
+  beta: 2,
+  rc: 3,
+  released: 4
+};
 
 // Packages to release
 let publicPackages = {
-  '@react-spectrum/actiongroup': 'alpha',
-  '@react-spectrum/breadcrumbs' : 'alpha',
+  '@adobe/react-spectrum': 'rc',
+  '@react-spectrum/actiongroup': 'rc',
+  '@react-spectrum/breadcrumbs' : 'rc',
   '@react-spectrum/button': 'rc',
-  '@react-spectrum/buttongroup': 'alpha',
+  '@react-spectrum/buttongroup': 'rc',
   '@react-spectrum/checkbox': 'rc',
-  '@react-spectrum/dialog': 'alpha',
+  '@react-spectrum/dialog': 'rc',
   '@react-spectrum/divider': 'rc',
   '@react-spectrum/form': 'rc',
   '@react-spectrum/icon': 'rc',
-  '@react-spectrum/illustratedmessage': 'alpha',
-  '@react-spectrum/image': 'alpha',
+  '@react-spectrum/illustratedmessage': 'rc',
+  '@react-spectrum/image': 'rc',
   '@react-spectrum/label': 'rc',
-  '@react-spectrum/layout': 'alpha',
-  '@react-spectrum/link': 'alpha',
-  '@react-spectrum/listbox': 'alpha',
-  '@react-spectrum/menu': 'alpha',
+  '@react-spectrum/layout': 'rc',
+  '@react-spectrum/link': 'rc',
+  '@react-spectrum/listbox': 'rc',
+  '@react-spectrum/menu': 'rc',
   '@react-spectrum/meter': 'rc',
-  '@react-spectrum/overlays': 'alpha',
-  '@react-spectrum/picker': 'alpha',
+  '@react-spectrum/overlays': 'rc',
+  '@react-spectrum/picker': 'rc',
   '@react-spectrum/progress': 'rc',
   '@react-spectrum/provider': 'rc',
   '@react-spectrum/radio': 'rc',
   '@react-spectrum/searchfield': 'rc',
   '@react-spectrum/statuslight': 'rc',
   '@react-spectrum/switch': 'rc',
+  '@react-spectrum/table': 'alpha',
+  '@react-spectrum/text': 'rc',
   '@react-spectrum/textfield': 'rc',
+  '@react-spectrum/theme-dark': 'rc',
   '@react-spectrum/theme-default': 'rc',
-  '@react-spectrum/text': 'alpha',
   '@react-spectrum/utils': 'rc',
-  '@react-spectrum/view': 'alpha',
+  '@react-spectrum/view': 'rc',
   '@react-spectrum/well': 'rc',
   '@spectrum-icons/color': 'rc',
-  '@spectrum-icons/workflow': 'rc'
+  '@spectrum-icons/workflow': 'rc',
+  '@spectrum-icons/illustrations': 'rc',
+  '@react-stately/data': 'rc'
 };
 
 // Packages never to release
@@ -73,12 +86,30 @@ if (arg.startsWith('@')) {
     throw new Error('Invalid package ' + arg);
   }
 
-  let addPackage = (pkg) => {
-    if (excludedPackages.has(pkg) || releasedPackages.has(pkg)) {
+  let addPackage = (pkg, status) => {
+    if (excludedPackages.has(pkg)) {
       return;
     }
 
-    releasedPackages.set(pkg, info[pkg].location);
+    let filePath = info[pkg].location + '/package.json';
+    let pkgJSON = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    if (pkgJSON.private) {
+      return;
+    }
+
+    if (releasedPackages.has(pkg)) {
+      let cur = releasedPackages.get(pkg);
+      if (levels[status] > levels[cur.level]) {
+        cur.status = status;
+      }
+
+      return;
+    }
+
+    releasedPackages.set(pkg, {
+      location: info[pkg].location,
+      status
+    });
 
     for (let p in info) {
       if (releasedPackages.has(p)) {
@@ -86,27 +117,45 @@ if (arg.startsWith('@')) {
       }
 
       if (info[p].workspaceDependencies.includes(pkg)) {
-        addPackage(p);
+        addPackage(p, status);
       }
     }
   };
 
-  addPackage(arg);
+  addPackage(arg, publicPackages[arg]);
+
+  for (let pkg in info) {
+    if (!releasedPackages.has(pkg)) {
+      excludedPackages.add(pkg);
+    }
+  }
 } else {
-  let addPackage = (pkg) => {
-    if (blackList.has(pkg) || releasedPackages.has(pkg)) {
+  let addPackage = (pkg, status) => {
+    if (excludedPackages.has(pkg)) {
       return;
     }
 
-    releasedPackages.set(pkg, info[pkg].location);
+    if (releasedPackages.has(pkg)) {
+      let cur = releasedPackages.get(pkg);
+      if (levels[status] > levels[cur.level]) {
+        cur.status = status;
+      }
+
+      return;
+    }
+
+    releasedPackages.set(pkg, {
+      location: info[pkg].location,
+      status
+    });
 
     for (let dep of info[pkg].workspaceDependencies) {
-      addPackage(dep);
+      addPackage(dep, status);
     }
   };
 
   for (let pkg in publicPackages) {
-    addPackage(pkg);
+    addPackage(pkg, publicPackages[pkg]);
   }
 }
 
@@ -124,7 +173,7 @@ async function getExistingPackages() {
   // Find what packages already exist on npm
   let existing = new Set();
   let promises = [];
-  for (let [name, location] of releasedPackages) {
+  for (let [name, {location}] of releasedPackages) {
     promises.push(
       fetch(`https://registry.npmjs.com/${name}`, {method: 'HEAD'})
         .then(res => {
@@ -141,18 +190,39 @@ async function getExistingPackages() {
 
 function getVersions(existingPackages) {
   let versions = new Map();
-  let names = [...existingPackages].sort();
-  for (let name of releasedPackages.keys()) {
-    let filePath = releasedPackages.get(name) + '/package.json';
+  for (let [name, {location, status}] of releasedPackages) {
+    let filePath = location + '/package.json';
     let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    if (pkg.private) {
-      continue;
-    }
 
+    // If the package already exists on npm, then increment the version
+    // number to the correct status. If it's a new package, then ensure
+    // the package.json version is correct according to the status.
     if (existingPackages.has(name)) {
-      versions.set(name, [pkg.version, semver.inc(pkg.version, 'prerelease')]);
+      let newVersion = status === 'released'
+        ? semver.inc(pkg.version, 'patch')
+        : semver.inc(pkg.version, 'prerelease', status)
+      versions.set(name, [pkg.version, newVersion, pkg.private]);
     } else {
-      versions.set(name, [pkg.version, pkg.version]);
+      let parsed = semver.parse(pkg.version);
+      let newVersion = pkg.version;
+      if (parsed.prerelease.length > 0) {
+        if (status === 'released') {
+          newVersion = semver.inc(pkg.version, 'patch');
+        } else if (parsed.prerelease[0] !== status) {
+          newVersion = semver.inc(pkg.version, 'prerelease', status);
+        } else {
+          parsed.prerelease[1] = 0;
+          newVersion = parsed.format();
+        }
+      } else {
+        if (status === 'released') {
+          newVersion = '3.0.0';
+        } else {
+          newVersion = semver.inc(pkg.version, 'prerelease', status);
+        }
+      }
+
+      versions.set(name, [pkg.version, newVersion, pkg.private]);
     }
   }
 
@@ -161,9 +231,25 @@ function getVersions(existingPackages) {
 
 async function promptVersions(versions) {
   console.log('');
-  for (let [name, [oldVersion, newVersion]] of versions) {
+  for (let [name, [oldVersion, newVersion, private]] of versions) {
     if (newVersion !== oldVersion) {
-      console.log(`${name}: ${oldVersion} => ${newVersion}`);
+      console.log(`${name}: ${chalk.blue(oldVersion)}${private ? chalk.red(' (private)') : ''} => ${chalk.green(newVersion)}`);
+    }
+  }
+
+  let loggedSpace = false;
+  for (let name in info) {
+    if (!releasedPackages.has(name) && !excludedPackages.has(name)) {
+      let filePath = info[name].location + '/package.json';
+      let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (!pkg.private) {
+        if (!loggedSpace) {
+          console.log('');
+          loggedSpace = true;
+        }
+
+        console.warn(chalk.red(`${name} will change from public to private`));
+      }
     }
   }
 
@@ -189,19 +275,18 @@ async function promptVersions(versions) {
 }
 
 function bumpVersions(versions) {
-  for (let [name, location] of releasedPackages) {
+  for (let [name, {location}] of releasedPackages) {
     let filePath = location + '/package.json';
     let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     pkg.version = versions.get(name)[1];
 
     if (pkg.private) {
-      console.warn(`${name} changed from private to public`);
       delete pkg.private;
     }
 
     for (let dep in pkg.dependencies) {
       if (versions.has(dep)) {
-        pkg.dependencies[dep] = '^' + versions.get(dep)[1];
+        pkg.dependencies[dep] = versions.get(dep)[1];
       }
     }
 
@@ -209,14 +294,20 @@ function bumpVersions(versions) {
   }
 
   for (let name in info) {
-    if (!releasedPackages.has(name) && !blackList.has(name)) {
+    if (!releasedPackages.has(name) && !excludedPackages.has(name)) {
       let filePath = info[name].location + '/package.json';
       let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
       if (!pkg.private) {
-        console.warn(`${name} should not be public`);
         pkg = insertKey(pkg, 'license', 'private', true);
-        fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
       }
+
+      for (let dep in pkg.dependencies) {
+        if (versions.has(dep)) {
+          pkg.dependencies[dep] = versions.get(dep)[1];
+        }
+      }
+
+      fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
     }
   }
 }

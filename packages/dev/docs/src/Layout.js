@@ -139,7 +139,6 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
         {scripts.map(s => <script type={s.type} src={s.url} defer />)}
-        <script src="https://assets.adobedtm.com/a7d65461e54e/01d650a3ee55/launch-4d5498348926.min.js" async />
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
         <meta property="og:title" content={currentPage.title} />
@@ -151,6 +150,15 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
       </head>
       <body>
         {children}
+        <script
+          dangerouslySetInnerHTML={{__html: `
+            window.addEventListener('load', () => {
+              let script = document.createElement('script');
+              script.async = true;
+              script.src = 'https://assets.adobedtm.com/a7d65461e54e/01d650a3ee55/launch-4d5498348926.min.js';
+              document.head.appendChild(script);
+            });
+          `}} />
       </body>
     </html>
   );
@@ -169,6 +177,11 @@ function Nav({currentPageName, pages}) {
   pages = pages.filter(p => {
     let pageParts = p.name.split('/');
     let pageDir = pageParts[0];
+
+    // Skip the error page, its only used for 404s
+    if (p.name === 'error.html') {
+      return false;
+    }
 
     // Pages within same directory (react-spectrum/Alert.html)
     if (currentParts.length > 1) {
@@ -244,11 +257,11 @@ function Nav({currentPageName, pages}) {
       <header>
         {currentParts.length > 1 &&
           <a href="../index.html" className={docStyles.backBtn}>
-            <ChevronLeft />
+            <ChevronLeft aria-label="Back" />
           </a>
         }
         <a href="./index.html" className={docStyles.homeBtn}>
-          <svg viewBox="0 0 30 26" fill="#E1251B">
+          <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
             <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
@@ -260,14 +273,17 @@ function Nav({currentPageName, pages}) {
       </header>
       <ul className={sideNavStyles['spectrum-SideNav']}>
         {rootPages.map(p => <SideNavItem {...p} />)}
-        {categories.map(key => (
-          <li className={sideNavStyles['spectrum-SideNav-item']}>
-            <h3 className={sideNavStyles['spectrum-SideNav-heading']}>{key}</h3>
-            <ul className={sideNavStyles['spectrum-SideNav']}>
-              {pageMap[key].sort((a, b) => a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
-            </ul>
-          </li>
-        ))}
+        {categories.map(key => {
+          const headingId = `${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
+          return (
+            <li className={sideNavStyles['spectrum-SideNav-item']}>
+              <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
+              <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
+                {pageMap[key].sort((a, b) => a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
+              </ul>
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );
@@ -293,7 +309,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
 
   return (
     <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage}>
-      <div className={docStyles.pageHeader} id="header" />
+      <header className={docStyles.pageHeader} id="header" />
       <Nav currentPageName={currentPage.name} pages={pages} />
       <main>
         <article className={classNames(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>

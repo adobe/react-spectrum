@@ -22,11 +22,12 @@ interface AriaTabProps {
   isDisabled?: boolean,
   isSelected?: boolean,
   onSelect?: () => void,
-  id?: string
+  id?: string,
+  value: any
 }
 
 interface AriaTabsProps extends HTMLAttributes<HTMLElement>{
-  children?: ReactElement | ReactElement[],
+  children?: ReactElement<AriaTabProps> | ReactElement<AriaTabProps>[]
 }
 
 interface TabListAria {
@@ -100,7 +101,10 @@ export function useTabs(props: AriaTabsProps, state: any): TabsAria {
   });
 
   if (selectedTabId == null) {
-    selectedTabId = React.Children.toArray(props.children)[0].props.id;
+    let childArray = React.Children.toArray(props.children);
+    if (childArray.length && React.isValidElement(childArray[0])) {
+      selectedTabId = childArray[0].props.id;
+    }
   }
 
   return {

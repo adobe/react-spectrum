@@ -10,6 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+// Portions of the code in this file are based on code from react.
+// Original licensing for the following can be found in the
+// NOTICE file in the root directory of this source tree.
+// See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
+
 import {RefObject, SyntheticEvent, useEffect, useRef} from 'react';
 
 interface InteractOutsideProps {
@@ -31,7 +36,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
         state.isPointerDown = true;
       }
     };
-  
+
     // Use pointer events if available. Otherwise, fall back to mouse and touch events.
     if (typeof PointerEvent !== 'undefined') {
       let onPointerUp = (e) => {
