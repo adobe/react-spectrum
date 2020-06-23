@@ -12,6 +12,7 @@ export default Layout;
 
 ---
 category: Concepts
+keywords: [accessibility, react-aria, aria]
 ---
 
 # Accessibility
@@ -26,7 +27,7 @@ Accessibility is the ability for applications to be used by everyone, including 
 This encompasses all types of disabilities, including vision, auditory, motor, and cognitive disabilities.
 
 React Aria addresses aspects of vision and motor disabilities through screen reader and keyboard navigation
-support. Since it does not provide any rendering or styling, additional consideration should be made 
+support. Since it does not provide any rendering or styling, additional consideration should be made
 in your design process for other types of disabilities. See the [inclusive design](https://spectrum.adobe.com/page/inclusive-design/)
 page on the Spectrum website for more details.
 
@@ -41,7 +42,7 @@ React Aria implements accessibility support according to the [WAI-ARIA](https://
 specification, published by the W3C. ARIA specifies **semantics** for many common UI controls so that assistive
 technology like screen readers can understand what our DOM nodes represent. When we cannot use native HTML elements
 with built-in semantics (e.g. `<button>` or `<select>`) for styling reasons, or if there isn't a native element available,
-ARIA is required to make presentational elements (e.g. `<div>`) have semantic meaning. This allows screen readers and 
+ARIA is required to make presentational elements (e.g. `<div>`) have semantic meaning. This allows screen readers and
 other assistive technology to understand these elements and announce them properly to the user.
 
 However, ARIA is a contract: it only specifies semantics, and it's up to the developer to implement the
@@ -63,7 +64,7 @@ Form inputs like text fields, checkboxes, and selects should usually have a visi
 will automatically associate the visible label with the control to so that assistive technology can describe it properly.
 
 In case a visible label is not desired for some reason, or you're using a control that doesn't have a built-in label,
-you must use the `aria-label` or `aria-labelledby` props to identify it to assistive technology. Most React Aria 
+you must use the `aria-label` or `aria-labelledby` props to identify it to assistive technology. Most React Aria
 hooks will display a console warning if you are missing both a visible label and an ARIA label.
 
 ## Keyboard navigation
@@ -82,7 +83,7 @@ gestures like swiping left and right rather than using a keyboard like on deskto
 elements are available to navigate to through the semantic information exposed by ARIA. These gestures and the virtual cursor
 takes over the whole screen, and normal touch interactions for your application will not be available.
 
-There are additional things to consider when supporting mobile screen readers. Since there's no hardware keyboard 
+There are additional things to consider when supporting mobile screen readers. Since there's no hardware keyboard
 on most mobile devices, we cannot rely on keyboard interactions being available. And since the screen reader gestures
 take over the entire screen, we cannot rely on touch interactions. This means that all functionality must be accessible
 to a screen reader, including things that would typically be handled by keyboard interactions.
@@ -90,7 +91,7 @@ to a screen reader, including things that would typically be handled by keyboard
 For example, to close a dialog or popover, mouse and touchscreen users typically click or tap outside. Keyboard users
 can press the <kbd>Escape</kbd> key. On desktop, this may be enough for screen reader users, but on mobile there is no
 keyboard available. So, we must ensure there is a way for screen reader users to access this functionality without a keyboard.
-React Aria allows you to handle this by placing a hidden button inside the dialog or popover that screen reader users can 
+React Aria allows you to handle this by placing a hidden button inside the dialog or popover that screen reader users can
 navigate to in order to close it.
 
 ## Testing

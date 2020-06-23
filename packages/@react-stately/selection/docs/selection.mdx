@@ -17,6 +17,7 @@ import packageData from '../package.json';
 
 ---
 category: Selection
+keywords: [react-stately, collection, multiple selection, single selection]
 ---
 
 # Selection
@@ -37,7 +38,7 @@ Selection is represented by a [Set](https://developer.mozilla.org/en-US/docs/Web
 object. You can also pass any iterable collection (e.g. an array) to the `selectedKeys` and `defaultSelectedKeys` props,
 but the `onSelectionChange` event will always pass back a Set.
 
-Selection is supported on both [static](collections.html#static-collections) and [dynamic](collections.html#dynamic-collections) 
+Selection is supported on both [static](collections.html#static-collections) and [dynamic](collections.html#dynamic-collections)
 collections. The following example show how to implement controlled selection
 behavior on a static collection, but could be applied to a dynamic collection the same way.
 
@@ -54,8 +55,8 @@ let [selectedKeys, setSelectedKeys] = useState(new Set());
 ## Single selection
 
 So far, we've discussed multiple selection. However, you may wish to limit selection to a single item instead.
-In some components, like a select or combo box, only single selection is supported. In this case, the singular 
-`selectedKey` and `defaultSelectedKey` props are available instead of their plural variants. These accept a 
+In some components, like a select or combo box, only single selection is supported. In this case, the singular
+`selectedKey` and `defaultSelectedKey` props are available instead of their plural variants. These accept a
 single key instead of a Set as their value, and `onSelectionChange` is also called with a single key.
 
 ```tsx
@@ -75,7 +76,7 @@ only contain a single key at a time.
 ```tsx
 let [selectedKeys, setSelectedKeys] = useState(new Set());
 
-<ListBox 
+<ListBox
   selectionMode="single"
   selectedKeys={selectedKeys}
   onSelectionChange={setSelectedKeys}>
