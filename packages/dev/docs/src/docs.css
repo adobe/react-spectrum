@@ -461,9 +461,6 @@ h2.sectionHeader {
   }
 }
 
-.themeSwitcher {
-
-}
 .hamburger {
   display: none;
 }
@@ -582,8 +579,8 @@ h2.sectionHeader {
     position: fixed;
     top: 0;
     left: 0;
-    width: calc(100vw - (100vw - 100%));
-    height: calc(100vh - (100vh - 100%));
+    width: calc(100vw - (100vw - 100%)); /* viewport width - scrollbar width if it's visible */
+    height: calc(100vh - (100vh - 100%)); /* viewport height - scrollbar height if it's visible */
     content: '';
     z-index: 99;
     background: var(--spectrum-alias-background-color-modal-overlay);

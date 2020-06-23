@@ -63,7 +63,7 @@ export function ThemeSwitcher() {
   let label = colorScheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
 
   return (
-    <div title={label} className={styles.themeSwitcher}>
+    <div title={label}>
       <ActionButton
         aria-label={label}
         onPress={onPress}>
