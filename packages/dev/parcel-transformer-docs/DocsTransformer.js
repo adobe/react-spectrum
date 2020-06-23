@@ -458,6 +458,13 @@ module.exports = new Transformer({
         });
       }
 
+      if (path.isTSTupleType()) {
+        return Object.assign(node, {
+          type: 'tuple',
+          elements: path.get('elementTypes').map(t => processExport(t))
+        });
+      }
+
       console.log('UNKNOWN TYPE', path.node.type);
     }
 

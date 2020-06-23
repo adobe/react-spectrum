@@ -11,8 +11,6 @@
   "env": {
     "storybook": {
       "presets": [
-        "@babel/preset-typescript",
-        "@babel/preset-react",
         [
           "@parcel/babel-preset-env",
           {
@@ -20,22 +18,6 @@
             "targets": {
               "esmodules": true
             }
-          }
-        ]
-      ]
-    },
-    "test": {
-      "plugins": [
-        "@parcel/babel-plugin-transform-runtime"
-      ],
-      "presets": [
-        "@babel/preset-typescript",
-        "@babel/preset-react",
-        [
-          "@babel/preset-env",
-          {
-            "useBuiltIns": "entry",
-            "corejs": 3
           }
         ]
       ]
@@ -54,17 +36,17 @@
               "data-testid"
             ]
           }
-        ],
-        [
-          "@parcel/babel-plugin-transform-runtime",
-          {
-            "version": "^7.6.2"
-          }
         ]
       ]
     }
   },
   "plugins": [
+    [
+      "@parcel/babel-plugin-transform-runtime",
+      {
+        "version": "^7.6.2"
+      }
+    ],
     [
       "@babel/plugin-proposal-decorators",
       {
