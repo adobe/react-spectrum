@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, MultipleSelectionBase, Removable, StyleProps} from '@react-types/shared';
+import {DOMProps, MultipleSelection, Removable, StyleProps} from '@react-types/shared';
 import {ReactChild, ReactElement, ReactNode} from 'react';
 
 export interface TagProps extends Removable<ReactChild, void> {
@@ -20,7 +20,7 @@ export interface TagProps extends Removable<ReactChild, void> {
   validationState?: 'invalid' | 'valid'
 }
 
-export interface TagGroupProps extends MultipleSelectionBase {
+export interface TagGroupProps extends MultipleSelection {
   children: ReactElement<TagProps> | ReactElement<TagProps>[],
   isDisabled?: boolean
   isReadOnly?: boolean,

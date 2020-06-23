@@ -14,7 +14,7 @@
     "edge >= 16"
   ],
   "scripts": {
-    "check-types": "tsc --skipLibCheck",
+    "check-types": "tsc",
     "start": "make run",
     "build-storybook": "build-storybook -c .storybook-v3 -o dist/$(git rev-parse HEAD)/storybook",
     "test": "make test",
