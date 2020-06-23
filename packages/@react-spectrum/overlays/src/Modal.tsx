@@ -26,7 +26,8 @@ interface ModalWrapperProps extends HTMLAttributes<HTMLElement> {
   isOpen?: boolean,
   onClose?: () => void,
   type?: 'fullscreen' | 'fullscreenTakeover',
-  isDismissable?: boolean
+  isDismissable?: boolean,
+  shouldCloseOnBlur?: boolean
 }
 
 function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
@@ -55,7 +56,7 @@ let typeMap = {
 };
 
 let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
-  let {children, isOpen, type, ...otherProps} = props;
+  let {children, isOpen, type, isDismissable, shouldCloseOnBlur, ...otherProps} = props;
   let typeVariant = typeMap[type];
 
   let {overlayProps} = useOverlay(props, ref);
