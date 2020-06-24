@@ -13,7 +13,7 @@
 // @ts-ignore
 import {flushSync} from 'react-dom';
 import {getScrollLeft} from './utils';
-import React, {CSSProperties, HTMLAttributes, Key, ReactNode, RefObject, useCallback, useLayoutEffect, useRef, useState} from 'react';
+import React, {CSSProperties, HTMLAttributes, ReactNode, RefObject, useCallback, useLayoutEffect, useRef, useState} from 'react';
 import {Rect, Size} from '@react-stately/virtualizer';
 import {useLocale} from '@react-aria/i18n';
 
@@ -22,7 +22,6 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   onVisibleRectChange: (rect: Rect) => void,
   children: ReactNode,
   innerStyle?: CSSProperties,
-  focusedKey?: Key,
   sizeToFit?: 'width' | 'height',
   onScrollStart?: () => void,
   onScrollEnd?: () => void,
@@ -39,8 +38,6 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     onScrollStart,
     onScrollEnd,
     scrollDirection = 'both',
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    focusedKey,
     ...otherProps
   } = props;
 
