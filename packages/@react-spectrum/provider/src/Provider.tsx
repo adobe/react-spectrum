@@ -148,7 +148,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
 
   let hasWarned = useRef(false);
   useEffect(() => {
-    if (locale && domRef.current) {
+    if (direction && domRef.current) {
       let closestDir = domRef.current.parentElement.closest('[dir]');
       let dir = closestDir && closestDir.getAttribute('dir');
       if (dir && dir !== direction && !hasWarned.current) {
@@ -156,7 +156,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
         hasWarned.current = true;
       }
     }
-  }, [locale, domRef, hasWarned]);
+  }, [direction, domRef, hasWarned]);
 
 
   return (
