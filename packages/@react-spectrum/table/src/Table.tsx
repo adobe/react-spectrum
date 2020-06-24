@@ -56,7 +56,7 @@ function useTableContext() {
   return useContext(TableContext);
 }
 
-function Table<T>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
+function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {isQuiet} = props;
   let {styleProps} = useStyleProps(props);
