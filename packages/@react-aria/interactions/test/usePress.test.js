@@ -15,7 +15,8 @@ import React from 'react';
 import {usePress} from '../';
 
 function Example(props) {
-  let {elementType: ElementType = 'div', ...otherProps} = props;
+  // eslint-disable-next-line no-unused-vars
+  let {elementType: ElementType = 'div', onPress, onPressChange, onPressStart, onPressEnd, onPressUp, ...otherProps} = props;
   let {pressProps} = usePress(props);
   return <ElementType {...otherProps} {...pressProps}>test</ElementType>;
 }
