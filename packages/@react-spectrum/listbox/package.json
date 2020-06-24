@@ -45,7 +45,6 @@
     "@react-stately/list": "3.0.0-rc.0",
     "@react-stately/virtualizer": "3.0.0-rc.0",
     "@react-types/listbox": "3.0.0-rc.0",
-    "@react-types/menu": "3.0.0-rc.0",
     "@react-types/shared": "3.0.0-rc.3",
     "@spectrum-icons/ui": "3.0.0-rc.3"
   },
