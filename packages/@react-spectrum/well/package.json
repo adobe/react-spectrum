@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/well",
-  "version": "3.0.0-rc.3",
+  "version": "3.0.0-rc.4",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -30,10 +30,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/utils": "3.0.0-rc.3",
-    "@react-spectrum/utils": "3.0.0-rc.3",
-    "@react-types/well": "3.0.0-rc.3",
-    "@react-types/shared": "3.0.0-rc.3"
+    "@react-aria/utils": "3.0.0-rc.4",
+    "@react-spectrum/utils": "3.0.0-rc.4",
+    "@react-types/well": "3.0.0-rc.4",
+    "@react-types/shared": "3.0.0-rc.4"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
