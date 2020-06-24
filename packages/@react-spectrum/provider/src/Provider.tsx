@@ -149,10 +149,10 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
   let hasWarned = useRef(false);
   useEffect(() => {
     if (locale && domRef.current) {
-      let closestLang = domRef.current.parentElement.closest('[lang]');
-      let lang = closestLang && closestLang.getAttribute('lang');
-      if (lang && lang !== locale && !hasWarned.current) {
-        console.warn(`Locales cannot be nested. ${locale} inside ${lang}.`);
+      let closestDir = domRef.current.parentElement.closest('[dir]');
+      let dir = closestDir && closestDir.getAttribute('dir');
+      if (dir && dir !== direction && !hasWarned.current) {
+        console.warn(`Dir's cannot be nested. ${direction} inside ${dir}.`);
         hasWarned.current = true;
       }
     }
