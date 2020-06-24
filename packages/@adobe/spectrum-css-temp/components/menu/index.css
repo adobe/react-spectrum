@@ -118,7 +118,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Menu-checkmark {
   display: none;
-  align-self: start;
+  align-self: flex-start;
   justify-self: end;
   grid-area: checkmark;
 }
@@ -178,7 +178,7 @@ governing permissions and limitations under the License.
 .spectrum-Menu .spectrum-Menu-end {
   grid-area: end;
   justify-self: end;
-  align-self: start;
+  align-self: flex-start;
   padding-inline-start: var(--spectrum-global-dimension-size-125);
 }
 .spectrum-Menu-icon {
@@ -194,7 +194,7 @@ governing permissions and limitations under the License.
 }
 .spectrum-Menu-keyboard {
   grid-area: keyboard;
-  align-self: start;
+  align-self: flex-start;
   padding-inline-start: var(--spectrum-global-dimension-size-125);
   /* override default browser styling. */
   /* keyboard shortcuts are always ASCII, so use base font */

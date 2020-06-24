@@ -232,7 +232,7 @@ governing permissions and limitations under the License.
 .spectrum-Dialog.spectrum-Dialog--dismissable .spectrum-Dialog-closeButton {
   grid-area: closeButton;
   /* align and justify so it doesn't do the default 'stretch' and end up with forced height/width */
-  align-self: start;
+  align-self: flex-start;
   justify-self: end;
 
   margin-inline-end: var(--spectrum-dialog-close-button-padding);

@@ -30,11 +30,9 @@
 
   /* On mobile browsers, vh units are fixed based on the maximum height of the screen.
    * However, when you scroll, the toolbar and address bar shrink, making the viewport resize.
-   * We use the fill-available value to counteract this where supported. */
+   * We use the stretch value to counteract this where supported. And rely on autoprefixer for prefixes. */
   height: 100vh;
-  height: -moz-available;
-  height: -webkit-fill-available;
-  height: fill-available;
+  height: stretch;
 
   /* Don't catch clicks */
   pointer-events: none;
