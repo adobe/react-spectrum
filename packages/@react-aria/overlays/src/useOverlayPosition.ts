@@ -11,7 +11,7 @@
  */
 
 import {calculatePosition, PositionResult} from './calculatePosition';
-import {HTMLAttributes, RefObject, useEffect, useState} from 'react';
+import {HTMLAttributes, RefObject, useCallback, useEffect, useState} from 'react';
 import {Placement, PlacementAxis} from '@react-types/overlays';
 import {useLocale} from '@react-aria/i18n';
 
@@ -35,7 +35,8 @@ interface AriaPositionProps extends PositionProps {
 interface PositionAria {
   overlayProps: HTMLAttributes<Element>,
   arrowProps: HTMLAttributes<Element>,
-  placement: PlacementAxis
+  placement: PlacementAxis,
+  updatePosition(): void
 }
 
 /**
@@ -80,7 +81,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     direction
   ];
 
-  let updatePosition = () => {
+  let updatePosition = useCallback(() => {
     if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current) {
       return;
     }
@@ -98,7 +99,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
         crossOffset
       })
     );
-  };
+  }, deps);
 
   // Update position when anything changes
   useEffect(updatePosition, deps);
@@ -121,7 +122,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
         left: position.arrowOffsetLeft,
         top: position.arrowOffsetTop
       }
-    }
+    },
+    updatePosition
   };
 }
 
