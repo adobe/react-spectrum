@@ -11,7 +11,6 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
 
 ---
 category: Concepts
@@ -28,22 +27,22 @@ Building high quality interactions that work across a wide variety of devices an
 The web runs across an extremely wide variety of devices and platforms: desktop, mobile, TVs, cars, even refrigerators.
 This extends to interaction models too: the web supports mouse, touch, keyboard, gamepads, screen readers, and more.
 
-Unfortunately, the web platform doesn't have any high level abstractions across these interaction models. There's no 
+Unfortunately, the web platform doesn't have any high level abstractions across these interaction models. There's no
 high level gesture events, or even the concept of a “press” event that works across all of these interaction models.
 We just have low level events like mouse, touch, keyboard, and focus events, and it's up to developers to put them
 together properly. This leads to many web apps not working consistently across various types of devices and interaction models.
 
-React Aria includes a collection of [Hooks](https://reactjs.org/docs/hooks-intro.html) that provide higher level abstractions 
-over the low level events exposed by the web platform, and helps normalize the behavior across browsers and devices. This includes 
-support for high level events like “press”, “hover”, and “focus”. Some of these seem simple at first, but you’d be surprised how 
-complicated it is to handle these events in a cross-browser, cross-device way. There are many tiny behavioral 
+React Aria includes a collection of [Hooks](https://reactjs.org/docs/hooks-intro.html) that provide higher level abstractions
+over the low level events exposed by the web platform, and helps normalize the behavior across browsers and devices. This includes
+support for high level events like “press”, “hover”, and “focus”. Some of these seem simple at first, but you’d be surprised how
+complicated it is to handle these events in a cross-browser, cross-device way. There are many tiny behavioral
 differences that have a big impact on how well components work across all of these platforms.
 
 ## Pointer events
 
 The web was originally designed for mouse events. Later, when touch devices were introduced, browsers added support for
 touch events. However, since existing web apps had not been designed with touch in mind, browsers needed to emulate
-mouse events on touch devices to ensure some compatibility with them. 
+mouse events on touch devices to ensure some compatibility with them.
 
 Touch input is quite different than mouse input though. For example, it is possible to hover over an element with a mouse,
 but not with touch. But since existing apps designed for mouse input have hover only effects, browsers emulate hover events
@@ -60,16 +59,16 @@ devices to mouse and touch events. It normalizes many cross-browser behavioral d
 platforms behave consistently. In addition, React Aria supports additional interaction models like keyboard and focus events
 to ensure that all users can interact with your app, not just mouse and touchscreen users.
 
-CSS pseudo classes like `:hover` and `:active` are also problematic in many cases, especially on hybrid devices that support 
+CSS pseudo classes like `:hover` and `:active` are also problematic in many cases, especially on hybrid devices that support
 both mouse and touch. They also emulate mouse behavior on touch devices, e.g. showing hover effects when you touch elements.
 It's best to use JavaScript events that apply CSS styles rather than these pseudo classes for the best cross-device experience.
 
-See [usePress](usePress.html) and [useHover](useHover.html) for more details about React Aria's hooks for cross device 
+See [usePress](usePress.html) and [useHover](useHover.html) for more details about React Aria's hooks for cross device
 interactions.
 
 ## Keyboard and focus behavior
 
-Keyboard and focus support is important to allow users to navigate your app with a keyboard. This is imperative for users 
+Keyboard and focus support is important to allow users to navigate your app with a keyboard. This is imperative for users
 who are unable to physically use a mouse or touch screen, but also nice for power users who may find it faster to navigate
 parts of your app without lifting their hands from the keyboard.
 
@@ -77,7 +76,7 @@ At a high level, keyboard navigation is broken up into **tab stops**, which may 
 move to the next tab stop, and <kbd>Shift</kbd> + <kbd>Tab</kbd> to move to the previous tab stop. A tab stop may be an atomic
 component like a text field or button, or a composite component like a listbox, radio group, grid, or toolbar. Composite components
 behave as a single tab stop. Elements within a composite component are typically navigated with the arrow keys, while the <kbd>Tab</kbd>
-key continues to navigate to the next/previous tab stop. React Aria implements hooks for many of these composite components and handles 
+key continues to navigate to the next/previous tab stop. React Aria implements hooks for many of these composite components and handles
 all of the keyboard navigation behavior for elements inside them.
 
 Overlay elements like dialogs, popovers, and menus have additional focus behavior to ensure that focus stays within them while they
@@ -86,7 +85,7 @@ the [FocusScope](FocusScope.html) component.
 
 Another important feature for keyboard users is a **focus ring**. This is a visual affordance for the currently focused element, which
 allows a keyboard user to know which element they are currently on. It should only be visible when navigating with a keyboard, so as
-not to distract mouse and touchscreen users. This can be implemented using the [useFocusRing](useFocusRing.html) hook or the 
+not to distract mouse and touchscreen users. This can be implemented using the [useFocusRing](useFocusRing.html) hook or the
 [FocusRing](FocusRing.html) component. The [useFocusVisible](useFocusVisible.html) hook can also be used to determine whether
 the user is currently navigating with a keyboard or not.
 
@@ -95,7 +94,7 @@ the user is currently navigating with a keyboard or not.
 An assistive technology, such as a screen reader, relies on semantic information exposed to the browser through ARIA or native HTML element
 semantics. This allows it to know what an element represents and relay this information to the user. As a screen reader or other
 assistive technology navigates around an application, it may fire various JavaScript events. Since screen readers are navigating
-the app in a completely different way than tranditional mouse, touch, or keyboard behavior, these events are emulated by a 
+the app in a completely different way than tranditional mouse, touch, or keyboard behavior, these events are emulated by a
 screen reader. It may focus elements, fire click events to activate them, or otherwise emulate mouse and keyboard events.
 
 React Aria is careful to handle events fired by assistive technology, and normalizes this behavior as needed so it is consistent
