@@ -46,6 +46,8 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
     transitionDuration,
     isLoading,
     onLoadMore,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    focusedKey,
     ...otherProps
   } = props;
 

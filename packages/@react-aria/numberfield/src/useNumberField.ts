@@ -75,25 +75,19 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   incrementAriaLabel = incrementAriaLabel || formatMessage('Increment');
   decrementAriaLabel = decrementAriaLabel || formatMessage('Decrement');
 
-  const incrementButtonProps = {
+  const incrementButtonProps: AriaButtonProps = {
     'aria-label': incrementAriaLabel,
     'aria-controls': inputId,
-    tabIndex: -1,
-    title: incrementAriaLabel,
+    excludeFromTabOrder: true,
     isDisabled: isDisabled || (value >= maxValue) || isReadOnly,
-    onPress: increment,
-    onMouseDown: e => e.preventDefault(),
-    onMouseUp: e => e.preventDefault()
+    onPress: increment
   };
-  const decrementButtonProps = {
+  const decrementButtonProps: AriaButtonProps = {
     'aria-label': decrementAriaLabel,
     'aria-controls': inputId,
-    tabIndex: -1,
-    title: decrementAriaLabel,
+    excludeFromTabOrder: true,
     isDisabled: isDisabled || (value <= minValue || isReadOnly),
-    onPress: decrement,
-    onMouseDown: e => e.preventDefault(),
-    onMouseUp: e => e.preventDefault()
+    onPress: decrement
   };
 
   useEffect(() => {

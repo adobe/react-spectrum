@@ -51,6 +51,8 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   let {
     children,
     isOpen,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    shouldCloseOnBlur,
     ...otherProps
   } = props;
   let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);

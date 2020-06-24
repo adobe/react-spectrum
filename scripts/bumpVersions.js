@@ -26,7 +26,6 @@ let levels = {
 
 // Packages to release
 let publicPackages = {
-  '@adobe/react-spectrum': 'rc',
   '@react-spectrum/actiongroup': 'rc',
   '@react-spectrum/breadcrumbs' : 'rc',
   '@react-spectrum/button': 'rc',

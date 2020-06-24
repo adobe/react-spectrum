@@ -50,6 +50,13 @@ interface AriaOptionProps {
   isVirtualized?: boolean
 }
 
+const isSafariMacOS =
+  typeof window !== 'undefined' && window.navigator != null
+    ? /^Mac/.test(window.navigator.platform) &&
+      /Safari/.test(window.navigator.userAgent) &&
+      !/Chrome/.test(window.navigator.userAgent)
+    : false;
+
 /**
  * Provides the behavior and accessibility implementation for an option in a listbox.
  * See `useListBox` for more details about listboxes.
@@ -72,11 +79,17 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   let optionProps = {
     role: 'option',
     'aria-disabled': isDisabled,
-    'aria-selected': isSelected,
-    'aria-label': props['aria-label'],
-    'aria-labelledby': labelId,
-    'aria-describedby': descriptionId
+    'aria-selected': isSelected
   };
+
+  // Safari with VoiceOver on macOS misreads options with aria-labelledby or aria-label as simply "text".
+  // We should not map slots to the label and description on Safari and instead just have VoiceOver read the textContent. 
+  // https://bugs.webkit.org/show_bug.cgi?id=209279
+  if (!isSafariMacOS) {
+    optionProps['aria-label'] = props['aria-label'];
+    optionProps['aria-labelledby'] = labelId;
+    optionProps['aria-describedby'] = descriptionId;
+  }
 
   if (isVirtualized) {
     optionProps['aria-posinset'] = state.collection.getItem(key).index + 1;
