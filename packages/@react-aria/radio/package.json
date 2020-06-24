@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/radio",
-  "version": "3.0.0-rc.3",
+  "version": "3.0.0-rc.4",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -8,7 +8,8 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "repository": {
@@ -17,13 +18,13 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/focus": "3.0.0-rc.3",
-    "@react-aria/i18n": "3.0.0-rc.3",
-    "@react-aria/interactions": "3.0.0-rc.3",
-    "@react-aria/label": "3.0.0-rc.3",
-    "@react-aria/utils": "3.0.0-rc.3",
-    "@react-stately/radio": "3.0.0-rc.3",
-    "@react-types/radio": "3.0.0-rc.3"
+    "@react-aria/focus": "3.0.0-rc.4",
+    "@react-aria/i18n": "3.0.0-rc.4",
+    "@react-aria/interactions": "3.0.0-rc.4",
+    "@react-aria/label": "3.0.0-rc.4",
+    "@react-aria/utils": "3.0.0-rc.4",
+    "@react-stately/radio": "3.0.0-rc.4",
+    "@react-types/radio": "3.0.0-rc.4"
   },
   "peerDependencies": {
     "react": "^16.8.0"

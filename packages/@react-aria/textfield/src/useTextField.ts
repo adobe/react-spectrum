@@ -57,7 +57,7 @@ export function useTextField(
       'aria-autocomplete': props['aria-autocomplete'],
       'aria-haspopup': props['aria-haspopup'],
       value: props.value,
-      defaultValue: props.defaultValue,
+      defaultValue: props.value ? undefined : props.defaultValue,
       onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
       autoComplete: props.autoComplete,
       maxLength: props.maxLength,

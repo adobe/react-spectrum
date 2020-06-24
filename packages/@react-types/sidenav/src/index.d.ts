@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, CollectionBase, DOMProps, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, DOMProps, Expandable, MultipleSelection, Node, StyleProps} from '@react-types/shared';
 import {HTMLAttributes, ReactNode} from 'react';
-import {Node, ReusableView} from '@react-stately/collections';
+import {ReusableView} from '@react-stately/virtualizer';
 
 export interface SideNavProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {
   shouldFocusWrap?: boolean

@@ -9,7 +9,8 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "repository": {
@@ -18,7 +19,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/i18n": "3.0.0-rc.3",
+    "@react-aria/i18n": "3.0.0-rc.4",
     "@react-stately/pagination": "^3.0.0-alpha.1",
     "@react-types/pagination": "^3.0.0-alpha.1"
   },

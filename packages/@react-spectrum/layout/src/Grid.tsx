@@ -40,10 +40,6 @@ export const gridStyleProps: StyleHandlers = {
   alignContent: ['alignContent', passthroughStyle]
 };
 
-/**
- * A layout container using CSS grid. Supports Spectrum dimensions as values to
- * ensure consistent and adaptive sizing and spacing.
- */
 function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
@@ -109,5 +105,9 @@ function gridTemplateValue(value) {
   return gridDimensionValue(value);
 }
 
+/**
+ * A layout container using CSS grid. Supports Spectrum dimensions as values to
+ * ensure consistent and adaptive sizing and spacing.
+ */
 const _Grid = forwardRef(Grid);
 export {_Grid as Grid};
