@@ -16,23 +16,12 @@ import '@testing-library/jest-dom';
 const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
   'An update to %s inside a test was not wrapped in act',
   'Unknown event handler property `%s`',
-  'Not implemented: navigation',
   'React does not recognize the `%s` prop on a DOM element',
-  'Received NaN for the `%s` attribute',
-  'Can\'t perform a React state update on an unmounted component',
-  '%s contains an input of type %s with both value and defaultValue props',
-  '<%s /> is using incorrect casing',
-  'The tag <%s> is unrecognized in this browser',
-  'The above error occurred in the <TestHook> component',
-  'Function components cannot be given refs. Attempts to access this ref will fail.',
-  'Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.'
+  'Can\'t perform a React state update on an unmounted component'
 ];
 
 const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
-  '`waitForDomChange` has been deprecated.',
-  'The style prop is unsafe and is unsupported in React Spectrum v3.',
-  'The className prop is unsafe and is unsupported in React Spectrum v3.',
-  'If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility'
+  '`waitForDomChange` has been deprecated.'
 ];
 
 function failTestOnConsoleError() {
