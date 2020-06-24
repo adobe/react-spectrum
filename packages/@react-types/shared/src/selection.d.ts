@@ -37,3 +37,5 @@ export interface MultipleSelection {
   /** Handler that is called when the selection changes. */
   onSelectionChange?: (keys: Selection) => any
 }
+
+export type FocusStrategy = 'first' | 'last';
