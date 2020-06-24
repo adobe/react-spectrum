@@ -10,7 +10,7 @@
     "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "dependencies": {
-    "@react-types/shared": "3.0.0-rc.4"
+    "@react-types/shared": "^3.0.0"
   },
   "publishConfig": {
     "access": "public"

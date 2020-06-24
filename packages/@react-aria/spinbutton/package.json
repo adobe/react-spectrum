@@ -20,8 +20,8 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/live-announcer": "^3.0.0-alpha.1",
-    "@react-aria/utils": "3.0.0-rc.4",
-    "@react-types/shared": "3.0.0-rc.4"
+    "@react-aria/utils": "^3.0.0",
+    "@react-types/shared": "^3.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0"
