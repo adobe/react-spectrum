@@ -15,3 +15,8 @@ governing permissions and limitations under the License.
 .spectrum {
   isolation: isolate;
 }
+
+/* We only want to apply isolation to our top most level provider. */
+.spectrum .spectrum {
+  isolation: auto;
+}
