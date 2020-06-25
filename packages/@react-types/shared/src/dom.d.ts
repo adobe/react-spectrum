@@ -53,10 +53,12 @@ export interface DOMProps {
 
 export interface FocusableDOMProps extends DOMProps {
   /**
-   * Indicates whether an element is focusable, allows or prevents them from being sequentially focusable,
-   * and determines their relative ordering for sequential focus navigation.
+   * Whether to exclude the element from the sequential tab order. If true,
+   * the element will not be focusable via the keyboard by tabbing. This should
+   * be avoided except in rare scenarios where an alternative means of accessing
+   * the element or its functionality via the keyboard is available.
    */
-  tabIndex?: number
+  excludeFromTabOrder?: boolean
 }
 
 // DOM props that apply to all text inputs

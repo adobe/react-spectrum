@@ -26,44 +26,43 @@ let levels = {
 
 // Packages to release
 let publicPackages = {
-  '@adobe/react-spectrum': 'rc',
-  '@react-spectrum/actiongroup': 'rc',
-  '@react-spectrum/breadcrumbs' : 'rc',
-  '@react-spectrum/button': 'rc',
-  '@react-spectrum/buttongroup': 'rc',
-  '@react-spectrum/checkbox': 'rc',
-  '@react-spectrum/dialog': 'rc',
-  '@react-spectrum/divider': 'rc',
-  '@react-spectrum/form': 'rc',
-  '@react-spectrum/icon': 'rc',
-  '@react-spectrum/illustratedmessage': 'rc',
-  '@react-spectrum/image': 'rc',
-  '@react-spectrum/label': 'rc',
-  '@react-spectrum/layout': 'rc',
-  '@react-spectrum/link': 'rc',
-  '@react-spectrum/listbox': 'rc',
-  '@react-spectrum/menu': 'rc',
-  '@react-spectrum/meter': 'rc',
-  '@react-spectrum/overlays': 'rc',
-  '@react-spectrum/picker': 'rc',
-  '@react-spectrum/progress': 'rc',
-  '@react-spectrum/provider': 'rc',
-  '@react-spectrum/radio': 'rc',
-  '@react-spectrum/searchfield': 'rc',
-  '@react-spectrum/statuslight': 'rc',
-  '@react-spectrum/switch': 'rc',
+  '@react-spectrum/actiongroup': 'released',
+  '@react-spectrum/breadcrumbs' : 'released',
+  '@react-spectrum/button': 'released',
+  '@react-spectrum/buttongroup': 'released',
+  '@react-spectrum/checkbox': 'released',
+  '@react-spectrum/dialog': 'released',
+  '@react-spectrum/divider': 'released',
+  '@react-spectrum/form': 'released',
+  '@react-spectrum/icon': 'released',
+  '@react-spectrum/illustratedmessage': 'released',
+  '@react-spectrum/image': 'released',
+  '@react-spectrum/label': 'released',
+  '@react-spectrum/layout': 'released',
+  '@react-spectrum/link': 'released',
+  '@react-spectrum/listbox': 'released',
+  '@react-spectrum/menu': 'released',
+  '@react-spectrum/meter': 'released',
+  '@react-spectrum/overlays': 'released',
+  '@react-spectrum/picker': 'released',
+  '@react-spectrum/progress': 'released',
+  '@react-spectrum/provider': 'released',
+  '@react-spectrum/radio': 'released',
+  '@react-spectrum/searchfield': 'released',
+  '@react-spectrum/statuslight': 'released',
+  '@react-spectrum/switch': 'released',
   '@react-spectrum/table': 'alpha',
-  '@react-spectrum/text': 'rc',
-  '@react-spectrum/textfield': 'rc',
-  '@react-spectrum/theme-dark': 'rc',
-  '@react-spectrum/theme-default': 'rc',
-  '@react-spectrum/utils': 'rc',
-  '@react-spectrum/view': 'rc',
-  '@react-spectrum/well': 'rc',
-  '@spectrum-icons/color': 'rc',
-  '@spectrum-icons/workflow': 'rc',
-  '@spectrum-icons/illustrations': 'rc',
-  '@react-stately/data': 'rc'
+  '@react-spectrum/text': 'released',
+  '@react-spectrum/textfield': 'released',
+  '@react-spectrum/theme-dark': 'released',
+  '@react-spectrum/theme-default': 'released',
+  '@react-spectrum/utils': 'released',
+  '@react-spectrum/view': 'released',
+  '@react-spectrum/well': 'released',
+  '@spectrum-icons/color': 'released',
+  '@spectrum-icons/workflow': 'released',
+  '@spectrum-icons/illustrations': 'released',
+  '@react-stately/data': 'released'
 };
 
 // Packages never to release
@@ -286,7 +285,8 @@ function bumpVersions(versions) {
 
     for (let dep in pkg.dependencies) {
       if (versions.has(dep)) {
-        pkg.dependencies[dep] = versions.get(dep)[1];
+        let {status} = releasedPackages.get(dep);
+        pkg.dependencies[dep] = (status === 'released' ? '^' : '') + versions.get(dep)[1];
       }
     }
 
@@ -303,7 +303,8 @@ function bumpVersions(versions) {
 
       for (let dep in pkg.dependencies) {
         if (versions.has(dep)) {
-          pkg.dependencies[dep] = versions.get(dep)[1];
+          let {status} = releasedPackages.get(dep);
+          pkg.dependencies[dep] = (status === 'released' ? '^' : '') + versions.get(dep)[1];
         }
       }
 

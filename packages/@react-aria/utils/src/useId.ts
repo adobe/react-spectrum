@@ -20,7 +20,7 @@ let id = 0;
 let randomInstanceNumber = Math.round(Math.random() * 10000000000);
 export function useId(defaultId?: string): string {
   let [value, setValue] = useState(defaultId);
-  let res = useMemo(() => value || `react-spectrum-${randomInstanceNumber}-${++id}`, [value]);
+  let res = useMemo(() => value || `react-aria-${randomInstanceNumber}-${++id}`, [value]);
   map.set(res, setValue);
   return res;
 }

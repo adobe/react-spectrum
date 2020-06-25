@@ -41,7 +41,7 @@ module.exports = new Transformer({
         if (path.node.source) {
           let symbols = new Map();
           for (let specifier of path.node.specifiers) {
-            symbols.set(specifier.exported.name, specifier.local.name);
+            symbols.set(specifier.exported.name, {local: specifier.local.name});
             asset.symbols.set(specifier.exported.name, specifier.local.name);
           }
 
@@ -53,12 +53,10 @@ module.exports = new Transformer({
         } else if (path.node.declaration) {
           if (t.isIdentifier(path.node.declaration.id)) {
             asset.symbols.set(path.node.declaration.id.name, path.node.declaration.id.name);
-            // console.log('EXPORT', path.node.declaration.id.name, processExport(path.get('declaration')));
             exports[path.node.declaration.id.name] = processExport(path.get('declaration'));
           } else {
             let identifiers = t.getBindingIdentifiers(path.node.declaration);
             for (let id of Object.keys(identifiers)) {
-              console.log('ID', id);
               asset.symbols.set(identifiers[id].name, identifiers[id].name);
             }
           }
@@ -76,7 +74,7 @@ module.exports = new Transformer({
       ExportAllDeclaration(path) {
         asset.addDependency({
           moduleSpecifier: path.node.source.value,
-          symbols: new Map([['*', '*']]),
+          symbols: new Map([['*', {local: '*'}]]),
           pipeline: 'docs-json'
         });
       },
@@ -246,7 +244,7 @@ module.exports = new Transformer({
       if (path.isImportSpecifier()) {
         asset.addDependency({
           moduleSpecifier: path.parent.source.value,
-          symbols: new Map([[path.node.imported.name, path.node.local.name]]),
+          symbols: new Map([[path.node.imported.name, {local: path.node.local.name}]]),
           pipeline: 'docs-json'
         });
 
