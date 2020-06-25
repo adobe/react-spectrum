@@ -11,3 +11,7 @@ governing permissions and limitations under the License.
 */
 
 @import '../commons/index.css';
+
+.spectrum {
+  isolation: isolate;
+}
