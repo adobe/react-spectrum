@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render} from '@testing-library/react';
 import {ActionGroup} from '../';
 import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {fireEvent, render} from '@testing-library/react';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -295,10 +295,10 @@ describe('ActionGroup', function () {
     let buttons = tree.getAllByRole('radio');
     buttonBefore.focus();
 
-    userEvent.tab();
+    act(() => userEvent.tab());
     expect(document.activeElement).toBe(buttons[0]);
 
-    userEvent.tab();
+    act(() => userEvent.tab());
     expect(document.activeElement).toBe(buttonAfter);
   });
 
@@ -310,10 +310,10 @@ describe('ActionGroup', function () {
     let buttons = tree.getAllByRole('radio');
     buttonAfter.focus();
 
-    userEvent.tab({shift: true});
+    act(() => userEvent.tab({shift: true}));
     expect(document.activeElement).toBe(buttons[1]);
 
-    userEvent.tab({shift: true});
+    act(() => userEvent.tab({shift: true}));
     expect(document.activeElement).toBe(buttonBefore);
   });
 
@@ -325,16 +325,16 @@ describe('ActionGroup', function () {
     let buttons = tree.getAllByRole('radio');
     buttonBefore.focus();
 
-    userEvent.tab();
+    act(() => userEvent.tab());
     expect(document.activeElement).toBe(buttons[0]);
 
     pressArrowRight(buttons[0]);
     expect(document.activeElement).toBe(buttons[1]);
 
-    userEvent.tab();
+    act(() => userEvent.tab());
     expect(document.activeElement).toBe(buttonAfter);
 
-    userEvent.tab({shift: true});
+    act(() => userEvent.tab({shift: true}));
     expect(document.activeElement).toBe(buttons[1]);
   });
 
