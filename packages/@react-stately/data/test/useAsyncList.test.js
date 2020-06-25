@@ -646,7 +646,7 @@ describe('useAsyncList', () => {
 
     it('should throw if updating the list while loading', async () => {
       let load = jest.fn().mockImplementation(getItems);
-      let {result, waitForNextUpdate} = renderHook(
+      let {result} = renderHook(
         () => useAsyncList({load})
       );
 
