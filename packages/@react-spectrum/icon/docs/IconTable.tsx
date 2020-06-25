@@ -101,9 +101,7 @@ export default function IconTable(props: {iconPackage: string}) {
               {key => (
                 <Cell>
                   {key === 'action'
-                    ? <ActionButton onPress={() => navigator.clipboard.writeText(item.importText)} aria-label="Copy import text">
-                        <Copy />
-                      </ActionButton>
+                    ? <ActionButton onPress={() => navigator.clipboard.writeText(item.importText)} aria-label="Copy import text"><Copy /></ActionButton>
                     : item[key]
                   }
                 </Cell>
