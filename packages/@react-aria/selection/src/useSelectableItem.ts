@@ -11,7 +11,7 @@
  */
 
 import {focusWithoutScrolling} from '@react-aria/utils';
-import {HTMLAttributes, Key, RefObject, useLayoutEffect} from 'react';
+import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressEvent} from '@react-types/shared';
 import {PressProps} from '@react-aria/interactions';
@@ -59,7 +59,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
   // Focus the associated DOM node when this item becomes the focusedKey
   let isFocused = key === manager.focusedKey;
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (isFocused && manager.isFocused && document.activeElement !== ref.current) {
       if (focus) {
         focus();

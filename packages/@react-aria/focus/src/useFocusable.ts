@@ -19,13 +19,13 @@ interface FocusableOptions extends FocusableProps, FocusableDOMProps {
   isDisabled?: boolean
 }
 
-export function useFocusable(props: FocusableOptions, domRef?: RefObject<HTMLElement>) {
+export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElement>) {
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
   let interactions = mergeProps(focusProps, keyboardProps);
 
   useEffect(() => {
-    if (props.autoFocus && domRef && domRef.current) {
+    if (props.autoFocus && domRef.current) {
       domRef.current.focus();
     }
   }, [props.autoFocus, domRef]);

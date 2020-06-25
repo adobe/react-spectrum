@@ -9,7 +9,8 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "targets": {
@@ -31,9 +32,9 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/tabs": "^3.0.0-alpha.1",
-    "@react-spectrum/utils": "3.0.0-rc.3",
+    "@react-spectrum/utils": "^3.0.0",
     "@react-stately/tabs": "^3.0.0-alpha.1",
-    "@react-types/shared": "3.0.0-rc.3",
+    "@react-types/shared": "^3.0.0",
     "classnames": "^2.2.5"
   },
   "devDependencies": {
