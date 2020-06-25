@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/link",
-  "version": "3.0.0-rc.0",
+  "version": "3.0.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -8,7 +8,8 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "targets": {
@@ -29,10 +30,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/focus": "3.0.0-rc.3",
-    "@react-aria/link": "3.0.0-rc.0",
-    "@react-spectrum/utils": "3.0.0-rc.3",
-    "@react-types/link": "3.0.0-rc.0"
+    "@react-aria/focus": "^3.0.0",
+    "@react-aria/link": "^3.0.0",
+    "@react-spectrum/utils": "^3.0.0",
+    "@react-types/link": "^3.0.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
