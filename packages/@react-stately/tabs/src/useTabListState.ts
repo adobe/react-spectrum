@@ -18,7 +18,7 @@ interface SingleSelectionBaseProps extends React.HTMLAttributes<HTMLElement> {
   defaultSelectedItem?: any,
   onSelectionChange?: (selectedItem: any) => void,
   typeToSelect?: boolean,
-  children?: ReactElement | ReactElement[]
+  children: ReactElement | ReactElement[]
 }
 
 export function useTabListState(props: SingleSelectionBaseProps): {selectedItem: any, setSelectedItem: (val: any) => void} {
@@ -34,7 +34,8 @@ export function useTabListState(props: SingleSelectionBaseProps): {selectedItem:
     defaultSelectedValue = getSelectedValue(childrenArray, props.defaultSelectedItem);
   }
 
-  let [selectedItem, setSelectedItem] = useControlledState(selectedValue, defaultSelectedValue || childrenArray[0].props.value, props.onSelectionChange);
+  let firstChildProps = React.isValidElement(childrenArray[0]) ? childrenArray[0].props : {};
+  let [selectedItem, setSelectedItem] = useControlledState(selectedValue, defaultSelectedValue || firstChildProps.value, props.onSelectionChange);
 
   // In the case that a uncontrolled tablist's child is removed/added, update the selected tab
   useEffect(() => {
