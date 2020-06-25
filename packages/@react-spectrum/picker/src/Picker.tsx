@@ -74,7 +74,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     keyboardDelegate: layout
   }, state, unwrapDOMRef(triggerRef));
 
-  let {overlayProps, placement} = useOverlayPosition({
+  let {overlayProps, placement, updatePosition} = useOverlayPosition({
     targetRef: unwrapDOMRef(triggerRef),
     overlayRef: unwrapDOMRef(popoverRef),
     scrollRef: listboxRef,
@@ -82,6 +82,17 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     shouldFlip: shouldFlip,
     isOpen: state.isOpen
   });
+
+  // Update position once the ListBox has rendered. This ensures that
+  // it flips properly when it doesn't fit in the available space.
+  // TODO: add ResizeObserver to useOverlayPosition so we don't need this.
+  useLayoutEffect(() => {
+    if (state.isOpen) {
+      requestAnimationFrame(() => {
+        updatePosition();
+      });
+    }
+  }, [state.isOpen, updatePosition]);
 
   let isLoadingInitial = props.isLoading && state.collection.size === 0;
   let isLoadingMore = props.isLoading && state.collection.size > 0;
