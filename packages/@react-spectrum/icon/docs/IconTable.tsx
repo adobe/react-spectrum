@@ -9,8 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
+// eslint-disable-next-line rulesdir/imports
+import {ActionButton} from '@react-spectrum/button';
 // eslint-disable-next-line rulesdir/imports
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '@react-spectrum/table';
+// eslint-disable-next-line rulesdir/imports
+import Copy from '@spectrum-icons/workflow/Copy';
 // eslint-disable-next-line rulesdir/imports
 import js from 'highlight.js/lib/languages/javascript';
 // eslint-disable-next-line rulesdir/imports
@@ -25,7 +30,8 @@ Lowlight.registerLanguage('js', js);
 let columns = [
   {name: 'Name', key: 'name', width: '20%'},
   {name: 'Icon', key: 'icon', width: '10%'},
-  {name: 'Import', key: 'import', width: '70%'}
+  {name: 'Import', key: 'import', width: '60%'},
+  {name: 'Action', key: 'action', width: '10%'}
 ];
 
 const icons = {
@@ -68,7 +74,8 @@ export default function IconTable(props: {iconPackage: string}) {
         return {
           name,
           icon: <img alt={`${name} icon`} src={packageMeta.srcTemplate(name)} width={36} height={36} />,
-          import: <Lowlight language="js" value={packageMeta.importTemplate(name)} inline className={typographyStyles['spectrum-Code4']} />
+          import: <Lowlight language="js" value={packageMeta.importTemplate(name)} inline className={typographyStyles['spectrum-Code4']} />,
+          importText: packageMeta.importTemplate(name)
         };
       });
       setTableState({items: [...originalItems], loading: false, originalItems});
@@ -89,7 +96,20 @@ export default function IconTable(props: {iconPackage: string}) {
           {column => <Column width={column.width}>{column.name}</Column>}
         </TableHeader>
         <TableBody items={tableState.items} isLoading={tableState.loading}>
-          {item => <Row key={item.name}>{key => <Cell>{item[key]}</Cell>}</Row>}
+          {item =>
+            (<Row key={item.name}>
+              {key => (
+                <Cell>
+                  {key === 'action'
+                    ? <ActionButton onPress={() => navigator.clipboard.writeText(item.importText)} aria-label="Copy import text">
+                        <Copy />
+                      </ActionButton>
+                    : item[key]
+                  }
+                </Cell>
+              )}
+            </Row>)
+          }
         </TableBody>
       </Table>
     </>
