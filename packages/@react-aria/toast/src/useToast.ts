@@ -55,7 +55,7 @@ export function useToast(props: ToastAriaProps, state: ToastState): ToastAria {
     }
   };
 
-  let iconProps = variant ? {alt: formatMessage(variant)} : {};
+  let iconProps = variant ? {'aria-label': formatMessage(variant)} : {};
 
   let pauseTimer = () => {
     timer && timer.pause();

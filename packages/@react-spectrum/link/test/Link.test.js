@@ -88,12 +88,6 @@ describe('Link', function () {
     expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
   });
 
-  it('supports tabIndex', () => {
-    let {getByRole} = render(<Link tabIndex={-1}>Click me</Link>);
-    let link = getByRole('link');
-    expect(link).toHaveAttribute('tabIndex', '-1');
-  });
-
   it('supports custom data attributes', () => {
     let {getByRole} = render(<Link data-testid="test">Click me</Link>);
     let link = getByRole('link');

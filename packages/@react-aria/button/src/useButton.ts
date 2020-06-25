@@ -67,7 +67,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   });
 
   let {focusableProps} = useFocusable(props, ref);
-  let buttonProps = mergeProps(pressProps, focusableProps);
+  let buttonProps = mergeProps(focusableProps, pressProps);
   buttonProps = mergeProps(buttonProps, filterDOMProps(props, {labelable: true}));
 
   return {

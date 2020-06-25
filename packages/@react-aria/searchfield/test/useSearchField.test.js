@@ -104,9 +104,9 @@ describe('useSearchField hook', () => {
       expect(clearButtonProps['aria-label']).toBe(expectedIntl);
     });
 
-    it('clear button should not be focusable', () => {
+    it('clear button should not be tabbable', () => {
       let {clearButtonProps} = renderSearchHook({});
-      expect(clearButtonProps.tabIndex).toBe(-1);
+      expect(clearButtonProps.excludeFromTabOrder).toBe(true);
     });
 
     describe('with specific onPress behavior', () => {

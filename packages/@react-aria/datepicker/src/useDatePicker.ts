@@ -78,7 +78,7 @@ export function useDatePicker(props: DatePickerAriaProps, state: DatePickerState
       'aria-labelledby': labelledBy
     },
     buttonProps: {
-      tabIndex: -1,
+      excludeFromTabOrder: true,
       id: buttonId,
       'aria-haspopup': 'dialog',
       'aria-label': formatMessage('calendar'),
