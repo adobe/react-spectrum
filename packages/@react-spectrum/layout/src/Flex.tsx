@@ -25,10 +25,6 @@ export const flexStyleProps: StyleHandlers = {
   alignContent: ['alignContent', flexAlignValue]
 };
 
-/**
- * A layout container using flexbox. Provides Spectrum dimension values, and supports the gap
- * property to define consistent spacing between items.
- */
 function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
@@ -141,5 +137,9 @@ function isFlexGapSupported() {
   return _isFlexGapSupported;
 }
 
+/**
+ * A layout container using flexbox. Provides Spectrum dimension values, and supports the gap
+ * property to define consistent spacing between items.
+ */
 const _Flex = forwardRef(Flex);
 export {_Flex as Flex};
