@@ -18,7 +18,7 @@ import {Content, View} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
-import {Heading} from '@react-spectrum/text';
+import {focusWithoutScrolling} from '@react-aria/utils';
 import highlightCss from './syntax-highlight.css';
 import {Pressable} from '@react-aria/interactions';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
@@ -47,14 +47,16 @@ function LinkPopover({id}) {
   let ref = useRef();
   let [breadcrumbs, setBreadcrumbs] = useState([document.getElementById(id)]);
 
-  const onBlurHeading = useCallback((event) => {
-    event.target.removeEventListener('blur', onBlurHeading);
+  const onBlurCurrentBreadcrumb = useCallback((event) => {
+    event.target.removeEventListener('blur', onBlurCurrentBreadcrumb);
     event.target.tabIndex = -1;
   },
   []);
 
   useEffect(() => {
-    let links = ref.current.querySelectorAll(`.${docsStyle.popover} [data-link]`);
+    let isCancelled = false; 
+    let timeoutId;
+    let links = ref.current.querySelectorAll('[data-link]');
     for (let link of links) {
       link.href = link.dataset.href;
       link.removeAttribute('aria-haspopup');
@@ -63,21 +65,33 @@ function LinkPopover({id}) {
         setBreadcrumbs([...breadcrumbs, document.getElementById(link.dataset.link)]);
       });
     }
-    const h3 = ref.current.closest(`.${highlightCss.spectrum}.${docsStyle.popover}`).querySelector('h3[aria-current]');
-    if (h3) {
-      h3.tabIndex = 0;
-      h3.addEventListener('blur', onBlurHeading);
-      requestAnimationFrame(() => h3.focus());
+
+    if (isCancelled) {
+      if (timeoutId) {
+        cancelAnimationFrame(timeoutId);
+      }
+      return;
     }
-  }, [breadcrumbs, onBlurHeading]);
+
+    timeoutId = requestAnimationFrame(() => {
+      const currentBreadcrumb = ref.current.closest(`.${docsStyle.popover}`).querySelector('[aria-current]');
+      if (currentBreadcrumb) {
+        currentBreadcrumb.tabIndex = 0;
+        currentBreadcrumb.addEventListener('blur', onBlurCurrentBreadcrumb);
+        focusWithoutScrolling(currentBreadcrumb); 
+      }
+    });
+
+    return () => isCancelled = true;
+  }, [breadcrumbs, onBlurCurrentBreadcrumb]);
 
   return (
     <Dialog UNSAFE_className={`${highlightCss.spectrum} ${docsStyle.popover}`} size="L">
       <View slot="heading">
         <Breadcrumbs onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}>
           {breadcrumbs.map((b, i) => (
-            <Item key={i + 1} textValue={b.dataset.title}>
-              {i < (breadcrumbs.length - 1) ? b.dataset.title : <Heading level={3}>{b.dataset.title}</Heading>}
+            <Item key={i + 1}>
+              {b.dataset.title}
             </Item>
           ))}
         </Breadcrumbs>
