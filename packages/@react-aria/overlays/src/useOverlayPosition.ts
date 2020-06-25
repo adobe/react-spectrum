@@ -11,7 +11,7 @@
  */
 
 import {calculatePosition, PositionResult} from './calculatePosition';
-import {HTMLAttributes, RefObject, useEffect, useState} from 'react';
+import {HTMLAttributes, RefObject, useCallback, useEffect, useState} from 'react';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
 import {useLocale} from '@react-aria/i18n';
 
@@ -47,7 +47,9 @@ interface PositionAria {
   /** Props for the overlay tip arrow if any. */
   arrowProps: HTMLAttributes<Element>,
   /** Placement of the overlay with respect to the overlay trigger. */
-  placement: PlacementAxis
+  placement: PlacementAxis,
+  /** Function that updates the position of the overlay. */
+  updatePosition(): void
 }
 
 /**
@@ -92,7 +94,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     direction
   ];
 
-  let updatePosition = () => {
+  let updatePosition = useCallback(() => {
     if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current) {
       return;
     }
@@ -110,7 +112,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
         crossOffset
       })
     );
-  };
+  }, deps);
 
   // Update position when anything changes
   useEffect(updatePosition, deps);
@@ -133,7 +135,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
         left: position.arrowOffsetLeft,
         top: position.arrowOffsetTop
       }
-    }
+    },
+    updatePosition
   };
 }
 
