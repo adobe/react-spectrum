@@ -55,7 +55,8 @@ module.exports = new Packager({
 
       let deps = bundleGraph.getDependencies(asset);
       for (let dep of deps) {
-        if (dep.symbols.get('*') === '*') {
+        let wildcard = dep.symbols.get('*');
+        if (wildcard && wildcard.local === '*') {
           let resolved = bundleGraph.getDependencyResolution(dep, bundle);
           Object.assign(res, processAsset(resolved));
         }

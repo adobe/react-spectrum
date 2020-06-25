@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/searchfield",
-  "version": "3.0.0-rc.3",
+  "version": "3.0.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -8,7 +8,8 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "targets": {
@@ -29,14 +30,14 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/searchfield": "3.0.0-rc.3",
-    "@react-spectrum/button": "3.0.0-rc.3",
-    "@react-spectrum/textfield": "3.0.0-rc.3",
-    "@react-spectrum/utils": "3.0.0-rc.3",
-    "@react-stately/searchfield": "3.0.0-rc.3",
-    "@react-types/searchfield": "3.0.0-rc.3",
-    "@react-types/textfield": "3.0.0-rc.3",
-    "@spectrum-icons/ui": "3.0.0-rc.3"
+    "@react-aria/searchfield": "^3.0.0",
+    "@react-spectrum/button": "^3.0.0",
+    "@react-spectrum/textfield": "^3.0.0",
+    "@react-spectrum/utils": "^3.0.0",
+    "@react-stately/searchfield": "^3.0.0",
+    "@react-types/searchfield": "^3.0.0",
+    "@react-types/textfield": "^3.0.0",
+    "@spectrum-icons/ui": "^3.0.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
