@@ -13,7 +13,17 @@
 // @ts-ignore
 import {flushSync} from 'react-dom';
 import {getScrollLeft} from './utils';
-import React, {CSSProperties, HTMLAttributes, ReactNode, RefObject, useCallback, useLayoutEffect, useRef, useState} from 'react';
+import React, {
+  CSSProperties,
+  HTMLAttributes,
+  ReactNode,
+  RefObject,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState
+} from 'react';
 import {Rect, Size} from '@react-stately/virtualizer';
 import {useLocale} from '@react-aria/i18n';
 
@@ -103,6 +113,10 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
       }
     });
   }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollEnd]);
+
+  useEffect(() => () => {
+    clearTimeout(state.scrollTimeout);
+  }, []);
 
   useLayoutEffect(() => {
     // TODO: resize observer

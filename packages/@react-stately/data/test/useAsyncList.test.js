@@ -646,7 +646,7 @@ describe('useAsyncList', () => {
 
     it('should throw if updating the list while loading', async () => {
       let load = jest.fn().mockImplementation(getItems);
-      let {result} = renderHook(
+      let {result, waitForNextUpdate} = renderHook(
         () => useAsyncList({load})
       );
 
@@ -665,6 +665,9 @@ describe('useAsyncList', () => {
       }
 
       expect(result.error).toEqual(new Error('Invalid action "update" in state "loading"'));
+      await act(async () => {
+        jest.runAllTimers();
+      });
     });
   });
 

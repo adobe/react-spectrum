@@ -392,6 +392,10 @@ export class Virtualizer<T extends object, V, W> {
     return layoutInfo.key;
   }
 
+  cancelRelayout() {
+    cancelAnimationFrame(this._relayoutRaf);
+  }
+
   /**
    * Triggers a layout invalidation, and updates the visible subviews.
    */
