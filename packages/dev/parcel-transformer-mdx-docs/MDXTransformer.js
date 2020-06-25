@@ -67,10 +67,15 @@ module.exports = new Transformer({
             // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actuall
             // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
             node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*\/\/\/- end collapse -\/\/\//g, '').trim();
-            node.meta = 'example';
+
+            // Only set node.meta to example if it is a tsx example (don't do it for tsx snippets since they don't have code blocks)
+            if (meta === 'example') {
+              node.meta = 'example';
+            }
 
             return [
-              ...responsiveCode(node),
+              // Only add responsive blocks for tsx examples (tsx snippets don't have code blocks)
+              ...(meta === 'example' ? responsiveCode(node) : [node]),
               {
                 type: 'jsx',
                 value: `<div id="${id}" />`
