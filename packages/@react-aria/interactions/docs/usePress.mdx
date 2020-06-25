@@ -13,7 +13,7 @@ export default Layout;
 import docs from 'docs:@react-aria/interactions';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/interactions/package.json';
 
 ```jsx import
 import {usePress} from '@react-aria/interactions';
@@ -38,7 +38,7 @@ keywords: [press interactions, press events, aria]
 
 ## Features
 
-`usePress` handles press interactions across mouse, touch, keyboard, and screen readers. A press interaction starts when a 
+`usePress` handles press interactions across mouse, touch, keyboard, and screen readers. A press interaction starts when a
 user presses down with a mouse or their finger on the target, and ends when they move the pointer off the target. It may
 start again if the pointer re-enters the target. `usePress` returns the current press state, which can be used to adjust
 the visual appearance of the target. If the pointer is released over the target, then an `onPress` event is fired.

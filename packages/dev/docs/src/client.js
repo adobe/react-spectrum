@@ -13,10 +13,13 @@
 import {ActionButton} from '@react-spectrum/button';
 import {addFocusRing} from './addFocusRing';
 import docsStyle from './docs.css';
+import {listen} from 'quicklink';
 import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
+
+window.addEventListener('load', () => listen());
 
 let title = document.querySelector('h1');
 

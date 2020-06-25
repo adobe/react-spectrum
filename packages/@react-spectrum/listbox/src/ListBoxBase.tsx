@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, Node, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, FocusStrategy, Node, StyleProps} from '@react-types/shared';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {FocusStrategy} from '@react-types/menu';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxContext} from './ListBoxContext';
