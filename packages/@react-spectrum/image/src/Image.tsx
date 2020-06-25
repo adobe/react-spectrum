@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import React from 'react';
 import {SpectrumImageProps} from '@react-types/image';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -21,25 +22,18 @@ import {useProviderProps} from '@react-spectrum/provider';
 function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props, 'image');
   let {
-    loaded,
-    isPlaceholder,
     objectFit,
     src,
-    decorative,
     alt,
     ...otherProps
   } = useProviderProps(props);
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
-  if (decorative) {
-    alt = '';
-  }
-
   if (alt == null) {
     console.warn(
-      'Neither the `alt` prop or `decorative` were provided to an image. ' +
-      'Add `alt` text for screen readers, or enable the `decorative` prop to indicate that the image ' +
+      'The `alt` prop was not provided to an image. ' +
+      'Add `alt` text for screen readers, or set `alt=""` prop to indicate that the image ' +
       'is decorative or redundant with displayed text and should not be annouced by screen readers.'
     );
   }
@@ -49,13 +43,12 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
       {...filterDOMProps(props)}
       {...styleProps}
       className={classNames({}, styleProps.className)}
-      style={{overflow: 'hidden'}}
+      style={{
+        ...styleProps.style,
+        overflow: 'hidden'
+      }}
       ref={domRef}>
       <img
-        className={classNames({}, 'react-spectrum-Image', {
-          'is-loaded': loaded,
-          'is-placeholder': isPlaceholder
-        })}
         src={src}
         alt={alt}
         style={{objectFit, height: '100%', width: '100%'}} />
@@ -63,5 +56,8 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * Image is used to insert and display an image within a component.
+ */
 const _Image = React.forwardRef(Image);
 export {_Image as Image};

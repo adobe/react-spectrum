@@ -14,7 +14,6 @@ import {fireEvent} from '@testing-library/react';
 import React from 'react';
 import {render} from '@testing-library/react';
 import {Tag, TagGroup} from '../src';
-import {TagList} from '@react/react-spectrum/TagList';
 
 describe('TagGroup', function () {
   let onRemoveSpy = jest.fn();
@@ -45,13 +44,12 @@ describe('TagGroup', function () {
   });
 
   it.each`
-   Name           | Component         | props
-   ${'TagGroup'}  | ${TagGroup}       | ${{isReadOnly: true, isRemovable: true, onRemove: onRemoveSpy}}
-   ${'TagList'}   | ${TagList}        | ${{readOnly: true, onClose: onRemoveSpy}}
-  `('$Name can be read only', ({Component, props}) => {
+   Name           | Component     | TagComponent | props
+   ${'TagGroup'}  | ${TagGroup}   | ${Tag}       | ${{isReadOnly: true, isRemovable: true, onRemove: onRemoveSpy}}
+  `('$Name can be read only', ({Component, TagComponent, props}) => {
     let {getByText} = render(
       <Component {...props}>
-        <Tag>Tag 1</Tag>
+        <TagComponent>Tag 1</TagComponent>
       </Component>
     );
     let tag = getByText('Tag 1');

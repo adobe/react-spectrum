@@ -3,27 +3,25 @@
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under
  * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps} from '@react-types/button';
+import {AriaSelectProps} from '@react-types/select';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
-import {mergeProps, useId} from '@react-aria/utils';
-import {PressProps} from '@react-aria/interactions';
 import {SelectState} from '@react-stately/select';
 import {useCollator} from '@react-aria/i18n';
 import {useLabel} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
 
-interface SelectProps {
-  /** A ref to the trigger element. */
-  triggerRef: RefObject<HTMLElement>,
-
+interface AriaSelectOptions<T> extends AriaSelectProps<T> {
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
@@ -34,9 +32,9 @@ interface SelectProps {
 interface SelectAria {
   /** Props for the label element. */
   labelProps: HTMLAttributes<HTMLElement>,
-  
+
   /** Props for the popup trigger element. */
-  triggerProps: HTMLAttributes<HTMLElement> & PressProps,
+  triggerProps: AriaButtonProps,
 
   /** Props for the element representing the selected value. */
   valueProps: HTMLAttributes<HTMLElement>,
@@ -51,9 +49,8 @@ interface SelectAria {
  * @param props - props for the select
  * @param state - state for the select, as returned by `useListState`
  */
-export function useSelect<T>(props: SelectProps, state: SelectState<T>): SelectAria {
+export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement>): SelectAria {
   let {
-    triggerRef,
     keyboardDelegate
   } = props;
 
@@ -64,10 +61,10 @@ export function useSelect<T>(props: SelectProps, state: SelectState<T>): SelectA
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      ref: triggerRef,
       type: 'listbox'
     },
-    state
+    state,
+    ref
   );
 
   let {typeSelectProps} = useTypeSelect({
@@ -83,12 +80,13 @@ export function useSelect<T>(props: SelectProps, state: SelectState<T>): SelectA
     labelElementType: 'span'
   });
 
+  let domProps = filterDOMProps(props, {labelable: true});
   let triggerProps = mergeProps(mergeProps(menuTriggerProps, fieldProps), typeSelectProps);
   let valueId = useId();
 
   return {
     labelProps,
-    triggerProps: {
+    triggerProps: mergeProps(domProps, {
       ...triggerProps,
       'aria-labelledby': [
         triggerProps['aria-labelledby'],
@@ -101,7 +99,7 @@ export function useSelect<T>(props: SelectProps, state: SelectState<T>): SelectA
       onBlur() {
         state.setFocused(false);
       }
-    },
+    }),
     valueProps: {
       id: valueId
     },

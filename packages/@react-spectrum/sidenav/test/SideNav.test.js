@@ -39,26 +39,26 @@ function renderComponent(Name, Component, ComponentSection, ComponentItem, props
   switch (Name) {
     case 'SideNav':
       return render(
-        <Component {...props} items={flatItems} itemKey="name">
-          {item => <ComponentItem>{item.name}</ComponentItem>}
+        <Component {...props} items={flatItems}>
+          {item => <ComponentItem key={item.name}>{item.name}</ComponentItem>}
         </Component>
       );
     case 'V2SideNav':
     case 'SideNavStatic':
       return render(
         <Component {...props} >
-          <ComponentItem uniqueKey="Foo">Foo</ComponentItem>
-          <ComponentItem uniqueKey="Bar">Bar</ComponentItem>
-          <ComponentItem uniqueKey="Bob">Bob</ComponentItem>
-          <ComponentItem uniqueKey="Alice">Alice</ComponentItem>
+          <ComponentItem key="Foo">Foo</ComponentItem>
+          <ComponentItem key="Bar">Bar</ComponentItem>
+          <ComponentItem key="Bob">Bob</ComponentItem>
+          <ComponentItem key="Alice">Alice</ComponentItem>
         </Component>
       );
     case 'SideNavWithSections':
       return render(
-        <Component {...props} items={withSection} itemKey="name">
+        <Component {...props} items={withSection}>
           {item => (
-            <ComponentSection items={item.children} title={item.name}>
-              {item => <ComponentItem>{item.name}</ComponentItem>}
+            <ComponentSection key={item.name} items={item.children} title={item.name}>
+              {item => <ComponentItem key={item.name}>{item.name}</ComponentItem>}
             </ComponentSection>
           )}
         </Component>
@@ -67,12 +67,12 @@ function renderComponent(Name, Component, ComponentSection, ComponentItem, props
       return render(
         <Component {...props} >
           <ComponentSection title="Section 1">
-            <ComponentItem uniqueKey="Foo">Foo</ComponentItem>
-            <ComponentItem uniqueKey="Bar">Bar</ComponentItem>
+            <ComponentItem key="Foo">Foo</ComponentItem>
+            <ComponentItem key="Bar">Bar</ComponentItem>
           </ComponentSection>
           <ComponentSection title="Section 2">
-            <ComponentItem uniqueKey="Bob">Bob</ComponentItem>
-            <ComponentItem uniqueKey="Alice">Alice</ComponentItem>
+            <ComponentItem key="Bob">Bob</ComponentItem>
+            <ComponentItem key="Alice">Alice</ComponentItem>
           </ComponentSection>
         </Component>
       );
@@ -162,7 +162,7 @@ describe('SideNav', function () {
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name can single select an item', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let spy = jest.fn();
-    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy});
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', onSelectionChange: spy});
 
     await waitForDomChange();
 
@@ -306,7 +306,7 @@ describe('SideNav', function () {
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name supports defaultSelectedKeys (uncontrolled)', async function ({Name, Component, ComponentSection, ComponentItem}) {
-    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {defaultSelectedKeys: ['Bar']});
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', defaultSelectedKeys: ['Bar']});
 
     await waitForDomChange();
 
@@ -333,7 +333,7 @@ describe('SideNav', function () {
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name supports defaultSelectedKeys (controlled)', async function ({Name, Component, ComponentSection, ComponentItem}) {
-    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectedKeys: ['Bar']});
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', selectedKeys: ['Bar']});
 
     await waitForDomChange();
 
@@ -391,7 +391,7 @@ describe('SideNav', function () {
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name does not allow empty selection', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let spy = jest.fn();
-    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy});
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', disallowEmptySelection: true, onSelectionChange: spy});
 
     await waitForDomChange();
 
@@ -424,7 +424,7 @@ describe('SideNav', function () {
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name with default key does not allow empty selection', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let spy = jest.fn();
-    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy, defaultSelectedKey: ['bar']});
+    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', disallowEmptySelection: true, onSelectionChange: spy, defaultSelectedKey: ['bar']});
 
     await waitForDomChange();
 

@@ -11,17 +11,18 @@
  */
 
 import {focusWithoutScrolling} from '@react-aria/utils';
-import {HTMLAttributes, Key, RefObject, useLayoutEffect} from 'react';
+import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressEvent} from '@react-types/shared';
 import {PressProps} from '@react-aria/interactions';
 
 interface SelectableItemOptions {
   selectionManager: MultipleSelectionManager,
-  itemKey: Key,
-  itemRef: RefObject<HTMLElement>,
+  key: Key,
+  ref: RefObject<HTMLElement>,
   shouldSelectOnPressUp?: boolean,
-  isVirtualized?: boolean
+  isVirtualized?: boolean,
+  focus?: () => void
 }
 
 interface SelectableItemAria {
@@ -31,10 +32,11 @@ interface SelectableItemAria {
 export function useSelectableItem(options: SelectableItemOptions): SelectableItemAria {
   let {
     selectionManager: manager,
-    itemKey,
-    itemRef,
+    key,
+    ref,
     shouldSelectOnPressUp,
-    isVirtualized
+    isVirtualized,
+    focus
   } = options;
 
   let onSelect = (e: PressEvent | PointerEvent) => {
@@ -43,36 +45,40 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
 
     if (manager.selectionMode === 'single') {
-      if (manager.isSelected(itemKey) && !manager.disallowEmptySelection) {
-        manager.toggleSelection(itemKey);
+      if (manager.isSelected(key) && !manager.disallowEmptySelection) {
+        manager.toggleSelection(key);
       } else {
-        manager.replaceSelection(itemKey);
+        manager.replaceSelection(key);
       }
     } else if (e.shiftKey) {
-      manager.extendSelection(itemKey);
+      manager.extendSelection(key);
     } else if (manager) {
-      manager.toggleSelection(itemKey);
+      manager.toggleSelection(key);
     }
   };
 
   // Focus the associated DOM node when this item becomes the focusedKey
-  let isFocused = itemKey === manager.focusedKey;
-  useLayoutEffect(() => {
-    if (isFocused && manager.isFocused && document.activeElement !== itemRef.current) {
-      focusWithoutScrolling(itemRef.current);
+  let isFocused = key === manager.focusedKey;
+  useEffect(() => {
+    if (isFocused && manager.isFocused && document.activeElement !== ref.current) {
+      if (focus) {
+        focus();
+      } else {
+        focusWithoutScrolling(ref.current);
+      }
     }
-  }, [itemRef, isFocused, manager.focusedKey, manager.isFocused]);
+  }, [ref, isFocused, manager.focusedKey, manager.isFocused]);
 
   let itemProps: SelectableItemAria['itemProps'] = {
     tabIndex: isFocused ? 0 : -1,
     onFocus(e) {
-      if (e.target === itemRef.current) {
-        manager.setFocusedKey(itemKey);
+      if (e.target === ref.current) {
+        manager.setFocusedKey(key);
       }
     }
   };
 
-  // By default, selection occurs on pointer down. This can be strange if selecting an 
+  // By default, selection occurs on pointer down. This can be strange if selecting an
   // item causes the UI to disappear immediately (e.g. menus).
   // If shouldSelectOnPressUp is true, we use onPressUp instead of onPressStart.
   // onPress requires a pointer down event on the same element as pointer up. For menus,
@@ -85,7 +91,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         onSelect(e);
       }
     };
-    
+
     itemProps.onPressUp = (e) => {
       if (e.pointerType !== 'keyboard') {
         onSelect(e);
@@ -107,7 +113,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   }
 
   if (!isVirtualized) {
-    itemProps['data-key'] = itemKey;
+    itemProps['data-key'] = key;
   }
 
   return {

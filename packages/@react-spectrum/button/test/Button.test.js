@@ -54,11 +54,62 @@ describe('Button', function () {
     ${'LogicButton'}  | ${LogicButton}
     ${'V2Button'}     | ${V2Button}
   `('$Name allows custom props to be passed through to the button', function ({Component}) {
-    let {getByRole} = render(<Component data-foo="bar" aria-hidden>Click Me</Component>);
+    let {getByRole} = render(<Component data-foo="bar">Click Me</Component>);
 
-    let button = getByRole('button', {hidden: true});
+    let button = getByRole('button');
     expect(button).toHaveAttribute('data-foo', 'bar');
-    expect(button).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  it.each`
+    Name              | Component
+    ${'ActionButton'} | ${ActionButton}
+    ${'Button'}       | ${Button}
+    ${'ClearButton'}  | ${ClearButton}
+    ${'LogicButton'}  | ${LogicButton}
+    ${'V2Button'}     | ${V2Button}
+  `('$Name supports aria-label', function ({Component}) {
+    let {getByRole} = render(<Component aria-label="Test" />);
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it.each`
+    Name              | Component
+    ${'ActionButton'} | ${ActionButton}
+    ${'Button'}       | ${Button}
+    ${'ClearButton'}  | ${ClearButton}
+    ${'LogicButton'}  | ${LogicButton}
+    ${'V2Button'}     | ${V2Button}
+  `('$Name supports aria-labelledby', function ({Component}) {
+    let {getByRole} = render(
+      <>
+        <span id="test">Test</span>
+        <Component aria-labelledby="test" />
+      </>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-labelledby', 'test');
+  });
+
+  it.each`
+    Name              | Component
+    ${'ActionButton'} | ${ActionButton}
+    ${'Button'}       | ${Button}
+    ${'ClearButton'}  | ${ClearButton}
+    ${'LogicButton'}  | ${LogicButton}
+    ${'V2Button'}     | ${V2Button}
+  `('$Name supports aria-describedby', function ({Component}) {
+    let {getByRole} = render(
+      <>
+        <span id="test">Test</span>
+        <Component aria-describedby="test">Hi</Component>
+      </>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-describedby', 'test');
   });
 
   it.each`
@@ -119,16 +170,16 @@ describe('Button', function () {
 
   it.each`
     Name              | Component      | props
-    ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, elementType: 'a', href: 'https://adobe.com'}}
-    ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, elementType: 'a', href: 'https://adobe.com'}}
-    ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, elementType: 'a', href: 'https://adobe.com'}}
-    ${'V2Button'}     | ${V2Button}    | ${{onClick: onPressSpy, element: 'a', href: 'https://adobe.com'}}
+    ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
+    ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
+    ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
+    ${'V2Button'}     | ${V2Button}    | ${{onClick: onPressSpy, element: 'a', href: '#only-hash-in-jsdom'}}
   `('$Name can have elementType=a with an href', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('tabindex', '0');
-    expect(button).toHaveAttribute('href', 'https://adobe.com');
+    expect(button).toHaveAttribute('href', '#only-hash-in-jsdom');
     triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });

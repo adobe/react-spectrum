@@ -12,10 +12,53 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import docsStyle from './docs.css';
+import {listen} from 'quicklink';
 import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
+
+window.addEventListener('load', () => listen());
+
+let title = document.querySelector('h1');
+
+// Size the title to fit the available space.
+function updateTitleFontSize() {
+  let fontSize = parseInt(window.getComputedStyle(title).fontSize, 10);
+  
+  // Constrain font size to 58px, or 10% of the window width, whichever is smaller.
+  let maxFontSize = Math.min(58, Math.round(window.innerWidth * 0.1));
+  if (fontSize > maxFontSize) {
+    fontSize = maxFontSize;
+    title.style.fontSize = maxFontSize + 'px';
+  }
+
+  // If the font size is less than the maximum font size,
+  // increase the font size until it overflows.
+  while (fontSize < maxFontSize && title.scrollWidth <= title.clientWidth) {
+    fontSize++;
+    title.style.fontSize = fontSize + 'px';
+  }
+
+  // Reduce the font size until it doesn't overflow.
+  while (title.scrollWidth > title.clientWidth) {
+    fontSize--;
+    title.style.fontSize = fontSize + 'px';
+  }
+}
+
+updateTitleFontSize();
+
+// Use ResizeObserver where available to detect size changes not related to window resizing, e.g. font loading.
+if (typeof ResizeObserver !== 'undefined') {
+  let observer = new ResizeObserver(() => {
+    // Avoid updating the layout during the resize event and creating circular notifications.
+    requestAnimationFrame(updateTitleFontSize);
+  });
+  observer.observe(title);
+} else {
+  window.addEventListener('resize', updateTitleFontSize);
+}
 
 function Hamburger() {
   let onPress = () => {
@@ -36,7 +79,7 @@ function Hamburger() {
   }, []);
 
   return (
-    <ActionButton onPress={onPress}>
+    <ActionButton onPress={onPress} aria-label="Open navigation panel">
       <ShowMenu />
     </ActionButton>
   );

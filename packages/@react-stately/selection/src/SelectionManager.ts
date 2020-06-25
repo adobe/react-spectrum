@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-stately/collections';
+import {Collection, Node, SelectionMode} from '@react-types/shared';
 import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
-import {SelectionMode} from '@react-types/shared';
 
 interface SelectionManagerOptions {
   allowsCellSelection?: boolean
@@ -91,20 +90,24 @@ export class SelectionManager implements MultipleSelectionManager {
    * Returns whether a key is selected.
    */
   isSelected(key: Key) {
+    if (this.state.selectionMode === 'none') {
+      return false;
+    }
+
     return this.state.selectedKeys === 'all' || this.state.selectedKeys.has(key);
   }
 
   /**
    * Whether the selection is empty.
    */
-  get isEmpty() {
+  get isEmpty(): boolean {
     return this.state.selectedKeys !== 'all' && this.state.selectedKeys.size === 0;
   }
 
   /**
    * Whether all items in the collection are selected.
    */
-  get isSelectAll() {
+  get isSelectAll(): boolean {
     if (this.isEmpty) {
       return false;
     }
@@ -239,7 +242,7 @@ export class SelectionManager implements MultipleSelectionManager {
     if (key == null) {
       return;
     }
-    
+
     this.state.setSelectedKeys(new Selection([key], key, key));
   }
 
@@ -251,7 +254,7 @@ export class SelectionManager implements MultipleSelectionManager {
         if (item.type === 'item') {
           keys.push(key);
         }
-        
+
         // Add child keys. If cell selection is allowed, then include item children too.
         if (item.hasChildNodes && (this.allowsCellSelection || item.type !== 'item')) {
           addKeys([...item.childNodes][0].key);

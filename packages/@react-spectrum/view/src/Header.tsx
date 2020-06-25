@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {ClearSlots, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {HeaderProps} from '@react-types/view';
 import React, {forwardRef} from 'react';
 
@@ -26,10 +27,15 @@ function Header(props: HeaderProps, ref: DOMRef) {
 
   return (
     <header {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
-      {children}
+      <ClearSlots>
+        {children}
+      </ClearSlots>
     </header>
   );
 }
 
+/**
+ * Header is used to position additional heading or title information.
+ */
 const _Header = forwardRef(Header);
 export {_Header as Header};

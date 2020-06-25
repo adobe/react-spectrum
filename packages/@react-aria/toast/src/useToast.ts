@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from '@react-aria/utils';
+import {chain, filterDOMProps, mergeProps} from '@react-aria/utils';
 import {DOMProps} from '@react-types/shared';
 import {HTMLAttributes, ImgHTMLAttributes} from 'react';
 // @ts-ignore
@@ -18,7 +18,6 @@ import intlMessages from '../intl/*.json';
 import {PressProps} from '@react-aria/interactions';
 import {ToastProps, ToastState} from '@react-types/toast';
 import {useFocus, useHover} from '@react-aria/interactions';
-import {useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
 interface ToastAriaProps extends ToastProps {}
@@ -32,7 +31,6 @@ interface ToastAria {
 
 export function useToast(props: ToastAriaProps, state: ToastState): ToastAria {
   let {
-    id,
     toastKey,
     onAction,
     onClose,
@@ -44,6 +42,7 @@ export function useToast(props: ToastAriaProps, state: ToastState): ToastAria {
     onRemove
   } = state;
   let formatMessage = useMessageFormatter(intlMessages);
+  let domProps = filterDOMProps(props);
 
   const handleAction = (...args) => {
     if (onAction) {
@@ -56,7 +55,7 @@ export function useToast(props: ToastAriaProps, state: ToastState): ToastAria {
     }
   };
 
-  let iconProps = variant ? {alt: formatMessage(variant)} : {};
+  let iconProps = variant ? {'aria-label': formatMessage(variant)} : {};
 
   let pauseTimer = () => {
     timer && timer.pause();
@@ -67,7 +66,7 @@ export function useToast(props: ToastAriaProps, state: ToastState): ToastAria {
   };
 
   let {hoverProps} = useHover({
-    onHover: pauseTimer,
+    onHoverStart: pauseTimer,
     onHoverEnd: resumeTimer
   });
 
@@ -77,11 +76,10 @@ export function useToast(props: ToastAriaProps, state: ToastState): ToastAria {
   });
 
   return {
-    toastProps: {
+    toastProps: mergeProps(domProps, {
       ...hoverProps,
-      id: useId(id),
       role: 'alert'
-    },
+    }),
     iconProps,
     actionButtonProps: {
       ...focusProps,

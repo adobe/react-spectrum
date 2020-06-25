@@ -10,34 +10,36 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
-import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
-import {Key, useMemo} from 'react';
+import {Collection, CollectionBase, Expandable, MultipleSelection, Node} from '@react-types/shared';
+import {Key, useEffect, useMemo} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {TreeCollection} from './TreeCollection';
+import {useCollection} from '@react-stately/collections';
 import {useControlledState} from '@react-stately/utils';
 
+interface TreeProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {}
 export interface TreeState<T> {
   /** A collection of items in the tree. */
-  collection: Collection<Node<T>>,
+  readonly collection: Collection<Node<T>>,
 
   /** A set of keys for items that are disabled. */
-  disabledKeys: Set<Key>,
+  readonly disabledKeys: Set<Key>,
 
   /** A set of keys for items that are expanded. */
-  expandedKeys: Set<Key>,
+  readonly expandedKeys: Set<Key>,
 
   /** Toggles the expanded state for an item by its key. */
-  toggleKey: (key: Key) => void,
+  toggleKey(key: Key): void,
 
   /** A selection manager to read and update multiple selection state. */
-  selectionManager: SelectionManager
+  readonly selectionManager: SelectionManager
 }
 
 /**
  * Provides state management for tree-like components. Handles building a collection
  * of items from props, item expanded state, and manages multiple selection state.
  */
-export function useTreeState<T extends object>(props: CollectionBase<T> & Expandable & MultipleSelection): TreeState<T> {
+export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T> {
   let [expandedKeys, setExpandedKeys] = useControlledState(
     props.expandedKeys ? new Set(props.expandedKeys) : undefined,
     props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
@@ -49,11 +51,14 @@ export function useTreeState<T extends object>(props: CollectionBase<T> & Expand
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
-  let tree = useMemo(() => {
-    let nodes = builder.build(props);
-    return new TreeCollection(nodes, expandedKeys);
-  }, [builder, expandedKeys, props]);
+  let tree = useCollection(props, nodes => new TreeCollection(nodes, {expandedKeys}));
+
+  // Reset focused key if that item is deleted from the collection.
+  useEffect(() => {
+    if (selectionState.focusedKey != null && !tree.getItem(selectionState.focusedKey)) {
+      selectionState.setFocusedKey(null);
+    }
+  }, [tree, selectionState.focusedKey]);
 
   let onToggle = (key: Key) => {
     setExpandedKeys(expandedKeys => toggleKey(expandedKeys, key));

@@ -20,7 +20,7 @@ import {Dialog} from './Dialog';
 import {DialogContext, DialogContextValue} from './context';
 import {Divider} from '@react-spectrum/divider';
 import {DOMRef} from '@react-types/shared';
-import {Heading} from '@react-spectrum/typography';
+import {Heading} from '@react-spectrum/text';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {forwardRef, useContext} from 'react';
@@ -66,8 +66,9 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
 
   return (
     <Dialog
-      {...styleProps}
+      UNSAFE_style={styleProps.style}
       UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)}
+      isHidden={styleProps.hidden}
       size="M"
       role="alertdialog"
       ref={ref}>

@@ -1,0 +1,511 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/menu';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/menu/package.json';
+
+```jsx import
+import {ActionButton} from '@react-spectrum/button'
+import Copy from '@spectrum-icons/workflow/Copy';
+import Cut from '@spectrum-icons/workflow/Cut';
+import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
+import Paste from '@spectrum-icons/workflow/Paste';
+```
+
+---
+category: Collections
+---
+
+# MenuTrigger and Menu
+
+<p>
+  {docs.exports.MenuTrigger.description}
+  <br /><br />
+  {docs.exports.Menu.description}
+</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Menu', 'MenuTrigger']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/popovers/'}
+  ]} />
+
+## Example
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+      Edit
+  </ActionButton>
+  <Menu>
+    <Item>Cut</Item>
+    <Item>Copy</Item>
+    <Item>Paste</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+## Content
+
+The Menu accepts Items and [`Sections`](#sections) as children. Items can be
+statically populated (initial example above) or dynamically (below). The dynamic
+method would be better suited to use if the actions within a Menu came from a
+data object such as values returned via an API call. A unique `key` prop must be set
+on each item.
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+      Edit
+  </ActionButton>
+  <Menu items={[{name: 'Cut'}, {name: 'Copy'}, {name: 'Paste'}]}>
+    {item => <Item key={item.name}>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+```
+
+The MenuTrigger accepts exactly two children: the Menu and the element which
+triggers the opening of the Menu. The trigger must be the first child passed into
+the MenuTrigger and should be an element that supports press events.
+
+If the Menu is open within a MenuTrigger it will close on blur or scroll events.
+
+### Selection
+
+Changes to the Menu's selected Item are propagated via the event [`onAction`](#onaction).
+
+The `defaultSelectedKeys` prop can be used to preselect Menu Items in the Menu
+placing selection of a Menu in an uncontrolled state. Alternatively, the
+`selectedKeys` prop preselects an Item in the Menu placing Item selection in a
+controlled state.
+
+```tsx example
+<MenuTrigger closeOnSelect={false}>
+  <ActionButton>
+      Edit (Controlled)
+  </ActionButton>
+  <Menu selectionMode="single" selectedKeys={['copy']}>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
+<MenuTrigger closeOnSelect={false}>
+  <ActionButton>
+      Edit (Uncontrolled)
+  </ActionButton>
+  <Menu selectionMode="single" defaultSelectedKeys={['paste']}>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+The `selectionMode` prop specifies how many Menu Items can be selected, with
+the options being a single Menu Item, multiple Menu Items, or disabling selection
+entirely (default).
+
+```tsx example
+<MenuTrigger closeOnSelect={false}>
+  <ActionButton>
+      Show (Multiple)
+  </ActionButton>
+  <Menu selectionMode="multiple" defaultSelectedKeys={['Sidebar', 'Console']}>
+    <Item key='Sidebar'>Sidebar</Item>
+    <Item key='Searchbar'>Searchbar</Item>
+    <Item key='Tools'>Tools</Item>
+    <Item key='Console'>Console</Item>
+  </Menu>
+</MenuTrigger>
+<MenuTrigger closeOnSelect={false}>
+  <ActionButton>
+      Edit (Selection Mode None)
+  </ActionButton>
+  <Menu selectionMode="none">
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+### Sections
+
+Menus may have Sections which can be used to wrap groups of Items. Each
+`Section` takes a `title` and `key` prop.
+
+#### Static Items
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+      Edit
+  </ActionButton>
+  <Menu>
+    <Section key="rollback" title="Rollback Options">
+      <Item key="undo">Undo</Item>
+      <Item key="redo">Redo</Item>
+    </Section>
+    <Section key="select" title="Selected Text Options">
+      <Item key="cut">Cut</Item>
+      <Item key="copy">Copy</Item>
+      <Item key="paste">Paste</Item>
+    </Section>
+  </Menu>
+</MenuTrigger>
+```
+
+#### Dynamic Items
+
+Sections should be populated with dynamic Items from a hierarchical data
+structure. Section takes an array of data using the `items` prop.
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+      File Types
+  </ActionButton>
+  <Menu
+    items={[{name: 'Docs', children: [{name: 'PDF'}]}, {name: 'Images', children: [{name: 'jpeg'}, {name: 'png'}, {name: 'tiff'}]}]}>
+    {item => (
+      <Section key={item.name} items={item.children} title={item.name}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </Section>
+    )}
+  </Menu>
+</MenuTrigger>
+```
+
+### Complex Menu Items
+
+A Menu Item's content may be any renderable node, not just strings.
+
+[View guidelines](https://spectrum.adobe.com/page/popovers/#Content-types)
+
+```tsx example
+import {Keyboard, Text} from '@react-spectrum/text';
+
+<MenuTrigger>
+  <ActionButton>
+      Edit
+  </ActionButton>
+  <Menu
+    items={[
+      {name: 'Copy', icon: 'Copy', shortcut: '⌘C'},
+      {name: 'Cut', icon: 'Cut', shortcut: '⌘X'},
+      {name: 'Paste', icon: 'Paste', shortcut: '⌘V'}
+    ]}>
+    {item => {
+      let iconMap = {
+        Copy,
+        Cut,
+        Paste
+      };
+      let Icon = iconMap[item.icon];
+      return (
+        <Item key={item.name} childItems={item.children} textValue={item.name}>
+          <Icon size="S" />
+          <Text>{item.name}</Text>
+          <Keyboard>{item.shortcut}</Keyboard>
+        </Item>
+      );
+    }}
+  </Menu>
+</MenuTrigger>
+```
+
+### Internationalization
+
+To internationalize a Menu, a localized string should be passed to the `children`
+prop of each Menu Item or to a Section's `title` prop. For languages that are
+read right-to-left (e.g. Hebrew and Arabic), the layout of the Menu is flipped.
+
+### Accessibility
+
+Title-less Menu Sections must be provided with an `aria-label` for accessibility.
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+      Edit
+  </ActionButton>
+  <Menu items={[{name: 'Rollback Options', children: [{name: 'Undo'}, {name: 'Redo'}]}, {name: 'Selected Text Options', children: [{name: 'Cut'}, {name: 'Copy'}, {name: 'Paste'}]}]}>
+    {item => (
+      <Section key={item.name} items={item.children} aria-label={item.name}>
+        {item => <Item key={item.name}>{item.name}</Item>}
+      </Section>
+    )}
+  </Menu>
+</MenuTrigger>
+```
+
+## Events
+
+Menu supports selection via mouse, keyboard, and touch.
+
+### onOpenChange
+
+MenuTrigger accepts an `onOpenChange` handler which is triggered whenever the Menu is opened or closed.
+
+The example below uses `onOpenChange` to update a separate span element with the current open state of the Menu.
+
+```tsx example
+function Example() {
+  let [state, setState] = React.useState(false);
+
+  return (
+    <div>
+      <MenuTrigger onOpenChange={(isOpen) => setState(isOpen)}>
+        <ActionButton>
+            Edit
+        </ActionButton>
+        <Menu>
+          <Item key="cut">Cut</Item>
+          <Item key="copy">Copy</Item>
+          <Item key="paste">Paste</Item>
+        </Menu>
+      </MenuTrigger>
+      <span style={{'margin-left': '8px'}}>Current open state: {state.toString()}</span>
+    </div>
+  );
+}
+```
+
+### onAction
+
+Menu accepts an `onAction` handler which is triggered whenever a Menu Item is selected.
+
+The example below uses the `onAction` to update text beside the MenuTrigger with the last selected Item.
+
+```tsx example
+function Example() {
+  let [state, setState] = React.useState(false);
+
+  return (
+    <div>
+      <MenuTrigger>
+        <ActionButton>
+            Edit
+        </ActionButton>
+        <Menu onAction={(value) => setState(value)}>
+          <Item key="cut">Cut</Item>
+          <Item key="copy">Copy</Item>
+          <Item key="paste">Paste</Item>
+        </Menu>
+      </MenuTrigger>
+      <span style={{'margin-left': '8px'}}>onAction: {state.toString()}</span>
+    </div>
+  );
+}
+```
+
+## Props
+
+### MenuTrigger
+
+<PropTable component={docs.exports.MenuTrigger} links={docs.links} />
+
+### Menu
+
+<PropTable component={docs.exports.Menu} links={docs.links} />
+
+## Behavioral Options
+
+### Align (MenuTrigger)
+
+[View guidelines](https://spectrum.adobe.com/page/popovers/#Placement)
+
+```tsx example
+<MenuTrigger align="start">
+  <ActionButton>
+    placement align=start
+  </ActionButton>
+  <Menu>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
+<MenuTrigger align="end">
+  <ActionButton>
+    placement align=end
+  </ActionButton>
+  <Menu>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+### Direction (MenuTrigger)
+
+[View guidelines](https://spectrum.adobe.com/page/popovers/#Placement)
+
+```tsx example
+<MenuTrigger direction="bottom" shouldFlip={false}>
+  <ActionButton>
+    placement direction=bottom
+  </ActionButton>
+  <Menu>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
+<MenuTrigger direction="top" shouldFlip={false}>
+  <ActionButton>
+    placement direction=top
+  </ActionButton>
+  <Menu>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+### Autofocus (Menu)
+
+Applying `autoFocus` to the Menu of the MenuTrigger sets focus to a Menu Item
+within the Menu upon opening.
+
+This example demonstrates how to use `autoFocus` to automatically focus the
+selected Menu Item when the Menu is opened.
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+    autoFocus
+  </ActionButton>
+  <Menu
+    selectionMode="single"
+    selectedKeys={['copy']}
+    autoFocus>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+These examples demonstrate how to use `autoFocus` to set whether or not the
+first Menu Item or last Menu Item is focused when the Menu is opened.
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+      autofocus=first
+  </ActionButton>
+  <Menu autoFocus="first">
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
+<MenuTrigger>
+  <ActionButton>
+    autofocus=last
+  </ActionButton>
+  <Menu autoFocus="last">
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+### Closes on Selection (MenuTrigger)
+
+The `closeOnSelect` MenuTrigger prop closes the Menu when an MenuItem is
+selected (default). Setting the `closeOnSelect` prop to `false` would be useful
+for a Menu listing filtering options where the user would make multiple
+selections at once.
+
+```tsx example
+<MenuTrigger closeOnSelect>
+  <ActionButton>
+    closeOnSelect=true
+  </ActionButton>
+  <Menu>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
+<MenuTrigger closeOnSelect={false}>
+  <ActionButton>
+    closeOnSelect=false
+  </ActionButton>
+  <Menu selectionMode="multiple">
+    <Item key="jpg">jpg</Item>
+    <Item key="png">png</Item>
+    <Item key="tiff">tiff</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+### Disabled Menu Items (Menu)
+
+```tsx example
+<MenuTrigger>
+  <ActionButton>
+    Filter
+  </ActionButton>
+  <Menu
+    items={[
+      {name: 'tiff', dataId: 'a1b2c3'},
+      {name: 'png', dataId: 'g5h1j9'},
+      {name: 'jpg', dataId: 'p8k3i4'},
+      {name: 'PDF', dataId: 'j7i3a0'}
+    ]}
+    disabledKeys={['a1b2c3', 'p8k3i4']}>
+    {item => <Item key={item.dataId}>{item.name}</Item>}
+  </Menu>
+</MenuTrigger>
+```
+
+### Flipping (MenuTrigger)
+
+Applying `shouldFlip` to the MenuTrigger makes the Menu attempt to flip on its
+main axis in situations where the original placement would cause it to render out of view.
+
+```tsx example
+<MenuTrigger shouldFlip>
+  <ActionButton>
+    shouldFlip=true
+  </ActionButton>
+  <Menu>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
+<MenuTrigger shouldFlip={false}>
+  <ActionButton>
+    shouldFlip=false
+  </ActionButton>
+  <Menu>
+    <Item key="cut">Cut</Item>
+    <Item key="copy">Copy</Item>
+    <Item key="paste">Paste</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+### Open (MenuTrigger)
+
+The `isOpen` and `defaultOpen` props control whether the MenuTrigger is open by default.
+They apply controlled and uncontrolled behavior on the MenuTrigger respectively.

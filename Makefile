@@ -56,10 +56,16 @@ packages/@spectrum-icons/ui/%.js: packages/@spectrum-icons/ui/src/%.tsx
 
 ui-icons: packages/@spectrum-icons/ui/src $(addprefix packages/@spectrum-icons/ui/, $(notdir $(addsuffix .js, $(basename $(wildcard packages/@spectrum-icons/ui/src/*.tsx)))))
 
-icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src packages/@spectrum-icons/ui/src
+packages/@spectrum-icons/illustrations/%.js: packages/@spectrum-icons/illustrations/src/%.tsx
+	yarn workspace @spectrum-icons/illustrations build-icons
+
+illustrations: packages/@spectrum-icons/illustrations/src $(addprefix packages/@spectrum-icons/illustrations/, $(notdir $(addsuffix .js, $(basename $(wildcard packages/@spectrum-icons/illustrations/src/*.tsx)))))
+
+icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src packages/@spectrum-icons/ui/src packages/@spectrum-icons/illustrations/src
 	@$(MAKE) workflow-icons
 	@$(MAKE) color-icons
 	@$(MAKE) ui-icons
+	@$(MAKE) illustrations
 
 lint:
 	yarn check-types
@@ -73,7 +79,7 @@ ci-test:
 	yarn jest --maxWorkers=2
 
 storybook:
-	NODE_ENV=storybook yarn build-storybook
+	NODE_ENV=production yarn build-storybook
 
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
@@ -90,3 +96,4 @@ website:
 
 website-master:
 	yarn build:docs --dist-dir dist/master/docs
+	cp packages/dev/docs/pages/robots.txt dist/master/docs/robots.txt

@@ -12,145 +12,255 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionGroup} from '../';
-import Add from '@spectrum-icons/workflow/Add';
-import Bell from '@spectrum-icons/workflow/Bell';
-import Brush from '@spectrum-icons/workflow/Brush';
-import Camera from '@spectrum-icons/workflow/Camera';
-import CheckmarkCircle from '@spectrum-icons/workflow/CheckmarkCircle';
-import Delete from '@spectrum-icons/workflow/Delete';
+import BookIcon from '@spectrum-icons/workflow/Book';
+import CopyIcon from '@spectrum-icons/workflow/Copy';
+import DeleteIcon from '@spectrum-icons/workflow/Delete';
+import DocumentIcon from '@spectrum-icons/workflow/Document';
+import DrawIcon from '@spectrum-icons/workflow/Draw';
+import {Flex} from '@react-spectrum/layout';
+import InfoIcon from '@spectrum-icons/workflow/Info';
 import {Item} from '@react-stately/collections';
+import PropertiesIcon from '@spectrum-icons/workflow/Properties';
 import React from 'react';
-import RegionSelect  from '@spectrum-icons/workflow/RegionSelect';
-import Select  from '@spectrum-icons/workflow/Select';
+import SettingsIcon from '@spectrum-icons/workflow/Settings';
 import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/typography';
-import Undo from '@spectrum-icons/workflow/Undo';
+import {Text} from '@react-spectrum/text';
+import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
+import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
+import ViewListIcon from '@spectrum-icons/workflow/ViewList';
 
-const items =
-  [
-    {children: 'React', name: 'React'},
-    {children: 'Add', name: 'Add'},
-    {children: 'Delete', name: 'Delete'},
-    {children: 'Bell', name: 'Bell'},
-    {children: 'Camera', name: 'Camera'},
-    {children: 'Undo', name: 'Undo'}
-  ];
+const docItems = [{children: 'Document setup', name: '1'}, {children: 'Settings', name: '2'}];
+const editItems = [{children: 'Edit', name: '1'}, {children: 'Copy', name: '2'}, {children: 'Delete', name: '3'}];
+const viewItems2 = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}];
+const viewItems = [{children: 'Grid view', name: '1'}, {children: 'List view', name: '2'}, {children: 'Gallery view', name: '3'}];
+const dataItems = [{children: 'Properties', name: '1'}, {children: 'Info', name: '2'}, {children: 'Keywords', name: '3'}];
+let onSelectionChange = action('onSelectionChange');
+
+let iconMap = {
+  'Document setup': DocumentIcon,
+  'Settings': SettingsIcon,
+  'Grid view': ViewGridIcon,
+  'List view': ViewListIcon,
+  'Gallery view': ViewCardIcon,
+  'Edit': DrawIcon,
+  'Copy': CopyIcon,
+  'Delete': DeleteIcon,
+  'Properties': PropertiesIcon,
+  'Info': InfoIcon,
+  'Keywords': BookIcon
+};
 
 storiesOf('ActionGroup', module)
   .addParameters({providerSwitcher: {status: 'negative'}})
   .add(
     'default',
-    () => render(null, items)
-  )
-  .add(
-    'icons',
-    () => render()
-  )
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  )
-  .add(
-    'isEmphasized',
-    () => render({isEmphasized: true})
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true})
-  )
-  .add(
-    'isConnected',
-    () => render({isConnected: true})
-  )
-  .add(
-    'isConected, isJustified',
     () => (
-      <div style={{width: '600px'}}>
-        {render({isConnected: true, isJustified: true})}
-      </div>
+      <Flex direction="column" gap="size-200" width="100%" margin="size-100">
+        <ActionGroup onAction={action('onAction')}>
+          {
+            docItems.map((itemProps) => (
+              <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
+            ))
+          }
+        </ActionGroup>
+        <ActionGroup onAction={action('onAction')}>
+          {
+            docItems.map((itemProps) => {
+              let IconElement = iconMap[itemProps.children];
+              return (
+                <Item key={itemProps.name} textValue={itemProps.name}>
+                  <Text>{itemProps.children}</Text>
+                  <IconElement />
+                </Item>
+              );
+            })
+          }
+        </ActionGroup>
+        <ActionGroup onAction={action('onAction')}>
+          {
+            docItems.map((itemProps) => {
+              let IconElement = iconMap[itemProps.children];
+              return (
+                <Item key={itemProps.name} textValue={itemProps.name}>
+                  <IconElement />
+                </Item>
+              );
+            })
+          }
+        </ActionGroup>
+      </Flex>
     )
   )
   .add(
-    'isConnected, isEmphasized',
-    () => render({isConnected: true, isEmphasized: true})
+    'isDisabled',
+    () => render({isDisabled: true, defaultSelectedKeys: ['1']}, docItems)
   )
   .add(
-    'selectionMode: none',
-    () => render({selectionMode: 'none', onAction: action('onAction')})
+    'compact',
+    () => render({density: 'compact', defaultSelectedKeys: ['1']}, viewItems)
+  )
+  .add(
+    'isJustified',
+    () => render({isJustified: true, defaultSelectedKeys: ['1']}, viewItems2)
+  )
+  .add(
+    'compact, isJustified',
+    () => render({density: 'compact', isJustified: true, defaultSelectedKeys: ['1']}, viewItems2)
+  )
+  .add(
+    'isQuiet',
+    () => render({isQuiet: true, defaultSelectedKeys: ['1']}, editItems)
+  )
+  .add(
+    'compact, isQuiet',
+    () => render({density: 'compact', isQuiet: true, defaultSelectedKeys: ['1']}, editItems)
+  )
+  .add(
+    'isEmphasized',
+    () => render({isEmphasized: true, defaultSelectedKeys: ['1']}, docItems)
+  )
+  .add(
+    'compact, isEmphasized',
+    () => render({isEmphasized: true, density: 'compact', defaultSelectedKeys: ['1']}, viewItems)
+  )
+  .add(
+    'isQuiet, isEmphasized',
+    () => render({isEmphasized: true, isQuiet: true, defaultSelectedKeys: ['1']}, viewItems)
   )
   .add(
     'selectionMode: multiple',
-    () => render({selectionMode: 'multiple'})
+    () => render({selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
   )
   .add(
-    'selectionMode: multiple, isConnected, isEmphasized',
-    () => render({isConnected: true, isEmphasized: true, selectionMode: 'multiple'})
+    'selectionMode: single, disallowEmptySelection',
+    () => render({selectionMode: 'single', disallowEmptySelection: true, defaultSelectedKeys: ['1']}, dataItems)
   )
   .add(
-    'orientation: vertical',
-    () => render({orientation: 'vertical'})
+    'selectionMode: multiple, isQuiet',
+    () => render({isQuiet: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
   )
   .add(
-    'icons only',
-    () => render({}, toolIcons)
+    'selectionMode: multiple, isQuiet, compact',
+    () => render({isQuiet: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
   )
   .add(
-    'icons only, isQuiet',
-    () => render({isQuiet: true}, toolIcons)
+    'selectionMode: multiple, isEmphasized',
+    () => render({isEmphasized: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
   )
   .add(
-    'icons only, orientation: vertical',
-    () => render({orientation: 'vertical'}, toolIcons)
+    'selectionMode: multiple, isEmphasized, compact',
+    () => render({isEmphasized: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
   )
   .add(
-    'icons only, orientation: vertical, isQuiet',
-    () => render({orientation: 'vertical', isQuiet: true}, toolIcons)
+    'selectionMode: multiple, isEmphasized, isQuiet',
+    () => render({isEmphasized: true, isQuiet: true, selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
   )
   .add(
-    'defaultSelectedKeys',
-    () => render({defaultSelectedKeys: ['Add', 'Delete'], selectionMode: 'multiple'})
+    'selectionMode: multiple, isEmphasized, isQuiet, compact',
+    () => render({isEmphasized: true, isQuiet: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
   )
   .add(
-    'selectedKeys (controlled)',
-    () => render({selectedKeys: ['Add', 'Delete'], selectionMode: 'multiple'})
+    'selectionMode: none',
+    () => render({selectionMode: 'none', onAction: action('onAction')}, editItems)
+  )
+  .add(
+    'vertical',
+    () => render({orientation: 'vertical', defaultSelectedKeys: ['1']}, docItems)
+  )
+  .add(
+    'vertical, isJustified',
+    () => render({isJustified: true, orientation: 'vertical', defaultSelectedKeys: ['1']}, docItems)
+  )
+  .add(
+    'vertical, compact',
+    () => render({density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']}, viewItems)
+  )
+  .add(
+    'vertical, isJustified, compact',
+    () => render({isJustified: true, density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']}, viewItems)
+  )
+  .add(
+    'vertical, isQuiet',
+    () => render({isQuiet: true, orientation: 'vertical', defaultSelectedKeys: ['1']}, editItems)
+  )
+  .add(
+    'vertical, isQuiet, compact',
+    () => render({isQuiet: true, density: 'compact', orientation: 'vertical', defaultSelectedKeys: ['1']}, viewItems)
   )
   .add(
     'disabledKeys',
-    () => render({disabledKeys: ['Add', 'Delete'], selectionMode: 'multiple'})
+    () => render({disabledKeys: ['1', '2'], selectionMode: 'multiple'}, dataItems)
   )
   .add(
-    'dynamic',
+    'dynamic default',
     () => (
-      <ActionGroup onSelectionChange={action('onSelect')} items={items} itemKey="name">
-        {item => <Item textValue={item.name}>{item.children}</Item>}
+      <ActionGroup onAction={action('onAction')} items={viewItems}>
+        {item => <Item key={item.name} textValue={item.name}>{item.children}</Item>}
+      </ActionGroup>
+    )
+  )
+  .add(
+    'dynamic single selection',
+    () => (
+      <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} items={viewItems}>
+        {item => <Item key={item.name} textValue={item.name}>{item.children}</Item>}
       </ActionGroup>
     )
   );
 
-const itemsWithIcons =
-  [
-    {children: <><CheckmarkCircle /><Text>React</Text></>, name: 'React'},
-    {children: <><Add /><Text>Add</Text></>, name: 'Add'},
-    {children: <><Delete /><Text>Delete</Text></>, name: 'Delete'},
-    {children: <><Bell /><Text>Bell</Text></>, name: 'Bell'},
-    {children: <><Camera /><Text>Camera</Text></>, name: 'Camera'},
-    {children: <><Undo /><Text>Undo</Text></>, name: 'Undo'}
-  ];
 
-const toolIcons =
-  [
-    {children: <Brush />, 'aria-label': 'Brush'},
-    {children: <Select />, 'aria-label': 'Select'},
-    {children: <RegionSelect />, 'aria-label': 'RegionSelect'}
-  ];
-
-function render(props = {}, items: any = itemsWithIcons) {
+function render(props, items) {
   return (
-    <ActionGroup onSelectionChange={action('onSelect')} {...props}>
+    <Flex gap="size-300" margin="size-100" width="100%" direction="column">
+      {renderText(props, items)}
+      {renderBoth(props, items)}
+      {renderIcons(props, items)}
+    </Flex>
+  );
+}
+
+function renderText(props, items: any = docItems) {
+  return (
+    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
       {
-        items.map((itemProps, index) => (
-          <Item uniqueKey={itemProps.name} key={index} textValue={itemProps.name} {...itemProps} />
+        items.map((itemProps) => (
+          <Item key={itemProps.name} textValue={itemProps.name} {...itemProps} />
         ))
+      }
+    </ActionGroup>
+  );
+}
+
+function renderBoth(props, items: any = docItems) {
+  return (
+    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
+      {
+        items.map((itemProps) => {
+          let IconElement = iconMap[itemProps.children];
+          return (
+            <Item key={itemProps.name} textValue={itemProps.name}>
+              <Text>{itemProps.children}</Text>
+              <IconElement />
+            </Item>
+          );
+        })
+      }
+    </ActionGroup>
+  );
+}
+
+function renderIcons(props, items: any = docItems) {
+  return (
+    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
+      {
+        items.map((itemProps) => {
+          let IconElement = iconMap[itemProps.children];
+          return (
+            <Item key={itemProps.name} textValue={itemProps.name}>
+              <IconElement />
+            </Item>
+          );
+        })
       }
     </ActionGroup>
   );

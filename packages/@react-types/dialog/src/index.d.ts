@@ -10,34 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
-import {PositionProps} from '@react-types/overlays';
+import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
+import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
 import {ReactElement, ReactNode, RefObject} from 'react';
 
 export type SpectrumDialogClose = (close: () => void) => ReactElement;
 
-export interface DialogTriggerProps {
-  /** Whether the Dialog is open by default (controlled). */
-  isOpen?: boolean,
-  /** Whether the Dialog is open by default (uncontrolled). */
-  defaultOpen?: boolean,
-  /** Handler that is called when the Dialog's open state changes. */
-  onOpenChange?: (isOpen: boolean) => void
-}
-
-export interface SpectrumDialogTriggerProps extends DialogTriggerProps, PositionProps {
+export interface SpectrumDialogTriggerProps extends OverlayTriggerProps, PositionProps {
   /** The Dialog and its trigger element. See the DialogTrigger [Content section](#content) for more information on what to provide as children. */
   children: [ReactElement, SpectrumDialogClose | ReactElement],
-  /** 
-   * The type of Dialog that should be rendered. See the DialogTrigger [types section](#dialog-types) for an explaination on each. 
-   * @default "modal"
+  /**
+   * The type of Dialog that should be rendered. See the DialogTrigger [types section](#dialog-types) for an explanation on each.
+   * @default 'modal'
    */
   type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
-  /** The type of Dialog that should be rendered when on a mobile device. See DialogTrigger [types section](#dialog-types) for an explaination on each. */
+  /** The type of Dialog that should be rendered when on a mobile device. See DialogTrigger [types section](#dialog-types) for an explanation on each. */
   mobileType?: 'modal' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   /**
    * Whether a popover type Dialog's arrow should be hidden.
-   * @default "false"
    */
   hideArrow?: boolean,
   /** The ref of the element the Dialog should visually attach itself to. Defaults to the trigger button if not defined. */
@@ -46,7 +36,15 @@ export interface SpectrumDialogTriggerProps extends DialogTriggerProps, Position
   isDismissable?: boolean
 }
 
-export interface SpectrumDialogProps extends DOMProps, StyleProps {
+export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
+  /**
+   * The accessibility role for the dialog.
+   * @default 'dialog'
+   */
+  role?: 'dialog' | 'alertdialog'
+}
+
+export interface SpectrumDialogProps extends AriaDialogProps, StyleProps {
   /** The contents of the Dialog. */
   children: ReactNode,
   /** The size of the Dialog. Only applies to "modal" type Dialogs. */
@@ -54,9 +52,7 @@ export interface SpectrumDialogProps extends DOMProps, StyleProps {
   /** Whether the Dialog is dismissable. See the [examples](#examples) for more details. */
   isDismissable?: boolean,
   /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
-  onDismiss?: () => void,
-  /** The role of the Dialog. */
-  role?: 'dialog' | 'alertdialog'
+  onDismiss?: () => void
 }
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {

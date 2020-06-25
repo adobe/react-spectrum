@@ -11,15 +11,15 @@
  */
 
 import {HTMLAttributes, Key, RefObject} from 'react';
+import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {ListState} from '@react-stately/list';
-import {useHover, usePress} from '@react-aria/interactions';
+import {mergeProps, useSlotId} from '@react-aria/utils';
 import {useSelectableItem} from '@react-aria/selection';
-import {useSlotId} from '@react-aria/utils';
 
 interface OptionAria {
   /** Props for the option element. */
   optionProps: HTMLAttributes<HTMLElement>,
-  
+
   /** Props for the main text element inside the option. */
   labelProps: HTMLAttributes<HTMLElement>,
 
@@ -27,7 +27,7 @@ interface OptionAria {
   descriptionProps: HTMLAttributes<HTMLElement>
 }
 
-interface OptionProps {
+interface AriaOptionProps {
   /** Whether the option is disabled. */
   isDisabled?: boolean,
 
@@ -40,9 +40,6 @@ interface OptionProps {
   /** The unique key for the option. */
   key?: Key,
 
-  /** A ref to the option element. */
-  ref?: RefObject<HTMLElement>,
-
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean,
 
@@ -53,18 +50,24 @@ interface OptionProps {
   isVirtualized?: boolean
 }
 
+const isSafariMacOS =
+  typeof window !== 'undefined' && window.navigator != null
+    ? /^Mac/.test(window.navigator.platform) &&
+      /Safari/.test(window.navigator.userAgent) &&
+      !/Chrome/.test(window.navigator.userAgent)
+    : false;
+
 /**
  * Provides the behavior and accessibility implementation for an option in a listbox.
  * See `useListBox` for more details about listboxes.
  * @param props - props for the option
  * @param state - state for the listbox, as returned by `useListState`
  */
-export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAria {
+export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: RefObject<HTMLElement>): OptionAria {
   let {
     isSelected,
     isDisabled,
     key,
-    ref,
     shouldSelectOnPressUp,
     shouldFocusOnHover,
     isVirtualized
@@ -76,39 +79,47 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
   let optionProps = {
     role: 'option',
     'aria-disabled': isDisabled,
-    'aria-selected': isSelected,
-    'aria-label': props['aria-label'],
-    'aria-labelledby': labelId,
-    'aria-describedby': descriptionId
+    'aria-selected': isSelected
   };
 
+  // Safari with VoiceOver on macOS misreads options with aria-labelledby or aria-label as simply "text".
+  // We should not map slots to the label and description on Safari and instead just have VoiceOver read the textContent. 
+  // https://bugs.webkit.org/show_bug.cgi?id=209279
+  if (!isSafariMacOS) {
+    optionProps['aria-label'] = props['aria-label'];
+    optionProps['aria-labelledby'] = labelId;
+    optionProps['aria-describedby'] = descriptionId;
+  }
+
   if (isVirtualized) {
-    optionProps['aria-posinset'] = state.collection.getItem(key).index;
+    optionProps['aria-posinset'] = state.collection.getItem(key).index + 1;
     optionProps['aria-setsize'] = state.collection.size;
   }
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: key,
-    itemRef: ref,
+    key,
+    ref,
     shouldSelectOnPressUp,
     isVirtualized
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled});
+
   let {hoverProps} = useHover({
     isDisabled: isDisabled || !shouldFocusOnHover,
-    onHover() {
-      state.selectionManager.setFocused(true);
-      state.selectionManager.setFocusedKey(key);
+    onHoverStart() {
+      if (!isFocusVisible()) {
+        state.selectionManager.setFocused(true);
+        state.selectionManager.setFocusedKey(key);
+      }
     }
   });
 
   return {
     optionProps: {
       ...optionProps,
-      ...pressProps,
-      ...hoverProps
+      ...mergeProps(pressProps, hoverProps)
     },
     labelProps: {
       id: labelId

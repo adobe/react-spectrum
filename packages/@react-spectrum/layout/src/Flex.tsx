@@ -10,11 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, dimensionValue, filterDOMProps, flexStyleProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, dimensionValue, passthroughStyle, StyleHandlers, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import {FlexProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 import styles from './flex.css';
+
+export const flexStyleProps: StyleHandlers = {
+  direction: ['flexDirection', passthroughStyle],
+  wrap: ['flexWrap', flexWrapValue],
+  justifyContent: ['justifyContent', flexAlignValue],
+  alignItems: ['alignItems', flexAlignValue],
+  alignContent: ['alignContent', flexAlignValue]
+};
 
 function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   let {
@@ -51,11 +60,20 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   // If no gaps, or native support exists, then we only need to render a single div.
   let style = {
     ...styleProps.style,
-    ...flexStyle.style,
-    columnGap: props.columnGap != null ? dimensionValue(props.columnGap) : undefined,
-    rowGap: props.rowGap != null ? dimensionValue(props.rowGap) : undefined,
-    gap: props.gap != null ? dimensionValue(props.gap) : undefined
+    ...flexStyle.style
   };
+
+  if (props.gap != null) {
+    style.gap = dimensionValue(props.gap);
+  }
+
+  if (props.columnGap != null) {
+    style.columnGap = dimensionValue(props.columnGap);
+  }
+
+  if (props.rowGap != null) {
+    style.rowGap = dimensionValue(props.rowGap);
+  }
 
   return (
     <div className={classNames(styles, 'flex', styleProps.className)} style={style} ref={domRef}>
@@ -64,12 +82,41 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
-// Copied from Modernizr.
+// Normalize 'start' and 'end' alignment values to 'flex-start' and 'flex-end'
+// in flex containers for browser compatibility.
+function flexAlignValue(value) {
+  if (value === 'start') {
+    return 'flex-start';
+  }
+
+  if (value === 'end') {
+    return 'flex-end';
+  }
+
+  return value;
+}
+
+function flexWrapValue(value) {
+  if (typeof value === 'boolean') {
+    return value ? 'wrap' : 'nowrap';
+  }
+
+  return value;
+}
+
+
+// Original licensing for the following method can be found in the
+// NOTICE file in the root directory of this source tree.
 // See https://github.com/Modernizr/Modernizr/blob/7efb9d0edd66815fb115fdce95fabaf019ce8db5/feature-detects/css/flexgap.js
+
 let _isFlexGapSupported = null;
 function isFlexGapSupported() {
   if (_isFlexGapSupported != null) {
     return _isFlexGapSupported;
+  }
+
+  if (typeof document === 'undefined') {
+    return false;
   }
 
   // create flex container with row-gap set
@@ -90,5 +137,9 @@ function isFlexGapSupported() {
   return _isFlexGapSupported;
 }
 
+/**
+ * A layout container using flexbox. Provides Spectrum dimension values, and supports the gap
+ * property to define consistent spacing between items.
+ */
 const _Flex = forwardRef(Flex);
 export {_Flex as Flex};

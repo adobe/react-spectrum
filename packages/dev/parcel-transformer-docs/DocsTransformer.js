@@ -41,7 +41,7 @@ module.exports = new Transformer({
         if (path.node.source) {
           let symbols = new Map();
           for (let specifier of path.node.specifiers) {
-            symbols.set(specifier.exported.name, specifier.local.name);
+            symbols.set(specifier.exported.name, {local: specifier.local.name});
             asset.symbols.set(specifier.exported.name, specifier.local.name);
           }
 
@@ -53,12 +53,10 @@ module.exports = new Transformer({
         } else if (path.node.declaration) {
           if (t.isIdentifier(path.node.declaration.id)) {
             asset.symbols.set(path.node.declaration.id.name, path.node.declaration.id.name);
-            // console.log('EXPORT', path.node.declaration.id.name, processExport(path.get('declaration')));
             exports[path.node.declaration.id.name] = processExport(path.get('declaration'));
           } else {
             let identifiers = t.getBindingIdentifiers(path.node.declaration);
             for (let id of Object.keys(identifiers)) {
-              console.log('ID', id);
               asset.symbols.set(identifiers[id].name, identifiers[id].name);
             }
           }
@@ -76,7 +74,7 @@ module.exports = new Transformer({
       ExportAllDeclaration(path) {
         asset.addDependency({
           moduleSpecifier: path.node.source.value,
-          symbols: new Map([['*', '*']]),
+          symbols: new Map([['*', {local: '*'}]]),
           pipeline: 'docs-json'
         });
       },
@@ -112,10 +110,6 @@ module.exports = new Transformer({
       if (path.isClassDeclaration()) {
         let properties = {};
         for (let propertyPath of path.get('body.body')) {
-          if (propertyPath.node.accessibility === 'private') {
-            continue;
-          }
-
           let property = processExport(propertyPath);
           if (property) {
             properties[property.name] = property;
@@ -146,7 +140,8 @@ module.exports = new Transformer({
           value: path.node.typeAnnotation
             ? processExport(path.get('typeAnnotation.typeAnnotation'))
             : {type: 'any'},
-          optional: path.node.optional || false
+          optional: path.node.optional || false,
+          access: path.node.accessibility
         }, docs));
       }
 
@@ -181,7 +176,8 @@ module.exports = new Transformer({
         return Object.assign(node, addDocs({
           type: value.type === 'function' ? 'method' : 'property',
           name,
-          value
+          value,
+          access: path.node.accessibility
         }, docs));
       }
 
@@ -230,10 +226,25 @@ module.exports = new Transformer({
         return base;
       }
 
+      if (path.isTSQualifiedName()) {
+        let left = processExport(path.get('left'));
+        if (left.type === 'interface' || left.type === 'object') {
+          let property = left.properties[path.node.right.name];
+          if (property) {
+            return property.value;
+          }
+        }
+
+        return Object.assign(node, {
+          type: 'identifier',
+          name: left.name + '.' + path.node.right.name
+        });
+      }
+
       if (path.isImportSpecifier()) {
         asset.addDependency({
           moduleSpecifier: path.parent.source.value,
-          symbols: new Map([[path.node.imported.name, path.node.local.name]]),
+          symbols: new Map([[path.node.imported.name, {local: path.node.local.name}]]),
           pipeline: 'docs-json'
         });
 
@@ -326,6 +337,17 @@ module.exports = new Transformer({
               ? path.get('typeParameters.params').map(p => processExport(p))
               : []
           }
+        }, docs));
+      }
+
+      if (path.isTSIndexSignature()) {
+        let name = path.node.parameters[0].name;
+        let docs = getJSDocs(path);
+        return Object.assign(node, addDocs({
+          type: 'property',
+          name,
+          indexType: processExport(path.get('parameters.0.typeAnnotation.typeAnnotation')),
+          value: processExport(path.get('typeAnnotation.typeAnnotation'))
         }, docs));
       }
 
@@ -434,6 +456,13 @@ module.exports = new Transformer({
         });
       }
 
+      if (path.isTSTupleType()) {
+        return Object.assign(node, {
+          type: 'tuple',
+          elements: path.get('elementTypes').map(t => processExport(t))
+        });
+      }
+
       console.log('UNKNOWN TYPE', path.node.type);
     }
 
@@ -525,7 +554,7 @@ module.exports = new Transformer({
           } else if (tag.title === 'protected') {
             result.access = 'protected';
           } else if (tag.title === 'public') {
-            result.access = 'private';
+            result.access = 'public';
           } else if (tag.title === 'return' || tag.title === 'returns') {
             result.return = tag.description;
           } else if (tag.title === 'param') {

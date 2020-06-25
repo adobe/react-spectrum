@@ -9,7 +9,8 @@
   "types": "dist/Alert.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "targets": {
@@ -30,10 +31,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/i18n": "^3.0.0-alpha.1",
-    "@react-spectrum/utils": "^3.0.0-alpha.1",
+    "@react-aria/i18n": "^3.0.0",
+    "@react-spectrum/utils": "^3.0.0",
     "@react-types/alert": "^3.0.0-alpha.1",
-    "@spectrum-icons/ui": "^3.0.0-alpha.1"
+    "@spectrum-icons/ui": "^3.0.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"

@@ -11,11 +11,11 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {layoutInfoToStyle, useCollectionItem} from '@react-aria/collections';
+import {layoutInfoToStyle, useVirtualizerItem} from '@react-aria/virtualizer';
 import {ListBoxContext} from './ListBoxContext';
-import {Node} from '@react-stately/collections';
+import {Node} from '@react-types/shared';
 import React, {Fragment, ReactNode, useContext, useRef} from 'react';
-import {ReusableView} from '@react-stately/collections';
+import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useListBoxSection} from '@react-aria/listbox';
 import {useLocale} from '@react-aria/i18n';
@@ -41,7 +41,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
   });
 
   let headerRef = useRef();
-  useCollectionItem({
+  useVirtualizerItem({
     reusableView: header,
     ref: headerRef
   });
@@ -78,7 +78,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
         style={layoutInfoToStyle(reusableView.layoutInfo, direction)}
         className={
           classNames(
-            styles, 
+            styles,
             'spectrum-Menu'
           )
         }>

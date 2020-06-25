@@ -10,44 +10,77 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection} from '@react-stately/collections';
-import {Direction, KeyboardDelegate, Orientation} from '@react-types/shared';
+import {Collection, Direction, KeyboardDelegate, Orientation} from '@react-types/shared';
 import {Key} from 'react';
 
 export class ActionGroupKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<T>;
   private flipDirection: boolean;
+  private disabledKeys: Set<Key>;
 
-  constructor(collection: Collection<T>, direction: Direction, orientation: Orientation) {
+  constructor(collection: Collection<T>, direction: Direction, orientation: Orientation, disabledKeys: Set<Key> = new Set()) {
     this.collection = collection;
     this.flipDirection = direction === 'rtl' && orientation === 'horizontal';
+    this.disabledKeys = disabledKeys;
   }
 
   getKeyLeftOf(key: Key) {
-    return this.flipDirection 
-      ? this.collection.getKeyAfter(key) || this.getFirstKey() 
-      : this.collection.getKeyBefore(key) || this.getLastKey();
+    if (this.flipDirection) {
+      return this.getNextKey(key);
+    } else {
+      return this.getPreviousKey(key);
+    }
   }
 
   getKeyRightOf(key: Key) {
-    return this.flipDirection 
-      ? this.collection.getKeyBefore(key) || this.getLastKey() 
-      : this.collection.getKeyAfter(key) || this.getFirstKey();
+    if (this.flipDirection) {
+      return this.getPreviousKey(key);
+    } else {
+      return this.getNextKey(key);
+    }
   }
 
   getKeyAbove(key: Key) {
-    return this.collection.getKeyBefore(key) || this.getLastKey();
+    return this.getPreviousKey(key);
   }
 
   getKeyBelow(key: Key) {
-    return this.collection.getKeyAfter(key) || this.getFirstKey();
+    return this.getNextKey(key);
   }
 
   getFirstKey() {
-    return this.collection.getFirstKey();
+    let key = this.collection.getFirstKey();
+    if (this.disabledKeys.has(key)) {
+      key = this.getNextKey(key);
+    }
+    return key;
   }
 
   getLastKey() {
-    return this.collection.getLastKey();
+    let key = this.collection.getLastKey();
+    if (this.disabledKeys.has(key)) {
+      key = this.getPreviousKey(key);
+    }
+    return key;
+  }
+
+  getNextKey(key) {
+    do {
+      key = this.collection.getKeyAfter(key);
+      if (!key) {
+        key = this.collection.getFirstKey();
+      }
+    } while (this.disabledKeys.has(key));
+    return key;
+  }
+
+  getPreviousKey(key) {
+    do {
+      key = this.collection.getKeyBefore(key);
+      if (!key) {
+        key = this.collection.getLastKey();
+      }
+    } while (this.disabledKeys.has(key));
+    return key;
   }
 }

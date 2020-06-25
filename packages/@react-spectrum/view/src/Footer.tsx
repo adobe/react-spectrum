@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {ClearSlots, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {FooterProps} from '@react-types/view';
 import React, {forwardRef} from 'react';
 
@@ -26,10 +27,15 @@ function Footer(props: FooterProps, ref: DOMRef) {
 
   return (
     <footer {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
-      {children}
+      <ClearSlots>
+        {children}
+      </ClearSlots>
     </footer>
   );
 }
 
+/**
+ * Footer is used to position footer content within a component.
+ */
 const _Footer = forwardRef(Footer);
 export {_Footer as Footer};

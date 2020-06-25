@@ -12,13 +12,6 @@
 
 const flatMap = require('unist-util-flatmap');
 
-const openingTag = '<>\n';
-const closingTag = '\n</>';
-
-const get = p => o =>
-  p.reduce((xs, x) =>
-    (xs && xs[x]) ? xs[x] : null, o);
-
 /**
  * Takes example code blocks in mdx files that are just React Tags and wraps all of them into
  * a single Fragment shorthand node. This way syntax trees can parse them and return something meaningful.
@@ -26,10 +19,9 @@ const get = p => o =>
 const fragmentWrap = () => (tree, file) => (
   flatMap(tree, node => {
     if (node.type === 'code') {
-      if (node.meta === 'example') {
-        let code = node.value;
-        if (/^<(.|\n)*>$/.test(code)) {
-          node.value = `${openingTag}${code}${closingTag}`;
+      if (/^example/.test(node.meta)) {
+        if (/^<(.|\n)*>$/m.test(node.value)) {
+          node.value = node.value.replace(/^(<(.|\n)*>)$/m, '<WRAPPER>\n$1\n</WRAPPER>');
         }
 
         return [node];
@@ -44,24 +36,45 @@ const fragmentWrap = () => (tree, file) => (
   })
 );
 
+function match(children, i, ...texts) {
+  if (children.length < i + texts.length) {
+    return false;
+  }
+
+  for (let t = 0; t < texts.length; t++, i++) {
+    let text = texts[t];
+    let child = children[i];
+
+    if (child.type === 'element') {
+      if (child.children && child.children[0] && child.children[0].value !== text) {
+        return false;
+      }
+    } else if (child.type === 'text') {
+      if (child.value !== text) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
 /**
  * This undoes the above wrapping for display purposes.
  */
 const fragmentUnWrap = () => (tree, file) => (
   flatMap(tree, node => {
     if (node.type === 'code') {
-      if (/example|snippet/.test(node.meta) && node.data && node.data.hChildren) {
-        if (get(['data', 'hChildren', 0, 'children', 1, 'children', 0, 'value'])(node) === '>') {
-          // unshift the children that make up `<>\n`
-          node.data.hChildren[0].children.shift();
-          node.data.hChildren[0].children.shift();
-          node.data.hChildren[0].children.shift();
+      if (/^example|^snippet/.test(node.meta) && node.data && node.data.hChildren) {
+        let children = node.data.hChildren[0].children;
+        for (let i = 0; i < children.length; i++) {
+          if (match(children, i, '<', 'WRAPPER', '>', '\n')) {
+            children.splice(i, 4);
+          }
 
-          // remove the last children that make up `\n</>`
-          node.data.hChildren[0].children.length = node.data.hChildren[0].children.length - 4;
-
-          // fix the 'value' field to reflect what we've done getting rid of the wrapping <></>
-          node.value = node.value.slice(3, node.value.length - 4);
+          if (match(children, i, '\n', '<', '/', 'WRAPPER', '>')) {
+            children.splice(i, 5);
+          }
         }
 
         return [

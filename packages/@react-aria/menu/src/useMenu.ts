@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaMenuProps} from '@react-types/menu';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
-import {MenuProps} from '@react-types/menu';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 
@@ -21,14 +22,11 @@ interface MenuAria {
   menuProps: HTMLAttributes<HTMLElement>
 }
 
-interface AriaMenuProps<T> extends MenuProps<T> {
-  /** A ref to the menu container element. */
-  ref?: RefObject<HTMLElement>,
-
+interface AriaMenuOptions<T> extends AriaMenuProps<T> {
   /** Whether the menu uses virtual scrolling. */
   isVirtualized?: boolean,
 
-  /** 
+  /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
@@ -41,14 +39,20 @@ interface AriaMenuProps<T> extends MenuProps<T> {
  * @param props - props for the menu
  * @param state - state for the menu, as returned by `useListState`
  */
-export function useMenu<T>(props: AriaMenuProps<T>, state: TreeState<T>): MenuAria {
+export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuAria {
   let {
     shouldFocusWrap = true,
     ...otherProps
   } = props;
 
+  if (!props['aria-label'] && !props['aria-labelledby']) {
+    console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
+  }
+
+  let domProps = filterDOMProps(props, {labelable: true});
   let {listProps} = useSelectableList({
     ...otherProps,
+    ref,
     selectionManager: state.selectionManager,
     collection: state.collection,
     disabledKeys: state.disabledKeys,
@@ -56,9 +60,9 @@ export function useMenu<T>(props: AriaMenuProps<T>, state: TreeState<T>): MenuAr
   });
 
   return {
-    menuProps: {
+    menuProps: mergeProps(domProps, {
       role: 'menu',
       ...listProps
-    }
+    })
   };
 }

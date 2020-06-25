@@ -20,9 +20,8 @@ const GROUPS = {
     /^on[A-Z]/
   ],
   Layout: [
-    'flex', 'flexGrow', 'flexShrink', 'flexDirection', 'flexWrap', 'flexBasis', 'alignItems', 'alignContent', 'alignSelf', 'justifyItems', 'justifyContent', 'justifySelf', 'order', 'flexOrder',
-    'gridTemplateColumns', 'gridTemplateRows', 'gridTemplateAreas', 'gridArea', 'gridColumn', 'gridRow', 'gridGap', 'gridColumnGap', 'gridRowGap', 'gridAutoFlow', 'gridAutoColumns', 'gridAutoRows',
-    'gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd', 'slot',
+    'flex', 'flexGrow', 'flexShrink', 'flexBasis', 'alignSelf', 'justifySelf', 'order', 'flexOrder',
+    'gridArea', 'gridColumn', 'gridRow', 'gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd', 'slot',
     'overflow'
   ],
   Spacing: [
@@ -69,7 +68,10 @@ const GROUPS = {
     'color'
   ],
   Accessibility: [
-    'role', 'id', 'tabIndex', /^aria-/
+    'role', 'id', 'tabIndex', 'excludeFromTabOrder', /^aria-/
+  ],
+  Advanced: [
+    'UNSAFE_className', 'UNSAFE_style'
   ]
 };
 
@@ -79,14 +81,14 @@ export function PropTable({component, links}) {
   return (
     <>
       <TypeContext.Provider value={links}>
-        <InterfaceType properties={ungrouped} showRequired showDefault />
+        <InterfaceType properties={ungrouped} showRequired showDefault isComponent />
         {Object.keys(groups).map(group => (
           <details>
             <summary className={typographyStyles['spectrum-Heading4']}>
               <ChevronRight size="S" />
               {group}
             </summary>
-            <InterfaceType properties={groups[group]} showRequired showDefault />
+            <InterfaceType properties={groups[group]} showRequired showDefault isComponent />
           </details>
         ))}
       </TypeContext.Provider>

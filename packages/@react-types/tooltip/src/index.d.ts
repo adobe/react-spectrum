@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
 import {HTMLAttributes, ReactElement, ReactNode} from 'react';
 import {PositionProps} from '@react-types/overlays';
 
@@ -26,7 +26,9 @@ export interface TooltipProps extends DOMProps {
   role?: 'tooltip'
 }
 
-export interface SpectrumTooltipProps extends TooltipProps, StyleProps {
+export interface AriaTooltipProps extends TooltipProps, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumTooltipProps extends AriaTooltipProps, StyleProps {
   variant?: 'neutral' | 'positive' | 'negative' | 'info',
   placement?: 'right' | 'left' | 'top' | 'bottom'
 }
