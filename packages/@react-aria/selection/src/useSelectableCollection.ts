@@ -11,14 +11,12 @@
  */
 
 import {FocusEvent, HTMLAttributes, KeyboardEvent, RefObject, useEffect} from 'react';
+import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
 import {focusWithoutScrolling} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {KeyboardDelegate} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useTypeSelect} from './useTypeSelect';
-
-type FocusStrategy = 'first' | 'last';
 
 const isMac =
   typeof window !== 'undefined' && window.navigator != null

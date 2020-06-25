@@ -25,9 +25,6 @@ import {useActionGroup} from '@react-aria/actiongroup';
 import {useActionGroupItem} from '@react-aria/actiongroup';
 import {useProviderProps} from '@react-spectrum/provider';
 
-/**
- * An ActionGroup is a grouping of ActionButtons that are related to one another.
- */
 function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
@@ -84,6 +81,9 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
   );
 }
 
+/**
+ * An ActionGroup is a grouping of ActionButtons that are related to one another.
+ */
 const _ActionGroup = forwardRef(ActionGroup) as <T>(props: SpectrumActionGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ActionGroup as ActionGroup};
 

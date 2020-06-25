@@ -66,7 +66,8 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
 }
 
 const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
-  let {children, placement = 'bottom', arrowProps, isOpen, hideArrow, ...otherProps} = props;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {children, placement = 'bottom', arrowProps, isOpen, hideArrow, shouldCloseOnBlur, ...otherProps} = props;
   let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
   useModal();
 
@@ -112,11 +113,15 @@ function Arrow(props) {
     if (ref.current) {
       let spectrumTipWidth = window.getComputedStyle(ref.current)
         .getPropertyValue('--spectrum-popover-tip-size');
-      setSize(parseInt(spectrumTipWidth, 10) / 2);
+      if (spectrumTipWidth !== '') {
+        setSize(parseInt(spectrumTipWidth, 10) / 2);
+      }
 
       let spectrumBorderWidth = window.getComputedStyle(ref.current)
         .getPropertyValue('--spectrum-popover-tip-borderWidth');
-      setBorderWidth(parseInt(spectrumBorderWidth, 10));
+      if (spectrumBorderWidth !== '') {
+        setBorderWidth(parseInt(spectrumBorderWidth, 10));
+      }
     }
   }, [ref]);
 
