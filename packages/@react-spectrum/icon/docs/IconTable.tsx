@@ -9,11 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+// eslint-disable-next-line rulesdir/imports
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '@react-spectrum/table';
+// eslint-disable-next-line rulesdir/imports
 import js from 'highlight.js/lib/languages/javascript';
+// eslint-disable-next-line rulesdir/imports
 import Lowlight from 'react-lowlight';
 import React, {useEffect, useState} from 'react';
+// eslint-disable-next-line rulesdir/imports
 import {SearchField} from '@react-spectrum/searchfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
@@ -82,11 +85,11 @@ export default function IconTable(props: {iconPackage: string}) {
         onChange={onSearch}
         marginBottom="20px" />
       <Table width="100%" height={500} selectionMode="none">
-        <TableHeader columns={columns} columnKey="key">
+        <TableHeader columns={columns}>
           {column => <Column width={column.width}>{column.name}</Column>}
         </TableHeader>
-        <TableBody items={tableState.items} isLoading={tableState.loading} itemKey="name">
-          {item => <Row>{key => <Cell>{item[key]}</Cell>}</Row>}
+        <TableBody items={tableState.items} isLoading={tableState.loading}>
+          {item => <Row key={item.name}>{key => <Cell>{item[key]}</Cell>}</Row>}
         </TableBody>
       </Table>
     </>
