@@ -15,7 +15,7 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/overlays';
-import {ProviderContext, ProviderProps} from '@react-types/provider';
+import {ProviderContext, ProviderProps, ProviderWrapperProps} from '@react-types/provider';
 import React, {useContext, useEffect, useRef} from 'react';
 import {
   shouldKeepSpectrumClassNames,
@@ -84,7 +84,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(otherProps);
   if (!prevContext || props.locale || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
     contents = (
-      <ProviderWrapper {...props} ref={ref}>
+      <ProviderWrapper isTopLevel={!prevContext} {...props} ref={ref}>
         {contents}
       </ProviderWrapper>
     );
@@ -110,9 +110,10 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
 let _Provider = React.forwardRef(Provider);
 export {_Provider as Provider};
 
-const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
+const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: ProviderWrapperProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
+    isTopLevel,
     ...otherProps
   } = props;
   let {locale, direction} = useLocale();
@@ -141,6 +142,7 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
 
   let style = {
     ...styleProps.style,
+    isolation: isTopLevel && 'isolate',
     // This ensures that browser native UI like scrollbars are rendered in the right color scheme.
     // See https://web.dev/color-scheme/.
     colorScheme: props.colorScheme ?? Object.keys(theme).filter(k => k === 'light' || k === 'dark').join(' ')
