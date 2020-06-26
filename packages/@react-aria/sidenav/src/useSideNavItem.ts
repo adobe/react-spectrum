@@ -35,7 +35,7 @@ export function useSideNavItem<T>(props: SpectrumSideNavItemProps<T>, state: Tre
 
   let isDisabled = state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
-  let {pressProps} = usePress(itemProps);
+  let {pressProps} = usePress({...itemProps, isDisabled});
 
   return {
     listItemProps: {
