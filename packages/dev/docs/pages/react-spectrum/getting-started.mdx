@@ -26,7 +26,7 @@ screen reader and keyboard navigation support for accessibility.
 
 ## Installation
 
-You can install React Spectrum package using a package manager like [npm](https://docs.npmjs.com/cli/npm) or 
+You can install React Spectrum package using a package manager like [npm](https://docs.npmjs.com/cli/npm) or
 [yarn](https://classic.yarnpkg.com/lang/en/).
 
 ```
@@ -43,6 +43,8 @@ React Spectrum works with most popular build tooling, like [Parcel](https://parc
 
 The only requirement is CSS importing support. This is built into Parcel and create-react-app out of the box.
 If you're using React Spectrum with raw webpack, then you'll need to configure [css-loader](https://webpack.js.org/loaders/css-loader/).
+
+If your application is written in TypeScript, be sure to add [@types/react](https://www.npmjs.com/package/@types/react) and [@types/react-dom](https://www.npmjs.com/package/@types/react-dom) to your project's dependencies as per React's [type checking guide](https://reactjs.org/docs/static-type-checking.html#type-definitions). React Spectrum components are published with their type definitions, so you can take advantage of static type checking, IDE autocomplete, and other TypeScript features.
 
 ## Setting up your app
 
@@ -77,5 +79,5 @@ See the [Provider](Provider.html) and [Button](Button.html) docs for more inform
 ## Next steps
 
 Now that you've set up your app, you can read the documentation for the individual components to understand them in detail.
-We also have high level documentation about topics like [theming](theming.html), [custom styling](styling.html), 
+We also have high level documentation about topics like [theming](theming.html), [custom styling](styling.html),
 [layout](layout.html), and [testing](testing.html).
