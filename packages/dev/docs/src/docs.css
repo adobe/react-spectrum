@@ -515,13 +515,10 @@ h2.sectionHeader {
   }
 }
 
-.hamburger {
-  display: none;
-}
-
 /* hamburger menu should be hidden so that it doesn't receive focus before the sidenav */
  .hamburgerButton {
    visibility: hidden;
+   display:none;
  }
 
 .responsiveVideo {
@@ -671,11 +668,8 @@ h2.sectionHeader {
     display: flex;
     width: 100%;
   }
-  .hamburger {
-    display: inline-flex;
-  }
-
   .hamburgerButton {
+    display: inline-flex;
     visibility: visible;
   }
 
