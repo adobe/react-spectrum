@@ -73,7 +73,10 @@ export function useVirtualizerState<T extends object, V, W>(opts: VirtualizerPro
     virtualizer.afterRender();
   });
 
-  useEffect(() => () => virtualizer.cancelRelayout());
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => virtualizer.willUnmount();
+  });
 
   return {
     virtualizer,

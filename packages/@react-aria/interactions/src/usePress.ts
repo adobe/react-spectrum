@@ -16,7 +16,7 @@
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
 import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {HTMLAttributes, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {PointerType, PressEvents} from '@react-types/shared';
 import {PressResponderContext} from './context';
 
@@ -108,6 +108,14 @@ export function usePress(props: PressHookProps): PressResult {
   });
 
   let globalListeners = useRef(new Map());
+  let addGlobalListener = useCallback((eventTarget, type, listener, options) => {
+    globalListeners.current.set(listener, {type, eventTarget, options});
+    eventTarget.addEventListener(type, listener, options);
+  }, [globalListeners.current]);
+  let removeGlobalListener = useCallback((eventTarget, type, listener, options) => {
+    eventTarget.removeEventListener(type, listener, options);
+    globalListeners.current.delete(listener);
+  }, [globalListeners.current]);
 
   let pressProps = useMemo(() => {
     let state = ref.current;
@@ -204,8 +212,7 @@ export function usePress(props: PressHookProps): PressResult {
 
             // Focus may move before the key up event, so register the event on the document
             // instead of the same element where the key down event occurred.
-            globalListeners.current.set(onKeyUp, ['keyup', document]);
-            document.addEventListener('keyup', onKeyUp, false);
+            addGlobalListener(document, 'keyup', onKeyUp, false);
           }
         }
       },
@@ -247,8 +254,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         state.isPressed = false;
         triggerPressEnd(createEvent(state.target, e), 'keyboard', e.target === state.target);
-        document.removeEventListener('keyup', onKeyUp, false);
-        globalListeners.current.delete(onKeyUp);
+        removeGlobalListener(document, 'keyup', onKeyUp, false);
 
         // If the target is a link, trigger the click method to open the URL,
         // but defer triggering pressEnd until onClick event handler.
@@ -303,12 +309,9 @@ export function usePress(props: PressHookProps): PressResult {
           disableTextSelection();
           triggerPressStart(e, e.pointerType);
 
-          globalListeners.current.set(onPointerMove, ['pointermove', document]);
-          globalListeners.current.set(onPointerUp, ['pointerup', document]);
-          globalListeners.current.set(onPointerCancel, ['pointercancel', document]);
-          document.addEventListener('pointermove', onPointerMove, false);
-          document.addEventListener('pointerup', onPointerUp, false);
-          document.addEventListener('pointercancel', onPointerCancel, false);
+          addGlobalListener(document, 'pointermove', onPointerMove, false);
+          addGlobalListener(document, 'pointerup', onPointerUp, false);
+          addGlobalListener(document, 'pointercancel', onPointerCancel, false);
         }
       };
 
@@ -322,12 +325,9 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       let unbindEvents = () => {
-        globalListeners.current.delete(onPointerMove);
-        globalListeners.current.delete(onPointerUp);
-        globalListeners.current.delete(onPointerCancel);
-        document.removeEventListener('pointermove', onPointerMove, false);
-        document.removeEventListener('pointerup', onPointerUp, false);
-        document.removeEventListener('pointercancel', onPointerCancel, false);
+        removeGlobalListener(document, 'pointermove', onPointerMove, false);
+        removeGlobalListener(document, 'pointerup', onPointerUp, false);
+        removeGlobalListener(document, 'pointercancel', onPointerCancel, false);
       };
 
       pressProps.onPointerUp = (e) => {
@@ -411,8 +411,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         triggerPressStart(e, isVirtualClick(e.nativeEvent) ? 'virtual' : 'mouse');
 
-        globalListeners.current.set(onMouseUp, ['mouseup', document]);
-        document.addEventListener('mouseup', onMouseUp, false);
+        addGlobalListener(document, 'mouseup', onMouseUp, false);
       };
 
       pressProps.onMouseEnter = (e) => {
@@ -444,8 +443,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         state.isPressed = false;
-        globalListeners.current.delete(onMouseUp);
-        document.removeEventListener('mouseup', onMouseUp, false);
+        removeGlobalListener(document, 'mouseup', onMouseUp, false);
 
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;
@@ -483,8 +481,7 @@ export function usePress(props: PressHookProps): PressResult {
         disableTextSelection();
         triggerPressStart(e, 'touch');
 
-        globalListeners.current.set(onScroll, ['scroll', window]);
-        window.addEventListener('scroll', onScroll, true);
+        addGlobalListener(window, 'scroll', onScroll, true);
       };
 
       pressProps.onTouchMove = (e) => {
@@ -524,8 +521,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.isOverTarget = false;
         state.ignoreEmulatedMouseEvents = true;
         restoreTextSelection();
-        globalListeners.current.delete(onScroll);
-        window.removeEventListener('scroll', onScroll, true);
+        removeGlobalListener(window, 'scroll', onScroll, true);
       };
 
       pressProps.onTouchCancel = (e) => {
@@ -565,9 +561,9 @@ export function usePress(props: PressHookProps): PressResult {
 
   useEffect(() => () => {
     globalListeners.current.forEach((value, key) => {
-      value[1].removeEventListener(value[0], key);
+      removeGlobalListener(value.eventTarget, value.type, key, value.options);
     });
-  }, []);
+  }, [globalListeners.current]);
 
   return {
     isPressed: isPressedProp || isPressed,

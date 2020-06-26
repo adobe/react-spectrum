@@ -270,8 +270,9 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     };
   }, [scopeRef, contain]);
 
-  useEffect(() => () => {
-    cancelAnimationFrame(raf.current);
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => cancelAnimationFrame(raf.current);
   }, []);
 }
 
