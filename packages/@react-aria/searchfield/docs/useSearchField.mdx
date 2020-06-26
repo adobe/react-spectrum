@@ -14,7 +14,7 @@ import docs from 'docs:@react-aria/searchfield';
 import statelyDocs from 'docs:@react-stately/searchfield';
 import buttonDocs from 'docs:@react-aria/button';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/searchfield/package.json';
 
 ```jsx import
 import {useSearchField} from '@react-aria/searchfield';
@@ -43,7 +43,7 @@ keywords: [searchbox, input, search, aria, form]
 ## Features
 
 Search fields can be built with `<input type="search">`, but these can be hard to
-style consistently cross browser. `useSearchField` helps achieve accessible 
+style consistently cross browser. `useSearchField` helps achieve accessible
 search fields that can be styled as needed.
 
 * Built with a native `<input type="search">` element
@@ -54,7 +54,7 @@ search fields that can be styled as needed.
 
 ## Anatomy
 
-Search fields consist of an input element, a label, and an optional clear button. 
+Search fields consist of an input element, a label, and an optional clear button.
 `useSearchField` automatically manages the labeling and relationships between the elements,
 and handles keyboard events. Users can press the Escape key to clear the search field, or the
 Enter key to trigger the `onSubmit` event.
@@ -68,7 +68,7 @@ Enter key to trigger the `onSubmit` event.
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSearchFieldState} />
 hook in `@react-stately/searchfield`. The state object should be passed as an option to `useSearchField`.
 
-If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead 
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
 to identify the element to screen readers.
 
 ## Example
@@ -90,7 +90,7 @@ function SearchField(props) {
   );
 }
 
-<SearchField 
+<SearchField
   label="Search"
   placeholder="What are you looking for?"
   onSubmit={text => alert(text)} />
@@ -127,7 +127,7 @@ function SearchField(props) {
   );
 }
 
-<SearchField 
+<SearchField
   label="Search"
   placeholder="What are you looking for?"
   onSubmit={text => alert(text)} />

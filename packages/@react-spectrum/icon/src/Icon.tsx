@@ -21,9 +21,9 @@ type Scale = 'M' | 'L'
 
 interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
-   * Alternate text for assistive technologies
+   * A screen reader only label for the Icon.
    */
-  alt?: string,
+  'aria-label'?: string,
   /**
    * The content to display. Should be an SVG
    */
@@ -32,14 +32,6 @@ interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
    * Size of Icon (changes based on scale)
    */
   size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL',
-  /**
-   * TODO
-   */
-  scale?: Scale,
-  /**
-   * TODO
-   */
-  color?: string,
   /**
    * A slot to place the icon in.
    * @default 'icon'
@@ -58,9 +50,6 @@ export function Icon(props: IconProps) {
   props = useSlotProps(props, 'icon');
   let {
     children,
-    alt,
-    scale,
-    color,
     size,
     'aria-label': ariaLabel,
     'aria-hidden': ariaHidden,
@@ -69,17 +58,9 @@ export function Icon(props: IconProps) {
   let {styleProps} = useStyleProps(otherProps);
 
   let provider = useProvider();
-  let pscale = 'M';
-  let pcolor = 'LIGHT';
+  let scale = 'M';
   if (provider !== null) {
-    pscale = provider.scale === 'large' ? 'L' : 'M';
-    pcolor = provider.colorScheme === 'dark' ? 'DARK' : 'LIGHT';
-  }
-  if (scale === undefined) {
-    scale = pscale as Scale;
-  }
-  if (color === undefined) {
-    color = pcolor;
+    scale = provider.scale === 'large' ? 'L' : 'M';
   }
   if (!ariaHidden) {
     ariaHidden = undefined;
@@ -91,11 +72,9 @@ export function Icon(props: IconProps) {
   return React.cloneElement(children, {
     ...filterDOMProps(otherProps),
     ...styleProps,
-    scale: 'M',
-    color,
     focusable: 'false',
-    'aria-label': ariaLabel || alt,
-    'aria-hidden': (ariaLabel || alt ? (ariaHidden || undefined) : true),
+    'aria-label': ariaLabel,
+    'aria-hidden': (ariaLabel ? (ariaHidden || undefined) : true),
     role: 'img',
     className: classNames(
       styles,

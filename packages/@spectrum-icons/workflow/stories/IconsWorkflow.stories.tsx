@@ -19,16 +19,16 @@ import {storiesOf} from '@storybook/react';
 storiesOf('Icons/Workflow', module)
   .add(
     'icon: Add with sizes',
-    () => renderIconSizes(Add, {alt: 'Add'})
+    () => renderIconSizes(Add, {'aria-label': 'Add'})
   )
   .add(
     'icon: Bell with sizes',
-    () => renderIconSizes(Bell, {alt: 'Bell'})
+    () => renderIconSizes(Bell, {'aria-label': 'Bell'})
   )
   .add(
     'icon: _3DMaterials with sizes',
 
-    () => renderIconSizes(Icon3DMaterials, {alt: '3D Materials'})
+    () => renderIconSizes(Icon3DMaterials, {'aria-label': '3D Materials'})
   );
 
 function renderIconSizes(Component, props) {

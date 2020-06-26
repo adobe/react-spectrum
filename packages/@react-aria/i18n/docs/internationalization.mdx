@@ -11,7 +11,6 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
 
 ---
 category: Concepts
@@ -26,7 +25,7 @@ right-to-left mirroring and interactions.
 ## Introduction
 
 Internationalization is the process of structuring your code and user interface to support localization. React Aria supports
-many aspects of localization for many components out of the box, including translations for builtin strings, localized 
+many aspects of localization for many components out of the box, including translations for builtin strings, localized
 date and number formatting, right-to-left interactions, and more. By using React Aria for your design system,
 these aspects of internationalization are handled for you. You can also use our hooks in your own custom components.
 
@@ -40,9 +39,9 @@ most of the builtin strings are for non-visible content to provide accessible la
 and passed in to components. This can be done with libraries such as [react-intl](https://formatjs.io/docs/react-intl).
 Internally, React Aria uses the same [intl-messageformat](https://formatjs.io/docs/intl-messageformat) library used by react-intl.
 
-React Aria also formats numbers and dates according to the current locale, and uses internationalized algorithms for collation, 
+React Aria also formats numbers and dates according to the current locale, and uses internationalized algorithms for collation,
 sorting, and text search. This is built into all of the components that need to perform these tasks out of the box, but you can
-also use our internationalization hooks in your own components. These are implemented with the builtin browser 
+also use our internationalization hooks in your own components. These are implemented with the builtin browser
 [Intl](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl) APIs under the hood, so there's no
 large libraries or locale data for users to download.
 
@@ -61,12 +60,12 @@ would appear on the left side of the screen in a right-to-left language. In addi
 mirror. For example, in a checkbox component, the label would be placed on the left side of the checkmark rather than the right.
 
 Since React Aria provides no rendering, it is up to you to implement RTL support in your design. The documentation for individual react-aria hooks
-calls out when you need to be aware of this, so you can account for it in your CSS using 
+calls out when you need to be aware of this, so you can account for it in your CSS using
 [logical properties](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Logical_Properties) or other means. For example, flexbox and CSS grid
 both automatically flip their layouts depending on the direction.
 
-Even though it is not responsible for rendering or layout, React Aria is aware of the current directionality, and adjusts interactions 
-accordingly. For example, when navigating using the left and right arrow keys, React Aria automatically flips the direction so that 
+Even though it is not responsible for rendering or layout, React Aria is aware of the current directionality, and adjusts interactions
+accordingly. For example, when navigating using the left and right arrow keys, React Aria automatically flips the direction so that
 the left arrow always navigates to the item physically to the left, and the right arrow always navigates to the item physically to the right.
 
 ## Example
