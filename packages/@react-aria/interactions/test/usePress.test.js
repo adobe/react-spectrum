@@ -17,7 +17,7 @@ import {usePress} from '../';
 function Example(props) {
   let {elementType: ElementType = 'div', ...otherProps} = props;
   let {pressProps} = usePress(otherProps);
-  return <ElementType {...otherProps} {...pressProps}>test</ElementType>;
+  return <ElementType {...pressProps}>test</ElementType>;
 }
 
 function pointerEvent(type, opts) {
