@@ -392,6 +392,9 @@ export class Virtualizer<T extends object, V, W> {
     return layoutInfo.key;
   }
 
+  /**
+   * Cleanup for when the Virtualizer will be unmounted.
+   */
   willUnmount() {
     cancelAnimationFrame(this._relayoutRaf);
   }
