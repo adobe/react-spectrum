@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render, waitForDomChange} from '@testing-library/react';
+import {fireEvent, render, waitFor} from '@testing-library/react';
 import {Modal} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -41,7 +41,10 @@ describe('Modal', function () {
       </Provider>
     );
 
-    await waitForDomChange(); // wait for animations
+    await waitFor(() => {
+      expect(getByRole('dialog')).toBeVisible();
+    }); // wait for animation
+
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
     expect(document.body).toHaveStyle('overflow: hidden');
@@ -56,7 +59,11 @@ describe('Modal', function () {
         </Modal>
       </Provider>
     );
-    await waitForDomChange(); // wait for animation
+
+    await waitFor(() => {
+      expect(getByRole('dialog')).toBeVisible();
+    }); // wait for animation
+
     let dialog = getByRole('dialog');
     fireEvent.keyDown(dialog, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -64,28 +71,36 @@ describe('Modal', function () {
 
   it('doesn\'t hide the modal when clicking outside by default', async function () {
     let onClose = jest.fn();
-    render(
+    let {getByRole} = render(
       <Provider theme={theme}>
         <Modal isOpen onClose={onClose}>
           <div role="dialog">contents</div>
         </Modal>
       </Provider>
     );
-    await waitForDomChange(); // wait for animation
+
+    await waitFor(() => {
+      expect(getByRole('dialog')).toBeVisible();
+    }); // wait for animation
+
     fireEvent.mouseUp(document.body);
     expect(onClose).toHaveBeenCalledTimes(0);
   });
 
   it('hides the modal when clicking outside if isDismissible is true', async function () {
     let onClose = jest.fn();
-    render(
+    let {getByRole} = render(
       <Provider theme={theme}>
         <Modal isOpen onClose={onClose} isDismissable>
           <div role="dialog">contents</div>
         </Modal>
       </Provider>
     );
-    await waitForDomChange(); // wait for animation
+
+    await waitFor(() => {
+      expect(getByRole('dialog')).toBeVisible();
+    }); // wait for animation
+
     fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
     expect(onClose).toHaveBeenCalledTimes(1);
