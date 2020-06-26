@@ -16,6 +16,7 @@
     "@react-spectrum/text": "^3.0.0",
     "@react-spectrum/view": "^3.0.0",
     "@react-aria/interactions": "^3.0.0",
+    "@react-aria/utils": "^3.0.0",
     "@react-aria/visually-hidden": "^3.0.0",
     "@react-spectrum/theme-default": "^3.0.0",
     "@spectrum-icons/ui": "^3.0.0",
