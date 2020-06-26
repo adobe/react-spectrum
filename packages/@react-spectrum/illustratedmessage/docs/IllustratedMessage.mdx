@@ -82,3 +82,65 @@ If you pass an SVG in yourself, you'll need to ensure that the `role` prop is se
 ## Props
 
 <PropTable component={docs.exports.IllustratedMessage} links={docs.links} />
+
+## Example Illustrations
+
+The below examples make use of illustrations included in the `@spectrum-icons` package.
+
+### 403 Forbidden
+
+```tsx example
+import Unauthorized from '@spectrum-icons/illustrations/Unauthorized';
+
+<IllustratedMessage>
+  <Unauthorized />
+  <Heading>Error 403: Access not allowed</Heading>
+  <Content>You do not permission to this page. Try checking the URL or visit a different page.</Content>
+</IllustratedMessage>
+```
+
+### 404 Not Found
+
+```tsx example
+<IllustratedMessage>
+  <NotFound />
+  <Heading>Error 404: Page not found</Heading>
+  <Content>This page isn't available. Try checking the URL or visit a different page.</Content>
+</IllustratedMessage>
+```
+
+### 500 Internal Server Error
+
+```tsx example
+import Error from '@spectrum-icons/illustrations/Error';
+
+<IllustratedMessage>
+  <Error />
+  <Heading>Error 500: Internal server error</Heading>
+  <Content>Something went wrong. Please try again later.</Content>
+</IllustratedMessage>
+```
+
+### 503 Service Unavailable
+
+```tsx example
+import Unavailable from '@spectrum-icons/illustrations/Unavailable';
+
+<IllustratedMessage>
+  <Unavailable />
+  <Heading>Error 503: Service Unavailable</Heading>
+  <Content>This page isn't working. Try a different page or try again later.</Content>
+</IllustratedMessage>
+```
+
+### 504 Gateway Timeout
+
+```tsx example
+import Timeout from '@spectrum-icons/illustrations/Timeout';
+
+<IllustratedMessage>
+  <Timeout />
+  <Heading>Error 504: Server Timeout</Heading>
+  <Content>The server took too long. Please try again later.</Content>
+</IllustratedMessage>
+```
