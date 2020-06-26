@@ -13,7 +13,7 @@
 import {Button} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render, waitForDomChange} from '@testing-library/react';
+import {render, waitFor} from '@testing-library/react';
 import {ToastContainer, ToastProvider, useToastProvider} from '../';
 import {triggerPress} from '@react-spectrum/test-utils';
 
@@ -73,10 +73,11 @@ describe.skip('Toast Provider and Container', function () {
     let toasts = getByRole('alert');
     expect(toasts).toBeVisible();
 
-    await waitForDomChange();
+    await waitFor(() => {
+      expect(() => {
+        getByRole('alert');
+      }).toThrow();
+    });
 
-    expect(() => {
-      getByRole('alert');
-    }).toThrow();
   });
 });
