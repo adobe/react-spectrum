@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {Flex} from '@react-spectrum/layout';
 import js from 'highlight.js/lib/languages/javascript';
 import Lowlight from 'react-lowlight';
 import React from 'react';
@@ -46,13 +47,13 @@ export function HeaderInfo(props) {
           </tr>
         </tbody>
       </table>
-      <div className={styles['resourceCardGroup']}>
+      <Flex wrap gap="size-200">
         {sourceData.map((source) => (
           <ResourceCard type={source.type} url={source.url} />
         ))}
         <ResourceCard type="GitHub" url={`https://github.com/adobe-private/react-spectrum-v3/tree/master/packages/${encodeURI(packageData.name)}`} />
         <ResourceCard type="NPM" url={`https://www.npmjs.com/package/${encodeURI(packageData.name)}`} />
-      </div>
+      </Flex>
     </>
   );
 }
