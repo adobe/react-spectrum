@@ -83,13 +83,6 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
   locale?: string
 }
 
-export interface ProviderWrapperProps extends ProviderProps {
-  /**
-   * If this is the top level Provider for the application.
-   */
-  isTopLevel?: boolean
-}
-
 export interface ProviderContext extends ContextProps {
   version: string,
   theme: Theme,
