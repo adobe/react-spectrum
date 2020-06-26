@@ -11,7 +11,6 @@
  */
 
 import {AnchorHTMLAttributes, HTMLAttributes, RefObject} from 'react';
-import {mergeProps} from '@react-aria/utils';
 import {SpectrumSideNavItemProps} from '@react-types/sidenav';
 import {TreeState} from '@react-stately/tree';
 import {usePress} from '@react-aria/interactions';
