@@ -31,8 +31,8 @@ and positioning, and how to create your own custom components using Spectrum sty
 
 React Spectrum components are designed to be **consistent** across all Adobe applications. They include built-in
 styling that has been considered carefully, and extensively tested. In general, customizing Spectrum design
-is discouraged, but most components do offer control over layout and other aspects. In addition, you can use 
-Spectrum defined variables to ensure your application conforms to design requirements, and is adaptive across 
+is discouraged, but most components do offer control over layout and other aspects. In addition, you can use
+Spectrum defined variables to ensure your application conforms to design requirements, and is adaptive across
 platform scales and color schemes.
 
 ## Style props
@@ -42,7 +42,7 @@ and positioning options. While internal component styles such as padding, colors
 are included in Spectrum and not available to override, external styles like margins and sizes can be set
 on all components.
 
-Supported styling options are available as props on every React Spectrum component. The following example shows 
+Supported styling options are available as props on every React Spectrum component. The following example shows
 a text field and a button. The text field has a custom width set on it, and the button has a margin before it.
 
 ```tsx example
@@ -147,7 +147,7 @@ Style props that accept colors, such as backgrounds and borders, only accept Spe
 In addition to ensuring consistency across products, Spectrum colors automatically adapt to color
 scheme changes, e.g. dark mode.
 
-The list of Spectrum color values is visualized below. Use the picker to see how they change between the 
+The list of Spectrum color values is visualized below. Use the picker to see how they change between the
 light and dark color schemes.
 
 ```tsx import
@@ -181,7 +181,7 @@ ReactDOM.render(<ColorViewer />, document.getElementById('color-viewer'));
 
 ## Escape hatches
 
-While we encourage teams to utilize Spectrum design as it is, we do realize that sometimes product specific 
+While we encourage teams to utilize Spectrum design as it is, we do realize that sometimes product specific
 customizations may be needed. In these cases, we encourage you or your designers to **talk to us**.
 We may be able to suggest an alternative implementation strategy, or perhaps your design can help inform future
 Spectrum additions.
@@ -191,7 +191,7 @@ escape hatches that you can **use at your own risk**. These are `UNSAFE_classNam
 should be considered a **last resort**. They can be used to work around bugs or limitations in React Spectrum,
 but should not be used in the long term.
 
-The reasoning behind this is that future updates to Spectrum design may cause unintended breaking changes in products. 
-If the internal DOM structure or CSS properties of a React Spectrum component change, this may lead to conflicts with CSS 
-overrides in products. For this reason, `className` and `style` are unsafe, and if you use them know that you are doing so at 
+The reasoning behind this is that future updates to Spectrum design may cause unintended breaking changes in products.
+If the internal DOM structure or CSS properties of a React Spectrum component change, this may lead to conflicts with CSS
+overrides in products. For this reason, `className` and `style` are unsafe, and if you use them know that you are doing so at
 your own risk.

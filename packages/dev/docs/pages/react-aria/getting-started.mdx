@@ -20,16 +20,16 @@ This page describes how to get started building your own component library with 
 
 ## What is React Aria?
 
-**React Aria** is a library of [React Hooks](https://reactjs.org/docs/hooks-intro.html) that provides 
-accessible UI primitives for your design system. It provides [accessibility](accessibility.html) and behavior for many common 
-UI components so you can focus on your unique design and styling. It implements [adaptive interactions](interactions.html) 
-to ensure the best experience possible for all users, including support for mouse, touch, keyboard, and 
+**React Aria** is a library of [React Hooks](https://reactjs.org/docs/hooks-intro.html) that provides
+accessible UI primitives for your design system. It provides [accessibility](accessibility.html) and behavior for many common
+UI components so you can focus on your unique design and styling. It implements [adaptive interactions](interactions.html)
+to ensure the best experience possible for all users, including support for mouse, touch, keyboard, and
 screen readers.
 
 ## Installation
 
 React Aria is **incrementally adoptable**. Each component is published as a separate package, so you can try it
-out in a single component and gradually add more over time. All of these packages are published under the 
+out in a single component and gradually add more over time. All of these packages are published under the
 [@react-aria](https://www.npmjs.com/org/react-aria) scope on npm.
 
 You can install any React Aria package using a package manager like [npm](https://docs.npmjs.com/cli/npm) or
@@ -48,8 +48,8 @@ the DOM structure that you render. For example, you may need to add extra elemen
 You also get complete control over how you style your components: you could use CSS classes, inline styles, CSS-in-JS, etc.
 
 Start by importing the hook you wish to use, and calling it in your component. You'll typically pass through the props
-from your component, along with a [ref](https://reactjs.org/docs/refs-and-the-dom.html) to the DOM node in some cases. 
-The hook will return one or more sets of DOM props which you should pass through to the appropriate element. This can be 
+from your component, along with a [ref](https://reactjs.org/docs/refs-and-the-dom.html) to the DOM node in some cases.
+The hook will return one or more sets of DOM props which you should pass through to the appropriate element. This can be
 done by [spreading the props](https://reactjs.org/docs/jsx-in-depth.html#spread-attributes) returned from the hook onto
 the element that you render.
 
@@ -87,7 +87,7 @@ Examples of stateful components include text fields, checkboxes, and selects.
 
 React Aria separates the state management logic into a separate hook that lives in [react-stately](../react-stately/index.html).
 The state hook holds the state for the component, and provides an interface to read and update that state. This allows
-this logic to be reused across different platforms, e.g. in react-native. Read more about this on the 
+this logic to be reused across different platforms, e.g. in react-native. Read more about this on the
 [architecture](../architecture.html) page.
 
 To build a stateful component, you'll need to install and import the corresponding state hook from react-stately.
@@ -124,7 +124,7 @@ See the [useCheckbox](useCheckbox.html) docs for a full example of a custom styl
 ## Next steps
 
 Now that you understand how to use the hooks in React Aria to build your own components, you can read the documentation
-for the individual hooks to understand them in detail. We also have high level documentation about topics like 
+for the individual hooks to understand them in detail. We also have high level documentation about topics like
 [interactions](interactions.html), [internationalization](internationalization.html), and [accessibility](accessibility.html).
 
 For a complete example of a component library built with React Aria, check out [React Spectrum](../react-spectrum/index.html),
