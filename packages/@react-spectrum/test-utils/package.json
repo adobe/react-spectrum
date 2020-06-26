@@ -9,7 +9,8 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "targets": {
@@ -36,8 +37,6 @@
     "react": "^16.8.0"
   },
   "devDependencies": {
-    "@react-spectrum/layout": "^3.0.0-alpha.1",
-    "@react-spectrum/provider": "^3.0.0-rc.1",
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"
   },
   "publishConfig": {

@@ -10,23 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, LabelPosition, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, LabelPosition, StyleProps} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 interface ProgressBaseProps {
   /**
    * The current value (controlled).
-   * @default "0"
+   * @default 0
    */
   value?: number,
   /**
    * The smallest value allowed for the input.
-   * @default "0"
+   * @default 0
    */
   minValue?: number,
   /**
    * The largest value allowed for the input.
-   * @default "100"
+   * @default 100
    */
   maxValue?: number
 }
@@ -42,41 +42,44 @@ export interface ProgressBarBaseProps extends ProgressBaseProps {
   valueLabel?: ReactNode // custom value label (e.g. 1 of 4)
 }
 
+export interface AriaProgressBarBaseProps extends ProgressBarBaseProps, DOMProps, AriaLabelingProps {}
+
 export interface ProgressBarProps extends ProgressBarBaseProps {
   /**
    * Whether presentation is indeterminate when progress isn't known.
-   * @default "false"
    */
   isIndeterminate?: boolean
 }
+
+export interface AriaProgressBarProps extends ProgressBarProps, DOMProps, AriaLabelingProps {}
 
 export interface ProgressCircleProps extends ProgressBaseProps {
   /**
    * Whether presentation is indeterminate when progress isn't known.
-   * @default "false"
    */
   isIndeterminate?: boolean
 }
 
-export interface SpectrumProgressCircleProps extends ProgressCircleProps, DOMProps, StyleProps {
+export interface AriaProgressCircleProps extends ProgressCircleProps, DOMProps, AriaLabelingProps {}
+export interface SpectrumProgressCircleProps extends AriaProgressCircleProps, StyleProps {
   /**
    * What the ProgressCircle's diameter should be.
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L',
   /** The [visual style](https://spectrum.adobe.com/page/circle-loader/#Over-background-variant) of the ProgressCircle. */
   variant?: 'overBackground'
 }
 
-export interface SpectrumProgressBarBaseProps extends ProgressBarBaseProps, DOMProps, StyleProps {
+export interface SpectrumProgressBarBaseProps extends AriaProgressBarBaseProps, StyleProps {
   /**
    * How thick the ProgressBar should be.
-   * @default "L"
+   * @default 'L'
    */
   size?: 'S' | 'L',
   /**
    * The label's overall position relative to the element it is labeling.
-   * @default "top"
+   * @default 'top'
    */
   labelPosition?: LabelPosition
 }

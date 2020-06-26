@@ -15,26 +15,43 @@ import {Key, Reducer, useEffect, useReducer} from 'react';
 import {Selection, SortDescriptor} from '@react-types/shared';
 
 interface AsyncListOptions<T, C> {
+  /** The keys for the initially selected items. */
   initialSelectedKeys?: Iterable<Key>,
+  /** The initial sort descriptor. */
   initialSortDescriptor?: SortDescriptor,
+  /** A function that returns a unique key for an item object. */
   getKey?: (item: T) => Key,
+  /** A function that loads the data for the items in the list. */
   load: AsyncListLoadFunction<T, C>,
+  /**
+   * An optional function that performs sorting. If not provided,
+   * then `sortDescriptor` is passed to the `load` function.
+   */
   sort?: AsyncListLoadFunction<T, C>
 }
 
 type AsyncListLoadFunction<T, C> = (state: AsyncListLoadOptions<T, C>) => Promise<AsyncListStateUpdate<T, C>>;
 interface AsyncListLoadOptions<T, C> {
+  /** The items currently in the list. */
   items: T[],
+  /** The keys of the currently selected items in the list. */
   selectedKeys: Selection,
+  /** The current sort descriptor for the list. */
   sortDescriptor: SortDescriptor,
+  /** An abort signal used to notify the load function that the request has been aborted. */
   signal: AbortSignal,
+  /** The pagination cursor returned from the last page load. */
   cursor?: C
 }
 
 interface AsyncListStateUpdate<T, C> {
+  /** The new items to append to the list. */
   items: Iterable<T>,
+  /** The keys to add to the selection. */
   selectedKeys?: Iterable<Key>,
+  /** The sort descriptor to set. */
   sortDescriptor?: SortDescriptor,
+  /** The pagination cursor to be used for the next page load. */
   cursor?: C
 }
 
@@ -64,16 +81,22 @@ interface Action<T, C> {
 }
 
 interface AsyncListData<T> extends ListData<T> {
+  /** Whether data is currently being loaded. */
   isLoading: boolean,
+  /** If loading data failed, then this contains the error that occurred. */
   error?: Error,
   // disabledKeys?: Set<Key>,
   // selectedKey?: Key,
   // expandedKeys?: Set<Key>,
+  /** The current sort descriptor for the list. */
   sortDescriptor?: SortDescriptor,
 
+  /** Reloads the data in the list. */
   reload(): void,
+  /** Loads the next page of data in the list. */
   loadMore(): void,
-  sort(desc: SortDescriptor): void
+  /** Triggers sorting for the list. */
+  sort(descriptor: SortDescriptor): void
 }
 
 function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncListState<T, C> {
@@ -102,7 +125,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
           return data;
         default:
           throw new Error(`Invalid action "${action.type}" in state "${data.state}"`);
-      }  
+      }
     case 'loading':
     case 'sorting':
       switch (action.type) {
@@ -158,7 +181,7 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
             ...data,
             state: 'idle',
             items: [...data.items, ...action.items],
-            selectedKeys: new Set(action.selectedKeys ?? data.selectedKeys),
+            selectedKeys: new Set([...data.selectedKeys, ...(action.selectedKeys ?? [])]),
             sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
             abortController: null,
             cursor: action.cursor
@@ -189,6 +212,10 @@ function reducer<T, C>(data: AsyncListState<T, C>, action: Action<T, C>): AsyncL
   }
 }
 
+/**
+ * Manages state for an immutable async loaded list data structure, and provides convenience methods to
+ * update the data over time. Manages loading and error states, pagination, and sorting.
+ */
 export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): AsyncListData<T> {
   const {
     load,
@@ -212,7 +239,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
       dispatch({...action, abortController});
 
       let response = await fn({
-        items: data.items,
+        items: data.items.slice(),
         selectedKeys: data.selectedKeys,
         sortDescriptor: action.sortDescriptor ?? data.sortDescriptor,
         signal: abortController.signal,
@@ -252,7 +279,7 @@ export function useAsyncList<T, C = string>(options: AsyncListOptions<T, C>): As
     sort(sortDescriptor: SortDescriptor) {
       dispatchFetch({type: 'sorting', sortDescriptor}, sort || load);
     },
-    ...createListActions(options, fn => {
+    ...createListActions({...options, getKey}, fn => {
       dispatch({type: 'update', updater: fn});
     })
   };

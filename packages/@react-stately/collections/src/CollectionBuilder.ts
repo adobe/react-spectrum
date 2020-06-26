@@ -10,23 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, CollectionElement} from '@react-types/shared';
-import {Node, PartialNode} from './types';
+import {CollectionBase, CollectionElement, Node} from '@react-types/shared';
+import {PartialNode} from './types';
 import React, {Key, ReactElement} from 'react';
 
 interface CollectionBuilderState {
-  renderer?: (value: any) => ReactElement,
-  childKey?: string
+  renderer?: (value: any) => ReactElement
 }
 
 export class CollectionBuilder<T extends object> {
-  private itemKey: string;
   private context?: unknown;
   private cache: WeakMap<T, Node<T>> = new WeakMap();
-
-  constructor(itemKey: string) {
-    this.itemKey = itemKey;
-  }
 
   build(props: CollectionBase<T>, context?: unknown) {
     this.context = context;
@@ -44,48 +38,54 @@ export class CollectionBuilder<T extends object> {
       for (let item of props.items) {
         yield* this.getFullNode({
           value: item
-        }, {renderer: children, childKey: this.itemKey});
+        }, {renderer: children});
       }
     } else {
-      let items = React.Children.toArray(children);
+      let items: CollectionElement<T>[] = [];
+      React.Children.forEach(children, child => {
+        items.push(child);
+      });
+
+      let index = 0;
       for (let item of items) {
-        yield* this.getFullNode({
-          element: item
-        }, {childKey: this.itemKey});
+        let nodes = this.getFullNode({
+          element: item,
+          index: index
+        }, {});
+
+        for (let node of nodes) {
+          index++;
+          yield node;
+        }
       }
     }
   }
 
   private getKey(item: CollectionElement<T>, partialNode: PartialNode<T>, state: CollectionBuilderState, parentKey?: Key): Key {
-    if (item.props.uniqueKey != null) {
-      return item.props.uniqueKey;
-    }
-
     if (item.key != null) {
-      return parentKey ? `${parentKey}${item.key}` : item.key;
+      return item.key;
     }
 
     if (partialNode.type === 'cell' && partialNode.key != null) {
       return `${parentKey}${partialNode.key}`;
     }
 
-    if (state.childKey && partialNode.value[state.childKey] != null) {
-      return partialNode.value[state.childKey];
-    }
-  
     let v = partialNode.value as any;
-    let key = v.key ?? v.id;
-    if (key == null) {
-      throw new Error('No key found for item');
+    if (v != null) {
+      let key = v.key ?? v.id;
+      if (key == null) {
+        throw new Error('No key found for item');
+      }
+
+      return key;
     }
-    
-    return key;
+
+    return parentKey ? `${parentKey}.${partialNode.index}` : `$.${partialNode.index}`;
   }
 
   private getChildState(state: CollectionBuilderState, partialNode: PartialNode<T>) {
     return {
-      renderer: partialNode.renderer || state.renderer,
-      childKey: partialNode.childKey || state.childKey
+      renderer: partialNode.renderer || state.renderer
     };
   }
 
@@ -96,6 +96,7 @@ export class CollectionBuilder<T extends object> {
     if (!element && partialNode.value && state && state.renderer) {
       let cached = this.cache.get(partialNode.value);
       if (cached && (!cached.shouldInvalidate || !cached.shouldInvalidate(this.context))) {
+        cached.index = partialNode.index;
         yield cached;
         return;
       }
@@ -105,7 +106,7 @@ export class CollectionBuilder<T extends object> {
 
     // If there's an element with a getCollectionNode function on its type, then it's a supported component.
     // Call this function to get a partial node, and recursively build a full node from there.
-    if (element) {
+    if (React.isValidElement(element)) {
       let type = element.type as any;
       if (typeof type !== 'function' || typeof type.getCollectionNode !== 'function') {
         let name = typeof element.type === 'function' ? element.type.name : element.type;
@@ -113,13 +114,16 @@ export class CollectionBuilder<T extends object> {
       }
 
       let childNodes = type.getCollectionNode(element.props, this.context) as Generator<PartialNode<T>, void, Node<T>[]>;
+      let index = partialNode.index;
       let result = childNodes.next();
       while (!result.done && result.value) {
         let childNode = result.value;
+
+        partialNode.index = index;
         let nodes = this.getFullNode({
           ...childNode,
-          key: childNode.element ? null : this.getKey(element, partialNode, state, parentKey),
-          index: partialNode.index,
+          key: childNode.element ? null : this.getKey(element as CollectionElement<T>, partialNode, state, parentKey),
+          index,
           wrapper: compose(partialNode.wrapper, childNode.wrapper)
         }, this.getChildState(state, childNode), parentKey ? `${parentKey}${element.key}` : element.key, parentNode);
 
@@ -137,12 +141,18 @@ export class CollectionBuilder<T extends object> {
             throw new Error(`Unsupported type <${capitalize(node.type)}> in <${capitalize(parentNode.type)}>. Only <${capitalize(partialNode.type)}> is supported.`);
           }
 
+          index++;
           yield node;
         }
 
         result = childNodes.next(children);
       }
 
+      return;
+    }
+
+    // Ignore invalid elements
+    if (partialNode.key == null) {
       return;
     }
 
@@ -167,13 +177,19 @@ export class CollectionBuilder<T extends object> {
           return;
         }
 
+        let index = 0;
         for (let child of partialNode.childNodes()) {
           // Ensure child keys are globally unique by prepending the parent node's key
-          if (child.key) {
+          if (child.key != null) {
             child.key = `${node.key}${child.key}`;
           }
 
-          yield* builder.getFullNode(child, builder.getChildState(state, child), node.key, node);
+          child.index = index;
+          let nodes = builder.getFullNode(child, builder.getChildState(state, child), node.key, node);
+          for (let node of nodes) {
+            index++;
+            yield node;
+          }
         }
       })
     };

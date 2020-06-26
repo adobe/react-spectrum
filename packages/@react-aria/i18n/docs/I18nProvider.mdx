@@ -1,0 +1,52 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/i18n';
+import {HeaderInfo, TypeContext, PropTable, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-aria/i18n/package.json';
+
+```tsx import
+import {useCollator} from '@react-aria/i18n';
+```
+
+---
+category: Internationalization
+---
+
+# I18nProvider
+
+<p>{docs.exports.I18nProvider.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['I18nProvider']} />
+
+## Introduction
+
+`I18nProvider` allows you to override the default locale as determined by the browser/system setting
+with a locale defined by your application (e.g. application setting). This should be done by wrapping
+your entire application in the provider, which will be cause all child elements to receive the new locale
+information via [useLocale](useLocale.html).
+
+## Props
+
+<PropTable component={docs.exports.I18nProvider} links={docs.links} />
+
+## Example
+
+```tsx
+import {I18nProvider} from '@react-aria/i18n';
+
+<I18nProvider locale="fr-FR">
+  <YourApp />
+</I18nProvider>
+```

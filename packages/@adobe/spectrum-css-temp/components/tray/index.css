@@ -36,6 +36,9 @@
   height: -webkit-fill-available;
   height: fill-available;
 
+  /* Don't catch clicks */
+  pointer-events: none;
+
   /* Appear above underlay */
   z-index: 2;
 }

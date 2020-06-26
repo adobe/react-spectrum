@@ -11,13 +11,12 @@
  */
 
 import {ActionGroupKeyboardDelegate} from './ActionGroupKeyboardDelegate';
-import {ActionGroupProps} from '@react-types/actiongroup';
-import {ActionGroupState} from '@react-stately/actiongroup';
+import {AriaActionGroupProps} from '@react-types/actiongroup';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useMemo, useState} from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {ListState} from '@react-stately/list';
 import {Orientation} from '@react-types/shared';
 import {useFocusWithin} from '@react-aria/interactions';
-import {useId} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 
@@ -27,28 +26,21 @@ const BUTTON_GROUP_ROLES = {
   'multiple': 'toolbar'
 };
 
-const BUTTON_ROLES = {
-  'none': null,
-  'single': 'radio',
-  'multiple': 'checkbox'
-};
-
 export interface ActionGroupAria {
-  actionGroupProps: HTMLAttributes<HTMLElement>,
-  buttonProps: HTMLAttributes<HTMLElement>,
+  actionGroupProps: HTMLAttributes<HTMLElement>
 }
 
-export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroupState<T>, ref: RefObject<HTMLElement>): ActionGroupAria {
+export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListState<T>, ref: RefObject<HTMLElement>): ActionGroupAria {
   let {
-    id,
-    selectionMode = 'single',
     isDisabled,
-    orientation = 'horizontal' as Orientation,
-    role = BUTTON_GROUP_ROLES[selectionMode]
+    orientation = 'horizontal' as Orientation
   } = props;
 
   let {direction} = useLocale();
-  let keyboardDelegate = useMemo(() => new ActionGroupKeyboardDelegate(state.collection, direction, orientation), [state.collection, direction, orientation]);
+  // eslint-disable-next-line arrow-body-style
+  let keyboardDelegate = useMemo(() => {
+    return new ActionGroupKeyboardDelegate(state.collection, direction, orientation, state.disabledKeys);
+  }, [state.collection, direction, orientation, state.disabledKeys]);
 
   let {collectionProps} = useSelectableCollection({
     ref,
@@ -61,20 +53,17 @@ export function useActionGroup<T>(props: ActionGroupProps<T>, state: ActionGroup
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setFocusWithin
   });
-
   let tabIndex = isFocusWithin ? -1 : 0;
 
+  let role = BUTTON_GROUP_ROLES[state.selectionManager.selectionMode];
   return {
     actionGroupProps: {
-      id: useId(id),
+      ...filterDOMProps(props, {labelable: true}),
       role,
-      tabIndex: isDisabled ? null : tabIndex,
       'aria-orientation': role === 'toolbar' ? orientation : null,
       'aria-disabled': isDisabled,
-      ...mergeProps(focusWithinProps, collectionProps)
-    },
-    buttonProps: {
-      role: BUTTON_ROLES[selectionMode]
+      ...mergeProps(focusWithinProps, collectionProps),
+      tabIndex: isDisabled ? null : tabIndex
     }
   };
 }

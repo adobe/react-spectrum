@@ -17,11 +17,11 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {Content, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
-import {Heading, Text} from '@react-spectrum/typography';
+import {Heading, Text} from '@react-spectrum/text';
 import isChromatic from 'storybook-chromatic/isChromatic';
+import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('DialogTrigger', module)
@@ -84,13 +84,13 @@ storiesOf('DialogTrigger', module)
       <div style={{paddingTop: 100}}>
         <input />
         <Provider colorScheme="dark" UNSAFE_style={{padding: 40, marginTop: 10}}>
-          <DialogTrigger>
+          <DialogTrigger isDismissable>
             <ActionButton>Trigger</ActionButton>
             <Dialog>
               <Content>
                 <input />
                 <input />
-                <DialogTrigger>
+                <DialogTrigger isDismissable>
                   <ActionButton>Trigger</ActionButton>
                   <Dialog>
                     <Content>
@@ -115,7 +115,7 @@ storiesOf('DialogTrigger', module)
         {(close) => (
           <Dialog>
             <Heading>The Heading</Heading>
-            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+            <Header>The Header</Header>
             <Divider />
             <Content>
               <DialogTrigger isDismissable>
@@ -134,6 +134,28 @@ storiesOf('DialogTrigger', module)
             </ButtonGroup>
           </Dialog>
         )}
+      </DialogTrigger>
+    ),
+    {chromatic: {disable: true}}
+  )
+  .add(
+    'with menu trigger',
+    () => (
+      <DialogTrigger type="popover">
+        <ActionButton>Trigger</ActionButton>
+        <Dialog>
+          <Heading>The Heading</Heading>
+          <Content>
+            <MenuTrigger>
+              <ActionButton>Test</ActionButton>
+              <Menu autoFocus="first">
+                <Item>Item 1</Item>
+                <Item>Item 2</Item>
+                <Item>Item 3</Item>
+              </Menu>
+            </MenuTrigger>
+          </Content>
+        </Dialog>
       </DialogTrigger>
     ),
     {chromatic: {disable: true}}
@@ -270,7 +292,7 @@ function render({width = 'auto', ...props}) {
         {(close) => (
           <Dialog>
             <Heading>The Heading</Heading>
-            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+            <Header>The Header</Header>
             <Divider />
             <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
             {!props.isDismissable &&
@@ -292,7 +314,7 @@ function renderPopover({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         <Dialog>
           <Heading>The Heading</Heading>
-          <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+          <Header>The Header</Header>
           <Divider />
           <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
         </Dialog>
@@ -309,7 +331,7 @@ let TriggerWithRef = (props) => {
         <ActionButton>Trigger</ActionButton>
         <Dialog>
           <Heading>The Heading</Heading>
-          <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+          <Header>The Header</Header>
           <Divider />
           <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
         </Dialog>

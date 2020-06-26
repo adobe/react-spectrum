@@ -61,7 +61,7 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
 
   let {hoverProps} = useHover({
     isDisabled,
-    onHover: handleDelayedShow,
+    onHoverStart: handleDelayedShow,
     onHoverEnd: handleDelayedHide
   });
 

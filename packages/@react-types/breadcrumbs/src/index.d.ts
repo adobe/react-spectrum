@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, PressEvents, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, PressEvents, StyleProps} from '@react-types/shared';
 import {ItemProps} from '@react-types/shared';
 import {Key, ReactElement, ReactNode} from 'react';
 
@@ -19,18 +19,11 @@ export interface BreadcrumbItemProps extends PressEvents {
   isCurrent?: boolean,
   /**
    * The type of current location the breadcrumb item represents, if `isCurrent` is true.
-   * @default "page"
+   * @default 'page'
    */
   'aria-current'?: 'page' | 'step' | 'location' | 'date' | 'time' | boolean | 'true' | 'false',
-  /** Whether the breadcrumbs are used as a heading element. */
-  isHeading?: boolean,
   /** Whether the breadcrumb item is disabled. */
   isDisabled?: boolean,
-  /**
-   * The aria-level for the heading element if `isHeading` and `isCurrent` are true.
-   * @default 1
-   */
-  headingAriaLevel?: number,
   /** The contents of the breadcrumb item. */
   children: ReactNode
 }
@@ -38,30 +31,24 @@ export interface BreadcrumbItemProps extends PressEvents {
 export interface BreadcrumbsProps<T> {
   /** The breadcrumb items. */
   children: ReactElement<ItemProps<T>> | ReactElement<ItemProps<T>>[],
-  /** Whether the breadcrumbs are used as a heading element. */
-  isHeading?: boolean,
-  /**
-   * Sets the aria-level attribute of the last item, but only if `isHeading` is true.
-   * @default 1
-   */
-  headingAriaLevel?: number,  
   /** Whether the Breadcrumbs are disabled. */
   isDisabled?: boolean,
   /** Called when an item is acted upon (usually selection via press). */
   onAction?: (key: Key) => void
 }
 
-export interface SpectrumBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps, StyleProps {
+export interface AriaBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, StyleProps {
   /**
-   * What the Breadcrumbs's size should be.
-   * @default "M"
+   * Size of the Breadcrumbs including spacing and layout.
+   * @default 'L'
    */
   size?: 'S' | 'M' | 'L',
-  /**
-   * The current number of visible items before items are collapsed.
-   * @default 4
-   */
-  maxVisibleItems?: 'auto' | number,
   /** Whether to always show the root item if the items are collapsed. */
-  showRoot?: boolean
+  showRoot?: boolean,
+  /**
+   * Whether to place the last Breadcrumb item onto a new line.
+   */
+  isMultiline?: boolean
 }

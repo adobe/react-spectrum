@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-stately/data';
 import {HeaderInfo, TypeContext, ClassAPI, FunctionAPI, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-stately/data/package.json';
 
 ---
 category: Data
@@ -29,7 +29,7 @@ category: Data
 ## Introduction
 
 React requires all data structures passed as props to be immutable. This enables them to be diffed correctly to determine
-what has changed since the last render. This can be challenging to accomplish from scratch in a performant way in JavaScript. 
+what has changed since the last render. This can be challenging to accomplish from scratch in a performant way in JavaScript.
 
 `useListData` helps manage an immutable list data structure, with helper methods to update the data in an efficient way.
 Since the data is stored in React state, calling these methods to update the data automatically causes the component
@@ -41,6 +41,10 @@ and is automatically updated when items are removed from the list.
 ## API
 
 <FunctionAPI function={docs.exports.useListData} links={docs.links} />
+
+## Options
+
+<ClassAPI links={docs.links} class={docs.links[docs.exports.useListData.parameters[0].value.base.id]} />
 
 ## Interface
 
@@ -68,10 +72,9 @@ let list = useListData({
 
 <ListBox
   items={list.items}
-  itemKey="name"
   selectedKeys={list.selectedKeys}
   onSelectionChange={list.setSelectedKeys}>
-  {item => <Item>{item.name}</Item>}
+  {item => <Item key={item.name}>{item.name}</Item>}
 </ListBox>
 ```
 

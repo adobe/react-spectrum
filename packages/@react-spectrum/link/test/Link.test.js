@@ -61,18 +61,20 @@ describe('Link', function () {
     let link = getByRole('link');
     expect(link).toBeDefined();
     expect(link.nodeName).toBe('SPAN');
+    expect(link).toHaveAttribute('tabIndex', '0');
   });
 
   it('Wraps custom child element', () => {
     let {getByRole} = render(
       <Link UNSAFE_className="test-class" onPress={onPressSpy} >
-        <a href="http://example.com" >Click me </a>
+        <a href="#only-hash-in-jsdom" >Click me </a>
       </Link>
     );
     let link = getByRole('link');
     expect(link).toBeDefined();
     expect(link.nodeName).toBe('A');
     expect(link).toHaveAttribute('class', expect.stringContaining('test-class'));
+    expect(link).toHaveAttribute('href', '#only-hash-in-jsdom');
     triggerPress(link);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
@@ -84,5 +86,11 @@ describe('Link', function () {
     triggerPress(link);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
     expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
+  });
+
+  it('supports custom data attributes', () => {
+    let {getByRole} = render(<Link data-testid="test">Click me</Link>);
+    let link = getByRole('link');
+    expect(link).toHaveAttribute('data-testid', 'test');
   });
 });

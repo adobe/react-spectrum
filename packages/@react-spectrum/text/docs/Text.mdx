@@ -1,0 +1,51 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/text';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/text/package.json';
+
+```jsx import
+import {Text} from '@react-spectrum/text';
+```
+
+---
+category: Content
+---
+
+# Text
+
+<p>{docs.exports.Text.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Text']} />
+
+## Example
+
+```tsx example
+<Text>Paste</Text>
+```
+
+## Content
+
+Text is used to wrap text strings and elements within other
+components. Based on the component it is used within, it gets Spectrum styling
+and may have a preassigned slot for positioning. By virtue of its name, the
+Text component provides semantic meaning in the context they are placed.
+Examples of its usage in [Dialog](Dialog.html#example) and
+[Button](Button.html#content). It is important to note that the Text component
+accepts any renderable node, not just strings.
+
+## Props
+
+<PropTable component={docs.exports.Text} links={docs.links} />

@@ -11,36 +11,52 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import {Highlights, Hero} from '@react-spectrum/docs';
-import heroNarrow from 'url:./assets/hero-narrow.png';
-import heroNarrow2x from 'url:./assets/hero-narrow@2x.png';
-import heroWide from 'url:./assets/hero-wide.png';
-import heroWide2x from 'url:./assets/hero-wide@2x.png';
+import heroNarrow from 'url:./assets/ReactSpectrumHome_Mobile_976x1025_1x.png';
+import heroNarrow2x from 'url:./assets/ReactSpectrumHome_Mobile_976x1025_2x.png';
+import heroNarrowWebp from 'url:./assets/ReactSpectrumHome_Mobile_976x1025_1x.webp';
+import heroNarrow2xWebp from 'url:./assets/ReactSpectrumHome_Mobile_976x1025_2x.webp';
+import heroWide from 'url:./assets/ReactSpectrumHome_976x445_1x.png';
+import heroWide2x from 'url:./assets/ReactSpectrumHome_976x445_2x.png';
+import heroWideWebp from 'url:./assets/ReactSpectrumHome_976x445_1x.webp';
+import heroWide2xWebp from 'url:./assets/ReactSpectrumHome_976x445_2x.webp';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-# React Spectrum
+---
+description: A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences.
+---
+
+# React Spectrum Libraries
 
 A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences.
 
-<Hero 
+<Hero
   narrow={heroNarrow}
   narrow2x={heroNarrow2x}
+  narrowWebp={heroNarrowWebp}
+  narrow2xWebp={heroNarrow2xWebp}
   wide={heroWide}
   wide2x={heroWide2x}
+  wideWebp={heroWideWebp}
+  wide2xWebp={heroWide2xWebp}
   alt="React Spectrum hero image" />
 
 <Highlights items={[
   {
     title: 'React Spectrum',
     description: 'A React implementation of Spectrum, Adobe’s design system. Spectrum provides adaptive, accessible, and cohesive experiences for all Adobe applications.',
-    url: './react-spectrum/index.html'
+    url: './react-spectrum/index.html',
+    urlText: <>Explore<VisuallyHidden elementType="span"> React Spectrum</VisuallyHidden></>
   },
   {
     title: 'React Aria',
     description: 'A library of React Hooks that provides accessible UI primitives for your design system.',
-    url: './react-aria/index.html'
+    url: './react-aria/index.html',
+    urlText: <>Learn more<VisuallyHidden elementType="span"> about React Aria</VisuallyHidden></>
   },
   {
     title: 'React Stately',
     description: 'A library of React Hooks that provides cross-platform state management for your design system.',
-    url: './react-stately/index.html'
+    url: './react-stately/index.html',
+    urlText: <>Get Started<VisuallyHidden elementType="span"> with React Stately</VisuallyHidden></>
   }
 ]} />

@@ -21,7 +21,7 @@ import Delete from '@spectrum-icons/workflow/Delete';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Heading} from '@react-spectrum/typography';
+import {Heading} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Modal} from '@react-spectrum/overlays';
 import More from '@spectrum-icons/workflow/More';
@@ -41,7 +41,7 @@ export function CRUDExample() {
   let [deletingItem, setDeletingItem] = useState(null);
 
   let createItem = (item) => {
-    list.prepend({...item, id: list.items.length + 1});
+    list.prepend({...item, id: Date.now()});
   };
 
   let editItem = (id, item) => {
@@ -72,27 +72,27 @@ export function CRUDExample() {
   let selectedCount = list.selectedKeys === 'all' ? list.items.length : list.selectedKeys.size;
 
   return (
-    <Flex flexDirection="column">
-      <ActionGroup selectionMode="none" marginBottom={8}>
+    <Flex direction="column">
+      <ActionGroup marginBottom={8}>
         <DialogTrigger>
-          <Item aria-label="Add item"><Add /></Item>
+          <Item key="add" aria-label="Add item"><Add /></Item>
           {onClose => <EditDialog item={null} onClose={onClose} onConfirm={createItem} />}
         </DialogTrigger>
         {selectedCount > 0 &&
           <DialogTrigger>
-            <Item aria-label="Delete selected items"><Delete /></Item>
+            <Item key="delete" aria-label="Delete selected items"><Delete /></Item>
             <AlertDialog title="Delete" variant="destructive" primaryActionLabel="Delete" onPrimaryAction={deleteSelectedItems}>
               Are you sure you want to delete {selectedCount === 1 ? '1 item' : `${selectedCount} items`}?
             </AlertDialog>
           </DialogTrigger>
         }
       </ActionGroup>
-      <Table width={500} height={300} isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
+      <Table aria-label="People" width={500} height={300} selectionMode="multiple" isQuiet selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys}>
         <TableHeader>
-          <Column isRowHeader uniqueKey="firstName">First Name</Column>
-          <Column isRowHeader uniqueKey="lastName">Last Name</Column>
-          <Column uniqueKey="birthday">Birthday</Column>
-          <Column uniqueKey="actions" align="end">Actions</Column>
+          <Column isRowHeader key="firstName">First Name</Column>
+          <Column isRowHeader key="lastName">Last Name</Column>
+          <Column key="birthday">Birthday</Column>
+          <Column key="actions" align="end">Actions</Column>
         </TableHeader>
         <TableBody items={list.items}>
           {item =>
@@ -103,8 +103,8 @@ export function CRUDExample() {
                     ? <MenuTrigger align="end">
                       <ActionButton isQuiet aria-label="Actions"><More /></ActionButton>
                       <Menu onAction={action => onAction(action, item)}>
-                        <Item uniqueKey="edit">Edit...</Item>
-                        <Item uniqueKey="delete">Delete...</Item>
+                        <Item key="edit">Edit...</Item>
+                        <Item key="delete">Delete...</Item>
                       </Menu>
                     </MenuTrigger>
                     : item[column]

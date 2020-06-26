@@ -13,8 +13,9 @@ export default Layout;
 import docs from 'docs:@react-aria/overlays';
 import focusDocs from 'docs:@react-aria/focus';
 import dialogDocs from 'docs:@react-aria/dialog';
+import statelyDocs from 'docs:@react-stately/overlays';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/overlays/package.json';
 
 ```jsx import
 import {useOverlayTrigger} from '@react-aria/overlays';
@@ -22,6 +23,7 @@ import {useOverlayTrigger} from '@react-aria/overlays';
 
 ---
 category: Overlays
+keywords: [overlays, dialog, modal, aria]
 ---
 
 # useOverlayTrigger
@@ -41,12 +43,12 @@ category: Overlays
 
 ## Features
 
-There is no built in way to create popovers or other types of overlays in 
+There is no built in way to create popovers or other types of overlays in
 HTML. <TypeLink links={docs.links} type={docs.exports.useOverlayTrigger} />,
 combined with <TypeLink links={docs.links} type={docs.exports.useOverlayPosition} />,
 helps achieve accessible overlays that can be styled as needed.
 
-**Note: `useOverlayTrigger` only handles the overlay itself. It should be combined 
+**Note: `useOverlayTrigger` only handles the overlay itself. It should be combined
 with [useDialog](useDialog.html) to create fully accessible popovers. For menus,
 see [useMenuTrigger](useMenuTrigger.html), which builds on `useOverlayTrigger` and provides
 additional functionality specific to menus.**
@@ -67,30 +69,33 @@ to handle hiding content behind the overlay from screen readers, and optionally
 with <TypeLink links={docs.links} type={docs.exports.useOverlayPosition} /> to
 handle positioning the overlay relative to the trigger.
 
-`useOverlayTrigger` returns props that you should spread onto the trigger element and 
+`useOverlayTrigger` returns props that you should spread onto the trigger element and
 the overlay container element:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useOverlayTrigger.return.id].properties} />
 </TypeContext.Provider>
 
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useOverlayTriggerState} />
+hook in `@react-stately/overlays`. The state object should be passed as an argument to `useOverlayTrigger`.
+
 ## Example
 
 This example shows how to build a typical popover overlay that is positioned relative to
-a trigger button. The content of the popover is a dialog, built 
+a trigger button. The content of the popover is a dialog, built
 with <TypeLink links={dialogDocs.links} type={dialogDocs.exports.useDialog} />.
 
 The popover can be closed by clicking or interacting outside the popover, or by pressing the Escape key.
 This is handled by <TypeLink links={docs.links} type={docs.exports.useOverlay} />.
-When the popover is closed, focus is restored back to its trigger button by a 
+When the popover is closed, focus is restored back to its trigger button by a
 &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;.
 
-Content outside the popover is hidden from screen readers 
+Content outside the popover is hidden from screen readers
 by <TypeLink links={docs.links} type={docs.exports.useModal} />.
 This improves the experience for screen reader users by ensuring that they don't
 navigate out of context. This is especially important when the popover is rendered
 into a portal at the end of the document, and the content just before it is
-unrelated to the original trigger. 
+unrelated to the original trigger.
 
 To allow screen reader users to more easily dismiss the popover, a visually hidden
 &lt;<TypeLink links={docs.links} type={docs.exports.DismissButton} />&gt;
@@ -104,6 +109,7 @@ end of the document body. If a nested overlay is opened, then the first overlay 
 to `aria-hidden`, so that only the top-most overlay is accessible to screen readers.
 
 ```tsx example
+import {useOverlayTriggerState} from '@react-stately/overlays';
 import {
   useOverlay,
   useOverlayPosition,
@@ -126,19 +132,18 @@ const Popover = React.forwardRef(({
   ...otherProps
 }, ref) => {
   // Handle interacting outside the dialog and pressing
-  // the the Escape key to close the modal. 
+  // the the Escape key to close the modal.
   let {overlayProps} = useOverlay({
-    ref,
     onClose,
     isOpen,
     isDismissable: true
-  });
+  }, ref);
 
   // Hide content outside the modal from screen readers.
   useModal();
 
   // Get props for the dialog and its title
-  let {dialogProps, titleProps} = useDialog({ref});
+  let {dialogProps, titleProps} = useDialog({}, ref);
 
   return (
     <FocusScope restoreFocus>
@@ -164,7 +169,7 @@ const Popover = React.forwardRef(({
 });
 
 function Example() {
-  let [isOpen, setOpen] = React.useState(false);
+  let state = useOverlayTriggerState({});
 
   let triggerRef = React.useRef();
   let overlayRef = React.useRef();
@@ -172,12 +177,7 @@ function Example() {
   // Get props for the trigger and overlay. This also handles
   // hiding the overlay when a parent element of the trigger scrolls
   // (which invalidates the popover positioning).
-  let {triggerProps, overlayProps} = useOverlayTrigger({
-    ref: triggerRef,
-    type: 'dialog',
-    onClose: () => setOpen(false),
-    isOpen
-  });
+  let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
 
   // Get popover positioning props relative to the trigger
   let {overlayProps: positionProps} = useOverlayPosition({
@@ -185,32 +185,32 @@ function Example() {
     overlayRef,
     placement: 'top',
     offset: 5,
-    isOpen
+    isOpen: state.isOpen
   });
 
   // useButton ensures that focus management is handled correctly,
   // across all browsers. Focus is restored to the button once the
   // popover closes.
   let {buttonProps} = useButton({
-    onPress: () => setOpen(true)
+    onPress: () => state.open()
   });
 
   return <>
-    <button 
+    <button
       {...buttonProps}
       {...triggerProps}
       ref={triggerRef}>
       Open Popover
     </button>
-    {isOpen &&
+    {state.isOpen &&
       <OverlayContainer>
         <Popover
           {...overlayProps}
           {...positionProps}
           ref={overlayRef}
           title="Popover title"
-          isOpen
-          onClose={() => setOpen(false)}>
+          isOpen={state.isOpen}
+          onClose={state.close}>
           This is the content of the popover.
         </Popover>
       </OverlayContainer>

@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/link';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-spectrum/link/package.json';
 
 ```jsx import
 import {Link} from '@react-spectrum/link';
@@ -35,19 +35,12 @@ category: Navigation
 ## Example
 
 ```tsx example
-<Link onPress={() => alert('pressed!')}>The missing link.</Link>
+<Link><a href="https://www.imdb.com/title/tt6348138/" target="_blank">The missing link.</a></Link>
 ```
 
 ## Content
 
 Links accept content as children.
-If the content is plain text, it will be styled and exposed to assistive technologies as a link.
-Events will need to be handled in JavaScript with the `onPress` prop.
-
-```tsx example
-<Link onPress={() => alert('pressed!')}>A label</Link>
-```
-
 If the child is a native anchor element, or a link component used with a client side router, the Link component will add spectrum styles and event handlers to that element.
 Actual navigation will be handled by the wrapped element.
 
@@ -63,6 +56,15 @@ import {Link as RouterLink} from 'react-router-dom';
 
 <Link><RouterLink to="/next-page">Next Page</RouterLink></Link>
 ```
+
+If the content is plain text, it will be styled and exposed to assistive technologies as a link.
+Events will need to be handled in JavaScript with the `onPress` prop.
+Note: this will not behave like a native link. Browser features like context menus and open in new tab will not apply.
+
+```tsx example
+<Link onPress={() => alert('pressed!')}>A label</Link>
+```
+
 
 ### Internationalization
 
@@ -101,12 +103,12 @@ Be mindful of what the experience is for users navigating with screen readers. M
 
 ### Over background
 ```tsx example
-<View backgroundColor="positive" padding="25px">
+<View backgroundColor="positive" padding="size-300">
   <Link variant="overBackground">Learn more here!</Link>
 </View>
 ```
 
-### quiet
+### Quiet
 ```tsx example
 <p>Would you like to <Link isQuiet>learn more</Link> about this fine component?</p>
 ```

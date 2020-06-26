@@ -11,11 +11,10 @@
  */
 
 import {ButtonProps} from '@react-types/button';
-import {classNames, filterDOMProps, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
-import React from 'react';
+import React, {RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 
@@ -28,7 +27,6 @@ interface FieldButtonProps extends ButtonProps, DOMProps, StyleProps {
 // @private
 function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
   let {
-    elementType: ElementType = 'button',
     isQuiet,
     isDisabled,
     validationState,
@@ -37,14 +35,14 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
     isActive,
     ...otherProps
   } = props;
-  let domRef = useFocusableRef(ref);
+  let domRef = useFocusableRef(ref) as RefObject<HTMLButtonElement>;
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
-      <ElementType
-        {...mergeProps(filterDOMProps(otherProps), buttonProps)}
+      <button
+        {...buttonProps}
         ref={domRef}
         className={
           classNames(
@@ -68,7 +66,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
           }}>
           {children}
         </SlotProvider>
-      </ElementType>
+      </button>
     </FocusRing>
   );
 }

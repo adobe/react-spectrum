@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
@@ -20,10 +20,6 @@ import {useRadio} from '@react-aria/radio';
 import {useRadioProvider} from './context';
 
 function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
-  if (!props.children && !props['aria-label']) {
-    console.warn('If no children are provided, an aria-label must be specified');
-  }
-
   let {
     isDisabled,
     children,
@@ -51,12 +47,6 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
 
   return (
     <label
-      {...filterDOMProps(
-        otherProps,
-        {
-          'aria-label': false
-        }
-      )}
       {...styleProps}
       ref={domRef}
       className={
@@ -88,6 +78,7 @@ function Radio(props: SpectrumRadioProps, ref: FocusableRef<HTMLLabelElement>) {
     </label>
   );
 }
+
 /**
  * Radio buttons allow users to select a single option from a list of mutually exclusive options.
  * All possible options are exposed up front for users to compare.

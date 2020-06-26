@@ -259,6 +259,17 @@ describe('Shared TextField behavior', () => {
     }
   });
 
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+  `('$Name passes through aria-errormessage', ({Name, Component}) => {
+    let tree = renderComponent(Component, {validationState: 'invalid', 'aria-label': 'mandatory label', 'aria-errormessage': 'error'});
+    let input = tree.getByRole('textbox');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAttribute('aria-errormessage', 'error');
+  });
+
   // Omitting SearchField because I don't think we support this use case. If we do, will need to change css a bit
   it.each`
     Name                | Component
@@ -405,5 +416,29 @@ describe('Shared TextField behavior', () => {
     let label = document.getElementById(labelId);
     expect(label).toHaveTextContent('Textfield label');
     expect(label).toHaveAttribute('for', input.id);
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name passes through ARIA props', ({Name, Component}) => {
+    let tree = renderComponent(Component, {'aria-label': 'mandatory label', 'aria-activedescendant': 'test', 'aria-autocomplete': 'list', 'aria-haspopup': 'menu'});
+    let input = tree.getByTestId(testId);
+    expect(input).toHaveAttribute('aria-activedescendant', 'test');
+    expect(input).toHaveAttribute('aria-autocomplete', 'list');
+    expect(input).toHaveAttribute('aria-haspopup', 'menu');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name supports excludeFromTabOrder', ({Name, Component}) => {
+    let tree = renderComponent(Component, {excludeFromTabOrder: true, 'aria-label': 'mandatory label'});
+    let input = tree.getByTestId(testId);
+    expect(input).toHaveAttribute('tabIndex', '-1');
   });
 });

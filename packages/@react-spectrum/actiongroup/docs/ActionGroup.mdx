@@ -1,0 +1,252 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/actiongroup';
+import collectionsDocs from 'docs:@react-stately/collections';
+import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/actiongroup/package.json';
+
+```jsx import
+import {ActionGroup} from '@react-spectrum/actiongroup';
+import Brush from '@spectrum-icons/workflow/Brush';
+import Edit from '@spectrum-icons/workflow/Edit';
+import {Item} from '@react-stately/collections';
+import RegionSelect from '@spectrum-icons/workflow/RegionSelect';
+import Select from '@spectrum-icons/workflow/Select';
+```
+
+---
+category: Buttons
+---
+
+# ActionGroup
+
+<p>{docs.exports.ActionGroup.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ActionGroup']} />
+
+## Example
+
+```tsx example
+<ActionGroup>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
+</ActionGroup>
+```
+
+## Content
+
+ActionGroups accepts a list of `children`, each with a `key` prop. It is required that the `children` are <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Item} /> components from the `@react-stately/collections` library.
+
+However, a function that returns `Item` components is also accepted.
+
+```tsx example
+const items = [
+  {children: 'React', name: 'React'},
+  {children: 'Add', name: 'Add'},
+  {children: 'Delete', name: 'Delete'}
+];
+<ActionGroup items={items}>
+  {item => <Item key={item.name}>{item.children}</Item>}
+</ActionGroup>
+```
+
+
+Each item needs to have a `key` prop so it can be identified when actioned upon by a user.
+
+See [Events](#events) for more information.
+
+## Value
+
+ActionGroups are uncontrolled by default.
+
+Use `defaultSelectedKeys` to provide a default set of selected items. The value of the selected keys must match the `key` prop of the items.
+
+```tsx example
+<ActionGroup selectionMode="single" defaultSelectedKeys={['list']}>
+  <Item key="grid">Grid view</Item>
+  <Item key="list">List view</Item>
+  <Item key="gallery">Gallery view</Item>
+</ActionGroup>
+```
+
+The `selectedKeys` prop can be used to make the selected state controlled.
+
+```tsx example
+<ActionGroup selectionMode="single" selectedKeys={['list']}>
+  <Item key="grid">Grid view</Item>
+  <Item key="list">List view</Item>
+  <Item key="gallery">Gallery view</Item>
+</ActionGroup>
+```
+
+### Accessibility
+
+If no visible label is provided (e.g. an icon only) to each item, an alternative text label must be provided to identify the control for accessibility.
+This should be added using the `aria-label` prop to each Item.
+
+```tsx example
+<ActionGroup>
+  <Item key="brush" aria-label="Brush"><Brush /></Item>
+  <Item key="select" aria-label="Select"><Select /></Item>
+  <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
+</ActionGroup>
+```
+
+### Internationalization
+
+In order to internationalize an ActionGroup, the strings of all child items should be localized.
+
+## Events
+
+Use the `onSelectionChange` prop as a callback to handle press events on items.
+The `key` prop from the selected item will be passed into the callback.
+
+The following example uses the `onSelectionChange` prop to update a string stored in React state.
+
+```tsx example
+function Example() {
+  let [lastKey, setLastKey] = React.useState(new Set());
+  return (
+    <div>
+      <ActionGroup selectionMode="single" onSelectionChange={setLastKey}>
+        <Item key="grid">Grid view</Item>
+        <Item key="list">List view</Item>
+        <Item key="gallery">Gallery view</Item>
+      </ActionGroup>
+      <p>Current selection: {lastKey}</p>
+    </div>
+  );
+}
+```
+
+For multiple selections, use the `selectionMode` prop with the `multiple` value.
+```tsx example
+function Example() {
+  let [selectedKeys, setSelectedKeys] = React.useState(new Set());
+  return (
+    <div>
+      <ActionGroup selectionMode="multiple" onSelectionChange={setSelectedKeys}>
+        <Item key="keywords">Keywords</Item>
+        <Item key="info">Info</Item>
+        <Item key="properties">Properties</Item>
+      </ActionGroup>
+      <p>Selected: {[...selectedKeys].toString()}</p>
+    </div>
+  );
+}
+```
+
+To continue to capturing actions when `selectionMode` is `none`, utilize the `onAction` prop.
+```tsx example
+function Example() {
+  let [actedKey, setActedKey] = React.useState('');
+  return (
+    <div>
+      <ActionGroup onAction={setActedKey}>
+        <Item key="add">Add</Item>
+        <Item key="delete">Delete</Item>
+        <Item key="edit">Edit</Item>
+      </ActionGroup>
+      <p>Last action: {actedKey}</p>
+    </div>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.ActionGroup} links={docs.links} />
+
+## Visual Options
+
+### Quiet
+
+```tsx example
+<ActionGroup isQuiet>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
+</ActionGroup>
+```
+
+### Emphasis
+
+The additional styling provided by the `isEmphasized` prop is only applied when items are selected.
+
+```tsx example
+<ActionGroup isEmphasized selectionMode="single" defaultSelectedKeys={['list']}>
+  <Item key="grid">Grid view</Item>
+  <Item key="list">List view</Item>
+  <Item key="gallery">Gallery view</Item>
+</ActionGroup>
+```
+
+### Disabled
+
+To disable the entire ActionGroup, use the `isDisabled` prop on the root.
+
+```tsx example
+<ActionGroup isDisabled>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
+</ActionGroup>
+```
+
+To disable individual items, a list of `disabledKeys` can be provided.
+
+```tsx example
+<ActionGroup disabledKeys={['add', 'delete']}>
+  <Item key="add">Add</Item>
+  <Item key="delete">Delete</Item>
+  <Item key="edit">Edit</Item>
+</ActionGroup>
+```
+
+### Orientation
+
+Using the `orientation` prop with value `vertical` changes the alignment of the items to follow the y-axis.
+
+```tsx example
+<ActionGroup orientation="vertical" maxWidth="32px">
+  <Item key="brush" aria-label="Brush"><Brush /></Item>
+  <Item key="select" aria-label="Select"><Select /></Item>
+  <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
+</ActionGroup>
+```
+
+### Density
+
+Using the `density` prop with value `compact` changes the margins between the buttons.
+In the default case, this merges the borders of neighboring ActionButtons. In the
+quiet case, it just reduces the margin size between the buttons.
+
+```tsx example
+<ActionGroup density="compact">
+  <Item key="brush" aria-label="Brush"><Brush /></Item>
+  <Item key="select" aria-label="Select"><Select /></Item>
+  <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
+</ActionGroup>
+```
+
+
+```tsx example
+<ActionGroup isQuiet density="compact">
+  <Item key="brush" aria-label="Brush"><Brush /></Item>
+  <Item key="select" aria-label="Select"><Select /></Item>
+  <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
+</ActionGroup>
+```

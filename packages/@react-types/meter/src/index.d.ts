@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ProgressBarBaseProps, SpectrumProgressBarBaseProps} from '@react-types/progress';
+import {AriaProgressBarBaseProps, ProgressBarBaseProps, SpectrumProgressBarBaseProps} from '@react-types/progress';
 
 export type MeterProps = ProgressBarBaseProps;
+export interface AriaMeterProps extends AriaProgressBarBaseProps {}
 export interface SpectrumMeterProps extends SpectrumProgressBarBaseProps {
   /** The [visual style](https://spectrum.adobe.com/page/meter/#-Options) of the Meter. */
   variant: 'positive' | 'warning' | 'critical'

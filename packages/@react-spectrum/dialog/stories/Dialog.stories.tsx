@@ -19,12 +19,11 @@ import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Heading, Text} from '@react-spectrum/typography';
+import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
-import {StatusLight} from '@react-spectrum/statuslight';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 
@@ -240,7 +239,7 @@ function render({width = 'auto', isDismissable = undefined, ...props}) {
         {(close) => (
           <Dialog {...props}>
             <Heading>The Heading</Heading>
-            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+            <Header>The Header</Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
             {!isDismissable &&
@@ -262,15 +261,15 @@ function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+            <Image slot="hero" alt="" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
             <Heading>The Heading</Heading>
-            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+            <Header>The Header</Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
             {!isDismissable &&
               <ButtonGroup>
                 <Button variant="secondary" onPress={close}>Cancel</Button>
-                <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+                <Button variant="cta" onPress={close}>Confirm</Button>
               </ButtonGroup>}
           </Dialog>
           )}
@@ -287,7 +286,7 @@ function renderFooter({width = 'auto', isDismissable = undefined, ...props}) {
         {(close) => (
           <Dialog {...props}>
             <Heading>The Heading</Heading>
-            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+            <Header>The Header</Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
             <Footer><Checkbox>I accept</Checkbox></Footer>
@@ -323,7 +322,7 @@ function renderWithForm({width = 'auto', ...props}) {
         {(close) => (
           <Dialog {...props}>
             <Heading>The Heading</Heading>
-            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+            <Header>The Header</Header>
             <Divider />
             <Content>
               <Form>
@@ -392,7 +391,7 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
         {(close) => (
           <Dialog {...props}>
             <Heading>The Heading</Heading>
-            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+            <Header>The Header</Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
             <ButtonGroup>
@@ -437,7 +436,7 @@ function renderWithDividerInContent({width = 'auto', ...props}) {
         {(close) => (
           <Dialog {...props}>
             <Heading>The Heading</Heading>
-            <Header><StatusLight variant="positive">Life is good</StatusLight></Header>
+            <Header>The Header</Header>
             <Divider />
             <Content>
               <Flex UNSAFE_style={{padding: '10px'}}>

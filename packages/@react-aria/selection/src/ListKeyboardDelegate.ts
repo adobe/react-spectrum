@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-stately/collections';
+import {Collection, KeyboardDelegate, Node} from '@react-types/shared';
 import {Key, RefObject} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
 
 export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<Node<T>>;
@@ -87,7 +86,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     let pageY = Math.max(0, item.offsetTop + item.offsetHeight - menu.offsetHeight);
-    
+
     while (item && item.offsetTop > pageY) {
       key = this.getKeyAbove(key);
       item = this.getItem(key);

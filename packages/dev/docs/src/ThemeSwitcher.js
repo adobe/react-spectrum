@@ -39,11 +39,11 @@ function useCurrentColorScheme() {
   return colorScheme;
 }
 
-export function ThemeProvider({children, UNSAFE_className}) {
+export function ThemeProvider({children, colorScheme: colorSchemeProp, UNSAFE_className}) {
   let colorScheme = useCurrentColorScheme();
 
   return (
-    <Provider theme={theme} colorScheme={colorScheme} UNSAFE_className={UNSAFE_className}>
+    <Provider theme={theme} colorScheme={colorSchemeProp || colorScheme} UNSAFE_className={UNSAFE_className}>
       {children}
     </Provider>
   );
@@ -53,8 +53,8 @@ export function Snippet({children}) {
   return <ThemeProvider UNSAFE_className={styles.snippet}>{children}</ThemeProvider>;
 }
 
-export function Example({children}) {
-  return <ThemeProvider UNSAFE_className={styles.example}>{children}</ThemeProvider>;
+export function Example({children, colorScheme}) {
+  return <ThemeProvider colorScheme={colorScheme} UNSAFE_className={styles.example}>{children}</ThemeProvider>;
 }
 
 export function ThemeSwitcher() {
@@ -63,12 +63,15 @@ export function ThemeSwitcher() {
     localStorage.theme = (colorScheme === 'dark' ? 'light' : 'dark');
     window.dispatchEvent(new Event('storage'));
   };
+  let label = colorScheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme';
 
   return (
-    <ActionButton 
-      aria-label={colorScheme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-      onPress={onPress}>
-      {colorScheme === 'dark' ? <Light /> : <Moon />}
-    </ActionButton>
+    <div title={label}>
+      <ActionButton
+        aria-label={label}
+        onPress={onPress}>
+        {colorScheme === 'dark' ? <Light /> : <Moon />}
+      </ActionButton>
+    </div>
   );
 }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {ModalProps} from '@react-types/overlays';
@@ -38,7 +38,6 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
     <Overlay {...otherProps}>
       <Underlay />
       <ModalWrapper
-        {...filterDOMProps(otherProps)}
         {...styleProps}
         onClose={onClose}
         type={type}
@@ -56,10 +55,11 @@ let typeMap = {
 };
 
 let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
-  let {children, onClose, isOpen, type, isDismissable = false, ...otherProps} = props;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {children, isOpen, type, isDismissable, ...otherProps} = props;
   let typeVariant = typeMap[type];
 
-  let {overlayProps} = useOverlay({ref, onClose, isOpen, isDismissable});
+  let {overlayProps} = useOverlay(props, ref);
   usePreventScroll();
   useModal();
 

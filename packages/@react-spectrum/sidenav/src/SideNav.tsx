@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {CollectionItem, CollectionView} from '@react-aria/collections';
-import {ListLayout, Node} from '@react-stately/collections';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {ListLayout} from '@react-stately/layout';
+import {Node} from '@react-types/shared';
 import React, {ReactElement, useMemo, useRef} from 'react';
-import {ReusableView} from '@react-stately/collections';
+import {ReusableView} from '@react-stately/virtualizer';
 import {SideNavContext} from './SideNavContext';
 import {SideNavItem} from './SideNavItem';
 import {SideNavSection} from './SideNavSection';
@@ -23,9 +23,10 @@ import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {useCollator} from '@react-aria/i18n';
 import {useSideNav} from '@react-aria/sidenav';
 import {useTreeState} from '@react-stately/tree';
+import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 
 export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
-  let state = useTreeState({...props, selectionMode: 'single', disallowEmptySelection: true});
+  let state = useTreeState(props);
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() => new ListLayout({rowHeight: 40, collator}), [collator]);
   let ref = useRef();
@@ -51,7 +52,7 @@ export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
     }
 
     return (
-      <CollectionItem 
+      <VirtualizerItem
         key={reusableView.key}
         reusableView={reusableView}
         parent={parent} />
@@ -60,11 +61,10 @@ export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
 
   return (
     <nav
-      {...filterDOMProps(props)}
       {...navProps}
       {...styleProps}>
       <SideNavContext.Provider value={state}>
-        <CollectionView
+        <Virtualizer
           {...listProps}
           ref={ref}
           focusedKey={state.selectionManager.focusedKey}
@@ -79,7 +79,7 @@ export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
               );
             }
           }}
-        </CollectionView>
+        </Virtualizer>
       </SideNavContext.Provider>
     </nav>
   );

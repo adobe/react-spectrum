@@ -58,7 +58,7 @@ for (let pkg of packages) {
     softAssert(json.module.endsWith('.js'), `${pkg}#module should be a .js file but got "${json.module}"`);
     softAssert(json.source, `${pkg} did not have "source"`);
     softAssert.equal(json.source, "src/index.ts", `${pkg} did not match "src/index.ts"`);
-    softAssert.deepEqual(json.files, ['dist'], `${pkg} did not match "files"`);
+    softAssert.deepEqual(json.files, ['dist', 'src'], `${pkg} did not match "files"`);
     softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
     softAssert(!json.dependencies || !json.dependencies['@adobe/spectrum-css-temp'], `${pkg} has @adobe/spectrum-css-temp in dependencies instead of devDependencies`);
     softAssert(json.dependencies && json.dependencies['@babel/runtime'], `${pkg} is missing a dependency on @babel/runtime`);
@@ -99,7 +99,7 @@ for (let pkg of packages) {
   let json = JSON.parse(fs.readFileSync(pkg));
   let [scope, basename] = json.name.split('/');
 
-  if (basename.includes('utils')) {
+  if (basename.includes('utils') || basename.includes('layout')) {
     continue;
   }
   if (scope === '@react-spectrum') {

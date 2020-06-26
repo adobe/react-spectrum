@@ -15,8 +15,7 @@ import intlMessages from '../intl/*.json';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {useSearchField} from '../';
 
 describe('useSearchField hook', () => {
@@ -27,7 +26,7 @@ describe('useSearchField hook', () => {
   let onClear = jest.fn();
 
   let renderSearchHook = (props, wrapper) => {
-    let {result} = renderHook(() => useSearchField(props, state, ref), {wrapper});
+    let {result} = renderHook(() => useSearchField({...props, 'aria-label': 'testLabel'}, state, ref), {wrapper});
     return result.current;
   };
 
@@ -99,26 +98,22 @@ describe('useSearchField hook', () => {
   describe('should return clearButtonProps', () => {
     it('with a localized aria-label', () => {
       let locale = 'de-DE';
-      let theme = {
-        light: themeLight,
-        medium: scaleMedium
-      };
-
       let wrapper = ({children}) => <Provider locale={locale} theme={theme}>{children}</Provider>;
       let expectedIntl = intlMessages[locale]['Clear search'];
       let {clearButtonProps} = renderSearchHook({}, wrapper);
       expect(clearButtonProps['aria-label']).toBe(expectedIntl);
     });
 
-    it('clear button should not be focusable', () => {
+    it('clear button should not be tabbable', () => {
       let {clearButtonProps} = renderSearchHook({});
-      expect(clearButtonProps.tabIndex).toBe(-1);
+      expect(clearButtonProps.excludeFromTabOrder).toBe(true);
     });
 
     describe('with specific onPress behavior', () => {
       let mockEvent = {blah: 1};
       it('sets the state to "" and focuses the search field', () => {
         let {clearButtonProps} = renderSearchHook({});
+        clearButtonProps.onPressStart(mockEvent);
         clearButtonProps.onPress(mockEvent);
         expect(state.setValue).toHaveBeenCalledTimes(1);
         expect(state.setValue).toHaveBeenCalledWith('');
@@ -127,6 +122,7 @@ describe('useSearchField hook', () => {
 
       it('calls the user provided onClear if provided', () => {
         let {clearButtonProps} = renderSearchHook({onClear});
+        clearButtonProps.onPressStart(mockEvent);
         clearButtonProps.onPress(mockEvent);
         // Verify that onClearButtonClick stuff still triggers
         expect(state.setValue).toHaveBeenCalledTimes(1);
@@ -134,6 +130,7 @@ describe('useSearchField hook', () => {
         expect(ref.current.focus).toHaveBeenCalledTimes(1);
         // Verify that props.onClear is triggered as well with the same event
         expect(onClear).toHaveBeenCalledTimes(1);
+        expect(onClear).toHaveBeenCalledWith();
       });
     });
   });

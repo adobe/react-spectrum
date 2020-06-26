@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {Overlay} from './Overlay';
@@ -37,7 +37,6 @@ function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
     <Overlay {...otherProps}>
       <Underlay />
       <TrayWrapper
-        {...filterDOMProps(otherProps)}
         {...styleProps}
         onClose={onClose}
         shouldCloseOnBlur={shouldCloseOnBlur}
@@ -51,12 +50,12 @@ function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
 let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<HTMLDivElement>) {
   let {
     children,
-    onClose,
-    shouldCloseOnBlur,
     isOpen,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    shouldCloseOnBlur,
     ...otherProps
   } = props;
-  let {overlayProps} = useOverlay({ref, onClose, shouldCloseOnBlur, isOpen, isDismissable: true});
+  let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
   usePreventScroll();
   useModal();
 

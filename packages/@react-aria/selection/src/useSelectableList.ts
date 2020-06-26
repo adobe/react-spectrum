@@ -10,10 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-stately/collections';
-import {FocusStrategy} from '@react-types/menu';
+import {Collection, FocusStrategy, KeyboardDelegate, Node} from '@react-types/shared';
 import {HTMLAttributes, Key, RefObject, useEffect, useMemo} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useCollator} from '@react-aria/i18n';
@@ -54,7 +52,7 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
   let delegate = useMemo(() => keyboardDelegate || new ListKeyboardDelegate(collection, disabledKeys, ref, collator), [keyboardDelegate, collection, disabledKeys, ref, collator]);
 
   // If not virtualized, scroll the focused element into view when the focusedKey changes.
-  // When virtualized, CollectionView handles this internally.
+  // When virtualized, Virtualizer handles this internally.
   useEffect(() => {
     if (!isVirtualized && selectionManager.focusedKey) {
       let element = ref.current.querySelector(`[data-key="${selectionManager.focusedKey}"]`) as HTMLElement;

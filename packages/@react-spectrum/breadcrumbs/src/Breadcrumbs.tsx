@@ -12,115 +12,129 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {Key, useEffect, useRef, useState} from 'react';
+import React, {Key, ReactElement, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
 import {useProviderProps} from '@react-spectrum/provider';
 
-// This value doesn't include the "menu", or the root if showRoot = true. The reason we ignore the menu and root is
-// because we always want to make sure we show the current breadcrumb.
 const MIN_VISIBLE_ITEMS = 1;
-
-// When dealing with the maximum number of items, we consider the root an item if showRoot = true (which is different
-// to the minimum). This means you'll see the root, the menu, and 4 other items when showRoot = true. When the root is
-// not showing, you'll see the menu and 5 other items.
-const MAX_VISIBLE_ITEMS = 5;
+const MAX_VISIBLE_ITEMS = 4;
 
 function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   props = useProviderProps(props);
   let {
-    size = 'M',
+    size = 'L',
+    isMultiline,
     children,
-    isHeading,
-    headingAriaLevel,
     showRoot,
     isDisabled,
-    maxVisibleItems = MAX_VISIBLE_ITEMS,
     onAction,
     ...otherProps
   } = props;
 
-  let childArray = React.Children.toArray(children);
-  let isCollapsible = maxVisibleItems === 'auto';
+  // Not using React.Children.toArray because it mutates the key prop.
+  let childArray: ReactElement[] = [];
+  React.Children.forEach(children, child => {
+    if (React.isValidElement(child)) {
+      childArray.push(child);
+    }
+  });
 
   let domRef = useDOMRef(ref);
-  let listRef = useRef(null);
+  let listRef = useRef<HTMLUListElement>(null);
 
-  let defaultVisibleItems: number;
+  let [visibleItems, setVisibleItems] = useValueEffect(childArray.length);
 
-  if (isCollapsible) {
-    defaultVisibleItems = childArray.length;
-  } else {
-    defaultVisibleItems = showRoot ? maxVisibleItems as number - 1 : maxVisibleItems as number;
-  }
-
-  const [visibleItems, setVisibleItems] = useState(defaultVisibleItems);
-
-  let {breadcrumbsProps} = useBreadcrumbs(props);
+  let {navProps} = useBreadcrumbs(props);
   let {styleProps} = useStyleProps(otherProps);
 
+  let updateOverflow = useCallback(() => {
+    let computeVisibleItems = (visibleItems: number) => {
+      let listItems = Array.from(listRef.current.children) as HTMLLIElement[];
+      let containerWidth = listRef.current.offsetWidth;
+      let isShowingMenu = childArray.length > visibleItems;
+      let calculatedWidth = 0;
+      let newVisibleItems = 0;
+      let maxVisibleItems = MAX_VISIBLE_ITEMS;
+
+      if (showRoot) {
+        calculatedWidth += listItems.shift().offsetWidth;
+        newVisibleItems++;
+      }
+
+      if (isShowingMenu) {
+        calculatedWidth += listItems.shift().offsetWidth;
+        maxVisibleItems--;
+      }
+
+      if (showRoot && calculatedWidth >= containerWidth) {
+        newVisibleItems--;
+      }
+
+      // TODO: what if multiline and only one breadcrumb??
+      if (isMultiline) {
+        listItems.pop();
+        newVisibleItems++;
+      } else {
+        // Ensure the last breadcrumb isn't truncated when we measure it.
+        let last = listItems.pop();
+        last.style.overflow = 'visible';
+
+        calculatedWidth += last.offsetWidth;
+        if (calculatedWidth < containerWidth) {
+          newVisibleItems++;
+        }
+
+        last.style.overflow = '';
+      }
+
+      for (let breadcrumb of listItems.reverse()) {
+        calculatedWidth += breadcrumb.offsetWidth;
+        if (calculatedWidth < containerWidth) {
+          newVisibleItems++;
+        }
+      }
+
+      return Math.max(MIN_VISIBLE_ITEMS, Math.min(maxVisibleItems, newVisibleItems));
+    };
+
+    setVisibleItems(function *() {
+      // Update to show all items.
+      yield childArray.length;
+
+      // Measure, and update to show the items that fit.
+      let newVisibleItems = computeVisibleItems(childArray.length);
+      yield newVisibleItems;
+
+      // If the number of items is less than the number of children,
+      // then update again to ensure that the menu fits.
+      if (newVisibleItems < childArray.length && newVisibleItems > 1) {
+        yield computeVisibleItems(newVisibleItems);
+      }
+    });
+  }, [listRef, children, setVisibleItems, showRoot, isMultiline]);
+
   useEffect(() => {
-    // Only run the resize logic if the menu is collapsible to avoid the risk of performance problems.
-    if (isCollapsible && listRef.current) {
-      let listItems = [...listRef.current.children];
-      // Ignore the last item when the size is large because it wraps onto a new line and doesn't take up horizontal space.
-      let listItemsToMeasure = size === 'L' ? listItems.slice(0, listItems.length - 1) : listItems;
-      let childrenWidths = listItemsToMeasure.map((item) => item.getBoundingClientRect().width);
+    window.addEventListener('resize', updateOverflow, false);
+    return () => {
+      window.removeEventListener('resize', updateOverflow, false);
+    };
+  }, [updateOverflow]);
 
-      let onResize = () => {
-        let containerWidth = listRef.current.getBoundingClientRect().width;
-        let [rootBreadcrumbWidth, ...otherBreadcrumbWidths] = childrenWidths;
-        let calculatedWidth = 0;
+  useLayoutEffect(updateOverflow, [children]);
 
-        // Make sure we account for the root breadcrumb if it's enabled.
-        if (showRoot) {
-          calculatedWidth += rootBreadcrumbWidth;
-        }
-
-        let otherVisibleItemsCount = 0;
-
-        // See how many other breadcrumbs we can fit (starting from the right).
-        otherBreadcrumbWidths.reverse().forEach(breadcrumbWidth => {
-          calculatedWidth += breadcrumbWidth;
-          if (calculatedWidth < containerWidth) {
-            otherVisibleItemsCount++;
-          }
-        });
-
-        let minVisibleItems = showRoot ? MIN_VISIBLE_ITEMS + 1 : MIN_VISIBLE_ITEMS;
-
-        if (otherVisibleItemsCount < minVisibleItems) {
-          otherVisibleItemsCount = MIN_VISIBLE_ITEMS;
-        }
-
-        let maxVisibleOtherItems = showRoot ? MAX_VISIBLE_ITEMS - 1 : MAX_VISIBLE_ITEMS;
-
-        if (otherVisibleItemsCount > maxVisibleOtherItems) {
-          otherVisibleItemsCount = maxVisibleOtherItems;
-        }
-
-        setVisibleItems(otherVisibleItemsCount);
-      };
-
-      window.addEventListener('resize', onResize);
-      onResize();
-      return () => {
-        window.removeEventListener('resize', onResize);
-      };
-    }
-  }, [isCollapsible, childArray.length, listRef, showRoot, size]);
-
+  let contents = childArray;
   if (childArray.length > visibleItems) {
     let selectedItem = childArray[childArray.length - 1];
-    let selectedKey = selectedItem.props.uniqueKey || selectedItem.key;
+    let selectedKey = selectedItem.key ?? childArray.length - 1;
     let onMenuAction = (key: Key) => {
       // Don't fire onAction when clicking on the last item
-      if (key !== selectedKey) {
+      if (key !== selectedKey && onAction) {
         onAction(key);
       }
     };
@@ -141,20 +155,20 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
       </BreadcrumbItem>
     );
 
-    let [rootBreadcrumb, ...otherBreadcrumbs] = childArray;
-    let rootItems = showRoot ? [rootBreadcrumb, menuItem] : [menuItem];
-    let visibleBreadcrumbs = otherBreadcrumbs.slice(-visibleItems);
-
-    childArray = [
-      ...rootItems,
-      ...visibleBreadcrumbs
-    ];
+    contents = [menuItem];
+    let breadcrumbs = [...childArray];
+    let endItems = visibleItems;
+    if (showRoot && visibleItems > 1) {
+      contents.unshift(breadcrumbs.shift());
+      endItems--;
+    }
+    contents.push(...breadcrumbs.slice(-endItems));
   }
 
-  let lastIndex = childArray.length - 1;
-  let breadcrumbItems = childArray.map((child, index) => {
+  let lastIndex = contents.length - 1;
+  let breadcrumbItems = contents.map((child, index) => {
     let isCurrent = index === lastIndex;
-    let key = child.props.uniqueKey || child.key;
+    let key = child.key ?? index;
     let onPress = () => {
       if (onAction) {
         onAction(key);
@@ -172,8 +186,6 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         }>
         <BreadcrumbItem
           isCurrent={isCurrent}
-          isHeading={isCurrent && isHeading}
-          headingAriaLevel={headingAriaLevel}
           isDisabled={isDisabled}
           onPress={onPress}>
           {child.props.children}
@@ -184,10 +196,8 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   return (
     <nav
-      {...filterDOMProps(otherProps)}
       {...styleProps}
-      {...breadcrumbsProps}
-      className={classNames({}, styleProps.className)}
+      {...navProps}
       ref={domRef}>
       <ul
         ref={listRef}
@@ -196,8 +206,10 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
             styles,
             'spectrum-Breadcrumbs',
             {
-              'spectrum-Breadcrumbs--compact': size === 'S',
-              'spectrum-Breadcrumbs--multiline': size === 'L',
+              'spectrum-Breadcrumbs--small': size === 'S',
+              'spectrum-Breadcrumbs--medium': size === 'M',
+              'spectrum-Breadcrumbs--multiline': isMultiline,
+              'spectrum-Breadcrumbs--showRoot': showRoot,
               'is-disabled': isDisabled
             },
             styleProps.className
@@ -207,6 +219,52 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
       </ul>
     </nav>
   );
+}
+
+// This hook works like `useState`, but when setting the value, you pass a generator function
+// that can yield multiple values. Each yielded value updates the state and waits for the next
+// layout effect, then continues the generator. This allows sequential updates to state to be
+// written linearly.
+function useValueEffect(defaultValue) {
+  let [value, setValue] = useState(defaultValue);
+  let effect = useRef(null);
+
+  // Store the function in a ref so we can always access the current version
+  // which has the proper `value` in scope.
+  let nextRef = useRef(null);
+  nextRef.current = () => {
+    // Run the generator to the next yield.
+    let newValue = effect.current.next();
+
+    // If the generator is done, reset the effect.
+    if (newValue.done) {
+      effect.current = null;
+      return;
+    }
+
+    // If the value is the same as the current value,
+    // then continue to the next yield. Otherwise,
+    // set the value in state and wait for the next layout effect.
+    if (value === newValue.value) {
+      nextRef.current();
+    } else {
+      setValue(newValue.value);
+    }
+  };
+
+  useLayoutEffect(() => {
+    // If there is an effect currently running, continue to the next yield.
+    if (effect.current) {
+      nextRef.current();
+    }
+  });
+
+  let queue = useCallback(fn => {
+    effect.current = fn();
+    nextRef.current();
+  }, [effect, nextRef]);
+
+  return [value, queue];
 }
 
 /**

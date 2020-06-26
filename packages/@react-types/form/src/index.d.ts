@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, SpectrumLabelableProps, StyleProps, ValidationState} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, SpectrumLabelableProps, StyleProps, ValidationState} from '@react-types/shared';
 import {ReactElement} from 'react';
 
-export interface SpectrumFormProps extends DOMProps, StyleProps, SpectrumLabelableProps {
+export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StyleProps, SpectrumLabelableProps {
   /** The contents of the Form. */
   children: ReactElement<SpectrumLabelableProps> | ReactElement<SpectrumLabelableProps>[],
   /** Whether the Form elements are displayed with their quiet style. */
@@ -26,9 +26,9 @@ export interface SpectrumFormProps extends DOMProps, StyleProps, SpectrumLabelab
   isRequired?: boolean,
   /** Whether the Form elements can be selected but not changed by the user. */
   isReadOnly?: boolean,
-  /** 
-   * Whether the Form elements should display their "valid" or "invalid" visual styling. 
-   * @default "valid"
+  /**
+   * Whether the Form elements should display their "valid" or "invalid" visual styling.
+   * @default 'valid'
    */
   validationState?: ValidationState
 }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CheckboxProps} from '@react-types/checkbox';
+import {AriaCheckboxProps} from '@react-types/checkbox';
 import {InputHTMLAttributes, RefObject, useEffect} from 'react';
 import {ToggleState} from '@react-stately/toggle';
 import {useToggle} from '@react-aria/toggle';
@@ -22,13 +22,13 @@ export interface CheckboxAria {
 
 /**
  * Provides the behavior and accessibility implementation for a checkbox component.
- * Checkboxes allow users to select multiple items from a list of individual items, or 
+ * Checkboxes allow users to select multiple items from a list of individual items, or
  * to mark one individual item as selected.
  * @param props - props for the checkbox
  * @param state - state for the checkbox, as returned by `useToggleState`
  * @param inputRef - a ref for the HTML input element
  */
-export function useCheckbox(props: CheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
+export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
   let {inputProps} = useToggle(props, state, inputRef);
   let {isSelected} = state;
 
@@ -39,7 +39,7 @@ export function useCheckbox(props: CheckboxProps, state: ToggleState, inputRef: 
     if (inputRef.current) {
       inputRef.current.indeterminate = isIndeterminate;
     }
-  }, [inputRef, isIndeterminate]);
+  });
 
   return {
     inputProps: {

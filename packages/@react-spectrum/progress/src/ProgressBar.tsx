@@ -23,7 +23,7 @@ function ProgressBar(props: SpectrumProgressBarProps, ref: DOMRef<HTMLDivElement
   const {
     progressBarProps,
     labelProps
-  } = useProgressBar({...otherProps, textValue: otherProps.valueLabel as any});
+  } = useProgressBar(props);
 
   return (
     <ProgressBarBase

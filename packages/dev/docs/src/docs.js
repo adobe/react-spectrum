@@ -16,6 +16,7 @@ import {Content, View} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
+import {Heading} from '@react-spectrum/text';
 import highlightCss from './syntax-highlight.css';
 import {Pressable} from '@react-aria/interactions';
 import React, {useEffect, useRef, useState} from 'react';
@@ -57,10 +58,10 @@ function LinkPopover({id}) {
   return (
     <Dialog UNSAFE_className={`${highlightCss.spectrum} ${docsStyle.popover}`} size="L">
       <View slot="heading">
-        <Breadcrumbs isHeading headingAriaLevel={3} onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}>
+        <Breadcrumbs onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}>
           {breadcrumbs.map((b, i) => (
-            <Item uniqueKey={i + 1}>
-              {b.dataset.title}
+            <Item key={i + 1}>
+              {i < (breadcrumbs.length - 1) ? b.dataset.title : <Heading level={3}>{b.dataset.title}</Heading>}
             </Item>
           ))}
         </Breadcrumbs>
