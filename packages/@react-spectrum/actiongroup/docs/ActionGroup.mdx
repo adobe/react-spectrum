@@ -26,6 +26,7 @@ import Select from '@spectrum-icons/workflow/Select';
 
 ---
 category: Buttons
+keywords: [toolbar, actiongroup, collections]
 ---
 
 # ActionGroup
@@ -62,7 +63,6 @@ const items = [
   {item => <Item key={item.name}>{item.children}</Item>}
 </ActionGroup>
 ```
-
 
 Each item needs to have a `key` prop so it can be identified when actioned upon by a user.
 
@@ -170,7 +170,7 @@ function Example() {
 
 <PropTable component={docs.exports.ActionGroup} links={docs.links} />
 
-## Visual Options
+## Visual options
 
 ### Quiet
 
@@ -182,7 +182,7 @@ function Example() {
 </ActionGroup>
 ```
 
-### Emphasis
+### Emphasize
 
 The additional styling provided by the `isEmphasized` prop is only applied when items are selected.
 
@@ -241,7 +241,6 @@ quiet case, it just reduces the margin size between the buttons.
   <Item key="regionSelect" aria-label="Select Region"><RegionSelect /></Item>
 </ActionGroup>
 ```
-
 
 ```tsx example
 <ActionGroup isQuiet density="compact">

@@ -79,7 +79,7 @@ function Hamburger() {
   }, []);
 
   return (
-    <ActionButton onPress={onPress} UNSAFE_className={docsStyle.hamburger} aria-label="Open navigation panel">
+    <ActionButton UNSAFE_className={docsStyle.hamburgerButton} onPress={onPress} aria-label="Open navigation panel">
       <ShowMenu />
     </ActionButton>
   );
@@ -89,3 +89,23 @@ ReactDOM.render(<>
   <Hamburger />
   <ThemeSwitcher />
 </>, document.getElementById('header'));
+
+document.addEventListener('mousedown', (e) => {
+  // Prevent focusing on links to other pages with the mouse to avoid flash of focus ring during navigation.
+  let link = e.target.closest('a');
+  if (link && (link.host !== location.host || link.pathname !== location.pathname)) {
+    e.preventDefault();
+  }
+
+  // Add mouse focus class to summary elements on mouse down to prevent native browser focus from showing.
+  if (e.target.tagName === 'SUMMARY') {
+    e.target.classList.add(docsStyle.mouseFocus);
+  }
+});
+
+// Remove mouse focus class on blur of a summary element.
+document.addEventListener('blur', (e) => {
+  if (e.target.tagName === 'SUMMARY') {
+    e.target.classList.remove(docsStyle.mouseFocus);
+  }
+}, true);
