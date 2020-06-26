@@ -558,11 +558,13 @@ export function usePress(props: PressHookProps): PressResult {
     return pressProps;
   }, [onPress, onPressStart, onPressEnd, onPressChange, onPressUp, isDisabled]);
 
-
-  useEffect(() => () => {
-    globalListeners.current.forEach((value, key) => {
-      removeGlobalListener(value.eventTarget, value.type, key, value.options);
-    });
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      globalListeners.current.forEach((value, key) => {
+        removeGlobalListener(value.eventTarget, value.type, key, value.options);
+      });
+    };
   }, [globalListeners.current]);
 
   return {

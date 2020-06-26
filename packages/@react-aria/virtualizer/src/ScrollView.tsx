@@ -114,8 +114,11 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     });
   }, [props, direction, state, contentSize, onVisibleRectChange, onScrollStart, onScrollEnd]);
 
-  useEffect(() => () => {
-    clearTimeout(state.scrollTimeout);
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      clearTimeout(state.scrollTimeout);
+    };
   }, []);
 
   useLayoutEffect(() => {
