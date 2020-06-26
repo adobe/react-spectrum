@@ -9,7 +9,8 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "repository": {
@@ -18,7 +19,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-stately/tree": "3.0.0-rc.0"
+    "@react-stately/tree": "^3.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0"

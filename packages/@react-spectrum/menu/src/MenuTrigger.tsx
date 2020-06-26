@@ -10,27 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
+import {classNames, unwrapDOMRef, useDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
-import {DOMRefValue} from '@react-types/shared';
+import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {MenuContext} from './context';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, useRef} from 'react';
+import React, {forwardRef, Fragment, useRef} from 'react';
 import {SpectrumMenuTriggerProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useMenuTriggerState} from '@react-stately/menu';
 
-/**
- * The MenuTrigger serves as a wrapper around a Menu and its associated trigger,
- * linking the Menu's open state with the trigger's press state.
- */
-export function MenuTrigger(props: SpectrumMenuTriggerProps) {
+function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) {
   let menuPopoverRef = useRef<DOMRefValue<HTMLDivElement>>();
-  let menuTriggerRef = useRef<HTMLElement>();
+  let triggerRef = useRef<HTMLElement>();
+  let domRef = useDOMRef(ref);
+  let menuTriggerRef = domRef || triggerRef;
   let menuRef = useRef<HTMLUListElement>();
   let {
     children,
@@ -109,3 +107,10 @@ export function MenuTrigger(props: SpectrumMenuTriggerProps) {
     </Fragment>
   );
 }
+
+/**
+ * The MenuTrigger serves as a wrapper around a Menu and its associated trigger,
+ * linking the Menu's open state with the trigger's press state.
+ */
+let _MenuTrigger = forwardRef(MenuTrigger);
+export {_MenuTrigger as MenuTrigger};

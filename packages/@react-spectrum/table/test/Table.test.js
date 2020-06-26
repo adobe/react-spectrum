@@ -1251,12 +1251,14 @@ describe('Table', function () {
         expect(table).toHaveAttribute('tabIndex', '0');
 
         let before = tree.getByTestId('before');
-        before.focus();
+        act(() => before.focus());
 
         // Simulate tabbing to the first "tabbable" item inside the table
-        fireEvent.keyDown(before, {key: 'Tab'});
-        within(table).getAllByRole('switch')[0].focus();
-        fireEvent.keyUp(before, {key: 'Tab'});
+        act(() => {
+          fireEvent.keyDown(before, {key: 'Tab'});
+          within(table).getAllByRole('switch')[0].focus();
+          fireEvent.keyUp(before, {key: 'Tab'});
+        });
 
         expect(document.activeElement).toBe(within(table).getAllByRole('row')[1]);
       });
@@ -1268,12 +1270,14 @@ describe('Table', function () {
         expect(table).toHaveAttribute('tabIndex', '0');
 
         let after = tree.getByTestId('after');
-        after.focus();
+        act(() => after.focus());
 
         // Simulate tabbing to the last "tabbable" item inside the table
-        fireEvent.keyDown(after, {key: 'Tab', shiftKey: true});
-        within(table).getAllByRole('link')[1].focus();
-        fireEvent.keyUp(after, {key: 'Tab', shiftKey: true});
+        act(() => {
+          fireEvent.keyDown(after, {key: 'Tab', shiftKey: true});
+          within(table).getAllByRole('link')[1].focus();
+          fireEvent.keyUp(after, {key: 'Tab', shiftKey: true});
+        });
 
         expect(document.activeElement).toBe(within(table).getAllByRole('row')[2]);
       });
@@ -1285,17 +1289,19 @@ describe('Table', function () {
         expect(table).toHaveAttribute('tabIndex', '0');
 
         let baz1 = getCell(tree, 'Baz 1');
-        baz1.focus();
+        act(() => baz1.focus());
 
         expect(table).toHaveAttribute('tabIndex', '-1');
 
         let before = tree.getByTestId('before');
-        before.focus();
+        act(() => before.focus());
 
         // Simulate tabbing to the first "tabbable" item inside the table
-        fireEvent.keyDown(before, {key: 'Tab'});
-        within(table).getAllByRole('switch')[0].focus();
-        fireEvent.keyUp(before, {key: 'Tab'});
+        act(() => {
+          fireEvent.keyDown(before, {key: 'Tab'});
+          within(table).getAllByRole('switch')[0].focus();
+          fireEvent.keyUp(before, {key: 'Tab'});
+        });
 
         expect(document.activeElement).toBe(baz1);
       });
@@ -1307,17 +1313,19 @@ describe('Table', function () {
         expect(table).toHaveAttribute('tabIndex', '0');
 
         let baz1 = getCell(tree, 'Baz 1');
-        baz1.focus();
+        act(() => baz1.focus());
 
         expect(table).toHaveAttribute('tabIndex', '-1');
 
         let after = tree.getByTestId('after');
-        after.focus();
+        act(() => after.focus());
 
         // Simulate tabbing to the last "tabbable" item inside the table
-        fireEvent.keyDown(after, {key: 'Tab'});
-        within(table).getAllByRole('link')[1].focus();
-        fireEvent.keyUp(after, {key: 'Tab'});
+        act(() => {
+          fireEvent.keyDown(after, {key: 'Tab'});
+          within(table).getAllByRole('link')[1].focus();
+          fireEvent.keyUp(after, {key: 'Tab'});
+        });
 
         expect(document.activeElement).toBe(baz1);
       });
@@ -1329,11 +1337,13 @@ describe('Table', function () {
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         // Simulate tabbing within the table
-        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
-        walker.currentNode = document.activeElement;
-        walker.nextNode().focus();
-        fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+          let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+          walker.currentNode = document.activeElement;
+          walker.nextNode().focus();
+          fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+        });
 
         let after = tree.getByTestId('after');
         expect(document.activeElement).toBe(after);
@@ -1342,15 +1352,17 @@ describe('Table', function () {
       it('should move focus after the table when tabbing from the last row', function () {
         let tree = renderFocusable();
 
-        tree.getAllByRole('row')[2].focus();
+        act(() => tree.getAllByRole('row')[2].focus());
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
 
         // Simulate tabbing within the table
-        fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
-        walker.currentNode = document.activeElement;
-        walker.nextNode().focus();
-        fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+          let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+          walker.currentNode = document.activeElement;
+          walker.nextNode().focus();
+          fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+        });
 
         let after = tree.getByTestId('after');
         expect(document.activeElement).toBe(after);
@@ -1363,11 +1375,13 @@ describe('Table', function () {
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         // Simulate shift tabbing within the table
-        fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
-        let walker = getFocusableTreeWalker(document.body, {tabbable: true});
-        walker.currentNode = document.activeElement;
-        walker.previousNode().focus();
-        fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
+        act(() => {
+          fireEvent.keyDown(document.activeElement, {key: 'Tab', shiftKey: true});
+          let walker = getFocusableTreeWalker(document.body, {tabbable: true});
+          walker.currentNode = document.activeElement;
+          walker.previousNode().focus();
+          fireEvent.keyUp(document.activeElement, {key: 'Tab', shiftKey: true});
+        });
 
         let before = tree.getByTestId('before');
         expect(document.activeElement).toBe(before);
@@ -2060,7 +2074,7 @@ describe('Table', function () {
       expect(rowHeaders[0]).toHaveTextContent('Sam');
 
       // focus gets reset
-      table.focus();
+      act(() => table.focus());
       expect(document.activeElement).toBe(rows[1]);
     });
 
@@ -2178,7 +2192,7 @@ describe('Table', function () {
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      act(() => {fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});});
 
       expect(() => {
         tree.getByRole('menu');
@@ -2186,7 +2200,7 @@ describe('Table', function () {
 
       expect(document.activeElement).toBe(within(rows[2]).getByRole('button'));
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+      act(() => {fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});});
 
       expect(() => {
         tree.getByRole('menu');
@@ -2194,7 +2208,7 @@ describe('Table', function () {
 
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+      act(() => {fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});});
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
@@ -2210,7 +2224,7 @@ describe('Table', function () {
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+      act(() => {fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeInTheDocument();
@@ -2227,7 +2241,7 @@ describe('Table', function () {
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', altKey: true});
+      act(() => {fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', altKey: true});});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeInTheDocument();
@@ -2244,7 +2258,7 @@ describe('Table', function () {
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
-      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+      act(() => {fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeInTheDocument();
@@ -2253,7 +2267,7 @@ describe('Table', function () {
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[1]);
 
-      table.focus();
+      act(() => table.focus());
 
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));

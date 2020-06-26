@@ -27,10 +27,6 @@ describe('UIIcon', function () {
     expect(icon).toHaveAttribute('focusable', 'false');
     expect(icon).toHaveAttribute('aria-label', 'labelled icon');
 
-    rerender(<Component alt="workflow alt"><FakeIcon /></Component>);
-    icon = getByRole('img');
-    expect(icon).toHaveAttribute('aria-label', 'workflow alt');
-
     rerender(<Component><FakeIcon /></Component>);
     icon = getByRole('img', {hidden: true});
     expect(icon).not.toHaveAttribute('aria-label');
@@ -41,10 +37,10 @@ describe('UIIcon', function () {
     Name        | Component
     ${'UIIcon'} | ${UIIcon}
   `('$Name supports aria-hidden prop', function ({Component}) {
-    let {getByRole, rerender} = render(<Component alt="explicitly hidden alt" aria-hidden><FakeIcon /></Component>);
+    let {getByRole, rerender} = render(<Component aria-label="explicitly hidden aria-label" aria-hidden><FakeIcon /></Component>);
 
     let icon = getByRole('img', {hidden: true});
-    expect(icon).toHaveAttribute('aria-label', 'explicitly hidden alt');
+    expect(icon).toHaveAttribute('aria-label', 'explicitly hidden aria-label');
     expect(icon).toHaveAttribute('aria-hidden', 'true');
 
     rerender(<Component aria-label="explicitly not hidden aria-label" aria-hidden={false}><FakeIcon /></Component>);

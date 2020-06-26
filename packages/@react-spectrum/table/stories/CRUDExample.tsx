@@ -75,12 +75,12 @@ export function CRUDExample() {
     <Flex direction="column">
       <ActionGroup marginBottom={8}>
         <DialogTrigger>
-          <Item aria-label="Add item"><Add /></Item>
+          <Item key="add" aria-label="Add item"><Add /></Item>
           {onClose => <EditDialog item={null} onClose={onClose} onConfirm={createItem} />}
         </DialogTrigger>
         {selectedCount > 0 &&
           <DialogTrigger>
-            <Item aria-label="Delete selected items"><Delete /></Item>
+            <Item key="delete" aria-label="Delete selected items"><Delete /></Item>
             <AlertDialog title="Delete" variant="destructive" primaryActionLabel="Delete" onPrimaryAction={deleteSelectedItems}>
               Are you sure you want to delete {selectedCount === 1 ? '1 item' : `${selectedCount} items`}?
             </AlertDialog>
