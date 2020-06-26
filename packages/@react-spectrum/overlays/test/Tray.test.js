@@ -11,7 +11,7 @@
  */
 
 import {Dialog} from '@react-spectrum/dialog';
-import {fireEvent, render, waitForDomChange} from '@testing-library/react';
+import {fireEvent, render, waitFor} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -56,22 +56,30 @@ describe('Tray', function () {
         </Tray>
       </Provider>
     );
-    await waitForDomChange(); // wait for animation
-    let dialog = getByRole('dialog');
+
+    await waitFor(() => {
+      expect(getByRole('dialog')).toBeVisible();
+    }); // wait for animation
+
+    let dialog = await getByRole('dialog');
     fireEvent.keyDown(dialog, {key: 'Escape'});
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it('hides the tray when clicking outside', async function () {
     let onClose = jest.fn();
-    render(
+    let {getByRole} = render(
       <Provider theme={theme}>
         <Tray isOpen onClose={onClose}>
           <div role="dialog">contents</div>
         </Tray>
       </Provider>
     );
-    await waitForDomChange(); // wait for animation
+
+    await waitFor(() => {
+      expect(getByRole('dialog')).toBeVisible();
+    }); // wait for animation
+
     fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -87,9 +95,11 @@ describe('Tray', function () {
       </Provider>
     );
 
-    await waitForDomChange(); // wait for animation
+    await waitFor(() => {
+      expect(getByRole('dialog')).toBeVisible();
+    }); // wait for animation
 
-    let dialog = getByRole('dialog');
+    let dialog = await getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
 
     dialog.blur();
