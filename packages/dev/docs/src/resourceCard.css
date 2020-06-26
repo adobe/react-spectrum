@@ -27,6 +27,12 @@
     box-shadow: 0 0 0 1px var(--spectrum-global-color-gray-400);
     transition: 125ms ease-in-out;
   }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--spectrum-alias-border-color-focus);
+  }
+
   @media screen and (max-width: 960px) {
     margin-bottom: 16px;
   }
