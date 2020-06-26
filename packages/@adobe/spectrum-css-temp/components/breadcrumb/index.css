@@ -104,33 +104,64 @@ governing permissions and limitations under the License.
 
   &[href],
   &[tabindex="0"] {
-    cursor: pointer;
+    &:not([aria-current]) {
+      cursor: pointer;
 
-    &:hover,
-    &:focus-ring {
-      text-decoration: underline;
+      &:hover,
+      &:focus-ring {
+        text-decoration: underline;
+      }
     }
   }
 }
 
 
-.spectrum-Breadcrumbs-item.is-dragged .spectrum-Breadcrumbs-itemLink:before,
-.spectrum-Breadcrumbs-itemLink:focus-ring:before {
-  position: absolute;
-  top: 0;
-  inset-inline-start: 0;
+.spectrum-Breadcrumbs-item {
+  &.is-dragged {
+    .spectrum-Breadcrumbs-itemLink {
+      &:before {
+        position: absolute;
+        top: 0;
+        inset-inline-start: 0;
+      
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+        height: 100%;
+      
+        border-width: var(--spectrum-breadcrumb-item-border-size-key-focus);
+        border-style: solid;
+        border-radius: var(--spectrum-breadcrumb-item-border-radius);
+      
+        content: '';
+        pointer-events: none;
+      }
+    }
+  }
+}
 
-  box-sizing: border-box;
-  display: block;
-  width: 100%;
-  height: 100%;
-
-  border-width: var(--spectrum-breadcrumb-item-border-size-key-focus);
-  border-style: solid;
-  border-radius: var(--spectrum-breadcrumb-item-border-radius);
-
-  content: '';
-  pointer-events: none;
+.spectrum-Breadcrumbs-itemLink {
+  &:not([aria-current]) {
+    &:focus-ring { 
+      &:before {
+        position: absolute;
+        top: 0;
+        inset-inline-start: 0;
+      
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+        height: 100%;
+      
+        border-width: var(--spectrum-breadcrumb-item-border-size-key-focus);
+        border-style: solid;
+        border-radius: var(--spectrum-breadcrumb-item-border-radius);
+      
+        content: '';
+        pointer-events: none;
+      }
+    }
+  }
 }
 
 .spectrum-Breadcrumbs--small {

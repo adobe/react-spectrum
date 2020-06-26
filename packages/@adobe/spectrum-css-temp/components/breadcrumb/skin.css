@@ -29,27 +29,29 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Breadcrumbs-itemLink {
-    color: inherit;
+    &:not([aria-current]) {
+      color: inherit;
 
-    &:hover {
-      color: var(--spectrum-breadcrumb-text-color-hover);
-    }
-
-    &:focus-ring {
-      color: var(--spectrum-breadcrumb-text-color-key-focus);
-
-      &:before {
-        border-color: var(--spectrum-breadcrumb-item-border-color-key-focus);
+      &:hover {
+        color: var(--spectrum-breadcrumb-text-color-hover);
       }
-    }
 
-    &:active {
-      color: var(--spectrum-breadcrumb-text-color-down);
-      border-bottom: 0;
-    }
+      &:focus-ring {
+        color: var(--spectrum-breadcrumb-text-color-key-focus);
 
-    &.is-disabled {
-      color: var(--spectrum-label-text-color-disabled);
+        &:before {
+          border-color: var(--spectrum-breadcrumb-item-border-color-key-focus);
+        }
+      }
+
+      &:active {
+        color: var(--spectrum-breadcrumb-text-color-down);
+        border-bottom: 0;
+      }
+
+      &.is-disabled {
+        color: var(--spectrum-label-text-color-disabled);
+      }
     }
   }
 
@@ -65,9 +67,11 @@ governing permissions and limitations under the License.
       }
     }
     .spectrum-Breadcrumbs-itemLink {
-      &:focus-ring {
-        color: var(--spectrum-breadcrumb-text-color-down);
-        border-bottom: 0;
+      &:not([aria-current]) {
+        &:focus-ring {
+          color: var(--spectrum-breadcrumb-text-color-down);
+          border-bottom: 0;
+        }
       }
     }
   }
