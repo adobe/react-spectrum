@@ -11,7 +11,7 @@
  */
 
 import {Collection} from '@react-types/shared';
-import {Key, useCallback, useLayoutEffect, useMemo, useState} from 'react';
+import {Key, useCallback, useEffect, useLayoutEffect, useMemo, useState} from 'react';
 import {Layout} from './Layout';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
@@ -72,6 +72,11 @@ export function useVirtualizerState<T extends object, V, W>(opts: VirtualizerPro
   useLayoutEffect(() => {
     virtualizer.afterRender();
   });
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => virtualizer.willUnmount();
+  }, []);
 
   return {
     virtualizer,
