@@ -36,8 +36,7 @@ export function useSideNavItem<T>(props: SpectrumSideNavItemProps<T>, state: Tre
 
   let isDisabled = state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
-  let {onPressStart, onPress, ...otherProps} = itemProps;
-  let {pressProps} = usePress({onPressStart, onPress, isDisabled});
+  let {pressProps} = usePress(itemProps);
 
   return {
     listItemProps: {
@@ -48,7 +47,7 @@ export function useSideNavItem<T>(props: SpectrumSideNavItemProps<T>, state: Tre
       target: '_self',
       'aria-disabled': isDisabled,
       'aria-current': isSelected ? ariaCurrent || 'page' : undefined,
-      ...mergeProps(otherProps, pressProps)
+      ...pressProps
     }
   };
 }
