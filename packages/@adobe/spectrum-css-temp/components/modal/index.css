@@ -40,6 +40,7 @@ governing permissions and limitations under the License.
    * However, when you scroll, the toolbar and address bar shrink, making the viewport resize.
    * We use the stretch value to counteract this where supported. And rely on autoprefixer for prefixes. */
   height: 100vh;
+  height: -moz-available;
   height: stretch;
 
   visibility: hidden;
