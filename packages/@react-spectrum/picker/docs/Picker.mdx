@@ -51,11 +51,11 @@ keywords: [select, collections, dropdown]
 ```
 
 ## Content
-Picker follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic forms of children. Similar to the Menu, Picker accepts an `<Item>` component, each with a `key` prop. Basic usage of the Picker, seen in the example above, shows multiple options populated with a string. This implementation would be used when the list of options is finite and known.
+Picker follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. Similar to the [Menu](MenuTrigger.html), Picker accepts `<Item>` elements as children, each with a `key` prop. Basic usage of the Picker, seen in the example above, shows multiple options populated with a string. Static collections, as in this example, can be used when the full list of options is known ahead of time.
 
-The dynamic method (shown below) would be better suited to use if the options came from a data object such as values returned from an API call. Providing the data in this way allows for Picker to automatically cache the rendering of each item, which dramatically improves performance.
+Dynamic collections, as shown below, can be used when the options come from an external data source such as an API call, or update over time. Providing the data in this way allows for Picker to automatically cache the rendering of each item, which dramatically improves performance.
 
-As seen below, an iterable list of options is passed to the Picker using the `items` prop. Each item accepts a key prop, which is passed to the onSelectionChange handler to identify the selected item. Alternatively, if the item objects contain an id property, as shown in the example below, then this is used automatically and a key prop is not required. See the <a href="#events" title="Events">events</a> section for more detail on selection.
+As seen below, an iterable list of options is passed to the Picker using the `items` prop. Each item accepts a key prop, which is passed to the onSelectionChange handler to identify the selected item. Alternatively, if the item objects contain an id property, as shown in the example below, then this is used automatically and a key prop is not required. See the [Events](#events) section for more detail on selection.
 
 ```tsx example
 function Example() {
@@ -110,7 +110,7 @@ Picker can be labeled using the `label` prop. If no label is provided, an altern
 ```
 
 ## Selection
-Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `key` of an item. See <a href="#events" title="Events">Events</a> for more details on selection events.
+Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `key` of an item. See [Events](#events) for more details on selection events.
 
 ```tsx example
 function Example() {
