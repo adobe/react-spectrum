@@ -48,7 +48,7 @@ interface PositionAria {
   arrowProps: HTMLAttributes<Element>,
   /** Placement of the overlay with respect to the overlay trigger. */
   placement: PlacementAxis,
-  /** Function that updates the position of the overlay. */
+  /** Function used to update the position of the overlay. */
   updatePosition(): void
 }
 
