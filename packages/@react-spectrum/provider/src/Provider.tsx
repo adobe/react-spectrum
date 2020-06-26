@@ -84,7 +84,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(otherProps);
   if (!prevContext || props.locale || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
     contents = (
-      <ProviderWrapper {...props} {...{UNSAFE_style: {isolation: !prevContext && 'isolate', ...styleProps.style}}} ref={ref}>
+      <ProviderWrapper {...props} {...{UNSAFE_style: {isolation: !prevContext ? 'isolate' : undefined, ...styleProps.style}}} ref={ref}>
         {contents}
       </ProviderWrapper>
     );
