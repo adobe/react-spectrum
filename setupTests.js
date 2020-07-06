@@ -14,15 +14,10 @@
 import '@testing-library/jest-dom';
 
 const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
-  'An update to %s inside a test was not wrapped in act',
-  'Unknown event handler property `%s`',
-  'React does not recognize the `%s` prop on a DOM element',
-  'Can\'t perform a React state update on an unmounted component'
+  'An update to %s inside a test was not wrapped in act'
 ];
 
-const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
-  '`waitForDomChange` has been deprecated.'
-];
+const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [];
 
 function failTestOnConsoleError() {
   const error = console.error;
