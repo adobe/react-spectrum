@@ -569,8 +569,14 @@ h2.sectionHeader {
     }
   }
 
-  .propTable tr td {
-    border: none !important;
+  .propTable tr.tableRow td.tableCell {
+    border: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .propTable tr.tableRow:last-child td.tableCell {
+    border: none;
     padding-top: 5px;
     padding-bottom: 5px;
   }
