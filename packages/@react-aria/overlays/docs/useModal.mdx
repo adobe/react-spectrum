@@ -10,31 +10,28 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-stately/toggle';
-import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink} from '@react-spectrum/docs';
-import packageData from '@react-stately/toggle/package.json';
+import docs from 'docs:@react-aria/overlays';
+import {FunctionAPI, HeaderInfo} from '@react-spectrum/docs';
+import packageData from '../package.json';
 
 ---
-category: Forms
-keywords: [toggle, checkbox, switch, input, state]
+category: Overlays
+keywords: [dialog, modal, tray, popover, aria]
 ---
 
-# useToggleState
+# useModal
 
-<p>{docs.exports.useToggleState.description}</p>
+<p>{docs.exports.useModal.description}</p>
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['useToggleState']} />
+  componentNames={['useModal']} />
 
 ## API
 
-<FunctionAPI function={docs.exports.useToggleState} links={docs.links} />
-
-## Interface
-
-<ClassAPI links={docs.links} class={docs.links[docs.exports.useToggleState.return.id]} />
+<FunctionAPI function={docs.exports.useModal} links={docs.links} />
 
 ## Example
 
-See the docs for [useCheckbox](/react-aria/useCheckbox.html) in react-aria for an example of `useToggleState`.
+See [useDialog](useDialog.html#example) and [useOverlayTrigger](useOverlayTrigger.html#example) for examples of using
+`useModal` to hide external elements from screen readers.
