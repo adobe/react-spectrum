@@ -393,6 +393,13 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   /**
+   * Cleanup for when the Virtualizer will be unmounted.
+   */
+  willUnmount() {
+    cancelAnimationFrame(this._relayoutRaf);
+  }
+
+  /**
    * Triggers a layout invalidation, and updates the visible subviews.
    */
   relayout(context: InvalidationContext<T, V> = {}) {
