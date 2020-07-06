@@ -41,7 +41,7 @@ const mdxComponents = {
       <h2 {...props} className={classNames(typographyStyles['spectrum-Heading3'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
         {children}
         <span className={classNames(docStyles['headingAnchor'])}>
-          <a className={classNames(linkStyle['spectrum-Link'], docStyles['anchor'])} href={`#${props.id}`}>#</a>
+          <a className={classNames(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`}>#</a>
         </span>
       </h2>
       <Divider marginBottom="33px" />
@@ -51,7 +51,7 @@ const mdxComponents = {
     <h3 {...props} className={classNames(typographyStyles['spectrum-Heading4'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
       {children}
       <span className={docStyles['headingAnchor']}>
-        <a className={classNames(linkStyle['spectrum-Link'], docStyles['anchor'])} href={`#${props.id}`} aria-label="§">#</a>
+        <a className={classNames(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label="§">#</a>
       </span>
     </h3>
   ),
@@ -59,7 +59,8 @@ const mdxComponents = {
   ul: ({children, ...props}) => <ul {...props} className={typographyStyles['spectrum-Body3']}>{children}</ul>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
-  a: ({children, ...props}) => <a {...props} className={linkStyle['spectrum-Link']} {...getAnchorProps(props.href)}>{children}</a>
+  a: ({children, ...props}) => <a {...props} className={classNames(linkStyle['spectrum-Link'], docStyles.link)} {...getAnchorProps(props.href)}>{children}</a>,
+  kbd: ({children, ...props}) => <kbd {...props} className={docStyles['keyboard']}>{children}</kbd>
 };
 
 function dirToTitle(dir) {
@@ -247,7 +248,7 @@ function Nav({currentPageName, pages}) {
   function SideNavItem({name, url, title}) {
     return (
       <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: name === currentPageName})}>
-        <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={url} {...getAnchorProps(url)}>{title}</a>
+        <a className={classNames(sideNavStyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} href={url} {...getAnchorProps(url)}>{title}</a>
       </li>
     );
   }
@@ -296,10 +297,10 @@ function Footer() {
       <hr className={classNames(ruleStyles['spectrum-Rule'], ruleStyles['spectrum-Rule--small'], ruleStyles['spectrum-Rule--horizontal'])} />
       <ul>
         <li>Copyright © {year} Adobe. All rights reserved.</li>
-        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy.html">Privacy</a></li>
-        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/legal/terms.html">Terms of Use</a></li>
-        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy/cookies.html">Cookies</a></li>
-        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy/ca-rights.html">Do not sell my personal information</a></li>
+        <li><a className={classNames(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy.html">Privacy</a></li>
+        <li><a className={classNames(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/legal/terms.html">Terms of Use</a></li>
+        <li><a className={classNames(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy/cookies.html">Cookies</a></li>
+        <li><a className={classNames(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy/ca-rights.html">Do not sell my personal information</a></li>
       </ul>
     </footer>
   );

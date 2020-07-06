@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-stately/tree": "3.0.0-rc.1"
+    "@react-stately/tree": "^3.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0"
