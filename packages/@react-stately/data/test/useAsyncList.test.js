@@ -665,6 +665,9 @@ describe('useAsyncList', () => {
       }
 
       expect(result.error).toEqual(new Error('Invalid action "update" in state "loading"'));
+      await act(async () => {
+        jest.runAllTimers();
+      });
     });
   });
 

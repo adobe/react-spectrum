@@ -184,6 +184,7 @@ function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOpt
 function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean) {
   let focusedNode = useRef<HTMLElement>();
 
+  let raf = useRef(null);
   useEffect(() => {
     let scope = scopeRef.current;
     if (!contain) {
@@ -251,7 +252,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
         activeScope = scopeRef;
         focusedNode.current = e.target;
         // Firefox doesn't shift focus back to the Dialog properly without this
-        requestAnimationFrame(() => {
+        raf.current = requestAnimationFrame(() => {
           focusedNode.current.focus();
         });
       }
@@ -268,6 +269,11 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       scope.forEach(element => element.removeEventListener('focusout', onBlur, false));
     };
   }, [scopeRef, contain]);
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => cancelAnimationFrame(raf.current);
+  }, []);
 }
 
 function isElementInAnyScope(element: Element, scopes: Set<RefObject<HTMLElement[]>>) {

@@ -19,7 +19,7 @@ import {usePress} from '@react-aria/interactions';
 
 interface RadioAriaProps extends AriaRadioProps {
   /**
-   * Whether the Radio control is required. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/required).
+   * Whether the Radio is required. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/required).
    */
   isRequired?: boolean,
   /**
