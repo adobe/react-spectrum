@@ -39,6 +39,6 @@ Search open/closed issues before submitting since someone might have asked the s
 
 <!--- Which product team is this feature for? (i.e. Adobe/Photoshop) -->
 
-## 🎁 Tracking Ticket
+## 🎁 Tracking Ticket (optional)
 
-<!--- Link to the feature request ticket in your system, if available (JIRA, Github, etc.) -->
+<!--- Link to the issue in your system, if publicly available -->
