@@ -297,7 +297,6 @@ describe('CalendarBase', () => {
       unmount();
     }
 
-    // TODO: these should really all be individual tests as each one renders and they may interfere, especially if one fails (thanks live announcer)
     it.each`
       Name                    | Calendar          | props
       ${'v3 Calendar'}        | ${Calendar}       | ${{}}
