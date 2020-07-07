@@ -28,29 +28,10 @@ A library of React Hooks that provides cross-platform state management for your 
 
 ## Features
 
-### ♿️ Accessible
-
-Accessibility and behavior is implemented according to [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/), including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users.
-
-[Read more about accessibility](https://react-spectrum.adobe.com/react-aria/accessibility.html)
-
-### 📱 Adaptive
-
-All components are designed to work with mouse, touch, and keyboard interactions. They’re built with responsive design principles to deliver a great experience, no matter the device.
-
-[Learn more about adaptive interactions](https://react-spectrum.adobe.com/react-aria/interactions.html)
-
-### 🌍 International
-
-Support over 30 languages is included out of the box, including support for right-to-left languages, date and number formatting, and more.
-
-[More information about internationalization](https://react-spectrum.adobe.com/react-aria/internationalization.html)
-
-### 🎨 Customizable
-
-React Spectrum components support custom themes, and automatically adapt for dark mode. For even more customizability, you can build your own components with your own DOM structure and stying using the [React Aria](https://react-spectrum.adobe.com/react-aria/index.html) and [React Stately](https://react-spectrum.adobe.com/react-stately/index.html) hooks to provide behavior, accessibility, and interactions.
-
-[Read about theming in React Spectrum](https://react-spectrum.adobe.com/react-spectrum/theming.html)
+* ♿️ **Accessible** – Accessibility and behavior is implemented according to [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/), including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users. [Read more about accessibility](https://react-spectrum.adobe.com/react-aria/accessibility.html).
+* 📱 **Adaptive** – All components are designed to work with mouse, touch, and keyboard interactions. They’re built with responsive design principles to deliver a great experience, no matter the device. [Learn more about adaptive interactions](https://react-spectrum.adobe.com/react-aria/interactions.html).
+* 🌍 **International** – Support over 30 languages is included out of the box, including support for right-to-left languages, date and number formatting, and more. [More information about internationalization](https://react-spectrum.adobe.com/react-aria/internationalization.html).
+* 🎨 **Customizable** – React Spectrum components support custom themes, and automatically adapt for dark mode. For even more customizability, you can build your own components with your own DOM structure and stying using the [React Aria](https://react-spectrum.adobe.com/react-aria/index.html) and [React Stately](https://react-spectrum.adobe.com/react-stately/index.html) hooks to provide behavior, accessibility, and interactions. [Read about theming in React Spectrum](https://react-spectrum.adobe.com/react-spectrum/theming.html).
 
 ## Getting started
 
