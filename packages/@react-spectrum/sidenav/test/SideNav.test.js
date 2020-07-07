@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render, waitFor} from '@testing-library/react';
+import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import {Item, Section} from '@react-spectrum/tree';
 import React from 'react';
 import {SideNav} from '../src';
@@ -83,13 +83,20 @@ function renderComponent(Name, Component, ComponentSection, ComponentItem, props
 
 describe('SideNav', function () {
   let stub1, stub2;
+  let scrollHeight;
+
   beforeAll(function () {
+    scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 48);
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.useFakeTimers();
     stub1 = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 200);
     stub2 = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 400);
   });
   afterAll(function () {
+    jest.useRealTimers();
     stub1.mockReset();
     stub2.mockReset();
+    scrollHeight.mockReset();
   });
 
   it.each`
@@ -262,10 +269,10 @@ describe('SideNav', function () {
     let selectedItem = items[0];
     selectedItem.focus();
     expect(selectedItem).toBe(document.activeElement);
-    fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
+    act(() => {fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});});
     let nextSelectedItem = items[1];
     expect(nextSelectedItem).toBe(document.activeElement);
-    fireEvent.keyDown(nextSelectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
+    act(() => {fireEvent.keyDown(nextSelectedItem, {key: 'ArrowUp', code: 38, charCode: 38});});
     expect(selectedItem).toBe(document.activeElement);
   });
 
@@ -290,13 +297,13 @@ describe('SideNav', function () {
     let firstItem = items[0];
     firstItem.focus();
     expect(firstItem).toBe(document.activeElement);
-    fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
+    act(() => {fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});});
     let lastItem = items[items.length - 1];
     expect(lastItem).not.toBe(document.activeElement);
 
     lastItem.focus();
     expect(lastItem).toBe(document.activeElement);
-    fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
+    act(() => {fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});});
     expect(firstItem).not.toBe(document.activeElement);
   });
 
@@ -319,13 +326,17 @@ describe('SideNav', function () {
     let firstItem = items[0];
     firstItem.focus();
     expect(firstItem).toBe(document.activeElement);
-    fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
+    act(() => {
+      fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
+    });
     let lastItem = items[items.length - 1];
     expect(lastItem).toBe(document.activeElement);
 
     lastItem.focus();
     expect(lastItem).toBe(document.activeElement);
-    fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
+    act(() => {
+      fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
+    });
     expect(firstItem).toBe(document.activeElement);
   });
 

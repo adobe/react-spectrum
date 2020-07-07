@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {NumberField} from '../';
 import NumberInput from '@react/react-spectrum/NumberInput';
 import React from 'react';
@@ -72,7 +72,7 @@ describe('NumberField', function () {
   `('$Name handles input change', ({Component}) => {
     let {textField} = renderNumberField(Component, {onChange: onChangeSpy});
 
-    userEvent.type(textField, '5');
+    act(() => {userEvent.type(textField, '5');});
     expect(onChangeSpy).toHaveBeenCalledWith(5);
   });
 
@@ -83,7 +83,7 @@ describe('NumberField', function () {
   `('$Name handles input change with custom step number', ({Component}) => {
     let {textField, incrementButton} = renderNumberField(Component, {onChange: onChangeSpy, step: 5});
 
-    userEvent.type(textField, '2');
+    act(() => {userEvent.type(textField, '2');});
     expect(onChangeSpy).toHaveBeenCalledWith(2);
     onChangeSpy.mockReset();
     triggerPress(incrementButton);
@@ -101,7 +101,7 @@ describe('NumberField', function () {
 
     expect(container).toHaveAttribute('aria-invalid', 'false');
 
-    userEvent.type(textField, '-1');
+    act(() => {userEvent.type(textField, '-1');});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
 
     expect(container).toHaveAttribute('aria-invalid', 'true');
@@ -118,7 +118,7 @@ describe('NumberField', function () {
 
     expect(container).toHaveAttribute('aria-invalid', 'false');
 
-    userEvent.type(textField, '1');
+    act(() => {userEvent.type(textField, '1');});
     expect(onChangeSpy).toHaveBeenCalledWith(1);
 
     expect(container).toHaveAttribute('aria-invalid', 'true');
@@ -169,8 +169,8 @@ describe('NumberField', function () {
 
     let {textField} = renderNumberField(Component, {onChange: onChangeSpy});
 
-    fireEvent.focus(textField);
-    fireEvent.wheel(textField, {deltaY: 10});
+    act(() => {fireEvent.focus(textField);});
+    act(() => {fireEvent.wheel(textField, {deltaY: 10});});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
   });
 
@@ -181,8 +181,8 @@ describe('NumberField', function () {
   `('$Name increment value when scrolling upwards', ({Component}) => {
     let {textField} = renderNumberField(Component, {onChange: onChangeSpy});
 
-    fireEvent.focus(textField);
-    fireEvent.wheel(textField, {deltaY: -10});
+    act(() => {fireEvent.focus(textField);})
+    act(() => {fireEvent.wheel(textField, {deltaY: -10});});
     expect(onChangeSpy).toHaveBeenCalledWith(1);
   });
 
@@ -229,8 +229,8 @@ describe('NumberField', function () {
     } = renderNumberField(Component, {minValue: 3, defaultValue: 2});
 
     expect(textField).toHaveAttribute('aria-invalid', 'true');
-    fireEvent.focus(textField);
-    fireEvent.wheel(textField, {deltaY: -10});
+    act(() => {fireEvent.focus(textField);});
+    act(() => {fireEvent.wheel(textField, {deltaY: -10});});
     expect(textField).not.toHaveAttribute('aria-invalid');
   });
 
@@ -243,8 +243,8 @@ describe('NumberField', function () {
     } = renderNumberField(Component, {maxValue: 3, defaultValue: 4});
 
     expect(textField).toHaveAttribute('aria-invalid', 'true');
-    fireEvent.focus(textField);
-    fireEvent.wheel(textField, {deltaY: 10});
+    act(() => {fireEvent.focus(textField);});
+    act(() => {fireEvent.wheel(textField, {deltaY: 10});});
     expect(textField).not.toHaveAttribute('aria-invalid');
   });
 

@@ -526,7 +526,7 @@ describe('ListBox', function () {
     let tree = render(
       <Provider theme={theme}>
         <ListBox aria-label="listbox">
-          <Item>
+          <Item textValue="Description">
             <Bell />
             <Text>Label</Text>
             <Text slot="description">Description</Text>
