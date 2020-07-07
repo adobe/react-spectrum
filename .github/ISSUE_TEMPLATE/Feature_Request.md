@@ -41,4 +41,4 @@ Search open/closed issues before submitting since someone might have asked the s
 
 ## 🎁 Tracking Ticket (optional)
 
-<!--- Link to the issue in your system, if publicly available -->
+<!--- Link to the ticket in your system, if publicly available -->
