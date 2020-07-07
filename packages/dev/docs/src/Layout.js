@@ -310,19 +310,21 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
 
   return (
     <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage}>
-      <header className={docStyles.pageHeader} id="header" />
-      <Nav currentPageName={currentPage.name} pages={pages} />
-      <main>
-        <article className={classNames(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>
-          <MDXProvider components={mdxComponents}>
-            <ImageContext.Provider value={publicUrl}>
-              <LinkProvider>{children}</LinkProvider>
-            </ImageContext.Provider>
-          </MDXProvider>
-        </article>
-        {toc.length ? <ToC toc={toc} /> : null}
-        <Footer />
-      </main>
+      <div style={{isolation: 'isolate'}}>
+        <header className={docStyles.pageHeader} id="header" />
+        <Nav currentPageName={currentPage.name} pages={pages} />
+        <main>
+          <article className={classNames(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>
+            <MDXProvider components={mdxComponents}>
+              <ImageContext.Provider value={publicUrl}>
+                <LinkProvider>{children}</LinkProvider>
+              </ImageContext.Provider>
+            </MDXProvider>
+          </article>
+          {toc.length ? <ToC toc={toc} /> : null}
+          <Footer />
+        </main>
+      </div>
     </Page>
   );
 }
