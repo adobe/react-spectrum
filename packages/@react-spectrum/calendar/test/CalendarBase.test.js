@@ -113,8 +113,13 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{}}
       ${'v2 Calendar'}       | ${V2Calendar}    | ${{}}
       ${'v2 range Calendar'} | ${V2Calendar}    | ${{selectionType: 'range'}}
-    `('$Name should focus today if autoFocus is set and there is no selected value', ({Calendar}) => {
+    `('$Name should focus today if autoFocus is set and there is no selected value', ({Name, Calendar}) => {
       let {getByRole, getByLabelText} = render(<Calendar autoFocus />);
+      if (Name.indexOf('v2') > -1) {
+        act(() => {
+          jest.runAllTimers();
+        });
+      }
 
       let cell = getByLabelText('today', {exact: false});
       expect(cell).toHaveAttribute('role', 'gridcell');

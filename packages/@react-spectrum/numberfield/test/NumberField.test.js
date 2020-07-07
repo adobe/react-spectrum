@@ -181,7 +181,7 @@ describe('NumberField', function () {
   `('$Name increment value when scrolling upwards', ({Component}) => {
     let {textField} = renderNumberField(Component, {onChange: onChangeSpy});
 
-    act(() => {fireEvent.focus(textField);})
+    act(() => {fireEvent.focus(textField);});
     act(() => {fireEvent.wheel(textField, {deltaY: -10});});
     expect(onChangeSpy).toHaveBeenCalledWith(1);
   });

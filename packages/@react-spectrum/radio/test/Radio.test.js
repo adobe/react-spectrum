@@ -157,7 +157,7 @@ describe('Radios', function () {
     expect(radios[2].checked).toBe(false);
 
     let dogs = getByLabelText('Dogs');
-    act(() => {userEvent.click(dogs)});
+    act(() => {userEvent.click(dogs);});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
 
