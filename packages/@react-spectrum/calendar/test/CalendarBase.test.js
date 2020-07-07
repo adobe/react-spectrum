@@ -26,10 +26,12 @@ let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, '
 describe('CalendarBase', () => {
   beforeAll(() => {
     jest.useFakeTimers();
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterAll(() => {
     jest.useRealTimers();
+    window.requestAnimationFrame.mockRestore();
   });
 
   afterEach(() => {
@@ -115,11 +117,6 @@ describe('CalendarBase', () => {
       ${'v2 range Calendar'} | ${V2Calendar}    | ${{selectionType: 'range'}}
     `('$Name should focus today if autoFocus is set and there is no selected value', ({Name, Calendar}) => {
       let {getByRole, getByLabelText} = render(<Calendar autoFocus />);
-      if (Name.indexOf('v2') > -1) {
-        act(() => {
-          jest.runAllTimers();
-        });
-      }
 
       let cell = getByLabelText('today', {exact: false});
       expect(cell).toHaveAttribute('role', 'gridcell');
