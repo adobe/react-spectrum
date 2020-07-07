@@ -3,7 +3,6 @@
   "version": "3.0.0-rc.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
-  "private": true,
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
@@ -20,6 +19,8 @@
     "url": "https://github.com/adobe-private/react-spectrum-v3"
   },
   "dependencies": {
+    "@react-aria/i18n": "^3.0.0",
+    "@react-aria/visually-hidden": "^3.0.0",
     "@react-spectrum/actiongroup": "^3.0.0",
     "@react-spectrum/breadcrumbs": "^3.0.0",
     "@react-spectrum/button": "^3.0.0",
@@ -31,7 +32,6 @@
     "@react-spectrum/icon": "^3.0.0",
     "@react-spectrum/illustratedmessage": "^3.0.0",
     "@react-spectrum/image": "^3.0.0",
-    "@react-spectrum/label": "^3.0.0",
     "@react-spectrum/layout": "^3.0.0",
     "@react-spectrum/link": "^3.0.0",
     "@react-spectrum/listbox": "^3.0.0",
@@ -50,6 +50,8 @@
     "@react-spectrum/theme-dark": "^3.0.0",
     "@react-spectrum/theme-default": "^3.0.0",
     "@react-spectrum/view": "^3.0.0",
-    "@react-spectrum/well": "^3.0.0"
+    "@react-spectrum/well": "^3.0.0",
+    "@react-stately/collections": "^3.0.0",
+    "@react-stately/data": "^3.0.0"
   }
 }

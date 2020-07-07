@@ -17,7 +17,7 @@ import {FlexProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 import styles from './flex.css';
 
-export const flexStyleProps: StyleHandlers = {
+const flexStyleProps: StyleHandlers = {
   direction: ['flexDirection', passthroughStyle],
   wrap: ['flexWrap', flexWrapValue],
   justifyContent: ['justifyContent', flexAlignValue],
