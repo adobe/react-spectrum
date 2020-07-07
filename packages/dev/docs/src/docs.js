@@ -61,7 +61,7 @@ function LinkPopover({id}) {
         <Breadcrumbs onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}>
           {breadcrumbs.map((b, i) => (
             <Item key={i + 1}>
-              {i < (breadcrumbs.length - 1) ? b.dataset.title : <Heading level={3}>{b.dataset.title}</Heading>}
+              {b.dataset.title}
             </Item>
           ))}
         </Breadcrumbs>
