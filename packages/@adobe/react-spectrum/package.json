@@ -53,5 +53,8 @@
     "@react-spectrum/well": "^3.0.0",
     "@react-stately/collections": "^3.0.0",
     "@react-stately/data": "^3.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
