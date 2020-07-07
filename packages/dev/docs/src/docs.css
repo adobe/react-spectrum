@@ -566,14 +566,23 @@ h2.sectionHeader {
 
 @define-mixin small-propTable {
   /* Collapse the prop table into a list with key/value pairs */
-  .propTable tr {
-    display: table;
-    width: 100%;
-    padding: 8px 0;
+  .propTable {
+    tr, td {
+      display: block;
+      text-align: left;
+    }
   }
 
-  .propTable td {
-    display: table-row;
+  .propTable tr.tableRow td.tableCell {
+    border: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .propTable tr.tableRow:last-child td.tableCell {
+    border: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
   }
 
   .propTable thead {
@@ -598,7 +607,13 @@ h2.sectionHeader {
     width: 80px;
     display: inline-block;
     vertical-align: middle;
-    padding: 8px 0;
+  }
+
+  .propTable tr td:first-child {
+    padding-top: 10px;
+  }
+  .propTable tr td:last-child {
+    padding-bottom: 10px;
   }
 
   .noDefault {
@@ -611,7 +626,6 @@ h2.sectionHeader {
 
   .methodTable td > span {
     display: block;
-    padding-top: 8px;
   }
 
   .methodTable td[data-column] code {
