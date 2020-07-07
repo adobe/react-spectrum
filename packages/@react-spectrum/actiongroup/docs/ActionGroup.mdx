@@ -63,22 +63,15 @@ ActionGroups accept a list of <TypeLink links={docs.links} type={docs.exports.It
 However, a function that returns `Item` components is also accepted.
 
 ```tsx example
-function Example() {
-  let [action, setAction] = React.useState();
+const items = [
+  {label: 'React', name: 'React'},
+  {label: 'Add', name: 'Add'},
+  {label: 'Delete', name: 'Delete'}
+];
 
-  const items = [
-    {label: 'React', name: 'React'},
-    {label: 'Add', name: 'Add'},
-    {label: 'Delete', name: 'Delete'}
-  ];
-
-  return (
-    <ActionGroup items={items} onAction={setAction}>
-      {item => <Item key={item.name}>{item.label}</Item>}
-    </ActionGroup>
-  );
-
-}
+<ActionGroup items={items}>
+  {item => <Item key={item.name}>{item.label}</Item>}
+</ActionGroup>
 ```
 
 ### Accessibility
@@ -117,54 +110,39 @@ function Example() {
   let [selected, setSelected] = React.useState(new Set(['list']));
 
   return (
-    <ActionGroup selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected}>
-      <Item key="grid">Grid view</Item>
-      <Item key="list">List view</Item>
-      <Item key="gallery">Gallery view</Item>
-    </ActionGroup>
-  );
-}
-```
-
-
-## Events
-Use the `onSelectionChange` prop as a callback to handle press events on items when selectionMode is either `single` or `multiple`.
-The `key` prop from the selected item will be passed into the callback.
-
-The following example uses the `onSelectionChange` prop to update a string stored in React state.
-
-```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState(new Set());
-  return (
-    <div>
-      <ActionGroup selectionMode="single" onSelectionChange={setSelected}>
+    <>
+      <ActionGroup selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected}>
         <Item key="grid">Grid view</Item>
         <Item key="list">List view</Item>
         <Item key="gallery">Gallery view</Item>
       </ActionGroup>
-      <p>Current selection: {[...selected]}</p>
-    </div>
-  );
-}
-```
-
-For multiple selections, use the `selectionMode` prop with the `multiple` value.
-```tsx example
-function Example() {
-  let [selectedKeys, setSelectedKeys] = React.useState(new Set());
-  return (
-    <>
-      <ActionGroup selectionMode="multiple" onSelectionChange={setSelectedKeys}>
-        <Item key="keywords">Keywords</Item>
-        <Item key="info">Info</Item>
-        <Item key="properties">Properties</Item>
-      </ActionGroup>
-      <p>Selected: {[...selectedKeys].join(', ')}</p>
+      <p>Current selection (controlled): {[...selected]}</p>
     </>
   );
 }
 ```
+
+Set `selectionMode` prop to `multiple` to allow more than one selection.
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState(new Set(['list']));
+
+  return (
+    <>
+      <ActionGroup selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected}>
+        <Item key="grid">Grid view</Item>
+        <Item key="list">List view</Item>
+        <Item key="gallery">Gallery view</Item>
+      </ActionGroup>
+      <p>Current selections (controlled): {[...selected].join(', ')}</p>
+    </>
+  );
+}
+```
+
+## Events
+Use the `onSelectionChange` prop as a callback to handle press events on items when selectionMode is either `single` or `multiple`.
+The `key` prop from the selected item will be passed into the callback.
 
 To continue to capturing actions when `selectionMode` is `none`, utilize the `onAction` prop.
 ```tsx example
@@ -177,7 +155,7 @@ function Example() {
         <Item key="delete">Delete</Item>
         <Item key="edit">Edit</Item>
       </ActionGroup>
-      <p>Last action: {actionKey}</p>
+      <p>Action: {actionKey}</p>
     </>
   );
 }
