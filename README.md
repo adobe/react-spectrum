@@ -2,12 +2,6 @@
 
 A collection of libraries and tools that help you build adaptive, accessible, and robust user experiences.
 
-## ⚠️ Under Construction  ⚠️
-We are currently working hard to be ready for a stable release.
-  - Please *don't share* this repo until we make our public announcement!
-  - If you are not already part of our Beta program and would like to join, please make a [request here](https://github.com/adobe-private/react-spectrum-v3/issues/new?template=Feedback.md).
-  - Please try out our RC React Spectrum Components and [tell us](https://github.com/adobe-private/react-spectrum-v3/issues/new/choose) what you think!
-
 ### React Spectrum
 
 A React implementation of Spectrum, Adobe’s design system. Spectrum provides adaptive, accessible, and cohesive experiences for all Adobe applications.
