@@ -23,7 +23,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import {GridProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 
-export const gridStyleProps: StyleHandlers = {
+const gridStyleProps: StyleHandlers = {
   ...baseStyleProps,
   autoFlow: ['gridAutoFlow', passthroughStyle],
   autoColumns: ['gridAutoColumns', gridDimensionValue],

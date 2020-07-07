@@ -64,7 +64,7 @@ export function ThemeSwitcher() {
 
   return (
     <div title={label}>
-      <ActionButton 
+      <ActionButton
         aria-label={label}
         onPress={onPress}>
         {colorScheme === 'dark' ? <Light /> : <Moon />}
