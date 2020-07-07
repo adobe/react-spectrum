@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "scripts": {
     "build-icons": "BUILD_ENV=production babel --root-mode upward src -d . --extensions '.tsx'",

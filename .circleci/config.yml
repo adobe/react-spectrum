@@ -7,7 +7,7 @@ jobs:
       - image: circleci/node:12.10
     resource_class: large
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - checkout
       - restore_cache:
@@ -35,14 +35,14 @@ jobs:
 
       - save_cache:
           paths:
-            - ~/react-spectrum-v3
+            - ~/react-spectrum
           key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
 
   test:
     docker:
       - image: circleci/node:12.10
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - restore_cache:
           key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
@@ -55,7 +55,7 @@ jobs:
     docker:
       - image: circleci/node:12.10
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - restore_cache:
           key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
@@ -69,7 +69,7 @@ jobs:
       - image: circleci/node:12.10
     resource_class: large
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - restore_cache:
           key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
@@ -87,7 +87,7 @@ jobs:
       - image: circleci/node:12.10
     resource_class: xlarge
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - restore_cache:
           key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
@@ -106,7 +106,7 @@ jobs:
       - image: circleci/node:12.10
     resource_class: large
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - restore_cache:
           key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
@@ -144,7 +144,7 @@ jobs:
   comment:
     docker:
       - image: circleci/node:12.10
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - checkout
       - restore_cache:
