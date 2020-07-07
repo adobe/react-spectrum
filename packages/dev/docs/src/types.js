@@ -11,6 +11,7 @@
  */
 
 import Asterisk from '@spectrum-icons/workflow/Asterisk';
+import classNames from 'classnames';
 import {getAnchorProps, getUsedLinks} from './utils';
 import {getDoc} from 'globals-docs';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
@@ -368,7 +369,7 @@ export function LinkType({id}) {
 }
 
 function SpectrumLink({href, children, title}) {
-  return <a className={linkStyle['spectrum-Link']} href={href} title={title} {...getAnchorProps(href)}>{children}</a>;
+  return <a className={classNames(linkStyle['spectrum-Link--secondary'], styles.link)} href={href} title={title} {...getAnchorProps(href)}>{children}</a>;
 }
 
 export function renderHTMLfromMarkdown(description) {
@@ -427,7 +428,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
                     <span className={`token ${isComponent ? 'hljs-attr' : 'hljs-variable'}`}>{prop.name}</span>
                   </code>
                   {!prop.optional && showRequired
-                    ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} alt="Required" />
+                    ? <Asterisk size="XXS" UNSAFE_className={styles.requiredIcon} aria-label="Required" />
                     : null
                   }
                 </td>

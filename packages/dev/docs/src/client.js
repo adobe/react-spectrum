@@ -12,17 +12,20 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import docsStyle from './docs.css';
+import {listen} from 'quicklink';
 import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
+
+window.addEventListener('load', () => listen());
 
 let title = document.querySelector('h1');
 
 // Size the title to fit the available space.
 function updateTitleFontSize() {
   let fontSize = parseInt(window.getComputedStyle(title).fontSize, 10);
-  
+
   // Constrain font size to 58px, or 10% of the window width, whichever is smaller.
   let maxFontSize = Math.min(58, Math.round(window.innerWidth * 0.1));
   if (fontSize > maxFontSize) {
@@ -76,7 +79,7 @@ function Hamburger() {
   }, []);
 
   return (
-    <ActionButton onPress={onPress} aria-label="Open navigation panel">
+    <ActionButton UNSAFE_className={docsStyle.hamburgerButton} onPress={onPress} aria-label="Open navigation panel">
       <ShowMenu />
     </ActionButton>
   );
@@ -86,3 +89,23 @@ ReactDOM.render(<>
   <Hamburger />
   <ThemeSwitcher />
 </>, document.getElementById('header'));
+
+document.addEventListener('mousedown', (e) => {
+  // Prevent focusing on links to other pages with the mouse to avoid flash of focus ring during navigation.
+  let link = e.target.closest('a');
+  if (link && (link.host !== location.host || link.pathname !== location.pathname)) {
+    e.preventDefault();
+  }
+
+  // Add mouse focus class to summary elements on mouse down to prevent native browser focus from showing.
+  if (e.target.tagName === 'SUMMARY') {
+    e.target.classList.add(docsStyle.mouseFocus);
+  }
+});
+
+// Remove mouse focus class on blur of a summary element.
+document.addEventListener('blur', (e) => {
+  if (e.target.tagName === 'SUMMARY') {
+    e.target.classList.remove(docsStyle.mouseFocus);
+  }
+}, true);

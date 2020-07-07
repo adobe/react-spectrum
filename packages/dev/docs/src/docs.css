@@ -154,17 +154,56 @@ html, body {
   text-decoration: none;
 }
 
-.backBtn {
-  color: var(--spectrum-global-color-gray-900);
-  margin-right: 10px;
+.sideNavItem:focus {
+  background-color: var(--spectrum-sidenav-item-background-color-key-focus);
+  color: var(--spectrum-sidenav-item-text-color-key-focus);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    border: var(--spectrum-tabs-focus-ring-size) solid transparent;
+    border-radius: var(--spectrum-sidenav-item-border-radius);
+
+    border-color: var(--spectrum-sidenav-item-border-color-key-focus);
+  }
 }
 
-.homeBtn svg {
-  width: 36px;
-  height: 32px;
-  display: block;
-  margin-right: 16px;
-  padding-top: 1px;
+.backBtn {
+  color: var(--spectrum-global-color-gray-900);
+  margin: -4px 6px -4px -4px;
+  padding: 2px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+
+  &:focus {
+    outline: none;
+    border-color: var(--spectrum-alias-border-color-focus);
+  }
+}
+
+.homeBtn {
+  margin: -4px;
+  padding: 2px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+
+  &:focus {
+    outline: none;
+    border-color: var(--spectrum-alias-border-color-focus);
+  }
+
+  svg {
+    width: 36px;
+    height: 32px;
+    display: block;
+    margin-right: 16px;
+    padding-top: 1px;
+  }
 }
 
 main {
@@ -244,9 +283,14 @@ footer li:last-child:after {
 }
 
 .colorLink {
+  outline: none;
   text-decoration: none;
   &:hover {
     text-decoration: underline;
+  }
+  &:focus:not(:active) {
+    text-decoration: underline;
+    text-decoration-style: double;
   }
 }
 
@@ -338,7 +382,7 @@ code :global(.large) {
   display: inline;
 }
 
-article kbd {
+.keyboard {
   font-family: var(--spectrum-font-family-base);
   background: var(--spectrum-global-color-gray-300);
   padding: 2px 6px;
@@ -377,10 +421,20 @@ summary {
   display: flex;
   align-items: center;
   cursor: pointer;
+
+  margin: 12px -4px 0 -4px !important;
+  padding: 2px;
+  border: 2px solid transparent;
+  border-radius: 4px;
 }
 
 summary:focus {
   outline: none;
+  border-color: var(--spectrum-alias-border-color-focus);
+}
+
+summary:focus.mouseFocus {
+  border-color: transparent;
 }
 
 summary::-webkit-details-marker {
@@ -457,6 +511,11 @@ h2.sectionHeader {
   width: 100%;
 }
 
+/* hamburger menu should be hidden so that it doesn't receive focus before the sidenav */
+ .hamburgerButton {
+   visibility: hidden;
+ }
+
 .responsiveVideo {
   position: relative;
   padding-bottom: 56.25%; /* 16:9 */
@@ -478,6 +537,11 @@ h2.sectionHeader {
   margin-right: var(--spectrum-global-dimension-size-200);
   margin-bottom: var(--spectrum-global-dimension-size-200);
   width: var(--spectrum-global-dimension-size-3400);
+}
+
+.link:focus {
+  text-decoration: underline;
+  text-decoration-style: double;
 }
 
 @media (max-width: 750px) {
@@ -596,6 +660,10 @@ h2.sectionHeader {
     border-bottom: 1px solid var(--spectrum-global-color-gray-200);
     background: var(--page-background);
     z-index: 50;
+  }
+
+  .hamburgerButton {
+    visibility: visible;
   }
 
   /* Expand the component description to full width */

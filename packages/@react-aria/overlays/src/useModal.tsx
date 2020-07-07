@@ -109,7 +109,7 @@ export function OverlayContainer(props: ModalProviderProps): React.ReactPortal {
 /**
  * Hides content outside the current `<OverlayContainer>` from screen readers
  * on mount and restores it on unmount. Typically used by modal dialogs and
- * other types over overlays to ensure that only the top-most modal is
+ * other types of overlays to ensure that only the top-most modal is
  * accessible at once.
  */
 export function useModal(): void {
