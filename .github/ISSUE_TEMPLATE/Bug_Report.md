@@ -51,6 +51,6 @@ Search open/closed issues before submitting since someone might have asked the s
 
 <!--- Which product team is this bug impacting? (i.e. Adobe/Photoshop) -->
 
-## 🕷 Tracking Issue
+## 🕷 Tracking Issue (optional)
 
-<!--- Link to the issue in your system, if available (JIRA, Github, etc.) -->
+<!--- Link to the issue in your system, if publicly available -->
