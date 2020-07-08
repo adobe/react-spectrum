@@ -15,7 +15,6 @@ const React = require('react');
 const ReactDOMServer = require('react-dom/server');
 const requireFromString = require('require-from-string');
 const {blobToString, urlJoin} = require('@parcel/utils');
-const {Readable} = require('stream');
 
 module.exports = new Optimizer({
   async optimize({bundle, bundleGraph, contents, map}) {

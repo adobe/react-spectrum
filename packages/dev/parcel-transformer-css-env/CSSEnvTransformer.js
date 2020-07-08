@@ -21,9 +21,9 @@ module.exports = new Transformer({
     asset.setEnvironment({
       context: 'browser',
       engines: {
-        browsers: asset.env.engines.browsers,
+        browsers: asset.env.engines.browsers
       },
-      minify: options.mode === 'production',
+      minify: options.mode === 'production'
     });
 
     return [asset];
