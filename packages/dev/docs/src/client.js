@@ -117,7 +117,7 @@ document.addEventListener('blur', (e) => {
  * If there was already a modal open and a new one was added, undo everything that the previous modal had hidden and hide based on the new one.
  *
  * If a modal container is removed, then undo the hiding based on the last hide others. Check if there are any other modals still around, and
- * hide based on the furthest one down in the dom.
+ * hide based on the last one added.
  */
 let target = document.querySelector('body');
 let config = {childList: true};
