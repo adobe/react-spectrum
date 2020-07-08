@@ -43,7 +43,7 @@ function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
   }
 
   let contents = (
-    <Provider ref={ref} UNSAFE_style={{background: 'transparent', isolation: 'isolate'}}>
+    <Provider ref={ref} UNSAFE_style={{background: 'transparent', isolation: 'isolate'}} data-modalcontainer="true">
       <OpenTransition
         in={isOpen}
         appear

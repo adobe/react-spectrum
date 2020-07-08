@@ -11,6 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {hideOthers} from 'aria-hidden';
 import docsStyle from './docs.css';
 import {listen} from 'quicklink';
 import React, {useEffect} from 'react';
@@ -109,3 +110,40 @@ document.addEventListener('blur', (e) => {
     e.target.classList.remove(docsStyle.mouseFocus);
   }
 }, true);
+
+/**
+ * Listen for additions to the child list of body. This is where providers render modal portals.
+ * When one is added, see if there is a modal inside it, if there is, then hide everything else from screen readers.
+ * If there was already a modal open and a new one was added, undo everything that the previous modal had hidden and hide based on the new one.
+ *
+ * If a modal container is removed, then undo the hiding based on the last hide others. Check if there are any other modals still around, and
+ * hide based on the furthest one down in the dom.
+ */
+let target = document.querySelector('body');
+let config = {childList: true};
+let modalContainer = [];
+let undo;
+
+let bodyObserver = new MutationObserver((mutationRecord) => {
+  for (let mutation of mutationRecord) {
+    mutation.type === 'childList' && console.log(!modalContainer, mutation.addedNodes.length > 0, mutation.addedNodes, Array.from(mutation.addedNodes).some(node => node.attributes['data-modalcontainer']));
+    if (mutation.type === 'childList' && !modalContainer && mutation.addedNodes.length > 0 && Array.from(mutation.addedNodes).some(node => node.attributes['data-modalcontainer'])) {
+      modalContainer.push(mutation.addedNodes[mutation.addedNodes.length - 1]);
+      let modal = modalContainer[modalContainer.length - 1].querySelector('[aria-modal="true"]');
+      if (undo) {
+        undo();
+      }
+      undo = hideOthers(modal);
+    } else if (mutation.type === 'childList' && modalContainer && mutation.removedNodes.length > 0 && mutation.removedNodes[0] === modalContainer) {
+      undo();
+      delete modalContainer[mutation.removedNodes[0]];
+      if (modalContainer.length > 0) {
+        let modal = modalContainer[modalContainer.length - 1].querySelector('[aria-modal="true"]');
+        undo = hideOthers(modal);
+      } else {
+        undo = undefined;
+      }
+    }
+  }
+});
+bodyObserver.observe(target, config);

@@ -395,3 +395,28 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
   )}
 </DialogTrigger>
 ```
+
+### Nested Dialogs
+```tsx example
+<div style={{paddingTop: 100}}>
+    <input />
+    <DialogTrigger isDismissable>
+        <ActionButton>Trigger</ActionButton>
+        <Dialog>
+          <Content>
+            <input />
+            <input />
+            <DialogTrigger isDismissable>
+              <ActionButton>Trigger</ActionButton>
+              <Dialog>
+                <Content>
+                  <input />
+                  <input />
+                </Content>
+              </Dialog>
+            </DialogTrigger>
+          </Content>
+        </Dialog>
+    </DialogTrigger>
+</div>
+```
