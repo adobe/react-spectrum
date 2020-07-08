@@ -174,24 +174,24 @@ workflows:
       - docs:
           requires:
             - build
-#      - docs-master:
-#          filters:
-#            branches:
-#              only: master
-#          requires:
-#            - build
+     - docs-master:
+         filters:
+           branches:
+             only: master
+         requires:
+           - build
       - deploy:
           requires:
             - lint
             - test
             - storybook
             - docs
-#      - deploy-master:
-#          filters:
-#            branches:
-#              only: master
-#          requires:
-#            - docs-master
+     - deploy-master:
+         filters:
+           branches:
+             only: master
+         requires:
+           - docs-master
       - comment:
           requires:
             - deploy
