@@ -72,7 +72,16 @@ html, body {
 }
 
 .dark {
-  --page-background: var(--spectrum-global-color-gray-100);
+  --page-background: var(--spectrum-global-color-gray-75);
+  nav {
+    background-color: var(--spectrum-global-color-gray-100);
+  }
+  .example {
+    background-color: var(--spectrum-global-color-gray-200);
+  }
+  article pre, article pre code span {
+    background-color: var(--spectrum-global-color-gray-100);
+  }
 }
 
 .exampleImage {
