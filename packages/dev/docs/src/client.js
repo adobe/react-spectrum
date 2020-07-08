@@ -11,8 +11,8 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {hideOthers} from 'aria-hidden';
 import docsStyle from './docs.css';
+import {hideOthers} from 'aria-hidden';
 import {listen} from 'quicklink';
 import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
