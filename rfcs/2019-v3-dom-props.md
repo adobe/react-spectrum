@@ -50,7 +50,7 @@ This can be enabled by supporting explicit props for styling in the API for each
 <Button margin="size-250">A button</Button>
 ```
 
-The full list of supported style props can be seen [here](https://github.com/adobe/react-spectrum/blob/db1b2716cbe934323866a8bb5391284e0659e569/packages/%40react-spectrum/view/src/types.ts#L4).
+The full list of supported style props can be seen [here](https://github.com/adobe/react-spectrum/blob/master/packages/%40react-types/shared/src/style.d.ts ).
 
 Applications may also need to take advantage of Spectrum DNA variables for custom UI components, e.g. layout containers. This could be provided in the form of a `<View>` component that would be used in place of `<div>` or `<span>`. It would add some additional props for backgrounds, borders, paddings, etc. using Spectrum defined variables for the values. A start at this is also included in the PR.
 
