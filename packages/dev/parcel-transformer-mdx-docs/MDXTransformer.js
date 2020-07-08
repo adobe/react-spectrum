@@ -198,90 +198,90 @@ module.exports = new Transformer({
       ]
     });
 
-    let exampleBundle = exampleCode.length === 0
-      ?  ''
-      : `import React from 'react';
-import ReactDOM from 'react-dom';
-import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
-${exampleCode.join('\n')}
-export default {};
-`;
-
-    // Ensure that the HTML asset always changes so that the packager runs
-    asset.type = 'html';
-    asset.setCode(Math.random().toString(36).slice(4));
+    asset.type = 'jsx';
+    asset.setCode(`/* @jsx mdx */
+    import React from 'react';
+    import { mdx } from '@mdx-js/react'
+    ${compiled}
+    `);
     asset.meta.toc = toc;
     asset.meta.title = title;
     asset.meta.category = category;
     asset.meta.description = description;
     asset.meta.keywords = keywords;
+    asset.meta.isMDX = true;
+    asset.isSplittable = false;
+
+    // Generate the client bundle. We always need the client script,
+    // and the docs script when there's a TOC or an example on the page.
+    let clientBundle = 'import \'@react-spectrum/docs/src/client\';\n';
+    if (toc.length || exampleCode.length > 0) {
+      clientBundle += 'import \'@react-spectrum/docs/src/docs\';\n';
+    }
+
+    // Add example code collected from the MDX.
+    if (exampleCode.length > 0) {
+      clientBundle += `import React from 'react';
+import ReactDOM from 'react-dom';
+import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
+${exampleCode.join('\n')}
+export default {};
+`;
+    }
 
     let assets = [
       asset,
       {
         type: 'jsx',
-        content: `/* @jsx mdx */
-import React from 'react';
-import { mdx } from '@mdx-js/react'
-${compiled}
-`,
-        isInline: true,
-        isSplittable: false,
-        uniqueKey: 'page',
+        content: clientBundle,
+        uniqueKey: 'client',
+        isSplittable: true,
         env: {
-          context: 'node',
-          engines: {
-            node: process.versions.node
-          },
-          outputFormat: 'commonjs',
-          includeNodeModules: {
-            // These don't need to be bundled.
-            react: false,
-            'react-dom': false,
-            'intl-messageformat': false,
-            'globals-docs': false,
-            lowlight: false,
-            scheduler: false,
-            'markdown-to-jsx': false,
-            'prop-types': false
-          },
-          scopeHoist: false,
-          minify: false
+          // We have to override all of the environment options to ensure this doesn't inherit
+          // anything from the parent asset, whose environment is set below.
+          context: 'browser',
+          engines: asset.env.engines,
+          outputFormat: asset.env.scopeHoist ? 'esmodule' : 'global',
+          includeNodeModules: asset.env.includeNodeModules,
+          scopeHoist: asset.env.scopeHoist,
+          minify: asset.env.minify
+        },
+        meta: {
+          isMDX: false
         }
       }
     ];
 
+    // Add a dependency on the client bundle. It should not inherit its entry status from the page,
+    // and should always be placed in a separate bundle.
     asset.addDependency({
-      moduleSpecifier: '@react-spectrum/docs/src/client',
-      isAsync: true
+      moduleSpecifier: 'client',
+      isEntry: false,
+      isIsolated: true
     });
 
-    if (toc.length || exampleBundle) {
-      asset.addDependency({
-        moduleSpecifier: '@react-spectrum/docs/src/docs',
-        isAsync: true
-      });
-    }
-
-    asset.addDependency({
-      moduleSpecifier: 'page'
+    // Override the environment of the page bundle. It will run in node as part of the SSG optimizer.
+    asset.setEnvironment({
+      context: 'node',
+      engines: {
+        node: process.versions.node,
+        browsers: asset.env.engines.browsers
+      },
+      outputFormat: 'commonjs',
+      includeNodeModules: {
+        // These don't need to be bundled.
+        react: false,
+        'react-dom': false,
+        'intl-messageformat': false,
+        'globals-docs': false,
+        lowlight: false,
+        scheduler: false,
+        'markdown-to-jsx': false,
+        'prop-types': false
+      },
+      scopeHoist: false,
+      minify: false
     });
-
-    if (exampleBundle) {
-      assets.push({
-        type: 'jsx',
-        content: exampleBundle,
-        uniqueKey: 'example',
-        env: {
-          outputFormat: asset.env.scopeHoist ? 'esmodule' : 'global'
-        }
-      });
-
-      asset.addDependency({
-        moduleSpecifier: 'example',
-        isAsync: true
-      });
-    }
 
     return assets;
   }
