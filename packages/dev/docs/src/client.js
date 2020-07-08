@@ -121,29 +121,37 @@ document.addEventListener('blur', (e) => {
  */
 let target = document.querySelector('body');
 let config = {childList: true};
-let modalContainer = [];
+let modalContainers = [];
 let undo;
 
-let bodyObserver = new MutationObserver((mutationRecord) => {
+let observer = new MutationObserver((mutationRecord) => {
   for (let mutation of mutationRecord) {
-    mutation.type === 'childList' && console.log(!modalContainer, mutation.addedNodes.length > 0, mutation.addedNodes, Array.from(mutation.addedNodes).some(node => node.attributes['data-modalcontainer']));
-    if (mutation.type === 'childList' && !modalContainer && mutation.addedNodes.length > 0 && Array.from(mutation.addedNodes).some(node => node.attributes['data-modalcontainer'])) {
-      modalContainer.push(mutation.addedNodes[mutation.addedNodes.length - 1]);
-      let modal = modalContainer[modalContainer.length - 1].querySelector('[aria-modal="true"]');
-      if (undo) {
-        undo();
-      }
-      undo = hideOthers(modal);
-    } else if (mutation.type === 'childList' && modalContainer && mutation.removedNodes.length > 0 && mutation.removedNodes[0] === modalContainer) {
-      undo();
-      delete modalContainer[mutation.removedNodes[0]];
-      if (modalContainer.length > 0) {
-        let modal = modalContainer[modalContainer.length - 1].querySelector('[aria-modal="true"]');
+    if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+      let addNode = Array.from(mutation.addedNodes).find(node => node.attributes['data-modalcontainer']);
+      if (addNode) {
+        modalContainers.push(addNode);
+        let modal = addNode.querySelector('[aria-modal="true"]');
+        if (undo) {
+          undo();
+        }
         undo = hideOthers(modal);
-      } else {
-        undo = undefined;
+      }
+    } else if (mutation.type === 'childList' && mutation.removedNodes.length > 0) {
+      let removedNodes = Array.from(mutation.removedNodes);
+      let nodeIndexRemove = modalContainers.findIndex(container => removedNodes.includes(container));
+      console.log(nodeIndexRemove);
+      if (nodeIndexRemove) {
+        undo();
+        modalContainers = modalContainers.filter((val, i) => i !== nodeIndexRemove);
+        console.log(modalContainers);
+        if (modalContainers.length > 0) {
+          let modal = modalContainers[modalContainers.length - 1].querySelector('[aria-modal="true"]');
+          undo = hideOthers(modal);
+        } else {
+          undo = undefined;
+        }
       }
     }
   }
 });
-bodyObserver.observe(target, config);
+observer.observe(target, config);
