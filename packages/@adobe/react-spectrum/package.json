@@ -1,6 +1,6 @@
 {
   "name": "@adobe/react-spectrum",
-  "version": "3.0.0-rc.0",
+  "version": "3.0.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -53,5 +53,8 @@
     "@react-spectrum/well": "^3.0.0",
     "@react-stately/collections": "^3.0.0",
     "@react-stately/data": "^3.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
