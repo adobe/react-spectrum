@@ -16,7 +16,6 @@ import {Content, View} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
-import {Heading} from '@react-spectrum/text';
 import highlightCss from './syntax-highlight.css';
 import {Pressable} from '@react-aria/interactions';
 import React, {useEffect, useRef, useState} from 'react';
