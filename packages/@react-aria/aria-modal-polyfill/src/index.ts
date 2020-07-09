@@ -41,10 +41,9 @@ export function watchModals(selector = 'body') {
       } else if (mutation.type === 'childList' && mutation.removedNodes.length > 0) {
         let removedNodes = Array.from(mutation.removedNodes);
         let nodeIndexRemove = modalContainers.findIndex(container => removedNodes.includes(container));
-        if (nodeIndexRemove) {
+        if (nodeIndexRemove >= 0) {
           undo();
           modalContainers = modalContainers.filter((val, i) => i !== nodeIndexRemove);
-          console.log(modalContainers);
           if (modalContainers.length > 0) {
             let modal = modalContainers[modalContainers.length - 1].querySelector('[aria-modal="true"]');
             undo = hideOthers(modal);
