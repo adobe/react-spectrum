@@ -65,12 +65,16 @@ function Example() {
     {id: 8, name: 'Turtle'},
     {id: 9, name: 'Wombat'}
   ];
+  let [animalId, setAnimalId] = React.useState();
 
   return (
     // Dynamic Items
-    <ListBox width="size-2400" aria-label="Animals" items={options} selectionMode="single" onSelectionChange={selected => console.log(selected)}>
-      {item => <Item>{item.name}</Item>}
-    </ListBox>
+    <>
+      <ListBox width="size-2400" aria-label="Animals" items={options} selectionMode="single" onSelectionChange={setAnimalId}>
+        {item => <Item>{item.name}</Item>}
+      </ListBox>
+      <p>Animal id: {animalId}</p>
+    </>
   );
 }
 ```
@@ -155,13 +159,15 @@ function Example() {
       {id: 8, name: 'Skunk'}
     ]}
   ];
+  let [selected, setSelected] = React.useState(new Set());
 
   return (
     <ListBox
       aria-label="Pick an animal"
       items={options}
+      selectedKeys={selected}
       selectionMode="single"
-      onSelectionChange={selected => console.log(selected)}
+      onSelectionChange={setSelected}
       width="size-2400">
       {item => (
         <Section key={item.name} items={item.children} title={item.name}>
