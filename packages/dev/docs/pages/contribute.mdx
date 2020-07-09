@@ -27,15 +27,15 @@ We adhere to the Adobe [code of conduct](https://github.com/adobe-private/react-
 
 ## Reporting issues
 ### Bugs
-We use [GitHub issues](https://github.com/adobe-private/react-spectrum-v3/issues) to track work and log bugs. Please check existing issues before filing anything new. We do our best to respond to issues within a few days. If you would like to contribute a fix, please let us know on the issue.
+We use [GitHub issues](https://github.com/adobe-private/react-spectrum-v3/issues) to track work and log bugs. Please check existing issues before filing anything new. We do our best to respond to issues within a few days. If you would like to contribute a fix, please let us know by leaving a comment on the issue.
 
-The best way to reduce back and forth on a bug is to add code for a storybook example exhibiting the issue along with steps to reproduce it. If you would like to work on a bugfix yourself, make sure an issue exists first.
+The best way to reduce back and forth on a bug is provide a small code example exhibiting the issue along with steps to reproduce it. If you would like to work on a bugfix yourself, make sure an issue exists first.
 
 ### Feature requests
-Our components can always be improved upon. If you have a feature request, you can use our Feature Request issue template in issues. For larger scopes of work, it is a good idea to put forth a Request For Comments (RFC) first to gather feedback from the team. A [template](https://github.com/adobe-private/react-spectrum-v3/blob/master/rfcs/template.md) is available to build an RFC. Make a PR to add your RFC to the [rfcs folder](https://github.com/adobe-private/react-spectrum-v3/tree/master/rfcs) to give the team and the community a chance to discuss the proposal.
+Our components can always be improved upon. If you have a feature request, you can use our Feature Request issue template. For larger scopes of work, it is a good idea to open a Request For Comments (RFC) first to gather feedback from the team. Please follow our RFC [template](https://github.com/adobe-private/react-spectrum-v3/blob/master/rfcs/template.md). Make a PR to add your RFC to the [rfcs folder](https://github.com/adobe-private/react-spectrum-v3/tree/master/rfcs) to give the team and the community a chance to discuss the proposal.
 
 ### Security issues
-Security issues shouldn't be reported on this issue tracker. Instead, [file an issue](https://helpx.adobe.com/security/alertus.html) to our security experts.
+Security issues shouldn't be reported on this issue tracker. Instead, please follow the directions [here](https://helpx.adobe.com/security/alertus.html) to contact our security team.
 
 ## Pull Requests
 For significant changes, it is recommended that you first propose your solution in [an RFC](#feature-requests) and gather feedback.
@@ -77,8 +77,8 @@ Make sure you have the following requirements installed: [node](https://nodejs.o
 
 Fork the repo first using [this guide](https://help.github.com/articles/fork-a-repo), then clone it locally.
 ```
-git clone https://github.com/YOUR-USERNAME/react-spectrum-v3
-cd react-spectrum-v3
+git clone https://github.com/YOUR-USERNAME/react-spectrum
+cd react-spectrum
 yarn install
 ```
 
@@ -93,10 +93,10 @@ yarn start:docs
 ```
 
 ### Tests
-We use [jest](https://jestjs.io/) for unit tests and [react-testing-library](https://testing-library.com/docs/react-testing-library/intro) for rendering and writing assertions. Please make sure you include tests with your pull requests. Our CI/CD will run the tests on PRs as well as lint code and TS. You can see on each PR whether you have passed all our checks. We split the tests into 2 groups.
+We use [jest](https://jestjs.io/) for unit tests and [react-testing-library](https://testing-library.com/docs/react-testing-library/intro) for rendering and writing assertions. Please make sure you include tests with your pull requests. Our CI will run the tests on PRs as well as the linter and type checker. You can see on each PR whether you have passed all our checks. We split the tests into 2 groups.
 
 *Visual tests*
-- A Storybook story should be written for any visual breakage of a component.
+- A Storybook story should be written for each visual state that a component can be in (based on props).
 
 *Unit tests*
 - (Props) Anything that should be changed by a prop should be tested via react-testing-library.
@@ -127,11 +127,11 @@ yarn lint
 ```
 
 ### Storybook
-We use [Storybooks](https://storybooks.js.org) for local development. You can use the command
+We use [Storybook](https://storybooks.js.org) for local development. Run the following command to start it:
 ```bash
 yarn start
 ```
-followed by opening [http://localhost:9003](http://localhost:9003) in your browser to play around with the components and test your changes.
+Then, open [http://localhost:9003](http://localhost:9003) in your browser to play around with the components and test your changes.
 
 ### Documentation
 Our documentation should always remain up to date. When making changes to components, make sure the appropriate documentation has been updated to reflect those changes. Documentation for each component can be found in the docs folder within a component's package. Other documentation pages can be found in the [packages/dev/docs](https://github.com/adobe-private/react-spectrum-v3/tree/master/packages/dev/docs) folder in the codebase.
@@ -140,8 +140,8 @@ Documentaton can be run locally by using
 ```bash
 yarn start:docs
 ```
-followed by opening [http://localhost:1234](http://localhost:1234) in your browser.
+Then, open [http://localhost:1234](http://localhost:1234) in your browser.
 
 ## Contributor to committer
 
-We love contributions from our community! If you'd like to go a step beyond contributor and become a committer with full write access and a say in the project, you must be invited to the project. The existing committers employ an internal nomination process that must reach lazy consensus (silence is approval) before invitations are issued. If you feel you are qualified and want to get more deeply involved, feel free to reach out to existing committers to have a conversation.
+We love contributions from our community! If you'd like to go a step beyond contributor and become a committer with full write access and a say in the project, you must be invited. The existing committers employ an internal nomination process that must reach lazy consensus (silence is approval) before invitations are issued. If you feel you are qualified and want to get more deeply involved, feel free to reach out to existing committers to have a conversation.
