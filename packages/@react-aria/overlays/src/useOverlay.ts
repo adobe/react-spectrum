@@ -61,7 +61,15 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
   }, [isOpen, ref]);
 
   // Only hide the overlay when it is the topmost visible overlay in the stack.
-  let onHide = () => {
+  let onHide = (e) => {
+    // if the event target is no longer in the document
+    if (e && e.target) {
+      const ownerDocument = e.target.ownerDocument;
+      if (!ownerDocument || !ownerDocument.body.contains(e.target)) {
+        return;
+      }
+    }
+
     if (visibleOverlays[visibleOverlays.length - 1] === ref && onClose) {
       onClose();
     }
@@ -71,7 +79,7 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
   let onKeyDown = (e) => {
     if (e.key === 'Escape') {
       e.preventDefault();
-      onHide();
+      onHide(e);
     }
   };
 
