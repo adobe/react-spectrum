@@ -20,6 +20,18 @@ const slug = require('remark-slug');
 const util = require('mdast-util-toc');
 const yaml = require('js-yaml');
 const prettier = require('prettier');
+const {parse} = require('@babel/parser');
+const traverse = require('@babel/traverse').default;
+const t = require('@babel/types');
+
+const IMPORT_MAPPINGS = {
+  '@react-spectrum/theme-default': {
+    theme: 'defaultTheme'
+  },
+  '@react-spectrum/theme-dark': {
+    theme: 'darkTheme'
+  }
+};
 
 module.exports = new Transformer({
   async transform({asset, options}) {
@@ -70,7 +82,7 @@ module.exports = new Transformer({
             node.meta = 'example';
 
             return [
-              ...responsiveCode(node),
+              ...transformExample(node),
               {
                 type: 'jsx',
                 value: `<div id="${id}" />`
@@ -88,7 +100,7 @@ module.exports = new Transformer({
             ];
           }
 
-          return responsiveCode(node);
+          return transformExample(node);
         }
 
         return [node];
@@ -287,7 +299,72 @@ export default {};
   }
 });
 
-function responsiveCode(node) {
+function transformExample(node) {
+  if (node.lang !== 'tsx') {
+    return responsiveCode(node);
+  }
+
+  if (/^<(.|\n)*>$/m.test(node.value)) {
+    node.value = node.value.replace(/^(<(.|\n)*>)$/m, '<WRAPPER>$1</WRAPPER>');
+  }
+
+  let ast = parse(node.value, {
+    sourceType: 'module',
+    plugins: ['jsx', 'typescript']
+  });
+
+  // Replace individual package imports in the code with monorepo imports if building for production
+  if (process.env.DOCS_ENV === 'production') {
+    let specifiers = [];
+    let last;
+
+    traverse(ast, {
+      ImportDeclaration(path) {
+        if (path.node.source.value.startsWith('@react-spectrum')) {
+          let mapping = IMPORT_MAPPINGS[path.node.source.value];
+          for (let specifier of path.node.specifiers) {
+            let mapped = mapping && mapping[specifier.imported.name];
+            if (mapped && specifier.local.name === specifier.imported.name) {
+              path.scope.rename(specifier.local.name, mapped);
+              specifiers.push(mapped);
+            } else {
+              specifiers.push(specifier.imported.name);
+            }
+          }
+
+          last = path.node;
+          path.remove();
+        }
+      },
+      Statement(path) {
+        path.skip();
+      },
+      Program: {
+        exit(path) {
+          if (specifiers.length > 0) {
+            let literal =  t.stringLiteral('@adobe/react-spectrum');
+            literal.raw = "'@adobe/react-spectrum'";
+
+            let decl = t.importDeclaration(
+              specifiers.map(s => t.importSpecifier(t.identifier(s), t.identifier(s))),
+              literal
+            );
+
+            decl.loc = last.loc;
+            decl.start = last.start;
+            decl.end = last.end;
+
+            path.unshiftContainer('body', [decl]);
+          }
+        }
+      }
+    });
+  }
+
+  return responsiveCode(node, ast);
+}
+
+function responsiveCode(node, ast) {
   if (!node.lang) {
     return [node];
   }
@@ -295,19 +372,19 @@ function responsiveCode(node) {
   let large = {
     ...node,
     meta: node.meta ? `${node.meta} large` : 'large',
-    value: formatCode(node, 80)
+    value: formatCode(node, ast, 80)
   };
 
   let medium = {
     ...node,
     meta: node.meta ? `${node.meta} medium` : 'medium',
-    value: formatCode(large, 60)
+    value: formatCode(large, ast, 60)
   };
 
   let small = {
     ...node,
     meta: node.meta ? `${node.meta} small` : 'small',
-    value: formatCode(medium, 25)
+    value: formatCode(medium, ast, 25)
   };
 
   return [
@@ -317,18 +394,19 @@ function responsiveCode(node) {
   ];
 }
 
-function formatCode(node, printWidth = 80) {
+function formatCode(node, ast, printWidth = 80) {
   let code = node.value;
-  if (code.split('\n').every(line => line.length <= printWidth)) {
+  if (!ast && code.split('\n').every(line => line.length <= printWidth)) {
     return code;
   }
 
-  if (/^<(.|\n)*>$/m.test(code)) {
-    code = code.replace(/^(<(.|\n)*>)$/m, '<WRAPPER>$1</WRAPPER>');
+  let parser = node.lang === 'css' ? 'css' : 'babel-ts';
+  if (ast) {
+    parser = () => ast;
   }
 
   code = prettier.format(code, {
-    parser: node.lang === 'css' ? 'css' : 'babel-ts',
+    parser,
     singleQuote: true,
     jsxBracketSameLine: true,
     bracketSpacing: false,
