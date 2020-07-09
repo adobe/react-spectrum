@@ -11,7 +11,7 @@
  */
 
 // To get the type definiton for "*.css"
-///<reference types="@react-types/shared" />
+/// <reference types="@react-types/shared" />
 
 import classNames from 'classnames';
 import React, {HTMLAttributes, JSXElementConstructor, ReactNode} from 'react';
