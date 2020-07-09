@@ -10,6 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+// To get the type definiton for "*.css"
+///<reference types="@react-types/shared" />
+
 import classNames from 'classnames';
 import React, {HTMLAttributes, JSXElementConstructor, ReactNode} from 'react';
 import styles from './VisuallyHidden.css';

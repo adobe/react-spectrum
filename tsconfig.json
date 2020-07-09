@@ -24,7 +24,9 @@
     // if 'target' is updated, this should be updated as well
     "lib": [
       "es6",
-      "dom"
+      "dom",
+      "es2017.object",
+      "es2017.intl"
     ],
     "skipLibCheck": false
   },

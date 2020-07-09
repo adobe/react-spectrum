@@ -11,6 +11,10 @@
  */
 
 declare module '*.css' {
-  const content: any;
+  interface CSSModule {
+    [key: string]: string;
+  }
+
+  const content: CSSModule;
   export default content;
 }
