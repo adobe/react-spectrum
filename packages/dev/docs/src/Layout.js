@@ -311,7 +311,7 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
   return (
     <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage}>
       <div style={{isolation: 'isolate'}}>
-        <header className={docStyles.pageHeader} id="header" />
+        <header className={docStyles.pageHeader} />
         <Nav currentPageName={currentPage.name} pages={pages} />
         <main>
           <article className={classNames(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>

@@ -88,7 +88,7 @@ function Hamburger() {
 ReactDOM.render(<>
   <Hamburger />
   <ThemeSwitcher />
-</>, document.getElementById('header'));
+</>, document.querySelector('.' + docsStyle.pageHeader));
 
 document.addEventListener('mousedown', (e) => {
   // Prevent focusing on links to other pages with the mouse to avoid flash of focus ring during navigation.
