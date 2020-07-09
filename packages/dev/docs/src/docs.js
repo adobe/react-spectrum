@@ -16,7 +16,6 @@ import {Content, View} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
-import {Heading} from '@react-spectrum/text';
 import highlightCss from './syntax-highlight.css';
 import {Pressable} from '@react-aria/interactions';
 import React, {useEffect, useRef, useState} from 'react';
@@ -61,7 +60,7 @@ function LinkPopover({id}) {
         <Breadcrumbs onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}>
           {breadcrumbs.map((b, i) => (
             <Item key={i + 1}>
-              {i < (breadcrumbs.length - 1) ? b.dataset.title : <Heading level={3}>{b.dataset.title}</Heading>}
+              {b.dataset.title}
             </Item>
           ))}
         </Breadcrumbs>
