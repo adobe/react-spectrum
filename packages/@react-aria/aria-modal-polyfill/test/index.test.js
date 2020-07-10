@@ -12,6 +12,7 @@
 
 import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import {ActionButton, Button} from '@react-spectrum/button';
+import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
@@ -19,7 +20,6 @@ import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {watchModals} from '../';
-import {Content} from '@react-spectrum/view';
 
 describe('watchModals', () => {
   let matchMedia;
