@@ -10,14 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-// eslint-disable-next-line rulesdir/imports
 import {ActionButton} from '@react-spectrum/button';
-// eslint-disable-next-line rulesdir/imports
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '@react-spectrum/table';
-// eslint-disable-next-line rulesdir/imports
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useEffect, useState} from 'react';
-// eslint-disable-next-line rulesdir/imports
 import {SearchField} from '@react-spectrum/searchfield';
 import {useProvider} from '@react-spectrum/provider';
 
