@@ -58,7 +58,7 @@ We recommend supporting both light and dark color schemes in your app, however, 
 
 ```tsx example
 <Provider theme={theme} colorScheme="light">
-  <ActionButton>I'm a light button</ActionButton>
+  <ActionButton margin="size-100">I'm a light button</ActionButton>
 </Provider>
 ```
 
@@ -77,7 +77,7 @@ Another important setting for your application is the locale. By default, React 
 To access the current locale anywhere in your application, see the [useLocale](https://react-spectrum.adobe.com/react-aria/useLocale.html) hook.
 
 ## Property groups
-Provider can also be used to define common properties for a group of components within in. For example, a group of components could be disabled together rather than individually by setting the `isDisabled` prop on any parent provider.
+Provider can also be used to define common properties for a group of components within it. For example, a group of components could be disabled together rather than individually by setting the `isDisabled` prop on any parent provider.
 
 ```tsx example
 <Flex direction="column" gap="size-100" alignItems="start">
