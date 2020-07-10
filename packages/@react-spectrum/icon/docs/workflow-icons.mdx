@@ -1,0 +1,79 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/icon';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/icon/package.json';
+import workflowIconPackageData from '@spectrum-icons/workflow/package.json';
+
+```jsx import
+import {Icon} from '@react-spectrum/icon';
+import IconTable from './IconTable';
+```
+
+---
+category: Icons
+---
+
+# Workflow Icons
+
+Workflow icons are graphical metaphors or symbols that can be used to compliment existing experiences.
+
+<HeaderInfo
+  packageData={workflowIconPackageData}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/iconography/'}
+  ]} />
+
+## Example
+
+```tsx example
+import Airplane from '@spectrum-icons/workflow/Airplane';
+
+<Airplane />
+```
+
+## Sizing
+
+Icons support t-shirt sizing. When used inside another React Spectrum component, they'll generally be sized automatically,
+but if you use icons standalone, you can use the `size` prop to control the sizing. The default size is "M" in medium scale
+(desktop), and "L" in large scale (mobile).
+
+```tsx example
+import Beaker from '@spectrum-icons/workflow/Beaker';
+
+<Beaker size="XXS" />
+<Beaker size="XS" />
+<Beaker size="S" />
+<Beaker size="M" />
+<Beaker size="L" />
+<Beaker size="XL" />
+<Beaker size="XXL" />
+```
+
+## Labeling
+
+By default, icons are considered decorative, and are hidden from assistive technology. When used within a component like a button
+that has no label, an `aria-label` should be provided to the parent component. If used standalone, an `aria-label` can be provided
+to the icon itself.
+
+```tsx example
+import LockClosed from '@spectrum-icons/workflow/LockClosed';
+
+<LockClosed aria-label="Locked" />
+```
+
+## Available Icons
+
+```tsx snippet
+<IconTable iconPackage="workflow" />
+```
