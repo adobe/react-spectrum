@@ -35,15 +35,15 @@
   resolved "https://registry.yarnpkg.com/@adobe/react-spectrum-workflow/-/react-spectrum-workflow-1.0.1.tgz#32537652fb52a6ebf8746ad58268520a04b7f553"
   integrity sha512-5BM+oJyP4vjmqAV/HSJYLJzR3wDDbEOMUZEEVeKJ81cKyq0aJ6qF9A9tmsW6jb/73cE7PpLr6vb+xqBqTOYsTw==
 
-"@atom-languages/language-css@git+ssh://git@github.com:atom/language-css.git#v0.44.4":
+"@atom-languages/language-css@atom/language-css#v0.44.4":
   version "0.44.4"
-  resolved "git+ssh://git@github.com:atom/language-css.git#9feb69c081308b63f78bb0d6a2af2ff5eb7d869b"
+  resolved "https://codeload.github.com/atom/language-css/tar.gz/9feb69c081308b63f78bb0d6a2af2ff5eb7d869b"
   dependencies:
     tree-sitter-css "^0.15.0"
 
-"@atom-languages/language-typescript@git+ssh://git@github.com:atom/language-typescript.git#v0.6.2":
+"@atom-languages/language-typescript@atom/language-typescript#v0.6.2":
   version "0.6.2"
-  resolved "git+ssh://git@github.com:atom/language-typescript.git#020b1e3f7623e9bad89204772e98d4ed8bf83b05"
+  resolved "https://codeload.github.com/atom/language-typescript/tar.gz/020b1e3f7623e9bad89204772e98d4ed8bf83b05"
   dependencies:
     tree-sitter-typescript "^0.16.1"
 
