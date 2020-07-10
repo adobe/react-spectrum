@@ -128,7 +128,6 @@ module.exports = new Packager({
           if (!k || k === 'props' || k === 'extends') {
             return merged;
           }
-          t.name === 'Foo' && console.log('interface Foo checking base');
 
           // If the key is "base", then it came from a generic type application, so we need to
           // check one level above. If that was a component or extended interface, return the
