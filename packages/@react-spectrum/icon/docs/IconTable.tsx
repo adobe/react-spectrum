@@ -15,24 +15,11 @@ import {ActionButton} from '@react-spectrum/button';
 // eslint-disable-next-line rulesdir/imports
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '@react-spectrum/table';
 // eslint-disable-next-line rulesdir/imports
-import Copy from '@spectrum-icons/workflow/Copy';
-// eslint-disable-next-line rulesdir/imports
-import js from 'highlight.js/lib/languages/javascript';
-// eslint-disable-next-line rulesdir/imports
-import Lowlight from 'react-lowlight';
+import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useEffect, useState} from 'react';
 // eslint-disable-next-line rulesdir/imports
 import {SearchField} from '@react-spectrum/searchfield';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
-
-Lowlight.registerLanguage('js', js);
-
-let columns = [
-  {name: 'Name', key: 'name', width: '20%'},
-  {name: 'Icon', key: 'icon', width: '10%'},
-  {name: 'Import', key: 'import', width: '60%'},
-  {name: 'Action', key: 'action', width: '10%'}
-];
+import {useProvider} from '@react-spectrum/provider';
 
 const icons = {
   workflow: {
@@ -43,7 +30,7 @@ const icons = {
       let defaultExport = name.match(/^\d/) ? `_${name}` : name;
       return `import ${defaultExport} from '@spectrum-icons/workflow/${name}';`;
     },
-    srcTemplate: name => `https://spectrum.adobe.com/static/icons/workflow_18/Smock_${name}_18_N.svg`
+    iconTemplate: name => <IconImage name={name} src={`https://spectrum.adobe.com/static/icons/workflow_18/Smock_${name}_18_N.svg`} />
   }
 };
 
@@ -77,8 +64,7 @@ export default function IconTable(props: {iconPackage: string}) {
         name = name.split('.')[0];
         return {
           name,
-          icon: <img alt={`${name} icon`} src={packageMeta.srcTemplate(name)} width={36} height={36} />,
-          import: <Lowlight language="js" value={packageMeta.importTemplate(name)} inline className={typographyStyles['spectrum-Code4']} />,
+          icon: packageMeta.iconTemplate(name),
           importText: packageMeta.importTemplate(name)
         };
       });
@@ -96,8 +82,10 @@ export default function IconTable(props: {iconPackage: string}) {
         onChange={onSearch}
         marginBottom="20px" />
       <Table width="100%" height={500} selectionMode="none">
-        <TableHeader columns={columns}>
-          {column => <Column width={column.width}>{column.name}</Column>}
+        <TableHeader>
+          <Column key="icon" width={64}>Icon</Column>
+          <Column key="name">Name</Column>
+          <Column key="action" width={120} align="end">Copy Import</Column>
         </TableHeader>
         <TableBody items={tableState.items} isLoading={tableState.loading}>
           {item =>
@@ -105,7 +93,7 @@ export default function IconTable(props: {iconPackage: string}) {
               {key => (
                 <Cell>
                   {key === 'action'
-                    ? <ActionButton onPress={() => navigator.clipboard.writeText(item.importText)} aria-label="Copy import text"><Copy /></ActionButton>
+                    ? <ActionButton onPress={() => navigator.clipboard.writeText(item.importText)} aria-label="Copy import text"><Paste /></ActionButton>
                     : item[key]
                   }
                 </Cell>
@@ -115,5 +103,18 @@ export default function IconTable(props: {iconPackage: string}) {
         </TableBody>
       </Table>
     </>
+  );
+}
+
+function IconImage(props) {
+  let {colorScheme} = useProvider();
+
+  return (
+    <img
+      alt={`${props.name} icon`}
+      src={props.src}
+      width={22}
+      height={22}
+      style={{verticalAlign: 'middle', filter: colorScheme === 'dark' ? 'invert()' : undefined}} />
   );
 }
