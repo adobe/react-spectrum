@@ -11,8 +11,8 @@
  */
 
 import docStyles from './docs.css';
-import React from 'react';
 import path from 'path';
+import React from 'react';
 
 export const ImageContext = React.createContext();
 
