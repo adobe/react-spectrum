@@ -25,7 +25,7 @@ module.exports = new Packager({
     let code = new Map(await Promise.all(promises));
     let cache = new Map();
     try {
-      var result = processAsset(bundle.getMainEntry());
+      var result = processAsset(bundle.getEntryAssets()[0]);
     } catch (err) {
       console.log(err.stack);
     }
