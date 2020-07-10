@@ -178,8 +178,8 @@ module.exports = new Packager({
         return recurse(t);
       });
     }
-    let returnVal = {contents: JSON.stringify({exports: result, links}, false, 2)};
-    return returnVal;
+
+    return {contents: JSON.stringify({exports: result, links}, false, 2)};
   }
 });
 
