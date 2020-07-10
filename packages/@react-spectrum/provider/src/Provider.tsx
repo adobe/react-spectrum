@@ -102,10 +102,9 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
 }
 
 /**
- * Provider is the containing component that all other React Spectrum components
- * are the children of. Used to set locale, theme, scale, toast position and
- * provider, modal provider, and common props for children components. Providers
- * can be nested.
+ * Provider is the container for all React Spectrum applications.
+ * It defines the theme, locale, and other application level settings,
+ * and can also be used to provide common properties to a group of components.
  */
 let _Provider = React.forwardRef(Provider);
 export {_Provider as Provider};
