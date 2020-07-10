@@ -45,6 +45,10 @@ export const TypeContext = React.createContext();
 export const LinkContext = React.createContext();
 
 export function Type({type}) {
+  if (type.id && type.id.indexOf('collections.d.ts:Node') > -1) {
+    console.log('beginning of matching type');
+    console.log(type);
+  }
   let links = useContext(TypeContext);
 
   if (!type) {
@@ -337,17 +341,22 @@ export function LinkProvider({children}) {
 
 export function LinkRenderer() {
   let links = useContext(LinkContext);
-  return [...links.values()].map(({type, links}) => (
-    <section key={type.id} id={type.id} data-title={type.name} hidden>
-      {type.description && <Markdown options={{forceBlock: true, overrides: {a: {component: SpectrumLink}}}} className={styles['type-description']}>{type.description}</Markdown>}
-      <TypeContext.Provider value={links}>
-        {type.type === 'interface' || type.type === 'alias' || type.type === 'component'
-          ? <Type type={type} />
-          : <code className={`${typographyStyles['spectrum-Code4']}`}><Type type={type} /></code>
-        }
-      </TypeContext.Provider>
-    </section>
-  ));
+  return [...links.values()].map(({type, links}) => {
+    if (type.name === 'Foo' || type.name === 'bar') {
+      console.log('found one', type);
+    }
+    return (
+      <section key={type.id} id={type.id} data-title={type.name} hidden>
+        {type.description && <Markdown options={{forceBlock: true, overrides: {a: {component: SpectrumLink}}}} className={styles['type-description']}>{type.description}</Markdown>}
+        <TypeContext.Provider value={links}>
+          {type.type === 'interface' || type.type === 'alias' || type.type === 'component'
+            ? <Type type={type} />
+            : <code className={`${typographyStyles['spectrum-Code4']}`}><Type type={type} /></code>
+          }
+        </TypeContext.Provider>
+      </section>
+    );
+  });
 }
 
 export function LinkType({id}) {

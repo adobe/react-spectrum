@@ -29,7 +29,8 @@ export function walk(obj, fn, k = null) {
 
 export function getUsedLinks(obj, links, usedLinks = {}) {
   walk(obj, (t, k, recurse) => {
-    if (t && t.type === 'link') {
+    // don't follow the link if it's already in links, that's circular
+    if (t && t.type === 'link' && !usedLinks[t.id]) {
       usedLinks[t.id] = links[t.id];
       getUsedLinks(links[t.id], links, usedLinks);
     }

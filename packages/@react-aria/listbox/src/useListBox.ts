@@ -25,7 +25,11 @@ interface ListBoxAria {
   labelProps: HTMLAttributes<HTMLElement>,
 }
 
-interface AriaListBoxOptions<T> extends AriaListBoxProps<T> {
+interface Foo {
+  bar?: Foo
+}
+
+interface AriaListBoxOptions<T> extends AriaListBoxProps<T>, Foo {
   /** Whether the listbox uses virtual scrolling. */
   isVirtualized?: boolean,
 

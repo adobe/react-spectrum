@@ -21,7 +21,7 @@ module.exports = new Resolver({
         mainFields: ['source', 'types', 'main'],
         options
       });
-  
+
       let resolved = await resolver.resolve({
         filename: filePath,
         isURL: dependency.isURL,

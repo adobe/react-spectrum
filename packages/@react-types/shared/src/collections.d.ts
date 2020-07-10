@@ -115,11 +115,16 @@ export interface KeyboardDelegate {
   getKeyForSearch?(search: string, fromKey?: Key): Key
 }
 
+interface Something {
+  something?: Something,
+  somethingElse?: boolean
+}
+
 /**
  * A generic interface to access a readonly sequential
  * collection of unique keyed items.
  */
-export interface Collection<T> extends Iterable<T> {
+export interface Collection<T> extends Iterable<T>, Something {
   /** The number of items in the collection. */
   readonly size: number;
 
@@ -139,7 +144,10 @@ export interface Collection<T> extends Iterable<T> {
   getFirstKey(): Key | null,
 
   /** Get the last key in the collection. */
-  getLastKey(): Key | null
+  getLastKey(): Key | null,
+
+  /** duh */
+  somethingWhat?: boolean
 }
 
 export interface Node<T> {
