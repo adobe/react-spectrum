@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {Flex} from '@react-spectrum/layout';
 import js from 'highlight.js/lib/languages/javascript';
 import Lowlight from 'react-lowlight';
 import React from 'react';
@@ -19,30 +20,6 @@ import typographyStyles from '@adobe/spectrum-css-temp/components/typography/var
 
 Lowlight.registerLanguage('js', js);
 
-export function HeaderTable({name, version, importSnippet}) {
-  return (
-    <table className={styles['headerInfo']}>
-      <tbody>
-        <tr>
-          <th className={typographyStyles['spectrum-Body--secondary']}>install</th>
-          <td className={typographyStyles['spectrum-Body4']}><code className={typographyStyles['spectrum-Code4']}>yarn add {name}</code></td>
-        </tr>
-        <tr>
-          <th className={typographyStyles['spectrum-Body--secondary']}>version</th>
-          <td className={typographyStyles['spectrum-Body4']}>{version}</td>
-        </tr>
-        {importSnippet ?
-          <tr>
-            <th className={typographyStyles['spectrum-Body--secondary']}>usage</th>
-            <td className={typographyStyles['spectrum-Body4']}>
-              <Lowlight language="js" value={importSnippet} inline className={typographyStyles['spectrum-Code4']} />
-            </td>
-          </tr> : null}
-      </tbody>
-    </table>
-  );
-}
-
 export function HeaderInfo(props) {
   let {
     packageData,
@@ -50,16 +27,38 @@ export function HeaderInfo(props) {
     sourceData = []
   } = props;
 
+  let importName = packageData.name;
+  if (process.env.DOCS_ENV === 'production') {
+    importName = '@adobe/react-spectrum';
+  }
+
   return (
     <>
-      <HeaderTable name={packageData.name} version={packageData.version} importSnippet={componentNames && `import {${componentNames.join(', ')}} from '${packageData.name}'`} />
-      <div className={styles['resourceCardGroup']}>
+      <table className={styles['headerInfo']}>
+        <tbody>
+          <tr>
+            <th className={typographyStyles['spectrum-Body--secondary']}>install</th>
+            <td className={typographyStyles['spectrum-Body4']}><code className={typographyStyles['spectrum-Code4']}>yarn add {importName}</code></td>
+          </tr>
+          <tr>
+            <th className={typographyStyles['spectrum-Body--secondary']}>version</th>
+            <td className={typographyStyles['spectrum-Body4']}>{packageData.version}</td>
+          </tr>
+          <tr>
+            <th className={typographyStyles['spectrum-Body--secondary']}>usage</th>
+            <td className={typographyStyles['spectrum-Body4']}>
+              <Lowlight language="js" value={`import {${componentNames.join(', ')}} from '${importName}'`} inline className={typographyStyles['spectrum-Code4']} />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <Flex wrap gap="size-200">
         {sourceData.map((source) => (
           <ResourceCard type={source.type} url={source.url} />
         ))}
         <ResourceCard type="GitHub" url={`https://github.com/adobe-private/react-spectrum-v3/tree/master/packages/${encodeURI(packageData.name)}`} />
         <ResourceCard type="NPM" url={`https://www.npmjs.com/package/${encodeURI(packageData.name)}`} />
-      </div>
+      </Flex>
     </>
   );
 }

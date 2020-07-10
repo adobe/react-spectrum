@@ -1,8 +1,8 @@
 {
-  "name": "parcel-packager-ssg",
+  "name": "parcel-optimizer-ssg",
   "version": "1.0.0",
   "private": true,
-  "main": "SSGPackager.js",
+  "main": "SSGOptimizer.js",
   "engines": {
     "parcel": ">= 2.0.0-alpha.3.2"
   },
