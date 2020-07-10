@@ -197,6 +197,10 @@ The title of a Dialog is typically provided via its heading. By default, the Dia
 `aria-labelledby` to match the heading id, but this can be overridden by providing an `aria-labelledby` prop
 to the Dialog directly. If a visible label isn't specified, an `aria-label` must be provided instead.
 
+When a Dialog is open, then it should be the only thing that can be interacted with. For the most part this is
+handled by aria-modal, however, there are some cases where this is not the case. In order to make aria-modal work
+in all cases, we have a package `@react-aria/aria-modal-polyfill`, see the [Aria Modal Polyfill docs](../react-aria/aria-modal-polyfill.html).
+
 ## Events
 
 For Dialogs, user defined callbacks should be chained with the DialogTrigger's `close` function in the press/click handler

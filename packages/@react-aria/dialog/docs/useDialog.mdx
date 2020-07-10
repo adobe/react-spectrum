@@ -72,6 +72,9 @@ to create modal dialogs, popovers, and other types of overlays.
 If a dialog does not have a visible title element, an `aria-label` or `aria-labelledby`
 prop must be passed instead to identify the element to assistive technology.
 
+`useDialog` applies 'aria-modal' to the modal. This doesn't cover every browser/screen reader combination and should be combined with `@react-aria/aria-modal-polyfill`, see the [Aria Modal Polyfill docs](../react-aria/aria-modal-polyfill.html).
+
+
 ## Example
 
 This example shows how to build a typical modal dialog. It has a partially transparent
