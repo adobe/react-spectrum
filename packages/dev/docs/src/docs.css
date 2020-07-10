@@ -72,12 +72,13 @@ html, body {
 }
 
 .dark {
-  --page-background: var(--spectrum-global-color-gray-100);
+  --page-background: var(--spectrum-global-color-gray-75);
   .example {
-    background-color: var(--spectrum-global-color-gray-75);
+    background-color: var(--spectrum-global-color-gray-100);
   }
-  article pre, article pre code span {
-    background-color: var(--spectrum-global-color-gray-50);
+  article pre  {
+    --hljs-background:  #212121; /* between gray-100 and gray-200 */
+    background-color: var(--hljs-background);
   }
 }
 
@@ -140,7 +141,7 @@ html, body {
   bottom: 0;
   width: 256px;
   padding: 0 24px;
-  background: var(--spectrum-global-color-gray-75);
+  background: var(--spectrum-global-color-gray-100);
   box-sizing: border-box;
 }
 
