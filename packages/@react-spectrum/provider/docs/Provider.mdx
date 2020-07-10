@@ -6,16 +6,18 @@ import {HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/provider/package.json';
 
 ```jsx import
-import {Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Form} from '@react-spectrum/form';
-import {Provider} from '@react-spectrum/provider';
 import {TextField} from '@react-spectrum/textfield';
+import {Flex} from '@react-spectrum/layout';
+import {Picker, Item} from '@react-spectrum/picker';
+import {ActionButton} from '@react-spectrum/button';
+import {RadioGroup, Radio} from '@react-spectrum/radio';
 ```
 
 ---
-category: Base
-keywords: [theme, locale, scale, toast, form props]
+category: Application
+keywords: [theme, locale, application, colorstop]
 ---
 
 # Provider
@@ -29,115 +31,98 @@ keywords: [theme, locale, scale, toast, form props]
 ## Example
 
 ```tsx example
-<Provider isDisabled scale="large">
-  <Button variant="primary">Button</Button>
-</Provider>
+import {Provider} from '@react-spectrum/provider';
+import {theme} from '@react-spectrum/theme-default';
+import {Button} from '@react-spectrum/button';
+
+function App() {
+  return (
+    <Provider theme={theme}>
+      <Button variant="cta">
+        Hello React Spectrum!
+      </Button>
+    </Provider>
+  );
+}
 ```
 
-## Global settings
+## Application provider
 
-Props such as `colorScheme`, `locale`, `scale`, and `theme` are applied to all
-children components, including nested Providers. The `theme` allows the
-definition of custom CSS variables for the `colorScheme` and `scale` prop values.
+A Provider must be the root component of your application. All other React Spectrum components rely on the Provider to define the theme, locale, and other settings that they need in order to render.
 
-### Color scheme and scale
+### Themes
+In order to provide the styling attributes that components need to render, you must pass a theme as a prop to the root provider in your application. Themes consist of a light and dark color scheme, along with medium and large platform scales. By default, React Spectrum will select the color scheme according to the user’s operating system setting, and the scale according to the device type (e.g. touch vs mouse input). To read more details about how theming works in React Spectrum, see the [theming docs](theming.html).
+
+### Color Schemes
+We recommend supporting both light and dark color schemes in your app, however, if you need to override this with an application specific setting, you can use the `colorScheme` prop.
 
 ```tsx example
-<Provider colorScheme="dark" scale="large">
-  <Form margin="15px">
-    <div>
-      <TextField label="Email" />
-    </div>
-    <Checkbox>
-      Checkbox Label
-    </Checkbox>
-    <div style={{'marginBottom': '15px'}}>
-      <Button variant="primary">Button</Button>
-    </div>
-  </Form>
+<Provider theme={theme} colorScheme="light">
+  <ActionButton margin="size-100">I'm a light button</ActionButton>
 </Provider>
 ```
 
-### Theme
+See the [styling docs](styling.html) for more information about using Spectrum color variables in your app to ensure it adapts to light and dark mode properly.
 
-The Provider's `theme` is the CSS variables for `colorScheme` and `scale` values.
+### Locales
+Another important setting for your application is the locale. By default, React Spectrum chooses the locale matching the user’s browser/operating system language, but this can be overridden with the locale prop if you have an application specific setting. This prop accepts a [BCP 47](https://www.ietf.org/rfc/bcp/bcp47.txt) language code. A list of supported locales is available [here](https://react-spectrum.adobe.com/react-aria/internationalization.html#supported-locales).
+
 
 ```tsx
-import {theme} from '@react-spectrum/theme-default';
-
-<Provider theme={theme} colorScheme="dark" scale="large">
-  <Form>
-    <div>
-      <TextField label="Email" />
-    </div>
-    <Checkbox>
-      Checkbox Label
-    </Checkbox>
-    <div>
-      <Button variant="primary">Button</Button>
-    </div>
-  </Form>
+<Provider theme={theme} locale={appSettings.locale}>
+  <YourApp />
 </Provider>
 ```
 
-### Locale
+To access the current locale anywhere in your application, see the [useLocale](https://react-spectrum.adobe.com/react-aria/useLocale.html) hook.
 
-The `locale` prop can be set to specify a locale for children of the Provider.
-The default for the locale prop is based on the system/browser settings.
-The `locale` prop does not support nesting. It must be the same across the page and all `lang`/`dir` attributes in the dom must match.
-See this list of supported [locales](../react-aria/internationalization#supported-locales).
+## Property groups
+Provider can also be used to define common properties for a group of components within it. For example, a group of components could be disabled together rather than individually by setting the `isDisabled` prop on any parent provider.
 
 ```tsx example
-<Provider locale="en-US">
-  <Form necessityIndicator="label">
-    <div>
-      <TextField label="email" />
-    </div>
-    <div>
-      <Button variant="primary">Button</Button>
-    </div>
-  </Form>
-</Provider>
-```
-
-## Provider nesting
-
-Providers can be nested. The parent Provider passes its props down to the
-children Providers.
-
-```tsx example
-<Provider isDisabled scale="large">
-  <Button variant="primary">Button</Button>
-  <Provider isQuiet>
-    <Button variant="primary">Button</Button>
+<Flex direction="column" gap="size-100" alignItems="start">
+  <Provider isDisabled>
+    <RadioGroup label="Favorite animal">
+      <Radio value="dogs">Dogs</Radio>
+      <Radio value="cats">Cats</Radio>
+      <Radio value="horses">Horses</Radio>
+    </RadioGroup>
+    <Checkbox>I agree</Checkbox>
+    <Button variant="primary">Submit</Button>
   </Provider>
-</Provider>
+</Flex>
 ```
 
-## Children props
+Provider supports many other properties that can be used in this way: `isQuiet`, `isEmphasized`, `isDisabled`, `isRequired`, `isReadOnly`, and `validationState`. These will be applied to any child components that support them.
 
-As a convenience, Provider supports passing common props to all components
-within it. For example, an entire group of components could be disabled by
-setting `isDisabled` in one place rather than on each individual element.
-These props are `isDisabled`, `isEmphasized`, `isQuiet`, `isReadOnly`,
-`isRequired`, and `validationState`.
+Property groups can also be nested. For example, a group of components could be made quiet or emphasized, with a sub-group that is also disabled. The inner-most provider will override outer ones, as will corresponding props on the components themselves.
 
-### isEmphasized
+The following example shows a registration form, which disables a picker and submit button until an email address is entered. All elements within the form use a quiet style, except the submit button, which overrides the provider setting using a prop.
 
 ```tsx example
-<Provider isEmphasized>
-  <Form>
-    <div>
-      <TextField label="Email" placeholder="info@adobe.com" />
-    </div>
-    <Checkbox>
-      Checkbox Label
-    </Checkbox>
-    <div>
-      <Button variant="primary">Button</Button>
-    </div>
-  </Form>
-</Provider>
+function Register() {
+  let [email, setEmail] = React.useState('');
+
+  return (
+    <Flex direction="column" gap="size-100" alignItems="start">
+      <Provider isQuiet>
+        <TextField
+          label="Email"
+          placeholder="example@adobe.com"
+          value={email}
+          onChange={setEmail} />
+        <Provider isDisabled={email.length === 0}>
+          <Picker label="Favorite color">
+            <Item key="magenta">Magenta</Item>
+            <Item key="indigo">Indigo</Item>
+            <Item key="chartreuse">Chartreuse</Item>
+          </Picker>
+          <Button variant="primary" isQuiet={false}>Submit</Button>
+        </Provider>
+      </Provider>
+    </Flex>
+  );
+}
 ```
 
 ## Props

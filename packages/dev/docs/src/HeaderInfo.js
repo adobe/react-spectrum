@@ -27,13 +27,18 @@ export function HeaderInfo(props) {
     sourceData = []
   } = props;
 
+  let importName = packageData.name;
+  if (process.env.DOCS_ENV === 'production') {
+    importName = '@adobe/react-spectrum';
+  }
+
   return (
     <>
       <table className={styles['headerInfo']}>
         <tbody>
           <tr>
             <th className={typographyStyles['spectrum-Body--secondary']}>install</th>
-            <td className={typographyStyles['spectrum-Body4']}><code className={typographyStyles['spectrum-Code4']}>yarn add {packageData.name}</code></td>
+            <td className={typographyStyles['spectrum-Body4']}><code className={typographyStyles['spectrum-Code4']}>yarn add {importName}</code></td>
           </tr>
           <tr>
             <th className={typographyStyles['spectrum-Body--secondary']}>version</th>
@@ -42,7 +47,7 @@ export function HeaderInfo(props) {
           <tr>
             <th className={typographyStyles['spectrum-Body--secondary']}>usage</th>
             <td className={typographyStyles['spectrum-Body4']}>
-              <Lowlight language="js" value={`import {${componentNames.join(', ')}} from '${packageData.name}'`} inline className={typographyStyles['spectrum-Code4']} />
+              <Lowlight language="js" value={`import {${componentNames.join(', ')}} from '${importName}'`} inline className={typographyStyles['spectrum-Code4']} />
             </td>
           </tr>
         </tbody>
