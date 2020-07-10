@@ -220,7 +220,7 @@ function walk(obj, fn) {
         circular.delete(obj);
         return res;
       } else {
-        // don't
+        // don't cache things like null/undefined
         return obj;
       }
     };
