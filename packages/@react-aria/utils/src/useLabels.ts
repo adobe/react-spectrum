@@ -15,7 +15,7 @@ import {HTMLAttributes} from 'react';
 import {useId} from './useId';
 
 /**
- * Merges aria-label and aria-labeled into aria-labelledby when both exist.
+ * Merges aria-label and aria-labelledby into aria-labelledby when both exist.
  * @param props - aria label props
  * @param defaultLabel - default value for aria-label when not present
  */
