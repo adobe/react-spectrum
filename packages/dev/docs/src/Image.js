@@ -12,6 +12,7 @@
 
 import docStyles from './docs.css';
 import React from 'react';
+import path from 'path';
 
 export const ImageContext = React.createContext();
 
@@ -19,14 +20,14 @@ export function Hero({wide, narrow, wide2x, narrow2x, wideWebp, narrowWebp, wide
   // Temporary fix for parcel issue with relative urls in server rendering.
   let publicUrl = React.useContext(ImageContext);
   let baseUrl = publicUrl.replace(/\/$/, '');
-  let narrowUrl = baseUrl + narrow;
-  let narrow2xUrl = baseUrl + narrow2x;
-  let wideUrl = baseUrl + wide;
-  let wide2xUrl = baseUrl + wide2x;
-  let narrowWebpUrl = baseUrl + narrowWebp;
-  let narrow2xWebpUrl = baseUrl + narrow2xWebp;
-  let wideWebpUrl = baseUrl + wideWebp;
-  let wide2xWebpUrl = baseUrl + wide2xWebp;
+  let narrowUrl = baseUrl + '/' + path.basename(narrow);
+  let narrow2xUrl = baseUrl + '/' + path.basename(narrow2x);
+  let wideUrl = baseUrl + '/' + path.basename(wide);
+  let wide2xUrl = baseUrl + '/' + path.basename(wide2x);
+  let narrowWebpUrl = baseUrl + '/' + path.basename(narrowWebp);
+  let narrow2xWebpUrl = baseUrl + '/' + path.basename(narrow2xWebp);
+  let wideWebpUrl = baseUrl + '/' + path.basename(wideWebp);
+  let wide2xWebpUrl = baseUrl + '/' + path.basename(wide2xWebp);
 
   return (
     <div className={docStyles.heroImage}>
