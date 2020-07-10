@@ -31,7 +31,11 @@ interface Options {
 
 const propRe = /^(data-.*)$/;
 
-// Filters out all props that aren't valid DOM props or are user defined via override prop obj.
+/**
+ * Filters out all props that aren't valid DOM props or are user defined via override prop obj.
+ * @param props - props to filter for a component
+ * @param opts - props to override
+ */
 export function filterDOMProps(props: DOMProps & AriaLabelingProps, opts: Options = {}): DOMProps & AriaLabelingProps {
   let {labelable, propNames} = opts;
   let filteredProps: HTMLAttributes<HTMLElement> = {};

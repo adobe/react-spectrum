@@ -18,6 +18,11 @@ let id = 0;
 // don't want to conflict with ids from v2, this will guarantee something unique
 // plus we'll know how many instances of this module are loaded on a page if there are more than one number ;)
 let randomInstanceNumber = Math.round(Math.random() * 10000000000);
+
+/**
+ * If a default is not provided, generate an id.
+ * @param defaultId - default component id
+ */
 export function useId(defaultId?: string): string {
   let [value, setValue] = useState(defaultId);
   let res = useMemo(() => value || `react-aria-${randomInstanceNumber}-${++id}`, [value]);
