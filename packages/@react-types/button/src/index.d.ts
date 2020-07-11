@@ -14,7 +14,7 @@ import {AriaLabelingProps, FocusableDOMProps, FocusableProps, PressEvents, Style
 import {JSXElementConstructor, ReactNode} from 'react';
 
 interface ButtonProps extends PressEvents, FocusableProps {
-  /** Whether the button is disabled */
+  /** Whether the button is disabled. */
   isDisabled?: boolean,
   /** The content to display in the button. */
   children?: ReactNode,
