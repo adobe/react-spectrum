@@ -16,9 +16,10 @@ import {Content, View} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
+import {focusWithoutScrolling} from '@react-aria/utils';
 import highlightCss from './syntax-highlight.css';
 import {Pressable} from '@react-aria/interactions';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {ThemeProvider} from './ThemeSwitcher';
 
@@ -36,29 +37,56 @@ for (let link of links) {
         <Pressable>
           {/* eslint-disable jsx-a11y/click-events-have-key-events */}
           {/* eslint-disable jsx-a11y/anchor-is-valid */}
-          <a role="link" tabIndex={0} data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
+          <a role="button" tabIndex={0} aria-haspopup="dialog" data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
         </Pressable>
         <LinkPopover id={link.dataset.link} />
       </DialogTrigger>
     </ThemeProvider>
   , container);
 
-  link.parentNode.replaceChild(container, link);
+  link.parentNode.replaceChild(container.firstElementChild, link);
 }
 
 function LinkPopover({id}) {
   let ref = useRef();
   let [breadcrumbs, setBreadcrumbs] = useState([document.getElementById(id)]);
 
+  const onBlurCurrentBreadcrumb = useCallback((event) => {
+    event.target.removeEventListener('blur', onBlurCurrentBreadcrumb);
+    event.target.tabIndex = -1;
+  },
+  []);
+
   useEffect(() => {
+    let isCancelled = false; 
+    let timeoutId;
     let links = ref.current.querySelectorAll('[data-link]');
     for (let link of links) {
+      link.removeAttribute('aria-haspopup');
       link.addEventListener('click', (e) => {
         e.preventDefault();
         setBreadcrumbs([...breadcrumbs, document.getElementById(link.dataset.link)]);
       });
     }
-  }, [breadcrumbs]);
+
+    if (isCancelled) {
+      if (timeoutId) {
+        cancelAnimationFrame(timeoutId);
+      }
+      return;
+    }
+
+    timeoutId = requestAnimationFrame(() => {
+      const currentBreadcrumb = ref.current.closest(`.${docsStyle.popover}`).querySelector('[aria-current]');
+      if (currentBreadcrumb) {
+        currentBreadcrumb.tabIndex = 0;
+        currentBreadcrumb.addEventListener('blur', onBlurCurrentBreadcrumb);
+        focusWithoutScrolling(currentBreadcrumb); 
+      }
+    });
+
+    return () => isCancelled = true;
+  }, [breadcrumbs, onBlurCurrentBreadcrumb]);
 
   return (
     <Dialog UNSAFE_className={`${highlightCss.spectrum} ${docsStyle.popover}`} size="L">
