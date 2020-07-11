@@ -30,7 +30,7 @@ interface AriaPositionProps extends PositionProps {
    */
   overlayRef: RefObject<HTMLElement>,
   /**
-   * TODO come up with a good description
+   * A ref for the scrollable region within the overlay.
    * @default overlayRef
    */
   scrollRef?: RefObject<HTMLElement>,
@@ -48,7 +48,7 @@ interface PositionAria {
   arrowProps: HTMLAttributes<Element>,
   /** Placement of the overlay with respect to the overlay trigger. */
   placement: PlacementAxis,
-  /** Function used to update the position of the overlay. */
+  /** Updates the position of the overlay. */
   updatePosition(): void
 }
 

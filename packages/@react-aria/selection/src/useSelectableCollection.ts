@@ -37,7 +37,7 @@ interface SelectableCollectionOptions {
    */
   selectionManager: MultipleSelectionManager,
   /**
-   * A delegate that returns collection item keys with respect to visual layout.
+   * A delegate object that implements behavior for keyboard focus movement.
    */
   keyboardDelegate: KeyboardDelegate,
   /**
