@@ -34,6 +34,8 @@ for (let link of links) {
     <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <DialogTrigger type="popover">
         <Pressable>
+          {/* eslint-disable jsx-a11y/click-events-have-key-events */}
+          {/* eslint-disable jsx-a11y/anchor-is-valid */}
           <a role="link" tabIndex={0} data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
         </Pressable>
         <LinkPopover id={link.dataset.link} />
