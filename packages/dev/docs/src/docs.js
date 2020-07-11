@@ -22,15 +22,19 @@ import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {ThemeProvider} from './ThemeSwitcher';
 
-let links = document.querySelectorAll(':not([hidden]) a[data-link]');
+let links = document.querySelectorAll('a[data-link]');
 for (let link of links) {
+  if (link.closest('[hidden]')) {
+    continue;
+  }
+
   let container = document.createElement('span');
 
   ReactDOM.render(
     <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <DialogTrigger type="popover">
         <Pressable>
-          <a href={link.href} data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
+          <a role="link" tabIndex={0} data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
         </Pressable>
         <LinkPopover id={link.dataset.link} />
       </DialogTrigger>
