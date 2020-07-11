@@ -15,7 +15,6 @@ import Light from '@spectrum-icons/workflow/Light';
 import Moon from '@spectrum-icons/workflow/Moon';
 import {Provider} from '@react-spectrum/provider';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import ReactDOM from 'react-dom';
 import styles from './docs.css';
 import {theme} from '@react-spectrum/theme-default';
 
@@ -48,6 +47,10 @@ export function ThemeProvider({children, colorScheme: colorSchemeProp, UNSAFE_cl
       {children}
     </Provider>
   );
+}
+
+export function Snippet({children}) {
+  return <ThemeProvider UNSAFE_className={styles.snippet}>{children}</ThemeProvider>;
 }
 
 export function Example({children, colorScheme}) {
