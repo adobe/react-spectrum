@@ -72,7 +72,14 @@ html, body {
 }
 
 .dark {
-  --page-background: var(--spectrum-global-color-gray-100);
+  --page-background: var(--spectrum-global-color-gray-75);
+  .example {
+    background-color: var(--spectrum-global-color-gray-100);
+  }
+  article pre  {
+    --hljs-background:  #212121; /* between gray-100 and gray-200 */
+    background-color: var(--hljs-background);
+  }
 }
 
 .exampleImage {
@@ -134,7 +141,7 @@ html, body {
   bottom: 0;
   width: 256px;
   padding: 0 24px;
-  background: var(--spectrum-global-color-gray-75);
+  background: var(--spectrum-global-color-gray-100);
   box-sizing: border-box;
 }
 
@@ -285,6 +292,7 @@ footer li:last-child:after {
 .colorLink {
   outline: none;
   text-decoration: none;
+  cursor: pointer;
   &:hover {
     text-decoration: underline;
   }
@@ -325,6 +333,10 @@ article.inCategory h2.sectionHeader + hr {
   padding: 40px;
   border-radius: 4px;
   margin-bottom: var(--spectrum-global-dimension-size-150);
+}
+
+.snippet {
+  background: none;
 }
 
 .inlineProvider {

@@ -38,46 +38,44 @@ export interface Theme {
 }
 
 interface ContextProps {
-  /** Whether children components should be displayed with the quiet style. */
+  /** Whether descendants should be displayed with the quiet style. */
   isQuiet?: boolean,
-  /** Whether children components should be displayed with the emphasized style. */
+  /** Whether descendants should be displayed with the emphasized style. */
   isEmphasized?: boolean,
-  /** Whether children components should be disabled. */
+  /** Whether descendants should be disabled. */
   isDisabled?: boolean,
-  /** Whether children components should be displayed with the required style. */
+  /** Whether descendants should be displayed with the required style. */
   isRequired?: boolean,
-  /** Whether children components should be read only. */
+  /** Whether descendants should be read only. */
   isReadOnly?: boolean,
-  /** Whether children components should be displayed with the validation state style. */
+  /** Whether descendants should be displayed with the validation state style. */
   validationState?: ValidationState
 }
 
 export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
-  /** The children components to receive Provider props and context. */
+  /** The content of the Provider */
   children: ReactNode,
   /**
-   * Theme scoped to this provider and its children components.
-   * Sets the CSS variables for scale and color scheme values.
+   * The theme for your application.
    */
   theme?: Theme,
   /**
-   * Color scheme scoped to this provider and its children components.
-   * Defaults to the color scheme set by the OS.
+   * The color scheme for your application.
+   * Defaults to operating system preferences.
    */
   colorScheme?: ColorScheme,
   /**
-   * If there is not an OS/browser color scheme this is the default.
+   * The default color scheme if no operating system setting is available.
    * @default 'light'
    */
   defaultColorScheme?: ColorScheme,
   /**
-   * Spectrum scale scoped to this provider and its children components.
-   * By default this is selected based on touch or mouse pointer type of the OS.
+   * Sets the scale for your applications. Defaults based on device pointer type.
    */
   scale?: Scale,
   /**
-   * Locale (language specific format) of this provider and its children.
-   * Uses the format primary-region, e.g. en-US, fr-CA, ar-AE.
+   * The locale for your application as a [BCP 47](https://www.ietf.org/rfc/bcp/bcp47.txt) language code.
+   * Defaults to the browser/OS language setting.
    * @default 'en-US'
    */
   locale?: string

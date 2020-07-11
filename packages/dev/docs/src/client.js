@@ -17,8 +17,10 @@ import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
+import {watchModals} from '@react-aria/aria-modal-polyfill';
 
 window.addEventListener('load', () => listen());
+window.addEventListener('load', () => watchModals());
 
 let title = document.querySelector('h1');
 
@@ -88,7 +90,7 @@ function Hamburger() {
 ReactDOM.render(<>
   <Hamburger />
   <ThemeSwitcher />
-</>, document.getElementById('header'));
+</>, document.querySelector('.' + docsStyle.pageHeader));
 
 document.addEventListener('mousedown', (e) => {
   // Prevent focusing on links to other pages with the mouse to avoid flash of focus ring during navigation.
@@ -109,3 +111,4 @@ document.addEventListener('blur', (e) => {
     e.target.classList.remove(docsStyle.mouseFocus);
   }
 }, true);
+
