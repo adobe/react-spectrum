@@ -7,8 +7,8 @@
     "parcel": ">= 2.0.0-alpha.3.2"
   },
   "dependencies": {
-    "@atom-languages/language-typescript": "git+ssh://git@github.com:atom/language-typescript.git#v0.6.2",
-    "@atom-languages/language-css": "git+ssh://git@github.com:atom/language-css.git#v0.44.4",
+    "@atom-languages/language-typescript": "atom/language-typescript#v0.6.2",
+    "@atom-languages/language-css": "atom/language-css#v0.44.4",
     "@mdx-js/mdx": "^1.5.5",
     "@mdx-js/react": "^1.5.5",
     "@parcel/plugin": "nightly",

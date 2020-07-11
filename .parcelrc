@@ -5,14 +5,14 @@
     "docs:*.{js,ts,tsx,json}": ["parcel-transformer-docs", "@parcel/transformer-inline"],
     "docs-json:*.{js,ts,tsx,json}": ["parcel-transformer-docs"],
     "*.mdx": ["parcel-transformer-mdx-docs"],
-    "*.svg": ["@parcel/transformer-svg-react"]
+    "*.svg": ["@parcel/transformer-svg-react"],
+    "*.css": ["...", "parcel-transformer-css-env"]
   },
   "namers": ["parcel-namer-docs", "..."],
   "packagers": {
     "*.json": "parcel-packager-docs",
-    "*.html": "parcel-packager-ssg"
   },
   "optimizers": {
-    "*.html": []
+    "*.js": ["parcel-optimizer-ssg", "..."]
   }
 }

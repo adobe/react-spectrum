@@ -16,22 +16,27 @@ import {Content, View} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
 import docsStyle from './docs.css';
-import {Heading} from '@react-spectrum/text';
 import highlightCss from './syntax-highlight.css';
 import {Pressable} from '@react-aria/interactions';
 import React, {useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {ThemeProvider} from './ThemeSwitcher';
 
-let links = document.querySelectorAll(':not([hidden]) a[data-link]');
+let links = document.querySelectorAll('a[data-link]');
 for (let link of links) {
+  if (link.closest('[hidden]')) {
+    continue;
+  }
+
   let container = document.createElement('span');
 
   ReactDOM.render(
     <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <DialogTrigger type="popover">
         <Pressable>
-          <a href={link.href} data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
+          {/* eslint-disable jsx-a11y/click-events-have-key-events */}
+          {/* eslint-disable jsx-a11y/anchor-is-valid */}
+          <a role="link" tabIndex={0} data-link={link.dataset.link} className={link.className} onClick={e => e.preventDefault()}>{link.textContent}</a>
         </Pressable>
         <LinkPopover id={link.dataset.link} />
       </DialogTrigger>
@@ -61,7 +66,7 @@ function LinkPopover({id}) {
         <Breadcrumbs onAction={(key) => setBreadcrumbs(breadcrumbs.slice(0, key))}>
           {breadcrumbs.map((b, i) => (
             <Item key={i + 1}>
-              {i < (breadcrumbs.length - 1) ? b.dataset.title : <Heading level={3}>{b.dataset.title}</Heading>}
+              {b.dataset.title}
             </Item>
           ))}
         </Breadcrumbs>

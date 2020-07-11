@@ -95,5 +95,5 @@ website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
 
 website-master:
-	yarn build:docs --dist-dir dist/master/docs
+	node scripts/buildWebsite.js
 	cp packages/dev/docs/pages/robots.txt dist/master/docs/robots.txt

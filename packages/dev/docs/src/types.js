@@ -422,8 +422,8 @@ export function InterfaceType({description, properties: props, showRequired, sho
           </thead>
           <tbody className={tableStyles['spectrum-Table-body']}>
             {properties.map((prop, index) => (
-              <tr key={index} className={tableStyles['spectrum-Table-row']}>
-                <td role="rowheader" className={tableStyles['spectrum-Table-cell']} data-column="Name">
+              <tr key={index} className={classNames(tableStyles['spectrum-Table-row'], styles.tableRow)}>
+                <td role="rowheader" className={classNames(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Name">
                   <code className={`${typographyStyles['spectrum-Code4']}`}>
                     <span className={`token ${isComponent ? 'hljs-attr' : 'hljs-variable'}`}>{prop.name}</span>
                   </code>
@@ -432,20 +432,20 @@ export function InterfaceType({description, properties: props, showRequired, sho
                     : null
                   }
                 </td>
-                <td className={tableStyles['spectrum-Table-cell']} data-column="Type">
+                <td className={classNames(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Type">
                   <code className={typographyStyles['spectrum-Code4']}>
                     <Type type={prop.value} />
                   </code>
                 </td>
                 {showDefault &&
-                  <td className={`${tableStyles['spectrum-Table-cell']} ${!prop.default ? styles.noDefault : ''}`} data-column="Default">
+                  <td className={`${tableStyles['spectrum-Table-cell']} ${styles.tableCell} ${!prop.default ? styles.noDefault : ''}`} data-column="Default">
                     {prop.default
                       ? <Lowlight language="js" value={prop.default} inline className={typographyStyles['spectrum-Code4']} />
                       : '—'
                     }
                   </td>
                 }
-                <td className={tableStyles['spectrum-Table-cell']}>{renderHTMLfromMarkdown(prop.description)}</td>
+                <td className={classNames(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description)}</td>
               </tr>
             ))}
           </tbody>
@@ -464,8 +464,8 @@ export function InterfaceType({description, properties: props, showRequired, sho
           </thead>
           <tbody className={tableStyles['spectrum-Table-body']}>
             {methods.map((prop, index) => (
-              <tr key={index} className={tableStyles['spectrum-Table-row']}>
-                <td role="rowheader" className={tableStyles['spectrum-Table-cell']} data-column="Name">
+              <tr key={index} className={classNames(tableStyles['spectrum-Table-row'], styles.tableRow)}>
+                <td role="rowheader" className={classNames(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Name">
                   <code className={`${typographyStyles['spectrum-Code4']}`}>
                     <span className="token hljs-function">{prop.name}</span>
                     <TypeParameters typeParameters={prop.value.typeParameters} />
@@ -476,7 +476,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
                     <Type type={prop.value.return} />
                   </code>
                 </td>
-                <td className={tableStyles['spectrum-Table-cell']}>{renderHTMLfromMarkdown(prop.description)}</td>
+                <td className={classNames(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description)}</td>
               </tr>
             ))}
           </tbody>
