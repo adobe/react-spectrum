@@ -292,6 +292,7 @@ footer li:last-child:after {
 .colorLink {
   outline: none;
   text-decoration: none;
+  cursor: pointer;
   &:hover {
     text-decoration: underline;
   }
