@@ -11,7 +11,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: yarn-cache-{{ checksum "yarn.lock" }}
+          key: rsp-yarn-{{ checksum "yarn.lock" }}
 
       - run:
           name: Write npmrc
@@ -31,7 +31,7 @@ jobs:
       - save_cache:
          paths:
            - node_modules
-         key: yarn-cache-{{ checksum "yarn.lock" }}
+         key: rsp-yarn-{{ checksum "yarn.lock" }}
 
       - save_cache:
           paths:
@@ -148,7 +148,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: yarn-cache-{{ checksum "yarn.lock" }}
+          key: rsp-yarn-{{ checksum "yarn.lock" }}
 
       - run:
           name: comment on pr
