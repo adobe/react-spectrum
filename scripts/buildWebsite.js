@@ -88,7 +88,7 @@ async function build() {
   await run('yarn', ['build'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
-  fs.copySync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'master', 'docs'));
+  fs.copySync(path.join(dir, 'dist'), path.join(__dirname, '..', 'dist', 'production', 'docs'));
   fs.removeSync(dir);
 }
 

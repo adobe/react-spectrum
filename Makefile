@@ -70,7 +70,7 @@ icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src 
 lint:
 	yarn check-types
 	eslint packages --ext .js,.ts,.tsx
-	node lint-packages.js
+	node scripts/lint-packages.js
 
 test:
 	yarn jest
@@ -94,6 +94,6 @@ build:
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
 
-website-master:
+website-production:
 	node scripts/buildWebsite.js
-	cp packages/dev/docs/pages/robots.txt dist/master/docs/robots.txt
+	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt

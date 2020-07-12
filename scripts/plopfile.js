@@ -15,7 +15,7 @@ let rspProject = 'React Spectrum v3';
 let otherProject = 'other';
 
 module.exports = function (plop) {
-  plop.setActionType('renameMany', require('./plop-actions/renameMany'));
+  plop.setActionType('renameMany', require('../plop-actions/renameMany'));
   plop.setHelper('replace', function (match, replacement, options) {
     let string = options.fn(this);
     return string.replace(match, replacement);

@@ -96,6 +96,11 @@ for (let pkg of packages) {
   softAssert(json.publishConfig && json.publishConfig.access === 'public', `${pkg} has missing or incorrect publishConfig`);
   softAssert.equal(json.license, 'Apache-2.0', `${pkg} has an incorrect license`);
   softAssert.deepEqual(json.repository, {type: 'git', url: 'https://github.com/adobe/react-spectrum'}, `${pkg} has incorrect or missing repository url`);
+
+  let readme = path.join(path.dirname(pkg), 'README.md');
+  if (!fs.existsSync(readme)) {
+    fs.writeFileSync(readme, `# ${json.name}\n\nThis package is part of [react-spectrum](https://github.com/adobe/react-spectrum). See the repo for more details.`);
+  }
 }
 
 
