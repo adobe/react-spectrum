@@ -20,7 +20,7 @@
   --hljs-attribute-color: var(--spectrum-global-color-indigo-700);
   --hljs-class-color: var(--spectrum-global-color-seafoam-600);
   --hljs-function-color: var(--spectrum-global-color-blue-600);
-  --hljs-variable-color: var(--spectrum-global-color-magenta-600);
+  --hljs-variable-color: var(--spectrum-global-color-magenta-700);
   --hljs-title-color: var(--spectrum-global-color-indigo-700);
   --hljs-comment-color: var(--spectrum-global-color-gray-700);
 }
