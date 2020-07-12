@@ -15,6 +15,7 @@
     "@react-spectrum/picker": "^3.0.0",
     "@react-spectrum/text": "^3.0.0",
     "@react-spectrum/view": "^3.0.0",
+    "@react-aria/aria-modal-polyfill": "^3.0.0",
     "@react-aria/interactions": "^3.0.0",
     "@react-aria/visually-hidden": "^3.0.0",
     "@react-spectrum/theme-default": "^3.0.0",

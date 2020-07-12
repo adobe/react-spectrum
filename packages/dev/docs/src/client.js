@@ -17,8 +17,10 @@ import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
+import {watchModals} from '@react-aria/aria-modal-polyfill';
 
 window.addEventListener('load', () => listen());
+window.addEventListener('load', () => watchModals());
 
 let title = document.querySelector('h1');
 
@@ -109,3 +111,4 @@ document.addEventListener('blur', (e) => {
     e.target.classList.remove(docsStyle.mouseFocus);
   }
 }, true);
+

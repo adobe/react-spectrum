@@ -55,7 +55,7 @@ Picker follows the [Collection Components](../react-stately/collections.html) AP
 
 Dynamic collections, as shown below, can be used when the options come from an external data source such as an API call, or update over time. Providing the data in this way allows for Picker to automatically cache the rendering of each item, which dramatically improves performance.
 
-As seen below, an iterable list of options is passed to the Picker using the `items` prop. Each item accepts a key prop, which is passed to the onSelectionChange handler to identify the selected item. Alternatively, if the item objects contain an id property, as shown in the example below, then this is used automatically and a key prop is not required. See the [Events](#events) section for more detail on selection.
+As seen below, an iterable list of options is passed to the Picker using the `items` prop. Each item accepts a key prop, which is passed to the onSelectionChange handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a key prop is not required. See the [Events](#events) section for more detail on selection.
 
 ```tsx example
 function Example() {
