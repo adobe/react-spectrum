@@ -66,11 +66,11 @@ The example below uses `onOpenChange` to update a separate span element with the
 
 ```tsx example
 function Example() {
-  let [state, setState] = React.useState(false);
+  let [isOpen, setIsOpen] = React.useState(false);
 
   return (
     <Flex gap="size-100">
-      <MenuTrigger onOpenChange={(isOpen) => setState(isOpen)}>
+      <MenuTrigger onOpenChange={setIsOpen}>
         <ActionButton>
             Edit
         </ActionButton>
@@ -80,7 +80,7 @@ function Example() {
           <Item key="paste">Paste</Item>
         </Menu>
       </MenuTrigger>
-      <div>Current open state: {state.toString()}</div>
+      <div>Current open state: {isOpen.toString()}</div>
     </Flex>
   );
 }
