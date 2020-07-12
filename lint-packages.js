@@ -95,7 +95,7 @@ for (let pkg of packages) {
 
   softAssert(json.publishConfig && json.publishConfig.access === 'public', `${pkg} has missing or incorrect publishConfig`);
   softAssert.equal(json.license, 'Apache-2.0', `${pkg} has an incorrect license`);
-  softAssert.deepEqual(json.repository, {type: 'git', url: 'https://github.com/adobe-private/react-spectrum-v3'}, `${pkg} has incorrect or missing repository url`);
+  softAssert.deepEqual(json.repository, {type: 'git', url: 'https://github.com/adobe/react-spectrum'}, `${pkg} has incorrect or missing repository url`);
 }
 
 
