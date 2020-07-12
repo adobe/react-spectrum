@@ -10,7 +10,7 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import DialogAnatomy from '../images/DialogAnatomy.svg';
+import DialogAnatomy from './images/DialogAnatomy.svg';
 import docs from 'docs:@react-spectrum/dialog';
 import {Image, HeaderInfo, PropTable} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/dialog/package.json';
@@ -194,7 +194,7 @@ You are also responsible for determining what component, if any, should be autom
 ### Accessibility
 
 The title of a Dialog is typically provided via its heading. By default, the Dialog sets its
-`aria-labelledby` to match the heading id, but this can be overridden by providing an `aria-labelledby` prop
+`aria-labelledby` to match the heading `id`, but this can be overridden by providing an `aria-labelledby` prop
 to the Dialog directly. If a visible label isn't specified, an `aria-label` must be provided instead.
 
 ## Events

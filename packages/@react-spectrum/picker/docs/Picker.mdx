@@ -43,7 +43,7 @@ keywords: [select, collections, dropdown]
 
 ## Example
 ```tsx example
-<Picker label="Choose frequency" onSelectionChange={selected => console.log(selected)}>
+<Picker label="Choose frequency">
   <Item key="rarely">Rarely</Item>
   <Item key="sometimes">Sometimes</Item>
   <Item key="always">Always</Item>
@@ -55,7 +55,7 @@ Picker follows the [Collection Components](../react-stately/collections.html) AP
 
 Dynamic collections, as shown below, can be used when the options come from an external data source such as an API call, or update over time. Providing the data in this way allows for Picker to automatically cache the rendering of each item, which dramatically improves performance.
 
-As seen below, an iterable list of options is passed to the Picker using the `items` prop. Each item accepts a key prop, which is passed to the onSelectionChange handler to identify the selected item. Alternatively, if the item objects contain an id property, as shown in the example below, then this is used automatically and a key prop is not required. See the [Events](#events) section for more detail on selection.
+As seen below, an iterable list of options is passed to the Picker using the `items` prop. Each item accepts a key prop, which is passed to the onSelectionChange handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and a key prop is not required. See the [Events](#events) section for more detail on selection.
 
 ```tsx example
 function Example() {
@@ -70,12 +70,16 @@ function Example() {
     {id: 8, name: 'Turtle'},
     {id: 9, name: 'Wombat'}
   ];
+  let [animalId, setAnimalId] = React.useState();
 
   return (
     // Dynamic Items
-    <Picker label="Pick an animal" items={options} onSelectionChange={selected => console.log(selected)}>
-      {item => <Item>{item.name}</Item>}
-    </Picker>
+    <>
+      <Picker label="Pick an animal" items={options} onSelectionChange={setAnimalId}>
+        {item => <Item>{item.name}</Item>}
+      </Picker>
+      <p>Animal id: {animalId}</p>
+    </>
   );
 }
 ```
@@ -182,15 +186,13 @@ function Example() {
   ];
 
   return (
-    <>
-      <Picker label="Pick an animal" items={options} onSelectionChange={selected => alert(selected)}>
-        {item => (
-          <Section key={item.name} items={item.children} title={item.name}>
-            {item => <Item>{item.name}</Item>}
-          </Section>
-        )}
-      </Picker>
-    </>
+    <Picker label="Pick an animal" items={options} onSelectionChange={selected => alert(selected)}>
+      {item => (
+        <Section key={item.name} items={item.children} title={item.name}>
+          {item => <Item>{item.name}</Item>}
+        </Section>
+      )}
+    </Picker>
   );
 }
 ```
@@ -383,7 +385,7 @@ The open state of the menu can be controlled via the `defaultOpen` and `isOpen` 
 ```tsx example
 function Example() {
   let [open, setOpen] = React.useState(false);
-  let [frequency, setfrequency] = React.useState("always");
+  let [frequency, setFrequency] = React.useState("always");
 
   return (
     <Picker
@@ -391,7 +393,7 @@ function Example() {
       isOpen={open}
       selectedKey={frequency}
       onOpenChange={setOpen}
-      onSelectionChange={selected => setfrequency(selected)}>
+      onSelectionChange={selected => setFrequency(selected)}>
       <Item key="rarely">Rarely</Item>
       <Item key="sometimes">Sometimes</Item>
       <Item key="always">Always</Item>

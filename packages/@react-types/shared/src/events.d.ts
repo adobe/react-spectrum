@@ -97,6 +97,6 @@ export interface PressEvents {
 }
 
 export interface FocusableProps extends FocusEvents, KeyboardEvents {
-  /** Whether the element should receive focus on render */
+  /** Whether the element should receive focus on render. */
   autoFocus?: boolean
 }

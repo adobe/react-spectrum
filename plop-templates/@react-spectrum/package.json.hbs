@@ -9,7 +9,9 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": ["dist"],
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "targets": {
     "main": {
       "includeNodeModules": ["@adobe/spectrum-css-temp"]

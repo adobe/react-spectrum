@@ -53,14 +53,10 @@ along with application level settings like the locale. Inside the `Provider`, yo
 including all React Spectrum components.
 
 ```tsx example
-// Import provider and theme
 import {Provider} from '@react-spectrum/provider';
 import {theme} from '@react-spectrum/theme-default';
-
-// Import the component you want to use
 import {Button} from '@react-spectrum/button';
 
-// Render it in your app!
 function App() {
   return (
     <Provider theme={theme}>

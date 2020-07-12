@@ -20,6 +20,18 @@ const slug = require('remark-slug');
 const util = require('mdast-util-toc');
 const yaml = require('js-yaml');
 const prettier = require('prettier');
+const {parse} = require('@babel/parser');
+const traverse = require('@babel/traverse').default;
+const t = require('@babel/types');
+
+const IMPORT_MAPPINGS = {
+  '@react-spectrum/theme-default': {
+    theme: 'defaultTheme'
+  },
+  '@react-spectrum/theme-dark': {
+    theme: 'darkTheme'
+  }
+};
 
 module.exports = new Transformer({
   async transform({asset, options}) {
@@ -34,7 +46,7 @@ module.exports = new Transformer({
             return [];
           }
 
-          if (meta === 'example') {
+          if (meta === 'example' || meta === 'snippet') {
             let id = `example-${exampleCode.length}`;
 
             // TODO: Parsing code with regex is bad. Replace with babel transform or something.
@@ -64,13 +76,23 @@ module.exports = new Transformer({
 
             exampleCode.push(code);
 
+            if (meta === 'snippet') {
+              node.meta = null;
+              return [
+                {
+                  type: 'jsx',
+                  value: `<div id="${id}" />`
+                }
+              ];
+            }
+
             // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actuall
             // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
             node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*\/\/\/- end collapse -\/\/\//g, '').trim();
             node.meta = 'example';
 
             return [
-              ...responsiveCode(node),
+              ...transformExample(node),
               {
                 type: 'jsx',
                 value: `<div id="${id}" />`
@@ -88,7 +110,7 @@ module.exports = new Transformer({
             ];
           }
 
-          return responsiveCode(node);
+          return transformExample(node);
         }
 
         return [node];
@@ -198,96 +220,161 @@ module.exports = new Transformer({
       ]
     });
 
-    let exampleBundle = exampleCode.length === 0
-      ?  ''
-      : `import React from 'react';
-import ReactDOM from 'react-dom';
-import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
-${exampleCode.join('\n')}
-export default {};
-`;
-
-    // Ensure that the HTML asset always changes so that the packager runs
-    asset.type = 'html';
-    asset.setCode(Math.random().toString(36).slice(4));
+    asset.type = 'jsx';
+    asset.setCode(`/* @jsx mdx */
+    import React from 'react';
+    import { mdx } from '@mdx-js/react'
+    ${compiled}
+    `);
     asset.meta.toc = toc;
     asset.meta.title = title;
     asset.meta.category = category;
     asset.meta.description = description;
     asset.meta.keywords = keywords;
+    asset.meta.isMDX = true;
+    asset.isSplittable = false;
+
+    // Generate the client bundle. We always need the client script,
+    // and the docs script when there's a TOC or an example on the page.
+    let clientBundle = 'import \'@react-spectrum/docs/src/client\';\n';
+    if (toc.length || exampleCode.length > 0) {
+      clientBundle += 'import \'@react-spectrum/docs/src/docs\';\n';
+    }
+
+    // Add example code collected from the MDX.
+    if (exampleCode.length > 0) {
+      clientBundle += `import React from 'react';
+import ReactDOM from 'react-dom';
+import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
+${exampleCode.join('\n')}
+export default {};
+`;
+    }
 
     let assets = [
       asset,
       {
         type: 'jsx',
-        content: `/* @jsx mdx */
-import React from 'react';
-import { mdx } from '@mdx-js/react'
-${compiled}
-`,
-        isInline: true,
-        isSplittable: false,
-        uniqueKey: 'page',
+        content: clientBundle,
+        uniqueKey: 'client',
+        isSplittable: true,
         env: {
-          context: 'node',
-          engines: {
-            node: process.versions.node
-          },
-          outputFormat: 'commonjs',
-          includeNodeModules: {
-            // These don't need to be bundled.
-            react: false,
-            'react-dom': false,
-            'intl-messageformat': false,
-            'globals-docs': false,
-            lowlight: false,
-            scheduler: false,
-            'markdown-to-jsx': false,
-            'prop-types': false
-          },
-          scopeHoist: false,
-          minify: false
+          // We have to override all of the environment options to ensure this doesn't inherit
+          // anything from the parent asset, whose environment is set below.
+          context: 'browser',
+          engines: asset.env.engines,
+          outputFormat: asset.env.scopeHoist ? 'esmodule' : 'global',
+          includeNodeModules: asset.env.includeNodeModules,
+          scopeHoist: asset.env.scopeHoist,
+          minify: asset.env.minify
+        },
+        meta: {
+          isMDX: false
         }
       }
     ];
 
+    // Add a dependency on the client bundle. It should not inherit its entry status from the page,
+    // and should always be placed in a separate bundle.
     asset.addDependency({
-      moduleSpecifier: '@react-spectrum/docs/src/client',
-      isAsync: true
+      moduleSpecifier: 'client',
+      isEntry: false,
+      isIsolated: true
     });
 
-    if (toc.length || exampleBundle) {
-      asset.addDependency({
-        moduleSpecifier: '@react-spectrum/docs/src/docs',
-        isAsync: true
-      });
-    }
-
-    asset.addDependency({
-      moduleSpecifier: 'page'
+    // Override the environment of the page bundle. It will run in node as part of the SSG optimizer.
+    asset.setEnvironment({
+      context: 'node',
+      engines: {
+        node: process.versions.node,
+        browsers: asset.env.engines.browsers
+      },
+      outputFormat: 'commonjs',
+      includeNodeModules: {
+        // These don't need to be bundled.
+        react: false,
+        'react-dom': false,
+        'intl-messageformat': false,
+        'globals-docs': false,
+        lowlight: false,
+        scheduler: false,
+        'markdown-to-jsx': false,
+        'prop-types': false
+      },
+      scopeHoist: false,
+      minify: false
     });
-
-    if (exampleBundle) {
-      assets.push({
-        type: 'jsx',
-        content: exampleBundle,
-        uniqueKey: 'example',
-        env: {
-          outputFormat: asset.env.scopeHoist ? 'esmodule' : 'global'
-        }
-      });
-
-      asset.addDependency({
-        moduleSpecifier: 'example',
-        isAsync: true
-      });
-    }
 
     return assets;
   }
 });
 
-function responsiveCode(node) {
+function transformExample(node) {
+  if (node.lang !== 'tsx') {
+    return responsiveCode(node);
+  }
+
+  if (/^<(.|\n)*>$/m.test(node.value)) {
+    node.value = node.value.replace(/^(<(.|\n)*>)$/m, '<WRAPPER>$1</WRAPPER>');
+  }
+
+  let ast = parse(node.value, {
+    sourceType: 'module',
+    plugins: ['jsx', 'typescript']
+  });
+
+  // Replace individual package imports in the code with monorepo imports if building for production
+  if (process.env.DOCS_ENV === 'production') {
+    let specifiers = [];
+    let last;
+
+    traverse(ast, {
+      ImportDeclaration(path) {
+        if (path.node.source.value.startsWith('@react-spectrum')) {
+          let mapping = IMPORT_MAPPINGS[path.node.source.value];
+          for (let specifier of path.node.specifiers) {
+            let mapped = mapping && mapping[specifier.imported.name];
+            if (mapped && specifier.local.name === specifier.imported.name) {
+              path.scope.rename(specifier.local.name, mapped);
+              specifiers.push(mapped);
+            } else {
+              specifiers.push(specifier.imported.name);
+            }
+          }
+
+          last = path.node;
+          path.remove();
+        }
+      },
+      Statement(path) {
+        path.skip();
+      },
+      Program: {
+        exit(path) {
+          if (specifiers.length > 0) {
+            let literal =  t.stringLiteral('@adobe/react-spectrum');
+            literal.raw = "'@adobe/react-spectrum'";
+
+            let decl = t.importDeclaration(
+              specifiers.map(s => t.importSpecifier(t.identifier(s), t.identifier(s))),
+              literal
+            );
+
+            decl.loc = last.loc;
+            decl.start = last.start;
+            decl.end = last.end;
+
+            path.unshiftContainer('body', [decl]);
+          }
+        }
+      }
+    });
+  }
+
+  return responsiveCode(node, ast);
+}
+
+function responsiveCode(node, ast) {
   if (!node.lang) {
     return [node];
   }
@@ -295,19 +382,19 @@ function responsiveCode(node) {
   let large = {
     ...node,
     meta: node.meta ? `${node.meta} large` : 'large',
-    value: formatCode(node, 80)
+    value: formatCode(node, ast, 80)
   };
 
   let medium = {
     ...node,
     meta: node.meta ? `${node.meta} medium` : 'medium',
-    value: formatCode(large, 60)
+    value: formatCode(large, ast, 60)
   };
 
   let small = {
     ...node,
     meta: node.meta ? `${node.meta} small` : 'small',
-    value: formatCode(medium, 25)
+    value: formatCode(medium, ast, 25)
   };
 
   return [
@@ -317,18 +404,19 @@ function responsiveCode(node) {
   ];
 }
 
-function formatCode(node, printWidth = 80) {
+function formatCode(node, ast, printWidth = 80) {
   let code = node.value;
-  if (code.split('\n').every(line => line.length <= printWidth)) {
+  if (!ast && code.split('\n').every(line => line.length <= printWidth)) {
     return code;
   }
 
-  if (/^<(.|\n)*>$/m.test(code)) {
-    code = code.replace(/^(<(.|\n)*>)$/m, '<WRAPPER>$1</WRAPPER>');
+  let parser = node.lang === 'css' ? 'css' : 'babel-ts';
+  if (ast) {
+    parser = () => ast;
   }
 
   code = prettier.format(code, {
-    parser: node.lang === 'css' ? 'css' : 'babel-ts',
+    parser,
     singleQuote: true,
     jsxBracketSameLine: true,
     bracketSpacing: false,

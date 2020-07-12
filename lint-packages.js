@@ -59,7 +59,11 @@ for (let pkg of packages) {
     softAssert(json.source, `${pkg} did not have "source"`);
     softAssert.equal(json.source, "src/index.ts", `${pkg} did not match "src/index.ts"`);
     softAssert.deepEqual(json.files, ['dist', 'src'], `${pkg} did not match "files"`);
-    softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
+    if (pkg.includes('@react-spectrum')){
+      softAssert.deepEqual(json.sideEffects, ['*.css'], `${pkg} is missing sideEffects: [ '*.css' ]`);
+    } else {
+      softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
+    }
     softAssert(!json.dependencies || !json.dependencies['@adobe/spectrum-css-temp'], `${pkg} has @adobe/spectrum-css-temp in dependencies instead of devDependencies`);
     softAssert(json.dependencies && json.dependencies['@babel/runtime'], `${pkg} is missing a dependency on @babel/runtime`);
     softAssert(!json.dependencies || !json.dependencies['@react-spectrum/test-utils'], '@react-spectrum/test-utils should be a devDependency');
