@@ -36,7 +36,7 @@ jobs:
       - save_cache:
           paths:
             - ~/react-spectrum
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
   test:
     docker:
@@ -58,7 +58,7 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: lint
@@ -72,7 +72,7 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build storybook
@@ -90,7 +90,7 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build docs
@@ -109,7 +109,7 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build docs
