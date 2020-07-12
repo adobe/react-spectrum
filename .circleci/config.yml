@@ -101,7 +101,7 @@ jobs:
           paths:
             - '*/docs/'
 
-  docs-master:
+  docs-production:
     docker:
       - image: circleci/node:12.10
     resource_class: large
@@ -113,7 +113,7 @@ jobs:
 
       - run:
           name: build docs
-          command: make website-master
+          command: make website-production
 
       - persist_to_workspace:
           root: dist
@@ -132,14 +132,14 @@ jobs:
               az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
             fi
 
-  deploy-master:
+  deploy-production:
     executor: azure-cli/azure-docker
     steps:
       - attach_workspace:
           at: /tmp/dist
       - run:
           name: deploy
-          command: az storage blob upload-batch -d "\$web" -s /tmp/dist/master/docs --account-name reactspectrum
+          command: az storage blob upload-batch -d "\$web" -s /tmp/dist/production/docs --account-name reactspectrum
 
   comment:
     docker:
@@ -174,10 +174,10 @@ workflows:
       - docs:
           requires:
             - build
-      - docs-master:
+      - docs-production:
           filters:
             branches:
-              only: master
+              only: main
           requires:
             - build
       - deploy:
@@ -186,12 +186,12 @@ workflows:
             - test
             - storybook
             - docs
-      - deploy-master:
+      - deploy-production:
           filters:
             branches:
-              only: master
+              only: main
           requires:
-            - docs-master
+            - docs-production
       - comment:
           requires:
             - deploy

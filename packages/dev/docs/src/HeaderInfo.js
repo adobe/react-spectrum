@@ -58,7 +58,7 @@ export function HeaderInfo(props) {
         {sourceData.map((source) => (
           <ResourceCard type={source.type} url={source.url} />
         ))}
-        <ResourceCard type="GitHub" url={`https://github.com/adobe/react-spectrum/tree/master/packages/${encodeURI(packageData.name)}`} />
+        <ResourceCard type="GitHub" url={`https://github.com/adobe/react-spectrum/tree/main/packages/${encodeURI(packageData.name)}`} />
         <ResourceCard type="NPM" url={`https://www.npmjs.com/package/${encodeURI(packageData.name)}`} />
       </Flex>
     </>
