@@ -87,7 +87,11 @@ function Example() {
         {...focusProps}
         aria-label="Example"
         placeholder="Focus me!" />
-      <ul>
+      <ul
+        style={{
+          maxHeight: '200px',
+          overflow: 'auto'
+        }}>
         {events.map((e, i) => <li key={i}>{e}</li>)}
       </ul>
     </>

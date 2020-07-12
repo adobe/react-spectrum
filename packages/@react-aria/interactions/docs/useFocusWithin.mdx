@@ -103,7 +103,11 @@ function Example() {
           Last Name: <input />
         </label>
       </div>
-      <ul>
+      <ul
+        style={{
+          maxHeight: '200px',
+          overflow: 'auto'
+        }}>
         {events.map((e, i) => <li key={i}>{e}</li>)}
       </ul>
     </>

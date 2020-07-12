@@ -148,6 +148,7 @@ html, body {
 .nav ul {
   /* override spectrum-css's 100%, which causes extra scrolling */
   height: auto;
+  margin-bottom: 30px;
 }
 
 .nav header {
