@@ -45,7 +45,7 @@ jobs:
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: test
