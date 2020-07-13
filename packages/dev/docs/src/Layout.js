@@ -165,7 +165,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
                 "logo": "https://www.adobe.com/favicon.ico"
               }
             }
-          ` />
+          `}} />
       </head>
       <body>
         {children}
