@@ -107,6 +107,15 @@ html, body {
   }
 }
 
+.homeLinks {
+  span {
+    font-size: 1.5em;
+    padding: 0 10px;
+    line-height: 1em;
+    vertical-align: text-bottom;
+  }
+}
+
 .highlights {
   display: flex;
   flex-wrap: wrap;
