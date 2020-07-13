@@ -143,6 +143,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
         <meta name="twitter:card" content="summary" />
+        <meta name="twitter:image" content={`https://${TLD}${heroImage}`} />
         <meta property="og:title" content={currentPage.title} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://${TLD}${currentPage.url}`} />
