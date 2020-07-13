@@ -237,7 +237,8 @@ article {
 
 footer.pageFooter {
   max-width: 967px;
-  width: 100%
+  width: 100%;
+  font-size: 11px;
 }
 
 footer ul {
