@@ -85,8 +85,15 @@ storybook:
 ci:
 	$(MAKE) publish
 
-publish: build
-	lerna publish from-package --yes
+publish:
+	@$(MAKE) build
+	@$(MAKE) build
+	yarn publish
+
+publish-nightly:
+	@$(MAKE) build
+	@$(MAKE) build
+	yarn publish:nightly
 
 build:
 	parcel build packages/@react-{spectrum,aria,stately}/*/ --no-minify
