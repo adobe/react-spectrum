@@ -448,31 +448,6 @@ function Example() {
 }
 ```
 
-### Open state
-The `isOpen` and `defaultOpen` props control whether the Dialog is open by default.
-They apply controlled and uncontrolled behavior on the DialogTrigger respectively.
-
-```tsx example
-function Example() {
-  let [open, setOpen] = React.useState(false);
-
-  return (
-    <DialogTrigger type="popover" isOpen={open} onOpenChange={setOpen}>
-      <ActionButton>Whispers</ActionButton>
-      <Dialog>
-        <Heading>Whispers and DMs</Heading>
-        <Divider />
-        <Content>
-          <Text>
-            You have 0 new messages.
-          </Text>
-        </Content>
-      </Dialog>
-    </DialogTrigger>
-  );
-}
-```
-
 ## Props
 
 <PropTable component={docs.exports.DialogTrigger} links={docs.links} />

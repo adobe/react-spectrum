@@ -112,7 +112,7 @@ function BreadcrumbItem(props) {
         {...itemProps}
         ref={ref}
         style={{
-          color: 'dodgerblue',
+          color: 'var(--blue)',
           textDecoration: props.isCurrent ? null : 'underline',
           fontWeight: props.isCurrent ? 'bold' : null,
           cursor: props.isCurrent ? 'default' : 'pointer'
@@ -167,7 +167,7 @@ function BreadcrumbItem(props) {
         ref={ref}
         href={props.href}
         style={{
-          color: 'dodgerblue',
+          color: 'var(--blue)',
           fontWeight: props.isCurrent ? 'bold' : null,
           cursor: props.isCurrent ? 'default' : 'pointer'
         }}>
@@ -226,7 +226,7 @@ function BreadcrumbItem(props) {
         style={{
           margin: 0,
           fontSize: '1em',
-          color: 'dodgerblue'
+          color: 'var(--blue)'
         }}>
         {props.children}
       </h3>
@@ -239,7 +239,7 @@ function BreadcrumbItem(props) {
           ref={ref}
           href={props.href}
           style={{
-            color: props.isDisabled ? 'gray' : 'dodgerblue',
+            color: props.isDisabled ? 'var(--gray)' : 'var(--blue)',
             fontWeight: props.isCurrent ? 'bold' : null,
             cursor: props.isCurrent ? 'default' : 'pointer'
           }}>
