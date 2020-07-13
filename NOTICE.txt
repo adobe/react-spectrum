@@ -6,12 +6,17 @@ The following is a list of sources from which code was used/modified in this cod
 This codebase contains a modified portion of code from Adobe which can be obtained at:
   * SOURCE:
     * https://www.npmjs.com/package/@adobe/react-spectrum-ui
-    * https://www.npmjs.com/package/@adobe/react-spectrum-workflow
-    * https://www.npmjs.com/package/@adobe/react-spectrum-workflow-color
-
   * LICENSE:
     * https://unpkg.com/@adobe/react-spectrum-ui@1.0.1/LICENSE
+
+  * SOURCE:
+    * https://www.npmjs.com/package/@adobe/react-spectrum-workflow
+  * LICENSE:
     * https://unpkg.com/@adobe/react-spectrum-workflow@1.0.1/LICENSE
+
+  * SOURCE:
+    * https://www.npmjs.com/package/@adobe/react-spectrum-workflow-color
+  * LICENSE:
     * https://unpkg.com/@adobe/react-spectrum-workflow-color@1.0.1/LICENSE
 
 -------------------------------------------------------------------------------
