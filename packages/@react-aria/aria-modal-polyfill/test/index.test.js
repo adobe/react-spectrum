@@ -103,8 +103,8 @@ describe('watchModals', () => {
             </Dialog>
           </DialogTrigger>
         </Provider>
-      <hr />
-    </>
+        <hr />
+      </>
     );
     // expect just the button labeled Trigger, and open the first dialog
     expect(() => getByRole('separator')).not.toThrow();
