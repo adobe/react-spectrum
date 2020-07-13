@@ -69,10 +69,21 @@ html, body {
   --page-background: var(--spectrum-global-color-gray-50);
   background: var(--page-background) !important;
   color-scheme: light dark;
+  --blue: #0040ff;
+  --gray: #6f6f6f;
 }
 
 .dark {
-  --page-background: var(--spectrum-global-color-gray-100);
+  --page-background: var(--spectrum-global-color-gray-75);
+  --blue: dodgerblue;
+  --gray: #868686;
+  .example {
+    background-color: var(--spectrum-global-color-gray-100);
+  }
+  article pre  {
+    --hljs-background:  #212121; /* between gray-100 and gray-200 */
+    background-color: var(--hljs-background);
+  }
 }
 
 .exampleImage {
@@ -93,6 +104,15 @@ html, body {
   img {
     max-width: 100%;
     border-radius: 4px;
+  }
+}
+
+.homeLinks {
+  span {
+    font-size: 1.5em;
+    padding: 0 10px;
+    line-height: 1em;
+    vertical-align: text-bottom;
   }
 }
 
@@ -134,13 +154,14 @@ html, body {
   bottom: 0;
   width: 256px;
   padding: 0 24px;
-  background: var(--spectrum-global-color-gray-75);
+  background: var(--spectrum-global-color-gray-100);
   box-sizing: border-box;
 }
 
 .nav ul {
   /* override spectrum-css's 100%, which causes extra scrolling */
   height: auto;
+  margin-bottom: 30px;
 }
 
 .nav header {
@@ -226,7 +247,8 @@ article {
 
 footer.pageFooter {
   max-width: 967px;
-  width: 100%
+  width: 100%;
+  font-size: 11px;
 }
 
 footer ul {
@@ -285,6 +307,7 @@ footer li:last-child:after {
 .colorLink {
   outline: none;
   text-decoration: none;
+  cursor: pointer;
   &:hover {
     text-decoration: underline;
   }
@@ -306,7 +329,7 @@ article h1.articleHeader {
 }
 
 article h1.articleHeader + p {
-  font-size: 18px;
+  font-size: var(--spectrum-body-2-text-size);
 }
 
 article.inCategory h1.articleHeader + p {
@@ -325,6 +348,10 @@ article.inCategory h2.sectionHeader + hr {
   padding: 40px;
   border-radius: 4px;
   margin-bottom: var(--spectrum-global-dimension-size-150);
+}
+
+.snippet {
+  background: none;
 }
 
 .inlineProvider {

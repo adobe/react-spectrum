@@ -10,8 +10,8 @@ All icons use default exports, so you are free to rename them as you see fit. In
 
 Both of these are valid:
 
-`import Add from '@spectrum-icons/workflow//Add'`
-`import IconAdd from '@spectrum-icons/workflow//Add'`
+`import Add from '@spectrum-icons/workflow/Add'`
+`import IconAdd from '@spectrum-icons/workflow/Add'`
 
 These will both display `<Add />` in the React Inspector
 

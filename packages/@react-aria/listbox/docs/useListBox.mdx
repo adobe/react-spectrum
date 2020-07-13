@@ -191,7 +191,7 @@ function Option({item, state}) {
   );
 }
 
-<ListBox label="Choose an option">
+<ListBox label="Choose an option" selectionMode="single">
   <Item>One</Item>
   <Item>Two</Item>
   <Item>Three</Item>
@@ -322,7 +322,7 @@ function Option({item, state}) {
 ///- end collapse -///
 }
 
-<ListBox label="Choose an option">
+<ListBox label="Choose an option" selectionMode="multiple">
   <Section title="Section 1">
     <Item>One</Item>
     <Item>Two</Item>
@@ -418,7 +418,7 @@ function Option({item, state}) {
   );
 }
 
-<ListBox label="Text alignment">
+<ListBox label="Text alignment" selectionMode="multiple">
   <Item textValue="Align Left">
     <div><strong>Align Left</strong></div>
     <div>Align the selected text to the left</div>

@@ -44,19 +44,21 @@ export function HeaderInfo(props) {
             <th className={typographyStyles['spectrum-Body--secondary']}>version</th>
             <td className={typographyStyles['spectrum-Body4']}>{packageData.version}</td>
           </tr>
-          <tr>
-            <th className={typographyStyles['spectrum-Body--secondary']}>usage</th>
-            <td className={typographyStyles['spectrum-Body4']}>
-              <Lowlight language="js" value={`import {${componentNames.join(', ')}} from '${importName}'`} inline className={typographyStyles['spectrum-Code4']} />
-            </td>
-          </tr>
+          {componentNames &&
+            <tr>
+              <th className={typographyStyles['spectrum-Body--secondary']}>usage</th>
+              <td className={typographyStyles['spectrum-Body4']}>
+                <Lowlight language="js" value={`import {${componentNames.join(', ')}} from '${importName}'`} inline className={typographyStyles['spectrum-Code4']} />
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
       <Flex wrap gap="size-200">
         {sourceData.map((source) => (
           <ResourceCard type={source.type} url={source.url} />
         ))}
-        <ResourceCard type="GitHub" url={`https://github.com/adobe-private/react-spectrum-v3/tree/master/packages/${encodeURI(packageData.name)}`} />
+        <ResourceCard type="GitHub" url={`https://github.com/adobe/react-spectrum/tree/main/packages/${encodeURI(packageData.name)}`} />
         <ResourceCard type="NPM" url={`https://www.npmjs.com/package/${encodeURI(packageData.name)}`} />
       </Flex>
     </>

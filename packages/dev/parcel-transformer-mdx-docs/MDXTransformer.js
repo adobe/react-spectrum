@@ -46,7 +46,7 @@ module.exports = new Transformer({
             return [];
           }
 
-          if (meta === 'example') {
+          if (meta === 'example' || meta === 'snippet') {
             let id = `example-${exampleCode.length}`;
 
             // TODO: Parsing code with regex is bad. Replace with babel transform or something.
@@ -75,6 +75,16 @@ module.exports = new Transformer({
             }
 
             exampleCode.push(code);
+
+            if (meta === 'snippet') {
+              node.meta = null;
+              return [
+                {
+                  type: 'jsx',
+                  value: `<div id="${id}" />`
+                }
+              ];
+            }
 
             // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actuall
             // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
@@ -372,19 +382,19 @@ function responsiveCode(node, ast) {
   let large = {
     ...node,
     meta: node.meta ? `${node.meta} large` : 'large',
-    value: formatCode(node, ast, 80)
+    value: formatCode(node, node.value, ast, 80)
   };
 
   let medium = {
     ...node,
     meta: node.meta ? `${node.meta} medium` : 'medium',
-    value: formatCode(large, ast, 60)
+    value: formatCode(node, large.value, ast, 60)
   };
 
   let small = {
     ...node,
     meta: node.meta ? `${node.meta} small` : 'small',
-    value: formatCode(medium, ast, 25)
+    value: formatCode(node, medium.value, ast, 25)
   };
 
   return [
@@ -394,8 +404,7 @@ function responsiveCode(node, ast) {
   ];
 }
 
-function formatCode(node, ast, printWidth = 80) {
-  let code = node.value;
+function formatCode(node, code, ast, printWidth = 80) {
   if (!ast && code.split('\n').every(line => line.length <= printWidth)) {
     return code;
   }
@@ -405,7 +414,7 @@ function formatCode(node, ast, printWidth = 80) {
     parser = () => ast;
   }
 
-  code = prettier.format(code, {
+  let res = prettier.format(node.value, {
     parser,
     singleQuote: true,
     jsxBracketSameLine: true,
@@ -414,7 +423,7 @@ function formatCode(node, ast, printWidth = 80) {
     printWidth
   });
 
-  return code.replace(/^<WRAPPER>((?:.|\n)*)<\/WRAPPER>;?\s*$/m, (str, contents) =>
+  return res.replace(/^<WRAPPER>((?:.|\n)*)<\/WRAPPER>;?\s*$/m, (str, contents) =>
     contents.replace(/^\s{2}/gm, '').trim()
   );
 }
