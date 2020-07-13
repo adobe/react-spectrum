@@ -1,0 +1,168 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import heroNarrow from 'url:../assets/ReactAria_Mobile_976x1025_1x.png';
+import heroNarrow2x from 'url:../assets/ReactAria_Mobile_976x1025_2x.png';
+import heroNarrowWebp from 'url:../assets/ReactAria_Mobile_976x1025_1x.webp';
+import heroNarrow2xWebp from 'url:../assets/ReactAria_Mobile_976x1025_2x.webp';
+import heroWide from 'url:../assets/ReactAria_976x445_1x.png';
+import heroWide2x from 'url:../assets/ReactAria_976x445_2x.png';
+import heroWideWebp from 'url:../assets/ReactAria_976x445_1x.webp';
+import heroWide2xWebp from 'url:../assets/ReactAria_976x445_2x.webp';
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+```tsx import
+import {Picker, Item, Section} from '@react-spectrum/picker';
+import {Text} from '@react-spectrum/text';
+import Book from '@spectrum-icons/workflow/Book';
+import BulkEditUsers from '@spectrum-icons/workflow/BulkEditUsers';
+import Draw from '@spectrum-icons/workflow/Draw';
+import {useSwitch} from '@react-aria/switch';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useToggleState} from '@react-stately/toggle';
+import {useFocusRing} from '@react-aria/focus';
+```
+
+---
+keywords: [react stately, react aria, react spectrum, hooks, react, spectrum]
+description: Today, we’re excited to announce [React Spectrum](https://react-spectrum.adobe.com/), a collection of libraries and tools that help you build adaptive, accessible, and robust user experiences. Check it out on [Github](https://github.com/adobe/react-spectrum)!
+date: 2020-07-14
+image: ../assets/ReactAria_976x445_2x.png
+---
+
+# Introducing React Spectrum
+
+Today, we’re excited to announce [React Spectrum](https://react-spectrum.adobe.com/), a collection of libraries and tools that help you build adaptive, accessible, and robust user experiences. Check it out on [Github](https://github.com/adobe/react-spectrum)!
+
+- **React Spectrum** — A React implementation of Spectrum, Adobe’s design system.
+- **React Aria** — A library of React Hooks that provides accessible UI primitives for your design system.
+- **React Stately** — A library of React Hooks that provides cross-platform state management and core logic for your design system.
+
+We’ve been working on React Spectrum for several years now. Adobe is a large company with thousands of engineers working on hundreds of products, which must meet high standards for UI consistency, accessibility, internationalization, and usability. Meeting these standards at our scale has been a challenge, and we’re excited to share what we’ve learned with the community and raise the bar for web applications together.
+
+<Hero
+  narrow={heroNarrow}
+  narrow2x={heroNarrow2x}
+  narrowWebp={heroNarrowWebp}
+  narrow2xWebp={heroNarrow2xWebp}
+  wide={heroWide}
+  wide2x={heroWide2x}
+  wideWebp={heroWideWebp}
+  wide2xWebp={heroWide2xWebp}
+  alt="React Aria hero image" />
+
+## Features
+
+- ♿️ [**Accessible**](https://react-spectrum.adobe.com/react-aria/accessibility.html) – Accessibility and behavior is implemented according to [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/), including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users.
+- 📱 [**Adaptive**](https://react-spectrum.adobe.com/react-aria/interactions.html) – All components are designed to work with mouse, touch, and keyboard interactions. They’re built with responsive design principles to deliver a great experience, no matter the device.
+- 🌍 [**International**](https://react-spectrum.adobe.com/react-aria/internationalization.html) – Support for over 30 languages is included out of the box, including support for right-to-left languages, date and number formatting, and more.
+- 🎨 [**Customizable**](https://react-spectrum.adobe.com/react-spectrum/theming.html) – React Spectrum components support custom themes, and automatically adapt for dark mode. For even more customizability, you can build your own components with your own DOM structure and stying using the [React Aria](https://react-spectrum.adobe.com/react-aria/index.html) and [React Stately](https://react-spectrum.adobe.com/react-stately/index.html) hooks to provide behavior, accessibility, and interactions.
+
+## Motivation
+
+Design systems are now more popular than ever, and many companies both large and small are implementing their own component libraries from scratch. Modern view libraries like React allow teams to build and maintain these components more easily than ever before, but it is still **extraordinarily difficult** to do so in a fully accessible way with interactions that work across many types of devices. This represents **millions of dollars** of investment for each company to **duplicate work** that could have been shared.
+
+While each design system is unique, there is often more in common between components than different. Most components typically found in a design system, like buttons, checkboxes, selects, and even tables, usually have very similar behavior and logic. The [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/) describe how many of the most common components should behave in terms of [accessibility semantics](https://www.w3.org/TR/wai-aria-1.2/) and [keyboard interactions](https://www.w3.org/TR/wai-aria-practices-1.2/). The main difference between design systems is styling.
+
+Unfortunately, many companies and teams don't have the resources or time to prioritize features like accessibility, internationalization, full keyboard navigation, and touch interactions. This leads to many web apps having sub-par accessibility and interactions, and contributes to the perception of the web as an inferior app platform compared to native apps.
+
+We believe there is an opportunity to share much of the behavior and component logic between design systems and across platforms. For example, user interactions, accessibility, internationalization, and behavior can be reused, while allowing custom styling and rendering to live within individual design systems. This has the potential to improve the overall quality of applications, while saving companies money and time, and reducing duplicated effort across the industry.
+
+## Architecture
+
+In order to allow reusing component behavior between design systems, React Spectrum splits each component into three parts: state, behavior, and the rendered component. This architecture is made possible by [React Hooks](https://reactjs.org/docs/hooks-intro.html), which enable the ability to reuse behavior between multiple components.
+
+### React Stately
+
+[React Stately](https://react-spectrum.adobe.com/react-stately/index.html) is a collection of hooks that provide state management and core logic for each component. They make no assumptions about the platform they are running on, and have no theme or design system specific logic.
+
+React Stately hooks accept common props from the component and provide state management. They implement the core logic for the component and return an interface for reading and updating the component state.
+
+React Stately can be used independently in your own components, or paired with React Aria hooks to get more of the behavior and user interactions for web applications out of the box. Learn more about React Stately, and how to [get started](https://react-spectrum.adobe.com/react-stately/getting-started.html) by reading the docs.
+
+### React Aria
+
+[React Aria](https://react-spectrum.adobe.com/react-aria/index.html) implements behavior and [accessibility](https://react-spectrum.adobe.com/react-aria/accessibility.html) for the web according to the [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/). It includes full screen reader and keyboard navigation support, along with mouse and touch [interactions](https://react-spectrum.adobe.com/react-aria/interactions.html) that have been tested across a wide variety of devices and browsers. It also implements [internationalization](https://react-spectrum.adobe.com/react-aria/internationalization.html) for over 30 languages, including right-to-left specific behavior, localized date and number formatting, and more.
+
+React Aria includes no design system specific styling or logic. It implements event handling, accessibility, internationalization, etc. — all the parts of a component that could be shared across multiple design systems. It returns DOM props that can be spread onto the elements rendered by the component. These include semantic properties like [ARIA](https://www.w3.org/TR/wai-aria-1.2/), and event handlers. The event handlers in turn call methods on the state interface to implement the behavior for the component.
+
+React Aria gives you complete control over the rendering and styling of your components, but rather than building everything from scratch, you start with higher level primitives that have semantic meaning, behavior, and interactions built in. This allows you to **build components more quickly**, and ensures that they work well across devices and assistive technology.
+
+Building a component with React Aria and React Stately looks like this. Call the hooks, and spread the resulting props onto the appropriate DOM elements.
+
+```tsx example
+function Switch(props) {
+  let state = useToggleState(props);
+  let {inputProps} = useSwitch(props, state);
+  let {isFocusVisible, focusProps} = useFocusRing();
+
+  return (
+    <label style={{display: 'flex', alignItems: 'center'}}>
+      <VisuallyHidden>
+        <input {...inputProps} {...focusProps} />
+      </VisuallyHidden>
+      <svg width={40} height={24} aria-hidden="true" style={{marginRight: 4}}>
+        <rect x={4} y={4} width={32} height={16} rx={8} fill={state.isSelected ? 'orange' : 'gray'} />
+        <circle cx={state.isSelected ? 28 : 12} cy={12} r={5} fill="white" />
+        {isFocusVisible &&
+          <rect x={1} y={1} width={38} height={22} rx={11} fill="none" stroke="orange" strokeWidth={2} />
+        }
+      </svg>
+      {props.children}
+    </label>
+  );
+}
+
+<Switch>Test</Switch>
+```
+
+[Read more](https://react-spectrum.adobe.com/react-aria/why.html) about React Aria and the problems it solves, and check out the docs to [get started](https://react-spectrum.adobe.com/react-aria/getting-started.html) building your own design system.
+
+### React Spectrum
+
+[React Spectrum](https://react-spectrum.adobe.com/react-spectrum/index.html) puts all of these pieces together and implements the Adobe-specific styling. It's designed to be adaptive, and works across mouse, touch, and keyboard interactions, on devices of any screen size. It supports [theming](https://react-spectrum.adobe.com/react-spectrum/theming.html), including automatic support for dark mode, and responsive scaling for large hit targets on touch devices.
+
+If you’re integrating with Adobe software or would like an end-to-end component library to use in your project, then React Spectrum is a great place to start. ***INSERT ADOBE STUFF HERE*** [Get started](https://react-spectrum.adobe.com/react-spectrum/getting-started.html) building an application with React Spectrum, and check out the docs for each component to learn more.
+
+We’ve designed the APIs in React Spectrum to be easy to use. The following example shows how simple it is to create a select element with support for sections and complex options.
+
+```tsx example
+<Picker label="Options">
+  <Section title="Permission">
+    <Item textValue="Read">
+      <Book size="S" />
+      <Text>Read</Text>
+      <Text slot="description">Read Only</Text>
+    </Item>
+    <Item textValue="Write">
+      <Draw size="S" />
+      <Text>Write</Text>
+      <Text slot="description">Read and Write Only</Text>
+    </Item>
+    <Item textValue="Admin">
+      <BulkEditUsers size="S" />
+      <Text>Admin</Text>
+      <Text slot="description">Full access</Text>
+    </Item>
+  </Section>
+</Picker>
+```
+
+If you’re building your own components, React Spectrum is a good example of how to use React Aria and React Stately to build a full design system.
+
+## Try it out!
+
+We’re really excited to see how you use React Aria, React Stately, and React Spectrum in your own applications! We’ve started with an initial set of components, and many more will be added in the coming months.
+
+Check out [our documentation](https://react-spectrum.adobe.com/) to learn more. We’ve put a huge amount of effort into making it easy to get started, with API docs and examples for each component, and a clear list of all of the functionality we handle out of the box.
+
+- [Website](https://react-spectrum.adobe.com/)
+- [Github](https://github.com/adobe/react-spectrum)

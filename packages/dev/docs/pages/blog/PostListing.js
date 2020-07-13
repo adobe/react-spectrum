@@ -1,0 +1,45 @@
+/*
+ * Copyright 2020 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
+import classNames from 'classnames';
+import docStyles from '@react-spectrum/docs/src/docs.css';
+import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
+import {PageContext, renderHTMLfromMarkdown, Time} from '@react-spectrum/docs';
+import React from 'react';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
+
+export function PostListing() {
+  let {pages} = React.useContext(PageContext);
+  let blogPages = pages
+    .filter(page => page.name.startsWith('blog/') && !page.name.endsWith('index.html'))
+    .sort((a, b) => a.date < b.date ? 1 : -1);
+
+  return (
+    <>
+      {blogPages.map(page => <BlogPost {...page} />)}
+    </>
+  );
+}
+
+function BlogPost({name, title, url, description, date}) {
+  return (
+    <article className={classNames(typographyStyles['spectrum-Typography'], docStyles.blogArticle)}>
+      <header className={docStyles.blogHeader}>
+        <h2 className={typographyStyles['spectrum-Heading3']}><a href={url} className={linkStyle['spectrum-Link']}>{title}</a></h2>
+        <Time date={date} />
+      </header>
+      <p className={typographyStyles['spectrum-Body3']}>
+        {renderHTMLfromMarkdown(description)}
+      </p>
+    </article>
+  );
+}
