@@ -170,7 +170,7 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props
 interface SpectrumDialogTriggerBase {
   type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   state: OverlayTriggerState,
-  isDismissable?: boolean
+  isDismissable?: boolean,
   dialogProps?: SpectrumDialogProps | {},
   triggerProps?: any,
   overlay: ReactElement,

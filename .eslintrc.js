@@ -29,7 +29,17 @@ module.exports = {
     },
     rules: {
       "no-unused-vars": OFF,
-      "@typescript-eslint/no-unused-vars": ERROR
+      "@typescript-eslint/no-unused-vars": ERROR,
+      "@typescript-eslint/member-delimiter-style": [ERROR, {
+        multiline: {
+          delimiter: 'comma',
+          requireLast: false
+        },
+        singleline: {
+          delimiter: 'comma',
+          requireLast: false
+        }
+      }],
     }
   }, {
     files: ['**/test/**', '**/stories/**', '**/docs/**'],
