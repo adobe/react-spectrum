@@ -17,7 +17,7 @@ export function attachToToC() {
   let headers = [];
   for (let link of tocLinks) {
     let headerId = link.href.split('#').pop();
-    let header = document.querySelector(`#${headerId}`);
+    let header = document.getElementById(headerId);
     headers.push({link, header});
   }
 
