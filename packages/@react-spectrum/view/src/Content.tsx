@@ -36,7 +36,7 @@ function Content(props: ContentProps, ref: DOMRef) {
 }
 
 /**
- * Content is used to specify primary content of a component.
+ * Content represents the primary content within a Spectrum container.
  */
 const _Content = forwardRef(Content);
 export {_Content as Content};

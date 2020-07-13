@@ -92,17 +92,22 @@ which define the values for the variables in each color scheme and platform scal
 a CSS class which includes the variables it defines, and `Provider` applies these classes according to
 media queries and prop settings.
 
-React Spectrum includes a default theme, which includes dark and light color schemes, along with medium and
-large platform scales. You can import it and pass it to the `Provider` to apply it.
+React Spectrum includes two themes by default. The `defaultTheme` uses the Spectrum `light` and `dark` color themes
+and is suitable for most applications. The `darkTheme` uses the Spectrum `dark` and `darkest` color themes, and is
+suitable for applications that are optimal with a darker interface regardless of operating system setting
+(e.g. photo/video editors). See the [Spectrum color](https://spectrum.adobe.com/page/color/#Color-themes-and-modes)
+page for more information.
+
+Import your desired theme and pass it to your application's `Provider` to apply it.
 
 ```tsx
 import {theme} from '@react-spectrum/theme-default';
 
 <Provider theme={theme}>
-  {/* Your app here! */}
+  <YourApp />
 </Provider>
 ```
 
 You can also build your own custom themes and apply them the same way. See the
-[source code](https://github.com/adobe-private/react-spectrum-v3/tree/master/packages/%40adobe/spectrum-css-temp/vars)
+[source code](https://github.com/adobe/react-spectrum/tree/main/packages/%40adobe/spectrum-css-temp/vars)
 for the default theme for a list of variables that should be defined.

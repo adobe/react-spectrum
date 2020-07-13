@@ -91,5 +91,13 @@ function isValidEvent(event, ref) {
     return false;
   }
 
+  // if the event target is no longer in the document
+  if (event.target) {
+    const ownerDocument = event.target.ownerDocument;
+    if (!ownerDocument || !ownerDocument.body.contains(event.target)) {
+      return false;
+    }
+  }
+
   return ref.current && !ref.current.contains(event.target);
 }

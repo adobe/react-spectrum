@@ -26,7 +26,7 @@ let levels = {
 
 // Packages to release
 let publicPackages = {
-  '@adobe/react-spectrum': 'rc',
+  '@adobe/react-spectrum': 'released',
   '@react-spectrum/actiongroup': 'released',
   '@react-spectrum/breadcrumbs' : 'released',
   '@react-spectrum/button': 'released',
@@ -53,6 +53,7 @@ let publicPackages = {
   '@react-spectrum/statuslight': 'released',
   '@react-spectrum/switch': 'released',
   '@react-spectrum/table': 'alpha',
+  '@react-types/table': 'rc',
   '@react-spectrum/text': 'released',
   '@react-spectrum/textfield': 'released',
   '@react-spectrum/theme-dark': 'released',
@@ -63,7 +64,8 @@ let publicPackages = {
   '@spectrum-icons/color': 'released',
   '@spectrum-icons/workflow': 'released',
   '@spectrum-icons/illustrations': 'released',
-  '@react-stately/data': 'released'
+  '@react-stately/data': 'released',
+  '@react-aria/aria-modal-polyfill': 'released'
 };
 
 // Packages never to release
@@ -137,7 +139,7 @@ if (arg.startsWith('@')) {
 
     if (releasedPackages.has(pkg)) {
       let cur = releasedPackages.get(pkg);
-      if (levels[status] > levels[cur.level]) {
+      if (levels[status] > levels[cur.level] && !publicPackages[pkg]) {
         cur.status = status;
       }
 
@@ -146,7 +148,7 @@ if (arg.startsWith('@')) {
 
     releasedPackages.set(pkg, {
       location: info[pkg].location,
-      status
+      status: publicPackages[pkg] || status
     });
 
     for (let dep of info[pkg].workspaceDependencies) {
@@ -232,7 +234,7 @@ function getVersions(existingPackages) {
 async function promptVersions(versions) {
   console.log('');
   for (let [name, [oldVersion, newVersion, private]] of versions) {
-    if (newVersion !== oldVersion) {
+    if (newVersion !== oldVersion || private) {
       console.log(`${name}: ${chalk.blue(oldVersion)}${private ? chalk.red(' (private)') : ''} => ${chalk.green(newVersion)}`);
     }
   }

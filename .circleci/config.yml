@@ -7,11 +7,11 @@ jobs:
       - image: circleci/node:12.10
     resource_class: large
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - checkout
       - restore_cache:
-          key: yarn-cache-{{ checksum "yarn.lock" }}
+          key: rsp-yarn-{{ checksum "yarn.lock" }}
 
       - run:
           name: Write npmrc
@@ -31,21 +31,21 @@ jobs:
       - save_cache:
          paths:
            - node_modules
-         key: yarn-cache-{{ checksum "yarn.lock" }}
+         key: rsp-yarn-{{ checksum "yarn.lock" }}
 
       - save_cache:
           paths:
-            - ~/react-spectrum-v3
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+            - ~/react-spectrum
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
   test:
     docker:
       - image: circleci/node:12.10
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: test
@@ -55,10 +55,10 @@ jobs:
     docker:
       - image: circleci/node:12.10
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: lint
@@ -69,10 +69,10 @@ jobs:
       - image: circleci/node:12.10
     resource_class: large
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build storybook
@@ -87,10 +87,10 @@ jobs:
       - image: circleci/node:12.10
     resource_class: xlarge
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build docs
@@ -101,19 +101,19 @@ jobs:
           paths:
             - '*/docs/'
 
-  docs-master:
+  docs-production:
     docker:
       - image: circleci/node:12.10
     resource_class: large
 
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - restore_cache:
-          key: v3-repo-{{ .Environment.CIRCLE_SHA1 }}
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
 
       - run:
           name: build docs
-          command: make website-master
+          command: make website-production
 
       - persist_to_workspace:
           root: dist
@@ -132,23 +132,23 @@ jobs:
               az storage blob upload-batch -d reactspectrum -s /tmp/dist --account-name reactspectrum
             fi
 
-  deploy-master:
+  deploy-production:
     executor: azure-cli/azure-docker
     steps:
       - attach_workspace:
           at: /tmp/dist
       - run:
           name: deploy
-          command: az storage blob upload-batch -d "\$web" -s /tmp/dist/master/docs --account-name reactspectrum
+          command: az storage blob upload-batch -d "\$web" -s /tmp/dist/production/docs --account-name reactspectrum
 
   comment:
     docker:
       - image: circleci/node:12.10
-    working_directory: ~/react-spectrum-v3
+    working_directory: ~/react-spectrum
     steps:
       - checkout
       - restore_cache:
-          key: yarn-cache-{{ checksum "yarn.lock" }}
+          key: rsp-yarn-{{ checksum "yarn.lock" }}
 
       - run:
           name: comment on pr
@@ -174,24 +174,24 @@ workflows:
       - docs:
           requires:
             - build
-#      - docs-master:
-#          filters:
-#            branches:
-#              only: master
-#          requires:
-#            - build
+      - docs-production:
+          filters:
+            branches:
+              only: main
+          requires:
+            - build
       - deploy:
           requires:
             - lint
             - test
             - storybook
             - docs
-#      - deploy-master:
-#          filters:
-#            branches:
-#              only: master
-#          requires:
-#            - docs-master
+      - deploy-production:
+          filters:
+            branches:
+              only: main
+          requires:
+            - docs-production
       - comment:
           requires:
             - deploy
