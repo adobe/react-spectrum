@@ -112,3 +112,18 @@ document.addEventListener('blur', (e) => {
   }
 }, true);
 
+let sidebar = document.querySelector('.' + docsStyle.nav);
+let lastSelectedItem = sessionStorage.getItem('sidebarSelectedItem');
+let lastScrollPosition = sessionStorage.getItem('sidebarScrollPosition');
+
+// If we have a recorded scroll position, and the last selected item is in the sidebar
+// (e.g. we're in the same category), then restore the scroll position.
+if (lastSelectedItem && lastScrollPosition && sidebar.querySelector(`a[href="${lastSelectedItem}"]`)) {
+  sidebar.scrollTop = parseInt(lastScrollPosition, 10);
+}
+
+// Save scroll position of the sidebar when we're about to navigate
+window.addEventListener('beforeunload', () => {
+  sessionStorage.setItem('sidebarSelectedItem', location.pathname);
+  sessionStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
+});
