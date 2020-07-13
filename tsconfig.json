@@ -25,6 +25,7 @@
     "lib": [
       "es6",
       "dom",
+      "es2016.array.include",
       "es2017.object",
       "es2017.intl"
     ],
