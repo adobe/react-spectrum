@@ -3,6 +3,18 @@ React-Spectrum
 The following is a list of sources from which code was used/modified in this codebase.
 
 -------------------------------------------------------------------------------
+This codebase contains a modified portion of code from Adobe which can be obtained at:
+  * SOURCE:
+    * https://www.npmjs.com/package/@adobe/react-spectrum-ui
+    * https://www.npmjs.com/package/@adobe/react-spectrum-workflow
+    * https://www.npmjs.com/package/@adobe/react-spectrum-workflow-color
+
+  * LICENSE:
+    * https://unpkg.com/@adobe/react-spectrum-ui@1.0.1/LICENSE
+    * https://unpkg.com/@adobe/react-spectrum-workflow@1.0.1/LICENSE
+    * https://unpkg.com/@adobe/react-spectrum-workflow-color@1.0.1/LICENSE
+
+-------------------------------------------------------------------------------
 This codebase contains a portion of code from react which can be obtained at:
   * SOURCE:
     * https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
