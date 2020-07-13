@@ -15,7 +15,10 @@ import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import {getAnchorProps} from './utils';
-import heroImage from 'url:../pages/assets/ReactSpectrum_976x445_2x.png';
+import heroImageAria from 'url:../pages/assets/ReactAria_976x445_2x.png';
+import heroImageHome from 'url:../pages/assets/ReactSpectrumHome_976x445_2x.png';
+import heroImageSpectrum from 'url:../pages/assets/ReactSpectrum_976x445_2x.png';
+import heroImageStately from 'url:../pages/assets/ReactStately_976x445_2x.png';
 import highlightCss from './syntax-highlight.css';
 import {ImageContext} from './Image';
 import {LinkProvider} from './types';
@@ -30,6 +33,11 @@ import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 const TLD = 'react-spectrum.adobe.com';
+const HERO = {
+  'react-spectrum': heroImageSpectrum,
+  'react-aria': heroImageAria,
+  'react-stately': heroImageStately
+};
 
 const mdxComponents = {
   h1: ({children, ...props}) => (
@@ -77,8 +85,9 @@ function stripMarkdown(description) {
 }
 
 function Page({children, currentPage, publicUrl, styles, scripts}) {
-  let isBlog = currentPage.name.startsWith('blog/');
-  let isSubpage = currentPage.name.split('/').length > 1 && !/index\.html$/.test(currentPage.name);
+  let parts = currentPage.name.split('/');
+  let isBlog = parts[0] === 'blog';
+  let isSubpage = parts.length > 1 && !/index\.html$/.test(currentPage.name);
   let pageSection = isSubpage ? dirToTitle(currentPage.name) : 'React Spectrum';
   if (isBlog && isSubpage) {
     pageSection = 'React Spectrum Blog';
@@ -87,6 +96,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
   let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
   let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
   let title = currentPage.title + (!/index\.html$/.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
+  let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
 
   return (
     <html
@@ -158,7 +168,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <meta property="og:title" content={currentPage.title} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://${TLD}${currentPage.url}`} />
-        <meta property="og:image" content={`https://${TLD}/${currentPage.image || path.basename(heroImage)}`} />
+        <meta property="og:image" content={`https://${TLD}/${currentPage.image || path.basename(hero)}`} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
         <script
