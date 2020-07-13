@@ -245,7 +245,7 @@
   --spectrum-meter-small-border-radius: var(--spectrum-global-dimension-static-size-25);
   --spectrum-pagination-page-button-line-height: 26px;
   /* BEGIN RSP PATCH */
-  /* fix popover in edge https://github.com/adobe-private/react-spectrum-v3/pull/402 */
+  /* fix popover in edge https://github.com/adobe/react-spectrum/pull/402 */
   --spectrum-overlay-positive-transform-distance: 6px;
   --spectrum-overlay-negative-transform-distance: -6px;
   /* END RSP PATCH */
@@ -319,7 +319,7 @@
   --spectrum-switch-track-width: 26px;
   --spectrum-switch-handle-border-radius: 7px;
   /* BEGIN RSP PATCH */
-  /* fix switch in edge: https://github.com/adobe-private/react-spectrum-v3/pull/90 */
+  /* fix switch in edge: https://github.com/adobe/react-spectrum/pull/90 */
   --spectrum-switch-handle-transform-x-ltr: 12px;
   --spectrum-switch-handle-transform-x-rtl: -12px;
   /* END RSP PATCH */

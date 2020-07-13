@@ -167,7 +167,14 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
 
 const CATEGORY_ORDER = [
   'Introduction',
-  'Concepts'
+  'Concepts',
+  'Application',
+  'Interactions',
+  'Layout',
+  '...',
+  'Content',
+  'Internationalization',
+  'Utilities'
 ];
 
 function Nav({currentPageName, pages}) {
@@ -234,12 +241,12 @@ function Nav({currentPageName, pages}) {
   for (let category of CATEGORY_ORDER) {
     if (pageMap[category]) {
       categories.push(category);
-    }
-  }
-
-  for (let category of Object.keys(pageMap).sort()) {
-    if (!CATEGORY_ORDER.includes(category)) {
-      categories.push(category);
+    } else if (category === '...') {
+      for (let category of Object.keys(pageMap).sort()) {
+        if (!CATEGORY_ORDER.includes(category)) {
+          categories.push(category);
+        }
+      }
     }
   }
 

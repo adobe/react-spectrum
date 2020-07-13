@@ -15,16 +15,16 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/i18n": "^3.0.0",
+    "@react-aria/i18n": "^3.0.1",
     "@react-aria/spinbutton": "^3.0.0-alpha.1",
-    "@react-aria/textfield": "^3.0.0",
-    "@react-aria/utils": "^3.0.0",
+    "@react-aria/textfield": "^3.0.1",
+    "@react-aria/utils": "^3.0.1",
     "@react-stately/numberfield": "^3.0.0-alpha.1",
-    "@react-types/button": "^3.0.0",
+    "@react-types/button": "^3.0.1",
     "@react-types/numberfield": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
