@@ -152,14 +152,14 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <meta property="og:locale" content="en_US" />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{__html: `
+          dangerouslySetInnerHTML={{__html: JSON.stringify(
             {
               "@context": "http://schema.org",
               "@type": "Article",
               "author": "Adobe Inc",
-              "headline": "${currentPage.title}",
-              "description": "${description}",
-              "image": "${`https://${TLD}${heroImage}`}",
+              "headline": currentPage.title,
+              "description": description,
+              "image": `https://${TLD}${heroImage}`,
               "publisher": {
                 "@type": "Organization",
                 "url": "https://www.adobe.com",
@@ -167,7 +167,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
                 "logo": "https://www.adobe.com/favicon.ico"
               }
             }
-          `}} />
+          )}} />
       </head>
       <body>
         {children}
