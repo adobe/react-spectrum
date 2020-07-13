@@ -142,6 +142,8 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         {scripts.map(s => <script type={s.type} src={s.url} defer />)}
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={`https://${TLD}${heroImage}`} />
         <meta property="og:title" content={currentPage.title} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://${TLD}${currentPage.url}`} />
@@ -269,11 +271,17 @@ function Nav({currentPageName, pages}) {
   }
 
   let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
+  let currentPageIsIndex = isIndex.test(currentPageName);
 
   function SideNavItem({name, url, title}) {
+    const isCurrentPage = !currentPageIsIndex && name === currentPageName;
     return (
-      <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: name === currentPageName})}>
-        <a className={classNames(sideNavStyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} href={url} {...getAnchorProps(url)}>{title}</a>
+      <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: isCurrentPage})}>
+        <a
+          className={classNames(sideNavStyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)}
+          href={url}
+          aria-current={isCurrentPage ? 'page' : null}
+          {...getAnchorProps(url)}>{title}</a>
       </li>
     );
   }
