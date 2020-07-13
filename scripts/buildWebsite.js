@@ -42,7 +42,8 @@ async function build() {
           name === 'parcel' ||
           name === 'patch-package' ||
           name.startsWith('@spectrum-css') ||
-          name.startsWith('postcss')
+          name.startsWith('postcss') ||
+          name.startsWith('@adobe')
         )
     ),
     dependencies: {},
