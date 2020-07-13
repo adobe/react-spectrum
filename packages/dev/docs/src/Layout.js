@@ -150,6 +150,24 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <meta property="og:image" content={`https://${TLD}${heroImage}`} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{__html: JSON.stringify(
+            {
+              '@context': 'http://schema.org',
+              '@type': 'Article',
+              author: 'Adobe Inc',
+              headline: currentPage.title,
+              description: description,
+              image: `https://${TLD}${heroImage}`,
+              publisher: {
+                '@type': 'Organization',
+                url: 'https://www.adobe.com',
+                name: 'Adobe',
+                logo: 'https://www.adobe.com/favicon.ico'
+              }
+            }
+          )}} />
       </head>
       <body>
         {children}
