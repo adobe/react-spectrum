@@ -152,6 +152,7 @@ html, body {
 .nav ul {
   /* override spectrum-css's 100%, which causes extra scrolling */
   height: auto;
+  margin-bottom: 30px;
 }
 
 .nav header {
@@ -319,7 +320,7 @@ article h1.articleHeader {
 }
 
 article h1.articleHeader + p {
-  font-size: 18px;
+  font-size: var(--spectrum-body-2-text-size);
 }
 
 article.inCategory h1.articleHeader + p {
