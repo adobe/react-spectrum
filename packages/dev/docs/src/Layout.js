@@ -142,6 +142,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         {scripts.map(s => <script type={s.type} src={s.url} defer />)}
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
+        <meta name="twitter:card" content="summary" />
         <meta property="og:title" content={currentPage.title} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://${TLD}${currentPage.url}`} />
