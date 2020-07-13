@@ -23,7 +23,7 @@ import {Flex} from '@react-spectrum/layout';
 
 ---
 category: Collections
-keywords: [menu trigger, menu, dropdown]
+keywords: [menu, dropdown, action menu]
 ---
 
 # MenuTrigger
@@ -62,14 +62,12 @@ the MenuTrigger and should support press events.
 
 MenuTrigger accepts an `onOpenChange` handler which is triggered whenever the Menu is opened or closed.
 
-The example below uses `onOpenChange` to update a separate span element with the current open state of the Menu.
-
 ```tsx example
 function Example() {
   let [isOpen, setIsOpen] = React.useState(false);
 
   return (
-    <Flex gap="size-100">
+    <Flex gap="size-100" alignItems="center">
       <MenuTrigger onOpenChange={setIsOpen}>
         <ActionButton>
             Edit
@@ -80,7 +78,7 @@ function Example() {
           <Item key="paste">Paste</Item>
         </Menu>
       </MenuTrigger>
-      <div>Current open state: {isOpen.toString()}</div>
+      <div>Currently open: {isOpen.toString()}</div>
     </Flex>
   );
 }
@@ -88,125 +86,90 @@ function Example() {
 
 ## Props
 
-### MenuTrigger
-
 <PropTable component={docs.exports.MenuTrigger} links={docs.links} />
 
-## Behavioral Options
+## Visual options
 
-### Align
-
-[View guidelines](https://spectrum.adobe.com/page/popovers/#Placement)
-
-```tsx example
-<MenuTrigger align="start">
-  <ActionButton>
-    placement align=start
-  </ActionButton>
-  <Menu>
-    <Item key="cut">Cut</Item>
-    <Item key="copy">Copy</Item>
-    <Item key="paste">Paste</Item>
-  </Menu>
-</MenuTrigger>
-<MenuTrigger align="end">
-  <ActionButton>
-    placement align=end
-  </ActionButton>
-  <Menu>
-    <Item key="cut">Cut</Item>
-    <Item key="copy">Copy</Item>
-    <Item key="paste">Paste</Item>
-  </Menu>
-</MenuTrigger>
-```
-
-### Direction
+### Align and direction
 
 [View guidelines](https://spectrum.adobe.com/page/popovers/#Placement)
 
+The `align` prop aligns the Menu relative to the trigger.
+
 ```tsx example
-<MenuTrigger direction="bottom" shouldFlip={false}>
-  <ActionButton>
-    placement direction=bottom
-  </ActionButton>
-  <Menu>
-    <Item key="cut">Cut</Item>
-    <Item key="copy">Copy</Item>
-    <Item key="paste">Paste</Item>
-  </Menu>
-</MenuTrigger>
-<MenuTrigger direction="top" shouldFlip={false}>
-  <ActionButton>
-    placement direction=top
-  </ActionButton>
-  <Menu>
-    <Item key="cut">Cut</Item>
-    <Item key="copy">Copy</Item>
-    <Item key="paste">Paste</Item>
-  </Menu>
-</MenuTrigger>
+import More from '@spectrum-icons/workflow/More';
+
+<Flex gap="size-100">
+  <MenuTrigger align="start">
+    <ActionButton aria-label="More options">
+      <More />
+    </ActionButton>
+    <Menu>
+      <Item key="cut">Cut</Item>
+      <Item key="copy">Copy</Item>
+      <Item key="paste">Paste</Item>
+    </Menu>
+  </MenuTrigger>
+  <MenuTrigger align="end" direction="top" shouldFlip={false}>
+    <ActionButton>
+      Edit options
+    </ActionButton>
+    <Menu>
+      <Item key="cut">Cut</Item>
+      <Item key="copy">Copy</Item>
+      <Item key="paste">Paste</Item>
+    </Menu>
+  </MenuTrigger>
+</Flex>
 ```
 
-### Closes on Selection
 
-The `closeOnSelect` MenuTrigger prop closes the Menu when an MenuItem is
-selected (default). Setting the `closeOnSelect` prop to `false` would be useful
-for a Menu listing filtering options where the user would make multiple
-selections at once.
+### Close on selection
+
+By default, the Menu closes when an item is selected. To change this, set the `closeOnSelect` prop to `false`. This might be useful when multiple selection is used. See [menu selection](./Menu.html#Selection) for more information.
 
 ```tsx example
-<MenuTrigger closeOnSelect>
-  <ActionButton>
-    closeOnSelect=true
-  </ActionButton>
-  <Menu>
-    <Item key="cut">Cut</Item>
-    <Item key="copy">Copy</Item>
-    <Item key="paste">Paste</Item>
-  </Menu>
-</MenuTrigger>
 <MenuTrigger closeOnSelect={false}>
   <ActionButton>
-    closeOnSelect=false
+    View
   </ActionButton>
   <Menu selectionMode="multiple">
-    <Item key="jpg">jpg</Item>
-    <Item key="png">png</Item>
-    <Item key="tiff">tiff</Item>
+    <Item key="side">Side bar</Item>
+    <Item key="options">Page options</Item>
+    <Item key="edit">Edit Panel</Item>
   </Menu>
 </MenuTrigger>
 ```
 
 ### Flipping
-
-Applying `shouldFlip` to the MenuTrigger makes the Menu attempt to flip on its
-main axis in situations where the original placement would cause it to render out of view.
+By default, the Menu flips direction automatically upon opening when space is limited. To change this, set the `shouldFlip` prop to `false`. Try scrolling the viewport close to the edge of the trigger in the example to see this in action.
 
 ```tsx example
-<MenuTrigger shouldFlip>
-  <ActionButton>
-    shouldFlip=true
-  </ActionButton>
-  <Menu>
-    <Item key="cut">Cut</Item>
-    <Item key="copy">Copy</Item>
-    <Item key="paste">Paste</Item>
-  </Menu>
-</MenuTrigger>
-<MenuTrigger shouldFlip={false}>
-  <ActionButton>
-    shouldFlip=false
-  </ActionButton>
-  <Menu>
-    <Item key="cut">Cut</Item>
-    <Item key="copy">Copy</Item>
-    <Item key="paste">Paste</Item>
-  </Menu>
-</MenuTrigger>
+<Flex gap="size-100">
+  <MenuTrigger shouldFlip>
+    <ActionButton aria-label="More options">
+      <More />
+    </ActionButton>
+    <Menu>
+      <Item key="cut">Cut</Item>
+      <Item key="copy">Copy</Item>
+      <Item key="paste">Paste</Item>
+    </Menu>
+    </MenuTrigger>
+    <MenuTrigger shouldFlip={false}>
+      <ActionButton>
+        Edit
+      </ActionButton>
+      <Menu>
+        <Item key="cut">Cut</Item>
+        <Item key="copy">Copy</Item>
+        <Item key="paste">Paste</Item>
+      </Menu>
+  </MenuTrigger>
+</Flex>
 ```
 
 ### Open
 
-The `isOpen` and `defaultOpen` props control whether the MenuTrigger is open by default.
-They apply controlled and uncontrolled behavior on the MenuTrigger respectively.
+The `isOpen` and `defaultOpen` props on the MenuTrigger control whether the Menu is open by default.
+They apply controlled and uncontrolled behavior on the Menu respectively.
