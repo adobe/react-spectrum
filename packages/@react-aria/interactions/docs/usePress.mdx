@@ -78,7 +78,7 @@ type of event that triggered the interaction.
 This example shows a simple target that handles press events with `usePress` and logs them to a list below.
 It also uses the `isPressed` state to adjust the background color when the target is pressed.
 Press down on the target and drag your pointer off and over to see when the events are fired, and try focusing
-the target with a keyboard and pressing the Enter or Space keys to trigger events as well.
+the target with a keyboard and pressing the <kbd>Enter</kbd> or <kbd>Space</kbd> keys to trigger events as well.
 
 **NOTE: for more advanced button functionality, see [useButton](useButton.html).**
 
@@ -112,7 +112,11 @@ function Example() {
         tabIndex={0}>
         Press me!
       </div>
-      <ul>
+      <ul
+        style={{
+          maxHeight: '200px',
+          overflow: 'auto'
+        }}>
         {events.map((e, i) => <li key={i}>{e}</li>)}
       </ul>
     </>

@@ -15,11 +15,11 @@
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-stately/utils": "^3.0.0",
+    "@react-stately/utils": "^3.0.1",
     "@react-types/pagination": "^3.0.0-alpha.1"
   },
   "peerDependencies": {

@@ -44,8 +44,8 @@ function SideNav(props) {
   if (node.children.length > 0) {
     return (
       <li className={classNames(sidenavstyles['spectrum-SideNav-item'])}>
-        <a className={classNames(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} href={`#${node.id}`} id={`${node.id}-heading`}>{node.textContent}</a>
-        <ul className={classNames(sidenavstyles['spectrum-SideNav'], sidenavstyles['spectrum-SideNav--multiLevel'])} aria-labelledby={`${node.id}-heading`}>
+        <a className={classNames(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} href={`#${node.id}`} id={`toc-${node.id}-heading`}>{node.textContent}</a>
+        <ul className={classNames(sidenavstyles['spectrum-SideNav'], sidenavstyles['spectrum-SideNav--multiLevel'])} aria-labelledby={`toc-${node.id}-heading`}>
           {node.children.map(child => <SideNav key={child.id} node={child} />)}
         </ul>
       </li>
