@@ -154,17 +154,17 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{__html: JSON.stringify(
             {
-              "@context": "http://schema.org",
-              "@type": "Article",
-              "author": "Adobe Inc",
-              "headline": currentPage.title,
-              "description": description,
-              "image": `https://${TLD}${heroImage}`,
-              "publisher": {
-                "@type": "Organization",
-                "url": "https://www.adobe.com",
-                "name": "Adobe",
-                "logo": "https://www.adobe.com/favicon.ico"
+              '@context': 'http://schema.org',
+              '@type': 'Article',
+              author: 'Adobe Inc',
+              headline: currentPage.title,
+              description: description,
+              image: `https://${TLD}${heroImage}`,
+              publisher: {
+                '@type': 'Organization',
+                url: 'https://www.adobe.com',
+                name: 'Adobe',
+                logo: 'https://www.adobe.com/favicon.ico'
               }
             }
           )}} />
