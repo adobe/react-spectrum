@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/icon",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -32,19 +32,14 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/utils": "^3.0.0",
-    "@react-spectrum/utils": "^3.0.0",
-    "@react-types/shared": "^3.0.0"
+    "@react-aria/utils": "^3.0.1",
+    "@react-spectrum/utils": "^3.0.1",
+    "@react-types/shared": "^3.0.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
     "@adobe/spectrum-css-workflow-icons": "^1.0.0",
-    "@react-spectrum/button": "3.0.0",
-    "@react-spectrum/searchfield": "^3.0.0",
-    "@react-spectrum/table": "3.0.0-alpha.2",
-    "@spectrum-icons/workflow": "^3.0.0",
-    "highlight.js": "9.18.1",
-    "react-lowlight": "^2.0.0"
+    "@spectrum-icons/workflow": "^3.0.0"
   },
   "peerDependencies": {
     "react": "^16.8.0",

@@ -115,7 +115,11 @@ function Example() {
         tabIndex={0}>
         Hover me!
       </div>
-      <ul>
+      <ul
+        style={{
+          maxHeight: '200px',
+          overflow: 'auto'
+        }}>
         {events.map((e, i) => <li key={i}>{e}</li>)}
       </ul>
     </>

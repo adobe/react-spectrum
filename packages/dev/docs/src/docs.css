@@ -69,10 +69,14 @@ html, body {
   --page-background: var(--spectrum-global-color-gray-50);
   background: var(--page-background) !important;
   color-scheme: light dark;
+  --blue: #0040ff;
+  --gray: #6f6f6f;
 }
 
 .dark {
   --page-background: var(--spectrum-global-color-gray-75);
+  --blue: dodgerblue;
+  --gray: #868686;
   .example {
     background-color: var(--spectrum-global-color-gray-100);
   }
@@ -148,6 +152,7 @@ html, body {
 .nav ul {
   /* override spectrum-css's 100%, which causes extra scrolling */
   height: auto;
+  margin-bottom: 30px;
 }
 
 .nav header {
@@ -233,7 +238,8 @@ article {
 
 footer.pageFooter {
   max-width: 967px;
-  width: 100%
+  width: 100%;
+  font-size: 11px;
 }
 
 footer ul {
