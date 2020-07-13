@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference path="css.d.ts" />
-
 export * from './dom';
 export * from './inputs';
 export * from './selection';
