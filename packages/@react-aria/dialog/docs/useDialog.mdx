@@ -44,8 +44,7 @@ building fully accessible custom dialogs from scratch is very difficult and erro
 `useDialog`, combined with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useModal} />,
 helps achieve accessible dialogs that can be styled as needed.
 
-**Note: `useDialog` only handles the dialog itself. It should be combined with other hooks and
-components as described below to create a fully accessible modal dialog.**
+**Note:** `useModal` only hides content within parent `OverlayProvider` components. However, if you have additional content in your application outside any `OverlayProvider`, then you should use the `@react-aria/aria-modal-polyfill` package to ensure that this content is hidden while modals are open as well. See the [aria-modal-polyfill docs](../react-aria/aria-modal-polyfill.html) for more information.
 
 * Exposed to assistive technology as a `dialog` or `alertdialog` with ARIA
 * Handles labelling the dialog by its title element
@@ -71,9 +70,6 @@ to create modal dialogs, popovers, and other types of overlays.
 
 If a dialog does not have a visible title element, an `aria-label` or `aria-labelledby`
 prop must be passed instead to identify the element to assistive technology.
-
-`useDialog` applies 'aria-modal' to the modal. This doesn't cover every browser/screen reader combination and should be combined with `@react-aria/aria-modal-polyfill`, see the [Aria Modal Polyfill docs](../react-aria/aria-modal-polyfill.html).
-
 
 ## Example
 

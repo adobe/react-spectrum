@@ -13,7 +13,7 @@
 import {hideOthers} from 'aria-hidden';
 
 /**
- * Acts as a polyfill for 'aria-modal' by watching for added modals and hiding the rest of the tree.
+ * Acts as a polyfill for `aria-modal` by watching for added modals and hiding any surrounding DOM elements with `aria-hidden`.
  */
 export function watchModals(selector:string = 'body'): void {
   /**

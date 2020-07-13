@@ -19,7 +19,7 @@ category: Overlays
 keywords: [dialog, modal, aria]
 ---
 
-# aria-modal-polyfill
+# watchModals
 
 <p>{docs.exports.watchModals.description}</p>
 
@@ -29,21 +29,22 @@ keywords: [dialog, modal, aria]
 
 ## Introduction
 
-Certain browser + screen reader combinations do not implement aria-modal correctly, allowing users to navigate outside of the modal.
-This watches a container for aria-modal nodes and hides the rest of the dom from screen readers when one is open use the [aria-hidden](https://www.npmjs.com/package/aria-hidden) package.
+Certain browser + screen reader combinations do not implement aria-modal correctly, which may unintentionally allow users to navigate outside of the modal.
+`react-aria-modal` watches a container element for `aria-modal` nodes and hides the rest of the dom from screen readers with `aria-hidden` when one is open. See the [aria-hidden](https://www.npmjs.com/package/aria-hidden) package for more details.
+Most of the time you do not need this, it should only be necessary if your app is not mounted at the root of the page.
 
 ## API
 
 <FunctionAPI function={docs.exports.watchModals} links={docs.links} />
 
 ## How to use
-Include this once in your application at the top level before modals are rendered.
+Include `@react-aria/aria-modal-polyfill` once in your application and call `watchModals` before any modals are rendered.
 ```
 import {watchModals} from '@react-aria/aria-modal-polyfill';
 watchModals();
 ```
 
-You can also pass it a selector string, by default it will watch body, which is where most applications should have their provider.
+By default, `@react-aria/aria-modal-polyfill` watches the document body, but you can also pass it a selector string if your modals are mounted in a different container.
 
 ```
 watchModals('.my-modal-root');

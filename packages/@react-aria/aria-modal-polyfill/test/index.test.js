@@ -44,14 +44,17 @@ describe('watchModals', () => {
   it('should hide everything except the modal', async () => {
     watchModals();
     let {getByLabelText, getByRole} = render(
-      <Provider theme={theme}>
-        <DialogTrigger>
-          <ActionButton aria-label="Trigger" />
-          <Dialog>contents</Dialog>
-        </DialogTrigger>
-      </Provider>
+      <>
+        <Provider theme={theme}>
+          <DialogTrigger>
+            <ActionButton aria-label="Trigger" />
+            <Dialog>contents</Dialog>
+          </DialogTrigger>
+        </Provider>
+        <hr />
+      </>
     );
-    expect(() => getByRole('button')).not.toThrow();
+    expect(() => getByRole('separator')).not.toThrow();
     act(() => {
       triggerPress(getByLabelText('Trigger'));
     });
@@ -64,7 +67,7 @@ describe('watchModals', () => {
     });
     // we shouldn't be able to find it because the search is done by accessibility and the non-modal
     // part of the tree should be inaccessible while the modal is open
-    expect(() => getByRole('button')).toThrow();
+    expect(() => getByRole('separator')).toThrow();
 
     expect(document.activeElement).toBe(dialog);
 
@@ -79,29 +82,32 @@ describe('watchModals', () => {
     }); // wait for animation
 
     // once the dialog is removed, we should be able to access the main part of the document again
-    expect(() => getByRole('button')).not.toThrow();
+    expect(() => getByRole('separator')).not.toThrow();
   });
 
   it('should handle nested modals', async () => {
     watchModals();
     let {getByLabelText, getByRole, getAllByRole, getByText} = render(
-      <Provider theme={theme}>
-        <DialogTrigger>
-          <ActionButton aria-label="Trigger" />
-          <Dialog>
-            <Content>
-              <div>Outer</div>
-              <DialogTrigger>
-                <Button variant="primary" aria-label="Nested Trigger" />
-                <Dialog>Inner</Dialog>
-              </DialogTrigger>
-            </Content>
-          </Dialog>
-        </DialogTrigger>
-      </Provider>
+      <>
+        <Provider theme={theme}>
+          <DialogTrigger>
+            <ActionButton aria-label="Trigger" />
+            <Dialog>
+              <Content>
+                <div>Outer</div>
+                <DialogTrigger>
+                  <Button variant="primary" aria-label="Nested Trigger" />
+                  <Dialog>Inner</Dialog>
+                </DialogTrigger>
+              </Content>
+            </Dialog>
+          </DialogTrigger>
+        </Provider>
+      <hr />
+    </>
     );
     // expect just the button labeled Trigger, and open the first dialog
-    expect(() => getByRole('button')).not.toThrow();
+    expect(() => getByRole('separator')).not.toThrow();
     act(() => {
       triggerPress(getByLabelText('Trigger'));
     });
@@ -113,6 +119,7 @@ describe('watchModals', () => {
       expect(dialog).toBeVisible();
     });
     expect(getByText('Outer')).toBeVisible();
+    expect(() => getByRole('separator')).toThrow();
 
     // the outer dialog is open now, expect to only have access to the button called Nested Trigger and click that
     let buttons = getAllByRole('button');
@@ -131,6 +138,7 @@ describe('watchModals', () => {
     });
     expect(getByText('Inner')).toBeVisible();
     expect(() => getByRole('button')).toThrow();
+    expect(() => getByRole('separator')).toThrow();
 
     // start closing dialogs
     fireEvent.keyDown(innerDialog, {key: 'Escape'});
@@ -146,6 +154,7 @@ describe('watchModals', () => {
     expect(buttons.length).toBe(1);
     expect(buttons[0]).toBe(getByLabelText('Nested Trigger'));
     expect(getByText('Outer')).toBeVisible();
+    expect(() => getByRole('separator')).toThrow();
 
     // close the outer dialog
     fireEvent.keyDown(dialog, {key: 'Escape'});
@@ -159,5 +168,6 @@ describe('watchModals', () => {
     buttons = getAllByRole('button');
     expect(buttons.length).toBe(1);
     expect(buttons[0]).toBe(getByLabelText('Trigger'));
+    expect(() => getByRole('separator')).not.toThrow();
   });
 });
