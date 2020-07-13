@@ -38,7 +38,6 @@
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",
-    "@adobe/spectrum-css-workflow-icons": "^1.0.0",
     "@spectrum-icons/workflow": "^3.0.0"
   },
   "peerDependencies": {
