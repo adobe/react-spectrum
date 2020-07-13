@@ -15,7 +15,7 @@ import {FunctionAPI, HeaderInfo} from '@react-spectrum/docs';
 import packageData from '../package.json';
 
 ---
-category: Labels
+category: Utilities
 keywords: [label, form, aria]
 ---
 
@@ -33,6 +33,32 @@ keywords: [label, form, aria]
 
 ## Example
 
-`useLabel` is used by other React Aria hooks to manage the `labelProps`.
+The `useLabel` hook associates a label with a field. It automatically handles
+creating an id for the field and associates the label with it.
+
+```tsx
+import {useLabel} from '@react-aria/label';
+
+function ColorField(props) {
+  let {labelProps, fieldProps} = useLabel(props);
+  return (
+    <>
+      <label {...labelProps}>{props.label}</label>
+      <select {...fieldProps}>
+        <option>Indigo</option>
+        <option>Maroon</option>
+        <option>Chartreuse</option>
+      </select>
+    </>
+  );
+}
+
+<ColorField label="Favorite color" />
+```
+
+By default, `useLabel` assumes that the label is a native HTML label element.
+However, if you are labeling a non-native form element, be sure to use an
+element other than a `<label>` and set the `labelElementType` prop appropriately.
+
 See [useRadioGroup](useRadioGroup.html#example) and [useTextField](useTextField.html#example)
 for examples of how `useLabel` is used by components.

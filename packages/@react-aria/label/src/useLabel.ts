@@ -32,6 +32,7 @@ interface LabelAria {
 /**
  * Provides the accessibility implementation for labels and their associated elements.
  * Labels provide context for user inputs.
+ * @param props - The props for labels and fields.
  */
 export function useLabel(props: LabelAriaProps): LabelAria {
   let {

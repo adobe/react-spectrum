@@ -21,7 +21,7 @@ let randomInstanceNumber = Math.round(Math.random() * 10000000000);
 
 /**
  * If a default is not provided, generate an id.
- * @param defaultId - default component id
+ * @param defaultId - Default component id.
  */
 export function useId(defaultId?: string): string {
   let [value, setValue] = useState(defaultId);

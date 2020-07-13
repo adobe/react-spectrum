@@ -33,8 +33,8 @@ const propRe = /^(data-.*)$/;
 
 /**
  * Filters out all props that aren't valid DOM props or defined via override prop obj.
- * @param props - props to filter for a component
- * @param opts - props to override
+ * @param props - The component props to be filtered.
+ * @param opts - Props to override.
  */
 export function filterDOMProps(props: DOMProps & AriaLabelingProps, opts: Options = {}): DOMProps & AriaLabelingProps {
   let {labelable, propNames} = opts;

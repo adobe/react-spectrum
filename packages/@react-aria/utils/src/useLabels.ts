@@ -16,8 +16,8 @@ import {useId} from './useId';
 
 /**
  * Merges aria-label and aria-labelledby into aria-labelledby when both exist.
- * @param props - aria label props
- * @param defaultLabel - default value for aria-label when not present
+ * @param props - Aria label props.
+ * @param defaultLabel - Default value for aria-label when not present.
  */
 export function useLabels(props: DOMProps & AriaLabelingProps, defaultLabel?: string): HTMLAttributes<HTMLElement> {
   let {
