@@ -319,7 +319,7 @@ article h1.articleHeader {
 }
 
 article h1.articleHeader + p {
-  font-size: 18px;
+  font-size: var(--spectrum-body-2-text-size);
 }
 
 article.inCategory h1.articleHeader + p {
