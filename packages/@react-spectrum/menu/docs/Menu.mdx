@@ -199,20 +199,6 @@ Menu supports multiple selection modes. By default, selection is disabled, howev
 Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
 
 ```tsx example
-<MenuTrigger>
-  <ActionButton>
-    Align
-  </ActionButton>
-  <Menu selectionMode="single" defaultSelectedKeys={['middle']}>
-    <Item key="left">Left</Item>
-    <Item key="middle">Middle</Item>
-    <Item key="right">Right</Item>
-  </Menu>
-</MenuTrigger>
-```
-The `selectedKeys` prop can be used to make the selected state controlled.
-
-```tsx example
 function Example() {
   let [selected, setSelected] = React.useState(new Set(['middle']));
 
