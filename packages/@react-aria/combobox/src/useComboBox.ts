@@ -11,8 +11,9 @@
  */
 
 import {chain} from '@react-aria/utils';
+import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
-import {FocusEvent, HTMLAttributes, RefObject} from 'react';
+import {FocusEvent, HTMLAttributes, RefObject, useEffect, useRef} from 'react';
 import {getItemId, listIds} from '@react-aria/listbox';
 import {ListLayout} from '@react-stately/collections';
 import {PressProps} from '@react-aria/interactions';
@@ -20,12 +21,7 @@ import {useMenuTrigger} from '@react-aria/menu';
 import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
 
-interface ComboBoxProps {
-  completionMode?: 'suggest' | 'complete',
-  menuTrigger?: 'focus' | 'input' | 'manual'
-}
-
-interface AriaComboBoxProps<T> extends ComboBoxProps {
+interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   popoverRef: RefObject<HTMLDivElement>,
   triggerRef: RefObject<HTMLElement>,
   inputRef: RefObject<HTMLInputElement>,
@@ -47,13 +43,16 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     popoverRef,
     inputRef,
     layout,
-    completionMode,
-    menuTrigger
+    completionMode = 'suggest',
+    menuTrigger = 'input',
+    allowsCustomValue,
+    onCustomValue
   } = props;
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      ref: triggerRef
+      ref: triggerRef,
+      type: 'listbox'
     },
     state
   );
@@ -70,7 +69,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   // when getting focusedKeyId
   listIds.set(state, menuProps.id);
 
-  let focusedItem = state.selectionManager.focusedKey ? state.collection.getItem(state.selectionManager.focusedKey) : undefined;
+  let focusedItem = state.selectionManager.focusedKey && state.isOpen ? state.collection.getItem(state.selectionManager.focusedKey) : undefined;
   let focusedKeyId = focusedItem ? getItemId(state, focusedItem.key) : undefined;
 
   // Using layout initiated from ComboBox, generate the keydown handlers for textfield (arrow up/down to navigate through menu when focus in the textfield)
@@ -87,24 +86,21 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onKeyDown = (e) => {
     switch (e.key) {
       case 'Enter':
-        if (state.isOpen && focusedItem) {
+        if (focusedItem) {
           state.setSelectedKey(state.selectionManager.focusedKey);
+          // I think I need this .close so that the menu closes even
+          // when the user hits Enter on the already selectedKey
+          state.close();
         }
         break;
       case 'Escape':
         state.close();
         break;
       case 'ArrowDown':
-        if (!state.isOpen) {
-          state.toggle('first');
-        }
-
+        state.open('first');
         break;
       case 'ArrowUp':
-        if (!state.isOpen) {
-          state.toggle('last');
-        }
-
+        state.open('last');
         break;
     }
   };
@@ -132,8 +128,14 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
     state.setFocused(false);
 
-    if (state.isOpen && focusedItem) {
+    if (focusedItem) {
       state.setSelectedKey(state.selectionManager.focusedKey);
+    } else if (allowsCustomValue && !state.selectedKey && onCustomValue) {
+      onCustomValue(state.inputValue);
+    } else if (!allowsCustomValue) {
+      let item = state.collection.getItem(state.selectedKey);
+      let itemText = item ? item.textValue : '';
+      state.setInputValue(itemText);
     }
   };
 
@@ -157,7 +159,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let {labelProps, inputProps} = useTextField({
     ...props,
     onChange,
-    onKeyDown: chain(collectionProps.onKeyDown, onKeyDown),
+    onKeyDown: chain(state.isOpen && collectionProps.onKeyDown, onKeyDown),
     onBlur,
     value: state.inputValue,
     onFocus
@@ -167,16 +169,35 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let onPress = (e) => {
     if (e.pointerType === 'touch') {
       inputRef.current.focus();
-      state.toggle();
+      state.open();
     }
   };
 
   let onPressStart = (e) => {
     if (e.pointerType !== 'touch') {
       inputRef.current.focus();
-      state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
+      state.open(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
     }
   };
+
+  // TODO: Think about if the below focus key stuff needs to account for mobile
+  // Focus first item if filtered collection no longer contains original focused item
+  useEffect(() => {
+    // Only set a focused key if one existed previously, don't want to focus something by default if allowsCustomValue = true
+    if ((!allowsCustomValue || state.selectionManager.focusedKey) && state.inputValue !== '' && !state.collection.getItem(state.selectionManager.focusedKey)) {
+      state.selectionManager.setFocusedKey(layout.getFirstKey());
+    }
+  }, [state.selectionManager, state.collection, layout, allowsCustomValue, state.inputValue]);
+
+  // Clear focused key if user clears textfield to prevent accidental selection on blur
+  let lastValue = useRef(state.inputValue);
+  useEffect(() => {
+    if (state.inputValue === '' && lastValue.current !== state.inputValue) {
+      state.selectionManager.setFocusedKey(null);
+    }
+
+    lastValue.current = state.inputValue;
+  }, [state.selectionManager, state.inputValue]);
 
   return {
     labelProps,
@@ -191,7 +212,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       role: 'combobox',
       'aria-controls': state.isOpen ? menuProps.id : undefined,
       'aria-autocomplete': completionMode === 'suggest' ? 'list' : 'both',
-      'aria-activedescendant': state.isOpen ? focusedKeyId : undefined
+      'aria-activedescendant': focusedKeyId
     },
     listBoxProps: {
       ...menuProps

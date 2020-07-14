@@ -10,24 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
-import {ListLayout} from '@react-stately/collections';
+import {CollectionBuilder, Item, ListLayout, TreeCollection} from '@react-stately/collections';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useComboBox} from '../';
 
 describe('useComboBox', function () {
-  let state = {selectionManager: {}};
   let setOpen = jest.fn();
+  let setFocusedKey = jest.fn();
 
+  let defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>};
+  let builder = new CollectionBuilder('id');
+  let nodes = builder.build(defaultProps);
+  let collection = new TreeCollection(nodes, new Set());
   let mockLayout = new ListLayout({
     rowHeight: 40
   });
-
-  beforeEach(() => {
-  });
+  mockLayout.collection = collection;
+  let state = {
+    selectionManager: {
+      setFocusedKey 
+    }, 
+    collection
+  };
 
   afterEach(() => {
     setOpen.mockClear();
+    setFocusedKey.mockClear();
   });
 
   it('should return default props for all the button group elements', function () {
@@ -46,31 +55,22 @@ describe('useComboBox', function () {
     expect(inputProps.id).toBeTruthy();
     expect(inputProps['aria-labelledby']).toBe(labelProps.id);
     expect(inputProps.role).toBe('combobox');
-
-    // TODO: This should be list right?
-    expect(inputProps['aria-autocomplete']).toBe('both');
+    expect(inputProps['aria-autocomplete']).toBe('list');
     expect(inputProps['aria-controls']).toBeFalsy();
-
+    expect(inputProps['aria-activedescendant']).toBeFalsy();
     expect(listBoxProps.id).toBeTruthy();
     expect(listBoxProps['aria-labelledby']).toBe(triggerProps.id);
     expect(triggerProps.id).toBeTruthy();
     expect(triggerProps.tabIndex).toBe(-1);
     expect(triggerProps['aria-haspopup']).toBeTruthy();
-
-
-    // update triggerProps to that
+    expect(triggerProps['aria-expanded']).toBeFalsy();
+    expect(triggerProps['aria-controls']).toBeFalsy();
+    expect(triggerProps['onPress']).toBeTruthy();
+    expect(triggerProps['onPressStart']).toBeTruthy();
+    expect(triggerProps['onKeyDown']).toBeTruthy();
   });
 
-
-  // Write test for:
-  // Everything should be linked to each other with the appropriate aria attributes
-    // aria-labelledby/aria-controls/aria-label/etc
-  // stuff has default ids
-  // button gets menuTrigger props (test via react testing library clicks) and it is properly hooked up to show state
-    // most of these will get testing in component test probably (keydown interactions, open and close)
-  // textfield gets the correct type and other textfield props (onInputChange is passed as onChange to useTextField hook?)
-    // readOnly, isDisabled, etc
-
-  // Figure out test for other interactions
-    // onFocus, onKeyPress etc
+  // TODO: test some of the useEffects?
+  // TODO: test when state.isOpen is true?
+  // Most of these are already tested in Combobox test
 });

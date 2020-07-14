@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
-import {Key, useEffect, useMemo, useRef, useState} from 'react';
+import {ComboBoxProps} from '@react-types/combobox';
+import {Key, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {SelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
@@ -23,14 +23,7 @@ export interface ComboBoxState<T> extends SelectState<T> {
   setInputValue: (value: string) => void
 }
 
-interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
-  isOpen?: boolean,
-  defaultOpen?: boolean,
-  onOpenChange?: (isOpen: boolean) => void,
-  inputValue?: string,
-  defaultInputValue?: string,
-  onInputChange?: (value: string) => void,
-  onFilter?: (value: string) => void,
+interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
   collator: Intl.Collator
 }
 
@@ -52,7 +45,7 @@ function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolea
   return filteredNode;
 }
 
-export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): ComboBoxState<T> {
+export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>): ComboBoxState<T> {
   let {
     onFilter,
     collator,
@@ -89,9 +82,10 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
     let itemText = selectedItem ? selectedItem.textValue : '';
     if (itemText !== props.inputValue) {
       console.error('Mismatch between selected item and inputValue!');
-    }  
+    }
   }
 
+  let lastSelectedKey = useRef('');
   let onInputChange = (value) => {
     if (props.onInputChange) {
       props.onInputChange(value);
@@ -103,38 +97,91 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
         onSelectionChange(newSelectedKey);
       }
     }
+
+    lastSelectedKey.current = newSelectedKey;
   };
 
   let initialSelectedKeyText = collection.getItem(props.selectedKey)?.textValue;
   let initialDefaultSelectedKeyText = collection.getItem(props.defaultSelectedKey)?.textValue;
-  let [inputValue, setInputValue] = useControlledState(toString(props.inputValue) || initialSelectedKeyText, toString(props.defaultInputValue) || initialDefaultSelectedKeyText || '', onInputChange);
+  let [inputValue, setInputValue] = useControlledState(toString(props.inputValue), initialSelectedKeyText || toString(props.defaultInputValue) || initialDefaultSelectedKeyText || '', onInputChange);
 
-  let selectedKey = computeKeyFromValue(inputValue, collection);
+  let selectedKey = props.selectedKey || computeKeyFromValue(inputValue, collection);
   let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
 
-  let setSelectedKey = (key) => {
-    if (key !== selectedKey) {
-      let item = collection.getItem(key);
-      let itemText = item ? item.textValue : '';
-      setInputValue(itemText);
-      triggerState.setOpen(false);
+  let triggerState = useMenuTriggerState(props);
+  // Fires when user hits Enter or clicks
+  let setSelectedKey = useCallback((key) => {
+    let item = collection.getItem(key);
+    let itemText = item ? item.textValue : '';
+    // think about the below conditionals below
+    // If I don't have the extra itemText check, then setting props.selectedKey to undef or just deleting one letter of the text
+    // so it doesn't match a key will then clear the textfield entirely (in controlled selected key case)
+    itemText && setInputValue(itemText);
+
+    // If itemText happens to be the same as the current input text but the keys don't match
+    // setInputValue won't call onSelectionChange for us so we call it here manually
+    if (itemText === inputValue && selectedKey !== key) {
+      if (onSelectionChange) {
+        onSelectionChange(key);
+      }
     }
-  };
+
+    // Only close the menu if the key is being set to something and not to undefined? (this is so when user backspaces the menu stays open)
+    // Or should this even be here? If we remove and put .close on Enter in useComboBox then we can
+    // have consitent behavior of menu staying open when the user types in something matching a combobox option for controlled and uncontrolled
+    // and still have Enter/Click close the menu
+    // This question is mainly around the behavior of if the menu should close when the user
+    // types something matching a option or if it should stay open
+    // If we want to keep the behavior of closing the menu when the user types in a valid combobox value
+    // then I think we'll have to add someting to onInputChange where it calls .close after onSelectionCHange (actually doesn't work cuz onChange in useCOmbobox makes it open again)
+    // key && triggerState.setOpen(false);
+  }, [collection, setInputValue, inputValue, onSelectionChange, selectedKey]);
+
+
+  let lastSelectedKeyProp = useRef('' as Key);
+  // Update the selectedKey and inputValue when props.selectedKey updates
+  useEffect(() => {
+    // need this check since setSelectedKey changes a lot making this useEffect fire even when props.selectedKey hasn't changed
+    if (lastSelectedKeyProp.current !== props.selectedKey) {
+      setSelectedKey(props.selectedKey);
+    }
+    lastSelectedKeyProp.current = props.selectedKey;
+    // as asked about, should the the triggerstate.setOpen be put here?
+    // having it here means
+    // props.selectedKey && triggerState.setOpen(false);
+  }, [props.selectedKey, setSelectedKey]);
+
+  // If props.inputValue changes, call onSelectionChange (it doesn't get called since onInputChange doesn't trigger on prop.inputValue changes)
+  let lastInputValueProp = useRef(props.inputValue);
+  useEffect(() => {
+    let newSelectedKey = computeKeyFromValue(props.inputValue, collection);
+    if (lastInputValueProp.current !== props.inputValue) {
+      // Only call onSelection if key changes (lastSelectedKey is also updated when user types so this stops duplicated onSelectionChange calls)
+      if (newSelectedKey !== lastSelectedKey.current) {
+        if (onSelectionChange) {
+          onSelectionChange(newSelectedKey);
+        }
+      }
+    }
+
+    lastSelectedKey.current = selectedKey;
+    lastInputValueProp.current = props.inputValue;
+  }, [props.inputValue, collection, selectedKey, onSelectionChange]);
 
   let selectionState = useMultipleSelectionState(
     {
       ...props,
-      selectedKeys, 
+      selectedKeys,
+      disallowEmptySelection: true,
       onSelectionChange: (keys) => setSelectedKey(keys.values().next().value),
       selectionMode: 'single'
     }
   );
-  
+
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
-  
-  let triggerState = useMenuTriggerState(props);
+
   let lowercaseValue = inputValue.toLowerCase().replace(' ', '');
 
   let defaultFilterFn = useMemo(() => (node: Node<T>) => {
@@ -171,19 +218,18 @@ export function useComboBoxState<T extends object>(props: ComboBoxProps<T>): Com
   }, [collection, inputValue, itemsControlled, defaultFilterFn]);
 
   let selectionManager = new SelectionManager(filteredCollection, selectionState);
-
-  // Focus first item if filtered collection no longer contains original focused item
-  useEffect(() => {
-    // Only set a focused key if one existed previously, don't want to focus something by default if customValue = true
-    if (selectionManager.focusedKey && !filteredCollection.getItem(selectionManager.focusedKey)) {
-      selectionManager.setFocusedKey(filteredCollection.getFirstKey());
-    }
-  }, [selectionManager, filteredCollection]);
-
   let selectedItem = selectedKey ? collection.getItem(selectedKey) : null;
+
+  // Prevent open operations from triggering if there is nothing to display
+  let open = (focusStrategy?) => {
+    if (filteredCollection.size > 0) {
+      triggerState.open(focusStrategy);
+    }
+  };
 
   return {
     ...triggerState,
+    open,
     selectionManager,
     selectedKey,
     setSelectedKey,

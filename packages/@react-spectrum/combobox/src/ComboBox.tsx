@@ -49,8 +49,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     autoFocus,
     shouldFlip = true,
     width,
-    direction = 'bottom',
-    ...otherProps
+    direction = 'bottom'
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -88,7 +87,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   let comboBoxAutoFocus;
   // Focus first/last item on menu open if focusStategy is set (done by up/down arrows)
   // Otherwise if allowsCustomValue is true, only autofocus if there is a selected item
-  // If allowsCustomValue is false, autofocus first item/selectedItem 
+  // If allowsCustomValue is false, autofocus first item/selectedItem
   if (state.focusStrategy) {
     comboBoxAutoFocus = state.focusStrategy;
   } else if (props.allowsCustomValue) {
@@ -112,7 +111,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         layout={layout}
         state={state}
         width={isMobile ? '100%' : undefined}
-        shouldUseVirtualFocus />
+        shouldUseVirtualFocus
+        transitionDuration={0} />
       <DismissButton onDismiss={() => state.setOpen(false)} />
     </FocusScope>
   );
@@ -179,7 +179,6 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         }
         style={{width: '100%'}}>
         <TextFieldBase
-          {...otherProps}
           labelProps={labelProps}
           inputProps={inputProps}
           inputRef={inputRef}
