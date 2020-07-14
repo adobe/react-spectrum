@@ -97,6 +97,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
   let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
   let title = currentPage.title + (!/index\.html$/.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
   let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
+  let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`
 
   return (
     <html
@@ -164,11 +165,11 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content={`https://${TLD}${heroImage}`} />
+        <meta name="twitter:image" content={heroUrl} />
         <meta property="og:title" content={currentPage.title} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://${TLD}${currentPage.url}`} />
-        <meta property="og:image" content={`https://${TLD}/${currentPage.image || path.basename(hero)}`} />
+        <meta property="og:image" content={heroUrl} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
         <script
@@ -180,7 +181,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
               author: 'Adobe Inc',
               headline: currentPage.title,
               description: description,
-              image: `https://${TLD}${heroImage}`,
+              image: heroUrl,
               publisher: {
                 '@type': 'Organization',
                 url: 'https://www.adobe.com',
