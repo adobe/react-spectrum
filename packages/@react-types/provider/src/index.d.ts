@@ -53,7 +53,7 @@ interface ContextProps {
 }
 
 export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
-  /** The content of the Provider */
+  /** The content of the Provider. */
   children: ReactNode,
   /**
    * The theme for your application.
