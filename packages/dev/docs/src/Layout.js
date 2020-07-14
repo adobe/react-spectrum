@@ -97,7 +97,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
   let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
   let title = currentPage.title + (!/index\.html$/.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
   let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
-  let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`
+  let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`;
 
   return (
     <html
