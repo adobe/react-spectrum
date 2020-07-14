@@ -262,7 +262,8 @@ storiesOf('Table', module)
           }
         </TableBody>
       </Table>
-    )
+    ),
+    {chromatic: {disable: true}}
   )
   .add(
     'isQuiet, many columns and rows',
@@ -281,7 +282,8 @@ storiesOf('Table', module)
           }
         </TableBody>
       </Table>
-    )
+    ),
+    {chromatic: {disable: true}}
   )
   .add(
     'column widths and dividers',
