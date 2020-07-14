@@ -84,6 +84,10 @@ function Example() {
   );
 }
 ```
+
+### Trays
+On mobile, Menus automatically display in a tray instead of a popover to improve usability.
+
 ### Internationalization
 In order to internationalize an Menu, the content provided to all child items should be localized.
 For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the Menu is flipped.
@@ -98,24 +102,22 @@ function Example() {
   let [selected, setSelected] = React.useState(new Set(['bold', 'left']));
 
   return (
-    <>
-      <MenuTrigger>
-        <ActionButton>
-          Edit
-        </ActionButton>
-        <Menu selectionMode="multiple" onSelectionChange={setSelected}>
-          <Section title="Styles">
-            <Item key="bold">Bold</Item>
-            <Item key="underline">Underline</Item>
-          </Section>
-          <Section title="Align">
-            <Item key="left">Left</Item>
-            <Item key="middle">Middle</Item>
-            <Item key="right">Right</Item>
-          </Section>
-        </Menu>
-      </MenuTrigger>
-    </>
+    <MenuTrigger>
+      <ActionButton>
+        Edit
+      </ActionButton>
+      <Menu selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected}>
+        <Section title="Styles">
+          <Item key="bold">Bold</Item>
+          <Item key="underline">Underline</Item>
+        </Section>
+        <Section title="Align">
+          <Item key="left">Left</Item>
+          <Item key="middle">Middle</Item>
+          <Item key="right">Right</Item>
+        </Section>
+      </Menu>
+    </MenuTrigger>
   );
 }
 ```
