@@ -41,7 +41,7 @@ const mdxComponents = {
       <h2 {...props} className={classNames(typographyStyles['spectrum-Heading3'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
         {children}
         <span className={classNames(docStyles['headingAnchor'])}>
-          <a className={classNames(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`}>#</a>
+          <a className={classNames(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
         </span>
       </h2>
       <Divider marginBottom="33px" />
@@ -51,11 +51,11 @@ const mdxComponents = {
     <h3 {...props} className={classNames(typographyStyles['spectrum-Heading4'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
       {children}
       <span className={docStyles['headingAnchor']}>
-        <a className={classNames(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label="§">#</a>
+        <a className={classNames(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
       </span>
     </h3>
   ),
-  p: ({children, ...props}) => <p {...props} className={typographyStyles['spectrum-Body3']}>{children}</p>,
+  p: ({children, ...props}) => <p className={typographyStyles['spectrum-Body3']} {...props}>{children}</p>,
   ul: ({children, ...props}) => <ul {...props} className={typographyStyles['spectrum-Body3']}>{children}</ul>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
@@ -150,6 +150,24 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <meta property="og:image" content={`https://${TLD}${heroImage}`} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{__html: JSON.stringify(
+            {
+              '@context': 'http://schema.org',
+              '@type': 'Article',
+              author: 'Adobe Inc',
+              headline: currentPage.title,
+              description: description,
+              image: `https://${TLD}${heroImage}`,
+              publisher: {
+                '@type': 'Organization',
+                url: 'https://www.adobe.com',
+                name: 'Adobe',
+                logo: 'https://www.adobe.com/favicon.ico'
+              }
+            }
+          )}} />
       </head>
       <body>
         {children}
