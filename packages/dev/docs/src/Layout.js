@@ -286,7 +286,6 @@ function Nav({currentPageName, pages}) {
       </li>
     );
   }
-  // let pathToPage = currentPageName.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
   return (
     <nav className={docStyles.nav}>
       <header>
