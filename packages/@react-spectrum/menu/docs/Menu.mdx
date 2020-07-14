@@ -128,6 +128,7 @@ Sections used with dynamic items are populated from a hierarchical data structur
 
 ```tsx example
 function Example() {
+  let [selected, setSelected] = React.useState(new Set([1,3]));
   let openWindows = [
     {
       name: 'Left Panel',
@@ -153,7 +154,10 @@ function Example() {
         Window
       </ActionButton>
       <Menu
-        items={openWindows}>
+        items={openWindows}
+        selectionMode="multiple"
+        selectedKeys={selected}
+        onSelectionChange={setSelected}>
         {item => (
           <Section items={item.children} title={item.name}>
             {item => <Item>{item.name}</Item>}
