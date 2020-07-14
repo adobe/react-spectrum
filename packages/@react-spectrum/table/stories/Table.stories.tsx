@@ -544,7 +544,8 @@ storiesOf('Table', module)
   )
   .add(
     'async loading',
-    () => <AsyncLoadingExample />
+    () => <AsyncLoadingExample />,
+    {chromatic: {disable: true}}
   );
 
 function AsyncLoadingExample() {
