@@ -92,6 +92,83 @@ On mobile, Menus automatically display in a tray instead of a popover to improve
 In order to internationalize an Menu, the content provided to all child items should be localized.
 For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the Menu is flipped.
 
+## Events
+Use the `onSelectionChange` prop as a callback to handle press events on items when selectionMode is either single or multiple. See [Selection](#selection) for more information.
+
+Menu also supports the `onAction` callback when `selectionMode` is `none` (default).
+
+```tsx example
+function Example() {
+  let [action, setAction] = React.useState('');
+
+  return (
+    <>
+      <MenuTrigger>
+        <ActionButton>
+          Edit
+        </ActionButton>
+        <Menu onAction={setAction}>
+          <Item key="cut">Cut</Item>
+          <Item key="copy">Copy</Item>
+          <Item key="paste">Paste</Item>
+        </Menu>
+      </MenuTrigger>
+      <p>Action: {action}</p>
+    </>
+  );
+}
+```
+
+## Selection
+Menu supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
+Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState(new Set(['middle']));
+
+  return (
+    <>
+      <MenuTrigger>
+        <ActionButton>
+          Align
+        </ActionButton>
+        <Menu selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected}>
+          <Item key="left">Left</Item>
+          <Item key="middle">Middle</Item>
+          <Item key="right">Right</Item>
+        </Menu>
+      </MenuTrigger>
+      <p>Current selection (controlled): {[...selected]}</p>
+    </>
+  );
+}
+```
+
+Set `selectionMode` prop to `multiple` to allow more than one selection.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState(new Set(['Sidebar', 'Console']));
+
+  return (
+    <>
+      <MenuTrigger closeOnSelect={false}>
+        <ActionButton>
+          Show
+        </ActionButton>
+        <Menu selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected}>
+          <Item key='Sidebar'>Sidebar</Item>
+          <Item key='Searchbar'>Searchbar</Item>
+          <Item key='Tools'>Tools</Item>
+          <Item key='Console'>Console</Item>
+        </Menu>
+      </MenuTrigger>
+      <p>Current selection (controlled): {[...selected].join(', ')}</p>
+    </>
+  );
+}
+```
 ## Sections
 Menu supports sections in order to group options. Sections can be used by wrapping groups of Items in a `Section` component. Each `Section` takes a `title` and `key` prop.
 
@@ -172,84 +249,6 @@ function Example() {
 ### Accessibility
 
 Sections without a `title` must provide an `aria-label` for accessibility.
-
-## Events
-Use the `onSelectionChange` prop as a callback to handle press events on items when selectionMode is either single or multiple. See [Selection](#selection) for more information.
-
-Menu also supports the `onAction` callback when `selectionMode` is `none` (default).
-
-```tsx example
-function Example() {
-  let [action, setAction] = React.useState('');
-
-  return (
-    <>
-      <MenuTrigger>
-        <ActionButton>
-          Edit
-        </ActionButton>
-        <Menu onAction={setAction}>
-          <Item key="cut">Cut</Item>
-          <Item key="copy">Copy</Item>
-          <Item key="paste">Paste</Item>
-        </Menu>
-      </MenuTrigger>
-      <p>Action: {action}</p>
-    </>
-  );
-}
-```
-
-## Selection
-Menu supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
-Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `key` prop of the items.
-
-```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState(new Set(['middle']));
-
-  return (
-    <>
-      <MenuTrigger>
-        <ActionButton>
-          Align
-        </ActionButton>
-        <Menu selectionMode="single" selectedKeys={selected} onSelectionChange={setSelected}>
-          <Item key="left">Left</Item>
-          <Item key="middle">Middle</Item>
-          <Item key="right">Right</Item>
-        </Menu>
-      </MenuTrigger>
-      <p>Current selection (controlled): {[...selected]}</p>
-    </>
-  );
-}
-```
-
-Set `selectionMode` prop to `multiple` to allow more than one selection.
-
-```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState(new Set(['Sidebar', 'Console']));
-
-  return (
-    <>
-      <MenuTrigger closeOnSelect={false}>
-        <ActionButton>
-          Show
-        </ActionButton>
-        <Menu selectionMode="multiple" selectedKeys={selected} onSelectionChange={setSelected}>
-          <Item key='Sidebar'>Sidebar</Item>
-          <Item key='Searchbar'>Searchbar</Item>
-          <Item key='Tools'>Tools</Item>
-          <Item key='Console'>Console</Item>
-        </Menu>
-      </MenuTrigger>
-      <p>Current selection (controlled): {[...selected].join(', ')}</p>
-    </>
-  );
-}
-```
 
 ## Complex Menu Items
 
