@@ -15,6 +15,7 @@ import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import {getAnchorProps} from './utils';
+import heroImage from 'url:../pages/assets/ReactSpectrumHome_Mobile_976x1025_2x.png';
 import highlightCss from './syntax-highlight.css';
 import {ImageContext} from './Image';
 import {LinkProvider} from './types';
@@ -27,6 +28,8 @@ import {theme} from '@react-spectrum/theme-default';
 import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
+const TLD = 'react-spectrum.adobe.com';
+
 const mdxComponents = {
   h1: ({children, ...props}) => (
     <h1 {...props} className={classNames(typographyStyles['spectrum-Heading1--display'], typographyStyles['spectrum-Article'], docStyles['articleHeader'])}>
@@ -38,7 +41,7 @@ const mdxComponents = {
       <h2 {...props} className={classNames(typographyStyles['spectrum-Heading3'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
         {children}
         <span className={classNames(docStyles['headingAnchor'])}>
-          <a className={classNames(linkStyle['spectrum-Link'], docStyles['anchor'])} href={`#${props.id}`}>#</a>
+          <a className={classNames(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
         </span>
       </h2>
       <Divider marginBottom="33px" />
@@ -48,22 +51,37 @@ const mdxComponents = {
     <h3 {...props} className={classNames(typographyStyles['spectrum-Heading4'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
       {children}
       <span className={docStyles['headingAnchor']}>
-        <a className={classNames(linkStyle['spectrum-Link'], docStyles['anchor'])} href={`#${props.id}`} aria-label="§">#</a>
+        <a className={classNames(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
       </span>
     </h3>
   ),
-  p: ({children, ...props}) => <p {...props} className={typographyStyles['spectrum-Body3']}>{children}</p>,
+  p: ({children, ...props}) => <p className={typographyStyles['spectrum-Body3']} {...props}>{children}</p>,
   ul: ({children, ...props}) => <ul {...props} className={typographyStyles['spectrum-Body3']}>{children}</ul>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
-  a: ({children, ...props}) => <a {...props} className={linkStyle['spectrum-Link']} {...getAnchorProps(props.href)}>{children}</a>
+  a: ({children, ...props}) => <a {...props} className={classNames(linkStyle['spectrum-Link'], docStyles.link)} {...getAnchorProps(props.href)}>{children}</a>,
+  kbd: ({children, ...props}) => <kbd {...props} className={docStyles['keyboard']}>{children}</kbd>
 };
 
-function Page({children, title, styles, scripts}) {
+function dirToTitle(dir) {
+  return dir
+    .split('/')[0]
+    .split('-')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+function Page({children, currentPage, publicUrl, styles, scripts}) {
+  let isSubpage = currentPage.name.split('/').length > 1 && !/index\.html$/.test(currentPage.name);
+  let pageSection = isSubpage ? dirToTitle(currentPage.name) : 'React Spectrum';
+  let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
+  let description = currentPage.description || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
+  let title = currentPage.title + (!/index\.html$/.test(currentPage.name) ? ` - ${pageSection}` : '');
   return (
     <html
       lang="en-US"
       dir="ltr"
+      prefix="og: http://ogp.me/ns#"
       className={classNames(
         theme.global.spectrum,
         theme.light['spectrum--light'],
@@ -90,25 +108,28 @@ function Page({children, title, styles, scripts}) {
             let update = () => {
               if (localStorage.theme === "dark" || (!localStorage.theme && dark.matches)) {
                 classList.remove("${theme.light['spectrum--light']}");
-                classList.add("${theme.dark['spectrum--dark']}");
+                classList.add("${theme.dark['spectrum--darkest']}", "${docStyles.dark}");
                 style.colorScheme = 'dark';
               } else {
                 classList.add("${theme.light['spectrum--light']}");
-                classList.remove("${theme.dark['spectrum--dark']}");
+                classList.remove("${theme.dark['spectrum--darkest']}", "${docStyles.dark}");
                 style.colorScheme = 'light';
               }
 
               if (!fine.matches) {
-                classList.remove("${theme.medium['spectrum--medium']}");
-                classList.add("${theme.large['spectrum--large']}");
+                classList.remove("${theme.medium['spectrum--medium']}", "${docStyles.medium}");
+                classList.add("${theme.large['spectrum--large']}", "${docStyles.large}");
               } else {
-                classList.add("${theme.medium['spectrum--medium']}");
-                classList.remove("${theme.large['spectrum--large']}");
+                classList.add("${theme.medium['spectrum--medium']}", "${docStyles.medium}");
+                classList.remove("${theme.large['spectrum--large']}", "${docStyles.large}");
               }
             };
 
             update();
-            dark.addListener(update);
+            dark.addListener(() => {
+              delete localStorage.theme;
+              update();
+            });
             fine.addListener(update);
             window.addEventListener('storage', update);
           })();
@@ -119,30 +140,76 @@ function Page({children, title, styles, scripts}) {
         <link rel="preload" as="font" href="https://use.typekit.net/af/74ffb1/000000000000000000017702/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3" crossOrigin="" />
         {styles.map(s => <link rel="stylesheet" href={s.url} />)}
         {scripts.map(s => <script type={s.type} src={s.url} defer />)}
+        <meta name="description" content={description} />
+        <meta name="keywords" content={keywords} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={`https://${TLD}${heroImage}`} />
+        <meta property="og:title" content={currentPage.title} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://${TLD}${currentPage.url}`} />
+        <meta property="og:image" content={`https://${TLD}${heroImage}`} />
+        <meta property="og:description" content={description} />
+        <meta property="og:locale" content="en_US" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{__html: JSON.stringify(
+            {
+              '@context': 'http://schema.org',
+              '@type': 'Article',
+              author: 'Adobe Inc',
+              headline: currentPage.title,
+              description: description,
+              image: `https://${TLD}${heroImage}`,
+              publisher: {
+                '@type': 'Organization',
+                url: 'https://www.adobe.com',
+                name: 'Adobe',
+                logo: 'https://www.adobe.com/favicon.ico'
+              }
+            }
+          )}} />
       </head>
       <body>
         {children}
+        <script
+          dangerouslySetInnerHTML={{__html: `
+            window.addEventListener('load', () => {
+              let script = document.createElement('script');
+              script.async = true;
+              script.src = 'https://assets.adobedtm.com/a7d65461e54e/01d650a3ee55/launch-4d5498348926.min.js';
+              document.head.appendChild(script);
+            });
+          `}} />
       </body>
     </html>
   );
 }
 
-function dirToTitle(dir) {
-  return dir
-    .split('/')[0]
-    .split('-')
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
-}
+const CATEGORY_ORDER = [
+  'Introduction',
+  'Concepts',
+  'Application',
+  'Interactions',
+  'Layout',
+  '...',
+  'Content',
+  'Internationalization',
+  'Utilities'
+];
 
 function Nav({currentPageName, pages}) {
   let isIndex = /index\.html$/;
   let currentParts = currentPageName.split('/');
   let currentDir = currentParts[0];
-    
+
   pages = pages.filter(p => {
     let pageParts = p.name.split('/');
     let pageDir = pageParts[0];
+
+    // Skip the error page, its only used for 404s
+    if (p.name === 'error.html') {
+      return false;
+    }
 
     // Pages within same directory (react-spectrum/Alert.html)
     if (currentParts.length > 1) {
@@ -157,6 +224,21 @@ function Nav({currentPageName, pages}) {
     // Other top-level pages
     return !isIndex.test(p.name) && pageParts.length === 1;
   });
+
+  if (currentParts.length === 1) {
+    pages.push({
+      category: 'Spectrum Ecosystem',
+      name: 'spectrum-design',
+      title: 'Spectrum Design',
+      url: 'https://spectrum.adobe.com'
+    });
+    pages.push({
+      category: 'Spectrum Ecosystem',
+      name: 'spectrum-css',
+      title: 'Spectrum CSS',
+      url: 'https://opensource.adobe.com/spectrum-css/'
+    });
+  }
 
   // Key by category
   let pageMap = {};
@@ -174,12 +256,32 @@ function Nav({currentPageName, pages}) {
     }
   });
 
+  // Order categories so specific ones come first, then all the others in sorted order.
+  let categories = [];
+  for (let category of CATEGORY_ORDER) {
+    if (pageMap[category]) {
+      categories.push(category);
+    } else if (category === '...') {
+      for (let category of Object.keys(pageMap).sort()) {
+        if (!CATEGORY_ORDER.includes(category)) {
+          categories.push(category);
+        }
+      }
+    }
+  }
+
   let title = currentParts.length > 1 ? dirToTitle(currentPageName) : 'React Spectrum';
+  let currentPageIsIndex = isIndex.test(currentPageName);
 
   function SideNavItem({name, url, title}) {
+    const isCurrentPage = !currentPageIsIndex && name === currentPageName;
     return (
-      <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: name === currentPageName})}>
-        <a className={sideNavStyles['spectrum-SideNav-itemLink']} href={url}>{title}</a>
+      <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: isCurrentPage})}>
+        <a
+          className={classNames(sideNavStyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)}
+          href={url}
+          aria-current={isCurrentPage ? 'page' : null}
+          {...getAnchorProps(url)}>{title}</a>
       </li>
     );
   }
@@ -189,11 +291,11 @@ function Nav({currentPageName, pages}) {
       <header>
         {currentParts.length > 1 &&
           <a href="../index.html" className={docStyles.backBtn}>
-            <ChevronLeft />
+            <ChevronLeft aria-label="Back" />
           </a>
         }
         <a href="./index.html" className={docStyles.homeBtn}>
-          <svg viewBox="0 0 30 26" fill="#E1251B">
+          <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
             <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
@@ -205,14 +307,17 @@ function Nav({currentPageName, pages}) {
       </header>
       <ul className={sideNavStyles['spectrum-SideNav']}>
         {rootPages.map(p => <SideNavItem {...p} />)}
-        {Object.keys(pageMap).sort().map(key => (
-          <li className={sideNavStyles['spectrum-SideNav-item']}>
-            <h3 className={sideNavStyles['spectrum-SideNav-heading']}>{key}</h3>
-            <ul className={sideNavStyles['spectrum-SideNav']}>
-              {pageMap[key].sort((a, b) => a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
-            </ul>
-          </li>
-        ))}
+        {categories.map(key => {
+          const headingId = `${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
+          return (
+            <li className={sideNavStyles['spectrum-SideNav-item']}>
+              <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
+              <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
+                {pageMap[key].sort((a, b) => a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
+              </ul>
+            </li>
+          );
+        })}
       </ul>
     </nav>
   );
@@ -221,13 +326,14 @@ function Nav({currentPageName, pages}) {
 function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer>
+    <footer className={docStyles.pageFooter}>
       <hr className={classNames(ruleStyles['spectrum-Rule'], ruleStyles['spectrum-Rule--small'], ruleStyles['spectrum-Rule--horizontal'])} />
       <ul>
         <li>Copyright © {year} Adobe. All rights reserved.</li>
-        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy.html">Privacy</a></li>
-        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/legal/terms.html">Terms of Use</a></li>
-        <li><a className={linkStyle['spectrum-Link--secondary']} href="//www.adobe.com/privacy/cookies.html">Cookies</a></li>
+        <li><a className={classNames(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy.html">Privacy</a></li>
+        <li><a className={classNames(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/legal/terms.html">Terms of Use</a></li>
+        <li><a className={classNames(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy/cookies.html">Cookies</a></li>
+        <li><a className={classNames(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy/ca-rights.html">Do not sell my personal information</a></li>
       </ul>
     </footer>
   );
@@ -236,20 +342,22 @@ function Footer() {
 export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
 
   return (
-    <Page title={currentPage.title} scripts={scripts} styles={styles}>
-      <div className={docStyles.pageHeader} id="header" />
-      <Nav currentPageName={currentPage.name} pages={pages} />
-      <main>
-        <article className={classNames(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>
-          <MDXProvider components={mdxComponents}>
-            <ImageContext.Provider value={publicUrl}>
-              <LinkProvider>{children}</LinkProvider>
-            </ImageContext.Provider>
-          </MDXProvider>
-        </article>
-        {toc.length ? <ToC toc={toc} /> : null}
-        <Footer />
-      </main>
+    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage}>
+      <div style={{isolation: 'isolate'}}>
+        <header className={docStyles.pageHeader} />
+        <Nav currentPageName={currentPage.name} pages={pages} />
+        <main>
+          <article className={classNames(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>
+            <MDXProvider components={mdxComponents}>
+              <ImageContext.Provider value={publicUrl}>
+                <LinkProvider>{children}</LinkProvider>
+              </ImageContext.Provider>
+            </MDXProvider>
+          </article>
+          {toc.length ? <ToC toc={toc} /> : null}
+          <Footer />
+        </main>
+      </div>
     </Page>
   );
 }

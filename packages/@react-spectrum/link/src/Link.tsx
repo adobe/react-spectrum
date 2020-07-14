@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, getWrappedElement, useStyleProps} from '@react-spectrum/utils';
+import {classNames, getWrappedElement, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React, {useRef} from 'react';
 import {SpectrumLinkProps} from '@react-types/link';
@@ -29,8 +29,7 @@ export function Link(props: SpectrumLinkProps) {
     isQuiet,
     children,
     // @ts-ignore
-    href,
-    ...otherProps
+    href
   } = props;
   let {styleProps} = useStyleProps(props);
 
@@ -41,16 +40,14 @@ export function Link(props: SpectrumLinkProps) {
   let ref = useRef();
   let {linkProps} = useLink({
     ...props,
-    ref,
     elementType: typeof children === 'string' ? 'span' : 'a'
-  });
+  }, ref);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       {React.cloneElement(
         getWrappedElement(children),
         {
-          ...filterDOMProps(otherProps),
           ...styleProps,
           ...linkProps,
           ref,

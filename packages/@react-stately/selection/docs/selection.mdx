@@ -13,10 +13,10 @@ export default Layout;
 import docs from 'docs:@react-stately/selection';
 import dataDocs from 'docs:@react-stately/data';
 import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
 
 ---
 category: Selection
+keywords: [collection, multiple selection, single selection, state]
 ---
 
 # Selection
@@ -25,7 +25,7 @@ Many [collection components](collections.html) support selecting items by clicki
 This page discusses how to handle selection events, how to control selection programmatically, and the
 data structures used to represent a selection.
 
-## Multiple Selection
+## Multiple selection
 
 Selection is handled by the `onSelectionChange` event, which is supported on most collection components. Controlled
 behavior is supported by the `selectedKeys` prop, and uncontrolled behavior is supported by the `defaultSelectedKeys`
@@ -37,7 +37,7 @@ Selection is represented by a [Set](https://developer.mozilla.org/en-US/docs/Web
 object. You can also pass any iterable collection (e.g. an array) to the `selectedKeys` and `defaultSelectedKeys` props,
 but the `onSelectionChange` event will always pass back a Set.
 
-Selection is supported on both [static](collections.html#static-collections) and [dynamic](collections.html#dynamic-collections) 
+Selection is supported on both [static](collections.html#static-collections) and [dynamic](collections.html#dynamic-collections)
 collections. The following example show how to implement controlled selection
 behavior on a static collection, but could be applied to a dynamic collection the same way.
 
@@ -45,26 +45,26 @@ behavior on a static collection, but could be applied to a dynamic collection th
 let [selectedKeys, setSelectedKeys] = useState(new Set());
 
 <ListBox selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
-  <Item uniqueKey="one">One</Item>
-  <Item uniqueKey="two">Two</Item>
-  <Item uniqueKey="three">Three</Item>
+  <Item key="one">One</Item>
+  <Item key="two">Two</Item>
+  <Item key="three">Three</Item>
 </ListBox>
 ```
 
 ## Single selection
 
 So far, we've discussed multiple selection. However, you may wish to limit selection to a single item instead.
-In some components, like a select or combo box, only single selection is supported. In this case, the singular 
-`selectedKey` and `defaultSelectedKey` props are available instead of their plural variants. These accept a 
+In some components, like a select or combo box, only single selection is supported. In this case, the singular
+`selectedKey` and `defaultSelectedKey` props are available instead of their plural variants. These accept a
 single key instead of a Set as their value, and `onSelectionChange` is also called with a single key.
 
 ```tsx
 let [selectedKey, setSelectedKey] = useState(null);
 
 <ComboBox selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
-  <Item uniqueKey="one">One</Item>
-  <Item uniqueKey="two">Two</Item>
-  <Item uniqueKey="three">Three</Item>
+  <Item key="one">One</Item>
+  <Item key="two">Two</Item>
+  <Item key="three">Three</Item>
 </ComboBox>
 ```
 
@@ -75,29 +75,15 @@ only contain a single key at a time.
 ```tsx
 let [selectedKeys, setSelectedKeys] = useState(new Set());
 
-<ListBox 
+<ListBox
   selectionMode="single"
   selectedKeys={selectedKeys}
   onSelectionChange={setSelectedKeys}>
-  <Item uniqueKey="one">One</Item>
-  <Item uniqueKey="two">Two</Item>
-  <Item uniqueKey="three">Three</Item>
+  <Item key="one">One</Item>
+  <Item key="two">Two</Item>
+  <Item key="three">Three</Item>
 </ListBox>
 ```
-
-## Select All
-
-Some components support a checkbox to select all items in the collection, or a keyboard shortcut like <kbd>⌘ Cmd</kbd> + <kbd>A</kbd>.
-This represents a selection of all items in the collection, regardless of whether or not all items have been loaded from the network.
-For example, when using a component with infinite scrolling support, the user will be unaware that all items are not yet loaded because
-it loads more transparently to them as they scroll down. For this reason, it makes sense for select all to represent all items, not just
-the loaded ones.
-
-When a select all event occurs, a special flag is set on the selection object: `isSelectAll`. When this is set, the selection represents
-all items in the collection, whether currently loaded or not. The application must adjust its handling of bulk actions in this case
-to apply to the entire collection rather than only the keys available to it locally.
-
-TODO: example
 
 ## Dynamic data
 
@@ -123,11 +109,42 @@ function removeItem() {
 
 <ListBox
   items={list.items}
-  itemKey="name"
   selectedKeys={list.selectedKeys}
   onSelectionChange={list.setSelectedKeys}>
-  {item => <Item>{item.name}</Item>}
+  {item => <Item key={item.name}>{item.name}</Item>}
 </ListBox>
 ```
 
 For more information, see [useListData](useListData.html) and [useTreeData](useTreeData.html).
+
+## Select All
+
+Some components support a checkbox to select all items in the collection, or a keyboard shortcut like <kbd>⌘ Cmd</kbd> + <kbd>A</kbd>.
+This represents a selection of all items in the collection, regardless of whether or not all items have been loaded from the network.
+For example, when using a component with infinite scrolling support, the user will be unaware that all items are not yet loaded because
+it loads more transparently to them as they scroll down. For this reason, it makes sense for select all to represent all items, not just
+the loaded ones.
+
+When a select all event occurs, `onSelectionChange` is called with the string `"all"` rather than a set of selected keys. `selectedKeys`
+and `defaultSelectedKeys` can also be set to `"all"` to programmatically select all items. This represents all items in the collection,
+whether currently loaded or not. The application must adjust its handling of bulk actions in this case to apply to the entire collection
+rather than only the keys available to it locally.
+
+```tsx
+let [selectedKeys, setSelectedKeys] = useState(new Set());
+
+function performBulkAction() {
+  if (selectedKeys === 'all') {
+    // perform action on all items
+  } else {
+    // perform action on selected items in selectedKeys
+  }
+}
+
+<ListBox
+  items={items}
+  selectedKeys={selectedKeys}
+  onSelectionChange={setSelectedKeys}>
+  {item => <Item>{item.name}</Item>}
+</ListBox>
+```

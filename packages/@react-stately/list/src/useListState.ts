@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
-import {CollectionBase, MultipleSelection} from '@react-types/shared';
-import {Key, useMemo} from 'react';
+import {Collection, CollectionBase, MultipleSelection, Node} from '@react-types/shared';
+import {Key, useEffect, useMemo} from 'react';
+import {ListCollection} from './ListCollection';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {useCollection} from '@react-stately/collections';
 
+export interface ListProps<T> extends CollectionBase<T>, MultipleSelection {}
 export interface ListState<T> {
   /** A collection of items in the list. */
   collection: Collection<Node<T>>,
@@ -30,17 +32,20 @@ export interface ListState<T> {
  * Provides state management for list-like components. Handles building a collection
  * of items from props, and manages multiple selection state.
  */
-export function useListState<T extends object>(props: CollectionBase<T> & MultipleSelection): ListState<T>  {
+export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let builder = useMemo(() => new CollectionBuilder<T>(props.itemKey), [props.itemKey]);
-  let collection = useMemo(() => {
-    let nodes = builder.build(props);
-    return new TreeCollection(nodes, new Set());
-  }, [builder, props]);
+  let collection = useCollection(props, nodes => new ListCollection(nodes));
+
+  // Reset focused key if that item is deleted from the collection.
+  useEffect(() => {
+    if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
+      selectionState.setFocusedKey(null);
+    }
+  }, [collection, selectionState.focusedKey]);
 
   return {
     collection,

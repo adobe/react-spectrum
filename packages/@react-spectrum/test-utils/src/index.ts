@@ -11,4 +11,3 @@
  */
 
 export * from './triggerPress';
-export * from './slots';

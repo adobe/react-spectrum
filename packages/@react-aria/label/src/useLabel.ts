@@ -10,19 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, LabelableProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, LabelableProps} from '@react-types/shared';
 import {ElementType, HTMLAttributes, LabelHTMLAttributes} from 'react';
 import {useId, useLabels} from '@react-aria/utils';
 
-interface LabelAriaProps extends LabelableProps, DOMProps {
+interface LabelAriaProps extends LabelableProps, DOMProps, AriaLabelingProps {
+  /**
+   * The HTML element used to render the label, e.g. 'label', or 'span'.
+   * @default 'label'
+   */
   labelElementType?: ElementType
 }
 
 interface LabelAria {
+  /** Props to apply to the label container element */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  /** Props to apply to the field container element being labeled */
   fieldProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Provides the accessibility implementation for labels and their associated elements.
+ * Labels provide context for user inputs.
+ * @param props - The props for labels and fields.
+ */
 export function useLabel(props: LabelAriaProps): LabelAria {
   let {
     id,

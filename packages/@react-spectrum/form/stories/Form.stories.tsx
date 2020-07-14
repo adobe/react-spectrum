@@ -17,7 +17,7 @@ import {Item, Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {TextField} from '@react-spectrum/textfield';
+import {TextArea, TextField} from '@react-spectrum/textfield';
 
 storiesOf('Form', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -56,8 +56,8 @@ storiesOf('Form', module)
         <TextField label="Street Address" placeholder="123 Any Street" />
         <Flex>
           <TextField label="City" placeholder="San Francisco" marginEnd="size-100" flex={1} />
-          <Picker label="State" placeholder="Select a state" items={states} itemKey="abbr" marginEnd="size-100" flex={1}>
-            {item => <Item>{item.name}</Item>}
+          <Picker label="State" placeholder="Select a state" items={states} marginEnd="size-100" flex={1}>
+            {item => <Item key={item.abbr}>{item.name}</Item>}
           </Picker>
           <TextField label="Zip code" placeholder="12345" flex={1} />
         </Flex>
@@ -108,12 +108,12 @@ function render(props: any = {}) {
       <TextField label="Last Name" placeholder="Smith" />
       <TextField label="Street Address" placeholder="123 Any Street" />
       <TextField label="City" placeholder="San Francisco" />
-      <Picker label="State" placeholder="Select a state" items={states} itemKey="abbr">
-        {item => <Item>{item.name}</Item>}
+      <Picker label="State" placeholder="Select a state" items={states}>
+        {item => <Item key={item.abbr}>{item.name}</Item>}
       </Picker>
       <TextField label="Zip code" placeholder="12345" />
-      <Picker label="Country" placeholder="Select a country" items={countries} itemKey="name">
-        {item => <Item>{item.name}</Item>}
+      <Picker label="Country" placeholder="Select a country" items={countries}>
+        {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
       <RadioGroup label="Favorite pet" name="favorite-pet-group">
         <Radio value="dogs">Dogs</Radio>
@@ -128,6 +128,7 @@ function render(props: any = {}) {
         <Item>Blue</Item>
         <Item>Purple</Item>
       </Picker>
+      <TextArea label="Comments" placeholder="How do you feel?" />
     </Form>
   );
 }

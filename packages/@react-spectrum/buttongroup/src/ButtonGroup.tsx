@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, SlotProvider, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import {SpectrumButtonGroupProps} from '@react-types/buttongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
@@ -40,7 +41,6 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
       setHasOverflow(false);
       let buttonGroupChildren = Array.from(domRef.current.children) as HTMLElement[];
       let maxX = domRef.current.offsetWidth + 1; // + 1 to account for rounding errors
-
       // If any buttons have negative X positions (align="end") or extend beyond
       // the width of the button group (align="start"), then switch to vertical.
       if (buttonGroupChildren.some(child => child.offsetLeft < 0 || child.offsetLeft + child.offsetWidth > maxX)) {
@@ -61,11 +61,9 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
     if (!dirty) {
       setDirty(true);
     }
+  // Don't add dirty to dep array since it will cause infinite loop
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [children, scale]);
-  // don't include dirty here, it will cause tests to hang
-  // we should do devon's imperative approach anyways
-  // where we remove and measure inline instead of this circular `use*Effect`
 
   // Check for overflow on window resize
   useEffect(() => {
@@ -111,9 +109,7 @@ function ButtonGroup(props: SpectrumButtonGroupProps, ref: DOMRef<HTMLDivElement
 }
 
 /**
- * ButtonGroup handles overflow for a group of Buttons. When there isn't enough horizontal space
- * for every Button, then it switches to a vertical layout. Anytime there are two or more
- * Buttons next to each other, a ButtonGroup should be used.
+ * ButtonGroup handles overflow for a grouping of buttons whose actions are related to each other.
  */
 let _ButtonGroup = React.forwardRef(ButtonGroup);
 export {_ButtonGroup as ButtonGroup};

@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-aria/button';
 import {HeaderInfo, FunctionAPI} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/button/package.json';
 
 ```jsx import
 import {useButton} from '@react-aria/button';
@@ -21,6 +21,7 @@ import {useRef} from 'react';
 
 ---
 category: Buttons
+keywords: [button, aria, form]
 ---
 
 # useButton
@@ -101,7 +102,7 @@ function Button(props) {
   }, ref);
 
   return (
-    <span 
+    <span
       {...buttonProps}
       style={{
         background: isPressed ? 'darkgreen' : 'green',

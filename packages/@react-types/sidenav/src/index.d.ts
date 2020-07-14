@@ -10,15 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, DOMProps, Expandable, MultipleSelection, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, DOMProps, Expandable, MultipleSelection, Node, StyleProps} from '@react-types/shared';
 import {HTMLAttributes, ReactNode} from 'react';
-import {Node, ReusableView} from '@react-stately/collections';
+import {ReusableView} from '@react-stately/virtualizer';
 
-export interface SideNavProps<T> extends CollectionBase<T>, Expandable, MultipleSelection, DOMProps, StyleProps {
+export interface SideNavProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {
   shouldFocusWrap?: boolean
 }
 
-export interface SpectrumSideNavProps<T> extends SideNavProps<T> {
+export interface AriaSideNavProps<T> extends SideNavProps<T>, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumSideNavProps<T> extends AriaSideNavProps<T>, StyleProps {
 }
 
 export interface SpectrumSideNavItemProps<T> extends HTMLAttributes<HTMLElement>{

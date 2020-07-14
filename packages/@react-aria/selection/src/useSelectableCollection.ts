@@ -11,14 +11,12 @@
  */
 
 import {FocusEvent, HTMLAttributes, KeyboardEvent, RefObject, useEffect} from 'react';
+import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
 import {focusWithoutScrolling} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {KeyboardDelegate} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useTypeSelect} from './useTypeSelect';
-
-type FocusStrategy = 'first' | 'last';
 
 const isMac =
   typeof window !== 'undefined' && window.navigator != null
@@ -34,17 +32,47 @@ function isCtrlKeyPressed(e: KeyboardEvent) {
 }
 
 interface SelectableCollectionOptions {
+  /**
+   * An interface for reading and updating multiple selection state.
+   */
   selectionManager: MultipleSelectionManager,
+  /**
+   * A delegate object that implements behavior for keyboard focus movement.
+   */
   keyboardDelegate: KeyboardDelegate,
+  /**
+   * The ref attached to the element representing the collection.
+   */
   ref: RefObject<HTMLElement>,
+  /**
+   * Whether the collection or one of its items should be automatically focused upon render.
+   * @default false
+   */
   autoFocus?: boolean | FocusStrategy,
+  /**
+   * Whether focus should wrap around when the end/start is reached.
+   * @default false
+   */
   shouldFocusWrap?: boolean,
+  /**
+   * Whether the collection allows empty selection.
+   * @default false
+   */
   disallowEmptySelection?: boolean,
+  /**
+   * Whether the collection allows the user to select all items via keyboard shortcut.
+   * @default false
+   */
   disallowSelectAll?: boolean,
+  /**
+   * Whether the collection should support typeahead.
+   * @default true
+   */
   shouldTypeAhead?: boolean
 }
 
 interface SelectableCollectionAria {
+  /** Props for the collection element. */
   collectionProps: HTMLAttributes<HTMLElement>
 }
 
@@ -61,6 +89,13 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
+    // Let child element (e.g. menu button) handle the event if the Alt key is pressed.
+    // Keyboard events bubble through portals. Don't handle keyboard events
+    // for elements outside the collection (e.g. menus).
+    if (e.altKey || !ref.current.contains(e.target as HTMLElement)) {
+      return;
+    }
+
     switch (e.key) {
       case 'ArrowDown': {
         if (delegate.getKeyBelow) {
@@ -186,12 +221,25 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
         // There may be elements that are "tabbable" inside a collection (e.g. in a grid cell).
         // However, collections should be treated as a single tab stop, with arrow key navigation internally.
         // We don't control the rendering of these, so we can't override the tabIndex to prevent tabbing.
-        // Instead, we handle the Tab key, and move focus manually to the next/previous tabbable element from the collection.
-        e.preventDefault();
-        let walker = getFocusableTreeWalker(document.body, {tabbable: true, from: ref.current});
-        let next = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
-        if (next) {
-          next.focus();
+        // Instead, we handle the Tab key, and move focus manually to the first/last tabbable element
+        // in the collection, so that the browser default behavior will apply starting from that element
+        // rather than the currently focused one.
+        if (e.shiftKey) {
+          ref.current.focus();
+        } else {
+          let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
+          let next: HTMLElement;
+          let last: HTMLElement;
+          do {
+            last = walker.lastChild() as HTMLElement;
+            if (last) {
+              next = last;
+            }
+          } while (last);
+
+          if (next && !next.contains(document.activeElement)) {
+            next.focus();
+          }
         }
         break;
       }
@@ -267,9 +315,16 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   }, []);
 
   let handlers = {
-    onKeyDown,
+    // We use a capturing listener to ensure that the keyboard events for the collection
+    // override those of the children. For example, ArrowDown in a table should always go
+    // to the cell below, and not open a menu.
+    onKeyDownCapture: onKeyDown,
     onFocus,
-    onBlur
+    onBlur,
+    onMouseDown(e) {
+      // Prevent focus going to the collection when clicking on the scrollbar.
+      e.preventDefault();
+    }
   };
 
   let {typeSelectProps} = useTypeSelect({

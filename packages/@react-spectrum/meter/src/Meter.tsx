@@ -23,7 +23,7 @@ function Meter(props: SpectrumMeterProps, ref: DOMRef<HTMLDivElement>) {
   const {
     meterProps,
     labelProps
-  } = useMeter({...otherProps, textValue: otherProps.valueLabel as any});
+  } = useMeter(props);
 
   return (
     <ProgressBarBase

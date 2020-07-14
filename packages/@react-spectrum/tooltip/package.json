@@ -9,9 +9,12 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "targets": {
     "main": {
       "includeNodeModules": [
@@ -26,20 +29,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/interactions": "^3.0.0-alpha.1",
-    "@react-aria/overlays": "^3.0.0-alpha.1",
+    "@react-aria/interactions": "^3.0.1",
+    "@react-aria/overlays": "^3.0.1",
     "@react-aria/tooltip": "^3.0.0-alpha.1",
-    "@react-aria/utils": "^3.0.0-rc.2",
-    "@react-spectrum/overlays": "^3.0.0-alpha.1",
-    "@react-spectrum/utils": "^3.0.0-alpha.1",
-    "@react-stately/utils": "^3.0.0-alpha.1",
+    "@react-aria/utils": "^3.0.1",
+    "@react-spectrum/overlays": "^3.0.1",
+    "@react-spectrum/utils": "^3.0.1",
     "@react-stately/tooltip": "^3.0.0-alpha.1",
-    "@react-types/tooltip": "^3.0.0-alpha.1",
-    "@react-types/shared": "^3.0.0-rc.1"
+    "@react-stately/utils": "^3.0.1",
+    "@react-types/overlays": "^3.0.1",
+    "@react-types/shared": "^3.0.1",
+    "@react-types/tooltip": "^3.0.0-alpha.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"

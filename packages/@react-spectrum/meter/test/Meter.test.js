@@ -67,4 +67,16 @@ describe('Meter', function () {
     expect(progressBar).toHaveAttribute('aria-valuetext', '50%');
     expect(progressBar).toHaveAttribute('role', 'meter progressbar');
   });
+
+  it('supports aria-label', function () {
+    let {getByRole} = render(<Meter aria-label="Meter" />);
+    let progressBar = getByRole('meter');
+    expect(progressBar).toHaveAttribute('aria-label', 'Meter');
+  });
+
+  it('supports custom DOM props', function () {
+    let {getByTestId} = render(<Meter label="Meter" data-testid="test" />);
+    let progressBar = getByTestId('test');
+    expect(progressBar).toBeInTheDocument();
+  });
 });

@@ -10,19 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-
 .spectrum {
   --hljs-color: var(--spectrum-global-color-gray-800);
   --hljs-background: var(--spectrum-global-color-gray-75);
-  --hljs-keyword-color: var(--spectrum-global-color-fuchsia-600);
+  --hljs-keyword-color: var(--spectrum-global-color-fuchsia-700);
   --hljs-section-color: var(--spectrum-global-color-red-600);
-  --hljs-string-color: var(--spectrum-global-color-celery-600);
-  --hljs-literal-color: var(--spectrum-global-color-orange-600);
-  --hljs-attribute-color: var(--spectrum-global-color-orange-600);
-  --hljs-class-color: var(--spectrum-global-color-yellow-600);
+  --hljs-string-color: var(--spectrum-global-color-green-600);
+  --hljs-literal-color: var(--spectrum-global-color-purple-700);
+  --hljs-attribute-color: var(--spectrum-global-color-indigo-700);
+  --hljs-class-color: var(--spectrum-global-color-seafoam-600);
   --hljs-function-color: var(--spectrum-global-color-blue-600);
-  --hljs-variable-color: var(--spectrum-global-color-yellow-600);
-  --hljs-title-color: var(--spectrum-global-color-indigo-600);
+  --hljs-variable-color: var(--spectrum-global-color-magenta-700);
+  --hljs-title-color: var(--spectrum-global-color-indigo-700);
+  --hljs-comment-color: var(--spectrum-global-color-gray-700);
 }
 
 /** for now keep syntax highlighting different from prop table. we can join them later if need be,
@@ -40,7 +40,7 @@
 
 :global(.hljs-comment),
 :global(.hljs-quote) {
-  color: #a0a1a7;
+  color: var(--hljs-comment-color);
   font-style: italic;
 }
 
@@ -116,15 +116,13 @@
 
 :global(.source) {
   display: block;
-  overflow-x: auto;
   padding: 0.5em;
   color: var(--hljs-color);
   background: var(--hljs-background);
 
   text-align: left;
-  white-space: pre;
   word-spacing: normal;
-  word-break: normal;
+  word-break: break-all;
   line-height: 1.5;
 
   -moz-tab-size: 4;
@@ -161,7 +159,7 @@
 }
 
 :global(.class-name) {
-  color: var(--hljs-section-color);
+  color: var(--hljs-class-color);
 }
 
 :global(.entity.attribute-name) {
@@ -185,6 +183,6 @@
 }
 
 :global(.comment) {
-  color: #a0a1a7;
+  color: var(--hljs-comment-color);
   font-style: italic;
 }

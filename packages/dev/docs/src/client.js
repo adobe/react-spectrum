@@ -12,10 +12,55 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import docsStyle from './docs.css';
+import {listen} from 'quicklink';
 import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
+import {watchModals} from '@react-aria/aria-modal-polyfill';
+
+window.addEventListener('load', () => listen());
+window.addEventListener('load', () => watchModals());
+
+let title = document.querySelector('h1');
+
+// Size the title to fit the available space.
+function updateTitleFontSize() {
+  let fontSize = parseInt(window.getComputedStyle(title).fontSize, 10);
+
+  // Constrain font size to 58px, or 10% of the window width, whichever is smaller.
+  let maxFontSize = Math.min(58, Math.round(window.innerWidth * 0.1));
+  if (fontSize > maxFontSize) {
+    fontSize = maxFontSize;
+    title.style.fontSize = maxFontSize + 'px';
+  }
+
+  // If the font size is less than the maximum font size,
+  // increase the font size until it overflows.
+  while (fontSize < maxFontSize && title.scrollWidth <= title.clientWidth) {
+    fontSize++;
+    title.style.fontSize = fontSize + 'px';
+  }
+
+  // Reduce the font size until it doesn't overflow.
+  while (title.scrollWidth > title.clientWidth) {
+    fontSize--;
+    title.style.fontSize = fontSize + 'px';
+  }
+}
+
+updateTitleFontSize();
+
+// Use ResizeObserver where available to detect size changes not related to window resizing, e.g. font loading.
+if (typeof ResizeObserver !== 'undefined') {
+  let observer = new ResizeObserver(() => {
+    // Avoid updating the layout during the resize event and creating circular notifications.
+    requestAnimationFrame(updateTitleFontSize);
+  });
+  observer.observe(title);
+} else {
+  window.addEventListener('resize', updateTitleFontSize);
+}
 
 function Hamburger() {
   let onPress = () => {
@@ -36,7 +81,7 @@ function Hamburger() {
   }, []);
 
   return (
-    <ActionButton onPress={onPress}>
+    <ActionButton UNSAFE_className={docsStyle.hamburgerButton} onPress={onPress} aria-label="Open navigation panel">
       <ShowMenu />
     </ActionButton>
   );
@@ -45,4 +90,40 @@ function Hamburger() {
 ReactDOM.render(<>
   <Hamburger />
   <ThemeSwitcher />
-</>, document.getElementById('header'));
+</>, document.querySelector('.' + docsStyle.pageHeader));
+
+document.addEventListener('mousedown', (e) => {
+  // Prevent focusing on links to other pages with the mouse to avoid flash of focus ring during navigation.
+  let link = e.target.closest('a');
+  if (link && (link.host !== location.host || link.pathname !== location.pathname)) {
+    e.preventDefault();
+  }
+
+  // Add mouse focus class to summary elements on mouse down to prevent native browser focus from showing.
+  if (e.target.tagName === 'SUMMARY') {
+    e.target.classList.add(docsStyle.mouseFocus);
+  }
+});
+
+// Remove mouse focus class on blur of a summary element.
+document.addEventListener('blur', (e) => {
+  if (e.target.tagName === 'SUMMARY') {
+    e.target.classList.remove(docsStyle.mouseFocus);
+  }
+}, true);
+
+let sidebar = document.querySelector('.' + docsStyle.nav);
+let lastSelectedItem = sessionStorage.getItem('sidebarSelectedItem');
+let lastScrollPosition = sessionStorage.getItem('sidebarScrollPosition');
+
+// If we have a recorded scroll position, and the last selected item is in the sidebar
+// (e.g. we're in the same category), then restore the scroll position.
+if (lastSelectedItem && lastScrollPosition && [...sidebar.querySelectorAll('a')].some(a => a.pathname === lastSelectedItem)) {
+  sidebar.scrollTop = parseInt(lastScrollPosition, 10);
+}
+
+// Save scroll position of the sidebar when we're about to navigate
+window.addEventListener('pagehide', () => {
+  sessionStorage.setItem('sidebarSelectedItem', location.pathname);
+  sessionStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
+});

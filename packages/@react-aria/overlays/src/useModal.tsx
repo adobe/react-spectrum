@@ -95,21 +95,21 @@ export function OverlayProvider(props: ModalProviderProps) {
 }
 
 /**
- * A container for overlays like modals and popovers. Renders the overlay 
+ * A container for overlays like modals and popovers. Renders the overlay
  * into a Portal which is placed at the end of the document body.
  * Also ensures that the overlay is hidden from screen readers if a
- * nested modal is opened. Only the top-most modal or overlay should 
+ * nested modal is opened. Only the top-most modal or overlay should
  * be accessible at once.
  */
-export function OverlayContainer(props: ModalProviderProps) {
+export function OverlayContainer(props: ModalProviderProps): React.ReactPortal {
   let contents = <OverlayProvider {...props} />;
   return ReactDOM.createPortal(contents, document.body);
 }
 
 /**
  * Hides content outside the current `<OverlayContainer>` from screen readers
- * on mount and restores it on unmount. Typically used by modal dialogs and 
- * other types over overlays to ensure that only the top-most modal is 
+ * on mount and restores it on unmount. Typically used by modal dialogs and
+ * other types of overlays to ensure that only the top-most modal is
  * accessible at once.
  */
 export function useModal(): void {

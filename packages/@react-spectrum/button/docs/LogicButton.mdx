@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/button';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-spectrum/button/package.json';
 
 ```jsx import
 import {LogicButton} from '@react-spectrum/button';
@@ -20,6 +20,7 @@ import {LogicButton} from '@react-spectrum/button';
 
 ---
 category: Buttons
+keywords: [logic button]
 ---
 
 # LogicButton
@@ -57,10 +58,10 @@ The following example uses an `onPress` handler to update the variant.
 
 ```tsx example
 function Example() {
-  let [variant, setVariant] = React.useState('or');
+  let [variant, setVariant] = React.useState('Or');
 
   return (
-    <LogicButton variant={variant} onPress={() => setVariant(variant === 'or' ? 'and' : 'or')}>{variant}</LogicButton>
+    <LogicButton variant={variant.toLowerCase()} onPress={() => setVariant(variant === 'Or' ? 'And' : 'Or')}>{variant}</LogicButton>
   );
 }
 ```
@@ -69,12 +70,12 @@ function Example() {
 
 <PropTable component={docs.exports.LogicButton} links={docs.links} />
 
-## Visual Options
+## Visual options
 
 ### Variant
 
 ```tsx example
-<LogicButton variant="or" marginRight="20px">Or</LogicButton>
+<LogicButton variant="or" marginEnd="20px">Or</LogicButton>
 <LogicButton variant="and">And</LogicButton>
 ```
 

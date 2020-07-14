@@ -21,15 +21,13 @@ describe('useBreadcrumbs', function () {
   };
 
   it('handles defaults', function () {
-    let {breadcrumbsProps} = renderLinkHook({});
-    expect(breadcrumbsProps['aria-label']).toBe('Breadcrumbs');
-    expect(breadcrumbsProps.id).toBeDefined();
+    let {navProps} = renderLinkHook({});
+    expect(navProps['aria-label']).toBe('Breadcrumbs');
   });
 
   it('handles custom aria label', function () {
-    let {breadcrumbsProps} = renderLinkHook({'aria-label': 'test-label'});
-    expect(breadcrumbsProps['aria-label']).toBe('test-label');
-    expect(breadcrumbsProps.id).toBeDefined();
+    let {navProps} = renderLinkHook({'aria-label': 'test-label'});
+    expect(navProps['aria-label']).toBe('test-label');
   });
 
 });

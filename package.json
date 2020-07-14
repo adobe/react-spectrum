@@ -5,11 +5,16 @@
   "description": "Spectrum UI components in React",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
-  "browserslist": ["chrome >= 61", "firefox >= 60", "safari >= 11", "edge >= 16"],
+  "browserslist": [
+    "chrome >= 61",
+    "firefox >= 60",
+    "safari >= 11",
+    "edge >= 16"
+  ],
   "scripts": {
-    "check-types": "tsc --skipLibCheck",
+    "check-types": "tsc",
     "start": "make run",
     "build-storybook": "build-storybook -c .storybook-v3 -o dist/$(git rev-parse HEAD)/storybook",
     "test": "make test",
@@ -18,7 +23,7 @@
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
     "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",
     "postinstall": "make icons && patch-package",
-    "plop": "plop",
+    "plop": "plop --plopfile scripts/plopfile.js",
     "chromatic": "CHROMATIC_APP_CODE=x8ktlved8wd chromatic test --build-script-name build-storybook",
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
     "start:docs": "PARCEL_WORKER_BACKEND=process parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
@@ -30,6 +35,7 @@
   "devDependencies": {
     "@actions/core": "^1.1.0",
     "@actions/github": "^1.1.0",
+    "@adobe/spectrum-css-workflow-icons": "^1.0.0",
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
     "@babel/node": "^7.4.5",
@@ -53,7 +59,8 @@
     "@parcel/babel-preset-env": "nightly",
     "@parcel/transformer-inline": "nightly",
     "@parcel/transformer-svg-react": "nightly",
-    "@spectrum-css/vars": "^2.0.0",
+    "@spectrum-css/vars": "^2.3.0",
+    "@spectrum-css/component-builder": "^1.0.0",
     "@storybook/addon-a11y": "^5.2.1",
     "@storybook/addon-actions": "^5.2.1",
     "@storybook/addon-info": "^5.2.1",
@@ -62,9 +69,9 @@
     "@storybook/react": "^5.2.1",
     "@testing-library/jest-dom": "^5.5.0",
     "@testing-library/react": "^10.0.3",
-    "@testing-library/user-event": "^10.0.2",
     "@testing-library/react-hooks": "^3.2.1",
-    "@types/react": "^16.8.0",
+    "@testing-library/user-event": "^10.3.1",
+    "@types/react": "16.9.23",
     "@types/storybook__react": "^4.0.1",
     "@typescript-eslint/eslint-plugin": "^2.28.0",
     "@typescript-eslint/parser": "^2.28.0",
@@ -134,15 +141,13 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
     "svg-stylus": "^0.0.5",
+    "tempy": "^0.5.0",
     "typescript": "^3.8.3",
     "url-loader": "^1.1.2",
     "webpack": "^4.29.6",
     "webpack-dev-middleware": "^3.6.1",
     "webpack-hot-middleware": "^2.24.3",
     "wsrun": "^5.0.0"
-  },
-  "dependencies": {
-    "@spectrum-css/component-builder": "^1.0.0"
   },
   "resolutions": {
     "@babel/core": "7.9.0",

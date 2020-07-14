@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, DOMEventPropNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {MenuContext} from './context';
 import {MenuItem} from './MenuItem';
@@ -25,13 +25,12 @@ import {useTreeState} from '@react-stately/tree';
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
   let contextProps = useContext(MenuContext);
   let completeProps = {
-    ...mergeProps(contextProps, props),
-    selectionMode: props.selectionMode || 'none'
+    ...mergeProps(contextProps, props)
   };
 
   let domRef = useDOMRef(ref);
   let state = useTreeState(completeProps);
-  let {menuProps} = useMenu({...completeProps, ref: domRef}, state);
+  let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
 
   // Sync ref from <MenuTrigger> context with DOM ref.
@@ -46,9 +45,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
 
   return (
     <ul
-      {...filterDOMProps(completeProps)}
-      // Allow DOM props to be passed from MenuTrigger via context only
-      {...mergeProps(menuProps, filterDOMProps(contextProps, DOMEventPropNames))}
+      {...menuProps}
       {...styleProps}
       ref={domRef}
       className={
@@ -87,6 +84,9 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   );
 }
 
+/**
+ * Menus display a list of actions or options that a user can choose.
+ */
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
 const _Menu = React.forwardRef(Menu) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLUListElement>}) => ReactElement;

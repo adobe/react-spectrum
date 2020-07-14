@@ -10,31 +10,49 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, CollectionBase, DOMProps, MultipleSelection, StyleProps} from '@react-types/shared';
+import {Alignment, AriaLabelingProps, CollectionBase, DOMProps, FocusStrategy, MultipleSelection, StyleProps} from '@react-types/shared';
 import {Key, ReactElement} from 'react';
+import {OverlayTriggerProps} from '@react-types/overlays';
 
-export type FocusStrategy = 'first' | 'last';
-
-export interface MenuTriggerProps {
+export interface MenuTriggerProps extends OverlayTriggerProps {
   // trigger?: 'press' | 'longPress',
+  /**
+   * Alignment of the menu relative to the trigger.
+   * @default 'start'
+   */
   align?: Alignment,
-  direction?: 'bottom' | 'top', // left right?
+  /**
+   * Where the Menu opens relative to its trigger.
+   * @default 'bottom'
+   */
+  direction?: 'bottom' | 'top',
+  /**
+   * Whether the Menu closes when a selection is made.
+   * @default true
+   */
   closeOnSelect?: boolean,
-  isOpen?: boolean,
-  defaultOpen?: boolean,
-  onOpenChange?: (isOpen: boolean) => void,
+  /**
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
+   */
   shouldFlip?: boolean
 }
 
 export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
+  /**
+   * The contents of the MenuTrigger - a trigger and a Menu.
+   */
   children: ReactElement[]
 }
 
 export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
+  /** Where the focus should be set. */
   autoFocus?: boolean | FocusStrategy,
+  /** Whether keyboard navigation is circular. */
   shouldFocusWrap?: boolean,
+  /** Handler that is called when an item is selected. */
   onAction?: (key: Key) => void
 }
 
-export interface SpectrumMenuProps<T> extends MenuProps<T>, DOMProps, StyleProps {
-}
+export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingProps {}
+export interface SpectrumMenuProps<T> extends AriaMenuProps<T>, StyleProps {}

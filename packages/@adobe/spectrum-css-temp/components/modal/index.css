@@ -35,8 +35,14 @@ governing permissions and limitations under the License.
   justify-content: center;
 
   box-sizing: border-box;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  /* On mobile browsers, vh units are fixed based on the maximum height of the screen.
+   * However, when you scroll, the toolbar and address bar shrink, making the viewport resize.
+   * We use the fill-available value to counteract this where supported. */
+  height: 100vh;
+  height: -moz-available;
+  height: -webkit-fill-available;
+  height: fill-available;
 
   visibility: hidden;
 
@@ -66,6 +72,7 @@ governing permissions and limitations under the License.
   /* Don't be bigger than the screen */
   max-height: var(--spectrum-dialog-max-height);
   max-width: 90vw;
+  min-width: var(--spectrum-dialog-min-width);
 
   border-radius: var(--spectrum-dialog-border-radius);
   outline: none; /* Firefox shows outline */
@@ -114,6 +121,8 @@ only screen and (max-device-height: 350px) {
   bottom: var(--spectrum-dialog-fullscreen-margin);
   max-width: none;
   max-height: none;
+  width: calc(100% - calc(2 * var(--spectrum-dialog-fullscreen-margin)));
+  height: calc(100% - calc(2 * var(--spectrum-dialog-fullscreen-margin)));
 }
 
 .spectrum-Modal--fullscreenTakeover {

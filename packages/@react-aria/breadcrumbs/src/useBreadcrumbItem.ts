@@ -12,60 +12,51 @@
 
 import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
 import {DOMProps} from '@react-types/shared';
-import {HTMLAttributes, useRef} from 'react';
-import {useId} from '@react-aria/utils';
+import {HTMLAttributes, RefObject} from 'react';
 import {useLink} from '@react-aria/link';
 
 interface AriaBreadcrumbItemProps extends BreadcrumbItemProps, DOMProps {
   /**
-   * The HTML element used to render the breadcrumb link, e.g. "a", or "span".
-   * @default "a"
+   * The HTML element used to render the breadcrumb link, e.g. 'a', or 'span'.
+   * @default 'a'
    */
-  elementType?: string,
+  elementType?: string
 }
 
 interface BreadcrumbItemAria {
   /** Props for the breadcrumb item link element. */
-  breadcrumbItemProps: HTMLAttributes<HTMLDivElement>
+  itemProps: HTMLAttributes<HTMLElement>
 }
 
 /**
  * Provides the behavior and accessibility implementation for an in a breadcrumbs component.
  * See `useBreadcrumbs` for details about breadcrumbs.
  */
-export function useBreadcrumbItem(props: AriaBreadcrumbItemProps): BreadcrumbItemAria {
+export function useBreadcrumbItem(props: AriaBreadcrumbItemProps, ref: RefObject<HTMLElement>): BreadcrumbItemAria {
   let {
-    id,
     isCurrent,
     isDisabled,
-    isHeading,
-    headingAriaLevel = 1,
-    children = '',
     'aria-current': ariaCurrent,
+    elementType = 'a',
     ...otherProps
   } = props;
 
-  let ref = useRef();
-  let {linkProps} = useLink({children, isDisabled: isDisabled || isCurrent, ...otherProps, ref});
+  let {linkProps} = useLink({isDisabled: isDisabled || isCurrent, elementType, ...otherProps}, ref);
+  let isHeading = /^h[1-6]$/.test(elementType);
+  let itemProps: HTMLAttributes<HTMLElement> = {};
 
-  let itemProps: HTMLAttributes<HTMLDivElement> = isCurrent
-    ? {...linkProps, 'aria-current': ariaCurrent || 'page'}
-    : linkProps;
+  if (!isHeading) {
+    itemProps = linkProps;
+  }
 
-  let breadcrumbItemHeadingProps;
-  if (isHeading && isCurrent) {
-    breadcrumbItemHeadingProps = {
-      role: 'heading',
-      'aria-level': headingAriaLevel
-    };
+  if (isCurrent) {
+    itemProps['aria-current'] = ariaCurrent || 'page';
   }
 
   return {
-    breadcrumbItemProps: {
-      id: useId(id),
+    itemProps: {
       'aria-disabled': isDisabled,
-      ...itemProps,
-      ...breadcrumbItemHeadingProps
+      ...itemProps
     }
   };
 }

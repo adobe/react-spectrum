@@ -12,10 +12,17 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
+:root {
+  --spectrum-table-cell-compact-padding-y: var(--spectrum-global-dimension-size-75);
+  --spectrum-table-cell-regular-padding-y: var(--spectrum-global-dimension-size-125);
+  --spectrum-table-cell-spacious-padding-y: var(--spectrum-global-dimension-size-175);
+}
+
 .spectrum-Table {
   border-collapse: separate;
   border-spacing: 0;
   outline: none;
+  isolation: isolate;
 }
 
 .spectrum-Table-sortedIcon {
@@ -129,9 +136,32 @@ governing permissions and limitations under the License.
   font-weight: var(--spectrum-table-cell-text-font-weight);
   /* need to subtract 1px here because 14px * 1.5 + 14px + 14px = 49px, and we want 48px */
   line-height: calc(calc(var(--spectrum-table-cell-text-size) * var(--spectrum-table-cell-text-line-height)) - 1px);
-  padding: var(--spectrum-table-cell-padding-y) var(--spectrum-table-cell-padding-x);
-  min-height: var(--spectrum-table-cell-min-height);
+  padding: var(--spectrum-table-cell-regular-padding-y) var(--spectrum-table-cell-padding-x);
+}
+
+.spectrum-Table--compact .spectrum-Table-cell {
+  padding-top: var(--spectrum-table-cell-compact-padding-y);
+  padding-bottom: var(--spectrum-table-cell-compact-padding-y);
+}
+
+.spectrum-Table--spacious .spectrum-Table-cell {
+  padding-top: var(--spectrum-table-cell-spacious-padding-y);
+  padding-bottom: var(--spectrum-table-cell-spacious-padding-y);
+}
+
+.spectrum-Table-cellContents {
+  /* truncate text with ellipsis */
   overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  /* allow focus ring of child to extend outside the bounds */
+  padding: 0 4px;
+  margin: 0 -4px;
+}
+
+.spectrum-Table--wrap .spectrum-Table-cellContents {
+  white-space: normal;
 }
 
 .spectrum-Table-cell,
@@ -230,7 +260,8 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Table-checkboxCell {
+.spectrum-Table-headCell.spectrum-Table-checkboxCell,
+.spectrum-Table-cell.spectrum-Table-checkboxCell {
   padding-inline-end: var(--spectrum-table-cell-checkbox-padding-right);
   /* have to eliminate vertical padding to allow proper vertical alignment */
   padding-top: 0px;

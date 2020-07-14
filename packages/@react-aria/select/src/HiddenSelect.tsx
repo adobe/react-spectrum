@@ -12,6 +12,7 @@
 
 import React, {ReactNode, RefObject} from 'react';
 import {SelectState} from '@react-stately/select';
+import {useInteractionModality} from '@react-aria/interactions';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface HiddenSelectProps<T> {
@@ -34,6 +35,7 @@ interface HiddenSelectProps<T> {
  */
 export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
   let {state, triggerRef, label, name} = props;
+  let modality = useInteractionModality();
 
   // If used in a <form>, use a hidden input so the value can be submitted to a server.
   // If the collection isn't too big, use a hidden <select> element for this so that browser
@@ -53,11 +55,15 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
     // input in the form. Using the <select> for this also works, but Safari on iOS briefly flashes
     // the native menu on focus, so this isn't ideal. A font-size of 16px or greater is required to
     // prevent Safari from zooming in on the input when it is focused.
+    //
+    // If the current interaction modality is null, then the user hasn't interacted with the page yet.
+    // In this case, we set the tabIndex to -1 on the input element so that automated accessibility
+    // checkers don't throw false-positives about focusable elements inside an aria-hidden parent.
     return (
       <VisuallyHidden aria-hidden="true">
         <input
           type="text"
-          tabIndex={state.isFocused || state.isOpen ? -1 : 0}
+          tabIndex={modality == null || state.isFocused || state.isOpen ? -1 : 0}
           style={{fontSize: 16}}
           onFocus={() => triggerRef.current.focus()} />
         <label>

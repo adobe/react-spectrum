@@ -9,7 +9,9 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": ["dist"],
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "targets": {
     "main": {
       "includeNodeModules": ["@adobe/spectrum-css-temp"]
@@ -20,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",

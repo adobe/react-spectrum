@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import {Overlay} from './Overlay';
@@ -52,7 +52,6 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   return (
     <Overlay {...otherProps}>
       <PopoverWrapper
-        {...filterDOMProps(otherProps)}
         {...styleProps}
         ref={domRef}
         placement={placement}
@@ -67,8 +66,9 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
 }
 
 const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HTMLDivElement>) => {
-  let {children, placement = 'bottom', arrowProps, isOpen, onClose, shouldCloseOnBlur, hideArrow, ...otherProps} = props;
-  let {overlayProps} = useOverlay({ref, onClose, shouldCloseOnBlur, isOpen, isDismissable: true});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {children, placement = 'bottom', arrowProps, isOpen, hideArrow, shouldCloseOnBlur, ...otherProps} = props;
+  let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
   useModal();
 
   return (
@@ -113,11 +113,15 @@ function Arrow(props) {
     if (ref.current) {
       let spectrumTipWidth = window.getComputedStyle(ref.current)
         .getPropertyValue('--spectrum-popover-tip-size');
-      setSize(parseInt(spectrumTipWidth, 10) / 2);
+      if (spectrumTipWidth !== '') {
+        setSize(parseInt(spectrumTipWidth, 10) / 2);
+      }
 
       let spectrumBorderWidth = window.getComputedStyle(ref.current)
         .getPropertyValue('--spectrum-popover-tip-borderWidth');
-      setBorderWidth(parseInt(spectrumBorderWidth, 10));
+      if (spectrumBorderWidth !== '') {
+        setBorderWidth(parseInt(spectrumBorderWidth, 10));
+      }
     }
   }, [ref]);
 

@@ -10,17 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps} from '@react-types/shared';
+import {HTMLAttributes} from 'react';
 import {useId} from './useId';
 
-export function useLabels(props: DOMProps, defaultLabel?: string): DOMProps {
+/**
+ * Merges aria-label and aria-labelledby into aria-labelledby when both exist.
+ * @param props - Aria label props.
+ * @param defaultLabel - Default value for aria-label when not present.
+ */
+export function useLabels(props: DOMProps & AriaLabelingProps, defaultLabel?: string): HTMLAttributes<HTMLElement> {
   let {
     id,
     'aria-label': label,
     'aria-labelledby': labelledBy
   } = props;
 
-  // If there is both an aria-label and aria-labelledby, 
+  // If there is both an aria-label and aria-labelledby,
   // combine them by pointing to the element itself.
   id = useId(id);
   if (labelledBy && label) {

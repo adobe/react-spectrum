@@ -1,0 +1,104 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+---
+category: Concepts
+---
+
+# Accessibility
+
+Building inclusive applications that are accessible to everyone is very important.
+React Aria helps you build accessible components by providing many aspects of
+accessibility out of the box, including full screen reader and keyboard navigation support.
+
+## Introduction
+
+Accessibility is the ability for applications to be used by everyone, including those with disabilities.
+This encompasses all types of disabilities, including vision, auditory, motor, and cognitive disabilities.
+
+React Aria addresses aspects of vision and motor disabilities through screen reader and keyboard navigation
+support. Since it does not provide any rendering or styling, additional consideration should be made
+in your design process for other types of disabilities. See the [inclusive design](https://spectrum.adobe.com/page/inclusive-design/)
+page on the Spectrum website for more details.
+
+Accessibility features also benefit users without disabilities. For example, power users may find it faster
+to interact with your application using a keyboard, rather than a mouse or touch screen. Especially for
+applications involving a large amount of data entry, good keyboard navigation support can dramatically increase
+user productivity.
+
+## ARIA
+
+React Aria implements accessibility support according to the [WAI-ARIA](https://www.w3.org/TR/wai-aria-1.2/)
+specification, published by the W3C. ARIA specifies **semantics** for many common UI controls so that assistive
+technology like screen readers can understand what our DOM nodes represent. When we cannot use native HTML elements
+with built-in semantics (e.g. `<button>` or `<select>`) for styling reasons, or if there isn't a native element available,
+ARIA is required to make presentational elements (e.g. `<div>`) have semantic meaning. This allows screen readers and
+other assistive technology to understand these elements and announce them properly to the user.
+
+However, ARIA is a contract: it only specifies semantics, and it's up to the developer to implement the
+**behavior** and interactions for each control with JavaScript. There is an additional document published by the W3C
+called the [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/), which provides patterns
+and examples of implementing this behavior on top of ARIA. It specifies keyboard interactions that are expected
+by users of these controls, along with the required roles and states to make them accessible to assistive technology.
+
+React Aria provides hooks for many ARIA patterns, which provide the semantics and behavior together. This makes building
+accessible components with custom styling much easier: just spread the props returned by the hooks onto the appropriate
+elements and you get accessibility and behavior pretty much for free. All you need to do is provide the styling.
+
+## Labeling
+
+React Aria includes most component semantics by default, but there is one important thing you must provide in your application:
+a textual label for each control. This gives a screen reader user context about the control they are interacting with.
+
+Form inputs like text fields, checkboxes, and selects should usually have a visible label, and in this case, React Aria
+will automatically associate the visible label with the control to so that assistive technology can describe it properly.
+
+In case a visible label is not desired for some reason, or you're using a control that doesn't have a built-in label,
+you must use the `aria-label` or `aria-labelledby` props to identify it to assistive technology. Most React Aria
+hooks will display a console warning if you are missing both a visible label and an ARIA label.
+
+## Keyboard navigation
+
+React Aria implements keyboard support for all components, which allows users who cannot use a mouse or touch screen
+to navigate your app. It also allows power users to navigate your application more quickly, without lifting their hands
+from the keyboard. All keyboard behavior is implemented according to the [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/) guidelines,
+and is designed to feel familiar to users of most commonly used desktop operating systems.
+
+For more information about keyboard navigation and focus interactions, see the [interactions](interactions.html) overview.
+
+## Mobile
+
+On mobile touch screen devices, screen reader users navigate applications by moving a virtual cursor around the screen with
+gestures like swiping left and right rather than using a keyboard like on desktop platforms. The screen reader knows which
+elements are available to navigate to through the semantic information exposed by ARIA. These gestures and the virtual cursor
+takes over the whole screen, and normal touch interactions for your application will not be available.
+
+There are additional things to consider when supporting mobile screen readers. Since there's no hardware keyboard
+on most mobile devices, we cannot rely on keyboard interactions being available. And since the screen reader gestures
+take over the entire screen, we cannot rely on touch interactions. This means that all functionality must be accessible
+to a screen reader, including things that would typically be handled by keyboard interactions.
+
+For example, to close a dialog or popover, mouse and touchscreen users typically click or tap outside. Keyboard users
+can press the <kbd>Escape</kbd> key. On desktop, this may be enough for screen reader users, but on mobile there is no
+keyboard available. So, we must ensure there is a way for screen reader users to access this functionality without a keyboard.
+React Aria allows you to handle this by placing a hidden button inside the dialog or popover that screen reader users can
+navigate to in order to close it.
+
+## Testing
+
+All React Aria components are tested across a wide variety of devices, browsers, and screen readers.
+
+* [VoiceOver on macOS](https://www.apple.com/accessibility/mac/vision/) in Safari and Chrome
+* [JAWS](https://www.freedomscientific.com/products/software/jaws/) on Windows in Firefox and Chrome
+* [NVDA](https://www.nvaccess.org) on Windows in Firefox and Chrome
+* [VoiceOver on iOS](https://www.apple.com/accessibility/iphone/vision/)
+* [TalkBack](https://www.android.com/accessibility/) on Android in Chrome

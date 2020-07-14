@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-aria/separator';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/separator/package.json';
 
 ```jsx import
 import {useSeparator} from '@react-aria/separator';
@@ -20,6 +20,7 @@ import {useSeparator} from '@react-aria/separator';
 
 ---
 category: Content
+keywords: [vertical separator, horizontal separator, separator, hr, aria]
 ---
 
 # useSeparator
@@ -48,7 +49,7 @@ accessible separators that can be styled as needed.
 
 ## Anatomy
 
-A separator consists of a single element that represents the divider. 
+A separator consists of a single element that represents the divider.
 `useSeparator` returns props to be spread onto the element:
 
 <TypeContext.Provider value={docs.links}>
@@ -65,7 +66,7 @@ function Separator(props) {
   let {separatorProps} = useSeparator(props);
 
   return (
-    <div 
+    <div
       {...separatorProps}
       style={{
         background: 'gray',

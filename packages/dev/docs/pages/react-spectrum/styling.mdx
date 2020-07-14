@@ -1,0 +1,197 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import sharedDocs from 'docs:@react-types/shared/src/style.d.ts';
+import {PropTable} from '@react-spectrum/docs';
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+```tsx import
+import {TextField} from '@react-spectrum/textfield';
+import {ActionButton} from '@react-spectrum/button';
+```
+
+---
+category: Concepts
+---
+
+# Styling
+
+This page describes how styling works in React Spectrum, including how to customize spacing, sizing,
+and positioning, and how to create your own custom components using Spectrum styles.
+
+## Introduction
+
+React Spectrum components are designed to be **consistent** across all Adobe applications. They include built-in
+styling that has been considered carefully, and extensively tested. In general, customizing Spectrum design
+is discouraged, but most components do offer control over layout and other aspects. In addition, you can use
+Spectrum defined variables to ensure your application conforms to design requirements, and is adaptive across
+platform scales and color schemes.
+
+## Style props
+
+All React Spectrum components support a limited set of styling options, including layout, spacing, sizing,
+and positioning options. While internal component styles such as padding, colors, borders and text styles
+are included in Spectrum and not available to override, external styles like margins and sizes can be set
+on all components.
+
+Supported styling options are available as props on every React Spectrum component. The following example shows
+a text field and a button. The text field has a custom width set on it, and the button has a margin before it.
+
+```tsx example
+<TextField label="Name" labelPosition="side" placeholder="John Smith" width="size-2000" />
+<ActionButton marginStart="size-150">Submit</ActionButton>
+```
+
+All of the available style props are listed below.
+
+<PropTable component={{
+  props: {
+    // Filter out UNSAFE properties
+    properties: Object.fromEntries(Object.entries(sharedDocs.exports.StyleProps.properties).filter(([k]) => !k.startsWith('UNSAFE_')))
+  }
+}} links={sharedDocs.links} />
+
+## Dimension values
+
+Where applicable, each style property accepts Spectrum defined variables in addition to raw CSS values.
+**Using Spectrum variables is preferred wherever possible**. These variables conform to Spectrum design
+defined sizing and spacing requirements, and also automatically adapt on different devices. For example,
+on touch screen devices, all Spectrum components expand in size to give users larger hit targets.
+
+The list of dimension values is visualized below. Use the picker to see how they change between desktop
+and mobile.
+
+```tsx import
+import {View} from '@react-spectrum/view';
+import {Flex} from '@react-spectrum/layout';
+import {Picker, Item} from '@react-spectrum/picker';
+import {Provider} from '@react-spectrum/provider';
+import {Example} from '@react-spectrum/docs/src/ThemeSwitcher';
+import {useState} from 'react';
+import dnaDocs from 'docs:@react-types/shared/src/dna.d.ts';
+
+function DimensionViewer() {
+  let [selectedKey, setSelectedKey] = useState('medium');
+
+  return (
+    <Example>
+      <Picker label="Scale" selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
+        <Item key="medium">Medium (desktop)</Item>
+        <Item key="large">Large (mobile)</Item>
+      </Picker>
+      <Provider scale={selectedKey}>
+        <ul style={{listStyle: 'none', padding: 0, overflow: 'auto'}}>
+          {dnaDocs.links[dnaDocs.exports.DimensionValue.id].value.elements.filter(v => v.value && !v.value.startsWith('static')).map(v =>
+            <li key={v.value}>
+              <Flex alignItems="center" marginBottom="size-25">
+                <View backgroundColor="blue-400" width={v.value} height="size-250" marginEnd="size-100" flexShrink={0} />
+                {v.value}
+              </Flex>
+            </li>
+          )}
+        </ul>
+      </Provider>
+    </Example>
+  );
+}
+
+ReactDOM.render(<DimensionViewer />, document.getElementById('dimension-viewer'));
+```
+
+<div id="dimension-viewer" />
+
+## Custom components
+
+Sometimes, you may find yourself needing to build a component that doesn't exist in Spectrum yet. In these cases,
+you can ensure consistency with other Spectrum components by utilizing existing Spectrum variables. For example,
+there are Spectrum variables for colors, border sizes, paddings, etc.
+
+These variables could be consumed in CSS directly, but if you're building something simple, you could consider
+using the `View` component from React Spectrum. `View` is like a `div` or `span` (depending on the `elementType` prop),
+but with additional style properties that map to Spectrum defined variables in addition to the ones covered above.
+
+The following example shows how you might build a container element using Spectrum defined variables for the border
+and padding. Use the color scheme and scale pickers to see how the view changes automatically based on these variables.
+
+```tsx example themeSwitcher=true
+<View
+  borderWidth="thin"
+  borderColor="dark"
+  borderRadius="medium"
+  padding="size-250">
+  <TextField label="Name" labelPosition="side" placeholder="John Smith" />
+  <ActionButton marginStart="size-150">Submit</ActionButton>
+</View>
+```
+
+All of the properties supported by `View` are listed below. All style properties covered previously are also supported.
+
+<PropTable component={{
+  props: {
+    // Filter out properties duplicated from StyleProps
+    properties: Object.fromEntries(Object.entries(sharedDocs.exports.ViewStyleProps.properties).filter(([k]) => !sharedDocs.exports.StyleProps.properties[k]))
+  }
+}} links={sharedDocs.links} />
+
+## Color values
+
+Style props that accept colors, such as backgrounds and borders, only accept Spectrum defined color values.
+In addition to ensuring consistency across products, Spectrum colors automatically adapt to color
+scheme changes, e.g. dark mode.
+
+The list of Spectrum color values is visualized below. Use the picker to see how they change between the
+light and dark color schemes.
+
+```tsx import
+function ColorViewer() {
+  let [selectedKey, setSelectedKey] = useState();
+
+  return (
+    <Example colorScheme={selectedKey}>
+      <Picker label="Color Scheme" selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
+        <Item key="light">Light</Item>
+        <Item key="dark">Dark</Item>
+      </Picker>
+      <ul style={{columnWidth: 160, listStyle: 'none', padding: 0}}>
+        {dnaDocs.links[dnaDocs.exports.ColorValue.id].value.elements.filter(v => v.value && !v.value.startsWith('static')).map(v =>
+          <li key={v.value}>
+            <Flex alignItems="center" marginBottom="size-25">
+              <View backgroundColor={v.value} width="size-250" height="size-250" marginEnd="size-100" flexShrink={0} />
+              {v.value}
+            </Flex>
+          </li>
+        )}
+      </ul>
+    </Example>
+  );
+}
+
+ReactDOM.render(<ColorViewer />, document.getElementById('color-viewer'));
+```
+
+<div id="color-viewer" />
+
+## Escape hatches
+
+While we encourage teams to utilize Spectrum design as it is, we do realize that sometimes product specific
+customizations may be needed. In these cases, we encourage you or your designers to **talk to us**.
+We may be able to suggest an alternative implementation strategy, or perhaps your design can help inform future
+Spectrum additions.
+
+While the traditional `className` and `style` props are not supported in React Spectrum components, there are two
+escape hatches that you can **use at your own risk**. These are `UNSAFE_className` and `UNSAFE_style`. Use of these props
+should be considered a **last resort**. They can be used to work around bugs or limitations in React Spectrum,
+but should not be used in the long term.
+
+The reasoning behind this is that future updates to Spectrum design may cause unintended breaking changes in products.
+If the internal DOM structure or CSS properties of a React Spectrum component change, this may lead to conflicts with CSS
+overrides in products. For this reason, `className` and `style` are unsafe, and if you use them know that you are doing so at
+your own risk.

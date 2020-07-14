@@ -11,26 +11,26 @@
  */
 
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {classNames, filterDOMProps} from '@react-spectrum/utils';
-import {CollectionBase, Expandable, MultipleSelection} from '@react-types/shared';
-import {CollectionView} from '@react-aria/collections';
+import {classNames} from '@react-spectrum/utils';
+import {CollectionBase, Expandable, MultipleSelection, Node} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import {Item, ListLayout, Node, Section, TreeCollection} from '@react-stately/collections';
-import {mergeProps} from '@react-aria/utils';
+import {Item, Section} from '@react-stately/collections';
+import {ListLayout} from '@react-stately/layout';
 import React, {Key, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/treeview/vars.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
+import {Virtualizer} from '@react-aria/virtualizer';
 
 export {Item, Section};
 
 export function Tree<T extends object>(props: CollectionBase<T> & Expandable & MultipleSelection) {
   let state = useTreeState(props);
-  let layout = useMemo(() => 
+  let layout = useMemo(() =>
     new ListLayout({
       rowHeight: 44,
-      indentationForItem(tree: TreeCollection<T>, key: Key) {
+      indentationForItem(tree, key: Key) {
         let level = tree.getItem(key).level;
         return 28 * level;
       }
@@ -45,7 +45,7 @@ export function Tree<T extends object>(props: CollectionBase<T> & Expandable & M
   });
 
   return (
-    <CollectionView
+    <Virtualizer
       {...collectionProps}
       ref={ref}
       focusedKey={state.selectionManager.focusedKey}
@@ -61,7 +61,7 @@ export function Tree<T extends object>(props: CollectionBase<T> & Expandable & M
           <TreeItem item={item} state={state} />
         );
       }}
-    </CollectionView>
+    </Virtualizer>
   );
 }
 
@@ -80,7 +80,7 @@ function TreeItem<T>(props: TreeItemProps<T>) {
 
   let isExpanded = state.expandedKeys.has(key);
   let isSelected = state.selectionManager.isSelected(key);
-  
+
   let itemClassName = classNames(styles, 'spectrum-TreeView-item', {
     'is-open': isExpanded
   });
@@ -93,17 +93,17 @@ function TreeItem<T>(props: TreeItemProps<T>) {
   let ref = useRef<HTMLDivElement>();
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: item.key,
-    itemRef: ref
+    key: item.key,
+    ref
   });
 
   let {pressProps} = usePress(itemProps);
-  
+
   return (
     <div className={itemClassName} role="presentation">
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-        <div 
-          {...mergeProps(pressProps, filterDOMProps(itemProps))}
+        <div
+          {...pressProps}
           ref={ref}
           className={linkClassName}>
           {hasChildNodes &&

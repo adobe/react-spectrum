@@ -10,43 +10,72 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/button';
-import {cssModuleToSlots, SlotProvider} from '@react-spectrum/utils';
-import {Divider} from '@react-spectrum/divider';
-import {Flex, Grid} from '@react-spectrum/layout';
-import {Footer, View} from '@react-spectrum/view';
-import {GridProps} from '@react-types/layout';
-import {Heading} from '@react-spectrum/typography';
-import {Image} from '@react-spectrum/image';
-import More from '@spectrum-icons/workflow/More';
+import {Grid, repeat} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import styles from './styles.css';
+import {View} from '@react-spectrum/view';
 
-// TODO: make some stories, live a little
-storiesOf('Layout', module)
-  .add(
-    'Grid: card',
-    () => render({
-      children: null
-    })
-  );
-
-function render(props: GridProps) {
-  return (
-    <Grid {...props} UNSAFE_className={styles['spectrum-Card']}>
-      <SlotProvider slots={cssModuleToSlots(styles)}>
-        <Image slot="preview" objectFit="cover" src="https://scontent-sjc3-1.cdninstagram.com/vp/061c1b0fa69e3f36c24710f8d5603655/5E500437/t51.2885-15/sh0.08/e35/s640x640/72625830_117633199385660_495143751973844448_n.jpg?_nc_ht=scontent-sjc3-1.cdninstagram.com&_nc_cat=108" alt="" />
-        <Image slot="avatar" src="https://a5.behance.net/a9758425f0eaa6f4064d20ba73dfb7946a48f067/img/profile/no-image-138.png?cb=264615658" alt="" />
-        <View slot="title">
-          <Flex justifyContent="space-between" alignItems="center">
-            <Heading>Thor Odinson</Heading>
-            <ActionButton isQuiet><More /></ActionButton>
-          </Flex>
-        </View>
-        <Divider size="S" />
-        <Footer>Got lost in the Lost Coast, trying to find home up there. Heimdall, if you see this post, send the Bifrost!</Footer>
-      </SlotProvider>
-    </Grid>
-  );
+let baseColors = ['celery', 'chartreuse', 'yellow', 'magenta', 'fuchsia', 'purple', 'indigo', 'seafoam', 'red', 'orange', 'green', 'blue'];
+let colors = [];
+for (let color of baseColors) {
+  for (let i = 4; i <= 7; i++) {
+    colors.push(`${color}-${i}00`);
+  }
 }
+
+storiesOf('Grid', module)
+  .add(
+    'Explicit grid',
+    () => (
+      <Grid
+        areas={[
+          'header  header',
+          'sidebar content',
+          'footer  footer'
+        ]}
+        columns={['size-3000', 'auto']}
+        rows={['size-1000', 'auto', 'size-1000']}
+        height="size-6000"
+        width="80%"
+        gap="size-100">
+        <View backgroundColor="celery-600" gridArea="header" padding="size-100">Header</View>
+        <View backgroundColor="blue-600" gridArea="sidebar" padding="size-100">Sidebar</View>
+        <View backgroundColor="purple-600" gridArea="content" padding="size-100">Content</View>
+        <View backgroundColor="magenta-600" gridArea="footer" padding="size-100">Footer</View>
+      </Grid>
+    )
+  )
+  .add(
+    'Implicit grid',
+    () => (
+      <Grid
+        columns={repeat('auto-fit', 'size-800')}
+        autoRows="size-800"
+        justifyContent="center"
+        width="80%"
+        gap="size-100">
+        {colors.map(color =>
+          <View key={color} backgroundColor={color} />
+        )}
+      </Grid>
+    )
+  );
+
+// function render(props: GridProps) {
+//   return (
+//     <Grid {...props} UNSAFE_className={styles['spectrum-Card']}>
+//       <SlotProvider slots={cssModuleToSlots(styles)}>
+//         <Image slot="preview" objectFit="cover" src="https://scontent-sjc3-1.cdninstagram.com/vp/061c1b0fa69e3f36c24710f8d5603655/5E500437/t51.2885-15/sh0.08/e35/s640x640/72625830_117633199385660_495143751973844448_n.jpg?_nc_ht=scontent-sjc3-1.cdninstagram.com&_nc_cat=108" alt="" />
+//         <Image slot="avatar" src="https://a5.behance.net/a9758425f0eaa6f4064d20ba73dfb7946a48f067/img/profile/no-image-138.png?cb=264615658" alt="" />
+//         <View slot="title">
+//           <Flex justifyContent="space-between" alignItems="center">
+//             <Heading>Thor Odinson</Heading>
+//             <ActionButton isQuiet><More /></ActionButton>
+//           </Flex>
+//         </View>
+//         <Divider size="S" />
+//         <Footer>Got lost in the Lost Coast, trying to find home up there. Heimdall, if you see this post, send the Bifrost!</Footer>
+//       </SlotProvider>
+//     </Grid>
+//   );
+// }

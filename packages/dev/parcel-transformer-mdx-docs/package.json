@@ -7,12 +7,14 @@
     "parcel": ">= 2.0.0-alpha.3.2"
   },
   "dependencies": {
-    "@atom-languages/language-typescript": "git+ssh://git@github.com:atom/language-typescript.git#v0.6.2",
-    "@atom-languages/language-css": "git+ssh://git@github.com:atom/language-css.git#v0.44.4",
+    "@atom-languages/language-typescript": "atom/language-typescript#v0.6.2",
+    "@atom-languages/language-css": "atom/language-css#v0.44.4",
     "@mdx-js/mdx": "^1.5.5",
     "@mdx-js/react": "^1.5.5",
     "@parcel/plugin": "nightly",
+    "js-yaml": "^3.13.1",
     "mdast-util-toc": "^5.0.1",
+    "prettier": "^2.0.5",
     "remark-frontmatter": "^2.0.0",
     "remark-slug": "5.1.2",
     "remark-toc": "^7.0.0",

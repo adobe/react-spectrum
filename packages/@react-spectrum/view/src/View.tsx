@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {ClearSlots, useDOMRef, useSlotProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps, useDOMRef, useSlotProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';
 import {ViewProps} from '@react-types/view';
 
@@ -30,11 +31,16 @@ function View(props: ViewProps, ref: DOMRef) {
       {...filterDOMProps(otherProps)}
       {...styleProps}
       ref={domRef}>
-      {children}
+      <ClearSlots>
+        {children}
+      </ClearSlots>
     </ElementType>
   );
 }
 
+/**
+ * View is a general purpose container with no specific semantics that can be used for custom styling purposes.
+ * It supports Spectrum style props to ensure consistency with other Spectrum components.
+ */
 const _View = forwardRef(View);
 export {_View as View};
-

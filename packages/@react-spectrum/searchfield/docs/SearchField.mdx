@@ -12,15 +12,17 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/searchfield';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-spectrum/searchfield/package.json';
 
 ```jsx import
-import Refresh from '@spectrum-icons/workflow/Refresh';
+import {Flex} from '@react-spectrum/layout';
 import {SearchField} from '@react-spectrum/searchfield';
+import User from '@spectrum-icons/workflow/User';
 ```
 
 ---
 category: Forms
+keywords: [search field, input]
 ---
 
 # SearchField
@@ -36,33 +38,47 @@ category: Forms
 ```tsx example
 function Example() {
   let [submittedText, setSubmittedText] = React.useState();
+
   return (
-    <div>
+    <>
       <SearchField
-      label="Search"
-      placeholder="Enter text"
-      onSubmit={text => setSubmittedText(text)} />
+        label="Search"
+        placeholder="Enter text"
+        onSubmit={setSubmittedText} />
       <p>Submitted text: {submittedText}</p>
-    </div>
+    </>
   );
 }
 ```
 
 ## Value
 
-A SearchFields's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+A SearchField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
 Alternatively, a controlled value can be provided using the `value` prop.
 
 ```tsx example
-<SearchField defaultValue="Default text" label="Uncontrolled SearchField" marginEnd="20px" />
-<SearchField value="Default text" label="Controlled SearchField" />
+function Example() {
+  let [searchValue, setSearchValue] = React.useState('puppies');
+  return (
+    <Flex gap="size-300">
+      <SearchField
+        defaultValue="puppies"
+        label="Search (uncontrolled)" />
+
+      <SearchField
+        value={searchValue}
+        onChange={setSearchValue}
+        label="Search (controlled)" />
+    </Flex>
+  );
+}
 ```
 
 Placeholder text that describes the expected value or formatting for the SearchField can be provided using the `placeholder` prop.
 Placeholder text will only appear when the SearchField is empty, and should not be used as a substitute for labeling the component with a visible label.
 
 ```tsx example
-<SearchField placeholder="abc@adobe.com" label="Email" />
+<SearchField placeholder="e.g. Sally Jones" label="Search for user" />
 ```
 
 ## Labeling
@@ -70,10 +86,12 @@ Placeholder text will only appear when the SearchField is empty, and should not 
 A visual label should be provided for the SearchField using the `label` prop. If the SearchField is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
 
 ```tsx example
-<SearchField label="Street address" marginEnd="20px" />
-<SearchField label="Street address" isRequired necessityIndicator="icon" marginEnd="20px" />
-<SearchField label="Street address" isRequired necessityIndicator="label" marginEnd="20px" />
-<SearchField label="Street address" necessityIndicator="label" />
+<Flex gap="size-300" wrap>
+  <SearchField label="Search" />
+  <SearchField label="Search" isRequired necessityIndicator="icon" />
+  <SearchField label="Search" isRequired necessityIndicator="label" />
+  <SearchField label="Search" necessityIndicator="label" />
+</Flex>
 ```
 
 ### Accessibility
@@ -82,20 +100,10 @@ If a visible label isn't specified, an `aria-label` must be provided to the Sear
 accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using
 the `id` of the labeling element instead.
 
-```tsx example
-<label id="label-1">Name</label>
-<SearchField aria-labelledby="label-1" marginStart="10px" />
-```
-
 ### Internationalization
 
 In order to internationalize a SearchField, a localized string should be passed to the `label` or `aria-label` prop.
 When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
-
-```tsx example
-<SearchField label="Street address" isRequired necessityIndicator="label" marginEnd="20px" />
-<SearchField label="Street address" necessityIndicator="label" />
-```
 
 ## Events
 
@@ -108,8 +116,8 @@ The example below uses `onChange`, `onSubmit`, and `onClear` to update two separ
 
 ```tsx example
 function Example() {
-  let [currentText, setCurrentText] = React.useState();
-  let [submittedText, setSubmittedText] = React.useState();
+  let [currentText, setCurrentText] = React.useState('');
+  let [submittedText, setSubmittedText] = React.useState('');
 
   return (
     <div>
@@ -118,12 +126,11 @@ function Example() {
         onClear={() => setCurrentText('')}
         onChange={setCurrentText}
         onSubmit={setSubmittedText}
-        label="Mirror"
-        marginEnd="20px"
+        label="Your text"
         value={currentText}
       />
-      <div>Mirrored text: {currentText}</div>
-      <div>Submitted text: {submittedText}</div>
+      <pre>Mirrored text: {currentText}</pre>
+      <pre>Submitted text: {submittedText}</pre>
     </div>
   );
 }
@@ -133,54 +140,45 @@ function Example() {
 
 <PropTable component={docs.exports.SearchField} links={docs.links} />
 
-## Visual Options
+## Visual options
 
 ### Quiet
 
 ```tsx example
-<SearchField label="Email" placeholder="Email Address" isQuiet />
+<SearchField label="Search" placeholder="Email Address" isQuiet />
 ```
 
 ### Disabled
 
 ```tsx example
-<SearchField label="Email" placeholder="Email Address" isDisabled />
+<SearchField label="Search" placeholder="Email Address" isDisabled />
 ```
 
-### Read Only
+### Read only
 
 The `isReadOnly` boolean prop makes the SearchField's text content immutable. Unlike `isDisabled` the SearchField remains focusable
 and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
 
 ```tsx example
-<SearchField label="Email" defaultValue="abc@adobe.com" isReadOnly />
+<SearchField label="Search" defaultValue="abc@adobe.com" isReadOnly />
 ```
 
-### Label Alignment
+### Label alignment and position
 
-Labels can be aligned to the "start" or the "end" of the SearchField. For left-to-right (LTR) languages, "start" refers to the left most edge
-of the SearchField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+By default, the label is positioned above the SearchField. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the SearchField and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
 
 ```tsx example
-<SearchField label="Email" labelAlign="start" marginEnd="20px" />
-<SearchField label="Email" labelAlign="end" />
+<SearchField label="Search" labelPosition="side" labelAlign="end" />
 ```
 
-### Label Position
+### Custom width
 
 ```tsx example
-<SearchField label="Email" labelPosition="top" marginEnd="20px" />
-<SearchField label="Email" labelPosition="side" />
+<SearchField label="Search" width="size-3600" />
 ```
 
-### Custom Width
-
+### Custom icon
+The icon in the SearchField can be changed to suit the theme of a search. For instance, if the SearchField was for searching users, an icon relating to that would help convey meaning. See the [Icons page](./Icon.html) for more.
 ```tsx example
-<SearchField label="Email" width="400px" />
-```
-
-### Custom Icon
-
-```tsx example
-<SearchField label="Refresh" icon={<Refresh />} />
+<SearchField label="Search for users" icon={<User />} />
 ```

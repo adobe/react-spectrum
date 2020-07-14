@@ -11,10 +11,10 @@
  */
 
 import {HTMLAttributes, Key, RefObject} from 'react';
+import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {mergeProps, useSlotId} from '@react-aria/utils';
 import {PressEvent} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
-import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface MenuItemAria {
@@ -26,12 +26,12 @@ interface MenuItemAria {
 
   /** Props for the description text element inside the menu item, if any */
   descriptionProps: HTMLAttributes<HTMLElement>,
-  
+
   /** Props for the keyboard shortcut text element inside the item, if any */
   keyboardShortcutProps: HTMLAttributes<HTMLElement>
 }
 
-interface MenuItemProps {
+interface AriaMenuItemProps {
   /** Whether the menu item is disabled. */
   isDisabled?: boolean,
 
@@ -44,13 +44,10 @@ interface MenuItemProps {
   /** The unique key for the menu item. */
   key?: Key,
 
-  /** A ref to the menu item element. */
-  ref?: RefObject<HTMLElement>,
-
   /** Handler that is called when the menu should close after selecting an item. */
   onClose?: () => void,
 
-  /** 
+  /**
    * Whether the menu should close when the menu item is selected.
    * @default true
    */
@@ -69,14 +66,13 @@ interface MenuItemProps {
  * @param props - props for the item
  * @param state - state for the menu, as returned by `useTreeState`
  */
-export function useMenuItem<T>(props: MenuItemProps, state: TreeState<T>): MenuItemAria {
+export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuItemAria {
   let {
     isSelected,
     isDisabled,
     key,
     onClose,
     closeOnSelect = true,
-    ref,
     isVirtualized,
     onAction
   } = props;
@@ -144,25 +140,26 @@ export function useMenuItem<T>(props: MenuItemProps, state: TreeState<T>): MenuI
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: key,
-    itemRef: ref,
+    key,
+    ref,
     shouldSelectOnPressUp: true
   });
 
   let {pressProps} = usePress(mergeProps({onPressStart, onPressUp, onKeyDown, isDisabled}, itemProps));
   let {hoverProps} = useHover({
     isDisabled,
-    onHover() {
-      state.selectionManager.setFocused(true);
-      state.selectionManager.setFocusedKey(key);
+    onHoverStart() {
+      if (!isFocusVisible()) {
+        state.selectionManager.setFocused(true);
+        state.selectionManager.setFocusedKey(key);
+      }
     }
   });
 
   return {
     menuItemProps: {
       ...ariaProps,
-      ...pressProps,
-      ...hoverProps
+      ...mergeProps(pressProps, hoverProps)
     },
     labelProps: {
       id: labelId

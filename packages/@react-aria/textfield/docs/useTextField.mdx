@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-aria/textfield';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/textfield/package.json';
 
 ```jsx import
 import {useTextField} from '@react-aria/textfield';
@@ -20,6 +20,7 @@ import {useTextField} from '@react-aria/textfield';
 
 ---
 category: Forms
+keywords: [textfield, textbox, input, label, aria]
 ---
 
 # useTextField
@@ -62,7 +63,7 @@ and the `aria-labelledby` attribute on the `<input>` element.
   <InterfaceType properties={docs.links[docs.exports.useTextField.return.id].properties} />
 </TypeContext.Provider>
 
-If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead 
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
 to identify the element to screen readers.
 
 ## Example
@@ -81,7 +82,7 @@ function TextField(props) {
   );
 }
 
-<TextField 
+<TextField
   label="Email"
   placeholder="abc@example.com" />
 ```

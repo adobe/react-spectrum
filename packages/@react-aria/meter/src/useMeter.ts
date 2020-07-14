@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps} from '@react-types/shared';
+import {AriaMeterProps} from '@react-types/meter';
 import {HTMLAttributes} from 'react';
-import {ProgressBarBaseProps} from '@react-types/progress';
 import {useProgressBar} from '@react-aria/progress';
 
 interface MeterAria {
@@ -22,15 +21,11 @@ interface MeterAria {
   labelProps: HTMLAttributes<HTMLElement>
 }
 
-interface MeterAriaProps extends ProgressBarBaseProps, DOMProps {
-  textValue?: string
-}
-
 /**
  * Provides the accessibility implementation for a meter component.
  * Meters represent a quantity within a known range, or a fractional value.
  */
-export function useMeter(props: MeterAriaProps): MeterAria {
+export function useMeter(props: AriaMeterProps): MeterAria {
   let {progressBarProps, labelProps} = useProgressBar(props);
 
   return {

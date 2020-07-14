@@ -10,18 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {BreadcrumbsProps} from '@react-types/breadcrumbs';
-import {DOMProps} from '@react-types/shared';
+import {AriaBreadcrumbsProps} from '@react-types/breadcrumbs';
+import {filterDOMProps} from '@react-aria/utils';
 import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useId} from '@react-aria/utils';
 import {useMessageFormatter} from '@react-aria/i18n';
 
-interface AriaBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps {}
 interface BreadcrumbsAria {
-  /** Props for the bradcrumbs navigation element.  */
-  breadcrumbsProps: HTMLAttributes<HTMLDivElement>
+  /** Props for the breadcrumbs navigation element. */
+  navProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -30,14 +28,14 @@ interface BreadcrumbsAria {
  */
 export function useBreadcrumbs<T>(props: AriaBreadcrumbsProps<T>): BreadcrumbsAria {
   let {
-    id,
-    'aria-label': ariaLabel
+    'aria-label': ariaLabel,
+    ...otherProps
   } = props;
 
   let formatMessage = useMessageFormatter(intlMessages);
   return {
-    breadcrumbsProps: {
-      id: useId(id),
+    navProps: {
+      ...filterDOMProps(otherProps, {labelable: true}),
       'aria-label': ariaLabel || formatMessage('breadcrumbs')
     }
   };
