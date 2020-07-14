@@ -19,6 +19,7 @@ import {ActionButton} from '@react-spectrum/button'
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
+import {Flex} from '@react-spectrum/layout';
 import Paste from '@spectrum-icons/workflow/Paste';
 ```
 
@@ -56,7 +57,7 @@ keywords: [menu trigger, dropdown, action menu]
 
 ## Content
 
-Menu follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. Similar to the [Picker](Picker.html), Menu accepts `<Item>` elements as children, each with a `key` prop. Basic usage of the Menu, seen in the example above, shows multiple items populated with a string. Static collections, as in this example, can be used when the full list of items is known ahead of time.
+Menu follows the [Collection Components](../react-stately/collections.html) API, accepting both static and dynamic collections. Similar to [Picker](Picker.html), Menu accepts `<Item>` elements as children, each with a `key` prop. Basic usage of Menu, seen in the example above, shows multiple items populated with a string. Static collections, as in this example, can be used when the full list of items is known ahead of time.
 
 Dynamic collections, as shown below, can be used when the items come from an external data source such as an API call, or update over time. Providing the data in this way allows for Menu to automatically cache the rendering of each item, which dramatically improves performance.
 
@@ -70,6 +71,7 @@ function Example() {
     {name: 'Paste'},
     {name: 'Replace'}
   ];
+
   return (
     <MenuTrigger>
       <ActionButton>
@@ -92,22 +94,30 @@ Menu supports sections in order to group options. Sections can be used by wrappi
 ### Static Items
 
 ```tsx example
-<MenuTrigger>
-  <ActionButton>
-    Edit
-  </ActionButton>
-  <Menu>
-    <Section title="Styles">
-      <Item key="bold">Bold</Item>
-      <Item key="underline">Underline</Item>
-    </Section>
-    <Section title="Align">
-      <Item key="left">Left</Item>
-      <Item key="middle">Middle</Item>
-      <Item key="right">Right</Item>
-    </Section>
-  </Menu>
-</MenuTrigger>
+function Example() {
+  let [selected, setSelected] = React.useState(new Set(['bold', 'left']));
+
+  return (
+    <>
+      <MenuTrigger>
+        <ActionButton>
+          Edit
+        </ActionButton>
+        <Menu selectionMode="multiple" onSelectionChange={setSelected}>
+          <Section title="Styles">
+            <Item key="bold">Bold</Item>
+            <Item key="underline">Underline</Item>
+          </Section>
+          <Section title="Align">
+            <Item key="left">Left</Item>
+            <Item key="middle">Middle</Item>
+            <Item key="right">Right</Item>
+          </Section>
+        </Menu>
+      </MenuTrigger>
+    </>
+  );
+}
 ```
 
 ### Dynamic Items
@@ -263,17 +273,17 @@ import {Keyboard, Text} from '@react-spectrum/text';
   </ActionButton>
   <Menu>
     <Item key="cut" textValue="cut">
-      <Cut />
+      <Cut size="S"/>
       <Text>Cut</Text>
       <Keyboard>⌘X</Keyboard>
     </Item>
     <Item key="copy" textValue="copy">
-      <Copy />
+      <Copy size="S"/>
       <Text>Copy</Text>
       <Keyboard>⌘C</Keyboard>
     </Item>
     <Item key="paste" textValue="paste">
-      <Paste />
+      <Paste size="S"/>
       <Text>Paste</Text>
       <Keyboard>⌘V</Keyboard>
     </Item>
@@ -287,54 +297,10 @@ import {Keyboard, Text} from '@react-spectrum/text';
 
 ## Visual Options
 
-### Autofocus (Menu)
+### Autofocus
 
 Applying `autoFocus` to the Menu of the MenuTrigger sets focus to a Menu Item
 within the Menu upon opening.
-
-This example demonstrates how to use `autoFocus` to automatically focus the
-selected Menu Item when the Menu is opened.
-
-```tsx example
-<MenuTrigger>
-  <ActionButton>
-    autoFocus
-  </ActionButton>
-  <Menu
-    selectionMode="single"
-    selectedKeys={['copy']}>
-    <Item key="cut">Cut</Item>
-    <Item key="copy">Copy</Item>
-    <Item key="paste">Paste</Item>
-  </Menu>
-</MenuTrigger>
-```
-
-These examples demonstrate how to use `autoFocus` to set whether or not the
-first Menu Item or last Menu Item is focused when the Menu is opened.
-
-```tsx example
-<MenuTrigger>
-  <ActionButton>
-      autofocus=first
-  </ActionButton>
-  <Menu autoFocus="first">
-    <Item key="cut">Cut</Item>
-    <Item key="copy">Copy</Item>
-    <Item key="paste">Paste</Item>
-  </Menu>
-</MenuTrigger>
-<MenuTrigger>
-  <ActionButton>
-    autofocus=last
-  </ActionButton>
-  <Menu autoFocus="last">
-    <Item key="cut">Cut</Item>
-    <Item key="copy">Copy</Item>
-    <Item key="paste">Paste</Item>
-  </Menu>
-</MenuTrigger>
-```
 
 ### Disabled
 
@@ -345,7 +311,7 @@ first Menu Item or last Menu Item is focused when the Menu is opened.
   </ActionButton>
   <Menu
     items={[
-      {name: 'tiff', dd: 'a1b2c3'},
+      {name: 'tiff', id: 'a1b2c3'},
       {name: 'png', id: 'g5h1j9'},
       {name: 'jpg', id: 'p8k3i4'},
       {name: 'PDF', id: 'j7i3a0'}

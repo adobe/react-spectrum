@@ -94,7 +94,7 @@ function Example() {
 
 [View guidelines](https://spectrum.adobe.com/page/popovers/#Placement)
 
-The `align` prop aligns the Menu relative to the trigger.
+The `align` prop aligns the Menu relative to the trigger and the `direction` prop controls the direction the Menu will render.
 
 ```tsx example
 import More from '@spectrum-icons/workflow/More';
@@ -173,3 +173,25 @@ By default, the Menu flips direction automatically upon opening when space is li
 
 The `isOpen` and `defaultOpen` props on the MenuTrigger control whether the Menu is open by default.
 They apply controlled and uncontrolled behavior on the Menu respectively.
+
+```tsx example
+function Example() {
+  let [open, setOpen] = React.useState(false);
+  let [selection, setSelection] = React.useState('');
+
+  return (
+    <MenuTrigger
+      isOpen={open}
+      onOpenChange={setOpen}
+      onSelectionChange={setSelection}>
+      <ActionButton>
+        View
+      </ActionButton>
+      <Menu selectionMode="multiple">
+        <Item key="side">Side bar</Item>
+        <Item key="options">Page options</Item>
+        <Item key="edit">Edit Panel</Item>
+      </Menu>
+    </MenuTrigger>
+  );
+}
