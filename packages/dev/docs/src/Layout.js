@@ -71,7 +71,7 @@ function dirToTitle(dir) {
     .join(' ');
 }
 
-function Page({children, currentPage, publicUrl, styles, scripts}) {
+function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
   let isSubpage = currentPage.name.split('/').length > 1 && !/index\.html$/.test(currentPage.name);
   let pageSection = isSubpage ? dirToTitle(currentPage.name) : 'React Spectrum';
   let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
@@ -150,6 +150,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <meta property="og:image" content={`https://${TLD}${heroImage}`} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
+        <meta data-github-src={pathToPage} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{__html: JSON.stringify(
@@ -285,7 +286,7 @@ function Nav({currentPageName, pages}) {
       </li>
     );
   }
-
+  // let pathToPage = currentPageName.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
   return (
     <nav className={docStyles.nav}>
       <header>
@@ -340,14 +341,16 @@ function Footer() {
 }
 
 export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
+  let pathToPage = currentPage.filePath.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
 
   return (
-    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage}>
+    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage} pathToPage={pathToPage}>
       <div style={{isolation: 'isolate'}}>
         <header className={docStyles.pageHeader} />
         <Nav currentPageName={currentPage.name} pages={pages} />
         <main>
           <article className={classNames(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>
+            <div id="edit-page" className={docStyles.editPageContainer} />
             <MDXProvider components={mdxComponents}>
               <ImageContext.Provider value={publicUrl}>
                 <LinkProvider>{children}</LinkProvider>

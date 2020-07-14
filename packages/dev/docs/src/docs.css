@@ -115,7 +115,10 @@ html, body {
     vertical-align: text-bottom;
   }
 }
-
+.editPageContainer {
+  display: flex;
+  justify-content: flex-end;
+}
 .highlights {
   display: flex;
   flex-wrap: wrap;
