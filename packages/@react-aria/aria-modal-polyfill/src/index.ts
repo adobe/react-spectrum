@@ -13,14 +13,17 @@
 import {hideOthers} from 'aria-hidden';
 
 /**
- * Listen for additions to the child list of body. This is where providers render modal portals.
- * When one is added, see if there is a modal inside it, if there is, then hide everything else from screen readers.
- * If there was already a modal open and a new one was added, undo everything that the previous modal had hidden and hide based on the new one.
- *
- * If a modal container is removed, then undo the hiding based on the last hide others. Check if there are any other modals still around, and
- * hide based on the last one added.
+ * Acts as a polyfill for `aria-modal` by watching for added modals and hiding any surrounding DOM elements with `aria-hidden`.
  */
-export function watchModals(selector = 'body') {
+export function watchModals(selector:string = 'body'): void {
+  /**
+   * Listen for additions to the child list of body. This is where providers render modal portals.
+   * When one is added, see if there is a modal inside it, if there is, then hide everything else from screen readers.
+   * If there was already a modal open and a new one was added, undo everything that the previous modal had hidden and hide based on the new one.
+   *
+   * If a modal container is removed, then undo the hiding based on the last hide others. Check if there are any other modals still around, and
+   * hide based on the last one added.
+   */
   let target = document.querySelector(selector);
   let config = {childList: true};
   let modalContainers = [];
