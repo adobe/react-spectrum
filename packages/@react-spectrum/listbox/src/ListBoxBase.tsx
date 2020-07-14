@@ -64,7 +64,7 @@ export function useListBoxLayout<T>(state: ListState<T>) {
 
 /** @private */
 function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
-  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, shouldUseVirtualFocus, domProps = {}, transitionDuration} = props;
+  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, shouldUseVirtualFocus, domProps = {}, transitionDuration = 0} = props;
   // @ts-ignore
   let {listBoxProps} = useListBox({
     ...props,
@@ -122,8 +122,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
         renderWrapper={renderWrapper}
         transitionDuration={transitionDuration}
         isLoading={props.isLoading}
-        onLoadMore={props.onLoadMore}
-        transitionDuration={0}>
+        onLoadMore={props.onLoadMore}>
         {(type, item: Node<T>) => {
           if (type === 'item') {
             return (

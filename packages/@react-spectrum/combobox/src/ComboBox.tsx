@@ -100,7 +100,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
 
   let listbox = (
     <FocusScope>
-      <DismissButton onDismiss={() => state.setOpen(false)} />
+      <DismissButton onDismiss={() => state.close()} />
       <ListBoxBase
         ref={listboxRef}
         domProps={listBoxProps}
@@ -113,7 +113,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         width={isMobile ? '100%' : undefined}
         shouldUseVirtualFocus
         transitionDuration={0} />
-      <DismissButton onDismiss={() => state.setOpen(false)} />
+      <DismissButton onDismiss={() => state.close()} />
     </FocusScope>
   );
 

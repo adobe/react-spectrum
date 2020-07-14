@@ -126,7 +126,7 @@ describe('useComboBoxState tests', function () {
     beforeEach(() => {
       onSelectionChange = jest.fn();
       let collator = {compare: jest.fn().mockReturnValue(true)};
-      defaultProps = {items: [{uniqueKey: '0', name: 'one'}, {uniqueKey: '1', name: 'onomatopoeia'}], children: (props) => <Item {...props}>{props.name}</Item>, onSelectionChange, collator};
+      defaultProps = {items: [{key: '0', name: 'one'}, {key: '1', name: 'onomatopoeia'}], children: (props) => <Item {...props}>{props.name}</Item>, onSelectionChange, collator};
     });
 
     it('support selectedKey', function () {

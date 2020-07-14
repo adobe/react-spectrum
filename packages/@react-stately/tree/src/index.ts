@@ -11,3 +11,4 @@
  */
 
 export * from './useTreeState';
+export * from './TreeCollection';

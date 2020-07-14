@@ -18,7 +18,7 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 
 let items = [
   {name: 'Aardvark', id: '1'},
@@ -43,7 +43,7 @@ storiesOf('ComboBox', module)
   .add(
     'no items',
     () => (
-      <ComboBox items={[]} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+      <ComboBox items={[]} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
         {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
     )
@@ -56,7 +56,7 @@ storiesOf('ComboBox', module)
   .add(
     'dynamic items',
     () => (
-      <ComboBox items={items} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+      <ComboBox items={items} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
         {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
     )
@@ -65,10 +65,10 @@ storiesOf('ComboBox', module)
   .add(
     'with sections',
     () => (
-      <ComboBox items={withSection} itemKey="name" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+      <ComboBox items={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
         {(item: any) => (
-          <Section items={item.children} title={item.name}>
-            {(item: any) => <Item>{item.name}</Item>}
+          <Section key={item.name} items={item.children} title={item.name}>
+            {(item: any) => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ComboBox>
@@ -80,12 +80,12 @@ storiesOf('ComboBox', module)
       <div style={{width: '192px'}}>
         <label id="test-label" htmlFor="test-id">Combobox</label>
         <ComboBox id="test-id" aria-labelledby="test-label" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
-          <Item uniqueKey="one">Item One</Item>
-          <Item uniqueKey="two" textValue="Item Two">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
             <Copy size="S" />
             <Text>Item Two</Text>
           </Item>
-          <Item uniqueKey="three">Item Three</Item>
+          <Item key="three">Item Three</Item>
         </ComboBox>
       </div>
     )
@@ -104,12 +104,12 @@ storiesOf('ComboBox', module)
       <div>
         <div>Note: Combobox needs focus to show dropdown.</div>
         <ComboBox label="Combobox" isOpen onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
-          <Item uniqueKey="one">Item One</Item>
-          <Item uniqueKey="two" textValue="Item Two">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
             <Copy size="S" />
             <Text>Item Two</Text>
           </Item>
-          <Item uniqueKey="three">Item Three</Item>
+          <Item key="three">Item Three</Item>
         </ComboBox>
       </div>
     )
@@ -120,12 +120,12 @@ storiesOf('ComboBox', module)
       <div>
         <div>Note: Combobox needs focus to show dropdown.</div>
         <ComboBox label="Combobox" defaultOpen onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
-          <Item uniqueKey="one">Item One</Item>
-          <Item uniqueKey="two" textValue="Item Two">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
             <Copy size="S" />
             <Text>Item Two</Text>
           </Item>
-          <Item uniqueKey="three">Item Three</Item>
+          <Item key="three">Item Three</Item>
         </ComboBox>
       </div>
     )
@@ -226,22 +226,22 @@ storiesOf('ComboBox', module)
   .add(
     'customWidth',
     () => (
-      <Flex flexDirection="column">
+      <Flex direction="column">
         <ComboBox label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} width="200px">
-          <Item uniqueKey="one">Item One</Item>
-          <Item uniqueKey="two" textValue="Item Two">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
             <Copy size="S" />
             <Text>Item Two</Text>
           </Item>
-          <Item uniqueKey="three">Item Three</Item>
+          <Item key="three">Item Three</Item>
         </ComboBox>
         <ComboBox label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} width="800px">
-          <Item uniqueKey="one">Item One</Item>
-          <Item uniqueKey="two" textValue="Item Two">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
             <Copy size="S" />
             <Text>Item Two</Text>
           </Item>
-          <Item uniqueKey="three">Item Three</Item>
+          <Item key="three">Item Three</Item>
         </ComboBox>
       </Flex>
     )
@@ -272,7 +272,7 @@ let CustomFilterComboBox = (props) => {
   };
 
   return (
-    <ComboBox items={list} itemKey="id" selectedKey={selectedKey} label="Combobox" onSelectionChange={onSelectionChange} onFilter={onFilter} onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+    <ComboBox items={list} selectedKey={selectedKey} label="Combobox" onSelectionChange={onSelectionChange} onFilter={onFilter} onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
       {(item: any) => <Item>{item.name}</Item>}
     </ComboBox>
   );
@@ -302,7 +302,7 @@ let AllControlledComboBox = (props) => {
           <Text>Set selected key: 6 (Ross)</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox {...props} selectedKey={selectedKey} inputValue={inputValue} items={withSection} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+      <ComboBox {...props} selectedKey={selectedKey} inputValue={inputValue} items={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -334,7 +334,7 @@ let ControlledKeyComboBox = (props) => {
           <Text>Clear key</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox {...props} selectedKey={selectedKey} items={withSection} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+      <ComboBox {...props} selectedKey={selectedKey} items={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -366,7 +366,7 @@ let ControlledValueComboBox = (props) => {
           <Text>Clear field</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox {...props} inputValue={value} items={withSection} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onValueChange} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+      <ComboBox {...props} inputValue={value} items={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onValueChange} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -393,7 +393,7 @@ let CustomValueComboBox = (props) => {
     <div>
       <div>Last custom value: {customValue}</div>
       <div>Selected Key: {selectedKey}</div>
-      <ComboBox {...props} selectedKey={selectedKey} items={withSection} itemKey="id" label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={onCustomValue} marginTop="40px">
+      <ComboBox {...props} selectedKey={selectedKey} items={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={onCustomValue} marginTop="40px">
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}
@@ -407,12 +407,12 @@ let CustomValueComboBox = (props) => {
 function render(props = {}) {
   return (
     <ComboBox label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')} {...props}>
-      <Item uniqueKey="one">Item One</Item>
-      <Item uniqueKey="two" textValue="Item Two">
+      <Item key="one">Item One</Item>
+      <Item key="two" textValue="Item Two">
         <Copy size="S" />
         <Text>Item Two</Text>
       </Item>
-      <Item uniqueKey="three">Item Three</Item>
+      <Item key="three">Item Three</Item>
     </ComboBox>
   );
 }

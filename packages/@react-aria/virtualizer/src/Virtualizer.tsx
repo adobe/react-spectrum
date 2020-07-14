@@ -33,7 +33,6 @@ interface VirtualizerProps<T extends object, V> extends HTMLAttributes<HTMLEleme
   transitionDuration?: number,
   isLoading?: boolean,
   onLoadMore?: () => void,
-  transitionDuration?: number
 }
 
 function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: RefObject<HTMLDivElement>) {
@@ -49,7 +48,6 @@ function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: Re
     onLoadMore,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     focusedKey,
-    transitionDuration,
     ...otherProps
   } = props;
 

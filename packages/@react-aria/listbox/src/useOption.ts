@@ -15,7 +15,7 @@ import {HTMLAttributes, RefObject} from 'react';
 import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {ListState} from '@react-stately/list';
 import {mergeProps, useSlotId} from '@react-aria/utils';
-import {Node} from '@react-stately/collections';
+import {Node} from '@react-types/shared';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface OptionAria {

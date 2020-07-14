@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBuilder, Item, ListLayout, TreeCollection} from '@react-stately/collections';
+import {CollectionBuilder, Item, TreeCollection} from '@react-stately/collections';
+import {ListLayout} from '@react-stately/layout';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useComboBox} from '../';
@@ -29,8 +30,8 @@ describe('useComboBox', function () {
   mockLayout.collection = collection;
   let state = {
     selectionManager: {
-      setFocusedKey 
-    }, 
+      setFocusedKey
+    },
     collection
   };
 

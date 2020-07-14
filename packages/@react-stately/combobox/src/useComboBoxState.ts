@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBuilder, Node, TreeCollection} from '@react-stately/collections';
+import {CollectionBuilder} from '@react-stately/collections';
 import {ComboBoxProps} from '@react-types/combobox';
 import {Key, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {Node} from '@react-types/shared';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {SelectState} from '@react-stately/select';
+import {TreeCollection} from '@react-stately/tree';
 import {useControlledState} from '@react-stately/utils';
 import {useMenuTriggerState} from '@react-stately/menu';
 
@@ -24,7 +26,9 @@ export interface ComboBoxState<T> extends SelectState<T> {
 }
 
 interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
-  collator: Intl.Collator
+  collator: Intl.Collator,
+  // TODO: figure out if we still need this itemKey and if not remove. if so, add here?
+  itemKey?: any
 }
 
 function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean): Iterable<Node<T>> {
@@ -49,7 +53,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let {
     onFilter,
     collator,
-    itemKey,
     onSelectionChange
   } = props;
 
@@ -71,10 +74,10 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     return key;
   };
 
-  let builder = useMemo(() => new CollectionBuilder<T>(itemKey), [itemKey]);
+  let builder = useMemo(() => new CollectionBuilder<T>(), []);
   let collection = useMemo(() => {
     let nodes = builder.build(props);
-    return new TreeCollection(nodes, new Set());
+    return new TreeCollection(nodes, {expandedKeys: new Set()});
   }, [builder, props]);
 
   if (props.selectedKey && props.inputValue) {
@@ -173,7 +176,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       ...props,
       selectedKeys,
       disallowEmptySelection: true,
-      onSelectionChange: (keys) => setSelectedKey(keys.values().next().value),
+      onSelectionChange: (keys: Set<Key>) => setSelectedKey(keys.values().next().value),
       selectionMode: 'single'
     }
   );
@@ -214,7 +217,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     if (itemsControlled || inputValue === '') {
       return collection;
     }
-    return new TreeCollection(filter(collection, defaultFilterFn), new Set());
+    return new TreeCollection(filter(collection, defaultFilterFn), {expandedKeys: new Set()});
   }, [collection, inputValue, itemsControlled, defaultFilterFn]);
 
   let selectionManager = new SelectionManager(filteredCollection, selectionState);

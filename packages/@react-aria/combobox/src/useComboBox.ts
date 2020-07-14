@@ -15,7 +15,7 @@ import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, HTMLAttributes, RefObject, useEffect, useRef} from 'react';
 import {getItemId, listIds} from '@react-aria/listbox';
-import {ListLayout} from '@react-stately/collections';
+import {ListLayout} from '@react-stately/layout';
 import {PressProps} from '@react-aria/interactions';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useSelectableCollection} from '@react-aria/selection';
@@ -51,10 +51,10 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
     {
-      ref: triggerRef,
       type: 'listbox'
     },
-    state
+    state,
+    triggerRef
   );
 
   let onChange = (val) => {
