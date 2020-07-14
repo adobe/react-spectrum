@@ -12,14 +12,14 @@
 
 import {ActionButton, Button} from '@react-spectrum/button';
 import docsStyle from './docs.css';
+import LinkOut from '@spectrum-icons/workflow/LinkOut';
 import {listen} from 'quicklink';
 import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
-import {watchModals} from '@react-aria/aria-modal-polyfill';
 import {Text} from '@react-spectrum/text';
-import LinkOut from '@spectrum-icons/workflow/LinkOut';
+import {watchModals} from '@react-aria/aria-modal-polyfill';
 
 window.addEventListener('load', () => listen());
 window.addEventListener('load', () => watchModals());
