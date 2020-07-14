@@ -73,7 +73,7 @@ export interface SpectrumProgressCircleProps extends AriaProgressCircleProps, St
 
 export interface SpectrumProgressBarBaseProps extends AriaProgressBarBaseProps, StyleProps {
   /**
-   * How thick the ProgressBar should be.
+   * How thick the bar should be.
    * @default 'L'
    */
   size?: 'S' | 'L',
