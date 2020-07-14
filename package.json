@@ -35,6 +35,7 @@
   "devDependencies": {
     "@actions/core": "^1.1.0",
     "@actions/github": "^1.1.0",
+    "@adobe/spectrum-css-workflow-icons": "^1.0.0",
     "@babel/cli": "^7.0.0",
     "@babel/core": "^7.0.0",
     "@babel/node": "^7.4.5",
