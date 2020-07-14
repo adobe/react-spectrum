@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBuilder, Item, TreeCollection} from '@react-stately/collections';
+import {CollectionBuilder, Item} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
+import {TreeCollection} from '@react-stately/tree';
 import {useComboBox} from '../';
 
 describe('useComboBox', function () {
@@ -23,7 +24,7 @@ describe('useComboBox', function () {
   let defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>};
   let builder = new CollectionBuilder('id');
   let nodes = builder.build(defaultProps);
-  let collection = new TreeCollection(nodes, new Set());
+  let collection = new TreeCollection(nodes, {expandedKeys: new Set()});
   let mockLayout = new ListLayout({
     rowHeight: 40
   });
@@ -62,7 +63,7 @@ describe('useComboBox', function () {
     expect(listBoxProps.id).toBeTruthy();
     expect(listBoxProps['aria-labelledby']).toBe(triggerProps.id);
     expect(triggerProps.id).toBeTruthy();
-    expect(triggerProps.tabIndex).toBe(-1);
+    expect(triggerProps.excludeFromTabOrder).toBeTruthy();
     expect(triggerProps['aria-haspopup']).toBeTruthy();
     expect(triggerProps['aria-expanded']).toBeFalsy();
     expect(triggerProps['aria-controls']).toBeFalsy();

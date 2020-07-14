@@ -236,7 +236,7 @@ describe('ComboBox', function () {
         expect(() => getByRole('listbox')).toThrow();
         expect(onOpenChange).toBeCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(false);
-        expect(button).not.toHaveAttribute('aria-expanded');
+        expect(button).toHaveAttribute('aria-expanded', 'false');
         expect(button).not.toHaveAttribute('aria-controls');
         expect(combobox).not.toHaveAttribute('aria-controls');
       });
@@ -406,7 +406,7 @@ describe('ComboBox', function () {
         });
         act(() => jest.runAllTimers());
         expect(() => getByRole('listbox')).toThrow();
-        expect(button).not.toHaveAttribute('aria-expanded');
+        expect(button).toHaveAttribute('aria-expanded', 'false');
         expect(button).not.toHaveAttribute('aria-controls');
         expect(combobox).not.toHaveAttribute('aria-controls');
       });

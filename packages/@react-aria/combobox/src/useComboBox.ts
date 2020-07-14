@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps} from '@react-types/button';
 import {chain} from '@react-aria/utils';
 import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, HTMLAttributes, RefObject, useEffect, useRef} from 'react';
 import {getItemId, listIds} from '@react-aria/listbox';
 import {ListLayout} from '@react-stately/layout';
-import {PressProps} from '@react-aria/interactions';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
@@ -31,7 +31,7 @@ interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
 }
 
 interface ComboBoxAria {
-  triggerProps: HTMLAttributes<HTMLElement> & PressProps,
+  triggerProps: AriaButtonProps,
   inputProps: HTMLAttributes<HTMLElement>,
   listBoxProps: HTMLAttributes<HTMLElement>,
   labelProps: HTMLAttributes<HTMLElement>
@@ -159,7 +159,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let {labelProps, inputProps} = useTextField({
     ...props,
     onChange,
-    onKeyDown: chain(state.isOpen && collectionProps.onKeyDown, onKeyDown),
+    onKeyDown: chain(state.isOpen && collectionProps.onKeyDownCapture, onKeyDown),
     onBlur,
     value: state.inputValue,
     onFocus
@@ -203,7 +203,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     labelProps,
     triggerProps: {
       ...menuTriggerProps,
-      tabIndex: -1,
+      excludeFromTabOrder: true,
       onPress,
       onPressStart
     },

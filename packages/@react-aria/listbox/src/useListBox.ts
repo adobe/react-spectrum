@@ -40,11 +40,7 @@ interface AriaListBoxOptions<T> extends AriaListBoxProps<T> {
   /**
    * An optional visual label for the listbox.
    */
-  label?: ReactNode,
-
-  // TODO double check if this is needed still or if it is already covered in arialistboxprops
-  /** ID of the listbox. */
-  id?: string
+  label?: ReactNode
 }
 
 /**
@@ -63,12 +59,12 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
     disabledKeys: state.disabledKeys
   });
 
-  // TODO: double check if this id needs to be set to the listBoxProps
   let id = useId(props.id);
   listIds.set(state, id);
 
   let {labelProps, fieldProps} = useLabel({
     ...props,
+    id,
     // listbox is not an HTML input element so it
     // shouldn't be labeled by a <label> element.
     labelElementType: 'span'
