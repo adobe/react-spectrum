@@ -14,6 +14,10 @@ import docs from 'docs:@react-aria/label';
 import {FunctionAPI, HeaderInfo} from '@react-spectrum/docs';
 import packageData from '@react-aria/label/package.json';
 
+```tsx import
+import {useLabel} from '@react-aria/label';
+```
+
 ---
 category: Utilities
 keywords: [label, form, aria]
@@ -36,11 +40,10 @@ keywords: [label, form, aria]
 The `useLabel` hook associates a label with a field. It automatically handles
 creating an id for the field and associates the label with it.
 
-```tsx
-import {useLabel} from '@react-aria/label';
-
+```tsx example
 function ColorField(props) {
   let {labelProps, fieldProps} = useLabel(props);
+
   return (
     <>
       <label {...labelProps}>{props.label}</label>
