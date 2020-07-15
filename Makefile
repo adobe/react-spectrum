@@ -22,7 +22,7 @@ run_chromatic:
 
 clean:
 	yarn clean:icons
-	rm -rf dist storybook-static storybook-static-v3 public src/dist
+	rm -rf dist public src/dist
 
 clean_all:
 	$(MAKE) clean
