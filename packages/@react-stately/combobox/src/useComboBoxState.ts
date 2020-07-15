@@ -152,16 +152,20 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   }, [props.selectedKey, setSelectedKey]);
 
   // If props.inputValue changes, call onSelectionChange (it doesn't get called since onInputChange doesn't trigger on prop.inputValue changes)
+  let lastInputValueProp = useRef(props.inputValue);
   useEffect(() => {
     let newSelectedKey = computeKeyFromValue(props.inputValue, collection);
-    // Only call onSelection if key changes (lastSelectedKey is also updated when user types so this stops duplicated onSelectionChange calls)
-    if (newSelectedKey !== lastSelectedKey.current) {
-      if (onSelectionChange) {
-        onSelectionChange(newSelectedKey);
+    if (lastInputValueProp.current !== props.inputValue) {
+      // Only call onSelection if key changes (lastSelectedKey is also updated when user types so this stops duplicated onSelectionChange calls)
+      if (newSelectedKey !== lastSelectedKey.current) {
+        if (onSelectionChange) {
+          onSelectionChange(newSelectedKey);
+        }
       }
     }
 
     lastSelectedKey.current = selectedKey;
+    lastInputValueProp.current = props.inputValue;
   }, [props.inputValue, collection, selectedKey, onSelectionChange]);
 
   let selectionState = useMultipleSelectionState(
