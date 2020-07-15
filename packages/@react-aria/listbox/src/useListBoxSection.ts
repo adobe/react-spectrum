@@ -34,7 +34,7 @@ interface ListBoxSectionAria {
 /**
  * Provides the behavior and accessibility implementation for a section in a listbox.
  * See `useListBox` for more details about listboxes.
- * @param props - props for the section
+ * @param props - Props for the section.
  */
 export function useListBoxSection(props: AriaListBoxSectionProps): ListBoxSectionAria {
   let {heading, 'aria-label': ariaLabel} = props;

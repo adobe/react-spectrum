@@ -25,7 +25,13 @@ const labelablePropNames = new Set([
 ]);
 
 interface Options {
+  /**
+   * If labelling associated aria properties should be included in the filter.
+   */
   labelable?: boolean,
+  /**
+   * A Set of other property names that should be included in the filter.
+   */
   propNames?: Set<string>
 }
 

@@ -17,14 +17,14 @@ import {Virtualizer} from './Virtualizer';
 let KEY = 0;
 
 /**
- * {@link CollectionView} creates instances of the {@link ReusableView} class to
+ * [CollectionView]{@link CollectionView} creates instances of the [ReusableView]{@link ReusableView} class to
  * represent views currently being displayed. ReusableViews manage a DOM node, handle
  * applying {@link LayoutInfo} objects to the view, and render content
  * as needed. Subclasses must implement the {@link render} method at a
- * minimum. Other methods can be overrided to customize behavior.
+ * minimum. Other methods can be overridden to customize behavior.
  */
 export class ReusableView<T extends object, V> {
-  /** The CollectionVirtualizer this view is a part of */
+  /** The CollectionVirtualizer this view is a part of. */
   virtualizer: Virtualizer<T, V, unknown>;
 
   /** The LayoutInfo this view is currently representing. */

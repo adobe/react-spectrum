@@ -19,7 +19,7 @@ import {
 // Event bubbling can be problematic in real-world applications, so the default for React Spectrum components
 // is not to propagate. This can be overridden by calling continuePropagation() on the event.
 export type BaseEvent<T extends SyntheticEvent> = T & {
-  /** @deprecated use continuePropagation */
+  /** @deprecated Use continuePropagation. */
   stopPropagation(): void,
   continuePropagation(): void
 }

@@ -42,10 +42,10 @@ export enum DropPosition {
 }
 
 export interface DragTarget {
-  /** The type of view being dragged */
+  /** The type of view being dragged. */
   type: string,
 
-  /** The key of the view being dragged */
+  /** The key of the view being dragged. */
   key: Key
 }
 
