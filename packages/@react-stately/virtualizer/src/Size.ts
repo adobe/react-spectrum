@@ -18,19 +18,19 @@ export class Size {
     this.width = width;
     this.height = height;
   }
-  
+
   /**
-   * Returns a copy of this size
+   * Returns a copy of this size.
    */
   copy(): Size {
     return new Size(this.width, this.height);
   }
-  
+
   /**
-   * Returns whether this size is equal to another one
+   * Returns whether this size is equal to another one.
    */
   equals(other: Size): boolean {
-    return this.width === other.width 
+    return this.width === other.width
         && this.height === other.height;
   }
 }

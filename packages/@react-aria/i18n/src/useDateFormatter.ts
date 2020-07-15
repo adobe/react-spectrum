@@ -17,7 +17,7 @@ let formatterCache = new Map<string, Intl.DateTimeFormat>();
 /**
  * Provides localized date formatting for the current locale. Automatically updates when the locale changes,
  * and handles caching of the date formatter for performance.
- * @param options - formatting options
+ * @param options - Formatting options.
  */
 export function useDateFormatter(options?: Intl.DateTimeFormatOptions): Intl.DateTimeFormat {
   let {locale} = useLocale();

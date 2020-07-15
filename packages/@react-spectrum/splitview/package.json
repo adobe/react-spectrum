@@ -35,9 +35,9 @@
     "@adobe/focus-ring-polyfill": "^0.x",
     "@babel/runtime": "^7.6.2",
     "@react-aria/splitview": "^3.0.0-alpha.1",
-    "@react-spectrum/utils": "^3.0.0",
+    "@react-spectrum/utils": "^3.0.2",
     "@react-stately/splitview": "^3.0.0-alpha.1",
-    "@react-types/shared": "^3.0.0"
+    "@react-types/shared": "^3.0.2"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"

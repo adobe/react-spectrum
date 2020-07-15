@@ -15,7 +15,7 @@ import {Rect} from './Rect';
 
 /**
  * Instances of this lightweight class are created by {@link Layout} subclasses
- * to represent each view in the {@link CollectionView}. LayoutInfo objects describe 
+ * to represent each view in the {@link CollectionView}. LayoutInfo objects describe
  * various properties of a view, such as its position and size, and style information.
  * The collection view uses this information when creating actual views to display.
  */
@@ -67,7 +67,7 @@ export class LayoutInfo {
   zIndex: number;
 
   /**
-   * @param type A string representing the view type. Should be `'item'` for item views. 
+   * @param type A string representing the view type. Should be `'item'` for item views.
                             Other types are used by supplementary views.
    * @param key The unique key for this view.
    * @param rect The rectangle describing the size and position of this view.
@@ -83,7 +83,7 @@ export class LayoutInfo {
     this.transform = null;
     this.zIndex = 0;
   }
-  
+
   /**
    * Returns a copy of the LayoutInfo.
    */

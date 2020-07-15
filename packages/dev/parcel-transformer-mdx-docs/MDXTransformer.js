@@ -122,6 +122,8 @@ module.exports = new Transformer({
     let category = '';
     let keywords = [];
     let description = '';
+    let date = '';
+    let image = '';
     const extractToc = (options) => {
       const settings = options || {};
       const depth = settings.maxDepth || 6;
@@ -136,9 +138,9 @@ module.exports = new Transformer({
         }).map;
 
         /**
-         * go from complex structure that the mdx plugin renders from to a simpler one
-         * it starts as an array because we start with the h2's not h1
-         * [{id, textContent, children: [{id, textContent, children: ...}, ...]}, ...]
+         * Go from complex structure that the mdx plugin renders from to a simpler one
+         * it starts as an array because we start with the h2's not h1.
+         * @example [{id, textContent, children: [{id, textContent, children: ...}, ...]}, ...]
          */
         function treeConverter(tree, first = false) {
           let newTree = {};
@@ -163,9 +165,7 @@ module.exports = new Transformer({
           toc = toc[0].children;
         }
 
-        /*
-         * Piggy back here to grab additional metadata.
-         */
+        // Piggy back here to grab additional metadata.
         let metadata = node.children.find(c => c.type === 'yaml');
         if (metadata) {
           let yamlData = yaml.safeLoad(metadata.value);
@@ -174,6 +174,13 @@ module.exports = new Transformer({
           category = yamlData.category || '';
           keywords = yamlData.keywords || [];
           description = yamlData.description || '';
+          date = yamlData.date || '';
+          if (yamlData.image) {
+            image = asset.addDependency({
+              moduleSpecifier: yamlData.image,
+              isURL: true
+            });
+          }
         }
 
         return node;
@@ -182,9 +189,11 @@ module.exports = new Transformer({
       return transformer;
     };
 
-    // Adds an `example` class to `pre` tags followed by examples.
-    // This allows us to remove the bottom rounded corners, but only when
-    // there is a rendered example below.
+    /**
+     * Adds an `example` class to `pre` tags followed by examples.
+     * This allows us to remove the bottom rounded corners, but only when
+     * there is a rendered example below.
+     */
     function wrapExamples() {
       return (tree) => (
         flatMap(tree, node => {
@@ -231,6 +240,8 @@ module.exports = new Transformer({
     asset.meta.category = category;
     asset.meta.description = description;
     asset.meta.keywords = keywords;
+    asset.meta.date = date;
+    asset.meta.image = image;
     asset.meta.isMDX = true;
     asset.isSplittable = false;
 
@@ -382,19 +393,19 @@ function responsiveCode(node, ast) {
   let large = {
     ...node,
     meta: node.meta ? `${node.meta} large` : 'large',
-    value: formatCode(node, ast, 80)
+    value: formatCode(node, node.value, ast, 80)
   };
 
   let medium = {
     ...node,
     meta: node.meta ? `${node.meta} medium` : 'medium',
-    value: formatCode(large, ast, 60)
+    value: formatCode(node, large.value, ast, 60)
   };
 
   let small = {
     ...node,
     meta: node.meta ? `${node.meta} small` : 'small',
-    value: formatCode(medium, ast, 25)
+    value: formatCode(node, medium.value, ast, 25)
   };
 
   return [
@@ -404,8 +415,7 @@ function responsiveCode(node, ast) {
   ];
 }
 
-function formatCode(node, ast, printWidth = 80) {
-  let code = node.value;
+function formatCode(node, code, ast, printWidth = 80) {
   if (!ast && code.split('\n').every(line => line.length <= printWidth)) {
     return code;
   }
@@ -415,7 +425,7 @@ function formatCode(node, ast, printWidth = 80) {
     parser = () => ast;
   }
 
-  code = prettier.format(code, {
+  let res = prettier.format(node.value, {
     parser,
     singleQuote: true,
     jsxBracketSameLine: true,
@@ -424,7 +434,7 @@ function formatCode(node, ast, printWidth = 80) {
     printWidth
   });
 
-  return code.replace(/^<WRAPPER>((?:.|\n)*)<\/WRAPPER>;?\s*$/m, (str, contents) =>
+  return res.replace(/^<WRAPPER>((?:.|\n)*)<\/WRAPPER>;?\s*$/m, (str, contents) =>
     contents.replace(/^\s{2}/gm, '').trim()
   );
 }

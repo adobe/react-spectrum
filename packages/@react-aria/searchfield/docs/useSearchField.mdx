@@ -48,16 +48,16 @@ search fields that can be styled as needed.
 
 * Built with a native `<input type="search">` element
 * Visual and ARIA labeling support
-* Keyboard submit handling via the Enter key
-* Keyboard support for clearing the search field with the Escape key
+* Keyboard submit handling via the <kbd>Enter</kbd> key
+* Keyboard support for clearing the search field with the <kbd>Escape</kbd> key
 * Custom clear button support with internationalized label for accessibility
 
 ## Anatomy
 
 Search fields consist of an input element, a label, and an optional clear button.
 `useSearchField` automatically manages the labeling and relationships between the elements,
-and handles keyboard events. Users can press the Escape key to clear the search field, or the
-Enter key to trigger the `onSubmit` event.
+and handles keyboard events. Users can press the <kbd>Escape</kbd> key to clear the search field, or the
+<kbd>Enter</kbd> key to trigger the `onSubmit` event.
 
 `useSearchField` returns two sets of props that you should spread onto the appropriate element:
 
@@ -134,6 +134,7 @@ function SearchField(props) {
 ```
 
 ```css
+/* css */
 .search-field {
   display: flex;
   flex-direction: column;

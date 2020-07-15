@@ -145,21 +145,21 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   /**
-   * Get the size of the scrollable content
+   * Get the size of the scrollable content.
    */
   get contentSize(): Size {
     return this._contentSize;
   }
 
   /**
-   * Get the collection view's currently visible rectangle
+   * Get the collection view's currently visible rectangle.
    */
   get visibleRect(): Rect {
     return this._visibleRect;
   }
 
   /**
-   * Set the collection view's currently visible rectangle
+   * Set the collection view's currently visible rectangle.
    */
   set visibleRect(rect: Rect) {
     this._setVisibleRect(rect);
@@ -234,14 +234,14 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   /**
-   * Get the collection view's layout
+   * Get the collection view's layout.
    */
   get layout(): Layout<T> {
     return this._layout;
   }
 
   /**
-   * Set the collection view's layout
+   * Set the collection view's layout.
    */
   set layout(layout: Layout<T>) {
     this.setLayout(layout);
@@ -250,8 +250,8 @@ export class Virtualizer<T extends object, V, W> {
   /**
    * Sets the collection view's layout, optionally with an animated transition
    * from the current layout to the new layout.
-   * @param layout The layout to switch to
-   * @param animated Whether to animate the layout change
+   * @param layout The layout to switch to.
+   * @param animated Whether to animate the layout change.
    */
   setLayout(layout: Layout<T>, animated = false) {
     if (layout === this._layout) {
@@ -351,8 +351,8 @@ export class Virtualizer<T extends object, V, W> {
    * Gets the visible view for the given type and key. Returns null if
    * the view is not currently visible.
    *
-   * @param key The key of the view to retrieve
-  */
+   * @param key The key of the view to retrieve.
+   */
   getView(key: Key): ReusableView<T, V> | null {
     return this._visibleViews.get(key) || null;
   }
@@ -519,7 +519,7 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   /**
-   * Corrects DOM order of visible views to match item order of collection
+   * Corrects DOM order of visible views to match item order of collection.
    */
   private _correctItemOrder() {
     // Defer until after scrolling and animated transactions are complete
@@ -927,8 +927,8 @@ export class Virtualizer<T extends object, V, W> {
 
   /**
    * Scrolls the item with the given key into view, optionally with an animation.
-   * @param key The key of the item to scroll into view
-   * @param duration The duration of the scroll animation
+   * @param key The key of the item to scroll into view.
+   * @param duration The duration of the scroll animation.
    */
   scrollToItem(key: Key, options?: ScrollToItemOptions) {
     if (!key) {
@@ -976,9 +976,9 @@ export class Virtualizer<T extends object, V, W> {
 
   /**
    * Performs an animated scroll to the given offset.
-   * @param offset - The offset to scroll to
-   * @param duration The duration of the animation
-   * @return a promise that resolves when the animation is complete
+   * @param offset - The offset to scroll to.
+   * @param duration The duration of the animation.
+   * @returns A promise that resolves when the animation is complete.
    */
   scrollTo(offset: Point, duration: number = 300): Promise<void> {
     // Cancel the current scroll animation

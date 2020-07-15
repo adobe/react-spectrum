@@ -23,8 +23,8 @@ export function ExampleThemeSwitcher({children}) {
   return (
     <Example colorScheme={colorScheme}>
       <Flex direction="column">
-        <Flex marginBottom="size-250">
-          <Picker label="Color Scheme" selectedKey={colorScheme} onSelectionChange={setColorScheme} marginEnd="size-250">
+        <Flex marginBottom="size-250" wrap columnGap="size-250" rowGap="size-100">
+          <Picker label="Color Scheme" selectedKey={colorScheme} onSelectionChange={setColorScheme}>
             <Item key="light">Light</Item>
             <Item key="dark">Dark</Item>
           </Picker>
