@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '../';
-import {fireEvent, render, waitFor, within} from '@testing-library/react';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -21,6 +21,12 @@ import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('DialogTrigger', function () {
   let matchMedia;
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+  afterAll(() => {
+    jest.useRealTimers();
+  });
 
   beforeEach(() => {
     matchMedia = new MatchMediaMock();
@@ -28,6 +34,7 @@ describe('DialogTrigger', function () {
   });
 
   afterEach(() => {
+    jest.runAllTimers();
     matchMedia.clear();
     window.requestAnimationFrame.mockRestore();
   });
@@ -48,6 +55,10 @@ describe('DialogTrigger', function () {
 
     let button = getByRole('button');
     triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
@@ -73,6 +84,10 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     triggerPress(button);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
 
@@ -96,6 +111,10 @@ describe('DialogTrigger', function () {
 
     let button = getByRole('button');
     triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
@@ -123,6 +142,10 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     triggerPress(button);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
 
@@ -148,6 +171,10 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     triggerPress(button);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
 
@@ -168,6 +195,10 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     triggerPress(button);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
 
     await waitFor(() => {
@@ -177,6 +208,11 @@ describe('DialogTrigger', function () {
     expect(document.activeElement).toBe(dialog);
 
     fireEvent.keyDown(dialog, {key: 'Escape'});
+    fireEvent.keyUp(dialog, {key: 'Escape'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
 
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
@@ -198,6 +234,10 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     triggerPress(button);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
 
     await waitFor(() => {
@@ -207,7 +247,11 @@ describe('DialogTrigger', function () {
     expect(document.activeElement).toBe(dialog);
 
     let dismiss = within(dialog).getByRole('button');
-    fireEvent.click(dismiss);
+    triggerPress(dismiss);
+
+    act(() => {
+      jest.runAllTimers();
+    });
 
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
@@ -231,6 +275,11 @@ describe('DialogTrigger', function () {
 
     let button = getByRole('button');
     triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
     }); // wait for animation
@@ -239,6 +288,11 @@ describe('DialogTrigger', function () {
 
     let dialog = getByRole('dialog');
     fireEvent.keyDown(dialog, {key: 'Escape'});
+    fireEvent.keyUp(dialog, {key: 'Escape'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
@@ -268,6 +322,10 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     triggerPress(button);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     expect(() => {
       getByRole('dialog');
     }).toThrow();
@@ -276,17 +334,29 @@ describe('DialogTrigger', function () {
 
     rerender(<Test isOpen onOpenChange={onOpenChange} />);
 
+    act(() => {
+      jest.runAllTimers();
+    });
     let dialog = getByRole('dialog');
     await waitFor(() => {
       expect(dialog).toBeVisible();
     }); // wait for animation
 
     fireEvent.keyDown(dialog, {key: 'Escape'});
+    fireEvent.keyUp(dialog, {key: 'Escape'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(2);
     expect(onOpenChange).toHaveBeenCalledWith(false);
 
     rerender(<Test isOpen={false} onOpenChange={onOpenChange} />);
+
+    act(() => {
+      jest.runAllTimers();
+    });
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
@@ -307,12 +377,21 @@ describe('DialogTrigger', function () {
     let onOpenChange = jest.fn();
     let {getByRole} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
     await waitFor(() => {
       expect(dialog).toBeVisible();
     }); // wait for animation
 
     fireEvent.keyDown(dialog, {key: 'Escape'});
+    fireEvent.keyUp(dialog, {key: 'Escape'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
 
@@ -336,6 +415,10 @@ describe('DialogTrigger', function () {
     let onOpenChange = jest.fn();
     let {getByRole, getByTestId} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
     let closeBtn = getByTestId('closebtn');
     await waitFor(() => {
@@ -346,6 +429,10 @@ describe('DialogTrigger', function () {
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    act(() => {
+      jest.runAllTimers();
+    });
 
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
@@ -367,6 +454,10 @@ describe('DialogTrigger', function () {
     let onOpenChange = jest.fn();
     let {getByRole, getByLabelText} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
     await waitFor(() => {
       expect(dialog).toBeVisible();
@@ -377,6 +468,10 @@ describe('DialogTrigger', function () {
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    act(() => {
+      jest.runAllTimers();
+    });
 
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
@@ -398,16 +493,23 @@ describe('DialogTrigger', function () {
     let onOpenChange = jest.fn();
     let {getByRole} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
     await waitFor(() => {
       expect(dialog).toBeVisible();
     }); // wait for animation
 
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
+    triggerPress(document.body);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    act(() => {
+      jest.runAllTimers();
+    });
 
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
@@ -429,12 +531,19 @@ describe('DialogTrigger', function () {
     let onOpenChange = jest.fn();
     let {getByRole} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
     await waitFor(() => {
       expect(dialog).toBeVisible();
     }); // wait for animation
 
-    fireEvent.mouseUp(document.body);
+    triggerPress(document.body);
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(0);
   });
@@ -455,16 +564,23 @@ describe('DialogTrigger', function () {
     let onOpenChange = jest.fn();
     let {getByTestId} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let modal = getByTestId('modal');
     await waitFor(() => {
       expect(modal).toBeVisible();
     }); // wait for animation
 
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
+    triggerPress(document.body);
     expect(modal).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    act(() => {
+      jest.runAllTimers();
+    });
 
     await waitFor(() => {
       expect(modal).not.toBeInTheDocument();
@@ -486,16 +602,23 @@ describe('DialogTrigger', function () {
     let onOpenChange = jest.fn();
     let {getByRole} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
     await waitFor(() => {
       expect(dialog).toBeVisible();
     }); // wait for animation
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
+    triggerPress(document.body);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    act(() => {
+      jest.runAllTimers();
+    });
 
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();

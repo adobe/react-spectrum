@@ -14,6 +14,12 @@ import {DOMProps, ViewStyleProps} from '@react-types/shared';
 import {JSXElementConstructor, ReactNode} from 'react';
 
 export interface ViewProps extends ViewStyleProps, DOMProps {
+  /**
+   * The element to render as the node.
+   */
   elementType?: string | JSXElementConstructor<any>,
+  /**
+   * Children to be displayed in the View.
+   */
   children?: ReactNode
 }

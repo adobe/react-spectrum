@@ -46,8 +46,8 @@ interface SelectAria {
 /**
  * Provides the behavior and accessibility implementation for a select component.
  * A select displays a collapsible list of options and allows a user to select one of them.
- * @param props - props for the select
- * @param state - state for the select, as returned by `useListState`
+ * @param props - Props for the select.
+ * @param state - State for the select, as returned by `useListState`.
  */
 export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<HTMLElement>): SelectAria {
   let {

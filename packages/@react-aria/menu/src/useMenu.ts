@@ -18,7 +18,7 @@ import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 
 interface MenuAria {
-  /** Props for the menu element */
+  /** Props for the menu element. */
   menuProps: HTMLAttributes<HTMLElement>
 }
 
@@ -35,9 +35,9 @@ interface AriaMenuOptions<T> extends AriaMenuProps<T> {
 
 /**
  * Provides the behavior and accessibility implementation for a menu component.
- * A menu displays a list of actions or options and allows a user to choose one.
- * @param props - props for the menu
- * @param state - state for the menu, as returned by `useListState`
+ * A menu displays a list of actions or options that a user can choose.
+ * @param props - Props for the menu.
+ * @param state - State for the menu, as returned by `useListState`.
  */
 export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuAria {
   let {

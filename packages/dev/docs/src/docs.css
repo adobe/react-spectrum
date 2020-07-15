@@ -80,7 +80,7 @@ html, body {
   .example {
     background-color: var(--spectrum-global-color-gray-100);
   }
-  article pre  {
+  .article pre  {
     --hljs-background:  #212121; /* between gray-100 and gray-200 */
     background-color: var(--hljs-background);
   }
@@ -104,6 +104,19 @@ html, body {
   img {
     max-width: 100%;
     border-radius: 4px;
+  }
+}
+
+.inCategory .heroImage {
+  padding-bottom: 0;
+}
+
+.homeLinks {
+  span {
+    font-size: 1.5em;
+    padding: 0 10px;
+    line-height: 1em;
+    vertical-align: text-bottom;
   }
 }
 
@@ -229,7 +242,7 @@ main {
   align-items: center;
 }
 
-article {
+.article {
   max-width: 967px;
   flex: 1;
   padding-bottom: 40px;
@@ -308,7 +321,7 @@ footer li:last-child:after {
   }
 }
 
-article h1.articleHeader {
+.article h1.articleHeader {
   margin-top: 0 !important;
   /* scale font size between 32px and 58px
    * 10vw is 32px at 320px viewport size. */
@@ -319,19 +332,19 @@ article h1.articleHeader {
   max-width: 100%;
 }
 
-article h1.articleHeader + p {
-  font-size: 18px;
+.article h1.articleHeader + p {
+  font-size: var(--spectrum-body-2-text-size);
 }
 
-article.inCategory h1.articleHeader + p {
+.article.inCategory h1.articleHeader + p {
   max-width: 75%;
 }
 
-article.inCategory h2.sectionHeader.docsHeader {
+.article.inCategory h2.sectionHeader.docsHeader {
   margin-top: 80px;
 }
 
-article.inCategory h2.sectionHeader + hr {
+.article.inCategory h2.sectionHeader + hr {
   margin-bottom: 33px;
 }
 
@@ -351,7 +364,7 @@ article.inCategory h2.sectionHeader + hr {
   font-family: inherit !important;
 }
 
-article pre {
+.article pre {
   background: var(--spectrum-global-color-gray-75);
   padding: 18px;
   border-radius: 4px;
@@ -359,18 +372,18 @@ article pre {
   white-space: pre-wrap;
 }
 
-article pre:global(.example) {
+.article pre:global(.example) {
   border-radius: 4px 4px 0 0;
   margin-bottom: 0;
 }
 
 /* Display large width code examples by default */
-article pre:global(.small),
-article pre:global(.medium) {
+.article pre:global(.small),
+.article pre:global(.medium) {
   display: none;
 }
 
-article pre + div > .example {
+.article pre + div > .example {
   border-radius: 0 0 4px 4px;
 }
 
@@ -380,14 +393,18 @@ code {
 
 /* Override spectrum font size for code in large scale */
 .medium code {
-  font-size: var(--spectrum-global-dimension-static-font-size-100);
+  &, .colorLink {
+    font-size: var(--spectrum-global-dimension-static-font-size-100);
+  }
 }
 
 .large code {
-  font-size: var(--spectrum-global-dimension-static-font-size-150);
+  &, .colorLink {
+    font-size: var(--spectrum-global-dimension-static-font-size-200);
+  }
 }
 
-article > code {
+.article > code {
   display: block;
 }
 
@@ -566,6 +583,29 @@ h2.sectionHeader {
   text-decoration-style: double;
 }
 
+.blogArticle {
+  margin: 40px 0;
+  max-width: 800px;
+}
+
+.blogHeader {
+  margin-bottom: 24px;
+}
+
+.blogArticle .blogHeader {
+  margin-bottom: 12px;
+}
+
+.blogHeader h1,
+.blogHeader h2 {
+  margin-top: 0;
+  margin-bottom: 0 !important;
+}
+
+.blogArticle p {
+  margin-bottom: 0;
+}
+
 @media (max-width: 750px) {
   .float {
     float: none;
@@ -704,17 +744,17 @@ h2.sectionHeader {
   }
 
   /* Expand the component description to full width */
-  article h1 + p {
+  .article h1 + p {
     max-width: initial !important;
   }
 
   /* Swap to displaying the medium width code examples */
-  article pre:global(.small),
-  article pre:global(.large) {
+  .article pre:global(.small),
+  .article pre:global(.large) {
     display: none;
   }
 
-  article pre:global(.medium) {
+  .article pre:global(.medium) {
     display: block;
   }
 
@@ -723,7 +763,7 @@ h2.sectionHeader {
     padding: 14px;
   }
 
-  article pre {
+  .article pre {
     padding: 8px;
   }
 
@@ -732,12 +772,12 @@ h2.sectionHeader {
 
 @media (max-width: 500px) {
   /* Swap to displaying the small width code examples */
-  article pre:global(.medium),
-  article pre:global(.large) {
+  .article pre:global(.medium),
+  .article pre:global(.large) {
     display: none;
   }
 
-  article pre:global(.small) {
+  .article pre:global(.small) {
     display: block;
   }
 

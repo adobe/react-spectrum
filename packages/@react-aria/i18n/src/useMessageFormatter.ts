@@ -26,7 +26,7 @@ const formatterCache = new Map();
 /**
  * Handles formatting ICU Message strings to create localized strings for the current locale.
  * Automatically updates when the locale changes, and handles caching of messages for performance.
- * @param strings - a mapping of languages to strings by key
+ * @param strings - A mapping of languages to strings by key.
  */
 export function useMessageFormatter(strings: MessageFormatterStrings): FormatMessage {
   let {locale: currentLocale} = useLocale();

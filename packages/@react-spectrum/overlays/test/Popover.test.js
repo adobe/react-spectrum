@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import {Dialog} from '@react-spectrum/dialog';
-import {fireEvent, render, waitFor} from '@testing-library/react';
 import {Popover} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Popover from '@react/react-spectrum/Popover';
 
 function PopoverWithDialog({children}) {
@@ -27,6 +28,13 @@ function PopoverWithDialog({children}) {
 }
 
 describe('Popover', function () {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   beforeEach(() => {
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({
@@ -35,6 +43,9 @@ describe('Popover', function () {
   });
 
   afterEach(() => {
+    act(() => {
+      jest.runAllTimers();
+    });
     window.requestAnimationFrame.mockRestore();
     window.getComputedStyle.mockRestore();
   });
@@ -52,6 +63,9 @@ describe('Popover', function () {
       );
 
       let dialog = getByRole('dialog');
+      act(() => {
+        jest.runAllTimers();
+      });
       if (Name === 'v3') {
         await waitFor(() => {
           expect(dialog).toBeVisible();
@@ -74,6 +88,9 @@ describe('Popover', function () {
         </Provider>
       );
 
+      act(() => {
+        jest.runAllTimers();
+      });
       if (Name === 'v2') {
         let input1 = getByTestId('input1');
         expect(document.activeElement).toBe(input1);
@@ -96,6 +113,9 @@ describe('Popover', function () {
           <Component {...props} />
         </Provider>
       );
+      act(() => {
+        jest.runAllTimers();
+      });
 
       let dialog = getByRole('dialog');
 
@@ -120,6 +140,9 @@ describe('Popover', function () {
           </Component>
         </Provider>
       );
+      act(() => {
+        jest.runAllTimers();
+      });
 
       if (Name === 'v3') {
         await waitFor(() => {
@@ -143,6 +166,9 @@ describe('Popover', function () {
           </Component>
         </Provider>
       );
+      act(() => {
+        jest.runAllTimers();
+      });
 
       let dialog = getByRole('dialog');
 
@@ -157,12 +183,15 @@ describe('Popover', function () {
       expect(document.activeElement).toBe(dialog);
 
       fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
       expect(document.activeElement).toBe(input1);
 
       fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
       expect(document.activeElement).toBe(input2);
 
       fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
       expect(document.activeElement).toBe(input1);
     });
   });
@@ -175,11 +204,15 @@ describe('Popover', function () {
           <Popover isOpen onClose={onClose} />
         </Provider>
       );
+      act(() => {
+        jest.runAllTimers();
+      });
       let popover = getByTestId('popover');
       await waitFor(() => {
         expect(popover).toBeVisible();
       }); // wait for animation
       fireEvent.keyDown(popover, {key: 'Escape'});
+      fireEvent.keyUp(popover, {key: 'Escape'});
       expect(onClose).toHaveBeenCalledTimes(1);
     });
 
@@ -190,33 +223,40 @@ describe('Popover', function () {
           <Popover isOpen onClose={onClose} />
         </Provider>
       );
+      act(() => {
+        jest.runAllTimers();
+      });
 
       await waitFor(() => {
         expect(getByTestId('popover')).toBeVisible();
       }); // wait for animation
-      fireEvent.mouseDown(document.body);
-      fireEvent.mouseUp(document.body);
+      triggerPress(document.body);
       expect(onClose).toHaveBeenCalledTimes(1);
     });
 
     it('hides the popover on blur when shouldCloseOnBlur is true', async function () {
+      // can't use Dialog in this one because Dialog does not work with shouldCloseOnBlur
       let onClose = jest.fn();
       let {getByRole, getByTestId} = render(
         <Provider theme={theme}>
           <Popover isOpen onClose={onClose} shouldCloseOnBlur>
-            <Dialog>Dialog</Dialog>
+            <button autoFocus>Focus me</button>
           </Popover>
         </Provider>
       );
 
+      act(() => {
+        jest.runAllTimers();
+      });
+      let button = getByRole('button');
+      let popover = getByTestId('popover');
+      expect(document.activeElement).toBe(button);
+
       await waitFor(() => {
-        expect(getByTestId('popover')).toBeVisible();
+        expect(popover).toBeVisible();
       }); // wait for animation
 
-      let dialog = getByRole('dialog');
-      expect(document.activeElement).toBe(dialog);
-
-      dialog.blur();
+      button.blur();
       expect(onClose).toHaveBeenCalledTimes(1);
     });
   });
