@@ -90,56 +90,62 @@ const fragmentUnWrap = () => (tree, file) => (
 module.exports = {fragmentUnWrap, fragmentWrap};
 
 /**
- * Example of what the nodes look like
- {
-  type: 'code',
-  lang: 'tsx',
-  meta: 'example',
-  value: '<>\n<Button variant="cta">Test</Button>\n</>',
-  position: Position {
-    start: { line: 28, column: 1, offset: 646 },
-    end: { line: 30, column: 4, offset: 700 },
-    indent: [ 1, 1 ]
-  },
-  data: {
-    hProperties: { className: [ 'tree-sitter', 'language-tsx' ] },
-    hChildren: [
-      {
-        type: 'element',
-        tagName: 'span',
-        properties: { className: [ 'source', 'ts' ] },
-        children: [
-          {
-            type: 'element',
-            tagName: 'span',
-            properties: { className: [ 'keyword', 'operator', 'js' ] },
-            children: [ { type: 'text', value: '<' } ]
-          },
-          {
-            type: 'element',
-            tagName: 'span',
-            properties: { className: [ 'keyword', 'operator', 'js' ] },
-            children: [ { type: 'text', value: '>' } ]
-          },
-          { type: 'text', value: '\n' },
-          ...
-          { type: 'text', value: '\n' },
-          {
-            type: 'element',
-            tagName: 'span',
-            properties: { className: [ 'keyword', 'operator', 'js' ] },
-            children: [ { type: 'text', value: '<' } ]
-          },
-          {
-            type: 'element',
-            tagName: 'span',
-            properties: { className: [ 'keyword', 'operator', 'js' ] },
-            children: [ { type: 'text', value: '/' } ]
-          },
-          {
-            type: 'element',
-            tagName: 'span',
-            properties: { className: [ 'keyword', 'operator', 'js' ] },
-            children: [ { type: 'text', value: '>' } ]
-          }
+ * Example of what the nodes look like.
+ * @example
+ * ```
+ * {
+ *  type: 'code',
+ *  lang: 'tsx',
+ *  meta: 'example',
+ *  value: '<>\n<Button variant="cta">Test</Button>\n</>',
+ *  position: Position {
+ *    start: { line: 28, column: 1, offset: 646 },
+ *    end: { line: 30, column: 4, offset: 700 },
+ *    indent: [ 1, 1 ]
+ *  },
+ *  data: {
+ *    hProperties: { className: [ 'tree-sitter', 'language-tsx' ] },
+ *    hChildren: [
+ *      {
+ *        type: 'element',
+ *        tagName: 'span',
+ *        properties: { className: [ 'source', 'ts' ] },
+ *        children: [
+ *          {
+ *            type: 'element',
+ *            tagName: 'span',
+ *            properties: { className: [ 'keyword', 'operator', 'js' ] },
+ *            children: [ { type: 'text', value: '<' } ]
+ *          },
+ *          {
+ *            type: 'element',
+ *            tagName: 'span',
+ *            properties: { className: [ 'keyword', 'operator', 'js' ] },
+ *            children: [ { type: 'text', value: '>' } ]
+ *          },
+ *          { type: 'text', value: '\n' },
+ *          ...
+ *          { type: 'text', value: '\n' },
+ *          {
+ *            type: 'element',
+ *            tagName: 'span',
+ *            properties: { className: [ 'keyword', 'operator', 'js' ] },
+ *            children: [ { type: 'text', value: '<' } ]
+ *          },
+ *          {
+ *            type: 'element',
+ *            tagName: 'span',
+ *            properties: { className: [ 'keyword', 'operator', 'js' ] },
+ *            children: [ { type: 'text', value: '/' } ]
+ *          },
+ *          {
+ *            type: 'element',
+ *            tagName: 'span',
+ *            properties: { className: [ 'keyword', 'operator', 'js' ] },
+ *            children: [ { type: 'text', value: '>' } ]
+ *          }
+ *       }
+ *    }
+ * }
+ * ```
  */

@@ -29,8 +29,8 @@ interface RadioGroupAria {
 /**
  * Provides the behavior and accessibility implementation for a radio group component.
  * Radio groups allow users to select a single item from a list of mutually exclusive options.
- * @param props - props for the radio group
- * @param state - state for the radio group, as returned by `useRadioGroupState`
+ * @param props - Props for the radio group.
+ * @param state - State for the radio group, as returned by `useRadioGroupState`.
  */
 export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState): RadioGroupAria {
   let {
