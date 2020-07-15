@@ -17,4 +17,4 @@ storybook-static
 
 
 #allow
-!.storybook-v3/lib
+!.storybook/lib
