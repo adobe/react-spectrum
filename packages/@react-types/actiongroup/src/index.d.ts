@@ -20,9 +20,9 @@ export interface ActionGroupProps<T> extends MultipleSelection {
    * @default 'horizontal'
    */
   orientation?: Orientation,
-  /** An list of `Item` elements or an `ItemRenderer`. If the latter, a list of items must be provided as an separate prop. */
+  /** An list of `Item` elements or a function. If the latter, a list of items must be provided using the `items` prop. */
   children: ItemElement<T> | ItemElement<T>[] | ItemRenderer<T>,
-  /** A list of items to iterate through and display as children. Must be used with an `ItemRenderer` as the sole child. */
+  /** A list of items to display as children. Must be used with a function as the sole child. */
   items?: Iterable<T>,
   /** A list of keys to disable. */
   disabledKeys?: Iterable<Key>,

@@ -28,7 +28,7 @@ export function HeaderInfo(props) {
   } = props;
 
   let importName = packageData.name;
-  if (process.env.DOCS_ENV === 'production') {
+  if (importName.startsWith('@react-spectrum') && process.env.DOCS_ENV === 'production') {
     importName = '@adobe/react-spectrum';
   }
 

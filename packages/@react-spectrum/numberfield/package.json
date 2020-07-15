@@ -33,15 +33,15 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/focus": "^3.0.1",
+    "@react-aria/focus": "^3.0.2",
     "@react-aria/numberfield": "^3.0.0-alpha.1",
-    "@react-spectrum/button": "^3.0.1",
-    "@react-spectrum/textfield": "^3.0.1",
-    "@react-spectrum/utils": "^3.0.1",
+    "@react-spectrum/button": "^3.0.2",
+    "@react-spectrum/textfield": "^3.0.2",
+    "@react-spectrum/utils": "^3.0.2",
     "@react-stately/numberfield": "^3.0.0-alpha.1",
     "@react-types/numberfield": "^3.0.0-alpha.1",
-    "@react-types/shared": "^3.0.1",
-    "@spectrum-icons/ui": "^3.0.1"
+    "@react-types/shared": "^3.0.2",
+    "@spectrum-icons/ui": "^3.0.2"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",

@@ -17,7 +17,6 @@ import packageData from '@react-spectrum/view/package.json';
 ```jsx import
 import {View} from '@react-spectrum/view';
 import {TextField} from '@react-spectrum/textfield';
-import {ActionButton} from '@react-spectrum/button';
 ```
 
 ---
@@ -38,7 +37,7 @@ The `View` component can be used as a general purpose container element, similar
 `div`. It supports Spectrum style props, which enable you to use Spectrum variables for
 styling to ensure consistency with other Spectrum components. In addition, Spectrum
 variables automatically adapt to color scheme changes (e.g. dark mode), and platform
-scale (e.g. touch vs. mouse input). See [Styling](Styling.html) to learn more.
+scale (e.g. touch vs. mouse input). See [Styling](styling.html) to learn more.
 
 ## Example
 
@@ -52,8 +51,7 @@ view changes automatically based on these variables.
   borderColor="dark"
   borderRadius="medium"
   padding="size-250">
-  <TextField label="Name" labelPosition="side" placeholder="John Smith" />
-  <ActionButton marginStart="size-150">Submit</ActionButton>
+  <TextField label="Name" placeholder="John Smith" />
 </View>
 ```
 
