@@ -122,6 +122,8 @@ module.exports = new Transformer({
     let category = '';
     let keywords = [];
     let description = '';
+    let date = '';
+    let image = '';
     const extractToc = (options) => {
       const settings = options || {};
       const depth = settings.maxDepth || 6;
@@ -174,6 +176,13 @@ module.exports = new Transformer({
           category = yamlData.category || '';
           keywords = yamlData.keywords || [];
           description = yamlData.description || '';
+          date = yamlData.date || '';
+          if (yamlData.image) {
+            image = asset.addDependency({
+              moduleSpecifier: yamlData.image,
+              isURL: true
+            });
+          }
         }
 
         return node;
@@ -231,6 +240,8 @@ module.exports = new Transformer({
     asset.meta.category = category;
     asset.meta.description = description;
     asset.meta.keywords = keywords;
+    asset.meta.date = date;
+    asset.meta.image = image;
     asset.meta.isMDX = true;
     asset.isSplittable = false;
 

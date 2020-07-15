@@ -55,7 +55,7 @@ Breadcrumbs provide a list of links to parent pages of the current page in heira
 Breadcrumbs consist of a navigation landmark element and a list of links. The last link
 represents the current page in the hierarchy, with the previous links representing the
 parent pages of the current page. Each of these parent links can be clicked, tapped, or
-triggered via the Enter key to navigate to that page. Optionally, breadcrumbs can be used
+triggered via the <kbd>Enter</kbd> key to navigate to that page. Optionally, breadcrumbs can be used
 in place of a page title, in which case the last breadcrumb acts as a heading.
 
 `useBreadcrumbs` returns props to be spread onto the navigation element:
@@ -94,7 +94,7 @@ function Breadcrumbs(props) {
 
   return (
     <nav {...navProps}>
-      <ol style={{display: 'flex', listStyle: 'none'}}>
+      <ol style={{display: 'flex', listStyle: 'none', margin: 0, padding: 0}}>
         {children.map((child, i) =>
           React.cloneElement(child, {isCurrent: i === children.length - 1})
         )}
@@ -147,7 +147,7 @@ function Breadcrumbs(props) {
 
   return (
     <nav {...navProps}>
-      <ol style={{display: 'flex', listStyle: 'none'}}>
+      <ol style={{display: 'flex', listStyle: 'none', margin: 0, padding: 0}}>
         {children.map((child, i) =>
           React.cloneElement(child, {isCurrent: i === children.length - 1})
         )}
@@ -202,7 +202,7 @@ function Breadcrumbs(props) {
 
   return (
     <nav {...navProps}>
-      <ol style={{display: 'flex', listStyle: 'none'}}>
+      <ol style={{display: 'flex', listStyle: 'none', margin: 0, padding: 0}}>
         {children.map((child, i) =>
           React.cloneElement(child, {
             isCurrent: i === children.length - 1,
