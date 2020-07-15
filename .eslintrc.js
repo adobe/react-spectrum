@@ -16,7 +16,7 @@ module.exports = {
   },
   overrides: [{
     files: ['packages/**/*.ts', 'packages/**/*.tsx'],
-    plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', '@typescript-eslint', 'monorepo'],
+    plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', '@typescript-eslint', 'monorepo', 'jsdoc'],
     parser: '@typescript-eslint/parser',
     parserOptions: {
       ecmaFeatures: {
@@ -35,7 +35,14 @@ module.exports = {
     files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
     rules: {
       'rulesdir/imports': OFF,
-      'monorepo/no-internal-import': OFF
+      'monorepo/no-internal-import': OFF,
+      'jsdoc/require-jsdoc': OFF
+    }
+  }, {
+    files: ['**/dev/**', '**/scripts/**'],
+    rules: {
+      'jsdoc/require-jsdoc': OFF,
+      'jsdoc/require-description': OFF
     }
   }],
   env: {
@@ -50,7 +57,20 @@ module.exports = {
     'jest': true,
     'expect': true
   },
+  settings: {
+    jsdoc: {
+      ignorePrivate: true,
+      publicFunctionsOnly: true
+    }
+  },
   rules: {
+    'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc']}],
+    'jsdoc/check-alignment': ERROR,
+    'jsdoc/check-indentation': ERROR,
+    'jsdoc/check-tag-names': ERROR,
+    // enable this rule to see literally everything missing jsdocs, this rule needs some refinement but is good as a sanity check.
+    // 'jsdoc/require-jsdoc': [ERROR, {contexts:['TSInterfaceDeclaration TSPropertySignature', 'TSInterfaceDeclaration TSMethodSignature']}],
+    'jsdoc/require-description': [ERROR, {exemptedBy: ['deprecated'], checkConstructors: false}],
     'comma-dangle': ERROR,
     'indent': OFF,
     'indent-legacy': [ERROR, ERROR, {SwitchCase: 1}],

@@ -15,7 +15,7 @@ import {ReactNode} from 'react';
 
 export interface KeyboardProps extends DOMProps, StyleProps {
   /**
-   * Keyboard shortcut text
+   * Keyboard shortcut text.
    */
   children: ReactNode,
   /**

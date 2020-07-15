@@ -31,7 +31,7 @@ interface OverlayProps {
 }
 
 interface OverlayAria {
-  /** Props to apply to the overlay container element */
+  /** Props to apply to the overlay container element. */
   overlayProps: HTMLAttributes<HTMLElement>
 }
 

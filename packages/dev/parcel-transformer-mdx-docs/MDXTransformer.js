@@ -138,9 +138,9 @@ module.exports = new Transformer({
         }).map;
 
         /**
-         * go from complex structure that the mdx plugin renders from to a simpler one
-         * it starts as an array because we start with the h2's not h1
-         * [{id, textContent, children: [{id, textContent, children: ...}, ...]}, ...]
+         * Go from complex structure that the mdx plugin renders from to a simpler one
+         * it starts as an array because we start with the h2's not h1.
+         * @example [{id, textContent, children: [{id, textContent, children: ...}, ...]}, ...]
          */
         function treeConverter(tree, first = false) {
           let newTree = {};
@@ -165,9 +165,7 @@ module.exports = new Transformer({
           toc = toc[0].children;
         }
 
-        /*
-         * Piggy back here to grab additional metadata.
-         */
+        // Piggy back here to grab additional metadata.
         let metadata = node.children.find(c => c.type === 'yaml');
         if (metadata) {
           let yamlData = yaml.safeLoad(metadata.value);
@@ -191,9 +189,11 @@ module.exports = new Transformer({
       return transformer;
     };
 
-    // Adds an `example` class to `pre` tags followed by examples.
-    // This allows us to remove the bottom rounded corners, but only when
-    // there is a rendered example below.
+    /**
+     * Adds an `example` class to `pre` tags followed by examples.
+     * This allows us to remove the bottom rounded corners, but only when
+     * there is a rendered example below.
+     */
     function wrapExamples() {
       return (tree) => (
         flatMap(tree, node => {

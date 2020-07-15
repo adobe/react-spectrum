@@ -15,15 +15,30 @@ import {KeyboardDelegate} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
 interface TypeSelectOptions {
+  /**
+   * A delegate that returns collection item keys with respect to visual layout.
+   */
   keyboardDelegate: KeyboardDelegate,
+  /**
+   * An interface for reading and updating multiple selection state.
+   */
   selectionManager: MultipleSelectionManager,
+  /**
+   * Called when an item is focused by typing.
+   */
   onTypeSelect?: (key: Key) => void
 }
 
 interface TypeSelectAria {
+  /**
+   * Props to be spread on the owner of the options.
+   */
   typeSelectProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Handles typeahead interactions with collections.
+ */
 export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
   let {keyboardDelegate, selectionManager, onTypeSelect} = options;
   let state = useRef({
