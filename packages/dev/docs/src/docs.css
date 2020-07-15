@@ -393,11 +393,15 @@ code {
 
 /* Override spectrum font size for code in large scale */
 .medium code {
-  font-size: var(--spectrum-global-dimension-static-font-size-100);
+  &, .colorLink {
+    font-size: var(--spectrum-global-dimension-static-font-size-100);
+  }
 }
 
 .large code {
-  font-size: var(--spectrum-global-dimension-static-font-size-150);
+  &, .colorLink {
+    font-size: var(--spectrum-global-dimension-static-font-size-200);
+  }
 }
 
 .article > code {
