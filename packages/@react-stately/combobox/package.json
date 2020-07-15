@@ -9,7 +9,8 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "repository": {
@@ -18,14 +19,14 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-stately/collections": "^3.0.1",
-    "@react-stately/menu": "^3.0.0-alpha.1",
-    "@react-stately/select": "^3.0.0-alpha.1",
-    "@react-stately/selection": "^3.0.0-alpha.1",
-    "@react-stately/tree": "^3.0.1",
-    "@react-stately/utils": "^3.0.0-alpha.1",
+    "@react-stately/collections": "^3.0.2",
+    "@react-stately/menu": "^3.0.2",
+    "@react-stately/select": "^3.0.2",
+    "@react-stately/selection": "^3.0.2",
+    "@react-stately/tree": "^3.0.2",
+    "@react-stately/utils": "^3.0.2",
     "@react-types/combobox": "^3.0.0-alpha.1",
-    "@react-types/shared": "^3.0.1"
+    "@react-types/shared": "^3.0.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"

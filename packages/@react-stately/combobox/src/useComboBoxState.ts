@@ -26,9 +26,7 @@ export interface ComboBoxState<T> extends SelectState<T> {
 }
 
 interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
-  collator: Intl.Collator,
-  // TODO: figure out if we still need this itemKey and if not remove. if so, add here?
-  itemKey?: any
+  collator: Intl.Collator
 }
 
 function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean): Iterable<Node<T>> {

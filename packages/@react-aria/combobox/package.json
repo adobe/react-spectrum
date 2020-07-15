@@ -8,7 +8,10 @@
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "files": ["dist"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "sideEffects": false,
   "repository": {
     "type": "git",
@@ -16,14 +19,14 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/listbox": "^3.0.0-alpha.1",
-    "@react-aria/menu": "^3.0.0-alpha.1",
-    "@react-aria/selection": "^3.0.0-alpha.1",
-    "@react-aria/textfield": "^3.0.0-rc.2",
-    "@react-aria/utils": "^3.0.0-rc.2",
-    "@react-stately/layout": "^3.0.1",
+    "@react-aria/listbox": "^3.0.2",
+    "@react-aria/menu": "^3.0.2",
+    "@react-aria/selection": "^3.0.2",
+    "@react-aria/textfield": "^3.0.2",
+    "@react-aria/utils": "^3.0.2",
     "@react-stately/combobox": "^3.0.0-alpha.1",
-    "@react-types/button": "^3.0.1",
+    "@react-stately/layout": "^3.0.2",
+    "@react-types/button": "^3.0.2",
     "@react-types/combobox": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
