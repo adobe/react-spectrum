@@ -82,7 +82,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     let selectedItem = collection.getItem(props.selectedKey);
     let itemText = selectedItem ? selectedItem.textValue : '';
     if (itemText !== props.inputValue) {
-      console.error('Mismatch between selected item and inputValue!');
+      throw new Error('Mismatch between selected item and inputValue!');
     }
   }
 
@@ -148,25 +148,20 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     }
     lastSelectedKeyProp.current = props.selectedKey;
     // as asked about, should the the triggerstate.setOpen be put here?
-    // having it here means
     // props.selectedKey && triggerState.setOpen(false);
   }, [props.selectedKey, setSelectedKey]);
 
   // If props.inputValue changes, call onSelectionChange (it doesn't get called since onInputChange doesn't trigger on prop.inputValue changes)
-  let lastInputValueProp = useRef(props.inputValue);
   useEffect(() => {
     let newSelectedKey = computeKeyFromValue(props.inputValue, collection);
-    if (lastInputValueProp.current !== props.inputValue) {
-      // Only call onSelection if key changes (lastSelectedKey is also updated when user types so this stops duplicated onSelectionChange calls)
-      if (newSelectedKey !== lastSelectedKey.current) {
-        if (onSelectionChange) {
-          onSelectionChange(newSelectedKey);
-        }
+    // Only call onSelection if key changes (lastSelectedKey is also updated when user types so this stops duplicated onSelectionChange calls)
+    if (newSelectedKey !== lastSelectedKey.current) {
+      if (onSelectionChange) {
+        onSelectionChange(newSelectedKey);
       }
     }
 
     lastSelectedKey.current = selectedKey;
-    lastInputValueProp.current = props.inputValue;
   }, [props.inputValue, collection, selectedKey, onSelectionChange]);
 
   let selectionState = useMultipleSelectionState(

@@ -294,14 +294,6 @@ let AllControlledComboBox = (props) => {
     <div>
       <div>Current selectedKey: {selectedKey}</div>
       <div>Current input value: {inputValue}</div>
-      <ButtonGroup marginEnd="30px">
-        <Button variant="secondary" onPress={() => setInputValue('Danni')}>
-          <Text>Set Input text: Danni (4)</Text>
-        </Button>
-        <Button variant="secondary" onPress={() => setSelectedKey('6')}>
-          <Text>Set selected key: 6 (Ross)</Text>
-        </Button>
-      </ButtonGroup>
       <ComboBox {...props} selectedKey={selectedKey} inputValue={inputValue} items={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
