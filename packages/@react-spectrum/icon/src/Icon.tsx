@@ -25,11 +25,11 @@ interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
    */
   'aria-label'?: string,
   /**
-   * The content to display. Should be an SVG
+   * The content to display. Should be an SVG.
    */
   children: ReactElement,
   /**
-   * Size of Icon (changes based on scale)
+   * Size of Icon (changes based on scale).
    */
   size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL',
   /**

@@ -15,7 +15,7 @@ import {ReactNode} from 'react';
 
 export interface HeaderProps extends DOMProps, StyleProps {
   /**
-   * Header content
+   * Header content.
    */
   children: ReactNode
 }

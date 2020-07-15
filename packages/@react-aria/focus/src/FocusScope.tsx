@@ -385,8 +385,11 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
   }, [scopeRef, restoreFocus, contain]);
 }
 
+/**
+ * Create a [TreeWalker]{@link https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker}
+ * that matches all focusable/tabbable elements.
+ */
 export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOptions) {
-  // Create a DOM tree walker that matches all focusable/tabbable elements
   let selector = opts?.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
   let walker = document.createTreeWalker(
     root,

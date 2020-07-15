@@ -22,6 +22,10 @@ interface InteractOutsideProps {
   onInteractOutside?: (e: SyntheticEvent) => void
 }
 
+/**
+ * Example, used in components like Dialogs and Popovers so they can close
+ * when a user clicks outside them.
+ */
 export function useInteractOutside(props: InteractOutsideProps) {
   let {ref, onInteractOutside} = props;
   let stateRef = useRef({

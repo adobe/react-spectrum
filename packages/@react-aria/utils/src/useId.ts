@@ -30,6 +30,9 @@ export function useId(defaultId?: string): string {
   return res;
 }
 
+/**
+ * Merges two ids.
+ */
 export function mergeIds(a: string, b: string): string {
   if (a === b) {
     return a;
@@ -50,6 +53,10 @@ export function mergeIds(a: string, b: string): string {
   return b;
 }
 
+/**
+ * Used to generate an id, and after render, check if that id is rendered so we know
+ * if we can use it in places such as labelledby.
+ */
 export function useSlotId(): string {
   let [id, setId] = useState(useId());
   useLayoutEffect(() => {
