@@ -20,7 +20,7 @@ import {Virtualizer} from './Virtualizer';
 // import { DragTarget, DropTarget } from '@react-types/shared';
 
 /**
- * {@link CollectionView} Supports arbitrary layout objects, which compute what views are visible, and how
+ * [CollectionView]{@link CollectionView} supports arbitrary layout objects, which compute what views are visible, and how
  * to position and style them. However, layouts do not create the views themselves directly. Instead,
  * layouts produce lightweight {@link LayoutInfo} objects which describe various properties of a view,
  * such as its position and size. The {@link CollectionView} is then responsible for creating the actual
