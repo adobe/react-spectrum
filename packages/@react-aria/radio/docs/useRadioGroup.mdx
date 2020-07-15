@@ -62,8 +62,8 @@ radio groups that can be styled as needed.
 A radio group consists of a set of radio buttons, and a label. Each radio
 includes a label and a visual selection indicator. A single radio button
 within the group can be selected at a time. Users may click or touch a radio
-button to select it, or use the Tab key to navigate to the group, the arrow keys
-to navigate within the group, and the Space key to select an option.
+button to select it, or use the <kbd>Tab</kbd> key to navigate to the group, the arrow keys
+to navigate within the group, and the <kbd>Space</kbd> key to select an option.
 
 `useRadioGroup` returns props for the group and its label, which you should spread
 onto the appropriate element:
@@ -172,8 +172,8 @@ function Radio(props) {
   let {inputProps} = useRadio(props, state);
   let {isFocusVisible, focusProps} = useFocusRing();
 
-  let isChecked = inputProps.checked;
-  let strokeWidth = isChecked ? 6 : 2;
+  let isSelected = state.selectedValue === props.value;
+  let strokeWidth = isSelected ? 6 : 2;
 
   return (
     <label style={{display: 'flex', alignItems: 'center'}}>
@@ -190,7 +190,7 @@ function Radio(props) {
           cy={12}
           r={8 - strokeWidth / 2}
           fill="none"
-          stroke={isChecked ? 'orange' : 'gray'}
+          stroke={isSelected ? 'orange' : 'gray'}
           strokeWidth={strokeWidth} />
         {isFocusVisible &&
           <circle

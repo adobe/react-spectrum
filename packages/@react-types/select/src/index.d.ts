@@ -33,7 +33,10 @@ export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, InputB
   defaultOpen?: boolean,
   /** Method that is called when the open state of the menu changes. */
   onOpenChange?: (isOpen: boolean) => void,
-  /** Whether the menu should automatically flip direction when space is limited. */
+  /**
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
+   */
   shouldFlip?: boolean
 }
 

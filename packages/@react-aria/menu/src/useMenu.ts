@@ -35,7 +35,7 @@ interface AriaMenuOptions<T> extends AriaMenuProps<T> {
 
 /**
  * Provides the behavior and accessibility implementation for a menu component.
- * A menu displays a list of actions or options and allows a user to choose one.
+ * A menu displays a list of actions or options that a user can choose.
  * @param props - Props for the menu.
  * @param state - State for the menu, as returned by `useListState`.
  */

@@ -36,7 +36,11 @@ module.exports = new Optimizer({
           url: urlJoin(b.target.publicUrl, rename(b)),
           name: rename(b),
           title: meta.title,
-          category: meta.category
+          category: meta.category,
+          description: meta.description,
+          keywords: meta.keywords,
+          date: meta.date,
+          image: getImageURL(meta.image, bundleGraph, b)
         });
       }
     });
@@ -58,7 +62,9 @@ module.exports = new Optimizer({
           title: mainAsset.meta.title,
           url: urlJoin(bundle.target.publicUrl, name),
           description: mainAsset.meta.description,
-          keywords: mainAsset.meta.keywords
+          keywords: mainAsset.meta.keywords,
+          date: mainAsset.meta.date,
+          image: getImageURL(mainAsset.meta.image, bundleGraph, bundle)
         },
         toc: mainAsset.meta.toc,
         publicUrl: bundle.target.publicUrl
@@ -74,4 +80,22 @@ module.exports = new Optimizer({
 
 function rename(bundle) {
   return bundle.name.slice(0, -bundle.type.length) + 'html';
+}
+
+function getImageURL(image, bundleGraph, bundle) {
+  if (!image) {
+    return '';
+  }
+
+  let dep = bundle.getMainEntry().getDependencies().find(d => d.id === image);
+  if (!dep) {
+    return '';
+  }
+
+  let resolved = bundleGraph.getReferencedBundle(dep, bundle);
+  if (!resolved) {
+    return '';
+  }
+
+  return resolved.name;
 }

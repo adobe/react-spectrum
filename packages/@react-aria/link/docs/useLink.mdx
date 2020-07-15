@@ -53,7 +53,7 @@ handled client side with JavaScript instead, it will not be exposed to assistive
 
 A link consists of a pressable area usually containing a textual label or an icon
 that users can click or tap to navigate to another page or resource. In addition,
-keyboard users may activate links using the Enter key.
+keyboard users may activate links using the <kbd>Enter</kbd> key.
 
 `useLink` returns props to be spread onto the link element:
 
@@ -72,6 +72,7 @@ This example shows a basic link using a native `<a>` element.
 function Link(props) {
   let ref = React.useRef();
   let {linkProps} = useLink(props, ref);
+
   return (
     <a
       {...linkProps}
@@ -97,6 +98,7 @@ assistive technology.
 function Link(props) {
   let ref = React.useRef();
   let {linkProps} = useLink({...props, elementType: 'span'}, ref);
+
   return (
     <span
       {...linkProps}
@@ -125,6 +127,7 @@ event will not be fired. The link will be exposed as disabled to assistive techn
 function Link(props) {
   let ref = React.useRef();
   let {linkProps} = useLink(props, ref);
+
   return (
     <a
       {...linkProps}
