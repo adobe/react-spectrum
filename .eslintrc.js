@@ -32,7 +32,7 @@ module.exports = {
       "@typescript-eslint/no-unused-vars": ERROR
     }
   }, {
-    files: ['**/test/**', '**/stories/**', '**/docs/**'],
+    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
     rules: {
       'rulesdir/imports': OFF,
       'monorepo/no-internal-import': OFF
