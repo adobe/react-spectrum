@@ -1,9 +1,7 @@
-import {Flex} from '@react-spectrum/layout';
 import {locales, scales, themes} from '../../constants';
 import {makeDecorator} from '@storybook/addons';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {defaultTheme} from '@adobe/react-spectrum';
+import {defaultTheme, Flex, Provider, View} from '@adobe/react-spectrum';
 
 export const withChromaticProvider = makeDecorator({
   name: 'withChromaticProvider',
@@ -14,14 +12,16 @@ export const withChromaticProvider = makeDecorator({
     let height = options.height;
 
     return (
-      <Provider theme={defaultTheme}>
-        <Flex style={{height}} direction="column" gap="size-100">
+      <Provider theme={defaultTheme} scale="medium">
+        <Flex style={{height}} direction="column">
           {(options.colorSchemes || Object.keys(themes)).map(colorScheme =>
             (options.scales || Object.keys(scales)).map(scale =>
               (colorScheme === 'light' ? selectedLocales : ['en-US']).map(locale =>
                 <Provider key={`${colorScheme}_${scale}_${locale}`} theme={themes[colorScheme]} colorScheme={colorScheme.replace(/est$/, '')} scale={scale} locale={locale} typekitId="pbi5ojv">
-                  <h1 style={{margin: 0, padding: '10px'}}>{`${colorScheme}, ${scale}, ${locale}`}</h1>
-                  {getStory(context)}
+                  <View margin="size-100">
+                    <h1 style={{margin: 0, padding: 0}}>{`${colorScheme}, ${scale}, ${locale}`}</h1>
+                    {getStory(context)}
+                  </View>
                 </Provider>
               )
             )

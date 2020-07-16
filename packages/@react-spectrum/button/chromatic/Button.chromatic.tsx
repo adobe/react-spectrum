@@ -26,8 +26,7 @@ storiesOf('Button', module)
     'with icon',
     () => (
       <Flex gap="size-200">
-        <Button
-          variant="primary">
+        <Button variant="primary">
           <Bell />
           <Text>Default</Text>
         </Button>
