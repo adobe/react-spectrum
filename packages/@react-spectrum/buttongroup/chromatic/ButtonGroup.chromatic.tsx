@@ -14,7 +14,7 @@ import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {View} from "@react-spectrum/view";
+import {View} from '@react-spectrum/view';
 
 storiesOf('ButtonGroup', module)
   .add(
