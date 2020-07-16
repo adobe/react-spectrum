@@ -22,24 +22,24 @@ storiesOf('ButtonGroup', module)
     () => render({})
   )
   .add(
-    'orientation: vertical',
-    () => render({orientation: 'vertical'})
-  )
-  .add(
-    'orientation: vertical, align: end',
-    () => render({orientation: 'vertical', align: 'end'})
+    'align: center',
+    () => render({align: 'center'})
   )
   .add(
     'align: end',
     () => render({align: 'end'})
   )
   .add(
-    'align: center',
-    () => render({align: 'center'})
+    'orientation: vertical',
+    () => render({orientation: 'vertical'})
   )
   .add(
-    'align: center, orientation: vertical',
-    () => render({align: 'center', orientation: 'vertical'})
+    'orientation: vertical, align: center',
+    () => render({orientation: 'vertical', align: 'center'})
+  )
+  .add(
+    'orientation: vertical, align: end',
+    () => render({orientation: 'vertical', align: 'end'})
   );
 
 function render(props) {

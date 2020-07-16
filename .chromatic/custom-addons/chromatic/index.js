@@ -8,12 +8,12 @@ export const withChromaticProvider = makeDecorator({
   parameterName: 'chromaticProvider',
   wrapper: (getStory, context, {options, parameters}) => {
     options = {...options, ...parameters};
-    let selectedLocales = options.locales ? locales.map(l => l.value).slice(1) : ['en-US'];
+    let selectedLocales = options.locales ? locales.map(l => l.value).slice(1) : ['en-US', 'ar-AE'];
     let height = options.height;
 
+    // do not add a top level provider, each provider variant needs to be independent so that we don't have RTL/LTR styles that interfere with each other
     return (
-      <Provider theme={defaultTheme} scale="medium">
-        <Flex style={{height}} direction="column">
+      <div style={{display: 'flex', flexDirection: 'column', height}}>
           {(options.colorSchemes || Object.keys(themes)).map(colorScheme =>
             (options.scales || Object.keys(scales)).map(scale =>
               (colorScheme === 'light' ? selectedLocales : ['en-US']).map(locale =>
@@ -26,8 +26,7 @@ export const withChromaticProvider = makeDecorator({
               )
             )
           )}
-        </Flex>
-      </Provider>
+      </div>
     )
   }
 });
