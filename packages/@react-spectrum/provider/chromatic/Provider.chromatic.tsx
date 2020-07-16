@@ -31,43 +31,15 @@ const THEME = {
 };
 
 storiesOf('Provider', module)
-  .add(
-    'nested props',
-    () => (
-      <Provider isDisabled>
-        <Button variant="primary">I am disabled</Button>
-        <Provider isQuiet>
-          <Button variant="primary">I am disabled and quiet</Button>
-        </Provider>
-      </Provider>
-    )
-  )
-  .add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  )
-  .add(
-    'isEmphasized',
-    () => render({isEmphasized: true})
-  )
-  .add(
-    'isDisabled',
-    () => render({isDisabled: true})
-  )
-  .add(
-    'isReadOnly',
-    () => render({isReadOnly: true})
-  )
-  .add(
-    'isRequired',
-    () => render({isRequired: true})
-  )
+  // don't need all the isEmphasized etc tests, the value being sent is tested in unit tests
+  // that the components look correctly with those values is being tested in those components chromatic tests
+
+  // keeping custom theme to show that the theme only changes expected things, in this case, the button, nothing else
   .add(
     'custom theme',
     () => render({theme: THEME})
   );
-// better to have them all with a value, that way emphasized can be tested
-// the non-value states will be tested by the individual components
+
 function render(props = {}) {
   return (
     <Provider {...props} UNSAFE_style={{padding: 50}}>
