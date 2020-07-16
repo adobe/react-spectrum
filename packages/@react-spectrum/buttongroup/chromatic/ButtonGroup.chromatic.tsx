@@ -30,10 +30,6 @@ storiesOf('ButtonGroup', module)
     () => render({orientation: 'vertical', align: 'end'})
   )
   .add(
-    'isDisabled, orientation: vertical',
-    () => render({isDisabled: true, orientation: 'vertical'})
-  )
-  .add(
     'align: end',
     () => render({align: 'end'})
   )
