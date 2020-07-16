@@ -11,11 +11,10 @@
  */
 
 import {getItemId} from './utils';
-import {HTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes, Key, RefObject} from 'react';
 import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {ListState} from '@react-stately/list';
 import {mergeProps, useSlotId} from '@react-aria/utils';
-import {Node} from '@react-types/shared';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface OptionAria {
@@ -29,7 +28,7 @@ interface OptionAria {
   descriptionProps: HTMLAttributes<HTMLElement>
 }
 
-interface AriaOptionProps<T> {
+interface AriaOptionProps {
   /** Whether the option is disabled. */
   isDisabled?: boolean,
 
@@ -39,8 +38,8 @@ interface AriaOptionProps<T> {
   /** A screen reader only label for the option. */
   'aria-label'?: string,
 
-  /** The item node. */
-  item?: Node<T>,
+  /** The unique key for the option. */
+  key?: Key,
 
   /** Whether selection should occur on press up instead of press down. */
   shouldSelectOnPressUp?: boolean,
@@ -68,11 +67,11 @@ const isSafariMacOS =
  * @param props - Props for the option.
  * @param state - State for the listbox, as returned by `useListState`.
  */
-export function useOption<T>(props: AriaOptionProps<T>, state: ListState<T>, ref: RefObject<HTMLElement>): OptionAria {
+export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: RefObject<HTMLElement>): OptionAria {
   let {
     isSelected,
     isDisabled,
-    item,
+    key,
     shouldSelectOnPressUp,
     shouldFocusOnHover,
     isVirtualized,
@@ -98,13 +97,13 @@ export function useOption<T>(props: AriaOptionProps<T>, state: ListState<T>, ref
   }
 
   if (isVirtualized) {
-    optionProps['aria-posinset'] = item.index + 1;
+    optionProps['aria-posinset'] = state.collection.getItem(key).index + 1;
     optionProps['aria-setsize'] = state.collection.size;
   }
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    key: item.key,
+    key,
     ref,
     shouldSelectOnPressUp,
     isVirtualized,
@@ -118,7 +117,7 @@ export function useOption<T>(props: AriaOptionProps<T>, state: ListState<T>, ref
     onHoverStart() {
       if (!isFocusVisible()) {
         state.selectionManager.setFocused(true);
-        state.selectionManager.setFocusedKey(item.key);
+        state.selectionManager.setFocusedKey(key);
       }
     }
   });
@@ -127,7 +126,7 @@ export function useOption<T>(props: AriaOptionProps<T>, state: ListState<T>, ref
     optionProps: {
       ...optionProps,
       ...mergeProps(pressProps, hoverProps),
-      id: getItemId(state, item.key)
+      id: getItemId(state, key)
     },
     labelProps: {
       id: labelId
