@@ -145,7 +145,7 @@ function Select(props) {
     labelProps,
     triggerProps,
     valueProps,
-    listBoxProps
+    menuProps
   } = useSelect(props, state, ref);
 
   // Get props for the button based on the trigger props from useSelect
@@ -177,7 +177,7 @@ function Select(props) {
       </button>
       {state.isOpen &&
         <ListBoxPopup
-          {...listBoxProps}
+          {...menuProps}
           state={state} />
       }
     </div>

@@ -111,8 +111,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         layout={layout}
         state={state}
         width={isMobile ? '100%' : undefined}
-        shouldUseVirtualFocus
-        transitionDuration={0} />
+        shouldUseVirtualFocus />
       <DismissButton onDismiss={() => state.close()} />
     </FocusScope>
   );
