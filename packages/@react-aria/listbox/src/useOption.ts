@@ -65,8 +65,8 @@ const isSafariMacOS =
 /**
  * Provides the behavior and accessibility implementation for an option in a listbox.
  * See `useListBox` for more details about listboxes.
- * @param props - props for the option
- * @param state - state for the listbox, as returned by `useListState`
+ * @param props - Props for the option.
+ * @param state - State for the listbox, as returned by `useListState`.
  */
 export function useOption<T>(props: AriaOptionProps<T>, state: ListState<T>, ref: RefObject<HTMLElement>): OptionAria {
   let {

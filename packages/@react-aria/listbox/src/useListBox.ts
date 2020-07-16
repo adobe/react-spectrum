@@ -46,8 +46,8 @@ interface AriaListBoxOptions<T> extends AriaListBoxProps<T> {
 /**
  * Provides the behavior and accessibility implementation for a listbox component.
  * A listbox displays a list of options and allows a user to select one or more of them.
- * @param props - props for the listbox
- * @param state - state for the listbox, as returned by `useListState`
+ * @param props - Props for the listbox.
+ * @param state - State for the listbox, as returned by `useListState`.
  */
 export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): ListBoxAria {
   let domProps = filterDOMProps(props, {labelable: true});

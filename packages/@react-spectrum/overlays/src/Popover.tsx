@@ -35,7 +35,7 @@ interface PopoverWrapperProps extends HTMLAttributes<HTMLElement> {
  * other two don't, they start at a fractional pixel value, it introduces rounding differences between browsers and
  * between display types (retina with subpixels vs not retina). By flipping them with CSS we can ensure that
  * the path always starts at 0 so that it perfectly overlaps the popover's border.
- * see bottom of file for more explanation.
+ * See bottom of file for more explanation.
  */
 let arrowPlacement = {
   left: 'right',
@@ -181,5 +181,5 @@ export {_Popover as Popover};
  * - I didn't try drawing the svg backwards
  * This could still be tried
  * - I tried changing the calculation of the popover placement AND the svg height/width so that they were all rounded
- * This seems to have done the trick
+ * This seems to have done the trick.
  */

@@ -46,49 +46,49 @@ interface TreeData<T extends object> {
 
   /**
    * Gets a node from the tree by key.
-   * @param key - the key of the item to retrieve.
+   * @param key - The key of the item to retrieve.
    */
   getItem(key: Key): TreeNode<T>,
 
   /**
    * Inserts an item into a parent node as a child.
-   * @param parentKey - the key of the parent item to insert into. `null` for the root.
-   * @param index - the index within the parent to insert into.
-   * @param value - the value to insert.
+   * @param parentKey - The key of the parent item to insert into. `null` for the root.
+   * @param index - The index within the parent to insert into.
+   * @param value - The value to insert.
    */
   insert(parentKey: Key | null, index: number, ...values: T[]): void,
 
   /**
    * Inserts items into the list before the item at the given key.
-   * @param key - the key of the item to insert before.
-   * @param values - the values to insert.
+   * @param key - The key of the item to insert before.
+   * @param values - The values to insert.
    */
   insertBefore(key: Key, ...values: T[]): void,
 
   /**
    * Inserts items into the list after the item at the given key.
-   * @param key - the key of the item to insert after.
-   * @param values - the values to insert.
+   * @param key - The key of the item to insert after.
+   * @param values - The values to insert.
    */
   insertAfter(key: Key, ...values: T[]): void,
 
   /**
    * Appends an item into a parent node as a child.
-   * @param parentKey - the key of the parent item to insert into. `null` for the root.
-   * @param value - the value to insert.
+   * @param parentKey - The key of the parent item to insert into. `null` for the root.
+   * @param value - The value to insert.
    */
   append(parentKey: Key | null, ...values: T[]): void,
 
   /**
    * Prepends an item into a parent node as a child.
-   * @param parentKey - the key of the parent item to insert into. `null` for the root.
-   * @param value - the value to insert.
+   * @param parentKey - The key of the parent item to insert into. `null` for the root.
+   * @param value - The value to insert.
    */
   prepend(parentKey: Key | null, ...value: T[]): void,
 
   /**
    * Removes an item from the tree by its key.
-   * @param key - the key of the item to remove.
+   * @param key - The key of the item to remove.
    */
   remove(...keys: Key[]): void,
 
@@ -100,16 +100,16 @@ interface TreeData<T extends object> {
 
   /**
    * Moves an item within the tree.
-   * @param key - the key of the item to move.
-   * @param toParentKey - the key of the new parent to insert into.
-   * @param index - the index within the new parent to insert at.
+   * @param key - The key of the item to move.
+   * @param toParentKey - The key of the new parent to insert into.
+   * @param index - The index within the new parent to insert at.
    */
   move(key: Key, toParentKey: Key, index: number): void,
 
   /**
    * Updates an item in the tree.
-   * @param key - the key of the item to update.
-   * @param newValue - the new value for the item.
+   * @param key - The key of the item to update.
+   * @param newValue - The new value for the item.
    */
   update(key: Key, newValue: T): void
 }

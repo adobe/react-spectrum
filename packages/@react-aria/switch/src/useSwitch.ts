@@ -23,9 +23,9 @@ export interface SwitchAria {
 /**
  * Provides the behavior and accessibility implementation for a switch component.
  * A switch is similar to a checkbox, but represents on/off values as opposed to selection.
- * @param props - props for the switch
- * @param state - state for the switch, as returned by `useToggleState`
- * @param ref - ref to the HTML input element
+ * @param props - Props for the switch.
+ * @param state - State for the switch, as returned by `useToggleState`.
+ * @param ref - Ref to the HTML input element.
  */
 export function useSwitch(props: AriaSwitchProps, state: ToggleState, ref: RefObject<HTMLInputElement>): SwitchAria {
   let {inputProps} = useToggle(props, state, ref);

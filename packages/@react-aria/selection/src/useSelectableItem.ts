@@ -17,19 +17,44 @@ import {PressEvent} from '@react-types/shared';
 import {PressProps} from '@react-aria/interactions';
 
 interface SelectableItemOptions {
+  /**
+   * An interface for reading and updating multiple selection state.
+   */
   selectionManager: MultipleSelectionManager,
+  /**
+   * A unique key for the item.
+   */
   key: Key,
+  /**
+   * Ref to the item.
+   */
   ref: RefObject<HTMLElement>,
+  /**
+   * By default, selection occurs on pointer down. This can be strange if selecting an
+   * item causes the UI to disappear immediately (e.g. menus).
+   */
   shouldSelectOnPressUp?: boolean,
+  /**
+   * Whether the option is contained in a virtual scroller.
+   */
   isVirtualized?: boolean,
-  shouldUseVirtualFocus?: boolean,
-  focus?: () => void
+  /**
+   * Function to focus the item.
+   */
+  focus?: () => void,
+  shouldUseVirtualFocus?: boolean
 }
 
 interface SelectableItemAria {
+  /**
+   * Props to be spread on the item root node.
+   */
   itemProps: HTMLAttributes<HTMLElement> & PressProps
 }
 
+/**
+ * Handles interactions with an item in a selectable collection.
+ */
 export function useSelectableItem(options: SelectableItemOptions): SelectableItemAria {
   let {
     selectionManager: manager,
@@ -86,7 +111,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // onPress requires a pointer down event on the same element as pointer up. For menus,
   // we want to be able to have the pointer down on the trigger that opens the menu and
   // the pointer up on the menu item rather than requiring a separate press.
-  // For keyboard events, selection still occurrs on key down.
+  // For keyboard events, selection still occurs on key down.
   if (shouldSelectOnPressUp) {
     itemProps.onPressStart = (e) => {
       if (e.pointerType === 'keyboard') {
