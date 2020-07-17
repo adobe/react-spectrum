@@ -13,7 +13,7 @@
 import {Radio, RadioGroup} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {View} from "@react-spectrum/view";
+import {View} from '@react-spectrum/view';
 
 storiesOf('RadioGroup', module)
   .add(
