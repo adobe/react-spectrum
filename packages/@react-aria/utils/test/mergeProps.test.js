@@ -18,11 +18,11 @@ import {mergeProps} from '../';
 describe('mergeProps', function () {
   it('handles one argument', function () {
     let onClick = () => {};
-    let classname = 'primary';
+    let className = 'primary';
     let id = 'test_id';
-    let mergedProps = mergeProps({onClick, classname, id});
+    let mergedProps = mergeProps({onClick, className, id});
     expect(mergedProps.onClick).toBe(onClick);
-    expect(mergedProps.classname).toBe(classname);
+    expect(mergedProps.className).toBe(className);
     expect(mergedProps.id).toBe(id);
   });
 
@@ -31,15 +31,15 @@ describe('mergeProps', function () {
     let message1 = 'click1';
     let message2 = 'click2';
     let message3 = 'click3';
-
-    let a = {onClick: () => console.log(message1)};
-    let b = {onClick: () => console.log(message2)};
-    let c = {onClick: () => console.log(message3)};
-    let mergedProps = mergeProps(a, b, c);
+    let mergedProps = mergeProps(
+      {onClick: () => console.log(message1)},
+      {onClick: () => console.log(message2)},
+      {onClick: () => console.log(message3)}
+    );
     mergedProps.onClick();
-    expect(console.log).toHaveBeenCalledWith(message1);
-    expect(console.log).toHaveBeenCalledWith(message2);
-    expect(console.log).toHaveBeenCalledWith(message3);
+    expect(console.log).toHaveBeenNthCalledWith(1, message1);
+    expect(console.log).toHaveBeenNthCalledWith(2, message2);
+    expect(console.log).toHaveBeenNthCalledWith(3, message3);
     expect(console.log).toHaveBeenCalledTimes(3);
   });
 
@@ -55,13 +55,14 @@ describe('mergeProps', function () {
       {onHover: () => console.log(hover), styles: {margin}},
       {onClick: () => console.log(click2), onFocus: () => console.log(focus)}
     );
+
     mergedProps.onClick();
+    expect(console.log).toHaveBeenNthCalledWith(1, click1);
+    expect(console.log).toHaveBeenNthCalledWith(2, click2);
     mergedProps.onFocus();
+    expect(console.log).toHaveBeenNthCalledWith(3, focus);
     mergedProps.onHover();
-    expect(console.log).toHaveBeenCalledWith(click1);
-    expect(console.log).toHaveBeenCalledWith(click2);
-    expect(console.log).toHaveBeenCalledWith(hover);
-    expect(console.log).toHaveBeenCalledWith(focus);
+    expect(console.log).toHaveBeenNthCalledWith(4, hover);
     expect(console.log).toHaveBeenCalledTimes(4);
     expect(mergedProps.styles.margin).toBe(margin);
   });
@@ -69,7 +70,7 @@ describe('mergeProps', function () {
   it('combines classNames', function () {
     let className1 = 'primary';
     let className2 = 'hover';
-    let className3 = 'hover';
+    let className3 = 'focus';
     let mergedProps = mergeProps({className: className1}, {className: className2}, {className: className3});
     let mergedClassNames = classNames(className1, className2, className3);
     expect(mergedProps.className).toBe(mergedClassNames);
