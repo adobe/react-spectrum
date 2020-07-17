@@ -65,7 +65,6 @@ export function mergeProps<T extends Props, U extends Props[]>(
         result[key] = classNames(result.UNSAFE_className, b.UNSAFE_className);
       } else if (key === "id" && result.id && b.id) {
         result.id = mergeIds(result.id, b.id);
-
         // Override others
       } else {
         result[key] = b[key] !== undefined ? b[key] : result[key];
