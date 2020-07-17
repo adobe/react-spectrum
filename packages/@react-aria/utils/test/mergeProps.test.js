@@ -43,6 +43,29 @@ describe('mergeProps', function () {
     expect(console.log).toHaveBeenCalledTimes(3);
   });
 
+  it('merges props with different keys', function () {
+    console.log = jest.fn();
+    let click1 = 'click1';
+    let click2 = 'click2';
+    let hover = 'hover';
+    let focus = 'focus';
+    let margin = 2;
+    const mergedProps = mergeProps(
+      {onClick: () => console.log(click1)},
+      {onHover: () => console.log(hover), styles: {margin}},
+      {onClick: () => console.log(click2), onFocus: () => console.log(focus)}
+    );
+    mergedProps.onClick();
+    mergedProps.onFocus();
+    mergedProps.onHover();
+    expect(console.log).toHaveBeenCalledWith(click1);
+    expect(console.log).toHaveBeenCalledWith(click2);
+    expect(console.log).toHaveBeenCalledWith(hover);
+    expect(console.log).toHaveBeenCalledWith(focus);
+    expect(console.log).toHaveBeenCalledTimes(4);
+    expect(mergedProps.styles.margin).toBe(margin);
+  });
+
   it('combines classNames', function () {
     let className1 = 'primary';
     let className2 = 'hover';
