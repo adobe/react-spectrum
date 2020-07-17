@@ -10,12 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '../';
-import {View} from "@react-spectrum/view";
-import {Checkbox} from "@react-spectrum/checkbox";
+import {View} from '@react-spectrum/view';
 
 storiesOf('Switch', module)
   .add(

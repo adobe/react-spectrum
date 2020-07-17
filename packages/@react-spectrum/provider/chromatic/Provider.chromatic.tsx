@@ -52,7 +52,7 @@ function render(props = {}) {
           placeholder="Something"
           marginTop="size-100"
           necessityIndicator="label"
-          value="dummy value"/>
+          value="dummy value" />
         <Checkbox isSelected>Cats!</Checkbox>
         <Switch isSelected>Dogs!</Switch>
         <RadioGroup value="dogs" label="A radio group">

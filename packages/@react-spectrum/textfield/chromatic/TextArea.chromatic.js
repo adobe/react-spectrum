@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {Flex} from '@react-spectrum/layout';
 import Info from '@spectrum-icons/workflow/Info';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextArea} from '../';
-import {Flex} from "@react-spectrum/layout";
 
 storiesOf('TextArea', module)
   .add(

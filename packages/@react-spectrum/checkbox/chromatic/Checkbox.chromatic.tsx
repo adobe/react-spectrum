@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
 import {Checkbox} from '../';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import {View} from "@react-spectrum/view";
+import {View} from '@react-spectrum/view';
 
 storiesOf('Checkbox', module)
   .add(

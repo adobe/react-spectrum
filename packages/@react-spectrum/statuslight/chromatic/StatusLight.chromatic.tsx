@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
+import {SpectrumStatusLightProps} from '@react-types/statuslight';
 import {StatusLight} from '../';
 import {storiesOf} from '@storybook/react';
-import {Flex} from "@react-spectrum/layout";
-import {SpectrumStatusLightProps} from "@react-types/statuslight";
-import {View} from "@react-spectrum/view";
-import {Switch} from "@react-spectrum/switch";
+import {View} from '@react-spectrum/view';
 
 let variants = ['celery', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'chartreuse', 'magenta', 'purple', 'neutral', 'info', 'positive', 'notice', 'negative', 'positive'];
 

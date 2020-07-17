@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import Refresh from '@spectrum-icons/workflow/Refresh';
 import {SearchField} from '../';
 import {storiesOf} from '@storybook/react';
-import {Flex} from '@react-spectrum/layout';
 
 const info = 'A containing element with `role="search"` has been added to define a **search** landmark region.';
 // not quite duplicate of Textfield, has things like clear button

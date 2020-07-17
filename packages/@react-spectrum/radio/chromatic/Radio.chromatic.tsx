@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../src';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
