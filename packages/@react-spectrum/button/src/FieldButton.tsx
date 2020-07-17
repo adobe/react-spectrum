@@ -44,8 +44,8 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <button
-        {...buttonProps}
         {...hoverProps}
+        {...buttonProps}
         ref={domRef}
         className={
           classNames(

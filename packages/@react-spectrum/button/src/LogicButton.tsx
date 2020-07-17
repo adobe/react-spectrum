@@ -17,8 +17,8 @@ import React from 'react';
 import {SpectrumLogicButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
-import {useProviderProps} from '@react-spectrum/provider';
 import {useHover} from '@react-aria/interactions';
+import {useProviderProps} from '@react-spectrum/provider';
 
 function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);

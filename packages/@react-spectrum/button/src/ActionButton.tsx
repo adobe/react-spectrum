@@ -18,8 +18,8 @@ import {SpectrumActionButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
-import {useProviderProps} from '@react-spectrum/provider';
 import {useHover} from '@react-aria/interactions';
+import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);

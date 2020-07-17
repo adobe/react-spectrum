@@ -18,8 +18,8 @@ import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
-import {useProviderProps} from '@react-spectrum/provider';
 import {useHover} from '@react-aria/interactions';
+import {useProviderProps} from '@react-spectrum/provider';
 
 // todo: CSS hasn't caught up yet, map
 let VARIANT_MAPPING = {
@@ -64,7 +64,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
               'spectrum-Button--quiet': isQuiet,
               'is-disabled': isDisabled,
               'is-active': isPressed,
-              'is-hovered': isHovered,
+              'is-hovered': isHovered
             },
             styleProps.className
           )
