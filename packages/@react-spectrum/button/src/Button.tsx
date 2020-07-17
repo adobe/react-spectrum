@@ -19,6 +19,7 @@ import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useHover} from '@react-aria/interactions';
 
 // todo: CSS hasn't caught up yet, map
 let VARIANT_MAPPING = {
@@ -39,6 +40,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
+  let {hoverProps, isHovered} = useHover(props);
   let {styleProps} = useStyleProps(otherProps);
 
   let buttonVariant = variant;
@@ -50,6 +52,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
         {...styleProps}
+        {...hoverProps}
         {...buttonProps}
         ref={domRef}
         className={
@@ -60,7 +63,8 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
             {
               'spectrum-Button--quiet': isQuiet,
               'is-disabled': isDisabled,
-              'is-active': isPressed
+              'is-active': isPressed,
+              'is-hovered': isHovered,
             },
             styleProps.className
           )

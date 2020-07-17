@@ -18,6 +18,7 @@ import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
+import {useHover} from '@react-aria/interactions';
 
 interface ClearButtonProps extends ButtonProps, DOMProps, StyleProps {
   focusClassName?: string,
@@ -34,6 +35,7 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
+  let {hoverProps, isHovered} = useHover(props);
   let {styleProps} = useStyleProps(otherProps);
 
   return (
@@ -41,6 +43,7 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
       <button
         {...styleProps}
         {...buttonProps}
+        {...hoverProps}
         ref={domRef}
         className={
           classNames(
@@ -48,7 +51,8 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
             'spectrum-ClearButton',
             {
               [`spectrum-ClearButton--${variant}`]: variant,
-              'is-active': isPressed
+              'is-active': isPressed,
+              'is-hovered': isHovered
             },
             styleProps.className
           )

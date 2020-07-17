@@ -17,6 +17,7 @@ import {FocusRing} from '@react-aria/focus';
 import React, {RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
+import {useHover} from '@react-aria/interactions';
 
 interface FieldButtonProps extends ButtonProps, DOMProps, StyleProps {
   isQuiet?: boolean,
@@ -37,12 +38,14 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
   } = props;
   let domRef = useFocusableRef(ref) as RefObject<HTMLButtonElement>;
   let {buttonProps, isPressed} = useButton(props, domRef);
+  let {hoverProps, isHovered} = useHover(props);
   let {styleProps} = useStyleProps(otherProps);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <button
         {...buttonProps}
+        {...hoverProps}
         ref={domRef}
         className={
           classNames(
@@ -52,7 +55,8 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
               'spectrum-FieldButton--quiet': isQuiet,
               'is-active': isActive || isPressed,
               'is-disabled': isDisabled,
-              'is-invalid': validationState === 'invalid'
+              'is-invalid': validationState === 'invalid',
+              'is-hovered': isHovered
             },
             styleProps.className
           )

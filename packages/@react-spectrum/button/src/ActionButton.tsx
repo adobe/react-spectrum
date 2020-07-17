@@ -19,6 +19,7 @@ import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useHover} from '@react-aria/interactions';
 
 function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
@@ -32,6 +33,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
 
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
+  let {hoverProps, isHovered} = useHover(props);
   let {styleProps} = useStyleProps(otherProps);
   let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));
 
@@ -40,6 +42,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
       <button
         {...styleProps}
         {...buttonProps}
+        {...hoverProps}
         ref={domRef}
         className={
           classNames(
@@ -48,7 +51,8 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
             {
               'spectrum-ActionButton--quiet': isQuiet,
               'is-active': isPressed,
-              'is-disabled': isDisabled
+              'is-disabled': isDisabled,
+              'is-hovered': isHovered
             },
             styleProps.className
           )

@@ -18,6 +18,7 @@ import {SpectrumLogicButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
 import {useProviderProps} from '@react-spectrum/provider';
+import {useHover} from '@react-aria/interactions';
 
 function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
@@ -30,6 +31,7 @@ function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef<HTMLButt
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
+  let {hoverProps, isHovered} = useHover(props);
   let {styleProps} = useStyleProps(otherProps);
 
   return (
@@ -37,6 +39,7 @@ function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef<HTMLButt
       <button
         {...styleProps}
         {...buttonProps}
+        {...hoverProps}
         ref={domRef}
         className={
           classNames(
@@ -45,7 +48,8 @@ function LogicButton(props: SpectrumLogicButtonProps, ref: FocusableRef<HTMLButt
             {
               [`spectrum-LogicButton--${variant}`]: variant,
               'is-disabled': isDisabled,
-              'is-active': isPressed
+              'is-active': isPressed,
+              'is-hovered': isHovered
             },
             styleProps.className
           )
