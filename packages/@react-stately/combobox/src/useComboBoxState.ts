@@ -71,7 +71,13 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   };
 
   // Need this collection here so that an initial inputValue can be found via collection.getItem
-  let {collection} = useListState(props);
+  let {collection} = useListState({
+    ...props,
+    // Have to do this to make singleselection onSelectionChange type work with multipleSelection onSelectionChange type
+    onSelectionChange: (keys: Set<Key>) => {
+      onSelectionChange(keys.values().next().value);
+    }
+  });
 
   if (props.selectedKey && props.inputValue) {
     let selectedItem = collection.getItem(props.selectedKey);
@@ -186,11 +192,10 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       ...props,
       selectedKeys,
       disallowEmptySelection: true,
+      // perhaps put triggerState.close in onSelectionChange?
       onSelectionChange: (keys: Set<Key>) => setSelectedKey(keys.values().next().value),
       selectionMode: 'single',
-      nodeFilter: itemsControlled || inputValue === '' ? null : filter,
-      filterFn: defaultFilterFn,
-      inputValue
+      nodeFilter: itemsControlled || inputValue === '' ? null : (nodes) => filter(nodes, defaultFilterFn)
     }
   );
 
