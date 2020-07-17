@@ -105,7 +105,7 @@ function handleWindowBlur() {
  * Setup global event listeners to control when keyboard focus style should be visible.
  */
 function setupGlobalFocusEvents() {
-  if ( window === 'undefined' || hasSetupGlobalListeners) {
+  if (typeof window === 'undefined' || hasSetupGlobalListeners) {
     return;
   }
 
