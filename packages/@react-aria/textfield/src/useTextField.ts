@@ -25,8 +25,8 @@ interface TextFieldAria {
 
 /**
  * Provides the behavior and accessibility implementation for a text field.
- * @param props - props for the text field
- * @param ref - ref to the HTML input element
+ * @param props - Props for the text field.
+ * @param ref - Ref to the HTML input element.
  */
 export function useTextField(
   props: AriaTextFieldProps,
@@ -57,7 +57,7 @@ export function useTextField(
       'aria-autocomplete': props['aria-autocomplete'],
       'aria-haspopup': props['aria-haspopup'],
       value: props.value,
-      defaultValue: props.defaultValue,
+      defaultValue: props.value ? undefined : props.defaultValue,
       onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
       autoComplete: props.autoComplete,
       maxLength: props.maxLength,

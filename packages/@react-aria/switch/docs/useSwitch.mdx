@@ -15,7 +15,7 @@ import hiddenDocs from 'docs:@react-aria/visually-hidden';
 import focusDocs from 'docs:@react-aria/focus';
 import statelyDocs from 'docs:@react-stately/toggle';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/switch/package.json';
 
 ```jsx import
 import {useSwitch} from '@react-aria/switch';
@@ -23,7 +23,7 @@ import {useSwitch} from '@react-aria/switch';
 
 ---
 category: Forms
-keywords: [switch, checkbox, form, aria]
+keywords: [switch, input, checkbox, aria]
 ---
 
 # useSwitch
@@ -57,7 +57,7 @@ as a switch. `useSwitch` helps achieve accessible switches that can be styled as
 ## Anatomy
 
 A switch consists of a visual selection indicator and a label. Users may click or touch a switch
-to toggle the selection state, or use the Tab key to navigate to it and the Space key to toggle it.
+to toggle the selection state, or use the <kbd>Tab</kbd> key to navigate to it and the <kbd>Space</kbd> key to toggle it.
 
 `useSwitch` returns props to be spread onto its input element:
 
@@ -77,7 +77,7 @@ technology.
 This example uses SVG to build the switch, with a visually hidden native input to represent
 the switch for accessibility. This is possible using
 the &lt;<TypeLink links={hiddenDocs.links} type={hiddenDocs.exports.VisuallyHidden} />&gt;
-from `@react-aria/visually-hidden`. It is still in the DOM and accessible to assistive technology,
+utility component from `@react-aria/visually-hidden`. It is still in the DOM and accessible to assistive technology,
 but invisible. The SVG element is the visual representation, and is hidden from screen readers
 with `aria-hidden`.
 
@@ -93,11 +93,9 @@ import {useToggleState} from '@react-stately/toggle';
 import {useFocusRing} from '@react-aria/focus';
 
 function Switch(props) {
-  let {children} = props;
   let state = useToggleState(props);
   let {inputProps} = useSwitch(props, state);
   let {isFocusVisible, focusProps} = useFocusRing();
-  let isChecked = inputProps.checked;
 
   return (
     <label style={{display: 'flex', alignItems: 'center'}}>
@@ -115,9 +113,9 @@ function Switch(props) {
           width={32}
           height={16}
           rx={8}
-          fill={isChecked ? 'orange' : 'gray'} />
+          fill={state.isSelected ? 'orange' : 'gray'} />
         <circle
-          cx={isChecked ? 28 : 12}
+          cx={state.isSelected ? 28 : 12}
           cy={12}
           r={5}
           fill="white" />
@@ -133,7 +131,7 @@ function Switch(props) {
             strokeWidth={2} />
         }
       </svg>
-      {children}
+      {props.children}
     </label>
   );
 }

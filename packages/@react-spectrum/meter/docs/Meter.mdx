@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/meter';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-spectrum/meter/package.json';
 
 ```jsx import
 import {Flex} from '@react-spectrum/layout';
@@ -41,7 +41,7 @@ category: Status
 ## Value
 
 Meters are controlled with the `value` prop.
-In this default case, the `value` props can be thought of as representing current percentage of progress as the minimum and maximum values default to 0 and 100, respectively.
+By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively.
 
 ```tsx example
 <Meter
@@ -50,7 +50,7 @@ In this default case, the `value` props can be thought of as representing curren
   variant="positive" />
 ```
 
-Alternatively, a different scale can be used by setting the `minValue` and `maxValue`.
+Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
 
 ```tsx example
 <Meter
@@ -61,8 +61,8 @@ Alternatively, a different scale can be used by setting the `minValue` and `maxV
   variant="positive" />
 ```
 
-Values are formatted as a percentage by default, but can be modified by using the `formatOptions` for different formats.
-`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied to the current locale.
+Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
 
 ```tsx example
 <Meter
@@ -74,19 +74,18 @@ Values are formatted as a percentage by default, but can be modified by using th
 
 ### Accessibility
 
-Depending on the visualization being used (i.e. depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` attribute are required.
+Depending on the visualization being used (i.e. depending on the `showValueLabel` prop), a `label`, `aria-label`, or `aria-labelledby` prop is required.
 
 ### Internationalization
 
 To internationalize a Meter, a localized string should be passed to the `label` prop, `aria-label` prop, or value of the associated `aria-labelledby` element.
 
-For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the bar loader is automatically flipped.
-
-If the prop `formatOptions` is used, Meter will utilize current locale to format the value string.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the layout of the meter is automatically flipped. In addition,
+Meter automatically uses the current locale to format the value label.
 
 ## Labeling
-Value labels are shown by default on top, but they can also be moved to the side or hidden as needed.
-The label should be in sentence case.
+Value labels are shown above the Meter by default, but they can also be moved to the side or hidden as needed.
+The label text should be in sentence case.
 
 ```tsx example
 <Flex direction="column" maxWidth="size-3000" gap="size-300">
@@ -101,10 +100,10 @@ The value label can be updated via the `valueLabel` prop in cases where showing 
 <Meter label="Progress" marginBottom="size-300" value={25} valueLabel="1 of 4" variant="warning" />
 ```
 
-Value labels by default show the percentage of progress in a determinate ProgressBar. These can be customized using the following props.
+By default, the value label is formatted as a percentage. This can be customized using the following props.
 
-* `showValueLabel`: Hides the value label
-* `formatOptions`: Allows you to customize the format of the percentage
+* `showValueLabel`: Allows you to display or hide the value label.
+* `formatOptions`: Allows you to customize the format of the value.
 * `valueLabel`: Allows you to customize the value label to any string.
 
 ```tsx example
@@ -131,7 +130,7 @@ Value labels by default show the percentage of progress in a determinate Progres
 
 <PropTable component={docs.exports.Meter} links={docs.links} />
 
-## Visual Options
+## Visual options
 
 ### Size
 [View guidelines](https://spectrum.adobe.com/page/meter/#Size)

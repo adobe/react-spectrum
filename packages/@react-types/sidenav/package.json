@@ -7,12 +7,11 @@
   "types": "src/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/shared": "3.0.0-rc.3",
-    "@react-stately/collections": "3.0.0-rc.0",
-    "@react-stately/tree": "3.0.0-rc.0"
+    "@react-types/shared": "^3.0.2",
+    "@react-stately/virtualizer": "^3.0.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"

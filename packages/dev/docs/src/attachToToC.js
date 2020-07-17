@@ -17,7 +17,7 @@ export function attachToToC() {
   let headers = [];
   for (let link of tocLinks) {
     let headerId = link.href.split('#').pop();
-    let header = document.querySelector(`#${headerId}`);
+    let header = document.getElementById(headerId);
     headers.push({link, header});
   }
 
@@ -29,9 +29,16 @@ export function attachToToC() {
         if ((header.header.offsetTop + header.header.getBoundingClientRect().height) > document.documentElement.scrollTop) {
           let currentSelection = document.querySelectorAll(`#toc .${sideNavStyles['is-selected']}`);
           if (currentSelection) {
-            currentSelection.forEach(node => node.classList.remove(sideNavStyles['is-selected']));
+            currentSelection.forEach(node => {
+              node.classList.remove(sideNavStyles['is-selected']);
+              const link = node.querySelector('[aria-current]');
+              if (link) {
+                link.removeAttribute('aria-current');
+              }
+            });
           }
           header.link.parentElement.classList.add(sideNavStyles['is-selected']);
+          header.link.setAttribute('aria-current', 'location');
           return true;
         }
       });

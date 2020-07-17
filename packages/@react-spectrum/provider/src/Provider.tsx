@@ -84,7 +84,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(otherProps);
   if (!prevContext || props.locale || theme !== prevContext.theme || colorScheme !== prevContext.colorScheme || scale !== prevContext.scale || Object.keys(domProps).length > 0 || otherProps.UNSAFE_className || Object.keys(styleProps.style).length > 0) {
     contents = (
-      <ProviderWrapper {...props} ref={ref}>
+      <ProviderWrapper {...props} UNSAFE_style={{isolation: !prevContext ? 'isolate' : undefined, ...styleProps.style}} ref={ref}>
         {contents}
       </ProviderWrapper>
     );
@@ -102,10 +102,9 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
 }
 
 /**
- * Provider is the containing component that all other React Spectrum components
- * are the children of. Used to set locale, theme, scale, toast position and
- * provider, modal provider, and common props for children components. Providers
- * can be nested.
+ * Provider is the container for all React Spectrum applications.
+ * It defines the theme, locale, and other application level settings,
+ * and can also be used to provide common properties to a group of components.
  */
 let _Provider = React.forwardRef(Provider);
 export {_Provider as Provider};
@@ -148,15 +147,15 @@ const ProviderWrapper = React.forwardRef(function ProviderWrapper(props: Provide
 
   let hasWarned = useRef(false);
   useEffect(() => {
-    if (locale && domRef.current) {
-      let closestLang = domRef.current.parentElement.closest('[lang]');
-      let lang = closestLang && closestLang.getAttribute('lang');
-      if (lang && lang !== locale && !hasWarned.current) {
-        console.warn(`Locales cannot be nested. ${locale} inside ${lang}.`);
+    if (direction && domRef.current) {
+      let closestDir = domRef.current.parentElement.closest('[dir]');
+      let dir = closestDir && closestDir.getAttribute('dir');
+      if (dir && dir !== direction && !hasWarned.current) {
+        console.warn(`Language directions cannot be nested. ${direction} inside ${dir}.`);
         hasWarned.current = true;
       }
     }
-  }, [locale, domRef, hasWarned]);
+  }, [direction, domRef, hasWarned]);
 
 
   return (

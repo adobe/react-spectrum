@@ -184,6 +184,7 @@ function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOpt
 function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean) {
   let focusedNode = useRef<HTMLElement>();
 
+  let raf = useRef(null);
   useEffect(() => {
     let scope = scopeRef.current;
     if (!contain) {
@@ -251,7 +252,7 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
         activeScope = scopeRef;
         focusedNode.current = e.target;
         // Firefox doesn't shift focus back to the Dialog properly without this
-        requestAnimationFrame(() => {
+        raf.current = requestAnimationFrame(() => {
           focusedNode.current.focus();
         });
       }
@@ -268,6 +269,11 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       scope.forEach(element => element.removeEventListener('focusout', onBlur, false));
     };
   }, [scopeRef, contain]);
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => cancelAnimationFrame(raf.current);
+  }, []);
 }
 
 function isElementInAnyScope(element: Element, scopes: Set<RefObject<HTMLElement[]>>) {
@@ -379,8 +385,11 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
   }, [scopeRef, restoreFocus, contain]);
 }
 
+/**
+ * Create a [TreeWalker]{@link https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker}
+ * that matches all focusable/tabbable elements.
+ */
 export function getFocusableTreeWalker(root: HTMLElement, opts?: FocusManagerOptions) {
-  // Create a DOM tree walker that matches all focusable/tabbable elements
   let selector = opts?.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
   let walker = document.createTreeWalker(
     root,

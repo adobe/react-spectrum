@@ -18,7 +18,7 @@ import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTagGroup} from '@react-aria/tag';
 
-interface TagGroupContext extends Removable<any, void> {
+interface TagGroupContextValue extends Removable<any, void> {
   isDisabled?: boolean,
   isFocused?: boolean,
   isRequired?: boolean,
@@ -27,9 +27,9 @@ interface TagGroupContext extends Removable<any, void> {
   role?: 'gridcell'
 }
 
-const TagGroupContext = React.createContext<TagGroupContext | {}>({});
+const TagGroupContext = React.createContext<TagGroupContextValue | {}>({});
 
-export function useTagGroupProvider(): TagGroupContext {
+export function useTagGroupProvider(): TagGroupContextValue {
   return useContext(TagGroupContext);
 }
 

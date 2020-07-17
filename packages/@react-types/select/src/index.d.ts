@@ -27,13 +27,16 @@ import {
 } from '@react-types/shared';
 
 export interface SelectProps<T> extends CollectionBase<T>, AsyncLoadable, InputBase, Validation, LabelableProps, TextInputBase, SingleSelection {
-  /** Sets the open state of the menu */
+  /** Sets the open state of the menu. */
   isOpen?: boolean,
-  /** Sets the default open state of the menu */
+  /** Sets the default open state of the menu. */
   defaultOpen?: boolean,
-  /** Method that is called when the open state of the menu changes */
+  /** Method that is called when the open state of the menu changes. */
   onOpenChange?: (isOpen: boolean) => void,
-  /** Whether the menu should automatically flip direction when space is limited */
+  /**
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
+   */
   shouldFlip?: boolean
 }
 
@@ -42,19 +45,19 @@ export interface AriaSelectProps<T> extends SelectProps<T>, DOMProps, AriaLabeli
 export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabelableProps, StyleProps {
   /** Whether the textfield should be displayed with a quiet style. */
   isQuiet?: boolean,
-  /** Alignment of the menu relative to the input target
+  /** Alignment of the menu relative to the input target.
    * @default 'start'
    */
   align?: Alignment,
   /**
-   * Direction the menu will render relative to the Picker
+   * Direction the menu will render relative to the Picker.
    * @default 'bottom'
    */
   direction?: 'bottom' | 'top',
-  /** Width of the menu */
+  /** Width of the menu. */
   menuWidth?: DimensionValue,
   /**
-   * The name of the Picker control input, applied to the hidden select element.
+   * The name of the Picker input, used when submitting an HTML form.
    */
   name?: string
 }

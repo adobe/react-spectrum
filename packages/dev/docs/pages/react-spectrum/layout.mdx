@@ -22,6 +22,7 @@ import {Text} from '@react-spectrum/text';
 
 ---
 category: Concepts
+keywords: [layout, flex, grid]
 ---
 
 # Layout
@@ -67,7 +68,7 @@ to ensure consistency across applications, and allow the layout to adapt to diff
 
 ### Example
 
-This example shows a simple horizontal stack, with a gap between each item defined using a Spectrum dimension variable.
+This example shows a simple vertical stack, with a gap between each item defined using a Spectrum dimension variable.
 
 ```tsx example
 <Flex direction="column" width="size-2000" gap="size-100">
@@ -122,7 +123,7 @@ content area, and footer. Notice how there are no nested layout elements — the
     'sidebar content',
     'footer  footer'
   ]}
-  columns={['size-3000', 'auto']}
+  columns={['1fr', '3fr']}
   rows={['size-1000', 'auto', 'size-1000']}
   height="size-6000"
   gap="size-100">

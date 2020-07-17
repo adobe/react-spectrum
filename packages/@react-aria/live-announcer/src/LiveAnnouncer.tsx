@@ -20,14 +20,23 @@ let node = null;
 let clearTimeoutId = null;
 const LIVEREGION_TIMEOUT_DELAY = 1000;
 
-export function announce(message, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY) {
+/**
+ * Announces the message using screen reader technology.
+ */
+export function announce(message: string, assertiveness = 'assertive', timeout = LIVEREGION_TIMEOUT_DELAY) {
   ensureInstance(announcer => announcer.announce(message, assertiveness, timeout));
 }
 
+/**
+ * Stops all queued announcements.
+ */
 export function clearAnnouncer(assertiveness) {
   ensureInstance(announcer => announcer.clear(assertiveness));
 }
 
+/**
+ * Removes the announcer from the DOM.
+ */
 export function destroyAnnouncer() {
   if (liveRegionAnnouncer.current) {
     ReactDOM.unmountComponentAtNode(node);
@@ -36,7 +45,10 @@ export function destroyAnnouncer() {
   }
 }
 
-function ensureInstance(callback) {
+/**
+ * Ensures we only have one instance of the announcer so that we don't have elements competing.
+ */
+function ensureInstance(callback: (announcer:any) => void) {
   if (!liveRegionAnnouncer.current) {
     node = document.createElement('div');
     document.body.appendChild(node);

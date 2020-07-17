@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {Flex} from '@react-spectrum/layout';
 import js from 'highlight.js/lib/languages/javascript';
 import Lowlight from 'react-lowlight';
 import React from 'react';
@@ -26,33 +27,40 @@ export function HeaderInfo(props) {
     sourceData = []
   } = props;
 
+  let importName = packageData.name;
+  if (importName.startsWith('@react-spectrum') && process.env.DOCS_ENV === 'production') {
+    importName = '@adobe/react-spectrum';
+  }
+
   return (
     <>
       <table className={styles['headerInfo']}>
         <tbody>
           <tr>
             <th className={typographyStyles['spectrum-Body--secondary']}>install</th>
-            <td className={typographyStyles['spectrum-Body4']}><code className={typographyStyles['spectrum-Code4']}>yarn add {packageData.name}</code></td>
+            <td className={typographyStyles['spectrum-Body4']}><code className={typographyStyles['spectrum-Code4']}>yarn add {importName}</code></td>
           </tr>
           <tr>
             <th className={typographyStyles['spectrum-Body--secondary']}>version</th>
             <td className={typographyStyles['spectrum-Body4']}>{packageData.version}</td>
           </tr>
-          <tr>
-            <th className={typographyStyles['spectrum-Body--secondary']}>usage</th>
-            <td className={typographyStyles['spectrum-Body4']}>
-              <Lowlight language="js" value={`import {${componentNames.join(', ')}} from '${packageData.name}'`} inline className={typographyStyles['spectrum-Code4']} />
-            </td>
-          </tr>
+          {componentNames &&
+            <tr>
+              <th className={typographyStyles['spectrum-Body--secondary']}>usage</th>
+              <td className={typographyStyles['spectrum-Body4']}>
+                <Lowlight language="js" value={`import {${componentNames.join(', ')}} from '${importName}'`} inline className={typographyStyles['spectrum-Code4']} />
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
-      <div className={styles['resourceCardGroup']}>
+      <Flex wrap gap="size-200">
         {sourceData.map((source) => (
           <ResourceCard type={source.type} url={source.url} />
         ))}
-        <ResourceCard type="GitHub" url={`https://github.com/adobe-private/react-spectrum-v3/tree/master/packages/${encodeURI(packageData.name)}`} />
+        <ResourceCard type="GitHub" url={`https://github.com/adobe/react-spectrum/tree/main/packages/${encodeURI(packageData.name)}`} />
         <ResourceCard type="NPM" url={`https://www.npmjs.com/package/${encodeURI(packageData.name)}`} />
-      </div>
+      </Flex>
     </>
   );
 }

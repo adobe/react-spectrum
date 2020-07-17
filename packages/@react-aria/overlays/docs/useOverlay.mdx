@@ -10,17 +10,28 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-spectrum/icon';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
-import packageData from '../package.json';
-
-```jsx import
-import {Icon} from '@react-spectrum/icon';
-```
+import docs from 'docs:@react-aria/overlays';
+import {FunctionAPI, HeaderInfo} from '@react-spectrum/docs';
+import packageData from '@react-aria/overlays/package.json';
 
 ---
-category: Misc
+category: Overlays
+keywords: [dialog, modal, tray, popover, aria]
 ---
 
-# Icon
-<p>Docs coming soon</p>
+# useOverlay
+
+<p>{docs.exports.useOverlay.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useOverlay']} />
+
+## API
+
+<FunctionAPI function={docs.exports.useOverlay} links={docs.links} />
+
+## Example
+
+See [useDialog](useDialog.html#example) and [useOverlayTrigger](useOverlayTrigger.html#example) for examples of using
+`useOverlay` to provide common overlay behavior to a component.

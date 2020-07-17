@@ -9,9 +9,12 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "targets": {
     "main": {
       "includeNodeModules": [
@@ -26,20 +29,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/calendar": "^3.0.0-alpha.1",
-    "@react-aria/focus": "3.0.0-rc.3",
-    "@react-aria/i18n": "3.0.0-rc.3",
-    "@react-aria/visually-hidden": "3.0.0-rc.0",
-    "@react-spectrum/button": "3.0.0-rc.3",
-    "@react-spectrum/utils": "3.0.0-rc.3",
+    "@react-aria/focus": "^3.0.2",
+    "@react-aria/i18n": "^3.0.2",
+    "@react-aria/visually-hidden": "^3.0.2",
+    "@react-spectrum/button": "^3.0.2",
+    "@react-spectrum/utils": "^3.0.2",
     "@react-stately/calendar": "^3.0.0-alpha.1",
     "@react-types/calendar": "^3.0.0-alpha.1",
-    "@react-types/shared": "3.0.0-rc.3",
-    "@spectrum-icons/ui": "3.0.0-rc.3",
+    "@react-types/shared": "^3.0.2",
+    "@spectrum-icons/ui": "^3.0.2",
     "date-fns": "^1.30.1"
   },
   "devDependencies": {

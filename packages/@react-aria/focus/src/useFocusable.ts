@@ -16,16 +16,20 @@ import {RefObject, useEffect} from 'react';
 import {useFocus, useKeyboard} from '@react-aria/interactions';
 
 interface FocusableOptions extends FocusableProps, FocusableDOMProps {
+  /** Whether focus should be disabled. */
   isDisabled?: boolean
 }
 
-export function useFocusable(props: FocusableOptions, domRef?: RefObject<HTMLElement>) {
+/**
+ * Used to make an element focusable and capable of auto focus.
+ */
+export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElement>) {
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
   let interactions = mergeProps(focusProps, keyboardProps);
 
   useEffect(() => {
-    if (props.autoFocus && domRef && domRef.current) {
+    if (props.autoFocus && domRef.current) {
       domRef.current.focus();
     }
   }, [props.autoFocus, domRef]);

@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, KeyboardDelegate, Node} from '@react-types/shared';
-import {FocusStrategy} from '@react-types/menu';
+import {Collection, FocusStrategy, KeyboardDelegate, Node} from '@react-types/shared';
 import {HTMLAttributes, Key, RefObject, useEffect, useMemo} from 'react';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {MultipleSelectionManager} from '@react-stately/selection';
@@ -19,21 +18,57 @@ import {useCollator} from '@react-aria/i18n';
 import {useSelectableCollection} from './useSelectableCollection';
 
 interface SelectableListOptions {
+  /**
+   * An interface for reading and updating multiple selection state.
+   */
   selectionManager: MultipleSelectionManager,
+  /**
+   * State of the collection.
+   */
   collection: Collection<Node<unknown>>,
+  /**
+   * The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with.
+   */
   disabledKeys: Set<Key>,
+  /**
+   * A ref to the item.
+   */
   ref?: RefObject<HTMLElement>,
+  /**
+   * A delegate that returns collection item keys with respect to visual layout.
+   */
   keyboardDelegate?: KeyboardDelegate,
+  /**
+   * Whether the collection or one of its items should be automatically focused upon render.
+   * @default false
+   */
   autoFocus?: boolean | FocusStrategy,
+  /**
+   * Whether focus should wrap around when the end/start is reached.
+   * @default false
+   */
   shouldFocusWrap?: boolean,
+  /**
+   * Whether the option is contained in a virtual scroller.
+   */
   isVirtualized?: boolean,
+  /**
+   * Whether the collection allows empty selection.
+   * @default false
+   */
   disallowEmptySelection?: boolean
 }
 
 interface SelectableListAria {
+  /**
+   * Props for the option element.
+   */
   listProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Handles interactions with a selectable list.
+ */
 export function useSelectableList(props: SelectableListOptions): SelectableListAria {
   let {
     selectionManager,
@@ -77,9 +112,11 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
   };
 }
 
-// Scrolls `scrollView` so that `element` is visible.
-// Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
-// but doesn't affect parents above `scrollView`.
+/**
+ * Scrolls `scrollView` so that `element` is visible.
+ * Similar to `element.scrollIntoView({block: 'nearest'})` (not supported in Edge),
+ * but doesn't affect parents above `scrollView`.
+ */
 function scrollIntoView(scrollView: HTMLElement, element: HTMLElement) {
   let offsetX = element.offsetLeft - scrollView.offsetLeft;
   let offsetY = element.offsetTop - scrollView.offsetTop;

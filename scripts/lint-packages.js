@@ -58,8 +58,12 @@ for (let pkg of packages) {
     softAssert(json.module.endsWith('.js'), `${pkg}#module should be a .js file but got "${json.module}"`);
     softAssert(json.source, `${pkg} did not have "source"`);
     softAssert.equal(json.source, "src/index.ts", `${pkg} did not match "src/index.ts"`);
-    softAssert.deepEqual(json.files, ['dist'], `${pkg} did not match "files"`);
-    softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
+    softAssert.deepEqual(json.files, ['dist', 'src'], `${pkg} did not match "files"`);
+    if (pkg.includes('@react-spectrum')){
+      softAssert.deepEqual(json.sideEffects, ['*.css'], `${pkg} is missing sideEffects: [ '*.css' ]`);
+    } else {
+      softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
+    }
     softAssert(!json.dependencies || !json.dependencies['@adobe/spectrum-css-temp'], `${pkg} has @adobe/spectrum-css-temp in dependencies instead of devDependencies`);
     softAssert(json.dependencies && json.dependencies['@babel/runtime'], `${pkg} is missing a dependency on @babel/runtime`);
     softAssert(!json.dependencies || !json.dependencies['@react-spectrum/test-utils'], '@react-spectrum/test-utils should be a devDependency');
@@ -91,7 +95,12 @@ for (let pkg of packages) {
 
   softAssert(json.publishConfig && json.publishConfig.access === 'public', `${pkg} has missing or incorrect publishConfig`);
   softAssert.equal(json.license, 'Apache-2.0', `${pkg} has an incorrect license`);
-  softAssert.deepEqual(json.repository, {type: 'git', url: 'https://github.com/adobe-private/react-spectrum-v3'}, `${pkg} has incorrect or missing repository url`);
+  softAssert.deepEqual(json.repository, {type: 'git', url: 'https://github.com/adobe/react-spectrum'}, `${pkg} has incorrect or missing repository url`);
+
+  let readme = path.join(path.dirname(pkg), 'README.md');
+  if (!fs.existsSync(readme)) {
+    fs.writeFileSync(readme, `# ${json.name}\n\nThis package is part of [react-spectrum](https://github.com/adobe/react-spectrum). See the repo for more details.`);
+  }
 }
 
 

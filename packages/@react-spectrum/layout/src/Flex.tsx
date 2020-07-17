@@ -17,7 +17,7 @@ import {FlexProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 import styles from './flex.css';
 
-export const flexStyleProps: StyleHandlers = {
+const flexStyleProps: StyleHandlers = {
   direction: ['flexDirection', passthroughStyle],
   wrap: ['flexWrap', flexWrapValue],
   justifyContent: ['justifyContent', flexAlignValue],
@@ -25,10 +25,6 @@ export const flexStyleProps: StyleHandlers = {
   alignContent: ['alignContent', flexAlignValue]
 };
 
-/**
- * A layout container using flexbox. Provides Spectrum dimension values, and supports the gap
- * property to define consistent spacing between items.
- */
 function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
@@ -86,8 +82,10 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
-// Normalize 'start' and 'end' alignment values to 'flex-start' and 'flex-end'
-// in flex containers for browser compatibility.
+/**
+ * Normalize 'start' and 'end' alignment values to 'flex-start' and 'flex-end'
+ * in flex containers for browser compatibility.
+ */
 function flexAlignValue(value) {
   if (value === 'start') {
     return 'flex-start';
@@ -100,6 +98,9 @@ function flexAlignValue(value) {
   return value;
 }
 
+/**
+ * Takes a boolean and translates it to flex wrap or nowrap.
+ */
 function flexWrapValue(value) {
   if (typeof value === 'boolean') {
     return value ? 'wrap' : 'nowrap';
@@ -141,5 +142,9 @@ function isFlexGapSupported() {
   return _isFlexGapSupported;
 }
 
+/**
+ * A layout container using flexbox. Provides Spectrum dimension values, and supports the gap
+ * property to define consistent spacing between items.
+ */
 const _Flex = forwardRef(Flex);
 export {_Flex as Flex};

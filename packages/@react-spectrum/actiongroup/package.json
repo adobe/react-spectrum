@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/actiongroup",
-  "version": "3.0.0-rc.0",
+  "version": "3.0.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -8,9 +8,12 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "targets": {
     "main": {
       "includeNodeModules": [
@@ -25,25 +28,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/actiongroup": "3.0.0-rc.0",
-    "@react-aria/utils": "3.0.0-rc.3",
-    "@react-spectrum/button": "3.0.0-rc.3",
-    "@react-spectrum/provider": "3.0.0-rc.3",
-    "@react-spectrum/utils": "3.0.0-rc.3",
-    "@react-stately/collections": "3.0.0-rc.0",
-    "@react-stately/list": "3.0.0-rc.0",
-    "@react-aria/button": "3.0.0-rc.3",
-    "@react-aria/focus": "3.0.0-rc.3",
-    "@react-aria/interactions": "3.0.0-rc.3",
-    "@react-aria/selection": "3.0.0-rc.0",
-    "@react-types/actiongroup": "3.0.0-rc.0",
-    "@react-types/button": "3.0.0-rc.3",
-    "@react-types/shared": "3.0.0-rc.3",
-    "@spectrum-icons/ui": "3.0.0-rc.3"
+    "@react-aria/actiongroup": "^3.0.2",
+    "@react-aria/utils": "^3.0.2",
+    "@react-spectrum/button": "^3.0.2",
+    "@react-spectrum/provider": "^3.0.2",
+    "@react-spectrum/utils": "^3.0.2",
+    "@react-stately/collections": "^3.0.2",
+    "@react-stately/list": "^3.0.2",
+    "@react-aria/button": "^3.0.2",
+    "@react-aria/focus": "^3.0.2",
+    "@react-aria/interactions": "^3.0.2",
+    "@react-aria/selection": "^3.0.2",
+    "@react-types/actiongroup": "^3.0.2",
+    "@react-types/button": "^3.0.2",
+    "@react-types/shared": "^3.0.2",
+    "@spectrum-icons/ui": "^3.0.2"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"

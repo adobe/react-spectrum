@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/textfield';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-spectrum/textfield/package.json';
 
 ```jsx import
 import {TextArea} from '@react-spectrum/textfield';
@@ -21,6 +21,7 @@ import {Flex} from '@react-spectrum/layout';
 
 ---
 category: Forms
+keywords: [text area, input]
 ---
 
 # TextArea
@@ -48,7 +49,7 @@ function Example() {
   let [value, setValue] = React.useState('This is on a wait list');
 
   return (
-    <Flex gap="size-300">
+    <Flex gap="size-150" wrap>
       <TextArea
         label="Notes (Uncontrolled)"
         defaultValue="This is on a wait list" />
@@ -75,7 +76,7 @@ A visual label should be provided for the TextArea using the `label` prop. If th
 `necessityIndicator` props can be used to show a required state.
 
 ```tsx example
-<Flex gap="size-300" wrap>
+<Flex gap="size-150" wrap>
   <TextArea label="Address" />
   <TextArea label="Address" isRequired necessityIndicator="icon" />
   <TextArea label="Address" isRequired necessityIndicator="label" />
@@ -126,12 +127,8 @@ Implement your own validation logic in your app and pass either `"valid"` or `"i
 The example below illustrates how one would validate if the user entered more than 20 characters into the TextArea.
 ```tsx example
 function Example() {
-  let [isValid, setValid] = React.useState(true);
   let [value, setValue] = React.useState('Lorem ipsum dolor sit');
-
-  React.useEffect(() => {
-    setValid(value.length <= 20)
-  }, [setValid, value]);
+  let isValid = React.useMemo(() => value.length <= 20, [value]);
 
   return (
     <TextArea
@@ -192,5 +189,5 @@ By default, the label is positioned above the TextArea. The `labelPosition` prop
 [View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
 
 ```tsx example
-<TextArea label="Email" width="size-3600" />
+<TextArea label="Email" width="size-3600" maxWidth="100%" />
 ```

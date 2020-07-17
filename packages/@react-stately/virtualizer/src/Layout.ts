@@ -20,7 +20,7 @@ import {Virtualizer} from './Virtualizer';
 // import { DragTarget, DropTarget } from '@react-types/shared';
 
 /**
- * {@link CollectionView} supports arbitrary layout objects, which compute what views are visible, and how
+ * [CollectionView]{@link CollectionView} supports arbitrary layout objects, which compute what views are visible, and how
  * to position and style them. However, layouts do not create the views themselves directly. Instead,
  * layouts produce lightweight {@link LayoutInfo} objects which describe various properties of a view,
  * such as its position and size. The {@link CollectionView} is then responsible for creating the actual
@@ -29,11 +29,11 @@ import {Virtualizer} from './Virtualizer';
  * Every layout extends from the {@link Layout} abstract base class. Layouts must implement a minimum of the
  * two methods listed below. All other methods can be optionally overridden to implement custom behavior.
  *
- * - {@link getVisibleLayoutInfos}
- * - {@link getLayoutInfo}
+ * @see {@link getVisibleLayoutInfos}
+ * @see {@link getLayoutInfo}
  */
 export abstract class Layout<T extends object> {
-  /** The CollectionView the layout is currently attached to */
+  /** The CollectionView the layout is currently attached to. */
   virtualizer: Virtualizer<T, any, any>;
 
   /**
@@ -59,14 +59,14 @@ export abstract class Layout<T extends object> {
   /**
    * Returns an array of {@link LayoutInfo} objects which are inside the given rectangle.
    * Should be implemented by subclasses.
-   * @param rect The rectangle that should contain the returned LayoutInfo objects
+   * @param rect The rectangle that should contain the returned LayoutInfo objects.
    */
   abstract getVisibleLayoutInfos(rect: Rect): LayoutInfo[];
 
   /**
    * Returns a {@link LayoutInfo} for the given key.
    * Should be implemented by subclasses.
-   * @param key The key of the LayoutInfo to retrieve
+   * @param key The key of the LayoutInfo to retrieve.
    */
   abstract getLayoutInfo(key: Key): LayoutInfo;
 
@@ -78,7 +78,7 @@ export abstract class Layout<T extends object> {
   /**
    * Returns a {@link DragTarget} describing a view at the given point to be dragged.
    * Return `null` to cancel the drag. The default implementation returns the view at the given point.
-   * @param point The point at which the drag occurred
+   * @param point The point at which the drag occurred.
    */
   // getDragTarget(point: Point): DragTarget | null {
   //   let target = this.virtualizer.keyAtPoint(point);
@@ -95,7 +95,7 @@ export abstract class Layout<T extends object> {
   /**
    * Returns a {@link DragTarget} object describing where a drop should occur. Return `null`
    * to reject the drop. The dropped items will be inserted before the resulting target.
-   * @param point The point at which the drop occurred
+   * @param point The point at which the drop occurred.
    */
   // getDropTarget(point: Point): DropTarget | null {
   //   return null;
@@ -106,7 +106,7 @@ export abstract class Layout<T extends object> {
    * The view is animated from this {@link LayoutInfo} to the one returned by {@link getLayoutInfo}.
    * The default implementation just returns its input.
    *
-   * @param layoutInfo The proposed LayoutInfo for this view
+   * @param layoutInfo The proposed LayoutInfo for this view.
    */
   getInitialLayoutInfo(layoutInfo: LayoutInfo): LayoutInfo {
     return layoutInfo;
@@ -117,7 +117,7 @@ export abstract class Layout<T extends object> {
    * The view is animated from the {@link LayoutInfo} returned by {@link getLayoutInfo}
    * to the one returned by this method. The default implementation returns its input.
    *
-   * @param layoutInfo The original LayoutInfo for this view
+   * @param layoutInfo The original LayoutInfo for this view.
    */
   getFinalLayoutInfo(layoutInfo: LayoutInfo): LayoutInfo {
     return layoutInfo;

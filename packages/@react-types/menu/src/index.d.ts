@@ -10,31 +10,37 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, AriaLabelingProps, CollectionBase, DOMProps, MultipleSelection, StyleProps} from '@react-types/shared';
+import {Alignment, AriaLabelingProps, CollectionBase, DOMProps, FocusStrategy, MultipleSelection, StyleProps} from '@react-types/shared';
 import {Key, ReactElement} from 'react';
 import {OverlayTriggerProps} from '@react-types/overlays';
 
-export type FocusStrategy = 'first' | 'last';
-
 export interface MenuTriggerProps extends OverlayTriggerProps {
   // trigger?: 'press' | 'longPress',
-  /** Where the Menu aligns with its trigger. */
+  /**
+   * Alignment of the menu relative to the trigger.
+   * @default 'start'
+   */
   align?: Alignment,
-  /** Where the Menu opens relative to its trigger. */
+  /**
+   * Where the Menu opens relative to its trigger.
+   * @default 'bottom'
+   */
   direction?: 'bottom' | 'top',
-  /** Whether the Menu closes when a selection is made. */
+  /**
+   * Whether the Menu closes when a selection is made.
+   * @default true
+   */
   closeOnSelect?: boolean,
   /**
-   * Whether the element should flip its orientation when there is insufficient
-   * space for it to render within the view.
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
    */
   shouldFlip?: boolean
 }
 
 export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
   /**
-   * The contents of the MenuTrigger, a trigger and a Menu. See the MenuTrigger
-   * [Content section](#content) for more information on what to provide as children.
+   * The contents of the MenuTrigger - a trigger and a Menu.
    */
   children: ReactElement[]
 }

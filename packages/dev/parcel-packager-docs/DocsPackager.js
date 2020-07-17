@@ -25,7 +25,7 @@ module.exports = new Packager({
     let code = new Map(await Promise.all(promises));
     let cache = new Map();
     try {
-      var result = processAsset(bundle.getMainEntry());
+      var result = processAsset(bundle.getEntryAssets()[0]);
     } catch (err) {
       console.log(err.stack);
     }
@@ -55,7 +55,8 @@ module.exports = new Packager({
 
       let deps = bundleGraph.getDependencies(asset);
       for (let dep of deps) {
-        if (dep.symbols.get('*') === '*') {
+        let wildcard = dep.symbols.get('*');
+        if (wildcard && wildcard.local === '*') {
           let resolved = bundleGraph.getDependencyResolution(dep, bundle);
           Object.assign(res, processAsset(resolved));
         }
@@ -168,7 +169,8 @@ module.exports = new Packager({
 
     function walkLinks(obj) {
       walk(obj, (t, k, recurse) => {
-        if (t && t.type === 'link') {
+        // don't follow the link if it's already in links, that's circular
+        if (t && t.type === 'link' && !links[t.id]) {
           links[t.id] = nodes[t.id];
           walkLinks(nodes[t.id]);
         }
@@ -185,13 +187,21 @@ async function parse(asset) {
   let buffer = await asset.getBuffer();
   return [asset.id, v8.deserialize(buffer)];
 }
-
 // cache things in pre-visit order so the references exist
 function walk(obj, fn) {
+  // cache so we don't recompute
   let cache = new Map();
+  // circular is to make sure we don't traverse over an object we visited earlier in the recursion
+  let circular = new Set();
 
   let visit = (obj, fn, k = null) => {
     let recurse = (obj) => {
+      if (circular.has(obj)) {
+        return {
+          type: 'link',
+          id: obj.id
+        };
+      }
       if (cache.has(obj)) {
         return cache.get(obj);
       }
@@ -201,14 +211,16 @@ function walk(obj, fn) {
         obj.forEach((item, i) => resultArray[i] = visit(item, fn, k));
         return resultArray;
       } else if (obj && typeof obj === 'object') {
+        circular.add(obj);
         let res = {};
         cache.set(obj, res);
         for (let key in obj) {
           res[key] = visit(obj[key], fn, key);
         }
+        circular.delete(obj);
         return res;
       } else {
-        cache.set(obj, obj);
+        // don't cache things like null/undefined
         return obj;
       }
     };

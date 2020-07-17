@@ -14,7 +14,7 @@ import docs from 'docs:@react-aria/dialog';
 import overlaysDocs from 'docs:@react-aria/overlays';
 import focusDocs from 'docs:@react-aria/focus';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/dialog/package.json';
 
 ---
 category: Overlays
@@ -44,16 +44,13 @@ building fully accessible custom dialogs from scratch is very difficult and erro
 `useDialog`, combined with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useModal} />,
 helps achieve accessible dialogs that can be styled as needed.
 
-**Note: `useDialog` only handles the dialog itself. It should be combined with other hooks and
-components as described below to create a fully accessible modal dialog.**
-
 * Exposed to assistive technology as a `dialog` or `alertdialog` with ARIA
 * Handles labelling the dialog by its title element
 * Handles focusing the dialog on mount, unless a child element is already focused
 * Contains focus inside the dialog when combined with &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;
 * Hides content behind the dialog from screen readers when combined with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useModal} />
 * Prevents scrolling the page behind the dialog when combined with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.usePreventScroll} />
-* Handles closing the dialog when interacting outside and pressing the Escape key, when combined with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlay} />
+* Handles closing the dialog when interacting outside and pressing the <kbd>Escape</kbd> key, when combined with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlay} />
 
 ## Anatomy
 
@@ -63,7 +60,7 @@ with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useModal} /
 and <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlay} /> as needed
 to create modal dialogs, popovers, and other types of overlays.
 
-`useDialog` returns props that you should spread onto the dialog container element:
+`useDialog` returns props that you should spread onto the appropriate element:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useDialog.return.id].properties} />
@@ -81,7 +78,7 @@ and hides content outside the dialog
 with <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useModal} />.
 
 The modal can be closed by clicking or interacting outside the dialog if the `isDismissable`
-prop is set to true, or by pressing the Escape key.
+prop is set to true, or by pressing the <kbd>Escape</kbd> key.
 This is handled by <TypeLink links={overlaysDocs.links} type={overlaysDocs.exports.useOverlay} />.
 
 Focus is contained within the dialog while it is open using a
@@ -95,6 +92,10 @@ In addition, each modal must be contained in an <TypeLink links={overlaysDocs.li
 which uses a React [Portal](https://reactjs.org/docs/portals.html) to render the modal at the
 end of the document body. If a nested modal is opened, then the first modal will also be set
 to `aria-hidden`, so that only the top-most modal is accessible.
+
+**Note:** `useModal` only hides content within parent `OverlayProvider` components. However, if you have additional content
+in your application outside any `OverlayProvider`, then you should use the `@react-aria/aria-modal-polyfill` package to ensure
+that this content is hidden while modals are open as well. See the [watchModals docs](../react-aria/watchModals.html) for more information.
 
 ```tsx example
 import {useOverlayTriggerState} from '@react-stately/overlays';

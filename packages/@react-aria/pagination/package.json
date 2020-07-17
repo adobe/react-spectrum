@@ -9,16 +9,17 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/i18n": "3.0.0-rc.3",
+    "@react-aria/i18n": "^3.0.2",
     "@react-stately/pagination": "^3.0.0-alpha.1",
     "@react-types/pagination": "^3.0.0-alpha.1"
   },

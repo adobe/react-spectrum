@@ -16,7 +16,7 @@
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
 import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {HTMLAttributes, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {PointerType, PressEvents} from '@react-types/shared';
 import {PressResponderContext} from './context';
 
@@ -106,6 +106,16 @@ export function usePress(props: PressHookProps): PressResult {
     target: null,
     isOverTarget: false
   });
+
+  let globalListeners = useRef(new Map());
+  let addGlobalListener = useCallback((eventTarget, type, listener, options) => {
+    globalListeners.current.set(listener, {type, eventTarget, options});
+    eventTarget.addEventListener(type, listener, options);
+  }, [globalListeners.current]);
+  let removeGlobalListener = useCallback((eventTarget, type, listener, options) => {
+    eventTarget.removeEventListener(type, listener, options);
+    globalListeners.current.delete(listener);
+  }, [globalListeners.current]);
 
   let pressProps = useMemo(() => {
     let state = ref.current;
@@ -202,7 +212,7 @@ export function usePress(props: PressHookProps): PressResult {
 
             // Focus may move before the key up event, so register the event on the document
             // instead of the same element where the key down event occurred.
-            document.addEventListener('keyup', onKeyUp, false);
+            addGlobalListener(document, 'keyup', onKeyUp, false);
           }
         }
       },
@@ -244,7 +254,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         state.isPressed = false;
         triggerPressEnd(createEvent(state.target, e), 'keyboard', e.target === state.target);
-        document.removeEventListener('keyup', onKeyUp, false);
+        removeGlobalListener(document, 'keyup', onKeyUp, false);
 
         // If the target is a link, trigger the click method to open the URL,
         // but defer triggering pressEnd until onClick event handler.
@@ -299,9 +309,9 @@ export function usePress(props: PressHookProps): PressResult {
           disableTextSelection();
           triggerPressStart(e, e.pointerType);
 
-          document.addEventListener('pointermove', onPointerMove, false);
-          document.addEventListener('pointerup', onPointerUp, false);
-          document.addEventListener('pointercancel', onPointerCancel, false);
+          addGlobalListener(document, 'pointermove', onPointerMove, false);
+          addGlobalListener(document, 'pointerup', onPointerUp, false);
+          addGlobalListener(document, 'pointercancel', onPointerCancel, false);
         }
       };
 
@@ -315,9 +325,9 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       let unbindEvents = () => {
-        document.removeEventListener('pointermove', onPointerMove, false);
-        document.removeEventListener('pointerup', onPointerUp, false);
-        document.removeEventListener('pointercancel', onPointerCancel, false);
+        removeGlobalListener(document, 'pointermove', onPointerMove, false);
+        removeGlobalListener(document, 'pointerup', onPointerUp, false);
+        removeGlobalListener(document, 'pointercancel', onPointerCancel, false);
       };
 
       pressProps.onPointerUp = (e) => {
@@ -401,7 +411,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         triggerPressStart(e, isVirtualClick(e.nativeEvent) ? 'virtual' : 'mouse');
 
-        document.addEventListener('mouseup', onMouseUp, false);
+        addGlobalListener(document, 'mouseup', onMouseUp, false);
       };
 
       pressProps.onMouseEnter = (e) => {
@@ -433,7 +443,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         state.isPressed = false;
-        document.removeEventListener('mouseup', onMouseUp, false);
+        removeGlobalListener(document, 'mouseup', onMouseUp, false);
 
         if (state.ignoreEmulatedMouseEvents) {
           state.ignoreEmulatedMouseEvents = false;
@@ -471,7 +481,7 @@ export function usePress(props: PressHookProps): PressResult {
         disableTextSelection();
         triggerPressStart(e, 'touch');
 
-        window.addEventListener('scroll', onScroll, true);
+        addGlobalListener(window, 'scroll', onScroll, true);
       };
 
       pressProps.onTouchMove = (e) => {
@@ -511,7 +521,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.isOverTarget = false;
         state.ignoreEmulatedMouseEvents = true;
         restoreTextSelection();
-        window.removeEventListener('scroll', onScroll, true);
+        removeGlobalListener(window, 'scroll', onScroll, true);
       };
 
       pressProps.onTouchCancel = (e) => {
@@ -548,6 +558,15 @@ export function usePress(props: PressHookProps): PressResult {
     return pressProps;
   }, [onPress, onPressStart, onPressEnd, onPressChange, onPressUp, isDisabled]);
 
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      globalListeners.current.forEach((value, key) => {
+        removeGlobalListener(value.eventTarget, value.type, key, value.options);
+      });
+    };
+  }, [globalListeners.current]);
+
   return {
     isPressed: isPressedProp || isPressed,
     pressProps: mergeProps(domProps, pressProps)
@@ -582,12 +601,13 @@ function isValidKeyboardEvent(event: KeyboardEvent): boolean {
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/blob/3c713d513195a53788b3f8bb4b70279d68b15bcc/packages/react-interactions/events/src/dom/shared/index.js#L74-L87
 
-// Keyboards, Assitive Technologies, and element.click() all produce a "virtual"
+// Keyboards, Assistive Technologies, and element.click() all produce a "virtual"
 // click event. This is a method of inferring such clicks. Every browser except
 // IE 11 only sets a zero value of "detail" for click events that are "virtual".
 // However, IE 11 uses a zero value for all click events. For IE 11 we rely on
 // the quirk that it produces click events that are of type PointerEvent, and
 // where only the "virtual" click lacks a pointerType field.
+
 function isVirtualClick(event: MouseEvent | PointerEvent): boolean {
   // JAWS/NVDA with Firefox.
   if ((event as any).mozInputSource === 0 && event.isTrusted) {
