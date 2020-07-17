@@ -33,12 +33,16 @@ export interface ListState<T> {
  * of items from props, and manages multiple selection state.
  */
 export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
+  let {
+    nodeFilter,
+    filterFn
+  } = props;
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let collection = useCollection(props, nodes => new ListCollection(nodes));
+  let collection = useCollection(props, nodes => nodeFilter && filterFn ? new ListCollection(nodeFilter(nodes, filterFn)) : new ListCollection(nodes));
 
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {

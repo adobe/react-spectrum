@@ -10,14 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBuilder} from '@react-stately/collections';
 import {ComboBoxProps} from '@react-types/combobox';
 import {Key, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Node} from '@react-types/shared';
-import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {SelectState} from '@react-stately/select';
-import {TreeCollection} from '@react-stately/tree';
 import {useControlledState} from '@react-stately/utils';
+import {useListState} from '@react-stately/list';
 import {useMenuTriggerState} from '@react-stately/menu';
 
 export interface ComboBoxState<T> extends SelectState<T> {
@@ -72,11 +70,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     return key;
   };
 
-  let builder = useMemo(() => new CollectionBuilder<T>(), []);
-  let collection = useMemo(() => {
-    let nodes = builder.build(props);
-    return new TreeCollection(nodes, {expandedKeys: new Set()});
-  }, [builder, props]);
+  // Need this collection here so that an initial inputValue can be found via collection.getItem
+  let {collection} = useListState(props);
 
   if (props.selectedKey && props.inputValue) {
     let selectedItem = collection.getItem(props.selectedKey);
@@ -158,20 +153,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     lastInputValueProp.current = props.inputValue;
   }, [props.inputValue, collection, selectedKey, onSelectionChange]);
 
-  let selectionState = useMultipleSelectionState(
-    {
-      ...props,
-      selectedKeys,
-      disallowEmptySelection: true,
-      onSelectionChange: (keys: Set<Key>) => setSelectedKey(keys.values().next().value),
-      selectionMode: 'single'
-    }
-  );
-
-  let disabledKeys = useMemo(() =>
-    props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
-  , [props.disabledKeys]);
-
   let lowercaseValue = inputValue.toLowerCase().replace(' ', '');
 
   let defaultFilterFn = useMemo(() => (node: Node<T>) => {
@@ -200,14 +181,19 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     lastValue.current = inputValue;
   }, [inputValue, onFilter]);
 
-  let filteredCollection = useMemo(() => {
-    if (itemsControlled || inputValue === '') {
-      return collection;
+  let {collection: filteredCollection, disabledKeys, selectionManager} = useListState(
+    {
+      ...props,
+      selectedKeys,
+      disallowEmptySelection: true,
+      onSelectionChange: (keys: Set<Key>) => setSelectedKey(keys.values().next().value),
+      selectionMode: 'single',
+      nodeFilter: itemsControlled || inputValue === '' ? null : filter,
+      filterFn: defaultFilterFn,
+      inputValue
     }
-    return new TreeCollection(filter(collection, defaultFilterFn), {expandedKeys: new Set()});
-  }, [collection, inputValue, itemsControlled, defaultFilterFn]);
+  );
 
-  let selectionManager = new SelectionManager(filteredCollection, selectionState);
   let selectedItem = selectedKey ? collection.getItem(selectedKey) : null;
 
   // Prevent open operations from triggering if there is nothing to display

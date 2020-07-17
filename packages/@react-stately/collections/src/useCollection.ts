@@ -26,5 +26,5 @@ export function useCollection<T extends object, C extends Collection<Node<T>> = 
     return prev.current;
   // Don't invalidate when any prop changes, just the two we care about.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [builder, props.children, props.items, context]);
+  }, [builder, props.children, props.items, context, factory]);
 }
