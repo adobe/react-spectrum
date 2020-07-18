@@ -48,7 +48,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     key
   } = item;
 
-  let isSelected = state.selectionManager.selectedKeys.has(key);
+  let isSelected = state.selectionManager.isSelected(key);
   let isDisabled = state.disabledKeys.has(key);
 
   let ref = useRef<HTMLLIElement>();
