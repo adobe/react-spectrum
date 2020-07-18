@@ -24,10 +24,7 @@ interface OptionAria {
   labelProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the description text element inside the option, if any. */
-  descriptionProps: HTMLAttributes<HTMLElement>,
-
-  /** Props for the hover style. */
-  isHovered: boolean
+  descriptionProps: HTMLAttributes<HTMLElement>
 }
 
 interface AriaOptionProps {
@@ -109,10 +106,10 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
 
   let {pressProps} = usePress({...itemProps, isDisabled});
 
-  let {hoverProps, isHovered} = useHover({
-    isDisabled,
+  let {hoverProps} = useHover({
+    isDisabled: isDisabled || !shouldFocusOnHover,
     onHoverStart() {
-      if (shouldFocusOnHover && !isFocusVisible()) {
+      if (!isFocusVisible()) {
         state.selectionManager.setFocused(true);
         state.selectionManager.setFocusedKey(key);
       }
@@ -129,7 +126,6 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     },
     descriptionProps: {
       id: descriptionId
-    },
-    isHovered
+    }
   };
 }

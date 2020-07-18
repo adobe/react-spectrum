@@ -25,8 +25,7 @@ interface SearchFieldAria {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the clear button. */
-  clearButtonProps: AriaButtonProps,
-  isHovered: boolean
+  clearButtonProps: AriaButtonProps
 }
 
 /**
@@ -85,7 +84,7 @@ export function useSearchField(
     inputRef.current.focus();
   };
 
-  let {labelProps, inputProps, isHovered} = useTextField({
+  let {labelProps, inputProps} = useTextField({
     ...props,
     value: state.value,
     onChange: state.setValue,
@@ -101,7 +100,6 @@ export function useSearchField(
       excludeFromTabOrder: true,
       onPress: onClearButtonClick,
       onPressStart
-    },
-    isHovered
+    }
   };
 }

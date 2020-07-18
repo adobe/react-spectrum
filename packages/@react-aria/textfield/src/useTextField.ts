@@ -14,15 +14,13 @@ import {AriaTextFieldProps} from '@react-types/textfield';
 import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
-import {useHover} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
 
 interface TextFieldAria {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>
   /** Props for the text field's visible label element (if any). */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
-  isHovered: boolean
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>
 }
 
 /**
@@ -44,13 +42,11 @@ export function useTextField(
   } = props;
   let {focusableProps} = useFocusable(props, ref);
   let {labelProps, fieldProps} = useLabel(props);
-  let {hoverProps, isHovered} = useHover(props);
   let domProps = filterDOMProps(props, {labelable: true});
 
   return {
     labelProps,
     inputProps: mergeProps(domProps, {
-      ...hoverProps,
       type,
       disabled: isDisabled,
       readOnly: isReadOnly,
@@ -89,7 +85,6 @@ export function useTextField(
       onInput: props.onInput,
       ...focusableProps,
       ...fieldProps
-    }),
-    isHovered
+    })
   };
 }
