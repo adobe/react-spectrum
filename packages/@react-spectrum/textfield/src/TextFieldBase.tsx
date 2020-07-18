@@ -35,7 +35,8 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps {
   isResizeable?: boolean | 'horizontal' | 'vertical',
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>,
-  inputRef?: RefObject<HTMLInputElement & HTMLTextAreaElement>
+  inputRef?: RefObject<HTMLInputElement & HTMLTextAreaElement>,
+  isInForm?: boolean // this should probably be moved elsewhere?
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
