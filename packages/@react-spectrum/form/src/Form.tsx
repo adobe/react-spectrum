@@ -46,7 +46,8 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
   let ctx = {
     labelPosition,
     labelAlign,
-    necessityIndicator
+    necessityIndicator,
+    isInForm: true
   };
 
   return (

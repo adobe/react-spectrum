@@ -89,6 +89,14 @@ storiesOf('Form', module)
     () => render({isQuiet: true, labelPosition: 'side'})
   )
   .add(
+    'isQuiet, labelPosition: side, invalid',
+    () => render({isQuiet: true, labelPosition: 'side', validationState: 'invalid'})
+  )
+  .add(
+    'labelPosition: side, invalid',
+    () => render({labelPosition: 'side', validationState: 'invalid'})
+  )
+  .add(
     'isEmphasized',
     () => render({isEmphasized: true})
   )

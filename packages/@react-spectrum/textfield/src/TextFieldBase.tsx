@@ -59,6 +59,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputProps,
     inputRef,
     isResizeable,
+    isInForm,
     ...otherProps
   } = props;
   let domRef = useRef<HTMLDivElement>(null);
@@ -110,29 +111,15 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     )
   });
 
-  let resizable;
-  let overflow;
-  let overflowKey = 'overflow';
+  // should we allow resize width for label top align end?
+  let isResizeableWidth = false;
+  let isResizeableHeight = false;
   if (isResizeable) {
-    let isResizeableWidth = false;
-    let isResizeableHeight = false;
-    if (!styleProps.style.width) {
+    if (!styleProps.style.width && !isInForm) {
       isResizeableWidth = true;
     }
     if (!styleProps.style.height) {
       isResizeableHeight = true;
-    }
-    if (isResizeableWidth && isResizeableHeight) {
-      resizable = 'both';
-      overflow = 'auto';
-    } else if (isResizeableHeight) {
-      resizable = 'vertical';
-      overflow = 'auto';
-      overflowKey = 'overflow-y';
-    } else if (isResizeableWidth) {
-      resizable = 'horizontal';
-      overflow = 'auto';
-      overflowKey = 'overflow-x';
     }
   }
 
@@ -146,14 +133,13 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
             'is-invalid': isInvalid,
             'is-valid': validationState === 'valid',
             'spectrum-Textfield--quiet': isQuiet,
-            'spectrum-Textfield--multiline': multiLine
+            'spectrum-Textfield--multiline': multiLine,
+            'spectrum-Textfield--resizeableX': isResizeableWidth,
+            'spectrum-Textfield--resizeableY': isResizeableHeight,
+            'spectrum-Textfield--disabled': inputProps.disabled
           }
         )
-      }
-      style={{
-        resize: resizable,
-        [overflowKey]: overflow
-      }}>
+      }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
         <ElementType
           {...inputProps}
@@ -168,8 +154,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
               },
               inputClassName
             )
-          }
-          style={{resize: 'none'}} />
+          } />
       </FocusRing>
       {icon}
       {validationState ? validation : null}

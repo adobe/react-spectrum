@@ -38,9 +38,13 @@ governing permissions and limitations under the License.
   min-width: var(--spectrum-textfield-min-width);
   width: var(--spectrum-component-single-line-width);
 
+  &.spectrum-Textfield--quiet.spectrum-Textfield--multiline {
+     height: var(--spectrum-textfield-height);
+  }
+
   &.spectrum-Textfield--quiet.spectrum-Textfield--multiline .spectrum-Textfield-input {
-    height: var(--spectrum-textfield-height);
-    min-height: var(--spectrum-textfield-height);
+     height: var(--spectrum-textfield-height);
+     min-height: var(--spectrum-textfield-height);
   }
 }
 
@@ -56,7 +60,10 @@ governing permissions and limitations under the License.
   text-indent: 0;
 
   width: 100%;
-  height: var(--spectrum-textfield-height);
+  height: 100%;
+  min-height: var(--spectrum-textfield-height);
+
+  resize: none;
 
   vertical-align: top; /* used to align them correctly in forms. */
 
@@ -159,12 +166,8 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Textfield--multiline & {
-    height: var(--spectrum-textfield-multiline-height);
     min-height: var(--spectrum-textfield-multiline-min-height);
     padding: var(--spectrum-textfield-multiline-padding-top) var(--spectrum-textfield-multiline-padding-x) var(--spectrum-textfield-multiline-padding-bottom) calc(var(--spectrum-textfield-multiline-padding-x) - 1px);
-
-    /* Remove the default vertical scrollbar for textarea in IE. */
-    overflow: auto;
   }
 
   .spectrum-Textfield--quiet & {
@@ -237,6 +240,24 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Textfield--multiline {
+.spectrum-Textfield--multiline:not(.spectrum-Textfield--disabled):not(.spectrum-Textfield--quiet) {
   min-height: var(--spectrum-global-dimension-size-700);
+  min-width: var(--spectrum-global-dimension-size-1200); /* reasonable min width for multiline? */
+
+  &.spectrum-Textfield--resizeableX {
+    overflow-x: auto;
+    resize: horizontal;
+  }
+  &.spectrum-Textfield--resizeableY {
+    overflow-y: auto;
+    resize: vertical;
+  }
+  &.spectrum-Textfield--resizeableX.spectrum-Textfield--resizeableY {
+    overflow: auto;
+    resize: both;
+  }
+  &.spectrum-Textfield--quiet {
+    overflow: unset;
+    resize: none;
+  }
 }
