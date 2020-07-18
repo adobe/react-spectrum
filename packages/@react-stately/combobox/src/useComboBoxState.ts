@@ -142,23 +142,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     lastSelectedKeyProp.current = props.selectedKey;
   }, [props.selectedKey, setSelectedKey]);
 
-  // If props.inputValue changes, call onSelectionChange (it doesn't get called since onInputChange doesn't trigger on prop.inputValue changes)
-  let lastInputValueProp = useRef(props.inputValue);
-  useEffect(() => {
-    let newSelectedKey = computeKeyFromValue(props.inputValue, collection);
-    if (lastInputValueProp.current !== props.inputValue) {
-      // Only call onSelection if key changes (lastSelectedKey is also updated when user types so this stops duplicated onSelectionChange calls)
-      if (newSelectedKey !== lastSelectedKey.current) {
-        if (onSelectionChange) {
-          onSelectionChange(newSelectedKey);
-        }
-      }
-    }
-
-    lastSelectedKey.current = selectedKey;
-    lastInputValueProp.current = props.inputValue;
-  }, [props.inputValue, collection, selectedKey, onSelectionChange]);
-
   let lowercaseValue = inputValue.toLowerCase().replace(' ', '');
 
   let defaultFilterFn = useMemo(() => (node: Node<T>) => {
@@ -192,7 +175,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       ...props,
       selectedKeys,
       disallowEmptySelection: true,
-      // perhaps put triggerState.close in onSelectionChange?
       onSelectionChange: (keys: Set<Key>) => setSelectedKey(keys.values().next().value),
       selectionMode: 'single',
       nodeFilter: itemsControlled || inputValue === '' ? null : (nodes) => filter(nodes, defaultFilterFn)
