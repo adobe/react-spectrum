@@ -1624,4 +1624,38 @@ describe('Picker', function () {
       expect(progressbar).not.toBeInTheDocument();
     });
   });
+
+  describe('disabled', function () {
+    it('enables the hidden select when isDisabled is false', function () {
+      let {getByRole, rerender, debug} = render(
+        <Provider theme={theme}>
+          <Picker isDisabled={false} label="Test" onSelectionChange={onSelectionChange}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let select = getByRole('textbox', {hidden: true});
+
+      expect(select).not.toBeDisabled()
+    })
+
+    it('disables the hidden select when isDisabled is true', function () {
+      let {getByRole, rerender, debug} = render(
+        <Provider theme={theme}>
+          <Picker isDisabled={true} label="Test" onSelectionChange={onSelectionChange}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let select = getByRole('textbox', {hidden: true});
+
+      expect(select).toBeDisabled()
+    })
+  })
 });
