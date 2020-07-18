@@ -36,6 +36,7 @@
     "@react-aria/datepicker": "^3.0.0-alpha.1",
     "@react-aria/focus": "^3.0.2",
     "@react-aria/i18n": "^3.0.2",
+    "@react-aria/interactions": "3.0.2",
     "@react-aria/utils": "^3.0.2",
     "@react-spectrum/button": "^3.0.2",
     "@react-spectrum/calendar": "^3.0.0-alpha.1",

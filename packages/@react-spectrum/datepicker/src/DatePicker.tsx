@@ -24,6 +24,7 @@ import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must b
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';
+import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -40,6 +41,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let {hoverProps, isHovered} = useHover(props);
   let state = useDatePickerState(props);
   let {comboboxProps, fieldProps, buttonProps, dialogProps} = useDatePicker(props, state);
   let {value, setValue, selectDate, isOpen, setOpen} = state;
@@ -52,7 +54,8 @@ export function DatePicker(props: SpectrumDatePickerProps) {
     {
       'spectrum-InputGroup--quiet': isQuiet,
       'is-invalid': state.validationState === 'invalid',
-      'is-disabled': isDisabled
+      'is-disabled': isDisabled,
+      'is-hovered': isHovered
     },
     styleProps.className
   );
@@ -65,6 +68,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
       autoFocus={autoFocus}>
       <div
         {...styleProps}
+        {...hoverProps}
         {...comboboxProps}
         className={className}
         ref={targetRef}>
