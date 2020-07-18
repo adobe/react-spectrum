@@ -27,6 +27,7 @@ import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
 import {TableState, useTableState} from '@react-stately/table';
+import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableRowGroup, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
@@ -356,10 +357,14 @@ function TableColumnHeader({column}) {
   }, state);
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
+  let {hoverProps, isHovered} = useHover({
+    isDisabled: false
+  });
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
+        {...hoverProps}
         {...columnHeaderProps}
         ref={ref}
         className={
@@ -369,7 +374,8 @@ function TableColumnHeader({column}) {
             {
               'is-sortable': columnProps.allowsSorting,
               'is-sorted-desc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'descending',
-              'is-sorted-asc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'ascending'
+              'is-sorted-asc': state.sortDescriptor?.column === column.key && state.sortDescriptor?.direction === 'ascending',
+              'is-hovered': isHovered
             },
             classNames(
               stylesOverrides,
@@ -401,16 +407,23 @@ function TableSelectAllCell({column}) {
   }, state);
 
   let {checkboxProps} = useTableSelectAllCheckbox(state);
+  let {hoverProps, isHovered} = useHover({
+    isDisabled: false
+  });
 
   return (
     <div
+      {...hoverProps}
       {...columnHeaderProps}
       ref={ref}
       className={
         classNames(
           styles,
           'spectrum-Table-headCell',
-          'spectrum-Table-checkboxCell'
+          'spectrum-Table-checkboxCell',
+          {
+            'is-hovered': isHovered
+          }
         )
       }>
       <Checkbox
@@ -448,6 +461,9 @@ function TableRow({item, children, ...otherProps}) {
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({
+    isDisabled: false
+  });
   let props = mergeProps(
     mergeProps(
       rowProps,
@@ -461,6 +477,7 @@ function TableRow({item, children, ...otherProps}) {
 
   return (
     <div
+      {...hoverProps}
       {...props}
       ref={ref}
       className={
@@ -470,7 +487,8 @@ function TableRow({item, children, ...otherProps}) {
           {
             'is-selected': isSelected,
             'is-focused': isFocusVisibleWithin,
-            'focus-ring': isFocusVisible
+            'focus-ring': isFocusVisible,
+            'is-hovered': isHovered
           }
         )
       }>
