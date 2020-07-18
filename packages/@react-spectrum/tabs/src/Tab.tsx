@@ -14,6 +14,7 @@ import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
 import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
+import {useHover} from '@react-aria/interactions';
 import {useTab} from '@react-aria/tabs';
 
 interface TabProps extends DOMProps, StyleProps {
@@ -33,16 +34,19 @@ export function Tab(props: TabProps) {
   let {label, isDisabled, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
   let {tabProps} = useTab(props);
+  let {hoverProps, isHovered} = useHover(props);
   return (
     <div
       {...styleProps}
+      {...hoverProps}
       {...tabProps}
       className={classNames(
         styles,
         'spectrum-Tabs-item',
         {
           'is-selected': tabProps['aria-selected'],
-          'is-disabled': isDisabled
+          'is-disabled': isDisabled,
+          'is-hovered': isHovered
         },
         styleProps.className
       )}>

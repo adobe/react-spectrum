@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@react-aria/interactions": "3.0.2",
     "@react-aria/tabs": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.2",
     "@react-stately/tabs": "^3.0.0-alpha.1",
