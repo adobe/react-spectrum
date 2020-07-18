@@ -42,8 +42,7 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
     labelProps,
     inputFieldProps,
     incrementButtonProps,
-    decrementButtonProps,
-    isHovered
+    decrementButtonProps
   } = useNumberField(props, state, inputRef);
 
   let className = classNames(
@@ -74,7 +73,6 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
         ref={ref}
         className={className}>
         <TextFieldBase
-          isHovered={isHovered}
           isQuiet={isQuiet}
           inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
           inputRef={inputRef}

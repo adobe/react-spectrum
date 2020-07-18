@@ -26,6 +26,7 @@ import React, {cloneElement, forwardRef, InputHTMLAttributes, LabelHTMLAttribute
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFormProps} from '@react-spectrum/form';
+import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
 interface TextFieldBaseProps extends SpectrumTextFieldProps {
@@ -35,7 +36,7 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>,
   inputRef?: RefObject<HTMLInputElement & HTMLTextAreaElement>,
-  isHovered: boolean
+  isHovered?: boolean
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
@@ -58,9 +59,10 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     labelProps,
     inputProps,
     inputRef,
-    isHovered,
+    isHovered: isHoveredProp,
     ...otherProps
   } = props;
+  let {hoverProps, isHovered} = useHover(props);
   let domRef = useRef<HTMLDivElement>(null);
   let defaultInputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
@@ -126,6 +128,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
         <ElementType
+          {...hoverProps}
           {...inputProps}
           ref={inputRef}
           rows={multiLine ? 1 : undefined}
@@ -135,7 +138,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
               'spectrum-Textfield-input',
               {
                 'spectrum-Textfield-inputIcon': icon,
-                'is-hovered': isHovered
+                'is-hovered': isHoveredProp || isHovered
               },
               inputClassName
             )

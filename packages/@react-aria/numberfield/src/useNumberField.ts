@@ -148,6 +148,6 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     labelProps,
     inputFieldProps: inputProps,
     incrementButtonProps,
-    decrementButtonProps,
+    decrementButtonProps
   };
 }

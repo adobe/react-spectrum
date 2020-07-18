@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@react-aria/interactions": "^3.0.2",
     "@react-aria/searchfield": "^3.0.2",
     "@react-spectrum/button": "^3.0.2",
     "@react-spectrum/textfield": "^3.0.2",

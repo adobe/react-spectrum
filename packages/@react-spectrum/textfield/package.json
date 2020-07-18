@@ -34,6 +34,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/focus": "^3.0.2",
     "@react-aria/i18n": "^3.0.2",
+    "@react-aria/interactions": "^3.0.2",
     "@react-aria/textfield": "^3.0.2",
     "@react-aria/utils": "^3.0.2",
     "@react-spectrum/form": "^3.0.2",
