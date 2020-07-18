@@ -110,9 +110,9 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   let {pressProps} = usePress({...itemProps, isDisabled});
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: isDisabled || shouldFocusOnHover,
+    isDisabled,
     onHoverStart() {
-      if (!isFocusVisible()) {
+      if (shouldFocusOnHover && !isFocusVisible()) {
         state.selectionManager.setFocused(true);
         state.selectionManager.setFocusedKey(key);
       }
