@@ -46,7 +46,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
   let isDisabled = state.disabledKeys.has(key);
 
   let ref = useRef<HTMLDivElement>();
-  let {optionProps, labelProps, descriptionProps} = useOption(
+  let {optionProps, labelProps, descriptionProps, isHovered} = useOption(
     {
       isSelected,
       isDisabled,
@@ -75,7 +75,8 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
           {
             'is-disabled': isDisabled,
             'is-selected': isSelected,
-            'is-selectable': state.selectionManager.selectionMode !== 'none'
+            'is-selectable': state.selectionManager.selectionMode !== 'none',
+            'is-hovered': isHovered
           }
         )}>
         <Grid
