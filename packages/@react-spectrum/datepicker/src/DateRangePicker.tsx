@@ -23,6 +23,7 @@ import {SpectrumDateRangePickerProps} from '@react-types/datepicker';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useDateRangePicker} from '@react-aria/datepicker';
 import {useDateRangePickerState} from '@react-stately/datepicker';
+import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -39,6 +40,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let {hoverProps, isHovered} = useHover(props);
   let state = useDateRangePickerState(props);
   let {comboboxProps, buttonProps, dialogProps, startFieldProps, endFieldProps} = useDateRangePicker(props, state);
   let {value, setDate, selectDateRange, isOpen, setOpen} = state;
@@ -52,7 +54,8 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
     {
       'spectrum-InputGroup--quiet': isQuiet,
       'is-invalid': state.validationState === 'invalid',
-      'is-disabled': isDisabled
+      'is-disabled': isDisabled,
+      'is-hovered': isHovered
     },
     styleProps.className
   );
@@ -66,6 +69,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
       autoFocus={autoFocus}>
       <div
         {...styleProps}
+        {...hoverProps}
         {...comboboxProps}
         className={className}
         ref={targetRef}>
