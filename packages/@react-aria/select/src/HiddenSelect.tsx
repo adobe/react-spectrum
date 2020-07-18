@@ -27,6 +27,9 @@ interface HiddenSelectProps<T> {
 
   /** HTML form input name. */
   name?: string
+
+  /** Sets the disabled state of the select and input */
+  isDisabled?: boolean
 }
 
 /**
@@ -34,7 +37,7 @@ interface HiddenSelectProps<T> {
  * form autofill, mobile form navigation, and native form submission.
  */
 export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
-  let {state, triggerRef, label, name} = props;
+  let {state, triggerRef, label, name, isDisabled} = props;
   let modality = useInteractionModality();
 
   // If used in a <form>, use a hidden input so the value can be submitted to a server.
@@ -65,11 +68,14 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
           type="text"
           tabIndex={modality == null || state.isFocused || state.isOpen ? -1 : 0}
           style={{fontSize: 16}}
-          onFocus={() => triggerRef.current.focus()} />
+          onFocus={() => triggerRef.current.focus()} 
+          disabled={isDisabled}
+          />
         <label>
           {label}
           <select
             tabIndex={-1}
+            disabled={isDisabled}
             name={name}
             size={state.collection.size}
             value={state.selectedKey}
@@ -95,6 +101,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
       <input
         type="hidden"
         name={name}
+        disabled={isDisabled}
         value={state.selectedKey} />
     );
   }

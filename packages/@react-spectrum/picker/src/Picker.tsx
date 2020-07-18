@@ -180,6 +180,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         )
       }>
       <HiddenSelect
+        isDisabled={isDisabled}
         state={state}
         triggerRef={unwrapDOMRef(triggerRef)}
         label={label}
