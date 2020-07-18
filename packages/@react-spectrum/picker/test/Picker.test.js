@@ -1627,7 +1627,7 @@ describe('Picker', function () {
 
   describe('disabled', function () {
     it('enables the hidden select when isDisabled is false', function () {
-      let {getByRole, rerender, debug} = render(
+      let {getByRole} = render(
         <Provider theme={theme}>
           <Picker isDisabled={false} label="Test" onSelectionChange={onSelectionChange}>
             <Item key="one">One</Item>
@@ -1639,13 +1639,13 @@ describe('Picker', function () {
 
       let select = getByRole('textbox', {hidden: true});
 
-      expect(select).not.toBeDisabled()
-    })
+      expect(select).not.toBeDisabled();
+    });
 
     it('disables the hidden select when isDisabled is true', function () {
-      let {getByRole, rerender, debug} = render(
+      let {getByRole} = render(
         <Provider theme={theme}>
-          <Picker isDisabled={true} label="Test" onSelectionChange={onSelectionChange}>
+          <Picker isDisabled label="Test" onSelectionChange={onSelectionChange}>
             <Item key="one">One</Item>
             <Item key="two">Two</Item>
             <Item key="three">Three</Item>
@@ -1655,7 +1655,7 @@ describe('Picker', function () {
 
       let select = getByRole('textbox', {hidden: true});
 
-      expect(select).toBeDisabled()
-    })
-  })
+      expect(select).toBeDisabled();
+    });
+  });
 });
