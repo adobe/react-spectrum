@@ -32,6 +32,7 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps {
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
   multiLine?: boolean,
+  isResizeable?: boolean | 'horizontal' | 'vertical',
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>,
   inputRef?: RefObject<HTMLInputElement & HTMLTextAreaElement>
@@ -109,6 +110,32 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     )
   });
 
+  let resizable;
+  let overflow;
+  let overflowKey = 'overflow';
+  if (isResizeable) {
+    let isResizeableWidth = false;
+    let isResizeableHeight = false;
+    if (!styleProps.style.width) {
+      isResizeableWidth = true;
+    }
+    if (!styleProps.style.height) {
+      isResizeableHeight = true;
+    }
+    if (isResizeableWidth && isResizeableHeight) {
+      resizable = 'both';
+      overflow = 'auto';
+    } else if (isResizeableHeight) {
+      resizable = 'vertical';
+      overflow = 'auto';
+      overflowKey = 'overflow-y';
+    } else if (isResizeableWidth) {
+      resizable = 'horizontal';
+      overflow = 'auto';
+      overflowKey = 'overflow-x';
+    }
+  }
+
   let textField = (
     <div
       className={
@@ -124,8 +151,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
         )
       }
       style={{
-        resize: isResizeable ? 'both' : undefined,
-        overflow: isResizeable ? 'auto' : undefined
+        resize: resizable,
+        [overflowKey]: overflow
       }}>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
         <ElementType

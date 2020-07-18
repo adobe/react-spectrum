@@ -236,3 +236,7 @@ governing permissions and limitations under the License.
     min-height: var(--spectrum-textfield-height);
   }
 }
+
+.spectrum-Textfield--multiline {
+  min-height: var(--spectrum-global-dimension-size-700);
+}
