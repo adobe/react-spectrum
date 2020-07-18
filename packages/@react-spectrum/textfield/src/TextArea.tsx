@@ -54,7 +54,8 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
       isDisabled={isDisabled}
       isQuiet={isQuiet}
       isReadOnly={isReadOnly}
-      isRequired={isRequired} />
+      isRequired={isRequired}
+      isResizeable={!isQuiet} />
   );
 }
 

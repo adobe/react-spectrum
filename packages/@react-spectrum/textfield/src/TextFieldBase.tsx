@@ -57,6 +57,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     labelProps,
     inputProps,
     inputRef,
+    isResizeable,
     ...otherProps
   } = props;
   let domRef = useRef<HTMLDivElement>(null);
@@ -121,7 +122,11 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
             'spectrum-Textfield--multiline': multiLine
           }
         )
-      }>
+      }
+      style={{
+        resize: isResizeable ? 'both' : undefined,
+        overflow: isResizeable ? 'auto' : undefined
+      }}>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
         <ElementType
           {...inputProps}
@@ -136,7 +141,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
               },
               inputClassName
             )
-          } />
+          }
+          style={{resize: 'none'}} />
       </FocusRing>
       {icon}
       {validationState ? validation : null}
