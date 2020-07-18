@@ -15,6 +15,7 @@ import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {ListBoxContext} from './ListBoxContext';
+import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import React, {useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
@@ -72,8 +73,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...optionProps}
-        {...hoverProps}
+        {...mergeProps(optionProps, shouldFocusOnHover ? {} : hoverProps)}
         ref={ref}
         className={classNames(
           styles,
