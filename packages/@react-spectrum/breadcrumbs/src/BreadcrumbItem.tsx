@@ -17,6 +17,7 @@ import {FocusRing} from '@react-aria/focus';
 import React, {Fragment, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbItem} from '@react-aria/breadcrumbs';
+import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
 export function BreadcrumbItem(props: BreadcrumbItemProps) {
@@ -32,18 +33,21 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
     ...props,
     elementType: typeof children === 'string' ? 'span' : 'a'
   }, ref);
+  let {hoverProps, isHovered} = useHover(props);
 
   let element = React.cloneElement(
     getWrappedElement(children),
     {
       ...itemProps,
+      ...hoverProps,
       ref,
       className:
         classNames(
           styles,
           'spectrum-Breadcrumbs-itemLink',
           {
-            'is-disabled': !isCurrent && isDisabled
+            'is-disabled': !isCurrent && isDisabled,
+            'is-hovered': isHovered
           }
         )
     }
