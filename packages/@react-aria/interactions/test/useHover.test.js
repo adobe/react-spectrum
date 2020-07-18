@@ -16,7 +16,7 @@ import {useHover} from '../';
 
 function Example(props) {
   let {hoverProps, isHovered} = useHover(props);
-return <div {...hoverProps}>test{isHovered && '-hovered'}</div>;
+  return <div {...hoverProps}>test{isHovered && '-hovered'}</div>;
 }
 
 function pointerEvent(type, opts) {
@@ -117,10 +117,10 @@ describe('useHover', function () {
       );
       let el = res.getByText('test');
 
-      fireEvent(el, pointerEvent('pointerover', { pointerType: 'mouse' }));
+      fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
       expect(el.textContent).toBe('test-hovered');
 
-      fireEvent(el, pointerEvent('pointerout', { pointerType: 'mouse' }));
+      fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
       expect(el.textContent).toBe('test');
     });
 
@@ -130,10 +130,10 @@ describe('useHover', function () {
       );
       let el = res.getByText('test');
 
-      fireEvent(el, pointerEvent('pointerover', { pointerType: 'touch' }));
+      fireEvent(el, pointerEvent('pointerover', {pointerType: 'touch'}));
       expect(el.textContent).toBe('test');
 
-      fireEvent(el, pointerEvent('pointerout', { pointerType: 'touch' }));
+      fireEvent(el, pointerEvent('pointerout', {pointerType: 'touch'}));
       expect(el.textContent).toBe('test');
     });
   });
