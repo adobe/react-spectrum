@@ -34,7 +34,8 @@ interface TextFieldBaseProps extends SpectrumTextFieldProps {
   multiLine?: boolean,
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>,
-  inputRef?: RefObject<HTMLInputElement & HTMLTextAreaElement>
+  inputRef?: RefObject<HTMLInputElement & HTMLTextAreaElement>,
+  isHovered: boolean
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
@@ -57,6 +58,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     labelProps,
     inputProps,
     inputRef,
+    isHovered,
     ...otherProps
   } = props;
   let domRef = useRef<HTMLDivElement>(null);
@@ -132,7 +134,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
               styles,
               'spectrum-Textfield-input',
               {
-                'spectrum-Textfield-inputIcon': icon
+                'spectrum-Textfield-inputIcon': icon,
+                'is-hovered': isHovered
               },
               inputClassName
             )

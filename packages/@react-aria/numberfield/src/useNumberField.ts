@@ -31,7 +31,8 @@ interface NumberFieldAria {
   inputFieldProps: HTMLAttributes<HTMLInputElement>,
   numberFieldProps: HTMLAttributes<HTMLDivElement>,
   incrementButtonProps: AriaButtonProps,
-  decrementButtonProps: AriaButtonProps
+  decrementButtonProps: AriaButtonProps,
+  isHovered: boolean
 }
 
 export function useNumberField(props: NumberFieldProps, state: NumberFieldState, ref: RefObject<HTMLInputElement>): NumberFieldAria {
@@ -120,7 +121,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   }, [inputId, isReadOnly, isDisabled, decrement, increment]);
 
   let domProps = filterDOMProps(props, {labelable: true});
-  let {labelProps, inputProps} = useTextField(mergeProps(spinButtonProps, {
+  let {labelProps, inputProps, isHovered} = useTextField(mergeProps(spinButtonProps, {
     autoFocus,
     value: '' + value,
     onChange: state.setValue,
@@ -148,6 +149,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     labelProps,
     inputFieldProps: inputProps,
     incrementButtonProps,
-    decrementButtonProps
+    decrementButtonProps,
+    isHovered
   };
 }

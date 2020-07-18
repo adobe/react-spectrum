@@ -38,7 +38,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     }
   };
 
-  let {labelProps, inputProps} = useTextField({
+  let {labelProps, inputProps, isHovered} = useTextField({
     ...props,
     onChange: chain(onChange, onHeightChange)
   }, inputRef);
@@ -47,6 +47,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     <TextFieldBase
       {...otherProps}
       ref={ref}
+      isHovered={isHovered}
       inputRef={inputRef}
       labelProps={labelProps}
       inputProps={inputProps}

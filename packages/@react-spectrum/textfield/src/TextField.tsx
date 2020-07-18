@@ -20,10 +20,11 @@ function TextField(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) 
   props = useProviderProps(props);
 
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
-  let {labelProps, inputProps} = useTextField(props, inputRef);
+  let {labelProps, inputProps, isHovered} = useTextField(props, inputRef);
   return (
     <TextFieldBase
       {...props}
+      isHovered={isHovered}
       labelProps={labelProps}
       inputProps={inputProps}
       ref={ref}
