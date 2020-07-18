@@ -27,43 +27,43 @@ describe('mergeProps', function () {
   });
 
   it('combines callbacks', function () {
-    console.log = jest.fn();
+    let mockFn = jest.fn();
     let message1 = 'click1';
     let message2 = 'click2';
     let message3 = 'click3';
     let mergedProps = mergeProps(
-      {onClick: () => console.log(message1)},
-      {onClick: () => console.log(message2)},
-      {onClick: () => console.log(message3)}
+      {onClick: () => mockFn(message1)},
+      {onClick: () => mockFn(message2)},
+      {onClick: () => mockFn(message3)}
     );
     mergedProps.onClick();
-    expect(console.log).toHaveBeenNthCalledWith(1, message1);
-    expect(console.log).toHaveBeenNthCalledWith(2, message2);
-    expect(console.log).toHaveBeenNthCalledWith(3, message3);
-    expect(console.log).toHaveBeenCalledTimes(3);
+    expect(mockFn).toHaveBeenNthCalledWith(1, message1);
+    expect(mockFn).toHaveBeenNthCalledWith(2, message2);
+    expect(mockFn).toHaveBeenNthCalledWith(3, message3);
+    expect(mockFn).toHaveBeenCalledTimes(3);
   });
 
   it('merges props with different keys', function () {
-    console.log = jest.fn();
+    let mockFn = jest.fn();
     let click1 = 'click1';
     let click2 = 'click2';
     let hover = 'hover';
     let focus = 'focus';
     let margin = 2;
     const mergedProps = mergeProps(
-      {onClick: () => console.log(click1)},
-      {onHover: () => console.log(hover), styles: {margin}},
-      {onClick: () => console.log(click2), onFocus: () => console.log(focus)}
+      {onClick: () => mockFn(click1)},
+      {onHover: () => mockFn(hover), styles: {margin}},
+      {onClick: () => mockFn(click2), onFocus: () => mockFn(focus)}
     );
 
     mergedProps.onClick();
-    expect(console.log).toHaveBeenNthCalledWith(1, click1);
-    expect(console.log).toHaveBeenNthCalledWith(2, click2);
+    expect(mockFn).toHaveBeenNthCalledWith(1, click1);
+    expect(mockFn).toHaveBeenNthCalledWith(2, click2);
     mergedProps.onFocus();
-    expect(console.log).toHaveBeenNthCalledWith(3, focus);
+    expect(mockFn).toHaveBeenNthCalledWith(3, focus);
     mergedProps.onHover();
-    expect(console.log).toHaveBeenNthCalledWith(4, hover);
-    expect(console.log).toHaveBeenCalledTimes(4);
+    expect(mockFn).toHaveBeenNthCalledWith(4, hover);
+    expect(mockFn).toHaveBeenCalledTimes(4);
     expect(mergedProps.styles.margin).toBe(margin);
   });
 
