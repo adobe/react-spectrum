@@ -33,10 +33,7 @@ export function Link(props: SpectrumLinkProps) {
     href
   } = props;
   let {styleProps} = useStyleProps(props);
-  let {hoverProps, isHovered} = useHover({ 
-    ...props,
-    isDisabled: false
-  });
+  let {hoverProps, isHovered} = useHover({});
 
   if (href) {
     console.warn('href is deprecated, please use an anchor element as children');

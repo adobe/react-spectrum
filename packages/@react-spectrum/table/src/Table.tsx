@@ -357,9 +357,7 @@ function TableColumnHeader({column}) {
   }, state);
 
   let columnProps = column.props as SpectrumColumnProps<unknown>;
-  let {hoverProps, isHovered} = useHover({
-    isDisabled: false
-  });
+  let {hoverProps, isHovered} = useHover({});
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -407,9 +405,7 @@ function TableSelectAllCell({column}) {
   }, state);
 
   let {checkboxProps} = useTableSelectAllCheckbox(state);
-  let {hoverProps, isHovered} = useHover({
-    isDisabled: false
-  });
+  let {hoverProps, isHovered} = useHover({});
 
   return (
     <div
@@ -461,9 +457,7 @@ function TableRow({item, children, ...otherProps}) {
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({
-    isDisabled: false
-  });
+  let {hoverProps, isHovered} = useHover({});
   let props = mergeProps(
     mergeProps(
       rowProps,
