@@ -13,10 +13,10 @@
 import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, RefObject} from 'react';
 import {MenuTriggerState} from '@react-stately/menu';
-import {useId, mergeProps} from '@react-aria/utils';
+import {MenuTriggerType} from '@react-types/menu';
+import {mergeProps, useId} from '@react-aria/utils';
+import {useLongPress} from '@react-aria/interactions';
 import {useOverlayTrigger} from '@react-aria/overlays';
-import { useLongPress } from '@react-aria/interactions/src/useLongPress';
-import { MenuTriggerType } from '@react-types/menu';
 
 interface MenuTriggerAriaProps {
   /** The type of menu that the menu trigger opens. */
@@ -55,11 +55,11 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
         state.toggle('last');
         break;
     }
-  }
+  };
 
   const handleLongPressAltBehaviour = (e) => {
     if (e.altKey) {
-      handleArrowKeyBehaviour(e)
+      handleArrowKeyBehaviour(e);
     }
   };
   
@@ -69,10 +69,10 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
     }
 
     if (ref && ref.current) {
-      if (trigger === "longPress") {
-        handleLongPressAltBehaviour(e)
+      if (trigger === 'longPress') {
+        handleLongPressAltBehaviour(e);
       } else  {
-        handleArrowKeyBehaviour(e)
+        handleArrowKeyBehaviour(e);
       }
     }
   };
@@ -103,18 +103,18 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
       if (e.pointerType === 'touch') {
         state.toggle();
       }
-    },
-  }
+    }
+  };
 
   let menuTriggerProps = {
     ...triggerProps,
-    id: menuTriggerId,
-  }
+    id: menuTriggerId
+  };
 
-  if (trigger === "longPress") {
-    menuTriggerProps = mergeProps(menuTriggerProps, longPressProps, { onKeyDown })
+  if (trigger === 'longPress') {
+    menuTriggerProps = mergeProps(menuTriggerProps, longPressProps, {onKeyDown});
   } else {
-    menuTriggerProps = mergeProps(menuTriggerProps, pressProps, { onKeyDown })
+    menuTriggerProps = mergeProps(menuTriggerProps, pressProps, {onKeyDown});
   }
 
   return {

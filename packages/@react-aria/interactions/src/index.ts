@@ -19,3 +19,4 @@ export * from './useFocus';
 export * from './useFocusWithin';
 export * from './useFocusVisible';
 export * from './useHover';
+export * from './useLongPress';

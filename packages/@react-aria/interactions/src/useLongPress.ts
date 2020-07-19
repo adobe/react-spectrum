@@ -15,9 +15,9 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import { useRef } from "react";
-import { usePress } from "./usePress";
-import { PressEvent } from "@react-types/shared";
+import {PressEvent} from '@react-types/shared';
+import {usePress} from './usePress';
+import {useRef} from 'react';
 
 export interface LongPressHookProps {
   onLongPress: (e: PressEvent) => void
@@ -31,11 +31,11 @@ export function useLongPress(props : LongPressHookProps) {
     triggerThreshold
   } = props;
   
-  triggerThreshold = triggerThreshold || 500
+  triggerThreshold = triggerThreshold || 500;
 
   const timeRef = useRef(null);
 
-  let { pressProps } = usePress({
+  let {pressProps} = usePress({
     onPressStart(e) {
       timeRef.current = setTimeout(() => {
         onLongPress(e);
@@ -43,10 +43,10 @@ export function useLongPress(props : LongPressHookProps) {
       }, triggerThreshold);
     },
     onPressEnd() { 
-     if(timeRef.current) {
-      clearTimeout(timeRef.current)
-     }
-    },
+      if (timeRef.current) {
+        clearTimeout(timeRef.current);
+      }
+    }
   });
   
   return pressProps;

@@ -106,7 +106,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   }
 
   let onKeyDown = (e) => {
-    if(!e.repeat) {
+    if (!e.repeat) {
       switch (e.key) {
         case ' ':
           if (!isDisabled && state.selectionManager.selectionMode === 'none' && closeOnSelect && onClose) {
