@@ -35,13 +35,14 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     align = 'start',
     shouldFlip = true,
     direction = 'bottom',
-    closeOnSelect = true
+    closeOnSelect = true,
+    trigger = "longPress"
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
   let state = useMenuTriggerState(props);
 
-  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, menuTriggerRef);
+  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, menuTriggerRef, trigger);
 
   let {overlayProps: positionProps, placement} = useOverlayPosition({
     targetRef: menuTriggerRef,

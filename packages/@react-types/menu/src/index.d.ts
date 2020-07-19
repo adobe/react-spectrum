@@ -38,11 +38,14 @@ export interface MenuTriggerProps extends OverlayTriggerProps {
   shouldFlip?: boolean
 }
 
+export type MenuTriggerType = 'longPress'
+
 export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
   /**
    * The contents of the MenuTrigger - a trigger and a Menu.
    */
   children: ReactElement[]
+  trigger?: MenuTriggerType
 }
 
 export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
