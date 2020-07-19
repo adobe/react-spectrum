@@ -63,7 +63,7 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
     }
   };
   
-  let onKeyDown = (e) => {
+  const onKeyDown = (e) => {
     if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {
       return;
     }
@@ -90,38 +90,33 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
     }
   });
 
+  const pressProps = {
+    onPressStart(e) {
+      // For consistency with native, open the menu on mouse/key down, but touch up.
+      if (e.pointerType !== 'touch') {
+        // If opened with a keyboard or screen reader, auto focus the first item.
+        // Otherwise, the menu itself will be focused.
+        state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
+      }
+    },
+    onPress(e) {
+      if (e.pointerType === 'touch') {
+        state.toggle();
+      }
+    },
+  }
 
-  let menuTriggerProps : any = {
+  let menuTriggerProps = {
     ...triggerProps,
     id: menuTriggerId,
   }
 
-  if(trigger === "longPress") {
-    menuTriggerProps = {
-      ...menuTriggerProps,
-      ...longPressProps
-    }
+  if (trigger === "longPress") {
+    menuTriggerProps = mergeProps(menuTriggerProps, longPressProps, { onKeyDown })
   } else {
-    menuTriggerProps = {
-      ...menuTriggerProps,
-      onPressStart(e) {
-        // For consistency with native, open the menu on mouse/key down, but touch up.
-        if (e.pointerType !== 'touch') {
-          // If opened with a keyboard or screen reader, auto focus the first item.
-          // Otherwise, the menu itself will be focused.
-          state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
-        }
-      },
-      onPress(e) {
-        if (e.pointerType === 'touch') {
-          state.toggle();
-        }
-      },
-    }
-}
+    menuTriggerProps = mergeProps(menuTriggerProps, pressProps, { onKeyDown })
+  }
 
-  menuTriggerProps = mergeProps(menuTriggerProps, { onKeyDown })
-  
   return {
     menuTriggerProps,
     menuProps: {
