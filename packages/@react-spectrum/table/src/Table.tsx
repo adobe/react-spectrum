@@ -362,8 +362,7 @@ function TableColumnHeader({column}) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...hoverProps}
-        {...columnHeaderProps}
+        {...mergeProps(columnHeaderProps, hoverProps)}
         ref={ref}
         className={
           classNames(
@@ -409,8 +408,7 @@ function TableSelectAllCell({column}) {
 
   return (
     <div
-      {...hoverProps}
-      {...columnHeaderProps}
+      {...mergeProps(columnHeaderProps, hoverProps)}
       ref={ref}
       className={
         classNames(
@@ -459,19 +457,15 @@ function TableRow({item, children, ...otherProps}) {
   let {isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({});
   let props = mergeProps(
-    mergeProps(
-      rowProps,
-      otherProps
-    ),
-    mergeProps(
-      focusWithinProps,
-      focusProps
-    )
+    rowProps,
+    otherProps,
+    focusWithinProps,
+    focusProps,
+    hoverProps
   );
 
   return (
     <div
-      {...hoverProps}
       {...props}
       ref={ref}
       className={

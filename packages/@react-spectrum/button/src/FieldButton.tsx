@@ -14,6 +14,7 @@ import {ButtonProps} from '@react-types/button';
 import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React, {RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
@@ -44,8 +45,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <button
-        {...hoverProps}
-        {...buttonProps}
+        {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
         className={
           classNames(

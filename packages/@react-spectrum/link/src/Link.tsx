@@ -12,6 +12,7 @@
 
 import {classNames, getWrappedElement, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import {SpectrumLinkProps} from '@react-types/link';
 import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
@@ -51,8 +52,7 @@ export function Link(props: SpectrumLinkProps) {
         getWrappedElement(children),
         {
           ...styleProps,
-          ...hoverProps,
-          ...linkProps,
+          ...mergeProps(linkProps, hoverProps),
           ref,
           className: classNames(
             styles,

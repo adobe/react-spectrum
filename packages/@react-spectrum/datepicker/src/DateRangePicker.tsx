@@ -17,6 +17,7 @@ import datepickerStyles from './index.css';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing, FocusScope, useFocusManager} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import {RangeCalendar} from '@react-spectrum/calendar';
 import React, {useRef} from 'react';
 import {SpectrumDateRangePickerProps} from '@react-types/datepicker';
@@ -69,8 +70,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
       autoFocus={autoFocus}>
       <div
         {...styleProps}
-        {...hoverProps}
-        {...comboboxProps}
+        {...mergeProps(comboboxProps, hoverProps)}
         className={className}
         ref={targetRef}>
         <FocusScope autoFocus={autoFocus}>

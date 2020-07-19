@@ -12,6 +12,7 @@
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
 import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {useHover} from '@react-aria/interactions';
@@ -38,8 +39,7 @@ export function Tab(props: TabProps) {
   return (
     <div
       {...styleProps}
-      {...hoverProps}
-      {...tabProps}
+      {...mergeProps(tabProps, hoverProps)}
       className={classNames(
         styles,
         'spectrum-Tabs-item',

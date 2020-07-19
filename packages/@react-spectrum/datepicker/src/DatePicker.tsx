@@ -18,6 +18,7 @@ import datepickerStyles from './index.css';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing, FocusScope} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import {SpectrumDatePickerProps} from '@react-types/datepicker';
 import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
@@ -68,8 +69,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
       autoFocus={autoFocus}>
       <div
         {...styleProps}
-        {...hoverProps}
-        {...comboboxProps}
+        {...mergeProps(comboboxProps, hoverProps)}
         className={className}
         ref={targetRef}>
         <FocusScope autoFocus={autoFocus}>
