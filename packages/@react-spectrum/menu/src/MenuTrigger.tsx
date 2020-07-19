@@ -36,7 +36,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     shouldFlip = true,
     direction = 'bottom',
     closeOnSelect = true,
-    trigger = "longPress"
+    trigger = 'press'
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);

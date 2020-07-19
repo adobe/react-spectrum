@@ -38,7 +38,7 @@ export interface MenuTriggerProps extends OverlayTriggerProps {
   shouldFlip?: boolean
 }
 
-export type MenuTriggerType = 'longPress'
+export type MenuTriggerType = 'press' | 'longPress'
 
 export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
   /**
