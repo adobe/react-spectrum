@@ -22,9 +22,6 @@ export function useLongPress(props : LongPressHookProps) {
 
   let { pressProps } = usePress({
     onPressStart(e) {
-      if(timeRef.current) {
-        clearTimeout(timeRef.current)
-      }
       timeRef.current = setTimeout(() => {
         onLongPress(e);
         timeRef.current = null;
