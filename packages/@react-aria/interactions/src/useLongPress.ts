@@ -1,10 +1,8 @@
-import { useRef, RefObject } from "react";
-import {usePress, PressProps} from "./usePress";
+import { useRef } from "react";
+import { usePress } from "./usePress";
 import { PressEvent } from "@react-types/shared";
 
-export interface LongPressHookProps extends PressProps {
-  /** A ref to the target element. */
-  ref?: RefObject<HTMLElement>
+export interface LongPressHookProps {
   onLongPress: (e: PressEvent) => void
   triggerThreshold?: number
 }
