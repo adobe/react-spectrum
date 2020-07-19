@@ -18,7 +18,6 @@ import {SpectrumSearchFieldProps} from '@react-types/searchfield';
 import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
-import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
@@ -46,7 +45,6 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   let state = useSearchFieldState(props);
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
   let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, inputRef);
-  let {hoverProps, isHovered} = useHover(props);
 
   let clearButton = (
     <ClearButton
@@ -64,9 +62,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   return (
     <TextFieldBase
       {...otherProps}
-      isHovered={isHovered}
       labelProps={labelProps}
-      inputProps={{...inputProps, ...hoverProps}}
+      inputProps={inputProps}
       UNSAFE_className={
         classNames(
           styles,
@@ -78,9 +75,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
           UNSAFE_className
         )
       }
-      inputClassName={classNames(styles, 'spectrum-Search-input', {
-        'is-hovered': isHovered
-      })}
+      inputClassName={classNames(styles, 'spectrum-Search-input')}
       ref={ref}
       inputRef={inputRef}
       isDisabled={isDisabled}
