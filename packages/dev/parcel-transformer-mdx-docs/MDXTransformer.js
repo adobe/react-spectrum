@@ -362,7 +362,7 @@ function transformExample(node) {
       },
       Program: {
         exit(path) {
-          if (specifiers.length > 0) {
+          if (specifiers.length > 0 && !(node.meta && node.meta.split(' ').includes('keepIndividualImports'))) {
             let literal =  t.stringLiteral('@adobe/react-spectrum');
             literal.raw = "'@adobe/react-spectrum'";
 
