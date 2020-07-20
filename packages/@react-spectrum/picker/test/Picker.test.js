@@ -1628,7 +1628,7 @@ describe('Picker', function () {
     });
   });
 
-  describe.only('disabled', function () {
+  describe('disabled', function () {
     it('disables the hidden select when isDisabled is true', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
