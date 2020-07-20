@@ -47,7 +47,7 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
 
   let factory = nodes => nodeFilter ? new ListCollection(nodeFilter(nodes)) : new ListCollection(nodes as Iterable<Node<T>>);
 
-  let collection = useCollection(props, factory, [nodeFilter]);
+  let collection = useCollection(props, factory, null, [nodeFilter]);
 
   // Reset focused key if that item is deleted from the collection.
   useEffect(() => {

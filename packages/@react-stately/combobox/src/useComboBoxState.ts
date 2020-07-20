@@ -170,6 +170,13 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     lastValue.current = inputValue;
   }, [inputValue, onFilter]);
 
+  let nodeFilter = useMemo(() => {
+    if (itemsControlled || inputValue === '') {
+      return null;
+    }
+    return (nodes) => filter(nodes, defaultFilterFn)
+  }, [itemsControlled, inputValue, filter, defaultFilterFn]);
+
   let {collection: filteredCollection, disabledKeys, selectionManager} = useListState(
     {
       ...props,
@@ -177,7 +184,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       disallowEmptySelection: true,
       onSelectionChange: (keys: Set<Key>) => setSelectedKey(keys.values().next().value),
       selectionMode: 'single',
-      nodeFilter: itemsControlled || inputValue === '' ? null : (nodes) => filter(nodes, defaultFilterFn)
+      nodeFilter
     }
   );
 
