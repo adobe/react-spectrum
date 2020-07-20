@@ -17,7 +17,7 @@ let cache = new Map<string, Intl.Collator>();
 /**
  * Provides localized string collation for the current locale. Automatically updates when the locale changes,
  * and handles caching of the collator for performance.
- * @param options - collator options
+ * @param options - Collator options.
  */
 export function useCollator(options?: Intl.CollatorOptions): Intl.Collator {
   let {locale} = useLocale();

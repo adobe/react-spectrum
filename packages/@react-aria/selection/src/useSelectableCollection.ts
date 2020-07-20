@@ -71,6 +71,9 @@ interface SelectableCollectionAria {
   collectionProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Handles interactions with selectable collections.
+ */
 export function useSelectableCollection(options: SelectableCollectionOptions): SelectableCollectionAria {
   let {
     selectionManager: manager,

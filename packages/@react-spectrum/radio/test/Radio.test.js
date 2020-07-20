@@ -157,7 +157,7 @@ describe('Radios', function () {
     expect(radios[2].checked).toBe(false);
 
     let dogs = getByLabelText('Dogs');
-    userEvent.click(dogs);
+    act(() => {userEvent.click(dogs);});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
 
@@ -253,7 +253,7 @@ describe('Radios', function () {
     expect(radios[0].checked).toBe(false);
     expect(radios[1].checked).toBe(false);
     expect(radios[2].checked).toBe(false);
-    userEvent.click(dogs);
+    act(() => {userEvent.click(dogs);});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
     expect(radios[0].checked).toBe(true);
@@ -277,7 +277,7 @@ describe('Radios', function () {
     expect(radios[2]).toHaveAttribute('readonly');
 
     let cats = getByLabelText('Cats');
-    userEvent.click(cats);
+    act(() => {userEvent.click(cats);});
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
@@ -297,7 +297,7 @@ describe('Radios', function () {
     expect(radios[2]).not.toHaveAttribute('readonly');
 
     let dogs = getByLabelText('Dogs');
-    userEvent.click(dogs);
+    act(() => {userEvent.click(dogs);});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -320,7 +320,7 @@ describe('Radios', function () {
 
     // have to click label or it won't work
     let dogs = getByLabelText('Dogs');
-    userEvent.click(dogs);
+    act(() => {userEvent.click(dogs);});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
     expect(radios[0].checked).toBe(true);
@@ -345,7 +345,7 @@ describe('Radios', function () {
     expect(radios[2].checked).toBe(true);
 
     let dogs = getByLabelText('Dogs');
-    userEvent.click(dogs);
+    act(() => {userEvent.click(dogs);});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
     expect(radios[0].checked).toBe(false);
@@ -500,7 +500,7 @@ describe('Radios', function () {
       radios[0].focus();
       expect(document.activeElement).toBe(radios[0]);
 
-      userEvent.click(radios[1]);
+      act(() => {userEvent.click(radios[1]);});
       expect(document.activeElement).toBe(radios[1]);
       expect(radios[0]).toHaveAttribute('tabIndex', '-1');
       expect(radios[1]).toHaveAttribute('tabIndex', '0');

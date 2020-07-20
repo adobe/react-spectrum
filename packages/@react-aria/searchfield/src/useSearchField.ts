@@ -30,9 +30,9 @@ interface SearchFieldAria {
 
 /**
  * Provides the behavior and accessibility implementation for a search field.
- * @param props - props for the search field
- * @param state - state for the search field, as returned by `useSearchFieldState`
- * @param inputRef - a ref to the input element
+ * @param props - Props for the search field.
+ * @param state - State for the search field, as returned by `useSearchFieldState`.
+ * @param inputRef - A ref to the input element.
  */
 export function useSearchField(
   props: AriaSearchFieldProps,
