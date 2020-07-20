@@ -52,6 +52,9 @@ describe('Picker', function () {
       </Provider>
     );
 
+    let select = getByRole('textbox', {hidden: true});
+    expect(select).not.toBeDisabled();
+
     let picker = getByRole('button');
     expect(picker).toHaveAttribute('aria-haspopup', 'listbox');
     expect(picker).toHaveAttribute('data-testid', 'test');
@@ -1626,22 +1629,6 @@ describe('Picker', function () {
   });
 
   describe('disabled', function () {
-    it('enables the hidden select when isDisabled is false', function () {
-      let {getByRole} = render(
-        <Provider theme={theme}>
-          <Picker isDisabled={false} label="Test" onSelectionChange={onSelectionChange}>
-            <Item key="one">One</Item>
-            <Item key="two">Two</Item>
-            <Item key="three">Three</Item>
-          </Picker>
-        </Provider>
-      );
-
-      let select = getByRole('textbox', {hidden: true});
-
-      expect(select).not.toBeDisabled();
-    });
-
     it('disables the hidden select when isDisabled is true', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
