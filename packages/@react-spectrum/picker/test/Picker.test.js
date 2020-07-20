@@ -1628,7 +1628,7 @@ describe('Picker', function () {
     });
   });
 
-  describe('disabled', function () {
+  describe.only('disabled', function () {
     it('disables the hidden select when isDisabled is true', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
@@ -1643,6 +1643,59 @@ describe('Picker', function () {
       let select = getByRole('textbox', {hidden: true});
 
       expect(select).toBeDisabled();
+    });
+
+    it('does not open on mouse down when isDisabled is true', function () {
+      let onOpenChange = jest.fn();
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker isDisabled label="Test" onOpenChange={onOpenChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      expect(() => getByRole('listbox')).toThrow();
+
+      let picker = getByRole('button');
+      act(() => {triggerPress(picker);});
+      act(() => jest.runAllTimers());
+
+      expect(() => getByRole('listbox')).toThrow();
+
+      expect(onOpenChange).toBeCalledTimes(0);
+
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
+      expect(document.activeElement).not.toBe(picker);
+    });
+
+    it('does not open on Space key press when isDisabled is true', function () {
+      let onOpenChange = jest.fn();
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker isDisabled label="Test" onOpenChange={onOpenChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      expect(() => getByRole('listbox')).toThrow();
+
+      let picker = getByRole('button');
+      act(() => {fireEvent.keyDown(picker, {key: ' '});});
+      act(() => {fireEvent.keyUp(picker, {key: ' '});});
+      act(() => jest.runAllTimers());
+
+      expect(() => getByRole('listbox')).toThrow();
+
+      expect(onOpenChange).toBeCalledTimes(0);
+
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
+      expect(document.activeElement).not.toBe(picker);
     });
   });
 });
