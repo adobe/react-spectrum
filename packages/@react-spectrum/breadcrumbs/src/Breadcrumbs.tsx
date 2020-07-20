@@ -16,7 +16,7 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {Key, ReactElement, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {Key, ReactElement, RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
@@ -24,6 +24,42 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 const MIN_VISIBLE_ITEMS = 1;
 const MAX_VISIBLE_ITEMS = 4;
+
+type useResizeObserverOptionsType<T> = {
+  ref: RefObject<T>,
+  onResize: (size: {
+    width: number,
+    height: number,
+  }) => void
+}
+
+function useResizeObserver<T>(options: useResizeObserverOptionsType<T>) {
+  const {ref, onResize} = options;
+
+  const resizeObserverInstance = new ResizeObserver((entries) => {
+    if (!entries.length) {
+      return;
+    }
+
+    const entry = entries[0]; // We just need the first element
+
+    onResize({
+      width: entry.contentRect.width,
+      height: entry.contentRect.height
+    });
+  });
+
+  useEffect(() => {
+    if (!ref) { return; }
+
+    resizeObserverInstance.observe(ref.current);
+
+    return () => resizeObserverInstance.unobserve(ref.current);
+  }, [ref]);
+
+  return {ref};
+}
+
 
 function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   props = useProviderProps(props);
@@ -119,12 +155,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     });
   }, [listRef, children, setVisibleItems, showRoot, isMultiline]);
 
-  useEffect(() => {
-    window.addEventListener('resize', updateOverflow, false);
-    return () => {
-      window.removeEventListener('resize', updateOverflow, false);
-    };
-  }, [updateOverflow]);
+  useResizeObserver({ref: domRef, onResize: updateOverflow});
 
   useLayoutEffect(updateOverflow, [children]);
 
