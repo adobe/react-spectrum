@@ -33,7 +33,7 @@ type useResizeObserverOptionsType<T> = {
   }) => void
 }
 
-function useResizeObserver<T>(options: useResizeObserverOptionsType<T>) {
+function useResizeObserver<T extends HTMLElement>(options: useResizeObserverOptionsType<T>) {
   const {ref, onResize} = options;
 
   const resizeObserverInstance = new ResizeObserver((entries) => {
