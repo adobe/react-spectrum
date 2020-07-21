@@ -10,23 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, useMemo, useState} from 'react';
-import {ListState, useListState} from '@react-stately/list';
 import {MenuTriggerState, useMenuTriggerState} from '@react-stately/menu';
-import {Node} from '@react-types/shared';
 import {SelectProps} from '@react-types/select';
-import {useControlledState} from '@react-stately/utils';
+import {useSingleSelectListState, SingleSelectListState} from '@react-stately/list';
+import {useState} from 'react';
 
-export interface SelectState<T> extends ListState<T>, MenuTriggerState {
-  /** The key for the currently selected item. */
-  readonly selectedKey: Key,
-
-  /** Sets the selected key. */
-  setSelectedKey(key: Key): void,
-
-  /** The value of the currently selected item. */
-  readonly selectedItem: Node<T>,
-
+export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerState {
   /** Whether the select is currently focused. */
   readonly isFocused: boolean,
 
@@ -40,45 +29,34 @@ export interface SelectState<T> extends ListState<T>, MenuTriggerState {
  * multiple selection state.
  */
 export function useSelectState<T extends object>(props: SelectProps<T>): SelectState<T>  {
-  let [selectedKey, setSelectedKey] = useControlledState(props.selectedKey, props.defaultSelectedKey, props.onSelectionChange);
-  let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
   let triggerState = useMenuTriggerState(props);
-  let {collection, disabledKeys, selectionManager} = useListState({
+  let listState = useSingleSelectListState({
     ...props,
-    selectionMode: 'single',
-    disallowEmptySelection: true,
-    selectedKeys,
-    onSelectionChange: (keys: Set<Key>) => {
-      setSelectedKey(keys.values().next().value);
+    onSelectionChange: (key) => {
+      if (props.onSelectionChange != null) {
+        props.onSelectionChange(key);
+      }
+
       triggerState.close();
     }
   });
 
-  let selectedItem = selectedKey
-    ? collection.getItem(selectedKey)
-    : null;
-
   let [isFocused, setFocused] = useState(false);
 
   return {
+    ...listState,
     ...triggerState,
     open() {
       // Don't open if the collection is empty.
-      if (collection.size !== 0) {
+      if (listState.collection.size !== 0) {
         triggerState.open();
       }
     },
     toggle(focusStrategy) {
-      if (collection.size !== 0) {
+      if (listState.collection.size !== 0) {
         triggerState.toggle(focusStrategy);
       }
     },
-    collection,
-    disabledKeys,
-    selectionManager,
-    selectedKey,
-    setSelectedKey,
-    selectedItem,
     isFocused,
     setFocused
   };
