@@ -12,7 +12,7 @@
 
 import {MenuTriggerState, useMenuTriggerState} from '@react-stately/menu';
 import {SelectProps} from '@react-types/select';
-import {useSingleSelectListState, SingleSelectListState} from '@react-stately/list';
+import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {useState} from 'react';
 
 export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerState {

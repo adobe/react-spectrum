@@ -14,7 +14,6 @@ import {CollectionBase, SingleSelection} from '@react-types/shared';
 import {Key, useMemo} from 'react';
 import {ListState, useListState} from './useListState';
 import {Node} from '@react-types/shared';
-import {SelectProps} from '@react-types/select';
 import {useControlledState} from '@react-stately/utils';
 
 export interface SingleSelectListProps<T> extends CollectionBase<T>, SingleSelection {}
@@ -33,7 +32,7 @@ export interface SingleSelectListState<T> extends ListState<T> {
  * Provides state management for list-like components with single selection.
  * Handles building a collection of items from props, and manages selection state.
  */
-export function useSingleSelectListState<T extends object>(props: SelectProps<T>): SingleSelectListState<T>  {
+export function useSingleSelectListState<T extends object>(props: SingleSelectListProps<T>): SingleSelectListState<T>  {
   let [selectedKey, setSelectedKey] = useControlledState(props.selectedKey, props.defaultSelectedKey, props.onSelectionChange);
   let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
   let {collection, disabledKeys, selectionManager} = useListState({
