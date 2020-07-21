@@ -14,9 +14,11 @@ import {BreadcrumbItemProps} from '@react-types/breadcrumbs';
 import ChevronRightSmall from '@spectrum-icons/ui/ChevronRightSmall';
 import {classNames, getWrappedElement} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React, {Fragment, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbItem} from '@react-aria/breadcrumbs';
+import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
 export function BreadcrumbItem(props: BreadcrumbItemProps) {
@@ -32,18 +34,20 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
     ...props,
     elementType: typeof children === 'string' ? 'span' : 'a'
   }, ref);
+  let {hoverProps, isHovered} = useHover(props);
 
   let element = React.cloneElement(
     getWrappedElement(children),
     {
-      ...itemProps,
+      ...mergeProps(itemProps, hoverProps),
       ref,
       className:
         classNames(
           styles,
           'spectrum-Breadcrumbs-itemLink',
           {
-            'is-disabled': !isCurrent && isDisabled
+            'is-disabled': !isCurrent && isDisabled,
+            'is-hovered': isHovered
           }
         )
     }

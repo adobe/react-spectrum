@@ -26,6 +26,10 @@ governing permissions and limitations under the License.
     &::placeholder {
       color: var(--spectrum-textfield-placeholder-text-color-hover);
     }
+
+    & ~ .spectrum-Textfield-icon {
+      color: var(--spectrum-textfield-placeholder-text-color-hover);
+    }
   }
 
   &:focus,

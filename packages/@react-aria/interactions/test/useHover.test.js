@@ -15,8 +15,8 @@ import React from 'react';
 import {useHover} from '../';
 
 function Example(props) {
-  let {hoverProps} = useHover(props);
-  return <div {...hoverProps}>test</div>;
+  let {hoverProps, isHovered} = useHover(props);
+  return <div {...hoverProps}>test{isHovered && '-hovered'}</div>;
 }
 
 function pointerEvent(type, opts) {
@@ -110,6 +110,32 @@ describe('useHover', function () {
 
       expect(events).toEqual([]);
     });
+
+    it('should visually change component with pointer events', function () {
+      let res = render(
+        <Example />
+      );
+      let el = res.getByText('test');
+
+      fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
+      expect(el.textContent).toBe('test-hovered');
+
+      fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
+      expect(el.textContent).toBe('test');
+    });
+
+    it('should not visually change component when pointerType is touch', function () {
+      let res = render(
+        <Example />
+      );
+      let el = res.getByText('test');
+
+      fireEvent(el, pointerEvent('pointerover', {pointerType: 'touch'}));
+      expect(el.textContent).toBe('test');
+
+      fireEvent(el, pointerEvent('pointerout', {pointerType: 'touch'}));
+      expect(el.textContent).toBe('test');
+    });
   });
 
   describe('mouse events', function () {
@@ -148,6 +174,19 @@ describe('useHover', function () {
         }
       ]);
     });
+
+    it('should visually change component with mouse events', function () {
+      let res = render(
+        <Example />
+      );
+      let el = res.getByText('test');
+
+      fireEvent.mouseEnter(el);
+      expect(el.textContent).toBe('test-hovered');
+
+      fireEvent.mouseLeave(el);
+      expect(el.textContent).toBe('test');
+    });
   });
 
   describe('touch events', function () {
@@ -169,6 +208,28 @@ describe('useHover', function () {
       fireEvent.mouseLeave(el);
 
       expect(events).toEqual([]);
+    });
+
+    it('should not visually change component with touch events', function () {
+      let res = render(
+        <Example />
+      );
+      let el = res.getByText('test');
+
+      fireEvent.touchStart(el);
+      expect(el.textContent).toBe('test');
+
+      fireEvent.touchMove(el);
+      expect(el.textContent).toBe('test');
+
+      fireEvent.touchEnd(el);
+      expect(el.textContent).toBe('test');
+
+      fireEvent.mouseEnter(el);
+      expect(el.textContent).toBe('test');
+
+      fireEvent.mouseLeave(el);
+      expect(el.textContent).toBe('test');
     });
   });
 });
