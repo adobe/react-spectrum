@@ -26,7 +26,7 @@ interface HiddenSelectProps<T> {
   label?: ReactNode,
 
   /** HTML form input name. */
-  name?: string
+  name?: string,
 
   /** Sets the disabled state of the select and input. */
   isDisabled?: boolean
@@ -68,7 +68,7 @@ export function HiddenSelect<T>(props: HiddenSelectProps<T>) {
           type="text"
           tabIndex={modality == null || state.isFocused || state.isOpen ? -1 : 0}
           style={{fontSize: 16}}
-          onFocus={() => triggerRef.current.focus()} 
+          onFocus={() => triggerRef.current.focus()}
           disabled={isDisabled} />
         <label>
           {label}
