@@ -174,7 +174,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     if (itemsControlled || inputValue === '') {
       return null;
     }
-    return (nodes) => filter(nodes, defaultFilterFn)
+    return (nodes) => filter(nodes, defaultFilterFn);
   }, [itemsControlled, inputValue, filter, defaultFilterFn]);
 
   let {collection: filteredCollection, disabledKeys, selectionManager} = useListState(

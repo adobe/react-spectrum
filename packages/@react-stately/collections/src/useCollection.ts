@@ -16,7 +16,7 @@ import {useMemo, useRef} from 'react';
 
 type CollectionFactory<T, C extends Collection<Node<T>>> = (node: Iterable<Node<T>>, prev: C | null) => C;
 
-export function useCollection<T extends object, C extends Collection<Node<T>> = Collection<Node<T>>>(props: CollectionBase<T>, factory: CollectionFactory<T, C>, context?: unknown, ...invalidators): C {
+export function useCollection<T extends object, C extends Collection<Node<T>> = Collection<Node<T>>>(props: CollectionBase<T>, factory: CollectionFactory<T, C>, context?: unknown, invalidators: Array<any> = []): C {
   let builder = useMemo(() => new CollectionBuilder<T>(), []);
 
   let prev = useRef<C>(null);
