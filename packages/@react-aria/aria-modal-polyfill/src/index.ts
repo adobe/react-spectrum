@@ -32,10 +32,10 @@ export function watchModals(selector:string = 'body'): void {
   let observer = new MutationObserver((mutationRecord) => {
     for (let mutation of mutationRecord) {
       if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-        let addNode = Array.from(mutation.addedNodes).find((node: Element) => node.querySelector('[aria-modal="true"]')) as HTMLElement;
+        let addNode = Array.from(mutation.addedNodes).find((node: Element) => node.querySelector('[aria-modal="true"], [data-ismodal]')) as HTMLElement;
         if (addNode) {
           modalContainers.push(addNode);
-          let modal = addNode.querySelector('[aria-modal="true"]') as HTMLElement;
+          let modal = addNode.querySelector('[aria-modal="true"], [data-ismodal]') as HTMLElement;
           if (undo) {
             undo();
           }
@@ -48,7 +48,7 @@ export function watchModals(selector:string = 'body'): void {
           undo();
           modalContainers = modalContainers.filter((val, i) => i !== nodeIndexRemove);
           if (modalContainers.length > 0) {
-            let modal = modalContainers[modalContainers.length - 1].querySelector('[aria-modal="true"]');
+            let modal = modalContainers[modalContainers.length - 1].querySelector('[aria-modal="true"], [data-ismodal]');
             undo = hideOthers(modal);
           } else {
             undo = undefined;
