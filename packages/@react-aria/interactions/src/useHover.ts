@@ -20,13 +20,13 @@ import {HTMLAttributes, useMemo, useRef, useState} from 'react';
 
 export interface HoverProps extends HoverEvents {
   /** Whether the hover events should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
   isHovered?: boolean
 }
 
 interface HoverResult {
   /** Props to spread on the target element. */
-  hoverProps: HTMLAttributes<HTMLElement>
+  hoverProps: HTMLAttributes<HTMLElement>,
   isHovered: boolean
 }
 
@@ -35,12 +35,12 @@ interface HoverResult {
  * across browsers and platforms, and ignores emulated mouse events on touch devices.
  */
 export function useHover(props: HoverProps): HoverResult {
-  let { 
-    onHoverStart, 
-    onHoverChange, 
-    onHoverEnd, 
-    isDisabled, 
-    isHovered: isHoveredProp 
+  let {
+    onHoverStart,
+    onHoverChange,
+    onHoverEnd,
+    isDisabled,
+    isHovered: isHoveredProp
   } = props;
 
   let [isHovered, setHovered] = useState(false);
