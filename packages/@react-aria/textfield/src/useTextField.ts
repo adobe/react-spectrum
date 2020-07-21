@@ -20,7 +20,7 @@ interface TextFieldAria {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>
   /** Props for the text field's visible label element (if any). */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>
 }
 
 /**

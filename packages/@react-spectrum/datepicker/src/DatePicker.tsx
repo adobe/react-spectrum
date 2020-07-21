@@ -18,12 +18,14 @@ import datepickerStyles from './index.css';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {FieldButton} from '@react-spectrum/button';
 import {FocusRing, FocusScope} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import {SpectrumDatePickerProps} from '@react-types/datepicker';
 import '@adobe/spectrum-css-temp/components/textfield/vars.css'; // HACK: must be included BEFORE inputgroup
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';
+import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -40,6 +42,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let {hoverProps, isHovered} = useHover(props);
   let state = useDatePickerState(props);
   let {comboboxProps, fieldProps, buttonProps, dialogProps} = useDatePicker(props, state);
   let {value, setValue, selectDate, isOpen, setOpen} = state;
@@ -52,7 +55,8 @@ export function DatePicker(props: SpectrumDatePickerProps) {
     {
       'spectrum-InputGroup--quiet': isQuiet,
       'is-invalid': state.validationState === 'invalid',
-      'is-disabled': isDisabled
+      'is-disabled': isDisabled,
+      'is-hovered': isHovered
     },
     styleProps.className
   );
@@ -65,7 +69,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
       autoFocus={autoFocus}>
       <div
         {...styleProps}
-        {...comboboxProps}
+        {...mergeProps(comboboxProps, hoverProps)}
         className={className}
         ref={targetRef}>
         <FocusScope autoFocus={autoFocus}>

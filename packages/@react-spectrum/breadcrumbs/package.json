@@ -35,6 +35,8 @@
     "@react-aria/breadcrumbs": "^3.0.2",
     "@react-aria/focus": "^3.0.2",
     "@react-aria/i18n": "^3.0.2",
+    "@react-aria/interactions": "^3.0.2",
+    "@react-aria/utils": "^3.0.2",
     "@react-spectrum/button": "^3.0.2",
     "@react-spectrum/menu": "^3.0.2",
     "@react-spectrum/utils": "^3.0.2",
