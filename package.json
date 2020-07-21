@@ -25,8 +25,9 @@
     "lint": "make lint",
     "jest": "node scripts/jest.js",
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
+    "build:icons": "babel-node --presets @babel/env ./scripts/buildIcons.js",
     "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",
-    "postinstall": "make icons && patch-package",
+    "postinstall": "yarn build:icons && patch-package",
     "plop": "plop --plopfile scripts/plopfile.js",
     "chromatic": "chromatic --project-token 'q5msektqrfg' --build-script-name 'build:chromatic'",
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js"
