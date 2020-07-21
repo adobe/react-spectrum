@@ -36,7 +36,7 @@ softAssert.deepEqual = function (val, val2, message) {
     console.error(chalk.red(message));
     errors = true;
   }
-}
+};
 softAssert.equal = function (val, val2, message) {
   try {
     assert.equal(val, val2, message);
@@ -44,7 +44,7 @@ softAssert.equal = function (val, val2, message) {
     console.error(chalk.red(message));
     errors = true;
   }
-}
+};
 
 let pkgNames = {};
 for (let pkg of packages) {
@@ -57,9 +57,9 @@ for (let pkg of packages) {
     softAssert(json.module, `${pkg} did not have "module"`);
     softAssert(json.module.endsWith('.js'), `${pkg}#module should be a .js file but got "${json.module}"`);
     softAssert(json.source, `${pkg} did not have "source"`);
-    softAssert.equal(json.source, "src/index.ts", `${pkg} did not match "src/index.ts"`);
+    softAssert.equal(json.source, 'src/index.ts', `${pkg} did not match "src/index.ts"`);
     softAssert.deepEqual(json.files, ['dist', 'src'], `${pkg} did not match "files"`);
-    if (pkg.includes('@react-spectrum')){
+    if (pkg.includes('@react-spectrum') || pkg.includes('@react-aria/visually-hidden')) {
       softAssert.deepEqual(json.sideEffects, ['*.css'], `${pkg} is missing sideEffects: [ '*.css' ]`);
     } else {
       softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);

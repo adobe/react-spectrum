@@ -26,6 +26,7 @@ import React, {cloneElement, forwardRef, InputHTMLAttributes, LabelHTMLAttribute
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useFormProps} from '@react-spectrum/form';
+import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
 interface TextFieldBaseProps extends SpectrumTextFieldProps {
@@ -59,6 +60,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputRef,
     ...otherProps
   } = props;
+  let {hoverProps, isHovered} = useHover(props);
   let domRef = useRef<HTMLDivElement>(null);
   let defaultInputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
@@ -124,7 +126,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
       }>
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
         <ElementType
-          {...inputProps}
+          {...mergeProps(inputProps, hoverProps)}
           ref={inputRef}
           rows={multiLine ? 1 : undefined}
           className={
@@ -132,7 +134,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
               styles,
               'spectrum-Textfield-input',
               {
-                'spectrum-Textfield-inputIcon': icon
+                'spectrum-Textfield-inputIcon': icon,
+                'is-hovered': isHovered
               },
               inputClassName
             )

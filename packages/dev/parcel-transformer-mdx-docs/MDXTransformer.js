@@ -341,7 +341,7 @@ function transformExample(node) {
 
     traverse(ast, {
       ImportDeclaration(path) {
-        if (path.node.source.value.startsWith('@react-spectrum')) {
+        if (path.node.source.value.startsWith('@react-spectrum') && !(node.meta && node.meta.split(' ').includes('keepIndividualImports'))) {
           let mapping = IMPORT_MAPPINGS[path.node.source.value];
           for (let specifier of path.node.specifiers) {
             let mapped = mapping && mapping[specifier.imported.name];
@@ -362,7 +362,7 @@ function transformExample(node) {
       },
       Program: {
         exit(path) {
-          if (specifiers.length > 0 && !(node.meta && node.meta.split(' ').includes('keepIndividualImports'))) {
+          if (specifiers.length > 0) {
             let literal =  t.stringLiteral('@adobe/react-spectrum');
             literal.raw = "'@adobe/react-spectrum'";
 

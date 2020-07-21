@@ -1398,7 +1398,8 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(items[1]);
 
       act(() => triggerPress(items[1]));
-      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledWith('two');
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
