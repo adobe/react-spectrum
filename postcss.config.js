@@ -16,7 +16,10 @@ module.exports = {
     [
       require("postcss-logical")(),
       require("postcss-dir-pseudo-class")(),
-      require("./lib/postcss-hover-class"),
+
+      // Use the hover media query in the docs because of SSR - some components have no client JS available.
+      // Otherwise, convert :hover to .is-hovered.
+      process.env.DOCS_ENV ? require("./lib/postcss-hover-media") : require("./lib/postcss-hover-class"),
     ]
   ),
 };
