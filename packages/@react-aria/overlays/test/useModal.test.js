@@ -16,7 +16,7 @@ import {render} from '@testing-library/react';
 
 function ModalDOM(props) {
   let {modalProps} = useModal();
-  return <div data-testid={props.modalId || 'modal'}>{props.children}</div>;
+  return <div data-testid={props.modalId || 'modal'} {...modalProps}>{props.children}</div>;
 }
 
 function Modal(props) {
