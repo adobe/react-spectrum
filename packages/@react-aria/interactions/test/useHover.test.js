@@ -31,6 +31,10 @@ function pointerEvent(type, opts) {
 }
 
 describe('useHover', function () {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
   it('does not handle hover events if disabled', function () {
     let events = [];
     let addEvent = (e) => events.push(e);
@@ -111,6 +115,75 @@ describe('useHover', function () {
       expect(events).toEqual([]);
     });
 
+    it('ignores emulated mouse events following touch events', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerover', {pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerout', {pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerType: 'touch'}));
+
+      // Safari on iOS has a bug that fires a pointer event with pointerType="mouse" on focus.
+      // See https://bugs.webkit.org/show_bug.cgi?id=214609.
+      fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
+
+      expect(events).toEqual([]);
+    });
+
+    it('ignores supports mouse events following touch events after a delay', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerover', {pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerout', {pointerType: 'touch'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerType: 'touch'}));
+
+      jest.advanceTimersByTime(100);
+
+      // Safari on iOS has a bug that fires a pointer event with pointerType="mouse" on focus.
+      // See https://bugs.webkit.org/show_bug.cgi?id=214609.
+      fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
+
+      expect(events).toEqual([
+        {
+          type: 'hoverstart',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: true
+        },
+        {
+          type: 'hoverend',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: false
+        }
+      ]);
+    });
+
     it('should visually change component with pointer events', function () {
       let res = render(
         <Example />
@@ -186,6 +259,75 @@ describe('useHover', function () {
 
       fireEvent.mouseLeave(el);
       expect(el.textContent).toBe('test');
+    });
+
+    it('ignores emulated mouse events following touch events', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.touchStart(el);
+      fireEvent.mouseEnter(el);
+      fireEvent.mouseLeave(el);
+      fireEvent.touchEnd(el);
+
+      // Safari on iOS has a bug that fires a mouse event on focus.
+      // See https://bugs.webkit.org/show_bug.cgi?id=214609.
+      fireEvent.mouseEnter(el);
+      fireEvent.mouseLeave(el);
+
+      expect(events).toEqual([]);
+    });
+
+    it('ignores supports mouse events following touch events after a delay', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.touchStart(el);
+      fireEvent.mouseEnter(el);
+      fireEvent.mouseLeave(el);
+      fireEvent.touchEnd(el);
+
+      jest.advanceTimersByTime(100);
+
+      // Safari on iOS has a bug that fires a mouse event on focus.
+      // See https://bugs.webkit.org/show_bug.cgi?id=214609.
+      fireEvent.mouseEnter(el);
+      fireEvent.mouseLeave(el);
+
+      expect(events).toEqual([
+        {
+          type: 'hoverstart',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: true
+        },
+        {
+          type: 'hoverend',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: false
+        }
+      ]);
     });
   });
 

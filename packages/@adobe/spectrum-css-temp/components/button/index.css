@@ -101,6 +101,9 @@ governing permissions and limitations under the License.
     max-block-size: 100%;
     flex-shrink: 0;
     order: 0; /* always be before the label, regardless of DOM order */
+
+    transition: background var(--spectrum-global-animation-duration-100) ease-out,
+                fill var(--spectrum-global-animation-duration-100) ease-out;
   }
 
 }

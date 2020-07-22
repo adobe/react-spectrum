@@ -11,32 +11,32 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Search-icon {
-  color: var(--spectrum-textfield-icon-color);
+  fill: var(--spectrum-textfield-icon-color);
 }
 
 .spectrum-Search-input {
   /* The value of color is identical for hover/active/focus-ring, but we repeat it here in case one is changed in the future */
   &:hover {
     & ~ .spectrum-Search-icon {
-      color: var(--spectrum-search-icon-color-hover);
+      fill: var(--spectrum-search-icon-color-hover);
     }
   }
 
   &:active {
     & ~ .spectrum-Search-icon {
-      color: var(--spectrum-search-icon-color-down);
+      fill: var(--spectrum-search-icon-color-down);
     }
   }
 
   &:focus-ring {
     & ~ .spectrum-Search-icon {
-      color: var(--spectrum-search-icon-color-key-focus);
+      fill: var(--spectrum-search-icon-color-key-focus);
     }
   }
 
   &:disabled {
     & ~ .spectrum-Search-icon {
-      color: var(--spectrum-textfield-text-color-disabled);
+      fill: var(--spectrum-textfield-text-color-disabled);
     }
   }
 }
