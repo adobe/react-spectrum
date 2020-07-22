@@ -10,50 +10,48 @@
  * governing permissions and limitations under the License.
  */
 
+import spawn from 'cross-spawn';
 import glob from 'fast-glob';
+import {promises as fs} from 'fs';
 import path from 'path';
-import { promises as fs } from 'fs';
-import { spawn } from 'child_process';
 
-const MAKE_PACKAGES = ['ui', 'workflow', 'color'].map((n) =>
-  getIconPackageFolder(n)
-);
-const BUILD_PACKAGES = [
-  ...MAKE_PACKAGES,
-  getIconPackageFolder('illustrations'),
-];
+const PACKAGES = {
+  ui: path.dirname(require.resolve('@adobe/react-spectrum-ui/dist/')),
+  workflow: path.dirname(
+    require.resolve('@adobe/react-spectrum-workflow/dist/')
+  ),
+  color: path.dirname(
+    require.resolve('@adobe/react-spectrum-workflow-color/dist/')
+  ),
+  illustrations: path.join(getIconPackageFolder('illustrations'), 'src')
+};
 
 (async function () {
-  // run `yarn make-icons` in packages which were never built or where the package.json is newer than the first source
-  for (let pkg of MAKE_PACKAGES) {
-    let firstSource = (await exists(path.join(pkg, 'src')))
-      ? (await glob([path.join(pkg, 'src/*.tsx').replace(/\\/g, '/')]))[0]
-      : null;
-
-    if (
-      firstSource == null ||
-      (await isNewerThan(path.join(pkg, 'package.json'), firstSource))
-    ) {
-      console.log('make-icons:', pkg);
-      await run('yarn', ['make-icons'], {
-        cwd: pkg,
-        stdio: 'inherit',
-      });
-    }
-  }
-
-  // run `yarn make-icons` in packages where at least one tsx file is newer thatn the corresponding js file
-  for (let pkg of BUILD_PACKAGES) {
+  // run in packages where at least one dist js file is newer that the corresponding source js file
+  for (let [pkg, srcFolder] of Object.entries(PACKAGES)) {
+    let distFolder = getIconPackageFolder(pkg);
     for (let srcFile of await glob([
-      path.join(pkg, 'src/*.tsx').replace(/\\/g, '/'),
+      path.join(srcFolder, '*.{js,tsx}').replace(/\\/g, '/')
     ])) {
+      let filename = path.basename(srcFile);
+      if (filename === 'index.js' || filename === 'util.js') {
+        continue;
+      }
+
       let distFile =
-        path.join(pkg, path.basename(srcFile, path.extname(srcFile))) + '.js';
+        path.join(distFolder, path.basename(srcFile, path.extname(srcFile))) +
+        '.js';
       if (!(await exists(distFile)) || (await isNewerThan(srcFile, distFile))) {
-        console.log('build-icons:', pkg);
+        console.log(`Building icons for @spectrum-icons/${pkg}`);
+        if (pkg !== 'illustrations') {
+          await run('yarn', ['make-icons'], {
+            cwd: distFolder,
+            stdio: 'inherit'
+          });
+        }
         await run('yarn', ['build-icons'], {
-          cwd: pkg,
-          stdio: 'inherit',
+          cwd: distFolder,
+          stdio: 'inherit'
         });
         break;
       }
