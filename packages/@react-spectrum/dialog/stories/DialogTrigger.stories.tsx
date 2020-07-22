@@ -18,20 +18,16 @@ import {chain} from '@react-aria/utils';
 import {Content, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/text';
-import isChromatic from 'storybook-chromatic/isChromatic';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('DialogTrigger', module)
-  // DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
-  .addParameters({chromaticProvider: {colorSchemes: ['light']}, chromatic: {pauseAnimationAtEnd: true}})
   .addParameters({providerSwitcher: {status: 'notice'}})
   .add(
     'default',
     () => render({}),
-    {chromaticProvider: {scales: ['medium'], height: 1000}} // modals overlap if multiple are open at the same time
   )
   .add(
     'type: popover',
@@ -39,13 +35,11 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'type: modal',
-    () => render({type: 'modal'}),
-    {chromaticProvider: {scales: ['medium'], height: 1000}}
+    () => render({type: 'modal'})
   )
   .add(
     'type: modal isDismissable',
-    () => render({type: 'modal', isDismissable: true}),
-    {chromaticProvider: {scales: ['medium'], height: 1000}}
+    () => render({type: 'modal', isDismissable: true})
   )
   .add(
     'type: fullscreen',
@@ -57,8 +51,7 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'type: tray',
-    () => renderPopover({type: 'tray'}),
-    {chromaticProvider: {scales: ['medium'], height: 1000}}
+    () => renderPopover({type: 'tray'})
   )
   .add(
     'mobileType: fullscreen',
@@ -70,13 +63,11 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'popover with mobileType: modal',
-    () => renderPopover({type: 'popover', mobileType: 'modal'}),
-    {chromaticProvider: {scales: ['medium'], height: 1000}, chromatic: {viewports: [350]}}
+    () => renderPopover({type: 'popover', mobileType: 'modal'})
   )
   .add(
     'popover with mobileType: tray',
-    () => renderPopover({type: 'popover', mobileType: 'tray'}),
-    {chromaticProvider: {scales: ['medium'], height: 1000}, chromatic: {viewports: [350]}}
+    () => renderPopover({type: 'popover', mobileType: 'tray'})
   )
   .add(
     'nested modals',
@@ -104,8 +95,7 @@ storiesOf('DialogTrigger', module)
           </DialogTrigger>
         </Provider>
       </div>
-    ),
-    {chromatic: {disable: true}}
+    )
   )
   .add(
     'nested modals, fullscreentakeover',
@@ -135,8 +125,7 @@ storiesOf('DialogTrigger', module)
           </Dialog>
         )}
       </DialogTrigger>
-    ),
-    {chromatic: {disable: true}}
+    )
   )
   .add(
     'with menu trigger',
@@ -157,8 +146,7 @@ storiesOf('DialogTrigger', module)
           </Content>
         </Dialog>
       </DialogTrigger>
-    ),
-    {chromatic: {disable: true}}
+    )
   )
   .add(
     'nested popovers',
@@ -178,8 +166,7 @@ storiesOf('DialogTrigger', module)
           </Dialog>
         </DialogTrigger>
       </div>
-    ),
-    {chromatic: {disable: true}}
+    )
   )
   .add(
     'popover inside scroll view',
@@ -204,8 +191,7 @@ storiesOf('DialogTrigger', module)
           </div>
         </div>
       </div>
-    ),
-    {chromatic: {disable: true}}
+    )
   )
   .add(
     'placement="left"',
@@ -287,7 +273,7 @@ storiesOf('DialogTrigger', module)
 function render({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger {...props} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
+      <DialogTrigger {...props} onOpenChange={action('open change')}>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog>
@@ -310,7 +296,7 @@ function render({width = 'auto', ...props}) {
 function renderPopover({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger {...props} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
+      <DialogTrigger {...props} onOpenChange={action('open change')}>
         <ActionButton>Trigger</ActionButton>
         <Dialog>
           <Heading>The Heading</Heading>
@@ -327,7 +313,7 @@ let TriggerWithRef = (props) => {
   let ref = React.useRef();
   return (
     <div style={{display: 'flex'}}>
-      <DialogTrigger {...props} targetRef={ref} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
+      <DialogTrigger {...props} targetRef={ref} onOpenChange={action('open change')}>
         <ActionButton>Trigger</ActionButton>
         <Dialog>
           <Heading>The Heading</Heading>
@@ -345,7 +331,7 @@ let TriggerWithRef = (props) => {
 function renderAlert({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger {...props} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
+      <DialogTrigger {...props} onOpenChange={action('open change')}>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <AlertDialog title="Alert! Danger!" variant="error" primaryActionLabel="Accept" secondaryActionLabel="Whoa" cancelLabel="Cancel" onCancel={chain(close, action('cancel'))} onPrimaryAction={chain(close, action('primary'))} onSecondaryAction={chain(close, action('secondary'))}>

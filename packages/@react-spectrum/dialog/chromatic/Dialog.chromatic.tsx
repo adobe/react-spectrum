@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
@@ -27,8 +26,11 @@ import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 
+// Dialogs mostly compose of other components, so we won't worry about themes
+// Dialogs are really only meant to have one visible at a time, so we must make individual stories for each one
+// might be good to eventually make the stories display-able without the trigger that imposes this restriction
 storiesOf('Dialog', module)
-  .addParameters({providerSwitcher: {status: 'notice'}})
+  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}})
   .add(
     'default',
     () => render({})
@@ -94,10 +96,7 @@ storiesOf('Dialog/Alert', module)
       title: 'Warning Destructive',
       children: singleParagraph(),
       primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel')
+      cancelLabel: 'Cancel'
     })
   )
   .add(
@@ -107,10 +106,7 @@ storiesOf('Dialog/Alert', module)
       title: 'Confirmation Required',
       children: singleParagraph(),
       primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel')
+      cancelLabel: 'Cancel'
     })
   )
   .add(
@@ -120,10 +116,7 @@ storiesOf('Dialog/Alert', module)
       title: 'Informative Alert',
       children: singleParagraph(),
       primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel')
+      cancelLabel: 'Cancel'
     })
   )
   .add(
@@ -133,10 +126,7 @@ storiesOf('Dialog/Alert', module)
       title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
       primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel')
+      cancelLabel: 'Cancel'
     })
   )
   .add(
@@ -146,10 +136,7 @@ storiesOf('Dialog/Alert', module)
       title: 'This is a warning',
       children: singleParagraph(),
       primaryActionLabel: 'Accept',
-      cancelLabel: 'Cancel',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel')
+      cancelLabel: 'Cancel'
     })
   )
   .add(
@@ -160,9 +147,6 @@ storiesOf('Dialog/Alert', module)
       children: singleParagraph(),
       primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel'),
       isPrimaryActionDisabled: true
     })
   )
@@ -175,9 +159,6 @@ storiesOf('Dialog/Alert', module)
       primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
       secondaryActionLabel: 'Secondary button',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel'),
       autoFocusButton: 'primary'
     })
   )
@@ -190,9 +171,6 @@ storiesOf('Dialog/Alert', module)
       primaryActionLabel: 'Accept',
       secondaryActionLabel: 'Secondary button',
       cancelLabel: 'Cancel',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel'),
       isSecondaryActionDisabled: true
     })
   )
@@ -205,9 +183,6 @@ storiesOf('Dialog/Alert', module)
       primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
       secondaryActionLabel: 'Secondary button',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel'),
       autoFocusButton: 'secondary'
     })
   )
@@ -220,9 +195,6 @@ storiesOf('Dialog/Alert', module)
       primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
       secondaryActionLabel: 'Secondary button',
-      onPrimaryAction: action('primary'),
-      onSecondaryAction: action('secondary'),
-      onCancel: action('cancel'),
       autoFocusButton: 'cancel'
     })
   );
@@ -303,7 +275,7 @@ function renderAlert({width = 'auto', ...props}: SpectrumAlertDialogProps) {
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
-        <AlertDialog {...props} onPrimaryAction={action('primary')} onSecondaryAction={action('secondary')} onCancel={props.onCancel} />
+        <AlertDialog {...props} />
       </DialogTrigger>
     </div>
   );
@@ -370,7 +342,7 @@ function renderLongContent({width = 'auto', ...props}) {
             <Content>{fiveParagraphs()}</Content>
             <ButtonGroup>
               <Button variant="secondary" onPress={close}>Cancel</Button>
-              <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+              <Button variant="cta" onPress={close}>Confirm</Button>
             </ButtonGroup>
           </Dialog>
         )}

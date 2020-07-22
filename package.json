@@ -16,7 +16,11 @@
   "scripts": {
     "check-types": "tsc",
     "start": "make run",
-    "build-storybook": "build-storybook -c .storybook-v3 -o dist/$(git rev-parse HEAD)/storybook",
+    "build:storybook": "build-storybook -c .storybook -o dist/$(git rev-parse HEAD)/storybook",
+    "start:chromatic": "NODE_ENV=storybook start-storybook -p 9004 --ci -c '.chromatic'",
+    "build:chromatic": "build-storybook -c .chromatic -o dist/$(git rev-parse HEAD)/chromatic",
+    "start:docs": "PARCEL_WORKER_BACKEND=process DOCS_ENV=dev parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
+    "build:docs": "PARCEL_WORKER_BACKEND=process DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' --no-scope-hoist",
     "test": "make test",
     "lint": "make lint",
     "jest": "node scripts/jest.js",
@@ -24,10 +28,8 @@
     "clean:icons": "babel-node --presets @babel/env ./scripts/cleanIcons.js",
     "postinstall": "make icons && patch-package",
     "plop": "plop --plopfile scripts/plopfile.js",
-    "chromatic": "chromatic --build-script-name build-storybook --project-token=q5msektqrfg",
-    "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
-    "start:docs": "PARCEL_WORKER_BACKEND=process DOCS_ENV=dev parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
-    "build:docs": "PARCEL_WORKER_BACKEND=process DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' --no-scope-hoist"
+    "chromatic": "chromatic --project-token 'q5msektqrfg' --build-script-name 'build:chromatic'",
+    "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js"
   },
   "workspaces": [
     "packages/*/*"

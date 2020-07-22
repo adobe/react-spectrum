@@ -19,7 +19,6 @@ import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
-import isChromatic from 'storybook-chromatic/isChromatic';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
 import Paste from '@spectrum-icons/workflow/Paste';
@@ -84,7 +83,6 @@ let withSection = [
 ];
 
 storiesOf('MenuTrigger', module)
-  .addParameters({chromaticProvider: {colorSchemes: ['light']}, chromatic: {pauseAnimationAtEnd: true}})
   .add(
     'default menu (static)',
     () => render(
@@ -313,8 +311,7 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'Menu with keyboard selection wrapping false',
-    () => render(defaultMenu, {}, {shouldFocusWrap: false}),
-    {chromatic: {disable: true}}
+    () => render(defaultMenu, {}, {shouldFocusWrap: false})
   )
   .add(
     'align="end"',
@@ -332,8 +329,7 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'shouldFlip',
-    () => render(defaultMenu, {shouldFlip: true}),
-    {chromatic: {disable: true}}
+    () => render(defaultMenu, {shouldFlip: true})
   )
   .add(
     'isOpen',
@@ -341,8 +337,7 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'defaultOpen',
-    () => render(defaultMenu, {defaultOpen: true}),
-    {chromatic: {disable: true}}
+    () => render(defaultMenu, {defaultOpen: true})
   )
   .add(
     'disabled button',
@@ -350,24 +345,21 @@ storiesOf('MenuTrigger', module)
   )
   .add(
     'multiselect menu',
-    () => render(defaultMenu, {}, {selectionMode: 'multiple'}),
-    {chromatic: {disable: true}}
+    () => render(defaultMenu, {}, {selectionMode: 'multiple'})
   )
   .add(
     'no selection allowed menu',
-    () => render(defaultMenu, {}, {selectionMode: 'none'}),
-    {chromatic: {disable: true}}
+    () => render(defaultMenu, {}, {selectionMode: 'none'})
   )
   .add(
     'closeOnSelect=false',
-    () => render(defaultMenu, {closeOnSelect: false}, {}),
-    {chromatic: {disable: true}}
+    () => render(defaultMenu, {closeOnSelect: false}, {})
   )
   .add(
     'menu with semantic elements (static)',
     () => (
       <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
-        <MenuTrigger onOpenChange={action('onOpenChange')} defaultOpen={isChromatic()}>
+        <MenuTrigger onOpenChange={action('onOpenChange')}>
           <ActionButton
             onPress={action('press')}
             onPressStart={action('pressstart')}
@@ -458,8 +450,7 @@ storiesOf('MenuTrigger', module)
           </div>
         </div>
       </div>
-    ),
-    {chromatic: {disable: true}}
+    )
   )
   .add(
     'menu closes on blur',
@@ -485,8 +476,7 @@ storiesOf('MenuTrigger', module)
           <input placeholder="Tab here" />
         </div>
       </>
-    ),
-    {chromatic: {disable: true}}
+    )
   );
 
 let customMenuItem = (item) => {
@@ -504,7 +494,7 @@ function render(menu, {isDisabled, ...props}: any = {}, menuProps = {}) {
   let menuRender = React.cloneElement(menu, menuProps);
   return (
     <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
-      <MenuTrigger onOpenChange={action('onOpenChange')} defaultOpen={isChromatic()} {...props}>
+      <MenuTrigger onOpenChange={action('onOpenChange')} {...props}>
         <ActionButton
           isDisabled={isDisabled}
           onPress={action('press')}
