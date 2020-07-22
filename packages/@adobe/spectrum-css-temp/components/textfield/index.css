@@ -217,7 +217,7 @@ governing permissions and limitations under the License.
   width: var(--spectrum-icon-info-medium-width);
   inset-inline-start: var(--spectrum-global-dimension-size-100);
   top: var(--spectrum-global-dimension-size-85);
-  transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
+  transition: fill var(--spectrum-global-animation-duration-100) ease-in-out;
 }
 
 /* styles the textfield properly if the left icon is provided */
