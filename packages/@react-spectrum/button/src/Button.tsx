@@ -41,7 +41,7 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
 
   let buttonVariant = variant;

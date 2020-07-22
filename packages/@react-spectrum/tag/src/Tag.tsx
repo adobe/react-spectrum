@@ -30,7 +30,7 @@ export const Tag = ((props: SpectrumTagProps) => {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   const {
     isDisabled: isGroupDisabled,
     isRemovable: isGroupRemovable,
