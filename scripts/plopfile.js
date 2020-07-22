@@ -20,6 +20,7 @@ module.exports = function (plop) {
     let string = options.fn(this);
     return string.replace(match, replacement);
   });
+
   // controller generator
   plop.setGenerator('component', {
     description: 'add new component',
@@ -66,14 +67,14 @@ module.exports = function (plop) {
         if (scopes.includes('@react-aria')) {
           actions.push({
             type: 'addMany',
-            templateFiles: 'plop-templates/@react-aria/**',
-            base: 'plop-templates/@react-aria/',
-            destination: `packages/@react-aria/${packageName}`,
+            templateFiles: '../plop-templates/@react-aria/**',
+            base: '../plop-templates/@react-aria/',
+            destination: `../packages/@react-aria/${packageName}`,
             data: {componentName}
           });
           actions.push({
             type: 'renameMany',
-            templateFiles: `packages/@react-aria/${packageName}/**`,
+            templateFiles: `../packages/@react-aria/${packageName}/**`,
             renamer: name => `${name.replace('Component', componentName)}`
           });
         }
@@ -81,14 +82,14 @@ module.exports = function (plop) {
         if (scopes.includes('@react-spectrum')) {
           actions.push({
             type: 'addMany',
-            templateFiles: 'plop-templates/@react-spectrum/**',
-            base: 'plop-templates/@react-spectrum/',
-            destination: `packages/@react-spectrum/${packageName}`,
+            templateFiles: '../plop-templates/@react-spectrum/**',
+            base: '../plop-templates/@react-spectrum/',
+            destination: `../packages/@react-spectrum/${packageName}`,
             data: {packageName, componentName, componentCSS}
           });
           actions.push({
             type: 'renameMany',
-            templateFiles: `packages/@react-spectrum/${packageName}/**`,
+            templateFiles: `../packages/@react-spectrum/${packageName}/**`,
             renamer: name => `${name.replace('Component', componentName)}`
           });
         }
@@ -96,14 +97,14 @@ module.exports = function (plop) {
         if (scopes.includes('@react-stately')) {
           actions.push({
             type: 'addMany',
-            templateFiles: 'plop-templates/@react-stately/**',
-            base: 'plop-templates/@react-stately/',
-            destination: `packages/@react-stately/${packageName}`,
+            templateFiles: '../plop-templates/@react-stately/**',
+            base: '../plop-templates/@react-stately/',
+            destination: `../packages/@react-stately/${packageName}`,
             data: {packageName, componentName}
           });
           actions.push({
             type: 'renameMany',
-            templateFiles: `packages/@react-stately/${packageName}/**`,
+            templateFiles: `../packages/@react-stately/${packageName}/**`,
             renamer: name => `${name.replace('Component', componentName)}`
           });
         }
@@ -111,23 +112,23 @@ module.exports = function (plop) {
         if (scopes.includes('@react-types')) {
           actions.push({
             type: 'addMany',
-            templateFiles: 'plop-templates/@react-types/**',
-            base: 'plop-templates/@react-types/',
-            destination: `packages/@react-types/${packageName}`,
+            templateFiles: '../plop-templates/@react-types/**',
+            base: '../plop-templates/@react-types/',
+            destination: `../packages/@react-types/${packageName}`,
             data: {packageName, componentName}
           });
           actions.push({
             type: 'renameMany',
-            templateFiles: `packages/@react-types/${packageName}/**`,
+            templateFiles: `../packages/@react-types/${packageName}/**`,
             renamer: name => `${name.replace('Component', componentName)}`
           });
         }
       } else {
         actions.push({
           type: 'addMany',
-          templateFiles: 'plop-templates/@scope/**',
-          base: 'plop-templates/@scope/',
-          destination: `packages/@${scopeName}/${packageName}`,
+          templateFiles: '../plop-templates/@scope/**',
+          base: '../plop-templates/@scope/',
+          destination: `../packages/@${scopeName}/${packageName}`,
           data: {scopeName, packageName, componentName}
         });
       }
