@@ -51,7 +51,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     icon,
     isQuiet = false,
     multiLine,
-    isDisabled = false,
     autoFocus,
     inputClassName,
     wrapperChildren,
@@ -85,9 +84,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   if (icon) {
     let UNSAFE_className = classNames(
       styles,
-      {
-        'disabled': isDisabled
-      },
       icon.props && icon.props.UNSAFE_className,
       'spectrum-Textfield-icon'
     );
