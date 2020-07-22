@@ -32,11 +32,12 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
     focusClassName,
     variant,
     autoFocus,
+    isDisabled,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
 
   return (

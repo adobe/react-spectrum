@@ -50,6 +50,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     validationState,
     icon,
     isQuiet = false,
+    isDisabled,
     multiLine,
     autoFocus,
     inputClassName,
@@ -59,7 +60,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputRef,
     ...otherProps
   } = props;
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let domRef = useRef<HTMLDivElement>(null);
   let defaultInputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
