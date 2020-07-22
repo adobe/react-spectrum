@@ -42,7 +42,7 @@ module.exports = {
       }],
     }
   }, {
-    files: ['**/test/**', '**/stories/**', '**/docs/**'],
+    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
     rules: {
       'rulesdir/imports': OFF,
       'monorepo/no-internal-import': OFF,
