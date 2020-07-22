@@ -15,7 +15,7 @@ const fs = require('fs');
 const assert = require('assert');
 const chalk = require('chalk');
 let path = require('path');
-let packages = glob.sync(__dirname + '/packages/@{react,spectrum}-*/*/package.json');
+let packages = glob.sync(path.dirname(__dirname) + '/packages/@{react,spectrum}-*/*/package.json');
 let errors = false;
 
 // soft assert won't fail the whole thing, allowing us to accumulate all errors at once
@@ -67,6 +67,7 @@ for (let pkg of packages) {
     softAssert(!json.dependencies || !json.dependencies['@adobe/spectrum-css-temp'], `${pkg} has @adobe/spectrum-css-temp in dependencies instead of devDependencies`);
     softAssert(json.dependencies && json.dependencies['@babel/runtime'], `${pkg} is missing a dependency on @babel/runtime`);
     softAssert(!json.dependencies || !json.dependencies['@react-spectrum/test-utils'], '@react-spectrum/test-utils should be a devDependency');
+    softAssert(!json.dependencies || !json.dependencies['react'], `${pkg} has react as a dependency, but it should be a peerDependency`);
 
     if (json.name.startsWith('@react-spectrum') && json.devDependencies && json.devDependencies['@adobe/spectrum-css-temp']) {
       softAssert.deepEqual(json.targets, {
