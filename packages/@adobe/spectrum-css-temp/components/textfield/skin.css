@@ -28,7 +28,7 @@ governing permissions and limitations under the License.
     }
 
     & ~ .spectrum-Textfield-icon {
-      color: var(--spectrum-textfield-placeholder-text-color-hover);
+      fill: var(--spectrum-textfield-placeholder-text-color-hover);
     }
   }
 
@@ -145,19 +145,19 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Textfield-icon {
-  color: var(--spectrum-textfield-icon-color);
+  fill: var(--spectrum-textfield-icon-color);
 
   &.disabled {
-    color: var(--spectrum-textfield-text-color-disabled);
+    fill: var(--spectrum-textfield-text-color-disabled);
   }
 }
 
 .spectrum-Textfield-validationIcon {
   .spectrum-Textfield.is-valid & {
-    color: var(--spectrum-alert-success-icon-color);
+    fill: var(--spectrum-alert-success-icon-color);
   }
 
   .spectrum-Textfield.is-invalid & {
-    color: var(--spectrum-alert-error-icon-color);
+    fill: var(--spectrum-alert-error-icon-color);
   }
 }
