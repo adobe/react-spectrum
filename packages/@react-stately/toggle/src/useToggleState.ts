@@ -24,7 +24,7 @@ export interface ToggleState {
 /**
  * Provides state management for toggle components like checkboxes and switches.
  */
-export function useToggleState(props: ToggleProps): ToggleState {
+export function useToggleState(props: ToggleProps = {}): ToggleState {
   let {isReadOnly, onChange} = props;
 
   // have to provide an empty function so useControlledState doesn't throw a fit

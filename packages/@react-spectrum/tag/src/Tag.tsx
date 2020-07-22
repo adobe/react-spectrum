@@ -14,9 +14,11 @@ import Alert from '@spectrum-icons/workflow/Alert';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {FocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {SpectrumTagProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
+import {useHover} from '@react-aria/interactions';
 import {useTag} from '@react-aria/tag';
 import {useTagGroupProvider} from './TagGroup';
 
@@ -28,6 +30,7 @@ export const Tag = ((props: SpectrumTagProps) => {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let {hoverProps, isHovered} = useHover(props);
   const {
     isDisabled: isGroupDisabled,
     isRemovable: isGroupRemovable,
@@ -54,7 +57,7 @@ export const Tag = ((props: SpectrumTagProps) => {
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
         {...styleProps}
-        {...tagProps}
+        {...mergeProps(tagProps, hoverProps)}
         className={classNames(
           styles,
           'spectrum-Tags-item',
@@ -62,7 +65,8 @@ export const Tag = ((props: SpectrumTagProps) => {
             'is-disabled': disabled,
             // 'is-selected': isSelected,
             'spectrum-Tags-item--removable': removable,
-            'is-invalid': isInvalid
+            'is-invalid': isInvalid,
+            'is-hovered': isHovered
           },
           styleProps.className
         )}>

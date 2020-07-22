@@ -16,16 +16,18 @@
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
 import {HoverEvents} from '@react-types/shared';
-import {HTMLAttributes, useMemo, useRef} from 'react';
+import {HTMLAttributes, useMemo, useRef, useState} from 'react';
 
 export interface HoverProps extends HoverEvents {
   /** Whether the hover events should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  isHovered?: boolean
 }
 
 interface HoverResult {
   /** Props to spread on the target element. */
-  hoverProps: HTMLAttributes<HTMLElement>
+  hoverProps: HTMLAttributes<HTMLElement>,
+  isHovered: boolean
 }
 
 /**
@@ -37,9 +39,11 @@ export function useHover(props: HoverProps): HoverResult {
     onHoverStart,
     onHoverChange,
     onHoverEnd,
-    isDisabled
+    isDisabled,
+    isHovered: isHoveredProp
   } = props;
 
+  let [isHovered, setHovered] = useState(false);
   let state = useRef({
     isHovered: false,
     ignoreEmulatedMouseEvents: false
@@ -65,8 +69,9 @@ export function useHover(props: HoverProps): HoverResult {
       if (onHoverChange) {
         onHoverChange(true);
       }
-    };
 
+      setHovered(true);
+    };
 
     let triggerHoverEnd = (event, pointerType) => {
       if (isDisabled || pointerType === 'touch' || !state.isHovered) {
@@ -87,6 +92,8 @@ export function useHover(props: HoverProps): HoverResult {
       if (onHoverChange) {
         onHoverChange(false);
       }
+
+      setHovered(false);
     };
 
     let hoverProps: HTMLAttributes<HTMLElement> = {};
@@ -120,6 +127,7 @@ export function useHover(props: HoverProps): HoverResult {
   }, [onHoverStart, onHoverChange, onHoverEnd, isDisabled, state]);
 
   return {
-    hoverProps
+    hoverProps,
+    isHovered: isHoveredProp || isHovered
   };
 }

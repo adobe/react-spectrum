@@ -78,10 +78,10 @@ export type CellElement = ReactElement<CellProps>;
 export type CellRenderer = (columnKey: Key) => CellElement;
 
 export interface TableCollection<T> extends Collection<TableNode<T>> {
-  headerRows: TableNode<T>[];
-  columns: TableNode<T>[];
-  rowHeaderColumnKeys: Set<Key>;
-  body: TableNode<T>;
+  headerRows: TableNode<T>[],
+  columns: TableNode<T>[],
+  rowHeaderColumnKeys: Set<Key>,
+  body: TableNode<T>
 }
 
 export interface TableNode<T> extends Node<T> {

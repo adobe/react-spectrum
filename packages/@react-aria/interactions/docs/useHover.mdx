@@ -126,3 +126,33 @@ function Example() {
   );
 }
 ```
+
+<!-- (disabled until release)
+
+Also, you can track `isHovered` state by simply destructuring the `useHover` call.
+
+```tsx example
+function Example() {
+  let {hoverProps, isHovered} = useHover({});
+
+  return (
+    <>
+      <div
+        {...hoverProps}
+        style={{
+          background: isHovered ? 'darkgreen' : 'green',
+          color: 'white',
+          display: 'inline-block',
+          padding: 4,
+          cursor: 'pointer'
+        }}
+        role="button"
+        tabIndex={0}>
+        Hover me!
+      </div>
+    </>
+  );
+}
+```
+
+-->

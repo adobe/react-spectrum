@@ -10,4 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './src';
+declare module '*.css' {
+  interface CSSModule {
+    [key: string]: string
+  }
+
+  const content: CSSModule;
+  export default content;
+}

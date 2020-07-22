@@ -57,7 +57,7 @@ export interface DropTarget {
    * The key of the view being dropped on or between.
    * If null, it represents the entire collection view.
    */
-  key: Key | null
+  key: Key | null,
 
   dropPosition: DropPosition
 }
