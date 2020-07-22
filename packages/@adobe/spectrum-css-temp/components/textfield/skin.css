@@ -70,6 +70,10 @@ governing permissions and limitations under the License.
     &::placeholder {
       color: var(--spectrum-textfield-placeholder-text-color-disabled);
     }
+
+    & ~ .spectrum-Textfield-icon {
+      fill: var(--spectrum-textfield-icon-color-disabled);
+    }
   }
 
   &:invalid,
@@ -168,10 +172,6 @@ governing permissions and limitations under the License.
 
 .spectrum-Textfield-icon {
   fill: var(--spectrum-textfield-icon-color);
-
-  &.disabled {
-    fill: var(--spectrum-textfield-icon-color-disabled);
-  }
 }
 
 .spectrum-Textfield-validationIcon {
