@@ -74,7 +74,7 @@ module.exports = function (plop) {
           });
           actions.push({
             type: 'renameMany',
-            templateFiles: `../packages/@react-aria/${packageName}/**`,
+            templateFiles: `packages/@react-aria/${packageName}/**`,
             renamer: name => `${name.replace('Component', componentName)}`
           });
         }
@@ -89,7 +89,7 @@ module.exports = function (plop) {
           });
           actions.push({
             type: 'renameMany',
-            templateFiles: `../packages/@react-spectrum/${packageName}/**`,
+            templateFiles: `packages/@react-spectrum/${packageName}/**`,
             renamer: name => `${name.replace('Component', componentName)}`
           });
         }
@@ -104,7 +104,7 @@ module.exports = function (plop) {
           });
           actions.push({
             type: 'renameMany',
-            templateFiles: `../packages/@react-stately/${packageName}/**`,
+            templateFiles: `packages/@react-stately/${packageName}/**`,
             renamer: name => `${name.replace('Component', componentName)}`
           });
         }
@@ -119,7 +119,7 @@ module.exports = function (plop) {
           });
           actions.push({
             type: 'renameMany',
-            templateFiles: `../packages/@react-types/${packageName}/**`,
+            templateFiles: `packages/@react-types/${packageName}/**`,
             renamer: name => `${name.replace('Component', componentName)}`
           });
         }
