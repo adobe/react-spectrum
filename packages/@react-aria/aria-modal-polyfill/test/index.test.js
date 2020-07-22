@@ -14,13 +14,13 @@ import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {watchModals} from '../';
-import {Item, Menu, MenuTrigger, Section} from "@react-spectrum/menu";
 
 describe('watchModals', () => {
   let matchMedia;
@@ -175,10 +175,10 @@ describe('watchModals', () => {
   it('should hide around Menus', async () => {
     let withSection = [
       {name: 'Heading 1', children: [
-          {name: 'Foo'},
-          {name: 'Bar'},
-          {name: 'Baz'}
-        ]}
+        {name: 'Foo'},
+        {name: 'Bar'},
+        {name: 'Baz'}
+      ]}
     ];
     // menu should be a tray
     // matchMedia.useMediaQuery('(max-width: 700px)');
@@ -234,10 +234,10 @@ describe('watchModals', () => {
   it('should hide around Tray', async () => {
     let withSection = [
       {name: 'Heading 1', children: [
-          {name: 'Foo'},
-          {name: 'Bar'},
-          {name: 'Baz'}
-        ]}
+        {name: 'Foo'},
+        {name: 'Bar'},
+        {name: 'Baz'}
+      ]}
     ];
     // menu should be a tray
     matchMedia.useMediaQuery('(max-width: 700px)');
@@ -293,10 +293,10 @@ describe('watchModals', () => {
   it('should hide around Popover', async () => {
     let withSection = [
       {name: 'Heading 1', children: [
-          {name: 'Foo'},
-          {name: 'Bar'},
-          {name: 'Baz'}
-        ]}
+        {name: 'Foo'},
+        {name: 'Bar'},
+        {name: 'Baz'}
+      ]}
     ];
     watchModals();
     let {getByLabelText, getByRole} = render(
