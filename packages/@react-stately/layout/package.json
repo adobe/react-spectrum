@@ -21,7 +21,9 @@
     "@react-stately/collections": "^3.0.2",
     "@react-stately/virtualizer": "^3.0.2",
     "@react-types/shared": "^3.0.2",
-    "@react-types/table": "3.0.0-rc.3",
+    "@react-types/table": "3.0.0-rc.3"
+  },
+  "peerDependencies": {
     "react": "^16.8.0"
   },
   "publishConfig": {
