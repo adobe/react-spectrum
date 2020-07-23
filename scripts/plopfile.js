@@ -49,6 +49,11 @@ module.exports = function (plop) {
       validate: (answer) => answer.length > 0
     }, {
       type: 'input',
+      name: 'categoryName',
+      message: 'docs category for the package',
+      validate: (answer) => answer.length > 0
+    }, {
+      type: 'input',
       name: 'componentName',
       message: 'component name, please use appropriate uppercase',
       validate: (answer) => answer.length > 0,
@@ -61,7 +66,7 @@ module.exports = function (plop) {
       when: ({projectType, scopes}) => projectType === rspProject && scopes.includes('@react-spectrum')
     }],
     actions: function (data) {
-      let {projectType, scopes, scopeName, packageName, componentName, componentCSS} = data;
+      let {projectType, scopes, scopeName, packageName, categoryName, componentName, componentCSS} = data;
       let actions = [];
       if (projectType === rspProject) {
         if (scopes.includes('@react-aria')) {
@@ -70,7 +75,7 @@ module.exports = function (plop) {
             templateFiles: '../plop-templates/@react-aria/**',
             base: '../plop-templates/@react-aria/',
             destination: `../packages/@react-aria/${packageName}`,
-            data: {componentName}
+            data: {componentName, categoryName}
           });
           actions.push({
             type: 'renameMany',
@@ -85,7 +90,7 @@ module.exports = function (plop) {
             templateFiles: '../plop-templates/@react-spectrum/**',
             base: '../plop-templates/@react-spectrum/',
             destination: `../packages/@react-spectrum/${packageName}`,
-            data: {packageName, componentName, componentCSS}
+            data: {packageName, componentName, componentCSS, categoryName}
           });
           actions.push({
             type: 'renameMany',
@@ -100,7 +105,7 @@ module.exports = function (plop) {
             templateFiles: '../plop-templates/@react-stately/**',
             base: '../plop-templates/@react-stately/',
             destination: `../packages/@react-stately/${packageName}`,
-            data: {packageName, componentName}
+            data: {packageName, componentName, categoryName}
           });
           actions.push({
             type: 'renameMany',
