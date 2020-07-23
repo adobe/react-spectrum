@@ -15,11 +15,14 @@ node_modules: package.json
 
 # --ci keeps it from opening the browser tab automatically
 run:
-	NODE_ENV=storybook start-storybook -p 9003 --ci -c ".storybook-v3"
+	NODE_ENV=storybook start-storybook -p 9003 --ci -c ".storybook"
+
+run_chromatic:
+	NODE_ENV=storybook start-storybook -p 9004 --ci -c ".chromatic"
 
 clean:
 	yarn clean:icons
-	rm -rf dist storybook-static storybook-static-v3 public src/dist
+	rm -rf dist public src/dist
 
 clean_all:
 	$(MAKE) clean
@@ -79,7 +82,7 @@ ci-test:
 	yarn jest --maxWorkers=2
 
 storybook:
-	NODE_ENV=production yarn build-storybook
+	NODE_ENV=production yarn build:storybook
 
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
