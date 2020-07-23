@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/visually-hidden",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -11,7 +11,9 @@
     "dist",
     "src"
   ],
-  "sideEffects": ["*.css"],
+  "sideEffects": [
+    "*.css"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
