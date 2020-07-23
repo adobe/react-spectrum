@@ -42,7 +42,7 @@ describe('watchModals', () => {
     window.requestAnimationFrame.mockRestore();
   });
 
-  let verify = async function(modal, getByRole) {
+  let verify = async function (modal, getByRole) {
     // this function expects some specific things when verifying
     // that there is a single separator in the dom that is hidden when the modal is open
     // but is accessible when the modal is open
@@ -70,7 +70,7 @@ describe('watchModals', () => {
 
     // once the modal is removed, we should be able to access the main part of the document again
     expect(() => getByRole('separator')).not.toThrow();
-  }
+  };
 
   it('should hide everything except the modal', async () => {
     watchModals();
@@ -216,7 +216,7 @@ describe('watchModals', () => {
       jest.runAllTimers();
     });
     let menu = getByRole('menu');
-    verify(menu, getByRole)
+    verify(menu, getByRole);
   });
 
   it('should hide around Tray', async () => {
