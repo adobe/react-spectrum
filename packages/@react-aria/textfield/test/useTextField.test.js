@@ -90,7 +90,7 @@ describe('useTextField hook', () => {
     it('without type prop if inputElementType is textarea', () => {
       let type = 'search';
       let pattern = /pattern/;
-      let props = renderTextFieldHook({type, inputElementType: 'textarea'});
+      let props = renderTextFieldHook({type, pattern, inputElementType: 'textarea'});
       expect(props.type).toBeUndefined();
       expect(props.pattern).toBeUndefined();
     });

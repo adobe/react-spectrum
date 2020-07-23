@@ -47,8 +47,8 @@ export function useTextField(
 
   const inputOnlyProps = {
     type,
-    pattern: props.pattern,
-  }
+    pattern: props.pattern
+  };
 
   return {
     labelProps,
