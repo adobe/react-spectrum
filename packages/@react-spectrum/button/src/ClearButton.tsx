@@ -28,15 +28,16 @@ interface ClearButtonProps extends ButtonProps, DOMProps, StyleProps {
 
 function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   let {
-    children = <CrossSmall />,
+    children = <CrossSmall UNSAFE_className={styles['spectrum-Icon']} />,
     focusClassName,
     variant,
     autoFocus,
+    isDisabled,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
 
   return (

@@ -69,7 +69,7 @@ governing permissions and limitations under the License.
   inset-inline-start: 12px;
   top: calc(calc(var(--spectrum-textfield-height) / 2) - calc(var(--spectrum-global-dimension-size-200) / 2));
 
-  transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
+  transition: fill var(--spectrum-global-animation-duration-100) ease-in-out;
 
   pointer-events: none;
 }
