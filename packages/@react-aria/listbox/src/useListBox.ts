@@ -22,9 +22,9 @@ import {useSelectableList} from '@react-aria/selection';
 
 interface ListBoxAria {
   /** Props for the listbox element. */
-  listBoxProps: HTMLAttributes<HTMLElement>
+  listBoxProps: HTMLAttributes<HTMLElement>,
   /** Props for the listbox's visual label element (if any). */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: HTMLAttributes<HTMLElement>
 }
 
 interface AriaListBoxOptions<T> extends AriaListBoxProps<T> {

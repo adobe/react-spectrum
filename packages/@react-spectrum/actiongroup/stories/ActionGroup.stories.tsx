@@ -159,10 +159,7 @@ storiesOf('ActionGroup', module)
     'selectionMode: multiple, isEmphasized, isQuiet, compact',
     () => render({isEmphasized: true, isQuiet: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
   )
-  .add(
-    'selectionMode: none',
-    () => render({selectionMode: 'none', onAction: action('onAction')}, editItems)
-  )
+  // no selection mode none, it's covered in the default story visually
   .add(
     'vertical',
     () => render({orientation: 'vertical', defaultSelectedKeys: ['1']}, docItems)

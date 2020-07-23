@@ -15,7 +15,7 @@ const fs = require('fs');
 const assert = require('assert');
 const chalk = require('chalk');
 let path = require('path');
-let packages = glob.sync(__dirname + '/packages/@{react,spectrum}-*/*/package.json');
+let packages = glob.sync(path.dirname(__dirname) + '/packages/@{react,spectrum}-*/*/package.json');
 let errors = false;
 
 // soft assert won't fail the whole thing, allowing us to accumulate all errors at once
@@ -36,7 +36,7 @@ softAssert.deepEqual = function (val, val2, message) {
     console.error(chalk.red(message));
     errors = true;
   }
-}
+};
 softAssert.equal = function (val, val2, message) {
   try {
     assert.equal(val, val2, message);
@@ -44,7 +44,7 @@ softAssert.equal = function (val, val2, message) {
     console.error(chalk.red(message));
     errors = true;
   }
-}
+};
 
 let pkgNames = {};
 for (let pkg of packages) {
@@ -57,9 +57,9 @@ for (let pkg of packages) {
     softAssert(json.module, `${pkg} did not have "module"`);
     softAssert(json.module.endsWith('.js'), `${pkg}#module should be a .js file but got "${json.module}"`);
     softAssert(json.source, `${pkg} did not have "source"`);
-    softAssert.equal(json.source, "src/index.ts", `${pkg} did not match "src/index.ts"`);
+    softAssert.equal(json.source, 'src/index.ts', `${pkg} did not match "src/index.ts"`);
     softAssert.deepEqual(json.files, ['dist', 'src'], `${pkg} did not match "files"`);
-    if (pkg.includes('@react-spectrum')){
+    if (pkg.includes('@react-spectrum') || pkg.includes('@react-aria/visually-hidden')) {
       softAssert.deepEqual(json.sideEffects, ['*.css'], `${pkg} is missing sideEffects: [ '*.css' ]`);
     } else {
       softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
@@ -67,6 +67,7 @@ for (let pkg of packages) {
     softAssert(!json.dependencies || !json.dependencies['@adobe/spectrum-css-temp'], `${pkg} has @adobe/spectrum-css-temp in dependencies instead of devDependencies`);
     softAssert(json.dependencies && json.dependencies['@babel/runtime'], `${pkg} is missing a dependency on @babel/runtime`);
     softAssert(!json.dependencies || !json.dependencies['@react-spectrum/test-utils'], '@react-spectrum/test-utils should be a devDependency');
+    softAssert(!json.dependencies || !json.dependencies['react'], `${pkg} has react as a dependency, but it should be a peerDependency`);
 
     if (json.name.startsWith('@react-spectrum') && json.devDependencies && json.devDependencies['@adobe/spectrum-css-temp']) {
       softAssert.deepEqual(json.targets, {

@@ -15,10 +15,12 @@ import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {ListBoxContext} from './ListBoxContext';
+import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import React, {useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
+import {useHover} from '@react-aria/interactions';
 import {useOption} from '@react-aria/listbox';
 import {useRef} from 'react';
 
@@ -63,6 +65,10 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     state,
     ref
   );
+  let {hoverProps, isHovered} = useHover({
+    ...props,
+    isDisabled
+  });
 
   let contents = typeof rendered === 'string'
     ? <Text>{rendered}</Text>
@@ -71,7 +77,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...optionProps}
+        {...mergeProps(optionProps, shouldFocusOnHover ? {} : hoverProps)}
         ref={ref}
         className={classNames(
           styles,
@@ -80,7 +86,8 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
             'is-focused': shouldUseVirtualFocus && isFocused,
             'is-disabled': isDisabled,
             'is-selected': isSelected,
-            'is-selectable': state.selectionManager.selectionMode !== 'none'
+            'is-selectable': state.selectionManager.selectionMode !== 'none',
+            'is-hovered': isHovered
           }
         )}>
         <Grid
