@@ -10,26 +10,26 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-stately/COMPONENT_NAME';
+import docs from 'docs:@react-stately/{{packageName}}';
 import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink} from '@react-spectrum/docs';
-import packageData from '@react-stately/COMPONENT_NAME/package.json';
+import packageData from '@react-stately/{{packageName}}/package.json';
 
 ---
 category: Category Name
 keywords: []
 ---
 
-# Hook Name
+# use{{componentName}}State
 
-<p>{docs.exports.useComponentState.description}</p>
+<p>{docs.exports.use{{componentName}}State.description}</p>
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['useComponentState']} />
+  componentNames={['use{{componentName}}State']} />
 
 ## API
 
-<FunctionAPI function={docs.exports.useComponentState} links={docs.links} />
+<FunctionAPI function={docs.exports.use{{~componentName~}}State} links={docs.links} />
 
 ## Introduction
 
@@ -37,11 +37,11 @@ keywords: []
 
 ## Options
 
-<ClassAPI links={docs.links} class={docs.links[docs.exports.useComponentState.parameters[0].value.base.id]} />
+<ClassAPI links={docs.links} class={docs.links[docs.exports.use{{~componentName~}}State.parameters[0].value.base.id]} />
 
 ## Interface
 
-<ClassAPI links={docs.links} class={docs.links[docs.exports.useComponentState.return.base.id]} />
+<ClassAPI links={docs.links} class={docs.links[docs.exports.use{{~componentName~}}State.return.base.id]} />
 
 ## Example
 

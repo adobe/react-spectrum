@@ -10,12 +10,12 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import docs from 'docs:@react-spectrum/COMPONENT_NAME';
+import docs from 'docs:@react-spectrum/{{packageName}}';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
-import packageData from '@react-spectrum/COMPONENT_NAME/package.json';
+import packageData from '@react-spectrum/{{packageName}}/package.json';
 
 ```jsx import
-import {Component} from '@react-spectrum/COMPONENT_NAME';
+import { {{~componentName~}} } from '@react-spectrum/{{packageName}}';
 ```
 
 ---
@@ -23,13 +23,13 @@ category: Category Name
 keywords: []
 ---
 
-# Component Name
+# {{componentName}}
 
-<p>{docs.exports.Component.description}</p>
+<p>{docs.exports.{{componentName}}.description}</p>
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Component']}
+  componentNames={['{{componentName}}']}
   sourceData={[
     {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/button/'}
   ]} />
@@ -37,7 +37,7 @@ keywords: []
 ## Example
 
 ```tsx example
-<Button variant="cta">Button</Button>
+<{{componentName}}>Button</{{componentName}}>
 ```
 
 ## Content
@@ -62,7 +62,7 @@ keywords: []
 
 ## Props
 
-<PropTable component={docs.exports.Component} links={docs.links} />
+<PropTable component={docs.exports.{{~componentName~}}} links={docs.links} />
 
 ## Visual options
 
