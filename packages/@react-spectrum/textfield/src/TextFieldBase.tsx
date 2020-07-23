@@ -50,8 +50,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     validationState,
     icon,
     isQuiet = false,
+    isDisabled,
     multiLine,
-    isDisabled = false,
     autoFocus,
     inputClassName,
     wrapperChildren,
@@ -60,7 +60,7 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     inputRef,
     ...otherProps
   } = props;
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let domRef = useRef<HTMLDivElement>(null);
   let defaultInputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
   inputRef = inputRef || defaultInputRef;
@@ -85,9 +85,6 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
   if (icon) {
     let UNSAFE_className = classNames(
       styles,
-      {
-        'disabled': isDisabled
-      },
       icon.props && icon.props.UNSAFE_className,
       'spectrum-Textfield-icon'
     );

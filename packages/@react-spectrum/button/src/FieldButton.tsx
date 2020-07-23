@@ -39,7 +39,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
   } = props;
   let domRef = useFocusableRef(ref) as RefObject<HTMLButtonElement>;
   let {buttonProps, isPressed} = useButton(props, domRef);
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
 
   return (

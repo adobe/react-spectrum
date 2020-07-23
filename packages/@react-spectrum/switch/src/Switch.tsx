@@ -31,7 +31,7 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
