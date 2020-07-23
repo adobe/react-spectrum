@@ -42,7 +42,7 @@ export function DatePicker(props: SpectrumDatePickerProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let state = useDatePickerState(props);
   let {comboboxProps, fieldProps, buttonProps, dialogProps} = useDatePicker(props, state);
   let {value, setValue, selectDate, isOpen, setOpen} = state;
