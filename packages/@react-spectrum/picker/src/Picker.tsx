@@ -26,6 +26,7 @@ import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps} from '@react-aria/utils';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
+import {PressResponder, useHover} from '@react-aria/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ReactElement, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
@@ -82,6 +83,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     shouldFlip: shouldFlip,
     isOpen: state.isOpen
   });
+
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   // Update position once the ListBox has rendered. This ensures that
   // it flips properly when it doesn't fit in the available space.
@@ -185,43 +188,45 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         triggerRef={unwrapDOMRef(triggerRef)}
         label={label}
         name={name} />
-      <FieldButton
-        {...triggerProps}
-        ref={triggerRef}
-        isActive={state.isOpen}
-        isQuiet={isQuiet}
-        isDisabled={isDisabled}
-        validationState={validationState}
-        UNSAFE_className={classNames(styles, 'spectrum-Dropdown-trigger')}>
-        <SlotProvider
-          slots={{
-            icon: {UNSAFE_className: classNames(styles, 'spectrum-Icon'), size: 'S'},
-            text: {
-              ...valueProps,
-              UNSAFE_className: classNames(
-                styles,
-                'spectrum-Dropdown-label',
-                {'is-placeholder': !state.selectedItem}
-              )
-            },
-            description: {
-              isHidden: true
-            }
-          }}>
-          {contents}
-        </SlotProvider>
-        {isLoadingInitial &&
-          <ProgressCircle
-            isIndeterminate
-            size="S"
-            aria-label={formatMessage('loading')}
-            UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
-        }
-        {validationState === 'invalid' && !isLoadingInitial &&
-          <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-invalidIcon')} />
-        }
-        <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
-      </FieldButton>
+      <PressResponder {...hoverProps}>
+        <FieldButton
+          {...triggerProps}
+          ref={triggerRef}
+          isActive={state.isOpen}
+          isQuiet={isQuiet}
+          isDisabled={isDisabled}
+          validationState={validationState}
+          UNSAFE_className={classNames(styles, 'spectrum-Dropdown-trigger', {'is-hovered': isHovered})}>
+          <SlotProvider
+            slots={{
+              icon: {UNSAFE_className: classNames(styles, 'spectrum-Icon'), size: 'S'},
+              text: {
+                ...valueProps,
+                UNSAFE_className: classNames(
+                  styles,
+                  'spectrum-Dropdown-label',
+                  {'is-placeholder': !state.selectedItem}
+                )
+              },
+              description: {
+                isHidden: true
+              }
+            }}>
+            {contents}
+          </SlotProvider>
+          {isLoadingInitial &&
+            <ProgressCircle
+              isIndeterminate
+              size="S"
+              aria-label={formatMessage('loading')}
+              UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
+          }
+          {validationState === 'invalid' && !isLoadingInitial &&
+            <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-invalidIcon')} />
+          }
+          <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
+        </FieldButton>
+      </PressResponder>
       {state.collection.size === 0 ? null : overlay}
     </div>
   );

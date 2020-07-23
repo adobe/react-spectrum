@@ -699,7 +699,7 @@ describe('MenuTrigger', function () {
 
   it('should not show checkmarks if selectionMode not defined', function () {
     let {queryByRole} = render(
-      <Menu selectedKeys={['alpha']}>
+      <Menu aria-label="foo" selectedKeys={['alpha']}>
         <Item key="alpha">Alpha</Item>
         <Item key="bravo">Bravo</Item>
       </Menu>

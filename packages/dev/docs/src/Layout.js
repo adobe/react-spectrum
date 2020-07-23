@@ -72,6 +72,11 @@ const mdxComponents = {
   kbd: ({children, ...props}) => <kbd {...props} className={docStyles['keyboard']}>{children}</kbd>
 };
 
+const sectionTitles = {
+  blog: 'React Spectrum Blog',
+  releases: 'React Spectrum Releases'
+};
+
 function dirToTitle(dir) {
   return dir
     .split('/')[0]
@@ -84,13 +89,17 @@ function stripMarkdown(description) {
   return (description || '').replace(/\[(.*?)\]\(.*?\)/g, '$1');
 }
 
+function isBlogSection(section) {
+  return section === 'blog' || section === 'releases';
+}
+
 function Page({children, currentPage, publicUrl, styles, scripts}) {
   let parts = currentPage.name.split('/');
-  let isBlog = parts[0] === 'blog';
+  let isBlog = isBlogSection(parts[0]);
   let isSubpage = parts.length > 1 && !/index\.html$/.test(currentPage.name);
   let pageSection = isSubpage ? dirToTitle(currentPage.name) : 'React Spectrum';
   if (isBlog && isSubpage) {
-    pageSection = 'React Spectrum Blog';
+    pageSection = sectionTitles[parts[0]];
   }
 
   let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
@@ -222,7 +231,8 @@ const CATEGORY_ORDER = [
 function Nav({currentPageName, pages}) {
   let isIndex = /index\.html$/;
   let currentParts = currentPageName.split('/');
-  let isBlog = currentParts[0] === 'blog';
+  let isBlog = isBlogSection(currentParts[0]);
+  let blogIndex = currentParts[0] + '/index.html';
   if (isBlog) {
     currentParts.shift();
   }
@@ -232,7 +242,7 @@ function Nav({currentPageName, pages}) {
   pages = pages.filter(p => {
     let pageParts = p.name.split('/');
     let pageDir = pageParts[0];
-    if (pageDir === 'blog') {
+    if (isBlogSection(pageDir)) {
       return currentParts.length === 1 && pageParts[pageParts.length - 1] === 'index.html';
     }
 
@@ -306,7 +316,7 @@ function Nav({currentPageName, pages}) {
   function SideNavItem({name, url, title}) {
     const isCurrentPage = !currentPageIsIndex && name === currentPageName;
     return (
-      <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: isCurrentPage || (name === 'blog/index.html' && isBlog)})}>
+      <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: isCurrentPage || (name === blogIndex && isBlog)})}>
         <a
           className={classNames(sideNavStyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)}
           href={url}
