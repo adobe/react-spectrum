@@ -33,6 +33,7 @@ export function useTextField(
   ref: RefObject<HTMLInputElement>
 ): TextFieldAria {
   let {
+    inputElementType = 'input',
     isDisabled = false,
     isRequired = false,
     isReadOnly = false,
@@ -44,47 +45,54 @@ export function useTextField(
   let {labelProps, fieldProps} = useLabel(props);
   let domProps = filterDOMProps(props, {labelable: true});
 
+  const inputOnlyProps = {
+    type,
+    pattern: props.pattern,
+  }
+
   return {
     labelProps,
-    inputProps: mergeProps(domProps, {
-      type,
-      disabled: isDisabled,
-      readOnly: isReadOnly,
-      'aria-required': isRequired || undefined,
-      'aria-invalid': validationState === 'invalid' || undefined,
-      'aria-errormessage': props['aria-errormessage'],
-      'aria-activedescendant': props['aria-activedescendant'],
-      'aria-autocomplete': props['aria-autocomplete'],
-      'aria-haspopup': props['aria-haspopup'],
-      value: props.value,
-      defaultValue: props.value ? undefined : props.defaultValue,
-      onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
-      autoComplete: props.autoComplete,
-      maxLength: props.maxLength,
-      minLength: props.minLength,
-      name: props.name,
-      pattern: props.pattern,
-      placeholder: props.placeholder,
-      inputMode: props.inputMode,
+    inputProps: mergeProps(
+      domProps,
+      inputElementType === 'input' && inputOnlyProps,
+      {
+        disabled: isDisabled,
+        readOnly: isReadOnly,
+        'aria-required': isRequired || undefined,
+        'aria-invalid': validationState === 'invalid' || undefined,
+        'aria-errormessage': props['aria-errormessage'],
+        'aria-activedescendant': props['aria-activedescendant'],
+        'aria-autocomplete': props['aria-autocomplete'],
+        'aria-haspopup': props['aria-haspopup'],
+        value: props.value,
+        defaultValue: props.value ? undefined : props.defaultValue,
+        onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
+        autoComplete: props.autoComplete,
+        maxLength: props.maxLength,
+        minLength: props.minLength,
+        name: props.name,
+        placeholder: props.placeholder,
+        inputMode: props.inputMode,
 
-      // Clipboard events
-      onCopy: props.onCopy,
-      onCut: props.onCut,
-      onPaste: props.onPaste,
+        // Clipboard events
+        onCopy: props.onCopy,
+        onCut: props.onCut,
+        onPaste: props.onPaste,
 
-      // Composition events
-      onCompositionEnd: props.onCompositionEnd,
-      onCompositionStart: props.onCompositionStart,
-      onCompositionUpdate: props.onCompositionUpdate,
+        // Composition events
+        onCompositionEnd: props.onCompositionEnd,
+        onCompositionStart: props.onCompositionStart,
+        onCompositionUpdate: props.onCompositionUpdate,
 
-      // Selection events
-      onSelect: props.onSelect,
+        // Selection events
+        onSelect: props.onSelect,
 
-      // Input events
-      onBeforeInput: props.onBeforeInput,
-      onInput: props.onInput,
-      ...focusableProps,
-      ...fieldProps
-    })
+        // Input events
+        onBeforeInput: props.onBeforeInput,
+        onInput: props.onInput,
+        ...focusableProps,
+        ...fieldProps
+      }
+    )
   };
 }
