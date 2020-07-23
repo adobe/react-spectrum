@@ -19,8 +19,8 @@ interface LabelAriaProps extends LabelableProps, DOMProps, AriaLabelingProps {
    * The HTML element used to render the label, e.g. 'label', or 'span'.
    * @default 'label'
    */
-  labelElementType?: ElementType
-  'aria-hidden'?: boolean,
+  labelElementType?: ElementType,
+  'aria-hidden'?: boolean
 }
 
 interface LabelAria {
