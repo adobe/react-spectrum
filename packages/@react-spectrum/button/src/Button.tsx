@@ -76,15 +76,13 @@ function Button(props: SpectrumButtonProps, ref: FocusableRef) {
             `spectrum-Button--${buttonVariant}`,
             {
               'spectrum-Button--quiet': isQuiet,
-<<<<<<< HEAD
-              'is-disabled': isDisabled,
-              'is-active': isPressed,
-              'is-hovered': isHovered
-=======
               'is-disabled': isDisabled || isIndeterminate,
               'is-active': isPressed,
-              'is-pending': isPending
->>>>>>> RSP-1686: Add `isPending` prop to @react-spectrum/Button
+              'is-hovered': isHovered
+              'is-disabled': isDisabled || isIndeterminate,
+              'is-active': isPressed,
+              'is-pending': isPending,
+              'is-hovered': isHovered
             },
             styleProps.className
           )
