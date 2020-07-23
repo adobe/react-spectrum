@@ -15,7 +15,7 @@ import {Key, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Node} from '@react-types/shared';
 import {SelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
-import {useListState} from '@react-stately/list';
+import {useSingleSelectListState} from '@react-stately/list';
 import {useMenuTriggerState} from '@react-stately/menu';
 
 export interface ComboBoxState<T> extends SelectState<T> {
@@ -71,12 +71,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   };
 
   // Need this collection here so that an initial inputValue can be found via collection.getItem
-  let {collection} = useListState({
+  // This is really just a replacement for using CollectionBuilder
+  let {collection} = useSingleSelectListState({
     ...props,
-    // Have to do this to make singleselection onSelectionChange type work with multipleSelection onSelectionChange type
-    onSelectionChange: (keys: Set<Key>) => {
-      onSelectionChange(keys.values().next().value);
-    }
+    // default to null if props.selectedKey isn't set to avoid useControlledState's uncontrolled to controlled warning
+    selectedKey: props.selectedKey || null,
   });
 
   if (props.selectedKey && props.inputValue) {
@@ -108,7 +107,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let [inputValue, setInputValue] = useControlledState(toString(props.inputValue), initialSelectedKeyText || toString(props.defaultInputValue) || initialDefaultSelectedKeyText || '', onInputChange);
 
   let selectedKey = props.selectedKey || computeKeyFromValue(inputValue, collection);
-  let selectedKeys = useMemo(() => selectedKey != null ? [selectedKey] : [], [selectedKey]);
 
   let triggerState = useMenuTriggerState(props);
   // Fires when user hits Enter or clicks
@@ -177,18 +175,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     return (nodes) => filter(nodes, defaultFilterFn);
   }, [itemsControlled, inputValue, filter, defaultFilterFn]);
 
-  let {collection: filteredCollection, disabledKeys, selectionManager} = useListState(
+  let {collection: filteredCollection, disabledKeys, selectionManager, selectedItem} = useSingleSelectListState(
     {
       ...props,
-      selectedKeys,
-      disallowEmptySelection: true,
-      onSelectionChange: (keys: Set<Key>) => setSelectedKey(keys.values().next().value),
-      selectionMode: 'single',
+      // Fall back to null as the selectedKey to avoid useControlledState error of uncontrolled to controlled and viceversa
+      selectedKey: selectedKey || null,
+      onSelectionChange: (key: Key) => setSelectedKey(key),
       nodeFilter
     }
   );
-
-  let selectedItem = selectedKey ? collection.getItem(selectedKey) : null;
 
   // Prevent open operations from triggering if there is nothing to display
   let open = (focusStrategy?) => {
