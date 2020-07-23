@@ -15,7 +15,7 @@ const fs = require('fs-extra');
 const packageJSON = require('../package.json');
 const path = require('path');
 const glob = require('fast-glob');
-const {spawn, execSync} = require('child_process');
+const spawn = require('cross-spawn');
 
 build().catch(err => {
   console.error(err.stack);
@@ -104,6 +104,6 @@ function run(cmd, args, opts) {
       }
 
       resolve();
-    })
+    });
   });
 }
