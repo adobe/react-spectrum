@@ -11,11 +11,14 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
-import {HTMLAttributes, useEffect, useRef} from 'react';
+import {AriaButtonProps} from '@react-types/button';
+import {HTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
 import {InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
+
 
 export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
   textValue?: string,
+  onValidate?: () => void,
   onIncrement?: () => void,
   onIncrementPage?: () => void,
   onDecrement?: () => void,
@@ -25,10 +28,16 @@ export interface SpinButtonProps extends InputBase, Validation, ValueBase<number
 }
 
 export interface SpinbuttonAria {
-  spinButtonProps: HTMLAttributes<HTMLDivElement>
+  spinButtonProps: HTMLAttributes<HTMLDivElement>;
+  incrementButtonProps: AriaButtonProps;
+  decrementButtonProps: AriaButtonProps;
 }
 
-export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
+export function useSpinButton(
+  props: SpinButtonProps,
+  inputRef?: RefObject<HTMLInputElement>
+): SpinbuttonAria {
+  const _async = useRef<NodeJS.Timeout>();
   let {
     value,
     textValue,
@@ -42,7 +51,8 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
     onDecrement,
     onDecrementPage,
     onDecrementToMin,
-    onIncrementToMax
+    onIncrementToMax,
+    onValidate
   } = props;
 
   let onKeyDown = (e) => {
@@ -51,13 +61,21 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
     }
 
     switch (e.key) {
+      case 'Enter':
+        e.preventDefault();
+        if (typeof onValidate === 'function') {
+          onValidate();
+        }
+
+        break;
+
       case 'PageUp':
         if (onIncrementPage) {
           e.preventDefault();
           onIncrementPage();
           break;
         }
-        // fallthrough!
+      // fallthrough!
       case 'ArrowUp':
       case 'Up':
         if (onIncrement) {
@@ -71,7 +89,7 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
           onDecrementPage();
           break;
         }
-        // fallthrough
+      // fallthrough
       case 'ArrowDown':
       case 'Down':
         if (onDecrement) {
@@ -97,10 +115,14 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
   let isFocused = useRef(false);
   let onFocus = () => {
     isFocused.current = true;
+    inputRef?.current.select();
   };
 
   let onBlur = () => {
     isFocused.current = false;
+    if (typeof onValidate === 'function') {
+      onValidate();
+    }
   };
 
   useEffect(() => {
@@ -108,6 +130,46 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
       announce(textValue || `${value}`);
     }
   }, [textValue, value]);
+
+  const onIncrementPressStart = useCallback(
+    (initialStepDelay: number) => {
+      onIncrement();
+
+      // Start spinning after initial delay
+      _async.current = setTimeout(
+        () => onIncrementPressStart(60),
+        initialStepDelay
+      );
+    },
+    [onIncrement]
+  );
+
+  const onIncrementPressEnd = useCallback(() => {
+    // Stop spinning
+    if (_async.current) {
+      clearTimeout(_async.current);
+    }
+  }, []);
+
+  const onDecrementPressStart = useCallback(
+    (initialStepDelay: number) => {
+      onDecrement();
+
+      // Start spinning after initial delay
+      _async.current = setTimeout(
+        () => onDecrementPressStart(75),
+        initialStepDelay
+      );
+    },
+    [onDecrement]
+  );
+
+  const onDecrementPressEnd = useCallback(() => {
+    // Stop spinning
+    if (_async.current) {
+      clearTimeout(_async.current);
+    }
+  }, []);
 
   return {
     spinButtonProps: {
@@ -122,6 +184,14 @@ export function useSpinButton(props: SpinButtonProps): SpinbuttonAria {
       onKeyDown,
       onFocus,
       onBlur
+    },
+    incrementButtonProps: {
+      onPressStart: () => onIncrementPressStart(400),
+      onPressEnd: onIncrementPressEnd
+    },
+    decrementButtonProps: {
+      onPressStart: () => onDecrementPressStart(400),
+      onPressEnd: onDecrementPressEnd
     }
   };
 }

@@ -21,6 +21,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-aria/live-announcer": "^3.0.0-alpha.1",
     "@react-aria/utils": "^3.0.2",
+    "@react-types/button": "3.0.2",
     "@react-types/shared": "^3.0.2"
   },
   "peerDependencies": {

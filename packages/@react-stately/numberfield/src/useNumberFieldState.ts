@@ -11,8 +11,8 @@
  */
 
 import {clamp} from '@react-aria/utils';
+import {useCallback, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useRef} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export interface NumberFieldState {
@@ -25,73 +25,96 @@ export interface NumberFieldState {
   validationState: ValidationState
 }
 
-export function useNumberFieldState(props) : NumberFieldState {
-  let {
-    minValue,
-    maxValue,
-    step = 1,
-    value,
-    defaultValue,
-    onChange
-  } = props;
+interface UseNumberFieldStateProps {
+  minValue?: number;
+  maxValue?: number;
+  step?: number;
+  defaultValue?: number | string;
+  onChange?: (value: string) => void;
+  value?: string | number;
+}
 
-  let [numValue, setNumValue] = useControlledState(value, defaultValue || '', onChange);
+export function useNumberFieldState(
+  props: UseNumberFieldStateProps
+): NumberFieldState {
+  let {minValue, maxValue, step = 1, value, defaultValue = 0, onChange} = props;
+
+  let [numValue, setNumValue] = useControlledState<string | number>(
+    value,
+    String(defaultValue),
+    onChange
+  );
   let isValid = useRef(!isInputValueInvalid(numValue, maxValue, minValue));
+  const lastValidValue = useRef(defaultValue);
 
   let increment = () => {
-    setNumValue(previousValue => {
-      let newValue = parseFloat(previousValue);
-      if (isNaN(newValue)) {
-        newValue = maxValue != null ? Math.min(step, maxValue) : step;
-      } else {
-        newValue = clamp(handleDecimalOperation('+', newValue, step), minValue, maxValue);
-      }
+    setNumValue((previousValue) => {
+      let newValue = isNaN(Number(previousValue))
+        ? lastValidValue.current
+        : Number(previousValue);
+
+      newValue = clamp(
+        handleDecimalOperation('+', newValue, step),
+        minValue,
+        maxValue
+      );
+
       updateValidation(newValue);
-      return newValue;
+      lastValidValue.current = newValue;
+      return String(newValue);
     });
   };
 
-  let incrementToMax = () => {
+  let incrementToMax = useCallback(() => {
     if (maxValue != null) {
-      setNumValue(maxValue);
+      setNumValue(String(maxValue));
     }
-  };
+  }, [maxValue, setNumValue]);
 
   let decrement = () => {
-    setNumValue(previousValue => {
-      let newValue = parseFloat(previousValue);
-      if (isNaN(newValue)) {
-        newValue = minValue != null ? Math.max(-step, minValue) : -step;
-      } else {
-        newValue = clamp(handleDecimalOperation('-', newValue, step), minValue, maxValue);
-      }
+    setNumValue((previousValue) => {
+      let newValue = isNaN(Number(previousValue))
+        ? lastValidValue.current
+        : Number(previousValue);
+
+      newValue = clamp(
+        handleDecimalOperation('-', newValue, step),
+        minValue,
+        maxValue
+      );
+
       updateValidation(newValue);
-      return newValue;
+      lastValidValue.current = newValue;
+      return String(newValue);
     });
   };
 
-  let decrementToMin = () => {
+  let decrementToMin = useCallback(() => {
     if (minValue != null) {
-      setNumValue(minValue);
+      setNumValue(String(minValue));
     }
-  };
+  }, [minValue, setNumValue]);
 
   let setValue = (value: string) => {
-    const valueAsNumber = value === '' ? null : +value;
-    const numeric = !isNaN(valueAsNumber);
+    updateValidation(value);
 
-    // They may be starting to type a negative number, we don't want to broadcast this to
-    // the onChange handler, but we do want to update the value state.
-    const resemblesNumber = numeric || value === '-' || value === '';
-
-    isValid.current = !isInputValueInvalid(value, maxValue, minValue);
-    if (resemblesNumber) {
-      setNumValue(valueAsNumber);
-    }
+    setNumValue(String(value));
   };
 
   let updateValidation = (value) => {
     isValid.current = !isInputValueInvalid(value, maxValue, minValue);
+  };
+
+  let validate = () => {
+    const validValue = getValidValue(
+      numValue,
+      lastValidValue.current,
+      maxValue,
+      minValue
+    );
+
+    lastValidValue.current = validValue;
+    setValue(validValue);
   };
 
   return {
@@ -101,13 +124,28 @@ export function useNumberFieldState(props) : NumberFieldState {
     decrement,
     decrementToMin,
     value: numValue,
+    validate,
     validationState: !isValid.current ? 'invalid' : null
   };
 }
 
-function isInputValueInvalid(value, max, min):boolean {
-  return value !== '' && isNaN(+value)
-    || (max !== null && value > max || min !== null && value < min);
+const getValidValue = (value, lastValidValue, max, min) => {
+  if (value === null || value.trim().length === 0 || isNaN(Number(value))) {
+    return lastValidValue;
+  }
+  const newValue = clamp(Number(value), min, max);
+  return newValue;
+};
+
+function isInputValueInvalid(value, max, min): boolean {
+  const numeric = Number(value);
+  return (
+    value === null ||
+    String(value).trim().length === 0 ||
+    isNaN(numeric) ||
+    numeric > max ||
+    numeric < min
+  );
 }
 
 function handleDecimalOperation(operator, value1, value2) {
