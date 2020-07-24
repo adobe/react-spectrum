@@ -12,7 +12,7 @@
 
 import {CollectionBase, DOMProps, FocusableProps, InputBase, SingleSelection, SpectrumLabelableProps, StyleProps, TextInputBase, Validation} from '@react-types/shared';
 
-export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
+export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, InputBase, TextInputBase, DOMProps, Validation, FocusableProps {
   isOpen?: boolean,
   defaultOpen?: boolean,
   onOpenChange?: (isOpen: boolean) => void,
@@ -27,8 +27,7 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection {
   shouldFlip?: boolean
 }
 
-// TODO: Check extends
-export interface SpectrumComboBoxProps<T> extends InputBase, TextInputBase, ComboBoxProps<T>, SpectrumLabelableProps, DOMProps, StyleProps, Validation, FocusableProps {
+export interface SpectrumComboBoxProps<T> extends ComboBoxProps<T>, SpectrumLabelableProps, StyleProps {
   isQuiet?: boolean,
   direction?: 'bottom' | 'top'
 }
