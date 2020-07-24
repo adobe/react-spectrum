@@ -13,5 +13,5 @@
     "src",
     "../../@react-types/shared/src/css.d.ts"
   ],
-  "exclude": ["scripts", "node_modules", "stories"]
+  "exclude": ["scripts", "node_modules", "stories", "chromatic"]
 }

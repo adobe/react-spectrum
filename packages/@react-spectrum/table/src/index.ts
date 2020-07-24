@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+/// <reference types="css-module-types" />
+
 export * from './Table';
 import {Column} from '@react-stately/table';
 import {SpectrumColumnProps} from '@react-types/table';

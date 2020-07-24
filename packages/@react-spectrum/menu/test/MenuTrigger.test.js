@@ -696,4 +696,15 @@ describe('MenuTrigger', function () {
       expect(buttonRef.current.UNSAFE_getDOMNode()).toBe(getByRole('button'));
     });
   });
+
+  it('should not show checkmarks if selectionMode not defined', function () {
+    let {queryByRole} = render(
+      <Menu aria-label="foo" selectedKeys={['alpha']}>
+        <Item key="alpha">Alpha</Item>
+        <Item key="bravo">Bravo</Item>
+      </Menu>
+    );
+    let checkmark = queryByRole('img', {hidden: true});
+    expect(checkmark).toBeNull();
+  });
 });

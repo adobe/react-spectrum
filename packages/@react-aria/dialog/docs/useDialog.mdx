@@ -114,7 +114,7 @@ function ModalDialog(props) {
   let {title, children} = props;
 
   // Handle interacting outside the dialog and pressing
-  // the the Escape key to close the modal.
+  // the Escape key to close the modal.
   let ref = React.useRef();
   let {overlayProps} = useOverlay(props, ref);
 

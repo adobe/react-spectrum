@@ -19,7 +19,6 @@ const BlockDecorator = storyFn => <div>{storyFn()}</div>;
 
 storiesOf('DateRangePicker', module)
   .addDecorator(BlockDecorator)
-  .addParameters({chromaticProvider: {locales: true}, chromatic: {viewports: [350]}})
   .add(
     'default',
     () => render()
@@ -94,7 +93,7 @@ storiesOf('DateRangePicker', module)
 function render(props = {}) {
   return (
     <div>
-      <DateRangePicker 
+      <DateRangePicker
         onChange={action('change')}
         {...props} />
     </div>
