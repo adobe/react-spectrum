@@ -11,25 +11,26 @@
  */
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {CollectionChildren, DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
-import {ListState, useListState} from '@react-stately/list';
-import React, {ReactNode, useEffect, useRef} from 'react';
+import {CollectionChildren, DOMProps, ItemElement, Node, Orientation, StyleProps} from '@react-types/shared';
+import {ListState, SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
+import React, {AriaAttributes, ReactNode, useEffect, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {Tab} from './Tab';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTabs} from '@react-aria/tabs';
 
 interface TabProps<T> extends DOMProps, StyleProps {
+  id?: string,
   item: Node<T>,
   state: ListState<T>,
   title?: ReactNode,
+  icon?: ReactNode,
   children?: ReactNode,
   isDisabled?: boolean,
-  isSelected?: boolean,
-  onSelect?: () => void
+  orientation?: Orientation
 }
 
-interface TabListProps<T> extends DOMProps, StyleProps {
+interface TabListProps<T> extends DOMProps, StyleProps, AriaAttributes {
   orientation?: Orientation,
   isQuiet?: boolean,
   density?: 'compact',
@@ -40,22 +41,14 @@ interface TabListProps<T> extends DOMProps, StyleProps {
   selectedItem?: any,
   defaultSelectedItem?: any,
   onSelectionChange?: (selectedItem: any) => void,
-  isEmphasized?: boolean
+  isEmphasized?: boolean,
+  state?: SingleSelectListState<TabProps<T>>
 }
 
 // TODO: Implement functionality related to overflowMode
 export function TabList<T>(props: TabListProps<T>) {
   props = useProviderProps(props);
-
   let ref = useRef<any>(); // Had to put this <any> in order to get around a null check.
-  // let [tabsArray, setTabsArray] = useState([]);
-
-  // useEffect(() => {
-  //   let tabs = Array.from(ref.current.querySelectorAll('.' + styles['spectrum-Tabs-item'])); // v3 what do we with these?
-  //   setTabsArray(tabs);
-  // }, [props.children]);
-
-  /** Defaults. */
   let {
     orientation = 'horizontal',
     isQuiet = false,
@@ -63,30 +56,26 @@ export function TabList<T>(props: TabListProps<T>) {
     isDisabled,
     defaultSelectedItem,
     onSelectionChange,
+    state: stateProp,
+    children,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let state = useListState({ 
+  let allKeys = React.Children.map(children, (child: ItemElement<TabProps<T>>) => child.key);
+  let tabListState = useSingleSelectListState({ 
     ...props, 
-    selectionMode: 'single',
     onSelectionChange,
-    disallowEmptySelection: true
+    defaultSelectedKey: defaultSelectedItem || allKeys[0],
+    disabledKeys: isDisabled ? [...allKeys] : []
   });
+  let state = stateProp || tabListState;
   let {tabListProps} = useTabs(props, state, ref);
-
+  let [selectedTab, setSelectedTab] = useState<HTMLElement>();
+  
   useEffect(() => {
-    if (state.collection.size) {
-      if (defaultSelectedItem) {
-        state.selectionManager.replaceSelection(defaultSelectedItem);
-      } else {
-        state.selectionManager.replaceSelection(state.collection.getFirstKey());
-      }
-    }
-  }, [state.collection.size]);
-
-  // let childArray = React.Children.toArray(props.children);
-  // let selectedIndex = findSelectedIndex(childArray, state);
-  // let selectedTab = tabsArray[selectedIndex];
+    let tabs: HTMLElement[] = Array.from(ref.current.querySelectorAll('.' + styles['spectrum-Tabs-item'])); // v3 what do we with these?
+    setSelectedTab(tabs.find(tab => tab.dataset.key === state.selectedKey));
+  }, [props.children, state.selectedKey]);
 
   return (
     <div
@@ -103,40 +92,35 @@ export function TabList<T>(props: TabListProps<T>) {
       {...tabListProps}>
       {[...state.collection].map(item => (
         <Tab
+          {...item.props}
           key={item.key}
           item={item}
           state={state}
-          isDisabled={isDisabled} />
-        )
-      )}
+          orientation={orientation} />
+      ))}
+      {selectedTab && <TabLine orientation={orientation} selectedTab={selectedTab} />}
     </div>
   );
 }
 
-// function TabLine({orientation, selectedTab}) {
-//   // v3 clean this up a bit
-//   // Ideally this would be a DNA variable, but vertical tabs aren't even in DNA, soo...
-//   let verticalSelectionIndicatorOffset = 12;
+function TabLine({orientation, selectedTab}) {
+  // v3 clean this up a bit
+  // Ideally this would be a DNA variable, but vertical tabs aren't even in DNA, soo...
+  let verticalSelectionIndicatorOffset = 12;
 
-//   let style = {
-//     transform: orientation === 'vertical'
-//       ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
-//       : `translateX(${selectedTab.offsetLeft}px) `,
-//     width: undefined,
-//     height: undefined
-//   };
+  let style = {
+    transform: orientation === 'vertical'
+      ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
+      : `translateX(${selectedTab.offsetLeft}px) `,
+    width: undefined,
+    height: undefined
+  };
 
-//   if (orientation === 'horizontal') {
-//     style.width = `${selectedTab.offsetWidth}px`;
-//   } else {
-//     style.height = `${selectedTab.offsetHeight - verticalSelectionIndicatorOffset}px`;
-//   }
+  if (orientation === 'horizontal') {
+    style.width = `${selectedTab.offsetWidth}px`;
+  } else {
+    style.height = `${selectedTab.offsetHeight - verticalSelectionIndicatorOffset}px`;
+  }
 
-//   return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
-// }
-
-// function findSelectedIndex(childArray, state) {
-//   return childArray.findIndex((child) =>
-//     child.props.key === state.selectedItem
-//   );
-// }
+  return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
+}

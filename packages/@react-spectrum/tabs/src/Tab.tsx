@@ -11,7 +11,7 @@
  */
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, Node, StyleProps} from '@react-types/shared';
+import {DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {ListState} from '@react-stately/list';
 import React, {ReactNode, useRef} from 'react';
@@ -19,30 +19,29 @@ import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {useTab} from '@react-aria/tabs';
 
 interface TabProps<T> extends DOMProps, StyleProps {
+  id?: string,
   item: Node<T>,
   state: ListState<T>,
   title?: ReactNode,
+  icon?: ReactNode,
   children?: ReactNode,
   isDisabled?: boolean,
-  isSelected?: boolean,
-  onSelect?: () => void
+  orientation?: Orientation
 }
 
 export function Tab<T>(props: TabProps<T>) {
-  // v3 come up with rule for how to handle props and dom props issue
-  // v3 Always use classNames even when only one class because of modules and "turnonclassname" option
-  // TODO: Add in icon in the render when cloneIcon/icon v3 becomes available. Make it so icon or label must be defined.
-  let {item, state, ...otherProps} = props;
+  let {id, item, state, icon, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
-  let ref = useRef<any>();
-  let {tabProps} = useTab({
-    item,
-    ref
-  }, state);
   let {
     key,
     rendered
   } = item;
+  let ref = useRef<any>();
+  let {tabProps} = useTab({
+    id,
+    item,
+    ref
+  }, state);
 
   let isSelected = state.selectionManager.selectedKeys.has(key);
   let isDisabled = state.disabledKeys.has(key);
@@ -62,9 +61,10 @@ export function Tab<T>(props: TabProps<T>) {
           },
           styleProps.className
         )}>
+        {/* Todo */}
+        {icon}
         {rendered && <span className={classNames(styles, 'spectrum-Tabs-itemLabel')}>{rendered}</span>}
       </div>
     </FocusRing>
   );
-
 }

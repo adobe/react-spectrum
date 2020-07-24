@@ -11,6 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import Bell from '@spectrum-icons/workflow/Bell';
 import {Item} from '@adobe/react-spectrum';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -25,16 +26,15 @@ storiesOf('Tabs', module)
     'orientation = vertical',
     () => render({orientation: 'vertical'})
   )
-  // .addWithInfo(
-  //   'orientation = vertical, icons',
-  //   () => (
-  //     <TabPanel orientation="vertical" onSelect={action('onSelect')}>
-  //       <Tab icon={<Twitter />}>Tab Body 1</Tab>
-  //       <Tab icon={<Facebook />}>Tab Body 2</Tab>
-  //     </TabPanel>
-  //   ),
-  //   {inline: true}
-  // )
+  .add(
+    'orientation = vertical, icons',
+    () => (
+      <Tabs orientation="vertical" onSelect={action('onSelect')}>
+        <Item icon={<Bell />} key="Bell1" title="Bell">Tab Body 1</Item>
+        <Item icon={<Bell />} key="Bell2" title="Bell">Tab Body 2</Item>
+      </Tabs>
+    )
+  )
   .add(
     'selectedItem = val2 (controlled)',
     () => render({selectedItem: 'val2'})
@@ -42,6 +42,9 @@ storiesOf('Tabs', module)
   .add(
     'defaultSelectedItem = val2 (uncontrolled)',
     () => render({defaultSelectedItem: 'val2'})
+  )
+  .add('keyboardActivation = manual',
+    () => render({keyboardActivation: 'manual'})
   );
 
 function render(props = {}) {

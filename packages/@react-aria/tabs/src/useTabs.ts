@@ -13,7 +13,7 @@ import {AriaLabelingProps, CollectionBase, KeyboardDelegate, Node, Orientation, 
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {ListState} from '@react-stately/list';
 import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
-import {useId, useSlotId} from '@react-aria/utils';
+import {useId} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem, useSelectableList} from '@react-aria/selection';
 
@@ -61,7 +61,8 @@ export function useTabs<T>(props: TabsProps<T>, state: ListState<T>, ref): TabsA
     disabledKeys,
     keyboardDelegate: delegate,
     ref,
-    selectOnFocus: keyboardActivation === 'automatic'
+    selectOnFocus: keyboardActivation === 'automatic',
+    disallowEmptySelection: true
   });
   return {
     tabListProps: {
@@ -80,28 +81,32 @@ interface TabAria {
 }
 
 interface TabAriaProps<T> {
+  id?: string,
   /** Collection node for the tab. */
   item: Node<T>,
   /** Ref to the tab. */
   ref: RefObject<HTMLElement>,
   /** A delegate object that implements behavior for keyboard focus movement. */
   keyboardDelegate?: KeyboardDelegate,
-   /**
-    * Whether tabs are activated automatically on focus or manually.
-    * @default 'automatic'
-    */
+  /**
+   * Whether tabs are activated automatically on focus or manually.
+   * @default 'automatic'
+   */
   keyboardActivation?: 'automatic' | 'manual',
   /**
    * The orientation of the tabs.
    * @default 'horizontal'
    */
-  orientation?: Orientation
+  orientation?: Orientation,
+  isDisabled?: boolean
 }
 
 export function useTab<T>(props: TabAriaProps<T>, state: ListState<T>): TabAria {
   let {
+    id,
     item, 
-    ref 
+    ref,
+    isDisabled: isDisabledProp
   } = props;
   let {key} = item;
   let {
@@ -111,7 +116,7 @@ export function useTab<T>(props: TabAriaProps<T>, state: ListState<T>): TabAria 
 
 
   let isSelected = manager.selectedKeys.has(key);
-  let isDisabled = disabledKeys.has(key);
+  let isDisabled = isDisabledProp || disabledKeys.has(key);
 
   let {itemProps} = useSelectableItem({
     selectionManager: manager,
@@ -121,8 +126,8 @@ export function useTab<T>(props: TabAriaProps<T>, state: ListState<T>): TabAria 
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled});
-  let tabId = useSlotId();
-  let tabPanelId = useId();
+  let tabId = useId(id);
+  let tabPanelId = useId(`${tabId}-panel`);
 
   return {
     tabProps: {
@@ -131,10 +136,11 @@ export function useTab<T>(props: TabAriaProps<T>, state: ListState<T>): TabAria 
       'aria-selected': isSelected,
       'aria-disabled': isDisabled,
       'aria-controls': tabPanelId,
-      tabIndex: isSelected ? 0 : -1,
+      tabIndex: !isDisabled && isSelected ? 0 : -1,
       role: 'tab'
     },
     tabPanelProps: {
+      id: tabPanelId,
       'aria-labelledby': tabId,
       role: 'tabpanel',
       tabIndex: 0

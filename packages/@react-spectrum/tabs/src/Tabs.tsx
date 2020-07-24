@@ -11,44 +11,57 @@
  */
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {CollectionChildren, DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
-import {ListState} from '@react-stately/list';
+import {CollectionChildren, DOMProps, ItemElement, Node, Orientation, StyleProps} from '@react-types/shared';
+import {ListState, useSingleSelectListState} from '@react-stately/list';
 import React, {ReactNode} from 'react';
 import {TabList} from './TabList';
 import {useProviderProps} from '@react-spectrum/provider';
 
 interface TabProps<T> extends DOMProps, StyleProps {
+  id?: string,
   item: Node<T>,
   state: ListState<T>,
   title?: ReactNode,
+  icon?: ReactNode,
   children?: ReactNode,
   isDisabled?: boolean,
-  isSelected?: boolean,
-  onSelect?: () => void
+  orientation?: Orientation
 }
 
 interface TabsProps<T> extends DOMProps, StyleProps {
   orientation?: Orientation,
   isQuiet?: boolean,
   density?: 'compact',
-  isDisabled?: boolean,
   overflowMode?: 'dropdown' | 'scrolling',
   keyboardActivation?: 'automatic' | 'manual',
   children: CollectionChildren<TabProps<T>>,
   selectedItem?: any,
   defaultSelectedItem?: any,
   onSelectionChange?: (selectedItem: any) => void,
-  isEmphasized?: boolean
+  isEmphasized?: boolean,
+  isDisabled?: boolean
 }
 
 export function Tabs<T>(props: TabsProps<T>) {
   props = useProviderProps(props);
   let {
-    children,
     orientation = 'horizontal' as Orientation,
+    children,
+    onSelectionChange,
+    isDisabled,
+    defaultSelectedItem,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let allKeys = React.Children.map(children, (child: ItemElement<TabProps<T>>) => child.key);
+  let state = useSingleSelectListState({ 
+    ...props, 
+    onSelectionChange,
+    defaultSelectedKey: defaultSelectedItem || allKeys[0],
+    disabledKeys: isDisabled ? [...allKeys] : []
+  });
+  let selected = [...state.collection].find(item => state.selectionManager.selectedKeys.has(item.key));
+
   return (
     <div
       {...styleProps}
@@ -60,11 +73,15 @@ export function Tabs<T>(props: TabsProps<T>) {
       )}>
       <TabList
         {...otherProps}
-        orientation={orientation}>
+        state={state}
+        isDisabled={isDisabled}
+        orientation={orientation}
+        defaultSelectedItem={defaultSelectedItem}
+        onSelectionChange={onSelectionChange}>
         {children}
       </TabList>
       <div className="react-spectrum-TabPanel-body">
-        tabpanel
+        {selected && selected.props.children}
       </div>
     </div>
   );
