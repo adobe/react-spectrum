@@ -938,6 +938,43 @@ describe('ComboBox', function () {
       expect(() => getByRole('listbox')).toThrow();
     });
 
+    it('clears the input field if value doesn\'t match a combobox option and no item is focused (menuTrigger=manual case)', function () {
+      let {getByRole, getAllByRole} = render(
+        <Provider theme={theme}>
+          <ComboBox label="Test" menuTrigger="manual" onOpenChange={onOpenChange} onSelectionChange={onSelectionChange} onCustomValue={onCustomValue} onInputChange={onInputChange}>
+            <Item key="1">Bulbasaur</Item>
+            <Item key="2">Squirtle</Item>
+            <Item key="3">Charmander</Item>
+          </ComboBox>
+          <Button variant="secondary">Focus move</Button>
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      let secondaryButton = getAllByRole('button')[1];
+
+      expect(onCustomValue).not.toHaveBeenCalled();
+      act(() => {
+        userEvent.click(combobox);
+        userEvent.type(combobox, 'Charm');
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('listbox')).toThrow();
+      expect(combobox.value).toBe('Charm');
+
+      act(() => {
+        userEvent.tab();
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).toBe(secondaryButton);
+      expect(onCustomValue).not.toHaveBeenCalled();
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(onInputChange).toHaveBeenCalledWith('');
+      expect(combobox.value).toBe('');
+    });
+
     it('propagates blur event outside of the component', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
