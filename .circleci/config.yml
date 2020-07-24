@@ -49,7 +49,7 @@ jobs:
 
       - run:
           name: test
-          command: make ci-test
+          command: yarn ci-test
 
   lint:
     docker:
@@ -62,7 +62,7 @@ jobs:
 
       - run:
           name: lint
-          command: make lint
+          command: yarn lint
 
   storybook:
     docker:

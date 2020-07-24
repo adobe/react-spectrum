@@ -37,8 +37,13 @@ describe('Picker', function () {
   });
 
   afterAll(function () {
+    jest.useRealTimers();
     offsetWidth.mockReset();
     offsetHeight.mockReset();
+  });
+
+  afterEach(() => {
+    act(() => jest.runAllTimers());
   });
 
   it('renders correctly', function () {
