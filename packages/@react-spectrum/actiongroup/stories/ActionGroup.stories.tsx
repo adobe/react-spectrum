@@ -81,7 +81,7 @@ storiesOf('ActionGroup', module)
             docItems.map((itemProps) => {
               let IconElement = iconMap[itemProps.children];
               return (
-                <Item key={itemProps.name} textValue={itemProps.name}>
+                <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
                   <IconElement />
                 </Item>
               );
@@ -235,7 +235,7 @@ function renderBoth(props, items: any = docItems) {
         items.map((itemProps) => {
           let IconElement = iconMap[itemProps.children];
           return (
-            <Item key={itemProps.name} textValue={itemProps.name}>
+            <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
               <Text>{itemProps.children}</Text>
               <IconElement />
             </Item>
@@ -253,7 +253,7 @@ function renderIcons(props, items: any = docItems) {
         items.map((itemProps) => {
           let IconElement = iconMap[itemProps.children];
           return (
-            <Item key={itemProps.name} textValue={itemProps.name}>
+            <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
               <IconElement />
             </Item>
           );
