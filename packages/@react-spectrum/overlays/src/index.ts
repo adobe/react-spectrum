@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+/// <reference types="css-module-types" />
+
 export * from './Overlay';
 export * from './Popover';
 export * from './Modal';

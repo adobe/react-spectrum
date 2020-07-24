@@ -17,7 +17,7 @@ interface ButtonProps extends PressEvents, FocusableProps {
   /** Whether the button is disabled. */
   isDisabled?: boolean,
   /** The content to display in the button. */
-  children?: ReactNode,
+  children?: ReactNode
 }
 
 export interface LinkButtonProps {

@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+/// <reference types="css-module-types" />
+
 export * from './MenuTrigger';
 export * from './Menu';
 export {Item, Section} from '@react-stately/collections';

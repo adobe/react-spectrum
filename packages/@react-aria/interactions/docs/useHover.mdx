@@ -83,21 +83,19 @@ with focus events in order to expose the content to keyboard users.
 ## Example
 
 This example shows a simple target that handles hover events with `useHover` and logs them to a
-list below. It also tracks the `isHovered` state using `onHoverChange` to adjust the background
+list below. It also uses the `isHovered` state to adjust the background
 color when the target is hovered.
 
 ```tsx example
 function Example() {
   let [events, setEvents] = React.useState([]);
-  let [isHovered, setHovered] = React.useState(false);
-  let {hoverProps} = useHover({
+  let {hoverProps, isHovered} = useHover({
     onHoverStart: e => setEvents(
       events => [...events, `hover start with ${e.pointerType}`]
     ),
     onHoverEnd: e => setEvents(
       events => [...events, `hover end with ${e.pointerType}`]
-    ),
-    onHoverChange: setHovered
+    )
   });
 
   return (

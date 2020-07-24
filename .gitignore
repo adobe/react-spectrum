@@ -15,7 +15,3 @@ packages/dev/v2-test-deps
 dist
 public
 storybook-static
-
-
-#allow
-!.storybook-v3/lib

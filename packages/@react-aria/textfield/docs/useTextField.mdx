@@ -41,12 +41,13 @@ keywords: [textfield, textbox, input, label, aria]
 ## Features
 
 Text fields can be built with [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input)
+or [&lt;textarea&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea) 
 and [&lt;label&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label) elements,
 but you must manually ensure that they are semantically connected via ids for accessibility.
 `useTextField` helps automate this, and handle other accessibility features while
 allowing for custom styling.
 
-* Built with a native `<input>` element
+* Built with a native `<input>` or `<textarea>` element
 * Visual and ARIA labeling support
 * Change, clipboard, composition, selection, and input event support
 * Required and invalid states exposed to assistive technology via ARIA

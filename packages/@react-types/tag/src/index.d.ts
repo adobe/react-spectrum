@@ -22,7 +22,7 @@ export interface TagProps extends Removable<ReactChild, void> {
 
 export interface TagGroupProps extends MultipleSelection {
   children: ReactElement<TagProps> | ReactElement<TagProps>[],
-  isDisabled?: boolean
+  isDisabled?: boolean,
   isReadOnly?: boolean,
   onRemove?: (items: any[]) => void,
   validationState?: 'invalid' | 'valid'
