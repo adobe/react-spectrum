@@ -15,8 +15,8 @@ import {Key, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {Node} from '@react-types/shared';
 import {SelectState} from '@react-stately/select';
 import {useControlledState} from '@react-stately/utils';
-import {useSingleSelectListState} from '@react-stately/list';
 import {useMenuTriggerState} from '@react-stately/menu';
+import {useSingleSelectListState} from '@react-stately/list';
 
 export interface ComboBoxState<T> extends SelectState<T> {
   inputValue: string,
@@ -75,7 +75,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let {collection} = useSingleSelectListState({
     ...props,
     // default to null if props.selectedKey isn't set to avoid useControlledState's uncontrolled to controlled warning
-    selectedKey: props.selectedKey || null,
+    selectedKey: props.selectedKey || null
   });
 
   if (props.selectedKey && props.inputValue) {
@@ -173,7 +173,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       return null;
     }
     return (nodes) => filter(nodes, defaultFilterFn);
-  }, [itemsControlled, inputValue, filter, defaultFilterFn]);
+  }, [itemsControlled, inputValue, defaultFilterFn]);
 
   let {collection: filteredCollection, disabledKeys, selectionManager, selectedItem} = useSingleSelectListState(
     {

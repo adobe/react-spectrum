@@ -740,6 +740,7 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
       expect(onSelectionChange).toHaveBeenCalledWith('2');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
     });
 
     it('filters combobox items using contains strategy', function () {
@@ -854,6 +855,7 @@ describe('ComboBox', function () {
       expect(document.activeElement).toBe(secondaryButton);
       expect(onOpenChange).toHaveBeenCalledWith(false);
       expect(onSelectionChange).toHaveBeenCalledWith('1');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onInputChange).toHaveBeenCalledWith('Bulbasaur');
       expect(queryByRole('listbox')).toBeFalsy();
     });

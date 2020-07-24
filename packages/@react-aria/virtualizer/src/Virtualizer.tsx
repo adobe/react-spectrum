@@ -32,7 +32,7 @@ interface VirtualizerProps<T extends object, V> extends HTMLAttributes<HTMLEleme
   scrollDirection?: 'horizontal' | 'vertical' | 'both',
   transitionDuration?: number,
   isLoading?: boolean,
-  onLoadMore?: () => void,
+  onLoadMore?: () => void
 }
 
 function Virtualizer<T extends object, V>(props: VirtualizerProps<T, V>, ref: RefObject<HTMLDivElement>) {
