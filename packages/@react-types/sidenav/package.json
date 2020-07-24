@@ -10,8 +10,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/shared": "^3.0.1",
-    "@react-stately/virtualizer": "^3.0.1"
+    "@react-types/shared": "^3.1.0",
+    "@react-stately/virtualizer": "^3.1.0"
   },
   "peerDependencies": {
     "react": "^16.8.0"

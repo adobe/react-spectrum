@@ -10,12 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent} from '@testing-library/react';
+import {act, fireEvent} from '@testing-library/react';
 
 // Triggers a "press" event on an element.
 // TODO: move to somewhere more common
 export function triggerPress(element, opts = {}) {
-  fireEvent.mouseDown(element, {detail: 1, ...opts});
-  fireEvent.mouseUp(element, {detail: 1, ...opts});
-  fireEvent.click(element, {detail: 1, ...opts});
+  act(() => {
+    fireEvent.mouseDown(element, {detail: 1, ...opts});
+  });
+  act(() => {
+    fireEvent.mouseUp(element, {detail: 1, ...opts});
+  });
+  act(() => {
+    fireEvent.click(element, {detail: 1, ...opts});
+  });
 }

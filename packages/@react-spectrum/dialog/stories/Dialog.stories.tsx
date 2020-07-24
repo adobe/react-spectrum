@@ -28,8 +28,6 @@ import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 
 storiesOf('Dialog', module)
-// DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
-  .addParameters({chromaticProvider: {colorSchemes: ['light']}, chromatic: {pauseAnimationAtEnd: true}})
   .addParameters({providerSwitcher: {status: 'notice'}})
   .add(
     'default',
@@ -89,8 +87,6 @@ storiesOf('Dialog', module)
   );
 
 storiesOf('Dialog/Alert', module)
-// DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
-  .addParameters({chromaticProvider: {colorSchemes: ['light']}, chromatic: {pauseAnimationAtEnd: true}})
   .add(
     'destructive',
     () => renderAlert({

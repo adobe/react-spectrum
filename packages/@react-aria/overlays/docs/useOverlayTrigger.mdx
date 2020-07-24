@@ -56,7 +56,7 @@ additional functionality specific to menus.**
 * Exposes overlay trigger and connects trigger to overlay with ARIA
 * Positions the overlay relative to the trigger when combined with <TypeLink links={docs.links} type={docs.exports.useOverlayPosition} />
 * Hides content behind the overlay from screen readers when combined with <TypeLink links={docs.links} type={docs.exports.useModal} />
-* Handles closing the overlay when interacting outside and pressing the Escape key, when combined with <TypeLink links={docs.links} type={docs.exports.useOverlay} />
+* Handles closing the overlay when interacting outside and pressing the <kbd>Escape</kbd> key, when combined with <TypeLink links={docs.links} type={docs.exports.useOverlay} />
 
 ## Anatomy
 
@@ -70,7 +70,7 @@ with <TypeLink links={docs.links} type={docs.exports.useOverlayPosition} /> to
 handle positioning the overlay relative to the trigger.
 
 `useOverlayTrigger` returns props that you should spread onto the trigger element and
-the overlay container element:
+the appropriate element:
 
 <TypeContext.Provider value={docs.links}>
   <InterfaceType properties={docs.links[docs.exports.useOverlayTrigger.return.id].properties} />
@@ -85,7 +85,7 @@ This example shows how to build a typical popover overlay that is positioned rel
 a trigger button. The content of the popover is a dialog, built
 with <TypeLink links={dialogDocs.links} type={dialogDocs.exports.useDialog} />.
 
-The popover can be closed by clicking or interacting outside the popover, or by pressing the Escape key.
+The popover can be closed by clicking or interacting outside the popover, or by pressing the <kbd>Escape</kbd> key.
 This is handled by <TypeLink links={docs.links} type={docs.exports.useOverlay} />.
 When the popover is closed, focus is restored back to its trigger button by a
 &lt;<TypeLink links={focusDocs.links} type={focusDocs.exports.FocusScope} />&gt;.
@@ -107,6 +107,11 @@ In addition, each overlay must be contained in an <TypeLink links={docs.links} t
 which uses a React [Portal](https://reactjs.org/docs/portals.html) to render the overlay at the
 end of the document body. If a nested overlay is opened, then the first overlay will also be set
 to `aria-hidden`, so that only the top-most overlay is accessible to screen readers.
+
+**Note:** `useModal` only hides content within parent `OverlayProvider` components. However, if you have additional
+content in your application outside any `OverlayProvider`, then you should use the `@react-aria/aria-modal-polyfill`
+package to ensure that this content is hidden while modals are open as well. See the
+[watchModals docs](../react-aria/watchModals.html) for more information.
 
 ```tsx example
 import {useOverlayTriggerState} from '@react-stately/overlays';
@@ -132,7 +137,7 @@ const Popover = React.forwardRef(({
   ...otherProps
 }, ref) => {
   // Handle interacting outside the dialog and pressing
-  // the the Escape key to close the modal.
+  // the Escape key to close the modal.
   let {overlayProps} = useOverlay({
     onClose,
     isOpen,

@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+/// <reference types="css-module-types" />
+
 import darkest from '@adobe/spectrum-css-temp/vars/spectrum-darkest.css';
 import global from '@adobe/spectrum-css-temp/vars/spectrum-global.css';
 import large from '@adobe/spectrum-css-temp/vars/spectrum-large.css';

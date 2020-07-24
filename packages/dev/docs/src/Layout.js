@@ -15,12 +15,16 @@ import classNames from 'classnames';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import {getAnchorProps} from './utils';
-import heroImage from 'url:../pages/assets/ReactSpectrumHome_Mobile_976x1025_2x.png';
+import heroImageAria from 'url:../pages/assets/ReactAria_976x445_2x.png';
+import heroImageHome from 'url:../pages/assets/ReactSpectrumHome_976x445_2x.png';
+import heroImageSpectrum from 'url:../pages/assets/ReactSpectrum_976x445_2x.png';
+import heroImageStately from 'url:../pages/assets/ReactStately_976x445_2x.png';
 import highlightCss from './syntax-highlight.css';
 import {ImageContext} from './Image';
 import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
+import path from 'path';
 import React from 'react';
 import ruleStyles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
@@ -29,6 +33,11 @@ import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 const TLD = 'react-spectrum.adobe.com';
+const HERO = {
+  'react-spectrum': heroImageSpectrum,
+  'react-aria': heroImageAria,
+  'react-stately': heroImageStately
+};
 
 const mdxComponents = {
   h1: ({children, ...props}) => (
@@ -63,6 +72,11 @@ const mdxComponents = {
   kbd: ({children, ...props}) => <kbd {...props} className={docStyles['keyboard']}>{children}</kbd>
 };
 
+const sectionTitles = {
+  blog: 'React Spectrum Blog',
+  releases: 'React Spectrum Releases'
+};
+
 function dirToTitle(dir) {
   return dir
     .split('/')[0]
@@ -71,12 +85,29 @@ function dirToTitle(dir) {
     .join(' ');
 }
 
+function stripMarkdown(description) {
+  return (description || '').replace(/\[(.*?)\]\(.*?\)/g, '$1');
+}
+
+function isBlogSection(section) {
+  return section === 'blog' || section === 'releases';
+}
+
 function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
-  let isSubpage = currentPage.name.split('/').length > 1 && !/index\.html$/.test(currentPage.name);
+  let parts = currentPage.name.split('/');
+  let isBlog = isBlogSection(parts[0]);
+  let isSubpage = parts.length > 1 && !/index\.html$/.test(currentPage.name);
   let pageSection = isSubpage ? dirToTitle(currentPage.name) : 'React Spectrum';
+  if (isBlog && isSubpage) {
+    pageSection = sectionTitles[parts[0]];
+  }
+
   let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
-  let description = currentPage.description || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
-  let title = currentPage.title + (!/index\.html$/.test(currentPage.name) ? ` - ${pageSection}` : '');
+  let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
+  let title = currentPage.title + (!/index\.html$/.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
+  let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
+  let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`;
+
   return (
     <html
       lang="en-US"
@@ -143,11 +174,11 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
         <meta name="description" content={description} />
         <meta name="keywords" content={keywords} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content={`https://${TLD}${heroImage}`} />
+        <meta name="twitter:image" content={heroUrl} />
         <meta property="og:title" content={currentPage.title} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://${TLD}${currentPage.url}`} />
-        <meta property="og:image" content={`https://${TLD}${heroImage}`} />
+        <meta property="og:image" content={heroUrl} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
         <meta data-github-src={pathToPage} />
@@ -160,7 +191,7 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
               author: 'Adobe Inc',
               headline: currentPage.title,
               description: description,
-              image: `https://${TLD}${heroImage}`,
+              image: heroUrl,
               publisher: {
                 '@type': 'Organization',
                 url: 'https://www.adobe.com',
@@ -201,11 +232,20 @@ const CATEGORY_ORDER = [
 function Nav({currentPageName, pages}) {
   let isIndex = /index\.html$/;
   let currentParts = currentPageName.split('/');
+  let isBlog = isBlogSection(currentParts[0]);
+  let blogIndex = currentParts[0] + '/index.html';
+  if (isBlog) {
+    currentParts.shift();
+  }
+
   let currentDir = currentParts[0];
 
   pages = pages.filter(p => {
     let pageParts = p.name.split('/');
     let pageDir = pageParts[0];
+    if (isBlogSection(pageDir)) {
+      return currentParts.length === 1 && pageParts[pageParts.length - 1] === 'index.html';
+    }
 
     // Skip the error page, its only used for 404s
     if (p.name === 'error.html') {
@@ -277,7 +317,7 @@ function Nav({currentPageName, pages}) {
   function SideNavItem({name, url, title}) {
     const isCurrentPage = !currentPageIsIndex && name === currentPageName;
     return (
-      <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: isCurrentPage})}>
+      <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: isCurrentPage || (name === blogIndex && isBlog)})}>
         <a
           className={classNames(sideNavStyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)}
           href={url}
@@ -294,7 +334,7 @@ function Nav({currentPageName, pages}) {
             <ChevronLeft aria-label="Back" />
           </a>
         }
-        <a href="./index.html" className={docStyles.homeBtn}>
+        <a href={isBlog ? '/index.html' : './index.html'} className={docStyles.homeBtn}>
           <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe">
             <polygon points="19,0 30,0 30,26" />
             <polygon points="11.1,0 0,0 0,26" />
@@ -338,10 +378,9 @@ function Footer() {
     </footer>
   );
 }
-
-export function Layout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
+export const PageContext = React.createContext();
+export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
   let pathToPage = currentPage.filePath.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
-
   return (
     <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage} pathToPage={pathToPage}>
       <div style={{isolation: 'isolate'}}>
@@ -352,7 +391,11 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
             <div id="edit-page" className={docStyles.editPageContainer} />
             <MDXProvider components={mdxComponents}>
               <ImageContext.Provider value={publicUrl}>
-                <LinkProvider>{children}</LinkProvider>
+                <LinkProvider>
+                  <PageContext.Provider value={{pages, currentPage}}>
+                    {children}
+                  </PageContext.Provider>
+                </LinkProvider>
               </ImageContext.Provider>
             </MDXProvider>
           </article>
@@ -361,5 +404,62 @@ export function Layout({scripts, styles, pages, currentPage, publicUrl, children
         </main>
       </div>
     </Page>
+  );
+}
+
+export function Layout(props) {
+  return (
+    <BaseLayout {...props}>
+      <article className={classNames(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !props.currentPage.name.endsWith('index.html')})}>
+        {props.children}
+      </article>
+    </BaseLayout>
+  );
+}
+
+export function BlogLayout(props) {
+  return (
+    <BaseLayout {...props}>
+      <div className={classNames(typographyStyles['spectrum-Typography'], docStyles.article, docStyles.inCategory)}>
+        {props.children}
+      </div>
+    </BaseLayout>
+  );
+}
+
+export function BlogPostLayout(props) {
+  // Add post date underneath the h1
+  let date = props.currentPage.date;
+  let components = mdxComponents;
+  if (date) {
+    components = {
+      ...mdxComponents,
+      h1: (props) => (
+        <header className={docStyles.blogHeader}>
+          {mdxComponents.h1(props)}
+          <Time date={date} />
+        </header>
+      )
+    };
+  }
+
+  return (
+    <Layout {...props}>
+      <MDXProvider components={components}>
+        {props.children}
+      </MDXProvider>
+    </Layout>
+  );
+}
+
+export function Time({date}) {
+  // treat date as local time rather than UTC
+  let localDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+  return (
+    <time
+      dateTime={date.toISOString().slice(0, 10)}
+      className={typographyStyles['spectrum-Body4']}>
+      {localDate.toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
+    </time>
   );
 }

@@ -15,7 +15,7 @@ import {ReactNode} from 'react';
 
 export interface HeadingProps extends DOMProps, StyleProps {
   /**
-   * Heading content
+   * Heading content.
    */
   children: ReactNode,
   /**

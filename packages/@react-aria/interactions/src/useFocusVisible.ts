@@ -54,7 +54,9 @@ function triggerChangeHandlers(modality: Modality, e: HandlerEvent) {
   }
 }
 
-// Helper function to determine if a KeyboardEvent is unmodified and could make keyboard focus styles visible
+/**
+ * Helper function to determine if a KeyboardEvent is unmodified and could make keyboard focus styles visible.
+ */
 function isValidKey(e: KeyboardEvent) {
   return !(e.metaKey || (!isMac && e.altKey) || e.ctrlKey);
 }
@@ -99,9 +101,11 @@ function handleWindowBlur() {
   hasEventBeforeFocus = false;
 }
 
-// Setup global event listeners to control when keyboard focus style should be visible
+/**
+ * Setup global event listeners to control when keyboard focus style should be visible.
+ */
 function setupGlobalFocusEvents() {
-  if (hasSetupGlobalListeners) {
+  if (typeof window === 'undefined' || hasSetupGlobalListeners) {
     return;
   }
 
@@ -136,10 +140,16 @@ function setupGlobalFocusEvents() {
   hasSetupGlobalListeners = true;
 }
 
+/**
+ * If true, keyboard focus is visible.
+ */
 export function isFocusVisible(): boolean {
   return currentModality !== 'pointer';
 }
 
+/**
+ * Keeps state of the current modality.
+ */
 export function useInteractionModality(): Modality {
   setupGlobalFocusEvents();
 

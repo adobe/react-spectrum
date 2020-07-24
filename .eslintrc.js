@@ -16,7 +16,7 @@ module.exports = {
   },
   overrides: [{
     files: ['packages/**/*.ts', 'packages/**/*.tsx'],
-    plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', '@typescript-eslint', 'monorepo'],
+    plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', '@typescript-eslint', 'monorepo', 'jsdoc'],
     parser: '@typescript-eslint/parser',
     parserOptions: {
       ecmaFeatures: {
@@ -29,13 +29,30 @@ module.exports = {
     },
     rules: {
       "no-unused-vars": OFF,
-      "@typescript-eslint/no-unused-vars": ERROR
+      "@typescript-eslint/no-unused-vars": ERROR,
+      "@typescript-eslint/member-delimiter-style": [ERROR, {
+        multiline: {
+          delimiter: 'comma',
+          requireLast: false
+        },
+        singleline: {
+          delimiter: 'comma',
+          requireLast: false
+        }
+      }],
     }
   }, {
-    files: ['**/test/**', '**/stories/**', '**/docs/**'],
+    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
     rules: {
       'rulesdir/imports': OFF,
-      'monorepo/no-internal-import': OFF
+      'monorepo/no-internal-import': OFF,
+      'jsdoc/require-jsdoc': OFF
+    }
+  }, {
+    files: ['**/dev/**', '**/scripts/**'],
+    rules: {
+      'jsdoc/require-jsdoc': OFF,
+      'jsdoc/require-description': OFF
     }
   }],
   env: {
@@ -50,7 +67,20 @@ module.exports = {
     'jest': true,
     'expect': true
   },
+  settings: {
+    jsdoc: {
+      ignorePrivate: true,
+      publicFunctionsOnly: true
+    }
+  },
   rules: {
+    'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc']}],
+    'jsdoc/check-alignment': ERROR,
+    'jsdoc/check-indentation': ERROR,
+    'jsdoc/check-tag-names': ERROR,
+    // enable this rule to see literally everything missing jsdocs, this rule needs some refinement but is good as a sanity check.
+    // 'jsdoc/require-jsdoc': [ERROR, {contexts:['TSInterfaceDeclaration TSPropertySignature', 'TSInterfaceDeclaration TSMethodSignature']}],
+    'jsdoc/require-description': [ERROR, {exemptedBy: ['deprecated'], checkConstructors: false}],
     'comma-dangle': ERROR,
     'indent': OFF,
     'indent-legacy': [ERROR, ERROR, {SwitchCase: 1}],
@@ -75,7 +105,7 @@ module.exports = {
     'no-unused-vars': [ERROR, {args: 'none', vars: 'all', varsIgnorePattern: '[rR]eact'}],
     'space-in-parens': [ERROR, 'never'],
     'space-unary-ops': [ERROR, {words: true, nonwords: false}],
-    'spaced-comment': [ERROR, 'always', {exceptions: ['*']}],
+    'spaced-comment': [ERROR, 'always', {exceptions: ['*'], markers: ['/']}],
     'max-depth': [WARN, 4],
     'radix': [ERROR, 'always'],
     'react/jsx-uses-react': WARN,

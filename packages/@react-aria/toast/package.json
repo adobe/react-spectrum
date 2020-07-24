@@ -19,10 +19,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/i18n": "^3.0.1",
-    "@react-aria/interactions": "^3.0.1",
-    "@react-aria/utils": "^3.0.1",
-    "@react-types/shared": "^3.0.1",
+    "@react-aria/i18n": "^3.1.0",
+    "@react-aria/interactions": "^3.1.0",
+    "@react-aria/utils": "^3.1.0",
+    "@react-types/shared": "^3.1.0",
     "@react-types/toast": "^3.0.0-alpha.1",
     "@react-stately/toast": "^3.0.0-alpha.1"
   },
