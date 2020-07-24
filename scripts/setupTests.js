@@ -15,7 +15,9 @@ import '@testing-library/jest-dom';
 
 const ERROR_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [];
 
-const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [];
+const WARNING_PATTERNS_WE_SHOULD_FIX_BUT_ALLOW = [
+  'componentWillReceiveProps has been renamed' // don't need to ever fix this one, it's v2
+];
 
 function failTestOnConsoleError() {
   const error = console.error;

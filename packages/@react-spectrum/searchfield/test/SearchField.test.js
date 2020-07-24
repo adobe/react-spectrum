@@ -59,10 +59,10 @@ describe('Search', () => {
     expect(clearButton).toBeNull();
   });
 
+  // omitting v2 because the v3 icon we use doesn't accept className, only UNSAFE_className
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name should support custom icons', ({Component}) => {
     let icon = <Checkmark data-testid="testicon" />;
     let tree = renderComponent(Component, {icon});
@@ -81,7 +81,6 @@ describe('Search', () => {
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name should display the clear button icon only if text is present', ({Component}) => {
     let tree = renderComponent(Component, {defaultValue: inputText});
     let clearButton = tree.getByLabelText('Clear search');
