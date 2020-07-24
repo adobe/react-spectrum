@@ -56,7 +56,12 @@ interface SelectableListOptions {
    * Whether the collection allows empty selection.
    * @default false
    */
-  disallowEmptySelection?: boolean
+  disallowEmptySelection?: boolean,
+  /**
+   * This is for tabs auto activation.
+   * @default false
+   */
+  selectOnFocus?: boolean
 }
 
 interface SelectableListAria {
@@ -79,7 +84,8 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     autoFocus,
     shouldFocusWrap,
     isVirtualized,
-    disallowEmptySelection
+    disallowEmptySelection,
+    selectOnFocus = false
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -104,7 +110,8 @@ export function useSelectableList(props: SelectableListOptions): SelectableListA
     keyboardDelegate: delegate,
     autoFocus,
     shouldFocusWrap,
-    disallowEmptySelection
+    disallowEmptySelection,
+    selectOnFocus
   });
 
   return {
