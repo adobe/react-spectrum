@@ -9,8 +9,22 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+const NodeEnvironment = require('jest-environment-node');
+const {Worker} = require('worker_threads');
 
-/// <reference types="css-module-types" />
+// Setup a single worker instance that's shared between test environments via a __SSR_WORKER__ global.
+let worker = new Worker(__dirname + '/hydrateWorker.js');
+worker.unref();
 
-export * from './triggerPress';
-export * from './testSSR';
+class SSREnvironment extends NodeEnvironment {
+  async setup() {
+    await super.setup();
+    this.global.__SSR_WORKER__ = worker;
+  }
+
+  async teardown() {
+    await super.teardown();
+  }
+}
+
+module.exports = SSREnvironment;

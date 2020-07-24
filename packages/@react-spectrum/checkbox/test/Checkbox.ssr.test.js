@@ -10,7 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
+import {testSSR} from '@react-spectrum/test-utils';
 
-export * from './triggerPress';
-export * from './testSSR';
+describe('Checkbox SSR', function () {
+  it('should render without errors', async function () {
+    await testSSR(__filename, `
+      import {Checkbox} from '../';
+      <Checkbox>Test</Checkbox>
+    `);
+  });
+});
