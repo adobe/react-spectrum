@@ -80,7 +80,7 @@ export function Tabs<T>(props: TabsProps<T>) {
         onSelectionChange={onSelectionChange}>
         {children}
       </TabList>
-      <div id="fix-me-tab-id" aria-labelledby="fix-me" tabIndex={0} className="react-spectrum-TabPanel-body">
+      <div id="fix-me-tab-id" aria-labelledby="fix-me" role="tabpanel" tabIndex={0} className="react-spectrum-TabPanel-body">
         {selected && selected.props.children}
       </div>
     </div>
