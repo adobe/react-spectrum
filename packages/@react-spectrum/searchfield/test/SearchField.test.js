@@ -192,7 +192,6 @@ describe('Search', () => {
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name clears the input field if the clear button is pressed and the field is uncontrolled', ({Component}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear});
     let input = tree.getByTestId(testId);
