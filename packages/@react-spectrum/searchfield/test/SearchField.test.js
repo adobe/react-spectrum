@@ -247,7 +247,6 @@ describe('Search', () => {
   it.each`
     Name                | Component        | props
     ${'v3 SearchField'} | ${SearchField}   | ${{isDisabled: true}}
-    ${'v2 SearchField'} | ${V2SearchField} | ${{disabled: true}}
   `('$Name doesn\'t clear the input field if the clear button is pressed and the field is disabled', ({Component, props}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear, ...props});
     let input = tree.getByTestId(testId);
