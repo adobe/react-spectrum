@@ -10,31 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBuilder, Item} from '@react-stately/collections';
+import {Item} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
-import {TreeCollection} from '@react-stately/tree';
 import {useComboBox} from '../';
+import {useSingleSelectListState} from '@react-stately/list';
 
 describe('useComboBox', function () {
   let setOpen = jest.fn();
   let setFocusedKey = jest.fn();
 
   let defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>};
-  let builder = new CollectionBuilder('id');
-  let nodes = builder.build(defaultProps);
-  let collection = new TreeCollection(nodes, {expandedKeys: new Set()});
+  let {result} = renderHook(() => useSingleSelectListState(defaultProps));
   let mockLayout = new ListLayout({
     rowHeight: 40
   });
-  mockLayout.collection = collection;
-  let state = {
-    selectionManager: {
-      setFocusedKey
-    },
-    collection
-  };
+  mockLayout.collection = result.current.collection;
 
   afterEach(() => {
     setOpen.mockClear();
@@ -49,7 +41,7 @@ describe('useComboBox', function () {
       layout: mockLayout
     };
 
-    let {result} = renderHook(() => useComboBox(props, state));
+    let {result} = renderHook(() => useComboBox(props, useSingleSelectListState(defaultProps)));
     let {triggerProps, inputProps, listBoxProps, labelProps} = result.current;
 
     expect(labelProps.id).toBeTruthy();
