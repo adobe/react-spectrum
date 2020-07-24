@@ -133,6 +133,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     } else if (allowsCustomValue && !state.selectedKey && onCustomValue) {
       onCustomValue(state.inputValue);
     } else if (!allowsCustomValue) {
+      // Clear the input field in the case of menuTrigger = manual and the user has typed
+      // in a value that doesn't match any of the list items
       let item = state.collection.getItem(state.selectedKey);
       let itemText = item ? item.textValue : '';
       state.setInputValue(itemText);
@@ -181,7 +183,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   };
 
   // TODO: Think about if the below focus key stuff needs to account for mobile
-  // Focus first item if filtered collection no longer contains original focused item
+  // Focus first item if filtered collection no longer contains original focused item (aka user typing to filter collection)
   useEffect(() => {
     // Only set a focused key if one existed previously, don't want to focus something by default if allowsCustomValue = true
     if ((!allowsCustomValue || state.selectionManager.focusedKey) && state.inputValue !== '' && !state.collection.getItem(state.selectionManager.focusedKey)) {

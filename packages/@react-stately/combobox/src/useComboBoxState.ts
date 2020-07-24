@@ -86,7 +86,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     }
   }
 
-  let lastSelectedKey = useRef('');
   let onInputChange = (value) => {
     if (props.onInputChange) {
       props.onInputChange(value);
@@ -98,8 +97,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
         onSelectionChange(newSelectedKey);
       }
     }
-
-    lastSelectedKey.current = newSelectedKey;
   };
 
   let initialSelectedKeyText = collection.getItem(props.selectedKey)?.textValue;
@@ -109,7 +106,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let selectedKey = props.selectedKey || computeKeyFromValue(inputValue, collection);
 
   let triggerState = useMenuTriggerState(props);
-  // Fires when user hits Enter or clicks
+
+  // Fires on selection change (when user hits Enter, clicks list item, props.selectedKey is changed)
   let setSelectedKey = useCallback((key) => {
     let item = collection.getItem(key);
     let itemText = item ? item.textValue : '';
@@ -129,9 +127,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   }, [collection, setInputValue, inputValue, onSelectionChange, selectedKey]);
 
-
-  let lastSelectedKeyProp = useRef('' as Key);
   // Update the selectedKey and inputValue when props.selectedKey updates
+  let lastSelectedKeyProp = useRef('' as Key);
   useEffect(() => {
     // need this check since setSelectedKey changes a lot making this useEffect fire even when props.selectedKey hasn't changed
     if (lastSelectedKeyProp.current !== props.selectedKey) {
