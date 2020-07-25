@@ -29,10 +29,11 @@ export interface TooltipTriggerState {
 }
 
 let tooltips = {};
+// open to ideas of how to improve this, it's a tad gross right now, though not complicated, just gross
 
 export function useTooltipTriggerState(props: TooltipTriggerStateProps): TooltipTriggerState {
   let {isOpen, open, close} = useOverlayTriggerState(props);
-  let id = useId(); // this is a unique id for the tooltips, it's not a dom id
+  let id = useId(); // this is a unique id for the tooltips in the map, it's not a dom id
 
   let ensureTooltipEntry = () => {
     if (!tooltips[id]) {
