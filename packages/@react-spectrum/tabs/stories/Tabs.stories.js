@@ -11,7 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import Bell from '@spectrum-icons/workflow/Bell';
+import Bookmark from '@spectrum-icons/workflow/Bookmark';
+import Calendar from '@spectrum-icons/workflow/Calendar';
+import Dashboard from '@spectrum-icons/workflow/Dashboard';
 import {Item} from '@adobe/react-spectrum';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
@@ -31,35 +33,19 @@ storiesOf('Tabs', module)
   .add('isQuiet, density: compact', () =>
     render({isQuiet: true, density: 'compact'})
   )
-  .add('icons', () => render({icons: true}))
-  .add('icons, orientation: vertical', () =>
-    render({icons: true, orientation: 'vertical'})
-  )
   .add('density: compact, orientation: vertical', () =>
     render({density: 'compact', orientation: 'vertical'})
   )
-  // .add(
-  //   'icons only',
-  //   () => (
-  //     <TabList onSelectionChange={action('onSelectionChange')}>
-  //       <Tab icon={<Twitter />} title="Twitter" aria-title="Tab 1" />
-  //       <Tab icon={<Instagram />} title="Instagram" aria-title="Tab 2" />
-  //       <Tab icon={<Facebook />} title="Facebook" aria-title="Tab 3" />
-  //     </TabList>
-  //   ),
-  //   {inline: true}
-  // )
-  // .add(
-  //   'disabled tabs',
-  //   () => (
-  //     <TabList onSelectionChange={action('onSelectionChange')}>
-  //       <Tab icon={<Twitter />} title="Twitter">Tab 1</Tab>
-  //       <Tab icon={<Instagram />} title="Instagram" disabled>Tab 2</Tab>
-  //       <Tab icon={<Facebook />} title="Facebook">Tab 3</Tab>
-  //     </TabList>
-  //   ),
-  //   {inline: true}
-  // )
+  .add('icons', () => renderWithIcons())
+  .add('icons, density: compact', () => 
+    renderWithIcons({density: 'compact'})
+  )
+  .add('icons, orientation: vertical', () => 
+    renderWithIcons({orientation: 'vertical'})
+  )
+  .add('icons, density: compact, orientation: vertical', () => 
+    renderWithIcons({orientation: 'vertical', density: 'compact'})
+  )
   .add('disable all tabs', () => render({isDisabled: true}))
   .add('keyboardActivation: manual', () =>
     render({icons: true, keyboardActivation: 'manual'})
@@ -71,6 +57,22 @@ function render(props = {}) {
       <Item title="Tab 1" key="val1">Tab Body 1</Item>
       <Item title="Tab 2" key="val2">Tab Body 2</Item>
       <Item title="Tab 3" key="val3">Tab Body 3</Item>
+    </Tabs>
+  );
+}
+
+function renderWithIcons(props = {}) {
+  return (
+    <Tabs {...props} onSelectionChange={action('onSelectionChange')}>
+      <Item key="dashboard" icon={<Dashboard />} title="Dashboard">
+        Dashboard
+      </Item>
+      <Item key="calendar" icon={<Calendar />} title="Calendar">
+        Calendar
+      </Item>
+      <Item key="bookmark" icon={<Bookmark />} title="Bookmark">
+        Bookmark
+      </Item>
     </Tabs>
   );
 }

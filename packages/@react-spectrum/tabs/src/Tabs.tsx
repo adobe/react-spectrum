@@ -11,16 +11,18 @@
  */
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {ItemElement, Orientation} from '@react-types/shared';
-import {useSingleSelectListState} from '@react-stately/list';
+import {CollectionElement, DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
+import {FocusRing} from '@react-aria/focus';
+import {ListState, useSingleSelectListState} from '@react-stately/list';
+import {mergeProps} from '@react-aria/utils';
 import React, {useEffect, useRef, useState} from 'react';
-import {SpectrumTabsProps, TabProps} from '@react-types/tabs';
+import {SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
-import {Tab} from './Tab';
+import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
-import { useTabs } from '@react-aria/tabs';
+import {useTab, useTabs} from '@react-aria/tabs';
 
-export function Tabs<T>(props: SpectrumTabsProps<T>) {
+export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
   props = useProviderProps(props);
   let {
     orientation = 'horizontal' as Orientation,
@@ -32,19 +34,18 @@ export function Tabs<T>(props: SpectrumTabsProps<T>) {
     defaultSelectedItem,
     ...otherProps
   } = props;
-  let ref = useRef<any>();
+  let ref = useRef<HTMLDivElement>();
 
-  let allKeys = React.Children.map(children, (child: ItemElement<TabProps<T>>) => child.key);
-  let state = useSingleSelectListState({ 
+  let allKeys = React.Children.map(children, (child: CollectionElement<T>) => child.key);
+  let state = useSingleSelectListState<T>({
     ...props, 
     onSelectionChange,
     defaultSelectedKey: defaultSelectedItem || allKeys[0],
     disabledKeys: isDisabled ? [...allKeys] : []
   });
   
-  
   let {styleProps} = useStyleProps(otherProps);
-  let {tabListProps} = useTabs(props, state, ref);
+  let {tabListProps, tabPanelProps} = useTabs(props, state, ref);
   
   let selected = [...state.collection].find(item => state.selectionManager.selectedKeys.has(item.key));
   let [selectedTab, setSelectedTab] = useState<HTMLElement>();
@@ -58,12 +59,12 @@ export function Tabs<T>(props: SpectrumTabsProps<T>) {
     <div
       {...styleProps}
       className={classNames(
-        {},
-        'react-spectrum-TabPanel',
-        `react-spectrum-TabPanel--${orientation}`,
-        styleProps.className
-      )}>
-       <div
+      {},
+      'react-spectrum-TabPanel',
+      `react-spectrum-TabPanel--${orientation}`,
+      styleProps.className
+    )}>
+      <div
         {...styleProps}
         {...tabListProps}
         ref={ref}
@@ -77,18 +78,74 @@ export function Tabs<T>(props: SpectrumTabsProps<T>) {
         )} >
         {[...state.collection].map(item => (
           <Tab
-            {...item.props}
             key={item.key}
             item={item}
             state={state}
+            isDisabled={isDisabled}
             orientation={orientation} />
         ))}
         {selectedTab && <TabLine orientation={orientation} selectedTab={selectedTab} />}
       </div>
-      <div id="fix-me-tab-id" aria-labelledby="fix-me" role="tabpanel" tabIndex={0} className="react-spectrum-TabPanel-body">
+      <div {...tabPanelProps} className="react-spectrum-TabPanel-body">
         {selected && selected.props.children}
       </div>
     </div>
+  );
+}
+
+interface TabProps<T> extends DOMProps, StyleProps {
+  item: Node<T>,
+  state: ListState<T>,
+  isDisabled?: boolean,
+  orientation?: Orientation
+}
+
+export function Tab<T>(props: TabProps<T>) {
+  let {item, state, ...otherProps} = props;
+  let {styleProps} = useStyleProps(otherProps);
+  let {
+    key,
+    rendered
+  } = item;
+
+  /** Needs to be HTMLButtonElement. */
+  let ref = useRef<HTMLDivElement>();
+  let {tabProps} = useTab({
+    item,
+    ref
+  }, state);
+
+  let {hoverProps, isHovered} = useHover({
+    ...props
+  });
+  let isSelected = state.selectionManager.selectedKeys.has(key);
+  let isDisabled = state.disabledKeys.has(key);
+
+  let icon = item.props.icon ? React.cloneElement(item.props.icon, {
+    size: 'S',
+    UNSAFE_className: classNames(styles, 'spectrum-Icon')
+  }) : undefined;
+
+  return (
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div // Needs to be a button.
+        {...styleProps}
+        {...mergeProps(tabProps, hoverProps)}
+        ref={ref}
+        className={classNames(
+          styles,
+          'spectrum-Tabs-item',
+          {
+            'is-selected': isSelected,
+            'is-disabled': isDisabled,
+            'is-hovered': isHovered
+          },
+          styleProps.className
+        )}>
+        {icon}
+        {rendered && <span className={classNames(styles, 'spectrum-Tabs-itemLabel')}>{rendered}</span>}
+      </div>
+    </FocusRing>
   );
 }
 

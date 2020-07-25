@@ -13,7 +13,6 @@ import {AriaLabelingProps, CollectionBase, KeyboardDelegate, Node, Orientation, 
 import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
 import {ListState} from '@react-stately/list';
 import {TabsKeyboardDelegate} from '.';
-import {useId} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
@@ -33,7 +32,9 @@ interface TabsProps<T> extends CollectionBase<T>, SingleSelection, AriaLabelingP
 
 interface TabsAria {
   /** Props for the tablist container. */
-  tabListProps: HTMLAttributes<HTMLElement>
+  tabListProps: HTMLAttributes<HTMLElement>,
+  /** Props for the associated tabpanel element. */
+  tabPanelProps: HTMLAttributes<HTMLElement>
 }
 
 export function useTabs<T>(props: TabsProps<T>, state: ListState<T>, ref): TabsAria {
@@ -61,20 +62,26 @@ export function useTabs<T>(props: TabsProps<T>, state: ListState<T>, ref): TabsA
     selectOnFocus: keyboardActivation === 'automatic',
     disallowEmptySelection: true
   });
+  let selectedKey = [...collection.getKeys()].find(key => manager.selectedKeys.has(key));
+
   return {
     tabListProps: {
       ...collectionProps,
       role: 'tablist',
       'aria-label': ariaLabel
+    },
+    tabPanelProps: {
+      id: generateId(selectedKey, 'tabpanel'),
+      'aria-labelledby': generateId(selectedKey, 'tab'),
+      tabIndex: 0,
+      role: 'tabpanel'
     }
   };
 }
 
 interface TabAria {
   /** Props for the tab element. */
-  tabProps: HTMLAttributes<HTMLElement>,
-  /** Props for the associated tabpanel element. */
-  tabPanelProps: HTMLAttributes<HTMLElement>
+  tabProps: HTMLAttributes<HTMLElement>
 }
 
 interface TabAriaProps<T> {
@@ -94,6 +101,7 @@ interface TabAriaProps<T> {
    * @default 'horizontal'
    */
   orientation?: Orientation,
+  /** Whether the tab should be disabled. */
   isDisabled?: boolean
 }
 
@@ -121,8 +129,9 @@ export function useTab<T>(props: TabAriaProps<T>, state: ListState<T>): TabAria 
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled});
-  let tabId = useId();
-  let tabPanelId = useId(`${tabId}-panel`);
+  let tabId = generateId(key, 'tab');
+  let tabPanelId = generateId(key, 'tabpanel');
+  let tabIndex = isSelected ? 0 : -1;
 
   return {
     tabProps: {
@@ -130,23 +139,16 @@ export function useTab<T>(props: TabAriaProps<T>, state: ListState<T>): TabAria 
       id: tabId,
       'aria-selected': isSelected,
       'aria-disabled': isDisabled,
-      'aria-controls': tabPanelId,
-      tabIndex: !isDisabled && isSelected ? 0 : -1,
+      'aria-controls': isSelected ? tabPanelId : undefined,
+      tabIndex: isDisabled ? undefined : tabIndex,
       role: 'tab'
-    },
-    tabPanelProps: {
-      id: tabPanelId,
-      'aria-labelledby': tabId,
-      role: 'tabpanel',
-      tabIndex: 0
     }
   };
 }
 
-function getTabId(key: Key): string {
-  return `react-aria-tab-${key}-id`;
-}
-
-function getTabPanelId(key: Key): string {
-  return `react-aria-tabpanel-${key}-id`;
+function generateId(key: Key, role: string) {
+  if (typeof key === 'string') {
+    key = key.replace(/\s+/g, '');
+  }
+  return `react-aria-${role}-${key}`;
 }
