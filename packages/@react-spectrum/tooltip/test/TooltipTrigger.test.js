@@ -209,6 +209,13 @@ describe('TooltipTrigger', function () {
         jest.advanceTimersByTime(CLOSE_TIME);
       });
       expect(tooltip).not.toBeInTheDocument();
+      act(() => {
+        button.blur();
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(() => getByRole('tooltip')).toThrow();
     });
   });
 
