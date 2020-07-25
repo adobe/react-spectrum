@@ -89,18 +89,6 @@ interface TabAriaProps<T> {
   item: Node<T>,
   /** Ref to the tab. */
   ref: RefObject<HTMLElement>,
-  /** A delegate object that implements behavior for keyboard focus movement. */
-  keyboardDelegate?: KeyboardDelegate,
-  /**
-   * Whether tabs are activated automatically on focus or manually.
-   * @default 'automatic'
-   */
-  keyboardActivation?: 'automatic' | 'manual',
-  /**
-   * The orientation of the tabs.
-   * @default 'horizontal'
-   */
-  orientation?: Orientation,
   /** Whether the tab should be disabled. */
   isDisabled?: boolean
 }
