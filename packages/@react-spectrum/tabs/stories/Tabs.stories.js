@@ -48,7 +48,13 @@ storiesOf('Tabs', module)
   )
   .add('disable all tabs', () => render({isDisabled: true}))
   .add('keyboardActivation: manual', () =>
-    render({icons: true, keyboardActivation: 'manual'})
+    render({keyboardActivation: 'manual'})
+  )
+  .add('overflowMode: dropdown', () =>
+    render({overflowMode: 'dropdown'})
+  )
+  .add('overflowMode: dropdown, density: compact', () =>
+    render({overflowMode: 'dropdown', density: 'compact'})
   );
 
 function render(props = {}) {

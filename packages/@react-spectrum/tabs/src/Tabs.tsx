@@ -11,11 +11,13 @@
  */
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {CollectionElement, DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
+import {CollectionChildren, CollectionElement, DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
+import {Item} from '@react-spectrum/menu';
 import {ListState, useSingleSelectListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
-import React, {useEffect, useRef, useState} from 'react';
+import {Picker} from '@react-spectrum/picker';
+import React, {Key, useEffect, useRef, useState} from 'react';
 import {SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {useHover} from '@react-aria/interactions';
@@ -32,6 +34,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
     isQuiet,
     density,
     defaultSelectedItem,
+    overflowMode = 'scrolling',
     ...otherProps
   } = props;
   let ref = useRef<HTMLDivElement>();
@@ -51,9 +54,14 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
   let [selectedTab, setSelectedTab] = useState<HTMLElement>();
   
   useEffect(() => {
-    let tabs: HTMLElement[] = Array.from(ref.current.querySelectorAll('.' + styles['spectrum-Tabs-item'])); // v3 what do we with these?
-    setSelectedTab(tabs.find(tab => tab.dataset.key === state.selectedKey));
-  }, [props.children, state.selectedKey]);
+    let tabs: HTMLElement[] = Array.from(ref.current.querySelectorAll('.' + styles['spectrum-Tabs-item']));
+    if (overflowMode === 'scrolling') {
+      setSelectedTab(tabs.find(tab => tab.dataset.key === state.selectedKey));
+    }
+    if (overflowMode === 'dropdown') {
+      setSelectedTab(tabs[0]);
+    }
+  }, [props.children, state.selectedKey, overflowMode]);
 
   return (
     <div
@@ -76,7 +84,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
           density ? `spectrum-Tabs--${density}` : '',
           styleProps.className
         )} >
-        {[...state.collection].map(item => (
+        {overflowMode === 'scrolling' && [...state.collection].map(item => (
           <Tab
             key={item.key}
             item={item}
@@ -84,6 +92,11 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
             isDisabled={isDisabled}
             orientation={orientation} />
         ))}
+        {overflowMode === 'dropdown' && (
+          <OverflowTab isDisabled={isDisabled} state={state}>
+            {children}
+          </OverflowTab>
+        )}
         {selectedTab && <TabLine orientation={orientation} selectedTab={selectedTab} />}
       </div>
       <div {...tabPanelProps} className="react-spectrum-TabPanel-body">
@@ -146,6 +159,39 @@ export function Tab<T>(props: TabProps<T>) {
         {rendered && <span className={classNames(styles, 'spectrum-Tabs-itemLabel')}>{rendered}</span>}
       </div>
     </FocusRing>
+  );
+}
+
+interface OverflowTabProps<T> extends DOMProps, StyleProps {
+  children: CollectionChildren<T>,
+  state: ListState<T>,
+  isDisabled?: boolean,
+  defaultSelectedItem?: Key
+}
+
+/** This is currently under construction: just for testing. */
+function OverflowTab<T = object>(props: OverflowTabProps<T>) {
+  let {
+    state,
+    isDisabled,
+    defaultSelectedItem
+  } = props;
+  let selected = [...state.collection].find(item => state.selectionManager.selectedKeys.has(item.key));
+
+  return (
+    <Picker
+      isQuiet
+      isDisabled={isDisabled}
+      onSelectionChange={key => state.selectionManager.replaceSelection(key)}
+      defaultSelectedKey={defaultSelectedItem}
+      selectedKey={selected.key}
+      UNSAFE_className={classNames(styles, 'spectrum-Tabs-item')} >
+      {[...state.collection].map(item => (
+        <Item {...item}>
+          {item.rendered}
+        </Item>
+      ))}
+    </Picker>
   );
 }
 

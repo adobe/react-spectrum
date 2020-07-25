@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaLabelingProps, CollectionBase, KeyboardDelegate, Node, Orientation, SingleSelection} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, Node, Orientation, SingleSelection} from '@react-types/shared';
 import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
 import {ListState} from '@react-stately/list';
 import {TabsKeyboardDelegate} from '.';
