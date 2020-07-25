@@ -19,6 +19,7 @@ import {Picker} from '@react-spectrum/picker';
 import React, {Key, useEffect, useRef, useState} from 'react';
 import {SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
+import tabsStyles from './tabs.css';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTab, useTabs} from '@react-aria/tabs';
@@ -66,7 +67,7 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
     <div
       {...styleProps}
       className={classNames(
-      {},
+      tabsStyles,
       'react-spectrum-TabPanel',
       `react-spectrum-TabPanel--${orientation}`,
       styleProps.className
