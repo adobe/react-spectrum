@@ -14,11 +14,13 @@ import {FocusableProvider} from '@react-aria/focus';
 import {Overlay} from '@react-spectrum/overlays';
 import {PlacementAxis} from '@react-types/overlays';
 import React, {RefObject, useContext, useRef} from 'react';
-import {StyleProps} from '@react-types/shared';
+import {DOMRef, StyleProps} from '@react-types/shared';
 import {TooltipTriggerProps} from '@react-types/tooltip';
 import {useOverlayPosition} from '@react-aria/overlays';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
+import {SpectrumMenuTriggerProps} from "@react-types/menu";
+import {useDOMRef} from "@react-spectrum/utils";
 
 interface TooltipContextProps extends StyleProps {
   ref?: RefObject<HTMLDivElement>,
@@ -32,7 +34,7 @@ export function useTooltipProvider(): TooltipContextProps {
   return useContext(TooltipContext) || {};
 }
 
-export function TooltipTrigger(props: TooltipTriggerProps) {
+function TooltipTrigger(props: TooltipTriggerProps, ref: DOMRef<HTMLElement>) {
   let {
     children,
     isDisabled
@@ -42,16 +44,18 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 
   let state = useTooltipTriggerState(props);
 
+  let domRef = useDOMRef(ref);
   let triggerRef = useRef<HTMLElement>();
+  let tooltipTriggerRef = domRef || triggerRef;
   let overlayRef = useRef<HTMLDivElement>();
 
   let {triggerProps, tooltipProps} = useTooltipTrigger({
     isDisabled
-  }, state, triggerRef);
+  }, state, tooltipTriggerRef);
 
   let {overlayProps, placement} = useOverlayPosition({
     placement: props.placement || 'right',
-    targetRef: triggerRef,
+    targetRef: tooltipTriggerRef,
     overlayRef,
     isOpen: state.isOpen
 
@@ -68,7 +72,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   return (
     <FocusableProvider
       {...triggerProps}
-      ref={triggerRef}>
+      ref={tooltipTriggerRef}>
       {trigger}
       <TooltipContext.Provider
         value={{
@@ -84,3 +88,9 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     </FocusableProvider>
   );
 }
+
+/**
+ * Display container for Tooltip content. Has a directional arrow dependent on its placement.
+ */
+let _TooltipTrigger = React.forwardRef(TooltipTrigger);
+export {_TooltipTrigger as TooltipTrigger};

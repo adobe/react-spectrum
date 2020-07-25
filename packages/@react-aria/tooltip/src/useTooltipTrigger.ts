@@ -93,6 +93,7 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
     },
     tooltipProps: {
       id: tooltipId
+      // should i keep the tooltip open if it gets hovered? (not the trigger, the tooltip itself)
     }
   };
 }

@@ -11,6 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
+import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Tooltip, TooltipTrigger} from '../src';
@@ -18,88 +19,87 @@ import {Tooltip, TooltipTrigger} from '../src';
 storiesOf('TooltipTrigger', module)
   .add(
     'default',
-    () => render('This is a tooltip.', {})
+    () => render({})
   )
   .add(
     'placement: left',
-    () => render('This is a tooltip.', {placement: 'start'})
+    () => render({placement: 'start'})
   )
   .add(
     'placement: top',
-    () => render('This is a tooltip.', {placement: 'top'})
+    () => render({placement: 'top'})
   )
   .add(
     'placement: bottom',
-    () => render('This is a tooltip.', {placement: 'bottom'})
+    () => render({placement: 'bottom'})
   )
   .add(
     'isDisabled',
-    () => render('This is a tooltip.', {placement: 'left', isDisabled: true})
+    () => render({placement: 'left', isDisabled: true})
   )
   .add(
     'delay',
-    () => render('Delayed Tooltip', {delay: true})
+    () => render({delay: true})
   )
   .add(
     'multiple tooltips',
-    () => renderMultipleTriggers('This is a tooltip.', {placement: 'left'})
+    () => renderMultipleTriggers({placement: 'left'})
   )
   .add(
     'delay multiple tooltips',
-    () => renderMultipleTriggers('This is a tooltip.', {delay: true})
+    () => renderMultipleTriggers({delay: true})
   )
   .add(
     'isOpen',
-    () => renderMultipleTriggers('This is a tooltip.', {isOpen: true})
+    () => renderMultipleTriggers({isOpen: true})
   );
 
-function render(content, props = {}) {
+function render(props = {}) {
   return (
     <TooltipTrigger {...props}>
       <ActionButton>Trigger Tooltip</ActionButton>
       <Tooltip>
-        {content}
+        Tooltip message.
       </Tooltip>
     </TooltipTrigger>
   );
 }
 
-// These are sample functions for proof of concept in this PR. Can be removed at in the next tooltip related pull request.
-function renderMultipleTriggers(content, props = {}) {
+function renderMultipleTriggers(props = {}) {
   return (
-    <div>
-      <div>
-        <TooltipTrigger {...props}>
-          <ActionButton>
-            Tooltip Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...props}>
-          <ActionButton>
-            Tooltip Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-      <div style={{height: 10}}> </div>
-      <div>
-        <TooltipTrigger {...props}>
-          <ActionButton>
-            Tooltip Trigger
-          </ActionButton>
-          <Tooltip>
-            {content}
-          </Tooltip>
-        </TooltipTrigger>
-      </div>
-    </div>
+    <Flex gap="size-100" direction="column">
+      <TooltipTrigger {...props}>
+        <ActionButton>
+          Neutral Tooltip
+        </ActionButton>
+        <Tooltip displayIcon>
+          Neutral message.
+        </Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger {...props}>
+        <ActionButton>
+          Positive Tooltip
+        </ActionButton>
+        <Tooltip variant="positive" displayIcon>
+          Positive message.
+        </Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger {...props}>
+        <ActionButton>
+          Negative Tooltip
+        </ActionButton>
+        <Tooltip variant="negative" displayIcon>
+          Negative message.
+        </Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger {...props}>
+        <ActionButton>
+          Info Tooltip
+        </ActionButton>
+        <Tooltip variant="info" displayIcon>
+          Informative message.
+        </Tooltip>
+      </TooltipTrigger>
+    </Flex>
   );
 }

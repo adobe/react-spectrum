@@ -10,26 +10,40 @@
  * governing permissions and limitations under the License.
  */
 
+import AlertSmall from '@spectrum-icons/ui/AlertSmall';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
+import InfoSmall from '@spectrum-icons/ui/InfoSmall';
 import {mergeProps} from '@react-aria/utils';
-import React, {RefObject, useContext, useRef} from 'react';
+import React, {RefObject, useRef} from 'react';
 import {SpectrumTooltipProps} from '@react-types/tooltip';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
+import SuccessSmall from '@spectrum-icons/ui/SuccessSmall';
 import {useTooltip} from '@react-aria/tooltip';
 import {useTooltipProvider} from './TooltipTrigger';
 
-export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefObject<HTMLDivElement>) => {
-  ref = ref || useRef();
-  props = mergeProps({...props, ref}, useTooltipProvider()); // i think useTooltipProvider is overriding the ref passed in??
+let iconMap = {
+  neutral: '',
+  info: InfoSmall,
+  positive: SuccessSmall,
+  negative: AlertSmall
+};
+
+function Tooltip(props: SpectrumTooltipProps, ref: RefObject<HTMLDivElement>) {
+  let defaultRef = useRef();
+  ref = ref || defaultRef; // need to figure out how to merge?
+  let {ref: overlayRef, ...tooltipProviderProps} = useTooltipProvider();
+  props = mergeProps(props, tooltipProviderProps);
   let {
     variant = 'neutral',
     placement = 'right',
     isOpen,
-    ref: overlayRef,
+    displayIcon,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
   let {tooltipProps} = useTooltip(props);
+
+  let Icon = iconMap[variant];
 
   return (
     <div
@@ -46,6 +60,7 @@ export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefOb
         styleProps.className
       )}
       ref={overlayRef}>
+      {displayIcon && variant !== 'neutral' && <Icon UNSAFE_className={classNames(styles, 'spectrum-Tooltip-typeIcon')} aria-hidden />}
       {props.children && (
         <span className={classNames(styles, 'spectrum-Tooltip-label')}>
           {props.children}
@@ -54,4 +69,11 @@ export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefOb
       <span className={classNames(styles, 'spectrum-Tooltip-tip')} />
     </div>
   );
-});
+}
+
+
+/**
+ * Display container for Tooltip content. Has a directional arrow dependent on its placement.
+ */
+let _Tooltip = React.forwardRef(Tooltip);
+export {_Tooltip as Tooltip};
