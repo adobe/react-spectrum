@@ -10,23 +10,99 @@
  * governing permissions and limitations under the License.
  */
 
-import {TooltipManager} from './TooltipManager';
-import {useState} from 'react';
+import {useEffect} from 'react';
+import {useId} from '@react-aria/utils';
+import {TooltipTriggerProps} from '@react-types/tooltip';
+import {useOverlayTriggerState} from "@react-stately/overlays";
+
+export const TOOLTIP_DELAY = 2000; // this seems to be a 2 second delay, check with design
+export const TOOLTIP_COOLDOWN = 2000;
+// should the cooldown be a different length of time?
+// what happens if one trigger is focused and a different trigger is hovered, does one of them win?
+
+interface TooltipTriggerStateProps extends TooltipTriggerProps {}
 
 export interface TooltipTriggerState {
-  open: boolean,
-  setOpen: (value: boolean) => void,
-  tooltipManager: TooltipManager
+  isOpen: boolean,
+  open: () => void,
+  close: () => void
 }
 
-let tooltipManager = new TooltipManager();
+let tooltips = {};
 
-export function useTooltipTriggerState(): TooltipTriggerState {
-  let [open, setOpen] = useState(false);
+export function useTooltipTriggerState(props: TooltipTriggerStateProps): TooltipTriggerState {
+  let {isOpen, open, close} = useOverlayTriggerState(props);
+  let id = useId(); // this is a unique id for the tooltips, it's not a dom id
+
+  let ensureTooltipEntry = () => {
+    if (!tooltips[id]) {
+      tooltips[id] = {open: false, warmedUp: false, warmupTimeout: null, cooldownTimeout: null};
+    }
+    return tooltips[id];
+  };
+
+  let showTooltip = () => {
+    let tooltip = ensureTooltipEntry();
+    if (tooltip.warmedUp || !tooltip.warmupTimeout || tooltip.cooldownTimeout) {
+      open();
+      tooltip.open = true;
+      if (tooltip.cooldownTimeout) {
+        clearTimeout(tooltip.cooldownTimeout);
+        tooltip.cooldownTimeout = null;
+      }
+    }
+  }
+
+  let hideTooltip = () => {
+    let tooltip = tooltips[id];
+    if (tooltip) {
+      tooltip.open = false;
+      close();
+      if (tooltip.warmupTimeout) {
+        clearTimeout(tooltip.warmupTimeout);
+        tooltip.warmupTimeout = null;
+      }
+      if (!tooltip.cooldownTimeout) {
+        tooltip.cooldownTimeout = setTimeout(() => delete tooltips[id], TOOLTIP_COOLDOWN);
+      }
+    }
+  }
+
+  let warmupTooltip = () => {
+    let tooltip = ensureTooltipEntry();
+    if (!tooltip.open && !tooltip.warmupTimeout && !tooltip.warmedUp) {
+      tooltip.warmupTimeout = setTimeout(() => {
+        tooltip.warmupTimeout = null;
+        tooltip.warmedUp = true;
+        showTooltip();
+      }, TOOLTIP_DELAY);
+    } else if (!tooltip.open && !tooltip.warmupTimeout && tooltip.warmedUp) {
+      showTooltip();
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      let tooltip = tooltips[id];
+      if (tooltip) {
+        clearTimeout(tooltip.warmupTimeout);
+        clearTimeout(tooltip.cooldownTimeout);
+        delete tooltips[id];
+      }
+    }
+  }, []);
 
   return {
-    open,
-    setOpen,
-    tooltipManager
+    isOpen,
+    open: () => {
+      if (props && props.delay) {
+        warmupTooltip();
+      } else {
+        showTooltip();
+      }
+    },
+    close: () => {
+      hideTooltip();
+    }
   };
 }

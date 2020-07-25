@@ -12,13 +12,50 @@
 
 import {FocusableDOMProps, FocusableProps} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import {RefObject, useEffect} from 'react';
+import React, {HTMLAttributes, MutableRefObject, ReactNode, RefObject, useContext, useEffect} from 'react';
 import {useFocus, useKeyboard} from '@react-aria/interactions';
 
 interface FocusableOptions extends FocusableProps, FocusableDOMProps {
   /** Whether focus should be disabled. */
   isDisabled?: boolean
 }
+
+interface FocusableContextProps extends HTMLAttributes<HTMLElement> {
+  children?: ReactNode,
+  ref?: MutableRefObject<HTMLElement>
+}
+
+export let FocusableContext = React.createContext<FocusableContextProps>(null);
+
+
+export function useFocusableContext(ref: RefObject<HTMLElement>): FocusableContextProps {
+  let context = useContext(FocusableContext) || {} as FocusableContextProps;
+
+  useEffect(() => {
+    if (context && context.ref) {
+      context.ref.current = ref.current;
+      return () => {
+        context.ref.current = null;
+      };
+    }
+  }, [context, ref]);
+
+  return context;
+}
+
+export let FocusableProvider = React.forwardRef((props: FocusableContextProps, ref: RefObject<HTMLElement>) => {
+  let {children, ...otherProps} = props;
+  let context = {
+    ...otherProps,
+    ref
+  };
+
+  return (
+    <FocusableContext.Provider value={context}>
+      {children}
+    </FocusableContext.Provider>
+  );
+});
 
 /**
  * Used to make an element focusable and capable of auto focus.
@@ -27,6 +64,7 @@ export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElem
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
   let interactions = mergeProps(focusProps, keyboardProps);
+  let domProps = useFocusableContext(domRef);
 
   useEffect(() => {
     if (props.autoFocus && domRef.current) {
@@ -35,9 +73,12 @@ export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElem
   }, [props.autoFocus, domRef]);
 
   return {
-    focusableProps: {
-      ...interactions,
-      tabIndex: props.excludeFromTabOrder && !props.isDisabled ? -1 : undefined
-    }
+    focusableProps: mergeProps(
+      {
+        ...interactions,
+        tabIndex: props.excludeFromTabOrder && !props.isDisabled ? -1 : undefined
+      },
+      domProps
+    )
   };
 }

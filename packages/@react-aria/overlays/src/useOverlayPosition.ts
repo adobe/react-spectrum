@@ -76,7 +76,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     arrowOffsetLeft: undefined,
     arrowOffsetTop: undefined,
     maxHeight: undefined,
-    placement: undefined
+    placement: translateRTL(placement, direction)
   });
 
   let deps = [

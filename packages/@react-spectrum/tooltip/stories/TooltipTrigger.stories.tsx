@@ -19,22 +19,39 @@ storiesOf('TooltipTrigger', module)
   .add(
     'default',
     () => render('This is a tooltip.', {})
-  ).add(
+  )
+  .add(
     'placement: left',
     () => render('This is a tooltip.', {placement: 'start'})
-  ).add(
+  )
+  .add(
     'placement: top',
     () => render('This is a tooltip.', {placement: 'top'})
-  ).add(
+  )
+  .add(
     'placement: bottom',
     () => render('This is a tooltip.', {placement: 'bottom'})
-  ).add(
+  )
+  .add(
     'isDisabled',
     () => render('This is a tooltip.', {placement: 'left', isDisabled: true})
-  ).add(
-     'multiple tooltips',
-     () => renderMultipleTriggers('This is a tooltip.', {placement: 'left'})
-   );
+  )
+  .add(
+    'delay',
+    () => render('Delayed Tooltip', {delay: true})
+  )
+  .add(
+    'multiple tooltips',
+    () => renderMultipleTriggers('This is a tooltip.', {placement: 'left'})
+  )
+  .add(
+    'delay multiple tooltips',
+    () => renderMultipleTriggers('This is a tooltip.', {delay: true})
+  )
+  .add(
+    'isOpen',
+    () => renderMultipleTriggers('This is a tooltip.', {isOpen: true})
+  );
 
 function render(content, props = {}) {
   return (

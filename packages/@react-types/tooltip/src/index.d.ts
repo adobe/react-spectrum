@@ -17,7 +17,8 @@ import {PositionProps} from '@react-types/overlays';
 export interface TooltipTriggerProps extends PositionProps {
   children: ReactElement[],
   isDisabled?: boolean,
-  onOpenChange?: (isOpen: boolean) => void
+  onOpenChange?: (isOpen: boolean) => void,
+  delay?: boolean
 }
 
 export interface TooltipProps extends DOMProps {
@@ -36,7 +37,5 @@ export interface SpectrumTooltipProps extends AriaTooltipProps, StyleProps {
 export interface TriggerProps extends DOMProps, HTMLAttributes<HTMLElement> {}
 
 export interface TooltipTriggerAriaProps {
-  tooltipProps: TooltipProps,
-  triggerProps: TriggerProps,
   isDisabled: boolean
 }

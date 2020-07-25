@@ -12,7 +12,7 @@
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
-import React, {RefObject, useRef} from 'react';
+import React, {RefObject, useContext, useRef} from 'react';
 import {SpectrumTooltipProps} from '@react-types/tooltip';
 import styles from '@adobe/spectrum-css-temp/components/tooltip/vars.css';
 import {useTooltip} from '@react-aria/tooltip';
@@ -20,13 +20,14 @@ import {useTooltipProvider} from './TooltipTrigger';
 
 export const Tooltip = React.forwardRef((props: SpectrumTooltipProps, ref: RefObject<HTMLDivElement>) => {
   ref = ref || useRef();
+  props = mergeProps({...props, ref}, useTooltipProvider()); // i think useTooltipProvider is overriding the ref passed in??
   let {
     variant = 'neutral',
     placement = 'right',
     isOpen,
     ref: overlayRef,
     ...otherProps
-  } = mergeProps({...props, ref}, useTooltipProvider());
+  } = props;
   let {styleProps} = useStyleProps(otherProps);
   let {tooltipProps} = useTooltip(props);
 
