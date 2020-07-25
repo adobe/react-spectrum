@@ -65,7 +65,7 @@ interface SelectableCollectionOptions {
    */
   disallowSelectAll?: boolean,
   /**
-   * This is for tabs auto activation.
+   * Whether key selection should be replaced on focus.
    * @default false
    */
   selectOnFocus?: boolean
