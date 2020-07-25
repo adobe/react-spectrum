@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {AriaLabelingProps, CollectionBase, KeyboardDelegate, Node, Orientation, SingleSelection} from '@react-types/shared';
-import {HTMLAttributes, RefObject, useMemo} from 'react';
+import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
 import {ListState} from '@react-stately/list';
 import {TabsKeyboardDelegate} from '.';
 import {useId} from '@react-aria/utils';
@@ -78,7 +78,6 @@ interface TabAria {
 }
 
 interface TabAriaProps<T> {
-  id?: string,
   /** Collection node for the tab. */
   item: Node<T>,
   /** Ref to the tab. */
@@ -100,7 +99,6 @@ interface TabAriaProps<T> {
 
 export function useTab<T>(props: TabAriaProps<T>, state: ListState<T>): TabAria {
   let {
-    id,
     item, 
     ref,
     isDisabled: isDisabledProp
@@ -123,7 +121,7 @@ export function useTab<T>(props: TabAriaProps<T>, state: ListState<T>): TabAria 
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled});
-  let tabId = useId(id);
+  let tabId = useId();
   let tabPanelId = useId(`${tabId}-panel`);
 
   return {
@@ -143,4 +141,12 @@ export function useTab<T>(props: TabAriaProps<T>, state: ListState<T>): TabAria 
       tabIndex: 0
     }
   };
+}
+
+function getTabId(key: Key): string {
+  return `react-aria-tab-${key}-id`;
+}
+
+function getTabPanelId(key: Key): string {
+  return `react-aria-tabpanel-${key}-id`;
 }

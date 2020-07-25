@@ -13,5 +13,4 @@
 /// <reference types="css-module-types" />
 
 export * from './Tabs';
-export * from './TabList';
 export * from './Tab';

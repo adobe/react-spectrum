@@ -11,26 +11,14 @@
  */
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import {ListState} from '@react-stately/list';
-import React, {ReactNode, useRef} from 'react';
+import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
+import {TabProps} from '@react-types/tabs';
 import {useTab} from '@react-aria/tabs';
 
-interface TabProps<T> extends DOMProps, StyleProps {
-  id?: string,
-  item: Node<T>,
-  state: ListState<T>,
-  title?: ReactNode,
-  icon?: ReactNode,
-  children?: ReactNode,
-  isDisabled?: boolean,
-  orientation?: Orientation
-}
-
 export function Tab<T>(props: TabProps<T>) {
-  let {id, item, state, icon, ...otherProps} = props;
+  let {item, state, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
   let {
     key,
@@ -38,7 +26,6 @@ export function Tab<T>(props: TabProps<T>) {
   } = item;
   let ref = useRef<any>();
   let {tabProps} = useTab({
-    id,
     item,
     ref
   }, state);
@@ -61,8 +48,6 @@ export function Tab<T>(props: TabProps<T>) {
           },
           styleProps.className
         )}>
-        {/* Todo */}
-        {icon}
         {rendered && <span className={classNames(styles, 'spectrum-Tabs-itemLabel')}>{rendered}</span>}
       </div>
     </FocusRing>
