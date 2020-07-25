@@ -14,6 +14,7 @@ import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
 import {InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
+import { text } from '@storybook/addon-knobs';
 
 
 export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
@@ -115,7 +116,6 @@ export function useSpinButton(
   let isFocused = useRef(false);
   let onFocus = () => {
     isFocused.current = true;
-    inputRef?.current.select();
   };
 
   let onBlur = () => {

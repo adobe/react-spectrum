@@ -24,7 +24,7 @@ import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElement>) => {
+export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps & {formatOptions?: Intl.NumberFormatOptions}, ref: RefObject<HTMLDivElement>) => {
   props = useProviderProps(props);
   let {
     // formatOptions,

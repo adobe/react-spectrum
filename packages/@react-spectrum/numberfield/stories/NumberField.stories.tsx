@@ -22,6 +22,10 @@ storiesOf('NumberField', module)
     () => render({onChange: action('onChange')})
   )
   .add(
+    'number formatter',
+    () => render({formatOptions: { style: 'unit', unit: 'percent' }})
+  )
+  .add(
     'isQuiet',
     () => render({isQuiet: true})
   )
