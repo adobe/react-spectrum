@@ -13,7 +13,6 @@
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {CollectionChildren, CollectionElement, DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import {Item} from '@react-spectrum/menu';
 import {ListState, useSingleSelectListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import {Picker} from '@react-spectrum/picker';
@@ -172,6 +171,7 @@ interface OverflowTabProps<T> extends DOMProps, StyleProps {
 /** This is currently under construction: just for testing. */
 function OverflowTab<T = object>(props: OverflowTabProps<T>) {
   let {
+    children,
     state,
     isDisabled,
     defaultSelectedItem
@@ -186,11 +186,7 @@ function OverflowTab<T = object>(props: OverflowTabProps<T>) {
       defaultSelectedKey={defaultSelectedItem}
       selectedKey={selected.key}
       UNSAFE_className={classNames(styles, 'spectrum-Tabs-item')} >
-      {[...state.collection].map(item => (
-        <Item {...item}>
-          {item.rendered}
-        </Item>
-      ))}
+      {children}
     </Picker>
   );
 }
