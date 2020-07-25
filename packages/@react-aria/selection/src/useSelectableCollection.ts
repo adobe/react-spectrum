@@ -113,7 +113,11 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
               manager.replaceSelection(nextKey);
             }
           } else if (shouldFocusWrap) {
-            manager.setFocusedKey(delegate.getFirstKey(manager.focusedKey));
+            let wrapKey = delegate.getFirstKey(manager.focusedKey);
+            manager.setFocusedKey(wrapKey);
+            if (manager.selectionMode === 'single' && selectOnFocus) {
+              manager.replaceSelection(wrapKey);
+            }
           }
 
           if (e.shiftKey && manager.selectionMode === 'multiple') {
@@ -135,7 +139,11 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
               manager.replaceSelection(nextKey);
             }
           } else if (shouldFocusWrap) {
-            manager.setFocusedKey(delegate.getLastKey(manager.focusedKey));
+            let wrapKey = delegate.getLastKey(manager.focusedKey);
+            manager.setFocusedKey(wrapKey);
+            if (manager.selectionMode === 'single' && selectOnFocus) {
+              manager.replaceSelection(wrapKey);
+            }
           }
 
           if (e.shiftKey && manager.selectionMode === 'multiple') {
