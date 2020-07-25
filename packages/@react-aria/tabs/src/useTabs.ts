@@ -12,7 +12,8 @@
 import {AriaLabelingProps, CollectionBase, KeyboardDelegate, Node, Orientation, SingleSelection} from '@react-types/shared';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {ListState} from '@react-stately/list';
-import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
+import {TabsKeyboardDelegate} from '.';
+import {useLocale} from '@react-aria/i18n';
 import {useId} from '@react-aria/utils';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableItem, useSelectableList} from '@react-aria/selection';
@@ -27,8 +28,7 @@ interface TabsProps<T> extends CollectionBase<T>, SingleSelection, AriaLabelingP
    * The orientation of the tabs.
    * @default 'horizontal'
    */
-  orientation?: Orientation,
-  keyboardDelegate?: KeyboardDelegate
+  orientation?: Orientation
 }
 
 interface TabsAria {
@@ -39,7 +39,6 @@ interface TabsAria {
 export function useTabs<T>(props: TabsProps<T>, state: ListState<T>, ref): TabsAria {
   let {
     'aria-label': ariaLabel,
-    keyboardDelegate,
     orientation = 'horizontal',
     keyboardActivation = 'automatic'
   } = props;
@@ -48,12 +47,12 @@ export function useTabs<T>(props: TabsProps<T>, state: ListState<T>, ref): TabsA
     selectionManager: manager,
     disabledKeys
   } = state;
-
-  let delegate = useMemo(() => keyboardDelegate || new TabsKeyboardDelegate({
-    disabledKeys: disabledKeys,
-    collection: collection,
-    orientation
-  }), [keyboardDelegate, collection, disabledKeys, orientation]);
+  let {direction} = useLocale();
+  let delegate = useMemo(() => new TabsKeyboardDelegate(
+    collection, 
+    direction, 
+    orientation, 
+    disabledKeys), [collection, disabledKeys, orientation]);
 
   let {listProps} = useSelectableList({
     selectionManager: manager,

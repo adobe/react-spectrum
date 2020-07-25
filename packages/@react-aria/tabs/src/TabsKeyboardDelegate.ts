@@ -10,108 +10,91 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, KeyboardDelegate, Node} from '@react-types/shared';
+import {Collection, Direction, KeyboardDelegate, Orientation} from '@react-types/shared';
 import {Key} from 'react';
 
-interface TabsKeyboardDelegateOptions<T> {
-  collection: Collection<Node<T>>,
-  disabledKeys: Set<Key>,
-  orientation: 'horizontal' | 'vertical'
-}
-
-
 export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
-  private collection: Collection<Node<T>>;
+  private collection: Collection<T>;
+  private flipDirection: boolean;
   private disabledKeys: Set<Key>;
-  private orientation: 'horizontal' | 'vertical'
+  private orientation: Orientation;
 
-  constructor(options: TabsKeyboardDelegateOptions<T>) {
-    this.collection = options.collection;
-    this.disabledKeys = options.disabledKeys;
-    this.orientation = options.orientation;
+  constructor(collection: Collection<T>, direction: Direction, orientation: Orientation, disabledKeys: Set<Key> = new Set()) {
+    this.collection = collection;
+    this.flipDirection = direction === 'rtl' && orientation === 'horizontal';
+    this.orientation = orientation;
+    this.disabledKeys = disabledKeys;
   }
 
   getKeyLeftOf(key: Key) {
-    if (this.orientation === 'horizontal') {
-      key = this.collection.getKeyBefore(key);
-      while (key) {
-        let item = this.collection.getItem(key);
-        if (item.type === 'item' && !this.disabledKeys.has(key)) {
-          return key;
-        }
-
-        key = this.collection.getKeyBefore(key);
+    if (this.flipDirection) {
+      return this.getNextKey(key);
+    } else {
+      if (this.orientation === 'horizontal') {
+        return this.getPreviousKey(key);
       }
+      return null;
     }
-    return null;
   }
 
   getKeyRightOf(key: Key) {
-    if (this.orientation === 'horizontal') {
-      key = this.collection.getKeyAfter(key);
-      while (key) {
-        let item = this.collection.getItem(key);
-        if (item.type === 'item' && !this.disabledKeys.has(key)) {
-          return key;
-        }
-
-        key = this.collection.getKeyAfter(key);
+    if (this.flipDirection) {
+      return this.getPreviousKey(key);
+    } else {
+      if (this.orientation === 'horizontal') {
+        return this.getNextKey(key);
       }
+      return null;
+    }
+  }
+
+  getKeyAbove(key: Key) {
+    if (this.orientation === 'vertical') {
+      return this.getPreviousKey(key);
     }
     return null;
   }
 
   getKeyBelow(key: Key) {
     if (this.orientation === 'vertical') {
-      key = this.collection.getKeyAfter(key);
-      while (key) {
-        let item = this.collection.getItem(key);
-        if (item.type === 'item' && !this.disabledKeys.has(key)) {
-          return key;
-        }
-    
-        key = this.collection.getKeyAfter(key);
-      }
-    }
-    return null;
-  }
-
-  getKeyAbove(key: Key) {
-    if (this.orientation === 'vertical') {
-      key = this.collection.getKeyBefore(key);
-      while (key) {
-        let item = this.collection.getItem(key);
-        if (item.type === 'item' && !this.disabledKeys.has(key)) {
-          return key;
-        }
-
-        key = this.collection.getKeyBefore(key);
-      }
+      return this.getNextKey(key);
     }
     return null;
   }
 
   getFirstKey() {
     let key = this.collection.getFirstKey();
-    while (key) {
-      let item = this.collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(key)) {
-        return key;
-      }
-
-      key = this.collection.getKeyAfter(key);
+    if (this.disabledKeys.has(key)) {
+      key = this.getNextKey(key);
     }
+    return key;
   }
 
   getLastKey() {
     let key = this.collection.getLastKey();
-    while (key) {
-      let item = this.collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(key)) {
-        return key;
-      }
-
-      key = this.collection.getKeyBefore(key);
+    if (this.disabledKeys.has(key)) {
+      key = this.getPreviousKey(key);
     }
+    return key;
+  }
+
+  getNextKey(key) {
+    do {
+      key = this.collection.getKeyAfter(key);
+      if (!key) {
+        key = this.collection.getFirstKey();
+      }
+    } while (this.disabledKeys.has(key));
+    return key;
+  }
+
+  getPreviousKey(key) {
+    do {
+      key = this.collection.getKeyBefore(key);
+      if (!key) {
+        key = this.collection.getLastKey();
+      }
+    } while (this.disabledKeys.has(key));
+    return key;
   }
 }
