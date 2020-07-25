@@ -13,10 +13,10 @@ import {AriaLabelingProps, CollectionBase, KeyboardDelegate, Node, Orientation, 
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {ListState} from '@react-stately/list';
 import {TabsKeyboardDelegate} from '.';
-import {useLocale} from '@react-aria/i18n';
 import {useId} from '@react-aria/utils';
+import {useLocale} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
-import {useSelectableItem, useSelectableList} from '@react-aria/selection';
+import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
 
 interface TabsProps<T> extends CollectionBase<T>, SingleSelection, AriaLabelingProps {
   /**
@@ -52,20 +52,18 @@ export function useTabs<T>(props: TabsProps<T>, state: ListState<T>, ref): TabsA
     collection, 
     direction, 
     orientation, 
-    disabledKeys), [collection, disabledKeys, orientation]);
+    disabledKeys), [collection, disabledKeys, orientation, direction]);
 
-  let {listProps} = useSelectableList({
-    selectionManager: manager,
-    collection,
-    disabledKeys,
-    keyboardDelegate: delegate,
+  let {collectionProps} = useSelectableCollection({
     ref,
+    selectionManager: manager,
+    keyboardDelegate: delegate,
     selectOnFocus: keyboardActivation === 'automatic',
     disallowEmptySelection: true
   });
   return {
     tabListProps: {
-      ...listProps,
+      ...collectionProps,
       role: 'tablist',
       'aria-label': ariaLabel
     }
