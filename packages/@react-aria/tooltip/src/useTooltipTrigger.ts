@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {mergeProps, useId} from '@react-aria/utils';
 import {FocusEvents} from '@react-types/shared';
 import {HoverProps, PressProps} from '@react-aria/interactions';
 import {HTMLAttributes, RefObject, useRef} from 'react';
+import {mergeProps, useId} from '@react-aria/utils';
 import {TooltipTriggerAriaProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
+import {useFocusable} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
-import {useFocusable} from "@react-aria/focus";
 
 interface TooltipTriggerAria {
   triggerProps: HTMLAttributes<HTMLElement> & PressProps & HoverProps & FocusEvents,
@@ -31,7 +31,6 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
 
   let tooltipId = useId();
 
-  // abstract away knowledge of timing transitions from aria hook
   let isHovered = useRef(false);
   let isFocused = useRef(false);
 
@@ -59,19 +58,19 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
   let onHoverStart = () => {
     isHovered.current = true;
     handleShow();
-  }
+  };
   let onHoverEnd = () => {
     isHovered.current = false;
     handleHide();
-  }
+  };
   let onFocus = () => {
     isFocused.current = true;
     handleShow();
-  }
+  };
   let onBlur = () => {
     isFocused.current = false;
     handleHide();
-  }
+  };
 
   let {hoverProps} = useHover({
     isDisabled,

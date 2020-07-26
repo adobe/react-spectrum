@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {TooltipTriggerProps} from '@react-types/tooltip';
 import {useEffect} from 'react';
 import {useId} from '@react-aria/utils';
-import {TooltipTriggerProps} from '@react-types/tooltip';
-import {useOverlayTriggerState} from "@react-stately/overlays";
+import {useOverlayTriggerState} from '@react-stately/overlays';
 
 export const TOOLTIP_DELAY = 2000; // this seems to be a 2 second delay, check with design
 export const TOOLTIP_COOLDOWN = 2000;
@@ -52,7 +52,7 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
         tooltip.cooldownTimeout = null;
       }
     }
-  }
+  };
 
   let hideTooltip = () => {
     let tooltip = tooltips[id];
@@ -67,7 +67,7 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
         tooltip.cooldownTimeout = setTimeout(() => delete tooltips[id], TOOLTIP_COOLDOWN);
       }
     }
-  }
+  };
 
   let warmupTooltip = () => {
     let tooltip = ensureTooltipEntry();
@@ -80,8 +80,9 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
     } else if (!tooltip.open && !tooltip.warmupTimeout && tooltip.warmedUp) {
       showTooltip();
     }
-  }
+  };
 
+  // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => {
       let tooltip = tooltips[id];
@@ -90,7 +91,7 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
         clearTimeout(tooltip.cooldownTimeout);
         delete tooltips[id];
       }
-    }
+    };
   }, []);
 
   return {

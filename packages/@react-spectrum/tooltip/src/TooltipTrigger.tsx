@@ -10,17 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMRef, StyleProps} from '@react-types/shared';
 import {FocusableProvider} from '@react-aria/focus';
 import {Overlay} from '@react-spectrum/overlays';
 import {PlacementAxis} from '@react-types/overlays';
 import React, {RefObject, useContext, useRef} from 'react';
-import {DOMRef, StyleProps} from '@react-types/shared';
 import {TooltipTriggerProps} from '@react-types/tooltip';
+import {useDOMRef} from '@react-spectrum/utils';
 import {useOverlayPosition} from '@react-aria/overlays';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
-import {SpectrumMenuTriggerProps} from "@react-types/menu";
-import {useDOMRef} from "@react-spectrum/utils";
 
 interface TooltipContextProps extends StyleProps {
   ref?: RefObject<HTMLDivElement>,
@@ -60,13 +59,13 @@ function TooltipTrigger(props: TooltipTriggerProps, ref: DOMRef<HTMLElement>) {
     isOpen: state.isOpen
 
     // do we need any of these?
-    //scrollRef = overlayRef,
-    //containerPadding = 12,
-    //shouldFlip = true,
-    //boundaryElement = document.body,
-    //offset = 0,
-    //crossOffset = 0,
-    //shouldUpdatePosition = true
+    // scrollRef = overlayRef,
+    // containerPadding = 12,
+    // shouldFlip = true,
+    // boundaryElement = document.body,
+    // offset = 0,
+    // crossOffset = 0,
+    // shouldUpdatePosition = true
   });
 
   return (

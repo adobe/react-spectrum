@@ -28,8 +28,10 @@ let iconMap = {
   negative: AlertSmall
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function Tooltip(props: SpectrumTooltipProps, ref: RefObject<HTMLDivElement>) {
   let defaultRef = useRef();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ref = ref || defaultRef; // need to figure out how to merge?
   let {ref: overlayRef, ...tooltipProviderProps} = useTooltipProvider();
   props = mergeProps(props, tooltipProviderProps);

@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {TOOLTIP_COOLDOWN, TOOLTIP_DELAY} from '@react-stately/tooltip';
 import {Tooltip, TooltipTrigger} from '../';
+import {TOOLTIP_COOLDOWN, TOOLTIP_DELAY} from '@react-stately/tooltip';
 
 let CLOSE_TIME = 350;
 
@@ -40,7 +40,7 @@ describe('TooltipTrigger', function () {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange}>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
         </Provider>
@@ -69,7 +69,7 @@ describe('TooltipTrigger', function () {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange}>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
         </Provider>
@@ -95,7 +95,7 @@ describe('TooltipTrigger', function () {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange}>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
         </Provider>
@@ -142,7 +142,7 @@ describe('TooltipTrigger', function () {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange}>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
         </Provider>
@@ -189,7 +189,7 @@ describe('TooltipTrigger', function () {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange}>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
         </Provider>
@@ -224,7 +224,7 @@ describe('TooltipTrigger', function () {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger delay onOpenChange={onOpenChange}>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
         </Provider>
@@ -259,7 +259,7 @@ describe('TooltipTrigger', function () {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger delay onOpenChange={onOpenChange}>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
         </Provider>
@@ -291,7 +291,7 @@ describe('TooltipTrigger', function () {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger delay onOpenChange={onOpenChange}>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
         </Provider>
@@ -321,7 +321,7 @@ describe('TooltipTrigger', function () {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger delay>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
         </Provider>
@@ -359,7 +359,7 @@ describe('TooltipTrigger', function () {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger delay>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
         </Provider>
@@ -431,11 +431,11 @@ describe('TooltipTrigger', function () {
       let {getByLabelText, getByText} = render(
         <Provider theme={theme}>
           <TooltipTrigger>
-            <ActionButton aria-label="good-trigger"/>
+            <ActionButton aria-label="good-trigger" />
             <Tooltip>{helpfulText}</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger>
-            <ActionButton aria-label="bad-trigger"/>
+            <ActionButton aria-label="bad-trigger" />
             <Tooltip>{unHelpfulText}</Tooltip>
           </TooltipTrigger>
         </Provider>
@@ -466,11 +466,11 @@ describe('TooltipTrigger', function () {
       let {getByLabelText, getByText} = render(
         <Provider theme={theme}>
           <TooltipTrigger>
-            <ActionButton aria-label="good-trigger"/>
+            <ActionButton aria-label="good-trigger" />
             <Tooltip>{helpfulText}</Tooltip>
           </TooltipTrigger>
           <TooltipTrigger>
-            <ActionButton aria-label="bad-trigger"/>
+            <ActionButton aria-label="bad-trigger" />
             <Tooltip>{unHelpfulText}</Tooltip>
           </TooltipTrigger>
         </Provider>
@@ -501,7 +501,7 @@ describe('TooltipTrigger', function () {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger isOpen onOpenChange={onOpenChange}>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
         </Provider>
@@ -530,7 +530,7 @@ describe('TooltipTrigger', function () {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger isOpen={false} onOpenChange={onOpenChange}>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
         </Provider>
@@ -558,7 +558,7 @@ describe('TooltipTrigger', function () {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger defaultOpen>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
         </Provider>
