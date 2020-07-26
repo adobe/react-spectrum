@@ -580,4 +580,101 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
   });
+
+  describe('concurrently open tooltips', () => {
+    it('does not allow more than one tooltip open at a time', () => {
+      let helpfulText = 'Helpful information.';
+      let unHelpfulText = 'Unhelpful information.';
+      let {getByLabelText, getByText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger>
+            <ActionButton aria-label="good-trigger" />
+            <Tooltip>{helpfulText}</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger>
+            <ActionButton aria-label="bad-trigger" />
+            <Tooltip>{unHelpfulText}</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+
+      let goodButton = getByLabelText('good-trigger');
+      let badButton = getByLabelText('bad-trigger');
+      act(() => {
+        goodButton.focus();
+      });
+      expect(getByText(helpfulText)).toBeVisible();
+
+      // we've used focus to open one, now we can use hover to try and open a second one
+      fireEvent.mouseEnter(badButton);
+      fireEvent.mouseMove(badButton);
+
+      expect(() => getByText(helpfulText)).toThrow();
+      expect(getByText(unHelpfulText)).toBeVisible();
+    });
+
+    it('two can be open at once if in controlled open state', () => {
+      let helpfulText = 'Helpful information.';
+      let unHelpfulText = 'Unhelpful information.';
+      let {getByLabelText, getByText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger isOpen>
+            <ActionButton aria-label="good-trigger" />
+            <Tooltip>{helpfulText}</Tooltip>
+          </TooltipTrigger>
+          <TooltipTrigger>
+            <ActionButton aria-label="bad-trigger" />
+            <Tooltip>{unHelpfulText}</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+
+      let badButton = getByLabelText('bad-trigger');
+      expect(getByText(helpfulText)).toBeVisible();
+
+      // open a second one through interaction
+      fireEvent.mouseEnter(badButton);
+      fireEvent.mouseMove(badButton);
+
+      expect(getByText(helpfulText)).toBeVisible();
+      expect(getByText(unHelpfulText)).toBeVisible();
+    });
+  });
+  describe('disabled', () => {
+    it('can be disabled from the TooltipTrigger', () => {
+      let {getByRole, getByLabelText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger isDisabled>
+            <ActionButton aria-label="trigger" />
+            <Tooltip>Helpful information.</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+      let button = getByLabelText('trigger');
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseMove(button);
+
+      expect(() => getByRole('tooltip')).toThrow();
+    });
+
+    // Given that a disabled button cannot be focused, i assume we want to stop this.
+    // isDisabled on TooltipTrigger disables the tooltip, not the Button, this one makes some sense, though maybe a bad prop name?
+    // isDisabled on the Button disables the Button, but not the tooltip, this one seems wrong
+    //    should we disable mouse events on everything that is disabled?
+    it.skip('can be disabled from the trigger', () => {
+      let {getByRole, getByLabelText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger>
+            <ActionButton aria-label="trigger" isDisabled />
+            <Tooltip>Helpful information.</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+      let button = getByLabelText('trigger');
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseMove(button);
+
+      expect(() => getByRole('tooltip')).toThrow();
+    });
+  });
 });

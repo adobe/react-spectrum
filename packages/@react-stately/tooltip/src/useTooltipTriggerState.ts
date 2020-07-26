@@ -11,7 +11,7 @@
  */
 
 import {TooltipTriggerProps} from '@react-types/tooltip';
-import {useEffect} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useId} from '@react-aria/utils';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
@@ -33,23 +33,26 @@ let tooltips = {};
 
 export function useTooltipTriggerState(props: TooltipTriggerStateProps): TooltipTriggerState {
   let {isOpen, open, close} = useOverlayTriggerState(props);
+  let state = useRef({warmedUp: false, warmupTimeout: null, cooldownTimeout: null});
+
   let id = useId(); // this is a unique id for the tooltips in the map, it's not a dom id
 
   let ensureTooltipEntry = () => {
-    if (!tooltips[id]) {
-      tooltips[id] = {open: false, warmedUp: false, warmupTimeout: null, cooldownTimeout: null};
-    }
-    return tooltips[id];
+    tooltips[id] = hideTooltip;
   };
 
   let showTooltip = () => {
-    let tooltip = ensureTooltipEntry();
-    if (tooltip.warmedUp || !tooltip.warmupTimeout || tooltip.cooldownTimeout) {
+    ensureTooltipEntry();
+    for (let hideTooltipId in tooltips) {
+      if (hideTooltipId !== id) {
+        tooltips[hideTooltipId]();
+      }
+    }
+    if (state.current.warmedUp || !state.current.warmupTimeout || state.current.cooldownTimeout) {
       open();
-      tooltip.open = true;
-      if (tooltip.cooldownTimeout) {
-        clearTimeout(tooltip.cooldownTimeout);
-        tooltip.cooldownTimeout = null;
+      if (state.current.cooldownTimeout) {
+        clearTimeout(state.current.cooldownTimeout);
+        state.current.cooldownTimeout = null;
       }
     }
   };
@@ -57,27 +60,30 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
   let hideTooltip = () => {
     let tooltip = tooltips[id];
     if (tooltip) {
-      tooltip.open = false;
       close();
-      if (tooltip.warmupTimeout) {
-        clearTimeout(tooltip.warmupTimeout);
-        tooltip.warmupTimeout = null;
+      if (state.current.warmupTimeout) {
+        clearTimeout(state.current.warmupTimeout);
+        state.current.warmupTimeout = null;
       }
-      if (!tooltip.cooldownTimeout) {
-        tooltip.cooldownTimeout = setTimeout(() => delete tooltips[id], TOOLTIP_COOLDOWN);
+      if (!state.current.cooldownTimeout) {
+        state.current.cooldownTimeout = setTimeout(() => {
+          delete tooltips[id];
+          state.current.cooldownTimeout = null;
+          state.current.warmedUp = false;
+        }, TOOLTIP_COOLDOWN);
       }
     }
   };
 
   let warmupTooltip = () => {
-    let tooltip = ensureTooltipEntry();
-    if (!tooltip.open && !tooltip.warmupTimeout && !tooltip.warmedUp) {
-      tooltip.warmupTimeout = setTimeout(() => {
-        tooltip.warmupTimeout = null;
-        tooltip.warmedUp = true;
+    ensureTooltipEntry();
+    if (!isOpen && !state.current.warmupTimeout && !state.current.warmedUp) {
+      state.current.warmupTimeout = setTimeout(() => {
+        state.current.warmupTimeout = null;
+        state.current.warmedUp = true;
         showTooltip();
       }, TOOLTIP_DELAY);
-    } else if (!tooltip.open && !tooltip.warmupTimeout && tooltip.warmedUp) {
+    } else if (!isOpen && !state.current.warmupTimeout && state.current.warmedUp) {
       showTooltip();
     }
   };
@@ -86,9 +92,9 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
   useEffect(() => {
     return () => {
       let tooltip = tooltips[id];
+      clearTimeout(state.current.warmupTimeout);
+      clearTimeout(state.current.cooldownTimeout);
       if (tooltip) {
-        clearTimeout(tooltip.warmupTimeout);
-        clearTimeout(tooltip.cooldownTimeout);
         delete tooltips[id];
       }
     };

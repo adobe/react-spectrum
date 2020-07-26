@@ -52,12 +52,27 @@ storiesOf('TooltipTrigger', module)
   .add(
     'isOpen',
     () => renderMultipleTriggers({isOpen: true})
+  )
+  .add(
+    'trigger disabled',
+    () => renderDisabledTrigger()
   );
 
 function render(props = {}) {
   return (
     <TooltipTrigger {...props}>
       <ActionButton>Trigger Tooltip</ActionButton>
+      <Tooltip>
+        Tooltip message.
+      </Tooltip>
+    </TooltipTrigger>
+  );
+}
+
+function renderDisabledTrigger() {
+  return (
+    <TooltipTrigger>
+      <ActionButton isDisabled>Trigger Tooltip</ActionButton>
       <Tooltip>
         Tooltip message.
       </Tooltip>
