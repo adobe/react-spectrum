@@ -28,7 +28,7 @@ export interface RadioGroupState {
   readonly lastFocusedValue: string | null,
 
   /** Sets the last focused value. */
-  setLastFocusedValue(value: string): void,
+  setLastFocusedValue(value: string): void
 }
 
 let instance = Math.round(Math.random() * 10000000000);

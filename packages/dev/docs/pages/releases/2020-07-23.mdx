@@ -1,0 +1,167 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: A new release has landed! The response to our release last week has been incredible. Thank you to all of the amazing contributors! This release contains some bug fixes, updates to how we handle hover state in React Spectrum, and documentation improvements.
+date: 2020-07-23
+---
+
+# July 23, 2020 Release
+
+A new release has landed! The response to our release last week has been incredible. Thank you to all of the amazing contributors!
+This release contains some bug fixes, updates to how we handle hover state in React Spectrum, and documentation improvements.
+See below for details, as well as the package versions included in this release.
+
+## Added
+
+- Replace `:hover` CSS pseudo class with [useHover](../../react-aria/useHover.html) hook across all components for improved touch/hybrid device support - [@so99ynoodles](https://github.com/so99ynoodles) - [PR](https://github.com/adobe/react-spectrum/pull/775)
+- Allow no props to be given to [useToggleState](../../react-stately/useToggleState.html) - [@Andarist](https://github.com/Andarist) - [PR](https://github.com/adobe/react-spectrum/pull/687)
+- Allow arbitrary number of prop objects to be passed to mergeProps - [@brookslybrand](https://github.com/brookslybrand) - [PR](https://github.com/adobe/react-spectrum/pull/776)
+- Add [useSingleSelectListState](../../react-stately/useSingleSelectListState.html) hook to `@react-stately/list` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/802)
+- Add active state to textfield for mobile - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/823)
+
+## Fixed
+
+- Add check for SSR environment to [useFocusVisible](../../react-aria/useFocusVisible.html) - [@RafalFilipek](https://github.com/RafalFilipek) - [PR](https://github.com/adobe/react-spectrum/pull/769)
+- Ignore selected keys when `selectionMode="none"` in menu - [@jluyau](https://github.com/jluyau) - [PR](https://github.com/adobe/react-spectrum/pull/783)
+- Fix tabbing to a disabled Picker in HiddenInput - [@gavinhenderson](https://github.com/gavinhenderson) - [PR](https://github.com/adobe/react-spectrum/pull/787)
+- Fix typescript build errors/warnings - [@mischnic](https://github.com/mischnic) - [PR](https://github.com/adobe/react-spectrum/pull/713)
+- Update lint rules - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/747)
+- Workaround for iOS hover events bug - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/815)
+- Fix hover and active styles for Radio invalid state - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/819)
+- Fix hover transition for icons in Safari - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/821)
+- Ensure react is a peer dependency instead of a dependency - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/824)
+
+## Docs
+
+- Fix `useKeyboard` example - [@spbyrne](https://github.com/spbyrne) - [PR](https://github.com/adobe/react-spectrum/pull/759)
+- Fix package imports for React Aria/React Stately packages - [@DeMoorJasper](https://github.com/DeMoorJasper) - [PR](https://github.com/adobe/react-spectrum/pull/761)
+- JSDocs eslint - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/662)
+- fix: some typos of react-aria - [@grgr-dkrk](https://github.com/grgr-dkrk) - [PR](https://github.com/adobe/react-spectrum/pull/774)
+- Fix individual import in versioning docs - [@mischnic](https://github.com/mischnic) - [PR](https://github.com/adobe/react-spectrum/pull/792)
+- Fix typo in ListBox docs - [@evargast](https://github.com/evargast) - [PR](https://github.com/adobe/react-spectrum/pull/795)
+
+## Released packages
+
+```
+- @adobe/react-spectrum@3.1.0
+- @react-aria/actiongroup@3.1.0
+- @react-aria/aria-modal-polyfill@3.1.0
+- @react-aria/breadcrumbs@3.1.0
+- @react-aria/button@3.1.0
+- @react-aria/checkbox@3.1.0
+- @react-aria/dialog@3.1.0
+- @react-aria/focus@3.1.0
+- @react-aria/i18n@3.1.0
+- @react-aria/interactions@3.1.0
+- @react-aria/label@3.1.0
+- @react-aria/link@3.1.0
+- @react-aria/listbox@3.1.0
+- @react-aria/menu@3.1.0
+- @react-aria/meter@3.1.0
+- @react-aria/overlays@3.1.0
+- @react-aria/progress@3.1.0
+- @react-aria/radio@3.1.0
+- @react-aria/searchfield@3.1.0
+- @react-aria/select@3.1.0
+- @react-aria/selection@3.1.0
+- @react-aria/separator@3.1.0
+- @react-aria/switch@3.1.0
+- @react-aria/table@3.0.0-alpha.5
+- @react-aria/textfield@3.1.0
+- @react-aria/toggle@3.1.0
+- @react-aria/utils@3.1.0
+- @react-aria/virtualizer@3.1.0
+- @react-aria/visually-hidden@3.1.0
+- @react-spectrum/actiongroup@3.1.0
+- @react-spectrum/breadcrumbs@3.1.0
+- @react-spectrum/button@3.1.0
+- @react-spectrum/buttongroup@3.1.0
+- @react-spectrum/checkbox@3.1.0
+- @react-spectrum/dialog@3.1.0
+- @react-spectrum/divider@3.1.0
+- @react-spectrum/form@3.1.0
+- @react-spectrum/icon@3.1.0
+- @react-spectrum/illustratedmessage@3.1.0
+- @react-spectrum/image@3.1.0
+- @react-spectrum/label@3.1.0
+- @react-spectrum/layout@3.1.0
+- @react-spectrum/link@3.1.0
+- @react-spectrum/listbox@3.1.0
+- @react-spectrum/menu@3.1.0
+- @react-spectrum/meter@3.1.0
+- @react-spectrum/overlays@3.1.0
+- @react-spectrum/picker@3.1.0
+- @react-spectrum/progress@3.1.0
+- @react-spectrum/provider@3.1.0
+- @react-spectrum/radio@3.1.0
+- @react-spectrum/searchfield@3.1.0
+- @react-spectrum/statuslight@3.1.0
+- @react-spectrum/switch@3.1.0
+- @react-spectrum/table@3.0.0-alpha.5
+- @react-spectrum/text@3.1.0
+- @react-spectrum/textfield@3.1.0
+- @react-spectrum/theme-dark@3.1.0
+- @react-spectrum/theme-default@3.1.0
+- @react-spectrum/utils@3.1.0
+- @react-spectrum/view@3.1.0
+- @react-spectrum/well@3.1.0
+- @react-stately/collections@3.1.0
+- @react-stately/data@3.1.0
+- @react-stately/layout@3.1.0
+- @react-stately/list@3.1.0
+- @react-stately/menu@3.1.0
+- @react-stately/overlays@3.1.0
+- @react-stately/radio@3.1.0
+- @react-stately/searchfield@3.1.0
+- @react-stately/select@3.1.0
+- @react-stately/selection@3.1.0
+- @react-stately/table@3.0.0-alpha.5
+- @react-stately/toggle@3.1.0
+- @react-stately/tree@3.1.0
+- @react-stately/utils@3.1.0
+- @react-stately/virtualizer@3.1.0
+- @react-types/actiongroup@3.1.0
+- @react-types/breadcrumbs@3.1.0
+- @react-types/button@3.1.0
+- @react-types/buttongroup@3.1.0
+- @react-types/checkbox@3.1.0
+- @react-types/dialog@3.1.0
+- @react-types/divider@3.1.0
+- @react-types/form@3.1.0
+- @react-types/illustratedmessage@3.1.0
+- @react-types/image@3.1.0
+- @react-types/label@3.1.0
+- @react-types/layout@3.1.0
+- @react-types/link@3.1.0
+- @react-types/listbox@3.1.0
+- @react-types/menu@3.1.0
+- @react-types/meter@3.1.0
+- @react-types/overlays@3.1.0
+- @react-types/progress@3.1.0
+- @react-types/provider@3.1.0
+- @react-types/radio@3.1.0
+- @react-types/searchfield@3.1.0
+- @react-types/select@3.1.0
+- @react-types/shared@3.1.0
+- @react-types/statuslight@3.1.0
+- @react-types/switch@3.1.0
+- @react-types/table@3.0.0-rc.4
+- @react-types/text@3.1.0
+- @react-types/textfield@3.1.0
+- @react-types/view@3.1.0
+- @react-types/well@3.1.0
+- @spectrum-icons/color@3.1.0
+- @spectrum-icons/illustrations@3.1.0
+- @spectrum-icons/ui@3.1.0
+- @spectrum-icons/workflow@3.1.0
+```

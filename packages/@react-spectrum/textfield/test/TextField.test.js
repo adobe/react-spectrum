@@ -198,7 +198,6 @@ describe('Shared TextField behavior', () => {
     ${'v3 SearchField'} | ${SearchField}
     ${'v2 TextField'}   | ${V2TextField}
     ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name is uncontrolled if defaultValue prop is provided', ({Name, Component}) => {
     let defaultValue = 'test';
     let newValue = 'blah';

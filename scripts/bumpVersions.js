@@ -83,6 +83,7 @@ let releasedPackages = new Map();
 // If releasing an individual package, bump that package and all packages that depend on it.
 // Otherwise, add all public packages and their dependencies.
 let arg = process.argv[process.argv.length - 1];
+let bump = /^(major|minor|patch)$/.test(arg) ? arg : 'patch';
 if (arg.startsWith('@')) {
   if (!info[arg]) {
     throw new Error('Invalid package ' + arg);
@@ -201,7 +202,7 @@ function getVersions(existingPackages) {
     // the package.json version is correct according to the status.
     if (existingPackages.has(name)) {
       let newVersion = status === 'released'
-        ? semver.inc(pkg.version, 'patch')
+        ? semver.inc(pkg.version, bump)
         : semver.inc(pkg.version, 'prerelease', status)
       versions.set(name, [pkg.version, newVersion, pkg.private]);
     } else {
@@ -209,7 +210,7 @@ function getVersions(existingPackages) {
       let newVersion = pkg.version;
       if (parsed.prerelease.length > 0) {
         if (status === 'released') {
-          newVersion = semver.inc(pkg.version, 'patch');
+          newVersion = semver.inc(pkg.version, bump);
         } else if (parsed.prerelease[0] !== status) {
           newVersion = semver.inc(pkg.version, 'prerelease', status);
         } else {

@@ -18,42 +18,56 @@ interface Props {
   [key: string]: any
 }
 
+// taken from: https://stackoverflow.com/questions/51603250/typescript-3-parameter-list-intersection-type/51604379#51604379
+type TupleTypes<T> = { [P in keyof T]: T[P] } extends { [key: number]: infer V } ? V : never;
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
+
 /**
  * Merges two props objects together. Event handlers are chained,
  * classNames are combined, and ids are deduplicated. For all other props,
- * the second props object overrides the first.
- * @param a - The first set of props to merge.
- * @param b - The second set of props to merge.
+ * the last prop object overrides all previous ones.
+ * @param args - Multiple sets of props to merge together.
  */
-export function mergeProps<T extends Props, U extends Props>(a: T, b: U): T & U {
-  let res: Props = {};
-  for (let key in a) {
-    // Chain events
-    if (/^on[A-Z]/.test(key) && typeof a[key] === 'function' && typeof b[key] === 'function') {
-      res[key] = chain(a[key], b[key]);
+export function mergeProps<T extends Props[]>(...args: T): UnionToIntersection<TupleTypes<T>> {
+  let result: Props = {};
+  for (let props of args) {
+    for (let key in result) {
+      // Chain events
+      if (
+        /^on[A-Z]/.test(key) &&
+        typeof result[key] === 'function' &&
+        typeof props[key] === 'function'
+      ) {
+        result[key] = chain(result[key], props[key]);
 
-    // Merge classnames, sometimes classNames are empty string which eval to false, so we just need to do a type check
-    } else if (key === 'className' && typeof a.className === 'string' && typeof b.className === 'string') {
-      res[key] = classNames(a.className, b.className);
+        // Merge classnames, sometimes classNames are empty string which eval to false, so we just need to do a type check
+      } else if (
+        key === 'className' &&
+        typeof result.className === 'string' &&
+        typeof props.className === 'string'
+      ) {
+        result[key] = classNames(result.className, props.className);
+      } else if (
+        key === 'UNSAFE_className' &&
+        typeof result.UNSAFE_className === 'string' &&
+        typeof props.UNSAFE_className === 'string'
+      ) {
+        result[key] = classNames(result.UNSAFE_className, props.UNSAFE_className);
+      } else if (key === 'id' && result.id && props.id) {
+        result.id = mergeIds(result.id, props.id);
+        // Override others
+      } else {
+        result[key] = props[key] !== undefined ? props[key] : result[key];
+      }
+    }
 
-    } else if (key === 'UNSAFE_className' && typeof a.UNSAFE_className === 'string' && typeof b.UNSAFE_className === 'string') {
-      res[key] = classNames(a.UNSAFE_className, b.UNSAFE_className);
-
-    } else if (key === 'id' && a.id && b.id) {
-      res.id = mergeIds(a.id, b.id);
-
-    // Override others
-    } else {
-      res[key] = b[key] !== undefined ? b[key] : a[key];
+    // Add props from b that are not in a
+    for (let key in props) {
+      if (result[key] === undefined) {
+        result[key] = props[key];
+      }
     }
   }
 
-  // Add props from b that are not in a
-  for (let key in b) {
-    if (a[key] === undefined) {
-      res[key] = b[key];
-    }
-  }
-
-  return res as T & U;
+  return result as UnionToIntersection<TupleTypes<T>>;
 }
