@@ -60,7 +60,7 @@ describe('NumberField', function () {
     expect(container).toBeTruthy();
     expect(container).toHaveAttribute('role', 'group');
     expect(textField).toBeTruthy();
-    expect(textField).toHaveAttribute('type', 'number');
+    expect(textField).toHaveAttribute('type', 'text');
     expect(incrementButton).toBeTruthy();
     expect(decrementButton).toBeTruthy();
   });
@@ -289,5 +289,53 @@ describe('NumberField', function () {
     expect(textField).toBeDefined();
     expect(incrementButton).not.toBeDefined();
     expect(decrementButton).not.toBeDefined();
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+  `('$Name properly formats value', ({Component}) => {
+    let {textField} = renderNumberField(Component, {showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
+
+    expect(textField).toHaveAttribute('value', '€10.00');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+  `('$Name properly formats value when value changes', ({Component}) => {
+    let {textField, incrementButton, decrementButton} = renderNumberField(Component, {showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
+
+    expect(textField).toHaveAttribute('value', '€10.00');
+    triggerPress(incrementButton);
+    expect(textField).toHaveAttribute('value', '€11.00');
+    triggerPress(decrementButton);
+    triggerPress(decrementButton);
+    expect(textField).toHaveAttribute('value', '€9.00');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+  `('$Name changes value to unformatted value on focus', ({Component}) => {
+    let {textField} = renderNumberField(Component, {showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
+
+    expect(textField).toHaveAttribute('value', '€10.00');
+    act(() => {fireEvent.focus(textField);});
+    expect(textField).toHaveAttribute('value', '10');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+  `('$Name sets invalid input value to valid number value on blur', ({Component}) => {
+    let {textField} = renderNumberField(Component, {showStepper: true, defaultValue: 10});
+
+    expect(textField).toHaveAttribute('value', '10');
+    act(() => userEvent.type(textField, '-'));
+    act(() => fireEvent.blur(textField));
+    expect(textField).toHaveAttribute('value', '10');
+    act(() => fireEvent.focus(textField));
+    expect(textField).toHaveAttribute('value', '10');
   });
 });

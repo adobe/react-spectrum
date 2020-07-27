@@ -51,9 +51,9 @@ export function useNumberFieldState(
 
   const [numberValue, setNumberValue] = useControlledState<number>(value, defaultValue || 0, onChange);
   const [inputValue, setInputValue] = useState(defaultValue ? inputValueFormatter.format(defaultValue) : '')
+  const [isValid, setIsValid] = useState(isInputValueValid(numberValue, maxValue, minValue));
 
   const minusSign = useRef('-')
-  let [isValid, setIsValid] = useState(isInputValueValid(numberValue, maxValue, minValue));
 
   useEffect(()=> {
     // Get the minus sign of the current locale to filter the input value
@@ -158,8 +158,8 @@ function isInputValueValid(value:number, max, min): boolean {
   return (
     value !== null &&
     !isNaN(value) &&
-    value <= max &&
-    value >= min
+    (max !== undefined ? value <= max : true) &&
+    (min !== undefined ? value >= min : true) 
   );
 }
 
