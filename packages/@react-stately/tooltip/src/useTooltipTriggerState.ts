@@ -11,7 +11,7 @@
  */
 
 import {TooltipTriggerProps} from '@react-types/tooltip';
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef} from 'react';
 import {useId} from '@react-aria/utils';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
