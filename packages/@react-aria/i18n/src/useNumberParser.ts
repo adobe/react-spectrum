@@ -19,6 +19,7 @@ type NumberParser = {
 
 /**
  * Provides localized number parsing for the current locale.
+ * Idea from https://observablehq.com/@mbostock/localized-number-parsing
  */
 export function useNumberParser(): NumberParser {
   let {locale} = useLocale();

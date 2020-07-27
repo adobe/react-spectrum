@@ -19,7 +19,6 @@ import { text } from '@storybook/addon-knobs';
 
 export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
   textValue?: string,
-  onValidate?: () => void,
   onIncrement?: () => void,
   onIncrementPage?: () => void,
   onDecrement?: () => void,
@@ -53,8 +52,11 @@ export function useSpinButton(
     onDecrementPage,
     onDecrementToMin,
     onIncrementToMax,
-    onValidate
   } = props;
+
+  useEffect(()=> {
+    return () => clearTimeout(_async.current)
+  }, [])
 
   let onKeyDown = (e) => {
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || isReadOnly) {
@@ -62,14 +64,6 @@ export function useSpinButton(
     }
 
     switch (e.key) {
-      case 'Enter':
-        e.preventDefault();
-        if (typeof onValidate === 'function') {
-          onValidate();
-        }
-
-        break;
-
       case 'PageUp':
         if (onIncrementPage) {
           e.preventDefault();
@@ -120,9 +114,6 @@ export function useSpinButton(
 
   let onBlur = () => {
     isFocused.current = false;
-    if (typeof onValidate === 'function') {
-      onValidate();
-    }
   };
 
   useEffect(() => {
@@ -134,7 +125,6 @@ export function useSpinButton(
   const onIncrementPressStart = useCallback(
     (initialStepDelay: number) => {
       onIncrement();
-
       // Start spinning after initial delay
       _async.current = setTimeout(
         () => onIncrementPressStart(60),
@@ -144,32 +134,20 @@ export function useSpinButton(
     [onIncrement]
   );
 
-  const onIncrementPressEnd = useCallback(() => {
-    // Stop spinning
-    if (_async.current) {
-      clearTimeout(_async.current);
-    }
-  }, []);
-
   const onDecrementPressStart = useCallback(
     (initialStepDelay: number) => {
       onDecrement();
-
       // Start spinning after initial delay
       _async.current = setTimeout(
-        () => onDecrementPressStart(75),
+        () => onDecrementPressStart(60),
         initialStepDelay
       );
     },
     [onDecrement]
   );
 
-  const onDecrementPressEnd = useCallback(() => {
-    // Stop spinning
-    if (_async.current) {
-      clearTimeout(_async.current);
-    }
-  }, []);
+
+  const clearAsync = () => clearTimeout(_async.current);
 
   return {
     spinButtonProps: {
@@ -187,11 +165,11 @@ export function useSpinButton(
     },
     incrementButtonProps: {
       onPressStart: () => onIncrementPressStart(400),
-      onPressEnd: onIncrementPressEnd
+      onPressEnd: clearAsync
     },
     decrementButtonProps: {
       onPressStart: () => onDecrementPressStart(400),
-      onPressEnd: onDecrementPressEnd
+      onPressEnd: clearAsync
     }
   };
 }

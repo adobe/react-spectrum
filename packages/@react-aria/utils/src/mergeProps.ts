@@ -19,7 +19,7 @@ interface Props {
 }
 
 /**
- * Merges multiple props objects together. Event handlers are chained,
+ * Merges two props objects together. Event handlers are chained,
  * classNames are combined, and ids are deduplicated. For all other props,
  * the second props object overrides the first.
  * @param a - The first set of props to merge.
