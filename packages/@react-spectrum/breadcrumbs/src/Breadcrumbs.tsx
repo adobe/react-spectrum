@@ -36,28 +36,26 @@ type useResizeObserverOptionsType<T> = {
 function useResizeObserver<T extends HTMLElement>(options: useResizeObserverOptionsType<T>) {
   const {ref, onResize} = options;
 
-  const resizeObserverInstance = new ResizeObserver((entries) => {
-    if (!entries.length) {
-      return;
-    }
-
-    const entry = entries[0]; // We just need the first element
-
-    onResize({
-      width: entry.contentRect.width,
-      height: entry.contentRect.height
-    });
-  });
 
   useEffect(() => {
     if (!ref) { return; }
 
+    const resizeObserverInstance = new ResizeObserver((entries) => {
+      if (!entries.length) {
+        return;
+      }
+
+      const entry = entries[0]; // We just need the first element
+
+      onResize({
+        width: entry.contentRect.width,
+        height: entry.contentRect.height
+      });
+    });
     resizeObserverInstance.observe(ref.current);
 
     return () => resizeObserverInstance.unobserve(ref.current);
   }, [ref]);
-
-  return {ref};
 }
 
 
