@@ -10,10 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from './chain';
-import classNames from 'classnames';
-import {mergeIds} from './useId';
-import { mergeProps } from './mergeProps';
+import {mergeProps} from './mergeProps';
 
 interface Props {
   [key: string]: any
@@ -24,7 +21,7 @@ interface Props {
  * classNames are combined, and ids are deduplicated. For all other props,
  * the current props object overrides the previous.
  * @typedef {{[key:string]: any}} Props
- * @param {Props[]} args - An array of props object
+ * @param {Props[]} args - An array of props object.
  * 
  * @example
  *  mergeMultipleProps(propsA, propsB, propsC, propsD)
@@ -32,7 +29,7 @@ interface Props {
 export function mergeMultipleProps<T extends Props>(...props:T[]): T {
   let res: Props = {};
 
-  res = props.reduce((prev, current) => mergeProps(prev, current))
+  res = props.reduce((prev, current) => mergeProps(prev, current));
 
   return res as T;
 }

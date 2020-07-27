@@ -12,9 +12,8 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
-import {HTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
+import {HTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
-import { text } from '@storybook/addon-knobs';
 
 
 export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
@@ -35,7 +34,6 @@ export interface SpinbuttonAria {
 
 export function useSpinButton(
   props: SpinButtonProps,
-  inputRef?: RefObject<HTMLInputElement>
 ): SpinbuttonAria {
   const _async = useRef<NodeJS.Timeout>();
   let {
@@ -51,12 +49,10 @@ export function useSpinButton(
     onDecrement,
     onDecrementPage,
     onDecrementToMin,
-    onIncrementToMax,
+    onIncrementToMax
   } = props;
 
-  useEffect(()=> {
-    return () => clearTimeout(_async.current)
-  }, [])
+  useEffect(() => () => clearTimeout(_async.current), []);
 
   let onKeyDown = (e) => {
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || isReadOnly) {

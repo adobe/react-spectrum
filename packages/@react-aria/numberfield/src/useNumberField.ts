@@ -13,15 +13,15 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect, useRef, useState} from 'react';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect, useState} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeMultipleProps} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
-import {useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
+import {useFocus} from '@react-aria/interactions';
+import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
-import { mergeMultipleProps } from '@react-aria/utils/src/mergeMultipleProps';
-import { useFocus } from '@react-aria/interactions';
 
 interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
   decrementAriaLabel?: string,
@@ -58,24 +58,24 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     numberValue,
     validationState,
     validateInputValue,
-    textValue,
+    textValue
   } = state;
 
   const formatMessage = useMessageFormatter(intlMessages);
 
   const inputId = useId();
-  const [isFocused, setIsFocused] = useState(false)
+  const [isFocused, setIsFocused] = useState(false);
   let {focusProps} = useFocus({
     onFocus: () => {
-      ref.current.value = String(inputValue)
-      ref.current.select()
-      setIsFocused(true)
+      ref.current.value = String(inputValue);
+      ref.current.select();
+      setIsFocused(true);
     },
     onBlur: () => {
       // Set input value to normalized valid value
-      validateInputValue()
-      setIsFocused(false)
-    },
+      validateInputValue();
+      setIsFocused(false);
+    }
   });
 
   const {
@@ -95,8 +95,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       onDecrementToMin: decrementToMin,
       value: numberValue,
       textValue
-    },
-    ref
+    }
   );
 
   incrementAriaLabel = incrementAriaLabel || formatMessage('Increment');
@@ -147,23 +146,23 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
 
   let domProps = filterDOMProps(props, {labelable: true});
   let {labelProps, inputProps} = useTextField(
-    mergeMultipleProps(focusProps, spinButtonProps, {
-        autoFocus,
-        isDisabled,
-        isReadOnly,
-        isRequired,
-        step,
-        validationState,
-        value: isFocused ? inputValue : textValue,
-        autoComplete: 'off',
-        'aria-label': props['aria-label'] || null,
-        'aria-labelledby': props['aria-labelledby'] || null,
-        id: inputId,
-        min: minValue,
-        max: maxValue,
-        placeholder: formatMessage('Enter a number'),
-        type: 'text',
-        onChange: state.setValue,
+    mergeMultipleProps<any>(focusProps, spinButtonProps, {
+      autoFocus,
+      isDisabled,
+      isReadOnly,
+      isRequired,
+      step,
+      validationState,
+      value: isFocused ? inputValue : textValue,
+      autoComplete: 'off',
+      'aria-label': props['aria-label'] || null,
+      'aria-labelledby': props['aria-labelledby'] || null,
+      id: inputId,
+      min: minValue,
+      max: maxValue,
+      placeholder: formatMessage('Enter a number'),
+      type: 'text',
+      onChange: state.setValue
     }), ref);
 
   return {

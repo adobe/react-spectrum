@@ -23,7 +23,7 @@ storiesOf('NumberField', module)
   )
   .add(
     'number formatter',
-    () => render({formatOptions: { style: 'currency', currency: 'EUR' }})
+    () => render({formatOptions: {style: 'currency', currency: 'EUR'}})
   )
   .add(
     'isQuiet',

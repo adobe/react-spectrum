@@ -11,11 +11,11 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {useCallback, useRef, useState, useEffect} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
+import {useNumberFormatter} from '@react-aria/i18n';
+import {useNumberParser} from '@react-aria/i18n';
 import {ValidationState} from '@react-types/shared';
-import { useNumberFormatter } from '@react-aria/i18n';
-import { useNumberParser } from '@react-aria/i18n/src/useNumberParser';
 
 export interface NumberFieldState {
   setValue: (val: number | string) => void,
@@ -45,21 +45,21 @@ export function useNumberFieldState(
 ): NumberFieldState {
   let {minValue, maxValue, step = 1, formatOptions, value, defaultValue, onChange} = props;
 
-  const numberParser = useNumberParser()
-  const textValueFormatter = useNumberFormatter(formatOptions)
-  const inputValueFormatter = useNumberFormatter()
+  const numberParser = useNumberParser();
+  const textValueFormatter = useNumberFormatter(formatOptions);
+  const inputValueFormatter = useNumberFormatter();
 
   const [numberValue, setNumberValue] = useControlledState<number>(value, defaultValue || 0, onChange);
-  const [inputValue, setInputValue] = useState(defaultValue ? inputValueFormatter.format(defaultValue) : '')
+  const [inputValue, setInputValue] = useState(defaultValue ? inputValueFormatter.format(defaultValue) : '');
   const [isValid, setIsValid] = useState(isInputValueValid(numberValue, maxValue, minValue));
 
-  const minusSign = useRef('-')
+  const minusSign = useRef('-');
 
-  useEffect(()=> {
+  useEffect(() => {
     // Get the minus sign of the current locale to filter the input value
     // Automatically updates the minus sign when numberFormatter changes
-    minusSign.current = inputValueFormatter.formatToParts(-11).find(p => p.type === 'minusSign').value
-  }, [inputValueFormatter])
+    minusSign.current = inputValueFormatter.formatToParts(-11).find(p => p.type === 'minusSign').value;
+  }, [inputValueFormatter]);
 
   let increment = () => {
     setNumberValue((previousValue) => {
@@ -70,7 +70,7 @@ export function useNumberFieldState(
       );
 
       updateValidation(newValue);
-      setInputValue(inputValueFormatter.format(newValue))
+      setInputValue(inputValueFormatter.format(newValue));
       return newValue;
     });
   };
@@ -78,9 +78,9 @@ export function useNumberFieldState(
   let incrementToMax = useCallback(() => {
     if (maxValue != null) {
       setNumberValue(maxValue);
-      setInputValue(inputValueFormatter.format(maxValue))
+      setInputValue(inputValueFormatter.format(maxValue));
     }
-  }, [maxValue, setNumberValue]);
+  }, [inputValueFormatter, maxValue, setNumberValue]);
 
   let decrement = () => {
     setNumberValue((previousValue) => {
@@ -91,7 +91,7 @@ export function useNumberFieldState(
       );
 
       updateValidation(newValue);
-      setInputValue(inputValueFormatter.format(newValue))
+      setInputValue(inputValueFormatter.format(newValue));
       return newValue;
     });
   };
@@ -99,13 +99,13 @@ export function useNumberFieldState(
   let decrementToMin = useCallback(() => {
     if (minValue != null) {
       setNumberValue(minValue);
-      setInputValue(inputValueFormatter.format(minValue))
+      setInputValue(inputValueFormatter.format(minValue));
     }
-  }, [minValue, setNumberValue]);
+  }, [inputValueFormatter, minValue, setNumberValue]);
 
   let setValue = (value: number | string) => {
-    value = value.toString().trim()
-    const newValue = numberParser.parse(value)
+    value = value.toString().trim();
+    const newValue = numberParser.parse(value);
 
     // If new value is not NaN then update the number value
     if (!isNaN(newValue)) {
@@ -118,14 +118,14 @@ export function useNumberFieldState(
     // 1) is not NaN or
     // 2) is equal to minus sign or
     // 3) is empty
-    if(!isNaN(newValue) || value === minusSign.current  || value.length === 0) {
-      setInputValue(value)
+    if (!isNaN(newValue) || value === minusSign.current  || value.length === 0) {
+      setInputValue(value);
     }
   };
 
 
   let updateValidation = (value) => {
-    setIsValid(isInputValueValid(value, maxValue, minValue))
+    setIsValid(isInputValueValid(value, maxValue, minValue));
   };
 
   // Mostly used in onBlur event to set the input value to
@@ -133,12 +133,12 @@ export function useNumberFieldState(
   // instead of leaving the only minus sign we set the input value back to valid value
   const validateInputValue = () => {
     // Do nothing if input value is empty
-    if(!inputValue.length) return 
+    if (!inputValue.length) {return;} 
 
-    const newValue = inputValueFormatter.format(numberValue)
+    const newValue = inputValueFormatter.format(numberValue);
     updateValidation(newValue); 
-    setInputValue(newValue)
-  }
+    setInputValue(newValue);
+  };
   
   return {
     setValue,
