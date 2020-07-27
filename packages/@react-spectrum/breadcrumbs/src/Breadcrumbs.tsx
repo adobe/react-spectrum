@@ -25,36 +25,43 @@ import {useProviderProps} from '@react-spectrum/provider';
 const MIN_VISIBLE_ITEMS = 1;
 const MAX_VISIBLE_ITEMS = 4;
 
+function hasResizeObserver() {
+  return typeof window.ResizeObserver !== 'undefined';
+}
+
 type useResizeObserverOptionsType<T> = {
   ref: RefObject<T>,
-  onResize: (size: {
-    width: number,
-    height: number,
-  }) => void
+  onResize: () => void
 }
 
 function useResizeObserver<T extends HTMLElement>(options: useResizeObserverOptionsType<T>) {
   const {ref, onResize} = options;
 
-
   useEffect(() => {
     if (!ref) { return; }
+
+    if (!hasResizeObserver()) {
+      window.addEventListener('resize', onResize, false);
+      return;
+    }
 
     const resizeObserverInstance = new ResizeObserver((entries) => {
       if (!entries.length) {
         return;
       }
 
-      const entry = entries[0]; // We just need the first element
-
-      onResize({
-        width: entry.contentRect.width,
-        height: entry.contentRect.height
-      });
+      onResize();
     });
     resizeObserverInstance.observe(ref.current);
 
-    return () => resizeObserverInstance.unobserve(ref.current);
+    return () => {
+      if (!hasResizeObserver()) {
+        window.removeEventListener('resize', onResize, false);
+        return;
+      }
+      resizeObserverInstance.unobserve(ref.current);
+    };
+
   }, [ref]);
 }
 
@@ -154,6 +161,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   }, [listRef, children, setVisibleItems, showRoot, isMultiline]);
 
   useResizeObserver({ref: domRef, onResize: updateOverflow});
+
 
   useLayoutEffect(updateOverflow, [children]);
 
