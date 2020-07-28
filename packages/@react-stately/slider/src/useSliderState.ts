@@ -87,8 +87,9 @@ export function useSliderState(props: SliderProps): SliderState {
   }
 
   function updateDragging(index: number, dragging: boolean) {
-    setDraggings(replaceIndex(isDraggings, index, dragging));
-    realTimeDragging.current = dragging;
+    const newDraggings = replaceIndex(isDraggings, index, dragging);
+    setDraggings(newDraggings);
+    realTimeDragging.current = newDraggings.some(Boolean);
   }
 
   function getValueLabelForValue(value: number) {
