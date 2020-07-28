@@ -30,12 +30,12 @@ export interface NumberFieldState {
 }
 
 interface UseNumberFieldStateProps {
-  minValue?: number;
-  maxValue?: number;
-  step?: number;
-  defaultValue?: number ;
-  onChange?: (value: string | number) => void;
-  value?: number;
+  minValue?: number,
+  maxValue?: number,
+  step?: number,
+  defaultValue?: number,
+  onChange?: (value: string | number) => void,
+  value?: number,
   formatOptions?: Intl.NumberFormatOptions
 }
 

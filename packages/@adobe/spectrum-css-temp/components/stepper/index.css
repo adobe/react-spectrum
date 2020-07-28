@@ -68,8 +68,10 @@ governing permissions and limitations under the License.
 
 .spectrum-Stepper-stepUp {
   border-block-end: none;
+  border-radius: var(--spectrum-border-radius);
   border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
   border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
+  border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
 
   .spectrum-Icon {
     position: absolute;
@@ -81,7 +83,10 @@ governing permissions and limitations under the License.
 
 .spectrum-Stepper-stepDown {
   border-block-start: none;
+  border-radius: var(--spectrum-border-radius);
   border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
+  border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
+  border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
   border-block-end-width: var(--spectrum-stepper-border-size-default);
 
   &:focus {

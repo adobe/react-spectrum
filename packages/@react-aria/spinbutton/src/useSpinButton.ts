@@ -27,9 +27,9 @@ export interface SpinButtonProps extends InputBase, Validation, ValueBase<number
 }
 
 export interface SpinbuttonAria {
-  spinButtonProps: HTMLAttributes<HTMLDivElement>;
-  incrementButtonProps: AriaButtonProps;
-  decrementButtonProps: AriaButtonProps;
+  spinButtonProps: HTMLAttributes<HTMLDivElement>,
+  incrementButtonProps: AriaButtonProps,
+  decrementButtonProps: AriaButtonProps
 }
 
 export function useSpinButton(

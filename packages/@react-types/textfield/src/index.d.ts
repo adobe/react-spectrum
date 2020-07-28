@@ -40,7 +40,7 @@ export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, F
   'aria-autocomplete'?: 'none' | 'inline' | 'list' | 'both',
   /** Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. */
 
-  'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog'
+  'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
 
   /**
    * The HTML element used to render the input, e.g. 'input', or 'textarea'.

@@ -449,7 +449,7 @@ describe('NumberField', function () {
     act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenCalledWith(13);
-    act(() => {jest.advanceTimersByTime(3*60);});
+    act(() => {jest.advanceTimersByTime(3 * 60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(6);
     expect(onChangeSpy).toHaveBeenNthCalledWith(4, 14);
     expect(onChangeSpy).toHaveBeenNthCalledWith(5, 15);
@@ -467,7 +467,7 @@ describe('NumberField', function () {
     act(() => {jest.advanceTimersByTime(60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenCalledWith(13);
-    act(() => {jest.advanceTimersByTime(3*60);});
+    act(() => {jest.advanceTimersByTime(3 * 60);});
     expect(onChangeSpy).toHaveBeenCalledTimes(6);
     expect(onChangeSpy).toHaveBeenNthCalledWith(4, 12);
     expect(onChangeSpy).toHaveBeenNthCalledWith(5, 11);

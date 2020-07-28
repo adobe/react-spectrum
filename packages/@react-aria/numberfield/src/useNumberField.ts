@@ -24,7 +24,7 @@ import {useTextField} from '@react-aria/textfield';
 
 interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
   decrementAriaLabel?: string,
-  incrementAriaLabel?: string,
+  incrementAriaLabel?: string
 }
 
 interface NumberFieldAria {
@@ -66,7 +66,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   const [isFocused, setIsFocused] = useState(false);
   let {focusProps} = useFocus({
     onFocus: () => {
-      ref.current.value = inputValue
+      ref.current.value = inputValue;
       ref.current.select();
       setIsFocused(true);
     },
