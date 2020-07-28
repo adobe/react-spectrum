@@ -20,4 +20,3 @@ export * from './useLabels';
 export * from './useUpdateEffect';
 export * from './focusWithoutScrolling';
 export * from './filterDOMProps';
-export * from './mergeMultipleProps';

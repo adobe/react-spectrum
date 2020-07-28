@@ -16,7 +16,6 @@ import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect, useState} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeMultipleProps} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {useFocus} from '@react-aria/interactions';
@@ -55,9 +54,9 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     decrement,
     decrementToMin,
     inputValue,
-    numberValue,
+    value,
     validationState,
-    validateInputValue,
+    commitInputValue,
     textValue
   } = state;
 
@@ -67,13 +66,13 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   const [isFocused, setIsFocused] = useState(false);
   let {focusProps} = useFocus({
     onFocus: () => {
-      ref.current.value = String(inputValue);
+      ref.current.value = inputValue
       ref.current.select();
       setIsFocused(true);
     },
     onBlur: () => {
       // Set input value to normalized valid value
-      validateInputValue();
+      commitInputValue();
       setIsFocused(false);
     }
   });
@@ -93,7 +92,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       onIncrementToMax: incrementToMax,
       onDecrement: decrement,
       onDecrementToMin: decrementToMin,
-      value: numberValue,
+      value,
       textValue
     }
   );
@@ -106,13 +105,13 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     'aria-label': incrementAriaLabel,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
-    isDisabled: canStep || numberValue >= maxValue
+    isDisabled: canStep || value >= maxValue
   });
   const decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
     'aria-label': decrementAriaLabel,
     'aria-controls': inputId,
     excludeFromTabOrder: true,
-    isDisabled: canStep || numberValue <= minValue
+    isDisabled: canStep || value <= minValue
   });
 
   useEffect(() => {
@@ -146,7 +145,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
 
   let domProps = filterDOMProps(props, {labelable: true});
   let {labelProps, inputProps} = useTextField(
-    mergeMultipleProps<any>(focusProps, spinButtonProps, {
+    mergeProps<any>(focusProps, spinButtonProps, {
       autoFocus,
       isDisabled,
       isReadOnly,

@@ -52,7 +52,12 @@ export function useSpinButton(
     onIncrementToMax
   } = props;
 
-  useEffect(() => () => clearTimeout(_async.current), []);
+  const clearAsync = () => clearTimeout(_async.current);
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => clearAsync();
+  }, []);
 
   let onKeyDown = (e) => {
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || isReadOnly) {
@@ -141,9 +146,6 @@ export function useSpinButton(
     },
     [onDecrement]
   );
-
-
-  const clearAsync = () => clearTimeout(_async.current);
 
   return {
     spinButtonProps: {

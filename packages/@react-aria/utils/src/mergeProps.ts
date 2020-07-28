@@ -23,7 +23,7 @@ type TupleTypes<T> = { [P in keyof T]: T[P] } extends { [key: number]: infer V }
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
 
 /**
- * Merges two props objects together. Event handlers are chained,
+ * Merges multiple props objects together. Event handlers are chained,
  * classNames are combined, and ids are deduplicated. For all other props,
  * the last prop object overrides all previous ones.
  * @param args - Multiple sets of props to merge together.

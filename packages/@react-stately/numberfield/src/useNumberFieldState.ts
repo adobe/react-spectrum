@@ -13,8 +13,7 @@
 import {clamp} from '@react-aria/utils';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useNumberFormatter} from '@react-aria/i18n';
-import {useNumberParser} from '@react-aria/i18n';
+import {useNumberFormatter, useNumberParser} from '@react-aria/i18n';
 import {ValidationState} from '@react-types/shared';
 
 export interface NumberFieldState {
@@ -23,8 +22,8 @@ export interface NumberFieldState {
   decrement: () => void,
   incrementToMax: () => void,
   decrementToMin: () => void,
-  validateInputValue: () => void,
-  numberValue: number,
+  commitInputValue: () => void,
+  value: number,
   inputValue: string,
   validationState: ValidationState,
   textValue?: string
@@ -103,8 +102,8 @@ export function useNumberFieldState(
     }
   }, [inputValueFormatter, minValue, setNumberValue]);
 
-  let setValue = (value: number | string) => {
-    value = value.toString().trim();
+  let setValue = (value: string) => {
+    value = value.trim();
     const newValue = numberParser.parse(value);
 
     // If new value is not NaN then update the number value
@@ -131,7 +130,7 @@ export function useNumberFieldState(
   // Mostly used in onBlur event to set the input value to
   // formatted numberValue. e.g. user types `-` then blurs. 
   // instead of leaving the only minus sign we set the input value back to valid value
-  const validateInputValue = () => {
+  const commitInputValue = () => {
     // Do nothing if input value is empty
     if (!inputValue.length) {return;} 
 
@@ -146,9 +145,9 @@ export function useNumberFieldState(
     incrementToMax,
     decrement,
     decrementToMin,
-    numberValue,
+    value: numberValue,
     inputValue,
-    validateInputValue,
+    commitInputValue,
     textValue: inputValue.length > 0 ? textValueFormatter.format(numberValue) : '',
     validationState: !isValid ? 'invalid' : null
   };
