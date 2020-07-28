@@ -21,7 +21,6 @@ import {SpectrumLabelProps} from '@react-types/label';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
-import {usePress} from '@react-aria/interactions';
 
 function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   props = useProviderProps(props);
@@ -35,7 +34,12 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
     htmlFor,
     for: labelFor,
     elementType: ElementType = 'label',
-    onPress,
+    onClick,
+    onKeyDown,
+    onKeyUp,
+    onMouseDown,
+    onPointerDown,
+    onPointerUp,
     ...otherProps
   } = props;
 
@@ -61,13 +65,13 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
     styleProps.className
   );
 
-  const {pressProps} = usePress({onPress, ref: domRef})
+  const pressProps = {onClick, onKeyDown, onKeyUp, onMouseDown , onPointerDown, onPointerUp}
 
   return (
     <ElementType
       {...filterDOMProps(otherProps)}
-      {...styleProps}
       {...pressProps}
+      {...styleProps}
       ref={domRef}
       className={labelClassNames}
       htmlFor={ElementType === 'label' ? labelFor || htmlFor : undefined}>
