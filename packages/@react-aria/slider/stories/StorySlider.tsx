@@ -30,8 +30,12 @@ export function StorySlider(props: StorySliderProps) {
     trackProps, labelProps, commonThumbProps
   } = useSlider(multiProps, state, trackRef);
 
-  const {thumbProps, inputProps} = useSliderThumb(
-    props, {...props, index: 0, ...commonThumbProps}, state, trackRef, inputRef);
+  const {thumbProps, inputProps} = useSliderThumb({
+    sliderProps: props,
+    thumbProps: {...props, index: 0, ...commonThumbProps},
+    trackRef,
+    inputRef
+  }, state);
 
   const value = state.values[0];
 

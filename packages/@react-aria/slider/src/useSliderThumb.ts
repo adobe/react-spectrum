@@ -17,6 +17,13 @@ interface SliderThumbAria {
   labelProps: HTMLAttributes<HTMLElement>;
 }
 
+interface SliderThumbOptions {
+  sliderProps: BaseSliderProps;
+  thumbProps: SliderThumbProps;
+  trackRef: React.RefObject<HTMLElement>;
+  inputRef: React.RefObject<HTMLInputElement>;
+}
+
 /**
  * Provides behavior and accessibility for a thumb of a slider component.
  * 
@@ -27,12 +34,10 @@ interface SliderThumbAria {
  * @param inputRef Ref for the range input element.
  */
 export function useSliderThumb(
-  sliderProps: BaseSliderProps,
-  thumbProps: SliderThumbProps,
+  opts: SliderThumbOptions,
   state: SliderState,
-  trackRef: React.RefObject<HTMLElement>,
-  inputRef: React.RefObject<HTMLInputElement>
 ): SliderThumbAria {
+  const {sliderProps, thumbProps, trackRef, inputRef} = opts;
   const {
     maxValue = DEFAULT_MAX_VALUE,
     minValue = DEFAULT_MIN_VALUE,

@@ -27,11 +27,19 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
     trackProps, labelProps, commonThumbProps, containerProps
   } = useSlider(props, state, trackRef);
 
-  const {thumbProps: minThumbProps, inputProps: minInputProps} = useSliderThumb(
-    props, {...props, index: 0, 'aria-label': minLabel ?? 'Minimum', ...commonThumbProps}, state, trackRef, minInputRef);
+  const {thumbProps: minThumbProps, inputProps: minInputProps} = useSliderThumb({
+    sliderProps: props,
+    thumbProps: {...props, index: 0, 'aria-label': minLabel ?? 'Minimum', ...commonThumbProps},
+    trackRef,
+    inputRef: minInputRef
+  }, state);
 
-  const {thumbProps: maxThumbProps, inputProps: maxInputProps} = useSliderThumb(
-    props, {...props, index: 1, 'aria-label': maxLabel ?? 'Maximum', ...commonThumbProps}, state, trackRef, maxInputRef);
+  const {thumbProps: maxThumbProps, inputProps: maxInputProps} = useSliderThumb({
+    sliderProps: props,
+    thumbProps: {...props, index: 1, 'aria-label': maxLabel ?? 'Maximum', ...commonThumbProps},
+    trackRef,
+    inputRef: maxInputRef
+  }, state);
 
   return (
     <div {...containerProps} className={styles.slider}>

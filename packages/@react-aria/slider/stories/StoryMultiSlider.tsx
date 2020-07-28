@@ -71,8 +71,12 @@ export function StoryThumb(props: StoryThumbProps) {
   const {index, state, commonThumbProps} = context;
 
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const {inputProps, thumbProps, labelProps} = useSliderThumb(
-    context.sliderProps, {...props, index, ...commonThumbProps}, state, context.trackRef, inputRef);
+  const {inputProps, thumbProps, labelProps} = useSliderThumb({
+    sliderProps: context.sliderProps,
+    thumbProps: { ...props, index, ...commonThumbProps },
+    trackRef: context.trackRef,
+    inputRef
+  }, state);
 
   return (
     <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>

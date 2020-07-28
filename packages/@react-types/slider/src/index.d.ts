@@ -17,7 +17,6 @@ export interface CommonSliderThumbProps {
   labelId: string;
 }
 
-
 export interface SliderThumbProps extends CommonSliderThumbProps, AriaLabelingProps, FocusableDOMProps, FocusableProps, Validation, AriaValidationProps, LabelableProps {
   isReadOnly?: boolean;
   isDisabled?: boolean;
