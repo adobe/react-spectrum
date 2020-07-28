@@ -19,7 +19,7 @@ import heroWide from 'url:../assets/ReactAria_976x445_1x.png';
 import heroWide2x from 'url:../assets/ReactAria_976x445_2x.png';
 import heroWideWebp from 'url:../assets/ReactAria_976x445_1x.webp';
 import heroWide2xWebp from 'url:../assets/ReactAria_976x445_2x.webp';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import styles from '@react-spectrum/docs/src/docs.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
@@ -32,7 +32,7 @@ description: A library of React Hooks that provides accessible UI primitives for
 
 A library of React Hooks that provides accessible UI primitives for your design system.
 
-<p className={classNames(typographyStyles['spectrum-Body2'], styles.homeLinks)}>
+<p className={clsx(typographyStyles['spectrum-Body2'], styles.homeLinks)}>
   <a href="getting-started.html">Get started</a>
   <span aria-hidden="true">•</span>
   <a href="https://github.com/adobe/react-spectrum">GitHub</a>
