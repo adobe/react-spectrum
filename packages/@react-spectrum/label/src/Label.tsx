@@ -65,7 +65,7 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
     styleProps.className
   );
 
-  const pressProps = {onClick, onKeyDown, onKeyUp, onMouseDown , onPointerDown, onPointerUp}
+  const pressProps = {onClick, onKeyDown, onKeyUp, onMouseDown, onPointerDown, onPointerUp};
 
   return (
     <ElementType
