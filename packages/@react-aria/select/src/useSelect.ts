@@ -20,6 +20,7 @@ import {SelectState} from '@react-stately/select';
 import {useCollator} from '@react-aria/i18n';
 import {useLabel} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
+import { usePress } from '@react-aria/interactions';
 
 interface AriaSelectOptions<T> extends AriaSelectProps<T> {
   /**
@@ -85,10 +86,12 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let triggerProps = mergeProps(mergeProps(menuTriggerProps, fieldProps), typeSelectProps);
   let valueId = useId();
 
+  const {pressProps} = usePress({onPress: () => ref.current.focus()})
+
   return {
     labelProps: {
       ...labelProps,
-      onPress: () => ref.current.focus()
+      ...pressProps
     },
     triggerProps: mergeProps(domProps, {
       ...triggerProps,
