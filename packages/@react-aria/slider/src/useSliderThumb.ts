@@ -2,7 +2,7 @@ import {BaseSliderProps, SliderThumbProps} from '@react-types/slider';
 import {chain, focusWithoutScrolling, mergeProps, useDrag1D} from '@react-aria/utils';
 import {computeOffsetToValue} from './utils';
 import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE, DEFAULT_STEP_VALUE, SliderState} from '@react-stately/slider';
-import {HTMLAttributes, useCallback, useEffect} from 'react';
+import {HTMLAttributes, useCallback, useEffect, ChangeEvent} from 'react';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
 
@@ -83,7 +83,6 @@ export function useSliderThumb(
     orientation: 'horizontal',
     onDrag: (dragging) => {
       state.setDragging(index, dragging);
-      console.log('THUMB FOCUS');
       focusInput();
     },
     onPositionChange: (position) => {
@@ -103,27 +102,36 @@ export function useSliderThumb(
     inputRef
   );
 
+  // We install mouse handlers for the drag motion on the thumb div, but 
+  // not the key handler for moving the thumb with the slider.  Instead,
+  // we focus the range input, and let the browser handle the keyboard
+  // interactions; we then listen to input's onChange to update state.
   return {
     inputProps: mergeProps(focusableProps, fieldProps, {
       type: 'range',
       tabIndex: allowDrag ? 0 : undefined,
-      'aria-valuenow': value,
-      'aria-valuemin': state.getMinValueForIndex(index),
-      'aria-valuemax': state.getMaxValueForIndex(index),
-      'aria-readonly': isReadOnly || undefined,
-      'aria-disabled': isDisabled || undefined,
+      min: state.getMinValueForIndex(index),
+      max: state.getMaxValueForIndex(index),
+      step: step,
+      value: value,
+      readonly: isReadOnly,
+      disabled: isDisabled,
       'aria-orientation': 'horizontal',
       'aria-valuetext': state.getValueLabelForIndex(index),
       'aria-required': isRequired || undefined,
       'aria-invalid': validationState === 'invalid' || undefined,
       'aria-errormessage': thumbProps['aria-errormessage'],
-      onKeyDown: allowDrag ? draggableProps.onKeyDown : undefined
+      onChange: (e: ChangeEvent<HTMLInputElement>) => {
+        state.setValue(index, parseFloat(e.target.value));
+      }
     }),
-    thumbProps: {
-      onMouseDown: allowDrag ? chain(draggableProps.onMouseDown, () => focusInput()) : undefined,
-      onMouseEnter: allowDrag ? draggableProps.onMouseEnter : undefined,
-      onMouseOut: allowDrag ? draggableProps.onMouseOut : undefined
-    },
+    thumbProps: allowDrag ? mergeProps({
+      onMouseDown: draggableProps.onMouseDown,
+      onMosueEnter: draggableProps.onMouseEnter,
+      onMouseOut: draggableProps.onMouseOut,
+    }, {
+      onMouseDown: focusInput,
+    }) : {},
     labelProps
   };
 }
