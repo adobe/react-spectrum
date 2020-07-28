@@ -45,6 +45,7 @@ describe('TooltipTrigger', function () {
           </TooltipTrigger>
         </Provider>
       );
+      expect(() => {getByRole('tooltip');}).toThrow();
 
       let button = getByLabelText('trigger');
       act(() => {
@@ -465,11 +466,11 @@ describe('TooltipTrigger', function () {
       let unHelpfulText = 'Unhelpful information.';
       let {getByLabelText, getByText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger>
+          <TooltipTrigger delay>
             <ActionButton aria-label="good-trigger" />
             <Tooltip>{helpfulText}</Tooltip>
           </TooltipTrigger>
-          <TooltipTrigger>
+          <TooltipTrigger delay>
             <ActionButton aria-label="bad-trigger" />
             <Tooltip>{unHelpfulText}</Tooltip>
           </TooltipTrigger>
@@ -481,18 +482,28 @@ describe('TooltipTrigger', function () {
       act(() => {
         goodButton.focus();
       });
-      let goodTooltip = getByText(helpfulText);
-      expect(goodTooltip).toBeVisible();
+      act(() => {
+        jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
+      });
+      expect(() => getByText(helpfulText)).toThrow();
+      expect(() => getByText(unHelpfulText)).toThrow();
+      fireEvent.mouseEnter(badButton);
+      fireEvent.mouseMove(badButton);
+      act(() => {
+        jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
+      });
+      expect(() => getByText(helpfulText)).toThrow();
       expect(() => getByText(unHelpfulText)).toThrow();
       act(() => {
-        goodButton.blur();
-      });
-      act(() => {
-        badButton.focus();
+        jest.advanceTimersByTime(TOOLTIP_DELAY / 2);
       });
       let badTooltip = getByText(unHelpfulText);
       expect(badTooltip).toBeVisible();
       expect(() => getByText(helpfulText)).toThrow();
+      act(() => {
+        goodButton.blur();
+      });
+      fireEvent.mouseLeave(badButton);
     });
   });
 

@@ -48,10 +48,26 @@ storiesOf('Tooltip', module)
     () => render('This is a tooltip.', {variant: 'info'})
   )
   .add(
+    'variant: neutral, icon',
+    () => render('This is a tooltip.', {variant: 'neutral', displayIcon: true})
+  )
+  .add(
+    'variant: positive, icon',
+    () => render('This is a tooltip.', {variant: 'positive', displayIcon: true})
+  )
+  .add(
+    'variant: negative, icon',
+    () => render('This is a tooltip.', {variant: 'negative', displayIcon: true})
+  )
+  .add(
+    'variant: info, icon',
+    () => render('This is a tooltip.', {variant: 'info', displayIcon: true})
+  )
+  .add(
     'long content',
     () => render(longMarkup)
   );
- 
+
 const longMarkup = (
   <div>
   Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor

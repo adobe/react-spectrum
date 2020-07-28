@@ -31,7 +31,7 @@ export interface AriaTooltipProps extends TooltipProps, DOMProps, AriaLabelingPr
 
 export interface SpectrumTooltipProps extends AriaTooltipProps, StyleProps {
   variant?: 'neutral' | 'positive' | 'negative' | 'info',
-  placement?: 'right' | 'left' | 'top' | 'bottom',
+  placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom',
   displayIcon?: boolean // is this what we want to name it?
 }
 

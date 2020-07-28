@@ -11,7 +11,7 @@
  */
 
 import {AriaTooltipProps} from '@react-types/tooltip';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {HTMLAttributes} from 'react';
 
 interface TooltipAria {
@@ -19,8 +19,9 @@ interface TooltipAria {
 }
 
 export function useTooltip(props: AriaTooltipProps): TooltipAria {
+  let defaultId = useId();
   let {
-    id,
+    id = defaultId,
     role = 'tooltip'
   } = props;
 

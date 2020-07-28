@@ -23,6 +23,10 @@ storiesOf('TooltipTrigger', module)
   )
   .add(
     'placement: left',
+    () => render({placement: 'left'})
+  )
+  .add(
+    'placement: start',
     () => render({placement: 'start'})
   )
   .add(
@@ -35,7 +39,7 @@ storiesOf('TooltipTrigger', module)
   )
   .add(
     'isDisabled',
-    () => render({placement: 'left', isDisabled: true})
+    () => render({placement: 'start', isDisabled: true})
   )
   .add(
     'delay',
@@ -43,7 +47,7 @@ storiesOf('TooltipTrigger', module)
   )
   .add(
     'multiple tooltips',
-    () => renderMultipleTriggers({placement: 'left'})
+    () => renderMultipleTriggers({placement: 'start'})
   )
   .add(
     'delay multiple tooltips',
