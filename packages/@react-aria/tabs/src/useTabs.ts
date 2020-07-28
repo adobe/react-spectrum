@@ -9,26 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaLabelingProps, CollectionBase, Node, Orientation, SingleSelection} from '@react-types/shared';
 import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
-import {ListState} from '@react-stately/list';
-import {TabsKeyboardDelegate} from '.';
+import {SingleSelectListState} from '@react-stately/list';
+import {TabAriaProps, TabsAriaProps} from '@react-types/tabs';
+import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
 import {useLocale} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
-
-interface TabsProps<T> extends CollectionBase<T>, SingleSelection, AriaLabelingProps {
-  /**
-   * Whether tabs are activated automatically on focus or manually.
-   * @default 'automatic'
-   */
-  keyboardActivation?: 'automatic' | 'manual',
-  /**
-   * The orientation of the tabs.
-   * @default 'horizontal'
-   */
-  orientation?: Orientation
-}
 
 interface TabsAria {
   /** Props for the tablist container. */
@@ -37,16 +24,17 @@ interface TabsAria {
   tabPanelProps: HTMLAttributes<HTMLElement>
 }
 
-export function useTabs<T>(props: TabsProps<T>, state: ListState<T>, ref): TabsAria {
+export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState<T>, ref): TabsAria {
   let {
-    'aria-label': ariaLabel,
-    orientation = 'horizontal',
+    'aria-label': ariaLabel, 
+    orientation = 'horizontal', 
     keyboardActivation = 'automatic'
   } = props;
   let {
-    collection,
-    selectionManager: manager,
-    disabledKeys
+    collection, 
+    selectionManager: manager, 
+    disabledKeys, 
+    selectedKey
   } = state;
   let {direction} = useLocale();
   let delegate = useMemo(() => new TabsKeyboardDelegate(
@@ -62,7 +50,6 @@ export function useTabs<T>(props: TabsProps<T>, state: ListState<T>, ref): TabsA
     selectOnFocus: keyboardActivation === 'automatic',
     disallowEmptySelection: true
   });
-  let selectedKey = [...collection.getKeys()].find(key => manager.selectedKeys.has(key));
 
   return {
     tabListProps: {
@@ -84,30 +71,16 @@ interface TabAria {
   tabProps: HTMLAttributes<HTMLElement>
 }
 
-interface TabAriaProps<T> {
-  /** Collection node for the tab. */
-  item: Node<T>,
-  /** Ref to the tab. */
-  ref: RefObject<HTMLElement>,
-  /** Whether the tab should be disabled. */
-  isDisabled?: boolean
-}
-
-export function useTab<T>(props: TabAriaProps<T>, state: ListState<T>): TabAria {
-  let {
-    item, 
-    ref,
-    isDisabled: isDisabledProp
-  } = props;
+export function useTab<T>(
+  props: TabAriaProps<T>,
+  state: SingleSelectListState<T>,
+  ref: RefObject<HTMLElement>
+): TabAria {
+  let {item, isDisabled} = props;
   let {key} = item;
-  let {
-    selectionManager: manager,
-    disabledKeys
-  } = state;
+  let {selectionManager: manager, selectedKey} = state;
 
-
-  let isSelected = manager.selectedKeys.has(key);
-  let isDisabled = isDisabledProp || disabledKeys.has(key);
+  let isSelected = key === selectedKey;
 
   let {itemProps} = useSelectableItem({
     selectionManager: manager,
@@ -119,7 +92,7 @@ export function useTab<T>(props: TabAriaProps<T>, state: ListState<T>): TabAria 
   let {pressProps} = usePress({...itemProps, isDisabled});
   let tabId = generateId(key, 'tab');
   let tabPanelId = generateId(key, 'tabpanel');
-  let tabIndex = isSelected ? 0 : -1;
+  let {tabIndex} = pressProps;
 
   return {
     tabProps: {

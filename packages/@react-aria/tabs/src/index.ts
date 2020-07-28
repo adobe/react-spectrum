@@ -11,4 +11,3 @@
  */
 
 export * from './useTabs';
-export * from './TabsKeyboardDelegate';

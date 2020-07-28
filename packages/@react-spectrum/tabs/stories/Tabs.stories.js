@@ -24,8 +24,11 @@ storiesOf('Tabs', module)
     info:
       'The page, anchored, and panel variants have been deprecated. Page is now compact, and panel/anchored tabs are just default. These variants will map properly to the new styles, but please do not specify these variants going forward.'
   })
-  .add('defaultSelectedItem: val2', () =>
-    render({defaultSelectedItem: 'val2'})
+  .add('defaultSelectedKey: val2', () =>
+    render({defaultSelectedKey: 'val2'})
+  )
+  .add('controlled: selectedKey: val3', () =>
+    render({selectedKey: 'val3'})
   )
   .add('orientation: vertical', () => render({orientation: 'vertical'}))
   .add('density: compact', () => render({density: 'compact'}))
@@ -62,7 +65,7 @@ storiesOf('Tabs', module)
 
 function render(props = {}) {
   return (
-    <Tabs {...props} onSelectionChange={action('onSelectionChange')}>
+    <Tabs defaultSelectedKey="val1" {...props} onSelectionChange={action('onSelectionChange')}>
       <Item title="Tab 1" key="val1">
         <Content margin="size-160">
           <Heading>Tab Body 1</Heading>
@@ -99,7 +102,7 @@ function render(props = {}) {
 
 function renderWithIcons(props = {}) {
   return (
-    <Tabs {...props} onSelectionChange={action('onSelectionChange')}>
+    <Tabs defaultSelectedKey="dashboard" {...props} onSelectionChange={action('onSelectionChange')}>
       <Item key="dashboard" icon={<Dashboard />} title="Dashboard">
         <Content margin="size-160">
           <Heading>Dashboard</Heading>

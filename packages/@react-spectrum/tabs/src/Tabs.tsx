@@ -11,12 +11,11 @@
  */
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {CollectionChildren, CollectionElement, DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
+import {DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import {ListState, useSingleSelectListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
-import {Picker} from '@react-spectrum/picker';
-import React, {Key, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
+import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import tabsStyles from './tabs.css';
@@ -28,50 +27,36 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
   props = useProviderProps(props);
   let {
     orientation = 'horizontal' as Orientation,
-    children,
     onSelectionChange,
     isDisabled,
     isQuiet,
     density,
-    defaultSelectedItem,
-    overflowMode = 'scrolling',
     ...otherProps
   } = props;
   let ref = useRef<HTMLDivElement>();
-
-  let allKeys = React.Children.map(children, (child: CollectionElement<T>) => child.key);
   let state = useSingleSelectListState<T>({
-    ...props, 
-    onSelectionChange,
-    defaultSelectedKey: defaultSelectedItem || allKeys[0],
-    disabledKeys: isDisabled ? [...allKeys] : []
+    ...props,
+    onSelectionChange
   });
-  
+
   let {styleProps} = useStyleProps(otherProps);
   let {tabListProps, tabPanelProps} = useTabs(props, state, ref);
-  
-  let selected = [...state.collection].find(item => state.selectionManager.selectedKeys.has(item.key));
   let [selectedTab, setSelectedTab] = useState<HTMLElement>();
-  
+
   useEffect(() => {
     let tabs: HTMLElement[] = Array.from(ref.current.querySelectorAll('.' + styles['spectrum-Tabs-item']));
-    if (overflowMode === 'scrolling') {
-      setSelectedTab(tabs.find(tab => tab.dataset.key === state.selectedKey));
-    }
-    if (overflowMode === 'dropdown') {
-      setSelectedTab(tabs[0]);
-    }
-  }, [props.children, state.selectedKey, overflowMode]);
+    setSelectedTab(tabs.find((tab) => tab.dataset.key === state.selectedKey));
+  }, [props.children, state.selectedKey]);
 
   return (
     <div
       {...styleProps}
       className={classNames(
-      tabsStyles,
-      'react-spectrum-TabPanel',
-      `react-spectrum-TabPanel--${orientation}`,
-      styleProps.className
-    )}>
+        tabsStyles,
+        'react-spectrum-TabPanel',
+        `react-spectrum-TabPanel--${orientation}`,
+        styleProps.className
+      )}>
       <div
         {...styleProps}
         {...tabListProps}
@@ -83,24 +68,14 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
           {'spectrum-Tabs--quiet': isQuiet},
           density ? `spectrum-Tabs--${density}` : '',
           styleProps.className
-        )} >
-        {overflowMode === 'scrolling' && [...state.collection].map(item => (
-          <Tab
-            key={item.key}
-            item={item}
-            state={state}
-            isDisabled={isDisabled}
-            orientation={orientation} />
+        )}>
+        {[...state.collection].map((item) => (
+          <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
         ))}
-        {overflowMode === 'dropdown' && (
-          <OverflowTab isDisabled={isDisabled} state={state}>
-            {children}
-          </OverflowTab>
-        )}
         {selectedTab && <TabLine orientation={orientation} selectedTab={selectedTab} />}
       </div>
       <div {...tabPanelProps} className="react-spectrum-TabPanel-body">
-        {selected && selected.props.children}
+        {state.selectedItem && state.selectedItem.props.children}
       </div>
     </div>
   );
@@ -108,31 +83,23 @@ export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
 
 interface TabProps<T> extends DOMProps, StyleProps {
   item: Node<T>,
-  state: ListState<T>,
+  state: SingleSelectListState<T>,
   isDisabled?: boolean,
   orientation?: Orientation
 }
 
 export function Tab<T>(props: TabProps<T>) {
-  let {item, state, ...otherProps} = props;
+  let {item, state, isDisabled, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
-  let {
-    key,
-    rendered
-  } = item;
+  let {key, rendered} = item;
 
-  /** Needs to be HTMLButtonElement. */
   let ref = useRef<HTMLDivElement>();
-  let {tabProps} = useTab({
-    item,
-    ref
-  }, state);
+  let {tabProps} = useTab({item, isDisabled}, state, ref);
 
   let {hoverProps, isHovered} = useHover({
     ...props
   });
-  let isSelected = state.selectionManager.selectedKeys.has(key);
-  let isDisabled = state.disabledKeys.has(key);
+  let isSelected = state.selectedKey === key;
 
   let icon = item.props.icon ? React.cloneElement(item.props.icon, {
     size: 'S',
@@ -141,7 +108,7 @@ export function Tab<T>(props: TabProps<T>) {
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div // Needs to be a button.
+      <div
         {...styleProps}
         {...mergeProps(tabProps, hoverProps)}
         ref={ref}
@@ -162,45 +129,13 @@ export function Tab<T>(props: TabProps<T>) {
   );
 }
 
-interface OverflowTabProps<T> extends DOMProps, StyleProps {
-  children: CollectionChildren<T>,
-  state: ListState<T>,
-  isDisabled?: boolean,
-  defaultSelectedItem?: Key
-}
-
-/** This is currently under construction: just for testing. */
-function OverflowTab<T = object>(props: OverflowTabProps<T>) {
-  let {
-    children,
-    state,
-    isDisabled,
-    defaultSelectedItem
-  } = props;
-  let selected = [...state.collection].find(item => state.selectionManager.selectedKeys.has(item.key));
-
-  return (
-    <Picker
-      isQuiet
-      isDisabled={isDisabled}
-      onSelectionChange={key => state.selectionManager.replaceSelection(key)}
-      defaultSelectedKey={defaultSelectedItem}
-      selectedKey={selected.key}
-      UNSAFE_className={classNames(styles, 'spectrum-Tabs-item')} >
-      {children}
-    </Picker>
-  );
-}
-
 function TabLine({orientation, selectedTab}) {
-  // v3 clean this up a bit
-  // Ideally this would be a DNA variable, but vertical tabs aren't even in DNA, soo...
   let verticalSelectionIndicatorOffset = 12;
 
   let style = {
     transform: orientation === 'vertical'
-      ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
-      : `translateX(${selectedTab.offsetLeft}px) `,
+        ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
+        : `translateX(${selectedTab.offsetLeft}px) `,
     width: undefined,
     height: undefined
   };
