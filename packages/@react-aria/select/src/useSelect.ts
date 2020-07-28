@@ -14,7 +14,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaSelectProps} from '@react-types/select';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
+import {KeyboardDelegate, PressEvents} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
 import {useCollator} from '@react-aria/i18n';
@@ -29,9 +29,10 @@ interface AriaSelectOptions<T> extends AriaSelectProps<T> {
   keyboardDelegate?: KeyboardDelegate
 }
 
+interface LabelProps extends HTMLAttributes<HTMLElement>, PressEvents {}
 interface SelectAria {
   /** Props for the label element. */
-  labelProps: HTMLAttributes<HTMLElement>,
+  labelProps: LabelProps,
 
   /** Props for the popup trigger element. */
   triggerProps: AriaButtonProps,
@@ -87,7 +88,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   return {
     labelProps: {
       ...labelProps,
-      onPress: () => { console.log('Test') }
+      onPress: () => ref.current.focus()
     },
     triggerProps: mergeProps(domProps, {
       ...triggerProps,
