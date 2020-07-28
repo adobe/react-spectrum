@@ -113,6 +113,7 @@ describe('ComboBox', function () {
 
   afterEach(() => {
     jest.clearAllMocks();
+    act(() => jest.runAllTimers());
   });
 
   afterAll(function () {
@@ -847,9 +848,9 @@ describe('ComboBox', function () {
       let secondaryButton = getAllByRole('button')[1];
       act(() => {
         userEvent.click(button);
-      });
-      act(() => {
+        jest.runAllTimers();
         userEvent.tab();
+        jest.runAllTimers();
       });
 
       expect(document.activeElement).toBe(secondaryButton);
