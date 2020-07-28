@@ -97,6 +97,15 @@ export function useSlider(
 
             realTimeTrackDraggingIndex.current = index;
             state.setFocusedIndex(index);
+
+            // We immediately toggle state to dragging and set the value on mouse down.
+            // We set the value now, instead of waiting for onDrag, so that the thumb 
+            // is updated while you're still holding the mouse button down.  And we 
+            // set dragging on now, so that onChangeEnd() won't fire yet when we set
+            // the value.  Dragging state will be reset to false in onDrag above, even
+            // if no dragging actually occurs.
+            state.setDragging(realTimeTrackDraggingIndex.current, true);
+            state.setValue(index, value);
           }
         }
       }
