@@ -31,6 +31,13 @@ describe('TooltipTrigger', function () {
     jest.useRealTimers();
   });
 
+  beforeEach(() => {
+    // by firing an event at the beginning of each test, we can put ourselves into
+    // keyboard modality for the test
+    fireEvent.keyDown(document.body, {key: 'Tab'});
+    fireEvent.keyUp(document.body, {key: 'Tab'});
+  });
+
   afterEach(() => {
     onOpenChange.mockClear();
   });
