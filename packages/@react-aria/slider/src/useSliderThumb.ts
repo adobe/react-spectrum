@@ -1,27 +1,27 @@
 import {BaseSliderProps, SliderThumbProps} from '@react-types/slider';
-import {chain, focusWithoutScrolling, mergeProps, useDrag1D} from '@react-aria/utils';
+import {ChangeEvent, HTMLAttributes, useCallback, useEffect} from 'react';
 import {computeOffsetToValue} from './utils';
 import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE, DEFAULT_STEP_VALUE, SliderState} from '@react-stately/slider';
-import {HTMLAttributes, useCallback, useEffect, ChangeEvent} from 'react';
+import {focusWithoutScrolling, mergeProps, useDrag1D} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
 
 interface SliderThumbAria {
   /** Props for the range input. */
-  inputProps: HTMLAttributes<HTMLElement>;
+  inputProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the root thumb element; handles the dragging motion. */
-  thumbProps: HTMLAttributes<HTMLElement>;
+  thumbProps: HTMLAttributes<HTMLElement>,
   
   /** Props for the label element for this thumb. */
-  labelProps: HTMLAttributes<HTMLElement>;
+  labelProps: HTMLAttributes<HTMLElement>
 }
 
 interface SliderThumbOptions {
-  sliderProps: BaseSliderProps;
-  thumbProps: SliderThumbProps;
-  trackRef: React.RefObject<HTMLElement>;
-  inputRef: React.RefObject<HTMLInputElement>;
+  sliderProps: BaseSliderProps,
+  thumbProps: SliderThumbProps,
+  trackRef: React.RefObject<HTMLElement>,
+  inputRef: React.RefObject<HTMLInputElement>
 }
 
 /**
@@ -128,9 +128,9 @@ export function useSliderThumb(
     thumbProps: allowDrag ? mergeProps({
       onMouseDown: draggableProps.onMouseDown,
       onMosueEnter: draggableProps.onMouseEnter,
-      onMouseOut: draggableProps.onMouseOut,
+      onMouseOut: draggableProps.onMouseOut
     }, {
-      onMouseDown: focusInput,
+      onMouseDown: focusInput
     }) : {},
     labelProps
   };

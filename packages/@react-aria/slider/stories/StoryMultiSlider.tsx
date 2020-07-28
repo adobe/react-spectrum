@@ -1,15 +1,15 @@
 import {classNames} from '@react-spectrum/utils';
+import {CommonSliderThumbProps, SliderProps, SliderThumbProps} from '@react-types/slider';
 import {FocusRing} from '@react-aria/focus';
-import {SliderProps, SliderThumbProps, CommonSliderThumbProps} from '@react-types/slider';
-import {SliderState, useSliderState} from '@react-stately/slider';
 import React from 'react';
+import {SliderState, useSliderState} from '@react-stately/slider';
 import styles from './story-slider.css';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 
 interface StoryMultiSliderProps extends SliderProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export function StoryMultiSlider(props: StoryMultiSliderProps) {
@@ -54,11 +54,11 @@ interface StoryThumbProps extends Omit<SliderThumbProps, 'index'|'labelId'> {
 }
 
 interface SliderStateContext {
-  sliderProps: StoryMultiSliderProps;
-  state: SliderState;
-  trackRef: React.RefObject<HTMLElement>;
-  index: number;
-  commonThumbProps: CommonSliderThumbProps;
+  sliderProps: StoryMultiSliderProps,
+  state: SliderState,
+  trackRef: React.RefObject<HTMLElement>,
+  index: number,
+  commonThumbProps: CommonSliderThumbProps
 }
 
 export function StoryThumb(props: StoryThumbProps) {
@@ -73,7 +73,7 @@ export function StoryThumb(props: StoryThumbProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const {inputProps, thumbProps, labelProps} = useSliderThumb({
     sliderProps: context.sliderProps,
-    thumbProps: { ...props, index, ...commonThumbProps },
+    thumbProps: {...props, index, ...commonThumbProps},
     trackRef: context.trackRef,
     inputRef
   }, state);

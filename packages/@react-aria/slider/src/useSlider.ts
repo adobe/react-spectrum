@@ -10,26 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
+import {CommonSliderThumbProps, SliderProps} from '@react-types/slider';
 import {computeOffsetToValue} from './utils';
 import {HTMLAttributes, useRef} from 'react';
 import {mergeProps, useDrag1D} from '@react-aria/utils';
-import {SliderProps, CommonSliderThumbProps} from '@react-types/slider';
 import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
 
 interface SliderAria {
   /** Props for the label element. */
-  labelProps: HTMLAttributes<HTMLElement>;
+  labelProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the root element of the slider component; groups slider inputs. */
-  containerProps: HTMLAttributes<HTMLElement>;
+  containerProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the track element. */
-  trackProps: HTMLAttributes<HTMLElement>;
+  trackProps: HTMLAttributes<HTMLElement>,
 
   /** Partial props that should be passed into `useSliderThumb` for all thumbs.  
    * Includes the Label ID for labeling slider inputs. */
-  commonThumbProps: CommonSliderThumbProps;
+  commonThumbProps: CommonSliderThumbProps
 }
 
 /**

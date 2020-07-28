@@ -18,28 +18,28 @@ import {useRef, useState} from 'react';
 
 export interface SliderState {
   // Values managed by the slider
-  readonly values: number[];
-  setValue: (index: number, value: number) => void;
+  readonly values: number[],
+  setValue: (index: number, value: number) => void,
 
   // Whether a specific index is being dragged
-  isDragging: (index: number) => boolean;
-  setDragging: (index: number, dragging: boolean) => void;
+  isDragging: (index: number) => boolean,
+  setDragging: (index: number, dragging: boolean) => void,
 
   // Currently-focused index
-  readonly focusedIndex: number | undefined;
-  setFocusedIndex: (index: number | undefined) => void;
+  readonly focusedIndex: number | undefined,
+  setFocusedIndex: (index: number | undefined) => void,
 
   // Returns the value offset as a percentage from 0 to 1.
-  getOffsetPercentForIndex: (index: number) => number;
-  getOffsetPercentForValue: (value: number) => number;
+  getOffsetPercentForIndex: (index: number) => number,
+  getOffsetPercentForValue: (value: number) => number,
 
   // Returns the string label for the value, per props.formatOptions
-  getValueLabelForIndex: (index: number) => string;
-  getValueLabelForValue: (value: number) => string;
+  getValueLabelForIndex: (index: number) => string,
+  getValueLabelForValue: (value: number) => string,
 
   // Returns the min and max values for the index
-  getMinValueForIndex: (index: number) => number;
-  getMaxValueForIndex: (index: number) => number;
+  getMinValueForIndex: (index: number) => number,
+  getMaxValueForIndex: (index: number) => number
 }
 
 export const DEFAULT_MIN_VALUE = 0;

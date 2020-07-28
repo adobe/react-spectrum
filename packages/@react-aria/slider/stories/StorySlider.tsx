@@ -8,8 +8,8 @@ import {ValueBase} from '@react-types/shared';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface StorySliderProps extends BaseSliderProps, ValueBase<number> {
-  origin?: number;
-  onChangeEnd?: (value: number) => void;
+  origin?: number,
+  onChangeEnd?: (value: number) => void
 }
 
 export function StorySlider(props: StorySliderProps) {

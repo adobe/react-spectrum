@@ -1,6 +1,6 @@
 import {FocusRing} from '@react-aria/focus';
-import {SliderProps} from '@react-types/slider';
 import React from 'react';
+import {SliderProps} from '@react-types/slider';
 import styles from './story-slider.css';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 import {useSliderState} from '@react-stately/slider';
@@ -8,8 +8,8 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 
 interface StoryRangeSliderProps extends SliderProps {
-  minLabel?: string;
-  maxLabel?: string;
+  minLabel?: string,
+  maxLabel?: string
 }
 
 export function StoryRangeSlider(props: StoryRangeSliderProps) {
