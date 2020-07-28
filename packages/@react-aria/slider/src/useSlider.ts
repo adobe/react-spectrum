@@ -13,7 +13,7 @@
 import {computeOffsetToValue} from './utils';
 import {HTMLAttributes, useRef} from 'react';
 import {mergeProps, useDrag1D} from '@react-aria/utils';
-import {SliderProps} from '@react-types/slider';
+import {SliderProps, CommonSliderThumbProps} from '@react-types/slider';
 import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
 
@@ -27,8 +27,9 @@ interface SliderAria {
   /** Props for the track element. */
   trackProps: HTMLAttributes<HTMLElement>;
 
-  /** Label ID for labling slider inputs. Should be passed on in `useSliderThumb`. */
-  labelId: string;
+  /** Partial props that should be passed into `useSliderThumb` for all thumbs.  
+   * Includes the Label ID for labeling slider inputs. */
+  commonThumbProps: CommonSliderThumbProps;
 }
 
 /**
@@ -100,6 +101,8 @@ export function useSlider(
         }
       }
     }, draggableProps),
-    labelId: (labelProps.id ?? fieldProps.id)!
+    commonThumbProps: {
+      labelId: (labelProps.id ?? fieldProps.id)!
+    }
   };
 }

@@ -10,10 +10,16 @@ export interface SliderProps extends BaseSliderProps, ValueBase<number[]> {
   onChangeEnd?: (value: number[]) => void;
 }
 
+/**
+ * Subset of SliderThumbProps that should have the same value for all slider thumbs
+ */
+export interface CommonSliderThumbProps {
+  labelId: string;
+}
 
-export interface SliderThumbProps extends AriaLabelingProps, FocusableDOMProps, FocusableProps, Validation, AriaValidationProps, LabelableProps {
+
+export interface SliderThumbProps extends CommonSliderThumbProps, AriaLabelingProps, FocusableDOMProps, FocusableProps, Validation, AriaValidationProps, LabelableProps {
   isReadOnly?: boolean;
   isDisabled?: boolean;
   index: number;
-  labelId: string;
 }

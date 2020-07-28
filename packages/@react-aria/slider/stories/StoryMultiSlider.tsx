@@ -1,6 +1,6 @@
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import {SliderProps, SliderThumbProps} from '@react-types/slider';
+import {SliderProps, SliderThumbProps, CommonSliderThumbProps} from '@react-types/slider';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import React from 'react';
 import styles from './story-slider.css';
@@ -17,7 +17,7 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const state = useSliderState(props);
   const {
-    trackProps, labelProps, labelId, containerProps
+    trackProps, labelProps, commonThumbProps, containerProps
   } = useSlider(props, state, trackRef);
 
   const numThumbs = React.Children.count(children);
@@ -41,7 +41,7 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
               state,
               trackRef,
               index,
-              labelId
+              commonThumbProps
             }
           } as any)))}
       </div>
@@ -58,7 +58,7 @@ interface SliderStateContext {
   state: SliderState;
   trackRef: React.RefObject<HTMLElement>;
   index: number;
-  labelId: string;
+  commonThumbProps: CommonSliderThumbProps;
 }
 
 export function StoryThumb(props: StoryThumbProps) {
@@ -68,11 +68,11 @@ export function StoryThumb(props: StoryThumbProps) {
   
   const {label, isDisabled} = props;
   const context = (props as any).__context as SliderStateContext;
-  const {index, state} = context;
+  const {index, state, commonThumbProps} = context;
 
   const inputRef = React.useRef<HTMLInputElement>(null);
   const {inputProps, thumbProps, labelProps} = useSliderThumb(
-    context.sliderProps, {...props, index, labelId: context.labelId}, state, context.trackRef, inputRef);
+    context.sliderProps, {...props, index, ...commonThumbProps}, state, context.trackRef, inputRef);
 
   return (
     <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
