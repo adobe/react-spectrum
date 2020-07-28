@@ -85,7 +85,10 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let valueId = useId();
 
   return {
-    labelProps,
+    labelProps: {
+      ...labelProps,
+      onPress: () => { console.log('Test') }
+    },
     triggerProps: mergeProps(domProps, {
       ...triggerProps,
       'aria-labelledby': [
