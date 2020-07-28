@@ -117,8 +117,9 @@ governing permissions and limitations under the License.
 
   .spectrum-Stepper-buttons {
     .spectrum-ActionButton {
-      border-top: none;
-      border-left: none;
+      border-block-start: none;
+      border-inline-start: none;
+      border-inline-end: none;
       border-radius: var(--spectrum-stepper-border-radius-reset);
     }
   }
