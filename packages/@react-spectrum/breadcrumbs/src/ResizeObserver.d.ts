@@ -36,17 +36,17 @@ declare class ResizeObserver {
    * The function called whenever an observed resize occurs. The function is
    * called with two parameters:
    * * **entries**
-   *   An array of
-   *   [ResizeObserverEntry](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry)
-   *   objects that can be used to access the new dimensions of the element
-   *   after each change.
+   * An array of
+   * [ResizeObserverEntry](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserverEntry)
+   * objects that can be used to access the new dimensions of the element
+   * after each change.
    * * **observer**
-   *   A reference to the `ResizeObserver` itself, so it will definitely be
-   *   accessible from inside the callback, should you need it. This could be
-   *   used for example to automatically unobserve the observer when a certain
-   *   condition is reached, but you can omit it if you don't need it.
+   * A reference to the `ResizeObserver` itself, so it will definitely be
+   * accessible from inside the callback, should you need it. This could be
+   * used for example to automatically unobserve the observer when a certain
+   * condition is reached, but you can omit it if you don't need it.
    *
-   * The callback will generally follow a pattern along the lines of:
+   * The callback will generally follow a pattern along the lines of:.
    * ```js
    * function(entries, observer) {
    *   for (let entry of entries) {
@@ -54,12 +54,12 @@ declare class ResizeObserver {
    *     // and possibly something to the observer itself
    *   }
    * }
-   * ```
+   * ```.
    *
    * The following snippet is taken from the
    * [resize-observer-text.html](https://mdn.github.io/dom-examples/resize-observer/resize-observer-text.html)
    * ([see source](https://github.com/mdn/dom-examples/blob/master/resize-observer/resize-observer-text.html))
-   * example:
+   * example:.
    * @example
    * const resizeObserver = new ResizeObserver(entries => {
    *   for (let entry of entries) {
@@ -126,12 +126,12 @@ interface ResizeObserverObserveOptions {
    *
    * @default "content-box"
    */
-  box?: "content-box" | "border-box";
+  box?: 'content-box' | 'border-box'
 }
 
 /**
- * The function called whenever an observed resize occurs. The function is
- * called with two parameters:
+ * The function called whenever an observed resize occurs.
+ * The function is called with two parameters.
  *
  * @param entries
  * An array of
@@ -145,7 +145,7 @@ interface ResizeObserverObserveOptions {
  * for example to automatically unobserve the observer when a certain condition
  * is reached, but you can omit it if you don't need it.
  *
- * The callback will generally follow a pattern along the lines of:
+ * The callback will generally follow a pattern along the lines of:.
  * @example
  * function(entries, observer) {
  *   for (let entry of entries) {
@@ -188,13 +188,13 @@ interface ResizeObserverEntry {
    * An object containing the new border box size of the observed element when
    * the callback is run.
    */
-  readonly borderBoxSize: ResizeObserverEntryBoxSize;
+  readonly borderBoxSize: ResizeObserverEntryBoxSize,
 
   /**
    * An object containing the new content box size of the observed element when
    * the callback is run.
    */
-  readonly contentBoxSize: ResizeObserverEntryBoxSize;
+  readonly contentBoxSize: ResizeObserverEntryBoxSize,
 
   /**
    * A [DOMRectReadOnly](https://developer.mozilla.org/en-US/docs/Web/API/DOMRectReadOnly)
@@ -205,7 +205,7 @@ interface ResizeObserverEntry {
    * in future versions.
    */
   // node_modules/typescript/lib/lib.dom.d.ts
-  readonly contentRect: DOMRectReadOnly;
+  readonly contentRect: DOMRectReadOnly,
 
   /**
    * A reference to the
@@ -213,7 +213,7 @@ interface ResizeObserverEntry {
    * [SVGElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGElement)
    * being observed.
    */
-  readonly target: Element;
+  readonly target: Element
 }
 
 /**
@@ -230,7 +230,7 @@ interface ResizeObserverEntryBoxSize {
    * this is the vertical dimension, or height; if the writing-mode is vertical,
    * this is the horizontal dimension, or width.
    */
-  blockSize: number;
+  blockSize: number,
 
   /**
    * The length of the observed element's border box in the inline dimension.
@@ -239,9 +239,9 @@ interface ResizeObserverEntryBoxSize {
    * this is the horizontal dimension, or width; if the writing-mode is
    * vertical, this is the vertical dimension, or height.
    */
-  inlineSize: number;
+  inlineSize: number
 }
 
 interface Window {
-  ResizeObserver: typeof ResizeObserver;
+  ResizeObserver: typeof ResizeObserver
 }
