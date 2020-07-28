@@ -1,9 +1,9 @@
-import {BaseSliderProps, MultiSliderProps} from '@react-types/slider';
-import {DEFAULT_MIN_VALUE, useMultiSliderState} from '@react-stately/slider';
+import {BaseSliderProps, SliderProps} from '@react-types/slider';
+import {DEFAULT_MIN_VALUE, useSliderState} from '@react-stately/slider';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
 import styles from './story-slider.css';
-import {useMultiSlider, useSliderThumb} from '@react-aria/slider';
+import {useSlider, useSliderThumb} from '@react-aria/slider';
 import {ValueBase} from '@react-types/shared';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -17,7 +17,7 @@ export function StorySlider(props: StorySliderProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const origin = props.origin ?? props.minValue ?? DEFAULT_MIN_VALUE;
 
-  const multiProps: MultiSliderProps = {
+  const multiProps: SliderProps = {
     ...props,
     value: props.value == null ? undefined :  [props.value],
     defaultValue: props.defaultValue == null ? undefined : [props.defaultValue],
@@ -25,10 +25,10 @@ export function StorySlider(props: StorySliderProps) {
     onChangeEnd: props.onChangeEnd == null ? undefined : (vals: number[]) => props.onChangeEnd(vals[0])
   };
 
-  const state = useMultiSliderState(multiProps);
+  const state = useSliderState(multiProps);
   const {
     trackProps, labelProps, labelId
-  } = useMultiSlider(multiProps, state, trackRef);
+  } = useSlider(multiProps, state, trackRef);
 
   const {thumbProps, inputProps} = useSliderThumb(
     props, {...props, index: 0, labelId}, state, trackRef, inputRef);

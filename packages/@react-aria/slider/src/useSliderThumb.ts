@@ -1,7 +1,7 @@
 import {BaseSliderProps, SliderThumbProps} from '@react-types/slider';
 import {chain, focusWithoutScrolling, mergeProps, useDrag1D} from '@react-aria/utils';
 import {computeOffsetToValue} from './utils';
-import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE, DEFAULT_STEP_VALUE, MultiSliderState} from '@react-stately/slider';
+import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE, DEFAULT_STEP_VALUE, SliderState} from '@react-stately/slider';
 import {HTMLAttributes, useCallback, useEffect} from 'react';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
@@ -22,14 +22,14 @@ interface SliderThumbAria {
  * 
  * @param sliderProps Props used for the Slider component.
  * @param thumbProps Props used for this specific thumb.
- * @param state Slider state, created via `useMultiSliderState`.
+ * @param state Slider state, created via `useSliderState`.
  * @param trackRef Ref for the track element.
  * @param inputRef Ref for the range input element.
  */
 export function useSliderThumb(
   sliderProps: BaseSliderProps,
   thumbProps: SliderThumbProps,
-  state: MultiSliderState,
+  state: SliderState,
   trackRef: React.RefObject<HTMLElement>,
   inputRef: React.RefObject<HTMLInputElement>
 ): SliderThumbAria {

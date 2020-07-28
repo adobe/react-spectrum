@@ -11,12 +11,12 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {MultiSliderProps} from '@react-types/slider';
+import {SliderProps} from '@react-types/slider';
 import {useControlledState} from '@react-stately/utils';
 import {useNumberFormatter} from '@react-aria/i18n';
 import {useRef, useState} from 'react';
 
-export interface MultiSliderState {
+export interface SliderState {
   // Values managed by the slider
   readonly values: number[];
   setValue: (index: number, value: number) => void;
@@ -46,7 +46,7 @@ export const DEFAULT_MIN_VALUE = 0;
 export const DEFAULT_MAX_VALUE = 100;
 export const DEFAULT_STEP_VALUE = 1;
 
-export function useMultiSliderState(props: MultiSliderProps): MultiSliderState {
+export function useSliderState(props: SliderProps): SliderState {
   let {isReadOnly, isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, formatOptions} = props;
 
   const [values, setValues] = useControlledState<number[]>(

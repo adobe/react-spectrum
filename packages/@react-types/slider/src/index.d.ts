@@ -6,7 +6,7 @@ export interface BaseSliderProps extends RangeInputBase<number>, LabelableProps,
   formatOptions?: Intl.NumberFormatOptions;
 }
 
-export interface MultiSliderProps extends BaseSliderProps, ValueBase<number[]> {
+export interface SliderProps extends BaseSliderProps, ValueBase<number[]> {
   onChangeEnd?: (value: number[]) => void;
 }
 

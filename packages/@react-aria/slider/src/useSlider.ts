@@ -13,11 +13,11 @@
 import {computeOffsetToValue} from './utils';
 import {HTMLAttributes, useRef} from 'react';
 import {mergeProps, useDrag1D} from '@react-aria/utils';
-import {MultiSliderProps} from '@react-types/slider';
-import {MultiSliderState} from '@react-stately/slider';
+import {SliderProps} from '@react-types/slider';
+import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
 
-interface MultiSliderAria {
+interface SliderAria {
   /** Props for the label element. */
   labelProps: HTMLAttributes<HTMLElement>;
 
@@ -35,17 +35,17 @@ interface MultiSliderAria {
  * Provides behavior and accessibility for a slider component.
  * 
  * @param props Props for the slider.
- * @param state State for the slider, as returned by `useMultiSliderState`.
+ * @param state State for the slider, as returned by `useSliderState`.
  * @param trackRef Ref for the "track" element.  The width of this element provides the "length"
  * of the track -- the span of one dimensional space that the slider thumb can be.  It also
  * accepts click and drag motions, so that the closest thumb will follow clicks and drags on
  * the track.
  */
-export function useMultiSlider(
-  props: MultiSliderProps, 
-  state: MultiSliderState, 
+export function useSlider(
+  props: SliderProps, 
+  state: SliderState, 
   trackRef: React.RefObject<HTMLElement>
-): MultiSliderAria {
+): SliderAria {
   const {labelProps, fieldProps} = useLabel(props);
 
   // When the user clicks or drags the track, we want the motion to set and drag the 

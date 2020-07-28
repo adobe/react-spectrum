@@ -1,13 +1,13 @@
 import {FocusRing} from '@react-aria/focus';
-import {MultiSliderProps} from '@react-types/slider';
+import {SliderProps} from '@react-types/slider';
 import React from 'react';
 import styles from './story-slider.css';
-import {useMultiSlider, useSliderThumb} from '@react-aria/slider';
-import {useMultiSliderState} from '@react-stately/slider';
+import {useSlider, useSliderThumb} from '@react-aria/slider';
+import {useSliderState} from '@react-stately/slider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 
-interface StoryRangeSliderProps extends MultiSliderProps {
+interface StoryRangeSliderProps extends SliderProps {
   minLabel?: string;
   maxLabel?: string;
 }
@@ -17,7 +17,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const minInputRef = React.useRef<HTMLInputElement>(null);
   const maxInputRef = React.useRef<HTMLInputElement>(null);
-  const state = useMultiSliderState(props);
+  const state = useSliderState(props);
 
   if (state.values.length !== 2) {
     throw new Error('Must specify an array of two numbers');
@@ -25,7 +25,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
 
   const {
     trackProps, labelProps, labelId, containerProps
-  } = useMultiSlider(props, state, trackRef);
+  } = useSlider(props, state, trackRef);
 
   const {thumbProps: minThumbProps, inputProps: minInputProps} = useSliderThumb(
     props, {...props, index: 0, labelId, 'aria-label': minLabel ?? 'Minimum'}, state, trackRef, minInputRef);
