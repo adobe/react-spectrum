@@ -307,8 +307,17 @@ describe('NumberField', function () {
   it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
-  `('$Name properly formats value', ({Component}) => {
+  `('$Name properly formats defaultValue', ({Component}) => {
     let {textField} = renderNumberField(Component, {showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
+
+    expect(textField).toHaveAttribute('value', '€10.00');
+  });
+
+  it.skip.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+  `('$Name properly formats value', ({Component}) => {
+    let {textField} = renderNumberField(Component, {showStepper: true, value: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     expect(textField).toHaveAttribute('value', '€10.00');
   });
@@ -341,8 +350,8 @@ describe('NumberField', function () {
   it.each`
     Name              | props                                                    | locale     | expected
     ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['€10.00', '10']}
-    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠٫٠٠ €', '١٠']}
-    ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10,00 €', '10']}
+    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠٫٠٠ €', '١٠']}
+    ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10,00 €', '10']}
   `('$Name changes value to unformatted value on focus', ({props, locale, expected}) => {
     let {textField} = renderNumberField(NumberField, {showStepper: true, defaultValue: 10, ...props}, locale);
 
@@ -356,10 +365,10 @@ describe('NumberField', function () {
   it.each`
     Name                       | props                                                                       | locale     | expected
     ${'US Euros'}              | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}}}  | ${'en-US'} | ${['€10.00', '€11.00', '€9.00']}
-    ${'French Euros'}          | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}}}  | ${'fr-FR'} | ${['10,00 €', '11,00 €', '9,00 €']}
-    ${'Arabic Euros'}          | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}}}  | ${'ar-AE'} | ${['١٠٫٠٠ €', '١١٫٠٠ €', '٩٫٠٠ €']}
+    ${'French Euros'}          | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}}}  | ${'fr-FR'} | ${['10,00 €', '11,00 €', '9,00 €']}
+    ${'Arabic Euros'}          | ${{defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}}}  | ${'ar-AE'} | ${['١٠٫٠٠ €', '١١٫٠٠ €', '٩٫٠٠ €']}
     ${'US Euros negative'}     | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['-€10.00', '-€9.00', '-€11.00']}
-    ${'French Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['-10,00 €', '-9,00 €', '-11,00 €']}
+    ${'French Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['-10,00 €', '-9,00 €', '-11,00 €']}
     ${'Arabic Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['\u061C-\u0661\u0660\u066B\u0660\u0660\xA0\u20AC', '\u061C-\u0669\u066B\u0660\u0660\xA0\u20AC', '\u061C-\u0661\u0661\u066B\u0660\u0660\xA0\u20AC']}
   `('$Name pressing increment & decrement keeps formatting', ({props, locale, expected}) => {
     let {textField, incrementButton, decrementButton} = renderNumberField(NumberField, {showStepper: true, minValue: -15, ...props}, locale);
@@ -375,8 +384,8 @@ describe('NumberField', function () {
   it.each`
     Name              | props                                                    | locale     | expected
     ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['10', '11', '9', '€9.00']}
-    ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10', '11', '9', '9,00 €']}
-    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠', '١١', '٩', '٩٫٠٠ €']}
+    ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10', '11', '9', '9,00 €']}
+    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠', '١١', '٩', '٩٫٠٠ €']}
   `('$Name pressing up arrow & down arrow keeps focus state formatting', ({props, locale, expected}) => {
     let {textField} = renderNumberField(NumberField, {showStepper: true, defaultValue: 10, ...props}, locale);
 
@@ -413,8 +422,8 @@ describe('NumberField', function () {
   it.each`
     Name              | props                                                    | locale     | keystrokes    | expected
     ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['4', '2']} | ${['4', '42', '€42.00']}
-    ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['4', '2']} | ${['4', '42', '42,00 €']}
-    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['٤', '٢']} | ${['٤', '٤٢', '٤٢٫٠٠ €']}
+    ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['4', '2']} | ${['4', '42', '42,00 €']}
+    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['٤', '٢']} | ${['٤', '٤٢', '٤٢٫٠٠ €']}
   `('$Name typing in locale stays consistent', ({props, locale, keystrokes, expected}) => {
     let {textField} = renderNumberField(NumberField, {showStepper: true, onChange: onChangeSpy, ...props}, locale);
 
@@ -493,7 +502,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(1.004);
     fireEvent.blur(textField);
   });
-  
+
   // not sure why this one won't work, it looked like select() was added to jsdom 5 years ago
   it.skip.each`
     Name                | Component
@@ -509,7 +518,7 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '3');
     fireEvent.blur(textField);
   });
-  
+
   it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
