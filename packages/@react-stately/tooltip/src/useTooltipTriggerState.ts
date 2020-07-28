@@ -41,13 +41,17 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
     tooltips[id] = hideTooltip;
   };
 
-  let showTooltip = () => {
-    ensureTooltipEntry();
+  let closeOpenTooltips = () => {
     for (let hideTooltipId in tooltips) {
       if (hideTooltipId !== id) {
         tooltips[hideTooltipId]();
       }
     }
+  }
+
+  let showTooltip = () => {
+    closeOpenTooltips();
+    ensureTooltipEntry();
     if (state.current.warmedUp || !state.current.warmupTimeout || state.current.cooldownTimeout) {
       open();
       if (state.current.cooldownTimeout) {
@@ -76,6 +80,7 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
   };
 
   let warmupTooltip = () => {
+    closeOpenTooltips();
     ensureTooltipEntry();
     if (!isOpen && !state.current.warmupTimeout && !state.current.warmedUp) {
       state.current.warmupTimeout = setTimeout(() => {
