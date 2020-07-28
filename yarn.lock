@@ -3497,6 +3497,31 @@
     prop-types "^15.6.1"
     react-lifecycles-compat "^3.0.4"
 
+"@react-aria/i18n@3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@react-aria/i18n/-/i18n-3.0.2.tgz#e2430164681fe6f4ab1ba332123835e05cf92add"
+  integrity sha512-fI7l/eHG8MIv5gEaTsASENgVyA0aFM0cJ4HqA+gNZlZyLKHoCGPxp9o8zLx2Em+JoHb9UI/W7dUG73fOJGvKvA==
+  dependencies:
+    "@babel/runtime" "^7.6.2"
+    "@react-types/shared" "^3.0.2"
+    intl-messageformat "^2.2.0"
+
+"@react-aria/interactions@3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@react-aria/interactions/-/interactions-3.0.2.tgz#3f1ef9ba2bec1148e98c79330a7efee342df8e10"
+  integrity sha512-TtLHlfz/2IWcRhTxuhVM/hxM2z3L7QZRDL6Cs+ZjHDHPyGAPEsEvxS0s0lQpx7KmIhNPV+nU5i+iFQ37exJ8kg==
+  dependencies:
+    "@babel/runtime" "^7.6.2"
+    "@react-aria/utils" "^3.0.2"
+    "@react-types/shared" "^3.0.2"
+
+"@react-types/button@3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@react-types/button/-/button-3.0.2.tgz#84ec26b51a446bf51e85cb41b70de6043e2e9080"
+  integrity sha512-vf4GISpn9TvYhh4DuCt+BgZWPMbcL7EuIlpHs7wlkm8XxxdkZ8CAiofZXYHdVgFBREalqVjeVi8DEr221zovPg==
+  dependencies:
+    "@react-types/shared" "^3.0.2"
+
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@samverschueren/stream-to-observable/-/stream-to-observable-0.3.0.tgz#ecdf48d532c58ea477acfcab80348424f8d0662f"
