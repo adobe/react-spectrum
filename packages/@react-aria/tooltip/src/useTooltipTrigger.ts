@@ -11,7 +11,7 @@
  */
 
 import {FocusEvents} from '@react-types/shared';
-import {HoverProps, PressProps} from '@react-aria/interactions';
+import {HoverProps, isFocusVisible, PressProps, useFocusVisible, usePress} from '@react-aria/interactions';
 import {HTMLAttributes, RefObject, useRef} from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
 import {TooltipTriggerAriaProps} from '@react-types/tooltip';
@@ -48,10 +48,16 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
 
   let onKeyDownTrigger = (e) => {
     if (ref && ref.current) {
+      // Escape after clicking something can give it keyboard focus
       // dismiss tooltip on esc key press
       if (e.key === 'Escape') {
         e.preventDefault();
-        state.close();
+        if (!isFocused.current) {
+          isFocused.current = true;
+          handleShow();
+        } else {
+          state.close();
+        }
       }
     }
   };
@@ -63,9 +69,17 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
     isHovered.current = false;
     handleHide();
   };
+  let onPressStart = () => {
+    if (isFocused.current) {
+      isFocused.current = false;
+    }
+  };
   let onFocus = () => {
-    isFocused.current = true;
-    handleShow();
+    let isVisible = isFocusVisible();
+    if (isVisible) {
+      isFocused.current = true;
+      handleShow();
+    }
   };
   let onBlur = () => {
     isFocused.current = false;
@@ -78,6 +92,8 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
     onHoverEnd
   });
 
+  let {pressProps} = usePress({onPressStart})
+
   let {focusableProps} = useFocusable({
     isDisabled,
     onFocus,
@@ -88,7 +104,7 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
   return {
     triggerProps: {
       'aria-describedby': state.open ? tooltipId : undefined,
-      ...mergeProps(focusableProps, hoverProps)
+      ...mergeProps(focusableProps, hoverProps, pressProps)
     },
     tooltipProps: {
       id: tooltipId
