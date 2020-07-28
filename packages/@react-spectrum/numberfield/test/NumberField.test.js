@@ -313,6 +313,16 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '€10.00');
   });
 
+  it.each`
+    Name                    | Component      | value          | result
+    ${'NumberField'}        | ${NumberField} | ${'98.543213'} | ${'98.54321'}
+    ${'NumberField rounds'} | ${NumberField} | ${'98.543216'} | ${'98.54322'}
+  `('$Name can have specified fraction digits', ({Component, value, result}) => {
+    let {textField} = renderNumberField(Component, {showStepper: true, formatOptions: {maximumFractionDigits: 5}});
+    act(() => {userEvent.type(textField, value);});
+    expect(textField).toHaveAttribute('value', result);
+  });
+
   it.skip.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
