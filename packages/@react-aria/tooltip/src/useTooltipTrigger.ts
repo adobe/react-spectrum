@@ -11,7 +11,7 @@
  */
 
 import {FocusEvents} from '@react-types/shared';
-import {HoverProps, isFocusVisible, PressProps, useFocusVisible, usePress} from '@react-aria/interactions';
+import {HoverProps, isFocusVisible, PressProps, usePress} from '@react-aria/interactions';
 import {HTMLAttributes, RefObject, useRef} from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
 import {TooltipTriggerAriaProps} from '@react-types/tooltip';
@@ -92,7 +92,7 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
     onHoverEnd
   });
 
-  let {pressProps} = usePress({onPressStart})
+  let {pressProps} = usePress({onPressStart});
 
   let {focusableProps} = useFocusable({
     isDisabled,

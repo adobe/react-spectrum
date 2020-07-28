@@ -47,7 +47,7 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
         tooltips[hideTooltipId]();
       }
     }
-  }
+  };
 
   let showTooltip = () => {
     closeOpenTooltips();
