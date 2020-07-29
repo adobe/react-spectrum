@@ -39,11 +39,20 @@ let withSection = [
   ]}
 ];
 
+let actions = {
+  onOpenChange: action('onOpenChange'),
+  onInputChange: action('onInputChange'),
+  onSelectionChange: action('onSelectionChange'),
+  onBlur: action('onBlur'),
+  onFocus: action('onFocus'),
+  onCustomValue: action('onCustomValue')
+};
+
 storiesOf('ComboBox', module)
   .add(
     'no items',
     () => (
-      <ComboBox items={[]} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+      <ComboBox items={[]} label="Combobox" {...actions}>
         {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
     )
@@ -52,23 +61,21 @@ storiesOf('ComboBox', module)
     'static items',
     () => render({})
   )
-  // TODO: figure out why item needs a :any here
   .add(
     'dynamic items',
     () => (
-      <ComboBox items={items} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
-        {(item: any) => <Item>{item.name}</Item>}
+      <ComboBox items={items} label="Combobox" {...actions}>
+        {(item) => <Item>{item.name}</Item>}
       </ComboBox>
     )
   )
-  // TODO: figure out why item needs a :any here
   .add(
     'with sections',
     () => (
-      <ComboBox items={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
-        {(item: any) => (
+      <ComboBox items={withSection} label="Combobox" {...actions}>
+        {(item) => (
           <Section key={item.name} items={item.children} title={item.name}>
-            {(item: any) => <Item key={item.name}>{item.name}</Item>}
+            {(item) => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ComboBox>
@@ -79,7 +86,7 @@ storiesOf('ComboBox', module)
     () => (
       <div style={{width: '192px'}}>
         <label id="test-label" htmlFor="test-id">Combobox</label>
-        <ComboBox id="test-id" aria-labelledby="test-label" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+        <ComboBox id="test-id" aria-labelledby="test-label" {...actions}>
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
             <Copy size="S" />
@@ -103,7 +110,7 @@ storiesOf('ComboBox', module)
     () => (
       <div>
         <div>Note: Combobox needs focus to show dropdown.</div>
-        <ComboBox label="Combobox" isOpen onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+        <ComboBox label="Combobox" isOpen {...actions}>
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
             <Copy size="S" />
@@ -119,7 +126,7 @@ storiesOf('ComboBox', module)
     () => (
       <div>
         <div>Note: Combobox needs focus to show dropdown.</div>
-        <ComboBox label="Combobox" defaultOpen onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} onSelectionChange={action('onSelectionChange')} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+        <ComboBox label="Combobox" defaultOpen {...actions}>
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
             <Copy size="S" />
@@ -184,7 +191,6 @@ storiesOf('ComboBox', module)
     'isReadOnly',
     () => render({isReadOnly: true})
   )
-  // TODO FIX THIS STORY, change spectrum field css width?
   .add(
     'labelPosition: top, labelAlign: end',
     () => render({labelAlign: 'end'})
@@ -227,7 +233,7 @@ storiesOf('ComboBox', module)
     'customWidth',
     () => (
       <Flex direction="column">
-        <ComboBox label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} width="200px">
+        <ComboBox label="Combobox" {...actions} width="200px">
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
             <Copy size="S" />
@@ -235,7 +241,7 @@ storiesOf('ComboBox', module)
           </Item>
           <Item key="three">Item Three</Item>
         </ComboBox>
-        <ComboBox label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={action('onInputChange')} width="800px">
+        <ComboBox label="Combobox" {...actions} width="800px">
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
             <Copy size="S" />

@@ -33,21 +33,20 @@ let outerBlur = jest.fn();
 let onBlur = jest.fn();
 let onCustomValue = jest.fn();
 
-function renderComboBox(props = {}) {
-  let comboboxProps = {
-    label: 'Test',
-    placeholder: 'Select a topic...',
-    onSelectionChange,
-    onOpenChange,
-    onInputChange,
-    onBlur,
-    onCustomValue,
-    ...props
-  };
+let defaultProps = {
+  label: 'Test',
+  placeholder: 'Select a topic...',
+  onSelectionChange,
+  onOpenChange,
+  onInputChange,
+  onBlur,
+  onCustomValue
+};
 
+function renderComboBox(props = {}) {
   return render(
     <Provider theme={theme}>
-      <ComboBox {...comboboxProps}>
+      <ComboBox {...defaultProps} {...props}>
         <Item key="1">One</Item>
         <Item key="2">Two</Item>
         <Item key="3">Three</Item>
@@ -57,20 +56,9 @@ function renderComboBox(props = {}) {
 }
 
 function renderSectionComboBox(props = {}) {
-  let comboboxProps = {
-    label: 'Test',
-    placeholder: 'Select a topic...',
-    onSelectionChange,
-    onOpenChange,
-    onInputChange,
-    onBlur,
-    onCustomValue,
-    ...props
-  };
-
   return render(
     <Provider theme={theme}>
-      <ComboBox {...comboboxProps}>
+      <ComboBox {...defaultProps} {...props}>
         <Section title="Section One" key="section 1">
           <Item key="1">One</Item>
           <Item key="2">Two</Item>

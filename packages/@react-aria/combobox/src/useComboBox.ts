@@ -25,9 +25,7 @@ interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   popoverRef: RefObject<HTMLDivElement>,
   triggerRef: RefObject<HTMLElement>,
   inputRef: RefObject<HTMLInputElement>,
-  layout: ListLayout<T>,
-  onBlur?: (e: FocusEvent<Element>) => void, // don't think these two (blur/focus) should be added?
-  onFocus?: (e: FocusEvent<Element>) => void
+  layout: ListLayout<T>
 }
 
 interface ComboBoxAria {
