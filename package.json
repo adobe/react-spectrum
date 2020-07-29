@@ -91,7 +91,7 @@
     "babelify": "^10.0.0",
     "chalk": "^2.4.2",
     "chromatic": "^5.0.0",
-    "classnames": "^2.2.5",
+    "clsx": "^1.1.1",
     "core-js": "^3.0.0",
     "cross-env": "^7.0.2",
     "cross-spawn": "^7.0.3",
