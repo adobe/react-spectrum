@@ -56,7 +56,7 @@ storiesOf('TooltipTrigger', module)
   )
   .add(
     'controlled',
-    () => renderMultipleTriggersControlled({isOpen: true})
+    () => <ControlledButtons />
   )
   .add(
     'trigger disabled',
@@ -124,7 +124,7 @@ function renderMultipleTriggers(props = {}) {
   );
 }
 
-function renderMultipleTriggersControlled(props = {}) {
+function ControlledButtons(props = {}) {
   let [one, setOne] = useState(false);
   let [two, setTwo] = useState(false);
   let [three, setThree] = useState(false);
