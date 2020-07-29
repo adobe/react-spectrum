@@ -15,7 +15,7 @@ import {useEffect} from 'react';
 import {useId} from '@react-aria/utils';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
-export const TOOLTIP_DELAY = 2000; // this seems to be a 2 second delay, check with design
+export const TOOLTIP_DELAY = 1500; // this seems to be a 1.5 second delay, check with design
 export const TOOLTIP_COOLDOWN = 2000;
 // should the cooldown be a different length of time?
 // what happens if one trigger is focused and a different trigger is hovered, does one of them win?
