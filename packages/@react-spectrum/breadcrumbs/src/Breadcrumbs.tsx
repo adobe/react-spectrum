@@ -42,27 +42,26 @@ function useResizeObserver<T extends HTMLElement>(options: useResizeObserverOpti
 
     if (!hasResizeObserver()) {
       window.addEventListener('resize', onResize, false);
-      return;
+      return () => {
+        window.removeEventListener('resize', onResize, false);
+      };
+    } else {
+
+      const resizeObserverInstance = new ResizeObserver((entries) => {
+        if (!entries.length) {
+          return;
+        }
+
+        onResize();
+      });
+      resizeObserverInstance.observe(ref.current);
+
+      return () => {
+        resizeObserverInstance.unobserve(ref.current);
+      };
     }
 
-    const resizeObserverInstance = new ResizeObserver((entries) => {
-      if (!entries.length) {
-        return;
-      }
-
-      onResize();
-    });
-    resizeObserverInstance.observe(ref.current);
-
-    return () => {
-      if (!hasResizeObserver()) {
-        window.removeEventListener('resize', onResize, false);
-        return;
-      }
-      resizeObserverInstance.unobserve(ref.current);
-    };
-
-  }, [ref]);
+  }, [onResize, ref]);
 }
 
 
