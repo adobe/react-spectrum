@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Flex} from '@react-spectrum/layout';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Tooltip, TooltipTrigger} from '../src';
-import {action} from "@storybook/addon-actions";
 
 storiesOf('TooltipTrigger', module)
   .add(
