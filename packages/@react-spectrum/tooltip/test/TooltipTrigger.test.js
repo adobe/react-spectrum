@@ -657,13 +657,14 @@ describe('TooltipTrigger', function () {
       fireEvent.mouseMove(button);
 
       expect(() => getByRole('tooltip')).toThrow();
+      fireEvent.mouseLeave(button);
     });
 
     // Given that a disabled button cannot be focused, i assume we want to stop this.
     // isDisabled on TooltipTrigger disables the tooltip, not the Button, this one makes some sense, though maybe a bad prop name?
     // isDisabled on the Button disables the Button, but not the tooltip, this one seems wrong
     //    should we disable mouse events on everything that is disabled?
-    it.skip('can be disabled from the trigger', () => {
+    it('can be disabled from the trigger', () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger delay={0}>
@@ -677,6 +678,26 @@ describe('TooltipTrigger', function () {
       fireEvent.mouseMove(button);
 
       expect(() => getByRole('tooltip')).toThrow();
+      fireEvent.mouseLeave(button);
+    });
+  });
+
+  describe('accessibility', () => {
+    it('has a trigger described by the tooltip when open', () => {
+      let {getByRole, getByLabelText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger delay={0}>
+            <ActionButton aria-label="trigger"/>
+            <Tooltip>Helpful information.</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+      let button = getByLabelText('trigger');
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseMove(button);
+      let tooltip = getByRole('tooltip');
+      expect(button).toHaveAttribute('aria-describedBy', tooltip.id);
+      fireEvent.mouseLeave(button);
     });
   });
 });
