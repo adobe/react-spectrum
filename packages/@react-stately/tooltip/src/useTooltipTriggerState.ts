@@ -24,7 +24,7 @@ interface TooltipTriggerStateProps extends TooltipTriggerProps {}
 
 export interface TooltipTriggerState {
   isOpen: boolean,
-  open: () => void,
+  open: (immediate?: boolean) => void,
   close: () => void
 }
 
@@ -57,6 +57,9 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
     ensureTooltipEntry();
     globalWarmedUp = true;
     open();
+    if (globalWarmUpTimeout) {
+      clearTimeout(globalWarmUpTimeout);
+    }
     if (globalCooldownTimeout) {
       clearTimeout(globalCooldownTimeout);
       globalCooldownTimeout = null;
@@ -107,8 +110,8 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
 
   return {
     isOpen,
-    open: () => {
-      if (delay > 0) {
+    open: (immediate) => {
+      if (!immediate && delay > 0) {
         warmupTooltip();
       } else {
         showTooltip();

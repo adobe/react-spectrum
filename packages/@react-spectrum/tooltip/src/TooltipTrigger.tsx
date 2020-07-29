@@ -57,15 +57,6 @@ function TooltipTrigger(props: TooltipTriggerProps, ref: DOMRef<HTMLElement>) {
     targetRef: tooltipTriggerRef,
     overlayRef,
     isOpen: state.isOpen
-
-    // do we need any of these?
-    // scrollRef = overlayRef,
-    // containerPadding = 12,
-    // shouldFlip = true,
-    // boundaryElement = document.body,
-    // offset = 0,
-    // crossOffset = 0,
-    // shouldUpdatePosition = true
   });
 
   return (

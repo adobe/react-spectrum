@@ -36,7 +36,7 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
 
   let handleShow = () => {
     if (isHovered.current || isFocused.current) {
-      state.open();
+      state.open(isFocused.current);
     }
   };
 
