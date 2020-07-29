@@ -40,13 +40,15 @@ describe('TooltipTrigger', function () {
 
   afterEach(() => {
     onOpenChange.mockClear();
+    // there's global state, so we need to make sure to run out the cooldown for every test
+    act(() => {jest.runAllTimers()});
   });
 
   describe('immediate', () => {
     it('opens for focus',  () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger onOpenChange={onOpenChange}>
+          <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -76,7 +78,7 @@ describe('TooltipTrigger', function () {
     it('opens for hover',  () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger onOpenChange={onOpenChange}>
+          <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -102,7 +104,7 @@ describe('TooltipTrigger', function () {
     it('if hovered and focused, will not hide if hover leaves',  () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger onOpenChange={onOpenChange}>
+          <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -149,7 +151,7 @@ describe('TooltipTrigger', function () {
     it('if hovered and focused, will not hide if focus leaves',  () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger onOpenChange={onOpenChange}>
+          <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -196,7 +198,7 @@ describe('TooltipTrigger', function () {
     it('can be keyboard force closed',  () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger onOpenChange={onOpenChange}>
+          <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -231,7 +233,7 @@ describe('TooltipTrigger', function () {
     it('opens for focus',  () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger delay onOpenChange={onOpenChange}>
+          <TooltipTrigger onOpenChange={onOpenChange}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -266,7 +268,7 @@ describe('TooltipTrigger', function () {
     it('opens for hover',  () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger delay onOpenChange={onOpenChange}>
+          <TooltipTrigger onOpenChange={onOpenChange}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -298,7 +300,7 @@ describe('TooltipTrigger', function () {
     it('never opens if blurred before it opens',  () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger delay onOpenChange={onOpenChange}>
+          <TooltipTrigger onOpenChange={onOpenChange}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -328,7 +330,7 @@ describe('TooltipTrigger', function () {
     it('opens for whichever occurs first',  () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger delay>
+          <TooltipTrigger>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -366,7 +368,7 @@ describe('TooltipTrigger', function () {
     it('once opened, it can be closed and opened instantly for a period of time',  () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger delay>
+          <TooltipTrigger>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -438,11 +440,11 @@ describe('TooltipTrigger', function () {
       let unHelpfulText = 'Unhelpful information.';
       let {getByLabelText, getByText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger>
+          <TooltipTrigger delay={0}>
             <ActionButton aria-label="good-trigger" />
             <Tooltip>{helpfulText}</Tooltip>
           </TooltipTrigger>
-          <TooltipTrigger>
+          <TooltipTrigger delay={0}>
             <ActionButton aria-label="bad-trigger" />
             <Tooltip>{unHelpfulText}</Tooltip>
           </TooltipTrigger>
@@ -466,6 +468,9 @@ describe('TooltipTrigger', function () {
       let badTooltip = getByText(unHelpfulText);
       expect(badTooltip).toBeVisible();
       expect(() => getByText(helpfulText)).toThrow();
+      act(() => {
+        badButton.blur();
+      });
     });
 
     it('prevents a delayed tooltip from showing', () => {
@@ -473,11 +478,11 @@ describe('TooltipTrigger', function () {
       let unHelpfulText = 'Unhelpful information.';
       let {getByLabelText, getByText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger delay>
+          <TooltipTrigger>
             <ActionButton aria-label="good-trigger" />
             <Tooltip>{helpfulText}</Tooltip>
           </TooltipTrigger>
-          <TooltipTrigger delay>
+          <TooltipTrigger>
             <ActionButton aria-label="bad-trigger" />
             <Tooltip>{unHelpfulText}</Tooltip>
           </TooltipTrigger>
@@ -518,7 +523,7 @@ describe('TooltipTrigger', function () {
     it('can be controlled open', () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger isOpen onOpenChange={onOpenChange}>
+          <TooltipTrigger isOpen delay={0} onOpenChange={onOpenChange}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -547,7 +552,7 @@ describe('TooltipTrigger', function () {
     it('can be controlled hidden', () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger isOpen={false} onOpenChange={onOpenChange}>
+          <TooltipTrigger isOpen={false} delay={0} onOpenChange={onOpenChange}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -575,7 +580,7 @@ describe('TooltipTrigger', function () {
     it('can be uncontrolled open', () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger defaultOpen>
+          <TooltipTrigger defaultOpen delay={0}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -605,11 +610,11 @@ describe('TooltipTrigger', function () {
       let unHelpfulText = 'Unhelpful information.';
       let {getByLabelText, getByText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger>
+          <TooltipTrigger delay={0}>
             <ActionButton aria-label="good-trigger" />
             <Tooltip>{helpfulText}</Tooltip>
           </TooltipTrigger>
-          <TooltipTrigger>
+          <TooltipTrigger delay={0}>
             <ActionButton aria-label="bad-trigger" />
             <Tooltip>{unHelpfulText}</Tooltip>
           </TooltipTrigger>
@@ -636,11 +641,11 @@ describe('TooltipTrigger', function () {
       let unHelpfulText = 'Unhelpful information.';
       let {getByLabelText, getByText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger isOpen>
+          <TooltipTrigger isOpen delay={0}>
             <ActionButton aria-label="good-trigger" />
             <Tooltip>{helpfulText}</Tooltip>
           </TooltipTrigger>
-          <TooltipTrigger>
+          <TooltipTrigger delay={0}>
             <ActionButton aria-label="bad-trigger" />
             <Tooltip>{unHelpfulText}</Tooltip>
           </TooltipTrigger>
@@ -662,7 +667,7 @@ describe('TooltipTrigger', function () {
     it('can be disabled from the TooltipTrigger', () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger isDisabled>
+          <TooltipTrigger isDisabled delay={0}>
             <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
@@ -682,7 +687,7 @@ describe('TooltipTrigger', function () {
     it.skip('can be disabled from the trigger', () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
-          <TooltipTrigger>
+          <TooltipTrigger delay={0}>
             <ActionButton aria-label="trigger" isDisabled />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>

@@ -15,6 +15,7 @@ import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Tooltip, TooltipTrigger} from '../src';
+import {action} from "@storybook/addon-actions";
 
 storiesOf('TooltipTrigger', module)
   .add(
@@ -23,35 +24,35 @@ storiesOf('TooltipTrigger', module)
   )
   .add(
     'placement: left',
-    () => render({placement: 'left'})
+    () => render({placement: 'left', delay: 0})
   )
   .add(
     'placement: start',
-    () => render({placement: 'start'})
+    () => render({placement: 'start', delay: 0})
   )
   .add(
     'placement: top',
-    () => render({placement: 'top'})
+    () => render({placement: 'top', delay: 0})
   )
   .add(
     'placement: bottom',
-    () => render({placement: 'bottom'})
+    () => render({placement: 'bottom', delay: 0})
   )
   .add(
     'isDisabled',
-    () => render({placement: 'start', isDisabled: true})
+    () => render({placement: 'start', isDisabled: true, delay: 0})
   )
   .add(
     'delay',
-    () => render({delay: true})
+    () => render({})
   )
   .add(
     'multiple tooltips',
-    () => renderMultipleTriggers({placement: 'start'})
+    () => renderMultipleTriggers({placement: 'start', delay: 0})
   )
   .add(
     'delay multiple tooltips',
-    () => renderMultipleTriggers({delay: true})
+    () => renderMultipleTriggers({})
   )
   .add(
     'isOpen',
@@ -64,7 +65,7 @@ storiesOf('TooltipTrigger', module)
 
 function render(props = {}) {
   return (
-    <TooltipTrigger {...props}>
+    <TooltipTrigger {...props} onOpenChange={action('openChange')}>
       <ActionButton>Trigger Tooltip</ActionButton>
       <Tooltip>
         Tooltip message.
@@ -75,7 +76,7 @@ function render(props = {}) {
 
 function renderDisabledTrigger() {
   return (
-    <TooltipTrigger>
+    <TooltipTrigger onOpenChange={action('openChange')}>
       <ActionButton isDisabled>Trigger Tooltip</ActionButton>
       <Tooltip>
         Tooltip message.
@@ -87,7 +88,7 @@ function renderDisabledTrigger() {
 function renderMultipleTriggers(props = {}) {
   return (
     <Flex gap="size-100" direction="column">
-      <TooltipTrigger {...props}>
+      <TooltipTrigger {...props} onOpenChange={action('openChange')}>
         <ActionButton>
           Neutral Tooltip
         </ActionButton>
@@ -95,7 +96,7 @@ function renderMultipleTriggers(props = {}) {
           Neutral message.
         </Tooltip>
       </TooltipTrigger>
-      <TooltipTrigger {...props}>
+      <TooltipTrigger {...props} onOpenChange={action('openChange')}>
         <ActionButton>
           Positive Tooltip
         </ActionButton>
@@ -103,7 +104,7 @@ function renderMultipleTriggers(props = {}) {
           Positive message.
         </Tooltip>
       </TooltipTrigger>
-      <TooltipTrigger {...props}>
+      <TooltipTrigger {...props} onOpenChange={action('openChange')}>
         <ActionButton>
           Negative Tooltip
         </ActionButton>
@@ -111,7 +112,7 @@ function renderMultipleTriggers(props = {}) {
           Negative message.
         </Tooltip>
       </TooltipTrigger>
-      <TooltipTrigger {...props}>
+      <TooltipTrigger {...props} onOpenChange={action('openChange')}>
         <ActionButton>
           Info Tooltip
         </ActionButton>

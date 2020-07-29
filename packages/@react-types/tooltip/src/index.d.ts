@@ -18,7 +18,7 @@ export interface TooltipTriggerProps extends PositionProps {
   children: ReactElement[],
   isDisabled?: boolean,
   onOpenChange?: (isOpen: boolean) => void,
-  delay?: boolean
+  delay?: number
 }
 
 export interface TooltipProps extends DOMProps {
