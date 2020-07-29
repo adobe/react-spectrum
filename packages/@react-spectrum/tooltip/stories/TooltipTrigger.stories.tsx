@@ -12,7 +12,7 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import {Flex} from '@react-spectrum/layout';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Tooltip, TooltipTrigger} from '../src';
 import {action} from "@storybook/addon-actions";
@@ -55,8 +55,8 @@ storiesOf('TooltipTrigger', module)
     () => renderMultipleTriggers({})
   )
   .add(
-    'isOpen',
-    () => renderMultipleTriggers({isOpen: true})
+    'controlled',
+    () => renderMultipleTriggersControlled({isOpen: true})
   )
   .add(
     'trigger disabled',
@@ -113,6 +113,49 @@ function renderMultipleTriggers(props = {}) {
         </Tooltip>
       </TooltipTrigger>
       <TooltipTrigger {...props} onOpenChange={action('openChange')}>
+        <ActionButton>
+          Info Tooltip
+        </ActionButton>
+        <Tooltip variant="info" displayIcon>
+          Informative message.
+        </Tooltip>
+      </TooltipTrigger>
+    </Flex>
+  );
+}
+
+function renderMultipleTriggersControlled(props = {}) {
+  let [one, setOne] = useState(false);
+  let [two, setTwo] = useState(false);
+  let [three, setThree] = useState(false);
+  let [four, setFour] = useState(false);
+  return (
+    <Flex gap="size-100" direction="column">
+      <TooltipTrigger {...props} isOpen={one} onOpenChange={setOne}>
+        <ActionButton>
+          Neutral Tooltip
+        </ActionButton>
+        <Tooltip displayIcon>
+          Neutral message.
+        </Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger {...props} isOpen={two} onOpenChange={setTwo}>
+        <ActionButton>
+          Positive Tooltip
+        </ActionButton>
+        <Tooltip variant="positive" displayIcon>
+          Positive message.
+        </Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger {...props} isOpen={three} onOpenChange={setThree}>
+        <ActionButton>
+          Negative Tooltip
+        </ActionButton>
+        <Tooltip variant="negative" displayIcon>
+          Negative message.
+        </Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger {...props} isOpen={four} onOpenChange={setFour}>
         <ActionButton>
           Info Tooltip
         </ActionButton>

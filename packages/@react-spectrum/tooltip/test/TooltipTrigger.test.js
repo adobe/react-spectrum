@@ -41,7 +41,7 @@ describe('TooltipTrigger', function () {
   afterEach(() => {
     onOpenChange.mockClear();
     // there's global state, so we need to make sure to run out the cooldown for every test
-    act(() => {jest.runAllTimers()});
+    act(() => {jest.runAllTimers();});
   });
 
   describe('immediate', () => {
@@ -687,7 +687,7 @@ describe('TooltipTrigger', function () {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger delay={0}>
-            <ActionButton aria-label="trigger"/>
+            <ActionButton aria-label="trigger" />
             <Tooltip>Helpful information.</Tooltip>
           </TooltipTrigger>
         </Provider>

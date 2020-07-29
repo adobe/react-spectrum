@@ -12,7 +12,7 @@
 
 import {FocusEvents} from '@react-types/shared';
 import {HoverProps, isFocusVisible, PressProps, usePress} from '@react-aria/interactions';
-import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
+import {HTMLAttributes, RefObject, useRef} from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
 import {TooltipTriggerAriaProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
