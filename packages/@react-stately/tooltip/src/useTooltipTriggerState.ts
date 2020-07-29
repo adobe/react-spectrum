@@ -17,8 +17,6 @@ import {useOverlayTriggerState} from '@react-stately/overlays';
 
 export const TOOLTIP_DELAY = 1500; // this seems to be a 1.5 second delay, check with design
 export const TOOLTIP_COOLDOWN = 2000;
-// should the cooldown be a different length of time?
-// what happens if one trigger is focused and a different trigger is hovered, does one of them win?
 
 interface TooltipTriggerStateProps extends TooltipTriggerProps {}
 
@@ -37,8 +35,8 @@ let globalCooldownTimeout = null;
 export function useTooltipTriggerState(props: TooltipTriggerStateProps): TooltipTriggerState {
   let {delay = TOOLTIP_DELAY} = props;
   let {isOpen, open, close} = useOverlayTriggerState(props);
-
-  let id = useId(); // this is a unique id for the tooltips in the map, it's not a dom id
+  // this is a unique id for the tooltips in the map, it's not a dom id
+  let id = useId();
 
   let ensureTooltipEntry = () => {
     tooltips[id] = hideTooltip;
