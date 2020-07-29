@@ -20,20 +20,6 @@ interface ButtonProps extends PressEvents, FocusableProps {
   children?: ReactNode
 }
 
-type RelOption =
-  'alternate' |
-  'author' |
-  'bookmark' |
-  'external' |
-  'help' |
-  'license' |
-  'next' |
-  'noopener' |
-  'noreferrer' |
-  'prev' |
-  'search' |
-  'tag'
-
 export interface LinkButtonProps {
   /**
    * The HTML element or React element used to render the button, e.g. 'div', 'a', or `RouterLink`.
@@ -45,7 +31,7 @@ export interface LinkButtonProps {
   /** The target window for the link. */
   target?: string,
   /** The rel values for the link as an array. */
-  rel?: RelOption | RelOption[]
+  rel?: string
 }
 
 interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {

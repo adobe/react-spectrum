@@ -42,12 +42,11 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onClick: deprecatedOnClick,
     href,
     target,
-    type = 'button',
-    rel = []
+    rel,
+    type = 'button'
   } = props;
   let additionalProps;
   if (elementType !== 'button') {
-    let relString = Array.isArray(rel) ? rel.join(' ') : rel;
     additionalProps = {
       role: 'button',
       tabIndex: isDisabled ? undefined : 0,
@@ -56,7 +55,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
       type: elementType === 'input' ? type : undefined,
       disabled: elementType === 'input' ? isDisabled : undefined,
       'aria-disabled': !isDisabled || elementType === 'input' ? undefined : isDisabled,
-      rel: elementType === 'a' ? relString : ''
+      rel: elementType === 'a' ? rel : undefined
     };
   }
 
