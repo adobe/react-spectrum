@@ -11,7 +11,7 @@
  */
 
 import {chain} from './chain';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import {mergeIds} from './useId';
 
 interface Props {
@@ -46,13 +46,13 @@ export function mergeProps<T extends Props[]>(...args: T): UnionToIntersection<T
         typeof result.className === 'string' &&
         typeof props.className === 'string'
       ) {
-        result[key] = classNames(result.className, props.className);
+        result[key] = clsx(result.className, props.className);
       } else if (
         key === 'UNSAFE_className' &&
         typeof result.UNSAFE_className === 'string' &&
         typeof props.UNSAFE_className === 'string'
       ) {
-        result[key] = classNames(result.UNSAFE_className, props.UNSAFE_className);
+        result[key] = clsx(result.UNSAFE_className, props.UNSAFE_className);
       } else if (key === 'id' && result.id && props.id) {
         result.id = mergeIds(result.id, props.id);
         // Override others
