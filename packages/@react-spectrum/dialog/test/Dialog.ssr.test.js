@@ -10,7 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
+import {testSSR} from '@react-spectrum/test-utils';
 
-export * from './triggerPress';
-export * from './testSSR';
+describe('Dialog SSR', function () {
+  it('Dialog should render without errors', async function () {
+    await testSSR(__filename, `
+      import {Dialog} from '../';
+
+      <Dialog>
+        contents
+      </Dialog>
+    `);
+  });
+
+  // TODO: AlertDialog, DialogTrigger
+});
