@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import classNames from 'classnames';
+import clsx from 'clsx';
 import {mergeIds} from '../src/useId';
 import {mergeProps} from '../';
 
@@ -72,7 +72,7 @@ describe('mergeProps', function () {
     let className2 = 'hover';
     let className3 = 'focus';
     let mergedProps = mergeProps({className: className1}, {className: className2}, {className: className3});
-    let mergedClassNames = classNames(className1, className2, className3);
+    let mergedClassNames = clsx(className1, className2, className3);
     expect(mergedProps.className).toBe(mergedClassNames);
   });
 
