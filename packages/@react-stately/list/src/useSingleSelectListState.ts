@@ -18,7 +18,7 @@ import {useControlledState} from '@react-stately/utils';
 
 export interface SingleSelectListProps<T> extends CollectionBase<T>, SingleSelection {
   /** Filter function to generate a filtered list of nodes. */
-  nodeFilter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>
+  filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>
 }
 export interface SingleSelectListState<T> extends ListState<T> {
   /** The key for the currently selected item. */

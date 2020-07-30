@@ -178,7 +178,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       // Fall back to null as the selectedKey to avoid useControlledState error of uncontrolled to controlled and viceversa
       selectedKey: selectedKey || null,
       onSelectionChange: (key: Key) => setSelectedKey(key),
-      nodeFilter
+      filter: nodeFilter
     }
   );
 

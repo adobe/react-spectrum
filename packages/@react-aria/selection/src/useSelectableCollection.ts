@@ -332,7 +332,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     selectionManager: manager
   });
 
-  if (disallowTypeAhead) {
+  if (!disallowTypeAhead) {
     handlers = mergeProps(typeSelectProps, handlers);
   }
 
