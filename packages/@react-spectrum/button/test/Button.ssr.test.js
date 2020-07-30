@@ -10,7 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
+import {testSSR} from '@react-spectrum/test-utils';
 
-export * from './triggerPress';
-export * from './testSSR';
+describe('Button SSR', function () {
+  it.each`
+    Name              | props
+    ${'ActionButton'} | ${{}}
+    ${'Button'}       | ${{}}
+    ${'FieldButton'}  | ${{}}
+    ${'LogicButton'}  | ${{}}
+  `('$Name should render without errors', async function ({Name, props}) {
+    await testSSR(__filename, `
+      import {${Name}} from '../';
+      <${Name}>Button</${Name}>
+    `);
+  });
+});
