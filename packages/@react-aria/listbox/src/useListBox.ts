@@ -14,7 +14,9 @@ import {AriaListBoxProps} from '@react-types/listbox';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, ReactNode, RefObject} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
+import {listIds} from './utils';
 import {ListState} from '@react-stately/list';
+import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 import {useSelectableList} from '@react-aria/selection';
 
@@ -57,8 +59,12 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
     disabledKeys: state.disabledKeys
   });
 
+  let id = useId(props.id);
+  listIds.set(state, id);
+
   let {labelProps, fieldProps} = useLabel({
     ...props,
+    id,
     // listbox is not an HTML input element so it
     // shouldn't be labeled by a <label> element.
     labelElementType: 'span'
