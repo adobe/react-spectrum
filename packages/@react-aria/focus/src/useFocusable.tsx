@@ -65,7 +65,7 @@ export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElem
   let {keyboardProps} = useKeyboard(props);
   let interactions = mergeProps(focusProps, keyboardProps);
   let domProps = useFocusableContext(domRef);
-  let interactionProps = props.isDisabled ? {} : domProps
+  let interactionProps = props.isDisabled ? {} : domProps;
 
   useEffect(() => {
     if (props.autoFocus && domRef.current) {
