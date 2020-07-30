@@ -33,7 +33,10 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
   // if a function is passed as the second child, it won't appear in toArray
   let [trigger, content] = children as [ReactElement, SpectrumDialogClose];
 
-  useDialogContainer(content);
+  let context = useContext(DialogContainerContext);
+  useEffect(() => {
+    context && context.addOverlayContent(content);
+  });
 
   let dialogContainerContext = useContext(DialogContainerContext);
   const triggerBase = <DialogTriggerBase>{trigger}</DialogTriggerBase>;
@@ -45,12 +48,6 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
   );
 }
 
-function useDialogContainer(content) {
-  let context = useContext(DialogContainerContext);
-  useEffect(() => {
-    context && context.setOverlayContent(content);
-  }, []);
-}
 
 export function DialogTriggerBase(props) {
   let {children} = props;
@@ -89,83 +86,3 @@ DialogTrigger.getCollectionNode = function* (props: SpectrumDialogTriggerProps) 
 // We don't want getCollectionNode to show up in the type definition
 let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => JSX.Element;
 export {_DialogTrigger as DialogTrigger};
-
-
-function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props}) {
-  let triggerRef = useRef<HTMLElement>();
-
-  let overlayRef = useRef<DOMRefValue<HTMLDivElement>>();
-  let {overlayProps: popoverProps, placement, arrowProps} = useOverlayPosition({
-    targetRef: targetRef || triggerRef,
-    overlayRef: unwrapDOMRef(overlayRef),
-    placement: props.placement,
-    containerPadding: props.containerPadding,
-    offset: props.offset,
-    crossOffset: props.crossOffset,
-    shouldFlip: props.shouldFlip,
-    isOpen: state.isOpen
-  });
-
-  let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
-
-  let triggerPropsWithRef = {
-    ...triggerProps,
-    ref: targetRef ? undefined : triggerRef
-  };
-
-  let overlay = (
-    <Popover
-      isOpen={state.isOpen}
-      UNSAFE_style={popoverProps.style}
-      ref={overlayRef}
-      onClose={state.close}
-      placement={placement}
-      arrowProps={arrowProps}
-      hideArrow={hideArrow}>
-      {content}
-    </Popover>
-  );
-
-  return (
-    <DialogTriggerBase
-      type="popover"
-      state={state}
-      triggerProps={triggerPropsWithRef}
-      dialogProps={overlayProps}
-      trigger={trigger}
-      overlay={overlay} />
-  );
-}
-
-// interface SpectrumDialogTriggerBase {
-//   type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
-//   state: OverlayTriggerState,
-//   isDismissable?: boolean
-//   dialogProps?: SpectrumDialogProps | {},
-//   triggerProps?: any,
-//   overlay: ReactElement,
-//   trigger: ReactElement
-// }
-//
-// function DialogTriggerBase({type, state, isDismissable, dialogProps = {}, triggerProps = {}, overlay, trigger}: SpectrumDialogTriggerBase) {
-//   let context = {
-//     type,
-//     onClose: state.close,
-//     isDismissable,
-//     ...dialogProps
-//   };
-//
-//   return (
-//     <Fragment>
-//       {/*<PressResponder*/}
-//       {/*  {...triggerProps}*/}
-//       {/*  onPress={state.toggle}*/}
-//       {/*  isPressed={state.isOpen && type !== 'modal' && type !== 'fullscreen' && type !== 'fullscreenTakeover'}>*/}
-//       {/*  {trigger}*/}
-//       {/*</PressResponder>*/}
-//       <DialogContext.Provider value={context}>
-//         {overlay}
-//       </DialogContext.Provider>
-//     </Fragment>
-//   );
-// }

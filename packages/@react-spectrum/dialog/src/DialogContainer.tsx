@@ -11,38 +11,11 @@ import {DialogContext} from './context';
 import {DialogTriggerBase} from './DialogTrigger';
 import {Dialog} from './Dialog';
 
-// extends OverlayTriggerProps
-// export function DialogContainer(props): ReactElement {
-//   const {children} = props;
-//   const [overlayProps, setOverlayProps] = useState(props);
-//   const [dialog, setDialog] = useState(null);
-//
-//   let state = useOverlayTriggerState(overlayProps);
-//
-//   const addDialog = (dialogChildren) => {
-//     !dialog && console.log('adding dialog');
-//     !dialog && setDialog(React.cloneElement(dialogChildren));
-//   };
-//
-//   const addProps = props => !overlayProps && setOverlayProps(props);
-//
-//   console.log('dialog', dialog);
-//   console.log('dialog state', state)
-//   return (
-//     <DialogContainerContext.Provider value={{addDialog, addProps}}>
-//       {dialog && React.cloneElement(dialog, {state})}
-//       {children}
-//     </DialogContainerContext.Provider>
-//   );
-// }
-//
-
 
 export function DialogContainer(props): ReactElement {
   let {
     children,
     content,
-    dialog,
     type = 'modal',
     mobileType = type === 'popover' ? 'modal' : type,
     hideArrow,
@@ -50,12 +23,11 @@ export function DialogContainer(props): ReactElement {
     isDismissable,
     ...positionProps
   } = props;
-
-  let [overlayContent, setOverlayContent] = useState(content);
+  // NOTE: content needs to be saved as function in order to save in useState (since it's a function as child)
+  let [overlayContent, setOverlayContent] = useState(() => content);
   let [overlayProps, setOverlayProps] = useState(props);
   let [dialogProps, setDialogProps] = useState({});
   let [triggerProps, setTriggerProps] = useState({});
-
 
   // On small devices, show a modal or tray instead of a popover.
   // TODO: DNA variable?
@@ -70,6 +42,8 @@ export function DialogContainer(props): ReactElement {
   }
 
   let state = useOverlayTriggerState(overlayProps);
+
+  let addOverlayContent = content => !overlayContent && setOverlayContent(() => content);
 
   let dialogContainerContext = {
     isDismissable,
@@ -104,7 +78,25 @@ export function DialogContainer(props): ReactElement {
     );
   }
 
-  console.log('typeof', typeof overlayContent)
+  let context = {
+    type,
+    onClose: state.close,
+    isDismissable,
+    ...dialogProps
+  };
+  return (
+    <DialogContainerContext.Provider value={{isDismissable, state, overlayContent, addOverlayContent, setOverlayProps, type}}>
+      {children}
+      <DialogContext.Provider value={context}>
+        <DialogContainerOverlay />
+      </DialogContext.Provider>
+    </DialogContainerContext.Provider>
+  );
+}
+
+function DialogContainerOverlay() {
+  let {isDismissable, overlayContent, state, type} = useContext(DialogContainerContext);
+
   let renderOverlay = () => {
     switch (type) {
       case 'fullscreen':
@@ -128,23 +120,8 @@ export function DialogContainer(props): ReactElement {
         );
     }
   };
-
-  let context = {
-    type,
-    onClose: state.close,
-    isDismissable,
-    ...dialogProps
-  };
-  return (
-    <DialogContainerContext.Provider value={{isDismissable, state, setOverlayContent, setOverlayProps, type}}>
-      {children}
-      <DialogContext.Provider value={context}>
-        {renderOverlay()}
-      </DialogContext.Provider>
-    </DialogContainerContext.Provider>
-  );
+  return renderOverlay();
 }
-
 
 function PopoverTrigger({targetRef, content, hideArrow, ...props}) {
   let triggerRef = useRef<HTMLElement>();
