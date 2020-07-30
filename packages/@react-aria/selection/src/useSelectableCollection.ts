@@ -65,10 +65,10 @@ interface SelectableCollectionOptions {
    */
   disallowSelectAll?: boolean,
   /**
-   * Whether the collection should support typeahead.
-   * @default true
+   * Whether the collection allows typeahead.
+   * @default false
    */
-  shouldTypeAhead?: boolean
+  disallowTypeAhead?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -88,7 +88,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     shouldFocusWrap = false,
     disallowEmptySelection = false,
     disallowSelectAll = false,
-    shouldTypeAhead = true
+    disallowTypeAhead = false
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -310,9 +310,6 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       if (focusedKey == null) {
         focusWithoutScrolling(ref.current);
       }
-    } else {
-      // Reset focused key from previous value on render but don't focus collection (e.g. Combobox w/ allowsCustomValue=true)
-      manager && manager.setFocusedKey && manager.setFocusedKey(null);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -335,7 +332,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     selectionManager: manager
   });
 
-  if (shouldTypeAhead) {
+  if (disallowTypeAhead) {
     handlers = mergeProps(typeSelectProps, handlers);
   }
 

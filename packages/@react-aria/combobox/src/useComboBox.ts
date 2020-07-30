@@ -74,7 +74,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
     keyboardDelegate: layout,
-    shouldTypeAhead: false,
+    disallowTypeAhead: true,
     disallowEmptySelection: true,
     disallowSelectAll: true,
     ref: inputRef
@@ -190,9 +190,11 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   }, [state.selectionManager, state.collection, layout, allowsCustomValue, state.inputValue]);
 
   // Clear focused key if user clears textfield to prevent accidental selection on blur
+  // Also clear focused key if allowsCustomValue is true, there isn't a selected key, and there isn't a focusStrategy set (indicative of menu being opened via arrow up/down)
+  // Specifically for case where menu is closed and user copy pastes a matching value into input field then deletes a character
   let lastValue = useRef(state.inputValue);
   useEffect(() => {
-    if (state.inputValue === '' && lastValue.current !== state.inputValue) {
+    if ((state.inputValue === '' && lastValue.current !== state.inputValue) || (allowsCustomValue && !state.selectedKey && !state.focusStrategy)) {
       state.selectionManager.setFocusedKey(null);
     }
 

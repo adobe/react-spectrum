@@ -817,6 +817,39 @@ describe('ComboBox', function () {
       expect(items).toHaveLength(3);
       expect(combobox).not.toHaveAttribute('aria-activedescendant');
     });
+
+    it('clears prior item focus when input no longer matches existing value if allowsCustomValue is true', function () {
+      let {getByRole} = renderComboBox({allowsCustomValue: true});
+      let combobox = getByRole('combobox');
+      // Change input value to something matching a combobox value
+      act(() => {
+        combobox.focus();
+        fireEvent.change(combobox, {target: {value: 'Two'}});
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(listbox).toBeVisible();
+      expect(items).toHaveLength(1);
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+      expect(items[0].textContent).toBe('Two');
+
+      // Change input text to something that doesn't match any combobox items but still shows the menu
+      act(() => {
+        combobox.focus();
+        fireEvent.change(combobox, {target: {value: 'Tw'}});
+        jest.runAllTimers();
+      });
+
+      // check that no item is focused in the menu
+      listbox = getByRole('listbox');
+      items = within(listbox).getAllByRole('option');
+      expect(listbox).toBeVisible();
+      expect(items).toHaveLength(1);
+      expect(combobox).not.toHaveAttribute('aria-activedescendant');
+      expect(items[0].textContent).toBe('Two');
+    });
   });
 
   describe('blur', function () {
