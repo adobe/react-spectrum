@@ -40,10 +40,7 @@ export function SideNavItem<T>(props: SpectrumSideNavItemProps<T>) {
   );
 
   let {listItemProps, listItemLinkProps} = useSideNavItem(props, state, ref);
-  let {hoverProps, isHovered} = useHover({
-    ...props,
-    isDisabled
-  });
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   return (
     <div

@@ -41,7 +41,7 @@ export function DateRangePicker(props: SpectrumDateRangePickerProps) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let state = useDateRangePickerState(props);
   let {comboboxProps, buttonProps, dialogProps, startFieldProps, endFieldProps} = useDateRangePicker(props, state);
   let {value, setDate, selectDateRange, isOpen, setOpen} = state;

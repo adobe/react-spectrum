@@ -27,7 +27,8 @@ import {useRef} from 'react';
 interface OptionProps<T> {
   item: Node<T>,
   shouldSelectOnPressUp?: boolean,
-  shouldFocusOnHover?: boolean
+  shouldFocusOnHover?: boolean,
+  shouldUseVirtualFocus?: boolean
 }
 
 /** @private */
@@ -35,7 +36,8 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
   let {
     item,
     shouldSelectOnPressUp,
-    shouldFocusOnHover
+    shouldFocusOnHover,
+    shouldUseVirtualFocus
   } = props;
 
   let {
@@ -46,6 +48,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
   let state = useContext(ListBoxContext);
   let isSelected = state.selectionManager.isSelected(key);
   let isDisabled = state.disabledKeys.has(key);
+  let isFocused = state.selectionManager.focusedKey === key;
 
   let ref = useRef<HTMLDivElement>();
   let {optionProps, labelProps, descriptionProps} = useOption(
@@ -56,7 +59,8 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
       key,
       shouldSelectOnPressUp,
       shouldFocusOnHover,
-      isVirtualized: true
+      isVirtualized: true,
+      shouldUseVirtualFocus
     },
     state,
     ref
@@ -79,6 +83,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
           styles,
           'spectrum-Menu-item',
           {
+            'is-focused': shouldUseVirtualFocus && isFocused,
             'is-disabled': isDisabled,
             'is-selected': isSelected,
             'is-selectable': state.selectionManager.selectionMode !== 'none',

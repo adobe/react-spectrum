@@ -68,7 +68,7 @@ module.exports = ({config}, env) => {
           include: path.resolve(__dirname, '../')
         },
         {
-          test: /packages\/.*\.css$/,
+          test: /packages[\\/].*\.css$/,
           use: [
             'style-loader',
             {
@@ -95,7 +95,7 @@ module.exports = ({config}, env) => {
           test: /\.css$/,
           loaders: ['style-loader', 'css-loader'],
           include: path.resolve(__dirname, '../'),
-          exclude: /packages\/.*\.css$/
+          exclude: /packages[\\/].*\.css$/
         },
         {
           test: /\.(ttf|woff|woff2|svg|gif|cur|eot|png|jpg)(\?[a-f0-9]{32})?$/,

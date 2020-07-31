@@ -68,10 +68,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     state,
     ref
   );
-  let {hoverProps, isHovered} = useHover({
-    ...props,
-    isDisabled
-  });
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   let contents = typeof rendered === 'string'
     ? <Text>{rendered}</Text>
