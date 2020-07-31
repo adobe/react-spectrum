@@ -538,4 +538,33 @@ describe('NumberField', function () {
     expect(incrementButton).toBeDisabled();
     expect(decrementButton).toBeDisabled();
   });
+
+  it.each`
+    Name                | Component
+    ${'v3 NumberField'} | ${NumberField}
+  `('$Name has proper aria attirbutes', ({Component}) => {
+    let {textField, incrementButton, decrementButton} = renderNumberField(Component, {
+      defaultValue: 100, 
+      minValue: 0, 
+      maxValue: 100, 
+      isReadOnly: true,
+      isDisabled: true,
+      isRequired: true,
+      id: 'test-numberfield-id',
+      formatOptions: {style: 'currency', currency: 'EUR'}
+    });
+
+    expect(textField).toHaveAttribute('aria-valuenow', '100'); 
+    expect(textField).toHaveAttribute('aria-valuetext', '€100.00'); 
+    expect(textField).toHaveAttribute('aria-valuemin', '0'); 
+    expect(textField).toHaveAttribute('aria-valuemax', '100'); 
+    expect(textField).toHaveAttribute('aria-readonly', 'true'); 
+    expect(textField).toHaveAttribute('aria-required', 'true'); 
+    expect(textField).toHaveAttribute('aria-disabled', 'true'); 
+    expect(textField).toHaveAttribute('role', 'spinbutton'); 
+    
+    // TODO: check aria-controls
+    expect(incrementButton).toHaveAttribute('aria-label', 'Increment');
+    expect(decrementButton).toHaveAttribute('aria-label', 'Decrement');
+  });
 });

@@ -12,6 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
+import {AriaTextFieldProps} from '@react-types/textfield';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect, useState} from 'react';
 // @ts-ignore
@@ -144,7 +145,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
 
   let domProps = filterDOMProps(props, {labelable: true});
   let {labelProps, inputProps} = useTextField(
-    mergeProps<any>(focusProps, spinButtonProps, {
+    mergeProps<Array<AriaTextFieldProps | HTMLAttributes<HTMLElement>>>(focusProps, {
       autoFocus,
       isDisabled,
       isReadOnly,
@@ -160,6 +161,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       onChange: state.setValue
     }), ref);
 
+  const inputFieldProps = mergeProps(spinButtonProps, inputProps);
   return {
     numberFieldProps: mergeProps(domProps, {
       role: 'group',
@@ -167,7 +169,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       'aria-invalid': validationState === 'invalid'
     }),
     labelProps,
-    inputFieldProps: inputProps,
+    inputFieldProps,
     incrementButtonProps,
     decrementButtonProps
   };
