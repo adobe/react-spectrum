@@ -13,6 +13,7 @@ import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
 import {SingleSelectListState} from '@react-stately/list';
 import {TabAriaProps, TabsAriaProps} from '@react-types/tabs';
 import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
+import {useId} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
@@ -24,23 +25,25 @@ interface TabsAria {
   tabPanelProps: HTMLAttributes<HTMLElement>
 }
 
+const tabsIds = new WeakMap<SingleSelectListState<unknown>, string>();
+
 export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState<T>, ref): TabsAria {
   let {
-    'aria-label': ariaLabel, 
-    orientation = 'horizontal', 
+    'aria-label': ariaLabel,
+    orientation = 'horizontal',
     keyboardActivation = 'automatic'
   } = props;
   let {
-    collection, 
-    selectionManager: manager, 
-    disabledKeys, 
+    collection,
+    selectionManager: manager,
+    disabledKeys,
     selectedKey
   } = state;
   let {direction} = useLocale();
   let delegate = useMemo(() => new TabsKeyboardDelegate(
-    collection, 
-    direction, 
-    orientation, 
+    collection,
+    direction,
+    orientation,
     disabledKeys), [collection, disabledKeys, orientation, direction]);
 
   let {collectionProps} = useSelectableCollection({
@@ -51,6 +54,10 @@ export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState
     disallowEmptySelection: true
   });
 
+  // Compute base id for all tabs
+  let tabsId = useId();
+  tabsIds.set(state, tabsId);
+
   return {
     tabListProps: {
       ...collectionProps,
@@ -58,8 +65,8 @@ export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState
       'aria-label': ariaLabel
     },
     tabPanelProps: {
-      id: generateId(selectedKey, 'tabpanel'),
-      'aria-labelledby': generateId(selectedKey, 'tab'),
+      id: generateId(state, selectedKey, 'tabpanel'),
+      'aria-labelledby': generateId(state, selectedKey, 'tab'),
       tabIndex: 0,
       role: 'tabpanel'
     }
@@ -84,14 +91,13 @@ export function useTab<T>(
 
   let {itemProps} = useSelectableItem({
     selectionManager: manager,
-    shouldSelectOnPressUp: true,
     key,
     ref
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled});
-  let tabId = generateId(key, 'tab');
-  let tabPanelId = generateId(key, 'tabpanel');
+  let tabId = generateId(state, key, 'tab');
+  let tabPanelId = generateId(state, key, 'tabpanel');
   let {tabIndex} = pressProps;
 
   return {
@@ -107,9 +113,11 @@ export function useTab<T>(
   };
 }
 
-function generateId(key: Key, role: string) {
+function generateId<T>(state: SingleSelectListState<T>, key: Key, role: string) {
   if (typeof key === 'string') {
     key = key.replace(/\s+/g, '');
   }
-  return `react-aria-${role}-${key}`;
+
+  let baseId = tabsIds.get(state);
+  return `${baseId}-${role}-${key}`;
 }

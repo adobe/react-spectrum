@@ -61,7 +61,7 @@ describe('Tabs', function () {
         expect(tab).toHaveAttribute('aria-controls');
         let tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
         expect(tabpanel).toBeTruthy();
-        expect(tabpanel).toHaveAttribute('aria-labelledby');
+        expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
         expect(tabpanel).toHaveAttribute('role', 'tabpanel');
         expect(tabpanel).toHaveTextContent(items[0].children);
       }
@@ -174,9 +174,38 @@ describe('Tabs', function () {
     expect(secondItem).toHaveAttribute('aria-controls');
     let tabpanel = document.getElementById(secondItem.getAttribute('aria-controls'));
     expect(tabpanel).toBeTruthy();
-    expect(tabpanel).toHaveAttribute('aria-labelledby');
+    expect(tabpanel).toHaveAttribute('aria-labelledby', secondItem.id);
     expect(tabpanel).toHaveAttribute('role', 'tabpanel');
     expect(tabpanel).toHaveTextContent(items[1].children);
     expect(onSelectionChange).toBeCalledTimes(1);
   });
+
+  it('does not generate conflicting ids between multiple tabs instances', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <Tabs>
+          {items.map(item => (
+            <Item key={item.name} title={item.name}>
+              {item.children}
+            </Item>
+          ))}
+        </Tabs>
+        <Tabs>
+          {items.map(item => (
+            <Item key={item.name} title={item.name}>
+              {item.children}
+            </Item>
+          ))}
+        </Tabs>
+      </Provider>
+    );
+
+    let tablists = tree.getAllByRole('tablist');
+    let tabs1 = within(tablists[0]).getAllByRole('tab');
+    let tabs2 = within(tablists[1]).getAllByRole('tab');
+
+    for (let i = 0; i < tabs1.length; i++) {
+      expect(tabs1[i].id).not.toBe(tabs2[i].id);
+    }
+  })
 });
