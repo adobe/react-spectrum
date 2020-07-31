@@ -63,7 +63,17 @@ interface SelectableCollectionOptions {
    * Whether the collection allows the user to select all items via keyboard shortcut.
    * @default false
    */
-  disallowSelectAll?: boolean
+  disallowSelectAll?: boolean,
+  /**
+   * Whether key selection should be replaced on focus.
+   * @default false
+   */
+  selectOnFocus?: boolean,
+  /**
+   * Whether the collection allows typeahead.
+   * @default false
+   */
+  disallowTypeAhead?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -82,7 +92,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     autoFocus = false,
     shouldFocusWrap = false,
     disallowEmptySelection = false,
-    disallowSelectAll = false
+    disallowSelectAll = false,
+    selectOnFocus = false,
+    disallowTypeAhead = false
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -103,8 +115,15 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
           if (nextKey) {
             manager.setFocusedKey(nextKey);
+            if (manager.selectionMode === 'single' && selectOnFocus) {
+              manager.replaceSelection(nextKey);
+            }
           } else if (shouldFocusWrap) {
-            manager.setFocusedKey(delegate.getFirstKey(manager.focusedKey));
+            let wrapKey = delegate.getFirstKey(manager.focusedKey);
+            manager.setFocusedKey(wrapKey);
+            if (manager.selectionMode === 'single' && selectOnFocus) {
+              manager.replaceSelection(wrapKey);
+            }
           }
 
           if (e.shiftKey && manager.selectionMode === 'multiple') {
@@ -122,8 +141,15 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
           if (nextKey) {
             manager.setFocusedKey(nextKey);
+            if (manager.selectionMode === 'single' && selectOnFocus) {
+              manager.replaceSelection(nextKey);
+            }
           } else if (shouldFocusWrap) {
-            manager.setFocusedKey(delegate.getLastKey(manager.focusedKey));
+            let wrapKey = delegate.getLastKey(manager.focusedKey);
+            manager.setFocusedKey(wrapKey);
+            if (manager.selectionMode === 'single' && selectOnFocus) {
+              manager.replaceSelection(wrapKey);
+            }
           }
 
           if (e.shiftKey && manager.selectionMode === 'multiple') {
@@ -138,6 +164,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
+            if (manager.selectionMode === 'single' && selectOnFocus) {
+              manager.replaceSelection(nextKey);
+            }
           }
           if (e.shiftKey && manager.selectionMode === 'multiple') {
             manager.extendSelection(nextKey);
@@ -151,6 +180,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           let nextKey = delegate.getKeyRightOf(manager.focusedKey);
           if (nextKey) {
             manager.setFocusedKey(nextKey);
+            if (manager.selectionMode === 'single' && selectOnFocus) {
+              manager.replaceSelection(nextKey);
+            }
           }
           if (e.shiftKey && manager.selectionMode === 'multiple') {
             manager.extendSelection(nextKey);
@@ -163,6 +195,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           e.preventDefault();
           let firstKey = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(firstKey);
+          if (manager.selectionMode === 'single' && selectOnFocus) {
+            manager.replaceSelection(firstKey);
+          }
           if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
             manager.extendSelection(firstKey);
           }
@@ -173,6 +208,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
           e.preventDefault();
           let lastKey = delegate.getLastKey(manager.focusedKey, isCtrlKeyPressed(e));
           manager.setFocusedKey(lastKey);
+          if (manager.selectionMode === 'single' && selectOnFocus) {
+            manager.replaceSelection(lastKey);
+          }
           if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
             manager.extendSelection(lastKey);
           }
@@ -308,24 +346,32 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  let handlers = {
+    // We use a capturing listener to ensure that the keyboard events for the collection
+    // override those of the children. For example, ArrowDown in a table should always go
+    // to the cell below, and not open a menu.
+    onKeyDownCapture: onKeyDown,
+    onFocus,
+    onBlur,
+    onMouseDown(e) {
+      // Prevent focus going to the collection when clicking on the scrollbar.
+      e.preventDefault();
+    }
+  };
+
   let {typeSelectProps} = useTypeSelect({
     keyboardDelegate: delegate,
     selectionManager: manager
   });
 
+  if (!disallowTypeAhead) {
+    handlers = mergeProps(typeSelectProps, handlers);
+  }
+
   return {
-    collectionProps: mergeProps(typeSelectProps, {
-      tabIndex: -1,
-      // We use a capturing listener to ensure that the keyboard events for the collection
-      // override those of the children. For example, ArrowDown in a table should always go
-      // to the cell below, and not open a menu.
-      onKeyDownCapture: onKeyDown,
-      onFocus,
-      onBlur,
-      onMouseDown(e) {
-        // Prevent focus going to the collection when clicking on the scrollbar.
-        e.preventDefault();
-      }
-    })
+    collectionProps: {
+      ...handlers,
+      tabIndex: -1
+    }
   };
 }
