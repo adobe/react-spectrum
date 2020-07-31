@@ -14,7 +14,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaSelectProps} from '@react-types/select';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
-import {KeyboardDelegate, PressEvents} from '@react-types/shared';
+import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
 import {useCollator} from '@react-aria/i18n';
@@ -89,8 +89,10 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
       ...labelProps,
       onClick: () => {
         const button = <HTMLInputElement> ref.current;
-        if(!button.disabled) ref.current.focus()
-      },
+        if (!button.disabled) {
+          ref.current.focus();
+        }
+      }
     },
     triggerProps: mergeProps(domProps, {
       ...triggerProps,
