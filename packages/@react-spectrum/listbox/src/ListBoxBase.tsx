@@ -38,6 +38,8 @@ interface ListBoxBaseProps<T> extends DOMProps, AriaLabelingProps, StyleProps {
   focusOnPointerEnter?: boolean,
   domProps?: HTMLAttributes<HTMLElement>,
   disallowEmptySelection?: boolean,
+  shouldUseVirtualFocus?: boolean,
+  transitionDuration?: number,
   isLoading?: boolean,
   onLoadMore?: () => void
 }
@@ -62,7 +64,7 @@ export function useListBoxLayout<T>(state: ListState<T>) {
 
 /** @private */
 function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
-  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, domProps = {}} = props;
+  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, shouldUseVirtualFocus, domProps = {}, transitionDuration = 0} = props;
   // @ts-ignore
   let {listBoxProps} = useListBox({
     ...props,
@@ -118,16 +120,17 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
         layout={layout}
         collection={state.collection}
         renderWrapper={renderWrapper}
+        transitionDuration={transitionDuration}
         isLoading={props.isLoading}
-        onLoadMore={props.onLoadMore}
-        transitionDuration={0}>
+        onLoadMore={props.onLoadMore}>
         {(type, item: Node<T>) => {
           if (type === 'item') {
             return (
               <ListBoxOption
                 item={item}
                 shouldSelectOnPressUp={shouldSelectOnPressUp}
-                shouldFocusOnHover={focusOnPointerEnter} />
+                shouldFocusOnHover={focusOnPointerEnter}
+                shouldUseVirtualFocus={shouldUseVirtualFocus} />
             );
           } else if (type === 'loader') {
             return (

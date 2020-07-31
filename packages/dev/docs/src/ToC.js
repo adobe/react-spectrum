@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import classNames from 'classnames';
+import clsx from 'clsx';
 import docStyles from './docs.css';
 import React from 'react';
 import sidenavstyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
@@ -36,24 +36,24 @@ function SideNav(props) {
   let {node} = props;
   if (!node.children) {
     return (
-      <ul className={classNames(sidenavstyles['spectrum-SideNav'], sidenavstyles['spectrum-SideNav--multiLevel'])}>
+      <ul className={clsx(sidenavstyles['spectrum-SideNav'], sidenavstyles['spectrum-SideNav--multiLevel'])}>
         {node.map(child => <SideNav key={child.id} node={child} />)}
       </ul>
     );
   }
   if (node.children.length > 0) {
     return (
-      <li className={classNames(sidenavstyles['spectrum-SideNav-item'])}>
-        <a className={classNames(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} href={`#${node.id}`} id={`toc-${node.id}-heading`}>{node.textContent}</a>
-        <ul className={classNames(sidenavstyles['spectrum-SideNav'], sidenavstyles['spectrum-SideNav--multiLevel'])} aria-labelledby={`toc-${node.id}-heading`}>
+      <li className={clsx(sidenavstyles['spectrum-SideNav-item'])}>
+        <a className={clsx(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} href={`#${node.id}`} id={`toc-${node.id}-heading`}>{node.textContent}</a>
+        <ul className={clsx(sidenavstyles['spectrum-SideNav'], sidenavstyles['spectrum-SideNav--multiLevel'])} aria-labelledby={`toc-${node.id}-heading`}>
           {node.children.map(child => <SideNav key={child.id} node={child} />)}
         </ul>
       </li>
     );
   } else {
     return (
-      <li className={classNames(sidenavstyles['spectrum-SideNav-item'])}>
-        <a className={classNames(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} href={`#${node.id}`}>{node.textContent}</a>
+      <li className={clsx(sidenavstyles['spectrum-SideNav-item'])}>
+        <a className={clsx(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} href={`#${node.id}`}>{node.textContent}</a>
       </li>
     );
   }

@@ -16,7 +16,7 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {Key, ReactElement, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {Key, ReactElement, RefObject, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
@@ -24,6 +24,46 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 const MIN_VISIBLE_ITEMS = 1;
 const MAX_VISIBLE_ITEMS = 4;
+
+function hasResizeObserver() {
+  return typeof window.ResizeObserver !== 'undefined';
+}
+
+type useResizeObserverOptionsType<T> = {
+  ref: RefObject<T>,
+  onResize: () => void
+}
+
+function useResizeObserver<T extends HTMLElement>(options: useResizeObserverOptionsType<T>) {
+  const {ref, onResize} = options;
+
+  useEffect(() => {
+    if (!ref) { return; }
+
+    if (!hasResizeObserver()) {
+      window.addEventListener('resize', onResize, false);
+      return () => {
+        window.removeEventListener('resize', onResize, false);
+      };
+    } else {
+
+      const resizeObserverInstance = new ResizeObserver((entries) => {
+        if (!entries.length) {
+          return;
+        }
+
+        onResize();
+      });
+      resizeObserverInstance.observe(ref.current);
+
+      return () => {
+        resizeObserverInstance.unobserve(ref.current);
+      };
+    }
+
+  }, [onResize, ref]);
+}
+
 
 function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   props = useProviderProps(props);
@@ -119,12 +159,8 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     });
   }, [listRef, children, setVisibleItems, showRoot, isMultiline]);
 
-  useEffect(() => {
-    window.addEventListener('resize', updateOverflow, false);
-    return () => {
-      window.removeEventListener('resize', updateOverflow, false);
-    };
-  }, [updateOverflow]);
+  useResizeObserver({ref: domRef, onResize: updateOverflow});
+
 
   useLayoutEffect(updateOverflow, [children]);
 

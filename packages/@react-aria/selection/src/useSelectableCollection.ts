@@ -68,7 +68,12 @@ interface SelectableCollectionOptions {
    * Whether key selection should be replaced on focus.
    * @default false
    */
-  selectOnFocus?: boolean
+  selectOnFocus?: boolean,
+  /**
+   * Whether the collection allows typeahead.
+   * @default false
+   */
+  disallowTypeAhead?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -88,7 +93,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     shouldFocusWrap = false,
     disallowEmptySelection = false,
     disallowSelectAll = false,
-    selectOnFocus = false
+    selectOnFocus = false,
+    disallowTypeAhead = false
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -340,24 +346,32 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  let handlers = {
+    // We use a capturing listener to ensure that the keyboard events for the collection
+    // override those of the children. For example, ArrowDown in a table should always go
+    // to the cell below, and not open a menu.
+    onKeyDownCapture: onKeyDown,
+    onFocus,
+    onBlur,
+    onMouseDown(e) {
+      // Prevent focus going to the collection when clicking on the scrollbar.
+      e.preventDefault();
+    }
+  };
+
   let {typeSelectProps} = useTypeSelect({
     keyboardDelegate: delegate,
     selectionManager: manager
   });
 
+  if (!disallowTypeAhead) {
+    handlers = mergeProps(typeSelectProps, handlers);
+  }
+
   return {
-    collectionProps: mergeProps(typeSelectProps, {
-      tabIndex: -1,
-      // We use a capturing listener to ensure that the keyboard events for the collection
-      // override those of the children. For example, ArrowDown in a table should always go
-      // to the cell below, and not open a menu.
-      onKeyDownCapture: onKeyDown,
-      onFocus,
-      onBlur,
-      onMouseDown(e) {
-        // Prevent focus going to the collection when clicking on the scrollbar.
-        e.preventDefault();
-      }
-    })
+    collectionProps: {
+      ...handlers,
+      tabIndex: -1
+    }
   };
 }
