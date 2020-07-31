@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {Item} from '@adobe/react-spectrum';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Tabs} from '../src';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 let items = [
   {name: 'Tab 1', children: 'Tab 1 body'},
@@ -207,5 +208,14 @@ describe('Tabs', function () {
     for (let i = 0; i < tabs1.length; i++) {
       expect(tabs1[i].id).not.toBe(tabs2[i].id);
     }
-  })
+  });
+
+  it('should focus the selected tab when tabbing in for the first time', function () {
+    let tree = renderComponent({defaultSelectedKey: items[1].name});
+    act(() => userEvent.tab());
+
+    let tablist = tree.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    expect(document.activeElement).toBe(tabs[1]);
+  });
 });
