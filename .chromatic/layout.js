@@ -1,10 +1,10 @@
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 
 export function VerticalCenter({children, className, style}) {
   return (
     <div
-      className={ classNames('react-spectrum-story', className) }
+      className={ clsx('react-spectrum-story', className) }
       style={style}
     >
       { children }
