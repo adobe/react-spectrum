@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {getItemId} from './utils';
 import {HTMLAttributes, Key, RefObject} from 'react';
 import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {ListState} from '@react-stately/list';
@@ -47,7 +48,10 @@ interface AriaOptionProps {
   shouldFocusOnHover?: boolean,
 
   /** Whether the option is contained in a virtual scrolling listbox. */
-  isVirtualized?: boolean
+  isVirtualized?: boolean,
+
+  /** Whether the option should use virtual focus instead of being focused directly. */
+  shouldUseVirtualFocus?: boolean
 }
 
 const isSafariMacOS =
@@ -70,7 +74,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     key,
     shouldSelectOnPressUp,
     shouldFocusOnHover,
-    isVirtualized
+    isVirtualized,
+    shouldUseVirtualFocus
   } = props;
 
   let labelId = useSlotId();
@@ -83,7 +88,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   };
 
   // Safari with VoiceOver on macOS misreads options with aria-labelledby or aria-label as simply "text".
-  // We should not map slots to the label and description on Safari and instead just have VoiceOver read the textContent. 
+  // We should not map slots to the label and description on Safari and instead just have VoiceOver read the textContent.
   // https://bugs.webkit.org/show_bug.cgi?id=209279
   if (!isSafariMacOS) {
     optionProps['aria-label'] = props['aria-label'];
@@ -101,7 +106,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     key,
     ref,
     shouldSelectOnPressUp,
-    isVirtualized
+    isVirtualized,
+    shouldUseVirtualFocus
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled});
@@ -119,7 +125,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
   return {
     optionProps: {
       ...optionProps,
-      ...mergeProps(pressProps, hoverProps)
+      ...mergeProps(pressProps, hoverProps),
+      id: getItemId(state, key)
     },
     labelProps: {
       id: labelId
