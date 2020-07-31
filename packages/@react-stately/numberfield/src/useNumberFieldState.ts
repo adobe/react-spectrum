@@ -49,7 +49,8 @@ export function useNumberFieldState(
   const inputValueFormatter = useNumberFormatter();
 
   const [numberValue, setNumberValue] = useControlledState<number>(value, defaultValue || 0, onChange);
-  const [inputValue, setInputValue] = useState(defaultValue ? inputValueFormatter.format(defaultValue) : '');
+  let initialInputValue = inputValueFormatter.format(numberValue);
+  const [inputValue, setInputValue] = useState(isNaN(value) && isNaN(defaultValue) ? '' : initialInputValue);
   const [isValid, setIsValid] = useState(isInputValueValid(numberValue, maxValue, minValue));
 
   const minusSign = useRef('-');
@@ -110,7 +111,7 @@ export function useNumberFieldState(
     if (!isNaN(newValue)) {
       setNumberValue(newValue);
     }
-    
+
     updateValidation(newValue);
 
     // Update the input value if value:
@@ -128,17 +129,17 @@ export function useNumberFieldState(
   };
 
   // Mostly used in onBlur event to set the input value to
-  // formatted numberValue. e.g. user types `-` then blurs. 
+  // formatted numberValue. e.g. user types `-` then blurs.
   // instead of leaving the only minus sign we set the input value back to valid value
   const commitInputValue = () => {
     // Do nothing if input value is empty
-    if (!inputValue.length) {return;} 
+    if (!inputValue.length) {return;}
 
     const newValue = inputValueFormatter.format(numberValue);
-    updateValidation(newValue); 
+    updateValidation(newValue);
     setInputValue(newValue);
   };
-  
+
   return {
     setValue,
     increment,
@@ -157,8 +158,8 @@ function isInputValueValid(value:number, max, min): boolean {
   return (
     value !== null &&
     !isNaN(value) &&
-    (max !== undefined ? value <= max : true) &&
-    (min !== undefined ? value >= min : true) 
+    (!isNaN(max) ? value <= max : true) &&
+    (!isNaN(min) ? value >= min : true)
   );
 }
 

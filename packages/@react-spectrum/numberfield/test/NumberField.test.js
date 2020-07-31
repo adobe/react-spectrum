@@ -19,6 +19,9 @@ import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
+// a note for these tests, text selection is not working in jsdom, so on focus will not select the value already
+// in the numberfield
+
 describe('NumberField', function () {
   let onChangeSpy = jest.fn();
 
@@ -110,11 +113,13 @@ describe('NumberField', function () {
     let {
       container,
       textField
-    } = renderNumberField(Component, {onChange: onChangeSpy, minValue: 0, defaultValue: 0});
+    } = renderNumberField(Component, {onChange: onChangeSpy, minValue: 0});
 
     expect(container).toHaveAttribute('aria-invalid', 'false');
 
+    act(() => {textField.focus();});
     act(() => {userEvent.type(textField, '-1');});
+    act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
 
     expect(container).toHaveAttribute('aria-invalid', 'true');
@@ -323,7 +328,7 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', result);
   });
 
-  it.skip.each`
+  it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
   `('$Name properly formats value', ({Component}) => {
@@ -542,11 +547,11 @@ describe('NumberField', function () {
   it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
-  `('$Name has proper aria attirbutes', ({Component}) => {
+  `('$Name has proper aria attributes', ({Component}) => {
     let {textField, incrementButton, decrementButton} = renderNumberField(Component, {
-      defaultValue: 100, 
-      minValue: 0, 
-      maxValue: 100, 
+      defaultValue: 100,
+      minValue: 0,
+      maxValue: 100,
       isReadOnly: true,
       isDisabled: true,
       isRequired: true,
@@ -554,17 +559,26 @@ describe('NumberField', function () {
       formatOptions: {style: 'currency', currency: 'EUR'}
     });
 
-    expect(textField).toHaveAttribute('aria-valuenow', '100'); 
-    expect(textField).toHaveAttribute('aria-valuetext', '€100.00'); 
-    expect(textField).toHaveAttribute('aria-valuemin', '0'); 
-    expect(textField).toHaveAttribute('aria-valuemax', '100'); 
-    expect(textField).toHaveAttribute('aria-readonly', 'true'); 
-    expect(textField).toHaveAttribute('aria-required', 'true'); 
-    expect(textField).toHaveAttribute('aria-disabled', 'true'); 
-    expect(textField).toHaveAttribute('role', 'spinbutton'); 
-    
+    expect(textField).toHaveAttribute('aria-valuenow', '100');
+    expect(textField).toHaveAttribute('aria-valuetext', '€100.00');
+    expect(textField).toHaveAttribute('aria-valuemin', '0');
+    expect(textField).toHaveAttribute('aria-valuemax', '100');
+    expect(textField).toHaveAttribute('aria-readonly', 'true');
+    expect(textField).toHaveAttribute('aria-required', 'true');
+    expect(textField).toHaveAttribute('aria-disabled', 'true');
+    expect(textField).toHaveAttribute('role', 'spinbutton');
+
     // TODO: check aria-controls
     expect(incrementButton).toHaveAttribute('aria-label', 'Increment');
     expect(decrementButton).toHaveAttribute('aria-label', 'Decrement');
+  });
+
+  it.each`
+    Name                          | Component      | props
+    ${'NumberField uncontrolled'} | ${NumberField} | ${{defaultValue: 0}}
+    ${'NumberField controlled'}   | ${NumberField} | ${{value: 0}}
+  `('$Name 0 is rendered', ({Component, props}) => {
+    let {textField} = renderNumberField(Component, props);
+    expect(textField).toHaveAttribute('value', '0');
   });
 });

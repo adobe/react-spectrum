@@ -55,7 +55,10 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
     classNames(
       stepperStyle,
       'spectrum-Stepper',
-      {'spectrum-Stepper--quiet': isQuiet},
+      {
+        'spectrum-Stepper--quiet': isQuiet,
+        'is-invalid': state.validationState === 'invalid'
+      },
       styleProps.className
     )
   );
