@@ -56,7 +56,7 @@ describe('Tabs', function () {
     for (let tab of tabs) {
       expect(tab).toHaveAttribute('tabindex');
       expect(tab).toHaveAttribute('aria-selected');
-      let isSelected = tab.getAttribute('aria-selected') === true;
+      let isSelected = tab.getAttribute('aria-selected') === 'true';
       if (isSelected) {
         expect(tab).toHaveAttribute('aria-controls');
         let tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
@@ -139,19 +139,26 @@ describe('Tabs', function () {
   });
 
   it('not select via left / right keys if keyboardActivation is manual, select on enter / spacebar', function () {
-    let container = renderComponent({keyboardActivation: 'manual'});
+    let container = renderComponent({keyboardActivation: 'manual', onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
     let secondItem = tabs[1];
+    let thirdItem = tabs[2];
     firstItem.focus();
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(firstItem, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(secondItem).toHaveAttribute('aria-selected', 'false');
     expect(document.activeElement).toBe(secondItem);
-    fireEvent.keyDown(secondItem, {key: 'Enter', code: 13, charCode: 13});
+    fireEvent.keyDown(secondItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    expect(thirdItem).toHaveAttribute('aria-selected', 'false');
+    expect(document.activeElement).toBe(thirdItem);
+    fireEvent.keyDown(thirdItem, {key: 'Enter', code: 13, charCode: 13});
     expect(firstItem).toHaveAttribute('aria-selected', 'false');
-    expect(secondItem).toHaveAttribute('aria-selected', 'true');
+    expect(secondItem).toHaveAttribute('aria-selected', 'false');
+    expect(thirdItem).toHaveAttribute('aria-selected', 'true');
+
+    expect(onSelectionChange).toBeCalledTimes(1);
   });
 
   it('supports using click to change tab', function () {
