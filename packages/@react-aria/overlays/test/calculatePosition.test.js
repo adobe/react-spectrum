@@ -334,6 +334,12 @@ describe('calculatePosition', function () {
       // testCases[9] is for right placement
       'left', getTargetDimension({left: 0, top: 0}), testCases[9].offsetBefore, 0, 0, true
     );
+
+    describe('positive offset', function () {
+      checkPosition(
+        'left', getTargetDimension({left: 0, top: 250}), [110, 200, undefined, 100, 350], 10, 0, true
+      );
+    });
   });
 
   describe('overlay smaller than target aligns in center', function () {
