@@ -16,7 +16,7 @@ import {renderHook} from '@testing-library/react-hooks';
 import {useSideNav} from '../';
 
 describe('useSideNav', function () {
-  let mockState = {};
+  let mockState = {selectionManager: {}};
   let mockLayout = new ListLayout({
     rowHeight: 40
   });

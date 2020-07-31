@@ -54,6 +54,11 @@ export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState
     disallowEmptySelection: true
   });
 
+  // Ensure a tab is always selected
+  if (manager.isEmpty) {
+    manager.replaceSelection(delegate.getFirstKey());
+  }
+
   // Compute base id for all tabs
   let tabsId = useId();
   tabsIds.set(state, tabsId);

@@ -28,7 +28,7 @@ let items = [
 function renderComponent(props) {
   return render(
     <Provider theme={theme}>
-      <Tabs defaultSelectedKey={items[0].name} {...props}>
+      <Tabs {...props}>
         {items.map(item => (
           <Item key={item.name} title={item.name}>
             {item.children}
@@ -140,7 +140,7 @@ describe('Tabs', function () {
   });
 
   it('not select via left / right keys if keyboardActivation is manual, select on enter / spacebar', function () {
-    let container = renderComponent({keyboardActivation: 'manual', onSelectionChange});
+    let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: items[0].name, onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
@@ -163,7 +163,7 @@ describe('Tabs', function () {
   });
 
   it('supports using click to change tab', function () {
-    let container = renderComponent({keyboardActivation: 'manual', onSelectionChange});
+    let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: items[0].name, onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
