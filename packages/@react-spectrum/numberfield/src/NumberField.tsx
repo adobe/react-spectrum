@@ -10,20 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/button';
-import ChevronDownSmall from '@spectrum-icons/ui/ChevronDownSmall';
-import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
-import {PressResponder, useHover} from '@react-aria/interactions';
 import React, {RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
+import StepButton from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProviderProps} from '@react-spectrum/provider';
+
 
 export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElement>) => {
   props = useProviderProps(props);
@@ -45,9 +43,6 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
     incrementButtonProps,
     decrementButtonProps
   } = useNumberField(props, state, inputRef);
-
-  let {hoverProps: stepUpHoverProps, isHovered: stepUpIsHovered} = useHover({});
-  let {hoverProps: stepDownHoverProps, isHovered: stepDownIsHovered} = useHover({});
 
   let className = classNames(
     inputgroupStyles,
@@ -86,40 +81,8 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
         <span
           className={classNames(stepperStyle, 'spectrum-Stepper-buttons')}
           role="presentation">
-          <PressResponder {...stepUpHoverProps}>
-            <ActionButton
-              UNSAFE_className={
-                classNames(
-                  stepperStyle,
-                  'spectrum-Stepper-stepUp',
-                  'spectrum-ActionButton',
-                  {
-                    'is-hovered': stepUpIsHovered
-                  }
-                )
-              }
-              {...incrementButtonProps}
-              isQuiet={isQuiet}>
-              <ChevronUpSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-stepUpIcon')} />
-            </ActionButton>
-          </PressResponder>
-          <PressResponder {...stepDownHoverProps}>
-            <ActionButton
-              UNSAFE_className={
-                classNames(
-                  stepperStyle,
-                  'spectrum-Stepper-stepDown',
-                  'spectrum-ActionButton',
-                  {
-                    'is-hovered': stepDownIsHovered
-                  }
-                )
-              }
-              {...decrementButtonProps}
-              isQuiet={isQuiet}>
-              <ChevronDownSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-stepDownIcon')} />
-            </ActionButton>
-          </PressResponder>
+          <StepButton direction="up" isQuiet={isQuiet} {...incrementButtonProps} />
+          <StepButton direction="down" isQuiet={isQuiet} {...decrementButtonProps} />
         </span>
         }
       </div>

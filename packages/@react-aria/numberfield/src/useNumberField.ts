@@ -44,7 +44,6 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     isRequired,
     minValue,
     maxValue,
-    step,
     autoFocus
   } = props;
 
@@ -150,15 +149,12 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       isDisabled,
       isReadOnly,
       isRequired,
-      step,
       validationState,
       value: isFocused ? inputValue : textValue,
       autoComplete: 'off',
       'aria-label': props['aria-label'] || null,
       'aria-labelledby': props['aria-labelledby'] || null,
       id: inputId,
-      min: minValue,
-      max: maxValue,
       placeholder: formatMessage('Enter a number'),
       type: 'text',
       onChange: state.setValue
