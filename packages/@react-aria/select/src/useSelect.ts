@@ -88,8 +88,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     labelProps: {
       ...labelProps,
       onClick: () => {
-        const button = <HTMLInputElement> ref.current;
-        if (!button.disabled) {
+        if (!ref.current.disabled) {
           ref.current.focus();
         }
       }
