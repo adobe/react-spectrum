@@ -20,7 +20,6 @@ import {SelectState} from '@react-stately/select';
 import {useCollator} from '@react-aria/i18n';
 import {useLabel} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
-import {usePress} from '@react-aria/interactions';
 
 interface AriaSelectOptions<T> extends AriaSelectProps<T> {
   /**
@@ -30,10 +29,9 @@ interface AriaSelectOptions<T> extends AriaSelectProps<T> {
   keyboardDelegate?: KeyboardDelegate
 }
 
-interface LabelProps extends HTMLAttributes<HTMLElement>, PressEvents {}
 interface SelectAria {
   /** Props for the label element. */
-  labelProps: LabelProps,
+  labelProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the popup trigger element. */
   triggerProps: AriaButtonProps,
@@ -86,12 +84,13 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let triggerProps = mergeProps(mergeProps(menuTriggerProps, fieldProps), typeSelectProps);
   let valueId = useId();
 
-  const {pressProps} = usePress({onPress: () => ref.current.focus()});
-
   return {
     labelProps: {
       ...labelProps,
-      ...pressProps
+      onClick: () => {
+        const button = <HTMLInputElement> ref.current;
+        if(!button.disabled) ref.current.focus()
+      },
     },
     triggerProps: mergeProps(domProps, {
       ...triggerProps,

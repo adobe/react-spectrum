@@ -35,11 +35,6 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
     for: labelFor,
     elementType: ElementType = 'label',
     onClick,
-    onKeyDown,
-    onKeyUp,
-    onMouseDown,
-    onPointerDown,
-    onPointerUp,
     ...otherProps
   } = props;
 
@@ -65,13 +60,11 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
     styleProps.className
   );
 
-  const pressProps = {onClick, onKeyDown, onKeyUp, onMouseDown, onPointerDown, onPointerUp};
-
   return (
     <ElementType
       {...filterDOMProps(otherProps)}
-      {...pressProps}
       {...styleProps}
+      onClick={onClick}
       ref={domRef}
       className={labelClassNames}
       htmlFor={ElementType === 'label' ? labelFor || htmlFor : undefined}>
