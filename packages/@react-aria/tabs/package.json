@@ -1,0 +1,37 @@
+{
+  "name": "@react-aria/tabs",
+  "version": "3.0.0-alpha.1",
+  "description": "Spectrum UI components in React",
+  "license": "Apache-2.0",
+  "private": true,
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.6.2",
+    "@react-aria/i18n": "^3.1.0",
+    "@react-aria/interactions": "^3.1.0",
+    "@react-aria/selection": "^3.1.0",
+    "@react-aria/utils": "^3.1.0",
+    "@react-stately/list": "^3.1.0",
+    "@react-types/shared": "^3.1.0",
+    "@react-types/tabs": "^3.0.0-alpha.1",
+    "@react-types/tag": "^3.0.0-alpha.1"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
