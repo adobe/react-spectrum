@@ -30,7 +30,7 @@ export interface LinkButtonProps {
   href?: string,
   /** The target window for the link. */
   target?: string,
-  /** The rel values for the link as an array. */
+  /** The relationship between the linked resource and the current page. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel). */
   rel?: string
 }
 
