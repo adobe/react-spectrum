@@ -29,7 +29,9 @@ export interface LinkButtonProps {
   /** A URL to link to if elementType="a". */
   href?: string,
   /** The target window for the link. */
-  target?: string
+  target?: string,
+  /** The relationship between the linked resource and the current page. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel). */
+  rel?: string
 }
 
 interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
