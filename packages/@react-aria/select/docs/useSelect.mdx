@@ -149,7 +149,7 @@ function Select(props) {
   } = useSelect(props, state, ref);
 
   // Get props for the button based on the trigger props from useSelect
-  let {buttonProps} = useButton(triggerProps);
+  let {buttonProps} = useButton(triggerProps, ref);
 
   return (
     <div style={{position: 'relative', display: 'inline-block'}}>
