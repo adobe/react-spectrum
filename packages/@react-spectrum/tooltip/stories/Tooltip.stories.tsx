@@ -49,19 +49,19 @@ storiesOf('Tooltip', module)
   )
   .add(
     'variant: neutral, icon',
-    () => render('This is a tooltip.', {variant: 'neutral', displayIcon: true})
+    () => render('This is a tooltip.', {variant: 'neutral', showIcon: true})
   )
   .add(
     'variant: positive, icon',
-    () => render('This is a tooltip.', {variant: 'positive', displayIcon: true})
+    () => render('This is a tooltip.', {variant: 'positive', showIcon: true})
   )
   .add(
     'variant: negative, icon',
-    () => render('This is a tooltip.', {variant: 'negative', displayIcon: true})
+    () => render('This is a tooltip.', {variant: 'negative', showIcon: true})
   )
   .add(
     'variant: info, icon',
-    () => render('This is a tooltip.', {variant: 'info', displayIcon: true})
+    () => render('This is a tooltip.', {variant: 'info', showIcon: true})
   )
   .add(
     'long content',

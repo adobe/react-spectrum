@@ -227,6 +227,77 @@ describe('TooltipTrigger', function () {
       });
       expect(() => getByRole('tooltip')).toThrow();
     });
+
+    it('can be keyboard force closed from anywhere',  () => {
+      let {getByRole, getByLabelText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
+            <ActionButton aria-label="trigger" />
+            <Tooltip>Helpful information.</Tooltip>
+          </TooltipTrigger>
+          <input type="text" />
+        </Provider>
+      );
+
+      let button = getByLabelText('trigger');
+      let input = getByRole('textbox');
+      act(() => {
+        input.focus();
+      });
+      fireEvent.mouseEnter(button);
+      fireEvent.mouseMove(button);
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      let tooltip = getByRole('tooltip');
+      expect(tooltip).toBeVisible();
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+      act(() => {
+        jest.advanceTimersByTime(CLOSE_TIME);
+      });
+      expect(tooltip).not.toBeInTheDocument();
+      act(() => {
+        input.blur();
+      });
+      fireEvent.mouseLeave(button);
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(() => getByRole('tooltip')).toThrow();
+    });
+
+    it('is closed if the trigger is clicked',  () => {
+      let {getByRole, getByLabelText} = render(
+        <Provider theme={theme}>
+          <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
+            <ActionButton aria-label="trigger" />
+            <Tooltip>Helpful information.</Tooltip>
+          </TooltipTrigger>
+        </Provider>
+      );
+
+      let button = getByLabelText('trigger');
+      act(() => {
+        button.focus();
+      });
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      let tooltip = getByRole('tooltip');
+      expect(tooltip).toBeVisible();
+      fireEvent.mouseDown(document.activeElement, {button: 0});
+      fireEvent.mouseUp(document.activeElement, {button: 0});
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+      act(() => {
+        jest.advanceTimersByTime(CLOSE_TIME);
+      });
+      expect(tooltip).not.toBeInTheDocument();
+      act(() => {
+        button.blur();
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+      expect(() => getByRole('tooltip')).toThrow();
+    });
   });
 
   describe('delay', () => {

@@ -92,7 +92,7 @@ function renderMultipleTriggers(props = {}) {
         <ActionButton>
           Neutral Tooltip
         </ActionButton>
-        <Tooltip displayIcon>
+        <Tooltip showIcon>
           Neutral message.
         </Tooltip>
       </TooltipTrigger>
@@ -100,7 +100,7 @@ function renderMultipleTriggers(props = {}) {
         <ActionButton>
           Positive Tooltip
         </ActionButton>
-        <Tooltip variant="positive" displayIcon>
+        <Tooltip variant="positive" showIcon>
           Positive message.
         </Tooltip>
       </TooltipTrigger>
@@ -108,7 +108,7 @@ function renderMultipleTriggers(props = {}) {
         <ActionButton>
           Negative Tooltip
         </ActionButton>
-        <Tooltip variant="negative" displayIcon>
+        <Tooltip variant="negative" showIcon>
           Negative message.
         </Tooltip>
       </TooltipTrigger>
@@ -116,7 +116,7 @@ function renderMultipleTriggers(props = {}) {
         <ActionButton>
           Info Tooltip
         </ActionButton>
-        <Tooltip variant="info" displayIcon>
+        <Tooltip variant="info" showIcon>
           Informative message.
         </Tooltip>
       </TooltipTrigger>
@@ -135,7 +135,7 @@ function ControlledButtons(props = {}) {
         <ActionButton>
           Neutral Tooltip
         </ActionButton>
-        <Tooltip displayIcon>
+        <Tooltip showIcon>
           Neutral message.
         </Tooltip>
       </TooltipTrigger>
@@ -143,7 +143,7 @@ function ControlledButtons(props = {}) {
         <ActionButton>
           Positive Tooltip
         </ActionButton>
-        <Tooltip variant="positive" displayIcon>
+        <Tooltip variant="positive" showIcon>
           Positive message.
         </Tooltip>
       </TooltipTrigger>
@@ -151,7 +151,7 @@ function ControlledButtons(props = {}) {
         <ActionButton>
           Negative Tooltip
         </ActionButton>
-        <Tooltip variant="negative" displayIcon>
+        <Tooltip variant="negative" showIcon>
           Negative message.
         </Tooltip>
       </TooltipTrigger>
@@ -159,7 +159,7 @@ function ControlledButtons(props = {}) {
         <ActionButton>
           Info Tooltip
         </ActionButton>
-        <Tooltip variant="info" displayIcon>
+        <Tooltip variant="info" showIcon>
           Informative message.
         </Tooltip>
       </TooltipTrigger>

@@ -16,7 +16,7 @@ import {useId} from '@react-aria/utils';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
 export const TOOLTIP_DELAY = 1500; // this seems to be a 1.5 second delay, check with design
-export const TOOLTIP_COOLDOWN = 2000;
+export const TOOLTIP_COOLDOWN = 500;
 
 interface TooltipTriggerStateProps extends TooltipTriggerProps {}
 
@@ -46,6 +46,7 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
     for (let hideTooltipId in tooltips) {
       if (hideTooltipId !== id) {
         tooltips[hideTooltipId]();
+        delete tooltips[hideTooltipId];
       }
     }
   };
@@ -57,6 +58,7 @@ export function useTooltipTriggerState(props: TooltipTriggerStateProps): Tooltip
     open();
     if (globalWarmUpTimeout) {
       clearTimeout(globalWarmUpTimeout);
+      globalWarmUpTimeout = null;
     }
     if (globalCooldownTimeout) {
       clearTimeout(globalCooldownTimeout);

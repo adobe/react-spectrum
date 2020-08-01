@@ -19,9 +19,8 @@ interface TooltipAria {
 }
 
 export function useTooltip(props: AriaTooltipProps): TooltipAria {
-  let defaultId = useId();
   let {
-    id = defaultId,
+    id,
     role = 'tooltip'
   } = props;
 
@@ -30,7 +29,7 @@ export function useTooltip(props: AriaTooltipProps): TooltipAria {
   return {
     tooltipProps: mergeProps(domProps, {
       role,
-      id
+      id: useId(id)
     })
   };
 }

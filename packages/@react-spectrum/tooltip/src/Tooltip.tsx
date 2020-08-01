@@ -39,7 +39,7 @@ function Tooltip(props: SpectrumTooltipProps, ref: RefObject<HTMLDivElement>) {
     variant = 'neutral',
     placement = 'right',
     isOpen,
-    displayIcon,
+    showIcon,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -62,7 +62,7 @@ function Tooltip(props: SpectrumTooltipProps, ref: RefObject<HTMLDivElement>) {
         styleProps.className
       )}
       ref={overlayRef}>
-      {displayIcon && variant !== 'neutral' && <Icon UNSAFE_className={classNames(styles, 'spectrum-Tooltip-typeIcon')} aria-hidden />}
+      {showIcon && variant !== 'neutral' && <Icon UNSAFE_className={classNames(styles, 'spectrum-Tooltip-typeIcon')} aria-hidden />}
       {props.children && (
         <span className={classNames(styles, 'spectrum-Tooltip-label')}>
           {props.children}

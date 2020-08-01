@@ -12,7 +12,7 @@
 
 import {FocusEvents} from '@react-types/shared';
 import {HoverProps, isFocusVisible, PressProps, usePress} from '@react-aria/interactions';
-import {HTMLAttributes, RefObject, useRef} from 'react';
+import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
 import {TooltipTriggerAriaProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
@@ -35,9 +35,7 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
   let isFocused = useRef(false);
 
   let handleShow = () => {
-    if (isHovered.current || isFocused.current) {
-      state.open(isFocused.current);
-    }
+    state.open(isFocused.current);
   };
 
   let handleHide = () => {
@@ -46,21 +44,23 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
     }
   };
 
-  let onKeyDownTrigger = (e) => {
-    if (ref && ref.current) {
-      // Escape after clicking something can give it keyboard focus
-      // dismiss tooltip on esc key press
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        if (!isFocused.current) {
-          isFocused.current = true;
-          handleShow();
-        } else {
+  useEffect(() => {
+    let onKeyDown = (e) => {
+      if (ref && ref.current) {
+        // Escape after clicking something can give it keyboard focus
+        // dismiss tooltip on esc key press
+        if (e.key === 'Escape') {
           state.close();
         }
       }
+    };
+    if (state.isOpen) {
+      document.addEventListener('keydown', onKeyDown);
+      return () => {
+        document.removeEventListener('keydown', onKeyDown);
+      };
     }
-  };
+  }, [ref, state]);
 
   let onHoverStart = () => {
     isHovered.current = true;
@@ -74,6 +74,7 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
     if (isFocused.current) {
       isFocused.current = false;
     }
+    handleHide();
   };
   let onFocus = () => {
     let isVisible = isFocusVisible();
@@ -98,8 +99,7 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
   let {focusableProps} = useFocusable({
     isDisabled,
     onFocus,
-    onBlur,
-    onKeyDown: onKeyDownTrigger
+    onBlur
   }, ref);
 
   return {
@@ -109,7 +109,6 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
     },
     tooltipProps: {
       id: tooltipId
-      // should i keep the tooltip open if it gets hovered? (not the trigger, the tooltip itself)
     }
   };
 }
