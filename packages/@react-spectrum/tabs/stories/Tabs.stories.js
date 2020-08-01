@@ -102,7 +102,7 @@ function render(props = {}) {
 
 function renderWithIcons(props = {}) {
   return (
-    <Tabs defaultSelectedKey="dashboard" {...props} onSelectionChange={action('onSelectionChange')}>
+    <Tabs {...props} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
       <Item key="dashboard" icon={<Dashboard />} title="Dashboard">
         <Content margin="size-160">
           <Heading>Dashboard</Heading>
