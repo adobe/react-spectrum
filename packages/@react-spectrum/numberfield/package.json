@@ -34,11 +34,13 @@
   "dependencies": {
     "@babel/runtime": "^7.6.2",
     "@react-aria/focus": "^3.1.0",
+    "@react-aria/interactions": "^3.1.0",
     "@react-aria/numberfield": "^3.0.0-alpha.1",
     "@react-spectrum/button": "^3.1.0",
     "@react-spectrum/textfield": "^3.1.0",
     "@react-spectrum/utils": "^3.1.0",
     "@react-stately/numberfield": "^3.0.0-alpha.1",
+    "@react-types/button": "^3.1.0",
     "@react-types/numberfield": "^3.0.0-alpha.1",
     "@react-types/shared": "^3.1.0",
     "@spectrum-icons/ui": "^3.1.0"
