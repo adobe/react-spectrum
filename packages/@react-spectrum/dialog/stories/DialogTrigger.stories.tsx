@@ -258,6 +258,10 @@ storiesOf('DialogTrigger', module)
     () => renderPopover({type: 'popover', placement: 'left', shouldFlip: false, width: 'calc(100vh - 100px)'})
   )
   .add(
+    'shouldFlip: true with offset',
+    () => renderPopover({type: 'popover', placement: 'left', shouldFlip: true, offset: 50, width: 'calc(100vh - 100px)'})
+  )
+  .add(
     'containerPadding',
     () => renderPopover({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 20})
   )
