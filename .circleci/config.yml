@@ -253,6 +253,9 @@ orbs:
           CHROMATIC_PROJECT_TOKEN:
             default: ""
             type: string
+          build_script_name:
+            default: ""
+            type: string
         steps:
           - run:
               command: yarn chromatic test --auto-accept-changes --build-script-name <<parameters.build_script_name>>
@@ -273,6 +276,9 @@ orbs:
             default: ""
             type: string
           CHROMATIC_PROJECT_TOKEN:
+            default: ""
+            type: string
+          build_script_name:
             default: ""
             type: string
         steps:
@@ -296,6 +302,9 @@ orbs:
             default: ""
             type: string
           CHROMATIC_PROJECT_TOKEN:
+            default: ""
+            type: string
+          build_script_name:
             default: ""
             type: string
         steps:
