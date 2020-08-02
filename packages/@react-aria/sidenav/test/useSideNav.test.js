@@ -33,7 +33,7 @@ describe('useSideNav', function () {
     expect(navProps.role).toBe('navigation');
     expect(listProps).toBeDefined();
     expect(listProps.role).toBe('list');
-    expect(typeof listProps.onKeyDown).toBe('function');
+    expect(typeof listProps.onKeyDownCapture).toBe('function');
     expect(typeof listProps.onFocus).toBe('function');
     expect(typeof listProps.onBlur).toBe('function');
   });
@@ -55,7 +55,7 @@ describe('useSideNav', function () {
     expect(listProps).toBeDefined();
     expect(listProps.role).toBe('list');
     expect(listProps['aria-labelledby']).toBe('test-aria-labelledby');
-    expect(typeof listProps.onKeyDown).toBe('function');
+    expect(typeof listProps.onKeyDownCapture).toBe('function');
     expect(typeof listProps.onFocus).toBe('function');
     expect(typeof listProps.onBlur).toBe('function');
   });
