@@ -1,6 +1,5 @@
 version: 2.1
-orbs:
-  azure-cli: circleci/azure-cli@1.1.0
+
 jobs:
   build:
     docker:
@@ -195,3 +194,331 @@ workflows:
       - comment:
           requires:
             - deploy
+  approval:
+    jobs:
+      - ready:
+          filters:
+            branches:
+              ignore: main
+          type: approval
+      - chromatic/test:
+          CHROMATIC_PROJECT_TOKEN: q5msektqrfg
+          build_script_name: 'build:chromatic'
+          cache_key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+          requires:
+            - ready
+          resource_class: xlarge
+    main-workflow:
+      jobs:
+        - chromatic/run-and-accept-all:
+            CHROMATIC_PROJECT_TOKEN: q5msektqrfg
+            build_script_name: 'build:chromatic'
+            filters:
+              branches:
+                only: main
+            resource_class: xlarge
+
+orbs:
+  azure-cli: circleci/azure-cli@1.1.0
+  chromatic:
+    # This code is licensed from CircleCI to the user under the MIT license. See
+    # https://circleci.com/orbs/registry/licensing for details.
+    commands:
+      load-node-modules:
+        description: Load and cache node modules, restoring from cache if available
+        parameters:
+          cache_key:
+            default: yarn-lock-{{ checksum "yarn.lock" }}
+            type: string
+        steps:
+          - restore_cache:
+              key: <<parameters.cache_key>>
+          - run: yarn --frozen-lockfile
+          - save_cache:
+              key: <<parameters.cache_key>>
+              paths:
+                - node_modules
+      test-accept-all-changes:
+        description: |
+          This command will run chromatic and auto-accept all changes to maintain a clean branch
+
+          typically this should only be run on the master branch
+
+          https://docs.chromaticqa.com/setup_ci#maintain-a-clean-master-branch
+          https://circleci.com/docs/2.0/configuration-reference/#filters-1
+        parameters:
+          CHROMATIC_APP_CODE:
+            default: ""
+            type: string
+          CHROMATIC_PROJECT_TOKEN:
+            default: ""
+            type: string
+        steps:
+          - run:
+              command: yarn chromatic test --auto-accept-changes --build-script-name <<parameters.build_script_name>>
+              environment:
+                CHROMATIC_APP_CODE: <<parameters.CHROMATIC_APP_CODE>>
+                CHROMATIC_PROJECT_TOKEN: <<parameters.CHROMATIC_PROJECT_TOKEN>>
+              name: Chromatic - accept all changes
+      test-exit-cleanly-on-changes:
+        description: |
+          Run a chromatic test on the current branch, exiting cleanly unless there are errors.
+
+          If you are using the chromatic integration (recommended) then you will want to let
+          chromatic handle reporting back the status of your snapshots. This command itself
+          will only fail if the tests failed to run. If they succeeded with changes this command
+          will succeed and chromatic will report back the number of changes.
+        parameters:
+          CHROMATIC_APP_CODE:
+            default: ""
+            type: string
+          CHROMATIC_PROJECT_TOKEN:
+            default: ""
+            type: string
+        steps:
+          - run:
+              command: yarn chromatic test --exit-zero-on-changes --build-script-name <<parameters.build_script_name>>
+              environment:
+                CHROMATIC_APP_CODE: <<parameters.CHROMATIC_APP_CODE>>
+                CHROMATIC_PROJECT_TOKEN: <<parameters.CHROMATIC_PROJECT_TOKEN>>
+              name: Chromatic - report changes to chromatic
+      test-fail-on-changes:
+        description: |
+          Run a chromatic test on the current branch and fails if there are changes.
+
+          Generally, you would want to let chromatic report on changes and have this command
+          only fail if there was an error running it or rendering a component.
+
+          If, however, you are not enabling the chromatic integration then you can use this to
+          fail a build when there are any changes to the UI.
+        parameters:
+          CHROMATIC_APP_CODE:
+            default: ""
+            type: string
+          CHROMATIC_PROJECT_TOKEN:
+            default: ""
+            type: string
+        steps:
+          - run:
+              command: yarn chromatic test --build-script-name <<parameters.build_script_name>>
+              environment:
+                CHROMATIC_APP_CODE: <<parameters.CHROMATIC_APP_CODE>>
+                CHROMATIC_PROJECT_TOKEN: <<parameters.CHROMATIC_PROJECT_TOKEN>>
+              name: Chromatic - fail if there are changes
+    description: |
+      Chromatic ensures consistency in UI components, down to the pixel.
+      Every commit is automatically tested for visual changes in the cloud.
+      Chromatic - https://www.chromaticqa.com/
+      Orb source code - https://github.com/waveaccounting/orb-chromatic
+
+      Note that this only support yarn for now
+    examples:
+      config-for-large-teams:
+        description: |
+          Recommended Config
+
+          This config is optimized for larger teams, where having chromatic run on every commit
+          would be prohibitively expensive
+
+          The main workflow jobs will run on every commit
+          Your approval workflow jobs will run only after a human clicks "approve"
+
+          Note that on master we run an 'accept-all' job instead of our regular test. This is a failsafe
+          in case there is a blip on Chromatic's servers causing changes approved in a feature branch to
+          show up as unapproved on master
+        usage:
+          orbs:
+            chromatic: wave/chromatic@x.y.z
+          version: 2.1
+          workflows:
+            approval:
+              jobs:
+                - ready:
+                    filters:
+                      branches:
+                        ignore: master
+                    type: approval
+                - chromatic/test:
+                    requires:
+                      - ready
+                    resource_class: xlarge
+            main-workflow:
+              jobs:
+                - chromatic/run-and-accept-all:
+                    CHROMATIC_APP_CODE: your_unique_code
+                    CHROMATIC_PROJECT_TOKEN: your_project_token
+                    filters:
+                      branches:
+                        only: master
+                    resource_class: xlarge
+      config-for-small-teams:
+        description: |
+          Recommended Config
+
+          This config is optimized for smaller teams, where having Chromatic run on every commit
+          is unlikely to put you over your quota
+
+
+          Note that on master we run an 'accept-all' job instead of our regular test. This is a failsafe
+          in case there is a blip on Chromatic's servers causing changes approved in a feature branch to
+          show up as unapproved on master
+        usage:
+          orbs:
+            chromatic: wave/chromatic@x.y.z
+          version: 2.1
+          workflows:
+            main-workflow:
+              jobs:
+                - chromatic/test:
+                    CHROMATIC_APP_CODE: your_unique_code
+                    CHROMATIC_PROJECT_TOKEN: your_project_token
+                    filters:
+                      branches:
+                        ignore: master
+                - chromatic/run-and-accept-all:
+                    CHROMATIC_APP_CODE: your_unique_code
+                    CHROMATIC_PROJECT_TOKEN: your_project_token
+                    filters:
+                      branches:
+                        only: master
+      keep-master-clean:
+        description: |
+          It is possible that changes you have approved on a feature branch may
+          still make it into master as unapproved. While chromatic is working hard
+          to make this process perfectly seamless, they have provided a simple
+          solution to make sure that your master branch is always clean.
+
+          Simply run the `run-and-accept-all` job on your master branch to ensure
+          that it is always passing on Chromatic.
+
+          Note that in order to safely use this you MUST run `chromatic/test` on feature branches
+        usage:
+          orbs:
+            chromatic: wave/chromatic@x.y.z
+          version: 2.1
+          workflows:
+            your-workflow:
+              jobs:
+                - chromatic/run-and-accept-all:
+                    CHROMATIC_APP_CODE: your_unique_code
+                    CHROMATIC_PROJECT_TOKEN: your_project_token
+                    filters:
+                      branches:
+                        only: master
+      run-on-every-commit:
+        description: |
+          Run chromatic on every commit
+        usage:
+          orbs:
+            chromatic: wave/chromatic@x.y.z
+          version: 2.1
+          workflows:
+            your-workflow:
+              jobs:
+                - chromatic/test:
+                    CHROMATIC_APP_CODE: your_unique_code
+                    CHROMATIC_PROJECT_TOKEN: your_project_token
+      run-when-ready:
+        description: |
+          Only run chromatic when a human clicks "approve"
+
+          This avoids running tests on every commit and wasting your snapshot quota
+        usage:
+          orbs:
+            chromatic: wave/chromatic@x.y.z
+          version: 2.1
+          workflows:
+            ui:
+              jobs:
+                - ready:
+                    filters:
+                      branches:
+                        ignore: master
+                    type: approval
+                - chromatic/test:
+                    CHROMATIC_APP_CODE: your_unique_code
+                    CHROMATIC_PROJECT_TOKEN: your_project_token
+                    requires:
+                      - ready
+    executors:
+      node:
+        description: Circle CI standard node docker image
+        docker:
+          - image: circleci/node:<<parameters.version>>
+        parameters:
+          resource_class:
+            default: medium
+            description: Resource class
+            type: string
+          version:
+            default: "10"
+            type: string
+        resource_class: <<parameters.resource_class>>
+    jobs:
+      run-and-accept-all:
+        description: |
+          This job will run chromatic and auto-accept all changes to maintain a clean branch
+
+          Pleae ensure you are filtering by branch when using this job
+
+          https://circleci.com/docs/2.0/configuration-reference/#filters-1
+          https://docs.chromaticqa.com/setup_ci#maintain-a-clean-master-branch
+        executor:
+          name: node
+          resource_class: <<parameters.resource_class>>
+          version: <<parameters.node_version>>
+        parameters:
+          CHROMATIC_APP_CODE:
+            default: ""
+            type: string
+          CHROMATIC_PROJECT_TOKEN:
+            default: ""
+            type: string
+          cache_key:
+            default: yarn-lock-{{ checksum "yarn.lock" }}
+            type: string
+          node_version:
+            default: "10"
+            type: string
+          resource_class:
+            default: medium
+            description: Resource class
+            type: string
+        steps:
+          - checkout
+          - load-node-modules:
+              cache_key: <<parameters.cache_key>>
+          - test-accept-all-changes:
+              CHROMATIC_APP_CODE: <<parameters.CHROMATIC_APP_CODE>>
+              CHROMATIC_PROJECT_TOKEN: <<parameters.CHROMATIC_PROJECT_TOKEN>>
+      test:
+        description: |
+          Run a chromatic test on the current branch. Report all changes. Exit non-0 only if any components fail to load
+        executor:
+          name: node
+          resource_class: <<parameters.resource_class>>
+          version: <<parameters.node_version>>
+        parameters:
+          CHROMATIC_APP_CODE:
+            default: ""
+            type: string
+          CHROMATIC_PROJECT_TOKEN:
+            default: ""
+            type: string
+          cache_key:
+            default: yarn-lock-{{ checksum "yarn.lock" }}
+            type: string
+          node_version:
+            default: "10"
+            type: string
+          resource_class:
+            default: medium
+            description: Resource class
+            type: string
+        steps:
+          - checkout
+          - load-node-modules:
+              cache_key: <<parameters.cache_key>>
+          - test-exit-cleanly-on-changes:
+              CHROMATIC_APP_CODE: <<parameters.CHROMATIC_APP_CODE>>
+              CHROMATIC_PROJECT_TOKEN: <<parameters.CHROMATIC_PROJECT_TOKEN>>
