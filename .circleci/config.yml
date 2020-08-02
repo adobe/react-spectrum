@@ -201,7 +201,7 @@ workflows:
             branches:
               ignore: main
           type: approval
-      - chromatic/test:
+      - rsp-chromatic/test:
           CHROMATIC_PROJECT_TOKEN: q5msektqrfg
           build_script_name: 'build:chromatic'
           cache_key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
@@ -210,7 +210,7 @@ workflows:
           resource_class: xlarge
     main-workflow:
       jobs:
-        - chromatic/run-and-accept-all:
+        - rsp-chromatic/run-and-accept-all:
             CHROMATIC_PROJECT_TOKEN: q5msektqrfg
             build_script_name: 'build:chromatic'
             filters:
@@ -220,7 +220,7 @@ workflows:
 
 orbs:
   azure-cli: circleci/azure-cli@1.1.0
-  chromatic:
+  rsp-chromatic:
     # This code is licensed from CircleCI to the user under the MIT license. See
     # https://circleci.com/orbs/registry/licensing for details.
     commands:
