@@ -203,7 +203,7 @@ workflows:
           type: approval
       - rsp-chromatic/test:
           CHROMATIC_PROJECT_TOKEN: q5msektqrfg
-          build_script_name: 'build:chromatic'
+          BUILD_SCRIPT_NAME: 'build:chromatic'
           cache_key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
           requires:
             - ready
@@ -212,7 +212,7 @@ workflows:
       jobs:
         - rsp-chromatic/run-and-accept-all:
             CHROMATIC_PROJECT_TOKEN: q5msektqrfg
-            build_script_name: 'build:chromatic'
+            BUILD_SCRIPT_NAME: 'build:chromatic'
             filters:
               branches:
                 only: main
@@ -253,12 +253,12 @@ orbs:
           CHROMATIC_PROJECT_TOKEN:
             default: ""
             type: string
-          build_script_name:
+          BUILD_SCRIPT_NAME:
             default: ""
             type: string
         steps:
           - run:
-              command: yarn chromatic test --auto-accept-changes --build-script-name <<parameters.build_script_name>>
+              command: yarn chromatic test --auto-accept-changes --build-script-name <<parameters.BUILD_SCRIPT_NAME>>
               environment:
                 CHROMATIC_APP_CODE: <<parameters.CHROMATIC_APP_CODE>>
                 CHROMATIC_PROJECT_TOKEN: <<parameters.CHROMATIC_PROJECT_TOKEN>>
@@ -278,12 +278,12 @@ orbs:
           CHROMATIC_PROJECT_TOKEN:
             default: ""
             type: string
-          build_script_name:
+          BUILD_SCRIPT_NAME:
             default: ""
             type: string
         steps:
           - run:
-              command: yarn chromatic test --exit-zero-on-changes --build-script-name <<parameters.build_script_name>>
+              command: yarn chromatic test --exit-zero-on-changes --build-script-name <<parameters.BUILD_SCRIPT_NAME>>
               environment:
                 CHROMATIC_APP_CODE: <<parameters.CHROMATIC_APP_CODE>>
                 CHROMATIC_PROJECT_TOKEN: <<parameters.CHROMATIC_PROJECT_TOKEN>>
@@ -304,12 +304,12 @@ orbs:
           CHROMATIC_PROJECT_TOKEN:
             default: ""
             type: string
-          build_script_name:
+          BUILD_SCRIPT_NAME:
             default: ""
             type: string
         steps:
           - run:
-              command: yarn chromatic test --build-script-name <<parameters.build_script_name>>
+              command: yarn chromatic test --build-script-name <<parameters.BUILD_SCRIPT_NAME>>
               environment:
                 CHROMATIC_APP_CODE: <<parameters.CHROMATIC_APP_CODE>>
                 CHROMATIC_PROJECT_TOKEN: <<parameters.CHROMATIC_PROJECT_TOKEN>>
