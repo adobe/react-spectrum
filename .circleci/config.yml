@@ -493,6 +493,9 @@ orbs:
             default: medium
             description: Resource class
             type: string
+          BUILD_SCRIPT_NAME:
+            default: ""
+            type: string
         steps:
           - checkout
           - load-node-modules:
@@ -500,6 +503,7 @@ orbs:
           - test-accept-all-changes:
               CHROMATIC_APP_CODE: <<parameters.CHROMATIC_APP_CODE>>
               CHROMATIC_PROJECT_TOKEN: <<parameters.CHROMATIC_PROJECT_TOKEN>>
+              BUILD_SCRIPT_NAME: <<parameters.BUILD_SCRIPT_NAME>>
       test:
         description: |
           Run a chromatic test on the current branch. Report all changes. Exit non-0 only if any components fail to load
@@ -524,6 +528,9 @@ orbs:
             default: medium
             description: Resource class
             type: string
+          BUILD_SCRIPT_NAME:
+            default: ""
+            type: string
         steps:
           - checkout
           - load-node-modules:
@@ -531,3 +538,4 @@ orbs:
           - test-exit-cleanly-on-changes:
               CHROMATIC_APP_CODE: <<parameters.CHROMATIC_APP_CODE>>
               CHROMATIC_PROJECT_TOKEN: <<parameters.CHROMATIC_PROJECT_TOKEN>>
+              BUILD_SCRIPT_NAME: <<parameters.BUILD_SCRIPT_NAME>>
