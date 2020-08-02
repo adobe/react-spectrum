@@ -208,15 +208,15 @@ workflows:
           requires:
             - ready
           resource_class: xlarge
-    main-workflow:
-      jobs:
-        - rsp-chromatic/run-and-accept-all:
-            CHROMATIC_PROJECT_TOKEN: q5msektqrfg
-            BUILD_SCRIPT_NAME: 'build:chromatic'
-            filters:
-              branches:
-                only: main
-            resource_class: xlarge
+  main-workflow:
+    jobs:
+      - rsp-chromatic/run-and-accept-all:
+          CHROMATIC_PROJECT_TOKEN: q5msektqrfg
+          BUILD_SCRIPT_NAME: 'build:chromatic'
+          filters:
+            branches:
+              only: main
+          resource_class: xlarge
 
 orbs:
   azure-cli: circleci/azure-cli@1.1.0
