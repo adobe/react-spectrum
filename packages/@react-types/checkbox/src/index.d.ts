@@ -58,15 +58,11 @@ export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLab
   'aria-controls'?: string
 }
 
-export interface CheckboxGroupProps extends ValueBase<string[]>, LabelableProps {
+export interface CheckboxGroupProps extends ValueBase<string[]>, InputBase, LabelableProps {
   /**
    * The name of the CheckboxGroup, used when submitting an HTML form.
    */
   name?: string
-  /**
-   * Whether the checkbox group is disabled.
-   */
-  isDisabled?: boolean
 }
 
 export interface CheckboxProps extends ToggleProps {
@@ -80,8 +76,6 @@ export interface CheckboxProps extends ToggleProps {
 export interface AriaCheckboxProps extends CheckboxProps, AriaToggleProps {}
 
 export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
-
-export interface AriaGroupedCheckboxProps extends Omit<AriaCheckboxProps, 'isSelected' | 'defaultSelected'> {}
 
 export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
   /**

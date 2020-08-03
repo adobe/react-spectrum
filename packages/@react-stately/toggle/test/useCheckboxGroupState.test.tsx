@@ -25,6 +25,20 @@ describe('useCheckboxGroupState', () => {
       expect(typeof state.addValue).toBe('function');
       expect(typeof state.removeValue).toBe('function');
       expect(typeof state.toggleValue).toBe('function');
+      expect(typeof state.getCheckboxState).toBe('function');
+
+      return null;
+    }
+    render(<Test />);
+  });
+
+  it('should return toggle state interface from `getCheckboxState`', () => {
+    function Test() {
+      const state = useCheckboxGroupState();
+      const checkboxState = state.getCheckboxState({value: 'test'});
+
+      expect(checkboxState.isSelected).toBe(false);
+      expect(typeof checkboxState.setSelected).toBe('function');
 
       return null;
     }
@@ -65,7 +79,7 @@ describe('useCheckboxGroupState', () => {
   });
 
   it('should be possible to control the value', () => {
-    function Test({value}: { value: string[] }) {
+    function Test({value}: {value: string[]}) {
       const state = useCheckboxGroupState({value});
       return <>{state.value.join(', ')}</>;
     }
@@ -204,5 +218,121 @@ describe('useCheckboxGroupState', () => {
     });
 
     expect(container.textContent).toBe('foo, qwe');
+  });
+
+  it('should update checkbox state after calling `setSelected` for it', () => {
+    let setSelected: (isSelected: boolean) => void;
+    let isSelected = false;
+
+    function Test() {
+      const state = useCheckboxGroupState();
+      const checkboxState = state.getCheckboxState({value: 'test'});
+      setSelected = checkboxState.setSelected;
+      isSelected = checkboxState.isSelected;
+
+      return <>{state.value.join(', ')}</>;
+    }
+
+    const {container} = render(<Test />);
+
+    expect(container.textContent).toBe('');
+    expect(isSelected).toBe(false);
+
+    act(() => {
+      setSelected(true);
+    });
+
+    expect(container.textContent).toBe('test');
+    expect(isSelected).toBe(true);
+  });
+
+  it('should not update state for readonly group', () => {
+    let addValue: (value: string) => void;
+    let removeValue: (value: string) => void;
+    let toggleValue: (value: string) => void;
+    let setSelected: (isSelected: boolean) => void;
+
+    function Test() {
+      const state = useCheckboxGroupState({isReadOnly: true});
+      addValue = state.addValue;
+      removeValue = state.removeValue;
+      toggleValue = state.toggleValue;
+
+      const checkboxState = state.getCheckboxState({value: 'test'});
+      setSelected = checkboxState.setSelected;
+
+      return <>{state.value.join(', ')}</>;
+    }
+
+    const {container} = render(<Test />);
+
+    expect(container.textContent).toBe('');
+
+    act(() => {
+      addValue('test');
+    });
+
+    expect(container.textContent).toBe('');
+
+    act(() => {
+      removeValue('test');
+    });
+
+    expect(container.textContent).toBe('');
+
+    act(() => {
+      toggleValue('test');
+    });
+
+    expect(container.textContent).toBe('');
+
+    act(() => {
+      setSelected(true);
+    });
+
+    expect(container.textContent).toBe('');
+  });
+
+  it('should not update state for readonly checkbox', () => {
+    let setSelected: (isSelected: boolean) => void;
+
+    function Test() {
+      const state = useCheckboxGroupState();
+      const checkboxState = state.getCheckboxState({value: 'test', isReadOnly: true});
+      setSelected = checkboxState.setSelected;
+
+      return <>{state.value.join(', ')}</>;
+    }
+
+    const {container} = render(<Test />);
+
+    expect(container.textContent).toBe('');
+
+    act(() => {
+      setSelected(true);
+    });
+
+    expect(container.textContent).toBe('');
+  });
+
+  it('should call `onChange` for a checkbox when updating state with `setSelected`', () => {
+    let setSelected: (isSelected: boolean) => void;
+    let onChangeSpy = jest.fn();
+
+    function Test() {
+      const state = useCheckboxGroupState();
+      const checkboxState = state.getCheckboxState({value: 'test', onChange: onChangeSpy});
+      setSelected = checkboxState.setSelected;
+
+      return null;
+    }
+
+    render(<Test />);
+
+    act(() => {
+      setSelected(true);
+    });
+
+    expect(onChangeSpy).toHaveBeenCalledWith(true);
   });
 });

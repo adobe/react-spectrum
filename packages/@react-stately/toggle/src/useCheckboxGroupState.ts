@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {CheckboxGroupProps} from '@react-types/checkbox';
+import {CheckboxGroupProps, ToggleProps} from '@react-types/checkbox';
+import {ToggleState} from './useToggleState';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo} from 'react';
 
@@ -31,7 +32,10 @@ export interface CheckboxGroupState {
   removeValue(value: string): void,
 
   /** Toggles a value in the set of selected values. */
-  toggleValue(value: string): void
+  toggleValue(value: string): void,
+
+  /** Gets checkbox state for a given checkbox. */
+  getCheckboxState(value: ToggleProps): ToggleState
 }
 
 let instance = Math.round(Math.random() * 10000000000);
@@ -45,7 +49,7 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
   let name = useMemo(() => props.name || `checkbox-group-${instance}-${++i}`, [props.name]);
   let [selectedValue, setValue] = useControlledState(props.value, props.defaultValue || [], props.onChange);
 
-  return {
+  const state: CheckboxGroupState = {
     name,
     value: selectedValue,
     setValue,
@@ -81,6 +85,29 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
         }
         return values.concat(value);
       });
+    },
+    getCheckboxState(props) {
+      const {value, onChange, isReadOnly} = props;
+      return {
+        isSelected: state.value.includes(value),
+        setSelected(isSelected) {
+          if (isReadOnly) {
+            return;
+          }
+
+          if (isSelected) {
+            state.addValue(value);
+          } else {
+            state.removeValue(value);
+          }
+
+          if (onChange) {
+            onChange(isSelected);
+          }
+        }
+      };
     }
   };
+
+  return state;
 }

@@ -10,62 +10,197 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render} from '@testing-library/react';
+import {AriaCheckboxGroupProps, AriaCheckboxProps} from '@react-types/checkbox';
 import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/toggle';
 import React, {useRef} from 'react';
-import {render} from '@testing-library/react';
-import {useCheckboxGroup, useGroupedCheckbox} from '../';
+import {useCheckbox, useCheckboxGroup} from '../';
+import userEvent from '@testing-library/user-event';
 
-interface CheckboxProps {
-  checkboxGroupState: CheckboxGroupState,
-  index: number,
-  value?: string,
-  children?: string
-}
-interface CheckboxGroupsProps {
-  checkboxProps?: CheckboxProps[],
-  label?: string
-}
-
-const checkboxDefaults = [
-  {value: 'foo', children: 'Foo'},
-  {value: 'bar', children: 'Bar'},
-  {value: 'xyz', children: 'Xyz'}
-];
-
-function Checkbox({checkboxGroupState, index, ...props}: CheckboxProps) {
-  const finalProps = {
-    ...checkboxDefaults[index],
-    ...props
-  };
+function Checkbox({checkboxGroupState, ...props}: AriaCheckboxProps & { checkboxGroupState: CheckboxGroupState }) {
   const ref = useRef<HTMLInputElement>();
-  const {children} = finalProps;
-  const {inputProps} = useGroupedCheckbox(finalProps, checkboxGroupState, ref);
+  const {children} = props;
+  const {inputProps} = useCheckbox({...props, name: checkboxGroupState.name}, checkboxGroupState.getCheckboxState(props), ref);
   return <label>{children}<input ref={ref} {...inputProps} /></label>;
 }
 
-function CheckboxGroup({
-  label = 'Legend',
-  checkboxProps = [],
-  ...props
-}: CheckboxGroupsProps) {
-  const state = useCheckboxGroupState();
-  const {checkboxGroupProps, labelProps} = useCheckboxGroup({
-    ...props,
-    label
-  });
+function CheckboxGroup({groupProps, checkboxProps}: {groupProps: AriaCheckboxGroupProps, checkboxProps: AriaCheckboxProps[]}) {
+  const state = useCheckboxGroupState(groupProps);
+  const {checkboxGroupProps, labelProps} = useCheckboxGroup(groupProps);
   return (
     <div {...checkboxGroupProps}>
-      <span {...labelProps}>{label}</span>
-      <Checkbox checkboxGroupState={state} index={0} {...checkboxProps[0]} />
-      <Checkbox checkboxGroupState={state} index={1} {...checkboxProps[1]} />
-      <Checkbox checkboxGroupState={state} index={2} {...checkboxProps[2]} />
+      {groupProps.label && <span {...labelProps}>{groupProps.label}</span>}
+      <Checkbox checkboxGroupState={state} {...checkboxProps[0]} />
+      <Checkbox checkboxGroupState={state} {...checkboxProps[1]} />
+      <Checkbox checkboxGroupState={state} {...checkboxProps[2]} />
     </div>
   );
 }
 
 describe('useCheckboxGroup', () => {
-  it('should return role="group"', () => {
-    let {getByRole} = render(<CheckboxGroup />);
-    expect(getByRole('group', {exact: true})).toBeTruthy();
+  it('handles defaults', () => {
+    let onChangeSpy = jest.fn();
+    let {getByRole, getAllByRole, getByLabelText} = render(
+      <CheckboxGroup
+        groupProps={{label: 'Favorite Pet', onChange: onChangeSpy}}
+        checkboxProps={[
+          {value: 'dogs', children: 'Dogs'},
+          {value: 'cats', children: 'Cats'},
+          {value: 'dragons', children: 'Dragons'}
+        ]} />
+    );
+
+    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
+    expect(checkboxGroup).toBeInTheDocument();
+    expect(checkboxes.length).toBe(3);
+
+    let groupName = checkboxes[0].getAttribute('name');
+    expect(checkboxes[0]).toHaveAttribute('name', groupName);
+    expect(checkboxes[1]).toHaveAttribute('name', groupName);
+    expect(checkboxes[2]).toHaveAttribute('name', groupName);
+
+    expect(checkboxes[0].value).toBe('dogs');
+    expect(checkboxes[1].value).toBe('cats');
+    expect(checkboxes[2].value).toBe('dragons');
+
+    expect(checkboxes[0].checked).toBe(false);
+    expect(checkboxes[1].checked).toBe(false);
+    expect(checkboxes[2].checked).toBe(false);
+
+    let dragons = getByLabelText('Dragons');
+    act(() => {userEvent.click(dragons);});
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(['dragons']);
+
+    expect(checkboxes[0].checked).toBe(false);
+    expect(checkboxes[1].checked).toBe(false);
+    expect(checkboxes[2].checked).toBe(true);
+  });
+
+  it('can have a default value', () => {
+    let {getByLabelText} = render(
+      <CheckboxGroup
+        groupProps={{label: 'Favorite Pet', value: ['cats']}}
+        checkboxProps={[
+          {value: 'dogs', children: 'Dogs'},
+          {value: 'cats', children: 'Cats'},
+          {value: 'dragons', children: 'Dragons'}
+        ]} />
+    );
+
+    expect((getByLabelText('Cats') as HTMLInputElement).checked).toBe(true);
+  });
+
+  it('name can be controlled', () => {
+    let {getAllByRole} = render(
+      <CheckboxGroup
+        groupProps={{name: 'awesome-react-aria', label: 'Favorite Pet'}}
+        checkboxProps={[
+          {value: 'dogs', children: 'Dogs'},
+          {value: 'cats', children: 'Cats'},
+          {value: 'dragons', children: 'Dragons'}
+        ]} />
+    );
+
+    let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
+
+    expect(checkboxes[0]).toHaveAttribute('name', 'awesome-react-aria');
+    expect(checkboxes[1]).toHaveAttribute('name', 'awesome-react-aria');
+    expect(checkboxes[2]).toHaveAttribute('name', 'awesome-react-aria');
+  });
+
+  it('supports labeling', () => {
+    let {getByRole} = render(
+      <CheckboxGroup
+        groupProps={{label: 'Favorite Pet'}}
+        checkboxProps={[
+          {value: 'dogs', children: 'Dogs'},
+          {value: 'cats', children: 'Cats'},
+          {value: 'dragons', children: 'Dragons'}
+        ]} />
+    );
+    let checkboxGroup = getByRole('group', {exact: true});
+
+    let labelId = checkboxGroup.getAttribute('aria-labelledby');
+    expect(labelId).toBeDefined();
+    let label = document.getElementById(labelId);
+    expect(label).toHaveTextContent('Favorite Pet');
+  });
+
+  it('supports aria-label', () => {
+    let {getByRole} = render(
+      <CheckboxGroup
+        groupProps={{'aria-label': 'My Favorite Pet'}}
+        checkboxProps={[
+          {value: 'dogs', children: 'Dogs'},
+          {value: 'cats', children: 'Cats'},
+          {value: 'dragons', children: 'Dragons'}
+        ]} />
+    );
+    let checkboxGroup = getByRole('group', {exact: true});
+
+    expect(checkboxGroup).toHaveAttribute('aria-label', 'My Favorite Pet');
+  });
+
+  it('supports custom props', () => {
+    const groupProps = {label: 'Favorite Pet', 'data-testid': 'favorite-pet'};
+    let {getByRole} = render(
+      <CheckboxGroup
+        groupProps={groupProps}
+        checkboxProps={[
+          {value: 'dogs', children: 'Dogs'},
+          {value: 'cats', children: 'Cats'},
+          {value: 'dragons', children: 'Dragons'}
+        ]} />
+    );
+    let checkboxGroup = getByRole('group', {exact: true});
+
+    expect(checkboxGroup).toHaveAttribute('data-testid', 'favorite-pet');
+  });
+
+  it('sets aria-disabled when isDisabled is true', () => {
+    let {getByRole} = render(
+      <CheckboxGroup
+        groupProps={{label: 'Favorite Pet', isDisabled: true}}
+        checkboxProps={[
+          {value: 'dogs', children: 'Dogs'},
+          {value: 'cats', children: 'Cats'},
+          {value: 'dragons', children: 'Dragons'}
+        ]} />
+    );
+    let checkboxGroup = getByRole('group', {exact: true});
+
+    expect(checkboxGroup).toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('doesn\'t set aria-disabled by default', () => {
+    let {getByRole} = render(
+      <CheckboxGroup
+        groupProps={{label: 'Favorite Pet'}}
+        checkboxProps={[
+          {value: 'dogs', children: 'Dogs'},
+          {value: 'cats', children: 'Cats'},
+          {value: 'dragons', children: 'Dragons'}
+        ]} />
+    );
+    let checkboxGroup = getByRole('group', {exact: true});
+
+    expect(checkboxGroup).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('doesn\'t set aria-disabled when isDisabled is false', () => {
+    let {getByRole} = render(
+      <CheckboxGroup
+        groupProps={{label: 'Favorite Pet', isDisabled: false}}
+        checkboxProps={[
+          {value: 'dogs', children: 'Dogs'},
+          {value: 'cats', children: 'Cats'},
+          {value: 'dragons', children: 'Dragons'}
+        ]} />
+    );
+    let checkboxGroup = getByRole('group', {exact: true});
+
+    expect(checkboxGroup).not.toHaveAttribute('aria-disabled');
   });
 });
