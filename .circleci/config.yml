@@ -205,7 +205,7 @@ workflows:
             branches:
               ignore: main
           type: approval
-      - rsp-chromatic/test:
+      - chromatic/test:
           CHROMATIC_PROJECT_TOKEN: q5msektqrfg
           cache_key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
           requires:
@@ -213,7 +213,7 @@ workflows:
           resource_class: xlarge
   main-workflow:
     jobs:
-      - rsp-chromatic/run-and-accept-all:
+      - chromatic/run-and-accept-all:
           CHROMATIC_PROJECT_TOKEN: q5msektqrfg
           filters:
             branches:
