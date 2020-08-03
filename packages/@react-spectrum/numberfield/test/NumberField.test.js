@@ -64,7 +64,6 @@ describe('NumberField', function () {
   it.each`
     Name                | Component
     ${'v3 NumberField'} | ${NumberField}
-    ${'v2 NumberField'} | ${NumberInput}
   `('$Name has correct aria and props', ({Component}) => {
     let {
       container,
