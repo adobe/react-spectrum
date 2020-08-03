@@ -29,7 +29,7 @@ interface SliderAria {
 
   /** Partial props that should be passed into `useSliderThumb` for all thumbs.  
    * Includes the Label ID for labeling slider inputs. */
-  commonThumbProps: CommonSliderThumbProps
+  thumbProps: CommonSliderThumbProps
 }
 
 /**
@@ -60,12 +60,12 @@ export function useSlider(
     orientation: 'horizontal',
     onDrag: (dragging) => {
       if (realTimeTrackDraggingIndex.current !== undefined) {
-        state.setDragging(realTimeTrackDraggingIndex.current, dragging);
+        state.setThumbDragging(realTimeTrackDraggingIndex.current, dragging);
       }
     },
     onPositionChange: (position) => {
       if (realTimeTrackDraggingIndex.current !== undefined) {
-        state.setValue(realTimeTrackDraggingIndex.current, computeOffsetToValue(position, props, trackRef));
+        state.setThumbValue(realTimeTrackDraggingIndex.current, computeOffsetToValue(position, props, trackRef));
       }
     }
   });
@@ -96,7 +96,7 @@ export function useSlider(
             e.preventDefault();
 
             realTimeTrackDraggingIndex.current = index;
-            state.setFocusedIndex(index);
+            state.setFocusedThumb(index);
 
             // We immediately toggle state to dragging and set the value on mouse down.
             // We set the value now, instead of waiting for onDrag, so that the thumb 
@@ -104,13 +104,13 @@ export function useSlider(
             // set dragging on now, so that onChangeEnd() won't fire yet when we set
             // the value.  Dragging state will be reset to false in onDrag above, even
             // if no dragging actually occurs.
-            state.setDragging(realTimeTrackDraggingIndex.current, true);
-            state.setValue(index, value);
+            state.setThumbDragging(realTimeTrackDraggingIndex.current, true);
+            state.setThumbValue(index, value);
           }
         }
       }
     }, draggableProps),
-    commonThumbProps: {
+    thumbProps: {
       labelId: (labelProps.id ?? fieldProps.id)!
     }
   };

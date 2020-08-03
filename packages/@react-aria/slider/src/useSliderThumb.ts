@@ -1,7 +1,7 @@
 import {BaseSliderProps, SliderThumbProps} from '@react-types/slider';
 import {ChangeEvent, HTMLAttributes, useCallback, useEffect} from 'react';
 import {computeOffsetToValue} from './utils';
-import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE, DEFAULT_STEP_VALUE, SliderState} from '@react-stately/slider';
+import {DEFAULT_STEP_VALUE, SliderState} from '@react-stately/slider';
 import {focusWithoutScrolling, mergeProps, useDrag1D} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
@@ -39,8 +39,6 @@ export function useSliderThumb(
 ): SliderThumbAria {
   const {sliderProps, thumbProps, trackRef, inputRef} = opts;
   const {
-    maxValue = DEFAULT_MAX_VALUE,
-    minValue = DEFAULT_MIN_VALUE,
     step = DEFAULT_STEP_VALUE,
     isReadOnly: isSliderReadOnly,
     isDisabled: isSliderDisabled
@@ -69,7 +67,7 @@ export function useSliderThumb(
     }
   }, [inputRef]);
 
-  const isFocused = state.focusedIndex === index;
+  const isFocused = state.focusedThumb === index;
 
   useEffect(() => {
     if (isFocused) {
@@ -82,22 +80,18 @@ export function useSliderThumb(
     reverse: false,
     orientation: 'horizontal',
     onDrag: (dragging) => {
-      state.setDragging(index, dragging);
+      state.setThumbDragging(index, dragging);
       focusInput();
     },
     onPositionChange: (position) => {
-      state.setValue(index, computeOffsetToValue(position, sliderProps, trackRef));
-    },
-    onIncrement: () => state.setValue(index, value + step),
-    onDecrement: () => state.setValue(index, value - step),
-    onIncrementToMax: () => state.setValue(index, maxValue),
-    onDecrementToMin: () => state.setValue(index, minValue)
+      state.setThumbValue(index, computeOffsetToValue(position, sliderProps, trackRef));
+    }
   });
 
   const {focusableProps} = useFocusable(
     mergeProps(thumbProps, {
-      onFocus: () => state.setFocusedIndex(index),
-      onBlur: () => state.setFocusedIndex(undefined)
+      onFocus: () => state.setFocusedThumb(index),
+      onBlur: () => state.setFocusedThumb(undefined)
     }),
     inputRef
   );
@@ -110,24 +104,24 @@ export function useSliderThumb(
     inputProps: mergeProps(focusableProps, fieldProps, {
       type: 'range',
       tabIndex: allowDrag ? 0 : undefined,
-      min: state.getMinValueForIndex(index),
-      max: state.getMaxValueForIndex(index),
+      min: state.getThumbMinValue(index),
+      max: state.getThumbMaxValue(index),
       step: step,
       value: value,
-      readonly: isReadOnly,
+      readOnly: isReadOnly,
       disabled: isDisabled,
       'aria-orientation': 'horizontal',
-      'aria-valuetext': state.getValueLabelForIndex(index),
+      'aria-valuetext': state.getThumbValueLabel(index),
       'aria-required': isRequired || undefined,
       'aria-invalid': validationState === 'invalid' || undefined,
       'aria-errormessage': thumbProps['aria-errormessage'],
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
-        state.setValue(index, parseFloat(e.target.value));
+        state.setThumbValue(index, parseFloat(e.target.value));
       }
     }),
     thumbProps: allowDrag ? mergeProps({
       onMouseDown: draggableProps.onMouseDown,
-      onMosueEnter: draggableProps.onMouseEnter,
+      onMouseEnter: draggableProps.onMouseEnter,
       onMouseOut: draggableProps.onMouseOut
     }, {
       onMouseDown: focusInput

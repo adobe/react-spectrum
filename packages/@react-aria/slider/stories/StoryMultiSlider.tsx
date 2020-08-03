@@ -17,7 +17,7 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const state = useSliderState(props);
   const {
-    trackProps, labelProps, commonThumbProps, containerProps
+    trackProps, labelProps, thumbProps: commonThumbProps, containerProps
   } = useSlider(props, state, trackRef);
 
   const numThumbs = React.Children.count(children);
@@ -84,7 +84,7 @@ export function StoryThumb(props: StoryThumbProps) {
         {...thumbProps} 
         className={classNames(styles, 'thumb', {thumbDisabled: isDisabled})}
         style={{
-          'left': `${state.getOffsetPercentForIndex(index) * 100}%`
+          'left': `${state.getThumbPercent(index) * 100}%`
         }}>
         <VisuallyHidden isFocusable><input className={styles.input} ref={inputRef} {...inputProps} /></VisuallyHidden>
         {label && <label {...labelProps}>{label}</label>}

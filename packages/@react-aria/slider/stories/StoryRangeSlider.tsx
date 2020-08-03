@@ -24,7 +24,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   }
 
   const {
-    trackProps, labelProps, commonThumbProps, containerProps
+    trackProps, labelProps, thumbProps: commonThumbProps, containerProps
   } = useSlider(props, state, trackRef);
 
   const {thumbProps: minThumbProps, inputProps: minInputProps} = useSliderThumb({
@@ -46,9 +46,9 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
       <div className={styles.sliderLabel}>
         {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
         <div className={styles.value}>
-          {state.getValueLabelForIndex(0)}
+          {state.getThumbValueLabel(0)}
           {' to '}
-          {state.getValueLabelForIndex(1)}
+          {state.getThumbValueLabel(1)}
         </div>
       </div>
       <div className={styles.trackContainer}>
@@ -56,8 +56,8 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
         <div 
           className={styles.filledRail} 
           style={{
-            left: `${state.getOffsetPercentForIndex(0) * 100}%`,
-            width: `${(state.getOffsetPercentForIndex(1) - state.getOffsetPercentForIndex(0)) * 100}%`
+            left: `${state.getThumbPercent(0) * 100}%`,
+            width: `${(state.getThumbPercent(1) - state.getThumbPercent(0)) * 100}%`
           }} />
         <div {...trackProps} ref={trackRef} className={styles.track} />
         <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
@@ -65,7 +65,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
             {...minThumbProps} 
             className={styles.thumb}
             style={{
-              'left': `${state.getOffsetPercentForIndex(0) * 100}%`
+              'left': `${state.getThumbPercent(0) * 100}%`
             }}>
             <VisuallyHidden isFocusable><input className={styles.input} ref={minInputRef} {...minInputProps} /></VisuallyHidden>
           </div>
@@ -75,7 +75,7 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
             {...maxThumbProps} 
             className={styles.thumb}
             style={{
-              'left': `${state.getOffsetPercentForIndex(1) * 100}%`
+              'left': `${state.getThumbPercent(1) * 100}%`
             }}>
             <VisuallyHidden isFocusable><input className={styles.input} ref={maxInputRef} {...maxInputProps} /></VisuallyHidden>
           </div>

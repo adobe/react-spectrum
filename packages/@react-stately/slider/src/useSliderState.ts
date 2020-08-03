@@ -19,27 +19,28 @@ import {useRef, useState} from 'react';
 export interface SliderState {
   // Values managed by the slider
   readonly values: number[],
-  setValue: (index: number, value: number) => void,
+  getThumbValue: (index: number) => number,
+  setThumbValue: (index: number, value: number) => void,
 
   // Whether a specific index is being dragged
-  isDragging: (index: number) => boolean,
-  setDragging: (index: number, dragging: boolean) => void,
+  isThumbDragging: (index: number) => boolean,
+  setThumbDragging: (index: number, dragging: boolean) => void,
 
   // Currently-focused index
-  readonly focusedIndex: number | undefined,
-  setFocusedIndex: (index: number | undefined) => void,
+  readonly focusedThumb: number | undefined,
+  setFocusedThumb: (index: number | undefined) => void,
 
   // Returns the value offset as a percentage from 0 to 1.
-  getOffsetPercentForIndex: (index: number) => number,
-  getOffsetPercentForValue: (value: number) => number,
+  getThumbPercent: (index: number) => number,
+  getValuePercent: (value: number) => number,
 
   // Returns the string label for the value, per props.formatOptions
-  getValueLabelForIndex: (index: number) => string,
-  getValueLabelForValue: (value: number) => string,
+  getThumbValueLabel: (index: number) => string,
+  getFormattedValue: (value: number) => string,
 
   // Returns the min and max values for the index
-  getMinValueForIndex: (index: number) => number,
-  getMaxValueForIndex: (index: number) => number
+  getThumbMinValue: (index: number) => number,
+  getThumbMaxValue: (index: number) => number
 }
 
 export const DEFAULT_MIN_VALUE = 0;
@@ -59,14 +60,14 @@ export function useSliderState(props: SliderProps): SliderState {
   const realTimeDragging = useRef(false);
   const formatter = useNumberFormatter(formatOptions);
 
-  function getOffsetPercentForValue(value: number) {
+  function getValuePercent(value: number) {
     return (value - minValue) / (maxValue - minValue);
   }
 
-  function getMinValueForIndex(index: number) {
+  function getThumbMinValue(index: number) {
     return index === 0 ? minValue : values[index - 1];
   }
-  function getMaxValueForIndex(index: number) {
+  function getThumbMaxValue(index: number) {
     return index === values.length - 1 ? maxValue : values[index + 1];
   }
 
@@ -74,8 +75,8 @@ export function useSliderState(props: SliderProps): SliderState {
     if (isReadOnly || isDisabled) {
       return;
     }
-    const thisMin = getMinValueForIndex(index);
-    const thisMax = getMaxValueForIndex(index);
+    const thisMin = getThumbMinValue(index);
+    const thisMax = getThumbMaxValue(index);
     value = clamp(value, thisMin, thisMax);
     const newValues = replaceIndex(values, index, value);
     setValues(newValues);
@@ -92,23 +93,24 @@ export function useSliderState(props: SliderProps): SliderState {
     realTimeDragging.current = newDraggings.some(Boolean);
   }
 
-  function getValueLabelForValue(value: number) {
+  function getFormattedValue(value: number) {
     return formatter.format(value);
   }
 
   return {
     values: values,
-    setValue: updateValue,
-    isDragging: (index: number) => isDraggings[index],
-    setDragging: updateDragging,
-    focusedIndex,
-    setFocusedIndex,
-    getOffsetPercentForIndex: (index: number) => getOffsetPercentForValue(values[index]),
-    getOffsetPercentForValue,
-    getValueLabelForIndex: (index: number) => getValueLabelForValue(values[index]),
-    getValueLabelForValue,
-    getMinValueForIndex,
-    getMaxValueForIndex
+    getThumbValue: (index: number) => values[index],
+    setThumbValue: updateValue,
+    isThumbDragging: (index: number) => isDraggings[index],
+    setThumbDragging: updateDragging,
+    focusedThumb: focusedIndex,
+    setFocusedThumb: setFocusedIndex,
+    getThumbPercent: (index: number) => getValuePercent(values[index]),
+    getValuePercent,
+    getThumbValueLabel: (index: number) => getFormattedValue(values[index]),
+    getFormattedValue,
+    getThumbMinValue,
+    getThumbMaxValue
   };
 }
 

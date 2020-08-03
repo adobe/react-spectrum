@@ -27,7 +27,7 @@ export function StorySlider(props: StorySliderProps) {
 
   const state = useSliderState(multiProps);
   const {
-    trackProps, labelProps, commonThumbProps
+    trackProps, labelProps, thumbProps: commonThumbProps
   } = useSlider(multiProps, state, trackRef);
 
   const {thumbProps, inputProps} = useSliderThumb({
@@ -43,15 +43,15 @@ export function StorySlider(props: StorySliderProps) {
     <div className={styles.slider}>
       <div className={styles.sliderLabel}>
         {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
-        <div className={styles.value}>{state.getValueLabelForIndex(0)}</div>
+        <div className={styles.value}>{state.getThumbValueLabel(0)}</div>
       </div>
       <div className={styles.trackContainer}>
         <div className={styles.rail} />
         <div 
           className={styles.filledRail} 
           style={{
-            left: `${state.getOffsetPercentForValue(Math.min(value, origin)) * 100}%`,
-            width: `${(state.getOffsetPercentForValue(Math.max(value, origin)) - state.getOffsetPercentForValue(Math.min(value, origin))) * 100}%`
+            left: `${state.getValuePercent(Math.min(value, origin)) * 100}%`,
+            width: `${(state.getValuePercent(Math.max(value, origin)) - state.getValuePercent(Math.min(value, origin))) * 100}%`
           }} />
         <div {...trackProps} ref={trackRef} className={styles.track} />
         <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
@@ -59,7 +59,7 @@ export function StorySlider(props: StorySliderProps) {
             {...thumbProps} 
             className={styles.thumb}
             style={{
-              'left': `${state.getOffsetPercentForIndex(0) * 100}%`
+              'left': `${state.getThumbPercent(0) * 100}%`
             }}>
             <VisuallyHidden isFocusable><input className={styles.input} ref={inputRef} {...inputProps} /></VisuallyHidden>
           </div>
