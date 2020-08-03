@@ -189,7 +189,7 @@ storiesOf('ComboBox', module)
   )
   .add(
     'isReadOnly',
-    () => render({isReadOnly: true})
+    () => render({isReadOnly: true, defaultSelectedKey: 'two'})
   )
   .add(
     'labelPosition: top, labelAlign: end',

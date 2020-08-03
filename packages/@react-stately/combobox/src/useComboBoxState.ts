@@ -111,10 +111,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let setSelectedKey = useCallback((key) => {
     let item = collection.getItem(key);
     let itemText = item ? item.textValue : '';
-    // think about the below conditionals below
-    // If I don't have the extra itemText check, then setting props.selectedKey to undef or just deleting one letter of the text
-    // so it doesn't match a key will then clear the textfield entirely (in controlled selected key case)
-    // Problem with this is that a clear button w/ setSelectedKey = '' won't actually clear the textfield because of this itemText check (also controlled selected key only case, input value uncontrolled).
     itemText && setInputValue(itemText);
 
     // If itemText happens to be the same as the current input text but the keys don't match

@@ -30,6 +30,7 @@ let onOpenChange = jest.fn();
 let onFilter = jest.fn();
 let onInputChange = jest.fn();
 let outerBlur = jest.fn();
+let onFocus = jest.fn();
 let onBlur = jest.fn();
 let onCustomValue = jest.fn();
 
@@ -39,6 +40,7 @@ let defaultProps = {
   onSelectionChange,
   onOpenChange,
   onInputChange,
+  onFocus,
   onBlur,
   onCustomValue
 };
@@ -119,6 +121,73 @@ describe('ComboBox', function () {
 
     let label = getAllByText('Test')[0];
     expect(label).toBeVisible();
+  });
+
+  it('can be disabled', function () {
+    let {getByRole} = renderComboBox({isDisabled: true});
+
+    let combobox = getByRole('combobox');
+    act(() => {
+      combobox.focus();
+      userEvent.type(combobox, 'One');
+      jest.runAllTimers();
+    });
+
+    expect(() => getByRole('listbox')).toThrow();
+    expect(onOpenChange).not.toHaveBeenCalled();
+    expect(onFocus).not.toHaveBeenCalled();
+
+    act(() => {
+      fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+      jest.runAllTimers();
+    });
+
+    expect(() => getByRole('listbox')).toThrow();
+    expect(onOpenChange).not.toHaveBeenCalled();
+
+    let button = getByRole('button');
+    act(() => {
+      triggerPress(button);
+      () => jest.runAllTimers();
+    });
+
+    expect(() => getByRole('listbox')).toThrow();
+    expect(onOpenChange).not.toHaveBeenCalled();
+    expect(onInputChange).not.toHaveBeenCalled();
+  });
+
+  it('can be readonly', function () {
+    let {getByRole} = renderComboBox({isReadOnly: true, defaultInputValue: 'Blargh'});
+
+    let combobox = getByRole('combobox');
+    act(() => {
+      combobox.focus();
+      userEvent.type(combobox, 'One');
+      jest.runAllTimers();
+    });
+
+    expect(() => getByRole('listbox')).toThrow();
+    expect(combobox.value).toBe('Blargh');
+    expect(onOpenChange).not.toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalled();
+
+    act(() => {
+      fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+      jest.runAllTimers();
+    });
+
+    expect(() => getByRole('listbox')).toThrow();
+    expect(onOpenChange).not.toHaveBeenCalled();
+
+    let button = getByRole('button');
+    act(() => {
+      triggerPress(button);
+      () => jest.runAllTimers();
+    });
+
+    expect(() => getByRole('listbox')).toThrow();
+    expect(onOpenChange).not.toHaveBeenCalled();
+    expect(onInputChange).not.toHaveBeenCalled();
   });
 
   it('features default behavior of completionMode suggest and menuTrigger input', function () {
@@ -250,7 +319,7 @@ describe('ComboBox', function () {
         expect(document.activeElement).toBe(combobox);
       });
 
-      // Double check this test
+      // TODO: Double check this test (might be applicable for async case)
       // it('fires onFilter if there are no items loaded yet', function () {
       //   let {getByRole} = render(
       //     <Provider theme={theme}>
@@ -1130,7 +1199,8 @@ describe('ComboBox', function () {
     });
 
     it('supports selectedKey and inputValue (not matching should error)', function () {
-      // TODO by Dan, fill this in when I confirm how the error should work
+      spyOn(console, "error");
+      expect(() => renderComboBox({selectedKey: '2', inputValue: 'Three'})).toThrow();
     });
 
     it('supports selectedKey and defaultInputValue (controlled by selectedKey)', function () {
@@ -1502,6 +1572,4 @@ describe('ComboBox', function () {
       expect(() => within(listbox).getAllByRole('img', {hidden: true})).toThrow();
     });
   });
-
-  // TODO: write tests for isDisabled/isReadOnly/other storybook stories
 });
