@@ -11,7 +11,7 @@
  */
 
 import {CheckboxGroupProps, ToggleProps} from '@react-types/checkbox';
-import {ToggleState} from './useToggleState';
+import {ToggleState} from '@react-stately/toggle';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo} from 'react';
 

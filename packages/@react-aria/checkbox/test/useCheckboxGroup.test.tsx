@@ -12,7 +12,7 @@
 
 import {act, render} from '@testing-library/react';
 import {AriaCheckboxGroupProps, AriaCheckboxProps} from '@react-types/checkbox';
-import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/toggle';
+import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/checkbox';
 import React, {useRef} from 'react';
 import {useCheckbox, useCheckboxGroup} from '../';
 import userEvent from '@testing-library/user-event';
