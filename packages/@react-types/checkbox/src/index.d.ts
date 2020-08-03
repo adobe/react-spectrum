@@ -18,7 +18,6 @@ import {
   FocusableProps,
   InputBase,
   LabelableProps,
-  Orientation,
   StyleProps,
   Validation,
   ValueBase
@@ -59,16 +58,15 @@ export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLab
   'aria-controls'?: string
 }
 
-export interface CheckboxGroupProps extends ValueBase<string[]>, InputBase, Validation, LabelableProps {
-  /**
-   * The axis the Checkbox Button(s) should align with.
-   * @default 'vertical'
-   */
-  orientation?: Orientation,
+export interface CheckboxGroupProps extends ValueBase<string[]>, LabelableProps {
   /**
    * The name of the CheckboxGroup, used when submitting an HTML form.
    */
   name?: string
+  /**
+   * Whether the checkbox group is disabled.
+   */
+  isDisabled?: boolean
 }
 
 export interface CheckboxProps extends ToggleProps {

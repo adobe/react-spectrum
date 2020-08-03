@@ -29,13 +29,7 @@ interface CheckboxGroupAria {
  * @param state - State for the checkbox group, as returned by `useCheckboxGroupState`.
  */
 export function useCheckboxGroup(props: AriaCheckboxGroupProps): CheckboxGroupAria {
-  let {
-    validationState,
-    isReadOnly,
-    isRequired,
-    isDisabled,
-    orientation = 'vertical'
-  } = props;
+  let {isDisabled} = props;
 
   let {labelProps, fieldProps} = useLabel({
     ...props,
@@ -49,12 +43,7 @@ export function useCheckboxGroup(props: AriaCheckboxGroupProps): CheckboxGroupAr
   return {
     checkboxGroupProps: mergeProps(domProps, {
       role: 'group',
-      'aria-invalid': validationState === 'invalid' || undefined,
-      'aria-errormessage': props['aria-errormessage'],
-      'aria-readonly': isReadOnly || undefined,
-      'aria-required': isRequired || undefined,
       'aria-disabled': isDisabled || undefined,
-      'aria-orientation': orientation,
       ...fieldProps
     }),
     labelProps
