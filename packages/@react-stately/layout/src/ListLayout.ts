@@ -63,6 +63,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected rootNodes: LayoutNode[];
   protected collator: Intl.Collator;
   protected cache: WeakMap<Node<T>, LayoutNode> = new WeakMap();
+  protected newCache: WeakMap<Node<T>, LayoutNode> = new WeakMap();
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description
@@ -115,6 +116,9 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
+    // Initialize new cache
+    this.newCache = new WeakMap();
+
     // Invalidate cache if the size of the collection changed.
     // In this case, we need to recalculate the entire layout.
     if (invalidationContext.sizeChanged) {
@@ -123,6 +127,10 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
     this.collection = this.virtualizer.collection;
     this.rootNodes = this.buildCollection();
+
+    // Replace old cache with new cache so nodes that are no longer in the collection aren't cached
+    // (for cases like combobox where original collection sticks around for filtering)
+    this.cache = this.newCache;
 
     this.lastWidth = this.virtualizer.visibleRect.width;
     this.lastCollection = this.collection;
@@ -183,7 +191,10 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
 
     this.layoutNodes.set(node.key, layoutNode);
-    this.cache.set(node, layoutNode);
+
+    // Update new cache rather than old cache so that we can get rid of cached nodes that don't exist in collection any more
+    this.newCache.set(node, layoutNode);
+
     return layoutNode;
   }
 

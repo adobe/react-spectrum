@@ -21,6 +21,7 @@ let formatterCache = new Map<string, Intl.NumberFormat>();
  */
 export function useNumberFormatter(options?: Intl.NumberFormatOptions): Intl.NumberFormat {
   let {locale} = useLocale();
+  
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
   if (formatterCache.has(cacheKey)) {
     return formatterCache.get(cacheKey);

@@ -59,10 +59,10 @@ describe('Search', () => {
     expect(clearButton).toBeNull();
   });
 
+  // omitting v2 because the v3 icon we use doesn't accept className, only UNSAFE_className
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name should support custom icons', ({Component}) => {
     let icon = <Checkmark data-testid="testicon" />;
     let tree = renderComponent(Component, {icon});
@@ -81,7 +81,6 @@ describe('Search', () => {
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name should display the clear button icon only if text is present', ({Component}) => {
     let tree = renderComponent(Component, {defaultValue: inputText});
     let clearButton = tree.getByLabelText('Clear search');
@@ -193,7 +192,6 @@ describe('Search', () => {
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name clears the input field if the clear button is pressed and the field is uncontrolled', ({Component}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear});
     let input = tree.getByTestId(testId);
@@ -249,7 +247,6 @@ describe('Search', () => {
   it.each`
     Name                | Component        | props
     ${'v3 SearchField'} | ${SearchField}   | ${{isDisabled: true}}
-    ${'v2 SearchField'} | ${V2SearchField} | ${{disabled: true}}
   `('$Name doesn\'t clear the input field if the clear button is pressed and the field is disabled', ({Component, props}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear, ...props});
     let input = tree.getByTestId(testId);
