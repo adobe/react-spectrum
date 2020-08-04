@@ -1,4 +1,5 @@
 import {RefObject, useEffect} from 'react';
+import './ResizeObserver';
 
 function hasResizeObserver() {
   return typeof (<any>window).ResizeObserver !== 'undefined';
@@ -22,7 +23,7 @@ export function useResizeObserver<T extends HTMLElement>(options: useResizeObser
       };
     } else {
 
-      const resizeObserverInstance = (<any>window).ResizeObserver((entries:any) => {
+      const resizeObserverInstance = new window.ResizeObserver((entries) => {
         if (!entries.length) {
           return;
         }
