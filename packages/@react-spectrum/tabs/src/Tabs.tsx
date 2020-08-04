@@ -11,76 +11,140 @@
  */
 
 import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, Orientation, StyleProps} from '@react-types/shared';
-import React, {ReactElement, ReactNode} from 'react';
-import styles from '../style/index.css';
-import {TabList} from './TabList';
+import {DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
+import {FocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
+import React, {useEffect, useRef, useState} from 'react';
+import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
+import {SpectrumTabsProps} from '@react-types/tabs';
+import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
+import tabsStyles from './tabs.css';
+import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useTabListState} from '@react-stately/tabs';
-import {useTabs} from '@react-aria/tabs';
+import {useTab, useTabs} from '@react-aria/tabs';
 
-interface TabProps extends DOMProps, StyleProps {
-  icon?: ReactNode,
-  label?: ReactNode,
-  value: any,
-  children?: ReactNode,
-  isDisabled?: boolean,
-  isSelected?: boolean, // Had to add this, TS complains in TabList in renderTabs
-  onSelect?: () => void
-}
-
-interface TabsProps extends DOMProps, StyleProps {
-  orientation?: Orientation,
-  isQuiet?: boolean,
-  density?: 'compact',
-  isDisabled?: boolean,
-  overflowMode?: 'dropdown' | 'scrolling',
-  keyboardActivation?: 'automatic' | 'manual',
-  children: ReactElement<TabProps> | ReactElement<TabProps>[],
-  selectedItem?: any,
-  defaultSelectedItem?: any,
-  onSelectionChange?: (selectedItem: any) => void,
-  isEmphasized?: boolean
-}
-
-export function Tabs(props: TabsProps) {
+export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
   props = useProviderProps(props);
-  let state = useTabListState(props);
   let {
     orientation = 'horizontal' as Orientation,
+    onSelectionChange,
+    isDisabled,
+    isQuiet,
+    density,
     ...otherProps
   } = props;
+  let ref = useRef<HTMLDivElement>();
+  let state = useSingleSelectListState<T>({
+    ...props,
+    onSelectionChange
+  });
+
   let {styleProps} = useStyleProps(otherProps);
+  let {tabListProps, tabPanelProps} = useTabs(props, state, ref);
+  let [selectedTab, setSelectedTab] = useState<HTMLElement>();
 
-  let {tabPanelProps, tabsPropsArray} = useTabs(props, state);
-  let children = React.Children.map(props.children, (c, i) =>
-    // @ts-ignore - TODO fix
-    typeof c === 'object' && c ? React.cloneElement(c, tabsPropsArray[i]) : c
-  );
-
-  let selected = children.find((child) => child.props.value === state.selectedItem) || children[0];
-  let body = selected.props.children;
+  useEffect(() => {
+    let tabs: HTMLElement[] = Array.from(ref.current.querySelectorAll('.' + styles['spectrum-Tabs-item']));
+    setSelectedTab(tabs.find((tab) => tab.dataset.key === state.selectedKey));
+  }, [props.children, state.selectedKey]);
 
   return (
     <div
       {...styleProps}
       className={classNames(
-        styles,
+        tabsStyles,
         'react-spectrum-TabPanel',
         `react-spectrum-TabPanel--${orientation}`,
         styleProps.className
       )}>
-      <TabList
-        {...otherProps}
-        orientation={orientation}
-        onSelectionChange={state.setSelectedItem}>
-        {children}
-      </TabList>
       <div
-        className="react-spectrum-TabPanel-body"
-        {...tabPanelProps}>
-        {body}
+        {...styleProps}
+        {...tabListProps}
+        ref={ref}
+        className={classNames(
+          styles,
+          'spectrum-Tabs',
+          `spectrum-Tabs--${orientation}`,
+          {'spectrum-Tabs--quiet': isQuiet},
+          density ? `spectrum-Tabs--${density}` : '',
+          styleProps.className
+        )}>
+        {[...state.collection].map((item) => (
+          <Tab key={item.key} item={item} state={state} isDisabled={isDisabled} orientation={orientation} />
+        ))}
+        {selectedTab && <TabLine orientation={orientation} selectedTab={selectedTab} />}
+      </div>
+      <div {...tabPanelProps} className="react-spectrum-TabPanel-body">
+        {state.selectedItem && state.selectedItem.props.children}
       </div>
     </div>
   );
+}
+
+interface TabProps<T> extends DOMProps, StyleProps {
+  item: Node<T>,
+  state: SingleSelectListState<T>,
+  isDisabled?: boolean,
+  orientation?: Orientation
+}
+
+export function Tab<T>(props: TabProps<T>) {
+  let {item, state, isDisabled, ...otherProps} = props;
+  let {styleProps} = useStyleProps(otherProps);
+  let {key, rendered} = item;
+
+  let ref = useRef<HTMLDivElement>();
+  let {tabProps} = useTab({item, isDisabled}, state, ref);
+
+  let {hoverProps, isHovered} = useHover({
+    ...props
+  });
+  let isSelected = state.selectedKey === key;
+
+  let icon = item.props.icon ? React.cloneElement(item.props.icon, {
+    size: 'S',
+    UNSAFE_className: classNames(styles, 'spectrum-Icon')
+  }) : undefined;
+
+  return (
+    <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
+      <div
+        {...styleProps}
+        {...mergeProps(tabProps, hoverProps)}
+        ref={ref}
+        className={classNames(
+          styles,
+          'spectrum-Tabs-item',
+          {
+            'is-selected': isSelected,
+            'is-disabled': isDisabled,
+            'is-hovered': isHovered
+          },
+          styleProps.className
+        )}>
+        {icon}
+        {rendered && <span className={classNames(styles, 'spectrum-Tabs-itemLabel')}>{rendered}</span>}
+      </div>
+    </FocusRing>
+  );
+}
+
+function TabLine({orientation, selectedTab}) {
+  let verticalSelectionIndicatorOffset = 12;
+
+  let style = {
+    transform: orientation === 'vertical'
+        ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
+        : `translateX(${selectedTab.offsetLeft}px) `,
+    width: undefined,
+    height: undefined
+  };
+
+  if (orientation === 'horizontal') {
+    style.width = `${selectedTab.offsetWidth}px`;
+  } else {
+    style.height = `${selectedTab.offsetHeight - verticalSelectionIndicatorOffset}px`;
+  }
+
+  return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
 }

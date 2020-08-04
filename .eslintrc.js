@@ -29,10 +29,20 @@ module.exports = {
     },
     rules: {
       "no-unused-vars": OFF,
-      "@typescript-eslint/no-unused-vars": ERROR
+      "@typescript-eslint/no-unused-vars": ERROR,
+      "@typescript-eslint/member-delimiter-style": [ERROR, {
+        multiline: {
+          delimiter: 'comma',
+          requireLast: false
+        },
+        singleline: {
+          delimiter: 'comma',
+          requireLast: false
+        }
+      }],
     }
   }, {
-    files: ['**/test/**', '**/stories/**', '**/docs/**'],
+    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
     rules: {
       'rulesdir/imports': OFF,
       'monorepo/no-internal-import': OFF,
@@ -95,7 +105,7 @@ module.exports = {
     'no-unused-vars': [ERROR, {args: 'none', vars: 'all', varsIgnorePattern: '[rR]eact'}],
     'space-in-parens': [ERROR, 'never'],
     'space-unary-ops': [ERROR, {words: true, nonwords: false}],
-    'spaced-comment': [ERROR, 'always', {exceptions: ['*']}],
+    'spaced-comment': [ERROR, 'always', {exceptions: ['*'], markers: ['/']}],
     'max-depth': [WARN, 4],
     'radix': [ERROR, 'always'],
     'react/jsx-uses-react': WARN,

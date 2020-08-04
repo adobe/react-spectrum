@@ -81,7 +81,7 @@ storiesOf('ActionGroup', module)
             docItems.map((itemProps) => {
               let IconElement = iconMap[itemProps.children];
               return (
-                <Item key={itemProps.name} textValue={itemProps.name}>
+                <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
                   <IconElement />
                 </Item>
               );
@@ -159,10 +159,7 @@ storiesOf('ActionGroup', module)
     'selectionMode: multiple, isEmphasized, isQuiet, compact',
     () => render({isEmphasized: true, isQuiet: true, density: 'compact', selectionMode: 'multiple', defaultSelectedKeys: ['1', '2']}, dataItems)
   )
-  .add(
-    'selectionMode: none',
-    () => render({selectionMode: 'none', onAction: action('onAction')}, editItems)
-  )
+  // no selection mode none, it's covered in the default story visually
   .add(
     'vertical',
     () => render({orientation: 'vertical', defaultSelectedKeys: ['1']}, docItems)
@@ -238,7 +235,7 @@ function renderBoth(props, items: any = docItems) {
         items.map((itemProps) => {
           let IconElement = iconMap[itemProps.children];
           return (
-            <Item key={itemProps.name} textValue={itemProps.name}>
+            <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
               <Text>{itemProps.children}</Text>
               <IconElement />
             </Item>
@@ -256,7 +253,7 @@ function renderIcons(props, items: any = docItems) {
         items.map((itemProps) => {
           let IconElement = iconMap[itemProps.children];
           return (
-            <Item key={itemProps.name} textValue={itemProps.name}>
+            <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
               <IconElement />
             </Item>
           );

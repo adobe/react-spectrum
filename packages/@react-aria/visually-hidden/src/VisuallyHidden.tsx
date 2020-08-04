@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, {HTMLAttributes, JSXElementConstructor, ReactNode} from 'react';
 import styles from './VisuallyHidden.css';
 
@@ -41,7 +41,7 @@ export function VisuallyHidden(props: VisuallyHiddenProps) {
     ...otherProps
   } = props;
 
-  className = classNames(
+  className = clsx(
     styles['u-react-spectrum-screenReaderOnly'],
     {[styles['is-focusable']]: isFocusable},
     className

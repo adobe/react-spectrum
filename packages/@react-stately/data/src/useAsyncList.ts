@@ -56,7 +56,7 @@ interface AsyncListStateUpdate<T, C> {
 }
 
 interface AsyncListState<T, C> extends ListState<T> {
-  state: 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle'
+  state: 'loading' | 'sorting' | 'loadingMore' | 'error' | 'idle',
   items: T[],
   // disabledKeys?: Iterable<Key>,
   selectedKeys: Selection,
