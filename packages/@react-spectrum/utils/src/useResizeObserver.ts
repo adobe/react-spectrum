@@ -2,7 +2,7 @@ import {RefObject, useEffect} from 'react';
 import './ResizeObserver.d.ts';
 
 function hasResizeObserver() {
-  return typeof (<any>window).ResizeObserver !== 'undefined';
+  return typeof window.ResizeObserver !== 'undefined';
 }
 
 type useResizeObserverOptionsType<T> = {
