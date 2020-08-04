@@ -241,7 +241,10 @@ interface ResizeObserverEntryBoxSize {
    */
   inlineSize: number
 }
-
-interface Window {
-  ResizeObserver: typeof ResizeObserver
+declare global {
+  interface Window {
+    ResizeObserver: typeof ResizeObserver
+  }
 }
+
+export {};
