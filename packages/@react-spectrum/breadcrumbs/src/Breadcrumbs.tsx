@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+/// <reference path="./ResizeObserver"/>
+
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
