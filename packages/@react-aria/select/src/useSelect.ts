@@ -85,7 +85,14 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let valueId = useId();
 
   return {
-    labelProps,
+    labelProps: {
+      ...labelProps,
+      onClick: () => {
+        if (!props.isDisabled) {
+          ref.current.focus();
+        }
+      }
+    },
     triggerProps: mergeProps(domProps, {
       ...triggerProps,
       'aria-labelledby': [
