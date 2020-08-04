@@ -81,8 +81,12 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
   fs.copySync(path.join(__dirname, '..', 'cssnano.config.js'), path.join(dir, 'cssnano.config.js'));
   fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
-  fs.copySync(path.join(__dirname, '..', 'patches'), path.join(dir, 'patches'));
   fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
+
+  // Only copy babel patch over
+  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches'));
+  let babelPatch = patches.find(name => name.startsWith('@babel'));
+  fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
 
   // Install and build
   await run('yarn', {cwd: dir, stdio: 'inherit'});
