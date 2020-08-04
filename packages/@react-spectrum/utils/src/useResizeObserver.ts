@@ -1,4 +1,4 @@
-import { RefObject, useEffect} from 'react';
+import {RefObject, useEffect} from 'react';
 
 function hasResizeObserver() {
   return typeof (<any>window).ResizeObserver !== 'undefined';
@@ -36,5 +36,5 @@ export function useResizeObserver<T extends HTMLElement>(options: useResizeObser
       };
     }
 
-  } , [onResize, ref]);
+  }, [onResize, ref]);
 }
