@@ -17,6 +17,7 @@ import {ComboBox, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 
@@ -296,10 +297,42 @@ let AllControlledComboBox = (props) => {
     setInputValue(value);
   };
 
+  let setSnake = () => {
+    ReactDOM.unstable_batchedUpdates(() => {
+      setInputValue('Snake');
+      setSelectedKey('3');
+    });
+  };
+
+  let setRoss = () => {
+    ReactDOM.unstable_batchedUpdates(() => {
+      setInputValue('Ross');
+      setSelectedKey('6');
+    });
+  };
+
+  let clearAll = () => {
+    ReactDOM.unstable_batchedUpdates(() => {
+      setInputValue('');
+      setSelectedKey('');
+    });
+  };
+
   return (
     <div>
       <div>Current selectedKey: {selectedKey}</div>
       <div>Current input value: {inputValue}</div>
+      <ButtonGroup marginEnd="30px">
+        <Button variant="secondary" onPress={setSnake}>
+          <Text>Snake</Text>
+        </Button>
+        <Button variant="secondary" onPress={setRoss}>
+          <Text>Ross</Text>
+        </Button>
+        <Button variant="secondary" onPress={clearAll}>
+          <Text>Clear key</Text>
+        </Button>
+      </ButtonGroup>
       <ComboBox {...props} selectedKey={selectedKey} inputValue={inputValue} items={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
