@@ -286,42 +286,32 @@ let CustomFilterComboBox = (props) => {
 };
 
 let AllControlledComboBox = (props) => {
-  let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
-  let [inputValue, setInputValue] = React.useState(props.inputValue);
+  let [fieldState, setFieldState] = React.useState({selectedKey: props.selectedKey, inputValue: props.inputValue});
 
   let onSelectionChange = (key) => {
-    setSelectedKey(key);
+    setFieldState(prevState => {return {inputValue: prevState.inputValue, selectedKey: key}});
   };
 
   let onInputChange = (value) => {
-    setInputValue(value);
+    setFieldState(prevState => {return {inputValue: value, selectedKey: prevState.selectedKey}});
   };
 
   let setSnake = () => {
-    ReactDOM.unstable_batchedUpdates(() => {
-      setInputValue('Snake');
-      setSelectedKey('3');
-    });
+    setFieldState({inputValue: 'Snake', selectedKey: '3'});
   };
 
   let setRoss = () => {
-    ReactDOM.unstable_batchedUpdates(() => {
-      setInputValue('Ross');
-      setSelectedKey('6');
-    });
+    setFieldState({inputValue: 'Ross', selectedKey: '6'});
   };
 
   let clearAll = () => {
-    ReactDOM.unstable_batchedUpdates(() => {
-      setInputValue('');
-      setSelectedKey('');
-    });
+    setFieldState({inputValue: '', selectedKey: ''});
   };
 
   return (
     <div>
-      <div>Current selectedKey: {selectedKey}</div>
-      <div>Current input value: {inputValue}</div>
+      <div>Current selectedKey: {fieldState.selectedKey}</div>
+      <div>Current input value: {fieldState.inputValue}</div>
       <ButtonGroup marginEnd="30px">
         <Button variant="secondary" onPress={setSnake}>
           <Text>Snake</Text>
@@ -333,7 +323,7 @@ let AllControlledComboBox = (props) => {
           <Text>Clear key</Text>
         </Button>
       </ButtonGroup>
-      <ComboBox {...props} selectedKey={selectedKey} inputValue={inputValue} items={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
+      <ComboBox {...props} selectedKey={fieldState.selectedKey} inputValue={fieldState.inputValue} items={withSection} label="Combobox" onOpenChange={action('onOpenChange')} onInputChange={onInputChange} onSelectionChange={onSelectionChange} onBlur={action('onBlur')} onFocus={action('onFocus')} onCustomValue={action('onCustomValue')}>
         {(item: any) => (
           <Section items={item.children} title={item.name}>
             {(item: any) => <Item>{item.name}</Item>}

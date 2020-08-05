@@ -139,6 +139,7 @@ describe('ComboBox', function () {
 
     act(() => {
       fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
       jest.runAllTimers();
     });
 
@@ -148,7 +149,7 @@ describe('ComboBox', function () {
     let button = getByRole('button');
     act(() => {
       triggerPress(button);
-      () => jest.runAllTimers();
+      jest.runAllTimers();
     });
 
     expect(() => getByRole('listbox')).toThrow();
@@ -182,7 +183,7 @@ describe('ComboBox', function () {
     let button = getByRole('button');
     act(() => {
       triggerPress(button);
-      () => jest.runAllTimers();
+      jest.runAllTimers();
     });
 
     expect(() => getByRole('listbox')).toThrow();
@@ -486,7 +487,7 @@ describe('ComboBox', function () {
         let button = getByRole('button');
         act(() => {
           triggerPress(button);
-          () => jest.runAllTimers();
+          jest.runAllTimers();
         });
 
         let listbox = getByRole('listbox');
