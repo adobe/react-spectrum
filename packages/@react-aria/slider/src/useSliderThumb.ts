@@ -92,7 +92,7 @@ export function useSliderThumb(
       tabIndex: allowDrag ? 0 : undefined,
       min: state.getThumbMinValue(index),
       max: state.getThumbMaxValue(index),
-      step: state.getStep(),
+      step: state.step,
       value: value,
       readOnly: isReadOnly,
       disabled: isDisabled,
