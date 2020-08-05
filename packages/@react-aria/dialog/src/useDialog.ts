@@ -52,13 +52,15 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): 
     }
   }, [ref]);
 
+  // We do not use aria-modal due to a Safari bug which forces the first focusable element to be focused
+  // on mount when inside an iframe, no matter which element we programmatically focus.
+  // See https://bugs.webkit.org/show_bug.cgi?id=211934.
   return {
     dialogProps: {
       ...filterDOMProps(props, {labelable: true}),
       role,
       tabIndex: -1,
-      'aria-labelledby': props['aria-labelledby'] || titleId,
-      'aria-modal': true
+      'aria-labelledby': props['aria-labelledby'] || titleId
     },
     titleProps: {
       id: titleId
