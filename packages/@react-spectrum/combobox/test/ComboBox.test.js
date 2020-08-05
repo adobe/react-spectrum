@@ -1201,7 +1201,7 @@ describe('ComboBox', function () {
     it('supports selectedKey and inputValue (not matching should error)', function () {
       const originalError = console.error;
       console.error = jest.fn();
-      expect(() => renderComboBox({selectedKey: '2', inputValue: 'Three'})).toThrow();
+      expect(() => renderComboBox({selectedKey: '2', inputValue: 'Three'})).toThrow('Mismatch between selected item and inputValue!');
       console.error = originalError;
     });
 
