@@ -225,6 +225,19 @@ storiesOf('Dialog/Alert', module)
       onCancel: action('cancel'),
       autoFocusButton: 'cancel'
     })
+  )
+  .add(
+    'keyboard cancel disabled',
+    () => renderAlert({
+      variant: 'information',
+      title: 'Informative Alert',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      cancelLabel: 'Cancel',
+      onPrimaryAction: action('primary'),
+      onCancel: action('cancel'),
+      isKeyboardCancelDisabled: true
+    })
   );
 
 function render({width = 'auto', isDismissable = undefined, ...props}) {

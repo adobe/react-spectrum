@@ -12,7 +12,7 @@
 
 import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
 import {ActionButton, Button} from '@react-spectrum/button';
-import {Dialog, DialogTrigger} from '../';
+import {AlertDialog, Dialog, DialogTrigger} from '../';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -623,5 +623,47 @@ describe('DialogTrigger', function () {
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
+  });
+
+  it('disable closing alert dialog via escape key', async function () {
+    let onPrimaryAction = jest.fn();
+    let {getByRole, getByText} = render(
+      <Provider theme={theme}>
+        <DialogTrigger>
+          <ActionButton>Trigger</ActionButton>
+          <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" onPrimaryAction={onPrimaryAction} isKeyboardCancelDisabled>
+            Content body
+          </AlertDialog>
+        </DialogTrigger>
+      </Provider>
+    );
+
+    let button = getByText('Trigger');
+    triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('alertdialog');
+
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
+    }); // wait for animation
+
+    expect(document.activeElement).toBe(dialog);
+
+    fireEvent.keyDown(dialog, {key: 'Escape'});
+    fireEvent.keyUp(dialog, {key: 'Escape'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    await waitFor(() => {
+      expect(dialog).toBeInTheDocument();
+    }); // wait for animation
+
+    expect(document.activeElement).toBe(dialog);
   });
 });
