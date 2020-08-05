@@ -1199,10 +1199,8 @@ describe('ComboBox', function () {
     });
 
     it('supports selectedKey and inputValue (not matching should error)', function () {
-      const originalError = console.error;
-      console.error = jest.fn();
+      jest.spyOn(console, 'error').mockImplementation(() => {});
       expect(() => renderComboBox({selectedKey: '2', inputValue: 'Three'})).toThrow('Mismatch between selected item and inputValue!');
-      console.error = originalError;
     });
 
     it('supports selectedKey and defaultInputValue (controlled by selectedKey)', function () {
