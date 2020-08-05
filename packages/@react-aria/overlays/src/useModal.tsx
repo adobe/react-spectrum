@@ -118,9 +118,14 @@ export function OverlayContainer(props: ModalProviderProps): React.ReactPortal {
   return ReactDOM.createPortal(contents, document.body);
 }
 
+interface ModalAriaProps extends HTMLAttributes<HTMLElement> {
+  /** Data attribute marks the dom node as a modal for the aria-modal-polyfill. */
+  'data-ismodal': boolean
+}
+
 interface ModalAria {
   /** Props for the modal content element. */
-  modalProps: HTMLAttributes<HTMLElement>
+  modalProps: ModalAriaProps
 }
 
 /**
