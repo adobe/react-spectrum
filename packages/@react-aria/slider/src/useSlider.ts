@@ -88,7 +88,8 @@ export function useSlider(
           const trackPosition = trackRef.current.getBoundingClientRect().left;
           const clickPosition = e.clientX;
           const offset = clickPosition - trackPosition;
-          const value = computeOffsetToValue(offset, props, trackRef);
+          const percent = offset / trackRef.current.offsetWidth;
+          const value = state.getPercentValue(percent);
           const minDiff = Math.min(...state.values.map(v => Math.abs(v - value)));
           const index = state.values.findIndex(v => Math.abs(v - value) === minDiff);
           if (index >= 0) {

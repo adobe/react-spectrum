@@ -1,8 +1,7 @@
-import {BaseSliderProps, SliderThumbProps} from '@react-types/slider';
 import {ChangeEvent, HTMLAttributes, useCallback, useEffect} from 'react';
-import {computeOffsetToValue} from './utils';
-import {DEFAULT_STEP_VALUE, SliderState} from '@react-stately/slider';
 import {focusWithoutScrolling, mergeProps, useDrag1D} from '@react-aria/utils';
+import {SliderState} from '@react-stately/slider';
+import {SliderThumbProps} from '@react-types/slider';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
 
@@ -17,9 +16,7 @@ interface SliderThumbAria {
   labelProps: HTMLAttributes<HTMLElement>
 }
 
-interface SliderThumbOptions {
-  sliderProps: BaseSliderProps,
-  thumbProps: SliderThumbProps,
+interface SliderThumbOptions extends SliderThumbProps {
   trackRef: React.RefObject<HTMLElement>,
   inputRef: React.RefObject<HTMLInputElement>
 }
@@ -27,39 +24,31 @@ interface SliderThumbOptions {
 /**
  * Provides behavior and accessibility for a thumb of a slider component.
  * 
- * @param sliderProps Props used for the Slider component.
- * @param thumbProps Props used for this specific thumb.
+ * @param opts Options for this Slider thumb.
  * @param state Slider state, created via `useSliderState`.
- * @param trackRef Ref for the track element.
- * @param inputRef Ref for the range input element.
  */
 export function useSliderThumb(
   opts: SliderThumbOptions,
   state: SliderState,
 ): SliderThumbAria {
-  const {sliderProps, thumbProps, trackRef, inputRef} = opts;
-  const {
-    step = DEFAULT_STEP_VALUE,
-    isReadOnly: isSliderReadOnly,
-    isDisabled: isSliderDisabled
-  } = sliderProps;
-
   const {
     index,
     isRequired,
     isDisabled,
     isReadOnly,
     validationState,
-    labelId
-  } = thumbProps;
+    labelId,
+    trackRef, 
+    inputRef
+  } = opts;
 
   const {labelProps, fieldProps} = useLabel({
-    ...thumbProps,
-    'aria-labelledby': `${labelId} ${thumbProps['aria-labelledby'] ?? ''}`.trim()
+    ...opts,
+    'aria-labelledby': `${labelId} ${opts['aria-labelledby'] ?? ''}`.trim()
   });
 
   const value = state.values[index];
-  const allowDrag = !(isSliderDisabled || isSliderReadOnly || isDisabled || isReadOnly);
+  const allowDrag = !(isDisabled || isReadOnly);
 
   const focusInput = useCallback(() => {
     if (inputRef.current) {
@@ -84,12 +73,13 @@ export function useSliderThumb(
       focusInput();
     },
     onPositionChange: (position) => {
-      state.setThumbValue(index, computeOffsetToValue(position, sliderProps, trackRef));
+      const percent = position / trackRef.current.offsetWidth;
+      state.setThumbPercent(index, percent);
     }
   });
 
   const {focusableProps} = useFocusable(
-    mergeProps(thumbProps, {
+    mergeProps(opts, {
       onFocus: () => state.setFocusedThumb(index),
       onBlur: () => state.setFocusedThumb(undefined)
     }),
@@ -106,7 +96,7 @@ export function useSliderThumb(
       tabIndex: allowDrag ? 0 : undefined,
       min: state.getThumbMinValue(index),
       max: state.getThumbMaxValue(index),
-      step: step,
+      step: state.getStep(),
       value: value,
       readOnly: isReadOnly,
       disabled: isDisabled,
@@ -114,7 +104,7 @@ export function useSliderThumb(
       'aria-valuetext': state.getThumbValueLabel(index),
       'aria-required': isRequired || undefined,
       'aria-invalid': validationState === 'invalid' || undefined,
-      'aria-errormessage': thumbProps['aria-errormessage'],
+      'aria-errormessage': opts['aria-errormessage'],
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
         state.setThumbValue(index, parseFloat(e.target.value));
       }

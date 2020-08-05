@@ -68,12 +68,14 @@ export function StoryThumb(props: StoryThumbProps) {
   
   const {label, isDisabled} = props;
   const context = (props as any).__context as SliderStateContext;
-  const {index, state, commonThumbProps} = context;
-
+  const {index, state, commonThumbProps, sliderProps} = context;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const {inputProps, thumbProps, labelProps} = useSliderThumb({
-    sliderProps: context.sliderProps,
-    thumbProps: {...props, index, ...commonThumbProps},
+    index, 
+    ...props,
+    ...commonThumbProps,
+    isReadOnly: sliderProps.isReadOnly || props.isReadOnly,
+    isDisabled: sliderProps.isDisabled || props.isDisabled,
     trackRef: context.trackRef,
     inputRef
   }, state);

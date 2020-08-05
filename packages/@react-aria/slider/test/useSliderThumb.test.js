@@ -21,10 +21,8 @@ describe('useSliderThumb', () => {
         let state = useSliderState(sliderProps);
         let {thumbProps: commonThumbProps} = useSlider(sliderProps, state, trackRef);
         let props = useSliderThumb({
-          sliderProps,
-          thumbProps: {
-            index: 0, ...commonThumbProps
-          },
+          index: 0,
+          ...commonThumbProps,
           trackRef,
           inputRef
         }, state);
@@ -49,12 +47,9 @@ describe('useSliderThumb', () => {
         let state = useSliderState(sliderProps);
         let {thumbProps: commonThumbProps} = useSlider(sliderProps, state, trackRef);
         let props = useSliderThumb({
-          sliderProps,
-          thumbProps: {
-            index: 0, 
-            label: 'thumb',
-            ...commonThumbProps
-          },
+          index: 0, 
+          label: 'thumb',
+          ...commonThumbProps,
           trackRef,
           inputRef
         }, state);
@@ -79,22 +74,16 @@ describe('useSliderThumb', () => {
         let state = useSliderState(sliderProps);
         let {thumbProps: commonThumbProps} = useSlider(sliderProps, state, trackRef);
         let props0 = useSliderThumb({
-          sliderProps,
-          thumbProps: {
-            index: 0, 
-            'aria-label': 'thumb0',
-            ...commonThumbProps
-          },
+          index: 0, 
+          'aria-label': 'thumb0',
+          ...commonThumbProps,
           trackRef,
           inputRef
         }, state);
         let props1 = useSliderThumb({
-          sliderProps,
-          thumbProps: {
-            index: 1, 
-            'aria-label': 'thumb1',
-            ...commonThumbProps
-          },
+          index: 1, 
+          'aria-label': 'thumb1',
+          ...commonThumbProps,
           trackRef,
           inputRef
         }, state);
@@ -128,14 +117,16 @@ describe('useSliderThumb', () => {
       stateRef.current = state;
       let {trackProps, thumbProps: commonThumbProps} = useSlider(props, state, trackRef);
       let {inputProps: input0Props, thumbProps: thumb0Props} = useSliderThumb({
-        sliderProps: props, 
-        thumbProps: {...commonThumbProps, 'aria-label': 'Min', index: 0},
+        ...commonThumbProps, 
+        'aria-label': 'Min', 
+        index: 0,
         trackRef,
         inputRef: input0Ref
       }, state);
       let {inputProps: input1Props, thumbProps: thumb1Props} = useSliderThumb({
-        sliderProps: props, 
-        thumbProps: {...commonThumbProps, 'aria-label': 'Max', index: 1},
+        ...commonThumbProps, 
+        'aria-label': 'Max', 
+        index: 1,
         trackRef,
         inputRef: input1Ref
       }, state);

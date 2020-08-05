@@ -8,6 +8,7 @@ describe('useSliderState', () => {
       defaultValue: [50],
       minValue: 10,
       maxValue: 200,
+      step: 10,
       formatOptions: {
         style: 'currency',
         currency: 'USD'
@@ -33,6 +34,15 @@ describe('useSliderState', () => {
     expect(result.current.getThumbValue(0)).toBe(10);
     expect(result.current.getThumbPercent(0)).toBe(0);
     expect(result.current.getThumbValueLabel(0)).toBe('$10.00');
+    
+    act(() => result.current.setThumbValue(0, 7));
+    expect(result.current.getThumbValue(0)).toBe(10);
+    expect(result.current.getThumbPercent(0)).toBe(0);
+    expect(result.current.getThumbValueLabel(0)).toBe('$10.00');
+
+    act(() => result.current.setThumbPercent(0, 0.13));
+    expect(result.current.getThumbValue(0)).toBe(30);
+    expect(result.current.getThumbPercent(0)).toBe(20 / 190);
   });
 
   it('should enforce maxValue and minValue for multiple thumbs', () => {

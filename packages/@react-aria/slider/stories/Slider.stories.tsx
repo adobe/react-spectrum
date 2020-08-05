@@ -12,6 +12,10 @@ storiesOf('Slider', module)
     () => <StorySlider label="Size" onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} />
   )
   .add(
+    'single with big steps',
+    () => <StorySlider label="Size" onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} step={10} />
+  )
+  .add(
     'single with origin',
     () => <StorySlider label="Exposure" origin={0} minValue={-5} maxValue={5} step={0.1} onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} />
   )

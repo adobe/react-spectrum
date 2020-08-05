@@ -28,15 +28,21 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   } = useSlider(props, state, trackRef);
 
   const {thumbProps: minThumbProps, inputProps: minInputProps} = useSliderThumb({
-    sliderProps: props,
-    thumbProps: {...props, index: 0, 'aria-label': minLabel ?? 'Minimum', ...commonThumbProps},
+    index: 0, 
+    'aria-label': minLabel ?? 'Minimum', 
+    ...commonThumbProps,
+    isReadOnly: props.isReadOnly,
+    isDisabled: props.isDisabled,
     trackRef,
     inputRef: minInputRef
   }, state);
 
   const {thumbProps: maxThumbProps, inputProps: maxInputProps} = useSliderThumb({
-    sliderProps: props,
-    thumbProps: {...props, index: 1, 'aria-label': maxLabel ?? 'Maximum', ...commonThumbProps},
+    index: 1, 
+    'aria-label': maxLabel ?? 'Maximum', 
+    ...commonThumbProps,
+    isReadOnly: props.isReadOnly,
+    isDisabled: props.isDisabled,
     trackRef,
     inputRef: maxInputRef
   }, state);

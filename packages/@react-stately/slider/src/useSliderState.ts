@@ -20,7 +20,13 @@ export interface SliderState {
   // Values managed by the slider
   readonly values: number[],
   getThumbValue: (index: number) => number,
+
+  // Sets value for thumb.  The actually value set will be clamped and
+  // rounded according to min/max/step
   setThumbValue: (index: number, value: number) => void,
+
+  // Sets value for thumb by percent offset (between 0 and 1)
+  setThumbPercent: (index: number, percent: number) => void,
 
   // Whether a specific index is being dragged
   isThumbDragging: (index: number) => boolean,
@@ -40,7 +46,13 @@ export interface SliderState {
 
   // Returns the min and max values for the index
   getThumbMinValue: (index: number) => number,
-  getThumbMaxValue: (index: number) => number
+  getThumbMaxValue: (index: number) => number,
+
+  // Converts a percent along track (between 0 and 1) to the corresponding value
+  getPercentValue: (percent: number) => number,
+
+  // Returns the step amount for the slider
+  getStep: () => number
 }
 
 export const DEFAULT_MIN_VALUE = 0;
@@ -48,7 +60,7 @@ export const DEFAULT_MAX_VALUE = 100;
 export const DEFAULT_STEP_VALUE = 1;
 
 export function useSliderState(props: SliderProps): SliderState {
-  let {isReadOnly, isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, formatOptions} = props;
+  let {isReadOnly, isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, formatOptions, step = DEFAULT_STEP_VALUE} = props;
 
   const [values, setValues] = useControlledState<number[]>(
     props.value as any,
@@ -77,7 +89,10 @@ export function useSliderState(props: SliderProps): SliderState {
     }
     const thisMin = getThumbMinValue(index);
     const thisMax = getThumbMaxValue(index);
-    value = clamp(value, thisMin, thisMax);
+
+    // Round value to multiple of step, clamp value between min and max
+    value = clamp(getRoundedValue(value), thisMin, thisMax);
+
     const newValues = replaceIndex(values, index, value);
     setValues(newValues);
 
@@ -97,10 +112,24 @@ export function useSliderState(props: SliderProps): SliderState {
     return formatter.format(value);
   }
 
+  function setThumbPercent(index: number, percent: number) {
+    updateValue(index, getPercentValue(percent));
+  }
+
+  function getRoundedValue(value: number) {
+    return Math.round((value - minValue) / step) * step + minValue;
+  }
+
+  function getPercentValue(percent: number) {
+    const val = percent * (maxValue - minValue) + minValue;
+    return clamp(getRoundedValue(val), minValue, maxValue);
+  }
+
   return {
     values: values,
     getThumbValue: (index: number) => values[index],
     setThumbValue: updateValue,
+    setThumbPercent,
     isThumbDragging: (index: number) => isDraggings[index],
     setThumbDragging: updateDragging,
     focusedThumb: focusedIndex,
@@ -110,7 +139,9 @@ export function useSliderState(props: SliderProps): SliderState {
     getThumbValueLabel: (index: number) => getFormattedValue(values[index]),
     getFormattedValue,
     getThumbMinValue,
-    getThumbMaxValue
+    getThumbMaxValue,
+    getPercentValue,
+    getStep: () => step
   };
 }
 
