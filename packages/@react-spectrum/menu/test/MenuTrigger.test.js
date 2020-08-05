@@ -649,5 +649,62 @@ describe('MenuTrigger', function () {
       expect(onOpenChange).toBeCalledTimes(2);
       expect(document.activeElement).toBe(button);
     });
+
+    it('should forward ref to the button', function () {
+      let ref = React.createRef();
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <MenuTrigger ref={ref}>
+            <Button>
+              {triggerText}
+            </Button>
+            <Menu items={withSection}>
+              {item => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+      );
+
+      expect(ref.current.UNSAFE_getDOMNode()).toBe(getByRole('button'));
+    });
+
+    it('works with a ref on both the button and menu trigger', function () {
+      let menuTriggerRef = React.createRef();
+      let buttonRef = React.createRef();
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <MenuTrigger ref={menuTriggerRef}>
+            <Button ref={buttonRef}>
+              {triggerText}
+            </Button>
+            <Menu items={withSection}>
+              {item => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+      );
+
+      expect(menuTriggerRef.current.UNSAFE_getDOMNode()).toBe(getByRole('button'));
+      expect(buttonRef.current.UNSAFE_getDOMNode()).toBe(getByRole('button'));
+    });
+  });
+
+  it('should not show checkmarks if selectionMode not defined', function () {
+    let {queryByRole} = render(
+      <Menu aria-label="foo" selectedKeys={['alpha']}>
+        <Item key="alpha">Alpha</Item>
+        <Item key="bravo">Bravo</Item>
+      </Menu>
+    );
+    let checkmark = queryByRole('img', {hidden: true});
+    expect(checkmark).toBeNull();
   });
 });

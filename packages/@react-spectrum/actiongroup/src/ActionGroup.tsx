@@ -16,7 +16,7 @@ import {classNames, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectru
 import {DOMProps, DOMRef, Node, StyleProps} from '@react-types/shared';
 import {ListState, useListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder, useHover} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
 import React, {forwardRef, Key, ReactElement, useRef} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
@@ -25,9 +25,6 @@ import {useActionGroup} from '@react-aria/actiongroup';
 import {useActionGroupItem} from '@react-aria/actiongroup';
 import {useProviderProps} from '@react-spectrum/provider';
 
-/**
-* An ActionGroup is a grouping of ActionButtons that are related to one another.
-*/
 function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
@@ -84,6 +81,9 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
   );
 }
 
+/**
+ * An ActionGroup is a grouping of ActionButtons that are related to one another.
+ */
 const _ActionGroup = forwardRef(ActionGroup) as <T>(props: SpectrumActionGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ActionGroup as ActionGroup};
 
@@ -100,6 +100,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: A
   let {buttonProps} = useActionGroupItem({key: item.key}, state, unwrapDOMRef(ref));
   isDisabled = isDisabled || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   if (onAction && !isDisabled) {
     buttonProps = mergeProps(buttonProps, {
@@ -110,7 +111,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: A
   let button = (
     // Use a PressResponder to send DOM props through.
     // ActionButton doesn't allow overriding the role by default.
-    <PressResponder {...buttonProps}>
+    <PressResponder {...mergeProps(buttonProps, hoverProps)}>
       <ActionButton
         ref={ref}
         UNSAFE_className={
@@ -118,7 +119,8 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: A
             styles,
             'spectrum-ActionGroup-item',
             {
-              'is-selected': isSelected
+              'is-selected': isSelected,
+              'is-hovered': isHovered
             },
             classNames(
               buttonStyles,

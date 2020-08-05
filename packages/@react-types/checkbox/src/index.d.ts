@@ -22,11 +22,29 @@ import {
 import {ReactNode} from 'react';
 
 export interface ToggleProps extends InputBase, Validation, FocusableProps {
-  children?: ReactNode, // pass in children to render label
+  /**
+   * The label for the element.
+   */
+  children?: ReactNode,
+  /**
+   * Whether the element should be selected (uncontrolled).
+   */
   defaultSelected?: boolean,
+  /**
+   * Whether the element should be selected (controlled).
+   */
   isSelected?: boolean,
+  /**
+   * Handler that is called when the element's selection state changes.
+   */
   onChange?: (isSelected: boolean) => void,
-  value?: string, // dom prop for input element
+  /**
+   * The value of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefvalue).
+   */
+  value?: string,
+  /**
+   * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
   name?: string
 }
 

@@ -60,12 +60,12 @@ for that component in your app to point to that package instead of the mono-pack
 For example, you'd replace:
 
 ```tsx
-import {Button} from '@adobe/react-spectrum/button';
+import {Button} from '@adobe/react-spectrum';
 ```
 
 with:
 
-```tsx
+```tsx keepIndividualImports
 import {Button} from '@react-spectrum/button';
 ```
 
@@ -79,7 +79,10 @@ to ensure your application works correctly and avoids bloat.
 You must manage versioning yourself. Unlike the mono-package, individually
 versioned packages must be manually upgraded to ensure compatibility between
 components. Upgrading a component that depends on another component may require
-that component to also be updated to ensure compatibility.
+that component to also be updated to ensure compatibility. We suggest using a
+lock file to ensure versions of dependencies between components are controlled.
+See [yarn lockfiles](https://classic.yarnpkg.com/en/docs/yarn-lock/) or
+[NPM lockfiles](https://docs.npmjs.com/configuring-npm/package-locks.html).
 
 ### Avoid duplicate versions
 

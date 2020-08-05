@@ -16,6 +16,7 @@ import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
 import {SpectrumSwitchProps} from '@react-types/switch';
 import styles from '@adobe/spectrum-css-temp/components/toggle/vars.css';
+import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSwitch} from '@react-aria/switch';
 import {useToggleState} from '@react-stately/toggle';
@@ -30,6 +31,7 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
@@ -40,6 +42,7 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
   return (
     <label
       {...styleProps}
+      {...hoverProps}
       ref={domRef}
       className={
         classNames(
@@ -47,7 +50,8 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
           'spectrum-ToggleSwitch',
           {
             'spectrum-ToggleSwitch--quiet': !isEmphasized,
-            'is-disabled': isDisabled
+            'is-disabled': isDisabled,
+            'is-hovered': isHovered
           },
           styleProps.className
         )

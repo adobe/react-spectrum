@@ -15,15 +15,30 @@ import {KeyboardDelegate} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
 interface TypeSelectOptions {
+  /**
+   * A delegate that returns collection item keys with respect to visual layout.
+   */
   keyboardDelegate: KeyboardDelegate,
+  /**
+   * An interface for reading and updating multiple selection state.
+   */
   selectionManager: MultipleSelectionManager,
+  /**
+   * Called when an item is focused by typing.
+   */
   onTypeSelect?: (key: Key) => void
 }
 
 interface TypeSelectAria {
+  /**
+   * Props to be spread on the owner of the options.
+   */
   typeSelectProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Handles typeahead interactions with collections.
+ */
 export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
   let {keyboardDelegate, selectionManager, onTypeSelect} = options;
   let state = useRef({
@@ -35,6 +50,15 @@ export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
     let character = getStringForKey(e.key);
     if (!character || e.ctrlKey || e.metaKey) {
       return;
+    }
+
+    // Do not propagate the Spacebar event if it's meant to be part of the search.
+    // When we time out, the search term becomes empty, hence the check on length.
+    // Trimming is to account for the case of pressing the Spacebar more than once,
+    // which should cycle through the selection/deselection of the focused item.
+    if (character === ' ' && state.search.trim().length > 0) {
+      e.preventDefault();
+      e.stopPropagation();
     }
 
     state.search += character;
@@ -61,7 +85,9 @@ export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
 
   return {
     typeSelectProps: {
-      onKeyDown: keyboardDelegate.getKeyForSearch ? onKeyDown : null
+      // Using a capturing listener to catch the keydown event before
+      // other hooks in order to handle the Spacebar event. 
+      onKeyDownCapture: keyboardDelegate.getKeyForSearch ? onKeyDown : null
     }
   };
 }

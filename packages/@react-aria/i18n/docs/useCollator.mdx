@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-aria/i18n';
 import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/i18n/package.json';
 
 ```tsx import
 import {useCollator} from '@react-aria/i18n';
@@ -20,6 +20,7 @@ import {useCollator} from '@react-aria/i18n';
 
 ---
 category: Internationalization
+keywords: [collator, i18n, aria, localization]
 ---
 
 # useCollator
@@ -34,8 +35,8 @@ category: Internationalization
 
 `useCollator` wraps a builtin browser [Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator)
 object to provide a React Hook that integrates with the i18n system in React Aria. It handles string comparison according to the current locale,
-updating when the locale changes, and caching of collators for performance. See the 
-[Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator) docs for 
+updating when the locale changes, and caching of collators for performance. See the
+[Intl.Collator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator) docs for
 information.
 
 ## API
@@ -57,22 +58,22 @@ function Example() {
   return (
     <>
       <div>
-        <input 
+        <input
           aria-label="First string"
           placeholder="First string"
           value={first}
           onChange={e => setFirst(e.target.value)} />
-        <input 
+        <input
           aria-label="Second string"
           placeholder="Second string"
           value={second}
           onChange={e => setSecond(e.target.value)} />
       </div>
       <p>
-        {result === 0 
-          ? 'The strings are the same' 
-          : result < 0 
-            ? 'First comes before second' 
+        {result === 0
+          ? 'The strings are the same'
+          : result < 0
+            ? 'First comes before second'
             : 'Second comes before first'
         }
       </p>

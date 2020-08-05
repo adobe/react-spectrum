@@ -23,7 +23,7 @@ import {filterDOMProps} from '@react-aria/utils';
 import {GridProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
 
-export const gridStyleProps: StyleHandlers = {
+const gridStyleProps: StyleHandlers = {
   ...baseStyleProps,
   autoFlow: ['gridAutoFlow', passthroughStyle],
   autoColumns: ['gridAutoColumns', gridDimensionValue],
@@ -33,17 +33,13 @@ export const gridStyleProps: StyleHandlers = {
   rows: ['gridTemplateRows', gridTemplateValue],
   gap: ['gap', dimensionValue],
   rowGap: ['rowGap', dimensionValue],
-  columnGap: ['rowGap', dimensionValue],
+  columnGap: ['columnGap', dimensionValue],
   justifyItems: ['justifyItems', passthroughStyle],
   justifyContent: ['justifyContent', passthroughStyle],
   alignItems: ['alignItems', passthroughStyle],
   alignContent: ['alignContent', passthroughStyle]
 };
 
-/**
- * A layout container using CSS grid. Supports Spectrum dimensions as values to
- * ensure consistent and adaptive sizing and spacing.
- */
 function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
@@ -63,8 +59,8 @@ function Grid(props: GridProps, ref: DOMRef<HTMLDivElement>) {
 /**
  * Can be used to make a repeating fragment of the columns or rows list.
  * See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/repeat).
- * @param count - the number of times to repeat the fragment
- * @param repeat - the fragment to repeat
+ * @param count - The number of times to repeat the fragment.
+ * @param repeat - The fragment to repeat.
  */
 export function repeat(count: number | 'auto-fill' | 'auto-fit', repeat: DimensionValue | DimensionValue[]): string {
   return `repeat(${count}, ${gridTemplateValue(repeat)})`;
@@ -73,8 +69,8 @@ export function repeat(count: number | 'auto-fill' | 'auto-fit', repeat: Dimensi
 /**
  * Defines a size range greater than or equal to min and less than or equal to max.
  * See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/minmax).
- * @param min - the minimum size
- * @param max - the maximum size
+ * @param min - The minimum size.
+ * @param max - The maximum size.
  */
 export function minmax(min: DimensionValue, max: DimensionValue): string {
   return `minmax(${gridDimensionValue(min)}, ${gridDimensionValue(max)})`;
@@ -83,7 +79,7 @@ export function minmax(min: DimensionValue, max: DimensionValue): string {
 /**
  * Clamps a given size to an available size.
  * See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/fit-content).
- * @param dimension - the size to clamp
+ * @param dimension - The size to clamp.
  */
 export function fitContent(dimension: DimensionValue): string {
   return `fit-content(${gridDimensionValue(dimension)})`;
@@ -109,5 +105,9 @@ function gridTemplateValue(value) {
   return gridDimensionValue(value);
 }
 
+/**
+ * A layout container using CSS grid. Supports Spectrum dimensions as values to
+ * ensure consistent and adaptive sizing and spacing.
+ */
 const _Grid = forwardRef(Grid);
 export {_Grid as Grid};

@@ -11,7 +11,6 @@
  */
 
 import {AnchorHTMLAttributes, HTMLAttributes, RefObject} from 'react';
-import {mergeProps} from '@react-aria/utils';
 import {SpectrumSideNavItemProps} from '@react-types/sidenav';
 import {TreeState} from '@react-stately/tree';
 import {usePress} from '@react-aria/interactions';
@@ -47,7 +46,7 @@ export function useSideNavItem<T>(props: SpectrumSideNavItemProps<T>, state: Tre
       target: '_self',
       'aria-disabled': isDisabled,
       'aria-current': isSelected ? ariaCurrent || 'page' : undefined,
-      ...mergeProps(itemProps, pressProps)
+      ...pressProps
     }
   };
 }

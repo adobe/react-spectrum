@@ -112,7 +112,7 @@ DialogTrigger.getCollectionNode = function* (props: SpectrumDialogTriggerProps) 
 };
 
 /**
- * The DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's
+ * DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's
  * open state with the trigger's press state. Additionally, it allows you to customize the type and
  * positioning of the Dialog.
  */
@@ -170,7 +170,7 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props
 interface SpectrumDialogTriggerBase {
   type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   state: OverlayTriggerState,
-  isDismissable?: boolean
+  isDismissable?: boolean,
   dialogProps?: SpectrumDialogProps | {},
   triggerProps?: any,
   overlay: ReactElement,

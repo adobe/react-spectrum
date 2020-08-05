@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/layout';
 import {HeaderInfo, PropTable, FunctionAPI} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-spectrum/layout/package.json';
 
 ```jsx import
 import {Grid, repeat, minmax} from '@react-spectrum/layout';
@@ -54,7 +54,7 @@ Each child uses the `gridArea` prop to declare which area it should be placed in
     'sidebar content',
     'footer  footer'
   ]}
-  columns={['size-3000', 'auto']}
+  columns={['1fr', '3fr']}
   rows={['size-1000', 'auto', 'size-1000']}
   height="size-6000"
   gap="size-100">

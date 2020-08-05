@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/image';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-spectrum/image/package.json';
 
 ```jsx import
 import {Flex} from '@react-spectrum/layout';
@@ -39,32 +39,34 @@ category: Content
 
 ## Content
 
-The Image component is used to add images as a child to other components.
-Based on the component it is used within, it gets Spectrum styling and may
-have a preassigned slot for positioning. By virtue of its name, the Image
-component provides semantic meaning in the context they are placed. An example
-of this is the hero image in [Dialog](Dialog.html#examples)
+The `Image` component represents an image within a Spectrum container
+such as a [Dialog](Dialog.html). `Image` provides no specific styling
+by itself, but receives styling from the parent container. In addition,
+`Image` will be automatically placed within the container's layout
+according to Spectrum guidelines.
 
-See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img) for more information.
+**Note: Images must have an `alt` attribute.** If the image is
+considered decorative and should not be announced by screen readers,
+then set `alt=""` to suppress the warning.
 
-Note: An image must either have the `alt` prop set. If the image is considered decorative and should
-not be announced by screen readers, then set `alt=""`.
+See [Dialog](Dialog.html#examples) for examples of how to use the
+`Image` component in the context of a Spectrum container.
 
 ### Internationalization
 
-To internationalize an Image, a localized string should be passed to the `alt` prop.
+To internationalize an `Image`, a localized string should be passed to the `alt` prop.
 
 ## Props
 
 <PropTable component={docs.exports.Image} links={docs.links} />
 
-## Visual Options
+## Visual options
 
 ### Decorative
 
 ```tsx example
 <Flex width="200px">
-  <Image src="https://scontent-sjc3-1.cdninstagram.com/v/t51.2885-15/e35/99120553_176571270346133_73156360171041206_n.jpg?_nc_ht=scontent-sjc3-1.cdninstagram.com&_nc_cat=105&_nc_ohc=QqfjoiATImoAX9-GZ7A&oh=a2523e59f8af2de64755e6b2f4dff0af&oe=5EF06CC7" alt="" />
+  <Image src="https://i.imgur.com/c3gTKSJ.jpg" alt="" />
 </Flex>
 ```
 
@@ -73,8 +75,8 @@ To internationalize an Image, a localized string should be passed to the `alt` p
 ```tsx example
 <Flex width="100%" height="200px">
   <Image
-    src="https://scontent-sjc3-1.cdninstagram.com/v/t51.2885-15/e35/99120553_176571270346133_73156360171041206_n.jpg?_nc_ht=scontent-sjc3-1.cdninstagram.com&_nc_cat=105&_nc_ohc=QqfjoiATImoAX9-GZ7A&oh=a2523e59f8af2de64755e6b2f4dff0af&oe=5EF06CC7"
-    alt="Illustration of grains"
+    src="https://i.imgur.com/c3gTKSJ.jpg"
+    alt="Eiffel Tower at sunset"
     objectFit="cover" />
 </Flex>
 ```

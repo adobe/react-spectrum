@@ -10,10 +10,10 @@ governing permissions and limitations under the License. -->
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
-import DialogAnatomy from '../images/DialogAnatomy.svg';
+import DialogAnatomy from './images/DialogAnatomy.svg';
 import docs from 'docs:@react-spectrum/dialog';
 import {Image, HeaderInfo, PropTable} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-spectrum/dialog/package.json';
 import styles from '@react-spectrum/docs/src/docs.css';
 
 ```jsx import
@@ -29,6 +29,7 @@ import {TextField} from '@react-spectrum/textfield';
 
 ---
 category: Overlays
+keywords: [modal, tray, popover]
 ---
 
 # Dialog
@@ -82,7 +83,8 @@ A standard Dialog has the following anatomy:
 </div>
 
 These sections can be populated by providing the following components to your Dialog as children:
-`Header`, `Heading` (title), `Divider`, `Content` (body), `ButtonGroup`, and `Footer`. Each of these components are
+[Header](Header.html), [Heading](Heading.html) (title), [Divider](Divider.html), [Content](Content.html) (body),
+[ButtonGroup](ButtonGroup.html), and [Footer](Footer.html). Each of these components are
 required in a Spectrum compliant Dialog except for `Header`, `Footer`, and `Divider` so be sure to design your Dialog accordingly.
 
 ### Examples
@@ -186,19 +188,21 @@ The example below illustrates how a Dialog with a hero image could be rendered v
 ### Accessibility
 
 Keep in mind when creating your Dialog that the tab order within the Dialog follows the order of the children provided.
-You are also responsible for determining what component, if any, should be automatically focused on Dialog render.
+You are also responsible for determining what component, if any, should be automatically focused when the Dialog opens.
 
 ## Labeling
 
 ### Accessibility
 
 The title of a Dialog is typically provided via its heading. By default, the Dialog sets its
-`aria-labelledby` to match the heading id, but this can be overridden by providing an `aria-labelledby` prop
+`aria-labelledby` to match the heading `id`, but this can be overridden by providing an `aria-labelledby` prop
 to the Dialog directly. If a visible label isn't specified, an `aria-label` must be provided instead.
+
+When a Dialog is open, then it should be the only thing that can be interacted with. If your application's `Provider` is at the root of the page, this is handled automatically. However, if your application has content outside the `Provider`, then you should use the `@react-aria/aria-modal-polyfill` package to hide this content from assistive technology while a modal is open. See the [watchModals docs](../react-aria/watchModals.html) for more details.
 
 ## Events
 
-For Dialogs, user defined callbacks should be chained with the DialogTrigger's `close` function in the press/click handler
+For Dialogs, user defined callbacks should be chained with the DialogTrigger's `close` function in the `onPress` handler
 of the Dialog's action buttons. The following example alerts if the Dialog's save or cancel button is clicked.
 
 ```tsx example
@@ -221,8 +225,8 @@ function Example() {
           <Heading>Profile</Heading>
           <Divider />
           <ButtonGroup>
-            <Button autoFocus variant="cta" onPress={() => alertSave(close)}>Save</Button>
             <Button variant="secondary" onPress={() => alertCancel(close)}>Cancel</Button>
+            <Button autoFocus variant="cta" onPress={() => alertSave(close)}>Save</Button>
           </ButtonGroup>
           <Content>
             <Form onSubmit={e => e.preventDefault()}>
@@ -238,7 +242,7 @@ function Example() {
 ```
 
 Additionally, DialogTrigger accepts an `onOpenChange` prop which is triggered whenever the Dialog is opened or closed.
-For more information on the `onOpenChange` prop see the [DialogTrigger docs](./DialogTrigger.html#events).
+For more information, see the [DialogTrigger docs](./DialogTrigger.html#events).
 
 ### Dismissable dialogs
 
@@ -281,7 +285,8 @@ the wrapping `close` function surrounding the Dialog. An example of this can be 
 ## Visual options
 
 ### Dialog types
-Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger docs](./DialogTrigger.html#dialog-types) for more information.
+Dialogs can be rendered as modals, popovers, or trays. Note that popovers are displayed as modals by default on mobile.
+See the [DialogTrigger docs](./DialogTrigger.html#dialog-types) for more information.
 
 ```tsx example
 <DialogTrigger isDismissable type="modal">
@@ -328,7 +333,7 @@ Dialogs can be rendered as modals, popovers, or trays. See the [DialogTrigger do
 
 ### Size
 Only `modal` type Dialogs support a user defined size prop. Note that the `fullscreen` and `fullscreenTakeover` sizes
-require the [DialogTrigger `type`](./DialogTrigger.html#dialog-types) prop to be set as `fullscreen` and `fullscreenTakeover`
+require the [DialogTrigger `type`](./DialogTrigger.html#dialog-types) prop to be set to `fullscreen` or `fullscreenTakeover`
 respectively for container sizing considerations. Modal sizes on mobile devices are also unaffected by this prop due to screen constraints.
 
 ```tsx example
@@ -339,8 +344,8 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
       <Heading>Profile</Heading>
       <Divider />
       <ButtonGroup>
-        <Button autoFocus variant="cta" onPress={close}>Save</Button>
         <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button autoFocus variant="cta" onPress={close}>Save</Button>
       </ButtonGroup>
       <Content>
         <Form onSubmit={e => e.preventDefault()}>
@@ -360,8 +365,8 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
       <Heading>Profile</Heading>
       <Divider />
       <ButtonGroup>
-        <Button autoFocus variant="cta" onPress={close}>Save</Button>
         <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button autoFocus variant="cta" onPress={close}>Save</Button>
       </ButtonGroup>
       <Content>
         <Form onSubmit={e => e.preventDefault()}>
@@ -381,8 +386,8 @@ respectively for container sizing considerations. Modal sizes on mobile devices 
       <Heading>Profile</Heading>
       <Divider />
       <ButtonGroup>
-        <Button autoFocus variant="cta" onPress={close}>Save</Button>
         <Button variant="secondary" onPress={close}>Cancel</Button>
+        <Button autoFocus variant="cta" onPress={close}>Save</Button>
       </ButtonGroup>
       <Content>
         <Form onSubmit={e => e.preventDefault()}>

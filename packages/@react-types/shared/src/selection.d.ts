@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {Key} from 'react';
+
 export interface SingleSelection {
   /** Whether the collection allows empty selection. */
   disallowEmptySelection?: boolean,
@@ -35,3 +37,5 @@ export interface MultipleSelection {
   /** Handler that is called when the selection changes. */
   onSelectionChange?: (keys: Selection) => any
 }
+
+export type FocusStrategy = 'first' | 'last';

@@ -1,43 +1,53 @@
 {
   "name": "@react-spectrum/table",
-  "version": "3.0.0-alpha.1",
-  "private": true,
+  "version": "3.0.0-alpha.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "files": ["dist"],
-  "sideEffects": false,
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": [
+    "*.css"
+  ],
   "targets": {
     "main": {
-      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
     },
     "module": {
-      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
     }
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/focus": "^3.0.0-rc.2",
-    "@react-aria/table": "^3.0.0-alpha.1",
-    "@react-aria/i18n": "^3.0.0-rc.2",
-    "@react-aria/utils": "^3.0.0-alpha.1",
-    "@react-aria/virtualizer": "^3.0.0-alpha.1",
-    "@react-spectrum/checkbox": "^3.0.0-rc.2",
-    "@react-spectrum/utils": "^3.0.0-alpha.1",
-    "@react-stately/collections": "^3.0.0-alpha.1",
-    "@react-stately/table": "^3.0.0-alpha.1",
-    "@react-stately/layout": "^3.0.0-alpha.1",
-    "@react-stately/virtualizer": "^3.0.0-alpha.1",
-    "@react-spectrum/progress": "^3.0.0-rc.2",
-    "@react-types/table": "^3.0.0-alpha.1",
-    "@spectrum-icons/ui": "^3.0.0-rc.2"
+    "@react-aria/focus": "^3.1.0",
+    "@react-aria/i18n": "^3.1.0",
+    "@react-aria/interactions": "^3.1.0",
+    "@react-aria/table": "3.0.0-alpha.5",
+    "@react-aria/utils": "^3.1.0",
+    "@react-aria/virtualizer": "^3.1.0",
+    "@react-spectrum/checkbox": "^3.1.0",
+    "@react-spectrum/progress": "^3.1.0",
+    "@react-spectrum/utils": "^3.1.0",
+    "@react-stately/collections": "^3.1.0",
+    "@react-stately/layout": "^3.1.0",
+    "@react-stately/table": "3.0.0-alpha.5",
+    "@react-stately/virtualizer": "^3.1.0",
+    "@react-types/shared": "^3.1.0",
+    "@react-types/table": "3.0.0-rc.4",
+    "@spectrum-icons/ui": "^3.1.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"

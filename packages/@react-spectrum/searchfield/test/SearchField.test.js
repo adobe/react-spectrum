@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, within} from '@testing-library/react';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
-import {fireEvent, render, within} from '@testing-library/react';
 import React from 'react';
 import {SearchField} from '../';
 import {triggerPress} from '@react-spectrum/test-utils';
@@ -59,10 +59,10 @@ describe('Search', () => {
     expect(clearButton).toBeNull();
   });
 
+  // omitting v2 because the v3 icon we use doesn't accept className, only UNSAFE_className
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name should support custom icons', ({Component}) => {
     let icon = <Checkmark data-testid="testicon" />;
     let tree = renderComponent(Component, {icon});
@@ -81,18 +81,17 @@ describe('Search', () => {
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name should display the clear button icon only if text is present', ({Component}) => {
     let tree = renderComponent(Component, {defaultValue: inputText});
     let clearButton = tree.getByLabelText('Clear search');
     expect(clearButton).toBeTruthy();
 
     let input = tree.getByTestId(testId);
-    fireEvent.change(input, {target: {value: ''}});
+    act(() => {fireEvent.change(input, {target: {value: ''}});});
     clearButton = tree.queryByLabelText('Clear search');
     expect(clearButton).toBeNull();
 
-    userEvent.type(input, 'bleh');
+    act(() => {userEvent.type(input, 'bleh');});
     clearButton = tree.queryByLabelText('Clear search');
     expect(clearButton).toBeTruthy();
   });
@@ -105,12 +104,16 @@ describe('Search', () => {
   `('$Name submits the textfield value when enter is pressed', ({Component}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onSubmit});
     let input = tree.getByTestId(testId);
-    fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
+    act(() => {fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});});
     expect(onSubmit).toBeCalledTimes(1);
     expect(onSubmit).toHaveBeenLastCalledWith(inputText);
 
-    fireEvent.change(input, {target: {value: ''}});
-    fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
+    act(() => {
+      fireEvent.change(input, {target: {value: ''}});
+    });
+    act(() => {
+      fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
+    });
     expect(onSubmit).toBeCalledTimes(2);
     expect(onSubmit).toHaveBeenLastCalledWith('');
   });
@@ -123,7 +126,7 @@ describe('Search', () => {
   `('$Name doesn\'t submit the textfield value when enter is pressed but field is disabled', ({Component, props}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onSubmit, ...props});
     let input = tree.getByTestId(testId);
-    fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
+    act(() => {fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});});
     expect(onSubmit).toBeCalledTimes(0);
   });
 
@@ -136,7 +139,7 @@ describe('Search', () => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear});
     let input = tree.getByTestId(testId);
     expect(input.value).toBe(inputText);
-    fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
+    act(() => {fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});});
     expect(onChange).toBeCalledTimes(1);
     expect(onChange).toHaveBeenLastCalledWith('');
     expect(input.value).toBe('');
@@ -158,7 +161,7 @@ describe('Search', () => {
     let tree = renderComponent(Component, {value: inputText, onChange, onClear});
     let input = tree.getByTestId(testId);
     expect(input.value).toBe(inputText);
-    fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
+    act(() => {fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});});
     expect(onChange).toBeCalledTimes(1);
     expect(onChange).toHaveBeenLastCalledWith('');
     expect(input.value).toBe(inputText);
@@ -178,7 +181,7 @@ describe('Search', () => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear, ...props});
     let input = tree.getByTestId(testId);
     expect(input.value).toBe(inputText);
-    fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
+    act(() => {fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});});
     expect(onChange).toBeCalledTimes(0);
     expect(input.value).toBe(inputText);
 
@@ -189,7 +192,6 @@ describe('Search', () => {
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name clears the input field if the clear button is pressed and the field is uncontrolled', ({Component}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear});
     let input = tree.getByTestId(testId);
@@ -223,7 +225,7 @@ describe('Search', () => {
     let input = tree.getByTestId(testId);
     let clearButton = tree.getByLabelText('Clear search');
     expect(input.value).toBe(inputText);
-    userEvent.click(clearButton);
+    act(() => {userEvent.click(clearButton);});
     expect(onChange).toBeCalledTimes(1);
 
     if (Component === SearchField) {
@@ -245,13 +247,12 @@ describe('Search', () => {
   it.each`
     Name                | Component        | props
     ${'v3 SearchField'} | ${SearchField}   | ${{isDisabled: true}}
-    ${'v2 SearchField'} | ${V2SearchField} | ${{disabled: true}}
   `('$Name doesn\'t clear the input field if the clear button is pressed and the field is disabled', ({Component, props}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear, ...props});
     let input = tree.getByTestId(testId);
     let clearButton = tree.getByLabelText('Clear search');
     expect(input.value).toBe(inputText);
-    userEvent.click(clearButton);
+    act(() => {userEvent.click(clearButton);});
     expect(onChange).toBeCalledTimes(0);
     expect(input.value).toBe(inputText);
 
@@ -279,9 +280,8 @@ describe('Search', () => {
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 SearchField'} | ${V2SearchField}
-  `('$Name should support tabIndex', ({Component}) => {
-    let tree = renderComponent(Component, {tabIndex: -1});
+  `('$Name should support excludeFromTabOrder', ({Component}) => {
+    let tree = renderComponent(Component, {excludeFromTabOrder: true});
     expect(tree.getByRole('searchbox')).toHaveAttribute('tabIndex', '-1');
   });
 });

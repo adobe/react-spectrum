@@ -27,8 +27,8 @@ interface ButtonAria {
 /**
  * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions,
  * focus behavior, and ARIA props for both native button elements and custom element types.
- * @param props - props to be applied to the button
- * @param ref - a ref to a DOM element for the button
+ * @param props - Props to be applied to the button.
+ * @param ref - A ref to a DOM element for the button.
  */
 export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): ButtonAria {
   let {
@@ -42,6 +42,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onClick: deprecatedOnClick,
     href,
     target,
+    rel,
     type = 'button'
   } = props;
   let additionalProps;
@@ -53,7 +54,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
       target: elementType === 'a' ? target : undefined,
       type: elementType === 'input' ? type : undefined,
       disabled: elementType === 'input' ? isDisabled : undefined,
-      'aria-disabled': !isDisabled || elementType === 'input' ? undefined : isDisabled
+      'aria-disabled': !isDisabled || elementType === 'input' ? undefined : isDisabled,
+      rel: elementType === 'a' ? rel : undefined
     };
   }
 
@@ -67,7 +69,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   });
 
   let {focusableProps} = useFocusable(props, ref);
-  let buttonProps = mergeProps(pressProps, focusableProps);
+  let buttonProps = mergeProps(focusableProps, pressProps);
   buttonProps = mergeProps(buttonProps, filterDOMProps(props, {labelable: true}));
 
   return {

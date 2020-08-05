@@ -24,7 +24,7 @@ export interface ItemProps<T> {
   /** A list of child item objects. Used for dynamic collections. */
   childItems?: Iterable<T>,
   /** Whether this item has children, even if not loaded yet. */
-  hasChildItems?: boolean,
+  hasChildItems?: boolean
 }
 
 export type ItemElement<T> = ReactElement<ItemProps<T>>;
@@ -59,32 +59,6 @@ export interface CollectionBase<T> {
   items?: Iterable<T>,
   /** The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with. */
   disabledKeys?: Iterable<Key>
-}
-
-export interface SingleSelection {
-  /** Whether the collection allows empty selection. */
-  disallowEmptySelection?: boolean,
-  /** The currently selected key in the collection (controlled). */
-  selectedKey?: Key,
-  /** The initial selected key in the collection (uncontrolled). */
-  defaultSelectedKey?: Key,
-  /** Handler that is called when the selection changes. */
-  onSelectionChange?: (key: Key) => any
-}
-
-export type SelectionMode = 'none' | 'single' | 'multiple';
-export type Selection = 'all' | Set<Key>;
-export interface MultipleSelection {
-  /** The type of selection that is allowed in the collection. */
-  selectionMode?: SelectionMode,
-  /** Whether the collection allows empty selection. */
-  disallowEmptySelection?: boolean,
-  /** The currently selected keys in the collection (controlled). */
-  selectedKeys?: 'all' | Iterable<Key>,
-  /** The initial selected keys in the collection (uncontrolled). */
-  defaultSelectedKeys?: 'all' | Iterable<Key>,
-  /** Handler that is called when the selection changes. */
-  onSelectionChange?: (keys: Selection) => any
 }
 
 export interface Expandable {
@@ -147,7 +121,7 @@ export interface KeyboardDelegate {
  */
 export interface Collection<T> extends Iterable<T> {
   /** The number of items in the collection. */
-  readonly size: number;
+  readonly size: number,
 
   /** Iterate over all keys in the collection. */
   getKeys(): Iterable<Key>,

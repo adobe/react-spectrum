@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/dialog",
-  "version": "3.0.0-alpha.3",
+  "version": "3.1.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -8,21 +8,22 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "peerDependencies": {
     "react": "^16.8.0"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/utils": "^3.0.0-rc.2",
-    "@react-stately/overlays": "^3.0.0-alpha.1",
-    "@react-types/dialog": "^3.0.0-alpha.1"
+    "@react-aria/utils": "^3.1.0",
+    "@react-stately/overlays": "^3.1.0",
+    "@react-types/dialog": "^3.1.0"
   },
   "publishConfig": {
     "access": "public"

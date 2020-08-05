@@ -18,7 +18,7 @@ import overlaysDocs from 'docs:@react-aria/overlays';
 import focusDocs from 'docs:@react-aria/focus';
 import listboxDocs from 'docs:@react-aria/listbox';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/select/package.json';
 
 ```jsx import
 import {useSelect} from '@react-aria/select';
@@ -26,7 +26,7 @@ import {useSelect} from '@react-aria/select';
 
 ---
 category: Forms
-keywords: [listbox, select, aria, form]
+keywords: [listbox, select, aria]
 ---
 
 # useSelect
@@ -82,7 +82,7 @@ the implementation of the popup listbox.
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSelectState} />
 hook from `@react-stately/select`. The state object should be passed as an option to `useSelect`
 
-If a select not have a visible label, an `aria-label` or `aria-labelledby`
+If a select does not have a visible label, an `aria-label` or `aria-labelledby`
 prop must be passed instead to identify it to assistive technology.
 
 ## State management
@@ -149,7 +149,7 @@ function Select(props) {
   } = useSelect(props, state, ref);
 
   // Get props for the button based on the trigger props from useSelect
-  let {buttonProps} = useButton(triggerProps);
+  let {buttonProps} = useButton(triggerProps, ref);
 
   return (
     <div style={{position: 'relative', display: 'inline-block'}}>

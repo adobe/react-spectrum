@@ -28,6 +28,10 @@ let withSection = [
   {name: 'Heading 2', children: [
     {name: 'Blah'},
     {name: 'Bleh'}
+  ]},
+  {name: 'Heading 3', children: [
+    {name: 'Foo Bar'},
+    {name: 'Foo Baz'}
   ]}
 ];
 
@@ -75,7 +79,7 @@ describe('ListBox', function () {
     expect(listbox).toHaveAttribute('aria-labelledby', 'label');
 
     let sections = within(listbox).getAllByRole('group');
-    expect(sections.length).toBe(2);
+    expect(sections.length).toBe(withSection.length);
 
     for (let section of sections) {
       expect(section).toHaveAttribute('aria-labelledby');
@@ -85,10 +89,10 @@ describe('ListBox', function () {
     }
 
     let dividers = within(listbox).getAllByRole('separator');
-    expect(dividers.length).toBe(1);
+    expect(dividers.length).toBe(withSection.length - 1);
 
     let items = within(listbox).getAllByRole('option');
-    expect(items.length).toBe(5);
+    expect(items.length).toBe(withSection.reduce((acc, curr) => (acc + curr.children.length), 0));
     let i = 1;
     for (let item of items) {
       expect(item).toHaveAttribute('tabindex');
@@ -489,6 +493,89 @@ describe('ListBox', function () {
       expect(document.activeElement).toBe(options[4]);
     });
 
+    it('supports the space character in a search', function () {
+      let tree = renderComponent({autoFocus: 'first'});
+      let listbox = tree.getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+      expect(document.activeElement).toBe(options[0]);
+
+      fireEvent.keyDown(listbox, {key: 'F'});
+      expect(document.activeElement).toBe(options[0]);
+
+      fireEvent.keyDown(listbox, {key: 'O'});
+      expect(document.activeElement).toBe(options[0]);
+
+      fireEvent.keyDown(listbox, {key: 'O'});
+      expect(document.activeElement).toBe(options[0]);
+
+      fireEvent.keyDown(listbox, {key: ' '});
+      expect(document.activeElement).toBe(options[5]);
+
+      fireEvent.keyDown(listbox, {key: 'B'});
+      expect(document.activeElement).toBe(options[5]);
+
+      fireEvent.keyDown(listbox, {key: 'A'});
+      expect(document.activeElement).toBe(options[5]);
+
+      fireEvent.keyDown(listbox, {key: 'Z'});
+      expect(document.activeElement).toBe(options[6]);
+    });
+
+    it('supports item selection using the Spacebar after search times out', function () {
+      let tree = renderComponent({autoFocus: 'first', onSelectionChange, selectionMode: 'single'});
+      let listbox = tree.getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+      expect(document.activeElement).toBe(options[0]);
+
+      fireEvent.keyDown(listbox, {key: 'F'});
+      expect(document.activeElement).toBe(options[0]);
+
+      fireEvent.keyDown(listbox, {key: 'O'});
+      expect(document.activeElement).toBe(options[0]);
+
+      fireEvent.keyDown(listbox, {key: 'O'});
+      expect(document.activeElement).toBe(options[0]);
+
+      fireEvent.keyDown(listbox, {key: ' '});
+      expect(document.activeElement).toBe(options[5]);
+
+      // Verify no selection was made
+      expect(document.activeElement).toHaveAttribute('aria-selected', 'false');
+
+      // Verify there are no checkmarks on the active element
+      let checkmark = within(document.activeElement).queryByRole('img', {hidden: true});
+      expect(checkmark).toBeFalsy();
+
+      // Verify there are no checkmarks in the entire listbox
+      let checkmarks = tree.queryAllByRole('img', {hidden: true});
+      expect(checkmarks.length).toBe(0);
+
+      // Verify onSelectionChange was not called
+      expect(onSelectionChange).toBeCalledTimes(0);
+
+      // Continue the search
+      fireEvent.keyDown(listbox, {key: 'B'});
+      expect(document.activeElement).toBe(options[5]);
+
+      // Advance the timers so we can select using the Spacebar
+      jest.runAllTimers();
+
+      fireEvent.keyDown(document.activeElement, {key: ' ', code: 32, charCode: 32});
+
+      // Verify the selection
+      expect(document.activeElement).toHaveAttribute('aria-selected', 'true');
+      checkmark = within(document.activeElement).getByRole('img', {hidden: true});
+      expect(checkmark).toBeTruthy();
+
+      // Verify there is only a single checkmark in the entire listbox
+      checkmarks = tree.getAllByRole('img', {hidden: true});
+      expect(checkmarks.length).toBe(1);
+
+      // Verify onSelectionChange is called
+      expect(onSelectionChange).toBeCalledTimes(1);
+      expect(onSelectionChange.mock.calls[0][0].has('Foo Bar')).toBeTruthy();
+    });
+
     it('resets the search text after a timeout', function () {
       let tree = renderComponent({autoFocus: 'first'});
       let listbox = tree.getByRole('listbox');
@@ -526,7 +613,7 @@ describe('ListBox', function () {
     let tree = render(
       <Provider theme={theme}>
         <ListBox aria-label="listbox">
-          <Item>
+          <Item textValue="Label">
             <Bell />
             <Text>Label</Text>
             <Text slot="description">Description</Text>

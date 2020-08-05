@@ -24,13 +24,13 @@ export interface SplitViewStatelyProps {
   onResize?: (primarySize: number) => void,
   onResizeEnd?: (primarySize: number) => void,
   primarySize?: number,
-  defaultPrimarySize?: number,
+  defaultPrimarySize?: number
 }
 
 export interface SplitViewHandleState {
   offset: number,
   dragging: boolean,
-  hovered: boolean
+  hovered: boolean,
   setOffset: (value: number) => void,
   setDragging: (value: boolean) => void,
   setHover: (value: boolean) => void,

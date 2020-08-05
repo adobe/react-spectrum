@@ -12,17 +12,15 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/statuslight';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-spectrum/statuslight/package.json';
 
 ```jsx import
 import {StatusLight} from '@react-spectrum/statuslight';
-import {Switch} from '@react-spectrum/switch';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
-import User from '@spectrum-icons/workflow/User';
 ```
 
 ---
 category: Status
+keywords: [status light, visual indicator]
 ---
 
 # StatusLight
@@ -44,8 +42,7 @@ category: Status
 
 ## Content
 
-A visible label is always required and can be provided by passing children.
-To indicate status, use the [variant](#variant) prop.
+A visible label can be provided by passing children. To indicate status, use the [variant](#variant) prop.
 
 ```tsx example
 <StatusLight variant="positive">Semantic color</StatusLight>

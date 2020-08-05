@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/dialog';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-spectrum/dialog/package.json';
 
 ```jsx import
 import {ActionButton} from '@react-spectrum/button';
@@ -21,6 +21,7 @@ import {AlertDialog, DialogTrigger} from '@react-spectrum/dialog';
 
 ---
 category: Overlays
+keywords: [alert dialog]
 ---
 
 # AlertDialog
@@ -51,13 +52,13 @@ category: Overlays
 
 ## Content
 
-Unlike Dialog, the layout in AlertDialog is very deliberate. The body of an AlertDialog can be provided by passing
+Unlike [Dialog](Dialog.html), the layout in AlertDialog is very deliberate. The body of an AlertDialog can be provided by passing
 children to the component. The AlertDialog also supports having up to three buttons in its footer: a primary button,
 a secondary button, and a cancel button. Each button can be rendered by providing a string to the `primaryActionLabel`, `secondaryActionLabel`,
 and `cancelLabel` respectively. Be sure to localize any strings provided to the AlertDialog and to the button labels as well.
 
-ActionDialogs should always have a visible title, specified by passing a string as the `title` prop. This string should be localized
-so that the ActionDialog is properly internationalized.
+AlertDialogs should always have a visible title, specified by passing a string as the `title` prop. This string should be localized
+so that it is properly internationalized.
 
 ```tsx example
 <DialogTrigger>
@@ -76,7 +77,7 @@ so that the ActionDialog is properly internationalized.
 
 ### Accessibility
 
-If any of the buttons in the ActionDialog's footer should be focused on render, specify which one via the `autoFocusButton` prop.
+If any of the buttons in the AlertDialog's footer should be focused when it opens, specify which one via the `autoFocusButton` prop.
 
 ```tsx example
 <DialogTrigger>

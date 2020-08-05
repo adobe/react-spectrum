@@ -13,10 +13,10 @@ export default Layout;
 import docs from 'docs:@react-stately/collections';
 import dataDocs from 'docs:@react-stately/data';
 import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
 
 ---
 category: Collections
+keywords: [static collection, dynamic collection, async loading, infinite loading, sections, hierarchy, state]
 ---
 
 # Collection components
@@ -235,7 +235,7 @@ let [sections, setSections] = useState([
 
 <Picker items={sections}>
   {section =>
-    <Section key={item.name} title={section.name} items={section.items}>
+    <Section key={section.name} title={section.name} items={section.items}>
       {item => <Item key={item.name}>{item.name}</Item>}
     </Section>
   }

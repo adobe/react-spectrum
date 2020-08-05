@@ -10,13 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy, MenuTriggerProps} from '@react-types/menu';
+import {FocusStrategy} from '@react-types/shared';
+import {MenuTriggerProps} from '@react-types/menu';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useState} from 'react';
 
 export interface MenuTriggerState extends OverlayTriggerState {
   /** Controls which item will be auto focused when the menu opens. */
   readonly focusStrategy: FocusStrategy,
+
+  /** Opens the menu. */
+  open(focusStrategy?: FocusStrategy | null): void,
 
   /** Toggles the menu. */
   toggle(focusStrategy?: FocusStrategy | null): void
@@ -33,6 +37,10 @@ export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  
   return {
     focusStrategy,
     ...overlayTriggerState,
+    open(focusStrategy: FocusStrategy = null) {
+      setFocusStrategy(focusStrategy);
+      overlayTriggerState.open();
+    },
     toggle(focusStrategy: FocusStrategy = null) {
       setFocusStrategy(focusStrategy);
       overlayTriggerState.toggle();

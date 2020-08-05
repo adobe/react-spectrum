@@ -13,8 +13,15 @@ export default Layout;
 import {Highlights, Hero} from '@react-spectrum/docs';
 import heroNarrow from 'url:../assets/ReactAria_Mobile_976x1025_1x.png';
 import heroNarrow2x from 'url:../assets/ReactAria_Mobile_976x1025_2x.png';
+import heroNarrowWebp from 'url:../assets/ReactAria_Mobile_976x1025_1x.webp';
+import heroNarrow2xWebp from 'url:../assets/ReactAria_Mobile_976x1025_2x.webp';
 import heroWide from 'url:../assets/ReactAria_976x445_1x.png';
 import heroWide2x from 'url:../assets/ReactAria_976x445_2x.png';
+import heroWideWebp from 'url:../assets/ReactAria_976x445_1x.webp';
+import heroWide2xWebp from 'url:../assets/ReactAria_976x445_2x.webp';
+import clsx from 'clsx';
+import styles from '@react-spectrum/docs/src/docs.css';
+import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 ---
 category: Libraries
@@ -25,13 +32,21 @@ description: A library of React Hooks that provides accessible UI primitives for
 
 A library of React Hooks that provides accessible UI primitives for your design system.
 
-<a href="getting-started.html" style={{fontSize: 18}}>Get started</a>
+<p className={clsx(typographyStyles['spectrum-Body2'], styles.homeLinks)}>
+  <a href="getting-started.html">Get started</a>
+  <span aria-hidden="true">•</span>
+  <a href="https://github.com/adobe/react-spectrum">GitHub</a>
+</p>
 
 <Hero
   narrow={heroNarrow}
   narrow2x={heroNarrow2x}
+  narrowWebp={heroNarrowWebp}
+  narrow2xWebp={heroNarrow2xWebp}
   wide={heroWide}
   wide2x={heroWide2x}
+  wideWebp={heroWideWebp}
+  wide2xWebp={heroWide2xWebp}
   alt="React Aria hero image" />
 
 <Highlights items={[

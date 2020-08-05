@@ -38,5 +38,9 @@ function View(props: ViewProps, ref: DOMRef) {
   );
 }
 
+/**
+ * View is a general purpose container with no specific semantics that can be used for custom styling purposes.
+ * It supports Spectrum style props to ensure consistency with other Spectrum components.
+ */
 const _View = forwardRef(View);
 export {_View as View};

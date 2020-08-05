@@ -14,7 +14,7 @@ import {AriaLabelingProps, AsyncLoadable, Collection, CollectionChildren, DOMPro
 import {Key, ReactElement, ReactNode} from 'react';
 
 export interface TableProps<T> extends MultipleSelection, Sortable {
-  children: ReactElement<TableHeaderProps | TableBodyProps | SectionProps | RowProps>[],
+  children: ReactElement<TableHeaderProps<T> | TableBodyProps<T> | SectionProps<T> | RowProps<T>>[],
   disabledKeys?: Iterable<Key>
 }
 
@@ -78,10 +78,10 @@ export type CellElement = ReactElement<CellProps>;
 export type CellRenderer = (columnKey: Key) => CellElement;
 
 export interface TableCollection<T> extends Collection<TableNode<T>> {
-  headerRows: TableNode<T>[];
-  columns: TableNode<T>[];
-  rowHeaderColumnKeys: Set<Key>;
-  body: TableNode<T>;
+  headerRows: TableNode<T>[],
+  columns: TableNode<T>[],
+  rowHeaderColumnKeys: Set<Key>,
+  body: TableNode<T>
 }
 
 export interface TableNode<T> extends Node<T> {

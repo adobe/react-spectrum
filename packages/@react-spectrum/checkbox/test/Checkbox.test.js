@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render} from '@testing-library/react';
 import {Checkbox} from '../';
 import React from 'react';
-import {render} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import V2Checkbox from '@react/react-spectrum/Checkbox';
 
@@ -38,13 +38,13 @@ describe('Checkbox', function () {
     expect(checkbox).toHaveAttribute('aria-checked', 'false');
     expect(onChangeSpy).not.toHaveBeenCalled();
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox).toHaveAttribute('aria-checked', 'true');
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy.mock.calls[0][0]).toBe(true);
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox).toHaveAttribute('aria-checked', 'false');
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy.mock.calls[1][0]).toBe(false);
@@ -64,7 +64,7 @@ describe('Checkbox', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeTruthy();
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy.mock.calls[0][0]).toBe(false);
@@ -82,7 +82,7 @@ describe('Checkbox', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeTruthy();
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy.mock.calls[0][0]).toBe(false);
@@ -100,7 +100,7 @@ describe('Checkbox', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeFalsy();
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy.mock.calls[0][0]).toBe(true);
@@ -118,7 +118,7 @@ describe('Checkbox', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeFalsy();
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
@@ -159,14 +159,14 @@ describe('Checkbox', function () {
     expect(checkbox.indeterminate).toBeTruthy();
     expect(checkbox.checked).toBeFalsy();
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox).toHaveAttribute('aria-checked', 'mixed');
     expect(checkbox.indeterminate).toBeTruthy();
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).toHaveBeenCalled();
     expect(onChangeSpy.mock.calls[0][0]).toBe(true);
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox).toHaveAttribute('aria-checked', 'mixed');
     expect(checkbox.indeterminate).toBeTruthy();
     expect(checkbox.checked).toBeFalsy();
@@ -229,9 +229,8 @@ describe('Checkbox', function () {
 
   it.each`
     Name                       | Component      | props
-    ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, tabIndex: -1}}
-    ${'V2Checkbox'}            | ${V2Checkbox}  | ${{onChange: onChangeSpy, tabIndex: -1}}
-  `('$Name supports tabIndex', function ({Component, props}) {
+    ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, excludeFromTabOrder: true}}
+  `('$Name supports excludeFromTabOrder', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Hi</Component>);
 
     let checkbox = getByRole('checkbox');
@@ -247,7 +246,7 @@ describe('Checkbox', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeTruthy();
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).not.toHaveBeenCalled();
   });

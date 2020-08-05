@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import _classNames from 'classnames';
+import _clsx from 'clsx';
 
 export let shouldKeepSpectrumClassNames = false;
 
@@ -52,5 +52,5 @@ export function classNames(cssModule: {[key: string]: string}, ...values: Array<
     }
   }
 
-  return _classNames(...classes);
+  return _clsx(...classes);
 }

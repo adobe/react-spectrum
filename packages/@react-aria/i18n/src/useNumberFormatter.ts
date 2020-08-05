@@ -17,10 +17,11 @@ let formatterCache = new Map<string, Intl.NumberFormat>();
 /**
  * Provides localized number formatting for the current locale. Automatically updates when the locale changes,
  * and handles caching of the number formatter for performance.
- * @param options - formatting options
+ * @param options - Formatting options.
  */
 export function useNumberFormatter(options?: Intl.NumberFormatOptions): Intl.NumberFormat {
   let {locale} = useLocale();
+  
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
   if (formatterCache.has(cacheKey)) {
     return formatterCache.get(cacheKey);

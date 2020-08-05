@@ -15,7 +15,7 @@ import {ReactNode} from 'react';
 
 export interface TextProps extends DOMProps, StyleProps {
   /**
-   * Text content
+   * Text content.
    */
   children: ReactNode,
   /**

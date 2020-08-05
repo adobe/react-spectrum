@@ -10,12 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, MultipleSelection, StyleProps} from '@react-types/shared';
-
-type FocusStrategy = 'first' | 'last';
+import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, FocusStrategy, MultipleSelection, StyleProps} from '@react-types/shared';
 
 export interface ListBoxProps<T> extends CollectionBase<T>, AsyncLoadable, MultipleSelection {
-  /** Whether the auto focus the listbox or an option. */
+  /** Whether to auto focus the listbox or an option. */
   autoFocus?: boolean | FocusStrategy,
   /** Whether focus should wrap around when the end/start is reached. */
   shouldFocusWrap?: boolean

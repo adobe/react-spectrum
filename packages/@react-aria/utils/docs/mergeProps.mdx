@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-aria/utils';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/utils/package.json';
 
 ---
 category: Utilities
@@ -38,7 +38,7 @@ This can be useful when you need to combine the results of multiple react-aria h
 element. For example, both hooks may return the same event handlers, class names, or ids, and only
 one of these can be applied. `mergeProps` handles combining these props together so that multiple
 event handlers will be chained, multiple classes will be combined, and ids will be deduplicated.
-For all other props, the second props object overrides the first.
+For all other props, the last prop object overrides all previous ones.
 
 ## Example
 
