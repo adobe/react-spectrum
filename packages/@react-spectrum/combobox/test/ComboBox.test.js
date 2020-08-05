@@ -174,6 +174,7 @@ describe('ComboBox', function () {
 
     act(() => {
       fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
       jest.runAllTimers();
     });
 
@@ -391,6 +392,7 @@ describe('ComboBox', function () {
 
         act(() => {
           fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+          fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
           jest.runAllTimers();
         });
 
@@ -408,6 +410,7 @@ describe('ComboBox', function () {
 
         act(() => {
           fireEvent.keyDown(combobox, {key: 'ArrowUp', code: 38, charCode: 38});
+          fireEvent.keyUp(combobox, {key: 'ArrowUp', code: 38, charCode: 38});
           jest.runAllTimers();
         });
 
@@ -648,18 +651,21 @@ describe('ComboBox', function () {
 
       act(() => {
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
       });
 
       expect(combobox).toHaveAttribute('aria-activedescendant', items[1].id);
 
       act(() => {
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
       });
 
       expect(combobox).toHaveAttribute('aria-activedescendant', items[2].id);
 
       act(() => {
         fireEvent.keyDown(combobox, {key: 'ArrowUp', code: 38, charCode: 38});
+        fireEvent.keyUp(combobox, {key: 'ArrowUp', code: 38, charCode: 38});
       });
 
       expect(combobox).toHaveAttribute('aria-activedescendant', items[1].id);
@@ -684,12 +690,14 @@ describe('ComboBox', function () {
 
       act(() => {
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
       });
 
       expect(combobox).toHaveAttribute('aria-activedescendant', items[1].id);
 
       act(() => {
         fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
         jest.runAllTimers();
       });
 
@@ -708,6 +716,7 @@ describe('ComboBox', function () {
         userEvent.type(combobox, 'O');
         jest.runAllTimers();
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
       });
 
       let listbox = getByRole('listbox');
@@ -1007,6 +1016,7 @@ describe('ComboBox', function () {
         userEvent.type(combobox, 'Charm');
         jest.runAllTimers();
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
       });
 
       let listbox = getByRole('listbox');
@@ -1107,6 +1117,7 @@ describe('ComboBox', function () {
         userEvent.type(combobox, 'o');
         jest.runAllTimers();
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
       });
 
       let listbox = getByRole('listbox');
@@ -1116,6 +1127,7 @@ describe('ComboBox', function () {
 
       act(() => {
         fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
         jest.runAllTimers();
         triggerPress(button);
         jest.runAllTimers();
@@ -1148,6 +1160,7 @@ describe('ComboBox', function () {
       act(() => {
         combobox.focus();
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
         jest.runAllTimers();
       });
 
@@ -1480,6 +1493,7 @@ describe('ComboBox', function () {
       act(() => {
         combobox.focus();
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
         jest.runAllTimers();
       });
 
@@ -1512,10 +1526,13 @@ describe('ComboBox', function () {
 
       act(() => {
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
         jest.runAllTimers();
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
         jest.runAllTimers();
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
         jest.runAllTimers();
       });
 
@@ -1523,6 +1540,7 @@ describe('ComboBox', function () {
 
       act(() => {
         fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
         jest.runAllTimers();
       });
 
