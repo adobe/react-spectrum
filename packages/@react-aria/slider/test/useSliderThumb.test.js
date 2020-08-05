@@ -26,11 +26,11 @@ describe('useSliderThumb', () => {
           trackRef,
           inputRef
         }, state);
-        return {props, labelId: commonThumbProps.labelId};
+        return {props, ...commonThumbProps};
       }).result;
-      
+
       let {inputProps} = result.current.props;
-      let labelId = result.current.labelId;
+      let labelId = result.current['aria-labelledby'];
       expect(inputProps).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 200, 'aria-labelledby': `${labelId}`});
     });
     it('should have the right labels with Slider thumb label', () => {
@@ -47,17 +47,17 @@ describe('useSliderThumb', () => {
         let state = useSliderState(sliderProps);
         let {thumbProps: commonThumbProps} = useSlider(sliderProps, state, trackRef);
         let props = useSliderThumb({
-          index: 0, 
+          index: 0,
           label: 'thumb',
           ...commonThumbProps,
           trackRef,
           inputRef
         }, state);
-        return {props, labelId: commonThumbProps.labelId};
+        return {props, ...commonThumbProps};
       }).result;
-      
+
       let {inputProps, labelProps} = result.current.props;
-      let labelId = result.current.labelId;
+      let labelId = result.current['aria-labelledby'];
       expect(inputProps).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 200, 'aria-labelledby': `${labelId} ${labelProps.id}`, id: labelProps.htmlFor});
     });
     it('should have the right labels with Slider thumb aria-label', () => {
@@ -74,25 +74,25 @@ describe('useSliderThumb', () => {
         let state = useSliderState(sliderProps);
         let {thumbProps: commonThumbProps} = useSlider(sliderProps, state, trackRef);
         let props0 = useSliderThumb({
-          index: 0, 
+          index: 0,
           'aria-label': 'thumb0',
           ...commonThumbProps,
           trackRef,
           inputRef
         }, state);
         let props1 = useSliderThumb({
-          index: 1, 
+          index: 1,
           'aria-label': 'thumb1',
           ...commonThumbProps,
           trackRef,
           inputRef
         }, state);
-        return {props0, props1, labelId: commonThumbProps.labelId};
+        return {props0, props1, ...commonThumbProps};
       }).result;
-      
+
       let {inputProps: inputProps0} = result.current.props0;
       let {inputProps: inputProps1} = result.current.props1;
-      let labelId = result.current.labelId;
+      let labelId = result.current['aria-labelledby'];
       expect(inputProps0).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 70, 'aria-labelledby': `${labelId} ${inputProps0.id}`});
       expect(inputProps1).toMatchObject({type: 'range', step: 2, value: 70, min: 50, max: 200, 'aria-labelledby': `${labelId} ${inputProps1.id}`});
     });
@@ -117,15 +117,15 @@ describe('useSliderThumb', () => {
       stateRef.current = state;
       let {trackProps, thumbProps: commonThumbProps} = useSlider(props, state, trackRef);
       let {inputProps: input0Props, thumbProps: thumb0Props} = useSliderThumb({
-        ...commonThumbProps, 
-        'aria-label': 'Min', 
+        ...commonThumbProps,
+        'aria-label': 'Min',
         index: 0,
         trackRef,
         inputRef: input0Ref
       }, state);
       let {inputProps: input1Props, thumbProps: thumb1Props} = useSliderThumb({
-        ...commonThumbProps, 
-        'aria-label': 'Max', 
+        ...commonThumbProps,
+        'aria-label': 'Max',
         index: 1,
         trackRef,
         inputRef: input1Ref
@@ -171,24 +171,24 @@ describe('useSliderThumb', () => {
 
       onChangeSpy.mockClear();
       onChangeEndSpy.mockClear();
-      
+
       // Drag thumb1 past thumb0
       let thumb1 = screen.getByTestId('thumb1');
       fireEvent.mouseDown(thumb1, {clientX: 80});
       expect(onChangeSpy).not.toHaveBeenCalled();
       expect(onChangeEndSpy).not.toHaveBeenCalled();
       expect(stateRef.current.values).toEqual([40, 80]);
-      
+
       fireEvent.mouseMove(thumb1, {clientX: 60});
       expect(onChangeSpy).toHaveBeenLastCalledWith([40, 60]);
       expect(onChangeEndSpy).not.toHaveBeenCalled();
       expect(stateRef.current.values).toEqual([40, 60]);
-      
+
       fireEvent.mouseMove(thumb1, {clientX: 30});
       expect(onChangeSpy).toHaveBeenLastCalledWith([40, 40]);
       expect(onChangeEndSpy).not.toHaveBeenCalled();
       expect(stateRef.current.values).toEqual([40, 40]);
-      
+
       fireEvent.mouseUp(thumb1, {clientX: 30});
       expect(onChangeSpy).toHaveBeenLastCalledWith([40, 40]);
       expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 40]);

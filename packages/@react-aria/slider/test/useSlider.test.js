@@ -15,30 +15,30 @@ describe('useSlider', () => {
         return {state, props, trackRef};
       }).result;
     }
-  
+
     it('should have the right labels when setting label', () => {
       let result = renderUseSlider({
         defaultValue: [0],
         label: 'Slider'
       });
-  
+
       let {labelProps, containerProps, thumbProps} = result.current.props;
-  
-      expect(labelProps.id).toBe(thumbProps.labelId);
+
+      expect(labelProps.id).toBe(thumbProps['aria-labelledby']);
       expect(containerProps.role).toBe('group');
       expect(containerProps.id).toBe(labelProps.htmlFor);
     });
-  
+
     it('should have the right labels when setting aria-label', () => {
       let result = renderUseSlider({
         defaultValue: [0],
         'aria-label': 'Slider'
       });
-  
+
       let {labelProps, containerProps, thumbProps} = result.current.props;
-  
+
       expect(labelProps).toEqual({});
-      expect(containerProps.id).toBe(thumbProps.labelId);
+      expect(containerProps.id).toBe(thumbProps['aria-labelledby']);
       expect(containerProps.role).toBe('group');
       expect(containerProps['aria-label']).toBe('Slider');
     });
@@ -95,7 +95,7 @@ describe('useSlider', () => {
       expect(onChangeSpy).toHaveBeenLastCalledWith([20, 80]);
       expect(onChangeEndSpy).not.toHaveBeenCalled();
       expect(stateRef.current.values).toEqual([20, 80]);
-      
+
       fireEvent.mouseMove(track, {clientX: 30});
       expect(onChangeSpy).toHaveBeenLastCalledWith([30, 80]);
       expect(onChangeEndSpy).not.toHaveBeenCalled();

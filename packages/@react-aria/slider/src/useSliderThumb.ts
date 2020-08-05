@@ -11,7 +11,7 @@ interface SliderThumbAria {
 
   /** Props for the root thumb element; handles the dragging motion. */
   thumbProps: HTMLAttributes<HTMLElement>,
-  
+
   /** Props for the label element for this thumb. */
   labelProps: HTMLAttributes<HTMLElement>
 }
@@ -23,7 +23,7 @@ interface SliderThumbOptions extends SliderThumbProps {
 
 /**
  * Provides behavior and accessibility for a thumb of a slider component.
- * 
+ *
  * @param opts Options for this Slider thumb.
  * @param state Slider state, created via `useSliderState`.
  */
@@ -37,15 +37,11 @@ export function useSliderThumb(
     isDisabled,
     isReadOnly,
     validationState,
-    labelId,
-    trackRef, 
+    trackRef,
     inputRef
   } = opts;
 
-  const {labelProps, fieldProps} = useLabel({
-    ...opts,
-    'aria-labelledby': `${labelId} ${opts['aria-labelledby'] ?? ''}`.trim()
-  });
+  const {labelProps, fieldProps} = useLabel(opts);
 
   const value = state.values[index];
   const allowDrag = !(isDisabled || isReadOnly);
@@ -86,7 +82,7 @@ export function useSliderThumb(
     inputRef
   );
 
-  // We install mouse handlers for the drag motion on the thumb div, but 
+  // We install mouse handlers for the drag motion on the thumb div, but
   // not the key handler for moving the thumb with the slider.  Instead,
   // we focus the range input, and let the browser handle the keyboard
   // interactions; we then listen to input's onChange to update state.

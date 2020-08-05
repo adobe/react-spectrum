@@ -1,7 +1,7 @@
 import {classNames} from '@react-spectrum/utils';
-import {CommonSliderThumbProps, SliderProps, SliderThumbProps} from '@react-types/slider';
 import {FocusRing} from '@react-aria/focus';
-import React from 'react';
+import React, {HTMLAttributes} from 'react';
+import {SliderProps, SliderThumbProps} from '@react-types/slider';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import styles from './story-slider.css';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
@@ -34,7 +34,7 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
       <div className={styles.trackContainer}>
         <div className={styles.rail} />
         <div {...trackProps} ref={trackRef} className={styles.track} />
-        {React.Children.map(children, ((child, index) => 
+        {React.Children.map(children, ((child, index) =>
           React.cloneElement(child as React.ReactElement, {
             __context: {
               sliderProps: props,
@@ -50,7 +50,7 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
 }
 
 
-interface StoryThumbProps extends Omit<SliderThumbProps, 'index'|'labelId'> {
+interface StoryThumbProps extends Omit<SliderThumbProps, 'index'> {
 }
 
 interface SliderStateContext {
@@ -58,20 +58,20 @@ interface SliderStateContext {
   state: SliderState,
   trackRef: React.RefObject<HTMLElement>,
   index: number,
-  commonThumbProps: CommonSliderThumbProps
+  commonThumbProps: HTMLAttributes<HTMLElement>
 }
 
 export function StoryThumb(props: StoryThumbProps) {
   if (!(props as any).__context) {
     throw new Error('Cannot use StoryThumb outside of a StoryMultiSlider!');
   }
-  
+
   const {label, isDisabled} = props;
   const context = (props as any).__context as SliderStateContext;
   const {index, state, commonThumbProps, sliderProps} = context;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const {inputProps, thumbProps, labelProps} = useSliderThumb({
-    index, 
+    index,
     ...props,
     ...commonThumbProps,
     isReadOnly: sliderProps.isReadOnly || props.isReadOnly,
@@ -82,8 +82,8 @@ export function StoryThumb(props: StoryThumbProps) {
 
   return (
     <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
-      <div 
-        {...thumbProps} 
+      <div
+        {...thumbProps}
         className={classNames(styles, 'thumb', {thumbDisabled: isDisabled})}
         style={{
           'left': `${state.getThumbPercent(index) * 100}%`
