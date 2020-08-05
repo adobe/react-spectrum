@@ -36,10 +36,6 @@ export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StylePro
    */
   action?: string,
   /**
-   * Specifies whether autocomplete is applied to an editable text field.
-   */
-  autoComplete?: 'on' | 'off',
-  /**
    * Sets or retrieves the encoding type for the form.
    */
   encType?: 'application/x-www-form-urlencoded' | 'multipart/form-data' | 'text/plain' | string,
@@ -54,9 +50,5 @@ export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StylePro
   /**
    * Fired on form submission.
    */
-  onSubmit?: FormEventHandler,
-  /**
-   * Fired on form reset.
-   */
-  onReset?: FormEventHandler
+  onSubmit?: FormEventHandler
 }

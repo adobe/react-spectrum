@@ -160,7 +160,6 @@ function FormWithControls(props: any = {}) {
           action('onSubmit')(e);
           e.preventDefault();
         }}
-        onReset={action('onReset')}
         {...props}>
         <TextField label="First Name controlled" placeholder="John" value={firstName} onChange={setFirstName} />
         <TextField label="Last Name default" placeholder="Smith" defaultValue="world" />
@@ -191,7 +190,6 @@ function FormWithControls(props: any = {}) {
         <TextArea label="Comments" placeholder="How do you feel? controlled" value={howIFeel} onChange={setHowIFeel} />
         <TextArea label="Comments" placeholder="How do you feel? default" defaultValue="hello" />
         <ButtonGroup>
-          <Button variant="secondary" type="reset">Reset</Button>
           <Button variant="primary" type="submit">Submit</Button>
         </ButtonGroup>
       </Form>

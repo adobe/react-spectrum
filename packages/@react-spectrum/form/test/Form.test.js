@@ -75,20 +75,17 @@ describe('Form', function () {
 
   it('supports form attributes', () => {
     let onSubmit = jest.fn().mockImplementation(e => e.preventDefault());
-    let onReset = jest.fn();
     let {getByLabelText, getByRole} = render(
       <Provider theme={theme}>
         <Form
           aria-label="Test"
           onSubmit={onSubmit}
-          onReset={onReset}
           action="/action_page.php"
           method="get"
           target="_self"
           encType="text/plain"
           autoComplete="on">
           <Button variant="primary" type="submit" aria-label="Submit" />
-          <Button variant="secondary" type="reset" aria-label="Reset" />
         </Form>
       </Provider>
     );
@@ -99,10 +96,7 @@ describe('Form', function () {
     expect(form).toHaveAttribute('target', '_self');
     expect(form).toHaveAttribute('encType', 'text/plain');
     expect(form).toHaveAttribute('autoComplete', 'on');
-    let reset = getByLabelText('Reset');
     let submit = getByLabelText('Submit');
-    userEvent.click(reset);
-    expect(onReset).toHaveBeenCalled();
     userEvent.click(submit);
     expect(onSubmit).toHaveBeenCalled();
   });
