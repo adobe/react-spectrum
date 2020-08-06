@@ -25,8 +25,6 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     isReadOnly = false,
     isRequired = false,
     onChange,
-    value,
-    defaultValue,
     ...otherProps
   } = props;
 
