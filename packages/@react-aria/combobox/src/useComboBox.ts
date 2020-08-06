@@ -40,6 +40,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     triggerRef,
     popoverRef,
     inputRef,
+    mobileInputRef,
     layout,
     completionMode = 'suggest',
     menuTrigger = 'input',
@@ -92,7 +93,13 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
         }
         break;
       case 'Escape':
-        state.close();
+        // TODO: maybe only call this if state.isOpen is true cuz there can be a case
+        // where the menu isn't open (if user types something that doens't match any valid value, state.isOpen is still true)
+        // but overlay state isOpen hasn't actually been updated
+        if (state.isOpen) {
+          state.close();
+        }
+
         break;
       case 'ArrowDown':
         state.open('first');
@@ -104,9 +111,20 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   };
 
   let onBlur = (e) => {
+    console.log('e', e.relatedTarget, popoverRef.current, props.listboxRef?.current)
     // If user is clicking on the combobox button, early return so we don't change textfield focus state, update the selected key erroneously,
     // and trigger close menu twice
-    if (triggerRef.current && triggerRef.current.contains(e.relatedTarget)) {
+
+    // Need to refine this so it doesn't blur if focus goes to the input field in the tray
+    // Also might need to manually focus the input field here
+    // perhaps split into two if statements (keep the triggerRef one as is, have the mobile input one with the listboxref and manual focus)
+
+    // TODO: Also figure out how to get the focus onto the mobile input consistently whenever it opens
+    // Ask if that is supposed to be the case
+    if (props.listboxRef.current && props.listboxRef.current.contains(e.relatedTarget) || triggerRef.current && triggerRef.current.contains(e.relatedTarget) || (mobileInputRef && mobileInputRef.current?.contains(e.relatedTarget))) {
+      if (mobileInputRef.current) {
+        mobileInputRef.current.focus();
+      }
       return;
     }
 

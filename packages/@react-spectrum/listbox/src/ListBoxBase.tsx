@@ -133,6 +133,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
                 shouldUseVirtualFocus={shouldUseVirtualFocus} />
             );
           } else if (type === 'loader') {
+            console.log('gawilenglawenglawkngl', type, item)
             return (
               // aria-selected isn't needed here since this option is not selectable.
               // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
@@ -144,6 +145,10 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
                   UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
               </div>
             );
+          } else if (type === 'placeholder') {
+            return(
+              <div>EMPTY LIST</div>
+            )
           }
         }}
       </Virtualizer>

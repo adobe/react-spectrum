@@ -49,7 +49,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let {
     onFilter,
     collator,
-    onSelectionChange
+    onSelectionChange,
+    isMobile
   } = props;
 
   let [isFocused, setFocused] = useState(false);
@@ -188,7 +189,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       triggerState.open(focusStrategy);
     }
   };
-
+  console.log('isopen calculation', triggerState.isOpen && isFocused && (isMobile || filteredCollection.size > 0))
   return {
     ...triggerState,
     open,
@@ -200,7 +201,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     setFocused,
     selectedItem,
     collection: filteredCollection,
-    isOpen: triggerState.isOpen && isFocused && filteredCollection.size > 0,
+    // isOpen: triggerState.isOpen && isFocused && filteredCollection.size > 0,
+    isOpen: triggerState.isOpen && isFocused && (isMobile || filteredCollection.size > 0),
     inputValue,
     setInputValue
   };

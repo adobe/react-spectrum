@@ -144,6 +144,15 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
       y = layoutNode.layoutInfo.rect.maxY;
       nodes.push(layoutNode);
     }
+    console.log('nodes', nodes);
+
+    if (nodes.length === 0) {
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, 40);
+      let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
+      this.layoutInfos.set('placeholder', placeholder);
+      nodes.push({layoutInfo: placeholder});
+      y = placeholder.rect.maxY;
+    }
 
     if (this.isLoading) {
       let rect = new Rect(0, y, this.virtualizer.visibleRect.width, 40);

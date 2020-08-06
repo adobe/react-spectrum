@@ -52,14 +52,20 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     direction = 'bottom'
   } = props;
 
+  let isMobile = useMediaQuery('(max-width: 700px)');
+  let mobileInputFieldRef = useRef();
+
   let {styleProps} = useStyleProps(props);
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
   let listboxRef = useRef();
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
   let collator = useCollator({sensitivity: 'base'});
-  let state = useComboBoxState({...props, collator});
+  let state = useComboBoxState({...props, collator, isMobile});
   let layout = useListBoxLayout(state);
+
+
+
   let {triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
     {
       ...props,
@@ -68,6 +74,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       triggerRef: unwrapDOMRef(triggerRef),
       popoverRef: unwrapDOMRef(popoverRef),
       inputRef: inputRef,
+      mobileInputRef: isMobile && mobileInputFieldRef,
+      listboxRef,
       menuTrigger
     },
     state
@@ -82,7 +90,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     isOpen: state.isOpen
   });
 
-  let isMobile = useMediaQuery('(max-width: 700px)');
+
 
   let comboBoxAutoFocus;
   // Focus first/last item on menu open if focusStategy is set (done by up/down arrows)
@@ -98,8 +106,10 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     comboBoxAutoFocus = 'first';
   }
 
+  // Need to figure out what other props should go on the textfield, prob needs to be related to
   let listbox = (
     <FocusScope>
+      {isMobile && <TextFieldBase autoFocus inputRef={mobileInputFieldRef} inputProps={{onChange: inputProps.onChange, value: inputProps.value, onKeyDown: inputProps.onKeydown}} validationState={validationState} />}
       <DismissButton onDismiss={() => state.close()} />
       <ListBoxBase
         ref={listboxRef}
@@ -129,6 +139,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   }, [scale, isMobile, triggerRef, inputRef, state.selectedKey]);
 
   let overlay;
+  console.log('state.isOpen', state.isOpen);
   if (isMobile) {
     overlay = (
       <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur>
