@@ -7,7 +7,7 @@ The following is a set of guidelines to follow when contributing to this project
 
 ## Code Of Conduct
 
-This project adheres to the Adobe [code of conduct](../CODE_OF_CONDUCT.md). By participating,
+This project adheres to the Adobe [code of conduct](./CODE_OF_CONDUCT.md). By participating,
 you are expected to uphold this code. Please report unacceptable behavior to
 [Grp-opensourceoffice@adobe.com](mailto:Grp-opensourceoffice@adobe.com).
 
