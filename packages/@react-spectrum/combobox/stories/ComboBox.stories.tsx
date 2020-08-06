@@ -17,7 +17,6 @@ import {ComboBox, Item, Section} from '../';
 import Copy from '@spectrum-icons/workflow/Copy';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 
@@ -289,11 +288,11 @@ let AllControlledComboBox = (props) => {
   let [fieldState, setFieldState] = React.useState({selectedKey: props.selectedKey, inputValue: props.inputValue});
 
   let onSelectionChange = (key) => {
-    setFieldState(prevState => {return {inputValue: prevState.inputValue, selectedKey: key}});
+    setFieldState(prevState => ({inputValue: prevState.inputValue, selectedKey: key}));
   };
 
   let onInputChange = (value) => {
-    setFieldState(prevState => {return {inputValue: value, selectedKey: prevState.selectedKey}});
+    setFieldState(prevState => ({inputValue: value, selectedKey: prevState.selectedKey}));
   };
 
   let setSnake = () => {
