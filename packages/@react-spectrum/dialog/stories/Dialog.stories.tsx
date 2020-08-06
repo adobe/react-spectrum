@@ -321,7 +321,7 @@ function renderWithForm({width = 'auto', ...props}) {
             <Header>The Header</Header>
             <Divider />
             <Content>
-              <Form onSubmit={e => e.preventDefault()}>
+              <Form>
                 <TextField label="Last Words" autoFocus />
                 <Checkbox>Acknowledge robot overlords</Checkbox>
                 <RadioGroup label="Preferred Job" name="jobs">

@@ -90,7 +90,7 @@ storiesOf('Provider', module)
 function render(props = {}) {
   return (
     <Provider {...props} UNSAFE_style={{padding: 50}}>
-      <Form onSubmit={e => e.preventDefault()}>
+      <Form>
         <Flex> {/* Extra div via Flex so that the button does not expand to 100% width */}
           <Button variant="primary">I am a button</Button>
         </Flex>
