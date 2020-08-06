@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, screen} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {TextArea} from '../';
 import V2TextArea from '@react/react-spectrum/Textarea';
@@ -47,30 +47,21 @@ describe('TextArea', () => {
     ${'v3 TextArea'}    | ${TextArea}      | ${{isQuiet: true, onChange}}
     ${'v2 TextArea'}    | ${V2TextArea}    | ${{quiet: true, onChange}}
   `('$Name quiet variant automatically adjusts its vertical height on change', ({Component, props}) => {
-    act(() => {
-      renderComponent(Component, props);
-    });
+    let tree = renderComponent(Component, props);
+    let input = tree.getByTestId(testId);
 
-    let input = screen.getByTestId(testId);
     expect(input.style.height).toBe('');
-
-    act(() => {
-      fireEvent.change(input, {target: {value: '15', style: {}}});
-    });
+    fireEvent.change(input, {target: {value: '15', style: {}}});
     expect(input.style.height).toBe(`${mockScrollHeight}px`);
   });
 
-
   it.each`
-    Name                | Component        | props
-    ${'v3 TextArea'}    | ${TextArea}      | ${{isQuiet: true, onChange, defaultValue: 'foo'}}
-    ${'v3 TextArea'}    | ${TextArea}      | ${{isQuiet: true, onChange, value: 'foo'}}
+    Name                               | Component        | props
+    ${'v3 TextArea (controlled)'}      | ${TextArea}      | ${{isQuiet: true, onChange, value: 'foo'}}
+    ${'v3 TextArea (uncontrolled)'}    | ${TextArea}      | ${{isQuiet: true, onChange, defaultValue: 'foo'}}
   `('$Name quiet variant automatically adjusts its vertical height on mount', ({Component, props}) => {
-    act(() => {
-      renderComponent(Component, props);
-    });
-
-    let input = screen.getByTestId(testId);
+    let tree = renderComponent(Component, props);
+    let input = tree.getByTestId(testId);
 
     expect(input.style.height).toBe(`${mockScrollHeight}px`);
   });

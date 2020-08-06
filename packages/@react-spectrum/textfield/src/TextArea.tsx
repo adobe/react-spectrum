@@ -11,7 +11,7 @@
  */
 
 import {chain} from '@react-aria/utils';
-import React, {RefObject, useEffect, useRef, useState} from 'react';
+import React, {RefObject, useCallback, useEffect, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -25,33 +25,36 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     isReadOnly = false,
     isRequired = false,
     onChange,
-    defaultValue,
     value,
+    defaultValue,
     ...otherProps
   } = props;
 
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
-  let [count, check] = useState(0);
 
-  function changeDomHeight(dom: HTMLInputElement & HTMLTextAreaElement) {
-    dom.style.height = 'auto';
-    dom.style.height = `${dom.scrollHeight}px`;
-  }
-
-  let onCheckHeight = () => check(x => x + 1);
+  let onHeightChange = useCallback(() => {
+    if (isQuiet) {
+      let input = inputRef.current;
+      input.style.height = 'auto';
+      input.style.height = `${input.scrollHeight}px`;
+    }
+  }, [isQuiet, inputRef]);
 
   useEffect(() => {
-    if (isQuiet && inputRef.current) {
-      if (!defaultValue && !value && count === 0) {
+    if (inputRef.current) {
+      // if no value or defaultValue is passed
+      // no need to call onHeightChange
+      if (!value && !defaultValue) {
         return;
       }
-      changeDomHeight(inputRef.current);
+      onHeightChange();
     }
-  }, [count]);
+  }, [onHeightChange]);
+
 
   let {labelProps, inputProps} = useTextField({
     ...props,
-    onChange: chain(onChange, onCheckHeight)
+    onChange: chain(onChange, onHeightChange)
   }, inputRef);
 
   return (
