@@ -266,6 +266,14 @@ storiesOf('DialogTrigger', module)
     () => render({type: 'modal', isKeyboardDismissDisabled: true})
   )
   .add(
+    'keyboard dismiss disabled: popover',
+    () => renderPopover({type: 'popover', placement: 'bottom', isKeyboardDismissDisabled: true})
+  )
+  .add(
+    'keyboard dismiss disabled: tray',
+    () => renderPopover({type: 'tray', isKeyboardDismissDisabled: true})
+  )
+  .add(
     'containerPadding',
     () => renderPopover({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 20})
   )
