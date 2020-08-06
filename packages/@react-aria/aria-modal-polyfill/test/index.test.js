@@ -14,6 +14,7 @@ import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -41,6 +42,36 @@ describe('watchModals', () => {
     window.requestAnimationFrame.mockRestore();
   });
 
+  let verify = async function (modal, getByRole) {
+    // this function expects some specific things when verifying
+    // that there is a single separator in the dom that is hidden when the modal is open
+    // but is accessible when the modal is open
+    // that 'Escape' will close whatever the open modal is
+    // that focus is given to the modal when it opens
+
+    await waitFor(() => {
+      expect(modal).toBeVisible();
+    });
+    // we shouldn't be able to find it because the search is done by accessibility and the non-modal
+    // part of the tree should be inaccessible while the modal is open
+    expect(() => getByRole('separator')).toThrow();
+
+    expect(document.activeElement).toBe(modal);
+
+    fireEvent.keyDown(modal, {key: 'Escape'});
+    fireEvent.keyUp(modal, {key: 'Escape'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
+    await waitFor(() => {
+      expect(modal).not.toBeInTheDocument();
+    }); // wait for animation
+
+    // once the modal is removed, we should be able to access the main part of the document again
+    expect(() => getByRole('separator')).not.toThrow();
+  };
+
   it('should hide everything except the modal', async () => {
     watchModals();
     let {getByLabelText, getByRole} = render(
@@ -62,27 +93,7 @@ describe('watchModals', () => {
       jest.runAllTimers();
     });
     let dialog = getByRole('dialog');
-    await waitFor(() => {
-      expect(dialog).toBeVisible();
-    });
-    // we shouldn't be able to find it because the search is done by accessibility and the non-modal
-    // part of the tree should be inaccessible while the modal is open
-    expect(() => getByRole('separator')).toThrow();
-
-    expect(document.activeElement).toBe(dialog);
-
-    fireEvent.keyDown(dialog, {key: 'Escape'});
-    fireEvent.keyUp(dialog, {key: 'Escape'});
-
-    act(() => {
-      jest.runAllTimers();
-    });
-    await waitFor(() => {
-      expect(dialog).not.toBeInTheDocument();
-    }); // wait for animation
-
-    // once the dialog is removed, we should be able to access the main part of the document again
-    expect(() => getByRole('separator')).not.toThrow();
+    verify(dialog, getByRole);
   });
 
   it('should handle nested modals', async () => {
@@ -169,5 +180,105 @@ describe('watchModals', () => {
     expect(buttons.length).toBe(1);
     expect(buttons[0]).toBe(getByLabelText('Trigger'));
     expect(() => getByRole('separator')).not.toThrow();
+  });
+
+  it('should hide around Menus', async () => {
+    let withSection = [
+      {name: 'Heading 1', children: [
+        {name: 'Foo'},
+        {name: 'Bar'},
+        {name: 'Baz'}
+      ]}
+    ];
+    watchModals();
+    let {getByLabelText, getByRole} = render(
+      <>
+        <Provider theme={theme}>
+          <MenuTrigger>
+            <ActionButton aria-label="Trigger" />
+            <Menu items={withSection}>
+              {item => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+        <hr />
+      </>
+    );
+    expect(() => getByRole('separator')).not.toThrow();
+    act(() => {
+      triggerPress(getByLabelText('Trigger'));
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
+    let menu = getByRole('menu');
+    verify(menu, getByRole);
+  });
+
+  it('should hide around Tray', async () => {
+    let withSection = [
+      {name: 'Heading 1', children: [
+        {name: 'Foo'},
+        {name: 'Bar'},
+        {name: 'Baz'}
+      ]}
+    ];
+    // menu should be a tray
+    matchMedia.useMediaQuery('(max-width: 700px)');
+    watchModals();
+    let {getByLabelText, getByRole} = render(
+      <>
+        <Provider theme={theme}>
+          <MenuTrigger>
+            <ActionButton aria-label="Trigger" />
+            <Menu items={withSection}>
+              {item => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+        <hr />
+      </>
+    );
+    expect(() => getByRole('separator')).not.toThrow();
+    act(() => {
+      triggerPress(getByLabelText('Trigger'));
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
+    let menu = getByRole('menu');
+    verify(menu, getByRole);
+  });
+
+  it('should hide around Popover', async () => {
+    watchModals();
+    let {getByLabelText, getByRole} = render(
+      <>
+        <Provider theme={theme}>
+          <DialogTrigger type="popover">
+            <ActionButton aria-label="Trigger" />
+            <Dialog>contents</Dialog>
+          </DialogTrigger>
+        </Provider>
+        <hr />
+      </>
+    );
+    expect(() => getByRole('separator')).not.toThrow();
+    act(() => {
+      triggerPress(getByLabelText('Trigger'));
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
+    let dialog = getByRole('dialog');
+    verify(dialog, getByRole);
   });
 });
