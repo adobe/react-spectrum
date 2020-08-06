@@ -1,0 +1,83 @@
+.slider {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+}
+
+.sliderLabel {
+  display: flex;
+  align-self: stretch;
+}
+
+.label {
+  color: #8b8b8b;
+}
+
+.value {
+  color: #585858;
+  margin-left: auto;
+}
+
+.thumb {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #707070;
+  box-sizing: border-box;
+  background-color: #f5f5f5;
+  box-shadow: 0 0 0 4px #f5f5f5;
+  top: 4px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.thumbFocusVisible {
+  box-shadow: 0 0 0 2px #f5f5f5, 0 0 0 4px #2c83eb;
+}
+
+.thumbFocused {
+  border-color: #2c83eb;
+}
+
+.thumbDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.thumbDisabled label {
+  cursor: inherit;
+}
+
+.rail {
+  position: absolute;
+  background-color: #e4e4e4;
+  height: 3px;
+  top: 13px;
+  width: 100%;
+}
+
+.filledRail {
+  position: absolute;
+  height: 3px;
+  background-color: #707070;
+  top: 13px;
+  height: 3px;
+  top: 13px;
+  left: 0;
+}
+
+.track {
+  position: relative;
+  height: 30px;
+  width: 100%;
+}
+
+.trackContainer {
+  position: relative;
+  width: 100%;
+}
