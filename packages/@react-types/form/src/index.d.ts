@@ -32,19 +32,19 @@ export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StylePro
    */
   validationState?: ValidationState,
   /**
-   * Sets or retrieves the URL to which the form content is sent for processing.
+   * Where to send the form-data when the form is submitted.
    */
   action?: string,
   /**
-   * Sets or retrieves the encoding type for the form.
+   * The enctype attribute specifies how the form-data should be encoded when submitting it to the server.
    */
-  encType?: 'application/x-www-form-urlencoded' | 'multipart/form-data' | 'text/plain' | string,
+  encType?: 'application/x-www-form-urlencoded' | 'multipart/form-data' | 'text/plain',
   /**
-   * Sets or retrieves how to send the form data to the server.
+   * The form-data can be sent as URL variables (with method="get") or as HTTP post transaction (with method="post").
    */
-  method?: 'get' | 'post' | string,
+  method?: 'get' | 'post',
   /**
-   * Sets or retrieves the window or frame at which to target content.
+   * The target attribute specifies a name or a keyword that indicates where to display the response that is received after submitting the form.
    */
   target?: '_blank' | '_self' | '_parent' | '_top',
   /**
