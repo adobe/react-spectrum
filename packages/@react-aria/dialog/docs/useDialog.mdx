@@ -121,7 +121,7 @@ function ModalDialog(props) {
   // Prevent scrolling while the modal is open, and hide content
   // outside the modal from screen readers.
   usePreventScroll();
-  useModal();
+  let {modalProps} = useModal();
 
   // Get props for the dialog and its title
   let {dialogProps, titleProps} = useDialog(props, ref);
@@ -144,6 +144,7 @@ function ModalDialog(props) {
         <div
           {...overlayProps}
           {...dialogProps}
+          {...modalProps}
           ref={ref}
           style={{
             background: 'white',
