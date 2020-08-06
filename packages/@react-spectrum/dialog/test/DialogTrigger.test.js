@@ -12,7 +12,7 @@
 
 import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
 import {ActionButton, Button} from '@react-spectrum/button';
-import {AlertDialog, Dialog, DialogTrigger} from '../';
+import {Dialog, DialogTrigger} from '../';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -625,27 +625,24 @@ describe('DialogTrigger', function () {
     }); // wait for animation
   });
 
-  it('disable closing alert dialog via escape key', async function () {
-    let onPrimaryAction = jest.fn();
-    let {getByRole, getByText} = render(
+  it('disable closing dialog via escape key', async function () {
+    let {getByRole} = render(
       <Provider theme={theme}>
-        <DialogTrigger>
+        <DialogTrigger isKeyboardDismissDisabled>
           <ActionButton>Trigger</ActionButton>
-          <AlertDialog variant="confirmation" title="the title" primaryActionLabel="confirm" onPrimaryAction={onPrimaryAction} isKeyboardCancelDisabled>
-            Content body
-          </AlertDialog>
+          <Dialog>Content body</Dialog>
         </DialogTrigger>
       </Provider>
     );
 
-    let button = getByText('Trigger');
+    let button = getByRole('button');
     triggerPress(button);
 
     act(() => {
       jest.runAllTimers();
     });
 
-    let dialog = getByRole('alertdialog');
+    let dialog = getByRole('dialog');
 
     await waitFor(() => {
       expect(dialog).toBeVisible();

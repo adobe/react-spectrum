@@ -78,7 +78,8 @@ export interface ModalProps extends StyleProps, OverlayProps {
   isOpen?: boolean,
   onClose?: () => void,
   type?: 'fullscreen' | 'fullscreenTakeover',
-  isDismissable?: boolean
+  isDismissable?: boolean,
+  isKeyboardDismissDisabled?: boolean
 }
 
 export interface PopoverProps extends StyleProps, OverlayProps {

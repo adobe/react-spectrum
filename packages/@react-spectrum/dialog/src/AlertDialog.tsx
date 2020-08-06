@@ -50,7 +50,6 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
     onCancel = () => {},
     onPrimaryAction = () => {},
     onSecondaryAction = () => {},
-    isKeyboardCancelDisabled,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -66,50 +65,48 @@ function AlertDialog(props: SpectrumAlertDialogProps, ref: DOMRef) {
   }
 
   return (
-    <div role="none" onKeyDown={isKeyboardCancelDisabled ? (e) => e.stopPropagation() : () => {}}>
-      <Dialog
-        UNSAFE_style={styleProps.style}
-        UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)}
-        isHidden={styleProps.hidden}
-        size="M"
-        role="alertdialog"
-        ref={ref}>
-        <Heading>{title}</Heading>
-        {(variant === 'error' || variant === 'warning') &&
-          <AlertMedium
-            slot="typeIcon"
-            aria-label={formatMessage('alert')} />
-        }
-        <Divider />
-        <Content>{children}</Content>
-        <ButtonGroup align="end">
-          {cancelLabel &&
-            <Button
-              variant="secondary"
-              onPress={() => chain(onClose(), onCancel())}
-              autoFocus={autoFocusButton === 'cancel'}>
-              {cancelLabel}
-            </Button>
-          }
-          {secondaryActionLabel &&
-            <Button
-              variant="secondary"
-              onPress={() => chain(onClose(), onSecondaryAction())}
-              isDisabled={isSecondaryActionDisabled}
-              autoFocus={autoFocusButton === 'secondary'}>
-              {secondaryActionLabel}
-            </Button>
-          }
+    <Dialog
+      UNSAFE_style={styleProps.style}
+      UNSAFE_className={classNames(styles, {[`spectrum-Dialog--${variant}`]: variant}, styleProps.className)}
+      isHidden={styleProps.hidden}
+      size="M"
+      role="alertdialog"
+      ref={ref}>
+      <Heading>{title}</Heading>
+      {(variant === 'error' || variant === 'warning') &&
+        <AlertMedium
+          slot="typeIcon"
+          aria-label={formatMessage('alert')} />
+      }
+      <Divider />
+      <Content>{children}</Content>
+      <ButtonGroup align="end">
+        {cancelLabel &&
           <Button
-            variant={confirmVariant}
-            onPress={() => chain(onClose(), onPrimaryAction())}
-            isDisabled={isPrimaryActionDisabled}
-            autoFocus={autoFocusButton === 'primary'}>
-            {primaryActionLabel}
+            variant="secondary"
+            onPress={() => chain(onClose(), onCancel())}
+            autoFocus={autoFocusButton === 'cancel'}>
+            {cancelLabel}
           </Button>
-        </ButtonGroup>
-      </Dialog>
-    </div>
+        }
+        {secondaryActionLabel &&
+          <Button
+            variant="secondary"
+            onPress={() => chain(onClose(), onSecondaryAction())}
+            isDisabled={isSecondaryActionDisabled}
+            autoFocus={autoFocusButton === 'secondary'}>
+            {secondaryActionLabel}
+          </Button>
+        }
+        <Button
+          variant={confirmVariant}
+          onPress={() => chain(onClose(), onPrimaryAction())}
+          isDisabled={isPrimaryActionDisabled}
+          autoFocus={autoFocusButton === 'primary'}>
+          {primaryActionLabel}
+        </Button>
+      </ButtonGroup>
+    </Dialog>
   );
 }
 

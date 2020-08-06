@@ -28,6 +28,7 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
     hideArrow,
     targetRef,
     isDismissable,
+    isKeyboardDismissDisabled,
     ...positionProps
   } = props;
   if (!Array.isArray(children) || children.length > 2) {
@@ -67,13 +68,13 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
       case 'fullscreen':
       case 'fullscreenTakeover':
         return (
-          <Modal isOpen={state.isOpen} isDismissable={false} onClose={state.close} type={type}>
+          <Modal isOpen={state.isOpen} isDismissable={false} onClose={state.close} type={type} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
             {typeof content === 'function' ? content(state.close) : content}
           </Modal>
         );
       case 'modal':
         return (
-          <Modal isOpen={state.isOpen} isDismissable={isDismissable} onClose={state.close}>
+          <Modal isOpen={state.isOpen} isDismissable={isDismissable} onClose={state.close} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
             {typeof content === 'function' ? content(state.close) : content}
           </Modal>
         );
