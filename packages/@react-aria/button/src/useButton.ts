@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps, AriaToggleButtonProps} from '@react-types/button';
 import {ButtonHTMLAttributes, RefObject} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {mergeProps} from '@react-aria/utils';
@@ -90,4 +90,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
       }
     })
   };
+}
+
+export function useToggleButton(props: AriaToggleButtonProps, ref: RefObject<HTMLElement>): ButtonAria {
+  return useButton(props,ref)
 }

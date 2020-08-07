@@ -18,7 +18,7 @@ import React from 'react';
 import {SpectrumToggleButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
-import {useButton} from '@react-aria/button';
+import {useButton, useToggleButton} from '@react-aria/button';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import { useToggleState } from '@react-stately/toggle';
@@ -35,7 +35,7 @@ function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLBu
   } = props;
 
   let domRef = useFocusableRef(ref);
-  let {buttonProps, isPressed} = useButton(props, domRef);
+  let {buttonProps, isPressed} = useToggleButton(props, domRef);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
   let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));

@@ -34,10 +34,10 @@ storiesOf('Button/ToggleButton', module)
 
   function render(props = {}) {
     return <Flex gap="size-100">
-        <ToggleButton onChange={ action('change')} {...props}>
+        <ToggleButton onChange={action('change')} onPress={action('press')} {...props}>
             Default
         </ToggleButton>
-        <ToggleButton onChange={ action('change')} defaultSelected={true} {...props}>
+        <ToggleButton onChange={action('change')} onPress={action('press')} defaultSelected={true} {...props}>
             Default (uncontrolled)
         </ToggleButton>
     </Flex>
