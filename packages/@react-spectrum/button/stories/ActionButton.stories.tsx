@@ -39,6 +39,14 @@ storiesOf('Button/ActionButton', module)
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}
+          isSelected>
+          <Add />
+          <Text>Default selected</Text>
+        </ActionButton>
+        <ActionButton
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
           isDisabled>
           <Text>Disabled</Text>
           <Add />
@@ -54,6 +62,13 @@ storiesOf('Button/ActionButton', module)
           onPress={action('press')}
           onPressStart={action('pressstart')}
           onPressEnd={action('pressend')}>
+          <Add />
+        </ActionButton>
+        <ActionButton
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isSelected>
           <Add />
         </ActionButton>
         <ActionButton
@@ -84,6 +99,14 @@ function render(props = {}) {
         onPressEnd={action('pressend')}
         {...props}>
         Default
+      </ActionButton>
+      <ActionButton
+        onPress={action('press')}
+        onPressStart={action('pressstart')}
+        onPressEnd={action('pressend')}
+        isSelected
+        {...props}>
+        Default selected
       </ActionButton>
       <ActionButton
         onPress={action('press')}

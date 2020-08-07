@@ -27,6 +27,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
   let {
     isQuiet,
     isDisabled,
+    isSelected,
     children,
     autoFocus,
     ...otherProps
@@ -52,7 +53,8 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
               'spectrum-ActionButton--quiet': isQuiet,
               'is-active': isPressed,
               'is-disabled': isDisabled,
-              'is-hovered': isHovered
+              'is-hovered': isHovered,
+              'is-selected': isSelected
             },
             styleProps.className
           )
