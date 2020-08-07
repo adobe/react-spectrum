@@ -11,6 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Button} from '@react-spectrum/button';
 import Info from '@spectrum-icons/workflow/Info';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -139,5 +140,10 @@ function render(props = {}) {
 
 function ControlledTextArea(props) {
   let [value, setValue] = useState('');
-  return <TextArea label="megatron" value={value} onChange={setValue} {...props} isQuiet />
+  return (
+    <>
+      <TextArea label="megatron" value={value} onChange={setValue} {...props} isQuiet />
+      <Button variant="primary" onPress={() => setValue('decepticons are evil transformers and should be kicked out of earth')}>Set Text</Button>
+    </>
+  );
 }

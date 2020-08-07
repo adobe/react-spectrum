@@ -11,6 +11,7 @@
  */
 
 import {act, fireEvent, render} from '@testing-library/react';
+import {Button} from '@react-spectrum/button';
 import React, {useState} from 'react';
 import {TextArea} from '../';
 import userEvent from '@testing-library/user-event';
@@ -77,9 +78,26 @@ describe('TextArea', () => {
     });
     expect(input.style.height).toBe(`${mockScrollHeight}px`);
   });
+
+  it('Controlled changing the quiet variant automatically adjusts its vertical height', () => {
+    let tree = render(<ControlledTextArea />);
+    let input = tree.getByTestId(testId);
+    let button = tree.getByRole('button');
+
+    expect(input.style.height).toBe('');
+    act(() => {
+      userEvent.click(button);
+    });
+    expect(input.style.height).toBe(`${mockScrollHeight}px`);
+  });
 });
 
 function ControlledTextArea(props) {
   let [value, setValue] = useState('');
-  return <TextArea aria-label="megatron" value={value} isQuiet onChange={setValue} {...props} data-testid={testId} />
+  return (
+    <>
+      <TextArea aria-label="megatron" value={value} isQuiet onChange={setValue} {...props} data-testid={testId} />
+      <Button variant="primary" onPress={() => setValue('decepticon')}>Set Text</Button>
+    </>
+  );
 }
