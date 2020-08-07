@@ -60,6 +60,7 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
 }
 
 export interface AriaButtonProps extends ButtonProps, LinkButtonProps, AriaBaseButtonProps {}
+export interface AriaToggleButtonProps extends ToggleButtonProps, AriaBaseButtonProps {}
 
 export interface SpectrumButtonProps extends AriaBaseButtonProps, ButtonProps, LinkButtonProps, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
