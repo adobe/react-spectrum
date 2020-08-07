@@ -74,7 +74,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     ? <Text>{rendered}</Text>
     : rendered;
 
-  let {modality} = useFocusVisible(props);
+  let {modality} = useFocusVisible();
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -85,10 +85,12 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
           styles,
           'spectrum-Menu-item',
           {
+            // For ComboBox since focus doesn't leave the input but menu items need keyboard focus style
             'is-focused': shouldUseVirtualFocus && isFocused && modality === 'keyboard',
             'is-disabled': isDisabled,
             'is-selected': isSelected,
             'is-selectable': state.selectionManager.selectionMode !== 'none',
+            // isHovered required for customValue ComboBox, isFocused required for opening ComboBox via button
             'is-hovered': isHovered || isFocused && modality === 'pointer'
           }
         )}>

@@ -29,7 +29,9 @@ interface FocusVisibleProps {
 
 interface FocusVisibleResult {
   /** Whether keyboard focus is visible globally. */
-  isFocusVisible: boolean
+  isFocusVisible: boolean,
+  /** What the current modality is. */
+  modality: Modality
 }
 
 let currentModality = null;
@@ -194,16 +196,5 @@ export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResu
     };
   }, [isTextInput]);
 
-  // if (props.shouldUseVirtualFocus) {
-  //   setFocusVisible(isFocusVisible());
-  // }
-
-  // useEffect(() => {
-  //   if (props.shouldUseVirtualFocus) {
-  //     setFocusVisible(isFocusVisible());
-  //   }
-  // }, [props.shouldUseVirtualFocus, currentModality])
-
-  console.log('isFocusVisible', isFocusVisibleState);
   return {isFocusVisible: isFocusVisibleState, modality: currentModality};
 }
