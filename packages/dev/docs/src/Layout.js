@@ -11,7 +11,7 @@
  */
 
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import {getAnchorProps} from './utils';
@@ -41,26 +41,26 @@ const HERO = {
 
 const mdxComponents = {
   h1: ({children, ...props}) => (
-    <h1 {...props} className={classNames(typographyStyles['spectrum-Heading1--display'], typographyStyles['spectrum-Article'], docStyles['articleHeader'])}>
+    <h1 {...props} className={clsx(typographyStyles['spectrum-Heading1--display'], typographyStyles['spectrum-Article'], docStyles['articleHeader'])}>
       {children}
     </h1>
   ),
   h2: ({children, ...props}) => (
     <>
-      <h2 {...props} className={classNames(typographyStyles['spectrum-Heading3'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
+      <h2 {...props} className={clsx(typographyStyles['spectrum-Heading3'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
         {children}
-        <span className={classNames(docStyles['headingAnchor'])}>
-          <a className={classNames(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
+        <span className={clsx(docStyles['headingAnchor'])}>
+          <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
         </span>
       </h2>
       <Divider marginBottom="33px" />
     </>
   ),
   h3: ({children, ...props}) => (
-    <h3 {...props} className={classNames(typographyStyles['spectrum-Heading4'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
+    <h3 {...props} className={clsx(typographyStyles['spectrum-Heading4'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
       {children}
       <span className={docStyles['headingAnchor']}>
-        <a className={classNames(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
+        <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
       </span>
     </h3>
   ),
@@ -68,7 +68,7 @@ const mdxComponents = {
   ul: ({children, ...props}) => <ul {...props} className={typographyStyles['spectrum-Body3']}>{children}</ul>,
   code: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
   inlineCode: ({children, ...props}) => <code {...props} className={typographyStyles['spectrum-Code4']}>{children}</code>,
-  a: ({children, ...props}) => <a {...props} className={classNames(linkStyle['spectrum-Link'], docStyles.link)} {...getAnchorProps(props.href)}>{children}</a>,
+  a: ({children, ...props}) => <a {...props} className={clsx(linkStyle['spectrum-Link'], docStyles.link)} {...getAnchorProps(props.href)}>{children}</a>,
   kbd: ({children, ...props}) => <kbd {...props} className={docStyles['keyboard']}>{children}</kbd>
 };
 
@@ -113,7 +113,7 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
       lang="en-US"
       dir="ltr"
       prefix="og: http://ogp.me/ns#"
-      className={classNames(
+      className={clsx(
         theme.global.spectrum,
         theme.light['spectrum--light'],
         theme.medium['spectrum--medium'],
@@ -317,9 +317,9 @@ function Nav({currentPageName, pages}) {
   function SideNavItem({name, url, title}) {
     const isCurrentPage = !currentPageIsIndex && name === currentPageName;
     return (
-      <li className={classNames(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: isCurrentPage || (name === blogIndex && isBlog)})}>
+      <li className={clsx(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: isCurrentPage || (name === blogIndex && isBlog)})}>
         <a
-          className={classNames(sideNavStyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)}
+          className={clsx(sideNavStyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)}
           href={url}
           aria-current={isCurrentPage ? 'page' : null}
           {...getAnchorProps(url)}>{title}</a>
@@ -367,13 +367,13 @@ function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer className={docStyles.pageFooter}>
-      <hr className={classNames(ruleStyles['spectrum-Rule'], ruleStyles['spectrum-Rule--small'], ruleStyles['spectrum-Rule--horizontal'])} />
+      <hr className={clsx(ruleStyles['spectrum-Rule'], ruleStyles['spectrum-Rule--small'], ruleStyles['spectrum-Rule--horizontal'])} />
       <ul>
         <li>Copyright © {year} Adobe. All rights reserved.</li>
-        <li><a className={classNames(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy.html">Privacy</a></li>
-        <li><a className={classNames(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/legal/terms.html">Terms of Use</a></li>
-        <li><a className={classNames(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy/cookies.html">Cookies</a></li>
-        <li><a className={classNames(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy/ca-rights.html">Do not sell my personal information</a></li>
+        <li><a className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy.html">Privacy</a></li>
+        <li><a className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/legal/terms.html">Terms of Use</a></li>
+        <li><a className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy/cookies.html">Cookies</a></li>
+        <li><a className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)} href="//www.adobe.com/privacy/ca-rights.html">Do not sell my personal information</a></li>
       </ul>
     </footer>
   );
@@ -410,7 +410,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
 export function Layout(props) {
   return (
     <BaseLayout {...props}>
-      <article className={classNames(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !props.currentPage.name.endsWith('index.html')})}>
+      <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !props.currentPage.name.endsWith('index.html')})}>
         {props.children}
       </article>
     </BaseLayout>
@@ -420,7 +420,7 @@ export function Layout(props) {
 export function BlogLayout(props) {
   return (
     <BaseLayout {...props}>
-      <div className={classNames(typographyStyles['spectrum-Typography'], docStyles.article, docStyles.inCategory)}>
+      <div className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, docStyles.inCategory)}>
         {props.children}
       </div>
     </BaseLayout>

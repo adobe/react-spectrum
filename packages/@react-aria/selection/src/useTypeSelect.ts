@@ -52,6 +52,15 @@ export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
       return;
     }
 
+    // Do not propagate the Spacebar event if it's meant to be part of the search.
+    // When we time out, the search term becomes empty, hence the check on length.
+    // Trimming is to account for the case of pressing the Spacebar more than once,
+    // which should cycle through the selection/deselection of the focused item.
+    if (character === ' ' && state.search.trim().length > 0) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
     state.search += character;
 
     // Use the delegate to find a key to focus.
@@ -76,7 +85,9 @@ export function useTypeSelect(options: TypeSelectOptions): TypeSelectAria {
 
   return {
     typeSelectProps: {
-      onKeyDown: keyboardDelegate.getKeyForSearch ? onKeyDown : null
+      // Using a capturing listener to catch the keydown event before
+      // other hooks in order to handle the Spacebar event. 
+      onKeyDownCapture: keyboardDelegate.getKeyForSearch ? onKeyDown : null
     }
   };
 }

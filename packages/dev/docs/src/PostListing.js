@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import classNames from 'classnames';
+import clsx from 'clsx';
 import docStyles from '@react-spectrum/docs/src/docs.css';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {PageContext, renderHTMLfromMarkdown, Time} from '@react-spectrum/docs';
@@ -32,7 +32,7 @@ export function PostListing({type}) {
 
 function BlogPost({name, title, url, description, date}) {
   return (
-    <article className={classNames(typographyStyles['spectrum-Typography'], docStyles.blogArticle)}>
+    <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.blogArticle)}>
       <header className={docStyles.blogHeader}>
         <h2 className={typographyStyles['spectrum-Heading3']}><a href={url} className={linkStyle['spectrum-Link']}>{title}</a></h2>
         <Time date={date} />

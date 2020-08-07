@@ -23,7 +23,7 @@
     "@react-aria/i18n": "^3.1.0",
     "@react-aria/utils": "^3.1.0",
     "@react-types/shared": "^3.1.0",
-    "classnames": "^2.2.5"
+    "clsx": "^1.1.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"
