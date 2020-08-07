@@ -20,11 +20,12 @@ import React, {
   RefObject,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState
 } from 'react';
 import {Rect, Size} from '@react-stately/virtualizer';
-import {useLayoutResizeObserver} from '@react-spectrum/utils';
+import {useResizeObserver} from '@react-spectrum/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
@@ -144,7 +145,10 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     }
   }, [onVisibleRectChange, ref, state, sizeToFit, contentSize]);
 
-  useLayoutResizeObserver({ref, onResize: updateSize});
+  useLayoutEffect(() => {
+    updateSize();
+  }, [updateSize]);
+  useResizeObserver({ref, onResize: updateSize});
 
   let style: React.CSSProperties = {
     // Reset padding so that relative positioning works correctly. Padding will be done in JS layout.
