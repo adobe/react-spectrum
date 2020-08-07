@@ -20,6 +20,15 @@ interface ButtonProps extends PressEvents, FocusableProps {
   children?: ReactNode
 }
 
+interface ToggleButtonProps extends ButtonProps {
+  /**  Whether the element should be selected (controlled). */
+  isSelected?: boolean,
+  /** Whether the element should be selected (uncontrolled). */
+  defaultSelected?: boolean,
+  /** Handler that is called when the element's selection state changes. */
+  onChange: (isSelected: boolean) => void
+}
+
 export interface LinkButtonProps {
   /**
    * The HTML element or React element used to render the button, e.g. 'div', 'a', or `RouterLink`.
@@ -67,4 +76,9 @@ export interface SpectrumActionButtonProps extends AriaBaseButtonProps, ButtonPr
 export interface SpectrumLogicButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
   /** The type of boolean sequence to be represented by the LogicButton. */
   variant: 'and' | 'or'
+}
+
+export interface SpectrumToggleButtonProps extends ToggleButtonProps, SpectrumActionButtonProps {
+  /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
+  isEmphasized?: boolean
 }
