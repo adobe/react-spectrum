@@ -1,4 +1,4 @@
-import {RefObject, useEffect} from 'react';
+import {RefObject, useEffect, useLayoutEffect} from 'react';
 import './ResizeObserver.d.ts';
 
 function hasResizeObserver() {
@@ -14,6 +14,37 @@ export function useResizeObserver<T extends HTMLElement>(options: useResizeObser
   const {ref, onResize} = options;
 
   useEffect(() => {
+    if (!ref) {return; }
+
+    if (!hasResizeObserver()) {
+      window.addEventListener('resize', onResize, false);
+      return () => {
+        window.removeEventListener('resize', onResize, false);
+      };
+    } else {
+
+      const resizeObserverInstance = new window.ResizeObserver((entries) => {
+        if (!entries.length) {
+          return;
+        }
+
+        onResize();
+      });
+      resizeObserverInstance.observe(ref.current);
+
+      return () => {
+        resizeObserverInstance.unobserve(ref.current);
+      };
+    }
+
+  }, [onResize, ref]);
+}
+
+
+export function useLayoutResizeObserver<T extends HTMLElement>(options: useResizeObserverOptionsType<T>) {
+  const {ref, onResize} = options;
+
+  useLayoutEffect(() => {
     if (!ref) {return; }
 
     if (!hasResizeObserver()) {
