@@ -11,7 +11,7 @@
  */
 
 import {chain} from '@react-aria/utils';
-import React, {RefObject, useRef} from 'react';
+import React, {RefObject, useCallback, useEffect, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -30,13 +30,25 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
 
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
 
-  let onHeightChange = () => {
+  let onHeightChange = useCallback(() => {
     if (isQuiet) {
       let input = inputRef.current;
       input.style.height = 'auto';
       input.style.height = `${input.scrollHeight}px`;
     }
-  };
+  }, [isQuiet, inputRef]);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      // if no value or defaultValue is passed
+      // no need to call onHeightChange
+      if (!inputRef.current.value) {
+        return;
+      }
+      onHeightChange();
+    }
+  }, [onHeightChange]);
+
 
   let {labelProps, inputProps} = useTextField({
     ...props,
