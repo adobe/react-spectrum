@@ -16,7 +16,10 @@ import {ListState, useListState} from './useListState';
 import {Node} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 
-export interface SingleSelectListProps<T> extends CollectionBase<T>, SingleSelection {}
+export interface SingleSelectListProps<T> extends CollectionBase<T>, SingleSelection {
+  /** Filter function to generate a filtered list of nodes. */
+  filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>
+}
 export interface SingleSelectListState<T> extends ListState<T> {
   /** The key for the currently selected item. */
   readonly selectedKey: Key,

@@ -13,3 +13,4 @@
 /// <reference types="css-module-types" />
 
 export * from './triggerPress';
+export * from './testSSR';

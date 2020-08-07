@@ -145,7 +145,7 @@ const Popover = React.forwardRef(({
   }, ref);
 
   // Hide content outside the modal from screen readers.
-  useModal();
+  let {modalProps} = useModal();
 
   // Get props for the dialog and its title
   let {dialogProps, titleProps} = useDialog({}, ref);
@@ -153,7 +153,7 @@ const Popover = React.forwardRef(({
   return (
     <FocusScope restoreFocus>
       <div
-        {...mergeProps(overlayProps, mergeProps(dialogProps, otherProps))}
+        {...mergeProps(overlayProps, dialogProps, otherProps, modalProps)}
         ref={ref}
         style={{
           background: 'white',

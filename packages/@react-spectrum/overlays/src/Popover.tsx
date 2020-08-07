@@ -69,11 +69,11 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let {children, placement = 'bottom', arrowProps, isOpen, hideArrow, shouldCloseOnBlur, ...otherProps} = props;
   let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
-  useModal();
+  let {modalProps} = useModal();
 
   return (
     <div
-      {...mergeProps(otherProps, overlayProps)}
+      {...mergeProps(otherProps, overlayProps, modalProps)}
       ref={ref}
       className={
         classNames(

@@ -721,6 +721,24 @@ describe('Picker', function () {
   });
 
   describe('labeling', function () {
+    it('focuses on the picker when you click the label', function () {
+      let {getAllByText, getByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" onSelectionChange={onSelectionChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let label = getAllByText('Test')[0];
+      label.click();
+
+      let picker = getByRole('button');
+      expect(document.activeElement).toBe(picker);
+    });
+
     it('supports labeling with a visible label', function () {
       let {getAllByText, getByText, getByRole} = render(
         <Provider theme={theme}>
