@@ -63,6 +63,7 @@ function isValidKey(e: KeyboardEvent) {
 
 function handleKeyboardEvent(e: KeyboardEvent) {
   hasEventBeforeFocus = true;
+
   if (isValidKey(e)) {
     currentModality = 'keyboard';
     triggerChangeHandlers('keyboard', e);
@@ -193,5 +194,16 @@ export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResu
     };
   }, [isTextInput]);
 
-  return {isFocusVisible: isFocusVisibleState};
+  // if (props.shouldUseVirtualFocus) {
+  //   setFocusVisible(isFocusVisible());
+  // }
+
+  // useEffect(() => {
+  //   if (props.shouldUseVirtualFocus) {
+  //     setFocusVisible(isFocusVisible());
+  //   }
+  // }, [props.shouldUseVirtualFocus, currentModality])
+
+  console.log('isFocusVisible', isFocusVisibleState);
+  return {isFocusVisible: isFocusVisibleState, modality: currentModality};
 }

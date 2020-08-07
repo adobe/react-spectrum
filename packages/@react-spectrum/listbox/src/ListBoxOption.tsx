@@ -20,7 +20,7 @@ import {Node} from '@react-types/shared';
 import React, {useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
-import {useHover} from '@react-aria/interactions';
+import {useFocusVisible, useHover} from '@react-aria/interactions';
 import {useOption} from '@react-aria/listbox';
 import {useRef} from 'react';
 
@@ -74,20 +74,22 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     ? <Text>{rendered}</Text>
     : rendered;
 
+  let {modality} = useFocusVisible(props);
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...mergeProps(optionProps, shouldFocusOnHover ? {} : hoverProps)}
+        {...mergeProps(optionProps, shouldFocusOnHover ? hoverProps : {})}
         ref={ref}
         className={classNames(
           styles,
           'spectrum-Menu-item',
           {
-            'is-focused': shouldUseVirtualFocus && isFocused,
+            'is-focused': shouldUseVirtualFocus && isFocused && modality === 'keyboard',
             'is-disabled': isDisabled,
             'is-selected': isSelected,
             'is-selectable': state.selectionManager.selectionMode !== 'none',
-            'is-hovered': isHovered
+            'is-hovered': isHovered || isFocused && modality === 'pointer'
           }
         )}>
         <Grid
