@@ -16,6 +16,8 @@ import {filterDOMProps} from '@react-aria/utils';
 import {mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
+import { ToggleState } from '@react-stately/toggle';
+import {chain} from '@react-aria/utils';
 
 interface ButtonAria {
   /** Props for the button element. */
@@ -92,6 +94,9 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   };
 }
 
-export function useToggleButton(props: AriaToggleButtonProps, ref: RefObject<HTMLElement>): ButtonAria {
-  return useButton(props,ref)
+export function useToggleButton(props: AriaToggleButtonProps, state: ToggleState, ref: RefObject<HTMLElement>): ButtonAria {
+  return useButton({
+    ...props,
+    onPress: chain(() => state.setSelected(!state.isSelected), props.onPress)
+  },ref);
 }

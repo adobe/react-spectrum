@@ -35,11 +35,12 @@ function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLBu
   } = props;
 
   let domRef = useFocusableRef(ref);
-  let {buttonProps, isPressed} = useToggleButton(props, domRef);
+  let state = useToggleState(props);
+  let {buttonProps, isPressed} = useToggleButton(props,state,domRef);
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
   let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));
-  let state = useToggleState(props);
+  
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
