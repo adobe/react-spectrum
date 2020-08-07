@@ -118,13 +118,23 @@ export function OverlayContainer(props: ModalProviderProps): React.ReactPortal {
   return ReactDOM.createPortal(contents, document.body);
 }
 
+interface ModalAriaProps extends HTMLAttributes<HTMLElement> {
+  /** Data attribute marks the dom node as a modal for the aria-modal-polyfill. */
+  'data-ismodal': boolean
+}
+
+interface ModalAria {
+  /** Props for the modal content element. */
+  modalProps: ModalAriaProps
+}
+
 /**
  * Hides content outside the current `<OverlayContainer>` from screen readers
  * on mount and restores it on unmount. Typically used by modal dialogs and
  * other types of overlays to ensure that only the top-most modal is
  * accessible at once.
  */
-export function useModal(): void {
+export function useModal(): ModalAria {
   // Add aria-hidden to all parent providers on mount, and restore on unmount.
   let context = useContext(Context);
   if (!context) {
@@ -145,4 +155,10 @@ export function useModal(): void {
       }
     };
   }, [context, context.parent]);
+
+  return {
+    modalProps: {
+      'data-ismodal': true
+    }
+  };
 }
