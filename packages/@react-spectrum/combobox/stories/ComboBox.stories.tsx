@@ -233,6 +233,14 @@ storiesOf('ComboBox', module)
     'customWidth',
     () => (
       <Flex direction="column">
+        <ComboBox label="Combobox" {...actions} width="50px">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
+          <Item key="three">Item Three</Item>
+        </ComboBox>
         <ComboBox label="Combobox" {...actions} width="200px">
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
