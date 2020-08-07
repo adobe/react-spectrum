@@ -235,7 +235,7 @@ let [sections, setSections] = useState([
 
 <Picker items={sections}>
   {section =>
-    <Section key={item.name} title={section.name} items={section.items}>
+    <Section key={section.name} title={section.name} items={section.items}>
       {item => <Item key={item.name}>{item.name}</Item>}
     </Section>
   }
