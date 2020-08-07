@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
-import React from 'react';
+import {act, fireEvent, render} from '@testing-library/react';
+import React, {useState} from 'react';
 import {TextArea} from '../';
+import userEvent from '@testing-library/user-event';
 import V2TextArea from '@react/react-spectrum/Textarea';
 
 let testId = 'test-id';
@@ -65,4 +66,20 @@ describe('TextArea', () => {
 
     expect(input.style.height).toBe(`${mockScrollHeight}px`);
   });
+
+  it('Controlled typing in the quiet variant automatically adjusts its vertical height', () => {
+    let tree = render(<ControlledTextArea />);
+    let input = tree.getByTestId(testId);
+
+    expect(input.style.height).toBe('');
+    act(() => {
+      userEvent.type(input, 'is a transformer');
+    });
+    expect(input.style.height).toBe(`${mockScrollHeight}px`);
+  });
 });
+
+function ControlledTextArea(props) {
+  let [value, setValue] = useState('');
+  return <TextArea aria-label="megatron" value={value} isQuiet onChange={setValue} {...props} data-testid={testId} />
+}
