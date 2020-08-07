@@ -251,7 +251,7 @@ export function usePress(props: PressHookProps): PressResult {
 
     let onKeyUp = (e: KeyboardEvent) => {
       if (state.isPressed && isValidKeyboardEvent(e)) {
-        if(isSubmitEvent(e)) { // spacebar trigger form submit on key up
+        if (isSubmitEvent(e)) { // spacebar trigger form submit on key up
           e.preventDefault();
         }
         e.stopPropagation();
