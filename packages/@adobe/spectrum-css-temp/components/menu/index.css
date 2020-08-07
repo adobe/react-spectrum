@@ -55,8 +55,6 @@ governing permissions and limitations under the License.
   overflow-y: auto;
   user-select: none;
 
-  max-height: inherit; /* inherit from parent popover */
-
   & .spectrum-Menu-sectionHeading {
     /* Support headings as LI */
     margin-block-start: var(--spectrum-menu-margin-x);
