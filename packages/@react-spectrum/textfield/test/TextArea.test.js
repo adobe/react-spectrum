@@ -54,4 +54,15 @@ describe('TextArea', () => {
     fireEvent.change(input, {target: {value: '15', style: {}}});
     expect(input.style.height).toBe(`${mockScrollHeight}px`);
   });
+
+  it.each`
+    Name                               | Component        | props
+    ${'v3 TextArea (controlled)'}      | ${TextArea}      | ${{isQuiet: true, onChange, value: 'foo'}}
+    ${'v3 TextArea (uncontrolled)'}    | ${TextArea}      | ${{isQuiet: true, onChange, defaultValue: 'foo'}}
+  `('$Name quiet variant automatically adjusts its vertical height on mount', ({Component, props}) => {
+    let tree = renderComponent(Component, props);
+    let input = tree.getByTestId(testId);
+
+    expect(input.style.height).toBe(`${mockScrollHeight}px`);
+  });
 });
