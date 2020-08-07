@@ -45,49 +45,14 @@ describe('TextArea', () => {
   // "auto" to get the scroller to appear, then the height is set equal to scrollHeight to remove the scroller
   // and properly adjust the height of the textarea to match the currently input text
   it.each`
-    Name                | Component        | props
-    ${'v3 TextArea'}    | ${TextArea}      | ${{isQuiet: true, onChange}}
-    ${'v2 TextArea'}    | ${V2TextArea}    | ${{quiet: true, onChange}}
-  `('$Name quiet variant automatically adjusts its vertical height on change', ({Component, props}) => {
-    let tree = renderComponent(Component, props);
-    let input = tree.getByTestId(testId);
-
-    expect(input.style.height).toBe('');
-    fireEvent.change(input, {target: {value: '15', style: {}}});
-    expect(input.style.height).toBe(`${mockScrollHeight}px`);
-  });
-
-  it.each`
     Name                               | Component        | props
+    ${'v3 TextArea default'}           | ${TextArea}      | ${{isQuiet: true, onChange}}
     ${'v3 TextArea (controlled)'}      | ${TextArea}      | ${{isQuiet: true, onChange, value: 'foo'}}
     ${'v3 TextArea (uncontrolled)'}    | ${TextArea}      | ${{isQuiet: true, onChange, defaultValue: 'foo'}}
   `('$Name quiet variant automatically adjusts its vertical height on mount', ({Component, props}) => {
     let tree = renderComponent(Component, props);
     let input = tree.getByTestId(testId);
 
-    expect(input.style.height).toBe(`${mockScrollHeight}px`);
-  });
-
-  it('Controlled typing in the quiet variant automatically adjusts its vertical height', () => {
-    let tree = render(<ControlledTextArea />);
-    let input = tree.getByTestId(testId);
-
-    expect(input.style.height).toBe('');
-    act(() => {
-      userEvent.type(input, 'is a transformer');
-    });
-    expect(input.style.height).toBe(`${mockScrollHeight}px`);
-  });
-
-  it('Controlled changing the quiet variant automatically adjusts its vertical height', () => {
-    let tree = render(<ControlledTextArea />);
-    let input = tree.getByTestId(testId);
-    let button = tree.getByRole('button');
-
-    expect(input.style.height).toBe('');
-    act(() => {
-      userEvent.click(button);
-    });
     expect(input.style.height).toBe(`${mockScrollHeight}px`);
   });
 });

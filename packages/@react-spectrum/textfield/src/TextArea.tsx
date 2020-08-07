@@ -44,11 +44,6 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
 
   useEffect(() => {
     if (inputRef.current) {
-      // if no value or defaultValue is passed
-      // no need to call onHeightChange
-      if (!inputValue || inputValue.length === 0) {
-        return;
-      }
       onHeightChange();
     }
   }, [onHeightChange, inputValue, inputRef]);
