@@ -193,7 +193,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
           isReadOnly={isReadOnly}
           isQuiet={isQuiet}
           validationState={validationState}
-          width={width} />
+          flex={1} />
         <FieldButton
           {...triggerProps}
           ref={triggerRef}
