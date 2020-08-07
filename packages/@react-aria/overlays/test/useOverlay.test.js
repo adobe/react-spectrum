@@ -40,7 +40,7 @@ describe('useOverlay', function () {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('should not hide the overlay when clicking outside if shouldCloseOnInteractOutside returns true', function () {
+  it('should hide the overlay when clicking outside if shouldCloseOnInteractOutside returns true', function () {
     let onClose = jest.fn();
     render(<Example isOpen onClose={onClose} isDismissable shouldCloseOnInteractOutside={target => target === document.body} />);
     fireEvent.mouseDown(document.body);
