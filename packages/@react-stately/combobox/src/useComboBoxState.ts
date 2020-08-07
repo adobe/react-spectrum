@@ -111,7 +111,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let setSelectedKey = useCallback((key) => {
     let item = collection.getItem(key);
     let itemText = item ? item.textValue : '';
-    itemText && setInputValue(itemText);
+
+    // Update input value except in the case where itemText is empty and the user is in the input field (indicative of a controlled key case and the user hit backspace on a currently valid item)
+    if (itemText || !isFocused) {
+      setInputValue(itemText);
+    }
 
     // If itemText happens to be the same as the current input text but the keys don't match
     // setInputValue won't call onSelectionChange for us so we call it here manually
@@ -124,7 +128,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   }, [collection, setInputValue, inputValue, onSelectionChange, selectedKey]);
 
   // Update the selectedKey and inputValue when props.selectedKey updates
-  let lastSelectedKeyProp = useRef('' as Key);
+  let lastSelectedKeyProp = useRef(props.selectedKey);
   useEffect(() => {
     // need this check since setSelectedKey changes a lot making this useEffect fire even when props.selectedKey hasn't changed
     if (lastSelectedKeyProp.current !== props.selectedKey) {
