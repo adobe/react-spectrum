@@ -198,7 +198,9 @@ export function usePress(props: PressHookProps): PressResult {
     let pressProps: HTMLAttributes<HTMLElement> = {
       onKeyDown(e) {
         if (isValidKeyboardEvent(e.nativeEvent)) {
-          e.preventDefault();
+          if (!isSubmitEvent(e.nativeEvent)) { // enter triggers form submit on key down
+            e.preventDefault();
+          }
           e.stopPropagation();
 
 
@@ -249,7 +251,9 @@ export function usePress(props: PressHookProps): PressResult {
 
     let onKeyUp = (e: KeyboardEvent) => {
       if (state.isPressed && isValidKeyboardEvent(e)) {
-        e.preventDefault();
+        if(isSubmitEvent(e)) { // spacebar trigger form submit on key up
+          e.preventDefault();
+        }
         e.stopPropagation();
 
         state.isPressed = false;
@@ -595,6 +599,13 @@ function isValidKeyboardEvent(event: KeyboardEvent): boolean {
     // An element with role='link' should only trigger with Enter key
     !(role === 'link' && key !== 'Enter')
   );
+}
+
+function isSubmitEvent(event: KeyboardEvent): boolean {
+  const {key, target} = event;
+  const element = target as HTMLElement;
+  const type = element.getAttribute('type');
+  return (key === 'Enter' || key === ' ' || key === 'Spacebar') && type === 'submit';
 }
 
 // Original licensing for the following method can be found in the
