@@ -163,7 +163,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     onKeyDown: !isReadOnly && chain(state.isOpen && collectionProps.onKeyDownCapture, onKeyDown),
     onBlur,
     value: state.inputValue,
-    onFocus
+    onFocus,
+    autoComplete: 'off'
   }, inputRef);
 
   // Return focus to textfield if user clicks menu trigger button
