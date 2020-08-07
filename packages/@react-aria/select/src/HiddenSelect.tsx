@@ -82,7 +82,7 @@ function useHiddenSelect<T>(props: AriaHiddenSelectProps<T>, state: SelectState<
       value: state.selectedKey,
       onChange: e => state.setSelectedKey(e.target.value)
     }
-  }
+  };
 }
 
 /**
