@@ -27,7 +27,13 @@ interface OverlayProps {
   isDismissable?: boolean,
 
   /** Whether the overlay should close when focus is lost or moves outside it. */
-  shouldCloseOnBlur?: boolean
+  shouldCloseOnBlur?: boolean,
+
+  /** 
+   * Whether pressing the escape key to close the overlay should be disabled. 
+   * @default false
+   */
+  isKeyboardDismissDisabled?: boolean
 }
 
 interface OverlayAria {
@@ -43,7 +49,7 @@ const visibleOverlays: RefObject<HTMLElement>[] = [];
  * or optionally, on blur. Only the top-most overlay will close at once.
  */
 export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): OverlayAria {
-  let {onClose, shouldCloseOnBlur, isOpen, isDismissable = false} = props;
+  let {onClose, shouldCloseOnBlur, isOpen, isDismissable = false, isKeyboardDismissDisabled = false} = props;
 
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {
@@ -68,7 +74,7 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
 
   // Handle the escape key
   let onKeyDown = (e) => {
-    if (e.key === 'Escape') {
+    if (e.key === 'Escape' && !isKeyboardDismissDisabled) {
       e.preventDefault();
       onHide();
     }
