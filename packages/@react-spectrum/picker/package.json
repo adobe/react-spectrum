@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/picker",
-  "version": "3.0.0-alpha.1",
+  "version": "3.1.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -8,9 +8,12 @@
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "targets": {
     "main": {
       "includeNodeModules": [
@@ -25,27 +28,30 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/focus": "^3.0.0-rc.2",
-    "@react-aria/i18n": "^3.0.0-rc.2",
-    "@react-aria/overlays": "^3.0.0-alpha.1",
-    "@react-aria/select": "^3.0.0-alpha.1",
-    "@react-aria/utils": "^3.0.0-rc.2",
-    "@react-spectrum/button": "^3.0.0-rc.2",
-    "@react-spectrum/form": "^3.0.0-rc.2",
-    "@react-spectrum/label": "^3.0.0-rc.2",
-    "@react-spectrum/listbox": "^3.0.0-alpha.1",
-    "@react-spectrum/overlays": "^3.0.0-alpha.1",
-    "@react-spectrum/progress": "^3.0.0-rc.2",
-    "@react-spectrum/provider": "^3.0.0-rc.2",
-    "@react-spectrum/typography": "^3.0.0-alpha.1",
-    "@react-spectrum/utils": "^3.0.0-rc.2",
-    "@react-stately/select": "^3.0.0-alpha.1",
-    "@react-types/select": "^3.0.0-alpha.1",
-    "@spectrum-icons/ui": "^3.0.0-rc.2"
+    "@react-aria/focus": "^3.1.0",
+    "@react-aria/i18n": "^3.1.0",
+    "@react-aria/interactions": "^3.1.0",
+    "@react-aria/overlays": "^3.1.0",
+    "@react-aria/select": "^3.1.0",
+    "@react-aria/utils": "^3.1.0",
+    "@react-spectrum/button": "^3.1.0",
+    "@react-spectrum/form": "^3.1.0",
+    "@react-spectrum/label": "^3.1.0",
+    "@react-spectrum/listbox": "^3.1.0",
+    "@react-spectrum/overlays": "^3.1.0",
+    "@react-spectrum/progress": "^3.1.0",
+    "@react-spectrum/provider": "^3.1.0",
+    "@react-spectrum/text": "^3.1.0",
+    "@react-spectrum/utils": "^3.1.0",
+    "@react-stately/select": "^3.1.0",
+    "@react-types/overlays": "^3.1.0",
+    "@react-types/select": "^3.1.0",
+    "@react-types/shared": "^3.1.0",
+    "@spectrum-icons/ui": "^3.1.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"

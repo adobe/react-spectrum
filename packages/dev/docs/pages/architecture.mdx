@@ -1,0 +1,263 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Flex} from '@react-spectrum/layout';
+import {View} from '@react-spectrum/view';
+import style from '@react-spectrum/docs/src/docs.css';
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+---
+category: Foundation
+keywords: [react stately, react aria, react spectrum, hooks, react, spectrum]
+---
+
+# Architecture
+
+This page discusses the architecture of React Spectrum, and how
+behavior and core logic for many common components can be shared
+between design systems and across platforms.
+
+## Introduction
+
+Today, many companies are implementing their own component libraries for their
+design systems from scratch. On the web, the primitives are very low level.
+There are very few built-in browser controls that are fully styleable, so
+each company needs to reimplement many of the same components from scratch.
+This has become easier to do with React and other modern view libraries, but
+implementing full support for accessibility, internationalization, keyboard,
+mouse, and touch interactions, and other features is still extraordinarily
+difficult.
+
+In addition, JavaScript has spread beyond only the web platform. Platforms
+like React Native allow React to render native widgets across mobile
+and desktop operating systems as well. This will continue to expand in the
+future as new platforms and interaction models are developed.
+
+While each design system is unique, there is often more in common between
+components than different. Most components typically found in a design
+system, like buttons, checkboxes, selects, and even
+tables, usually have very similar behavior and logic. There are even
+specifications that describe how many of the most common components should
+behave in terms of [accessibility semantics](https://www.w3.org/TR/wai-aria-1.2/)
+and [keyboard interactions](https://www.w3.org/TR/wai-aria-practices-1.2/).
+The main difference between design systems is the styling.
+
+This opens up to the possibility of sharing much of the behavior and
+component logic between design systems and across platforms. For example,
+user interactions, accessibility, internationalization, and behavior
+can be reused, while allowing custom styling and rendering to live
+within individual design systems. This has the potential to improve
+the overall quality of applications, while saving companies money
+and time, and reducing duplicated effort across the industry.
+
+## Architecture
+
+<figure className={style.float}>
+  <Flex direction="column" gap="size-125">
+    <View backgroundColor="magenta-600" height="size-900">
+      <Flex alignItems="center" justifyContent="center" height="100%">
+        <span style={{color: 'white', fontSize: 18}}>Component</span>
+      </Flex>
+    </View>
+    <View backgroundColor="green-600" height="size-900">
+      <Flex alignItems="center" justifyContent="center" height="100%">
+        <span style={{color: 'white', fontSize: 18}}>Behavior Hook</span>
+      </Flex>
+    </View>
+    <View backgroundColor="blue-500" height="size-900">
+      <Flex alignItems="center" justifyContent="center" height="100%">
+        <span style={{color: 'white', fontSize: 18}}>State Hook</span>
+      </Flex>
+    </View>
+  </Flex>
+</figure>
+
+In order to allow reusing component behavior between design systems,
+React Spectrum splits each component into three parts: state, behavior,
+and the rendered component.
+
+Some components don't have all of these pieces. For example, some simple
+components do not require any state, and others are only compositions of
+other components, so each component has the pieces of this architecture
+that make sense for their purpose.
+
+This architecture is made possible by
+[React Hooks](https://reactjs.org/docs/hooks-intro.html), which enable
+the ability to reuse behavior between multiple components. Hooks allow
+accessing React features like state and effects from functions which
+can be called from any component. If you're unfamiliar with hooks,
+we recommend reading the documentation linked above first.
+
+### State hook
+
+At the bottom is the state hook. This hook is shared across platforms —
+it could work on the web, react-native, or any other platform, and makes
+no assumptions about the view system it is running on. It also has no
+theme or design system specific logic.
+
+The state hook accepts common props from the component and provides
+state management. It implements the core logic for the component and
+returns an interface for reading and updating the component state.
+
+Not all components have a state hook. For example, many components are
+read-only — they display something to the user but don't allow them
+to change it. State hooks are found in interactive components that allow
+data entry, or have some kind of visual state that the user can update
+(e.g. expanding/collapsing).
+
+### Behavior hook
+
+In the middle is the behavior hook. This hook is platform specific, and
+depends on the platform API (e.g. the DOM or react-native). It also has
+no theme or design system specific logic. It implements event
+handling, accessibility, internationalization, etc. — all the parts of a
+component that could be shared across multiple design systems.
+
+The behavior hook uses the state hook in order to implement component behavior.
+It returns one or more sets of platform specific props (e.g. DOM props) that
+can be spread onto the elements rendered by the component. These include
+semantic properties like [ARIA](https://www.w3.org/TR/wai-aria-1.2/), and
+event handlers. The event handlers in turn call methods on
+the state interface to implement the behavior for the component.
+
+Some components may not have any user interactions, but still have a behavior
+hook. Most components have some kind of semantics that they need to expose
+for accessibility (a form of behavior). The only components that won't have
+a behavior hook of their own are those that only compose together other
+components.
+
+### Component
+
+At the top is the component, which lives in each design system and composes
+all of these pieces together. It provides the theme and design system specific
+logic, and renders the actual platform elements. It applies styles, which could
+be implemented in many different ways (e.g. CSS classes, CSS-in-JS, etc.).
+
+The component uses props returned by the behavior hook and state from the state
+hook to implement the visual appearance. It spreads props returned from the behavior
+hook onto elements that it renders to apply semantics and interactions, and can use
+the state from the state hook to adjust its visual appearance.
+This allows complete control over the rendering of the component, including
+things like adding extra elements as needed for styling or layout control.
+
+<div style={{clear: 'both'}} />
+
+## Implementation
+
+<figure className={style.float}>
+  <Flex direction="column" gap="size-125">
+    <View backgroundColor="magenta-600" height="size-900">
+      <Flex alignItems="center" justifyContent="center" height="100%">
+        <span style={{color: 'white', fontSize: 18}}>@react-spectrum</span>
+      </Flex>
+    </View>
+    <View backgroundColor="green-600" height="size-900">
+      <Flex alignItems="center" justifyContent="center" height="100%">
+        <span style={{color: 'white', fontSize: 18}}>@react-aria</span>
+      </Flex>
+    </View>
+    <View backgroundColor="blue-500" height="size-900">
+      <Flex alignItems="center" justifyContent="center" height="100%">
+        <span style={{color: 'white', fontSize: 18}}>@react-stately</span>
+      </Flex>
+    </View>
+  </Flex>
+</figure>
+
+Our implementation of this architecture splits each piece into three npm
+scopes, with individually versioned packages for each component. This
+allows you **incrementally adopt** this approach in your own design system
+and reuse as much or as little as makes sense for your usecases.
+
+Within a component, the hooks are designed to be **highly composable**,
+with individual features split into many hooks. This allows you to combine
+them together and achieve your design with only the features you need in
+your design system.
+
+The overall goal for the project is to make reusing behavior across design
+systems as easy as possible, while allowing full design customizability
+and avoiding code bloat.
+
+<div style={{clear: 'both'}} />
+
+### React Stately
+
+[React Stately](react-stately/index.html) implements state management and
+core logic for each component. It handles complex logic for things
+like [collections](react-stately/collections.html) and [selection](react-stately/selection.html)
+in a fully cross-platform way that you could reuse on the web, in
+react-native, etc.
+
+React Stately hooks can be used independently in your own components,
+or paired with React Aria hooks to get more of the behavior and user
+interactions for web applications out of the box. We do not yet have
+behavior hooks for other platforms however, so if you're working in
+react-native or another view system, you'll need to use React Stately
+directly.
+
+Read more about React Stately and [get started](react-stately/getting-started.html)
+by reading the docs.
+
+### React Aria
+
+[React Aria](react-aria/index.html) implements behavior and [accessibility](react-aria/accessibility.html)
+for the web according to [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/).
+It includes full screen reader and keyboard navigation support, along with
+mouse and touch [interactions](react-aria/interactions.html) that have been
+tested across a wide variety of devices and browsers. It also implements
+[internationalization](react-aria/internationalization.html) for over 30
+languages, including right-to-left specific behavior, localized date and
+number formatting, and more.
+
+Most importantly, React Aria is **fully customizable**, since it doesn't
+implement any rendering or impose a DOM structure or styling methodology.
+You just need to spread the props returned by each React Aria hook onto
+the appropriate DOM elements, and you get high quality interactions,
+behavior, and accessibility pretty much for free. All you need to do is
+provide the styling.
+
+[Read more](react-aria/why.html) about React Aria and
+the problems it solves, and check out the docs to [get started](react-aria/getting-started.html)
+building your own design system.
+
+### React Spectrum
+
+[React Spectrum](react-spectrum/index.html) puts all of these pieces together
+and implements the Adobe-specific styling. It's designed to be adaptive, and
+works across mouse, touch, and keyboard interactions, on devices of any screen
+size. It supports [theming](react-spectrum/theming.html), including automatic
+support for dark mode and responsive scaling for large hit targets on touch
+devices.
+
+If you're integrating with Adobe software, React Spectrum is a great way to
+make your UI consistent. It's also a really great example of how to use
+React Aria and React Stately to build a full design system, so if you're
+developing your own component library, you can check out the
+[source code](https://github.com/adobe/react-spectrum) for
+inspiration.
+
+[Get started](react-spectrum/getting-started.html) building an application
+with React Spectrum, and read the docs for each component to learn more.
+
+## Learn more
+
+The following talk from React Europe discusses how this project came to be, its architecture, high quality
+cross-device interactions, and how we can share behavior between design systems.
+
+<div className={style.responsiveVideo}>
+  <iframe
+    title="YouTube embedded video: Design system and accessibility - Devon Govett aka @devongovett at @ReactEurope 2020"
+    width="840"
+    height="471"
+    src="https://www.youtube.com/embed/dxDcBB7Xoxs"
+    frameborder="0"
+    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen />
+</div>

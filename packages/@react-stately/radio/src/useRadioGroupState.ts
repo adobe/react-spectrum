@@ -16,19 +16,19 @@ import {useMemo, useState} from 'react';
 
 export interface RadioGroupState {
   /** The name for the group, used for native form submission. */
-  name: string,
+  readonly name: string,
 
   /** The currently selected value. */
-  selectedValue: string | undefined,
+  readonly selectedValue: string | null,
 
   /** Sets the selected value. */
-  setSelectedValue: (value: string) => void,
+  setSelectedValue(value: string): void,
 
-  /** The last focused radio. */
-  focusableRadio: string | undefined,
+  /** The value of the last focused radio. */
+  readonly lastFocusedValue: string | null,
 
-  /** Sets the last focused radio. */
-  setFocusableRadio: (value: string) => void,
+  /** Sets the last focused value. */
+  setLastFocusedValue(value: string): void
 }
 
 let instance = Math.round(Math.random() * 10000000000);
@@ -41,7 +41,7 @@ let i = 0;
 export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
   let name = useMemo(() => props.name || `radio-group-${instance}-${++i}`, [props.name]);
   let [selectedValue, setSelected] = useControlledState(props.value, props.defaultValue, props.onChange);
-  let [focusableRadio, setFocusableRadio] = useState(null);
+  let [lastFocusedValue, setLastFocusedValue] = useState(null);
 
   let setSelectedValue = (value) => {
     if (!props.isReadOnly) {
@@ -53,7 +53,7 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
     name,
     selectedValue,
     setSelectedValue,
-    focusableRadio,
-    setFocusableRadio
+    lastFocusedValue,
+    setLastFocusedValue
   };
 }

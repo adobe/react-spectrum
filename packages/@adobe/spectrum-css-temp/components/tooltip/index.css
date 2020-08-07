@@ -31,10 +31,10 @@ governing permissions and limitations under the License.
 
   vertical-align: top;
 
-  width: auto;
+  inline-size: auto;
   padding: var(--spectrum-tooltip-padding-top) var(--spectrum-tooltip-padding-x);
   border-radius: var(--spectrum-tooltip-border-radius);
-  min-height: var(--spectrum-tooltip-min-height);
+  min-block-size: var(--spectrum-tooltip-min-height);
 
   font-size: var(--spectrum-tooltip-text-size);
   font-weight: var(--spectrum-tooltip-text-font-weight);
@@ -132,10 +132,10 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tooltip-typeIcon {
-  margin-left: calc(var(--spectrum-tooltip-icon-margin-x) - var(--spectrum-tooltip-padding-x));
-  margin-right: var(--spectrum-tooltip-icon-margin-x);
-  width: var(--spectrum-tooltip-icon-size);
-  height: var(--spectrum-tooltip-icon-size);
+  margin-inline-start: calc(var(--spectrum-tooltip-icon-margin-x) - var(--spectrum-tooltip-padding-x));
+  margin-inline-end: var(--spectrum-tooltip-icon-margin-x);
+  inline-size: var(--spectrum-tooltip-icon-size);
+  block-size: var(--spectrum-tooltip-icon-size);
   align-self: flex-start;
 
   /* Adjusts for weird misalignment */
@@ -143,7 +143,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tooltip-label {
-  max-width: var(--spectrum-tooltip-content-max-width);
+  max-inline-size: var(--spectrum-tooltip-content-max-width);
 
   /* Make sure line height is correct to prevent problems in Windows */
   line-height: var(--spectrum-tooltip-text-line-height);
@@ -164,7 +164,7 @@ governing permissions and limitations under the License.
 
   .spectrum-Tooltip-label {
     /* Don't try to wrap as the mechanism used for this helper does not support wrapping */
-    max-width: none;
+    max-inline-size: none;
   }
 
   .spectrum-Tooltip--right,

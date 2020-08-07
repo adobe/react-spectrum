@@ -11,26 +11,17 @@
  */
 
 import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
-import {PositionProps} from '@react-types/overlays';
+import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
 import {ReactElement, ReactNode, RefObject} from 'react';
 
 export type SpectrumDialogClose = (close: () => void) => ReactElement;
 
-export interface DialogTriggerProps {
-  /** Whether the Dialog is open by default (controlled). */
-  isOpen?: boolean,
-  /** Whether the Dialog is open by default (uncontrolled). */
-  defaultOpen?: boolean,
-  /** Handler that is called when the Dialog's open state changes. */
-  onOpenChange?: (isOpen: boolean) => void
-}
-
-export interface SpectrumDialogTriggerProps extends DialogTriggerProps, PositionProps {
+export interface SpectrumDialogTriggerProps extends OverlayTriggerProps, PositionProps {
   /** The Dialog and its trigger element. See the DialogTrigger [Content section](#content) for more information on what to provide as children. */
   children: [ReactElement, SpectrumDialogClose | ReactElement],
   /**
    * The type of Dialog that should be rendered. See the DialogTrigger [types section](#dialog-types) for an explanation on each.
-   * @default "modal"
+   * @default 'modal'
    */
   type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
   /** The type of Dialog that should be rendered when on a mobile device. See DialogTrigger [types section](#dialog-types) for an explanation on each. */
@@ -46,7 +37,10 @@ export interface SpectrumDialogTriggerProps extends DialogTriggerProps, Position
 }
 
 export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
-  /** The accessibility role for the dialog. */
+  /**
+   * The accessibility role for the dialog.
+   * @default 'dialog'
+   */
   role?: 'dialog' | 'alertdialog'
 }
 
@@ -63,7 +57,7 @@ export interface SpectrumDialogProps extends AriaDialogProps, StyleProps {
 
 export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/dialog/#Options) of the AlertDialog.  */
-  variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning'
+  variant?: 'confirmation' | 'information' | 'destructive' | 'error' | 'warning',
   /** The title of the AlertDialog. */
   title: string,
   /** The contents of the AlertDialog. */
@@ -84,8 +78,8 @@ export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
   onPrimaryAction?: () => void,
   /** Handler that is called when the secondary button is pressed. */
   onSecondaryAction?: () => void,
-  /** Button to focus by default upon render. */
-  autoFocusButton?: 'cancel' | 'primary' | 'secondary',
+  /** Button to focus by default when the dialog opens. */
+  autoFocusButton?: 'cancel' | 'primary' | 'secondary'
   // allowsKeyboardConfirmation?: boolean, // triggers primary action
   // isKeyboardCancelDisabled?: boolean // needed?
 }

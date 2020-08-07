@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-aria/link';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/link/package.json';
 
 ```jsx import
 import {useLink} from '@react-aria/link';
@@ -52,8 +52,8 @@ handled client side with JavaScript instead, it will not be exposed to assistive
 ## Anatomy
 
 A link consists of a pressable area usually containing a textual label or an icon
-that users can click or tap to navigate to another page or resource. In addition, 
-keyboard users may activate links using the Enter key.
+that users can click or tap to navigate to another page or resource. In addition,
+keyboard users may activate links using the <kbd>Enter</kbd> key.
 
 `useLink` returns props to be spread onto the link element:
 
@@ -70,13 +70,16 @@ This example shows a basic link using a native `<a>` element.
 
 ```tsx example
 function Link(props) {
-  let {linkProps} = useLink(props);
+  let ref = React.useRef();
+  let {linkProps} = useLink(props, ref);
+
   return (
     <a
       {...linkProps}
+      ref={ref}
       href={props.href}
       target={props.target}
-      style={{color: 'dodgerblue'}}>
+      style={{color: 'var(--blue)'}}>
       {props.children}
     </a>
   );
@@ -93,12 +96,15 @@ assistive technology.
 
 ```tsx example
 function Link(props) {
-  let {linkProps} = useLink({...props, elementType: 'span'});
+  let ref = React.useRef();
+  let {linkProps} = useLink({...props, elementType: 'span'}, ref);
+
   return (
     <span
       {...linkProps}
+      ref={ref}
       style={{
-        color: 'dodgerblue',
+        color: 'var(--blue)',
         textDecoration: 'underline',
         cursor: 'pointer'
       }}>
@@ -119,14 +125,17 @@ event will not be fired. The link will be exposed as disabled to assistive techn
 
 ```tsx example
 function Link(props) {
-  let {linkProps} = useLink(props);
+  let ref = React.useRef();
+  let {linkProps} = useLink(props, ref);
+
   return (
     <a
       {...linkProps}
+      ref={ref}
       href={props.href}
       target={props.target}
       style={{
-        color: props.isDisabled ? 'gray' : 'dodgerblue',
+        color: props.isDisabled ? 'var(--gray)' : 'var(--blue)',
         cursor: props.isDisabled ? 'default' : 'pointer'
       }}>
       {props.children}

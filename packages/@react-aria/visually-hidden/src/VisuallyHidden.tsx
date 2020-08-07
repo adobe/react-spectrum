@@ -10,21 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React, {HTMLAttributes, JSXElementConstructor, ReactNode} from 'react';
 import styles from './VisuallyHidden.css';
 
 interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {
-  /** The content to visually hide */
+  /** The content to visually hide. */
   children: ReactNode,
 
   /**
-   * The element type for the container 
+   * The element type for the container.
    * @default 'div'
    */
   elementType?: string | JSXElementConstructor<any>,
-  
-  /** Whether the content can be focused */
+
+  /** Whether the content can be focused. */
   isFocusable?: boolean
 }
 
@@ -40,13 +40,13 @@ export function VisuallyHidden(props: VisuallyHiddenProps) {
     isFocusable,
     ...otherProps
   } = props;
-  
-  className = classNames(
+
+  className = clsx(
     styles['u-react-spectrum-screenReaderOnly'],
     {[styles['is-focusable']]: isFocusable},
     className
   );
-    
+
   return (
     <Element
       className={className}

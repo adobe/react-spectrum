@@ -1,0 +1,127 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+---
+category: Introduction
+---
+
+# Versioning
+
+This page discusses how individually versioned components work in React Spectrum.
+
+## Introduction
+
+For most applications, we recommend installing the `@adobe/react-spectrum`
+package, which includes all stable components in React Spectrum. Using this
+package ensures that your app includes only a single version of each component,
+and that all components are compatible with one another.
+
+However, there are some cases where it may be useful to use separate
+packages for some components. For example, you may need to temporarily upgrade a
+single component to a newer version without upgrading another. Or you may wish to
+test out a pre-release version of a component, or a brand new component that's not
+yet stable. In these cases, you can use the individually versioned packages that
+we publish for each component in addition to the mono-package.
+
+## Installing individual packages
+
+All of the individually versioned component packages are published under the
+[@react-spectrum](https://www.npmjs.com/org/react-spectrum) scope on npm.
+
+You can install any React Spectrum package using a package manager like
+[npm](https://docs.npmjs.com/cli/npm) or [yarn](https://classic.yarnpkg.com/lang/en/).
+
+```
+yarn add @react-spectrum/button
+```
+
+By default, this will get you the latest stable version of the component.
+If you'd like a pre-release version, then you'll need to specify a version
+to install:
+
+```
+yarn add @react-spectrum/button@3.0.0-rc.2
+```
+
+## Using individual packages
+
+Once you've installed an individual component package, you can update the imports
+for that component in your app to point to that package instead of the mono-package.
+
+For example, you'd replace:
+
+```tsx
+import {Button} from '@adobe/react-spectrum';
+```
+
+with:
+
+```tsx keepIndividualImports
+import {Button} from '@react-spectrum/button';
+```
+
+## Considerations
+
+Using individually versioned packages does have some downsides that you should consider
+to ensure your application works correctly and avoids bloat.
+
+### Manual upgrades
+
+You must manage versioning yourself. Unlike the mono-package, individually
+versioned packages must be manually upgraded to ensure compatibility between
+components. Upgrading a component that depends on another component may require
+that component to also be updated to ensure compatibility. We suggest using a
+lock file to ensure versions of dependencies between components are controlled.
+See [yarn lockfiles](https://classic.yarnpkg.com/en/docs/yarn-lock/) or
+[NPM lockfiles](https://docs.npmjs.com/configuring-npm/package-locks.html).
+
+### Avoid duplicate versions
+
+You should ensure that you do not unintentionally introduce multiple versions of
+the same component into your app. While this does technically work, it will
+cause your application to include more code than necessary, so it should only
+be used as a temporary fix if at all.
+
+### Provider version
+
+You must ensure that the version of the [Provider](Provider.html) component
+and the [theme](theming.html) that you use is greater than or equal to the
+newest version of any component in your app.
+
+The theme provides the CSS variables that each component depends on, so if you
+have an old theme that's missing a variable from a newer component somewhere
+in your app, it will likely not look correct. This case should be rare since
+variables are added infrequently, but it's good practice to ensure the theme
+is up to date whenever you install an individually versioned component.
+
+## Breaking changes
+
+While we try to avoid them as much as we can, sometimes breaking changes to
+components are necessary. React Spectrum strictly follows [semver](https://semver.org).
+When a breaking change occurs, it will be done in a major version release
+to avoid breaking existing applications depending on the old version.
+
+In order to enable applications to upgrade to the latest major versions
+of components incrementally, the major version will first be
+published to an individually versioned package for that component.
+Teams can choose to upgrade this component in their applications
+when they are ready, without being forced to upgrade all components at once.
+
+Every six months, if there are any major versions of components that have been released,
+a new major version of the mono-package will be released including all of
+the latest versions. At this point, applications should upgrade to the latest
+mono-package and remove any individually versioned packages they had upgraded
+to in the meantime.
+
+This strategy strikes a balance between enabling applications to upgrade to
+new versions of components immediately as needed, while not requiring them to upgrade
+all components at once.

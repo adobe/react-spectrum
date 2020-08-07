@@ -19,7 +19,7 @@ import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Heading, Text} from '@react-spectrum/typography';
+import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
@@ -28,8 +28,6 @@ import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 
 storiesOf('Dialog', module)
-// DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
-  .addParameters({chromaticProvider: {colorSchemes: ['light']}, chromatic: {pauseAnimationAtEnd: true}})
   .addParameters({providerSwitcher: {status: 'notice'}})
   .add(
     'default',
@@ -89,8 +87,6 @@ storiesOf('Dialog', module)
   );
 
 storiesOf('Dialog/Alert', module)
-// DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
-  .addParameters({chromaticProvider: {colorSchemes: ['light']}, chromatic: {pauseAnimationAtEnd: true}})
   .add(
     'destructive',
     () => renderAlert({
@@ -261,7 +257,7 @@ function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+            <Image slot="hero" alt="" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
             <Heading>The Heading</Heading>
             <Header>The Header</Header>
             <Divider />
@@ -269,7 +265,7 @@ function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
             {!isDismissable &&
               <ButtonGroup>
                 <Button variant="secondary" onPress={close}>Cancel</Button>
-                <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
+                <Button variant="cta" onPress={close}>Confirm</Button>
               </ButtonGroup>}
           </Dialog>
           )}

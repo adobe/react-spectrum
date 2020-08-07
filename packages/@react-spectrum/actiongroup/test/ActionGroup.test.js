@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render} from '@testing-library/react';
 import {ActionGroup} from '../';
 import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {fireEvent, render} from '@testing-library/react';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -58,7 +58,7 @@ let btnBehavior = new BtnBehavior();
 
 function pressKeyOnButton(key) {
   return (button) => {
-    fireEvent.keyDown(button, {key});
+    act(() => {fireEvent.keyDown(button, {key});});
   };
 }
 
@@ -136,7 +136,6 @@ describe('ActionGroup', function () {
   it.each`
   Name               | ComponentGroup   | Component
   ${'ActionGroup'}   | ${ActionGroup}   | ${Item}
-  ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button}
   `('$Name handles defaults', function ({ComponentGroup, Component}) {
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme} locale="de-DE">
@@ -145,8 +144,8 @@ describe('ActionGroup', function () {
         </ComponentGroup>
       </Provider>
     );
-    expect(getByRole('radiogroup')).toBeTruthy();
-    expect(getAllByRole('radio')).toBeTruthy();
+    expect(getByRole('toolbar')).toBeTruthy();
+    expect(getAllByRole('button')).toBeTruthy();
   });
 
   it.each`
@@ -157,8 +156,8 @@ describe('ActionGroup', function () {
     let {getByRole, getAllByRole} = render(
       <Provider theme={theme} locale="de-DE">
         <ComponentGroup {...props} >
-          <Component >Click me</Component>
-          <Component >Click me</Component>
+          <Component>Click me</Component>
+          <Component>Click me</Component>
         </ComponentGroup>
       </Provider>
     );
@@ -169,7 +168,7 @@ describe('ActionGroup', function () {
 
   it.each`
     Name               | ComponentGroup   | Component   | props
-    ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{orientation: 'vertical', selectionMode: 'none'}}
+    ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{orientation: 'vertical'}}
     ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button} | ${{orientation: 'vertical', role: 'toolbar'}}
   `('$Name handles vertical', function ({ComponentGroup, Component, props}) {
     let {getByTestId} = render(
@@ -185,9 +184,9 @@ describe('ActionGroup', function () {
 
   it.each`
     Name               | ComponentGroup   | Component   | props
-    ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{isDisabled: true}}
+    ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{selectionMode: 'single', isDisabled: true}}
     ${'V2ButtonGroup'} | ${V2ButtonGroup} | ${V2Button} | ${{disabled: true}}
-  `('$Name handles disabeld', function ({ComponentGroup, Component, props}) {
+  `('$Name handles disabled', function ({ComponentGroup, Component, props}) {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
         <ComponentGroup {...props} >
@@ -201,14 +200,14 @@ describe('ActionGroup', function () {
 
   it.each`
     Name                                                   | props                                         | orders
-    ${'(left/right arrows, ltr + horizontal) ActionGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(left/right arrows, rtl + horizontal) ActionGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.forward}]}
-    ${'(up/down arrows, ltr + horizontal) ActionGroup'}    | ${{locale: 'de-DE'}}                          | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(up/down arrows, rtl + horizontal) ActionGroup'}    | ${{locale: 'ar-AE'}}                          | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(left/right arrows, ltr + vertical) ActionGroup'}   | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(left/right arrows, rtl + vertical) ActionGroup'}   | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
-    ${'(up/down arrows, ltr + vertical) ActionGroup'}      | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
-    ${'(up/down arrows, rtl + vertical) ActionGroup'}      | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: () => userEvent.tab(), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(left/right arrows, ltr + horizontal) ActionGroup'} | ${{locale: 'de-DE'}}                          | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(left/right arrows, rtl + horizontal) ActionGroup'} | ${{locale: 'ar-AE'}}                          | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.forward}]}
+    ${'(up/down arrows, ltr + horizontal) ActionGroup'}    | ${{locale: 'de-DE'}}                          | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(up/down arrows, rtl + horizontal) ActionGroup'}    | ${{locale: 'ar-AE'}}                          | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(left/right arrows, ltr + vertical) ActionGroup'}   | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(left/right arrows, rtl + vertical) ActionGroup'}   | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowRight, result: btnBehavior.forward}, {action: pressArrowLeft, result: btnBehavior.backward}, {action: pressArrowLeft, result: btnBehavior.backward}]}
+    ${'(up/down arrows, ltr + vertical) ActionGroup'}      | ${{locale: 'de-DE', orientation: 'vertical'}} | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
+    ${'(up/down arrows, rtl + vertical) ActionGroup'}      | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: () => act(() => {userEvent.tab();}), result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
   `('$Name shifts button focus in the correct direction on key press', function ({Name, props, orders}) {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
@@ -220,8 +219,8 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
-    let buttons = tree.getAllByRole('radio');
-    let buttonGroup = tree.getByRole('radiogroup');
+    let buttons = tree.getAllByRole('button');
+    let buttonGroup = tree.getByRole('toolbar');
     buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
@@ -232,14 +231,14 @@ describe('ActionGroup', function () {
 
   it.each`
     Name                     | props                | disabledKeys   | orders
-    ${'middle disabled'}     | ${{locale: 'de-DE'}} | ${['1']}       | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
-    ${'first disabled'}      | ${{locale: 'de-DE'}} | ${['0']}       | ${[{action: () => userEvent.tab(), result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}]}
-    ${'last disabled'}       | ${{locale: 'de-DE'}} | ${['2']}       | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
-    ${'1&2 disabled'}        | ${{locale: 'de-DE'}} | ${['0', '1']}  | ${[{action: () => userEvent.tab(), result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}]}
-    ${'rtl middle disabled'} | ${{locale: 'ar-AE'}} | ${['1']}       | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
-    ${'rtl first disabled'}  | ${{locale: 'ar-AE'}} | ${['0']}       | ${[{action: () => userEvent.tab(), result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}]}
-    ${'rtl last disabled'}   | ${{locale: 'ar-AE'}} | ${['2']}       | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
-    ${'rtl 1&2 disabled'}    | ${{locale: 'ar-AE'}} | ${['0', '1']}  | ${[{action: () => userEvent.tab(), result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}]}
+    ${'middle disabled'}     | ${{locale: 'de-DE'}} | ${['1']}       | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'first disabled'}      | ${{locale: 'de-DE'}} | ${['0']}       | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}]}
+    ${'last disabled'}       | ${{locale: 'de-DE'}} | ${['2']}       | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'1&2 disabled'}        | ${{locale: 'de-DE'}} | ${['0', '1']}  | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}]}
+    ${'rtl middle disabled'} | ${{locale: 'ar-AE'}} | ${['1']}       | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'rtl first disabled'}  | ${{locale: 'ar-AE'}} | ${['0']}       | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}]}
+    ${'rtl last disabled'}   | ${{locale: 'ar-AE'}} | ${['2']}       | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['0', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '0', '-1']}, {action: pressArrowRight, result: () => ['0', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '0', '-1']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1']}]}
+    ${'rtl 1&2 disabled'}    | ${{locale: 'ar-AE'}} | ${['0', '1']}  | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowRight, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['-1', '-1', '0']}]}
 
   `('$Name skips disabled keys', function ({Name, props, disabledKeys, orders}) {
     let tree = render(
@@ -252,8 +251,8 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
-    let buttons = tree.getAllByRole('radio');
-    let buttonGroup = tree.getByRole('radiogroup');
+    let buttons = tree.getAllByRole('button');
+    let buttonGroup = tree.getByRole('toolbar');
     buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
@@ -264,8 +263,8 @@ describe('ActionGroup', function () {
 
   it.each`
     Name                         | props                | disabledKeys   | orders
-    ${'middle two disabled'}     | ${{locale: 'de-DE'}} | ${['1', '2']}  | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
-    ${'rtl middle two disabled'} | ${{locale: 'de-DE'}} | ${['1', '2']}  | ${[{action: () => userEvent.tab(), result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
+    ${'middle two disabled'}     | ${{locale: 'de-DE'}} | ${['1', '2']}  | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
+    ${'rtl middle two disabled'} | ${{locale: 'de-DE'}} | ${['1', '2']}  | ${[{action: () => act(() => {userEvent.tab();}), result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
   `('$Name skips multiple disabled keys', function ({Name, props, disabledKeys, orders}) {
     let tree = render(
       <Provider theme={theme} locale={props.locale}>
@@ -278,8 +277,8 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
-    let buttons = tree.getAllByRole('radio');
-    let buttonGroup = tree.getByRole('radiogroup');
+    let buttons = tree.getAllByRole('button');
+    let buttonGroup = tree.getByRole('toolbar');
     buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
@@ -289,58 +288,58 @@ describe('ActionGroup', function () {
   });
 
   it('should be focusable from Tab', async function () {
-    let tree = renderComponentWithExtraInputs({});
+    let tree = renderComponentWithExtraInputs({selectionMode: 'single'});
 
     let buttonBefore = tree.getByLabelText('ButtonBefore');
     let buttonAfter = tree.getByLabelText('ButtonAfter');
     let buttons = tree.getAllByRole('radio');
     buttonBefore.focus();
 
-    userEvent.tab();
+    act(() => userEvent.tab());
     expect(document.activeElement).toBe(buttons[0]);
 
-    userEvent.tab();
+    act(() => userEvent.tab());
     expect(document.activeElement).toBe(buttonAfter);
   });
 
   it('should be focusable from Shift + Tab', function () {
-    let tree = renderComponentWithExtraInputs({});
+    let tree = renderComponentWithExtraInputs({selectionMode: 'single'});
 
     let buttonBefore = tree.getByLabelText('ButtonBefore');
     let buttonAfter = tree.getByLabelText('ButtonAfter');
     let buttons = tree.getAllByRole('radio');
     buttonAfter.focus();
 
-    userEvent.tab({shift: true});
+    act(() => userEvent.tab({shift: true}));
     expect(document.activeElement).toBe(buttons[1]);
 
-    userEvent.tab({shift: true});
+    act(() => userEvent.tab({shift: true}));
     expect(document.activeElement).toBe(buttonBefore);
   });
 
   it('should remember last focused item', function () {
-    let tree = renderComponentWithExtraInputs({});
+    let tree = renderComponentWithExtraInputs({selectionMode: 'single'});
 
     let buttonBefore = tree.getByLabelText('ButtonBefore');
     let buttonAfter = tree.getByLabelText('ButtonAfter');
     let buttons = tree.getAllByRole('radio');
     buttonBefore.focus();
 
-    userEvent.tab();
+    act(() => userEvent.tab());
     expect(document.activeElement).toBe(buttons[0]);
 
     pressArrowRight(buttons[0]);
     expect(document.activeElement).toBe(buttons[1]);
 
-    userEvent.tab();
+    act(() => userEvent.tab());
     expect(document.activeElement).toBe(buttonAfter);
 
-    userEvent.tab({shift: true});
+    act(() => userEvent.tab({shift: true}));
     expect(document.activeElement).toBe(buttons[1]);
   });
 
   it('ActionGroup handles single selection', function () {
-    let {getAllByRole} = renderComponent({});
+    let {getAllByRole} = renderComponent({selectionMode: 'single'});
 
     let [button1, button2] = getAllByRole('radio');
     triggerPress(button1);
@@ -421,7 +420,7 @@ describe('ActionGroup', function () {
   it('ActionGroup should pass className, role and tabIndex', function () {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
-        <ActionGroup>
+        <ActionGroup selectionMode="single">
           <Item UNSAFE_className={'test-class'}>Click me</Item>
         </ActionGroup>
       </Provider>
@@ -438,7 +437,7 @@ describe('ActionGroup', function () {
 
   it('ActionGroup handles disabledKeys', function () {
     let onSelectionChange = jest.fn();
-    let {getAllByRole} = renderComponent({disabledKeys: ['1'], onSelectionChange});
+    let {getAllByRole} = renderComponent({selectionMode: 'single', disabledKeys: ['1'], onSelectionChange});
 
     let [button1, button2] = getAllByRole('radio');
     triggerPress(button1);
@@ -451,7 +450,7 @@ describe('ActionGroup', function () {
 
   it('ActionGroup handles selectedKeys (controlled)', function () {
     let onSelectionChange = jest.fn();
-    let {getAllByRole} = renderComponent({selectedKeys: ['1'], onSelectionChange});
+    let {getAllByRole} = renderComponent({selectionMode: 'single', selectedKeys: ['1'], onSelectionChange});
 
     let [button1, button2] = getAllByRole('radio');
     expect(button1).toHaveAttribute('aria-checked', 'true');
@@ -464,7 +463,7 @@ describe('ActionGroup', function () {
 
   it('ActionGroup handles selectedKeys (controlled)', function () {
     let onSelectionChange = jest.fn();
-    let {getAllByRole} = renderComponent({defaultSelectedKeys: ['1'], onSelectionChange});
+    let {getAllByRole} = renderComponent({selectionMode: 'single', defaultSelectedKeys: ['1'], onSelectionChange});
 
     let [button1, button2] = getAllByRole('radio');
     expect(button1).toHaveAttribute('aria-checked', 'true');
@@ -484,7 +483,7 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
-    let button1 = getByRole('radiogroup');
+    let button1 = getByRole('toolbar');
     expect(button1).toHaveAttribute('aria-label', 'Test');
   });
 
@@ -498,7 +497,7 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
-    let button1 = getByRole('radiogroup');
+    let button1 = getByRole('toolbar');
     expect(button1).toHaveAttribute('aria-labelledby', 'test');
   });
 
@@ -512,14 +511,14 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
-    let button1 = getByRole('radiogroup');
+    let button1 = getByRole('toolbar');
     expect(button1).toHaveAttribute('aria-describedby', 'test');
   });
 
   it('ActionGroup allow aria-label on Item', function () {
     let {getByRole} = render(
       <Provider theme={theme} locale="de-DE">
-        <ActionGroup>
+        <ActionGroup selectionMode="single">
           <Item aria-label="Test">Click me</Item>
         </ActionGroup>
       </Provider>
@@ -538,7 +537,7 @@ describe('ActionGroup', function () {
       </Provider>
     );
 
-    let button1 = getByRole('radiogroup');
+    let button1 = getByRole('toolbar');
     expect(button1).toHaveAttribute('data-testid', 'test');
   });
 
@@ -563,7 +562,7 @@ describe('ActionGroup', function () {
     let onAction = jest.fn();
     let tree = render(
       <Provider theme={theme} locale="de-DE">
-        <ActionGroup selectionMode="none" onAction={onAction} isDisabled>
+        <ActionGroup onAction={onAction} isDisabled>
           <Item key="test">Click me</Item>
         </ActionGroup>
       </Provider>
@@ -579,7 +578,7 @@ describe('ActionGroup', function () {
     let onAction = jest.fn();
     let tree = render(
       <Provider theme={theme} locale="de-DE">
-        <ActionGroup selectionMode="none" onAction={onAction} disabledKeys={['test']}>
+        <ActionGroup onAction={onAction} disabledKeys={['test']}>
           <Item key="test">Click me</Item>
         </ActionGroup>
       </Provider>
@@ -594,7 +593,7 @@ describe('ActionGroup', function () {
   it('supports DialogTrigger as a wrapper around items', function () {
     let tree = render(
       <Provider theme={theme}>
-        <ActionGroup selectionMode="none">
+        <ActionGroup>
           <DialogTrigger>
             <Item>Hi</Item>
             <Dialog>

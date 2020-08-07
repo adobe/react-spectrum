@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, createEvent, fireEvent, render} from '@testing-library/react';
+import {Button} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../';
 import React from 'react';
@@ -147,12 +148,16 @@ describe('Radios', function () {
       });
     }
 
+    expect(radios[0].value).toBe('dogs');
+    expect(radios[1].value).toBe('cats');
+    expect(radios[2].value).toBe('dragons');
+
     expect(radios[0].checked).toBe(false);
     expect(radios[1].checked).toBe(false);
     expect(radios[2].checked).toBe(false);
 
     let dogs = getByLabelText('Dogs');
-    userEvent.click(dogs);
+    act(() => {userEvent.click(dogs);});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
 
@@ -248,7 +253,7 @@ describe('Radios', function () {
     expect(radios[0].checked).toBe(false);
     expect(radios[1].checked).toBe(false);
     expect(radios[2].checked).toBe(false);
-    userEvent.click(dogs);
+    act(() => {userEvent.click(dogs);});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
     expect(radios[0].checked).toBe(true);
@@ -272,7 +277,7 @@ describe('Radios', function () {
     expect(radios[2]).toHaveAttribute('readonly');
 
     let cats = getByLabelText('Cats');
-    userEvent.click(cats);
+    act(() => {userEvent.click(cats);});
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
@@ -292,7 +297,7 @@ describe('Radios', function () {
     expect(radios[2]).not.toHaveAttribute('readonly');
 
     let dogs = getByLabelText('Dogs');
-    userEvent.click(dogs);
+    act(() => {userEvent.click(dogs);});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -315,7 +320,7 @@ describe('Radios', function () {
 
     // have to click label or it won't work
     let dogs = getByLabelText('Dogs');
-    userEvent.click(dogs);
+    act(() => {userEvent.click(dogs);});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
     expect(radios[0].checked).toBe(true);
@@ -340,7 +345,7 @@ describe('Radios', function () {
     expect(radios[2].checked).toBe(true);
 
     let dogs = getByLabelText('Dogs');
-    userEvent.click(dogs);
+    act(() => {userEvent.click(dogs);});
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
     expect(radios[0].checked).toBe(false);
@@ -422,12 +427,70 @@ describe('Radios', function () {
     expect(radioGroup).toHaveAttribute('aria-disabled', 'true');
   });
 
-  describe('V3 Radio group supports roving tabIndex ', function () {
+  describe('Radio group supports roving tabIndex ', function () {
     afterEach(() => {
       radioBehavior.reset();
     });
 
-    it('v3 RadioGroup default roving tabIndex', async () => {
+
+    it('does not tab through individual radios', () => {
+      // this test gives a false sense of security, it doesn't catch the problem
+      // where all keydown events were being stopped in the radio group
+      let {getByRole, getAllByRole} = render(
+        <Provider theme={theme} locale="en-US">
+          <Button variant="primary" aria-label="extra button" />
+          <RadioGroup aria-label="favorite pet" orientation="horizontal">
+            <Radio value="dogs">Dogs</Radio>
+            <Radio value="cats">Cats</Radio>
+            <Radio value="dragons">Dragons</Radio>
+          </RadioGroup>
+        </Provider>
+      );
+      let radios = getAllByRole('radio');
+      let button = getByRole('button');
+
+      let preventDefault = jest.fn();
+      act(() => {
+        let tabEvent = createEvent.keyDown(button, {key: 'Tab'});
+        fireEvent(button, tabEvent);
+        if (!tabEvent.defaultPrevented) {
+          userEvent.tab();
+        }
+        fireEvent.keyUp(button, {key: 'Tab', preventDefault});
+      });
+      expect(document.activeElement).toBe(button);
+      expect(document.activeElement).not.toBe(radios[0]);
+      expect(document.activeElement).not.toBe(radios[1]);
+      expect(document.activeElement).not.toBe(radios[2]);
+
+      act(() => {
+        let tabEvent = createEvent.keyDown(button, {key: 'Tab'});
+        fireEvent(document.activeElement, tabEvent);
+        if (!tabEvent.defaultPrevented) {
+          userEvent.tab();
+        }
+        fireEvent.keyUp(document.activeElement, {key: 'Tab', preventDefault});
+      });
+      expect(document.activeElement).not.toBe(button);
+      expect(document.activeElement).toBe(radios[0]);
+      expect(document.activeElement).not.toBe(radios[1]);
+      expect(document.activeElement).not.toBe(radios[2]);
+
+      act(() => {
+        let tabEvent = createEvent.keyDown(button, {key: 'Tab'});
+        fireEvent(document.activeElement, tabEvent);
+        if (!tabEvent.defaultPrevented) {
+          userEvent.tab();
+        }
+        fireEvent.keyUp(document.activeElement, {key: 'Tab', preventDefault});
+      });
+      expect(document.activeElement).toBe(button);
+      expect(document.activeElement).not.toBe(radios[0]);
+      expect(document.activeElement).not.toBe(radios[1]);
+      expect(document.activeElement).not.toBe(radios[2]);
+    });
+
+    it('RadioGroup default roving tabIndex', async () => {
       let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {}, {});
       let radios = getAllByRole('radio');
       expect(radios[0]).toHaveAttribute('tabIndex', '0');
@@ -437,14 +500,14 @@ describe('Radios', function () {
       radios[0].focus();
       expect(document.activeElement).toBe(radios[0]);
 
-      userEvent.click(radios[1]);
+      act(() => {userEvent.click(radios[1]);});
       expect(document.activeElement).toBe(radios[1]);
       expect(radios[0]).toHaveAttribute('tabIndex', '-1');
       expect(radios[1]).toHaveAttribute('tabIndex', '0');
       expect(radios[2]).toHaveAttribute('tabIndex', '-1');
     });
 
-    it('v3 RadioGroup roving tabIndex for autoFocus', async () => {
+    it('RadioGroup roving tabIndex for autoFocus', async () => {
       let {getAllByRole} = renderRadioGroup(RadioGroup, Radio, {}, [{}, {autoFocus: true}, {}]);
       let radios = getAllByRole('radio');
       expect(radios[0]).toHaveAttribute('tabIndex', '-1');

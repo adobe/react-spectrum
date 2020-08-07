@@ -10,28 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy, MenuTriggerProps} from '@react-types/menu';
-import {useControlledState} from '@react-stately/utils';
+import {FocusStrategy} from '@react-types/shared';
+import {MenuTriggerProps} from '@react-types/menu';
+import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useState} from 'react';
 
-export interface MenuTriggerState {
-  /** Whether the menu is currently open. */
-  isOpen: boolean,
-
-  /** Sets whether the menu is open. */
-  setOpen(value: boolean): void,
-
+export interface MenuTriggerState extends OverlayTriggerState {
   /** Controls which item will be auto focused when the menu opens. */
-  focusStrategy: FocusStrategy,
-
-  /** Sets which item will be auto focused when the menu opens. */
-  setFocusStrategy(value: FocusStrategy): void,
+  readonly focusStrategy: FocusStrategy,
 
   /** Opens the menu. */
-  open(): void,
-
-  /** Closes the menu. */
-  close(): void,
+  open(focusStrategy?: FocusStrategy | null): void,
 
   /** Toggles the menu. */
   toggle(focusStrategy?: FocusStrategy | null): void
@@ -42,23 +31,19 @@ export interface MenuTriggerState {
  * and controls which item will receive focus when it opens.
  */
 export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  {
-  let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
+  let overlayTriggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
 
   return {
-    isOpen, 
-    setOpen, 
-    focusStrategy, 
-    setFocusStrategy,
-    open() {
-      setOpen(true);
-    },
-    close() {
-      setOpen(false);
+    focusStrategy,
+    ...overlayTriggerState,
+    open(focusStrategy: FocusStrategy = null) {
+      setFocusStrategy(focusStrategy);
+      overlayTriggerState.open();
     },
     toggle(focusStrategy: FocusStrategy = null) {
       setFocusStrategy(focusStrategy);
-      setOpen(!isOpen);
+      overlayTriggerState.toggle();
     }
   };
 }

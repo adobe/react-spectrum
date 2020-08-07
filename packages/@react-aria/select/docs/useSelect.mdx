@@ -11,14 +11,14 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/select';
-import collectionsDocs from 'docs:@react-stately/collections';
+import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/select';
 import overlaysDocs from 'docs:@react-aria/overlays';
 import focusDocs from 'docs:@react-aria/focus';
 import listboxDocs from 'docs:@react-aria/listbox';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/select/package.json';
 
 ```jsx import
 import {useSelect} from '@react-aria/select';
@@ -26,7 +26,7 @@ import {useSelect} from '@react-aria/select';
 
 ---
 category: Forms
-keywords: [listbox, select, aria, form]
+keywords: [listbox, select, aria]
 ---
 
 # useSelect
@@ -82,7 +82,7 @@ the implementation of the popup listbox.
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useSelectState} />
 hook from `@react-stately/select`. The state object should be passed as an option to `useSelect`
 
-If a select not have a visible label, an `aria-label` or `aria-labelledby`
+If a select does not have a visible label, an `aria-label` or `aria-labelledby`
 prop must be passed instead to identify it to assistive technology.
 
 ## State management
@@ -140,28 +140,28 @@ function Select(props) {
   let state = useSelectState(props);
 
   // Get props for child elements from useSelect
-  let triggerRef = React.useRef();
+  let ref = React.useRef();
   let {
     labelProps,
     triggerProps,
     valueProps,
     menuProps
-  } = useSelect({...props, triggerRef}, state);
+  } = useSelect(props, state, ref);
 
   // Get props for the button based on the trigger props from useSelect
-  let {buttonProps} = useButton(triggerProps);
+  let {buttonProps} = useButton(triggerProps, ref);
 
   return (
     <div style={{position: 'relative', display: 'inline-block'}}>
       <div {...labelProps}>{props.label}</div>
       <HiddenSelect
         state={state}
-        triggerRef={triggerRef}
+        triggerRef={ref}
         label={props.label}
         name={props.name} />
       <button
         {...buttonProps}
-        ref={triggerRef}
+        ref={ref}
         style={{height: 30, fontSize: 14}}>
         <span {...valueProps}>
           {state.selectedItem
@@ -189,21 +189,19 @@ function ListBoxPopup({state, ...otherProps}) {
 
   // Get props for the listbox
   let {listBoxProps} = useListBox({
-    ref,
     autoFocus: state.focusStrategy,
     disallowEmptySelection: true
-  }, state);
+  }, state, ref);
 
   // Handle events that should cause the popup to close,
   // e.g. blur, clicking outside, or pressing the escape key.
   let overlayRef = React.useRef();
   let {overlayProps} = useOverlay({
-    ref: overlayRef,
     onClose: () => state.close(),
     shouldCloseOnBlur: true,
     isOpen: state.isOpen,
     isDismissable: true
-  });
+  }, overlayRef);
 
   // Wrap in <FocusScope> so that focus is restored back to the
   // trigger when the popup is closed. In addition, add hidden
@@ -245,12 +243,11 @@ function Option({item, state}) {
   let isSelected = state.selectionManager.isSelected(item.key);
   let {optionProps} = useOption({
     key: item.key,
-    ref,
     isDisabled,
     isSelected,
     shouldSelectOnPressUp: true,
     shouldFocusOnHover: true
-  }, state);
+  }, state, ref);
 
   // Handle focus events so we can apply highlighted
   // style to the focused option

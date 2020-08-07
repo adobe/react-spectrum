@@ -7,10 +7,10 @@
   "types": "src/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe-private/react-spectrum-v3"
+    "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/shared": "^3.0.0-alpha.1"
+    "@react-types/shared": "^3.1.0"
   },
   "publishConfig": {
     "access": "public"

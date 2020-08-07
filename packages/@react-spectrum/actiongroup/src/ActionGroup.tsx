@@ -11,13 +11,12 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {ActionGroupState, useActionGroupState} from '@react-stately/actiongroup';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {classNames, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, DOMRef, SelectionMode, StyleProps} from '@react-types/shared';
+import {DOMProps, DOMRef, Node, StyleProps} from '@react-types/shared';
+import {ListState, useListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
-import {Node} from '@react-stately/collections';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder, useHover} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
 import React, {forwardRef, Key, ReactElement, useRef} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
@@ -26,18 +25,14 @@ import {useActionGroup} from '@react-aria/actiongroup';
 import {useActionGroupItem} from '@react-aria/actiongroup';
 import {useProviderProps} from '@react-spectrum/provider';
 
-/**
-* An ActionGroup is a grouping of ActionButtons that are related to one another.
-*/
 function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
 
   let {
     isEmphasized,
-    isConnected, // no quiet option available in this mode
+    density,
     isJustified,
     isDisabled,
-    selectionMode = 'single' as SelectionMode,
     orientation = 'horizontal',
     isQuiet,
     onAction,
@@ -45,50 +40,56 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
   } = props;
 
   let domRef = useDOMRef(ref);
-  let state = useActionGroupState({...props, selectionMode});
+  let state = useListState(props);
   let {actionGroupProps} = useActionGroup(props, state, domRef);
   let isVertical = orientation === 'vertical';
   let providerProps = {isEmphasized, isDisabled, isQuiet};
   let {styleProps} = useStyleProps(props);
 
   return (
-    <div
-      {...actionGroupProps}
-      {...styleProps}
-      ref={domRef}
-      className={
-        classNames(
-          styles,
-          'spectrum-ActionButtonGroup',
-          classNames(buttonStyles, {
-            'spectrum-ButtonGroup--vertical': isVertical,
-            'spectrum-ButtonGroup--connected': isConnected && !isQuiet,
-            'spectrum-ButtonGroup--justified': isJustified
-          }),
-          otherProps.UNSAFE_className
-        )
-      }>
-      <Provider {...providerProps}>
-        {[...state.collection].map((item) => (
-          <ActionGroupItem
-            key={item.key}
-            onAction={onAction}
-            isDisabled={isDisabled}
-            isEmphasized={isEmphasized}
-            item={item}
-            state={state} />
-        ))}
-      </Provider>
+    <div {...styleProps} className={classNames(styles, 'flex-container', styleProps.className)}>
+      <div
+        {...actionGroupProps}
+        ref={domRef}
+        className={
+          classNames(
+            styles,
+            'flex-gap',
+            'spectrum-ActionGroup',
+            {
+              'spectrum-ActionGroup--quiet': isQuiet,
+              'spectrum-ActionGroup--vertical': isVertical,
+              'spectrum-ActionGroup--compact': density === 'compact',
+              'spectrum-ActionGroup--justified': isJustified
+            },
+            otherProps.UNSAFE_className
+          )
+        }>
+        <Provider {...providerProps}>
+          {[...state.collection].map((item) => (
+            <ActionGroupItem
+              key={item.key}
+              onAction={onAction}
+              isDisabled={isDisabled}
+              isEmphasized={isEmphasized}
+              item={item}
+              state={state} />
+          ))}
+        </Provider>
+      </div>
     </div>
   );
 }
 
+/**
+ * An ActionGroup is a grouping of ActionButtons that are related to one another.
+ */
 const _ActionGroup = forwardRef(ActionGroup) as <T>(props: SpectrumActionGroupProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ActionGroup as ActionGroup};
 
 interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
   item: Node<T>,
-  state: ActionGroupState<T>,
+  state: ListState<T>,
   isDisabled: boolean,
   isEmphasized: boolean,
   onAction: (key: Key) => void
@@ -99,6 +100,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: A
   let {buttonProps} = useActionGroupItem({key: item.key}, state, unwrapDOMRef(ref));
   isDisabled = isDisabled || state.disabledKeys.has(item.key);
   let isSelected = state.selectionManager.isSelected(item.key);
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   if (onAction && !isDisabled) {
     buttonProps = mergeProps(buttonProps, {
@@ -109,17 +111,24 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, onAction}: A
   let button = (
     // Use a PressResponder to send DOM props through.
     // ActionButton doesn't allow overriding the role by default.
-    <PressResponder {...buttonProps}>
+    <PressResponder {...mergeProps(buttonProps, hoverProps)}>
       <ActionButton
         ref={ref}
         UNSAFE_className={
           classNames(
-            buttonStyles,
-            'spectrum-ButtonGroup-item',
+            styles,
+            'spectrum-ActionGroup-item',
             {
-              'spectrum-ActionButton--emphasized': isEmphasized,
-              'is-selected': isSelected
-            }
+              'is-selected': isSelected,
+              'is-hovered': isHovered
+            },
+            classNames(
+              buttonStyles,
+              {
+                'spectrum-ActionButton--emphasized': isEmphasized,
+                'is-selected': isSelected
+              }
+            )
           )
         }
         isDisabled={isDisabled}

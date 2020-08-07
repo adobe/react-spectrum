@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/view';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-spectrum/view/package.json';
 
 ```jsx import
 import {Footer} from '@react-spectrum/view';
@@ -30,7 +30,7 @@ category: Content
   packageData={packageData}
   componentNames={['Footer']} />
 
-## Examples
+## Example
 
 ```tsx example
 <Footer>&copy; All rights reserved.</Footer>
@@ -38,17 +38,16 @@ category: Content
 
 ## Content
 
-The Footer component is used as a child to other components. Based on the
-component it is used within, it gets Spectrum styling and may have a preassigned
-slot for positioning. By virtue of its name, the Footer component provides
-semantic meaning in the context they are placed. An example of this is
-explained in [Dialog](Dialog.html#content). It is important to note
-that the Footer element accepts any renderable node, not just strings.
+The `Footer` component represents a footer within a Spectrum container
+such as a [Dialog](Dialog.html). `Footer` provides no specific styling by
+itself, but receives styling from the parent container. In addition,
+`Footer` will be automatically placed within the container's layout
+according to Spectrum guidelines.
 
-A Footer is used to specify a layout region below the content section of a component.
-Example usage can be found in [Dialog](Dialog.html#example).
-
-See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/footer) for more information.
+See [Dialog](Dialog.html#examples) for examples of how to use the
+`Footer` component in the context of a Spectrum container.
+See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/footer)
+for more information about the semantics of the `footer` element.
 
 ## Props
 

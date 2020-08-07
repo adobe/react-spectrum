@@ -17,7 +17,7 @@ import menuDocs from 'docs:@react-aria/menu';
 import buttonDocs from 'docs:@react-aria/button';
 import statelyDocs from 'docs:@react-stately/menu';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/menu/package.json';
 
 ```jsx import
 import {useMenuTrigger} from '@react-aria/menu';
@@ -66,7 +66,7 @@ the implementation of the button and popup menu respectively.
 </TypeContext.Provider>
 
 State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useMenuTriggerState} />
-hook from `@react-stately/menu`. The state object should be passed as an option to `useMenuTrigger`
+hook from `@react-stately/menu`. The state object should be passed as an option to `useMenuTrigger`.
 
 ## Example
 
@@ -104,7 +104,7 @@ function MenuButton(props) {
 
   // Get props for the menu trigger and menu elements
   let ref = React.useRef();
-  let {menuTriggerProps, menuProps} = useMenuTrigger({ref}, state);
+  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, ref);
 
   // Get props for the button based on the trigger props from useMenuTrigger
   let {buttonProps} = useButton(menuTriggerProps, ref);
@@ -135,18 +135,17 @@ function MenuPopup(props) {
 
   // Get props for the menu element
   let ref = React.useRef();
-  let {menuProps} = useMenu({...props, ref}, state);
+  let {menuProps} = useMenu(props, state, ref);
 
   // Handle events that should cause the menu to close,
   // e.g. blur, clicking outside, or pressing the escape key.
   let overlayRef = React.useRef();
   let {overlayProps} = useOverlay({
-    ref: overlayRef,
     onClose: props.onClose,
     shouldCloseOnBlur: true,
     isOpen: true,
     isDismissable: true
-  });
+  }, overlayRef);
 
   // Wrap in <FocusScope> so that focus is restored back to the
   // trigger when the menu is closed. In addition, add hidden
@@ -188,11 +187,10 @@ function MenuItem({item, state, onAction, onClose}) {
   let ref = React.useRef();
   let {menuItemProps} = useMenuItem({
     key: item.key,
-    ref,
     isDisabled: item.isDisabled,
     onAction,
     onClose
-  }, state);
+  }, state, ref);
 
   // Handle focus events so we can apply highlighted
   // style to the focused menu item

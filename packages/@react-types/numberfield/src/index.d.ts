@@ -10,9 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, FocusableProps, InputBase, RangeInputBase, StyleProps, TextInputBase, ValueBase} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  DOMProps,
+  FocusableProps,
+  InputBase,
+  RangeInputBase,
+  StyleProps,
+  TextInputBase,
+  Validation,
+  ValueBase
+} from '@react-types/shared';
 
-export interface NumberFieldProps extends InputBase, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number> {
+export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number> {
   decrementAriaLabel?: string,
   incrementAriaLabel?: string,
   formatOptions?: Intl.NumberFormatOptions
@@ -22,5 +32,6 @@ export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLa
 
 export interface SpectrumNumberFieldProps extends AriaNumberFieldProps, StyleProps {
   isQuiet?: boolean,
-  showStepper?: boolean
+  showStepper?: boolean,
+  formatOptions?: Intl.NumberFormatOptions
 }

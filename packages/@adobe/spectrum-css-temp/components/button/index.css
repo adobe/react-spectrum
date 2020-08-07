@@ -70,8 +70,13 @@ governing permissions and limitations under the License.
 
   cursor: default;
 
+  isolation: isolate;
+
   &:focus {
     outline: none;
+  }
+  &:focus-ring {
+    z-index: 3;
   }
 
   /* Fix Firefox */
@@ -96,6 +101,9 @@ governing permissions and limitations under the License.
     max-block-size: 100%;
     flex-shrink: 0;
     order: 0; /* always be before the label, regardless of DOM order */
+
+    transition: background var(--spectrum-global-animation-duration-100) ease-out,
+                fill var(--spectrum-global-animation-duration-100) ease-out;
   }
 
 }
@@ -111,6 +119,7 @@ governing permissions and limitations under the License.
     bottom: 0;
     top: 0;
     margin: calc(var(--spectrum-alias-focus-ring-gap) * -1);
+    transform: translateX(0); /* Forces FF to render on the pixel grid */
 
     transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
                 margin var(--spectrum-global-animation-duration-100) ease-out;
@@ -149,7 +158,7 @@ governing permissions and limitations under the License.
     box-shadow: none;
   }
 
-  /* there should be space between the icon and text no matter the DOM order */ 
+  /* there should be space between the icon and text no matter the DOM order */
   .spectrum-Icon + .spectrum-Button-label {
     margin-inline-start: var(--spectrum-button-primary-text-gap);
   }
@@ -375,75 +384,4 @@ a.spectrum-ActionButton {
 .spectrum-ClearButton--small {
   inline-size: var(--spectrum-clearbutton-small-width);
   block-size: var(--spectrum-clearbutton-small-height);
-}
-
-/* Potentially temporary: Add back default margin between all buttons when adjacent */
-.spectrum-Button + .spectrum-Button {
-  margin-inline-start: var(--spectrum-buttongroup-button-gap-x);
-}
-
-.spectrum-ActionButton + .spectrum-ActionButton {
-  margin-inline-start: var(--spectrum-actionbuttongroup-text-button-gap-x);
-}
-
-.spectrum-ButtonGroup--vertical {
-  display: inline-flex;
-  flex-direction: column;
-
-  .spectrum-ButtonGroup-item {
-    .spectrum-ActionButton-label {
-      flex-grow: 1;
-      text-align: start;
-    }
-
-    &.spectrum-ActionButton + .spectrum-ActionButton {
-      margin-block-start: var(--spectrum-actionbuttongroup-text-button-gap-y);
-      margin-inline-start: var(--spectrum-buttongroup-button-gap-reset);
-    }
-  }
-}
-
-.spectrum-ButtonGroup--connected .spectrum-ButtonGroup-item {
-  &:hover {
-    z-index: 1;
-  }
-
-  /* Appear above hovered border */
-  &:focus-ring {
-    z-index: 2;
-  }
-
-  &.spectrum-ActionButton--emphasized.is-selected {
-    z-index: 2;
-  }
-
-  &.spectrum-ActionButton + .spectrum-ActionButton {
-    margin-inline-start: calc(var(--spectrum-actionbutton-border-size) * -1 / 2);
-    margin-inline-end: calc(var(--spectrum-actionbutton-border-size) * -1 / 2);
-  }
-
-  &.spectrum-ActionButton {
-    border-radius: 0;
-
-    &:first-child {
-      border-start-start-radius: var(--spectrum-actionbutton-border-radius);
-      border-end-start-radius: var(--spectrum-actionbutton-border-radius);
-      margin-inline-end: calc(var(--spectrum-actionbutton-border-size) * -1 / 2);
-    }
-
-    &:last-child {
-      border-start-end-radius: var(--spectrum-actionbutton-border-radius);
-      border-end-end-radius: var(--spectrum-actionbutton-border-radius);
-      margin-inline-start: calc(var(--spectrum-actionbutton-border-size) * -1 / 2);
-      margin-inline-end: 0;
-    }
-  }
-
-  .spectrum-ActionButton-label {
-    inline-size: auto;
-  }
-}
-
-.spectrum-ButtonGroup--justified .spectrum-ButtonGroup-item{
-  flex: 1;
 }

@@ -11,15 +11,15 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
+import {ButtonHTMLAttributes, RefObject} from 'react';
 import {filterDOMProps} from '@react-aria/utils';
 import {mergeProps} from '@react-aria/utils';
-import {RefObject} from 'react';
-import {useDOMPropsResponder, usePress} from '@react-aria/interactions';
 import {useFocusable} from '@react-aria/focus';
+import {usePress} from '@react-aria/interactions';
 
 interface ButtonAria {
   /** Props for the button element. */
-  buttonProps: React.ButtonHTMLAttributes<HTMLButtonElement>,
+  buttonProps: ButtonHTMLAttributes<HTMLButtonElement>,
   /** Whether the button is currently pressed. */
   isPressed: boolean
 }
@@ -27,8 +27,8 @@ interface ButtonAria {
 /**
  * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions,
  * focus behavior, and ARIA props for both native button elements and custom element types.
- * @param props - props to be applied to the button
- * @param ref - a ref to a DOM element for the button
+ * @param props - Props to be applied to the button.
+ * @param ref - A ref to a DOM element for the button.
  */
 export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): ButtonAria {
   let {
@@ -42,6 +42,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onClick: deprecatedOnClick,
     href,
     target,
+    rel,
     type = 'button'
   } = props;
   let additionalProps;
@@ -53,7 +54,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
       target: elementType === 'a' ? target : undefined,
       type: elementType === 'input' ? type : undefined,
       disabled: elementType === 'input' ? isDisabled : undefined,
-      'aria-disabled': !isDisabled || elementType === 'input' ? undefined : isDisabled
+      'aria-disabled': !isDisabled || elementType === 'input' ? undefined : isDisabled,
+      rel: elementType === 'a' ? rel : undefined
     };
   }
 
@@ -66,10 +68,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     ref
   });
 
-  let {contextProps} = useDOMPropsResponder(ref);
   let {focusableProps} = useFocusable(props, ref);
-  let buttonProps = mergeProps(pressProps, focusableProps);
-  buttonProps = mergeProps(buttonProps, contextProps);
+  let buttonProps = mergeProps(focusableProps, pressProps);
   buttonProps = mergeProps(buttonProps, filterDOMProps(props, {labelable: true}));
 
   return {

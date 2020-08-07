@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps} from '@react-types/button';
 import {AriaSearchFieldProps} from '@react-types/searchfield';
-import {ButtonHTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {PressProps} from '@react-aria/interactions';
 import {SearchFieldState} from '@react-stately/searchfield';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useTextField} from '@react-aria/textfield';
@@ -25,14 +25,14 @@ interface SearchFieldAria {
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the clear button. */
-  clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement> & PressProps
+  clearButtonProps: AriaButtonProps
 }
 
 /**
  * Provides the behavior and accessibility implementation for a search field.
- * @param props - props for the search field
- * @param state - state for the search field, as returned by `useSearchFieldState`
- * @param inputRef - a ref to the input element
+ * @param props - Props for the search field.
+ * @param state - State for the search field, as returned by `useSearchFieldState`.
+ * @param inputRef - A ref to the input element.
  */
 export function useSearchField(
   props: AriaSearchFieldProps,
@@ -72,11 +72,16 @@ export function useSearchField(
 
   let onClearButtonClick = () => {
     state.setValue('');
-    inputRef.current.focus();
-   
+
     if (onClear) {
       onClear();
     }
+  };
+
+  let onPressStart = () => {
+    // this is in PressStart for mobile so that touching the clear button doesn't remove focus from
+    // the input and close the keyboard
+    inputRef.current.focus();
   };
 
   let {labelProps, inputProps} = useTextField({
@@ -92,8 +97,9 @@ export function useSearchField(
     inputProps,
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),
-      tabIndex: -1,
-      onPress: onClearButtonClick
+      excludeFromTabOrder: true,
+      onPress: onClearButtonClick,
+      onPressStart
     }
   };
 }

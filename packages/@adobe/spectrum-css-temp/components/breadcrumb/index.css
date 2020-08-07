@@ -69,15 +69,23 @@ governing permissions and limitations under the License.
   > .spectrum-ActionButton {
     margin-inline-end: var(--spectrum-breadcrumb-button-gap);
   }
+
+  /* last breadcrumb should truncate with an ellipsis */
+  &:last-child {
+    overflow: hidden;
+    .spectrum-Breadcrumbs-itemLink {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
 }
 
 .spectrum-Breadcrumbs-itemLink {
   cursor: default;
   position: relative;
 
-  display: inline-flex;
-  align-items: center;
-  justify-content: start;
+  line-height: var(--spectrum-breadcrumb-list-height);
+  vertical-align: middle;
 
   padding: 0 var(--spectrum-breadcrumb-item-padding-x);
   height: var(--spectrum-breadcrumb-list-height);
@@ -89,6 +97,10 @@ governing permissions and limitations under the License.
   outline: none;
 
   text-decoration: none;
+  /* override webkit and user agent h1 */
+  margin-block-start: 0;
+  margin-block-end: 0;
+  font-size: inherit;
 
   &[href],
   &[tabindex="0"] {
@@ -121,7 +133,13 @@ governing permissions and limitations under the License.
   pointer-events: none;
 }
 
-.spectrum-Breadcrumbs--compact {
+.spectrum-Breadcrumbs--small {
+  .spectrum-Breadcrumbs-item {
+    font-size: var(--spectrum-breadcrumb-multiline-item-text-size);
+  }
+}
+
+.spectrum-Breadcrumbs--medium {
   .spectrum-Breadcrumbs-item {
     font-size: var(--spectrum-breadcrumb-compact-item-text-size);
   }
@@ -131,10 +149,6 @@ governing permissions and limitations under the License.
   flex-wrap: wrap;
 
   .spectrum-Breadcrumbs-item {
-    font-size: var(--spectrum-breadcrumb-multiline-item-text-size);
-    font-weight: var(--spectrum-breadcrumb-multiline-item-text-font-weight);
-    line-height: var(--spectrum-breadcrumb-multiline-item-text-line-height);
-
     &:last-of-type {
       height: auto;
 
@@ -148,7 +162,6 @@ governing permissions and limitations under the License.
 
       .spectrum-Breadcrumbs-itemLink {
         height: auto;
-
         text-decoration: none;
       }
     }

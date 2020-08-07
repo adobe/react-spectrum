@@ -10,10 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AriaValidationProps, FocusableDOMProps, FocusableProps, FocusableRefValue, InputBase, LabelableProps, SpectrumLabelableProps, StyleProps, TextInputBase, TextInputDOMProps, ValueBase} from '@react-types/shared';
-import {ReactElement} from 'react';
+import {
+  AriaLabelingProps,
+  AriaValidationProps,
+  FocusableDOMProps,
+  FocusableProps,
+  FocusableRefValue,
+  InputBase,
+  LabelableProps,
+  SpectrumLabelableProps,
+  StyleProps,
+  TextInputBase,
+  TextInputDOMProps,
+  Validation,
+  ValueBase
+} from '@react-types/shared';
+import {ElementType, ReactElement} from 'react';
 
-export interface TextFieldProps extends InputBase, FocusableProps, TextInputBase, ValueBase<string>, LabelableProps {}
+export interface TextFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<string>, LabelableProps {}
 
 export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps, AriaValidationProps {
   // https://www.w3.org/TR/wai-aria-1.2/#textbox
@@ -25,7 +39,16 @@ export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, F
    */
   'aria-autocomplete'?: 'none' | 'inline' | 'list' | 'both',
   /** Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. */
-  'aria-haspopup'?: boolean | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog'
+
+  'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
+
+  /**
+   * The HTML element used to render the input, e.g. 'input', or 'textarea'.
+   * It determines whether certain HTML attributes will be included in `inputProps`.
+   * For example, [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-type).
+   * @default 'input'
+   */
+  inputElementType?: ElementType
 }
 
 export interface SpectrumTextFieldProps extends AriaTextFieldProps, SpectrumLabelableProps, StyleProps {

@@ -11,56 +11,57 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-stately/collections';
+import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import treeDocs from 'docs:@react-stately/tree';
 import listDocs from 'docs:@react-stately/list';
 import listboxDocs from 'docs:@react-aria/listbox';
 import selectDocs from 'docs:@react-aria/select';
 import {HeaderInfo, TypeContext, InterfaceType, ClassAPI, FunctionAPI, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
 
 ---
 category: Collections
+keywords: [state]
 ---
 
 # Collection interface
 
-<p>{docs.exports.Collection.description}</p>
+<p>{collectionsDocs.exports.Collection.description}</p>
 
 ## Introduction
 
-The <TypeLink links={docs.links} type={docs.exports.Collection} /> interface provides a generic representation
+The <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} /> interface provides a generic representation
 for many types of collections. The collection is read only (immutable), and sequential (ordered). Each item
 has a unique key that identifies it, which can be used to access items. It's like a combination
 of an array and a map: you can iterate over items in a well defined order, and also access items by key.
 
 ## Interface
 
-<ClassAPI links={docs.links} class={docs.exports.Collection} />
+<ClassAPI links={collectionsDocs.links} class={collectionsDocs.exports.Collection} />
 
 ## Building a collection
 
-The <TypeLink links={docs.links} type={docs.exports.Collection} /> interface can be implemented in many ways.
+The <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} /> interface can be implemented in many ways.
 For example, you could write a class to expose the required methods and properties for an underlying data structure
 like an array or [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map).
 
 As discussed on the [Collection Components](collections.html) page, React Spectrum implements a JSX-based
-API for defining collections. This is implemented by the <TypeLink links={docs.links} type={docs.exports.CollectionBuilder} />
-class. `CollectionBuilder` iterates over the JSX tree, and recursively builds a collection 
-of <TypeLink links={docs.links} type={docs.exports.Node} /> objects. Each node includes the value of the item
+API for defining collections. This is implemented by the <TypeLink links={docs.links} type={docs.exports.useCollection} />
+hook. `useCollection` iterates over the JSX tree, and recursively builds a collection
+of <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Node} /> objects. Each node includes the value of the item
 it represents, along with some metadata about its place in the collection.
 
-These nodes are then wrapped in a class that implements the <TypeLink links={docs.links} type={docs.exports.Collection} />
+These nodes are then wrapped in a class that implements the <TypeLink links={collectionsDocs.links} type={collectionsDocs.exports.Collection} />
 interface, and exposes the nodes. State management hooks like <TypeLink links={listDocs.links} type={listDocs.exports.useListState} />
 and <TypeLink links={treeDocs.links} type={treeDocs.exports.useTreeState} /> handle building the collection and exposing
 the necessary interface to components.
 
-When implementing collection components using [react-aria](/react-aria/index.html) hooks 
+When implementing collection components using [react-aria](/react-aria/index.html) hooks
 like <TypeLink links={listboxDocs.links} type={listboxDocs.exports.useListBox} />,
 and <TypeLink links={selectDocs.links} type={selectDocs.exports.useSelect} />, you'll iterate over these nodes
 to render the data in the collection. The properties exposed by a node are described below.
 
 ## Node interface
 
-<TypeContext.Provider value={docs.links}>
-  <InterfaceType properties={docs.exports.Node.properties} />
+<TypeContext.Provider value={collectionsDocs.links}>
+  <InterfaceType properties={collectionsDocs.exports.Node.properties} />
 </TypeContext.Provider>

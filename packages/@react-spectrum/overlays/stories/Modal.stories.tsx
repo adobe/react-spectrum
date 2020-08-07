@@ -15,14 +15,13 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
-import {Heading, Text} from '@react-spectrum/typography';
+import {Heading, Text} from '@react-spectrum/text';
 import {Modal} from '../';
 import React, {Fragment, useState} from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('Modal', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
-  .addParameters({chromatic: {disable: true}})
   .add(
     'default',
     () => <ModalExample />

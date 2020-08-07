@@ -14,8 +14,11 @@ import {Key, useState} from 'react';
 import {Selection} from '@react-types/shared';
 
 interface ListOptions<T> {
+  /** Initial items in the list. */
   initialItems?: T[],
+  /** The keys for the initially selected items. */
   initialSelectedKeys?: 'all' | Iterable<Key>,
+  /** A function that returns a unique key for an item object. */
   getKey?: (item: T) => Key
 }
 
@@ -31,66 +34,66 @@ export interface ListData<T> {
 
   /**
    * Gets an item from the list by key.
-   * @param key - the key of the item to retrieve.
+   * @param key - The key of the item to retrieve.
    */
   getItem(key: Key): T,
 
   /**
    * Inserts items into the list at the given index.
-   * @param index - the index to insert into.
-   * @param values - the values to insert.
+   * @param index - The index to insert into.
+   * @param values - The values to insert.
    */
   insert(index: number, ...values: T[]): void,
 
   /**
    * Inserts items into the list before the item at the given key.
-   * @param key - the key of the item to insert before.
-   * @param values - the values to insert.
+   * @param key - The key of the item to insert before.
+   * @param values - The values to insert.
    */
   insertBefore(key: Key, ...values: T[]): void,
 
   /**
    * Inserts items into the list after the item at the given key.
-   * @param key - the key of the item to insert after.
-   * @param values - the values to insert.
+   * @param key - The key of the item to insert after.
+   * @param values - The values to insert.
    */
   insertAfter(key: Key, ...values: T[]): void,
 
   /**
    * Appends items to the list.
-   * @param values - the values to insert.
+   * @param values - The values to insert.
    */
   append(...values: T[]): void,
 
   /**
    * Prepends items to the list.
-   * @param value - the value to insert.
+   * @param value - The value to insert.
    */
   prepend(...values: T[]): void,
 
   /**
    * Removes items from the list by their keys.
-   * @param keys - the keys of the item to remove.
+   * @param keys - The keys of the item to remove.
    */
   remove(...keys: Key[]): void,
 
   /**
-   * Removes all items from the list that are currently 
+   * Removes all items from the list that are currently
    * in the set of selected items.
    */
   removeSelectedItems(): void,
 
   /**
    * Moves an item within the list.
-   * @param key - the key of the item to move.
-   * @param toIndex - the index to move the item to.
+   * @param key - The key of the item to move.
+   * @param toIndex - The index to move the item to.
    */
   move(key: Key, toIndex: number): void,
 
   /**
    * Updates an item in the list.
-   * @param key - the key of the item to update.
-   * @param newValue - the new value for the item.
+   * @param key - The key of the item to update.
+   * @param newValue - The new value for the item.
    */
   update(key: Key, newValue: T): void
 }
@@ -104,12 +107,12 @@ export interface ListState<T> {
  * Manages state for an immutable list data structure, and provides convenience methods to
  * update the data over time.
  */
-export function useListData<T>(opts: ListOptions<T>): ListData<T> {
+export function useListData<T>(options: ListOptions<T>): ListData<T> {
   let {
     initialItems = [],
     initialSelectedKeys,
     getKey = (item: any) => item.id || item.key
-  } = opts;
+  } = options;
   let [state, setState] = useState<ListState<T>>({
     items: initialItems,
     selectedKeys: initialSelectedKeys === 'all' ? 'all' : new Set(initialSelectedKeys || [])

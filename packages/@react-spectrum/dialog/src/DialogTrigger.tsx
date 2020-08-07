@@ -13,11 +13,11 @@
 import {DialogContext} from './context';
 import {DOMRefValue} from '@react-types/shared';
 import {Modal, Popover, Tray} from '@react-spectrum/overlays';
+import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
-import {useDialogTriggerState} from '@react-stately/dialog';
 import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 
 function DialogTrigger(props: SpectrumDialogTriggerProps) {
@@ -48,15 +48,13 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
     type = mobileType;
   }
 
-  let state = useDialogTriggerState(props);
+  let state = useOverlayTriggerState(props);
 
   if (type === 'popover') {
     return (
       <PopoverTrigger
         {...positionProps}
-        isOpen={state.isOpen}
-        onPress={state.toggle}
-        onClose={state.close}
+        state={state}
         targetRef={targetRef}
         trigger={trigger}
         content={content}
@@ -91,9 +89,7 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
   return (
     <DialogTriggerBase
       type={type}
-      isOpen={state.isOpen}
-      onPress={state.toggle}
-      onClose={state.close}
+      state={state}
       isDismissable={isDismissable}
       trigger={trigger}
       overlay={renderOverlay()} />
@@ -116,8 +112,8 @@ DialogTrigger.getCollectionNode = function* (props: SpectrumDialogTriggerProps) 
 };
 
 /**
- * The DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's 
- * open state with the trigger's press state. Additionally, it allows you to customize the type and 
+ * DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's
+ * open state with the trigger's press state. Additionally, it allows you to customize the type and
  * positioning of the Dialog.
  */
 
@@ -125,7 +121,7 @@ DialogTrigger.getCollectionNode = function* (props: SpectrumDialogTriggerProps) 
 let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => JSX.Element;
 export {_DialogTrigger as DialogTrigger};
 
-function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, hideArrow, ...props}) {
+function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props}) {
   let triggerRef = useRef<HTMLElement>();
 
   let overlayRef = useRef<DOMRefValue<HTMLDivElement>>();
@@ -137,15 +133,10 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
     offset: props.offset,
     crossOffset: props.crossOffset,
     shouldFlip: props.shouldFlip,
-    isOpen
+    isOpen: state.isOpen
   });
 
-  let {triggerProps, overlayProps} = useOverlayTrigger({
-    ref: triggerRef,
-    type: 'dialog',
-    onClose,
-    isOpen
-  });
+  let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
 
   let triggerPropsWithRef = {
     ...triggerProps,
@@ -154,10 +145,10 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
 
   let overlay = (
     <Popover
-      isOpen={isOpen}
+      isOpen={state.isOpen}
       UNSAFE_style={popoverProps.style}
       ref={overlayRef}
-      onClose={onClose}
+      onClose={state.close}
       placement={placement}
       arrowProps={arrowProps}
       hideArrow={hideArrow}>
@@ -168,9 +159,7 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
   return (
     <DialogTriggerBase
       type="popover"
-      isOpen={isOpen}
-      onPress={onPress}
-      onClose={onClose}
+      state={state}
       triggerProps={triggerPropsWithRef}
       dialogProps={overlayProps}
       trigger={trigger}
@@ -180,20 +169,18 @@ function PopoverTrigger({isOpen, onPress, onClose, targetRef, trigger, content, 
 
 interface SpectrumDialogTriggerBase {
   type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
-  isOpen?: boolean,
-  onPress?: any,
-  onClose?: () => void,
-  isDismissable?: boolean
+  state: OverlayTriggerState,
+  isDismissable?: boolean,
   dialogProps?: SpectrumDialogProps | {},
   triggerProps?: any,
   overlay: ReactElement,
   trigger: ReactElement
 }
 
-function DialogTriggerBase({type, isOpen, onPress, onClose, isDismissable, dialogProps = {}, triggerProps = {}, overlay, trigger}: SpectrumDialogTriggerBase) {
+function DialogTriggerBase({type, state, isDismissable, dialogProps = {}, triggerProps = {}, overlay, trigger}: SpectrumDialogTriggerBase) {
   let context = {
     type,
-    onClose,
+    onClose: state.close,
     isDismissable,
     ...dialogProps
   };
@@ -202,8 +189,8 @@ function DialogTriggerBase({type, isOpen, onPress, onClose, isDismissable, dialo
     <Fragment>
       <PressResponder
         {...triggerProps}
-        onPress={onPress}
-        isPressed={isOpen && type !== 'modal' && type !== 'fullscreen' && type !== 'fullscreenTakeover'}>
+        onPress={state.toggle}
+        isPressed={state.isOpen && type !== 'modal' && type !== 'fullscreen' && type !== 'fullscreenTakeover'}>
         {trigger}
       </PressResponder>
       <DialogContext.Provider value={context}>

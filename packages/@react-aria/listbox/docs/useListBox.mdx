@@ -11,11 +11,11 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/listbox';
-import collectionsDocs from 'docs:@react-stately/collections';
+import collectionsDocs from 'docs:@react-types/shared/src/collections.d.ts';
 import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/list';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/listbox/package.json';
 
 ```jsx import
 import {useListBox, useListBoxSection, useOption} from '@react-aria/listbox';
@@ -133,7 +133,7 @@ function ListBox(props) {
 
   // Get props for the listbox element
   let ref = React.useRef();
-  let {listBoxProps, labelProps} = useListBox({...props, ref}, state);
+  let {listBoxProps, labelProps} = useListBox(props, state, ref);
 
   return (
     <>
@@ -166,10 +166,9 @@ function Option({item, state}) {
   let isSelected = state.selectionManager.isSelected(item.key);
   let {optionProps} = useOption({
     key: item.key,
-    ref,
     isDisabled,
     isSelected
-  }, state);
+  }, state, ref);
 
   // Determine whether we should show a keyboard
   // focus ring for accessibility
@@ -192,7 +191,7 @@ function Option({item, state}) {
   );
 }
 
-<ListBox label="Choose an option">
+<ListBox label="Choose an option" selectionMode="single">
   <Item>One</Item>
   <Item>Two</Item>
   <Item>Three</Item>
@@ -215,7 +214,7 @@ import {useSeparator} from '@react-aria/separator';
 function ListBox(props) {
   let state = useListState(props);
   let ref = React.useRef();
-  let {listBoxProps, labelProps} = useListBox({...props, ref}, state);
+  let {listBoxProps, labelProps} = useListBox(props, state, ref);
 
   return (
     <>
@@ -300,10 +299,9 @@ function Option({item, state}) {
   let isSelected = state.selectionManager.isSelected(item.key);
   let {optionProps} = useOption({
     key: item.key,
-    ref,
     isDisabled,
     isSelected
-  }, state);
+  }, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   return (
@@ -324,7 +322,7 @@ function Option({item, state}) {
 ///- end collapse -///
 }
 
-<ListBox label="Choose an option">
+<ListBox label="Choose an option" selectionMode="multiple">
   <Section title="Section 1">
     <Item>One</Item>
     <Item>Two</Item>
@@ -360,7 +358,7 @@ function ListBox(props) {
 ///- begin collapse -///
   let state = useListState(props);
   let ref = React.useRef();
-  let {listBoxProps, labelProps} = useListBox({...props, ref}, state);
+  let {listBoxProps, labelProps} = useListBox(props, state, ref);
 
   return (
     <>
@@ -393,10 +391,9 @@ function Option({item, state}) {
   let isSelected = state.selectionManager.isSelected(item.key);
   let {optionProps, labelProps, descriptionProps} = useOption({
     key: item.key,
-    ref,
     isDisabled,
     isSelected
-  }, state);
+  }, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   // Pull out the two expected children. We will clone them
@@ -421,7 +418,7 @@ function Option({item, state}) {
   );
 }
 
-<ListBox label="Text alignment">
+<ListBox label="Text alignment" selectionMode="multiple">
   <Item textValue="Align Left">
     <div><strong>Align Left</strong></div>
     <div>Align the selected text to the left</div>

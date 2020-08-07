@@ -19,12 +19,10 @@ export interface AriaLinkOptions extends AriaLinkProps {
   /** Whether the link is disabled. */
   isDisabled?: boolean,
   /**
-   * The HTML element used to render the link, e.g. "a", or "span".
-   * @default "a"
+   * The HTML element used to render the link, e.g. 'a', or 'span'.
+   * @default 'a'
    */
-  elementType?: string,
-  /** A ref to the link element. */
-  ref?: RefObject<HTMLElement | null>
+  elementType?: string
 }
 
 export interface LinkAria {
@@ -37,9 +35,8 @@ export interface LinkAria {
  * A link allows a user to navigate to another page or resource within a web page
  * or application.
  */
-export function useLink(props: AriaLinkOptions): LinkAria {
+export function useLink(props: AriaLinkOptions, ref: RefObject<HTMLElement>): LinkAria {
   let {
-    tabIndex,
     elementType = 'a',
     onPress,
     onPressStart,
@@ -47,7 +44,6 @@ export function useLink(props: AriaLinkOptions): LinkAria {
     // @ts-ignore
     onClick: deprecatedOnClick,
     isDisabled,
-    ref,
     ...otherProps
   } = props;
 
@@ -55,7 +51,7 @@ export function useLink(props: AriaLinkOptions): LinkAria {
   if (elementType !== 'a') {
     linkProps = {
       role: 'link',
-      tabIndex: !isDisabled ? (tabIndex || 0) : undefined
+      tabIndex: !isDisabled ? 0 : undefined
     };
   }
 
@@ -64,7 +60,6 @@ export function useLink(props: AriaLinkOptions): LinkAria {
 
   return {
     linkProps: mergeProps(domProps, {
-      tabIndex,
       ...pressProps,
       ...linkProps,
       'aria-disabled': isDisabled || undefined,

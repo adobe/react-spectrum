@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import classNames from 'classnames';
+import clsx from 'clsx';
 import {mergeProps} from '@react-aria/utils';
 import React, {ReactElement} from 'react';
 import {useFocusRing} from './useFocusRing';
 
 interface FocusRingProps {
   /** Child element to apply CSS classes to. */
-  children?: ReactElement,
+  children: ReactElement,
   /** CSS class to apply when the element is focused. */
   focusClass?: string,
   /** CSS class to apply when the element has keyboard focus. */
@@ -47,7 +47,7 @@ export function FocusRing(props: FocusRingProps) {
 
   return React.cloneElement(child, mergeProps(child.props, {
     ...focusProps,
-    className: classNames({
+    className: clsx({
       [focusClass || '']: isFocused,
       [focusRingClass || '']: isFocusVisible
     })

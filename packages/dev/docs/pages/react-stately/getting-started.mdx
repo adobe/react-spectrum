@@ -1,0 +1,99 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+---
+category: Introduction
+---
+
+# Getting Started
+
+This page describes how to get started building your own component library with React Stately.
+
+## What is React Stately?
+
+**React Stately** is library of React Hooks that provides cross-platform state management for your design system.
+It provides the foundation and core logic for your component library, and implements state management for many
+common components. It returns an interface for reading and updating component state, with methods that implement
+much of the core logic for the component.
+
+React Stately is designed to be cross-platform, and could work on the web, react-native, or any other platform.
+On the web, it can be paired with [React Aria](../react-aria/index.html), which provides behavior, accessibility,
+and user interactions for many components, while React Stately provides state management.
+
+## Installation
+
+React Stately is **incrementally adoptable**. Each component is published as a separate package, so you can try it
+out in a single component and gradually add more over time. All of these packages are published under the
+[@react-stately](https://www.npmjs.com/org/react-stately) scope on npm.
+
+You can install any React Stately package using a package manager like [npm](https://docs.npmjs.com/cli/npm) or
+[yarn](https://classic.yarnpkg.com/lang/en/).
+
+```
+yarn add @react-stately/radio
+```
+
+## Building a component
+
+This example shows a very simple radio group component built with the [useRadioGroupState](useRadioGroupState.html) hook
+to manage state. It generates a name for each input in the group so the browser associates them, and manages the
+selection state. The example shows [uncontrolled](https://reactjs.org/docs/uncontrolled-components.html) behavior
+using the `defaultValue` prop, and `useRadioGroupState` handles firing the `onChange` event with the new selected value.
+
+```tsx example
+import {useRadioGroupState} from '@react-stately/radio';
+
+function RadioGroup(props) {
+  let state = useRadioGroupState(props);
+
+  return (
+    <>
+      <label>
+        <input
+          type="radio"
+          name={state.name}
+          checked={state.selectedValue === 'dogs'}
+          onChange={() => state.setSelectedValue('dogs')} />
+        Dogs
+      </label>
+      <label>
+        <input
+          type="radio"
+          name={state.name}
+          checked={state.selectedValue === 'cats'}
+          onChange={() => state.setSelectedValue('cats')} />
+        Cats
+      </label>
+    </>
+  );
+}
+
+<RadioGroup
+  defaultValue="dogs"
+  onChange={value => alert(`Selected ${value}`)} />
+```
+
+If you're using React Stately on the web, see [useRadioGroup](../react-aria/useRadioGroup.html) in React Aria to help
+handle more of this behavior and accessibility for you. To see an example of how React Stately manages more complex state,
+see [useSelectState](useSelectState.html).
+
+## Next steps
+
+Now that you understand how to use the hooks in React Stately to build your own components, you can read the documentation
+for the individual hooks to understand them in detail. We also have high level documentation about more complex topics like
+[collections](collections.html) and [selection](selection.html).
+
+For more examples of using React Stately, also check out the docs for [React Aria](../react-aria/index.html), which is a library
+of hooks that implement behavior and accessibility for the web on top of React Stately. For a complete example of a full component library
+built with React Stately and React Aria, also check out [React Spectrum](../react-spectrum/index.html). The
+[source code](https://github.com/adobe/react-spectrum/tree/main/packages/%40react-spectrum)
+is a good example of how the React Stately and React Aria hooks are used in many real-world components.

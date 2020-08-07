@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:@react-aria/focus';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/focus/package.json';
 
 ```tsx import
 import {useFocusRing} from '@react-aria/focus';
@@ -70,13 +70,14 @@ function Example() {
   let {isFocusVisible, focusProps} = useFocusRing();
 
   return (
-    <button 
+    <button
       {...focusProps}
       style={{
         WebkitAppearance: 'none',
         appearance: 'none',
         background: 'green',
         border: 'none',
+        color: 'white',
         fontSize: 14,
         padding: '4px 8px',
         outline: isFocusVisible ? '2px solid dodgerblue' : 'none',

@@ -12,12 +12,12 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/divider';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-spectrum/divider/package.json';
 
 ```jsx import
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
 ```
 
 ---
@@ -41,7 +41,7 @@ category: Content
 [View guidelines](https://spectrum.adobe.com/page/divider/#Orientation)
 
 ```tsx example
-<Flex flexDirection="column" gap="size-125">
+<Flex direction="column" gap="size-125">
   <Text>Content above</Text>
   <Divider />
   <Text>Content below</Text>
@@ -62,7 +62,7 @@ category: Content
 [View guidelines](https://spectrum.adobe.com/page/divider/#Size)
 
 ```tsx example
-<Flex flexDirection="column" gap="size-125">
+<Flex direction="column" gap="size-125">
   <Text>Content above large Divider</Text>
   <Divider size="L" />
   <Text>Content above medium Divider</Text>

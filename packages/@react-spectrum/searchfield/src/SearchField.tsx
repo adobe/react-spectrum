@@ -75,12 +75,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
           UNSAFE_className
         )
       }
-      inputClassName={
-        classNames(
-          styles,
-          'spectrum-Search-input'
-        )
-      }
+      inputClassName={classNames(styles, 'spectrum-Search-input')}
       ref={ref}
       inputRef={inputRef}
       isDisabled={isDisabled}

@@ -13,8 +13,10 @@
 import {HTMLAttributes, ReactNode} from 'react';
 import {useId} from '@react-aria/utils';
 
-interface MenuSectionProps {
+interface AriaMenuSectionProps {
+  /** The heading for the section. */
   heading?: ReactNode,
+  /** An accessibility label for the section. Required if `heading` is not present. */
   'aria-label'?: string
 }
 
@@ -32,9 +34,9 @@ interface MenuSectionAria {
 /**
  * Provides the behavior and accessibility implementation for a section in a menu.
  * See `useMenu` for more details about menus.
- * @param props - props for the section
+ * @param props - Props for the section.
  */
-export function useMenuSection(props: MenuSectionProps): MenuSectionAria {
+export function useMenuSection(props: AriaMenuSectionProps): MenuSectionAria {
   let {heading, 'aria-label': ariaLabel} = props;
   let headingId = useId();
 

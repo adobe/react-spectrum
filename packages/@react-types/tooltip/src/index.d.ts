@@ -10,14 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
 import {HTMLAttributes, ReactElement, ReactNode} from 'react';
 import {PositionProps} from '@react-types/overlays';
 
 export interface TooltipTriggerProps extends PositionProps {
   children: ReactElement[],
   isDisabled?: boolean,
-  onOpenChange?: (isOpen: boolean) => void
+  onOpenChange?: (isOpen: boolean) => void,
+  delay?: number
 }
 
 export interface TooltipProps extends DOMProps {
@@ -30,13 +31,12 @@ export interface AriaTooltipProps extends TooltipProps, DOMProps, AriaLabelingPr
 
 export interface SpectrumTooltipProps extends AriaTooltipProps, StyleProps {
   variant?: 'neutral' | 'positive' | 'negative' | 'info',
-  placement?: 'right' | 'left' | 'top' | 'bottom'
+  placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom',
+  showIcon?: boolean
 }
 
 export interface TriggerProps extends DOMProps, HTMLAttributes<HTMLElement> {}
 
 export interface TooltipTriggerAriaProps {
-  tooltipProps: TooltipProps,
-  triggerProps: TriggerProps,
   isDisabled: boolean
 }

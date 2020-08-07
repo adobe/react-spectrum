@@ -18,10 +18,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {useListState} from '@react-stately/list';
 
 function ListBox<T extends object>(props: SpectrumListBoxProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let state = useListState({
-    ...props,
-    selectionMode: props.selectionMode || 'single'
-  });
+  let state = useListState(props);
   let layout = useListBoxLayout(state);
   let domRef = useDOMRef(ref);
 
@@ -39,7 +36,7 @@ function ListBox<T extends object>(props: SpectrumListBoxProps<T>, ref: DOMRef<H
 
 
 /**
- * Listbox shows lists
+ * A list of options that can allow selection of one or more.
  */
 const _ListBox = React.forwardRef(ListBox) as <T>(props: SpectrumListBoxProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_ListBox as ListBox};

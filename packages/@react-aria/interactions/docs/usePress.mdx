@@ -13,7 +13,7 @@ export default Layout;
 import docs from 'docs:@react-aria/interactions';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-aria/interactions/package.json';
 
 ```jsx import
 import {usePress} from '@react-aria/interactions';
@@ -38,13 +38,13 @@ keywords: [press interactions, press events, aria]
 
 ## Features
 
-`usePress` handles press interactions across mouse, touch, keyboard, and screen readers. A press interaction starts when a 
+`usePress` handles press interactions across mouse, touch, keyboard, and screen readers. A press interaction starts when a
 user presses down with a mouse or their finger on the target, and ends when they move the pointer off the target. It may
 start again if the pointer re-enters the target. `usePress` returns the current press state, which can be used to adjust
 the visual appearance of the target. If the pointer is released over the target, then an `onPress` event is fired.
 
 * Handles mouse and touch events
-* Handles Enter or Space key presses
+* Handles <kbd>Enter</kbd> or <kbd>Space</kbd> key presses
 * Handles screen reader virtual clicks
 * Uses pointer events where available, with fallbacks to mouse and touch events
 * Normalizes focus behavior on mouse and touch interactions across browsers
@@ -78,7 +78,7 @@ type of event that triggered the interaction.
 This example shows a simple target that handles press events with `usePress` and logs them to a list below.
 It also uses the `isPressed` state to adjust the background color when the target is pressed.
 Press down on the target and drag your pointer off and over to see when the events are fired, and try focusing
-the target with a keyboard and pressing the Enter or Space keys to trigger events as well.
+the target with a keyboard and pressing the <kbd>Enter</kbd> or <kbd>Space</kbd> keys to trigger events as well.
 
 **NOTE: for more advanced button functionality, see [useButton](useButton.html).**
 
@@ -112,7 +112,11 @@ function Example() {
         tabIndex={0}>
         Press me!
       </div>
-      <ul>
+      <ul
+        style={{
+          maxHeight: '200px',
+          overflow: 'auto'
+        }}>
         {events.map((e, i) => <li key={i}>{e}</li>)}
       </ul>
     </>

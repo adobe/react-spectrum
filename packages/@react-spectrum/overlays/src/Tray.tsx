@@ -50,14 +50,14 @@ function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
 let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<HTMLDivElement>) {
   let {
     children,
-    onClose,
-    shouldCloseOnBlur,
     isOpen,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    shouldCloseOnBlur,
     ...otherProps
   } = props;
-  let {overlayProps} = useOverlay({ref, onClose, shouldCloseOnBlur, isOpen, isDismissable: true});
+  let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
   usePreventScroll();
-  useModal();
+  let {modalProps} = useModal();
 
   // We need to measure the window's height in JS rather than using percentages in CSS
   // so that contents (e.g. menu) can inherit the max-height properly. Using percentages
@@ -105,6 +105,7 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
     <div className={wrapperClassName}>
       <div
         {...domProps}
+        {...modalProps}
         style={style}
         className={className}
         ref={ref}

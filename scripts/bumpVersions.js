@@ -15,46 +15,61 @@ const fs = require('fs');
 const fetch = require('node-fetch');
 const semver = require('semver');
 const readline = require("readline");
+const chalk = require('chalk');
+
+let levels = {
+  alpha: 1,
+  beta: 2,
+  rc: 3,
+  released: 4
+};
 
 // Packages to release
 let publicPackages = {
-  '@react-spectrum/actiongroup': 'alpha',
-  '@react-spectrum/breadcrumbs' : 'alpha',
-  '@react-spectrum/button': 'rc',
-  '@react-spectrum/buttongroup': 'alpha',
-  '@react-spectrum/checkbox': 'rc',
-  '@react-spectrum/dialog': 'alpha',
-  '@react-spectrum/divider': 'rc',
-  '@react-spectrum/form': 'rc',
-  '@react-spectrum/icon': 'rc',
-  '@react-spectrum/illustratedmessage': 'alpha',
-  '@react-spectrum/image': 'alpha',
-  '@react-spectrum/label': 'rc',
-  '@react-spectrum/layout': 'alpha',
-  '@react-spectrum/link': 'alpha',
-  '@react-spectrum/listbox': 'alpha',
-  '@react-spectrum/menu': 'alpha',
-  '@react-spectrum/meter': 'rc',
-  '@react-spectrum/overlays': 'alpha',
-  '@react-spectrum/picker': 'alpha',
-  '@react-spectrum/progress': 'rc',
-  '@react-spectrum/provider': 'rc',
-  '@react-spectrum/radio': 'rc',
-  '@react-spectrum/searchfield': 'rc',
-  '@react-spectrum/statuslight': 'rc',
-  '@react-spectrum/switch': 'rc',
-  '@react-spectrum/textfield': 'rc',
-  '@react-spectrum/theme-default': 'rc',
-  '@react-spectrum/typography': 'alpha',
-  '@react-spectrum/utils': 'rc',
-  '@react-spectrum/view': 'alpha',
-  '@react-spectrum/well': 'rc',
-  '@spectrum-icons/color': 'rc',
-  '@spectrum-icons/workflow': 'rc'
+  '@adobe/react-spectrum': 'released',
+  '@react-spectrum/actiongroup': 'released',
+  '@react-spectrum/breadcrumbs' : 'released',
+  '@react-spectrum/button': 'released',
+  '@react-spectrum/buttongroup': 'released',
+  '@react-spectrum/checkbox': 'released',
+  '@react-spectrum/dialog': 'released',
+  '@react-spectrum/divider': 'released',
+  '@react-spectrum/form': 'released',
+  '@react-spectrum/icon': 'released',
+  '@react-spectrum/illustratedmessage': 'released',
+  '@react-spectrum/image': 'released',
+  '@react-spectrum/label': 'released',
+  '@react-spectrum/layout': 'released',
+  '@react-spectrum/link': 'released',
+  '@react-spectrum/listbox': 'released',
+  '@react-spectrum/menu': 'released',
+  '@react-spectrum/meter': 'released',
+  '@react-spectrum/overlays': 'released',
+  '@react-spectrum/picker': 'released',
+  '@react-spectrum/progress': 'released',
+  '@react-spectrum/provider': 'released',
+  '@react-spectrum/radio': 'released',
+  '@react-spectrum/searchfield': 'released',
+  '@react-spectrum/statuslight': 'released',
+  '@react-spectrum/switch': 'released',
+  '@react-spectrum/table': 'alpha',
+  '@react-types/table': 'rc',
+  '@react-spectrum/text': 'released',
+  '@react-spectrum/textfield': 'released',
+  '@react-spectrum/theme-dark': 'released',
+  '@react-spectrum/theme-default': 'released',
+  '@react-spectrum/utils': 'released',
+  '@react-spectrum/view': 'released',
+  '@react-spectrum/well': 'released',
+  '@spectrum-icons/color': 'released',
+  '@spectrum-icons/workflow': 'released',
+  '@spectrum-icons/illustrations': 'released',
+  '@react-stately/data': 'released',
+  '@react-aria/aria-modal-polyfill': 'released'
 };
 
 // Packages never to release
-let blackList = new Set([
+let excludedPackages = new Set([
   '@adobe/spectrum-css-temp',
   '@react-spectrum/test-utils',
   '@spectrum-icons/build-tools'
@@ -68,46 +83,83 @@ let releasedPackages = new Map();
 // If releasing an individual package, bump that package and all packages that depend on it.
 // Otherwise, add all public packages and their dependencies.
 let arg = process.argv[process.argv.length - 1];
+let bump = /^(major|minor|patch)$/.test(arg) ? arg : 'patch';
 if (arg.startsWith('@')) {
   if (!info[arg]) {
     throw new Error('Invalid package ' + arg);
   }
 
-  let addPackage = (pkg) => {
-    if (blackList.has(pkg) || releasedPackages.has(pkg)) {
+  let addPackage = (pkg, status) => {
+    if (excludedPackages.has(pkg)) {
       return;
     }
-  
-    releasedPackages.set(pkg, info[pkg].location);
-  
+
+    let filePath = info[pkg].location + '/package.json';
+    let pkgJSON = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    if (pkgJSON.private) {
+      return;
+    }
+
+    if (releasedPackages.has(pkg)) {
+      let cur = releasedPackages.get(pkg);
+      if (levels[status] > levels[cur.level]) {
+        cur.status = status;
+      }
+
+      return;
+    }
+
+    releasedPackages.set(pkg, {
+      location: info[pkg].location,
+      status
+    });
+
     for (let p in info) {
       if (releasedPackages.has(p)) {
         continue;
       }
-  
+
       if (info[p].workspaceDependencies.includes(pkg)) {
-        addPackage(p);
+        addPackage(p, status);
       }
     }
   };
 
-  addPackage(arg);
+  addPackage(arg, publicPackages[arg]);
+
+  for (let pkg in info) {
+    if (!releasedPackages.has(pkg)) {
+      excludedPackages.add(pkg);
+    }
+  }
 } else {
-  let addPackage = (pkg) => {
-    if (blackList.has(pkg) || releasedPackages.has(pkg)) {
+  let addPackage = (pkg, status) => {
+    if (excludedPackages.has(pkg)) {
       return;
     }
-  
-    releasedPackages.set(pkg, info[pkg].location);
-  
+
+    if (releasedPackages.has(pkg)) {
+      let cur = releasedPackages.get(pkg);
+      if (levels[status] > levels[cur.level] && !publicPackages[pkg]) {
+        cur.status = status;
+      }
+
+      return;
+    }
+
+    releasedPackages.set(pkg, {
+      location: info[pkg].location,
+      status: publicPackages[pkg] || status
+    });
+
     for (let dep of info[pkg].workspaceDependencies) {
-      addPackage(dep);
+      addPackage(dep, status);
     }
   };
 
   for (let pkg in publicPackages) {
-    addPackage(pkg);
-  }  
+    addPackage(pkg, publicPackages[pkg]);
+  }
 }
 
 run();
@@ -124,7 +176,7 @@ async function getExistingPackages() {
   // Find what packages already exist on npm
   let existing = new Set();
   let promises = [];
-  for (let [name, location] of releasedPackages) {
+  for (let [name, {location}] of releasedPackages) {
     promises.push(
       fetch(`https://registry.npmjs.com/${name}`, {method: 'HEAD'})
         .then(res => {
@@ -141,18 +193,39 @@ async function getExistingPackages() {
 
 function getVersions(existingPackages) {
   let versions = new Map();
-  let names = [...existingPackages].sort();
-  for (let name of releasedPackages.keys()) {
-    let filePath = releasedPackages.get(name) + '/package.json';
+  for (let [name, {location, status}] of releasedPackages) {
+    let filePath = location + '/package.json';
     let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-    if (pkg.private) {
-      continue;
-    }
 
+    // If the package already exists on npm, then increment the version
+    // number to the correct status. If it's a new package, then ensure
+    // the package.json version is correct according to the status.
     if (existingPackages.has(name)) {
-      versions.set(name, [pkg.version, semver.inc(pkg.version, 'prerelease')]);
+      let newVersion = status === 'released'
+        ? semver.inc(pkg.version, bump)
+        : semver.inc(pkg.version, 'prerelease', status)
+      versions.set(name, [pkg.version, newVersion, pkg.private]);
     } else {
-      versions.set(name, [pkg.version, pkg.version]);
+      let parsed = semver.parse(pkg.version);
+      let newVersion = pkg.version;
+      if (parsed.prerelease.length > 0) {
+        if (status === 'released') {
+          newVersion = semver.inc(pkg.version, bump);
+        } else if (parsed.prerelease[0] !== status) {
+          newVersion = semver.inc(pkg.version, 'prerelease', status);
+        } else {
+          parsed.prerelease[1] = 0;
+          newVersion = parsed.format();
+        }
+      } else {
+        if (status === 'released') {
+          newVersion = '3.0.0';
+        } else {
+          newVersion = semver.inc(pkg.version, 'prerelease', status);
+        }
+      }
+
+      versions.set(name, [pkg.version, newVersion, pkg.private]);
     }
   }
 
@@ -161,9 +234,25 @@ function getVersions(existingPackages) {
 
 async function promptVersions(versions) {
   console.log('');
-  for (let [name, [oldVersion, newVersion]] of versions) {
-    if (newVersion !== oldVersion) {
-      console.log(`${name}: ${oldVersion} => ${newVersion}`);
+  for (let [name, [oldVersion, newVersion, private]] of versions) {
+    if (newVersion !== oldVersion || private) {
+      console.log(`${name}: ${chalk.blue(oldVersion)}${private ? chalk.red(' (private)') : ''} => ${chalk.green(newVersion)}`);
+    }
+  }
+
+  let loggedSpace = false;
+  for (let name in info) {
+    if (!releasedPackages.has(name) && !excludedPackages.has(name)) {
+      let filePath = info[name].location + '/package.json';
+      let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+      if (!pkg.private) {
+        if (!loggedSpace) {
+          console.log('');
+          loggedSpace = true;
+        }
+
+        console.warn(chalk.red(`${name} will change from public to private`));
+      }
     }
   }
 
@@ -189,36 +278,43 @@ async function promptVersions(versions) {
 }
 
 function bumpVersions(versions) {
-  for (let [name, location] of releasedPackages) {
+  for (let [name, {location}] of releasedPackages) {
     let filePath = location + '/package.json';
     let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     pkg.version = versions.get(name)[1];
-  
+
     if (pkg.private) {
-      console.warn(`${name} changed from private to public`);
       delete pkg.private;
     }
-  
+
     for (let dep in pkg.dependencies) {
       if (versions.has(dep)) {
-        pkg.dependencies[dep] = '^' + versions.get(dep)[1];
+        let {status} = releasedPackages.get(dep);
+        pkg.dependencies[dep] = (status === 'released' ? '^' : '') + versions.get(dep)[1];
       }
     }
-  
+
     fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
   }
-  
+
   for (let name in info) {
-    if (!releasedPackages.has(name) && !blackList.has(name)) {
+    if (!releasedPackages.has(name) && !excludedPackages.has(name)) {
       let filePath = info[name].location + '/package.json';
       let pkg = JSON.parse(fs.readFileSync(filePath, 'utf8'));
       if (!pkg.private) {
-        console.warn(`${name} should not be public`);
         pkg = insertKey(pkg, 'license', 'private', true);
-        fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
       }
+
+      for (let dep in pkg.dependencies) {
+        if (versions.has(dep)) {
+          let {status} = releasedPackages.get(dep);
+          pkg.dependencies[dep] = (status === 'released' ? '^' : '') + versions.get(dep)[1];
+        }
+      }
+
+      fs.writeFileSync(filePath, JSON.stringify(pkg, false, 2) + '\n');
     }
-  }  
+  }
 }
 
 function commit(versions) {

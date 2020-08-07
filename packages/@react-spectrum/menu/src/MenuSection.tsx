@@ -12,7 +12,7 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {MenuItem} from './MenuItem';
-import {Node} from '@react-stately/collections';
+import {Node} from '@react-types/shared';
 import React, {Fragment, Key} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState} from '@react-stately/tree';
@@ -32,7 +32,7 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
     heading: item.rendered,
     'aria-label': item['aria-label']
   });
-  
+
   let {separatorProps} = useSeparator({
     elementType: 'li'
   });
@@ -53,7 +53,7 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
             {...headingProps}
             className={
               classNames(
-                styles, 
+                styles,
                 'spectrum-Menu-sectionHeading'
               )
             }>
@@ -64,7 +64,7 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
           {...groupProps}
           className={
             classNames(
-              styles, 
+              styles,
               'spectrum-Menu'
             )
           }>

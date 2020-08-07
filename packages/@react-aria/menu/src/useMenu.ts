@@ -18,18 +18,15 @@ import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 
 interface MenuAria {
-  /** Props for the menu element */
+  /** Props for the menu element. */
   menuProps: HTMLAttributes<HTMLElement>
 }
 
 interface AriaMenuOptions<T> extends AriaMenuProps<T> {
-  /** A ref to the menu container element. */
-  ref?: RefObject<HTMLElement>,
-
   /** Whether the menu uses virtual scrolling. */
   isVirtualized?: boolean,
 
-  /** 
+  /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
@@ -38,11 +35,11 @@ interface AriaMenuOptions<T> extends AriaMenuProps<T> {
 
 /**
  * Provides the behavior and accessibility implementation for a menu component.
- * A menu displays a list of actions or options and allows a user to choose one.
- * @param props - props for the menu
- * @param state - state for the menu, as returned by `useListState`
+ * A menu displays a list of actions or options that a user can choose.
+ * @param props - Props for the menu.
+ * @param state - State for the menu, as returned by `useListState`.
  */
-export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>): MenuAria {
+export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuAria {
   let {
     shouldFocusWrap = true,
     ...otherProps
@@ -55,6 +52,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>): Menu
   let domProps = filterDOMProps(props, {labelable: true});
   let {listProps} = useSelectableList({
     ...otherProps,
+    ref,
     selectionManager: state.selectionManager,
     collection: state.collection,
     disabledKeys: state.disabledKeys,
