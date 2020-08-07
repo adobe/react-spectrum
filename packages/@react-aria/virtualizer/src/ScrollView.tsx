@@ -25,8 +25,8 @@ import React, {
   useState
 } from 'react';
 import {Rect, Size} from '@react-stately/virtualizer';
-import {useResizeObserver} from '@react-spectrum/utils';
 import {useLocale} from '@react-aria/i18n';
+import {useResizeObserver} from '@react-spectrum/utils';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   contentSize: Size,

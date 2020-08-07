@@ -1,4 +1,4 @@
-import {RefObject, useEffect, useLayoutEffect} from 'react';
+import {RefObject, useEffect} from 'react';
 import './ResizeObserver.d.ts';
 
 function hasResizeObserver() {
