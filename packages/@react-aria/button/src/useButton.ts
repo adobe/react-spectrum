@@ -95,8 +95,16 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
 }
 
 export function useToggleButton(props: AriaToggleButtonProps, state: ToggleState, ref: RefObject<HTMLElement>): ButtonAria {
-  return useButton({
+  const {isSelected,setSelected} = state;
+  const { isPressed, buttonProps } = useButton({
     ...props,
-    onPress: chain(() => state.setSelected(!state.isSelected), props.onPress)
+    onPress: chain(() => setSelected(!isSelected), props.onPress)
   },ref);
+  
+  return {
+    isPressed,
+    buttonProps: mergeProps(buttonProps, {
+      'aria-pressed' : isSelected
+    })
+  };
 }
