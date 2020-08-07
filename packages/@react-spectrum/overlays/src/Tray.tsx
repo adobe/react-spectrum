@@ -25,11 +25,12 @@ interface TrayWrapperProps extends HTMLAttributes<HTMLElement> {
   children: ReactNode,
   isOpen?: boolean,
   onClose?: () => void,
-  shouldCloseOnBlur?: boolean
+  shouldCloseOnBlur?: boolean,
+  isKeyboardDismissDisabled?: boolean
 }
 
 function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, onClose, shouldCloseOnBlur, ...otherProps} = props;
+  let {children, onClose, shouldCloseOnBlur, isKeyboardDismissDisabled, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
 
@@ -40,6 +41,7 @@ function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
         {...styleProps}
         onClose={onClose}
         shouldCloseOnBlur={shouldCloseOnBlur}
+        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
         ref={domRef}>
         {children}
       </TrayWrapper>
@@ -53,6 +55,8 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
     isOpen,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     shouldCloseOnBlur,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isKeyboardDismissDisabled,
     ...otherProps
   } = props;
   let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
