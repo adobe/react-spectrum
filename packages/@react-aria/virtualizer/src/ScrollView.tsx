@@ -133,22 +133,10 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
       let w = dom.clientWidth;
       let h = dom.clientHeight;
       if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
-        let style = window.getComputedStyle(dom);
-
         if (sizeToFit === 'width') {
-          w = contentSize.width;
-
-          let maxWidth = parseInt(style.maxWidth, 10);
-          if (!isNaN(maxWidth)) {
-            w = Math.min(maxWidth, w);
-          }
+          w = Math.min(w, contentSize.width);
         } else if (sizeToFit === 'height') {
-          h = contentSize.height;
-
-          let maxHeight = parseInt(style.maxHeight, 10);
-          if (!isNaN(maxHeight)) {
-            h = Math.min(maxHeight, h);
-          }
+          h = Math.min(h, contentSize.height);
         }
       }
 
