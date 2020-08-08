@@ -23,6 +23,7 @@ import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
@@ -365,7 +366,7 @@ describe('Picker', function () {
       expect(() => getByRole('listbox')).toThrow();
 
       let picker = getByRole('button');
-      act(() => triggerPress(picker));
+      act(() => userEvent.click(picker));
       act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
@@ -375,7 +376,7 @@ describe('Picker', function () {
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
-      act(() => triggerPress(picker));
+      act(() => userEvent.click(picker));
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();

@@ -80,7 +80,7 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
     }
   };
 
-  let onInteractOutside = isDismissable ? (e: SyntheticEvent<HTMLElement>) => {
+  let onInteractOutside = isDismissable && isOpen ? (e: SyntheticEvent<HTMLElement>) => {
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as HTMLElement)) {
       onHide();
     }
