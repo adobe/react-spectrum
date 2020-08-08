@@ -11,7 +11,7 @@
  */
 
 import {chain} from '@react-aria/utils';
-import React, {RefObject, useCallback, useEffect, useRef} from 'react';
+import React, {RefObject, useCallback, useLayoutEffect, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useControlledState} from '@react-stately/utils';
@@ -42,7 +42,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     }
   }, [isQuiet, inputRef]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (inputRef.current) {
       onHeightChange();
     }
