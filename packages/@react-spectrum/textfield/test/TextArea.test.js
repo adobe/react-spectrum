@@ -10,12 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
-import {Button} from '@react-spectrum/button';
-import React, {useState} from 'react';
+import React from 'react';
+import {render} from '@testing-library/react';
 import {TextArea} from '../';
-import userEvent from '@testing-library/user-event';
-import V2TextArea from '@react/react-spectrum/Textarea';
 
 let testId = 'test-id';
 let mockScrollHeight = 500;
@@ -56,13 +53,3 @@ describe('TextArea', () => {
     expect(input.style.height).toBe(`${mockScrollHeight}px`);
   });
 });
-
-function ControlledTextArea(props) {
-  let [value, setValue] = useState('');
-  return (
-    <>
-      <TextArea aria-label="megatron" value={value} isQuiet onChange={setValue} {...props} data-testid={testId} />
-      <Button variant="primary" onPress={() => setValue('decepticon')}>Set Text</Button>
-    </>
-  );
-}
