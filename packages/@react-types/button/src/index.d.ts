@@ -21,7 +21,7 @@ interface ButtonProps extends PressEvents, FocusableProps {
 }
 
 interface ToggleButtonProps extends ButtonProps {
-  /**  Whether the element should be selected (controlled). */
+  /** Whether the element should be selected (controlled). */
   isSelected?: boolean,
   /** Whether the element should be selected (uncontrolled). */
   defaultSelected?: boolean,

@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
+import {Flex} from '@adobe/react-spectrum';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
-import { Flex } from '@adobe/react-spectrum';
-import { ToggleButton } from '../src/ToggleButton';
-import { action } from '@storybook/addon-actions';
+import {ToggleButton} from '../';
+
 
 storiesOf('Button/ToggleButton', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -23,22 +24,22 @@ storiesOf('Button/ToggleButton', module)
     () => render()
   ).add(
     'emphasized',
-    () => render( { isEmphasized : true })
+    () => render({isEmphasized: true})
   ).add(
     'isQuiet',
-    () => render( { isQuiet : true })
+    () => render({isQuiet: true})
   ).add(
     'isQuiet & emphasized',
-    () => render( { isEmphasized : true, isQuiet: true })
+    () => render({isEmphasized: true, isQuiet: true})
   );
 
-  function render(props = {}) {
-    return <Flex gap="size-100">
-        <ToggleButton onChange={action('change')} onPress={action('press')} {...props}>
-            Default
-        </ToggleButton>
-        <ToggleButton onChange={action('change')} onPress={action('press')} defaultSelected={true} {...props}>
-            Default (uncontrolled)
-        </ToggleButton>
-    </Flex>
-  }
+function render(props = {}) {
+  return (<Flex gap="size-100">
+    <ToggleButton onChange={action('change')} onPress={action('press')} {...props}>
+      Default
+    </ToggleButton>
+    <ToggleButton onChange={action('change')} onPress={action('press')} defaultSelected {...props}>
+      Default (uncontrolled)
+    </ToggleButton>
+  </Flex>);
+}
