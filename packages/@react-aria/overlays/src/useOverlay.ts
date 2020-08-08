@@ -99,8 +99,10 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,
-    onBlurWithin: () => {
-      onClose();
+    onBlurWithin: (e) => {
+      if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.relatedTarget as HTMLElement)) {
+        onClose();
+      }
     }
   });
 
