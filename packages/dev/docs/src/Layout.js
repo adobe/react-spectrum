@@ -387,7 +387,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
         <header className={docStyles.pageHeader} />
         <Nav currentPageName={currentPage.name} pages={pages} />
         <main>
-          <article className={classNames(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>
+          <article className={clsx(typographyStyles['spectrum-Typography'], {[docStyles.inCategory]: !!currentPage.category})}>
             <div id="edit-page" className={docStyles.editPageContainer} />
             <MDXProvider components={mdxComponents}>
               <ImageContext.Provider value={publicUrl}>
