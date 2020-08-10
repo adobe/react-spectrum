@@ -18,9 +18,9 @@ export interface ToggleState {
   readonly isSelected: boolean,
 
   /** Updates selection state. */
-  setSelected(isSelected: boolean): void
+  setSelected(isSelected: boolean): void,
   
-  /** Toggle the selection state */
+  /** Toggle the selection state. */
   toggle(): void
 }
 
@@ -44,14 +44,14 @@ export function useToggleState(props: ToggleProps = {}): ToggleState {
   }
 
   function toggleState() {
-    if(!isReadOnly) {
-      setSelected( prev => {
+    if (!isReadOnly) {
+      setSelected(prev => {
         let newVal = !prev;
-        if(onChange) {
-          onChange(newVal)
+        if (onChange) {
+          onChange(newVal);
         }
         return newVal;
-      })
+      });
     }
   }
 
