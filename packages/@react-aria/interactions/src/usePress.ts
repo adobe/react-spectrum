@@ -29,7 +29,9 @@ export interface PressProps extends PressEvents {
 
 export interface PressHookProps extends PressProps {
   /** A ref to the target element. */
-  ref?: RefObject<HTMLElement>
+  ref?: RefObject<HTMLElement>,
+  /** Whether the target should recieve virtual focus. */
+  shouldUseVirtualFocus?: boolean
 }
 
 interface PressState {
@@ -93,7 +95,8 @@ export function usePress(props: PressHookProps): PressResult {
     isDisabled,
     isPressed: isPressedProp,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
+    ref: _, // Removing `ref` from `domProps` because TypeScript is dumb,
+    shouldUseVirtualFocus,
     ...domProps
   } = usePressResponderContext(props);
 
@@ -302,7 +305,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.activePointerId = e.pointerId;
           state.target = e.currentTarget;
 
-          if (!isDisabled) {
+          if (!isDisabled && !shouldUseVirtualFocus) {
             focusWithoutScrolling(e.currentTarget);
           }
 
@@ -405,7 +408,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.isOverTarget = true;
         state.target = e.currentTarget;
 
-        if (!isDisabled) {
+        if (!isDisabled && !shouldUseVirtualFocus) {
           focusWithoutScrolling(e.currentTarget);
         }
 

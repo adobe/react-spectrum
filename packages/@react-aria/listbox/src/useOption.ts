@@ -110,7 +110,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     shouldUseVirtualFocus
   });
 
-  let {pressProps} = usePress({...itemProps, isDisabled});
+  let {pressProps} = usePress({...itemProps, isDisabled, shouldUseVirtualFocus});
 
   let {hoverProps} = useHover({
     isDisabled: isDisabled || !shouldFocusOnHover,
