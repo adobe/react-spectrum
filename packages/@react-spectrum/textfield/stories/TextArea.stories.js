@@ -35,6 +35,14 @@ storiesOf('TextArea', module)
     () => render({isQuiet: true})
   )
   .add(
+    'isQuiet, defaultValue',
+    () => render({isQuiet: true, defaultValue: 'foo  '.repeat(10)})
+  )
+  .add(
+    'isQuiet, value',
+    () => render({isQuiet: true, value: 'foo  '.repeat(10)})
+  )
+  .add(
     'isDisabled: true',
     () => render({isDisabled: true})
   )
