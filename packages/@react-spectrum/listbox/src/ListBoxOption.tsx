@@ -20,7 +20,7 @@ import {Node} from '@react-types/shared';
 import React, {useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
-import {useFocusVisible, useHover} from '@react-aria/interactions';
+import {useHover, isFocusVisible} from '@react-aria/interactions';
 import {useOption} from '@react-aria/listbox';
 import {useRef} from 'react';
 
@@ -74,7 +74,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     ? <Text>{rendered}</Text>
     : rendered;
 
-  let {modality} = useFocusVisible();
+  let isKeyboardModality = isFocusVisible();
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -86,12 +86,12 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
           'spectrum-Menu-item',
           {
             // For ComboBox since focus doesn't leave the input but menu items need keyboard focus style
-            'is-focused': shouldUseVirtualFocus && isFocused && modality === 'keyboard',
+            'is-focused': shouldUseVirtualFocus && isFocused && isKeyboardModality,
             'is-disabled': isDisabled,
             'is-selected': isSelected,
             'is-selectable': state.selectionManager.selectionMode !== 'none',
             // isHovered required for customValue ComboBox, isFocused required for opening ComboBox via button
-            'is-hovered': isHovered || isFocused && modality === 'pointer'
+            'is-hovered': isHovered || isFocused && !isKeyboardModality
           }
         )}>
         <Grid
