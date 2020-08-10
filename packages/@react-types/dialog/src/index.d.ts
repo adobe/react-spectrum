@@ -33,7 +33,9 @@ export interface SpectrumDialogTriggerProps extends OverlayTriggerProps, Positio
   /** The ref of the element the Dialog should visually attach itself to. Defaults to the trigger button if not defined. */
   targetRef?: RefObject<HTMLElement>,
   /** Whether a modal type Dialog should be dismissable. */
-  isDismissable?: boolean
+  isDismissable?: boolean,
+  /** Whether pressing the escape key to close the dialog should be disabled. */
+  isKeyboardDismissDisabled?: boolean
 }
 
 export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
@@ -81,5 +83,4 @@ export interface SpectrumAlertDialogProps extends DOMProps, StyleProps {
   /** Button to focus by default when the dialog opens. */
   autoFocusButton?: 'cancel' | 'primary' | 'secondary'
   // allowsKeyboardConfirmation?: boolean, // triggers primary action
-  // isKeyboardCancelDisabled?: boolean // needed?
 }

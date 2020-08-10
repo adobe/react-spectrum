@@ -65,6 +65,7 @@ export interface OverlayProps {
   children: ReactNode,
   isOpen?: boolean,
   container?: Element,
+  isKeyboardDismissDisabled?: boolean,
   onEnter?: () => void,
   onEntering?: () => void,
   onEntered?: () => void,
