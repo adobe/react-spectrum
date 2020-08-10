@@ -84,7 +84,7 @@ storiesOf('ComboBox', module)
   .add(
     'user provided id and label',
     () => (
-      <div style={{width: '192px'}}>
+      <Flex direction="column" width="size-3000">
         <label id="test-label" htmlFor="test-id">Combobox</label>
         <ComboBox id="test-id" aria-labelledby="test-label" {...actions}>
           <Item key="one">Item One</Item>
@@ -94,7 +94,7 @@ storiesOf('ComboBox', module)
           </Item>
           <Item key="three">Item Three</Item>
         </ComboBox>
-      </div>
+      </Flex>
     )
   )
   .add(
@@ -200,6 +200,22 @@ storiesOf('ComboBox', module)
     () => render({labelPosition: 'side'})
   )
   .add(
+    'no visible label',
+    () => (
+      <ComboBox items={items} aria-label="ComboBox" {...actions}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+    )
+  )
+  .add(
+    'no visible label, isQuiet',
+    () => (
+      <ComboBox items={items} aria-label="ComboBox" isQuiet {...actions}>
+        {(item: any) => <Item>{item.name}</Item>}
+      </ComboBox>
+    )
+  )
+  .add(
     'isRequired',
     () => render({isRequired: true})
   )
@@ -233,7 +249,7 @@ storiesOf('ComboBox', module)
     'customWidth',
     () => (
       <Flex direction="column">
-        <ComboBox label="Combobox" {...actions} width="50px">
+        <ComboBox label="Combobox" {...actions} width="size-500">
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
             <Copy size="S" />
@@ -241,7 +257,7 @@ storiesOf('ComboBox', module)
           </Item>
           <Item key="three">Item Three</Item>
         </ComboBox>
-        <ComboBox label="Combobox" {...actions} width="200px">
+        <ComboBox label="Combobox" {...actions} isQuiet width="size-3000">
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
             <Copy size="S" />
@@ -249,7 +265,38 @@ storiesOf('ComboBox', module)
           </Item>
           <Item key="three">Item Three</Item>
         </ComboBox>
-        <ComboBox label="Combobox" {...actions} width="800px">
+        <ComboBox label="Combobox" {...actions} width="size-6000">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
+          <Item key="three">Item Three</Item>
+        </ComboBox>
+      </Flex>
+    )
+  )
+  .add(
+    'no visible label, customWidth',
+    () => (
+      <Flex gap="size-300" direction="column" >
+        <ComboBox {...actions} aria-label="ComboBox" width="size-500">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
+          <Item key="three">Item Three</Item>
+        </ComboBox>
+        <ComboBox {...actions} aria-label="ComboBox" isQuiet width="size-3000">
+          <Item key="one">Item One</Item>
+          <Item key="two" textValue="Item Two">
+            <Copy size="S" />
+            <Text>Item Two</Text>
+          </Item>
+          <Item key="three">Item Three</Item>
+        </ComboBox>
+        <ComboBox {...actions} aria-label="ComboBox" width="size-6000">
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
             <Copy size="S" />

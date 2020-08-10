@@ -156,6 +156,10 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     );
   }
 
+  // If there is a label defined, the textfield width should be determined by the label container
+  // otherwise it should recieve the style props
+  let textFieldStyles = props.label ? {style: {width: '100%'}} : styleProps;
+
   let textField = (
     <FocusRing
       within
@@ -164,6 +168,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       focusRingClass={classNames(styles, 'focus-ring')}
       autoFocus={autoFocus}>
       <div
+        {...textFieldStyles}
         className={
           classNames(
             styles,
@@ -173,10 +178,9 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
               'is-disabled': isDisabled,
               'is-invalid': validationState === 'invalid'
             },
-            styleProps.className
+            !props.label && styleProps.className
           )
-        }
-        style={{width: '100%'}}>
+        }>
         <TextFieldBase
           labelProps={labelProps}
           inputProps={inputProps}
