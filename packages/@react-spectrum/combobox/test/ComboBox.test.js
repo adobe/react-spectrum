@@ -1468,8 +1468,42 @@ describe('ComboBox', function () {
       expect(onInputChange).toHaveBeenLastCalledWith('');
     });
 
-    // TODO: do another version of the "doesn\'t updates the input field value when selectedKey changes if the field is focused and the new text would be empty (controlled key programatic update)" test
-    // but with a controlled combobox with a separate state tracker, test when user backspaces the last letter of a valid selected combobox item
+    it('does updates the input field value when selectedKey changes if the field is not focused and the new text would be empty (controlled key programatic update)', function () {
+      let ControlledKeyComboBox = (props) => {
+        let [selectedKey, setSelectedKey] = React.useState(props.selectedKey);
+
+        let onSelectionChange = (key) => {
+          setSelectedKey(key);
+        };
+
+        return (
+          <div>
+            <Provider theme={theme}>
+              <ComboBox {...props} selectedKey={selectedKey} label="Combobox" onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
+                <Item key="1">One</Item>
+                <Item key="2">Two</Item>
+                <Item key="3">Three</Item>
+              </ComboBox>
+              <Button variant="secondary" onPress={() => setSelectedKey('')}>Clear Button</Button>
+            </Provider>
+          </div>
+      )};
+
+      let {getAllByRole, getByRole, rerender} = render(<ControlledKeyComboBox selectedKey="2" />);
+      let combobox = getByRole('combobox');
+      expect(combobox.value).toBe('Two');
+      expect(document.activeElement).not.toBe(combobox);
+
+      let clearButton = getAllByRole('button')[1];
+
+      act(() => {
+        triggerPress(clearButton);
+        jest.runAllTimers();
+      });
+
+      expect(combobox.value).toBe('');
+      expect(onInputChange).toHaveBeenLastCalledWith('');
+    });
 
     // Add tests for programtically changing the selectedKey/inputValue props?
   });
