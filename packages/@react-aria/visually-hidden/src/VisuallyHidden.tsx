@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import clsx from 'clsx';
-import React, {HTMLAttributes, JSXElementConstructor, ReactNode} from 'react';
-import styles from './VisuallyHidden.css';
+import {mergeProps} from '@react-aria/utils';
+import React, {CSSProperties, HTMLAttributes, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
+import {useFocus} from '@react-aria/interactions';
 
 interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {
   /** The content to visually hide. */
@@ -24,9 +24,22 @@ interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {
    */
   elementType?: string | JSXElementConstructor<any>,
 
-  /** Whether the content can be focused. */
+  /** Whether the element should become visible on focus, for example skip links. */
   isFocusable?: boolean
 }
+
+const styles: CSSProperties = {
+  border: 0,
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  margin: '0 -1px -1px 0',
+  overflow: 'hidden',
+  padding: 0,
+  position: 'absolute',
+  width: 1,
+  whiteSpace: 'nowrap'
+};
 
 /**
  * VisuallyHidden hides its children visually, while keeping content visible
@@ -35,22 +48,33 @@ interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {
 export function VisuallyHidden(props: VisuallyHiddenProps) {
   let {
     children,
-    className,
+    style,
     elementType: Element = 'div',
     isFocusable,
     ...otherProps
   } = props;
 
-  className = clsx(
-    styles['u-react-spectrum-screenReaderOnly'],
-    {[styles['is-focusable']]: isFocusable},
-    className
-  );
+  let [isFocused, setFocused] = useState(false);
+  let {focusProps} = useFocus({
+    isDisabled: !isFocusable,
+    onFocusChange: setFocused
+  });
+
+  // If focused, don't hide the element.
+  let combinedStyles = useMemo(() => {
+    if (isFocused) {
+      return style;
+    } else if (style) {
+      return {...styles, ...style};
+    } else {
+      return styles;
+    }
+  }, [isFocused]);
 
   return (
     <Element
-      className={className}
-      {...otherProps}>
+      {...mergeProps(otherProps, focusProps)}
+      style={combinedStyles}>
       {children}
     </Element>
   );
