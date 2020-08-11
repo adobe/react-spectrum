@@ -36,25 +36,18 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Stepper-buttons {
-  display: block;
+  display: flex;
+  flex-direction: column;
   border-radius: var(--spectrum-border-radius) 0 0 var(--spectrum-border-radius);
   transition: box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 }
 
 .spectrum-Stepper-stepUp,
 .spectrum-Stepper-stepDown {
-  position: relative;
-  display: block;
-  line-height: 0;
+  display: flex;
 
   block-size: var(--spectrum-stepper-button-height);
   inline-size: var(--spectrum-stepper-button-width);
-
-  padding-inline-start: var(--spectrum-stepper-padding);
-  padding-inline-end: var(--spectrum-stepper-padding);
-
-  /* Avoid margin added by adjacent buttons */
-  margin: 0 !important;
 
   border-width: var(--spectrum-stepper-border-size-default);
   border-inline-end-width: var(--spectrum-stepper-border-size-reset);
@@ -72,13 +65,6 @@ governing permissions and limitations under the License.
   border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
   border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
   border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
-
-  .spectrum-Icon {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 3px;
-  }
 }
 
 .spectrum-Stepper-stepDown {

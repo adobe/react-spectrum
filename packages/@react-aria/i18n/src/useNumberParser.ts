@@ -22,21 +22,24 @@ type NumberParser = {
  * Idea from https://observablehq.com/@mbostock/localized-number-parsing.
  */
 export function useNumberParser(): NumberParser {
-  let {locale} = useLocale();
+  let {locale: appLocale} = useLocale();
   const numberData = useRef({group: null, decimal: null, numeral: null, index: null});
 
   useEffect(() => {
-    const parts = new Intl.NumberFormat(locale).formatToParts(12345.6);
-    const numerals = [...new Intl.NumberFormat(locale, {useGrouping: false}).format(9876543210)].reverse();
+    const parts = new Intl.NumberFormat(appLocale).formatToParts(12345.6);
+    const numerals = [...new Intl.NumberFormat(appLocale, {useGrouping: false}).format(9876543210)].reverse();
     const index = new Map(numerals.map((d, i) => [d, i]));
-    
+
     numberData.current.group = new RegExp(`[${parts.find(d => d.type === 'group').value}]`, 'g');
     numberData.current.decimal = new RegExp(`[${parts.find(d => d.type === 'decimal').value}]`);
     numberData.current.numeral = new RegExp(`[${numerals.join('')}]`, 'g');
     numberData.current.index = d => index.get(d);
-  },  [locale]);
+  },  [appLocale]);
 
-  const parse = useCallback((value:string) => {
+  const parse = useCallback((value:string): number => {
+    // first match the prefix/suffix wrapper of everything that isn't a number
+    // then preserve that as we'll need to put it back together as the current input value
+    // with the actual numerals, parse them into a number
     value = value.trim()
       .replace(numberData.current.group, '')
       .replace(numberData.current.decimal, '.')

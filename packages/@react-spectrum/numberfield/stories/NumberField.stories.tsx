@@ -14,6 +14,8 @@ import {action} from '@storybook/addon-actions';
 import {NumberField} from '../src';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {Picker, Item} from "@react-spectrum/picker";
+import {Form} from "@react-spectrum/form";
 
 storiesOf('NumberField', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
@@ -30,6 +32,14 @@ storiesOf('NumberField', module)
     () => render({isQuiet: true})
   )
   .add(
+    'validationState: invalid',
+    () => render({validationState: 'invalid'})
+  )
+  .add(
+    'validationState: invalid, isQuiet',
+    () => render({validationState: 'invalid', isQuiet: true})
+  )
+  .add(
     'minValue = 0, maxValue = 20',
     () => render({minValue: 0, maxValue: 20})
   )
@@ -44,6 +54,10 @@ storiesOf('NumberField', module)
   .add(
     'controlled',
     () => <NumberFieldControlled />
+  )
+  .add(
+    'currency switcher',
+    () => <NumberFieldWithCurrencySelect />
   );
 
 function render(props: any = {}) {
@@ -55,4 +69,29 @@ function render(props: any = {}) {
 function NumberFieldControlled(props) {
   let [value, setValue] = useState(10);
   return <NumberField {...props} formatOptions={{style: 'currency', currency: 'EUR'}} value={value} onChange={setValue} />;
+}
+
+function NumberFieldWithCurrencySelect(props) {
+  let [value, setValue] = useState(10);
+  let [currency, setCurrency] = useState('EUR');
+  let [currencySign, setCurrencySign] = useState('standard');
+  return (
+    <Form>
+      <NumberField label="Monies" {...props} formatOptions={{style: 'currency', currency, currencySign}} value={value} onChange={setValue} />
+      <Picker
+        onSelectionChange={item => setCurrency(String(item))}
+        label="Choose Currency"
+        defaultSelectedKey={currency}
+        items={[{label: 'Euro', value: 'EUR'}, {label: 'US Dollar', value: 'USD'}, {label: 'Japanese Yen', value: 'JPY'}, {label: 'Saudi Riyal', value: 'SAR'}]}>
+        {item => <Item key={item.value}>{item.label}</Item>}
+      </Picker>
+      <Picker
+        onSelectionChange={item => setCurrencySign(String(item))}
+        label="Currency Sign"
+        defaultSelectedKey={currencySign}
+        items={[{label: 'Standard', value: 'standard'}, {label: 'Accounting', value: 'accounting'}]}>
+        {item => <Item key={item.value}>{item.label}</Item>}
+      </Picker>
+    </Form>
+  );
 }

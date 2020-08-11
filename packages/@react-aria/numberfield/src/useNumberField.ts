@@ -143,8 +143,10 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   }, [inputId, isReadOnly, isDisabled, decrement, increment]);
 
   let domProps = filterDOMProps(props, {labelable: true});
+  console.log('props for useTextField', props);
   let {labelProps, inputProps} = useTextField(
     mergeProps(focusProps, {
+      ...props,
       autoFocus,
       isDisabled,
       isReadOnly,

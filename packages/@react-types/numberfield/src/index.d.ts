@@ -14,7 +14,7 @@ import {
   AriaLabelingProps,
   DOMProps,
   FocusableProps,
-  InputBase,
+  InputBase, LabelableProps,
   RangeInputBase,
   StyleProps,
   TextInputBase,
@@ -22,7 +22,7 @@ import {
   ValueBase
 } from '@react-types/shared';
 
-export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number> {
+export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps {
   decrementAriaLabel?: string,
   incrementAriaLabel?: string,
   formatOptions?: Intl.NumberFormatOptions

@@ -21,21 +21,32 @@ import {TextFieldBase} from '@react-spectrum/textfield';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProviderProps} from '@react-spectrum/provider';
+import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import {mergeProps} from '@react-aria/utils';
+import {Label} from '@react-spectrum/label';
+import {useFormProps} from '@react-spectrum/form';
+import {LabelPosition} from "@react-types/shared";
 
 
 export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElement>) => {
   props = useProviderProps(props);
+  props = useFormProps(props);
   let {
-    // formatOptions,
     isQuiet,
     isDisabled,
     showStepper = true,
     autoFocus,
+    isRequired,
+    necessityIndicator,
+    label,
+    labelPosition = 'top' as LabelPosition,
+    labelAlign,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(props);
   let state = useNumberFieldState(otherProps);
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
+  let domRef = useRef<HTMLDivElement>(null);
   let {
     numberFieldProps,
     labelProps,
@@ -43,6 +54,8 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
     incrementButtonProps,
     decrementButtonProps
   } = useNumberField(props, state, inputRef);
+
+  console.log('labelProps', labelProps);
 
   let className = classNames(
     inputgroupStyles,
@@ -63,7 +76,7 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
     )
   );
 
-  return (
+  let numberfield = (
     <FocusRing
       within
       focusClass={classNames(inputgroupStyles, 'is-focused', classNames(stepperStyle, 'is-focused'))}
@@ -74,10 +87,13 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
         {...numberFieldProps}
         ref={ref}
         className={className}>
+        {/* remove label from props since we render it out here already */}
         <TextFieldBase
+          {...otherProps}
           isQuiet={isQuiet}
           inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
           inputRef={inputRef}
+          label={null}
           labelProps={labelProps}
           inputProps={inputFieldProps} />
         {showStepper &&
@@ -91,4 +107,42 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
       </div>
     </FocusRing>
   );
+
+  if (label) {
+    let labelWrapperClass = classNames(
+      labelStyles,
+      'spectrum-Field',
+      {
+        'spectrum-Field--positionTop': labelPosition === 'top',
+        'spectrum-Field--positionSide': labelPosition === 'side'
+      },
+      styleProps.className
+    );
+
+    numberfield = React.cloneElement(numberfield, mergeProps(numberfield.props, {
+      className: classNames(labelStyles, 'spectrum-Field-field')
+    }));
+
+    return (
+      <div
+        {...styleProps}
+        ref={domRef}
+        className={labelWrapperClass}>
+        <Label
+          {...labelProps}
+          labelPosition={labelPosition}
+          labelAlign={labelAlign}
+          isRequired={isRequired}
+          necessityIndicator={necessityIndicator}>
+          {label}
+        </Label>
+        {numberfield}
+      </div>
+    );
+  }
+
+  return React.cloneElement(numberfield, mergeProps(numberfield.props, {
+    ...styleProps,
+    ref: domRef
+  }));
 });

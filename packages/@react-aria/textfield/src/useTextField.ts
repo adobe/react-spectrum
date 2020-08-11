@@ -43,6 +43,7 @@ export function useTextField(
   } = props;
   let {focusableProps} = useFocusable(props, ref);
   let {labelProps, fieldProps} = useLabel(props);
+  console.log('labelProps', labelProps);
   let domProps = filterDOMProps(props, {labelable: true});
 
   const inputOnlyProps = {

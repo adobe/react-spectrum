@@ -15,6 +15,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
 import {useNumberFormatter, useNumberParser} from '@react-aria/i18n';
 import {ValidationState} from '@react-types/shared';
+import {NumberFieldProps} from "@react-types/numberfield";
 
 export interface NumberFieldState {
   setValue: (val: number | string) => void,
@@ -29,18 +30,8 @@ export interface NumberFieldState {
   textValue?: string
 }
 
-interface UseNumberFieldStateProps {
-  minValue?: number,
-  maxValue?: number,
-  step?: number,
-  defaultValue?: number,
-  onChange?: (value: string | number) => void,
-  value?: number,
-  formatOptions?: Intl.NumberFormatOptions
-}
-
 export function useNumberFieldState(
-  props: UseNumberFieldStateProps
+  props: NumberFieldProps
 ): NumberFieldState {
   let {minValue, maxValue, step = 1, formatOptions, value, defaultValue, onChange} = props;
 
@@ -70,6 +61,7 @@ export function useNumberFieldState(
       );
 
       updateValidation(newValue);
+
       setInputValue(inputValueFormatter.format(newValue));
       return newValue;
     });
