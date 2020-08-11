@@ -150,10 +150,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     };
 
     let shouldCloseOnInteractOutside = (element) => {
-      if (triggerRef.current && triggerRef.current?.UNSAFE_getDOMNode().contains(element)) {
-        return false;
-      }
-      return true;
+      return !(triggerRef.current?.UNSAFE_getDOMNode()?.contains(element));
     };
 
 
