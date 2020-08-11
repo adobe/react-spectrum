@@ -367,6 +367,10 @@ governing permissions and limitations under the License.
     box-shadow: 0 0 0 var(--spectrum-button-primary-border-size-increase-key-focus) var(--spectrum-actionbutton-border-color-key-focus);
     color: var(--spectrum-actionbutton-text-color-key-focus);
 
+    &.is-active {
+      border-color: var(--spectrum-actionbutton-border-color-key-focus);
+    }
+
     .spectrum-Icon {
       fill: var(--spectrum-actionbutton-icon-color-key-focus);
     }
@@ -424,6 +428,10 @@ governing permissions and limitations under the License.
       background-color: var(--spectrum-actionbutton-background-color-selected-key-focus);
       border-color: var(--spectrum-actionbutton-border-color-selected-key-focus);
       color: var(--spectrum-actionbutton-text-color-selected-key-focus);
+
+      &.is-active {
+        border-color: var(--spectrum-actionbutton-border-color-key-focus);
+      }
 
       .spectrum-Icon {
         fill: var(--spectrum-actionbutton-icon-color-selected-key-focus);
@@ -548,6 +556,11 @@ governing permissions and limitations under the License.
       background-color: var(--spectrum-actionbutton-emphasized-background-color-selected-key-focus);
       border-color: var(--spectrum-actionbutton-emphasized-border-color-selected-key-focus);
       color: var(--spectrum-actionbutton-emphasized-text-color-selected-key-focus);
+
+      &.is-active {
+        /* change 1px of focus ring blue to match the rest of the active state */
+        box-shadow: 0 0 0 var(--spectrum-button-primary-border-size-increase-key-focus) var(--spectrum-actionbutton-emphasized-border-color-selected-down);
+      }
 
       .spectrum-Icon {
         fill: var(--spectrum-actionbutton-emphasized-icon-color-selected-key-focus);
