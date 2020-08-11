@@ -11,7 +11,8 @@
  */
 
 import {AriaDialogProps} from '@react-types/dialog';
-import {filterDOMProps, focusWithoutScrolling, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, useSlotId} from '@react-aria/utils';
+import {focusSafely} from '@react-aria/focus';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 
 interface DialogAria {
@@ -34,7 +35,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): 
   // Focus the dialog itself on mount, unless a child element is already focused.
   useEffect(() => {
     if (ref.current && !ref.current.contains(document.activeElement)) {
-      focusWithoutScrolling(ref.current);
+      focusSafely(ref.current);
 
       // Safari on iOS does not move the VoiceOver cursor to the dialog
       // or announce that it has opened until it has rendered. A workaround
@@ -42,7 +43,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): 
       let timeout = setTimeout(() => {
         if (document.activeElement === ref.current) {
           ref.current.blur();
-          focusWithoutScrolling(ref.current);
+          focusSafely(ref.current);
         }
       }, 500);
 
