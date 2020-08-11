@@ -83,41 +83,45 @@ storiesOf('Button', module)
   )
   .add(
     'element: a, href: \'//example.com\', target: \'_self\'',
-    () => render({elementType: 'a', href: '//example.com', target: '_self', variant: 'primary'})
+    () => render({elementType: 'a', href: '//example.com', target: '_self', variant: 'primary'}, 'Note: Known browser behavior where keyboard focus in Safari doesn\'t work.')
   )
   .add(
     'element: a, rel: \'noopener noreferrer\'',
-    () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
+    () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'}, 'Note: Known browser behavior where keyboard focus in Safari doesn\'t work.')
   );
 
-function render(props: any = {}) {
+function render(props: any = {}, note: string = '') {
+  console.log('note', note);
   return (
-    <Flex gap="size-200">
-      <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        {...props}>
-        Default
-      </Button>
-      <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        isDisabled
-        {...props}>
-        Disabled
-      </Button>
-      {props.variant !== 'cta' && (
-      <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        isQuiet
-        {...props}>
-        Quiet
-      </Button>
-      )}
+    <Flex gap="size-200" direction="column">
+      <Flex gap="size-200">
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          {...props}>
+          Default
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled
+          {...props}>
+          Disabled
+        </Button>
+        {props.variant !== 'cta' && (
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isQuiet
+          {...props}>
+          Quiet
+        </Button>
+        )}
+      </Flex>
+      {note && (<div>{note}</div>)}
     </Flex>
   );
 }
