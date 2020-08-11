@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {CommonSliderThumbProps, SliderProps} from '@react-types/slider';
-import {computeOffsetToValue} from './utils';
+import {computeOffsetToValue, sliderIds} from './utils';
 import {HTMLAttributes, useRef} from 'react';
 import {mergeProps, useDrag1D} from '@react-aria/utils';
+import {SliderProps} from '@react-types/slider';
 import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
 
@@ -25,16 +25,12 @@ interface SliderAria {
   containerProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the track element. */
-  trackProps: HTMLAttributes<HTMLElement>,
-
-  /** Partial props that should be passed into `useSliderThumb` for all thumbs.  
-   * Includes the Label ID for labeling slider inputs. */
-  thumbProps: CommonSliderThumbProps
+  trackProps: HTMLAttributes<HTMLElement>
 }
 
 /**
  * Provides behavior and accessibility for a slider component.
- * 
+ *
  * @param props Props for the slider.
  * @param state State for the slider, as returned by `useSliderState`.
  * @param trackRef Ref for the "track" element.  The width of this element provides the "length"
@@ -43,13 +39,16 @@ interface SliderAria {
  * the track.
  */
 export function useSlider(
-  props: SliderProps, 
-  state: SliderState, 
+  props: SliderProps,
+  state: SliderState,
   trackRef: React.RefObject<HTMLElement>
 ): SliderAria {
   const {labelProps, fieldProps} = useLabel(props);
 
-  // When the user clicks or drags the track, we want the motion to set and drag the 
+  // Attach id of the label to the state so it can be accessed by useSliderThumb.
+  sliderIds.set(state, labelProps.id ?? fieldProps.id);
+
+  // When the user clicks or drags the track, we want the motion to set and drag the
   // closest thumb.  Hence we also need to install useDrag1D() on the track element.
   // Here, we keep track of which index is the "closest" to the drag start point.
   // It is set onMouseDown; see trackProps below.
@@ -100,8 +99,8 @@ export function useSlider(
             state.setFocusedThumb(index);
 
             // We immediately toggle state to dragging and set the value on mouse down.
-            // We set the value now, instead of waiting for onDrag, so that the thumb 
-            // is updated while you're still holding the mouse button down.  And we 
+            // We set the value now, instead of waiting for onDrag, so that the thumb
+            // is updated while you're still holding the mouse button down.  And we
             // set dragging on now, so that onChangeEnd() won't fire yet when we set
             // the value.  Dragging state will be reset to false in onDrag above, even
             // if no dragging actually occurs.
@@ -110,9 +109,6 @@ export function useSlider(
           }
         }
       }
-    }, draggableProps),
-    thumbProps: {
-      labelId: (labelProps.id ?? fieldProps.id)!
-    }
+    }, draggableProps)
   };
 }

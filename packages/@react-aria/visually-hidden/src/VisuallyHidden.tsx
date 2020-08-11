@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import clsx from 'clsx';
-import React, {HTMLAttributes, JSXElementConstructor, ReactNode} from 'react';
-import styles from './VisuallyHidden.css';
+import {mergeProps} from '@react-aria/utils';
+import React, {CSSProperties, HTMLAttributes, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
+import {useFocus} from '@react-aria/interactions';
 
 interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {
   /** The content to visually hide. */
-  children: ReactNode,
+  children?: ReactNode,
 
   /**
    * The element type for the container.
@@ -24,8 +24,60 @@ interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {
    */
   elementType?: string | JSXElementConstructor<any>,
 
-  /** Whether the content can be focused. */
+  /** Whether the element should become visible on focus, for example skip links. */
   isFocusable?: boolean
+}
+
+const styles: CSSProperties = {
+  border: 0,
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  margin: '0 -1px -1px 0',
+  overflow: 'hidden',
+  padding: 0,
+  position: 'absolute',
+  width: 1,
+  whiteSpace: 'nowrap'
+};
+
+interface VisuallyHiddenAria {
+  visuallyHiddenProps: HTMLAttributes<HTMLElement>
+}
+
+/**
+ * Provides props for an element that hides its children visually
+ * but keeps content visible to assistive technology.
+ */
+export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHiddenAria {
+  let {
+    style,
+    isFocusable
+  } = props;
+
+  let [isFocused, setFocused] = useState(false);
+  let {focusProps} = useFocus({
+    isDisabled: !isFocusable,
+    onFocusChange: setFocused
+  });
+
+  // If focused, don't hide the element.
+  let combinedStyles = useMemo(() => {
+    if (isFocused) {
+      return style;
+    } else if (style) {
+      return {...styles, ...style};
+    } else {
+      return styles;
+    }
+  }, [isFocused]);
+
+  return {
+    visuallyHiddenProps: {
+      ...focusProps,
+      style: combinedStyles
+    }
+  };
 }
 
 /**
@@ -33,24 +85,12 @@ interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {
  * to screen readers.
  */
 export function VisuallyHidden(props: VisuallyHiddenProps) {
-  let {
-    children,
-    className,
-    elementType: Element = 'div',
-    isFocusable,
-    ...otherProps
-  } = props;
-
-  className = clsx(
-    styles['u-react-spectrum-screenReaderOnly'],
-    {[styles['is-focusable']]: isFocusable},
-    className
-  );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {children, elementType: Element = 'div', isFocusable, style, ...otherProps} = props;
+  let {visuallyHiddenProps} = useVisuallyHidden(props);
 
   return (
-    <Element
-      className={className}
-      {...otherProps}>
+    <Element {...mergeProps(otherProps, visuallyHiddenProps)}>
       {children}
     </Element>
   );
