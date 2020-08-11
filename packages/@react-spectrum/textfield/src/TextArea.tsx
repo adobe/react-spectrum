@@ -51,7 +51,8 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
 
   let {labelProps, inputProps} = useTextField({
     ...props,
-    onChange: chain(onChange, setInputValue)
+    onChange: chain(onChange, setInputValue),
+    inputElementType: 'textarea'
   }, inputRef);
 
   return (
