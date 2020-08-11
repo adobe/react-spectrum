@@ -16,7 +16,7 @@ import {useFocus} from '@react-aria/interactions';
 
 interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {
   /** The content to visually hide. */
-  children: ReactNode,
+  children?: ReactNode,
 
   /**
    * The element type for the container.
@@ -41,17 +41,18 @@ const styles: CSSProperties = {
   whiteSpace: 'nowrap'
 };
 
+interface VisuallyHiddenAria {
+  visuallyHiddenProps: HTMLAttributes<HTMLElement>
+}
+
 /**
- * VisuallyHidden hides its children visually, while keeping content visible
- * to screen readers.
+ * Provides props for an element that hides its children visually
+ * but keeps content visible to assistive technology.
  */
-export function VisuallyHidden(props: VisuallyHiddenProps) {
+export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHiddenAria {
   let {
-    children,
     style,
-    elementType: Element = 'div',
-    isFocusable,
-    ...otherProps
+    isFocusable
   } = props;
 
   let [isFocused, setFocused] = useState(false);
@@ -71,10 +72,25 @@ export function VisuallyHidden(props: VisuallyHiddenProps) {
     }
   }, [isFocused]);
 
+  return {
+    visuallyHiddenProps: {
+      ...focusProps,
+      style: combinedStyles
+    }
+  };
+}
+
+/**
+ * VisuallyHidden hides its children visually, while keeping content visible
+ * to screen readers.
+ */
+export function VisuallyHidden(props: VisuallyHiddenProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {children, elementType: Element = 'div', isFocusable, style, ...otherProps} = props;
+  let {visuallyHiddenProps} = useVisuallyHidden(props);
+
   return (
-    <Element
-      {...mergeProps(otherProps, focusProps)}
-      style={combinedStyles}>
+    <Element {...mergeProps(otherProps, visuallyHiddenProps)}>
       {children}
     </Element>
   );
