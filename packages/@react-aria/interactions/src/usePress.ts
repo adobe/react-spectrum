@@ -15,8 +15,9 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, runAfterTransition} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {isVirtualClick} from './utils';
 import {PointerType, PressEvents} from '@react-types/shared';
 import {PressResponderContext} from './context';
 
@@ -277,11 +278,15 @@ export function usePress(props: PressHookProps): PressResult {
       // There appears to be a delay on iOS where selection still might occur
       // after pointer up, so wait a bit before removing user-select.
       setTimeout(() => {
-        // Avoid race conditions
-        if (!state.isPressed && document.documentElement.style.webkitUserSelect === 'none') {
-          document.documentElement.style.webkitUserSelect = state.userSelect || '';
-          state.userSelect = null;
-        }
+        // Wait for any CSS transitions to complete so we don't recompute style
+        // for the whole page in the middle of the animation and cause jank.
+        runAfterTransition(() => {
+          // Avoid race conditions
+          if (!state.isPressed && document.documentElement.style.webkitUserSelect === 'none') {
+            document.documentElement.style.webkitUserSelect = state.userSelect || '';
+            state.userSelect = null;
+          }
+        });
       }, 300);
     };
 
@@ -595,26 +600,6 @@ function isValidKeyboardEvent(event: KeyboardEvent): boolean {
     // An element with role='link' should only trigger with Enter key
     !(role === 'link' && key !== 'Enter')
   );
-}
-
-// Original licensing for the following method can be found in the
-// NOTICE file in the root directory of this source tree.
-// See https://github.com/facebook/react/blob/3c713d513195a53788b3f8bb4b70279d68b15bcc/packages/react-interactions/events/src/dom/shared/index.js#L74-L87
-
-// Keyboards, Assistive Technologies, and element.click() all produce a "virtual"
-// click event. This is a method of inferring such clicks. Every browser except
-// IE 11 only sets a zero value of "detail" for click events that are "virtual".
-// However, IE 11 uses a zero value for all click events. For IE 11 we rely on
-// the quirk that it produces click events that are of type PointerEvent, and
-// where only the "virtual" click lacks a pointerType field.
-
-function isVirtualClick(event: MouseEvent | PointerEvent): boolean {
-  // JAWS/NVDA with Firefox.
-  if ((event as any).mozInputSource === 0 && event.isTrusted) {
-    return true;
-  }
-
-  return event.detail === 0 && !(event as PointerEvent).pointerType;
 }
 
 function getTouchFromEvent(event: TouchEvent): Touch | null {

@@ -11,9 +11,8 @@
  */
 
 import {FocusEvent, HTMLAttributes, KeyboardEvent, RefObject, useEffect} from 'react';
+import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
-import {focusWithoutScrolling} from '@react-aria/utils';
-import {getFocusableTreeWalker} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useTypeSelect} from './useTypeSelect';
@@ -340,7 +339,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
       // If no default focus key is selected, focus the collection itself.
       if (focusedKey == null) {
-        focusWithoutScrolling(ref.current);
+        focusSafely(ref.current);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
