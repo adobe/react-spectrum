@@ -500,7 +500,7 @@ storiesOf('MenuTrigger', module)
         {defaultMenu}
       </MenuTrigger>
     </Flex>
-  );
+  ));
 
 
 let customMenuItem = (item) => {
