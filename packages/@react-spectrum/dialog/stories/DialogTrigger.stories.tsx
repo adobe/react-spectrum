@@ -251,15 +251,15 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'shouldFlip: true',
-    () => renderPopover({type: 'popover', placement: 'left', shouldFlip: true, width: 'calc(100vh - 100px)'})
+    () => renderPopover({type: 'popover', placement: 'start', shouldFlip: true, width: 'calc(100vh - 100px)'})
   )
   .add(
     'shouldFlip: false',
-    () => renderPopover({type: 'popover', placement: 'left', shouldFlip: false, width: 'calc(100vh - 100px)'})
+    () => renderPopover({type: 'popover', placement: 'start', shouldFlip: false, width: 'calc(100vh - 100px)'})
   )
   .add(
     'shouldFlip: true with offset',
-    () => renderPopover({type: 'popover', placement: 'left', shouldFlip: true, offset: 50, width: 'calc(100vh - 100px)'})
+    () => renderPopover({type: 'popover', placement: 'start', shouldFlip: true, offset: 50, width: 'calc(100vh - 100px)'})
   )
   .add(
     'keyboard dismiss disabled: modal',
