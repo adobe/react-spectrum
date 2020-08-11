@@ -97,10 +97,10 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
   };
 
   let onKeyDown = (e) => {
-    e.preventDefault();
     switch (e.key) {
       case 'Left':
       case 'ArrowLeft':
+        e.preventDefault();
         if (orientation === 'horizontal') {
           if (onDecrement && !reverse) {
             onDecrement();
@@ -111,6 +111,7 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
         break;
       case 'Up':
       case 'ArrowUp':
+        e.preventDefault();
         if (orientation === 'vertical') {
           if (onDecrement && !reverse) {
             onDecrement();
@@ -121,6 +122,7 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
         break;
       case 'Right':
       case 'ArrowRight':
+        e.preventDefault();
         if (orientation === 'horizontal') {
           if (onIncrement && !reverse) {
             onIncrement();
@@ -131,6 +133,7 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
         break;
       case 'Down':
       case 'ArrowDown':
+        e.preventDefault();
         if (orientation === 'vertical') {
           if (onIncrement && !reverse) {
             onIncrement();
@@ -140,16 +143,19 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
         }
         break;
       case 'Home':
+        e.preventDefault();
         if (onDecrementToMin) {
           onDecrementToMin();
         }
         break;
       case 'End':
+        e.preventDefault();
         if (onIncrementToMax) {
           onIncrementToMax();
         }
         break;
       case 'Enter':
+        e.preventDefault();
         if (onCollapseToggle) {
           onCollapseToggle();
         }
