@@ -218,4 +218,12 @@ describe('Tabs', function () {
     let tabs = within(tablist).getAllByRole('tab');
     expect(document.activeElement).toBe(tabs[1]);
   });
+
+  it('should not focus any tabs when isDisabled tabbing in for the first time', function () {
+    let tree = renderComponent({defaultSelectedKey: items[1].name, isDisabled: true});
+    act(() => userEvent.tab());
+
+    let tabpanel = tree.getByRole('tabpanel');
+    expect(document.activeElement).toBe(tabpanel);
+  });
 });
