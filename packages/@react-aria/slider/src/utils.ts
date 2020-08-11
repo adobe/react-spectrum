@@ -1,4 +1,7 @@
 import {BaseSliderProps} from '@react-types/slider';
+import {SliderState} from '@react-stately/slider';
+
+export const sliderIds = new WeakMap<SliderState, string>();
 
 export function computeOffsetToValue(offset: number, props: BaseSliderProps, trackRef: React.RefObject<HTMLElement>) {
   const {minValue = 0, maxValue = 100, step = 1} = props;
