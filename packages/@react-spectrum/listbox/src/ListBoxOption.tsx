@@ -14,13 +14,13 @@ import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
+import {isFocusVisible, useHover} from '@react-aria/interactions';
 import {ListBoxContext} from './ListBoxContext';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import React, {useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
-import {useHover, isFocusVisible} from '@react-aria/interactions';
 import {useOption} from '@react-aria/listbox';
 import {useRef} from 'react';
 

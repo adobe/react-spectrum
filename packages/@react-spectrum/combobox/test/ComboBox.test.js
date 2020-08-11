@@ -1077,6 +1077,122 @@ describe('ComboBox', function () {
       expect(combobox.value).toBe('');
     });
 
+    it('input field doesn\'t lose focus when user mouse downs on a menu item', function () {
+      let {getByRole} = renderComboBox({});
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+
+      act(() => {
+        combobox.focus();
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).toBe(combobox);
+      expect(onOpenChange).toHaveBeenLastCalledWith(true);
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      let items = within(listbox).getAllByRole('option');
+
+      act(() => {
+        fireEvent.mouseDown(items[0]);
+        jest.runAllTimers();
+      });
+
+      expect(onInputChange).not.toHaveBeenCalled();
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(onOpenChange).toHaveBeenLastCalledWith(true);
+      expect(combobox.value).toBe('');
+      expect(document.activeElement).toBe(combobox);
+      expect(listbox).toBeVisible();
+
+      act(() => {
+        fireEvent.mouseUp(items[0]);
+        jest.runAllTimers();
+      });
+
+      expect(combobox.value).toBe('One');
+      expect(onInputChange).toHaveBeenCalledTimes(1);
+      expect(onInputChange).toHaveBeenCalledWith('One');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledWith('1');
+      expect(document.activeElement).toBe(combobox);
+      expect(onBlur).not.toBeCalled();
+    });
+
+    it('tab and shift tab move focus away from the combobox and select the focused item', function () {
+      let {getByRole, getAllByRole} = render(
+        <Provider theme={theme}>
+          <Button variant="secondary">Shift tab move</Button>
+          <ComboBox label="Test" onSelectionChange={onSelectionChange} onInputChange={onInputChange}>
+            <Item key="1">Bulbasaur</Item>
+            <Item key="2">Squirtle</Item>
+            <Item key="3">Charmander</Item>
+          </ComboBox>
+          <Button variant="secondary">Tab move</Button>
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      let shiftTabButton = getAllByRole('button')[0];
+      let comboboxButton = getAllByRole('button')[1];
+      let tabButton = getAllByRole('button')[2];
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(onInputChange).not.toHaveBeenCalled();
+      expect(combobox.value).toBe('');
+
+      act(() => {
+        combobox.focus();
+        userEvent.click(comboboxButton);
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).toBe(combobox);
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      let items = within(listbox).getAllByRole('option');
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+      expect(items[0]).toHaveTextContent('Bulbasaur');
+
+      act(() => {
+        userEvent.tab();
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('listbox')).toThrow();
+      expect(onInputChange).toHaveBeenLastCalledWith('Bulbasaur');
+      expect(onSelectionChange).toHaveBeenLastCalledWith('1');
+      expect(combobox.value).toBe('Bulbasaur');
+      expect(document.activeElement).toBe(tabButton);
+
+      act(() => {
+        combobox.focus();
+        fireEvent.change(combobox, {target: {value: 'B'}});
+        jest.runAllTimers();
+      });
+
+      expect(onInputChange).toHaveBeenLastCalledWith('B');
+      expect(onSelectionChange).toHaveBeenLastCalledWith(undefined);
+      expect(combobox.value).toBe('B');
+      expect(document.activeElement).toBe(combobox);
+      listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      items = within(listbox).getAllByRole('option');
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+      expect(items[0]).toHaveTextContent('Bulbasaur');
+
+      act(() => {
+        userEvent.tab({shift: true});
+        jest.runAllTimers();
+      });
+
+      expect(onInputChange).toHaveBeenLastCalledWith('Bulbasaur');
+      expect(onSelectionChange).toHaveBeenLastCalledWith('1');
+      expect(combobox.value).toBe('Bulbasaur');
+      expect(() => getByRole('listbox')).toThrow();
+      expect(document.activeElement).toBe(shiftTabButton);
+    });
+
     it('propagates blur event outside of the component', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
@@ -1312,6 +1428,48 @@ describe('ComboBox', function () {
       expect(items[0]).toHaveTextContent('Two');
       expect(items[0]).toHaveAttribute('aria-selected', 'true');
     });
+
+    it('doesn\'t updates the input field value when selectedKey changes if the field is focused and the new text would be empty (controlled key programatic update)', function () {
+      let ControlledKeyComboBox = (props) => (
+        <div>
+          <Provider theme={theme}>
+            <ComboBox {...props} selectedKey={props.selectedKey} label="Combobox" onInputChange={onInputChange}>
+              <Item key="1">One</Item>
+              <Item key="2">Two</Item>
+              <Item key="3">Three</Item>
+            </ComboBox>
+            <Button variant="secondary">Tab Button</Button>
+          </Provider>
+        </div>
+      );
+
+      let {getAllByRole, getByRole, rerender} = render(<ControlledKeyComboBox selectedKey="2" />);
+      let combobox = getByRole('combobox');
+      expect(combobox.value).toBe('Two');
+      expect(document.activeElement).not.toBe(combobox);
+      act(() => {
+        combobox.focus();
+      });
+
+      expect(document.activeElement).toBe(combobox);
+      rerender(<ControlledKeyComboBox selectedKey={''} />);
+
+      expect(document.activeElement).toBe(combobox);
+      expect(combobox.value).toBe('Two');
+
+      act(() => {
+        userEvent.tab();
+        jest.runAllTimers();
+      });
+
+      let tabButton = getAllByRole('button')[1];
+      expect(document.activeElement).toBe(tabButton);
+      expect(combobox.value).toBe('');
+      expect(onInputChange).toHaveBeenLastCalledWith('');
+    });
+
+    // TODO: do another version of the "doesn\'t updates the input field value when selectedKey changes if the field is focused and the new text would be empty (controlled key programatic update)" test
+    // but with a controlled combobox with a separate state tracker, test when user backspaces the last letter of a valid selected combobox item
 
     // Add tests for programtically changing the selectedKey/inputValue props?
   });

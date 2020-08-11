@@ -48,7 +48,6 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     menuTrigger = 'input',
     autoFocus,
     shouldFlip = true,
-    width,
     direction = 'bottom'
   } = props;
 

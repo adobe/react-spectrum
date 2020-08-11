@@ -559,7 +559,7 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     return pressProps;
-  }, [onPress, onPressStart, onPressEnd, onPressChange, onPressUp, isDisabled]);
+  }, [onPress, onPressStart, onPressEnd, onPressChange, onPressUp, isDisabled, shouldUseVirtualFocus]);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {

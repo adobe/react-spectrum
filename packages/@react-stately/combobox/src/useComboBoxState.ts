@@ -103,8 +103,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let initialDefaultSelectedKeyText = collection.getItem(props.defaultSelectedKey)?.textValue;
   let [inputValue, setInputValue] = useControlledState(toString(props.inputValue), initialSelectedKeyText || toString(props.defaultInputValue) || initialDefaultSelectedKeyText || '', onInputChange);
 
-  let selectedKey = props.selectedKey || computeKeyFromValue(inputValue, collection);
-
+  // If user passes props.selectedKey=null or '', we want to honor that as the new key (e.g. Controlled key combobox, user want to programatically clear the selected key regardless of current input value)
+  let selectedKey = typeof props.selectedKey !== 'undefined' ? props.selectedKey : computeKeyFromValue(inputValue, collection);
   let triggerState = useMenuTriggerState(props);
 
   // Fires on selection change (when user hits Enter, clicks list item, props.selectedKey is changed)
@@ -125,7 +125,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       }
     }
 
-  }, [collection, setInputValue, inputValue, onSelectionChange, selectedKey]);
+  }, [collection, setInputValue, inputValue, onSelectionChange, selectedKey, isFocused]);
 
   // Update the selectedKey and inputValue when props.selectedKey updates
   let lastSelectedKeyProp = useRef(props.selectedKey);
