@@ -479,30 +479,28 @@ storiesOf('MenuTrigger', module)
       </>
     )
   )
-  .add('double menu', () => {
-    return (
-      <Flex gap="size-100">
-        <MenuTrigger>
-          <ActionButton
-            onPressStart={action('1onPressStart')}
-            onPressEnd={action('1onPressEnd')}
-            onPress={action('1onPress')}>
-            Menu Button 1
-          </ActionButton>
-          {defaultMenu}
-        </MenuTrigger>
-        <MenuTrigger>
-          <ActionButton
-            onPressStart={action('2onPressStart')}
-            onPressEnd={action('2onPressEnd')}
-            onPress={action('2onPress')}>
-            Menu Button 2
-          </ActionButton>
-          {defaultMenu}
-        </MenuTrigger>
-      </Flex>
-    );
-  });
+  .add('double menu', () => (
+    <Flex gap="size-100">
+      <MenuTrigger>
+        <ActionButton
+          onPressStart={action('1onPressStart')}
+          onPressEnd={action('1onPressEnd')}
+          onPress={action('1onPress')}>
+          Menu Button 1
+        </ActionButton>
+        {defaultMenu}
+      </MenuTrigger>
+      <MenuTrigger>
+        <ActionButton
+          onPressStart={action('2onPressStart')}
+          onPressEnd={action('2onPressEnd')}
+          onPress={action('2onPress')}>
+          Menu Button 2
+        </ActionButton>
+        {defaultMenu}
+      </MenuTrigger>
+    </Flex>
+  );
 
 
 let customMenuItem = (item) => {

@@ -149,10 +149,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       minWidth: isQuiet ? `calc(${buttonWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : buttonWidth
     };
 
-    let shouldCloseOnInteractOutside = (element) => {
-      return !(triggerRef.current?.UNSAFE_getDOMNode()?.contains(element));
-    };
-
+    let shouldCloseOnInteractOutside = (element) => !triggerRef.current?.UNSAFE_getDOMNode()?.contains(element);
 
     overlay = (
       <Popover

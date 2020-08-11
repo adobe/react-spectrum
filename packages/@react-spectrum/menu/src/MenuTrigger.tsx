@@ -73,9 +73,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     </FocusScope>
   );
 
-  let shouldCloseOnInteractOutside = (element) => {
-    return !(menuTriggerRef.current?.contains(element));
-  };
+  let shouldCloseOnInteractOutside = (element) => !menuTriggerRef.current?.contains(element);
 
   // On small screen devices, the menu is rendered in a tray, otherwise a popover.
   let overlay;
