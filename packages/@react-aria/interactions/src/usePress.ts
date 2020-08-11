@@ -273,6 +273,12 @@ export function usePress(props: PressHookProps): PressResult {
     // that element from being selected, but nearby elements may still receive selection. We add
     // user-select: none on touch start, and remove it again on touch end to prevent this.
     let disableTextSelection = () => {
+      // restoreTextSelection logic is always called after 300ms delay, so there is chance
+      // when multiple press events fired within 300ms, at that time this function is called
+      // and set state.userSelect to none. in order to avoid that, following guard is added
+      if (document.documentElement.style.webkitUserSelect === 'none') {
+        return;
+      }
       state.userSelect = document.documentElement.style.webkitUserSelect;
       document.documentElement.style.webkitUserSelect = 'none';
     };
