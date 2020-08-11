@@ -28,7 +28,7 @@ describe('useSliderThumb', () => {
         return {props, labelProps, containerProps};
       }).result;
 
-      let {inputProps, labelProps} = result.current.props;
+      let {inputProps} = result.current.props;
       let labelId = result.current.labelProps.id;
       expect(inputProps).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 200, 'aria-labelledby': `${labelId}`});
     });
