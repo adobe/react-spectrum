@@ -624,4 +624,43 @@ describe('DialogTrigger', function () {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
   });
+
+  it('disable closing dialog via escape key', async function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <DialogTrigger isKeyboardDismissDisabled>
+          <ActionButton>Trigger</ActionButton>
+          <Dialog>Content body</Dialog>
+        </DialogTrigger>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('dialog');
+
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
+    }); // wait for animation
+
+    expect(document.activeElement).toBe(dialog);
+
+    fireEvent.keyDown(dialog, {key: 'Escape'});
+    fireEvent.keyUp(dialog, {key: 'Escape'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    await waitFor(() => {
+      expect(dialog).toBeInTheDocument();
+    }); // wait for animation
+
+    expect(document.activeElement).toBe(dialog);
+  });
 });

@@ -11,7 +11,8 @@
  */
 
 import {AriaDialogProps} from '@react-types/dialog';
-import {filterDOMProps, focusWithoutScrolling, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, useSlotId} from '@react-aria/utils';
+import {focusSafely} from '@react-aria/focus';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
 
 interface DialogAria {
@@ -34,7 +35,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): 
   // Focus the dialog itself on mount, unless a child element is already focused.
   useEffect(() => {
     if (ref.current && !ref.current.contains(document.activeElement)) {
-      focusWithoutScrolling(ref.current);
+      focusSafely(ref.current);
 
       // Safari on iOS does not move the VoiceOver cursor to the dialog
       // or announce that it has opened until it has rendered. A workaround
@@ -42,7 +43,7 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): 
       let timeout = setTimeout(() => {
         if (document.activeElement === ref.current) {
           ref.current.blur();
-          focusWithoutScrolling(ref.current);
+          focusSafely(ref.current);
         }
       }, 500);
 
@@ -52,13 +53,17 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<HTMLElement>): 
     }
   }, [ref]);
 
+  // We do not use aria-modal due to a Safari bug which forces the first focusable element to be focused
+  // on mount when inside an iframe, no matter which element we programmatically focus.
+  // See https://bugs.webkit.org/show_bug.cgi?id=211934.
+  // useModal sets aria-hidden on all elements outside the dialog, so the dialog will behave as a modal
+  // even without aria-modal on the dialog itself.
   return {
     dialogProps: {
       ...filterDOMProps(props, {labelable: true}),
       role,
       tabIndex: -1,
-      'aria-labelledby': props['aria-labelledby'] || titleId,
-      'aria-modal': true
+      'aria-labelledby': props['aria-labelledby'] || titleId
     },
     titleProps: {
       id: titleId

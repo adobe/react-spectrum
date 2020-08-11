@@ -29,6 +29,8 @@ governing permissions and limitations under the License.
 
   /* Friends should align to the top of the tabs */
   vertical-align: top;
+
+  outline: none;
 }
 
 .spectrum-Tabs-item {
