@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, RefObject, useEffect} from 'react';
+import {HTMLAttributes, RefObject, SyntheticEvent, useEffect} from 'react';
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
 interface OverlayProps {
@@ -33,7 +33,15 @@ interface OverlayProps {
    * Whether pressing the escape key to close the overlay should be disabled. 
    * @default false
    */
-  isKeyboardDismissDisabled?: boolean
+  isKeyboardDismissDisabled?: boolean,
+
+  /**
+   * When user interacts with the argument element outside of the overlay ref,
+   * return true if onClose should be called.  This gives you a chance to filter
+   * out interaction with elements that should not dismiss the overlay.  
+   * By default, onClose will always be called on interaction outside the overlay ref.
+   */
+  shouldCloseOnInteractOutside?: (element: HTMLElement) => boolean
 }
 
 interface OverlayAria {
@@ -49,7 +57,7 @@ const visibleOverlays: RefObject<HTMLElement>[] = [];
  * or optionally, on blur. Only the top-most overlay will close at once.
  */
 export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): OverlayAria {
-  let {onClose, shouldCloseOnBlur, isOpen, isDismissable = false, isKeyboardDismissDisabled = false} = props;
+  let {onClose, shouldCloseOnBlur, isOpen, isDismissable = false, isKeyboardDismissDisabled = false, shouldCloseOnInteractOutside} = props;
 
   // Add the overlay ref to the stack of visible overlays on mount, and remove on unmount.
   useEffect(() => {
@@ -72,6 +80,12 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
     }
   };
 
+  let onInteractOutside = (e: SyntheticEvent<HTMLElement>) => {
+    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as HTMLElement)) {
+      onHide();
+    }
+  };
+
   // Handle the escape key
   let onKeyDown = (e) => {
     if (e.key === 'Escape' && !isKeyboardDismissDisabled) {
@@ -81,12 +95,14 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: isDismissable ? onHide : null});
+  useInteractOutside({ref, onInteractOutside: isDismissable ? onInteractOutside : null});
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,
-    onBlurWithin: () => {
-      onClose();
+    onBlurWithin: (e) => {
+      if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.relatedTarget as HTMLElement)) {
+        onClose();
+      }
     }
   });
 
