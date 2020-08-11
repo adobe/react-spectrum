@@ -1,5 +1,6 @@
 import {ChangeEvent, HTMLAttributes, useCallback, useEffect} from 'react';
 import {focusWithoutScrolling, mergeProps, useDrag1D} from '@react-aria/utils';
+import {sliderIds} from './utils';
 import {SliderState} from '@react-stately/slider';
 import {SliderThumbProps} from '@react-types/slider';
 import {useFocusable} from '@react-aria/focus';
@@ -41,7 +42,11 @@ export function useSliderThumb(
     inputRef
   } = opts;
 
-  const {labelProps, fieldProps} = useLabel(opts);
+  let labelId = sliderIds.get(state);
+  const {labelProps, fieldProps} = useLabel({
+    ...opts,
+    'aria-labelledby': `${labelId} ${opts['aria-labelledby'] ?? ''}`.trim()
+  });
 
   const value = state.values[index];
   const allowDrag = !(isDisabled || isReadOnly);

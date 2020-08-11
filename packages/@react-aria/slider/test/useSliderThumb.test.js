@@ -19,18 +19,17 @@ describe('useSliderThumb', () => {
           step: 2
         };
         let state = useSliderState(sliderProps);
-        let {thumbProps: commonThumbProps} = useSlider(sliderProps, state, trackRef);
+        let {labelProps, containerProps} = useSlider(sliderProps, state, trackRef);
         let props = useSliderThumb({
           index: 0,
-          ...commonThumbProps,
           trackRef,
           inputRef
         }, state);
-        return {props, ...commonThumbProps};
+        return {props, labelProps, containerProps};
       }).result;
 
-      let {inputProps} = result.current.props;
-      let labelId = result.current['aria-labelledby'];
+      let {inputProps, labelProps} = result.current.props;
+      let labelId = result.current.labelProps.id;
       expect(inputProps).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 200, 'aria-labelledby': `${labelId}`});
     });
     it('should have the right labels with Slider thumb label', () => {
@@ -45,19 +44,18 @@ describe('useSliderThumb', () => {
           step: 2
         };
         let state = useSliderState(sliderProps);
-        let {thumbProps: commonThumbProps} = useSlider(sliderProps, state, trackRef);
+        let {labelProps, containerProps} = useSlider(sliderProps, state, trackRef);
         let props = useSliderThumb({
           index: 0,
           label: 'thumb',
-          ...commonThumbProps,
           trackRef,
           inputRef
         }, state);
-        return {props, ...commonThumbProps};
+        return {props, labelProps, containerProps};
       }).result;
 
       let {inputProps, labelProps} = result.current.props;
-      let labelId = result.current['aria-labelledby'];
+      let labelId = result.current.containerProps.id;
       expect(inputProps).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 200, 'aria-labelledby': `${labelId} ${labelProps.id}`, id: labelProps.htmlFor});
     });
     it('should have the right labels with Slider thumb aria-label', () => {
@@ -72,27 +70,25 @@ describe('useSliderThumb', () => {
           step: 2
         };
         let state = useSliderState(sliderProps);
-        let {thumbProps: commonThumbProps} = useSlider(sliderProps, state, trackRef);
+        let {labelProps, containerProps} = useSlider(sliderProps, state, trackRef);
         let props0 = useSliderThumb({
           index: 0,
           'aria-label': 'thumb0',
-          ...commonThumbProps,
           trackRef,
           inputRef
         }, state);
         let props1 = useSliderThumb({
           index: 1,
           'aria-label': 'thumb1',
-          ...commonThumbProps,
           trackRef,
           inputRef
         }, state);
-        return {props0, props1, ...commonThumbProps};
+        return {props0, props1, labelProps, containerProps};
       }).result;
 
       let {inputProps: inputProps0} = result.current.props0;
       let {inputProps: inputProps1} = result.current.props1;
-      let labelId = result.current['aria-labelledby'];
+      let labelId = result.current.containerProps.id;
       expect(inputProps0).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 70, 'aria-labelledby': `${labelId} ${inputProps0.id}`});
       expect(inputProps1).toMatchObject({type: 'range', step: 2, value: 70, min: 50, max: 200, 'aria-labelledby': `${labelId} ${inputProps1.id}`});
     });

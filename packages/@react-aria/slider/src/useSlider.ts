@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {computeOffsetToValue} from './utils';
+import {computeOffsetToValue, sliderIds} from './utils';
 import {HTMLAttributes, useRef} from 'react';
 import {mergeProps, useDrag1D} from '@react-aria/utils';
 import {SliderProps} from '@react-types/slider';
@@ -25,11 +25,7 @@ interface SliderAria {
   containerProps: HTMLAttributes<HTMLElement>,
 
   /** Props for the track element. */
-  trackProps: HTMLAttributes<HTMLElement>,
-
-  /** Partial props that should be passed into `useSliderThumb` for all thumbs.
-   * Includes the Label ID for labeling slider inputs. */
-  thumbProps: HTMLAttributes<HTMLElement>
+  trackProps: HTMLAttributes<HTMLElement>
 }
 
 /**
@@ -48,6 +44,9 @@ export function useSlider(
   trackRef: React.RefObject<HTMLElement>
 ): SliderAria {
   const {labelProps, fieldProps} = useLabel(props);
+
+  // Attach id of the label to the state so it can be accessed by useSliderThumb.
+  sliderIds.set(state, labelProps.id ?? fieldProps.id);
 
   // When the user clicks or drags the track, we want the motion to set and drag the
   // closest thumb.  Hence we also need to install useDrag1D() on the track element.
@@ -110,9 +109,6 @@ export function useSlider(
           }
         }
       }
-    }, draggableProps),
-    thumbProps: {
-      'aria-labelledby': (labelProps.id ?? fieldProps.id)!
-    }
+    }, draggableProps)
   };
 }

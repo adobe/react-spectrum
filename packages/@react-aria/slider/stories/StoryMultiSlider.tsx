@@ -1,6 +1,6 @@
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import React, {HTMLAttributes} from 'react';
+import React from 'react';
 import {SliderProps, SliderThumbProps} from '@react-types/slider';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import styles from './story-slider.css';
@@ -17,7 +17,7 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
   const trackRef = React.useRef<HTMLDivElement>(null);
   const state = useSliderState(props);
   const {
-    trackProps, labelProps, thumbProps: commonThumbProps, containerProps
+    trackProps, labelProps, containerProps
   } = useSlider(props, state, trackRef);
 
   const numThumbs = React.Children.count(children);
@@ -40,8 +40,7 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
               sliderProps: props,
               state,
               trackRef,
-              index,
-              commonThumbProps
+              index
             }
           } as any)))}
       </div>
@@ -57,8 +56,7 @@ interface SliderStateContext {
   sliderProps: StoryMultiSliderProps,
   state: SliderState,
   trackRef: React.RefObject<HTMLElement>,
-  index: number,
-  commonThumbProps: HTMLAttributes<HTMLElement>
+  index: number
 }
 
 export function StoryThumb(props: StoryThumbProps) {
@@ -68,12 +66,11 @@ export function StoryThumb(props: StoryThumbProps) {
 
   const {label, isDisabled} = props;
   const context = (props as any).__context as SliderStateContext;
-  const {index, state, commonThumbProps, sliderProps} = context;
+  const {index, state, sliderProps} = context;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const {inputProps, thumbProps, labelProps} = useSliderThumb({
     index,
     ...props,
-    ...commonThumbProps,
     isReadOnly: sliderProps.isReadOnly || props.isReadOnly,
     isDisabled: sliderProps.isDisabled || props.isDisabled,
     trackRef: context.trackRef,
