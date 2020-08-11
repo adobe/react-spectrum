@@ -51,8 +51,8 @@ export interface SliderState {
   // Converts a percent along track (between 0 and 1) to the corresponding value
   getPercentValue: (percent: number) => number,
 
-  // Returns the step amount for the slider
-  getStep: () => number
+  // The step amount for the slider
+  readonly step: number
 }
 
 export const DEFAULT_MIN_VALUE = 0;
@@ -141,7 +141,7 @@ export function useSliderState(props: SliderProps): SliderState {
     getThumbMinValue,
     getThumbMaxValue,
     getPercentValue,
-    getStep: () => step
+    step
   };
 }
 

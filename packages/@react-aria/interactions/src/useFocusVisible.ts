@@ -15,9 +15,10 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
+import {isVirtualClick} from './utils';
 import {useEffect, useState} from 'react';
 
-type Modality = 'keyboard' | 'pointer';
+type Modality = 'keyboard' | 'pointer' | 'virtual';
 type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent;
 type Handler = (modality: Modality, e: HandlerEvent) => void;
 interface FocusVisibleProps {
@@ -78,6 +79,13 @@ function handlePointerEvent(e: PointerEvent | MouseEvent) {
   }
 }
 
+function handleClickEvent(e: MouseEvent) {
+  if (isVirtualClick(e)) {
+    hasEventBeforeFocus = true;
+    currentModality = 'virtual';
+  }
+}
+
 function handleFocusEvent(e: FocusEvent) {
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
@@ -122,6 +130,7 @@ function setupGlobalFocusEvents() {
 
   document.addEventListener('keydown', handleKeyboardEvent, true);
   document.addEventListener('keyup', handleKeyboardEvent, true);
+  document.addEventListener('click', handleClickEvent, true);
 
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).
@@ -146,6 +155,10 @@ function setupGlobalFocusEvents() {
  */
 export function isFocusVisible(): boolean {
   return currentModality !== 'pointer';
+}
+
+export function getInteractionModality(): Modality {
+  return currentModality;
 }
 
 /**

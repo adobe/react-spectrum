@@ -126,6 +126,30 @@ export class SelectionManager implements MultipleSelectionManager {
     return this._isSelectAll;
   }
 
+  get firstSelectedKey(): Key | null {
+    let first: Node<unknown> | null = null;
+    for (let key of this.state.selectedKeys) {
+      let item = this.collection.getItem(key);
+      if (!first || item?.index < first.index) {
+        first = item;
+      }
+    }
+
+    return first?.key;
+  }
+
+  get lastSelectedKey(): Key | null {
+    let last: Node<unknown> | null = null;
+    for (let key of this.state.selectedKeys) {
+      let item = this.collection.getItem(key);
+      if (!last || item?.index > last.index) {
+        last = item;
+      }
+    }
+
+    return last?.key;
+  }
+
   /**
    * Extends the selection to the given key.
    */

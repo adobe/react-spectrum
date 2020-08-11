@@ -27,12 +27,13 @@ export function StorySlider(props: StorySliderProps) {
 
   const state = useSliderState(multiProps);
   const {
-    trackProps, labelProps, thumbProps: commonThumbProps
+    containerProps,
+    trackProps,
+    labelProps
   } = useSlider(multiProps, state, trackRef);
 
   const {thumbProps, inputProps} = useSliderThumb({
     index: 0,
-    ...commonThumbProps,
     isReadOnly: props.isReadOnly,
     isDisabled: props.isDisabled,
     trackRef,
@@ -42,23 +43,23 @@ export function StorySlider(props: StorySliderProps) {
   const value = state.values[0];
 
   return (
-    <div className={styles.slider}>
+    <div className={styles.slider} {...containerProps}>
       <div className={styles.sliderLabel}>
         {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
         <div className={styles.value}>{state.getThumbValueLabel(0)}</div>
       </div>
       <div className={styles.trackContainer}>
         <div className={styles.rail} />
-        <div 
-          className={styles.filledRail} 
+        <div
+          className={styles.filledRail}
           style={{
             left: `${state.getValuePercent(Math.min(value, origin)) * 100}%`,
             width: `${(state.getValuePercent(Math.max(value, origin)) - state.getValuePercent(Math.min(value, origin))) * 100}%`
           }} />
         <div {...trackProps} ref={trackRef} className={styles.track} />
         <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
-          <div 
-            {...thumbProps} 
+          <div
+            {...thumbProps}
             className={styles.thumb}
             style={{
               'left': `${state.getThumbPercent(0) * 100}%`

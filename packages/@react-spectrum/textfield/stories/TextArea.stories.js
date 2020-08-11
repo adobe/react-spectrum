@@ -11,8 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Button} from '@react-spectrum/button';
 import Info from '@spectrum-icons/workflow/Info';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {TextArea} from '../';
 
@@ -119,6 +120,9 @@ storiesOf('TextArea', module)
   )
   .add('custom width, quiet',
     () => render({icon: <Info />, validationState: 'invalid', width: '300px', isQuiet: true})
+  )
+  .add('controlled interactive',
+    () => <ControlledTextArea />
   );
 
 function render(props = {}) {
@@ -131,5 +135,15 @@ function render(props = {}) {
       onBlur={action('blur')}
       UNSAFE_className="custom_classname"
       {...props} />
+  );
+}
+
+function ControlledTextArea(props) {
+  let [value, setValue] = useState('');
+  return (
+    <>
+      <TextArea label="megatron" value={value} onChange={setValue} {...props} isQuiet />
+      <Button variant="primary" onPress={() => setValue('decepticons are evil transformers and should be kicked out of earth')}>Set Text</Button>
+    </>
   );
 }

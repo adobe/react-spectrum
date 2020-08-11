@@ -24,13 +24,12 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   }
 
   const {
-    trackProps, labelProps, thumbProps: commonThumbProps, containerProps
+    trackProps, labelProps, containerProps
   } = useSlider(props, state, trackRef);
 
   const {thumbProps: minThumbProps, inputProps: minInputProps} = useSliderThumb({
-    index: 0, 
-    'aria-label': minLabel ?? 'Minimum', 
-    ...commonThumbProps,
+    index: 0,
+    'aria-label': minLabel ?? 'Minimum',
     isReadOnly: props.isReadOnly,
     isDisabled: props.isDisabled,
     trackRef,
@@ -38,9 +37,8 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
   }, state);
 
   const {thumbProps: maxThumbProps, inputProps: maxInputProps} = useSliderThumb({
-    index: 1, 
-    'aria-label': maxLabel ?? 'Maximum', 
-    ...commonThumbProps,
+    index: 1,
+    'aria-label': maxLabel ?? 'Maximum',
     isReadOnly: props.isReadOnly,
     isDisabled: props.isDisabled,
     trackRef,
@@ -59,16 +57,16 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
       </div>
       <div className={styles.trackContainer}>
         <div className={styles.rail} />
-        <div 
-          className={styles.filledRail} 
+        <div
+          className={styles.filledRail}
           style={{
             left: `${state.getThumbPercent(0) * 100}%`,
             width: `${(state.getThumbPercent(1) - state.getThumbPercent(0)) * 100}%`
           }} />
         <div {...trackProps} ref={trackRef} className={styles.track} />
         <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
-          <div 
-            {...minThumbProps} 
+          <div
+            {...minThumbProps}
             className={styles.thumb}
             style={{
               'left': `${state.getThumbPercent(0) * 100}%`
@@ -77,8 +75,8 @@ export function StoryRangeSlider(props: StoryRangeSliderProps) {
           </div>
         </FocusRing>
         <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
-          <div 
-            {...maxThumbProps} 
+          <div
+            {...maxThumbProps}
             className={styles.thumb}
             style={{
               'left': `${state.getThumbPercent(1) * 100}%`
