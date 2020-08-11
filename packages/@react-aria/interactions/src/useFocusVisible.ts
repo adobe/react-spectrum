@@ -63,7 +63,6 @@ function isValidKey(e: KeyboardEvent) {
 
 function handleKeyboardEvent(e: KeyboardEvent) {
   hasEventBeforeFocus = true;
-
   if (isValidKey(e)) {
     currentModality = 'keyboard';
     triggerChangeHandlers('keyboard', e);

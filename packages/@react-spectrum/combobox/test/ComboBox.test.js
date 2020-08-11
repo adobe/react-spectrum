@@ -1487,9 +1487,10 @@ describe('ComboBox', function () {
               <Button variant="secondary" onPress={() => setSelectedKey('')}>Clear Button</Button>
             </Provider>
           </div>
-      )};
+        );
+      };
 
-      let {getAllByRole, getByRole, rerender} = render(<ControlledKeyComboBox selectedKey="2" />);
+      let {getAllByRole, getByRole} = render(<ControlledKeyComboBox selectedKey="2" />);
       let combobox = getByRole('combobox');
       expect(combobox.value).toBe('Two');
       expect(document.activeElement).not.toBe(combobox);
