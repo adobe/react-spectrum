@@ -14,8 +14,8 @@ import {mergeProps, useId} from '@react-aria/utils';
 import {SingleSelectListState} from '@react-stately/list';
 import {TabAriaProps, TabsAriaProps} from '@react-types/tabs';
 import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
-import {useLocale} from '@react-aria/i18n';
 import {useFocusWithin, usePress} from '@react-aria/interactions';
+import {useLocale} from '@react-aria/i18n';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
 
 interface TabsAria {
