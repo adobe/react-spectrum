@@ -40,13 +40,13 @@ storiesOf('Tabs', module)
     render({density: 'compact', orientation: 'vertical'})
   )
   .add('icons', () => renderWithIcons())
-  .add('icons, density: compact', () => 
+  .add('icons, density: compact', () =>
     renderWithIcons({density: 'compact'})
   )
-  .add('icons, orientation: vertical', () => 
+  .add('icons, orientation: vertical', () =>
     renderWithIcons({orientation: 'vertical'})
   )
-  .add('icons, density: compact, orientation: vertical', () => 
+  .add('icons, density: compact, orientation: vertical', () =>
     renderWithIcons({orientation: 'vertical', density: 'compact'})
   )
   .add('disable all tabs', () => render({isDisabled: true}))
@@ -65,7 +65,7 @@ storiesOf('Tabs', module)
 
 function render(props = {}) {
   return (
-    <Tabs defaultSelectedKey="val1" {...props} onSelectionChange={action('onSelectionChange')}>
+    <Tabs {...props} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
       <Item title="Tab 1" key="val1">
         <Content margin="size-160">
           <Heading>Tab Body 1</Heading>
@@ -102,7 +102,7 @@ function render(props = {}) {
 
 function renderWithIcons(props = {}) {
   return (
-    <Tabs defaultSelectedKey="dashboard" {...props} onSelectionChange={action('onSelectionChange')}>
+    <Tabs {...props} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
       <Item key="dashboard" icon={<Dashboard />} title="Dashboard">
         <Content margin="size-160">
           <Heading>Dashboard</Heading>
