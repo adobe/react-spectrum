@@ -96,34 +96,38 @@ storiesOf('Button', module)
     }
   );
 
-function render(props: any = {}) {
+function render(props: any = {}, note: string = '') {
+  console.log('note', note);
   return (
-    <Flex gap="size-200">
-      <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        {...props}>
-        Default
-      </Button>
-      <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        isDisabled
-        {...props}>
-        Disabled
-      </Button>
-      {props.variant !== 'cta' && (
-      <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        isQuiet
-        {...props}>
-        Quiet
-      </Button>
-      )}
+    <Flex gap="size-200" direction="column">
+      <Flex gap="size-200">
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          {...props}>
+          Default
+        </Button>
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isDisabled
+          {...props}>
+          Disabled
+        </Button>
+        {props.variant !== 'cta' && (
+        <Button
+          onPress={action('press')}
+          onPressStart={action('pressstart')}
+          onPressEnd={action('pressend')}
+          isQuiet
+          {...props}>
+          Quiet
+        </Button>
+        )}
+      </Flex>
+      {note && (<div>{note}</div>)}
     </Flex>
   );
 }
