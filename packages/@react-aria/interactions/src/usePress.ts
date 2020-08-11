@@ -600,12 +600,12 @@ function isValidKeyboardEvent(event: KeyboardEvent): boolean {
     !(role === 'link' && key !== 'Enter')
   );
 }
-
+// should be run after isValidKeyboardEvent, as that checks the key
 function isSubmitEvent(event: KeyboardEvent): boolean {
-  const {key, target} = event;
+  const {target} = event;
   const element = target as HTMLElement;
   const type = element.getAttribute('type');
-  return (key === 'Enter' || key === ' ' || key === 'Spacebar') && type === 'submit';
+  return type === 'submit';
 }
 
 // Original licensing for the following method can be found in the
