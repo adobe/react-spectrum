@@ -122,14 +122,14 @@ export interface TextInputDOMProps extends DOMProps {
 
   // Composition events
   /**
-   * Handler that is called when a text composition system starts a new text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionend_event).
-   */
-  onCompositionEnd?: CompositionEventHandler<HTMLInputElement>,
-
-  /**
-   * Handler that is called when a text composition system completes or cancels the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event).
+   * Handler that is called when a text composition system starts a new text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionstart_event).
    */
   onCompositionStart?: CompositionEventHandler<HTMLInputElement>,
+  
+  /**
+   * Handler that is called when a text composition system completes or cancels the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionend_event).
+   */
+  onCompositionEnd?: CompositionEventHandler<HTMLInputElement>,
 
   /**
    * Handler that is called when a new character is received in the current text composition session. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/compositionupdate_event).
