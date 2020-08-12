@@ -40,6 +40,7 @@ module.exports = new Optimizer({
           description: meta.description,
           keywords: meta.keywords,
           date: meta.date,
+          author: meta.author,
           image: getImageURL(meta.image, bundleGraph, b)
         });
       }
@@ -64,6 +65,7 @@ module.exports = new Optimizer({
           description: mainAsset.meta.description,
           keywords: mainAsset.meta.keywords,
           date: mainAsset.meta.date,
+          author: mainAsset.meta.author,
           image: getImageURL(mainAsset.meta.image, bundleGraph, bundle)
         },
         toc: mainAsset.meta.toc,
