@@ -111,6 +111,11 @@ html, body {
   padding-bottom: 0;
 }
 
+.video {
+  max-width: 100%;
+  margin: 20px 0;
+}
+
 .homeLinks {
   span {
     font-size: 1.5em;
@@ -604,6 +609,16 @@ h2.sectionHeader {
 
 .blogArticle p {
   margin-bottom: 0;
+}
+
+.blogHeader address,
+.blogArticle address {
+  display: inline;
+}
+
+.blogHeader address + time:before,
+.blogArticle address + time:before {
+  content: ' • ';
 }
 
 @media (max-width: 750px) {

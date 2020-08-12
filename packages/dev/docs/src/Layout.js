@@ -427,6 +427,8 @@ export function BlogLayout(props) {
 export function BlogPostLayout(props) {
   // Add post date underneath the h1
   let date = props.currentPage.date;
+  let author = props.currentPage.author || '';
+  let authorParts = author.match(/^\[(.*?)\]\((.*?)\)$/) || [''];
   let components = mdxComponents;
   if (date) {
     components = {
@@ -434,6 +436,7 @@ export function BlogPostLayout(props) {
       h1: (props) => (
         <header className={docStyles.blogHeader}>
           {mdxComponents.h1(props)}
+          {author && <address className={typographyStyles['spectrum-Body4']}>By <a rel="author" href={authorParts[2]} className={clsx(linkStyle['spectrum-Link'], docStyles.link)} {...getAnchorProps(authorParts[2])}>{authorParts[1]}</a></address>}
           <Time date={date} />
         </header>
       )
