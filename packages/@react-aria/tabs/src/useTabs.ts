@@ -9,13 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
+import {HTMLAttributes, Key, RefObject, useMemo, useState} from 'react';
+import {mergeProps, useId} from '@react-aria/utils';
 import {SingleSelectListState} from '@react-stately/list';
 import {TabAriaProps, TabsAriaProps} from '@react-types/tabs';
 import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
-import {useId} from '@react-aria/utils';
+import {useFocusWithin, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
-import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
 
 interface TabsAria {
@@ -29,6 +29,7 @@ const tabsIds = new WeakMap<SingleSelectListState<unknown>, string>();
 
 export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState<T>, ref): TabsAria {
   let {
+    isDisabled,
     'aria-label': ariaLabel,
     orientation = 'horizontal',
     keyboardActivation = 'automatic'
@@ -63,11 +64,19 @@ export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState
   let tabsId = useId();
   tabsIds.set(state, tabsId);
 
+  let [isFocusWithin, setFocusWithin] = useState(false);
+  let {focusWithinProps} = useFocusWithin({
+    onFocusWithinChange: setFocusWithin
+  });
+  let tabIndex = isFocusWithin ? -1 : 0;
+
   return {
     tabListProps: {
-      ...collectionProps,
+      ...mergeProps(focusWithinProps, collectionProps),
       role: 'tablist',
-      'aria-label': ariaLabel
+      'aria-disabled': isDisabled,
+      'aria-label': ariaLabel,
+      tabIndex: isDisabled ? null : tabIndex
     },
     tabPanelProps: {
       id: generateId(state, selectedKey, 'tabpanel'),
@@ -88,7 +97,7 @@ export function useTab<T>(
   state: SingleSelectListState<T>,
   ref: RefObject<HTMLElement>
 ): TabAria {
-  let {item, isDisabled} = props;
+  let {item, isDisabled: propsDisabled} = props;
   let {key} = item;
   let {selectionManager: manager, selectedKey} = state;
 
@@ -99,6 +108,7 @@ export function useTab<T>(
     key,
     ref
   });
+  let isDisabled = propsDisabled || state.disabledKeys.has(key);
 
   let {pressProps} = usePress({...itemProps, isDisabled});
   let tabId = generateId(state, key, 'tab');

@@ -90,9 +90,10 @@ interface TabProps<T> extends DOMProps, StyleProps {
 }
 
 export function Tab<T>(props: TabProps<T>) {
-  let {item, state, isDisabled, ...otherProps} = props;
+  let {item, state, isDisabled: propsDisabled, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
   let {key, rendered} = item;
+  let isDisabled = propsDisabled || state.disabledKeys.has(key);
 
   let ref = useRef<HTMLDivElement>();
   let {tabProps} = useTab({item, isDisabled}, state, ref);

@@ -218,4 +218,35 @@ describe('Tabs', function () {
     let tabs = within(tablist).getAllByRole('tab');
     expect(document.activeElement).toBe(tabs[1]);
   });
+
+  it('should not focus any tabs when isDisabled tabbing in for the first time', function () {
+    let tree = renderComponent({defaultSelectedKey: items[1].name, isDisabled: true});
+    act(() => userEvent.tab());
+
+    let tabpanel = tree.getByRole('tabpanel');
+    expect(document.activeElement).toBe(tabpanel);
+  });
+
+  it('disabled tabs cannot be keyboard navigated to', function () {
+    let tree = renderComponent({defaultSelectedKey: items[0].name, disabledKeys: [items[1].name], onSelectionChange});
+    act(() => userEvent.tab());
+
+    let tablist = tree.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    expect(document.activeElement).toBe(tabs[0]);
+    fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
+    fireEvent.keyUp(tabs[1], {key: 'ArrowRight'});
+    expect(onSelectionChange).toBeCalledWith(items[2].name);
+  });
+
+  it('disabled tabs cannot be pressed', function () {
+    let tree = renderComponent({defaultSelectedKey: items[0].name, disabledKeys: [items[1].name], onSelectionChange});
+    act(() => userEvent.tab());
+
+    let tablist = tree.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    expect(document.activeElement).toBe(tabs[0]);
+    act(() => userEvent.click(tabs[1]));
+    expect(onSelectionChange).not.toBeCalled();
+  });
 });
