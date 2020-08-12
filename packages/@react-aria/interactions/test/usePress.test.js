@@ -1651,4 +1651,78 @@ describe('usePress', function () {
 
     expect(document.activeElement).toBe(el);
   });
+
+  describe('disable text-selection when pressed', function () {
+    let handler = jest.fn();
+    let mockUserSelect = 'contain';
+    let oldUserSelect = document.documentElement.style.webkitUserSelect;
+
+    beforeAll(() => {
+      jest.useFakeTimers();
+      jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    });
+    afterAll(() => {
+      jest.useRealTimers();
+      window.requestAnimationFrame.mockRestore();
+      handler.mockClear();
+    });
+    beforeEach(() => {
+      document.documentElement.style.webkitUserSelect = mockUserSelect;
+    });
+    afterEach(() => {
+      document.documentElement.style.webkitUserSelect = oldUserSelect;
+    });
+
+    it('should add user-select:none to html element when press start', function () {
+      let {getByText, baseElement} = render(
+        <Example
+          onPressStart={handler}
+          onPressEnd={handler}
+          onPressChange={handler}
+          onPress={handler}
+          onPressUp={handler} />,
+        {
+          baseElement: document.documentElement
+        }
+      );
+
+      let el = getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      expect(baseElement.style.webkitUserSelect).toBe('none');
+    });
+
+    it('should remove user-select:none to html element when press end', function () {
+      let {getByText, baseElement} = render(
+        <Example
+          onPressStart={handler}
+          onPressEnd={handler}
+          onPressChange={handler}
+          onPress={handler}
+          onPressUp={handler} />,
+        {
+          baseElement: document.documentElement
+        }
+      );
+
+      let el = getByText('test');
+
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
+
+      jest.advanceTimersByTime(300);
+      expect(baseElement.style.webkitUserSelect).toBe(mockUserSelect);
+
+      // Checkbox doesn't remove `user-select: none;` style from HTML Element issue
+      // see https://github.com/adobe/react-spectrum/issues/862
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
+      jest.advanceTimersByTime(300);
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
+      jest.advanceTimersByTime(300);
+
+      expect(baseElement.style.webkitUserSelect).toBe(mockUserSelect);
+    });
+  });
 });
