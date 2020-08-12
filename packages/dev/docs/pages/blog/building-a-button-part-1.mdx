@@ -32,7 +32,7 @@ In this series of blog posts, we’ll look at some of the details that we’ve c
 
 A button seems like a simple component at first. The `<button>` element is built into the browser, and you can style it pretty easily with CSS. This gets you pretty far, but if you sit down and test this across various types of interaction models little details start to jump out. The experience could be better on touch devices, keyboard focus works differently across browsers, and the need to adapt the experience across interaction models becomes more apparent.
 
-Stepping back, buttons actually support quite a few different types of interactions. Of course, they support clicking with the mouse, but they also support tapping on a touch screen. Hover effects are supported when using a mouse, but not when interacting with a touch screen or keyboard. Buttons also support keyboard focus, and can be activated using the Enter or Space keys. Finally, they can be pressed with a virtual cursor by assistive technology such as screen readers.
+Stepping back, buttons actually support quite a few different types of interactions. Of course, they support clicking with the mouse, but they also support tapping on a touch screen. Hover effects are supported when using a mouse, but not when interacting with a touch screen or keyboard. Buttons also support keyboard focus, and can be activated using the <kbd>Enter</kbd> or <kbd>Space</kbd> keys. Finally, they can be pressed with a virtual cursor by assistive technology such as screen readers.
 
 Today we’ll be looking at handling press events across mouse, touch, keyboard, and screen readers. In the future posts, we’ll also look at handling hover effects, and keyboard focus behavior.
 
@@ -62,7 +62,7 @@ The CSS `:active` and `:hover` pseudo-classes are also affected by mouse event e
 
 ## Pointer events
 
-The [pointer events](https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events) spec is designed to help with these issues. It unifies mouse, touch, and stylus interactions into a single event model. We can handle the `onPointerDown` and `onPointerUp` events, each of which has a `pointerType` property to indicate what type of interaction triggered it. This is very useful to allow other parts of the UI to adapt based on the interaction model, for example, selection of items in a list usually occurs on mouse down but on touch up.
+The [pointer events](https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events) spec is designed to help with these issues. It unifies mouse, touch, and stylus interactions into a single event model. We can handle the `onPointerDown` and `onPointerUp` events, each of which has a `pointerType` property to indicate what type of interaction triggered it. This is very useful to allow other parts of the UI to adapt based on the interaction model. For example, selection of items in a list on a desktop occurs on mouse down but on mobile it occurs on touch up.
 
 While browser support is improving, React Aria also implements fallbacks for pointer events on top of mouse and touch events. We listen for both, and if a touch event occurs prior to the mouse event, we ignore it. This way we can determine what kind of device fired the event, and also ensure that we handle events as fast as possible without waiting for browser delays.
 
@@ -72,7 +72,7 @@ Even with pointer events there are still some browser inconsistencies though. Fo
 
 Another interesting thing about touch events is that they can be canceled. For example, if you’re in the middle of touching a button and you get a phone call or other notification, your press cannot be completed due to an overlay covering the element you were touching.
 
-Another case is scrolling. If you touch a button and then scroll the page, you likely did not intend to activate the button. So when you release your touch, it should not trigger the button’s press action. We need to disambiguate between these events and cancel the press as appropriate in order to behave as the user expects.
+Touch events can also be canceled by scrolling. If you touch a button and then scroll the page, you likely did not intend to activate the button. So when you release your touch, it should not trigger the button’s press action. We need to disambiguate between these events and cancel the press as appropriate in order to behave as the user expects.
 
 ## Text selection
 
@@ -84,9 +84,9 @@ It is possible to add the `user-select: none` CSS property to the button to make
 
 ## Keyboard interactions
 
-Buttons can also be pressed using the keyboard with the Enter or Space keys. This is fairly easy to implement, but there are a few details worth considering. For example, if the element is a link, it should only be triggered by the Enter key and not the Space key, except if it has the ARIA `button` role applied.
+Buttons can also be pressed using the keyboard with the <kbd>Enter</kbd> or <kbd>Space</kbd> keys. This is fairly easy to implement, but there are a few details worth considering. For example, if the element is a link, it should only be triggered by the <kbd>Enter</kbd> key and not the <kbd>Space</kbd> key, except if it has the ARIA `button` role applied.
 
-There is also the challenge of repeating keyboard events. If you press and hold a key on the keyboard, the `onKeyDown` event will repeat periodically until you release the key. This is useful in text inputs, but not really on buttons and other pressable elements, and can even be problematic. For example, if you had a button which opened a menu of selectable items, pressing and holding the Enter key would cause the menu to open, and then the first menu item to be selected without the user intending to do this. This is because the event repeats, so once the menu opens on the first key down event, the menu item gains focus and is triggered by the repeated event. React Aria is careful to ignore these repeating events so this does not happen.
+There is also the challenge of repeating keyboard events. If you press and hold a key on the keyboard, the `onKeyDown` event will repeat periodically until you release the key. This is useful in text inputs, but not really on buttons and other pressable elements, and can even be problematic. For example, if you had a button which opened a menu of selectable items, pressing and holding the <kbd>Enter</kbd> key would cause the menu to open, and then the first menu item to be selected without the user intending to do this. This is because the event repeats, so once the menu opens on the first key down event, the menu item gains focus and is triggered by the repeated event. React Aria is careful to ignore these repeating events so this does not happen.
 
 ## Virtual press events
 
