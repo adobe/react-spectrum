@@ -46,7 +46,7 @@ storiesOf('SearchField', module)
     {info}
   )
   .add('custom width',
-    () => render({defaultValue: 'React', width: 275})
+    () => render({defaultValue: 'React', width: 300})
   );
 
 function renderSearchLandmark(child) {

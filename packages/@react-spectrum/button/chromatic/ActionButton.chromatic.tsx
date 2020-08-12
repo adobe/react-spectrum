@@ -44,7 +44,7 @@ storiesOf('Button/ActionButton', module)
         </ActionButton>
         <ActionButton isQuiet>
           <Add />
-          <Text>Quiet</Text>
+          Quiet
         </ActionButton>
         <ActionButton isDisabled>
           <Text>Disabled</Text>

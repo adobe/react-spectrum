@@ -15,18 +15,12 @@ export const withChromaticProvider = makeDecorator({
     } else {
       selectedLocales = options.locales ? locales.map(l => l.value).slice(1) : ['en-US', 'ar-AE'];
     }
-    let height;
-    let minHeight;
-    if(isNaN(options.height)) {
-      minHeight = 1000;
-    } else {
-      height = options.height;
-    }
+    let height = options.height;
 
     // do not add a top level provider, each provider variant needs to be independent so that we don't have RTL/LTR styles that interfere with each other
     return (
       <DisableAnimations disableAnimations={options.disableAnimations}>
-        <div style={{display: 'flex', flexDirection: 'column', height, minHeight}}>
+        <div style={{display: 'flex', flexDirection: 'column', height}}>
             {(options.colorSchemes || Object.keys(themes)).map(colorScheme =>
               (options.scales || Object.keys(scales)).map(scale =>
                 (colorScheme === 'light' ? selectedLocales : ['en-US']).map(locale =>

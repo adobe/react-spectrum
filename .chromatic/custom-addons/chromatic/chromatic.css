@@ -50,6 +50,7 @@
   font-family: "adobe-clean-serif",sans-serif;
 }
 
+
 .disableAnimations * {
   animation: none !important;
   transition: none !important;

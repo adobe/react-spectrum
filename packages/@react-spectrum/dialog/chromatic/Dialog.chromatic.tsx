@@ -89,7 +89,6 @@ storiesOf('Dialog', module)
   );
 
 storiesOf('Dialog/Alert', module)
-  .addParameters({chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium'], disableAnimations: true}})
   .add(
     'destructive',
     () => renderAlert({
