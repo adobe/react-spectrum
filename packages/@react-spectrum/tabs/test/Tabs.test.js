@@ -236,7 +236,7 @@ describe('Tabs', function () {
     expect(document.activeElement).toBe(tabs[0]);
     fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
     fireEvent.keyUp(tabs[1], {key: 'ArrowRight'});
-    expect(onSelectionChange).toBeCalledWith(items[2].name)
+    expect(onSelectionChange).toBeCalledWith(items[2].name);
   });
 
   it('disabled tabs cannot be pressed', function () {

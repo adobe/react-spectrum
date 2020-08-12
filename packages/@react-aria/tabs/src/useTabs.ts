@@ -108,7 +108,7 @@ export function useTab<T>(
     key,
     ref
   });
-  let isDisabled = propsDisabled || state.disabledKeys.has(key)
+  let isDisabled = propsDisabled || state.disabledKeys.has(key);
 
   let {pressProps} = usePress({...itemProps, isDisabled});
   let tabId = generateId(state, key, 'tab');
