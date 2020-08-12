@@ -519,7 +519,6 @@ governing permissions and limitations under the License.
   &.is-active {
     background-color: var(--spectrum-actionbutton-emphasized-background-color-down);
     border-color: var(--spectrum-actionbutton-emphasized-border-color-down);
-    box-shadow: none;
     color: var(--spectrum-actionbutton-emphasized-text-color-down);
 
     .spectrum-ActionButton-hold {
@@ -560,6 +559,7 @@ governing permissions and limitations under the License.
       &.is-active {
         /* change 1px of focus ring blue to match the rest of the active state */
         box-shadow: 0 0 0 var(--spectrum-button-primary-border-size-increase-key-focus) var(--spectrum-actionbutton-emphasized-border-color-selected-down);
+        border-color: var(--spectrum-actionbutton-emphasized-border-color-selected-down);
       }
 
       .spectrum-Icon {
