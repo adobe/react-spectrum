@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {Item} from '@adobe/react-spectrum';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Tabs} from '../src';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 let items = [
   {name: 'Tab 1', children: 'Tab 1 body'},
@@ -27,7 +28,7 @@ let items = [
 function renderComponent(props) {
   return render(
     <Provider theme={theme}>
-      <Tabs defaultSelectedKey={items[0].name} {...props}>
+      <Tabs {...props}>
         {items.map(item => (
           <Item key={item.name} title={item.name}>
             {item.children}
@@ -61,7 +62,7 @@ describe('Tabs', function () {
         expect(tab).toHaveAttribute('aria-controls');
         let tabpanel = document.getElementById(tab.getAttribute('aria-controls'));
         expect(tabpanel).toBeTruthy();
-        expect(tabpanel).toHaveAttribute('aria-labelledby');
+        expect(tabpanel).toHaveAttribute('aria-labelledby', tab.id);
         expect(tabpanel).toHaveAttribute('role', 'tabpanel');
         expect(tabpanel).toHaveTextContent(items[0].children);
       }
@@ -139,7 +140,7 @@ describe('Tabs', function () {
   });
 
   it('not select via left / right keys if keyboardActivation is manual, select on enter / spacebar', function () {
-    let container = renderComponent({keyboardActivation: 'manual', onSelectionChange});
+    let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: items[0].name, onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
@@ -162,7 +163,7 @@ describe('Tabs', function () {
   });
 
   it('supports using click to change tab', function () {
-    let container = renderComponent({keyboardActivation: 'manual', onSelectionChange});
+    let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: items[0].name, onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
@@ -174,9 +175,78 @@ describe('Tabs', function () {
     expect(secondItem).toHaveAttribute('aria-controls');
     let tabpanel = document.getElementById(secondItem.getAttribute('aria-controls'));
     expect(tabpanel).toBeTruthy();
-    expect(tabpanel).toHaveAttribute('aria-labelledby');
+    expect(tabpanel).toHaveAttribute('aria-labelledby', secondItem.id);
     expect(tabpanel).toHaveAttribute('role', 'tabpanel');
     expect(tabpanel).toHaveTextContent(items[1].children);
     expect(onSelectionChange).toBeCalledTimes(1);
+  });
+
+  it('does not generate conflicting ids between multiple tabs instances', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <Tabs>
+          {items.map(item => (
+            <Item key={item.name} title={item.name}>
+              {item.children}
+            </Item>
+          ))}
+        </Tabs>
+        <Tabs>
+          {items.map(item => (
+            <Item key={item.name} title={item.name}>
+              {item.children}
+            </Item>
+          ))}
+        </Tabs>
+      </Provider>
+    );
+
+    let tablists = tree.getAllByRole('tablist');
+    let tabs1 = within(tablists[0]).getAllByRole('tab');
+    let tabs2 = within(tablists[1]).getAllByRole('tab');
+
+    for (let i = 0; i < tabs1.length; i++) {
+      expect(tabs1[i].id).not.toBe(tabs2[i].id);
+    }
+  });
+
+  it('should focus the selected tab when tabbing in for the first time', function () {
+    let tree = renderComponent({defaultSelectedKey: items[1].name});
+    act(() => userEvent.tab());
+
+    let tablist = tree.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    expect(document.activeElement).toBe(tabs[1]);
+  });
+
+  it('should not focus any tabs when isDisabled tabbing in for the first time', function () {
+    let tree = renderComponent({defaultSelectedKey: items[1].name, isDisabled: true});
+    act(() => userEvent.tab());
+
+    let tabpanel = tree.getByRole('tabpanel');
+    expect(document.activeElement).toBe(tabpanel);
+  });
+
+  it('disabled tabs cannot be keyboard navigated to', function () {
+    let tree = renderComponent({defaultSelectedKey: items[0].name, disabledKeys: [items[1].name], onSelectionChange});
+    act(() => userEvent.tab());
+
+    let tablist = tree.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    expect(document.activeElement).toBe(tabs[0]);
+    fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
+    fireEvent.keyUp(tabs[1], {key: 'ArrowRight'});
+    expect(onSelectionChange).toBeCalledWith(items[2].name);
+  });
+
+  it('disabled tabs cannot be pressed', function () {
+    let tree = renderComponent({defaultSelectedKey: items[0].name, disabledKeys: [items[1].name], onSelectionChange});
+    act(() => userEvent.tab());
+
+    let tablist = tree.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    expect(document.activeElement).toBe(tabs[0]);
+    act(() => userEvent.click(tabs[1]));
+    expect(onSelectionChange).not.toBeCalled();
   });
 });

@@ -17,10 +17,6 @@ import statelyDocs from 'docs:@react-stately/overlays';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/overlays/package.json';
 
-```jsx import
-import {useOverlayTrigger} from '@react-aria/overlays';
-```
-
 ---
 category: Overlays
 keywords: [overlays, dialog, modal, aria]
@@ -117,6 +113,7 @@ package to ensure that this content is hidden while modals are open as well. See
 import {useOverlayTriggerState} from '@react-stately/overlays';
 import {
   useOverlay,
+  useOverlayTrigger,
   useOverlayPosition,
   useModal,
   OverlayProvider,
