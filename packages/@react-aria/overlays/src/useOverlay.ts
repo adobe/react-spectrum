@@ -80,11 +80,11 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
     }
   };
 
-  let onInteractOutside = isDismissable && isOpen ? (e: SyntheticEvent<HTMLElement>) => {
+  let onInteractOutside = (e: SyntheticEvent<HTMLElement>) => {
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as HTMLElement)) {
       onHide();
     }
-  } : undefined;
+  };
 
   // Handle the escape key
   let onKeyDown = (e) => {
@@ -95,7 +95,7 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside});
+  useInteractOutside({ref, onInteractOutside: isDismissable && isOpen ? onInteractOutside : undefined});
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,
