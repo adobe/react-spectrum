@@ -604,7 +604,14 @@ h2.sectionHeader {
 .blogHeader h1,
 .blogHeader h2 {
   margin-top: 0;
+}
+
+.blogHeader h1 {
   margin-bottom: 0 !important;
+}
+
+.blogHeader h2 {
+  margin-bottom: 5px !important;
 }
 
 .blogArticle p {
