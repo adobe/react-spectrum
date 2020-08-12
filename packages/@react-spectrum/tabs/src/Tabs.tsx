@@ -140,7 +140,7 @@ function TabLine({orientation, selectedTab}) {
     width: undefined,
     height: undefined,
     transform: undefined
-  })
+  });
 
   useLayoutEffect(() => {
     let styleObj = {transform: undefined, width: undefined, height: undefined};
