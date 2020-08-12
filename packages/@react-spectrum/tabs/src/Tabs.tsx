@@ -14,12 +14,13 @@ import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import tabsStyles from './tabs.css';
 import {useHover} from '@react-aria/interactions';
+import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTab, useTabs} from '@react-aria/tabs';
 
@@ -131,20 +132,26 @@ export function Tab<T>(props: TabProps<T>) {
 
 function TabLine({orientation, selectedTab}) {
   let verticalSelectionIndicatorOffset = 12;
-
-  let style = {
-    transform: orientation === 'vertical'
-        ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
-        : `translateX(${selectedTab.offsetLeft}px) `,
+  let {direction} = useLocale();
+  let [style, setStyle] = useState({
     width: undefined,
-    height: undefined
-  };
+    height: undefined,
+    transform: undefined
+  })
 
-  if (orientation === 'horizontal') {
-    style.width = `${selectedTab.offsetWidth}px`;
-  } else {
-    style.height = `${selectedTab.offsetHeight - verticalSelectionIndicatorOffset}px`;
-  }
+  useLayoutEffect(() => {
+    let styleObj = {transform: undefined, width: undefined, height: undefined};
+    styleObj.transform = orientation === 'vertical'
+      ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
+      : `translateX(${selectedTab.offsetLeft}px) `;
+
+    if (orientation === 'horizontal') {
+      styleObj.width = `${selectedTab.offsetWidth}px`;
+    } else {
+      styleObj.height = `${selectedTab.offsetHeight - verticalSelectionIndicatorOffset}px`;
+    }
+    setStyle(styleObj);
+  }, [direction, setStyle, selectedTab, orientation]);
 
   return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
 }
