@@ -28,7 +28,7 @@ export class TableLayout<T> extends ListLayout<T> {
       this.collection.columns.length !== this.lastCollection.columns.length ||
       this.collection.columns.some((c, i) => c.key !== this.lastCollection.columns[i].key)
     ) {
-      this.cache = new WeakMap();
+      this.invalidateEverything = true;
     }
 
     this.buildColumnWidths();
