@@ -72,7 +72,7 @@ Even with pointer events there are still some browser inconsistencies though. Fo
 
 Another interesting thing about touch events is that they can be canceled. For example, if you’re in the middle of touching a button and you get a phone call or other notification, your press cannot be completed due to an overlay covering the element you were touching.
 
-There are also cases where this does not happen automatically, and we need to recognize them, like scrolling. If you touch a button and then scroll the page, you likely did not intend to activate the button. So when you release your touch, it should not trigger the button’s press action. We need to disambiguate between these events and cancel the press as appropriate in order to behave as the user expects.
+Touch events can also be canceled by scrolling. If you touch a button and then scroll the page, you likely did not intend to activate the button. So when you release your touch, it should not trigger the button’s press action. We need to disambiguate between these events and cancel the press as appropriate in order to behave as the user expects.
 
 ## Text selection
 
