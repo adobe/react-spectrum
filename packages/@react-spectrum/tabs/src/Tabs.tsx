@@ -21,7 +21,7 @@ import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import tabsStyles from './tabs.css';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useTab, useTabs} from '@react-aria/tabs';
 
 export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
@@ -133,6 +133,8 @@ export function Tab<T>(props: TabProps<T>) {
 function TabLine({orientation, selectedTab}) {
   let verticalSelectionIndicatorOffset = 12;
   let {direction} = useLocale();
+  let {scale} = useProvider();
+
   let [style, setStyle] = useState({
     width: undefined,
     height: undefined,
@@ -151,7 +153,7 @@ function TabLine({orientation, selectedTab}) {
       styleObj.height = `${selectedTab.offsetHeight - verticalSelectionIndicatorOffset}px`;
     }
     setStyle(styleObj);
-  }, [direction, setStyle, selectedTab, orientation]);
+  }, [direction, setStyle, selectedTab, orientation, scale]);
 
   return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
 }
