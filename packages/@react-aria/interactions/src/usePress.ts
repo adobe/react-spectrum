@@ -25,7 +25,8 @@ export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
   isPressed?: boolean,
   /** Whether the press events should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  allowDefault?: boolean
 }
 
 export interface PressHookProps extends PressProps {
@@ -92,6 +93,7 @@ export function usePress(props: PressHookProps): PressResult {
     onPressEnd,
     onPressUp,
     isDisabled,
+    allowDefault = false,
     isPressed: isPressedProp,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
@@ -199,7 +201,9 @@ export function usePress(props: PressHookProps): PressResult {
     let pressProps: HTMLAttributes<HTMLElement> = {
       onKeyDown(e) {
         if (isValidKeyboardEvent(e.nativeEvent)) {
-          if (!isSubmitEvent(e.nativeEvent)) { // enter triggers form submit on key down
+          // enter triggers form submit on key down
+          // since enter is a special key for submitting forms and it occurs on key down
+          if (allowDefault) {
             e.preventDefault();
           }
           e.stopPropagation();
@@ -252,7 +256,8 @@ export function usePress(props: PressHookProps): PressResult {
 
     let onKeyUp = (e: KeyboardEvent) => {
       if (state.isPressed && isValidKeyboardEvent(e)) {
-        if (!isSubmitEvent(e)) { // spacebar trigger form submit on key up
+        // spacebar trigger form submit on key up, this is because it's actually a 'click'
+        if (allowDefault) {
           e.preventDefault();
         }
         e.stopPropagation();

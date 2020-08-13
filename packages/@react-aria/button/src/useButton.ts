@@ -68,7 +68,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onPressChange,
     onPress,
     isDisabled,
-    ref
+    ref,
+    allowDefault: type === 'submit'
   });
 
   let {focusableProps} = useFocusable(props, ref);
@@ -101,7 +102,7 @@ export function useToggleButton(props: AriaToggleButtonProps, state: ToggleState
     ...props,
     onPress: chain(state.toggle, props.onPress)
   }, ref);
-  
+
   return {
     isPressed,
     buttonProps: mergeProps(buttonProps, {
