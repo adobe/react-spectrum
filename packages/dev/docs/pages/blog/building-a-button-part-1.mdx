@@ -40,7 +40,7 @@ Today we’ll be looking at handling press events across mouse, touch, keyboard,
 
 The web was created before touch devices were widespread. As a result, web APIs are designed around mouse events. When touch devices were introduced, browsers added support for touch events. However, since existing web apps had not been designed with touch in mind, browsers needed to emulate mouse events on touch devices to ensure compatibility with them.
 
-To illustrate this, when tapping on a button on a touch device, mobile browsers fire the following events.
+To illustrate this, when tapping a button on a touch device, mobile browsers fire the following events:
 
 - onTouchStart
 - onTouchEnd
@@ -52,7 +52,7 @@ To illustrate this, when tapping on a button on a touch device, mobile browsers 
 
 This way, if applications aren’t designed to support touch events, they can still handle mouse events. However, for applications that support both, these duplicate events can be quite problematic.
 
-Touch events cannot emulate mouse events perfectly. Mice support several extra dimensions of interactions, for example multiple buttons, scroll wheels, and the ability to hover over a target without pressing it. Because these features are not available on touch screens, many types of gestures have been developed to offer similar functionality. For example, it’s common to double tap to zoom, scroll by panning with one finger, and long press to select text or open a context menu. This makes it considerably more complex to handle touch events, because you need to disambiguate between these gestures.
+Touch events cannot emulate mouse events perfectly. Mice support several extra dimensions of interactions, such as multiple buttons, scroll wheels, and the ability to hover over a target without pressing it. Because these features are not available on touch screens, many types of gestures have been developed to offer similar functionality. For example, it’s common to double tap to zoom, scroll by panning with one finger, and long press to select text or open a context menu. This makes it considerably more complex to handle touch events, because you need to disambiguate between these gestures.
 
 Mobile browsers often introduce delays before emulated mouse events like onClick in order to help with this. For example, in order to determine if the user will double tap to zoom, the onClick event is delayed to see if a second tap occurs. This has improved to some degree over the years, and there are now various ways to opt-out of this delay, however there are still cases where it can occur if your library is running in an unknown environment.
 

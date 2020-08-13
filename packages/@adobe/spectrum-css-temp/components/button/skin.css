@@ -519,7 +519,6 @@ governing permissions and limitations under the License.
   &.is-active {
     background-color: var(--spectrum-actionbutton-emphasized-background-color-down);
     border-color: var(--spectrum-actionbutton-emphasized-border-color-down);
-    box-shadow: none;
     color: var(--spectrum-actionbutton-emphasized-text-color-down);
 
     .spectrum-ActionButton-hold {
