@@ -106,6 +106,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     <FocusScope restoreFocus>
       <DismissButton onDismiss={() => state.close()} />
       <ListBoxBase
+        // Set max height: inherit so Tray scrolling for async loading ListBoxes works
+        UNSAFE_style={{'maxHeight': 'inherit'}}
         ref={listboxRef}
         domProps={menuProps}
         disallowEmptySelection

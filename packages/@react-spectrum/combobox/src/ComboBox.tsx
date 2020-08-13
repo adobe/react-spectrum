@@ -102,6 +102,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     <FocusScope>
       <DismissButton onDismiss={() => state.close()} />
       <ListBoxBase
+        // Set max height: inherit so Tray scrolling for async loading ListBoxes works
+        UNSAFE_style={{'maxHeight': 'inherit'}}
         ref={listboxRef}
         domProps={listBoxProps}
         disallowEmptySelection
