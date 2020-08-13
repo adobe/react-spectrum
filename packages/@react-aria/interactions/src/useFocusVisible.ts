@@ -160,6 +160,11 @@ export function getInteractionModality(): Modality {
   return currentModality;
 }
 
+export function setInteractionModality(modality: Modality) {
+  currentModality = modality;
+  triggerChangeHandlers(modality, null);
+}
+
 /**
  * Keeps state of the current modality.
  */
@@ -190,10 +195,10 @@ export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResu
   let {isTextInput, autoFocus} = props;
   let [isFocusVisibleState, setFocusVisible] = useState(autoFocus || isFocusVisible());
   useEffect(() => {
-    let handler = (modality, e) => {
+    let handler = (modality: Modality, e: HandlerEvent) => {
       // If this is a text input component, don't update the focus visible style when
       // typing except for when the Tab and Escape keys are pressed.
-      if (isTextInput && modality === 'keyboard' && !FOCUS_VISIBLE_INPUT_KEYS[e.key]) {
+      if (isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]) {
         return;
       }
 
