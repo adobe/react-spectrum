@@ -610,13 +610,6 @@ function isValidKeyboardEvent(event: KeyboardEvent): boolean {
     !(role === 'link' && key !== 'Enter')
   );
 }
-// should be run after isValidKeyboardEvent, as that checks the key
-function isSubmitEvent(event: KeyboardEvent): boolean {
-  const {target} = event;
-  const element = target as HTMLElement;
-  const type = element.getAttribute('type');
-  return type === 'submit';
-}
 
 function getTouchFromEvent(event: TouchEvent): Touch | null {
   const {targetTouches} = event;
