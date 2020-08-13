@@ -111,6 +111,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         layout={layout}
         state={state}
         width={isMobile ? '100%' : undefined}
+        // Set max height: inherit so Tray scrolling works
+        UNSAFE_style={{maxHeight: 'inherit'}}
         shouldUseVirtualFocus />
       <DismissButton onDismiss={() => state.close()} />
     </FocusScope>
