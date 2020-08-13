@@ -140,6 +140,7 @@
     "react-dom": "^0.14 || ^15 || ^16",
     "react-overlays": "0.8.3",
     "react-test-renderer": "^16.9.0",
+    "read-pkg-up": "^7.0.1",
     "recursive-readdir": "^2.2.2",
     "regenerator-runtime": "0.13.3",
     "rimraf": "^2.6.3",
