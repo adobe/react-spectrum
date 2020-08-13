@@ -63,7 +63,8 @@
     "@babel/plugin-proposal-export-namespace-from",
     "@babel/plugin-syntax-class-properties",
     "transform-glob-import",
-    "babel-plugin-macros"
+    "babel-plugin-macros",
+    "./lib/babel-plugin-package-json-version"
   ],
   "sourceType": "unambiguous"
 }
