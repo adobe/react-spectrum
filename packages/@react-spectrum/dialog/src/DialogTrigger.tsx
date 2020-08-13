@@ -33,13 +33,8 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
   // if a function is passed as the second child, it won't appear in toArray
   let [trigger, content] = children as [ReactElement, SpectrumDialogClose];
 
-  let context = useContext(DialogContainerContext);
-  useEffect(() => {
-    context && context.addOverlayContent(content);
-  });
-
   let dialogContainerContext = useContext(DialogContainerContext);
-  const triggerBase = <DialogTriggerBase>{trigger}</DialogTriggerBase>;
+  const triggerBase = <DialogTriggerBase content={content}>{trigger}</DialogTriggerBase>;
 
   return dialogContainerContext ? triggerBase : (
     <DialogContainer content={content} {...otherProps}>
@@ -50,12 +45,15 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
 
 
 export function DialogTriggerBase(props) {
-  let {children} = props;
-  let {state, triggerProps, type} = useContext(DialogContainerContext);
+  let {children, content} = props;
+  let {state, triggerProps, type, addContent} = useContext(DialogContainerContext);
   return (
     <PressResponder
       {...triggerProps}
-      onPress={state.toggle}
+      onPress={() => {
+        addContent(state.isOpen ? null : content);
+        state.toggle();
+      }}
       isPressed={state.isOpen && type !== 'modal' && type !== 'fullscreen' && type !== 'fullscreenTakeover'}>
       {children}
     </PressResponder>

@@ -43,7 +43,8 @@ export function DialogContainer(props): ReactElement {
 
   let state = useOverlayTriggerState(overlayProps);
 
-  let addOverlayContent = content => !overlayContent && setOverlayContent(() => content);
+  // todo just pass setOverlayContent via context value
+  let addContent = content => setOverlayContent(() => content);
 
   let dialogContainerContext = {
     isDismissable,
@@ -85,7 +86,7 @@ export function DialogContainer(props): ReactElement {
     ...dialogProps
   };
   return (
-    <DialogContainerContext.Provider value={{isDismissable, state, overlayContent, addOverlayContent, setOverlayProps, type}}>
+    <DialogContainerContext.Provider value={{isDismissable, state, overlayContent, addContent, setOverlayProps, type}}>
       {children}
       <DialogContext.Provider value={context}>
         <DialogContainerOverlay />
