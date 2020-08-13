@@ -61,7 +61,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     autoFocus: state.focusStrategy || true,
     UNSAFE_style: isMobile ? {
       width: '100%',
-      'max-height': 'inherit'
+      maxHeight: 'inherit'
     } : undefined,
     UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile})
   };
