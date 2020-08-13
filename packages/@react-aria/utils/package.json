@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/utils",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
