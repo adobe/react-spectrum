@@ -26,6 +26,7 @@ export interface PressProps extends PressEvents {
   isPressed?: boolean,
   /** Whether the press events should be disabled. */
   isDisabled?: boolean,
+  /** If usePress should not preventDefault, which is called by default. Useful for form submission. */
   allowDefault?: boolean
 }
 
