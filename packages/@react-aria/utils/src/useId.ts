@@ -15,9 +15,10 @@ import {useEffect, useLayoutEffect, useMemo, useState} from 'react';
 let map: Map<string, (v: string) => void> = new Map();
 
 let id = 0;
-// don't want to conflict with ids from v2, this will guarantee something unique
+// don't want to conflict with ids from other instances of this module, this will *mostly* guarantee something unique
 // plus we'll know how many instances of this module are loaded on a page if there are more than one number ;)
-let randomInstanceNumber = Math.round(Math.random() * 10000000000);
+// NOTE: __PACKAGE_JSON_VERSION__ is injected by <root>/lib/babel-plugin-package-json-version.js during babel transpilation
+let packageVersion = __PACKAGE_JSON_VERSION__;
 
 /**
  * If a default is not provided, generate an id.
@@ -28,13 +29,12 @@ export function useId(defaultId?: string): string {
   // preserve SSR rendering compatibility
   // only use the auto-generated id after component mounts client-side
   useEffect(() => {
-    const res = value || `react-aria-${randomInstanceNumber}-${++id}`;
+    const res = value || `react-aria-utils-${__PACKAGE_JSON_VERSION__}-${++id}`;
     map.set(res, setValue);
     setValue(res);
   }, [value])
   return value;
 }
-
 /**
  * Merges two ids.
  */
