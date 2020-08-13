@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {computeOffsetToValue, sliderIds} from './utils';
 import {HTMLAttributes, useRef} from 'react';
 import {mergeProps, useDrag1D} from '@react-aria/utils';
+import {sliderIds} from './utils';
 import {SliderProps} from '@react-types/slider';
 import {SliderState} from '@react-stately/slider';
 import {useLabel} from '@react-aria/label';
@@ -53,7 +53,7 @@ export function useSlider(
   // Here, we keep track of which index is the "closest" to the drag start point.
   // It is set onMouseDown; see trackProps below.
   const realTimeTrackDraggingIndex = useRef<number | undefined>(undefined);
-  const draggableProps = useDrag1D({
+  const {onMouseDown, onMouseEnter, onMouseOut} = useDrag1D({
     containerRef: trackRef as any,
     reverse: false,
     orientation: 'horizontal',
@@ -61,10 +61,21 @@ export function useSlider(
       if (realTimeTrackDraggingIndex.current !== undefined) {
         state.setThumbDragging(realTimeTrackDraggingIndex.current, dragging);
       }
+      if (!dragging) {
+        state.setTrackDragging(false);
+      }
     },
     onPositionChange: (position) => {
-      if (realTimeTrackDraggingIndex.current !== undefined) {
-        state.setThumbValue(realTimeTrackDraggingIndex.current, computeOffsetToValue(position, props, trackRef));
+      if (realTimeTrackDraggingIndex.current !== undefined && trackRef.current) {
+        const percent = position / trackRef.current.offsetWidth;
+        state.setThumbPercent(realTimeTrackDraggingIndex.current, percent);
+
+        // When track-dragging ends, onDrag is called before a final onPositionChange is
+        // called, so we can't reset realTimeTrackDraggingIndex until onPositionChange,
+        // as we still needed to update the thumb position one last time.
+        if (!state.isTrackDragging()) {
+          realTimeTrackDraggingIndex.current = undefined;
+        }
       }
     }
   });
@@ -82,16 +93,18 @@ export function useSlider(
     trackProps: mergeProps({
       onMouseDown: (e: React.MouseEvent<HTMLElement>) => {
         // We only trigger track-dragging if the user clicks on the track itself.
-        if (trackRef.current && trackRef.current === e.target) {
+        if (trackRef.current) {
           // Find the closest thumb
           const trackPosition = trackRef.current.getBoundingClientRect().left;
           const clickPosition = e.clientX;
           const offset = clickPosition - trackPosition;
           const percent = offset / trackRef.current.offsetWidth;
           const value = state.getPercentValue(percent);
-          const minDiff = Math.min(...state.values.map(v => Math.abs(v - value)));
+
+          // Only compute the diff for thumbs that are editable, as only they can be dragged
+          const minDiff = Math.min(...state.values.map((v, index) => state.isThumbEditable(index) ? Math.abs(v - value) : Number.POSITIVE_INFINITY));
           const index = state.values.findIndex(v => Math.abs(v - value) === minDiff);
-          if (index >= 0) {
+          if (minDiff !== Number.POSITIVE_INFINITY && index >= 0) {
             // Don't unfocus anything
             e.preventDefault();
 
@@ -105,10 +118,15 @@ export function useSlider(
             // the value.  Dragging state will be reset to false in onDrag above, even
             // if no dragging actually occurs.
             state.setThumbDragging(realTimeTrackDraggingIndex.current, true);
+            state.setTrackDragging(true);
             state.setThumbValue(index, value);
+          } else {
+            realTimeTrackDraggingIndex.current = undefined;
           }
         }
       }
-    }, draggableProps)
+    }, {
+      onMouseDown, onMouseEnter, onMouseOut
+    })
   };
 }

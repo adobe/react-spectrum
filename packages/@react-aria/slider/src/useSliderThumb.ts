@@ -1,4 +1,4 @@
-import {ChangeEvent, HTMLAttributes, useCallback, useEffect} from 'react';
+import {ChangeEvent, HTMLAttributes, useCallback, useEffect, useLayoutEffect} from 'react';
 import {focusWithoutScrolling, mergeProps, useDrag1D} from '@react-aria/utils';
 import {sliderIds} from './utils';
 import {SliderState} from '@react-stately/slider';
@@ -49,7 +49,7 @@ export function useSliderThumb(
   });
 
   const value = state.values[index];
-  const allowDrag = !(isDisabled || isReadOnly);
+  const isEditable = !(isDisabled || isReadOnly);
 
   const focusInput = useCallback(() => {
     if (inputRef.current) {
@@ -70,14 +70,28 @@ export function useSliderThumb(
     reverse: false,
     orientation: 'horizontal',
     onDrag: (dragging) => {
+      if (state.isTrackDragging()) {
+        // If the track's drag handlers are already handling the drag event,
+        // that means this thumb must be a child of the track.  Just let the
+        // track's drag handlers handle it.
+        return;
+      }
       state.setThumbDragging(index, dragging);
       focusInput();
     },
     onPositionChange: (position) => {
+      if (state.isTrackDragging()) {
+        return;
+      }
       const percent = position / trackRef.current.offsetWidth;
       state.setThumbPercent(index, percent);
     }
   });
+
+  // Use useLayoutEffect to immediately register editability with the state
+  useLayoutEffect(() => {
+    state.setThumbEditable(index, isEditable);
+  }, [index, isEditable, state]);
 
   const {focusableProps} = useFocusable(
     mergeProps(opts, {
@@ -94,7 +108,7 @@ export function useSliderThumb(
   return {
     inputProps: mergeProps(focusableProps, fieldProps, {
       type: 'range',
-      tabIndex: allowDrag ? 0 : undefined,
+      tabIndex: isEditable ? 0 : undefined,
       min: state.getThumbMinValue(index),
       max: state.getThumbMaxValue(index),
       step: state.step,
@@ -110,7 +124,7 @@ export function useSliderThumb(
         state.setThumbValue(index, parseFloat(e.target.value));
       }
     }),
-    thumbProps: allowDrag ? mergeProps({
+    thumbProps: isEditable ? mergeProps({
       onMouseDown: draggableProps.onMouseDown,
       onMouseEnter: draggableProps.onMouseEnter,
       onMouseOut: draggableProps.onMouseOut
