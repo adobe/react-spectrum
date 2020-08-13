@@ -115,6 +115,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         layout={layout}
         state={state}
         width={isMobile ? '100%' : undefined}
+        // Set max height: inherit so Tray scrolling works
+        UNSAFE_style={{maxHeight: 'inherit'}}
         isLoading={isLoadingMore}
         onLoadMore={props.onLoadMore} />
       <DismissButton onDismiss={() => state.close()} />
