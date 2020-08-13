@@ -45,6 +45,8 @@ export function useSlider(
 ): SliderAria {
   const {labelProps, fieldProps} = useLabel(props);
 
+  const isSliderEditable = !(props.isDisabled || props.isReadOnly);
+
   // Attach id of the label to the state so it can be accessed by useSliderThumb.
   sliderIds.set(state, labelProps.id ?? fieldProps.id);
 
@@ -93,7 +95,7 @@ export function useSlider(
     trackProps: mergeProps({
       onMouseDown: (e: React.MouseEvent<HTMLElement>) => {
         // We only trigger track-dragging if the user clicks on the track itself.
-        if (trackRef.current) {
+        if (trackRef.current && isSliderEditable) {
           // Find the closest thumb
           const trackPosition = trackRef.current.getBoundingClientRect().left;
           const clickPosition = e.clientX;
