@@ -19,10 +19,15 @@ import {useOverlayPosition} from '@react-aria/overlays';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
 
+const DEFAULT_OFFSET = 7;
+const DEFAULT_CROSS_OFFSET = 0;
+
 function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
   let {
     children,
-    isDisabled
+    crossOffset = DEFAULT_CROSS_OFFSET,
+    isDisabled,
+    offset = DEFAULT_OFFSET
   } = props;
 
   let [trigger, tooltip] = React.Children.toArray(children);
@@ -40,6 +45,8 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     placement: props.placement || 'top',
     targetRef: tooltipTriggerRef,
     overlayRef,
+    offset,
+    crossOffset,
     isOpen: state.isOpen
   });
 
