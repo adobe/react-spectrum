@@ -84,12 +84,12 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
       if (e.key === 'Enter') {
         ref.current?.click();
       }
-    }
+    };
     submitProps.onKeyUp = (e: KeyboardEvent) => {
       if (e.key === ' ') {
         ref.current?.click();
       }
-    }
+    };
   }
   let buttonProps = mergeProps(submitProps, focusableProps, pressProps, filterDOMProps(props, {labelable: true}));
 

@@ -25,9 +25,7 @@ export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
   isPressed?: boolean,
   /** Whether the press events should be disabled. */
-  isDisabled?: boolean,
-  /** If usePress should not preventDefault, which is called by default. Useful for form submission. */
-  allowDefault?: boolean
+  isDisabled?: boolean
 }
 
 export interface PressHookProps extends PressProps {
@@ -94,7 +92,6 @@ export function usePress(props: PressHookProps): PressResult {
     onPressEnd,
     onPressUp,
     isDisabled,
-    allowDefault = false,
     isPressed: isPressedProp,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
