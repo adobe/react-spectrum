@@ -24,16 +24,17 @@ let randomInstanceNumber = Math.round(Math.random() * 10000000000);
  * @param defaultId - Default component id.
  */
 export function useId(defaultId?: string): string {
-  let [value, setValue] = useState(defaultId);
+  let [value, setValue] = useState(defaultId || '');
   // preserve SSR rendering compatibility
   // only use the auto-generated id after component mounts client-side
   useEffect(() => {
-    const res = value || `react-aria-${randomInstanceNumber}-${++id}`;
+    const res = defaultId || value || `react-aria-${randomInstanceNumber}-${++id}`;
     map.set(res, setValue);
     if (res !== value) {
       setValue(res);
     }
-  }, [value])
+  }, [defaultId, value])
+
   return value;
 }
 /**
