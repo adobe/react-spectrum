@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {focusWithoutScrolling} from '@react-aria/utils';
+import {focusSafely} from '@react-aria/focus';
 import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressEvent} from '@react-types/shared';
@@ -41,7 +41,8 @@ interface SelectableItemOptions {
   /**
    * Function to focus the item.
    */
-  focus?: () => void
+  focus?: () => void,
+  shouldUseVirtualFocus?: boolean
 }
 
 interface SelectableItemAria {
@@ -61,6 +62,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     ref,
     shouldSelectOnPressUp,
     isVirtualized,
+    shouldUseVirtualFocus,
     focus
   } = options;
 
@@ -85,14 +87,14 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Focus the associated DOM node when this item becomes the focusedKey
   let isFocused = key === manager.focusedKey;
   useEffect(() => {
-    if (isFocused && manager.isFocused && document.activeElement !== ref.current) {
+    if (isFocused && manager.isFocused && !shouldUseVirtualFocus && document.activeElement !== ref.current) {
       if (focus) {
         focus();
       } else {
-        focusWithoutScrolling(ref.current);
+        focusSafely(ref.current);
       }
     }
-  }, [ref, isFocused, manager.focusedKey, manager.isFocused]);
+  }, [ref, isFocused, manager.focusedKey, manager.isFocused, shouldUseVirtualFocus]);
 
   let itemProps: SelectableItemAria['itemProps'] = {
     tabIndex: isFocused ? 0 : -1,

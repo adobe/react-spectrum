@@ -10,6 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './TabList';
-export * from './Tab';
+/// <reference types="css-module-types" />
+
 export * from './Tabs';

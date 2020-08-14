@@ -65,6 +65,7 @@ export interface OverlayProps {
   children: ReactNode,
   isOpen?: boolean,
   container?: Element,
+  isKeyboardDismissDisabled?: boolean,
   onEnter?: () => void,
   onEntering?: () => void,
   onEntered?: () => void,
@@ -88,7 +89,8 @@ export interface PopoverProps extends StyleProps, OverlayProps {
   hideArrow?: boolean,
   isOpen?: boolean,
   onClose?: () => void,
-  shouldCloseOnBlur?: boolean
+  shouldCloseOnBlur?: boolean,
+  shouldCloseOnInteractOutside?: (element: HTMLElement) => boolean
 }
 
 export interface TrayProps extends StyleProps, OverlayProps {

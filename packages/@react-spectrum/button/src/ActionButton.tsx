@@ -13,11 +13,13 @@
 import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import {SpectrumActionButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
+import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
@@ -32,6 +34,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
 
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
   let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));
 
@@ -39,7 +42,7 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <button
         {...styleProps}
-        {...buttonProps}
+        {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
         className={
           classNames(
@@ -48,7 +51,8 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
             {
               'spectrum-ActionButton--quiet': isQuiet,
               'is-active': isPressed,
-              'is-disabled': isDisabled
+              'is-disabled': isDisabled,
+              'is-hovered': isHovered
             },
             styleProps.className
           )

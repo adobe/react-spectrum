@@ -17,7 +17,16 @@ interface ButtonProps extends PressEvents, FocusableProps {
   /** Whether the button is disabled. */
   isDisabled?: boolean,
   /** The content to display in the button. */
-  children?: ReactNode,
+  children?: ReactNode
+}
+
+interface ToggleButtonProps extends ButtonProps {
+  /** Whether the element should be selected (controlled). */
+  isSelected?: boolean,
+  /** Whether the element should be selected (uncontrolled). */
+  defaultSelected?: boolean,
+  /** Handler that is called when the element's selection state changes. */
+  onChange: (isSelected: boolean) => void
 }
 
 export interface LinkButtonProps {
@@ -29,7 +38,9 @@ export interface LinkButtonProps {
   /** A URL to link to if elementType="a". */
   href?: string,
   /** The target window for the link. */
-  target?: string
+  target?: string,
+  /** The relationship between the linked resource and the current page. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel). */
+  rel?: string
 }
 
 interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
@@ -49,6 +60,7 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
 }
 
 export interface AriaButtonProps extends ButtonProps, LinkButtonProps, AriaBaseButtonProps {}
+export interface AriaToggleButtonProps extends ToggleButtonProps, AriaBaseButtonProps {}
 
 export interface SpectrumButtonProps extends AriaBaseButtonProps, ButtonProps, LinkButtonProps, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
@@ -65,4 +77,9 @@ export interface SpectrumActionButtonProps extends AriaBaseButtonProps, ButtonPr
 export interface SpectrumLogicButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
   /** The type of boolean sequence to be represented by the LogicButton. */
   variant: 'and' | 'or'
+}
+
+export interface SpectrumToggleButtonProps extends ToggleButtonProps, SpectrumActionButtonProps {
+  /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
+  isEmphasized?: boolean
 }

@@ -11,11 +11,11 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Tabs {
-  border-bottom-color: var(--spectrum-tabs-rule-color);
+  border-block-end-color: var(--spectrum-tabs-rule-color);
 }
 
 .spectrum-Tabs--vertical {
-  border-left-color: var(--spectrum-tabs-vertical-rule-color);
+  border-inline-start-color: var(--spectrum-tabs-vertical-rule-color);
 }
 
 .spectrum-Tabs-selectionIndicator {
@@ -67,7 +67,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tabs--quiet {
-  border-bottom-color: var(--spectrum-tabs-quiet-rule-color);
+  border-block-end-color: var(--spectrum-tabs-quiet-rule-color);
 
   .spectrum-Tabs-selectionIndicator {
     background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
@@ -77,7 +77,7 @@ governing permissions and limitations under the License.
 .spectrum-Tabs--vertical {
   &.spectrum-Tabs--quiet,
   &.spectrum-Tabs--compact {
-    border-left-color: var(--spectrum-tabs-quiet-vertical-rule-color);
+    border-inline-start-color: var(--spectrum-tabs-quiet-vertical-rule-color);
 
     .spectrum-Tabs-selectionIndicator {
       background-color: var(--spectrum-tabs-quiet-selection-indicator-color);

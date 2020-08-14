@@ -10,12 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, render} from '@testing-library/react';
+import {Button} from '@react-spectrum/button';
 import {Form} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render} from '@testing-library/react';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 
 describe('Form', function () {
   it('should render a form', () => {
@@ -69,6 +71,34 @@ describe('Form', function () {
     expect(labelId).toBeDefined();
     let label = document.getElementById(labelId);
     expect(label).toHaveTextContent('A text field ​(optional)');
+  });
+
+  it('supports form attributes', () => {
+    let onSubmit = jest.fn().mockImplementation(e => e.preventDefault());
+    let {getByLabelText, getByRole} = render(
+      <Provider theme={theme}>
+        <Form
+          aria-label="Test"
+          onSubmit={onSubmit}
+          action="/action_page.php"
+          method="get"
+          target="_self"
+          encType="text/plain"
+          autoComplete="on">
+          <Button variant="primary" type="submit" aria-label="Submit" />
+        </Form>
+      </Provider>
+    );
+
+    let form = getByRole('form');
+    expect(form).toHaveAttribute('action', '/action_page.php');
+    expect(form).toHaveAttribute('method', 'get');
+    expect(form).toHaveAttribute('target', '_self');
+    expect(form).toHaveAttribute('encType', 'text/plain');
+    expect(form).toHaveAttribute('autoComplete', 'on');
+    let submit = getByLabelText('Submit');
+    act(() => {userEvent.click(submit);});
+    expect(onSubmit).toHaveBeenCalled();
   });
 
   it('supports aria-label', () => {

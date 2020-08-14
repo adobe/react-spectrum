@@ -123,6 +123,7 @@ module.exports = new Transformer({
     let keywords = [];
     let description = '';
     let date = '';
+    let author = '';
     let image = '';
     const extractToc = (options) => {
       const settings = options || {};
@@ -175,6 +176,7 @@ module.exports = new Transformer({
           keywords = yamlData.keywords || [];
           description = yamlData.description || '';
           date = yamlData.date || '';
+          author = yamlData.author || '';
           if (yamlData.image) {
             image = asset.addDependency({
               moduleSpecifier: yamlData.image,
@@ -241,6 +243,7 @@ module.exports = new Transformer({
     asset.meta.description = description;
     asset.meta.keywords = keywords;
     asset.meta.date = date;
+    asset.meta.author = author;
     asset.meta.image = image;
     asset.meta.isMDX = true;
     asset.isSplittable = false;
@@ -341,7 +344,7 @@ function transformExample(node) {
 
     traverse(ast, {
       ImportDeclaration(path) {
-        if (path.node.source.value.startsWith('@react-spectrum')) {
+        if (path.node.source.value.startsWith('@react-spectrum') && !(node.meta && node.meta.split(' ').includes('keepIndividualImports'))) {
           let mapping = IMPORT_MAPPINGS[path.node.source.value];
           for (let specifier of path.node.specifiers) {
             let mapped = mapping && mapping[specifier.imported.name];

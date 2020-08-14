@@ -23,6 +23,7 @@ import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
@@ -37,8 +38,13 @@ describe('Picker', function () {
   });
 
   afterAll(function () {
+    jest.useRealTimers();
     offsetWidth.mockReset();
     offsetHeight.mockReset();
+  });
+
+  afterEach(() => {
+    act(() => jest.runAllTimers());
   });
 
   it('renders correctly', function () {
@@ -51,6 +57,9 @@ describe('Picker', function () {
         </Picker>
       </Provider>
     );
+
+    let select = getByRole('textbox', {hidden: true});
+    expect(select).not.toBeDisabled();
 
     let picker = getByRole('button');
     expect(picker).toHaveAttribute('aria-haspopup', 'listbox');
@@ -357,7 +366,7 @@ describe('Picker', function () {
       expect(() => getByRole('listbox')).toThrow();
 
       let picker = getByRole('button');
-      act(() => triggerPress(picker));
+      act(() => userEvent.click(picker));
       act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
@@ -367,7 +376,7 @@ describe('Picker', function () {
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
-      act(() => triggerPress(picker));
+      act(() => userEvent.click(picker));
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
@@ -713,6 +722,24 @@ describe('Picker', function () {
   });
 
   describe('labeling', function () {
+    it('focuses on the picker when you click the label', function () {
+      let {getAllByText, getByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" onSelectionChange={onSelectionChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let label = getAllByText('Test')[0];
+      label.click();
+
+      let picker = getByRole('button');
+      expect(document.activeElement).toBe(picker);
+    });
+
     it('supports labeling with a visible label', function () {
       let {getAllByText, getByText, getByRole} = render(
         <Provider theme={theme}>
@@ -1395,7 +1422,8 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(items[1]);
 
       act(() => triggerPress(items[1]));
-      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledWith('two');
       act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
@@ -1622,6 +1650,77 @@ describe('Picker', function () {
       options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(2);
       expect(progressbar).not.toBeInTheDocument();
+    });
+  });
+
+  describe('disabled', function () {
+    it('disables the hidden select when isDisabled is true', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker isDisabled label="Test" onSelectionChange={onSelectionChange}>
+            <Item key="one">One</Item>
+            <Item key="two">Two</Item>
+            <Item key="three">Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let select = getByRole('textbox', {hidden: true});
+
+      expect(select).toBeDisabled();
+    });
+
+    it('does not open on mouse down when isDisabled is true', function () {
+      let onOpenChange = jest.fn();
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker isDisabled label="Test" onOpenChange={onOpenChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      expect(() => getByRole('listbox')).toThrow();
+
+      let picker = getByRole('button');
+      act(() => {triggerPress(picker);});
+      act(() => jest.runAllTimers());
+
+      expect(() => getByRole('listbox')).toThrow();
+
+      expect(onOpenChange).toBeCalledTimes(0);
+
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
+      expect(document.activeElement).not.toBe(picker);
+    });
+
+    it('does not open on Space key press when isDisabled is true', function () {
+      let onOpenChange = jest.fn();
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker isDisabled label="Test" onOpenChange={onOpenChange}>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+      );
+
+      expect(() => getByRole('listbox')).toThrow();
+
+      let picker = getByRole('button');
+      act(() => {fireEvent.keyDown(picker, {key: ' '});});
+      act(() => {fireEvent.keyUp(picker, {key: ' '});});
+      act(() => jest.runAllTimers());
+
+      expect(() => getByRole('listbox')).toThrow();
+
+      expect(onOpenChange).toBeCalledTimes(0);
+
+      expect(picker).toHaveAttribute('aria-expanded', 'false');
+      expect(document.activeElement).not.toBe(picker);
     });
   });
 });

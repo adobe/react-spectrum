@@ -10,14 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render} from '@testing-library/react';
 import {DateRangePicker} from '../';
-import {fireEvent, getAllByRole as getAllByRoleInContainer, render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('DateRangePicker', function () {
+  // there are live announcers, we need to be able to get rid of them after each test or get a warning in the console about act()
+  beforeAll(() => jest.useFakeTimers());
+  afterAll(() => jest.useRealTimers());
+  afterEach(() => {
+    act(() => {
+      jest.runAllTimers();
+    });
+  });
   describe('basics', function () {
     it('should render a DateRangePicker with a specified date range', function () {
       let {getByRole, getAllByRole} = render(<DateRangePicker value={{start: new Date(2019, 1, 3), end: new Date(2019, 4, 6)}} />);

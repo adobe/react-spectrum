@@ -9,14 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useResizeObserver, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {Key, ReactElement, useCallback, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {Key, ReactElement, useCallback,  useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
@@ -119,12 +118,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     });
   }, [listRef, children, setVisibleItems, showRoot, isMultiline]);
 
-  useEffect(() => {
-    window.addEventListener('resize', updateOverflow, false);
-    return () => {
-      window.removeEventListener('resize', updateOverflow, false);
-    };
-  }, [updateOverflow]);
+  useResizeObserver({ref: domRef, onResize: updateOverflow});
 
   useLayoutEffect(updateOverflow, [children]);
 

@@ -10,12 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps} from '@react-types/button';
+import {AriaButtonProps, AriaToggleButtonProps} from '@react-types/button';
 import {ButtonHTMLAttributes, RefObject} from 'react';
+import {chain} from '@react-aria/utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {mergeProps} from '@react-aria/utils';
+import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
+
 
 interface ButtonAria {
   /** Props for the button element. */
@@ -42,6 +45,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onClick: deprecatedOnClick,
     href,
     target,
+    rel,
     type = 'button'
   } = props;
   let additionalProps;
@@ -53,7 +57,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
       target: elementType === 'a' ? target : undefined,
       type: elementType === 'input' ? type : undefined,
       disabled: elementType === 'input' ? isDisabled : undefined,
-      'aria-disabled': !isDisabled || elementType === 'input' ? undefined : isDisabled
+      'aria-disabled': !isDisabled || elementType === 'input' ? undefined : isDisabled,
+      rel: elementType === 'a' ? rel : undefined
     };
   }
 
@@ -86,6 +91,21 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
           console.warn('onClick is deprecated, please use onPress');
         }
       }
+    })
+  };
+}
+
+export function useToggleButton(props: AriaToggleButtonProps, state: ToggleState, ref: RefObject<HTMLElement>): ButtonAria {
+  const {isSelected} = state;
+  const {isPressed, buttonProps} = useButton({
+    ...props,
+    onPress: chain(state.toggle, props.onPress)
+  }, ref);
+  
+  return {
+    isPressed,
+    buttonProps: mergeProps(buttonProps, {
+      'aria-pressed': isSelected
     })
   };
 }

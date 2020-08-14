@@ -21,7 +21,7 @@ export interface FocusState {
   /** The current focused key in the collection. */
   readonly focusedKey: Key,
   /** Sets the focused key. */
-  setFocusedKey(key: Key): void,
+  setFocusedKey(key: Key): void
 }
 
 export interface SingleSelectionState extends FocusState {
@@ -55,8 +55,12 @@ export interface MultipleSelectionManager extends FocusState {
   readonly isEmpty: boolean,
   /** Whether all items in the collection are selected. */
   readonly isSelectAll: boolean,
+  /** The first selected key in the collection. */
+  readonly firstSelectedKey: Key | null,
+  /** The last selected key in the collection. */
+  readonly lastSelectedKey: Key | null,
   /** Returns whether a key is selected. */
-  isSelected(key: Key): boolean
+  isSelected(key: Key): boolean,
   /** Extends the selection to the given key. */
   extendSelection(toKey: Key): void,
   /** Toggles whether the given key is selected. */

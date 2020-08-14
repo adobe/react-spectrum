@@ -221,7 +221,7 @@ describe('MenuTrigger', function () {
 
     menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
-    expect(onOpenChange).toBeCalledTimes(2); // once for press, once for blur :/
+    expect(onOpenChange).toBeCalledTimes(1);
   });
 
   // New functionality in v3
@@ -567,6 +567,19 @@ describe('MenuTrigger', function () {
       expect(onOpenChange).toBeCalledTimes(2);
     });
 
+    it.each`
+      Name                      | Component      | props | menuProps
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+    `('$Name ignores repeating keyboard events', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13, repeat: true}));
+
+      let menu = tree.queryByRole('menu');
+      expect(menu).toBeTruthy();
+    });
+
     it('tabs to the next element after the trigger and closes the menu', function () {
       tree = render(
         <Provider theme={theme}>
@@ -695,5 +708,16 @@ describe('MenuTrigger', function () {
       expect(menuTriggerRef.current.UNSAFE_getDOMNode()).toBe(getByRole('button'));
       expect(buttonRef.current.UNSAFE_getDOMNode()).toBe(getByRole('button'));
     });
+  });
+
+  it('should not show checkmarks if selectionMode not defined', function () {
+    let {queryByRole} = render(
+      <Menu aria-label="foo" selectedKeys={['alpha']}>
+        <Item key="alpha">Alpha</Item>
+        <Item key="bravo">Bravo</Item>
+      </Menu>
+    );
+    let checkmark = queryByRole('img', {hidden: true});
+    expect(checkmark).toBeNull();
   });
 });

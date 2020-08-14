@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/visually-hidden",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -11,14 +11,18 @@
     "dist",
     "src"
   ],
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "classnames": "^2.2.5"
+    "@react-aria/interactions": "^3.1.0",
+    "@react-aria/utils": "^3.1.0",
+    "clsx": "^1.1.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"

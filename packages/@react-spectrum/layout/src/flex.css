@@ -33,7 +33,11 @@
   height: calc(100% + var(--row-gap));
 }
 
-.flex-gap > * {
+/* If the selector was .flex-gap > *, it wouldn't override when components have a margin 0 specified by a single
+ * class selector, specificity is equal. Both are one class. Neither > nor * contribute to specificity.
+ * We need to make it more specific, so we raise it by 1 class.
+ */
+.flex-container .flex-gap > * {
   /* apply half of the gap to each side of every item */
   margin: calc(var(--row-gap) / 2) calc(var(--column-gap) / 2);
 }
