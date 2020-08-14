@@ -25,7 +25,12 @@ export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
   isPressed?: boolean,
   /** Whether the press events should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /**
+   * Whether to allow onclick default behavior.
+   * @default false
+   **/
+  allowClickDefault?: boolean
 }
 
 export interface PressHookProps extends PressProps {
@@ -95,6 +100,7 @@ export function usePress(props: PressHookProps): PressResult {
     isPressed: isPressedProp,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
+    allowClickDefault = false,
     ...domProps
   } = usePressResponderContext(props);
 
@@ -224,10 +230,10 @@ export function usePress(props: PressHookProps): PressResult {
       },
       onClick(e) {
         if (e && e.button === 0) {
-          e.stopPropagation();
-          if (isDisabled) {
+          if (!allowClickDefault) {
             e.preventDefault();
           }
+          e.stopPropagation();
 
           // If triggered from a screen reader or by using element.click(),
           // trigger as if it were a keyboard click.

@@ -68,11 +68,11 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onPressChange,
     onPress,
     isDisabled,
-    ref
+    ref,
+    allowClickDefault: type === 'submit'
   });
 
   let {focusableProps} = useFocusable(props, ref);
-
   // enter triggers form submit on key down
   // since enter is a special key for submitting forms and it occurs on key down
   // spacebar trigger form submit on key up, this is because it's actually a 'click'
@@ -80,6 +80,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
   if (type === 'submit') {
     // we must use `click` because if we try to use `form.submit` it will bypass the onSubmit handler
     // as a result, no one can preventDefault on the form, so instead we use click on the button
+    // see step 6 https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#firing-submission-events
     submitProps.onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
         ref.current?.click();
