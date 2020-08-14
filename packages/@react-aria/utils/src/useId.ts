@@ -66,7 +66,7 @@ export function mergeIds(a: string, b: string): string {
  */
 export function useSlotId(): string {
   let [id, setId] = useState(useId());
-  useLayoutEffect(() => {
+  useEffect(() => {
     let setCurr = map.get(id);
     if (setCurr && !document.getElementById(id)) {
       setId(null);
