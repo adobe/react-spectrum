@@ -14,13 +14,13 @@ import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
+import {isFocusVisible, useHover} from '@react-aria/interactions';
 import {ListBoxContext} from './ListBoxContext';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import React, {useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
-import {useHover} from '@react-aria/interactions';
 import {useOption} from '@react-aria/listbox';
 import {useRef} from 'react';
 
@@ -74,20 +74,24 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     ? <Text>{rendered}</Text>
     : rendered;
 
+  let isKeyboardModality = isFocusVisible();
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...mergeProps(optionProps, shouldFocusOnHover ? {} : hoverProps)}
+        {...mergeProps(optionProps, shouldFocusOnHover ? hoverProps : {})}
         ref={ref}
         className={classNames(
           styles,
           'spectrum-Menu-item',
           {
-            'is-focused': shouldUseVirtualFocus && isFocused,
+            // For ComboBox since focus doesn't leave the input but menu items need keyboard focus style
+            'is-focused': shouldUseVirtualFocus && isFocused && isKeyboardModality,
             'is-disabled': isDisabled,
             'is-selected': isSelected,
             'is-selectable': state.selectionManager.selectionMode !== 'none',
-            'is-hovered': isHovered
+            // isHovered required for customValue ComboBox, isFocused required for opening ComboBox via button
+            'is-hovered': isHovered || isFocused && !isKeyboardModality
           }
         )}>
         <Grid

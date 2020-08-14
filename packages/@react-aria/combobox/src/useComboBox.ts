@@ -45,7 +45,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     completionMode = 'suggest',
     menuTrigger = 'input',
     allowsCustomValue,
-    onCustomValue
+    onCustomValue,
+    isReadOnly
   } = props;
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
@@ -177,10 +178,11 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let {labelProps, inputProps} = useTextField({
     ...props,
     onChange,
-    onKeyDown: chain(state.isOpen && collectionProps.onKeyDownCapture, onKeyDown),
+    onKeyDown: !isReadOnly && chain(state.isOpen && collectionProps.onKeyDownCapture, onKeyDown),
     onBlur,
     value: state.inputValue,
-    onFocus
+    onFocus,
+    autoComplete: 'off'
   }, inputRef);
 
   // Return focus to textfield if user clicks menu trigger button
@@ -198,7 +200,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
-  // TODO: Think about if the below focus key stuff needs to account for mobile
   // Focus first item if filtered collection no longer contains original focused item (aka user typing to filter collection)
   useEffect(() => {
     // Only set a focused key if one existed previously, don't want to focus something by default if allowsCustomValue = true
@@ -217,7 +218,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
 
     lastValue.current = state.inputValue;
-  }, [state.selectionManager, state.inputValue]);
+  }, [state.selectionManager, state.inputValue, allowsCustomValue, state.focusStrategy, state.selectedKey]);
 
   return {
     labelProps,

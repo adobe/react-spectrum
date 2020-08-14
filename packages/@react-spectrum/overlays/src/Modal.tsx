@@ -26,11 +26,12 @@ interface ModalWrapperProps extends HTMLAttributes<HTMLElement> {
   isOpen?: boolean,
   onClose?: () => void,
   type?: 'fullscreen' | 'fullscreenTakeover',
-  isDismissable?: boolean
+  isDismissable?: boolean,
+  isKeyboardDismissDisabled?: boolean
 }
 
 function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, onClose, type, isDismissable, ...otherProps} = props;
+  let {children, onClose, type, isDismissable, isKeyboardDismissDisabled, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
 
@@ -42,6 +43,7 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
         onClose={onClose}
         type={type}
         isDismissable={isDismissable}
+        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
         ref={domRef}>
         {children}
       </ModalWrapper>
@@ -56,12 +58,12 @@ let typeMap = {
 
 let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {children, isOpen, type, isDismissable, ...otherProps} = props;
+  let {children, isOpen, type, isDismissable, isKeyboardDismissDisabled, ...otherProps} = props;
   let typeVariant = typeMap[type];
 
   let {overlayProps} = useOverlay(props, ref);
   usePreventScroll();
-  useModal();
+  let {modalProps} = useModal();
 
   let wrapperClassName = classNames(
     modalStyles,
@@ -91,7 +93,7 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
   return (
     <div className={wrapperClassName}>
       <div
-        {...mergeProps(otherProps, overlayProps)}
+        {...mergeProps(otherProps, overlayProps, modalProps)}
         ref={ref}
         className={modalClassName}
         data-testid="modal">

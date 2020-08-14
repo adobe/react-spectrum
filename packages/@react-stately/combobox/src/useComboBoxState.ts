@@ -104,19 +104,19 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   let initialDefaultSelectedKeyText = collection.getItem(props.defaultSelectedKey)?.textValue;
   let [inputValue, setInputValue] = useControlledState(toString(props.inputValue), initialSelectedKeyText || toString(props.defaultInputValue) || initialDefaultSelectedKeyText || '', onInputChange);
 
-  let selectedKey = props.selectedKey || computeKeyFromValue(inputValue, collection);
-
+  // If user passes props.selectedKey=null or '', we want to honor that as the new key (e.g. Controlled key combobox, user want to programatically clear the selected key regardless of current input value)
+  let selectedKey = typeof props.selectedKey !== 'undefined' ? props.selectedKey : computeKeyFromValue(inputValue, collection);
   let triggerState = useMenuTriggerState(props);
 
   // Fires on selection change (when user hits Enter, clicks list item, props.selectedKey is changed)
   let setSelectedKey = useCallback((key) => {
     let item = collection.getItem(key);
     let itemText = item ? item.textValue : '';
-    // think about the below conditionals below
-    // If I don't have the extra itemText check, then setting props.selectedKey to undef or just deleting one letter of the text
-    // so it doesn't match a key will then clear the textfield entirely (in controlled selected key case)
-    // Problem with this is that a clear button w/ setSelectedKey = '' won't actually clear the textfield because of this itemText check (also controlled selected key only case, input value uncontrolled).
-    itemText && setInputValue(itemText);
+
+    // Update input value except in the case where itemText is empty and the user is in the input field (indicative of a controlled key case and the user hit backspace on a currently valid item)
+    if (itemText || !isFocused) {
+      setInputValue(itemText);
+    }
 
     // If itemText happens to be the same as the current input text but the keys don't match
     // setInputValue won't call onSelectionChange for us so we call it here manually
@@ -126,10 +126,10 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       }
     }
 
-  }, [collection, setInputValue, inputValue, onSelectionChange, selectedKey]);
+  }, [collection, setInputValue, inputValue, onSelectionChange, selectedKey, isFocused]);
 
   // Update the selectedKey and inputValue when props.selectedKey updates
-  let lastSelectedKeyProp = useRef('' as Key);
+  let lastSelectedKeyProp = useRef(props.selectedKey);
   useEffect(() => {
     // need this check since setSelectedKey changes a lot making this useEffect fire even when props.selectedKey hasn't changed
     if (lastSelectedKeyProp.current !== props.selectedKey) {
@@ -178,7 +178,10 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       ...props,
       // Fall back to null as the selectedKey to avoid useControlledState error of uncontrolled to controlled and viceversa
       selectedKey: selectedKey || null,
-      onSelectionChange: (key: Key) => setSelectedKey(key),
+      onSelectionChange: (key: Key) => {
+        setSelectedKey(key);
+        triggerState.close();
+      },
       filter: nodeFilter
     }
   );

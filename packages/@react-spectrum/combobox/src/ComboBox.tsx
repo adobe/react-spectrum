@@ -48,7 +48,6 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     menuTrigger = 'input',
     autoFocus,
     shouldFlip = true,
-    width,
     direction = 'bottom'
   } = props;
 
@@ -121,6 +120,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         layout={layout}
         state={state}
         width={isMobile ? '100%' : undefined}
+        // Set max height: inherit so Tray scrolling works
+        UNSAFE_style={{maxHeight: 'inherit'}}
         shouldUseVirtualFocus />
       <DismissButton onDismiss={() => state.close()} />
     </FocusScope>
@@ -167,6 +168,10 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     );
   }
 
+  // If there is a label defined, the textfield width should be determined by the label container
+  // otherwise it should recieve the style props
+  let textFieldStyles = props.label ? {style: {width: '100%'}} : styleProps;
+
   let textField = (
     <FocusRing
       within
@@ -175,6 +180,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       focusRingClass={classNames(styles, 'focus-ring')}
       autoFocus={autoFocus}>
       <div
+        {...textFieldStyles}
         className={
           classNames(
             styles,
@@ -184,10 +190,9 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
               'is-disabled': isDisabled,
               'is-invalid': validationState === 'invalid'
             },
-            styleProps.className
+            !props.label && styleProps.className
           )
-        }
-        style={{width: '100%'}}>
+        }>
         <TextFieldBase
           labelProps={labelProps}
           inputProps={inputProps}
@@ -204,7 +209,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
           isReadOnly={isReadOnly}
           isQuiet={isQuiet}
           validationState={validationState}
-          width={width} />
+          flex={1} />
         <FieldButton
           {...triggerProps}
           ref={triggerRef}

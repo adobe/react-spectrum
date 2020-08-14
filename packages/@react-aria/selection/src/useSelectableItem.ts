@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {focusWithoutScrolling} from '@react-aria/utils';
+import {focusSafely} from '@react-aria/focus';
 import {HTMLAttributes, Key, RefObject, useEffect} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressEvent} from '@react-types/shared';
@@ -42,6 +42,9 @@ interface SelectableItemOptions {
    * Function to focus the item.
    */
   focus?: () => void,
+  /**
+   * Whether the item should recieve virtual focus.
+   */
   shouldUseVirtualFocus?: boolean
 }
 
@@ -91,13 +94,13 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       if (focus) {
         focus();
       } else {
-        focusWithoutScrolling(ref.current);
+        focusSafely(ref.current);
       }
     }
   }, [ref, isFocused, manager.focusedKey, manager.isFocused, shouldUseVirtualFocus]);
 
   let itemProps: SelectableItemAria['itemProps'] = {
-    tabIndex: isFocused ? 0 : -1,
+    tabIndex: isFocused && !shouldUseVirtualFocus ? 0 : -1,
     onFocus(e) {
       if (e.target === ref.current) {
         manager.setFocusedKey(key);

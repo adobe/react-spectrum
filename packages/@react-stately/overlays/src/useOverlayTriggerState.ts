@@ -40,7 +40,7 @@ export function useOverlayTriggerState(props: OverlayTriggerProps): OverlayTrigg
       setOpen(false);
     },
     toggle() {
-      setOpen(!isOpen);
+      setOpen(prev => !prev);
     }
   };
 }

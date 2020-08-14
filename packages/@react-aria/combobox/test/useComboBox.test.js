@@ -63,8 +63,4 @@ describe('useComboBox', function () {
     expect(triggerProps['onPressStart']).toBeTruthy();
     expect(triggerProps['onKeyDown']).toBeTruthy();
   });
-
-  // TODO: test some of the useEffects?
-  // TODO: test when state.isOpen is true?
-  // Most of these are already tested in Combobox test
 });

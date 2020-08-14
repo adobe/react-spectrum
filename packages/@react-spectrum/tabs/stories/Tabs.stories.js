@@ -20,52 +20,79 @@ import {storiesOf} from '@storybook/react';
 import {Tabs} from '..';
 
 storiesOf('Tabs', module)
-  .add('Default', () => render(), {
-    info:
-      'The page, anchored, and panel variants have been deprecated. Page is now compact, and panel/anchored tabs are just default. These variants will map properly to the new styles, but please do not specify these variants going forward.'
+  .add(
+    'Default',
+    () => render(),
+  {
+    info: 'The page, anchored, and panel variants have been deprecated. Page is now compact, and panel/anchored tabs are just default. These variants will map properly to the new styles, but please do not specify these variants going forward.'
   })
-  .add('defaultSelectedKey: val2', () =>
-    render({defaultSelectedKey: 'val2'})
+  .add(
+    'defaultSelectedKey: val2',
+    () => render({defaultSelectedKey: 'val2'})
   )
-  .add('controlled: selectedKey: val3', () =>
-    render({selectedKey: 'val3'})
+  .add(
+    'controlled: selectedKey: val3',
+    () => render({selectedKey: 'val3'})
   )
-  .add('orientation: vertical', () => render({orientation: 'vertical'}))
-  .add('density: compact', () => render({density: 'compact'}))
-  .add('isQuiet', () => render({isQuiet: true}))
-  .add('isQuiet, density: compact', () =>
-    render({isQuiet: true, density: 'compact'})
+  .add(
+    'orientation: vertical',
+    () => render({orientation: 'vertical'}))
+  .add(
+    'density: compact',
+    () => render({density: 'compact'}))
+  .add(
+    'isQuiet',
+    () => render({isQuiet: true}))
+  .add(
+    'isQuiet, density: compact',
+    () => render({isQuiet: true, density: 'compact'})
   )
-  .add('density: compact, orientation: vertical', () =>
-    render({density: 'compact', orientation: 'vertical'})
+  .add(
+    'density: compact, orientation: vertical',
+    () => render({density: 'compact', orientation: 'vertical'})
   )
-  .add('icons', () => renderWithIcons())
-  .add('icons, density: compact', () => 
-    renderWithIcons({density: 'compact'})
+  .add(
+    'icons',
+    () => renderWithIcons())
+  .add(
+    'icons, density: compact',
+    () => renderWithIcons({density: 'compact'})
   )
-  .add('icons, orientation: vertical', () => 
-    renderWithIcons({orientation: 'vertical'})
+  .add(
+    'icons, orientation: vertical',
+    () => renderWithIcons({orientation: 'vertical'})
   )
-  .add('icons, density: compact, orientation: vertical', () => 
-    renderWithIcons({orientation: 'vertical', density: 'compact'})
+  .add(
+    'icons, density: compact, orientation: vertical',
+    () => renderWithIcons({orientation: 'vertical', density: 'compact'})
   )
-  .add('disable all tabs', () => render({isDisabled: true}))
-  .add('keyboardActivation: manual', () =>
-    render({keyboardActivation: 'manual'})
+  .add(
+    'disable all tabs',
+    () => render({isDisabled: true}))
+  .add(
+    'keyboardActivation: manual',
+    () => render({keyboardActivation: 'manual'})
   )
-  .add('overflowMode: dropdown', () =>
-    render({overflowMode: 'dropdown'})
+  .add(
+    'overflowMode: dropdown',
+    () => render({overflowMode: 'dropdown'})
   )
-  .add('overflowMode: dropdown, density: compact', () =>
-    render({overflowMode: 'dropdown', density: 'compact'})
+  .add(
+    'overflowMode: dropdown, density: compact',
+    () => render({overflowMode: 'dropdown', density: 'compact'})
   )
-  .add('overflowMode: dropdown, orientation: vertical', () =>
-    render({overflowMode: 'dropdown', orientation: 'vertical'})
+  .add(
+    'overflowMode: dropdown, orientation: vertical',
+    () => render({overflowMode: 'dropdown', orientation: 'vertical'})
+  )
+  .add(
+    'middle disabled',
+    () => render({disabledKeys: ['val2']})
   );
 
 function render(props = {}) {
   return (
-    <Tabs defaultSelectedKey="val1" {...props} onSelectionChange={action('onSelectionChange')}>
+    <Tabs {...props} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
       <Item title="Tab 1" key="val1">
         <Content margin="size-160">
           <Heading>Tab Body 1</Heading>
@@ -102,7 +129,7 @@ function render(props = {}) {
 
 function renderWithIcons(props = {}) {
   return (
-    <Tabs defaultSelectedKey="dashboard" {...props} onSelectionChange={action('onSelectionChange')}>
+    <Tabs {...props} maxWidth={500} onSelectionChange={action('onSelectionChange')}>
       <Item key="dashboard" icon={<Dashboard />} title="Dashboard">
         <Content margin="size-160">
           <Heading>Dashboard</Heading>

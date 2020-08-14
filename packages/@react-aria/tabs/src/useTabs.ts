@@ -9,12 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {HTMLAttributes, Key, RefObject, useMemo} from 'react';
+import {HTMLAttributes, Key, RefObject, useMemo, useState} from 'react';
+import {mergeProps, useId} from '@react-aria/utils';
 import {SingleSelectListState} from '@react-stately/list';
 import {TabAriaProps, TabsAriaProps} from '@react-types/tabs';
 import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
+import {useFocusWithin, usePress} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
-import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection, useSelectableItem} from '@react-aria/selection';
 
 interface TabsAria {
@@ -24,23 +25,26 @@ interface TabsAria {
   tabPanelProps: HTMLAttributes<HTMLElement>
 }
 
+const tabsIds = new WeakMap<SingleSelectListState<unknown>, string>();
+
 export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState<T>, ref): TabsAria {
   let {
-    'aria-label': ariaLabel, 
-    orientation = 'horizontal', 
+    isDisabled,
+    'aria-label': ariaLabel,
+    orientation = 'horizontal',
     keyboardActivation = 'automatic'
   } = props;
   let {
-    collection, 
-    selectionManager: manager, 
-    disabledKeys, 
+    collection,
+    selectionManager: manager,
+    disabledKeys,
     selectedKey
   } = state;
   let {direction} = useLocale();
   let delegate = useMemo(() => new TabsKeyboardDelegate(
-    collection, 
-    direction, 
-    orientation, 
+    collection,
+    direction,
+    orientation,
     disabledKeys), [collection, disabledKeys, orientation, direction]);
 
   let {collectionProps} = useSelectableCollection({
@@ -51,15 +55,32 @@ export function useTabs<T>(props: TabsAriaProps<T>, state: SingleSelectListState
     disallowEmptySelection: true
   });
 
+  // Ensure a tab is always selected
+  if (manager.isEmpty) {
+    manager.replaceSelection(delegate.getFirstKey());
+  }
+
+  // Compute base id for all tabs
+  let tabsId = useId();
+  tabsIds.set(state, tabsId);
+
+  let [isFocusWithin, setFocusWithin] = useState(false);
+  let {focusWithinProps} = useFocusWithin({
+    onFocusWithinChange: setFocusWithin
+  });
+  let tabIndex = isFocusWithin ? -1 : 0;
+
   return {
     tabListProps: {
-      ...collectionProps,
+      ...mergeProps(focusWithinProps, collectionProps),
       role: 'tablist',
-      'aria-label': ariaLabel
+      'aria-disabled': isDisabled,
+      'aria-label': ariaLabel,
+      tabIndex: isDisabled ? null : tabIndex
     },
     tabPanelProps: {
-      id: generateId(selectedKey, 'tabpanel'),
-      'aria-labelledby': generateId(selectedKey, 'tab'),
+      id: generateId(state, selectedKey, 'tabpanel'),
+      'aria-labelledby': generateId(state, selectedKey, 'tab'),
       tabIndex: 0,
       role: 'tabpanel'
     }
@@ -76,7 +97,7 @@ export function useTab<T>(
   state: SingleSelectListState<T>,
   ref: RefObject<HTMLElement>
 ): TabAria {
-  let {item, isDisabled} = props;
+  let {item, isDisabled: propsDisabled} = props;
   let {key} = item;
   let {selectionManager: manager, selectedKey} = state;
 
@@ -84,14 +105,14 @@ export function useTab<T>(
 
   let {itemProps} = useSelectableItem({
     selectionManager: manager,
-    shouldSelectOnPressUp: true,
     key,
     ref
   });
+  let isDisabled = propsDisabled || state.disabledKeys.has(key);
 
   let {pressProps} = usePress({...itemProps, isDisabled});
-  let tabId = generateId(key, 'tab');
-  let tabPanelId = generateId(key, 'tabpanel');
+  let tabId = generateId(state, key, 'tab');
+  let tabPanelId = generateId(state, key, 'tabpanel');
   let {tabIndex} = pressProps;
 
   return {
@@ -107,9 +128,11 @@ export function useTab<T>(
   };
 }
 
-function generateId(key: Key, role: string) {
+function generateId<T>(state: SingleSelectListState<T>, key: Key, role: string) {
   if (typeof key === 'string') {
     key = key.replace(/\s+/g, '');
   }
-  return `react-aria-${role}-${key}`;
+
+  let baseId = tabsIds.get(state);
+  return `${baseId}-${role}-${key}`;
 }
