@@ -10,11 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render} from '@testing-library/react';
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
-import {fireEvent, render} from '@testing-library/react';
+import {Checkbox, defaultTheme} from '@adobe/react-spectrum';
+import {Form} from '@react-spectrum/form';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
+import userEvent from "@testing-library/user-event";
 
 /**
  * Logic Button has no tests outside of this file because functionally it is identical
@@ -217,4 +221,43 @@ describe('Button', function () {
     let button = getByRole('button');
     expect(document.activeElement).toBe(button);
   });
+
+
+  it('submit in form using space', function () {
+    let onSubmit = jest.fn(e => e.preventDefault());
+    let {getByRole} = render(
+      <Provider theme={defaultTheme}>
+        <Form onSubmit={onSubmit}>
+          <Checkbox>An Input</Checkbox>
+          <Button variant="primary" type="submit">Click Me</Button>
+        </Form>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    fireEvent.keyDown(button, {key: ' '});
+    fireEvent.keyUp(button, {key: ' '});
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+
+  it('submit in form using enter', function () {
+    let onSubmit = jest.fn(e => e.preventDefault());
+    let {getByRole} = render(
+      <Provider theme={defaultTheme}>
+        <Form onSubmit={onSubmit}>
+          <Checkbox>An Input</Checkbox>
+          <Button variant="primary" type="submit">Click Me</Button>
+        </Form>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    fireEvent.keyDown(button, {key: 'Enter'});
+    fireEvent.keyUp(button, {key: 'Enter'});
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+
+  // 'implicit submission' can't be tested https://github.com/testing-library/react-testing-library/issues/487
 });

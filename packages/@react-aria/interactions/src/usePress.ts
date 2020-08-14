@@ -202,11 +202,7 @@ export function usePress(props: PressHookProps): PressResult {
     let pressProps: HTMLAttributes<HTMLElement> = {
       onKeyDown(e) {
         if (isValidKeyboardEvent(e.nativeEvent)) {
-          // enter triggers form submit on key down
-          // since enter is a special key for submitting forms and it occurs on key down
-          if (!allowDefault) {
-            e.preventDefault();
-          }
+          e.preventDefault();
           e.stopPropagation();
 
 
@@ -257,10 +253,7 @@ export function usePress(props: PressHookProps): PressResult {
 
     let onKeyUp = (e: KeyboardEvent) => {
       if (state.isPressed && isValidKeyboardEvent(e)) {
-        // spacebar trigger form submit on key up, this is because it's actually a 'click'
-        if (!allowDefault) {
-          e.preventDefault();
-        }
+        e.preventDefault();
         e.stopPropagation();
 
         state.isPressed = false;

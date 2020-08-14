@@ -68,13 +68,30 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onPressChange,
     onPress,
     isDisabled,
-    ref,
-    allowDefault: type === 'submit'
+    ref
   });
 
   let {focusableProps} = useFocusable(props, ref);
-  let buttonProps = mergeProps(focusableProps, pressProps);
-  buttonProps = mergeProps(buttonProps, filterDOMProps(props, {labelable: true}));
+
+  // enter triggers form submit on key down
+  // since enter is a special key for submitting forms and it occurs on key down
+  // spacebar trigger form submit on key up, this is because it's actually a 'click'
+  let submitProps = {onKeyDown: undefined, onKeyUp: undefined};
+  if (type === 'submit') {
+    // we must use `click` because if we try to use `form.submit` it will bypass the onSubmit handler
+    // as a result, no one can preventDefault on the form, so instead we use click on the button
+    submitProps.onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        ref.current?.click();
+      }
+    }
+    submitProps.onKeyUp = (e: KeyboardEvent) => {
+      if (e.key === ' ') {
+        ref.current?.click();
+      }
+    }
+  }
+  let buttonProps = mergeProps(submitProps, focusableProps, pressProps, filterDOMProps(props, {labelable: true}));
 
   return {
     isPressed, // Used to indicate press state for visual
