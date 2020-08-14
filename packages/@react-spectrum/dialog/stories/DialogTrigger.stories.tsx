@@ -22,6 +22,7 @@ import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
+import {DialogContainer} from '../src/DialogContainer';
 
 storiesOf('DialogTrigger', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
@@ -284,7 +285,39 @@ storiesOf('DialogTrigger', module)
   .add(
     'alert dialog',
     () => renderAlert({})
-  );
+  )
+  .add('menu trigger', () => {
+    return (
+      <DialogContainer>
+        <MenuTrigger>
+          <Button variant="cta">hello</Button>
+          <Menu>
+            <DialogTrigger>
+              <Item>dialog</Item>
+              <Dialog>
+                asdf
+              </Dialog>
+            </DialogTrigger>
+          </Menu>
+        </MenuTrigger>
+      </DialogContainer>
+    );
+  })
+  .add('dialog from dialog', () => {
+    return (
+      <DialogTrigger>
+        <Button variant="cta">Open dialog</Button>
+        <Dialog>
+          <DialogTrigger>
+            <Button variant="cta">Nested dialog</Button>
+            <Dialog>
+              Stacks on stacks!
+            </Dialog>
+          </DialogTrigger>
+        </Dialog>
+      </DialogTrigger>
+    );
+  });
 
 function render({width = 'auto', ...props}) {
   return (

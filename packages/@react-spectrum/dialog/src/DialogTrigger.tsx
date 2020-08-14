@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {DialogContext} from './context';
+import {DialogContext, DialogContextValue} from './context';
 import {DOMRefValue} from '@react-types/shared';
 import {Modal, Popover, Tray} from '@react-spectrum/overlays';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
@@ -25,7 +25,12 @@ import {DialogContainer} from './DialogContainer';
 function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let {
     children,
-    ...otherProps
+    type = 'modal',
+    mobileType = type === 'popover' ? 'modal' : type,
+    hideArrow,
+    isKeyboardDismissDisabled,
+    targetRef,
+    ...positionProps
   } = props;
   if (!Array.isArray(children) || children.length > 2) {
     throw new Error('DialogTrigger must have exactly 2 children');
@@ -33,16 +38,39 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
   // if a function is passed as the second child, it won't appear in toArray
   let [trigger, content] = children as [ReactElement, SpectrumDialogClose];
 
+  // On small devices, show a modal or tray instead of a popover.
+  // TODO: DNA variable?
+  let isMobile = useMediaQuery('(max-width: 700px)');
+  if (isMobile) {
+    type = mobileType;
+  }
+
+  let state = useOverlayTriggerState(props);
   let dialogContainerContext = useContext(DialogContainerContext);
+
+  if (type === 'popover') {
+    return (
+      <PopoverTrigger
+        {...positionProps}
+        state={state}
+        targetRef={targetRef}
+        trigger={trigger}
+        content={content}
+        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
+        hideArrow={hideArrow} />
+    );
+  }
+
   const triggerBase = <DialogTriggerBase content={content}>{trigger}</DialogTriggerBase>;
 
-  return dialogContainerContext ? triggerBase : (
-    <DialogContainer content={content} {...otherProps}>
+  // if container exists and not being used (showing an overlay), pass trigger base, otherwise
+  // create container for overlay to attach to
+  return dialogContainerContext && !dialogContainerContext.overlayContent ? triggerBase : (
+    <DialogContainer content={content} {...props}>
       {triggerBase}
     </DialogContainer>
   );
 }
-
 
 export function DialogTriggerBase(props) {
   let {children, content} = props;
@@ -74,6 +102,58 @@ DialogTrigger.getCollectionNode = function* (props: SpectrumDialogTriggerProps) 
     )
   };
 };
+
+
+function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboardDismissDisabled, ...props}) {
+  let triggerRef = useRef<HTMLElement>();
+
+  let overlayRef = useRef<DOMRefValue<HTMLDivElement>>();
+  let {overlayProps: popoverProps, placement, arrowProps} = useOverlayPosition({
+    targetRef: targetRef || triggerRef,
+    overlayRef: unwrapDOMRef(overlayRef),
+    placement: props.placement,
+    containerPadding: props.containerPadding,
+    offset: props.offset,
+    crossOffset: props.crossOffset,
+    shouldFlip: props.shouldFlip,
+    isOpen: state.isOpen
+  });
+
+  let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
+  let triggerPropsWithRef = {
+    ...triggerProps,
+    ref: targetRef ? undefined : triggerRef
+  };
+  let context : DialogContextValue = {
+    type: 'popover',
+    onClose: state.close,
+    ...overlayProps
+  };
+
+  return (
+    <Fragment>
+      <PressResponder
+        {...triggerPropsWithRef}
+        onPress={state.toggle}
+        isPressed={state.isOpen}>
+        {trigger}
+      </PressResponder>
+      <DialogContext.Provider value={context}>
+        <Popover
+          isOpen={state.isOpen}
+          UNSAFE_style={popoverProps.style}
+          ref={overlayRef}
+          onClose={state.close}
+          placement={placement}
+          arrowProps={arrowProps}
+          isKeyboardDismissDisabled={isKeyboardDismissDisabled}
+          hideArrow={hideArrow}>
+          {content}
+        </Popover>
+      </DialogContext.Provider>
+    </Fragment>
+  );
+}
 
 /**
  * DialogTrigger serves as a wrapper around a Dialog and its associated trigger, linking the Dialog's
