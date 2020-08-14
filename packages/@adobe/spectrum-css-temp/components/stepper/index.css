@@ -23,7 +23,7 @@ governing permissions and limitations under the License.
 
 .spectrum-Stepper {
   display: inline-flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
   flex-wrap: nowrap;
 
   width: var(--spectrum-component-single-line-width);
@@ -50,7 +50,7 @@ governing permissions and limitations under the License.
   inline-size: var(--spectrum-stepper-button-width);
 
   border-width: var(--spectrum-stepper-border-size-default);
-  border-inline-end-width: var(--spectrum-stepper-border-size-reset);
+  border-inline-start-width: var(--spectrum-stepper-border-size-reset);
   border-radius: var(--spectrum-border-radius) 0 0 var(--spectrum-border-radius);
 
   .spectrum-Icon {
@@ -60,9 +60,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Stepper-stepUp {
-  border-block-end: none;
   border-radius: var(--spectrum-border-radius);
-  border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
+  border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
   border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
   border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
 }
@@ -72,7 +71,7 @@ governing permissions and limitations under the License.
   border-radius: var(--spectrum-border-radius);
   border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
   border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
-  border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
+  border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
   border-block-end-width: var(--spectrum-stepper-border-size-default);
 
   &:focus {
@@ -92,13 +91,13 @@ governing permissions and limitations under the License.
 
   flex: 1;
 
-  border-start-start-radius: var(--spectrum-stepper-border-radius-reset);
-  border-end-start-radius: var(--spectrum-stepper-border-radius-reset);
+  border-start-end-radius: var(--spectrum-stepper-border-radius-reset);
+  border-end-end-radius: var(--spectrum-stepper-border-radius-reset);
 
   z-index: 1;
 }
 
-.spectrum-Stepper--quiet {
+.spectrum-Stepper.spectrum-Stepper--quiet {
   border-radius: var(--spectrum-stepper-border-radius-reset);
 
   .spectrum-Stepper-buttons {
@@ -109,4 +108,16 @@ governing permissions and limitations under the License.
       border-radius: var(--spectrum-stepper-border-radius-reset);
     }
   }
+  .spectrum-Stepper-stepUp {
+    border-block-end: none
+  }
+  &:focus,
+  &.focus-ring {
+    .spectrum-Stepper-buttons {
+      border-block-start: none;
+      border-inline-start: none;
+      border-inline-end: none;
+    }
+  }
 }
+

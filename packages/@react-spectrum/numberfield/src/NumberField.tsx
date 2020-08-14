@@ -13,6 +13,9 @@
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
+import {Label} from '@react-spectrum/label';
+import {LabelPosition} from '@react-types/shared';
+import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import React, {RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import StepButton from './StepButton';
@@ -21,11 +24,8 @@ import {TextFieldBase} from '@react-spectrum/textfield';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProviderProps} from '@react-spectrum/provider';
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps} from '@react-aria/utils';
-import {Label} from '@react-spectrum/label';
 import {useFormProps} from '@react-spectrum/form';
-import {LabelPosition} from "@react-types/shared";
 
 
 export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElement>) => {
@@ -43,6 +43,8 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
     labelAlign,
     ...otherProps
   } = props;
+  // either we don't pass otherProps to input... seems not ideal
+  // or we figure out some way to take the styleprops out of otherProps...?
   let {styleProps} = useStyleProps(props);
   let state = useNumberFieldState(otherProps);
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
@@ -54,8 +56,6 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
     incrementButtonProps,
     decrementButtonProps
   } = useNumberField(props, state, inputRef);
-
-  console.log('labelProps', labelProps);
 
   let className = classNames(
     inputgroupStyles,
@@ -79,6 +79,7 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
   let numberfield = (
     <FocusRing
       within
+      isTextInput
       focusClass={classNames(inputgroupStyles, 'is-focused', classNames(stepperStyle, 'is-focused'))}
       focusRingClass={classNames(inputgroupStyles, 'focus-ring', classNames(stepperStyle, 'focus-ring'))}
       autoFocus={autoFocus}>
@@ -93,6 +94,7 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
           isQuiet={isQuiet}
           inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
           inputRef={inputRef}
+          validationState={state.validationState}
           label={null}
           labelProps={labelProps}
           inputProps={inputFieldProps} />

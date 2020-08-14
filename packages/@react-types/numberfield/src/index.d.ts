@@ -15,7 +15,7 @@ import {
   DOMProps,
   FocusableProps,
   InputBase, LabelableProps,
-  RangeInputBase,
+  RangeInputBase, SpectrumLabelableProps,
   StyleProps,
   TextInputBase,
   Validation,
@@ -30,7 +30,7 @@ export interface NumberFieldProps extends InputBase, Validation, FocusableProps,
 
 export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps {}
 
-export interface SpectrumNumberFieldProps extends AriaNumberFieldProps, StyleProps {
+export interface SpectrumNumberFieldProps extends AriaNumberFieldProps, StyleProps, SpectrumLabelableProps {
   isQuiet?: boolean,
   showStepper?: boolean,
   formatOptions?: Intl.NumberFormatOptions
