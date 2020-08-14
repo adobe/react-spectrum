@@ -41,7 +41,6 @@ function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLBu
   let {styleProps} = useStyleProps(otherProps);
   let isTextOnly = React.Children.toArray(props.children).every(c => !React.isValidElement(c));
 
-
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <button
@@ -84,7 +83,7 @@ function ToggleButton(props: SpectrumToggleButtonProps, ref: FocusableRef<HTMLBu
 
 /**
  * ToggleButtons allow users to toggle a selection on or off, for example
- * switching between two modes, or showing/hiding a panel.
+ * switching between two states or modes.
  */
 let _ToggleButton = React.forwardRef(ToggleButton);
 export {_ToggleButton as ToggleButton};

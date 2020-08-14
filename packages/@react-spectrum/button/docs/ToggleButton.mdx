@@ -38,7 +38,7 @@ keywords: [toggle button]
 ## Example
 
 ```tsx example
-<ToggleButton>Edit</ToggleButton>
+<ToggleButton>Pin</ToggleButton>
 ```
 
 ## Content
@@ -48,10 +48,10 @@ A visible label can be provided by passing a string or a Text component as a chi
 
 ```tsx example
 import {Text} from '@react-spectrum/text';
-import Edit from '@spectrum-icons/workflow/Edit';
+import Pin from '@spectrum-icons/workflow/PinOff';
 
 <ToggleButton>
-  <Edit />
+  <Pin />
   <Text>Icon + Label</Text>
 </ToggleButton>
 ```
@@ -64,9 +64,12 @@ the `aria-label` prop.
 
 ```tsx example
 <ToggleButton aria-label="Icon only">
-  <Edit />
+  <Pin />
 </ToggleButton>
 ```
+
+**Note:** `ToggleButton` should not be used when the content of the button changes between selection states, for example,
+mute/unmute or play/pause. In these cases, use an [ActionButton](ActionButton.html) instead.
 
 ### Internationalization
 
@@ -76,33 +79,15 @@ In order to internationalize an ToggleButton, a localized string should be passe
 
 ToggleButtons are not selected by default. The `defaultSelected` prop can be used to set the default state (uncontrolled).
 Alternatively, the `isSelected` prop can be used to make the selected state controlled. See React's documentation on
-[uncontrolled components](https://reactjs.org/docs/uncontrolled-components.html) for more info.
-
-```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState(false);
-
-  return (
-    <Flex gap="size-100">
-      <ToggleButton defaultSelected>Edit (uncontrolled)</ToggleButton>
-      <ToggleButton isSelected={selected} onChange={setSelected}>Edit (controlled)</ToggleButton>
-    </Flex>
-  );
-}
-```
+[uncontrolled components](https://reactjs.org/docs/uncontrolled-components.html) for more info, and [Events](#Events), below,
+for an example of controlled behavior.
 
 ## Events
 
 ToggleButtons support user interactions via mouse, keyboard, and touch. When pressing the button, the selection
-state is toggled, and the `onChange` event is fired.
-
-The following example uses an `onChange` handler to update React state. The selection state is used to toggle
-the icon that is displayed in the button representing muted vs unmuted states, along with the `aria-label` for accessibility.
+state is toggled, and the `onChange` event is fired. The following example uses an `onChange` handler to update React state.
 
 ```tsx example
-import VolumeMute from '@spectrum-icons/workflow/VolumeMute';
-import VolumeThree from '@spectrum-icons/workflow/VolumeThree';
-
 function Example() {
   let [isSelected, setSelected] = React.useState(false);
 
@@ -111,8 +96,8 @@ function Example() {
       isEmphasized
       isSelected={isSelected}
       onChange={setSelected}
-      aria-label={isSelected ? "Unmute" : "Mute"}>
-      {isSelected ? <VolumeMute /> : <VolumeThree />}
+      aria-label="Pin">
+      <Pin />
     </ToggleButton>
   );
 }
@@ -128,19 +113,19 @@ function Example() {
 [View guidelines](https://spectrum.adobe.com/page/action-button/#Quiet)
 
 ```tsx example
-<ToggleButton isQuiet>Edit</ToggleButton>
+<ToggleButton isQuiet>Pin</ToggleButton>
 ```
 
 ### Disabled
 [View guidelines](https://spectrum.adobe.com/page/action-button/#Disabled)
 
 ```tsx example
-<ToggleButton isDisabled>Edit</ToggleButton>
+<ToggleButton isDisabled>Pin</ToggleButton>
 ```
 
 ### Emphasized
 [View guidelines](https://spectrum.adobe.com/page/action-button/#Emphasis)
 
 ```tsx example
-<ToggleButton isEmphasized defaultSelected>Edit</ToggleButton>
+<ToggleButton isEmphasized defaultSelected>Pin</ToggleButton>
 ```
