@@ -554,6 +554,7 @@ governing permissions and limitations under the License.
     &:focus-ring {
       background-color: var(--spectrum-actionbutton-emphasized-background-color-selected-key-focus);
       border-color: var(--spectrum-actionbutton-emphasized-border-color-selected-key-focus);
+      box-shadow: 0 0 0 var(--spectrum-button-primary-border-size-increase-key-focus) var(--spectrum-actionbutton-emphasized-border-color-selected-key-focus);
       color: var(--spectrum-actionbutton-emphasized-text-color-selected-key-focus);
 
       &:hover {
