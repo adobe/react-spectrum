@@ -114,6 +114,10 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   });
 
   useEffect(() => {
+    if (!document.getElementById(inputId)) {
+      return () => {};
+    }
+
     const handleInputScrollWheel = e => {
       // If the input isn't supposed to receive input, do nothing.
       // TODO: add focus
