@@ -25,3 +25,12 @@ export function triggerPress(element, opts = {}) {
     fireEvent.click(element, {detail: 1, ...opts});
   });
 }
+
+export function triggerTouchPress(element, opts = {}) {
+  act(() => {
+    fireEvent.touchStart(element, {targetTouches: [{}]});
+  });
+  act(() => {
+    fireEvent.touchEnd(element, {targetTouches: [{}]});
+  });
+}

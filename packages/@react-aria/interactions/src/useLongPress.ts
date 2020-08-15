@@ -16,6 +16,7 @@ import {useRef} from 'react';
 
 export interface LongPressHookProps {
   onLongPress: (e: PressEvent) => void,
+  onPressStart?: (e: PressEvent) => void,
   triggerThreshold?: number
 }
 
@@ -23,6 +24,7 @@ export const LONG_PRESS_DEFAULT_THRESHOLD_IN_MS = 500;
 
 export function useLongPress(props : LongPressHookProps) {
   let {
+    onPressStart,
     onLongPress,
     triggerThreshold
   } = props;
@@ -34,6 +36,10 @@ export function useLongPress(props : LongPressHookProps) {
   let {pressProps} = usePress({
     onPressStart(e) {
       if (e.pointerType === 'mouse' || e.pointerType === 'touch') {
+        if (onPressStart) {
+          onPressStart(e);
+        }
+
         timeRef.current = setTimeout(() => {
           onLongPress(e);
           timeRef.current = null;

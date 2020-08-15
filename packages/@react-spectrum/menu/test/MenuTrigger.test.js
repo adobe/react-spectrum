@@ -17,7 +17,7 @@ import {LONG_PRESS_DEFAULT_THRESHOLD_IN_MS} from '@react-aria/interactions';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerLongPress, triggerPress} from '@react-spectrum/test-utils';
+import {triggerLongPress, triggerPress, triggerTouchPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 import V2Dropdown from '@react/react-spectrum/Dropdown';
 import {Menu as V2Menu, MenuItem as V2MenuItem} from '@react/react-spectrum/Menu';
@@ -222,7 +222,7 @@ describe('MenuTrigger', function () {
 
     menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
-    expect(onOpenChange).toBeCalledTimes(2); // once for press, once for blur :/
+    expect(onOpenChange).toBeCalledTimes(1);
   });
 
   // New functionality in v3
@@ -568,6 +568,19 @@ describe('MenuTrigger', function () {
       expect(onOpenChange).toBeCalledTimes(2);
     });
 
+    it.each`
+      Name                      | Component      | props | menuProps
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+    `('$Name ignores repeating keyboard events', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13, repeat: true}));
+
+      let menu = tree.queryByRole('menu');
+      expect(menu).toBeTruthy();
+    });
+
     it('tabs to the next element after the trigger and closes the menu', function () {
       tree = render(
         <Provider theme={theme}>
@@ -725,7 +738,7 @@ describe('MenuTrigger', function () {
       const props = {onOpenChange, trigger: 'longPress'};
       verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
         if (menu) {
-          triggerPress(button);
+          triggerTouchPress(button);
         } else {
           triggerLongPress(button, 'touch');
         }

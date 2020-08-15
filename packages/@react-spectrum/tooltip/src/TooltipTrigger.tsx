@@ -10,15 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-// import {DOMPropsResponder} from '@react-aria/interactions';
-// import {Overlay} from '@react-spectrum/overlays';
+import {DOMRef, StyleProps} from '@react-types/shared';
+import {FocusableProvider} from '@react-aria/focus';
+import {Overlay} from '@react-spectrum/overlays';
 import {PlacementAxis} from '@react-types/overlays';
-import React, {RefObject, useContext} from 'react';
-import {StyleProps} from '@react-types/shared';
+import React, {RefObject, useContext, useRef} from 'react';
 import {TooltipTriggerProps} from '@react-types/tooltip';
-// import {useOverlayPosition} from '@react-aria/overlays';
-// import {useTooltipTrigger} from '@react-aria/tooltip';
-// import {useTooltipTriggerState} from '@react-stately/tooltip';
+import {useDOMRef} from '@react-spectrum/utils';
+import {useOverlayPosition} from '@react-aria/overlays';
+import {useTooltipTrigger} from '@react-aria/tooltip';
+import {useTooltipTriggerState} from '@react-stately/tooltip';
 
 interface TooltipContextProps extends StyleProps {
   ref?: RefObject<HTMLDivElement>,
@@ -29,54 +30,57 @@ interface TooltipContextProps extends StyleProps {
 const TooltipContext = React.createContext<TooltipContextProps>({});
 
 export function useTooltipProvider(): TooltipContextProps {
-  return useContext(TooltipContext);
+  return useContext(TooltipContext) || {};
 }
 
-// eslint-disable-next-line
-export function TooltipTrigger(props: TooltipTriggerProps) {
-  // let {
-  //   children,
-  //   isDisabled
-  // } = props;
+function TooltipTrigger(props: TooltipTriggerProps, ref: DOMRef<HTMLElement>) {
+  let {
+    children,
+    isDisabled
+  } = props;
 
-  // let [trigger, tooltip] = React.Children.toArray(children);
+  let [trigger, tooltip] = React.Children.toArray(children);
 
-  // let state = useTooltipTriggerState();
+  let state = useTooltipTriggerState(props);
 
-  // let triggerRef = useRef<HTMLElement>();
-  // let overlayRef = useRef<HTMLDivElement>();
+  let domRef = useDOMRef(ref);
+  let triggerRef = useRef<HTMLElement>();
+  let tooltipTriggerRef = domRef || triggerRef;
+  let overlayRef = useRef<HTMLDivElement>();
 
-  // let {triggerProps, tooltipProps} = useTooltipTrigger({
-  //   tooltipProps: tooltip.props,
-  //   triggerProps: trigger.props,
-  //   isDisabled
-  // }, state, triggerRef);
+  let {triggerProps, tooltipProps} = useTooltipTrigger({
+    isDisabled
+  }, state, tooltipTriggerRef);
 
-  // let {overlayProps, placement} = useOverlayPosition({
-  //   placement: props.placement || 'right',
-  //   targetRef: triggerRef,
-  //   overlayRef
-  // });
+  let {overlayProps, placement} = useOverlayPosition({
+    placement: props.placement || 'right',
+    targetRef: tooltipTriggerRef,
+    overlayRef,
+    isOpen: state.isOpen
+  });
 
-  return null;
-
-  // return (
-  //   <DOMPropsResponder
-  //     {...triggerProps}
-  //     ref={triggerRef}
-  //     isDisabled={isDisabled}>
-  //     {trigger}
-  //     <TooltipContext.Provider
-  //       value={{
-  //         placement,
-  //         ref: overlayRef,
-  //         UNSAFE_style: overlayProps.style,
-  //         ...tooltipProps
-  //       }}>
-  //       <Overlay isOpen={state.open}>
-  //         {tooltip}
-  //       </Overlay>
-  //     </TooltipContext.Provider>
-  //   </DOMPropsResponder>
-  // );
+  return (
+    <FocusableProvider
+      {...triggerProps}
+      ref={tooltipTriggerRef}>
+      {trigger}
+      <TooltipContext.Provider
+        value={{
+          placement,
+          ref: overlayRef,
+          UNSAFE_style: overlayProps.style,
+          ...tooltipProps
+        }}>
+        <Overlay isOpen={state.isOpen}>
+          {tooltip}
+        </Overlay>
+      </TooltipContext.Provider>
+    </FocusableProvider>
+  );
 }
+
+/**
+ * Display container for Tooltip content. Has a directional arrow dependent on its placement.
+ */
+let _TooltipTrigger = React.forwardRef(TooltipTrigger);
+export {_TooltipTrigger as TooltipTrigger};

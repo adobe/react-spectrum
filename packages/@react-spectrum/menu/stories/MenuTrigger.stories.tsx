@@ -19,6 +19,7 @@ import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
+import {Flex} from '@react-spectrum/layout';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Keyboard, Text} from '@react-spectrum/text';
 import Paste from '@spectrum-icons/workflow/Paste';
@@ -495,7 +496,30 @@ storiesOf('MenuTrigger', module)
         </div>
       </>
     )
-  );
+  )
+  .add('double menu', () => (
+    <Flex gap="size-100">
+      <MenuTrigger>
+        <ActionButton
+          onPressStart={action('1onPressStart')}
+          onPressEnd={action('1onPressEnd')}
+          onPress={action('1onPress')}>
+          Menu Button 1
+        </ActionButton>
+        {defaultMenu}
+      </MenuTrigger>
+      <MenuTrigger>
+        <ActionButton
+          onPressStart={action('2onPressStart')}
+          onPressEnd={action('2onPressEnd')}
+          onPress={action('2onPress')}>
+          Menu Button 2
+        </ActionButton>
+        {defaultMenu}
+      </MenuTrigger>
+    </Flex>
+  ));
+
 
 let customMenuItem = (item) => {
   let Icon = iconMap[item.icon];

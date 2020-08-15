@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import classNames from 'classnames';
+import clsx from 'clsx';
 import React from 'react';
 import styles from './resourceCard.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
@@ -60,7 +60,7 @@ export function ResourceCard(props) {
       <div>
         {cardContent.svg}
       </div>
-      <div className={classNames(typographyStyles['spectrum-Body4'], styles['cardContent'])}>
+      <div className={clsx(typographyStyles['spectrum-Body4'], styles['cardContent'])}>
         <div className={styles['cardTitle']}>
           {cardContent.title}
         </div>

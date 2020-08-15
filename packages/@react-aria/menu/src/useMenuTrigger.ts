@@ -80,8 +80,12 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
   };
 
   const longPressProps = useLongPress({
+    // Close on press start as menu can be in a open state after onLongPress.
+    onPressStart() {
+      state.close();
+    },
     onLongPress() {
-      state.toggle('first');
+      state.open('first');
     }
   });
 

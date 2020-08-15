@@ -14,3 +14,4 @@
 
 export * from './triggerPress';
 export * from './triggerLongPress';
+export * from './testSSR';
