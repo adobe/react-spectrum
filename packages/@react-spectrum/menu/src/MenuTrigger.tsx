@@ -42,7 +42,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   let [menuTrigger, menu] = React.Children.toArray(children);
   let state = useMenuTriggerState(props);
 
-  let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, menuTriggerRef, trigger);
+  let {menuTriggerProps, menuProps} = useMenuTrigger({trigger}, state, menuTriggerRef);
 
   let {overlayProps: positionProps, placement} = useOverlayPosition({
     targetRef: menuTriggerRef,

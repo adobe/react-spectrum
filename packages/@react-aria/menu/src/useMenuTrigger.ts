@@ -20,7 +20,8 @@ import {useOverlayTrigger} from '@react-aria/overlays';
 
 interface MenuTriggerAriaProps {
   /** The type of menu that the menu trigger opens. */
-  type?: 'menu' | 'listbox'
+  type?: 'menu' | 'listbox',
+  trigger?: MenuTriggerType
 }
 
 interface MenuTriggerAria {
@@ -36,9 +37,10 @@ interface MenuTriggerAria {
  * @param props - Props for the menu trigger.
  * @param state - State for the menu trigger.
  */
-export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerState, ref: RefObject<HTMLElement>, trigger?: MenuTriggerType): MenuTriggerAria {
+export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerState, ref: RefObject<HTMLElement>): MenuTriggerAria {
   let {
-    type = 'menu' as MenuTriggerAriaProps['type']
+    type = 'menu' as MenuTriggerAriaProps['type'],
+    trigger
   } = props;
 
   let menuTriggerId = useId();
@@ -78,15 +80,8 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
   };
 
   const longPressProps = useLongPress({
-    onLongPress(e) {
-      // For consistency with native, open the menu on mouse/key down, but touch up.
-      if (e.pointerType !== 'touch') {
-        state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
-      } else {
-        // If opened with a keyboard or screen reader, auto focus the first item.
-        // Otherwise, the menu itself will be focused.
-        state.toggle();
-      }
+    onLongPress() {
+      state.toggle('first');
     }
   });
 
@@ -111,11 +106,7 @@ export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerSt
     id: menuTriggerId
   };
 
-  if (trigger === 'longPress') {
-    menuTriggerProps = mergeProps(menuTriggerProps, longPressProps, {onKeyDown});
-  } else {
-    menuTriggerProps = mergeProps(menuTriggerProps, pressProps, {onKeyDown});
-  }
+  menuTriggerProps = mergeProps(menuTriggerProps, trigger === 'longPress' ? longPressProps : pressProps, {onKeyDown});
 
   return {
     menuTriggerProps,

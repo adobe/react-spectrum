@@ -10,20 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-// Portions of the code in this file are based on code from react.
-// Original licensing for the following can be found in the
-// NOTICE file in the root directory of this source tree.
-// See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
-
 import {PressEvent} from '@react-types/shared';
 import {usePress} from './usePress';
 import {useRef} from 'react';
 
 export interface LongPressHookProps {
-  onLongPress: (e: PressEvent) => void
+  onLongPress: (e: PressEvent) => void,
   triggerThreshold?: number
 }
 
+export const LONG_PRESS_DEFAULT_THRESHOLD_IN_MS = 500;
 
 export function useLongPress(props : LongPressHookProps) {
   let {
@@ -31,16 +27,18 @@ export function useLongPress(props : LongPressHookProps) {
     triggerThreshold
   } = props;
   
-  triggerThreshold = triggerThreshold || 500;
+  triggerThreshold = triggerThreshold || LONG_PRESS_DEFAULT_THRESHOLD_IN_MS;
 
   const timeRef = useRef(null);
 
   let {pressProps} = usePress({
     onPressStart(e) {
-      timeRef.current = setTimeout(() => {
-        onLongPress(e);
-        timeRef.current = null;
-      }, triggerThreshold);
+      if (e.pointerType === 'mouse' || e.pointerType === 'touch') {
+        timeRef.current = setTimeout(() => {
+          onLongPress(e);
+          timeRef.current = null;
+        }, triggerThreshold);
+      }
     },
     onPressEnd() { 
       if (timeRef.current) {
