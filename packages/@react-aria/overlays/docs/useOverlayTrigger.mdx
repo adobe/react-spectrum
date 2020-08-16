@@ -17,10 +17,6 @@ import statelyDocs from 'docs:@react-stately/overlays';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-aria/overlays/package.json';
 
-```jsx import
-import {useOverlayTrigger} from '@react-aria/overlays';
-```
-
 ---
 category: Overlays
 keywords: [overlays, dialog, modal, aria]
@@ -117,6 +113,7 @@ package to ensure that this content is hidden while modals are open as well. See
 import {useOverlayTriggerState} from '@react-stately/overlays';
 import {
   useOverlay,
+  useOverlayTrigger,
   useOverlayPosition,
   useModal,
   OverlayProvider,
@@ -145,7 +142,7 @@ const Popover = React.forwardRef(({
   }, ref);
 
   // Hide content outside the modal from screen readers.
-  useModal();
+  let {modalProps} = useModal();
 
   // Get props for the dialog and its title
   let {dialogProps, titleProps} = useDialog({}, ref);
@@ -153,7 +150,7 @@ const Popover = React.forwardRef(({
   return (
     <FocusScope restoreFocus>
       <div
-        {...mergeProps(overlayProps, mergeProps(dialogProps, otherProps))}
+        {...mergeProps(overlayProps, dialogProps, otherProps, modalProps)}
         ref={ref}
         style={{
           background: 'white',

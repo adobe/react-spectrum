@@ -17,3 +17,4 @@ export * from './ActionButton';
 export * from './FieldButton';
 export * from './LogicButton';
 export * from './ClearButton';
+export * from './ToggleButton';
