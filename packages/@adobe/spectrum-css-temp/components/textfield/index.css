@@ -29,7 +29,7 @@ governing permissions and limitations under the License.
   --spectrum-textfield-multiline-padding-bottom: var(--spectrum-textfield-padding-bottom);
 
   /* Todo: DNA uses incorrect font family "Adobe Clean" */;
-  --spectrum-textfield-text-font-family-fixed: adobe-clean, Helvetica, Arial, sans-serif;
+  --spectrum-textfield-text-font-family-fixed: var(--spectrum-font-family-base);
 }
 
 .spectrum-Textfield {
@@ -41,6 +41,7 @@ governing permissions and limitations under the License.
   &.spectrum-Textfield--quiet.spectrum-Textfield--multiline .spectrum-Textfield-input {
     height: var(--spectrum-textfield-height);
     min-height: var(--spectrum-textfield-height);
+    overflow-x: hidden;
   }
 }
 

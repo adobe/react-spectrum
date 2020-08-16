@@ -730,6 +730,10 @@ describe('ListBox', function () {
     });
 
     it('should fire onLoadMore when scrolling near the bottom', function () {
+      // Mock clientHeight to match maxHeight prop
+      let maxHeight = 200;
+      jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => maxHeight);
+
       let onLoadMore = jest.fn();
       let items = [];
       for (let i = 1; i <= 100; i++) {
@@ -738,7 +742,7 @@ describe('ListBox', function () {
 
       let {getByRole} = render(
         <Provider theme={theme}>
-          <ListBox aria-label="listbox" items={items} maxHeight={200} onLoadMore={onLoadMore}>
+          <ListBox aria-label="listbox" items={items} maxHeight={maxHeight} onLoadMore={onLoadMore}>
             {item => <Item key={item.name}>{item.name}</Item>}
           </ListBox>
         </Provider>

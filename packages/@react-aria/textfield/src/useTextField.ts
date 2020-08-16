@@ -12,6 +12,7 @@
 
 import {AriaTextFieldProps} from '@react-types/textfield';
 import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {ElementType} from 'react';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
 import {useLabel} from '@react-aria/label';
@@ -23,13 +24,23 @@ interface TextFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>
 }
 
+interface AriaTextFieldOptions extends AriaTextFieldProps {
+  /**
+   * The HTML element used to render the input, e.g. 'input', or 'textarea'.
+   * It determines whether certain HTML attributes will be included in `inputProps`.
+   * For example, [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-type).
+   * @default 'input'
+   */
+  inputElementType?: ElementType
+}
+
 /**
  * Provides the behavior and accessibility implementation for a text field.
  * @param props - Props for the text field.
  * @param ref - Ref to the HTML input element.
  */
 export function useTextField(
-  props: AriaTextFieldProps,
+  props: AriaTextFieldOptions,
   ref: RefObject<HTMLInputElement>
 ): TextFieldAria {
   let {
