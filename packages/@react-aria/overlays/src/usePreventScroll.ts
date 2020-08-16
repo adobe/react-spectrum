@@ -22,12 +22,12 @@ interface PreventScrollOptions {
   isOpen?: boolean
 }
 
-export function usePreventScroll(options?: PreventScrollOptions){
+export function usePreventScroll(options? : PreventScrollOptions) {
 
   const {isOpen = true} = options;
 
-   useEffect(() => {
-    let { paddingRight, overflow } = document.body.style;
+  useEffect(() => {
+    let {paddingRight, overflow} = document.body.style;
 
     if (isOpen !== true) {
       document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
