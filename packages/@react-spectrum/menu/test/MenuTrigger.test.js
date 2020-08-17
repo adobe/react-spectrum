@@ -221,7 +221,7 @@ describe('MenuTrigger', function () {
 
     menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
-    expect(onOpenChange).toBeCalledTimes(1);
+    expect(onOpenChange).toBeCalledTimes(2); // once for press, once for blur :/
   });
 
   // New functionality in v3
