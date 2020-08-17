@@ -32,7 +32,8 @@ interface ComboBoxAria {
   triggerProps: AriaButtonProps,
   inputProps: HTMLAttributes<HTMLElement>,
   listBoxProps: HTMLAttributes<HTMLElement>,
-  labelProps: HTMLAttributes<HTMLElement>
+  labelProps: HTMLAttributes<HTMLElement>,
+  trayInputProps: HTMLAttributes<HTMLElement>
 }
 
 export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
@@ -72,9 +73,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let focusedItem = state.selectionManager.focusedKey && state.isOpen ? state.collection.getItem(state.selectionManager.focusedKey) : undefined;
   let focusedKeyId = focusedItem ? getItemId(state, focusedItem.key) : undefined;
 
-  // TODO: Do we want the mobile input field to have the same keydown handling? If so we will need to call
-  // useSelectableCollection again with ref: trayInputRef since the keydown handler has a ref check that early returns if the ref doesn't contain the event target
-
   // Using layout initiated from ComboBox, generate the keydown handlers for textfield (arrow up/down to navigate through menu when focus in the textfield)
   let {collectionProps} = useSelectableCollection({
     selectionManager: state.selectionManager,
@@ -83,6 +81,17 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     disallowEmptySelection: true,
     disallowSelectAll: true,
     ref: inputRef
+  });
+
+  // TODO: Do we want the mobile input field to have the same keydown handling? If so we will need to call
+  // useSelectableCollection again with ref: trayInputRef since the keydown handler has a ref check that early returns if the ref doesn't contain the event target
+  let {collectionProps: trayCollectionProps} = useSelectableCollection({
+    selectionManager: state.selectionManager,
+    keyboardDelegate: layout,
+    disallowTypeAhead: true,
+    disallowEmptySelection: true,
+    disallowSelectAll: true,
+    ref: trayInputRef
   });
 
   // For textfield specific keydown operations
@@ -97,13 +106,9 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
         }
         break;
       case 'Escape':
-        // TODO: maybe only call this if state.isOpen is true cuz there can be a case
-        // where the menu isn't open (if user types something that doens't match any valid value, state.isOpen is still true)
-        // but overlay state isOpen hasn't actually been updated
         if (state.isOpen) {
           state.close();
         }
-
         break;
       case 'ArrowDown':
         state.open('first');
@@ -115,21 +120,9 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   };
 
   let onBlur = (e) => {
-    console.log('in the blur', e.relatedTarget);
-    console.log('mobile ref', trayInputRef.current)
-    // // If the trayInputRef is available, then that means the tray is being opened. Focus the input in the tray and early return.
-    // // This logic currently only triggers for typing in something that doesn't match or if you click on the mobile input while in the tray
-    // if (props.listboxRef.current && props.listboxRef.current.contains(e.relatedTarget) || ) {
-    //   console.log('focusing mobile input');
-    //   trayInputRef.current.focus();
-    //   return;
-    // }
-
     // If user is clicking on the combobox button, early return so we don't change textfield focus state, update the selected key erroneously,
-    // and trigger close menu twice
-    // TODO: Think about whether we actually need the trayInputRef part of this (might not need it once we get the mobile input auto focuses on open)
+    // and trigger close menu twice. Also early return when focus is moved to the Tray's input field (mobile case).
     if ((triggerRef.current && triggerRef.current.contains(e.relatedTarget)) || (trayInputRef.current && trayInputRef.current.contains(e.relatedTarget))) {
-      console.log('early return')
       return;
     }
 
@@ -189,18 +182,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     autoComplete: 'off'
   }, inputRef);
 
-  // Get the mobile props
-  let {inputProps: trayInputProps} = useTextField({
-    onChange,
-    // TODO: might need to have escape/enter keydown handlers here as well, maybe just use the onKeyDown that already exists?
-    onKeyDown: collectionProps.onKeyDownCapture,
-    value: state.inputValue,
-    autoComplete: 'off',
-    autoFocus: true
-    // TODO: maybe needs autoFocus here?
-  }, trayInputRef);
-  console.log('trayInputProps', trayInputProps);
-
   // Return focus to textfield if user clicks menu trigger button
   let onPress = (e) => {
     if (e.pointerType === 'touch') {
@@ -236,6 +217,16 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     lastValue.current = state.inputValue;
   }, [state.selectionManager, state.inputValue, allowsCustomValue, state.focusStrategy, state.selectedKey]);
 
+  // Refocus input when menu closes for any reason
+  let prevOpenState = useRef(state.isOpen);
+  useEffect(() => {
+    if (!state.isOpen && prevOpenState.current !== state.isOpen) {
+      inputRef.current.focus();
+    }
+
+    prevOpenState.current = state.isOpen;
+  }, [state.isOpen, inputRef]);
+
   return {
     labelProps,
     triggerProps: {
@@ -252,8 +243,10 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       'aria-activedescendant': focusedKeyId
     },
     trayInputProps: {
-      ...trayInputProps
-      // TODO what other aria stuff needs to go here
+      onKeyDown: !isReadOnly && chain(trayCollectionProps.onKeyDownCapture, onKeyDown),
+      // TODO: what should go here for aria, labeling?
+      'aria-autocomplete': completionMode === 'suggest' ? 'list' : 'both',
+      'aria-activedescendant': focusedKeyId
     },
     listBoxProps: {
       ...menuProps

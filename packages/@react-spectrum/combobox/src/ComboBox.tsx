@@ -63,8 +63,6 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   let state = useComboBoxState({...props, collator, isMobile});
   let layout = useListBoxLayout(state);
 
-
-
   let {triggerProps, inputProps, listBoxProps, labelProps, trayInputProps} = useComboBox(
     {
       ...props,
@@ -73,7 +71,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       triggerRef: unwrapDOMRef(triggerRef),
       popoverRef: unwrapDOMRef(popoverRef),
       inputRef: inputRef,
-      trayInputRef: trayInputRef,
+      trayInputRef: unwrapDOMRef(trayInputRef),
       listboxRef,
       menuTrigger
     },
@@ -104,15 +102,13 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   } else {
     comboBoxAutoFocus = 'first';
   }
-  // TODO: Need to figure out what other props should go on the textfield, prob needs to be related to
+  // TODO: Need to figure out what other props should go on the textfield, aria/labeling?
   // TODO: Use TextField or TextFieldBase? Right now leaning towards using TextField cuz it makes autofocus easier
   // otherwise need to call useTextField and manually focus the mobile textfield on open cuz useFocusable's useEffect
   // doesn't seem to trigger for TextfieldBase + useTextfield (but if I change domRef to domRef.current for the dep array it works)
   let listbox = (
     <FocusScope>
-      {/* {isMobile && <TextFieldBase inputClassName="fawefawe" inputRef={trayInputRef} inputProps={trayInputProps} validationState={validationState} />} */}
-      {/* {isMobile && <TextFieldBase autoFocus inputClassName="fawefawe" inputRef={trayInputRef} inputProps={{onChange: inputProps.onChange, value: inputProps.value, onKeyDown: inputProps.onKeyDown}} validationState={validationState} />} */}
-      {isMobile && <TextField autoFocus ref={trayInputRef} onChange={state.setInputValue} value={state.inputValue} onKeyDown={inputProps.onKeyDown} validationState={validationState} />}
+      {isMobile && <TextField autoFocus ref={trayInputRef} onChange={state.setInputValue} value={state.inputValue} validationState={validationState} {...trayInputProps} />}
       <DismissButton onDismiss={() => state.close()} />
       <ListBoxBase
         ref={listboxRef}
