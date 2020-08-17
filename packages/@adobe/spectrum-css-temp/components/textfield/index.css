@@ -41,6 +41,7 @@ governing permissions and limitations under the License.
   &.spectrum-Textfield--quiet.spectrum-Textfield--multiline .spectrum-Textfield-input {
     height: var(--spectrum-textfield-height);
     min-height: var(--spectrum-textfield-height);
+    overflow-x: hidden;
   }
 }
 
