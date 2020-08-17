@@ -133,7 +133,6 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
                 shouldUseVirtualFocus={shouldUseVirtualFocus} />
             );
           } else if (type === 'loader') {
-            console.log('gawilenglawenglawkngl', type, item)
             return (
               // aria-selected isn't needed here since this option is not selectable.
               // eslint-disable-next-line jsx-a11y/role-has-required-aria-props

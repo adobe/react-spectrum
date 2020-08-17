@@ -24,7 +24,7 @@ import {Popover, Tray} from '@react-spectrum/overlays';
 import React, {ReactElement, RefObject, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
-import {TextFieldBase} from '@react-spectrum/textfield';
+import {TextField, TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
 import {useCollator} from '@react-aria/i18n';
 import {useComboBox} from '@react-aria/combobox';
@@ -52,7 +52,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   } = props;
 
   let isMobile = useMediaQuery('(max-width: 700px)');
-  let mobileInputFieldRef = useRef();
+  let trayInputRef = useRef();
 
   let {styleProps} = useStyleProps(props);
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
@@ -65,7 +65,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
 
 
 
-  let {triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
+  let {triggerProps, inputProps, listBoxProps, labelProps, trayInputProps} = useComboBox(
     {
       ...props,
       completionMode,
@@ -73,7 +73,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       triggerRef: unwrapDOMRef(triggerRef),
       popoverRef: unwrapDOMRef(popoverRef),
       inputRef: inputRef,
-      mobileInputRef: isMobile && mobileInputFieldRef,
+      trayInputRef: trayInputRef,
       listboxRef,
       menuTrigger
     },
@@ -104,11 +104,15 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   } else {
     comboBoxAutoFocus = 'first';
   }
-
-  // Need to figure out what other props should go on the textfield, prob needs to be related to
+  // TODO: Need to figure out what other props should go on the textfield, prob needs to be related to
+  // TODO: Use TextField or TextFieldBase? Right now leaning towards using TextField cuz it makes autofocus easier
+  // otherwise need to call useTextField and manually focus the mobile textfield on open cuz useFocusable's useEffect
+  // doesn't seem to trigger for TextfieldBase + useTextfield (but if I change domRef to domRef.current for the dep array it works)
   let listbox = (
     <FocusScope>
-      {isMobile && <TextFieldBase autoFocus inputRef={mobileInputFieldRef} inputProps={{onChange: inputProps.onChange, value: inputProps.value, onKeyDown: inputProps.onKeydown}} validationState={validationState} />}
+      {/* {isMobile && <TextFieldBase inputClassName="fawefawe" inputRef={trayInputRef} inputProps={trayInputProps} validationState={validationState} />} */}
+      {/* {isMobile && <TextFieldBase autoFocus inputClassName="fawefawe" inputRef={trayInputRef} inputProps={{onChange: inputProps.onChange, value: inputProps.value, onKeyDown: inputProps.onKeyDown}} validationState={validationState} />} */}
+      {isMobile && <TextField autoFocus ref={trayInputRef} onChange={state.setInputValue} value={state.inputValue} onKeyDown={inputProps.onKeyDown} validationState={validationState} />}
       <DismissButton onDismiss={() => state.close()} />
       <ListBoxBase
         ref={listboxRef}
@@ -140,7 +144,6 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   }, [scale, isMobile, triggerRef, inputRef, state.selectedKey]);
 
   let overlay;
-  console.log('state.isOpen', state.isOpen);
   if (isMobile) {
     overlay = (
       <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur>

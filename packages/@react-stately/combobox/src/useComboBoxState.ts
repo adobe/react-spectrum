@@ -192,7 +192,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
       triggerState.open(focusStrategy);
     }
   };
-  console.log('isopen calculation', triggerState.isOpen && isFocused && (isMobile || filteredCollection.size > 0))
+  // console.log('isopen calculation', triggerState.isOpen && isFocused && (isMobile || filteredCollection.size > 0))
   return {
     ...triggerState,
     open,
