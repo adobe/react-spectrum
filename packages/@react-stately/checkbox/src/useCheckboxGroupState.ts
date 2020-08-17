@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {CheckboxGroupProps, ToggleProps} from '@react-types/checkbox';
-import {ToggleState} from '@react-stately/toggle';
+import {CheckboxGroupProps} from '@react-types/checkbox';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo} from 'react';
 
@@ -32,10 +31,7 @@ export interface CheckboxGroupState {
   removeValue(value: string): void,
 
   /** Toggles a value in the set of selected values. */
-  toggleValue(value: string): void,
-
-  /** Gets checkbox state for a given checkbox. */
-  getCheckboxState(value: ToggleProps): ToggleState
+  toggleValue(value: string): void
 }
 
 let instance = Math.round(Math.random() * 10000000000);
@@ -85,27 +81,6 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
         }
         return values.concat(value);
       });
-    },
-    getCheckboxState(props) {
-      const {value, onChange, isReadOnly} = props;
-      return {
-        isSelected: state.value.includes(value),
-        setSelected(isSelected) {
-          if (isReadOnly) {
-            return;
-          }
-
-          if (isSelected) {
-            state.addValue(value);
-          } else {
-            state.removeValue(value);
-          }
-
-          if (onChange) {
-            onChange(isSelected);
-          }
-        }
-      };
     }
   };
 

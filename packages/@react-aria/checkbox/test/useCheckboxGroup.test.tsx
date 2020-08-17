@@ -14,13 +14,13 @@ import {act, render} from '@testing-library/react';
 import {AriaCheckboxGroupProps, AriaCheckboxProps} from '@react-types/checkbox';
 import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/checkbox';
 import React, {useRef} from 'react';
-import {useCheckbox, useCheckboxGroup} from '../';
+import {useCheckboxGroup, useCheckboxGroupItem} from '../';
 import userEvent from '@testing-library/user-event';
 
 function Checkbox({checkboxGroupState, ...props}: AriaCheckboxProps & { checkboxGroupState: CheckboxGroupState }) {
   const ref = useRef<HTMLInputElement>();
   const {children} = props;
-  const {inputProps} = useCheckbox({...props, name: checkboxGroupState.name}, checkboxGroupState.getCheckboxState(props), ref);
+  const {inputProps} = useCheckboxGroupItem(props, checkboxGroupState, ref);
   return <label>{children}<input ref={ref} {...inputProps} /></label>;
 }
 
@@ -202,5 +202,28 @@ describe('useCheckboxGroup', () => {
     let checkboxGroup = getByRole('group', {exact: true});
 
     expect(checkboxGroup).not.toHaveAttribute('aria-disabled');
+  });
+
+  it('should not update state for readonly checkbox', () => {
+    let groupOnChangeSpy = jest.fn();
+    let checkboxOnChangeSpy = jest.fn();
+    let {getAllByRole, getByLabelText} = render(
+      <CheckboxGroup
+        groupProps={{label: 'Favorite Pet', onChange: groupOnChangeSpy}}
+        checkboxProps={[
+          {value: 'dogs', children: 'Dogs'},
+          {value: 'cats', children: 'Cats'},
+          {value: 'dragons', children: 'Dragons', isReadOnly: true, onChange: checkboxOnChangeSpy}
+        ]} />
+    );
+
+    let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
+    let dragons = getByLabelText('Dragons');
+
+    act(() => {userEvent.click(dragons);});
+
+    expect(groupOnChangeSpy).toHaveBeenCalledTimes(0);
+    expect(checkboxOnChangeSpy).toHaveBeenCalledTimes(0);
+    expect(checkboxes[2].checked).toBe(false);
   });
 });
