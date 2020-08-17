@@ -25,8 +25,7 @@
     "@react-aria/utils": "^3.1.0",
     "@react-stately/list": "^3.1.0",
     "@react-types/shared": "^3.1.0",
-    "@react-types/tabs": "^3.0.0-alpha.1",
-    "@react-types/tag": "^3.0.0-alpha.1"
+    "@react-types/tabs": "^3.0.0-alpha.1"
   },
   "peerDependencies": {
     "react": "^16.8.0"
