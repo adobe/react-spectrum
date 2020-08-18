@@ -39,6 +39,16 @@ let withSection = [
   ]}
 ];
 
+let lotsOfSections: any[] = [];
+for (let i = 0; i < 50; i++) {
+  let children = [];
+  for (let j = 0; j < 50; j++) {
+    children.push({name: `Section ${i}, Item ${j}`});
+  }
+
+  lotsOfSections.push({name: 'Section ' + i, children});
+}
+
 let actions = {
   onOpenChange: action('onOpenChange'),
   onInputChange: action('onInputChange'),
@@ -76,6 +86,18 @@ storiesOf('ComboBox', module)
         {(item) => (
           <Section key={item.name} items={item.children} title={item.name}>
             {(item) => <Item key={item.name}>{item.name}</Item>}
+          </Section>
+        )}
+      </ComboBox>
+    )
+  )
+  .add(
+    'with many sections',
+    () => (
+      <ComboBox items={lotsOfSections} label="Combobox" {...actions}>
+        {(item) => (
+          <Section key={item.name} items={item.children} title={item.name}>
+            {(item: any) => <Item key={item.name}>{item.name}</Item>}
           </Section>
         )}
       </ComboBox>
