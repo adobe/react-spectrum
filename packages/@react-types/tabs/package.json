@@ -1,8 +1,7 @@
 {
   "name": "@react-types/tabs",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0-alpha.0",
   "description": "Spectrum UI components in React",
-  "private": true,
   "license": "Apache-2.0",
   "types": "src/index.d.ts",
   "repository": {
@@ -10,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/shared": "^3.1.0"
+    "@react-types/shared": "^3.2.0"
   },
   "peerDependencies": {
     "react": "^16.8.0"

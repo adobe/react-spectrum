@@ -42,6 +42,9 @@ interface SelectableItemOptions {
    * Function to focus the item.
    */
   focus?: () => void,
+  /**
+   * Whether the option should use virtual focus instead of being focused directly.
+   */
   shouldUseVirtualFocus?: boolean
 }
 
