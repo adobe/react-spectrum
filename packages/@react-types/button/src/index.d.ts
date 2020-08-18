@@ -26,7 +26,7 @@ interface ToggleButtonProps extends ButtonProps {
   /** Whether the element should be selected (uncontrolled). */
   defaultSelected?: boolean,
   /** Handler that is called when the element's selection state changes. */
-  onChange: (isSelected: boolean) => void
+  onChange?: (isSelected: boolean) => void
 }
 
 export interface LinkButtonProps {
@@ -70,7 +70,7 @@ export interface SpectrumButtonProps extends AriaBaseButtonProps, ButtonProps, L
 }
 
 export interface SpectrumActionButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
-  /** Whether the ActionButton should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
+  /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
   isQuiet?: boolean
 }
 
