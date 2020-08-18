@@ -202,17 +202,22 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     lastValue.current = state.inputValue;
   }, [state.selectionManager, state.inputValue, allowsCustomValue, state.focusStrategy, state.selectedKey]);
 
+  // TODO: ask what else needs to go into the aria-labelledby for the button (difference between current spec and aria 1.2)
+  let triggerLabel = props['aria-labelledby'] || labelProps.id;
+
   return {
     labelProps,
     triggerProps: {
       ...menuTriggerProps,
       excludeFromTabOrder: true,
       onPress,
-      onPressStart
+      onPressStart,
+      'aria-labelledby': triggerLabel
     },
     inputProps: {
       ...inputProps,
       role: 'combobox',
+      'aria-expanded': menuTriggerProps['aria-expanded'],
       'aria-controls': state.isOpen ? menuProps.id : undefined,
       'aria-autocomplete': completionMode === 'suggest' ? 'list' : 'both',
       'aria-activedescendant': focusedKeyId
