@@ -10,17 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaButtonProps, AriaToggleButtonProps} from '@react-types/button';
+import {AriaButtonProps} from '@react-types/button';
 import {ButtonHTMLAttributes, RefObject} from 'react';
-import {chain} from '@react-aria/utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {mergeProps} from '@react-aria/utils';
-import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
 
-interface ButtonAria {
+export interface ButtonAria {
   /** Props for the button element. */
   buttonProps: ButtonHTMLAttributes<HTMLButtonElement>,
   /** Whether the button is currently pressed. */
@@ -91,21 +89,6 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
           console.warn('onClick is deprecated, please use onPress');
         }
       }
-    })
-  };
-}
-
-export function useToggleButton(props: AriaToggleButtonProps, state: ToggleState, ref: RefObject<HTMLElement>): ButtonAria {
-  const {isSelected} = state;
-  const {isPressed, buttonProps} = useButton({
-    ...props,
-    onPress: chain(state.toggle, props.onPress)
-  }, ref);
-  
-  return {
-    isPressed,
-    buttonProps: mergeProps(buttonProps, {
-      'aria-pressed': isSelected
     })
   };
 }
