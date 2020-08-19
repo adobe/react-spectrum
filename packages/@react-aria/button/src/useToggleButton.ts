@@ -17,6 +17,10 @@ import {mergeProps} from '@react-aria/utils';
 import {RefObject} from 'react';
 import {ToggleState} from '@react-stately/toggle';
 
+/**
+ * Provides the behavior and accessibility implementation for a toggle button component.
+ * ToggleButtons allow users to toggle a selection on or off, for example switching between two states or modes.
+ */
 export function useToggleButton(props: AriaToggleButtonProps, state: ToggleState, ref: RefObject<HTMLElement>): ButtonAria {
   const {isSelected} = state;
   const {isPressed, buttonProps} = useButton({
