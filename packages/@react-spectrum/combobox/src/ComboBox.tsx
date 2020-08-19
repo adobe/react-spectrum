@@ -29,6 +29,7 @@ import {TextFieldRef} from '@react-types/textfield';
 import {useCollator} from '@react-aria/i18n';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
+import {useHover} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObject<TextFieldRef>) {
@@ -51,6 +52,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     direction = 'bottom'
   } = props;
 
+  let {hoverProps, isHovered} = useHover(props);
   let {styleProps} = useStyleProps(props);
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
   let triggerRef = useRef<FocusableRefValue<HTMLElement>>();
@@ -170,6 +172,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       autoFocus={autoFocus}>
       <div
         {...textFieldStyles}
+        {...hoverProps}
         className={
           classNames(
             styles,
@@ -177,7 +180,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
             {
               'spectrum-InputGroup--quiet': isQuiet,
               'is-disabled': isDisabled,
-              'is-invalid': validationState === 'invalid'
+              'is-invalid': validationState === 'invalid',
+              'is-hovered': isHovered
             },
             !props.label && styleProps.className
           )
