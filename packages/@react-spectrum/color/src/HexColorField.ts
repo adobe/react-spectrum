@@ -19,7 +19,7 @@ function HexColorField {
 }
 
 /**
- * HexColorField allows users to input a color value in hex format.
+ * An input for color. Displays color value in hex format.
  */
 const _HexColorField = React.forwardRef(HexColorField);
 export {_HexColorField as HexColorField};
