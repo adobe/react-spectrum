@@ -1784,4 +1784,19 @@ describe('ComboBox', function () {
       expect(() => within(listbox).getAllByRole('img', {hidden: true})).toThrow();
     });
   });
+
+  describe('mobile combobox', function () {
+    // TODO: things to write tests for
+    // Test that opening the tray autofocuses the tray input field and that closing the field autofocuses the original combobox input
+        // For the above test opening the tray via arrow up/down, clicking the button, typing
+    // Test that the tray is a fixed height regardless of filtering that happens after the tray opens
+    // Test that keyboard operations work in the tray (up/down goes through the items via virtual focus)
+    // Test that filtering works in the tray by typing in the tray input field
+    // test that if there aren't any results from filtering, the tray remains open and there is a placeholder
+    // Test that clicking on option selects it. Test that hitting enter on the option also works
+    // Test that the value of the tray input mirrors that of the combobox input field
+    // Test that the tray won't open if the the user types something in the combobox field that yields 0 results
+
+    // Test that the autofocusing of the combobox when the menu closes only happens in mobile view
+  });
 });
