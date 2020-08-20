@@ -1722,4 +1722,48 @@ describe('Picker', function () {
       expect(document.activeElement).not.toBe(picker);
     });
   });
+  describe('force tray or popover', function () {
+    it('open as tray', function () {
+      let {getByRole, queryByTestId} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" displayItemsIn="tray">
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+		);
+
+      let picker = getByRole('button');
+			// make sure to run through mousedown AND mouseup, like would really happen, otherwise a mouseup listener
+			// sits around until the component is unmounted
+      act(() => { triggerPress(picker); });
+      act(() => jest.runAllTimers());
+
+      expect(queryByTestId('tray')).toBeVisible();
+      expect(queryByTestId('popover')).not.toBeInTheDocument();
+    });
+	
+    it('open as popover', function () {
+      let {getByRole, queryByTestId} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" displayItemsIn="popover">
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </Picker>
+        </Provider>
+		);
+
+      let picker = getByRole('button');
+		// make sure to run through mousedown AND mouseup, like would really happen, otherwise a mouseup listener
+		// sits around until the component is unmounted
+      act(() => { triggerPress(picker); });
+      act(() => jest.runAllTimers());
+
+
+      expect(queryByTestId('tray')).not.toBeInTheDocument();
+      expect(queryByTestId('popover')).toBeVisible();
+    });
+  });
 });

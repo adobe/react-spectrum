@@ -397,3 +397,12 @@ function Example() {
   );
 }
 ```
+### Display Items In
+Picker normally chooses whether to display items as a tray or popover. This allows you to override that decision.
+```tsx example
+<Picker label="Choose frequency" displayItemsIn='tray'>
+  <Item key="rarely">Rarely</Item>
+  <Item key="sometimes">Sometimes</Item>
+  <Item key="always">Always</Item>
+</Picker>
+```

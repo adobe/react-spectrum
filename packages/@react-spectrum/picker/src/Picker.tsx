@@ -55,7 +55,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     isRequired,
     necessityIndicator,
     menuWidth,
-    name
+	name,
+	displayItemsIn
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -134,9 +135,10 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   }, [scale, isMobile, triggerRef, state.selectedKey]);
 
   let overlay;
-  if (isMobile) {
+  let useTray = displayItemsIn ? displayItemsIn === 'tray' : isMobile;
+  if (useTray) {
     overlay = (
-      <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur>
+      <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur data-testid="picker-tray" >
         {listbox}
       </Tray>
     );
@@ -153,6 +155,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
 
     overlay = (
       <Popover
+		data-testid="picker-popup"
         isOpen={state.isOpen}
         UNSAFE_style={style}
         UNSAFE_className={classNames(styles, 'spectrum-Dropdown-popover', {'spectrum-Dropdown-popover--quiet': isQuiet})}
