@@ -11,8 +11,8 @@
  */
 
 import {useLayoutEffect} from './useLayoutEffect';
-import {useState} from 'react';
 import {useSSRSafeId} from '@react-aria/ssr';
+import {useState} from 'react';
 
 let map: Map<string, (v: string) => void> = new Map();
 
