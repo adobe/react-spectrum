@@ -477,28 +477,28 @@ storiesOf('Picker', module)
       <AsyncLoadingExample />
 	)
   )
-	.add(
-		'force tray or popover',
-		() => (
-			<div>
-				<Picker label="Force Tray" onSelectionChange={(action('selectionChange'))} displayItemsIn='tray'>
-					<Item key="One">One</Item>
-					<Item key="Two">Two</Item>
-					<Item key="Three">Three</Item>
-				</Picker>
-				<Picker label="Force Popup" onSelectionChange={(action('selectionChange'))} displayItemsIn='popover'>
-					<Item key="One">One</Item>
-					<Item key="Two">Two</Item>
-					<Item key="Three">Three</Item>
-				</Picker>
-				<Picker label="Picker Decides" onSelectionChange={(action('selectionChange'))}>
-					<Item key="One">One</Item>
-					<Item key="Two">Two</Item>
-					<Item key="Three">Three</Item>
-				</Picker>
-			</div>
-		)
-	) ;
+  .add(
+    'force tray or popover',
+    () => (
+      <div>
+        <Picker label="Force Tray" onSelectionChange={(action('selectionChange'))} displayItemsIn="tray">
+          <Item key="One">One</Item>
+          <Item key="Two">Two</Item>
+          <Item key="Three">Three</Item>
+        </Picker>
+        <Picker label="Force Popup" onSelectionChange={(action('selectionChange'))} displayItemsIn="popover">
+          <Item key="One">One</Item>
+          <Item key="Two">Two</Item>
+          <Item key="Three">Three</Item>
+        </Picker>
+        <Picker label="Picker Decides" onSelectionChange={(action('selectionChange'))}>
+          <Item key="One">One</Item>
+          <Item key="Two">Two</Item>
+          <Item key="Three">Three</Item>
+        </Picker>
+      </div>
+	)
+  );
 
 function AsyncLoadingExample() {
   interface Pokemon {
