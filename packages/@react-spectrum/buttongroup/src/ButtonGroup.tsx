@@ -12,8 +12,8 @@
 
 import {classNames, SlotProvider, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
-import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
+import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
+import React, {useCallback, useEffect, useState} from 'react';
 import {SpectrumButtonGroupProps} from '@react-types/buttongroup';
 import styles from '@adobe/spectrum-css-temp/components/buttongroup/vars.css';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';

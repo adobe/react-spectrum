@@ -10,15 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useId';
-export * from './chain';
-export * from './mergeProps';
-export * from './number';
-export * from './getOffset';
-export * from './useDrag1D';
-export * from './useLabels';
-export * from './useUpdateEffect';
-export * from './focusWithoutScrolling';
-export * from './filterDOMProps';
-export * from './runAfterTransition';
-export * from './useLayoutEffect';
+import React from 'react';
+
+// During SSR, React emits a warning when calling useLayoutEffect.
+// Since neither useLayoutEffect nor useEffect run on the server,
+// we can suppress this by replace it with a noop on the server.
+export const useLayoutEffect = typeof window !== 'undefined'
+  ? React.useLayoutEffect
+  : () => {};
