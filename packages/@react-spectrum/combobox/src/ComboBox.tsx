@@ -106,9 +106,10 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   // TODO: Use TextField or TextFieldBase? Right now leaning towards using TextField cuz it makes autofocus easier
   // otherwise need to call useTextField and manually focus the mobile textfield on open cuz useFocusable's useEffect
   // doesn't seem to trigger for TextfieldBase + useTextfield (but if I change domRef to domRef.current for the dep array it works)
+  // TODO: What if user has a external label, how do we communicate that label to the tray textfield? Should we have a prop trayInputLabel?
   let listbox = (
     <FocusScope>
-      {isMobile && <TextField autoFocus ref={trayInputRef} onChange={state.setInputValue} value={state.inputValue} validationState={validationState} {...trayInputProps} />}
+      {isMobile && <TextField label={label} autoFocus ref={trayInputRef} onChange={state.setInputValue} value={state.inputValue} validationState={validationState} {...trayInputProps} />}
       <DismissButton onDismiss={() => state.close()} />
       <ListBoxBase
         ref={listboxRef}
