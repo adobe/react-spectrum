@@ -265,6 +265,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     },
     trayInputProps: {
       onKeyDown: !isReadOnly && chain(trayCollectionProps.onKeyDownCapture, onKeyDown),
+      // Preserve isFocused=true when user is in tray input so that input value doesn't get completely cleared when backspacing in selectedKey case
+      onFocus: () => state.setFocused(true),
       // TODO: what should go here for aria, labeling?
       'aria-autocomplete': completionMode === 'suggest' ? 'list' : 'both',
       'aria-activedescendant': focusedKeyId
