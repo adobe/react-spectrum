@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
-import {getFocusableTreeWalker} from '@react-aria/focus';
+import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {HTMLAttributes, RefObject} from 'react';
 import {isFocusVisible, usePress} from '@react-aria/interactions';
+import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import {TableState} from '@react-stately/table';
 import {useSelectableItem} from '@react-aria/selection';
@@ -41,9 +41,9 @@ export function useTableCell<T>(props: GridCellProps, state: TableState<T>): Gri
     let treeWalker = getFocusableTreeWalker(ref.current);
     let focusable = treeWalker.firstChild() as HTMLElement;
     if (focusable) {
-      focusWithoutScrolling(focusable);
+      focusSafely(focusable);
     } else {
-      focusWithoutScrolling(ref.current);
+      focusSafely(ref.current);
     }
   };
 

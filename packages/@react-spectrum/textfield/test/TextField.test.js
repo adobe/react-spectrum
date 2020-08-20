@@ -73,7 +73,11 @@ describe('Shared TextField behavior', () => {
     expect(input.value).toBe('');
     act(() => {userEvent.type(input, inputText);});
     expect(input.value).toBe(inputText);
-    expect(input).toHaveAttribute('type', expectedType);
+    if (Name === 'v3 TextArea') {
+      expect(input).not.toHaveAttribute('type');
+    } else {
+      expect(input).toHaveAttribute('type', expectedType);
+    }
     expect(input.tagName).toBe(expectedTagName);
   });
 
@@ -198,7 +202,6 @@ describe('Shared TextField behavior', () => {
     ${'v3 SearchField'} | ${SearchField}
     ${'v2 TextField'}   | ${V2TextField}
     ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name is uncontrolled if defaultValue prop is provided', ({Name, Component}) => {
     let defaultValue = 'test';
     let newValue = 'blah';

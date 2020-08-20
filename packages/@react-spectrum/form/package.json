@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/form",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -32,10 +32,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-    "@react-aria/utils": "^3.1.0",
-    "@react-spectrum/utils": "^3.1.0",
-    "@react-types/form": "^3.1.0",
-    "@react-types/shared": "^3.1.0"
+    "@react-aria/utils": "^3.2.0",
+    "@react-spectrum/utils": "^3.2.0",
+    "@react-types/form": "^3.2.0",
+    "@react-types/shared": "^3.2.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"

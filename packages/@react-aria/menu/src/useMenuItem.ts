@@ -105,7 +105,13 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     ariaProps['aria-setsize'] = state.collection.size;
   }
 
-  let onKeyDown = (e) => {
+  let onKeyDown = (e: KeyboardEvent) => {
+    // Ignore repeating events, which may have started on the menu trigger before moving
+    // focus to the menu item. We want to wait for a second complete key press sequence.
+    if (e.repeat) {
+      return;
+    }
+
     switch (e.key) {
       case ' ':
         if (!isDisabled && state.selectionManager.selectionMode === 'none' && closeOnSelect && onClose) {

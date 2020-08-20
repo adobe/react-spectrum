@@ -17,7 +17,8 @@ import {mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
-interface ButtonAria {
+
+export interface ButtonAria {
   /** Props for the button element. */
   buttonProps: ButtonHTMLAttributes<HTMLButtonElement>,
   /** Whether the button is currently pressed. */
@@ -42,6 +43,7 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
     onClick: deprecatedOnClick,
     href,
     target,
+    rel,
     type = 'button'
   } = props;
   let additionalProps;
@@ -53,7 +55,8 @@ export function useButton(props: AriaButtonProps, ref: RefObject<HTMLElement>): 
       target: elementType === 'a' ? target : undefined,
       type: elementType === 'input' ? type : undefined,
       disabled: elementType === 'input' ? isDisabled : undefined,
-      'aria-disabled': !isDisabled || elementType === 'input' ? undefined : isDisabled
+      'aria-disabled': !isDisabled || elementType === 'input' ? undefined : isDisabled,
+      rel: elementType === 'a' ? rel : undefined
     };
   }
 
