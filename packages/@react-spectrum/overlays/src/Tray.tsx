@@ -69,26 +69,28 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   // We cannot use vh units because mobile browsers adjust the window height dynamically
   // when the address bar/bottom toolbars show and hide on scroll and vh units are fixed.
   let [maxHeight, setMaxHeight] = useState(window.innerHeight);
-  let [height, setHeight] = useState(0);
 
   // TODO: prob should have this logic happen only for combobox, pass in a boolean lockHeight??
   // First stab at locking tray height
   // Problem is that this will allow the tray to grow if more options load in (aka you delete your input), probably not desired
   // and it won't let the tray to shrink upon filtering (desired)
   // I would like it to not grow but unfortunately the final tray height happens on the second render so I can't useeffect on first render only
+  let currentHeight = ref.current ? ref.current.offsetHeight : 0;
   if (ref.current) {
     ref.current.style.height = 'auto';
-    if (ref.current.offsetHeight > height) {
-      setHeight(ref.current.offsetHeight);
+    if (ref.current.offsetHeight > currentHeight) {
+      ref.current.style.height = `${ref.current.offsetHeight}px`;
+    } else {
+      ref.current.style.height = `${currentHeight}px`;
     }
-    ref.current.style.height = `${height}px`;
   }
 
+  // TODO: Maybe don't need the set height stuff here? the max-height should constraint it just fine
   useEffect(() => {
     let onResize = () => {
       setMaxHeight(window.innerHeight);
-      if (height && height > window.innerHeight) {
-        setHeight(window.innerHeight);
+      if (ref.current && ref.current.offsetHeight > window.innerHeight) {
+        ref.current.style.height = `${window.innerHeight}px`;
       }
     };
 
@@ -96,7 +98,7 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
     return () => {
       window.removeEventListener('resize', onResize);
     };
-  }, []);
+  }, [ref]);
 
   let domProps = mergeProps(otherProps, overlayProps);
   let style = {
