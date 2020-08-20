@@ -87,7 +87,7 @@ export function useModalProvider(): ModalProviderAria {
  */
 function OverlayContainerDOM(props: ModalProviderProps) {
   let {modalProviderProps} = useModalProvider();
-  return <div {...props} {...modalProviderProps} />;
+  return <div data-overlay-container {...props} {...modalProviderProps} />;
 }
 
 /**
@@ -106,6 +106,10 @@ export function OverlayProvider(props: ModalProviderProps) {
   );
 }
 
+interface OverlayContainerProps extends ModalProviderProps {
+  getContainerRootElement?: () => HTMLElement
+}
+
 /**
  * A container for overlays like modals and popovers. Renders the overlay
  * into a Portal which is placed at the end of the document body.
@@ -113,9 +117,18 @@ export function OverlayProvider(props: ModalProviderProps) {
  * nested modal is opened. Only the top-most modal or overlay should
  * be accessible at once.
  */
-export function OverlayContainer(props: ModalProviderProps): React.ReactPortal {
-  let contents = <OverlayProvider {...props} />;
-  return ReactDOM.createPortal(contents, document.body);
+export function OverlayContainer(props: OverlayContainerProps): React.ReactPortal {
+  let {getContainerRootElement = () => document.body, ...rest} = props;
+  let containerRootElement = getContainerRootElement();
+
+  React.useEffect(() => {
+    if (containerRootElement.closest('[data-overlay-container]')) {
+      throw new Error('The root container element must not be inside another container. See https://github.com/adobe/react-spectrum/issues/991#issuecomment-678566328');
+    }
+  }, [containerRootElement]);
+
+  let contents = <OverlayProvider {...rest} />;
+  return ReactDOM.createPortal(contents, containerRootElement);
 }
 
 interface ModalAriaProps extends HTMLAttributes<HTMLElement> {
