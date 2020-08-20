@@ -81,6 +81,7 @@ function testComboBoxOpen(combobox, button, listbox, focusedItemIndex) {
   expect(button).toHaveAttribute('aria-expanded', 'true');
   expect(button).toHaveAttribute('aria-controls', listbox.id);
   expect(combobox).toHaveAttribute('aria-controls', listbox.id);
+  expect(button).toHaveAttribute('aria-expanded', 'true');
 
   let items = within(listbox).getAllByRole('option');
   expect(items).toHaveLength(3);
@@ -299,6 +300,7 @@ describe('ComboBox', function () {
         expect(button).toHaveAttribute('aria-expanded', 'false');
         expect(button).not.toHaveAttribute('aria-controls');
         expect(combobox).not.toHaveAttribute('aria-controls');
+        expect(combobox).toHaveAttribute('aria-expanded', 'false');
       });
     });
 
@@ -436,6 +438,7 @@ describe('ComboBox', function () {
         expect(button).toHaveAttribute('aria-expanded', 'true');
         expect(button).toHaveAttribute('aria-controls', listbox.id);
         expect(combobox).toHaveAttribute('aria-controls', listbox.id);
+        expect(combobox).toHaveAttribute('aria-expanded', 'true');
 
         let items = within(listbox).getAllByRole('option');
         expect(items).toHaveLength(1);
@@ -471,6 +474,7 @@ describe('ComboBox', function () {
         expect(button).toHaveAttribute('aria-expanded', 'false');
         expect(button).not.toHaveAttribute('aria-controls');
         expect(combobox).not.toHaveAttribute('aria-controls');
+        expect(combobox).toHaveAttribute('aria-expanded', 'false');
       });
 
       it('doesn\'t opens the menu on user typing if menuTrigger=manual', function () {
@@ -624,6 +628,7 @@ describe('ComboBox', function () {
       expect(button).toHaveAttribute('aria-expanded', 'true');
       expect(button).toHaveAttribute('aria-controls', listbox.id);
       expect(combobox).toHaveAttribute('aria-controls', listbox.id);
+      expect(combobox).toHaveAttribute('aria-expanded', 'true');
       expect(items).toHaveLength(3);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
@@ -829,6 +834,19 @@ describe('ComboBox', function () {
       expect(items).toHaveLength(2);
       expect(items[0]).toHaveTextContent('One');
       expect(items[1]).toHaveTextContent('Two');
+    });
+
+    it('should not match any items if input is just a space', function () {
+      let {getByRole} = renderComboBox();
+
+      let combobox = getByRole('combobox');
+      act(() => {
+        combobox.focus();
+        userEvent.type(combobox, ' ');
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('listbox')).toThrow();
     });
 
     it('calls onFilter', () => {

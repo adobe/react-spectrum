@@ -43,7 +43,7 @@ interface SelectableItemOptions {
    */
   focus?: () => void,
   /**
-   * Whether the item should recieve virtual focus.
+   * Whether the option should use virtual focus instead of being focused directly.
    */
   shouldUseVirtualFocus?: boolean
 }

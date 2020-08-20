@@ -31,7 +31,7 @@ export interface PressProps extends PressEvents {
 export interface PressHookProps extends PressProps {
   /** A ref to the target element. */
   ref?: RefObject<HTMLElement>,
-  /** Whether the target should recieve virtual focus. */
+  /** Whether the target should use virtual focus instead of being focused directly. */
   shouldUseVirtualFocus?: boolean
 }
 
