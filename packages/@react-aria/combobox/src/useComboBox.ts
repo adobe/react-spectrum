@@ -18,6 +18,7 @@ import {getItemId, listIds} from '@react-aria/listbox';
 import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
 import {ListLayout} from '@react-stately/layout';
 import {useMenuTrigger} from '@react-aria/menu';
+import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
 
@@ -25,7 +26,9 @@ interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   popoverRef: RefObject<HTMLDivElement>,
   triggerRef: RefObject<HTMLElement>,
   inputRef: RefObject<HTMLInputElement>,
-  layout: ListLayout<T>
+  trayInputRef?: RefObject<HTMLInputElement>,
+  layout: ListLayout<T>,
+  isMobile?: boolean
 }
 
 interface ComboBoxAria {
@@ -47,7 +50,9 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     menuTrigger = 'input',
     allowsCustomValue,
     onCustomValue,
-    isReadOnly
+    isReadOnly,
+    isDisabled,
+    isMobile
   } = props;
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
@@ -182,6 +187,16 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     autoComplete: 'off'
   }, inputRef);
 
+  let {pressProps: inputPressProps} = usePress({
+    onPress: () => {
+      if (isMobile) {
+        state.open();
+      }
+    },
+    isDisabled,
+    ref: inputRef
+  });
+
   // Return focus to textfield if user clicks menu trigger button
   let onPress = (e) => {
     if (e.pointerType === 'touch') {
@@ -220,12 +235,12 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   // Refocus input when mobile tray closes for any reason
   let prevOpenState = useRef(state.isOpen);
   useEffect(() => {
-    if (!state.isOpen && prevOpenState.current !== state.isOpen && trayInputRef.current) {
+    if (!state.isOpen && prevOpenState.current !== state.isOpen && isMobile) {
       inputRef.current.focus();
     }
 
     prevOpenState.current = state.isOpen;
-  }, [state.isOpen, inputRef, trayInputRef.current]);
+  }, [state.isOpen, inputRef, isMobile]);
 
   return {
     labelProps,
@@ -237,6 +252,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     },
     inputProps: {
       ...inputProps,
+      ...inputPressProps,
       role: 'combobox',
       'aria-controls': state.isOpen ? menuProps.id : undefined,
       'aria-autocomplete': completionMode === 'suggest' ? 'list' : 'both',

@@ -24,7 +24,8 @@ export interface ComboBoxState<T> extends SelectState<T> {
 }
 
 interface ComboBoxStateProps<T> extends ComboBoxProps<T> {
-  collator: Intl.Collator
+  collator: Intl.Collator,
+  isMobile?: boolean
 }
 
 function filter<T>(nodes: Iterable<Node<T>>, filterFn: (node: Node<T>) => boolean): Iterable<Node<T>> {
