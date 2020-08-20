@@ -10,20 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import { Point } from "./Point";
+import {Point} from './Point';
 
 // use high res timer if available
-let perf = typeof window !== "undefined" ? window.performance : null;
+let perf = typeof window !== 'undefined' ? window.performance : null;
 // @ts-ignore
 let perfNow = perf && (perf.now || perf.webkitNow || perf.msNow || perf.mozNow);
 let getTime = perfNow
   ? perfNow.bind(perf)
   : function () {
-      return Date.now ? Date.now() : new Date().getTime();
-    };
+    return Date.now ? Date.now() : new Date().getTime();
+  };
 
 export interface CancelablePromise<T> extends Promise<T> {
-  cancel(): void;
+  cancel(): void
 }
 
 export function tween(begin, end, duration, ease, fn): CancelablePromise<void> {
