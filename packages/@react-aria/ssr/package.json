@@ -1,6 +1,7 @@
 {
-  "name": "@react-aria/utils",
-  "version": "3.2.0",
+  "name": "@react-aria/ssr",
+  "version": "3.0.0-alpha.1",
+  "private": true,
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -17,10 +18,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
-    "@react-aria/ssr": "3.0.0-alpha.1",
-    "@react-types/shared": "^3.2.0",
-    "clsx": "^1.1.1"
+    "@babel/runtime": "^7.6.2"
   },
   "peerDependencies": {
     "react": "^16.8.0"
