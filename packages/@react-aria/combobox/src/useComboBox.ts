@@ -17,6 +17,7 @@ import {ComboBoxState} from '@react-stately/combobox';
 import {getItemId, listIds} from '@react-aria/listbox';
 import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
 import {ListLayout} from '@react-stately/layout';
+import {mergeProps} from '@react-aria/utils';
 import {useMenuTrigger} from '@react-aria/menu';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection} from '@react-aria/selection';
@@ -255,8 +256,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       'aria-labelledby': triggerLabel
     },
     inputProps: {
-      ...inputProps,
-      ...inputPressProps,
+      ...mergeProps(inputProps, inputPressProps),
       role: 'combobox',
       'aria-expanded': menuTriggerProps['aria-expanded'],
       'aria-controls': state.isOpen ? menuProps.id : undefined,
