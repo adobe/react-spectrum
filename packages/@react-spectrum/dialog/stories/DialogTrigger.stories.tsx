@@ -314,12 +314,17 @@ function renderPopover({width = 'auto', ...props}) {
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger {...props} onOpenChange={action('open change')}>
         <ActionButton>Trigger</ActionButton>
-        <Dialog>
-          <Heading>The Heading</Heading>
-          <Header>The Header</Header>
-          <Divider />
-          <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
-        </Dialog>
+        {(close) => (
+          <Dialog>
+            <Heading>The Heading</Heading>
+            <Header>The Header</Header>
+            <Divider />
+            <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
+            <ButtonGroup>
+              <Button variant="secondary" onPress={chain(close, action('cancel'))}>Cancel</Button>
+            </ButtonGroup>
+          </Dialog>
+        )}
       </DialogTrigger>
     </div>
   );
