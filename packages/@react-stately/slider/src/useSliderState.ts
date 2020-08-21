@@ -74,7 +74,7 @@ export function useSliderState(props: SliderProps): SliderState {
     props.onChange as any
   );
   const [isDraggings, setDraggings] = useState<boolean[]>(new Array(values.length).fill(false));
-  const [isEditables, setEditables] = useState<boolean[]>(new Array(values.length).fill(true));
+  const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
   const [focusedIndex, setFocusedIndex] = useState<number|undefined>(undefined);
   const [isTrackDragging, setTrackDragging] = useState(false);
 
@@ -97,13 +97,11 @@ export function useSliderState(props: SliderProps): SliderState {
   }
 
   function isThumbEditable(index: number) {
-    return isEditables[index];
+    return isEditablesRef.current[index];
   }
 
   function setThumbEditable(index: number, editable: boolean) {
-    if (isEditables[index] !== editable) {
-      setEditables(replaceIndex(isEditables, index, editable));
-    }
+    isEditablesRef.current[index] = editable;
   }
 
   function updateValue(index: number, value: number) {

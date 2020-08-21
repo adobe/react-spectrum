@@ -1,4 +1,4 @@
-import {ChangeEvent, HTMLAttributes, useCallback, useEffect, useLayoutEffect} from 'react';
+import {ChangeEvent, HTMLAttributes, useCallback, useEffect} from 'react';
 import {focusWithoutScrolling, mergeProps, useDrag1D} from '@react-aria/utils';
 import {sliderIds} from './utils';
 import {SliderState} from '@react-stately/slider';
@@ -88,10 +88,8 @@ export function useSliderThumb(
     }
   });
 
-  // Use useLayoutEffect to immediately register editability with the state
-  useLayoutEffect(() => {
-    state.setThumbEditable(index, isEditable);
-  }, [index, isEditable, state]);
+  // Immediately register editability with the state
+  state.setThumbEditable(index, isEditable);
 
   const {focusableProps} = useFocusable(
     mergeProps(opts, {
