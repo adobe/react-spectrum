@@ -31,8 +31,6 @@ export interface SliderState {
   // Whether a specific index is being dragged
   isThumbDragging: (index: number) => boolean,
   setThumbDragging: (index: number, dragging: boolean) => void,
-  isTrackDragging: () => boolean,
-  setTrackDragging: (dragging: boolean) => void,
 
   // Currently-focused index
   readonly focusedThumb: number | undefined,
@@ -76,13 +74,11 @@ export function useSliderState(props: SliderProps): SliderState {
   const [isDraggings, setDraggings] = useState<boolean[]>(new Array(values.length).fill(false));
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
   const [focusedIndex, setFocusedIndex] = useState<number|undefined>(undefined);
-  const [isTrackDragging, setTrackDragging] = useState(false);
 
   // We keep some of the dragging state on refs as well, because they are read by event
   // handlers.  In useDrag1D, the same drag event handler is used for the entire drag motion,
   // so the state object within their closure is already stale.
   const realTimeDragging = useRef(false);
-  const realTimeTrackDragging = useRef(false);
   const formatter = useNumberFormatter(formatOptions);
 
   function getValuePercent(value: number) {
@@ -156,11 +152,6 @@ export function useSliderState(props: SliderProps): SliderState {
     setThumbPercent,
     isThumbDragging: (index: number) => isDraggings[index],
     setThumbDragging: updateDragging,
-    isTrackDragging: () => isTrackDragging || realTimeTrackDragging.current,
-    setTrackDragging: (dragging: boolean) => {
-      realTimeTrackDragging.current = dragging;
-      setTrackDragging(dragging);
-    },
     focusedThumb: focusedIndex,
     setFocusedThumb: setFocusedIndex,
     getThumbPercent: (index: number) => getValuePercent(values[index]),

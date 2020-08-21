@@ -70,19 +70,10 @@ export function useSliderThumb(
     reverse: false,
     orientation: 'horizontal',
     onDrag: (dragging) => {
-      if (state.isTrackDragging()) {
-        // If the track's drag handlers are already handling the drag event,
-        // that means this thumb must be a child of the track.  Just let the
-        // track's drag handlers handle it.
-        return;
-      }
       state.setThumbDragging(index, dragging);
       focusInput();
     },
     onPositionChange: (position) => {
-      if (state.isTrackDragging()) {
-        return;
-      }
       const percent = position / trackRef.current.offsetWidth;
       state.setThumbPercent(index, percent);
     }

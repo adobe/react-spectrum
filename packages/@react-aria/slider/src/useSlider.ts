@@ -55,6 +55,7 @@ export function useSlider(
   // Here, we keep track of which index is the "closest" to the drag start point.
   // It is set onMouseDown; see trackProps below.
   const realTimeTrackDraggingIndex = useRef<number | undefined>(undefined);
+  const isTrackDragging = useRef(false);
   const {onMouseDown, onMouseEnter, onMouseOut} = useDrag1D({
     containerRef: trackRef as any,
     reverse: false,
@@ -63,9 +64,7 @@ export function useSlider(
       if (realTimeTrackDraggingIndex.current !== undefined) {
         state.setThumbDragging(realTimeTrackDraggingIndex.current, dragging);
       }
-      if (!dragging) {
-        state.setTrackDragging(false);
-      }
+      isTrackDragging.current = dragging;
     },
     onPositionChange: (position) => {
       if (realTimeTrackDraggingIndex.current !== undefined && trackRef.current) {
@@ -74,8 +73,9 @@ export function useSlider(
 
         // When track-dragging ends, onDrag is called before a final onPositionChange is
         // called, so we can't reset realTimeTrackDraggingIndex until onPositionChange,
-        // as we still needed to update the thumb position one last time.
-        if (!state.isTrackDragging()) {
+        // as we still needed to update the thumb position one last time.  Hence we
+        // track whether we're dragging, and the actual dragged index, separately.
+        if (!isTrackDragging.current) {
           realTimeTrackDraggingIndex.current = undefined;
         }
       }
@@ -120,7 +120,6 @@ export function useSlider(
             // the value.  Dragging state will be reset to false in onDrag above, even
             // if no dragging actually occurs.
             state.setThumbDragging(realTimeTrackDraggingIndex.current, true);
-            state.setTrackDragging(true);
             state.setThumbValue(index, value);
           } else {
             realTimeTrackDraggingIndex.current = undefined;
