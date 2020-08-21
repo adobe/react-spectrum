@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {forwardRef} from 'react';
+import React, {RefObject} from 'react';
 import {SpectrumHexColorFieldProps} from '@react-types/color';
 
-function HexColorField(props: SpectrumHexColorFieldProps) {
+function HexColorField(props: SpectrumHexColorFieldProps, ref: RefObject<HTMLDivElement>) {
   return (
     <div>Hex</div>
   );
@@ -22,5 +22,5 @@ function HexColorField(props: SpectrumHexColorFieldProps) {
 /**
  * An input for color. Displays color value in hex format.
  */
-const _HexColorField = forwardRef(HexColorField);
+const _HexColorField = React.forwardRef(HexColorField);
 export {_HexColorField as HexColorField};
