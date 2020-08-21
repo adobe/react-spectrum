@@ -93,6 +93,11 @@ export function useSliderState(props: SliderProps): SliderState {
     // Round value to multiple of step, clamp value between min and max
     value = clamp(getRoundedValue(value), thisMin, thisMax);
 
+    // Do nothing if slider hasn't moved
+    if (value === values[index]) {
+      return;
+    }
+
     const newValues = replaceIndex(values, index, value);
     setValues(newValues);
 
