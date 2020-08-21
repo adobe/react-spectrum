@@ -19,8 +19,9 @@ describe('useCheckboxGroupState', () => {
     function Test() {
       const state = useCheckboxGroupState();
 
-      expect(typeof state.name).toBe('string');
       expect(state.value).toEqual([]);
+      expect(state.isDisabled).toBe(false);
+      expect(state.isReadOnly).toBe(false);
       expect(typeof state.setValue).toBe('function');
       expect(typeof state.addValue).toBe('function');
       expect(typeof state.removeValue).toBe('function');
@@ -31,11 +32,22 @@ describe('useCheckboxGroupState', () => {
     render(<Test />);
   });
 
-  it('should return the same `name` that has been provided', () => {
+  it('should return the same `isDisabled` that has been provided', () => {
     function Test() {
-      const state = useCheckboxGroupState({name: 'foo'});
+      const state = useCheckboxGroupState({isDisabled: true});
 
-      expect(state.name).toBe('foo');
+      expect(state.isDisabled).toBe(true);
+
+      return null;
+    }
+    render(<Test />);
+  });
+
+  it('should return the same `isReadOnly` that has been provided', () => {
+    function Test() {
+      const state = useCheckboxGroupState({isReadOnly: true});
+
+      expect(state.isReadOnly).toBe(true);
 
       return null;
     }

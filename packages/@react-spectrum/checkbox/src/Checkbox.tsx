@@ -10,15 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {CheckboxGroupContext} from './context';
 import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
 import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import DashSmall from '@spectrum-icons/ui/DashSmall';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import React, {forwardRef, useRef} from 'react';
+import React, {forwardRef, useContext, useRef} from 'react';
 import {SpectrumCheckboxProps} from '@react-types/checkbox';
 import styles from '@adobe/spectrum-css-temp/components/checkbox/vars.css';
-import {useCheckbox} from '@react-aria/checkbox';
+import {useCheckbox, useCheckboxGroupItem} from '@react-aria/checkbox';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useToggleState} from '@react-stately/toggle';
@@ -31,6 +32,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
     isDisabled = false,
     autoFocus,
     children,
+    validationState,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -38,8 +40,16 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
 
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
-  let state = useToggleState(props);
-  let {inputProps} = useCheckbox(props, state, inputRef);
+
+  // Swap hooks depending on whether this checkbox is inside a CheckboxGroup.
+  // This is a bit unorthodox. Typically, hooks cannot be called in a conditional,
+  // but since the checkbox won't move in and out of a group, it should be safe.
+  let groupState = useContext(CheckboxGroupContext);
+  let {inputProps} = groupState
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    ? useCheckboxGroupItem(props, groupState, inputRef)
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    : useCheckbox(props, useToggleState(props), inputRef);
 
   let markIcon = isIndeterminate
     ? <DashSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
@@ -55,10 +65,10 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
           styles,
           'spectrum-Checkbox',
           {
-            'is-checked': state.isSelected,
+            'is-checked': inputProps.checked,
             'is-indeterminate': isIndeterminate,
             'spectrum-Checkbox--quiet': !isEmphasized,
-            'is-invalid': inputProps['aria-invalid'],
+            'is-invalid': validationState === 'invalid',
             'is-disabled': isDisabled,
             'is-hovered': isHovered
           },

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
+import {CheckboxGroupState} from '@react-stately/checkbox';
+import React from 'react';
 
-export * from './Checkbox';
-export * from './CheckboxGroup';
+export const CheckboxGroupContext = React.createContext<CheckboxGroupState>(null);

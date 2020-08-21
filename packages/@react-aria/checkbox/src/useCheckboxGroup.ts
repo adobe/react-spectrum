@@ -11,6 +11,8 @@
  */
 
 import {AriaCheckboxGroupProps} from '@react-types/checkbox';
+import {checkboxGroupNames} from './utils';
+import {CheckboxGroupState} from '@react-stately/checkbox';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes} from 'react';
 import {useLabel} from '@react-aria/label';
@@ -28,8 +30,8 @@ interface CheckboxGroupAria {
  * @param props - Props for the checkbox group.
  * @param state - State for the checkbox group, as returned by `useCheckboxGroupState`.
  */
-export function useCheckboxGroup(props: AriaCheckboxGroupProps): CheckboxGroupAria {
-  let {isDisabled} = props;
+export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxGroupState): CheckboxGroupAria {
+  let {isDisabled, name} = props;
 
   let {labelProps, fieldProps} = useLabel({
     ...props,
@@ -39,6 +41,9 @@ export function useCheckboxGroup(props: AriaCheckboxGroupProps): CheckboxGroupAr
   });
 
   let domProps = filterDOMProps(props, {labelable: true});
+
+  // Pass name prop from group to all items by attaching to the state.
+  checkboxGroupNames.set(state, name);
 
   return {
     checkboxGroupProps: mergeProps(domProps, {
