@@ -10,14 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {useLayoutEffect, useMemo, useState} from 'react';
+import {useLayoutEffect, useState} from 'react';
+import {useSSRSafeId} from '@react-aria/ssr';
 
 let map: Map<string, (v: string) => void> = new Map();
-
-let id = 0;
-// don't want to conflict with ids from v2, this will guarantee something unique
-// plus we'll know how many instances of this module are loaded on a page if there are more than one number ;)
-let randomInstanceNumber = Math.round(Math.random() * 10000000000);
 
 /**
  * If a default is not provided, generate an id.
@@ -25,7 +21,7 @@ let randomInstanceNumber = Math.round(Math.random() * 10000000000);
  */
 export function useId(defaultId?: string): string {
   let [value, setValue] = useState(defaultId);
-  let res = useMemo(() => value || `react-aria-${randomInstanceNumber}-${++id}`, [value]);
+  let res = useSSRSafeId(value);
   map.set(res, setValue);
   return res;
 }
