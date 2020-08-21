@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {ReactNode, useContext, useMemo} from 'react';
+import React, {ReactNode, useContext, useLayoutEffect, useMemo, useState} from 'react';
 
 // To support SSR, the auto incrementing id counter is stored in a context. This allows
 // it to be reset on every request to ensure the client and server are consistent.
@@ -76,4 +76,24 @@ export function useSSRSafeId(defaultId?: string): string {
   }
 
   return useMemo(() => defaultId || `react-aria-${ctx.prefix}-${++ctx.current}`, [defaultId]);
+}
+
+/** @private */
+export function useIsSSR(): boolean {
+  let cur = useContext(SSRContext);
+  let isInSSRContext = cur !== defaultContext;
+  let [isSSR, setIsSSR] = useState(isInSSRContext);
+
+  // If on the client, and the component was initially server rendered,
+  // then schedule a layout effect to update the component after hydration.
+  if (typeof window !== 'undefined' && isInSSRContext) {
+    // This if statement technically breaks the rules of hooks, but is safe
+    // because the condition never changes after mounting.
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useLayoutEffect(() => {
+      setIsSSR(false);
+    }, []);
+  }
+
+  return isSSR;
 }
