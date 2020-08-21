@@ -13,11 +13,14 @@
 import {
   AriaLabelingProps,
   AriaValidationProps,
+  DOMProps,
   FocusableDOMProps,
   FocusableProps,
   InputBase,
+  LabelableProps,
   StyleProps,
-  Validation
+  Validation,
+  ValueBase
 } from '@react-types/shared';
 import {ReactNode} from 'react';
 
@@ -55,6 +58,13 @@ export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLab
   'aria-controls'?: string
 }
 
+export interface CheckboxGroupProps extends ValueBase<string[]>, InputBase, LabelableProps {
+  /**
+   * The name of the CheckboxGroup, used when submitting an HTML form.
+   */
+  name?: string
+}
+
 export interface CheckboxProps extends ToggleProps {
   /**
    * Indeterminism is presentational only.
@@ -64,6 +74,10 @@ export interface CheckboxProps extends ToggleProps {
 }
 
 export interface AriaCheckboxProps extends CheckboxProps, AriaToggleProps {}
+
+export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
+
+export interface AriaCheckboxGroupItemProps extends Omit<AriaCheckboxProps, 'isSelected' | 'defaultSelected'> {}
 
 export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
   /**

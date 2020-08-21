@@ -36,6 +36,7 @@
     "@react-aria/focus": "^3.1.0",
     "@react-aria/interactions": "^3.1.0",
     "@react-spectrum/utils": "^3.1.0",
+    "@react-stately/checkbox": "^3.1.0",
     "@react-stately/toggle": "^3.1.0",
     "@react-types/checkbox": "^3.1.0",
     "@react-types/shared": "^3.1.0",
