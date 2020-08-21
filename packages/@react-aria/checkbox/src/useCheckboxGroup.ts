@@ -19,7 +19,7 @@ import {useLabel} from '@react-aria/label';
 
 interface CheckboxGroupAria {
   /** Props for the checkbox group wrapper element. */
-  checkboxGroupProps: HTMLAttributes<HTMLElement>,
+  groupProps: HTMLAttributes<HTMLElement>,
   /** Props for the checkbox group's visible label (if any). */
   labelProps: HTMLAttributes<HTMLElement>
 }
@@ -46,7 +46,7 @@ export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxG
   checkboxGroupNames.set(state, name);
 
   return {
-    checkboxGroupProps: mergeProps(domProps, {
+    groupProps: mergeProps(domProps, {
       role: 'group',
       'aria-disabled': isDisabled || undefined,
       ...fieldProps

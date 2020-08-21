@@ -41,12 +41,12 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
   let state = useCheckboxGroupState(props);
-  let {labelProps, checkboxGroupProps} = useCheckboxGroup(props, state);
+  let {labelProps, groupProps} = useCheckboxGroup(props, state);
 
   return (
     <div
       {...styleProps}
-      {...checkboxGroupProps}
+      {...groupProps}
       className={
         classNames(
           styles,

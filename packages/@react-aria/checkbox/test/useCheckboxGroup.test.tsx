@@ -26,7 +26,7 @@ function Checkbox({checkboxGroupState, ...props}: AriaCheckboxProps & { checkbox
 
 function CheckboxGroup({groupProps, checkboxProps}: {groupProps: AriaCheckboxGroupProps, checkboxProps: AriaCheckboxProps[]}) {
   const state = useCheckboxGroupState(groupProps);
-  const {checkboxGroupProps, labelProps} = useCheckboxGroup(groupProps, state);
+  const {groupProps: checkboxGroupProps, labelProps} = useCheckboxGroup(groupProps, state);
   return (
     <div {...checkboxGroupProps}>
       {groupProps.label && <span {...labelProps}>{groupProps.label}</span>}
