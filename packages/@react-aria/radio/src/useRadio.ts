@@ -13,6 +13,7 @@
 import {AriaRadioProps} from '@react-types/radio';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
+import {radioGroupNames} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
@@ -82,7 +83,7 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
     inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',
-      name: state.name,
+      name: radioGroupNames.get(state),
       tabIndex,
       disabled: isDisabled,
       readOnly: isReadOnly,

@@ -10,22 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {testSSR} from '@react-spectrum/test-utils';
+import React from 'react';
 
-describe('Picker SSR', function () {
-  it('should render without errors', async function () {
-    await testSSR(__filename, `
-      import {Picker, Item} from '../';
-      import {Provider} from '@react-spectrum/provider';
-      import {theme} from '@react-spectrum/theme-default';
-
-      <Provider theme={theme}>
-        <Picker label="Picker">
-          <Item>One</Item>
-          <Item>Two</Item>
-          <Item>Three</Item>
-        </Picker>
-      </Provider>
-    `);
-  });
-});
+// During SSR, React emits a warning when calling useLayoutEffect.
+// Since neither useLayoutEffect nor useEffect run on the server,
+// we can suppress this by replace it with a noop on the server.
+export const useLayoutEffect = typeof window !== 'undefined'
+  ? React.useLayoutEffect
+  : () => {};
