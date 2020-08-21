@@ -17,7 +17,7 @@ import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overla
 import {PressResponder} from '@react-aria/interactions';
 import React, {Fragment, ReactElement, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
-import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
+import { unwrapDOMRef, isMobileDevice} from '@react-spectrum/utils';
 import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
 
 function DialogTrigger(props: SpectrumDialogTriggerProps) {
@@ -39,7 +39,7 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
 
   // On small devices, show a modal or tray instead of a popover.
   // TODO: DNA variable?
-  let isMobile = useMediaQuery('(max-width: 700px)');
+  let isMobile = isMobileDevice();
   if (isMobile) {
     // handle cases where desktop popovers need a close button for the mobile modal view
     if (type !== 'modal' && mobileType === 'modal') {
