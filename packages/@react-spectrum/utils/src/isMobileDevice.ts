@@ -12,6 +12,6 @@
 
 const MOBILE_SCREEN_WIDTH = 700;
 
- export function isMobileDevice(): boolean {
-	 return window?.screen.width <= MOBILE_SCREEN_WIDTH;
- }
+export function isMobileDevice(): boolean {
+  return window?.screen.width <= MOBILE_SCREEN_WIDTH;
+}

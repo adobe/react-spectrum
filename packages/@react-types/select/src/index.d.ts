@@ -59,10 +59,5 @@ export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, SpectrumLabe
   /**
    * The name of the Picker input, used when submitting an HTML form.
    */
-  name?: string,
-  /**
-   * If set to 'tray', the items will open in a tray. If 'popover', as a popover.
-   * If not defined, Picker will make its best guess based on window max-width.
-   */
-  displayItemsIn?: 'tray' | 'popover'
+  name?: string
 }

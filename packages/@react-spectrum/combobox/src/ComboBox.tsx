@@ -11,7 +11,7 @@
  */
 
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, unwrapDOMRef, useStyleProps, isMobileDevice} from '@react-spectrum/utils';
+import {classNames, unwrapDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRefValue} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
@@ -82,7 +82,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     isOpen: state.isOpen
   });
 
-  let isMobile = isMobileDevice();
+  let isMobile = useMediaQuery('(max-width: 700px)');
 
   let comboBoxAutoFocus;
   // Focus first/last item on menu open if focusStategy is set (done by up/down arrows)

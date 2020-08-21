@@ -12,7 +12,7 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import { classNames, dimensionValue, SlotProvider, unwrapDOMRef, useDOMRef, isMobileDevice, useStyleProps} from '@react-spectrum/utils';
+import {classNames, dimensionValue, isMobileDevice, SlotProvider, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
@@ -55,8 +55,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     isRequired,
     necessityIndicator,
     menuWidth,
-	name,
-	displayItemsIn
+	name
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -135,8 +134,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   }, [scale, isMobile, triggerRef, state.selectedKey]);
 
   let overlay;
-  let useTray = displayItemsIn ? displayItemsIn === 'tray' : isMobile;
-  if (useTray) {
+  if (isMobile) {
     overlay = (
       <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur >
         {listbox}
