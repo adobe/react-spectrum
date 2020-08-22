@@ -96,5 +96,8 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
   );
 }
 
+/**
+ * A CheckboxGroup allows users to select one or more items from a list of choices.
+ */
 const _CheckboxGroup = React.forwardRef(CheckboxGroup);
 export {_CheckboxGroup as CheckboxGroup};
