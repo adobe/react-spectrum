@@ -49,7 +49,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
   let {inputProps} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
-        ...props,
+      ...props,
       // Only pass isRequired and validationState to react-aria if they came from
       // the props for this individual checkbox, and not from the group via context.
       isRequired: originalProps.isRequired,
