@@ -10,17 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-import {testSSR} from '@react-spectrum/test-utils';
-
-describe('Menu SSR', function () {
-  it('should render without errors', async function () {
-    await testSSR(__filename, `
-      import {Menu, Item} from '../';
-      <Menu aria-label="Menu">
-        <Item>Left</Item>
-        <Item>Middle</Item>
-        <Item>Right</Item>
-      </Menu>
-    `);
-  });
-});
+export * from './src';
