@@ -184,7 +184,9 @@ function computePosition(
   overlaySize: Offset,
   placementInfo: ParsedPlacement,
   offset: number,
-  crossOffset: number
+  crossOffset: number,
+  containerOffsetWithBoundary: Offset,
+  isContainerPositioned: boolean
 ) {
   let {placement, crossPlacement, axis, crossAxis, size, crossSize} = placementInfo;
   let position: Position = {};
@@ -204,7 +206,12 @@ function computePosition(
 
   // Floor these so the position isn't placed on a partial pixel, only whole pixels. Shouldn't matter if it was floored or ceiled, so chose one.
   if (placement === axis) {
-    position[FLIPPED_DIRECTION[axis]] = Math.floor(boundaryDimensions[size] - childOffset[axis] + offset);
+    // If the container is positioned (non-static), then we use the container's actual
+    // height, as `bottom` will be relative to this height.  But if the container is static,
+    // then it can only be the `document.body`, and `bottom` will be relative to _its_
+    // container, which should be as large as boundaryDimensions.
+    const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary[size] : boundaryDimensions[size]);
+    position[FLIPPED_DIRECTION[axis]] = Math.floor(containerHeight - childOffset[axis] + offset);
   } else {
     position[axis] = Math.floor(childOffset[axis] + childOffset[size] + offset);
   }
@@ -221,8 +228,18 @@ function getMaxHeight(
   padding: number
 ) {
   return position.top != null
-    ? Math.max(0, boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top + containerOffsetWithBoundary.top - position.top - margins.top - margins.bottom - padding)
-    : Math.max(0, childOffset.top - boundaryDimensions.top - boundaryDimensions.scroll.top - containerOffsetWithBoundary.top - margins.top - margins.bottom - padding);
+    // We want the distance between the top of the overlay to the bottom of the boundary
+    ? Math.max(0, 
+      (boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the bottom of the boundary
+      - (containerOffsetWithBoundary.top + position.top) // this is the top of the overlay
+      - (margins.top + margins.bottom + padding) // save additional space for margin and padding
+    )
+    // We want the distance between the top of the trigger to the top of the boundary
+    : Math.max(0, 
+      (childOffset.top + containerOffsetWithBoundary.top) // this is the top of the trigger
+      - (boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the top of the boundary
+      - (margins.top + margins.bottom + padding) // save additional space for margin and padding
+    );
 }
 
 function getAvailableSpace(
@@ -252,11 +269,12 @@ export function calculatePositionInternal(
   boundaryDimensions: Dimensions,
   containerOffsetWithBoundary: Offset,
   offset: number,
-  crossOffset: number
+  crossOffset: number,
+  isContainerPositioned: boolean
 ): PositionResult {
   let placementInfo = parsePlacement(placementInput);
   let {size, crossAxis, crossSize, placement, crossPlacement} = placementInfo;
-  let position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, offset, crossOffset);
+  let position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned);
   let normalizedOffset = offset;
   let space = getAvailableSpace(
     boundaryDimensions,
@@ -270,7 +288,7 @@ export function calculatePositionInternal(
   // Check if the scroll size of the overlay is greater than the available space to determine if we need to flip
   if (flip && scrollSize[size] > space) {
     let flippedPlacementInfo = parsePlacement(`${FLIPPED_DIRECTION[placement]} ${crossPlacement}` as Placement);
-    let flippedPosition = computePosition(childOffset, boundaryDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset);
+    let flippedPosition = computePosition(childOffset, boundaryDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned);
     let flippedSpace = getAvailableSpace(
       boundaryDimensions,
       containerOffsetWithBoundary,
@@ -302,7 +320,7 @@ export function calculatePositionInternal(
 
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
-  position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset);
+  position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset, containerOffsetWithBoundary, isContainerPositioned);
   delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
   position[crossAxis] += delta;
 
@@ -336,6 +354,8 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
 
   let container = overlayNode.offsetParent || document.body;
   let isBodyContainer = container.tagName === 'BODY';
+  const containerPositionStyle = window.getComputedStyle(container).position;
+  let isContainerPositioned = !!containerPositionStyle && containerPositionStyle !== 'static';
   let childOffset: Offset = isBodyContainer ? getOffset(targetNode) : getPosition(targetNode, container);
 
   if (!isBodyContainer) {
@@ -363,6 +383,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     boundaryDimensions,
     containerOffsetWithBoundary,
     offset,
-    crossOffset
+    crossOffset,
+    isContainerPositioned
   );
 }
