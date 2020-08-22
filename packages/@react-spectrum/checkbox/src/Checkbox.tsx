@@ -25,6 +25,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useToggleState} from '@react-stately/toggle';
 
 function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
+  let originalProps = props;
   props = useProviderProps(props);
   let {
     isIndeterminate = false,
@@ -47,13 +48,27 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
   let groupState = useContext(CheckboxGroupContext);
   let {inputProps} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    ? useCheckboxGroupItem(props, groupState, inputRef)
+    ? useCheckboxGroupItem({
+        ...props,
+      // Only pass isRequired and validationState to react-aria if they came from
+      // the props for this individual checkbox, and not from the group via context.
+      isRequired: originalProps.isRequired,
+      validationState: originalProps.validationState
+    }, groupState, inputRef)
     // eslint-disable-next-line react-hooks/rules-of-hooks
     : useCheckbox(props, useToggleState(props), inputRef);
 
   let markIcon = isIndeterminate
     ? <DashSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
     : <CheckmarkSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-checkmark')} />;
+
+  if (groupState) {
+    for (let key of ['isSelected', 'defaultSelected', 'isEmphasized']) {
+      if (originalProps[key] != null) {
+        console.warn(`${key} is unsupported on individual <Checkbox> elements within a <CheckboxGroup>. Please apply these props to the group instead.`);
+      }
+    }
+  }
 
   return (
     <label

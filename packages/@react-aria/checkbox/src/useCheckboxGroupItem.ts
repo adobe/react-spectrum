@@ -45,13 +45,8 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
     ...props,
     isReadOnly: props.isReadOnly || state.isReadOnly,
     isDisabled: props.isDisabled || state.isDisabled,
-    name: checkboxGroupNames.get(state)
+    name: props.name || checkboxGroupNames.get(state)
   }, toggleState, inputRef);
-
-  // Delete required and aria-invalid from inputProps since they don't really make sense
-  // when used in a checkbox group. These will be communicated by the group itself.
-  delete inputProps.required;
-  delete inputProps['aria-invalid'];
 
   return {inputProps};
 }

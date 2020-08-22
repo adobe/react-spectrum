@@ -79,6 +79,10 @@ storiesOf('CheckboxGroup', module)
     () => render({validationState: 'invalid'})
   )
   .add(
+    'validationState: "invalid" on one checkbox',
+    () => render({}, [{}, {validationState: 'invalid'}, {}])
+  )
+  .add(
     'no visible label',
     () => render({label: null, 'aria-label': 'Pets'})
   )
