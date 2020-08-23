@@ -66,6 +66,10 @@
   transition: opacity var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay),
     transform var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay);
 
+  &:last-child {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
+  }
+
   &.is-open {
     @inherit: %spectrum-overlay--open;
 
