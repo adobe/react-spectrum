@@ -150,6 +150,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
             );
           } else if (type === 'placeholder' && isMobile) {
             // TODO: update with renderEmptyView when spectrum comes back with what it should look like
+            // Also should probably limit this to combobox only
             return(
               <IllustratedMessage>
                 <Content>No Results</Content>

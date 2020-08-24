@@ -96,7 +96,8 @@ export interface TrayProps extends StyleProps, OverlayProps {
   children: ReactElement,
   isOpen?: boolean,
   onClose?: () => void,
-  shouldCloseOnBlur?: boolean
+  shouldCloseOnBlur?: boolean,
+  lockHeightToMax?: boolean
 }
 
 export interface OverlayTriggerProps {

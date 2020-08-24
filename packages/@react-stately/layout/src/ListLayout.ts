@@ -137,7 +137,9 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
 
     if (nodes.length === 0) {
-      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, this.virtualizer.visibleRect.height);
+      // TODO: figure out what the calculation here should really be, at the moment it is the inner height - tray margin
+      // ideally it would the size of the placeholder being put into the tray
+      let rect = new Rect(0, y, this.virtualizer.visibleRect.width, window.innerHeight - 64);
       let placeholder = new LayoutInfo('placeholder', 'placeholder', rect);
       this.layoutInfos.set('placeholder', placeholder);
       nodes.push({layoutInfo: placeholder});

@@ -26,11 +26,12 @@ interface TrayWrapperProps extends HTMLAttributes<HTMLElement> {
   isOpen?: boolean,
   onClose?: () => void,
   shouldCloseOnBlur?: boolean,
-  isKeyboardDismissDisabled?: boolean
+  isKeyboardDismissDisabled?: boolean,
+  lockHeightToMax?: boolean
 }
 
 function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, onClose, shouldCloseOnBlur, isKeyboardDismissDisabled, ...otherProps} = props;
+  let {children, onClose, shouldCloseOnBlur, isKeyboardDismissDisabled, lockHeightToMax, ...otherProps} = props;
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(props);
 
@@ -42,7 +43,8 @@ function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
         onClose={onClose}
         shouldCloseOnBlur={shouldCloseOnBlur}
         isKeyboardDismissDisabled={isKeyboardDismissDisabled}
-        ref={domRef}>
+        ref={domRef}
+        lockHeightToMax={lockHeightToMax}>
         {children}
       </TrayWrapper>
     </Overlay>
@@ -57,6 +59,7 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
     shouldCloseOnBlur,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isKeyboardDismissDisabled,
+    lockHeightToMax,
     ...otherProps
   } = props;
   let {overlayProps} = useOverlay({...props, isDismissable: true}, ref);
@@ -70,28 +73,9 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   // when the address bar/bottom toolbars show and hide on scroll and vh units are fixed.
   let [maxHeight, setMaxHeight] = useState(window.innerHeight);
 
-  // TODO: prob should have this logic happen only for combobox, pass in a boolean lockHeight??
-  // First stab at locking tray height
-  // Problem is that this will allow the tray to grow if more options load in (aka you delete your input), probably not desired
-  // and it won't let the tray to shrink upon filtering (desired)
-  // I would like it to not grow but unfortunately the final tray height happens on the second render so I can't useeffect on first render only
-  let currentHeight = ref.current ? ref.current.offsetHeight : 0;
-  if (ref.current) {
-    ref.current.style.height = 'auto';
-    if (ref.current.offsetHeight > currentHeight) {
-      ref.current.style.height = `${ref.current.offsetHeight}px`;
-    } else {
-      ref.current.style.height = `${currentHeight}px`;
-    }
-  }
-
-  // TODO: Maybe don't need the set height stuff here? the max-height should constraint it just fine
   useEffect(() => {
     let onResize = () => {
       setMaxHeight(window.innerHeight);
-      if (ref.current && ref.current.offsetHeight > window.innerHeight) {
-        ref.current.style.height = `${window.innerHeight}px`;
-      }
     };
 
     window.addEventListener('resize', onResize);
@@ -103,7 +87,8 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   let domProps = mergeProps(otherProps, overlayProps);
   let style = {
     ...domProps.style,
-    maxHeight: `calc(${maxHeight}px - var(--spectrum-tray-margin-top))`
+    maxHeight: `calc(${maxHeight}px - var(--spectrum-tray-margin-top))`,
+    height: lockHeightToMax && `${window.innerHeight}px`
   };
 
   let wrapperClassName = classNames(

@@ -146,7 +146,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur>
+      <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur lockHeightToMax>
         {listbox}
       </Tray>
     );
