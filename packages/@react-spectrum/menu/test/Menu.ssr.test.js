@@ -16,7 +16,7 @@ describe('Menu SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
       import {Menu, Item} from '../';
-      <Menu>
+      <Menu aria-label="Menu">
         <Item>Left</Item>
         <Item>Middle</Item>
         <Item>Right</Item>
