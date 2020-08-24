@@ -14,9 +14,9 @@ import {BlogPostLayout, Video} from '@react-spectrum/docs';
 export default BlogPostLayout;
 
 ---
-keywords: [react aria, react spectrum, react, spectrum, interactions, button, touch, hover, web development, javascript, css, html]
+keywords: [react aria, react spectrum, react, interactions, button, touch, hover, web development, javascript, css]
 description: This is the second post in our three part series on building a button component. In the [first post](building-a-button-part-1.html), we covered how React Spectrum and React Aria implement adaptive press events across mouse, touch, keyboard, and screen readers. Today, we’ll cover hover interactions.
-date: 2020-08-19
+date: 2020-08-25
 author: '[Devon Govett](https://twitter.com/devongovett)'
 image: ../assets/ReactAria_976x445_2x.png
 ---
@@ -57,11 +57,11 @@ However, JavaScript mouse events are also subject to emulation on touch devices.
 
 As discussed in the previous post, [pointer events](https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events) are supposed to solve these issues by exposing a `pointerType` property that specifies what kind of device the user is interacting with. While `onPointerEnter` is fired even on devices that don’t support hover, we should be able to ignore these events if they have `pointerType="touch"` set.
 
-Unfortunately, on iOS there is a [bug](https://bugs.webkit.org/show_bug.cgi?id=214609) where even pointer events are subject to mouse event emulation. iOS fires `onPointerEnter` twice – once with `pointerType="touch"` and again with `pointerType="mouse"`. The mouse event is fired just after `onPointerUp`, and before `onFocus`. We could try setting a flag during the event with `pointerType="touch"` and ignore the following event with `pointerType="mouse"`, but since this is a bug only on iOS, this would mean that we would ignore the next mouse event on other devices, which could be long in the future when the user switches interaction modes.
+Unfortunately, on iOS there is currently a [bug](https://bugs.webkit.org/show_bug.cgi?id=214609) where even pointer events are subject to mouse event emulation. iOS fires `onPointerEnter` twice – once with `pointerType="touch"` and again with `pointerType="mouse"`. The mouse event is fired just after `onPointerUp`, and before `onFocus`. We could try setting a flag during the event with `pointerType="touch"` and ignore the following event with `pointerType="mouse"`, but since this is a bug only on iOS, this would mean that we would ignore the next mouse event on other devices, which could be long in the future when the user switches interaction modes.
 
 The solution is a bit tricky. We listen for the `onPointerUp` event globally on the document, and set  a flag if `pointerType="touch"` to ignore the following `onPointerEnter` event with `pointerType="mouse"`. After a short timeout (50ms), we reset this flag back to `false`. This means that we will ignore `onPointerEnter` events with `pointerType="mouse"` for 50ms following an `onPointerUp` event with `pointerType="touch"` – long enough to ignore the emulated mouse event on iOS, but short enough to not ignore real user events in the future.
 
-This handler must be global to the document rather than local to the element being hovered due to another iOS quirk – focus events, and the prior  `onPointerEnter` event with `pointerType="mouse"`, are dispatched even when you didn’t touch the element directly, but somewhere nearby. iOS does some sloppy hit detection and focuses the nearest element to the user’s tap, within some threshold. In this case, the `onPointerUp` event with `pointerType="touch"`  is not dispatched on the element since the user did not actually touch it. This means we would not be able to ignore the emulated mouse event, because our flag would never be set. Using a global event listener instead of a local one allows us to handle the `onPointerUp` event with `pointerType="touch"` and ignore the following `onPointerEnter` event with `pointerType="mouse"` even if the user touched nearby the element rather than directly on it.
+This handler must be global to the document rather than local to the element being hovered due to another iOS quirk – focus events, and the prior  `onPointerEnter` event with `pointerType="mouse"`, are dispatched even when you didn’t touch the element directly, but somewhere nearby. iOS attempts to determine the user’s intent and focuses the nearest element to their tap within some threshold. In this case, the `onPointerUp` event with `pointerType="touch"`  is not dispatched on the element since the user did not actually touch it. This means we would not be able to ignore the emulated mouse event, because our flag would never be set. Using a global event listener instead of a local one allows us to handle the `onPointerUp` event with `pointerType="touch"` and ignore the following `onPointerEnter` event with `pointerType="mouse"` even if the user touched nearby the element rather than directly on it.
 
 I hear that these bugs may already be fixed in the iOS 14 betas, so hopefully we’ll be able to remove this code sometime in the future.
 
