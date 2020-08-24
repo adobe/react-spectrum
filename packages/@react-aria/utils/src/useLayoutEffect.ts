@@ -10,17 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {testSSR} from '@react-spectrum/test-utils';
+import React from 'react';
 
-describe('Menu SSR', function () {
-  it('should render without errors', async function () {
-    await testSSR(__filename, `
-      import {Menu, Item} from '../';
-      <Menu aria-label="Menu">
-        <Item>Left</Item>
-        <Item>Middle</Item>
-        <Item>Right</Item>
-      </Menu>
-    `);
-  });
-});
+// During SSR, React emits a warning when calling useLayoutEffect.
+// Since neither useLayoutEffect nor useEffect run on the server,
+// we can suppress this by replace it with a noop on the server.
+export const useLayoutEffect = typeof window !== 'undefined'
+  ? React.useLayoutEffect
+  : () => {};
