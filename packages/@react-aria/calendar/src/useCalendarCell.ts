@@ -12,7 +12,6 @@
 
 import {CalendarCellOptions, CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {chain} from '@react-aria/utils';
-import {FocusEvent} from '@react-types/shared';
 import {getCalendarId, getCellId} from './useCalendarBase';
 import {HTMLAttributes} from 'react';
 // @ts-ignore
@@ -99,12 +98,9 @@ export function useCalendarCell(props: CalendarCellOptions, state: CalendarState
       ...focusProps,
       onFocus: chain(
         focusProps.onFocus,
-        (event: FocusEvent) => {
+        () => {
           if (!props.isDisabled) {
             state.setFocusedDate(props.cellDate);
-            if (typeof event.continuePropagation === 'function') {
-              event.continuePropagation();
-            }
           }
         }
       ),
