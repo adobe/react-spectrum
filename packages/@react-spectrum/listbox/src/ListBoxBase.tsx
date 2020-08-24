@@ -12,6 +12,8 @@
 
 import {AriaLabelingProps, DOMProps, FocusStrategy, Node, StyleProps} from '@react-types/shared';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {Content} from '@react-spectrum/view';
+import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxContext} from './ListBoxContext';
@@ -20,6 +22,7 @@ import {ListBoxSection} from './ListBoxSection';
 import {ListLayout} from '@react-stately/layout';
 import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
+import NotFound from '@spectrum-icons/illustrations/src/NotFound';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, RefObject, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
@@ -41,7 +44,8 @@ interface ListBoxBaseProps<T> extends DOMProps, AriaLabelingProps, StyleProps {
   shouldUseVirtualFocus?: boolean,
   transitionDuration?: number,
   isLoading?: boolean,
-  onLoadMore?: () => void
+  onLoadMore?: () => void,
+  isMobile?: boolean
 }
 
 /** @private */
@@ -64,7 +68,7 @@ export function useListBoxLayout<T>(state: ListState<T>) {
 
 /** @private */
 function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElement>) {
-  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, shouldUseVirtualFocus, domProps = {}, transitionDuration = 0} = props;
+  let {layout, state, shouldSelectOnPressUp, focusOnPointerEnter, shouldUseVirtualFocus, domProps = {}, transitionDuration = 0, isMobile} = props;
   // @ts-ignore
   let {listBoxProps} = useListBox({
     ...props,
@@ -144,9 +148,13 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
                   UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
               </div>
             );
-          } else if (type === 'placeholder') {
+          } else if (type === 'placeholder' && isMobile) {
+            // TODO: update with renderEmptyView when spectrum comes back with what it should look like
             return(
-              <div>EMPTY LIST</div>
+              <IllustratedMessage>
+                <Content>No Results</Content>
+                <NotFound aria-label="No Results" />
+              </IllustratedMessage>
             )
           }
         }}

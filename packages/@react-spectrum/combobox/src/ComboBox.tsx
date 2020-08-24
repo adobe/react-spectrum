@@ -111,8 +111,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   // TODO: What if user has a external label, how do we communicate that label to the tray textfield? Should we have a prop trayInputLabel?
   let listbox = (
     <FocusScope>
-      {isMobile && <TextField label={label} autoFocus ref={trayInputRef} onChange={state.setInputValue} value={state.inputValue} validationState={validationState} {...trayInputProps} />}
       <DismissButton onDismiss={() => state.close()} />
+      {isMobile && <TextField marginTop={5} marginX={15} width={'initial'} label={label} autoFocus ref={trayInputRef} onChange={state.setInputValue} value={state.inputValue} validationState={validationState} {...trayInputProps} />}
       <ListBoxBase
         ref={listboxRef}
         domProps={listBoxProps}
@@ -125,7 +125,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         width={isMobile ? '100%' : undefined}
         // Set max height: inherit so Tray scrolling works
         UNSAFE_style={{maxHeight: 'inherit'}}
-        shouldUseVirtualFocus />
+        shouldUseVirtualFocus
+        isMobile={isMobile} />
       <DismissButton onDismiss={() => state.close()} />
     </FocusScope>
   );

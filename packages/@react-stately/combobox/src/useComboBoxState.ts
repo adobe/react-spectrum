@@ -220,7 +220,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     setFocused,
     selectedItem,
     collection: filteredCollection,
-    isOpen,
+    isOpen: true,
     inputValue,
     setInputValue
   };
