@@ -11,7 +11,7 @@
  */
 
 // @ts-ignore
-import {flushSync} from 'react-dom';
+import {flushSync as _flushSync} from 'react-dom';
 import {getScrollLeft} from './utils';
 import React, {
   CSSProperties,
@@ -26,6 +26,8 @@ import React, {
 import {Rect, Size} from '@react-stately/virtualizer';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
+
+const flushSync = _flushSync ?? ((cb) => cb());
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   contentSize: Size,
