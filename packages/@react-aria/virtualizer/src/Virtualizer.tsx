@@ -118,12 +118,13 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
       if (scrollToItem) {
         scrollToItem(focusedKey);
       } else {
-        virtualizer.scrollToItem(focusedKey, {duration: 0});
+        // TODO: Similar as the above, this should have offSetX (ref.current.offsetLeft) and offsetY right? In case the virtualizer is offset in a tray
+        virtualizer.scrollToItem(focusedKey, {duration: 0, offsetY: ref.current.offsetTop});
       }
     }
 
     lastFocusedKey.current = focusedKey;
-  }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem]);
+  }, [focusedKey, virtualizer.visibleRect.height, virtualizer, lastFocusedKey, scrollToItem, ref]);
 
   let isFocusWithin = useRef(false);
   let onFocus = useCallback((e: FocusEvent) => {
@@ -132,7 +133,8 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
     // We only want to do this if the collection itself is receiving focus, not a child
     // element, and we aren't moving focus to the collection from within (see below).
     if (e.target === ref.current && !isFocusWithin.current) {
-      virtualizer.scrollToItem(focusedKey, {duration: 0});
+      // TODO: similar as above, needs offsetX and offsetY?
+      virtualizer.scrollToItem(focusedKey, {duration: 0, offsetY: ref.current.offsetTop});
     }
 
     isFocusWithin.current = e.target !== ref.current;
