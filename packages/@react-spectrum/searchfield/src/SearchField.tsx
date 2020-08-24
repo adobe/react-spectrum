@@ -25,8 +25,8 @@ import {useSearchFieldState} from '@react-stately/searchfield';
 function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
   let defaultIcon = (
-    <Magnifier 
-      data-testid="searchicon" 
+    <Magnifier
+      data-testid="searchicon"
       UNSAFE_className={
         classNames(
           styles,
@@ -43,9 +43,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   } = props;
 
   let state = useSearchFieldState(props);
-  let textfieldRef = useRef<TextFieldRef>();
-  textfieldRef = ref || textfieldRef;
-  let {searchFieldProps, clearButtonProps} = useSearchField(props, state, unwrapInputRef(textfieldRef));
+  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
+  let {labelProps, inputProps, clearButtonProps} = useSearchField(props, state, inputRef);
 
   let clearButton = (
     <ClearButton
@@ -63,7 +62,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   return (
     <TextFieldBase
       {...otherProps}
-      {...searchFieldProps as any}
+      labelProps={labelProps}
+      inputProps={inputProps}
       UNSAFE_className={
         classNames(
           styles,
@@ -75,31 +75,17 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
           UNSAFE_className
         )
       }
-      inputClassName={
-        classNames(
-          styles,
-          'spectrum-Search-input'
-        )
-      }
-      ref={textfieldRef}
+      inputClassName={classNames(styles, 'spectrum-Search-input')}
+      ref={ref}
+      inputRef={inputRef}
       isDisabled={isDisabled}
       icon={icon}
-      onChange={state.setValue}
-      value={state.value}
-      wrapperChildren={state.value !== '' && clearButton} />
+      wrapperChildren={(state.value !== '' && !props.isReadOnly) && clearButton} />
   );
 }
 
 /**
- * SearchFields are decorated text inputs that allow users to submit text.
+ * A SearchField is a text field designed for searches.
  */
 let _SearchField = forwardRef(SearchField);
 export {_SearchField as SearchField};
-
-function unwrapInputRef(ref: RefObject<TextFieldRef>) {
-  return {
-    get current() {
-      return ref.current && ref.current.getInputElement();
-    }
-  };
-}

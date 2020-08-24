@@ -10,27 +10,45 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, PressEvents, StyleProps} from '@react-types/shared';
-import {ReactElement, ReactNode} from 'react';
+import {AriaLabelingProps, DOMProps, PressEvents, StyleProps} from '@react-types/shared';
+import {ItemProps} from '@react-types/shared';
+import {Key, ReactElement, ReactNode} from 'react';
 
 export interface BreadcrumbItemProps extends PressEvents {
+  /** Whether the breadcrumb item represents the current page. */
   isCurrent?: boolean,
-  isHeading?: boolean,
-  isDisabled?: boolean,
-  headingAriaLevel?: number,
+  /**
+   * The type of current location the breadcrumb item represents, if `isCurrent` is true.
+   * @default 'page'
+   */
   'aria-current'?: 'page' | 'step' | 'location' | 'date' | 'time' | boolean | 'true' | 'false',
+  /** Whether the breadcrumb item is disabled. */
+  isDisabled?: boolean,
+  /** The contents of the breadcrumb item. */
   children: ReactNode
 }
 
-export interface BreadcrumbsProps {
-  children: ReactElement<BreadcrumbItemProps> | ReactElement<BreadcrumbItemProps>[],
-  maxVisibleItems?: 'auto' | number
+export interface BreadcrumbsProps<T> {
+  /** The breadcrumb items. */
+  children: ReactElement<ItemProps<T>> | ReactElement<ItemProps<T>>[],
+  /** Whether the Breadcrumbs are disabled. */
+  isDisabled?: boolean,
+  /** Called when an item is acted upon (usually selection via press). */
+  onAction?: (key: Key) => void
 }
 
-export interface SpectrumBreadcrumbsProps extends BreadcrumbsProps, DOMProps, StyleProps {
+export interface AriaBreadcrumbsProps<T> extends BreadcrumbsProps<T>, DOMProps, AriaLabelingProps {}
+
+export interface SpectrumBreadcrumbsProps<T> extends AriaBreadcrumbsProps<T>, StyleProps {
+  /**
+   * Size of the Breadcrumbs including spacing and layout.
+   * @default 'L'
+   */
   size?: 'S' | 'M' | 'L',
-  isHeading?: boolean,
-  headingAriaLevel?: number,
+  /** Whether to always show the root item if the items are collapsed. */
   showRoot?: boolean,
-  isDisabled?: boolean
+  /**
+   * Whether to place the last Breadcrumb item onto a new line.
+   */
+  isMultiline?: boolean
 }

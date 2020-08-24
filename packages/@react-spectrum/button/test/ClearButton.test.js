@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import {ClearButton} from '../';
 import React from 'react';
-import {testSlotsAPI, triggerPress} from '@react-spectrum/test-utils';
+import {render} from '@testing-library/react';
+import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 
 // NOTE: ClearButton doesn't use Button.tsx as a base and thus differs from v2 ClearButton in a couple ways
@@ -23,12 +23,7 @@ describe('ClearButton', function () {
   let FakeIcon = (props) => <svg {...props}><path d="M 10,150 L 70,10 L 130,150 z" /></svg>;
 
   afterEach(() => {
-    cleanup();
     onPressSpy.mockClear();
-  });
-
-  it('uses slots api', () => {
-    testSlotsAPI(ClearButton);
   });
 
   it.each`
@@ -38,7 +33,7 @@ describe('ClearButton', function () {
   `('$Name handles defaults', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
-    let button = getByRole('button');
+    let button = getByRole('button', {hidden: true});
     triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
@@ -48,11 +43,10 @@ describe('ClearButton', function () {
     ${'v3 ClearButton'} | ${ClearButton} | ${{}}
     ${'v2 ClearButton'} | ${V2Button}    | ${{variant: 'clear'}}
   `('$Name allows custom props to be passed through to the button', function ({Component, props}) {
-    let {getByRole} = render(<Component {...props} data-foo="bar" aria-hidden>Click Me</Component>);
+    let {getByRole} = render(<Component {...props} data-foo="bar">Click Me</Component>);
 
-    let button = getByRole('button');
+    let button = getByRole('button', {hidden: true});
     expect(button).toHaveAttribute('data-foo', 'bar');
-    expect(button).toHaveAttribute('aria-hidden', 'true');
   });
 
   // Current v3 implementation that diverges from v2

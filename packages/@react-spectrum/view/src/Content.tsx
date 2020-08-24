@@ -10,29 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, ClearSlots, useSlotProps} from '@react-spectrum/utils';
-import {DOMProps, ViewStyleProps} from '@react-types/shared';
-import {filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-import {HTMLElement} from 'react-dom';
-import React, {ReactNode, RefObject} from 'react';
+import {ClearSlots, useDOMRef, useSlotProps} from '@react-spectrum/utils';
+import {ContentProps} from '@react-types/view';
+import {DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
+import React, {forwardRef} from 'react';
+import {useStyleProps} from '@react-spectrum/utils';
 
-export interface ContentProps extends DOMProps, ViewStyleProps {
-  children: ReactNode
-}
-
-export const Content = React.forwardRef((props: ContentProps, ref: RefObject<HTMLElement>) => {
+function Content(props: ContentProps, ref: DOMRef) {
   props = useSlotProps(props, 'content');
   let {
     children,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let domRef = useDOMRef(ref);
 
   return (
-    <section {...filterDOMProps(otherProps)} {...styleProps} className={classNames({}, styleProps.className)} ref={ref}>
+    <section {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       <ClearSlots>
         {children}
       </ClearSlots>
     </section>
   );
-});
+}
+
+/**
+ * Content represents the primary content within a Spectrum container.
+ */
+const _Content = forwardRef(Content);
+export {_Content as Content};

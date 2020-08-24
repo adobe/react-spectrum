@@ -10,24 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
+import {OverlayTriggerState} from '@react-stately/overlays';
 import {useId} from '@react-aria/utils';
 
 interface OverlayTriggerProps {
-  ref: RefObject<HTMLElement | null>,
-  type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid',
-  onClose?: () => void,
-  isOpen?: boolean
+  /** Type of overlay that is opened by the trigger. */
+  type: 'dialog' | 'menu' | 'listbox' | 'tree' | 'grid'
 }
 
 interface OverlayTriggerAria {
-  triggerAriaProps: HTMLAttributes<HTMLElement>,
-  overlayAriaProps: HTMLAttributes<HTMLElement>
+  /** Props for the trigger element. */
+  triggerProps: AriaButtonProps,
+
+  /** Props for the overlay container element. */
+  overlayProps: HTMLAttributes<HTMLElement>
 }
 
-export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAria {
-  let {ref, type, onClose, isOpen} = props;
-  
+/**
+ * Handles the behavior and accessibility for an overlay trigger, e.g. a button
+ * that opens a popover, menu, or other overlay that is positioned relative to the trigger.
+ */
+export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTriggerState, ref: RefObject<HTMLElement>): OverlayTriggerAria {
+  let {type} = props;
+  let {isOpen} = state;
+
   // When scrolling a parent scrollable region of the trigger (other than the body),
   // we hide the popover. Otherwise, its position would be incorrect.
   useEffect(() => {
@@ -38,24 +46,22 @@ export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAri
     let onScroll = (e: MouseEvent) => {
       // Ignore if scrolling an scrollable region outside the trigger's tree.
       let target = e.target as HTMLElement;
-      if (target === document.body || !ref.current || !target.contains(ref.current)) {
+      if (!ref.current || !target.contains(ref.current)) {
         return;
       }
 
-      if (onClose) {
-        onClose();
-      }
+      state.close();
     };
 
-    document.body.addEventListener('scroll', onScroll, true);
+    window.addEventListener('scroll', onScroll, true);
     return () => {
-      document.body.removeEventListener('scroll', onScroll, true);
+      window.removeEventListener('scroll', onScroll, true);
     };
-  }, [isOpen, onClose, ref]);
+  }, [isOpen, ref]);
 
   // Aria 1.1 supports multiple values for aria-haspopup other than just menus.
   // https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup
-  // However, we only add it for menus for now because screen readers often 
+  // However, we only add it for menus for now because screen readers often
   // announce it as a menu even for other values.
   let ariaHasPopup = undefined;
   if (type === 'menu') {
@@ -66,12 +72,12 @@ export function useOverlayTrigger(props: OverlayTriggerProps): OverlayTriggerAri
 
   let overlayId = useId();
   return {
-    triggerAriaProps: {
+    triggerProps: {
       'aria-haspopup': ariaHasPopup,
       'aria-expanded': isOpen,
       'aria-controls': isOpen ? overlayId : null
     },
-    overlayAriaProps: {
+    overlayProps: {
       id: overlayId
     }
   };

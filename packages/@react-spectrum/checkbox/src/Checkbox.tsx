@@ -11,7 +11,7 @@
  */
 
 import CheckmarkSmall from '@spectrum-icons/ui/CheckmarkSmall';
-import {classNames, filterDOMProps, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import DashSmall from '@spectrum-icons/ui/DashSmall';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -19,12 +19,12 @@ import React, {forwardRef, useRef} from 'react';
 import {SpectrumCheckboxProps} from '@react-types/checkbox';
 import styles from '@adobe/spectrum-css-temp/components/checkbox/vars.css';
 import {useCheckbox} from '@react-aria/checkbox';
+import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useToggleState} from '@react-stately/toggle';
 
 function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   props = useProviderProps(props);
-  props = useSlotProps(props);
   let {
     isIndeterminate = false,
     isEmphasized = false,
@@ -34,6 +34,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
@@ -46,23 +47,20 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
 
   return (
     <label
-      {...filterDOMProps(
-        otherProps,
-        {
-          'aria-label': false
-        }
-      )}
       {...styleProps}
+      {...hoverProps}
       ref={domRef}
       className={
         classNames(
           styles,
           'spectrum-Checkbox',
           {
+            'is-checked': state.isSelected,
             'is-indeterminate': isIndeterminate,
             'spectrum-Checkbox--quiet': !isEmphasized,
             'is-invalid': inputProps['aria-invalid'],
-            'is-disabled': isDisabled
+            'is-disabled': isDisabled,
+            'is-hovered': isHovered
           },
           styleProps.className
         )

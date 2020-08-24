@@ -13,12 +13,13 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
-import {Heading, Text} from '@react-spectrum/typography';
+import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
@@ -27,8 +28,6 @@ import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
 
 storiesOf('Dialog', module)
-// DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
-  .addParameters({chromaticProvider: {colorSchemes: ['light']}, chromatic: {pauseAnimationAtEnd: true}})
   .addParameters({providerSwitcher: {status: 'notice'}})
   .add(
     'default',
@@ -49,6 +48,10 @@ storiesOf('Dialog', module)
   .add(
     'with hero, isDimissable',
     () => renderHero({isDismissable: true})
+  )
+  .add(
+    'with footer',
+    () => renderFooter({})
   )
   .add(
     'small',
@@ -75,22 +78,25 @@ storiesOf('Dialog', module)
     () => renderWithThreeButtons({})
   )
   .add(
+    'three buttons, vertical orientation',
+    () => renderWithThreeButtonsVertical({})
+  )
+  .add(
     'cleared content',
     () => renderWithDividerInContent({})
   );
 
 storiesOf('Dialog/Alert', module)
-// DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
-  .addParameters({chromaticProvider: {colorSchemes: ['light']}, chromatic: {pauseAnimationAtEnd: true}})
   .add(
     'destructive',
     () => renderAlert({
       variant: 'destructive',
       title: 'Warning Destructive',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      onConfirm: action('confirm'),
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel')
     })
   )
@@ -100,9 +106,10 @@ storiesOf('Dialog/Alert', module)
       variant: 'confirmation',
       title: 'Confirmation Required',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      onConfirm: action('confirm'),
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel')
     })
   )
@@ -112,9 +119,10 @@ storiesOf('Dialog/Alert', module)
       variant: 'information',
       title: 'Informative Alert',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      onConfirm: action('confirm'),
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel')
     })
   )
@@ -124,9 +132,10 @@ storiesOf('Dialog/Alert', module)
       variant: 'error',
       title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      onConfirm: action('confirm'),
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel')
     })
   )
@@ -136,9 +145,10 @@ storiesOf('Dialog/Alert', module)
       variant: 'warning',
       title: 'This is a warning',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      onConfirm: action('confirm'),
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel')
     })
   )
@@ -148,11 +158,12 @@ storiesOf('Dialog/Alert', module)
       variant: 'error',
       title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      onConfirm: action('confirm'),
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel'),
-      isConfirmDisabled: true
+      isPrimaryActionDisabled: true
     })
   )
   .add(
@@ -161,12 +172,28 @@ storiesOf('Dialog/Alert', module)
       variant: 'error',
       title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      secondaryLabel: 'Secondary button',
-      onConfirm: action('confirm'),
+      secondaryActionLabel: 'Secondary button',
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel'),
       autoFocusButton: 'primary'
+    })
+  )
+  .add(
+    'secondary disabled',
+    () => renderAlert({
+      variant: 'error',
+      title: 'Error: Danger Will Robinson',
+      children: singleParagraph(),
+      primaryActionLabel: 'Accept',
+      secondaryActionLabel: 'Secondary button',
+      cancelLabel: 'Cancel',
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
+      onCancel: action('cancel'),
+      isSecondaryActionDisabled: true
     })
   )
   .add(
@@ -175,10 +202,11 @@ storiesOf('Dialog/Alert', module)
       variant: 'error',
       title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      secondaryLabel: 'Secondary button',
-      onConfirm: action('confirm'),
+      secondaryActionLabel: 'Secondary button',
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel'),
       autoFocusButton: 'secondary'
     })
@@ -189,10 +217,11 @@ storiesOf('Dialog/Alert', module)
       variant: 'error',
       title: 'Error: Danger Will Robinson',
       children: singleParagraph(),
-      primaryLabel: 'Accept',
+      primaryActionLabel: 'Accept',
       cancelLabel: 'Cancel',
-      secondaryLabel: 'Secondary button',
-      onConfirm: action('confirm'),
+      secondaryActionLabel: 'Secondary button',
+      onPrimaryAction: action('primary'),
+      onSecondaryAction: action('secondary'),
       onCancel: action('cancel'),
       autoFocusButton: 'cancel'
     })
@@ -205,14 +234,15 @@ function render({width = 'auto', isDismissable = undefined, ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading</Heading>
+            <Header>The Header</Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
             {!isDismissable &&
-              <Footer>
+              <ButtonGroup>
                 <Button variant="secondary" onPress={close}>Cancel</Button>
                 <Button variant="cta" onPress={close}>Confirm</Button>
-              </Footer>}
+              </ButtonGroup>}
           </Dialog>
         )}
       </DialogTrigger>
@@ -227,17 +257,42 @@ function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
-            <Header><Heading>The Heading</Heading></Header>
+            <Image slot="hero" alt="" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
+            <Heading>The Heading</Heading>
+            <Header>The Header</Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
             {!isDismissable &&
-              <Footer>
+              <ButtonGroup>
                 <Button variant="secondary" onPress={close}>Cancel</Button>
-                <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
-              </Footer>}
+                <Button variant="cta" onPress={close}>Confirm</Button>
+              </ButtonGroup>}
           </Dialog>
           )}
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderFooter({width = 'auto', isDismissable = undefined, ...props}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger isDismissable={isDismissable} defaultOpen>
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog {...props}>
+            <Heading>The Heading</Heading>
+            <Header>The Header</Header>
+            <Divider />
+            <Content>{singleParagraph()}</Content>
+            <Footer><Checkbox>I accept</Checkbox></Footer>
+            {!isDismissable &&
+            <ButtonGroup>
+              <Button variant="secondary" onPress={close}>Cancel</Button>
+              <Button variant="cta" onPress={close}>Confirm</Button>
+            </ButtonGroup>}
+          </Dialog>
+        )}
       </DialogTrigger>
     </div>
   );
@@ -248,7 +303,7 @@ function renderAlert({width = 'auto', ...props}: SpectrumAlertDialogProps) {
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
-        <AlertDialog {...props} onConfirm={props.onConfirm} onCancel={props.onCancel} />
+        <AlertDialog {...props} onPrimaryAction={action('primary')} onSecondaryAction={action('secondary')} onCancel={props.onCancel} />
       </DialogTrigger>
     </div>
   );
@@ -262,7 +317,8 @@ function renderWithForm({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading</Heading>
+            <Header>The Header</Header>
             <Divider />
             <Content>
               <Form>
@@ -281,10 +337,10 @@ function renderWithForm({width = 'auto', ...props}) {
                 </RadioGroup>
               </Form>
             </Content>
-            <Footer>
+            <ButtonGroup>
               <Button variant="secondary" onPress={close}>Cancel</Button>
               <Button variant="cta" onPress={close}>Confirm</Button>
-            </Footer>
+            </ButtonGroup>
           </Dialog>
         )}
       </DialogTrigger>
@@ -309,13 +365,13 @@ function renderLongContent({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading is also very long and demonstrates what happens if there is no Header</Heading>
             <Divider />
             <Content>{fiveParagraphs()}</Content>
-            <Footer>
+            <ButtonGroup>
               <Button variant="secondary" onPress={close}>Cancel</Button>
               <Button variant="cta" onPress={close} autoFocus>Confirm</Button>
-            </Footer>
+            </ButtonGroup>
           </Dialog>
         )}
       </DialogTrigger>
@@ -330,14 +386,37 @@ function renderWithThreeButtons({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading</Heading>
+            <Header>The Header</Header>
             <Divider />
             <Content>{singleParagraph()}</Content>
-            <Footer>
+            <ButtonGroup>
               <Button variant="secondary" onPress={close}>Secondary</Button>
               <Button variant="primary" onPress={close}>Primary</Button>
               <Button variant="cta" onPress={close} autoFocus>CTA</Button>
-            </Footer>
+            </ButtonGroup>
+          </Dialog>
+        )}
+      </DialogTrigger>
+    </div>
+  );
+}
+
+function renderWithThreeButtonsVertical({width = 'auto', ...props}) {
+  return (
+    <div style={{display: 'flex', width, margin: '100px 0'}}>
+      <DialogTrigger defaultOpen>
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog {...props}>
+            <Heading>The Heading</Heading>
+            <Divider />
+            <Content>{singleParagraph()}</Content>
+            <ButtonGroup orientation="vertical">
+              <Button variant="secondary" onPress={close}>Secondary</Button>
+              <Button variant="primary" onPress={close}>Primary</Button>
+              <Button variant="cta" onPress={close} autoFocus>CTA</Button>
+            </ButtonGroup>
           </Dialog>
         )}
       </DialogTrigger>
@@ -352,7 +431,8 @@ function renderWithDividerInContent({width = 'auto', ...props}) {
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog {...props}>
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading</Heading>
+            <Header>The Header</Header>
             <Divider />
             <Content>
               <Flex UNSAFE_style={{padding: '10px'}}>
@@ -361,10 +441,10 @@ function renderWithDividerInContent({width = 'auto', ...props}) {
                 <Text flexGrow={1} flexBasis={0}>Column number two. Eleifend quam adipiscing vitae proin sagittis nisl. Diam donec adipiscing tristique risus.</Text>
               </Flex>
             </Content>
-            <Footer>
+            <ButtonGroup>
               <Button variant="primary" onPress={close}>Primary</Button>
               <Button variant="cta" onPress={close} autoFocus>CTA</Button>
-            </Footer>
+            </ButtonGroup>
           </Dialog>
         )}
       </DialogTrigger>

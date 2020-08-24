@@ -11,13 +11,13 @@
  */
 
 import React from 'react';
-import {renderHook} from 'react-hooks-testing-library';
+import {renderHook} from '@testing-library/react-hooks';
 import {useTextField} from '../';
 
 describe('useTextField hook', () => {
   let renderTextFieldHook = (props) => {
     let {result} = renderHook(() => useTextField(props));
-    return result.current.textFieldProps;
+    return result.current.inputProps;
   };
 
   describe('should return textFieldProps', () => {
@@ -72,14 +72,6 @@ describe('useTextField hook', () => {
       expect(props['aria-invalid']).toBeUndefined();
     });
 
-    it('with appropriate props if autoFocus is defined', () => {
-      let props = renderTextFieldHook({autoFocus: true, 'aria-label': 'mandatory label'});
-      expect(props.autoFocus).toBeTruthy();
-
-      props = renderTextFieldHook({autoFocus: false, 'aria-label': 'mandatory label'});
-      expect(props.autoFocus).toBeFalsy();
-    });
-
     it('with an onChange that calls user specified onChange with appropriate values', () => {
       let onChange = jest.fn();
       let props = renderTextFieldHook({onChange, 'aria-label': 'mandatory label'});
@@ -93,6 +85,14 @@ describe('useTextField hook', () => {
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(mockEvent.target.value);
       onChange.mockClear();
+    });
+
+    it('without type prop if inputElementType is textarea', () => {
+      let type = 'search';
+      let pattern = /pattern/;
+      let props = renderTextFieldHook({type, pattern, inputElementType: 'textarea'});
+      expect(props.type).toBeUndefined();
+      expect(props.pattern).toBeUndefined();
     });
   });
 });

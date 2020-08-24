@@ -11,38 +11,40 @@
  */
 
 import {ButtonProps} from '@react-types/button';
-import {classNames, filterDOMProps, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import CrossSmall from '@spectrum-icons/ui/CrossSmall';
-import {FocusableRef} from '@react-types/shared';
+import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
+import {useHover} from '@react-aria/interactions';
 
-interface ClearButtonProps extends ButtonProps {
+interface ClearButtonProps extends ButtonProps, DOMProps, StyleProps {
   focusClassName?: string,
   variant?: 'overBackground'
 }
 
 function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
-  props = useSlotProps(props);
   let {
-    children = <CrossSmall />,
+    children = <CrossSmall UNSAFE_className={styles['spectrum-Icon']} />,
     focusClassName,
     variant,
     autoFocus,
+    isDisabled,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusClassName)} autoFocus={autoFocus}>
       <button
-        {...filterDOMProps(otherProps)}
         {...styleProps}
-        {...buttonProps}
+        {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
         className={
           classNames(
@@ -50,7 +52,8 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
             'spectrum-ClearButton',
             {
               [`spectrum-ClearButton--${variant}`]: variant,
-              'is-active': isPressed
+              'is-active': isPressed,
+              'is-hovered': isHovered
             },
             styleProps.className
           )

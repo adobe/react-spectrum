@@ -24,8 +24,12 @@
     // if 'target' is updated, this should be updated as well
     "lib": [
       "es6",
-      "dom"
-    ]
+      "dom",
+      "es2016.array.include",
+      "es2017.object",
+      "es2017.intl"
+    ],
+    "skipLibCheck": false
   },
   "include": [
     "packages"

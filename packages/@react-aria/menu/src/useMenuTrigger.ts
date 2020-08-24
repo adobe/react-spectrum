@@ -10,41 +10,40 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
-import {MenuTriggerProps, MenuTriggerState} from '@react-types/menu';
-import {PressProps} from '@react-aria/interactions';
+import {AriaButtonProps} from '@react-types/button';
+import {HTMLAttributes, RefObject} from 'react';
+import {MenuTriggerState} from '@react-stately/menu';
 import {useId} from '@react-aria/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
-interface MenuTriggerAria {
-  menuTriggerProps: AllHTMLAttributes<HTMLElement> & PressProps,
-  menuProps: AllHTMLAttributes<HTMLElement>
+interface MenuTriggerAriaProps {
+  /** The type of menu that the menu trigger opens. */
+  type?: 'menu' | 'listbox'
 }
 
-export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState): MenuTriggerAria {
+interface MenuTriggerAria {
+  /** Props for the menu trigger element. */
+  menuTriggerProps: AriaButtonProps,
+
+  /** Props for the menu. */
+  menuProps: HTMLAttributes<HTMLElement>
+}
+
+/**
+ * Provides the behavior and accessibility implementation for a menu trigger.
+ * @param props - Props for the menu trigger.
+ * @param state - State for the menu trigger.
+ */
+export function useMenuTrigger(props: MenuTriggerAriaProps, state: MenuTriggerState, ref: RefObject<HTMLElement>): MenuTriggerAria {
   let {
-    ref,
-    type = 'menu' as MenuTriggerProps['type'],
-    isDisabled
+    type = 'menu' as MenuTriggerAriaProps['type']
   } = props;
 
   let menuTriggerId = useId();
-  let {triggerAriaProps, overlayAriaProps} = useOverlayTrigger({
-    ref,
-    type,
-    onClose: () => state.setOpen(false),
-    isOpen: state.isOpen
-  });
-
-  let onPress = () => {
-    if (!isDisabled) {
-      state.setFocusStrategy('first');
-      state.setOpen(!state.isOpen);
-    }
-  };
+  let {triggerProps, overlayProps} = useOverlayTrigger({type}, state, ref);
 
   let onKeyDown = (e) => {
-    if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented || isDisabled) {
+    if ((typeof e.isDefaultPrevented === 'function' && e.isDefaultPrevented()) || e.defaultPrevented) {
       return;
     }
 
@@ -52,15 +51,11 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
       switch (e.key) {
         case 'ArrowDown':
           e.preventDefault();
-          e.stopPropagation();
-          onPress();
+          state.toggle('first');
           break;
         case 'ArrowUp':
           e.preventDefault();
-          e.stopPropagation();
-          onPress();
-          // If no menu item is selected, focus last item when opening menu with ArrowDown
-          state.setFocusStrategy('last');
+          state.toggle('last');
           break;
       }
     }
@@ -68,13 +63,25 @@ export function useMenuTrigger(props: MenuTriggerProps, state: MenuTriggerState)
 
   return {
     menuTriggerProps: {
-      ...triggerAriaProps,
+      ...triggerProps,
       id: menuTriggerId,
-      onPressStart: onPress,
+      onPressStart(e) {
+        // For consistency with native, open the menu on mouse/key down, but touch up.
+        if (e.pointerType !== 'touch') {
+          // If opened with a keyboard or screen reader, auto focus the first item.
+          // Otherwise, the menu itself will be focused.
+          state.toggle(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
+        }
+      },
+      onPress(e) {
+        if (e.pointerType === 'touch') {
+          state.toggle();
+        }
+      },
       onKeyDown
     },
     menuProps: {
-      ...overlayAriaProps,
+      ...overlayProps,
       'aria-labelledby': menuTriggerId
     }
   };

@@ -10,22 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/button';
-import ChevronDownSmall from '@spectrum-icons/ui/ChevronDownSmall';
-import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall';
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import {HTMLElement} from 'react-dom';
 import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
-import React, {RefObject} from 'react';
+import React, {RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
+import StepButton from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProviderProps} from '@react-spectrum/provider';
 
-export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, ref: RefObject<HTMLElement>) => {
+
+export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElement>) => {
   props = useProviderProps(props);
   let {
     // formatOptions,
@@ -37,12 +35,14 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
   } = props;
   let {styleProps} = useStyleProps(props);
   let state = useNumberFieldState(otherProps);
+  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
   let {
     numberFieldProps,
+    labelProps,
     inputFieldProps,
     incrementButtonProps,
     decrementButtonProps
-  } = useNumberField(props, state);
+  } = useNumberField(props, state, inputRef);
 
   let className = classNames(
     inputgroupStyles,
@@ -55,7 +55,10 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
     classNames(
       stepperStyle,
       'spectrum-Stepper',
-      {'spectrum-Stepper--quiet': isQuiet},
+      {
+        'spectrum-Stepper--quiet': isQuiet,
+        'is-invalid': state.validationState === 'invalid'
+      },
       styleProps.className
     )
   );
@@ -67,47 +70,22 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
       focusRingClass={classNames(inputgroupStyles, 'focus-ring', classNames(stepperStyle, 'focus-ring'))}
       autoFocus={autoFocus}>
       <div
-        {...filterDOMProps(props)}
         {...styleProps}
         {...numberFieldProps}
         ref={ref}
         className={className}>
         <TextFieldBase
           isQuiet={isQuiet}
-          autoFocus={autoFocus}
           inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
-          {...inputFieldProps as any}
-          value={state.value}
-          validationState={state.validationState}
-          onChange={state.setValue} />
+          inputRef={inputRef}
+          labelProps={labelProps}
+          inputProps={inputFieldProps} />
         {showStepper &&
         <span
           className={classNames(stepperStyle, 'spectrum-Stepper-buttons')}
           role="presentation">
-          <ActionButton
-            UNSAFE_className={
-              classNames(
-                stepperStyle,
-                'spectrum-Stepper-stepUp',
-                'spectrum-ActionButton'
-              )
-            }
-            {...incrementButtonProps}
-            isQuiet={isQuiet}>
-            <ChevronUpSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-stepUpIcon')} />
-          </ActionButton>
-          <ActionButton
-            UNSAFE_className={
-              classNames(
-                stepperStyle,
-                'spectrum-Stepper-stepDown',
-                'spectrum-ActionButton'
-              )
-            }
-            {...decrementButtonProps}
-            isQuiet={isQuiet}>
-            <ChevronDownSmall UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-stepDownIcon')} />
-          </ActionButton>
+          <StepButton direction="up" isQuiet={isQuiet} {...incrementButtonProps} />
+          <StepButton direction="down" isQuiet={isQuiet} {...decrementButtonProps} />
         </span>
         }
       </div>

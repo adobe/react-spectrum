@@ -10,19 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import React, {forwardRef, useRef} from 'react';
 import {SpectrumSwitchProps} from '@react-types/switch';
 import styles from '@adobe/spectrum-css-temp/components/toggle/vars.css';
+import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSwitch} from '@react-aria/switch';
 import {useToggleState} from '@react-stately/toggle';
 
 function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>) {
   props = useProviderProps(props);
-  props = useSlotProps(props);
   let {
     isEmphasized = false,
     isDisabled = false,
@@ -31,21 +31,18 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
-  let state = useToggleState(props);
-  let {inputProps} = useSwitch(props, state);
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
+  let state = useToggleState(props);
+  let {inputProps} = useSwitch(props, state, inputRef);
+
 
   return (
     <label
-      {...filterDOMProps(
-        otherProps,
-        {
-          'aria-label': false
-        }
-      )}
       {...styleProps}
+      {...hoverProps}
       ref={domRef}
       className={
         classNames(
@@ -53,7 +50,8 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
           'spectrum-ToggleSwitch',
           {
             'spectrum-ToggleSwitch--quiet': !isEmphasized,
-            'is-disabled': isDisabled
+            'is-disabled': isDisabled,
+            'is-hovered': isHovered
           },
           styleProps.className
         )

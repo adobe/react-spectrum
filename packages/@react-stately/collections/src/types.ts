@@ -12,81 +12,20 @@
 
 import {ItemRenderer} from '@react-types/shared';
 import {Key, ReactElement, ReactNode} from 'react';
-import {Rect} from './Rect';
-import {ReusableView} from './ReusableView';
-import {Size} from './Size';
-import {Transaction} from './Transaction';
-
-export interface ItemStates {
-  isSelected?: boolean,
-  isExpanded?: boolean,
-  isDisabled?: boolean,
-  isFocused?: boolean
-}
-
-export interface Node<T> extends ItemStates {
-  type: 'section' | 'item',
-  key: Key,
-  value: T,
-  level: number,
-  hasChildNodes: boolean,
-  childNodes: Iterable<Node<T>>,
-  rendered: ReactNode,
-  textValue: string,
-  index?: number,
-  wrapper?: ((element: ReactElement) => ReactElement) | void,
-  parentKey?: Key,
-  prevKey?: Key,
-  nextKey?: Key
-}
 
 export interface PartialNode<T> {
-  type?: 'section' | 'item',
+  type?: string,
   key?: Key,
   value?: T,
   element?: ReactElement,
-  wrapper?: ((element: ReactElement) => ReactElement) | void,
+  wrapper?: (element: ReactElement) => ReactElement,
   rendered?: ReactNode,
   textValue?: string,
+  'aria-label'?: string,
+  index?: number,
   renderer?: ItemRenderer<T>,
   hasChildNodes?: boolean,
-  childNodes?: () => IterableIterator<PartialNode<T>>
-}
-
-export interface Collection<T> extends Iterable<T> {
-  readonly size: number;
-  getKeys(): Iterable<Key>,
-  getItem(key: Key): T,
-  getKeyBefore(key: Key): Key | null,
-  getKeyAfter(key: Key): Key | null,
-  getFirstKey(): Key | null,
-  getLastKey(): Key | null
-}
-
-export interface InvalidationContext<T extends object, V> {
-  contentChanged?: boolean,
-  offsetChanged?: boolean,
-  sizeChanged?: boolean,
-  animated?: boolean,
-  beforeLayout?(): void,
-  afterLayout?(): void,
-  afterAnimation?(): void,
-  transaction?: Transaction<T, V>
-}
-
-export interface CollectionManagerDelegate<T extends object, V, W> {
-  setVisibleViews(views: W[]): void,
-  setContentSize(size: Size): void,
-  setVisibleRect(rect: Rect): void,
-  getType?(content: T): string,
-  renderView(type: string, content: T): V,
-  renderWrapper(
-    parent: ReusableView<T, V> | null,
-    reusableView: ReusableView<T, V>,
-    children: ReusableView<T, V>[],
-    renderChildren: (views: ReusableView<T, V>[]) => W[]
-  ): W,
-  beginAnimations(): void,
-  endAnimations(): void,
-  getScrollAnchor?(rect: Rect): Key
+  childNodes?: () => IterableIterator<PartialNode<T>>,
+  props?: any,
+  shouldInvalidate?: (context: unknown) => boolean
 }

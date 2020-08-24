@@ -10,26 +10,72 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes} from 'react';
+import {AriaListBoxProps} from '@react-types/listbox';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {HTMLAttributes, ReactNode, RefObject} from 'react';
+import {KeyboardDelegate} from '@react-types/shared';
+import {listIds} from './utils';
 import {ListState} from '@react-stately/list';
+import {useId} from '@react-aria/utils';
+import {useLabel} from '@react-aria/label';
 import {useSelectableList} from '@react-aria/selection';
 
 interface ListBoxAria {
-  listBoxProps: HTMLAttributes<HTMLElement>
+  /** Props for the listbox element. */
+  listBoxProps: HTMLAttributes<HTMLElement>,
+  /** Props for the listbox's visual label element (if any). */
+  labelProps: HTMLAttributes<HTMLElement>
 }
 
-export function useListBox<T>(props, state: ListState<T>): ListBoxAria {
+interface AriaListBoxOptions<T> extends AriaListBoxProps<T> {
+  /** Whether the listbox uses virtual scrolling. */
+  isVirtualized?: boolean,
+
+  /**
+   * An optional keyboard delegate implementation for type to select,
+   * to override the default.
+   */
+  keyboardDelegate?: KeyboardDelegate,
+
+  /**
+   * An optional visual label for the listbox.
+   */
+  label?: ReactNode
+}
+
+/**
+ * Provides the behavior and accessibility implementation for a listbox component.
+ * A listbox displays a list of options and allows a user to select one or more of them.
+ * @param props - Props for the listbox.
+ * @param state - State for the listbox, as returned by `useListState`.
+ */
+export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): ListBoxAria {
+  let domProps = filterDOMProps(props, {labelable: true});
   let {listProps} = useSelectableList({
     ...props,
+    ref,
     selectionManager: state.selectionManager,
-    collection: state.collection
+    collection: state.collection,
+    disabledKeys: state.disabledKeys
+  });
+
+  let id = useId(props.id);
+  listIds.set(state, id);
+
+  let {labelProps, fieldProps} = useLabel({
+    ...props,
+    id,
+    // listbox is not an HTML input element so it
+    // shouldn't be labeled by a <label> element.
+    labelElementType: 'span'
   });
 
   return {
-    listBoxProps: {
+    labelProps,
+    listBoxProps: mergeProps(domProps, {
       role: 'listbox',
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
-      ...listProps
-    }
+      ...mergeProps(fieldProps, listProps)
+    })
   };
 }

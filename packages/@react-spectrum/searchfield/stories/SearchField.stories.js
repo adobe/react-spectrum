@@ -51,6 +51,11 @@ storiesOf('SearchField', module)
     {info}
   )
   .add(
+    'isReadOnly',
+    () => renderSearchLandmark(render({defaultValue: 'React', isReadOnly: true})),
+    {info}
+  )
+  .add(
     'isRequired: true',
     () => render({isRequired: true})
   )

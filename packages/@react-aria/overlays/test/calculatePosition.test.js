@@ -37,6 +37,9 @@ const containerDimensions = {
   left: 0
 };
 
+// Reset JSDom's default margin on the body
+document.body.style.margin = 0;
+
 function createElementWithDimensions(elemName, dimensions, margins) {
   margins = margins || {};
   let elem = document.createElement(elemName);
@@ -63,6 +66,9 @@ function createElementWithDimensions(elemName, dimensions, margins) {
     right: dimensions.right || 0,
     bottom: dimensions.bottom || 0
   });
+
+  jest.spyOn(elem, 'scrollWidth', 'get').mockImplementation(() => dimensions.width || 0);
+  jest.spyOn(elem, 'scrollHeight', 'get').mockImplementation(() => dimensions.height || 0);
 
   return elem;
 }
@@ -95,12 +101,28 @@ const PROVIDER_OFFSET = 50;
 describe('calculatePosition', function () {
   function checkPositionCommon(title, expected, placement, targetDimension, boundaryDimensions, offset, crossOffset, flip, providerOffset = 0) {
     const placementAxis = placement.split(' ')[0];
+
+    // The tests are all based on top/left positioning. Convert to bottom/right positioning if needed.
+    let pos = {};
+    if ((placementAxis === 'left' && !flip) || (placementAxis === 'right' && flip)) {
+      pos.right = boundaryDimensions.width - (expected[0] + overlaySize.width);
+      pos.top = expected[1];
+    } else if ((placementAxis === 'right' && !flip) || (placementAxis === 'left' && flip)) {
+      pos.left = expected[0];
+      pos.top = expected[1];
+    } else if (placementAxis === 'top') {
+      pos.left = expected[0];
+      pos.bottom = boundaryDimensions.height - providerOffset - (expected[1] + overlaySize.height);
+    } else if (placementAxis === 'bottom') {
+      pos.left = expected[0];
+      pos.top = expected[1];
+    }
+    
     const expectedPosition = {
-      positionLeft: expected[0],
-      positionTop: expected[1],
+      position: pos,
       arrowOffsetLeft: expected[2],
       arrowOffsetTop: expected[3],
-      maxHeight: expected[4] - providerOffset,
+      maxHeight: expected[4] - (placementAxis !== 'top' ? providerOffset : 0),
       placement: flip ? FLIPPED_DIRECTION[placementAxis] : placementAxis
     };
 
@@ -121,8 +143,19 @@ describe('calculatePosition', function () {
     });
     parentElement.appendChild(boundariesElem);
 
+
     it(title, function () {
-      const result = calculatePosition(placement, overlay, target, container, 50, flip, boundariesElem, offset, crossOffset);
+      const result = calculatePosition({
+        placement,
+        overlayNode: overlay,
+        targetNode: target,
+        scrollNode: overlay,
+        padding: 50,
+        shouldFlip: flip,
+        boundaryElement: boundariesElem,
+        offset,
+        crossOffset
+      });
       expect(result).toEqual(expectedPosition);
       document.documentElement.removeChild(parentElement);
     });
@@ -162,7 +195,7 @@ describe('calculatePosition', function () {
       offsetBefore: [-200, 50, undefined, 0, 500],
       offsetAfter: [300, 350, undefined, 200, 200],
       crossAxisOffset: [50, 210, undefined, 90, 340],
-      mainAxisOffset: [60, 200, undefined, 100, 350]
+      mainAxisOffset: [40, 200, undefined, 100, 350]
     },
     {
       placement: 'left top',
@@ -170,7 +203,7 @@ describe('calculatePosition', function () {
       offsetBefore: [-200, 50, undefined, 0, 500],
       offsetAfter: [300, 350, undefined, 200, 200],
       crossAxisOffset: [50, 250, undefined, 50, 300],
-      mainAxisOffset: [60, 250, undefined, 50, 300]
+      mainAxisOffset: [40, 250, undefined, 50, 300]
     },
     {
       placement: 'left bottom',
@@ -178,31 +211,31 @@ describe('calculatePosition', function () {
       offsetBefore: [-200, 50, undefined, 0, 500],
       offsetAfter: [300, 350, undefined, 200, 200],
       crossAxisOffset: [50, 160, undefined, 140, 390],
-      mainAxisOffset: [60, 150, undefined, 150, 400]
+      mainAxisOffset: [40, 150, undefined, 150, 400]
     },
     {
       placement: 'top',
-      noOffset: [200, 50, 100, undefined, 500],
-      offsetBefore: [50, -200, 0, undefined, 750],
-      offsetAfter: [350, 300, 200, undefined, 250],
-      mainAxisOffset: [200, 60, 100, undefined, 490],
-      crossAxisOffset: [210, 50, 90, undefined, 500]
+      noOffset: [200, 50, 100, undefined, 200],
+      offsetBefore: [50, -200, 0, undefined, 0],
+      offsetAfter: [350, 300, 200, undefined, 450],
+      mainAxisOffset: [200, 40, 100, undefined, 200],
+      crossAxisOffset: [210, 50, 90, undefined, 200]
     },
     {
       placement: 'top left',
-      noOffset: [250, 50, 50, undefined, 500],
-      offsetBefore: [50, -200, 0, undefined, 750],
-      offsetAfter: [350, 300, 200, undefined, 250],
-      mainAxisOffset: [250, 60, 50, undefined, 490],
-      crossAxisOffset: [250, 50, 50, undefined, 500]
+      noOffset: [250, 50, 50, undefined, 200],
+      offsetBefore: [50, -200, 0, undefined, 0],
+      offsetAfter: [350, 300, 200, undefined, 450],
+      mainAxisOffset: [250, 40, 50, undefined, 200],
+      crossAxisOffset: [250, 50, 50, undefined, 200]
     },
     {
       placement: 'top right',
-      noOffset: [150, 50, 150, undefined, 500],
-      offsetBefore: [50, -200, 0, undefined, 750],
-      offsetAfter: [350, 300, 200, undefined, 250],
-      mainAxisOffset: [150, 60, 150, undefined, 490],
-      crossAxisOffset: [160, 50, 140, undefined, 500]
+      noOffset: [150, 50, 150, undefined, 200],
+      offsetBefore: [50, -200, 0, undefined, 0],
+      offsetAfter: [350, 300, 200, undefined, 450],
+      mainAxisOffset: [150, 40, 150, undefined, 200],
+      crossAxisOffset: [160, 50, 140, undefined, 200]
     },
     {
       placement: 'bottom',
@@ -301,6 +334,12 @@ describe('calculatePosition', function () {
       // testCases[9] is for right placement
       'left', getTargetDimension({left: 0, top: 0}), testCases[9].offsetBefore, 0, 0, true
     );
+
+    describe('positive offset', function () {
+      checkPosition(
+        'left', getTargetDimension({left: 0, top: 250}), [110, 200, undefined, 100, 350], 10, 0, true
+      );
+    });
   });
 
   describe('overlay smaller than target aligns in center', function () {
@@ -318,7 +357,17 @@ describe('calculatePosition', function () {
       target.style = 'margin:20px';
       document.body.appendChild(target);
 
-      const {positionTop} = calculatePosition('bottom', overlayNode, target, container, 0, false, 'container', 0, 0);
+      let {position: {top: positionTop}} = calculatePosition({
+        placement: 'bottom',
+        overlayNode,
+        targetNode: target,
+        scrollNode: overlayNode,
+        padding: 0,
+        shouldFlip: false,
+        boundaryElement: container,
+        offset: 0,
+        crossOffset: 0
+      });
       expect(positionTop).toBe(0);
 
       document.body.removeChild(target);

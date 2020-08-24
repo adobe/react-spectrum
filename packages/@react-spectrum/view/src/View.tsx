@@ -10,30 +10,37 @@
  * governing permissions and limitations under the License.
  */
 
-import {filterDOMProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
-import {HTMLElement} from 'react-dom';
-import React, {HTMLAttributes, JSXElementConstructor, ReactNode, RefObject} from 'react';
-import {ViewStyleProps} from '@react-types/shared';
+import {ClearSlots, useDOMRef, useSlotProps, useStyleProps, viewStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {filterDOMProps} from '@react-aria/utils';
+import React, {forwardRef} from 'react';
+import {ViewProps} from '@react-types/view';
 
-export interface ViewProps extends ViewStyleProps, Omit<HTMLAttributes<HTMLElement>, 'className' | 'style'> {
-  elementType?: string | JSXElementConstructor<any>,
-  children?: ReactNode
-}
-
-export const View = React.forwardRef((props: ViewProps, ref: RefObject<HTMLElement>) => {
+function View(props: ViewProps, ref: DOMRef) {
+  props = useSlotProps(props);
   let {
     elementType: ElementType = 'div',
     children,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(props, viewStyleProps);
+  let domRef = useDOMRef(ref);
 
   return (
     <ElementType
       {...filterDOMProps(otherProps)}
       {...styleProps}
-      ref={ref}>
-      {children}
+      ref={domRef}>
+      <ClearSlots>
+        {children}
+      </ClearSlots>
     </ElementType>
   );
-});
+}
+
+/**
+ * View is a general purpose container with no specific semantics that can be used for custom styling purposes.
+ * It supports Spectrum style props to ensure consistency with other Spectrum components.
+ */
+const _View = forwardRef(View);
+export {_View as View};

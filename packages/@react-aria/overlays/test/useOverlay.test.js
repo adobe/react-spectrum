@@ -10,19 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import React, {useRef} from 'react';
 import {useOverlay} from '../';
 
 function Example(props) {
   let ref = useRef();
-  let {overlayProps} = useOverlay({ref, ...props});
+  let {overlayProps} = useOverlay(props, ref);
   return <div ref={ref} {...overlayProps} data-testid={props['data-testid'] || 'test'}>{props.children}</div>;
 }
 
 describe('useOverlay', function () {
-  afterEach(cleanup);
-
   it('should not focus the overlay if a child is focused', function () {
     let res = render(
       <Example isOpen>
@@ -40,6 +38,22 @@ describe('useOverlay', function () {
     fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('should hide the overlay when clicking outside if shouldCloseOnInteractOutside returns true', function () {
+    let onClose = jest.fn();
+    render(<Example isOpen onClose={onClose} isDismissable shouldCloseOnInteractOutside={target => target === document.body} />);
+    fireEvent.mouseDown(document.body);
+    fireEvent.mouseUp(document.body);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not hide the overlay when clicking outside if shouldCloseOnInteractOutside returns false', function () {
+    let onClose = jest.fn();
+    render(<Example isOpen onClose={onClose} isDismissable shouldCloseOnInteractOutside={target => target !== document.body} />);
+    fireEvent.mouseDown(document.body);
+    fireEvent.mouseUp(document.body);
+    expect(onClose).toHaveBeenCalledTimes(0);
   });
 
   it('should not hide the overlay when clicking outside if isDismissable is false', function () {

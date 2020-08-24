@@ -10,18 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import {ProgressBar} from '../';
 import React from 'react';
+import {render} from '@testing-library/react';
 import V2ProgressBar from '@react/react-spectrum/Progress';
 
 
 describe('ProgressBar', function () {
-
-  afterEach(() => {
-    cleanup();
-  });
-
   it.each`
     Name               | Component
     ${'ProgressBar'}   | ${ProgressBar}
@@ -96,5 +91,11 @@ describe('ProgressBar', function () {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     render(<ProgressBar value={25} />);
     expect(spyWarn).toHaveBeenCalledWith('If you do not provide a visible label via children, you must specify an aria-label or aria-labelledby attribute for accessibility');
+  });
+
+  it('supports custom DOM props', function () {
+    let {getByTestId} = render(<ProgressBar label="Meter" data-testid="test" />);
+    let progressBar = getByTestId('test');
+    expect(progressBar).toBeInTheDocument();
   });
 });

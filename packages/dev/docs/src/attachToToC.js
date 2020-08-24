@@ -17,28 +17,35 @@ export function attachToToC() {
   let headers = [];
   for (let link of tocLinks) {
     let headerId = link.href.split('#').pop();
-    let header = document.querySelector(`#${headerId}`);
+    let header = document.getElementById(headerId);
     headers.push({link, header});
   }
 
   function updateToc() {
-    // this needs to be improved a little but the math hurts my head right now
-    // right now it's impossible to select the last section if the last two heights combined are smaller than the viewport height
-    headers.some((header, i) => {
-      if ((header.header.offsetTop + header.header.getBoundingClientRect().height) > document.documentElement.scrollTop) {
-        let currentSelection = document.querySelectorAll(`#toc .${sideNavStyles['is-selected']}`);
-        if (currentSelection) {
-          currentSelection.forEach(node => node.classList.remove(sideNavStyles['is-selected']));
+    requestAnimationFrame(() => {
+      // this needs to be improved a little but the math hurts my head right now
+      // right now it's impossible to select the last section if the last two heights combined are smaller than the viewport height
+      headers.some((header, i) => {
+        if ((header.header.offsetTop + header.header.getBoundingClientRect().height) > document.documentElement.scrollTop) {
+          let currentSelection = document.querySelectorAll(`#toc .${sideNavStyles['is-selected']}`);
+          if (currentSelection) {
+            currentSelection.forEach(node => {
+              node.classList.remove(sideNavStyles['is-selected']);
+              const link = node.querySelector('[aria-current]');
+              if (link) {
+                link.removeAttribute('aria-current');
+              }
+            });
+          }
+          header.link.parentElement.classList.add(sideNavStyles['is-selected']);
+          header.link.setAttribute('aria-current', 'location');
+          return true;
         }
-        header.link.parentElement.classList.add(sideNavStyles['is-selected']);
-        return true;
-      }
+      });
     });
   }
 
   updateToc();
 
-  document.addEventListener('scroll', () => {
-    updateToc();
-  });
+  document.addEventListener('scroll', updateToc);
 }

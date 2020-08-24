@@ -11,15 +11,16 @@
  */
 
 import {ButtonProps} from '@react-types/button';
-import {classNames, filterDOMProps, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {FocusableRef} from '@react-types/shared';
+import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMProps, FocusableRef, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React from 'react';
+import React, {RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {useButton} from '@react-aria/button';
+import {useHover} from '@react-aria/interactions';
 
-interface FieldButtonProps extends ButtonProps {
+interface FieldButtonProps extends ButtonProps, DOMProps, StyleProps {
   isQuiet?: boolean,
   isActive?: boolean,
   validationState?: 'valid' | 'invalid'
@@ -27,9 +28,7 @@ interface FieldButtonProps extends ButtonProps {
 
 // @private
 function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
-  props = useSlotProps(props);
   let {
-    elementType: ElementType = 'button',
     isQuiet,
     isDisabled,
     validationState,
@@ -38,14 +37,15 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
     isActive,
     ...otherProps
   } = props;
-  let domRef = useFocusableRef(ref);
+  let domRef = useFocusableRef(ref) as RefObject<HTMLButtonElement>;
   let {buttonProps, isPressed} = useButton(props, domRef);
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
-      <ElementType
-        {...mergeProps(filterDOMProps(otherProps), buttonProps)}
+      <button
+        {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
         className={
           classNames(
@@ -55,7 +55,8 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
               'spectrum-FieldButton--quiet': isQuiet,
               'is-active': isActive || isPressed,
               'is-disabled': isDisabled,
-              'is-invalid': validationState === 'invalid'
+              'is-invalid': validationState === 'invalid',
+              'is-hovered': isHovered
             },
             styleProps.className
           )
@@ -69,7 +70,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
           }}>
           {children}
         </SlotProvider>
-      </ElementType>
+      </button>
     </FocusRing>
   );
 }

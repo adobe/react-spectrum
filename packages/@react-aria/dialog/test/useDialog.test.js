@@ -10,19 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
 import React, {useRef} from 'react';
+import {render} from '@testing-library/react';
 import {useDialog} from '../';
 
 function Example(props) {
   let ref = useRef();
-  let {dialogProps} = useDialog({ref, ...props});
+  let {dialogProps} = useDialog(props, ref);
   return <div ref={ref} {...dialogProps} data-testid="test">{props.children}</div>;
 }
 
 describe('useDialog', function () {
-  afterEach(cleanup);
-
   it('should have role="dialog" by default', function () {
     let res = render(<Example />);
     let el = res.getByTestId('test');

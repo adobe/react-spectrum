@@ -11,7 +11,7 @@
  */
 
 import {Alignment, DOMProps, LabelPosition, NecessityIndicator, StyleProps} from '@react-types/shared';
-import {ElementType, ReactNode} from 'react';
+import {ElementType, HTMLAttributes, ReactNode} from 'react';
 
 export interface LabelProps {
   children?: ReactNode,
@@ -20,9 +20,10 @@ export interface LabelProps {
   elementType?: ElementType
 }
 
-export interface SpectrumLabelProps extends LabelProps, DOMProps, StyleProps {
+export interface SpectrumLabelProps extends LabelProps, DOMProps, StyleProps, HTMLAttributes<HTMLElement> {
   labelPosition?: LabelPosition, // default top
   labelAlign?: Alignment, // default start
   isRequired?: boolean,
-  necessityIndicator?: NecessityIndicator // default icon
+  necessityIndicator?: NecessityIndicator, // default icon
+  includeNecessityIndicatorInAccessibilityName?: boolean
 }

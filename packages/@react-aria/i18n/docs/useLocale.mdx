@@ -1,0 +1,63 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/i18n';
+import {ClassAPI, HeaderInfo, TypeContext, FunctionAPI, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-aria/i18n/package.json';
+
+---
+category: Internationalization
+keywords: [locale, i18n, aria, localization]
+---
+
+# useLocale
+
+<p>{docs.exports.useLocale.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useLocale']} />
+
+## Introduction
+
+`useLocale` allows components to access the current locale and interface layout direction.
+By default, this is automatically detected based on the browser or system language, but it can
+be overridden by using the [I18nProvider](I18nProvider.html) at the root of your app.
+
+`useLocale` should be used in the root of your app to define the
+[lang](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/lang)
+and [dir](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/dir) attributes
+so that the browser knows which language and direction the user interface should be rendered in.
+
+## API
+
+<FunctionAPI function={docs.exports.useLocale} links={docs.links} />
+
+## Interface
+
+<ClassAPI class={docs.links[docs.exports.useLocale.return.id]} links={docs.links} />
+
+## Example
+
+```tsx
+import {useLocale} from '@react-aria/i18n';
+
+function YourApp() {
+  let {locale, direction} = useLocale();
+
+  return (
+    <div lang={locale} dir={direction}>
+      {/* your app here */}
+    </div>
+  );
+}
+```

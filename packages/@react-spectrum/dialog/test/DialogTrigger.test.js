@@ -10,23 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
 import {ActionButton, Button} from '@react-spectrum/button';
-import {cleanup, fireEvent, render, waitForDomChange} from '@testing-library/react';
 import {Dialog, DialogTrigger} from '../';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 describe('DialogTrigger', function () {
   let matchMedia;
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+  afterAll(() => {
+    jest.useRealTimers();
+  });
 
   beforeEach(() => {
     matchMedia = new MatchMediaMock();
@@ -34,9 +34,9 @@ describe('DialogTrigger', function () {
   });
 
   afterEach(() => {
+    jest.runAllTimers();
     matchMedia.clear();
     window.requestAnimationFrame.mockRestore();
-    cleanup();
   });
 
   it('should trigger a modal by default', function () {
@@ -55,6 +55,10 @@ describe('DialogTrigger', function () {
 
     let button = getByRole('button');
     triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
@@ -80,6 +84,10 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     triggerPress(button);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
 
@@ -103,6 +111,10 @@ describe('DialogTrigger', function () {
 
     let button = getByRole('button');
     triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
@@ -130,6 +142,10 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     triggerPress(button);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
 
@@ -155,6 +171,10 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     triggerPress(button);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
 
@@ -175,13 +195,68 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     triggerPress(button);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
-    await waitForDomChange(); // wait for animation
+
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
+    }); // wait for animation
+
     expect(document.activeElement).toBe(dialog);
 
     fireEvent.keyDown(dialog, {key: 'Escape'});
-    await waitForDomChange(); // wait for animation
-    expect(dialog).not.toBeInTheDocument();
+    fireEvent.keyUp(dialog, {key: 'Escape'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    await waitFor(() => {
+      expect(dialog).not.toBeInTheDocument();
+    }); // wait for animation
+
+    expect(document.activeElement).toBe(button);
+  });
+
+  it('should restore focus to the trigger when the dialog is closed from a hidden dismiss button', async function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <DialogTrigger type="popover">
+          <ActionButton>Trigger</ActionButton>
+          <Dialog>contents</Dialog>
+        </DialogTrigger>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('dialog');
+
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
+    }); // wait for animation
+
+    expect(document.activeElement).toBe(dialog);
+
+    let dismiss = within(dialog).getByRole('button');
+    triggerPress(dismiss);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    await waitFor(() => {
+      expect(dialog).not.toBeInTheDocument();
+    }); // wait for animation
+
     expect(document.activeElement).toBe(button);
   });
 
@@ -200,13 +275,27 @@ describe('DialogTrigger', function () {
 
     let button = getByRole('button');
     triggerPress(button);
-    await waitForDomChange(); // wait for animation
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    await waitFor(() => {
+      expect(getByRole('dialog')).toBeVisible();
+    }); // wait for animation
 
     expect(rootProviderRef.current.UNSAFE_getDOMNode()).toHaveAttribute('aria-hidden', 'true');
 
     let dialog = getByRole('dialog');
     fireEvent.keyDown(dialog, {key: 'Escape'});
-    await waitForDomChange(); // wait for animation
+    fireEvent.keyUp(dialog, {key: 'Escape'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
+    await waitFor(() => {
+      expect(dialog).not.toBeInTheDocument();
+    }); // wait for animation
 
     expect(rootProviderRef.current.UNSAFE_getDOMNode()).not.toHaveAttribute('aria-hidden');
   });
@@ -233,6 +322,10 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     triggerPress(button);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     expect(() => {
       getByRole('dialog');
     }).toThrow();
@@ -241,21 +334,32 @@ describe('DialogTrigger', function () {
 
     rerender(<Test isOpen onOpenChange={onOpenChange} />);
 
+    act(() => {
+      jest.runAllTimers();
+    });
     let dialog = getByRole('dialog');
-    expect(dialog).toBeVisible();
-    await waitForDomChange(); // wait for animation
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
+    }); // wait for animation
 
     fireEvent.keyDown(dialog, {key: 'Escape'});
+    fireEvent.keyUp(dialog, {key: 'Escape'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(2);
     expect(onOpenChange).toHaveBeenCalledWith(false);
 
     rerender(<Test isOpen={false} onOpenChange={onOpenChange} />);
-    await waitForDomChange(); // wait for animation
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    act(() => {
+      jest.runAllTimers();
+    });
+    await waitFor(() => {
+      expect(dialog).not.toBeInTheDocument();
+    }); // wait for animation
   });
 
   it('can be uncontrolled with defaultOpen', async function () {
@@ -273,20 +377,27 @@ describe('DialogTrigger', function () {
     let onOpenChange = jest.fn();
     let {getByRole} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
-    expect(dialog).toBeVisible();
-    await waitForDomChange(); // wait for animation
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
+    }); // wait for animation
 
     fireEvent.keyDown(dialog, {key: 'Escape'});
-    expect(dialog).toBeVisible();
+    fireEvent.keyUp(dialog, {key: 'Escape'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
 
-    await waitForDomChange(); // wait for animation
-
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    await waitFor(() => {
+      expect(dialog).not.toBeInTheDocument();
+    }); // wait for animation
   });
 
   it('can be closed by buttons the user adds', async function () {
@@ -304,21 +415,28 @@ describe('DialogTrigger', function () {
     let onOpenChange = jest.fn();
     let {getByRole, getByTestId} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
     let closeBtn = getByTestId('closebtn');
-    expect(dialog).toBeVisible();
-    await waitForDomChange(); // wait for animation
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
+    }); // wait for animation
 
     triggerPress(closeBtn);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
 
-    await waitForDomChange(); // wait for animation
+    act(() => {
+      jest.runAllTimers();
+    });
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    await waitFor(() => {
+      expect(dialog).not.toBeInTheDocument();
+    }); // wait for animation
   });
 
   it('can be closed by dismiss button in dialog', async function () {
@@ -336,21 +454,28 @@ describe('DialogTrigger', function () {
     let onOpenChange = jest.fn();
     let {getByRole, getByLabelText} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
 
-    let dialog = getByRole('dialog');
-    expect(dialog).toBeVisible();
-    await waitForDomChange(); // wait for animation
+    act(() => {
+      jest.runAllTimers();
+    });
 
-    let closeButton = getByLabelText('dismiss');
+    let dialog = getByRole('dialog');
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
+    }); // wait for animation
+
+    let closeButton = getByLabelText('Dismiss');
     triggerPress(closeButton);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
 
-    await waitForDomChange(); // wait for animation
+    act(() => {
+      jest.runAllTimers();
+    });
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    await waitFor(() => {
+      expect(dialog).not.toBeInTheDocument();
+    }); // wait for animation
   });
 
   it('dismissable modals can be closed by clicking outside the dialog', async function () {
@@ -368,21 +493,27 @@ describe('DialogTrigger', function () {
     let onOpenChange = jest.fn();
     let {getByRole} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
 
-    let dialog = getByRole('dialog');
-    expect(dialog).toBeVisible();
-    await waitForDomChange(); // wait for animation
+    act(() => {
+      jest.runAllTimers();
+    });
 
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
+    let dialog = getByRole('dialog');
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
+    }); // wait for animation
+
+    triggerPress(document.body);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
 
-    await waitForDomChange(); // wait for animation
+    act(() => {
+      jest.runAllTimers();
+    });
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    await waitFor(() => {
+      expect(dialog).not.toBeInTheDocument();
+    }); // wait for animation
   });
 
   it('non dismissable modals cannot be closed by clicking outside the dialog', async function () {
@@ -399,12 +530,20 @@ describe('DialogTrigger', function () {
 
     let onOpenChange = jest.fn();
     let {getByRole} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
-    
-    let dialog = getByRole('dialog');
-    expect(dialog).toBeVisible();
-    await waitForDomChange(); // wait for animation
 
-    fireEvent.mouseUp(document.body);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('dialog');
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
+    }); // wait for animation
+
+    triggerPress(document.body);
+    act(() => {
+      jest.runAllTimers();
+    });
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(0);
   });
@@ -424,22 +563,28 @@ describe('DialogTrigger', function () {
 
     let onOpenChange = jest.fn();
     let {getByTestId} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
-    
-    let modal = getByTestId('modal');
-    expect(modal).toBeVisible();
-    await waitForDomChange(); // wait for animation
 
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let modal = getByTestId('modal');
+    await waitFor(() => {
+      expect(modal).toBeVisible();
+    }); // wait for animation
+
+    triggerPress(document.body);
     expect(modal).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
 
-    await waitForDomChange(); // wait for animation
+    act(() => {
+      jest.runAllTimers();
+    });
 
-    expect(() => {
-      getByTestId('modal');
-    }).toThrow();
+    await waitFor(() => {
+      expect(modal).not.toBeInTheDocument();
+    }); // wait for animation
   });
 
   it('non-modals can be closed by clicking outside the dialog regardless of isDismissable', async function () {
@@ -457,19 +602,65 @@ describe('DialogTrigger', function () {
     let onOpenChange = jest.fn();
     let {getByRole} = render(<Test defaultOpen onOpenChange={onOpenChange} />);
 
+    act(() => {
+      jest.runAllTimers();
+    });
+
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
-    await waitForDomChange(); // wait for animation
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
+    }); // wait for animation
+    triggerPress(document.body);
     expect(dialog).toBeVisible();
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
 
-    await waitForDomChange(); // wait for animation
+    act(() => {
+      jest.runAllTimers();
+    });
 
-    expect(() => {
-      getByRole('dialog');
-    }).toThrow();
+    await waitFor(() => {
+      expect(dialog).not.toBeInTheDocument();
+    }); // wait for animation
+  });
+
+  it('disable closing dialog via escape key', async function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <DialogTrigger isKeyboardDismissDisabled>
+          <ActionButton>Trigger</ActionButton>
+          <Dialog>Content body</Dialog>
+        </DialogTrigger>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('dialog');
+
+    await waitFor(() => {
+      expect(dialog).toBeVisible();
+    }); // wait for animation
+
+    expect(document.activeElement).toBe(dialog);
+
+    fireEvent.keyDown(dialog, {key: 'Escape'});
+    fireEvent.keyUp(dialog, {key: 'Escape'});
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    await waitFor(() => {
+      expect(dialog).toBeInTheDocument();
+    }); // wait for animation
+
+    expect(document.activeElement).toBe(dialog);
   });
 });

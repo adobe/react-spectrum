@@ -10,26 +10,32 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, useEffect} from 'react';
+import {AriaButtonProps} from '@react-types/button';
+import {AriaNumberFieldProps} from '@react-types/numberfield';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect, useState} from 'react';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useId} from '@react-aria/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
+import {useFocus} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useTextField} from '@react-aria/textfield';
 
-interface NumberFieldProps extends SpinButtonProps {
+interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
   decrementAriaLabel?: string,
   incrementAriaLabel?: string
 }
 
 interface NumberFieldAria {
-  inputFieldProps: AllHTMLAttributes<HTMLInputElement>,
-  numberFieldProps: AllHTMLAttributes<HTMLDivElement>,
-  incrementButtonProps: AllHTMLAttributes<HTMLButtonElement>,
-  decrementButtonProps: AllHTMLAttributes<HTMLButtonElement>
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  inputFieldProps: HTMLAttributes<HTMLInputElement>,
+  numberFieldProps: HTMLAttributes<HTMLDivElement>,
+  incrementButtonProps: AriaButtonProps,
+  decrementButtonProps: AriaButtonProps
 }
 
-export function useNumberField(props: NumberFieldProps, state: NumberFieldState): NumberFieldAria {
+export function useNumberField(props: NumberFieldProps, state: NumberFieldState, ref: RefObject<HTMLInputElement>): NumberFieldAria {
   let {
     decrementAriaLabel,
     incrementAriaLabel,
@@ -38,7 +44,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     isRequired,
     minValue,
     maxValue,
-    step
+    autoFocus
   } = props;
 
   let {
@@ -46,49 +52,66 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     incrementToMax,
     decrement,
     decrementToMin,
+    inputValue,
     value,
-    validationState
+    validationState,
+    commitInputValue,
+    textValue
   } = state;
 
   const formatMessage = useMessageFormatter(intlMessages);
-  const inputId = useId();
 
-  const {spinButtonProps} = useSpinButton({
-    isDisabled,
-    isReadOnly,
-    isRequired,
-    maxValue,
-    minValue,
-    onIncrement: increment,
-    onIncrementToMax: incrementToMax,
-    onDecrement: decrement,
-    onDecrementToMin: decrementToMin,
-    value
+  const inputId = useId();
+  const [isFocused, setIsFocused] = useState(false);
+  let {focusProps} = useFocus({
+    onFocus: () => {
+      ref.current.value = inputValue;
+      ref.current.select();
+      setIsFocused(true);
+    },
+    onBlur: () => {
+      // Set input value to normalized valid value
+      commitInputValue();
+      setIsFocused(false);
+    }
   });
+
+  const {
+    spinButtonProps,
+    incrementButtonProps: incButtonProps,
+    decrementButtonProps: decButtonProps
+  } = useSpinButton(
+    {
+      isDisabled,
+      isReadOnly,
+      isRequired,
+      maxValue,
+      minValue,
+      onIncrement: increment,
+      onIncrementToMax: incrementToMax,
+      onDecrement: decrement,
+      onDecrementToMin: decrementToMin,
+      value,
+      textValue
+    }
+  );
 
   incrementAriaLabel = incrementAriaLabel || formatMessage('Increment');
   decrementAriaLabel = decrementAriaLabel || formatMessage('Decrement');
+  const canStep = isDisabled || isReadOnly;
 
-  const incrementButtonProps = {
+  const incrementButtonProps: AriaButtonProps = mergeProps(incButtonProps, {
     'aria-label': incrementAriaLabel,
     'aria-controls': inputId,
-    tabIndex: -1,
-    title: incrementAriaLabel,
-    isDisabled: isDisabled || (value >= maxValue) || isReadOnly,
-    onPress: increment,
-    onMouseDown: e => e.preventDefault(),
-    onMouseUp: e => e.preventDefault()
-  };
-  const decrementButtonProps = {
+    excludeFromTabOrder: true,
+    isDisabled: canStep || value >= maxValue
+  });
+  const decrementButtonProps: AriaButtonProps = mergeProps(decButtonProps, {
     'aria-label': decrementAriaLabel,
     'aria-controls': inputId,
-    tabIndex: -1,
-    title: decrementAriaLabel,
-    isDisabled: isDisabled || (value <= minValue || isReadOnly),
-    onPress: decrement,
-    onMouseDown: e => e.preventDefault(),
-    onMouseUp: e => e.preventDefault()
-  };
+    excludeFromTabOrder: true,
+    isDisabled: canStep || value <= minValue
+  });
 
   useEffect(() => {
     const handleInputScrollWheel = e => {
@@ -119,28 +142,33 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState)
     };
   }, [inputId, isReadOnly, isDisabled, decrement, increment]);
 
-  return {
-    numberFieldProps: {
-      role: 'group',
-      'aria-label': props['aria-label'] || null,
-      'aria-labelledby': props['aria-labelledby'] || null,
-      'aria-disabled': isDisabled,
-      'aria-invalid': validationState === 'invalid'
-    },
-    inputFieldProps: mergeProps(spinButtonProps, {
+  let domProps = filterDOMProps(props, {labelable: true});
+  let {labelProps, inputProps} = useTextField(
+    mergeProps(focusProps, {
+      autoFocus,
+      isDisabled,
+      isReadOnly,
+      isRequired,
+      validationState,
+      value: isFocused ? inputValue : textValue,
       autoComplete: 'off',
       'aria-label': props['aria-label'] || null,
       'aria-labelledby': props['aria-labelledby'] || null,
       id: inputId,
-      isDisabled,
-      isReadOnly,
-      isRequired,
-      min: minValue,
-      max: maxValue,
       placeholder: formatMessage('Enter a number'),
-      type: 'number',
-      step
+      type: 'text',
+      onChange: state.setValue
+    }), ref);
+
+  const inputFieldProps = mergeProps(spinButtonProps, inputProps);
+  return {
+    numberFieldProps: mergeProps(domProps, {
+      role: 'group',
+      'aria-disabled': isDisabled,
+      'aria-invalid': validationState === 'invalid'
     }),
+    labelProps,
+    inputFieldProps,
     incrementButtonProps,
     decrementButtonProps
   };

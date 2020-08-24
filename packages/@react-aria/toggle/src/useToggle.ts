@@ -10,21 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps} from '@react-types/shared';
-import {InputHTMLAttributes} from 'react';
-import {mergeProps} from '@react-aria/utils';
-import {SwitchProps} from '@react-types/switch';
+import {AriaToggleProps} from '@react-types/checkbox';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {InputHTMLAttributes, RefObject} from 'react';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
-import {usePressableInput} from '@react-aria/interactions';
+import {usePress} from '@react-aria/interactions';
 
 export interface ToggleAria {
+  /**
+   * Props to be spread on the input element.
+   */
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
-export function useToggle(props: SwitchProps & DOMProps, state: ToggleState): ToggleAria {
+/**
+ * Handles interactions for toggle elements, e.g. Checkboxes and Switches.
+ */
+export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefObject<HTMLElement>): ToggleAria {
   let {
-    autoFocus = false,
     isDisabled = false,
     isRequired,
     isReadOnly,
@@ -32,6 +36,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState): To
     name,
     children,
     'aria-label': ariaLabel,
+    'aria-labelledby': ariaLabelledby,
     validationState = 'valid'
   } = props;
 
@@ -42,24 +47,26 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState): To
     state.setSelected(e.target.checked);
   };
 
-  let hasChildren = children !== null;
-  let hasAriaLabel = ariaLabel !== null;
+  let hasChildren = children != null;
+  let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
   if (!hasChildren && !hasAriaLabel) {
     console.warn('If you do not provide children, you must specify an aria-label for accessibility');
   }
-  let isInvalid = validationState === 'invalid';
 
-  let {pressProps} = usePressableInput({
+  // This handles focusing the input on pointer down, which Safari does not do by default.
+  let {pressProps} = usePress({
     isDisabled
   });
 
-  let {focusableProps} = useFocusable(props);
+  let {focusableProps} = useFocusable(props, ref);
   let interactions = mergeProps(pressProps, focusableProps);
+  let domProps = filterDOMProps(props, {labelable: true});
 
   return {
-    inputProps: {
-      'aria-label': ariaLabel,
-      'aria-invalid': isInvalid,
+    inputProps: mergeProps(domProps, {
+      'aria-invalid': validationState === 'invalid' || undefined,
+      'aria-errormessage': props['aria-errormessage'],
+      'aria-controls': props['aria-controls'],
       onChange,
       disabled: isDisabled,
       required: isRequired,
@@ -67,8 +74,7 @@ export function useToggle(props: SwitchProps & DOMProps, state: ToggleState): To
       value,
       name,
       type: 'checkbox',
-      autoFocus,
       ...interactions
-    }
+    })
   };
 }

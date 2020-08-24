@@ -6,20 +6,19 @@ PATH := ./node_modules/.bin:$(PATH)
 all: node_modules
 
 adobe_setup:
-	echo "--install.ignore-optional false" > .yarnrc
-	git update-index --assume-unchanged .yarnrc
+	mkdir packages/dev/v2-test-deps
+	cp scripts/v2-package.json packages/dev/v2-test-deps/package.json
 
 node_modules: package.json
 	yarn install
 	touch $@
 
-# --ci keeps it from opening the browser tab automatically
-run:
-	NODE_ENV=storybook start-storybook -p 9003 --ci -c ".storybook-v3"
+run_chromatic:
+	NODE_ENV=storybook start-storybook -p 9004 --ci -c ".chromatic"
 
 clean:
 	yarn clean:icons
-	rm -rf dist storybook-static storybook-static-v3 public src/dist
+	rm -rf dist public src/dist
 
 clean_all:
 	$(MAKE) clean
@@ -56,24 +55,19 @@ packages/@spectrum-icons/ui/%.js: packages/@spectrum-icons/ui/src/%.tsx
 
 ui-icons: packages/@spectrum-icons/ui/src $(addprefix packages/@spectrum-icons/ui/, $(notdir $(addsuffix .js, $(basename $(wildcard packages/@spectrum-icons/ui/src/*.tsx)))))
 
-icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src packages/@spectrum-icons/ui/src
+packages/@spectrum-icons/illustrations/%.js: packages/@spectrum-icons/illustrations/src/%.tsx
+	yarn workspace @spectrum-icons/illustrations build-icons
+
+illustrations: packages/@spectrum-icons/illustrations/src $(addprefix packages/@spectrum-icons/illustrations/, $(notdir $(addsuffix .js, $(basename $(wildcard packages/@spectrum-icons/illustrations/src/*.tsx)))))
+
+icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src packages/@spectrum-icons/ui/src packages/@spectrum-icons/illustrations/src
 	@$(MAKE) workflow-icons
 	@$(MAKE) color-icons
 	@$(MAKE) ui-icons
-
-lint:
-	yarn check-types
-	eslint packages --ext .js,.ts,.tsx
-	node lint-packages.js
-
-test:
-	yarn jest
-
-ci-test:
-	yarn jest --maxWorkers=2
+	@$(MAKE) illustrations
 
 storybook:
-	NODE_ENV=storybook yarn build-storybook
+	NODE_ENV=production yarn build:storybook
 
 # for now doesn't have deploy since v3 doesn't have a place for docs and stuff yet
 ci:
@@ -87,3 +81,8 @@ build:
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
+
+website-production:
+	node scripts/buildWebsite.js
+	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
+	node scripts/brotli.js

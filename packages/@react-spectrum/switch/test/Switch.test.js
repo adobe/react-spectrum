@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, render} from '@testing-library/react';
+import {act, render} from '@testing-library/react';
 import React from 'react';
 import {Switch} from '../';
 import userEvent from '@testing-library/user-event';
@@ -22,7 +22,6 @@ describe('Switch', function () {
 
   afterEach(() => {
     onChangeSpy.mockClear();
-    cleanup();
   });
 
   it.each`
@@ -39,12 +38,12 @@ describe('Switch', function () {
     expect(checkbox).toHaveAttribute('aria-checked', 'false');
     expect(onChangeSpy).not.toHaveBeenCalled();
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox).toHaveAttribute('aria-checked', 'true');
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy.mock.calls[0][0]).toBe(true);
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox).toHaveAttribute('aria-checked', 'false');
     expect(onChangeSpy.mock.calls[1][0]).toBe(false);
 
@@ -63,7 +62,7 @@ describe('Switch', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeTruthy();
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy.mock.calls[0][0]).toBe(false);
   });
@@ -80,7 +79,7 @@ describe('Switch', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeTruthy();
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy.mock.calls[0][0]).toBe(false);
   });
@@ -97,7 +96,7 @@ describe('Switch', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeFalsy();
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy.mock.calls[0][0]).toBe(true);
   });
@@ -114,20 +113,73 @@ describe('Switch', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeFalsy();
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+
+  it.each`
+    Name                     | Component    | props
+    ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, 'aria-label': 'not visible'}}
+    ${'V2Switch quiet'}      | ${V2Switch}  | ${{onChange: onChangeSpy, 'aria-label': 'not visible', quiet: true}}
+  `('$Name can have a non-visible label', function ({Component, props}) {
+    let {getByRole} = render(<Component {...props} />);
+
+    let checkbox = getByRole('switch');
+    expect(checkbox).toHaveAttribute('aria-label', props['aria-label']);
+  });
+
+  it.each`
+    Name                     | Component    | props
+    ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, 'aria-labelledby': 'test'}}
+    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy, 'aria-labelledby': 'test'}}
+  `('$Name supports aria-labelledby', function ({Component, props}) {
+    let {getByRole} = render(
+      <>
+        <span id="test">Test</span>
+        <Component {...props} />
+      </>
+    );
+
+    let checkbox = getByRole('switch');
+    expect(checkbox).toHaveAttribute('aria-labelledby', props['aria-labelledby']);
+  });
+
+  it.each`
+    Name                     | Component    | props
+    ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, 'aria-describedby': 'test'}}
+    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy, 'aria-describedby': 'test'}}
+  `('$Name supports aria-describedby', function ({Component, props}) {
+    let {getByRole} = render(
+      <>
+        <span id="test">Test</span>
+        <Component {...props}>Hi</Component>
+      </>
+    );
+
+    let checkbox = getByRole('switch');
+    expect(checkbox).toHaveAttribute('aria-describedby', props['aria-describedby']);
   });
 
   /* This one is different, aria-hidden is getting applied to the label, not to the input, because it's the root */
   it.each`
     Name                     | Component    | props
-    ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, 'aria-hidden': true, 'data-testid': 'target'}}
+    ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, 'data-testid': 'target'}}
   `('$Name supports additional props', function ({Component, props}) {
     let {getByTestId} = render(<Component {...props}>Click Me</Component>);
 
     let checkboxLabel = getByTestId('target');
-    expect(checkboxLabel).toHaveAttribute('aria-hidden', 'true');
+    expect(checkboxLabel).toBeInTheDocument();
+  });
+
+  it.each`
+    Name                     | Component    | props
+    ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, excludeFromTabOrder: true}}
+  `('$Name supports excludeFromTabOrder', function ({Component, props}) {
+    let {getByRole} = render(<Component {...props}>Hi</Component>);
+
+    let checkbox = getByRole('switch');
+    expect(checkbox).toHaveAttribute('tabIndex', '-1');
   });
 
   it.each`
@@ -139,7 +191,7 @@ describe('Switch', function () {
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeTruthy();
 
-    userEvent.click(checkbox);
+    act(() => {userEvent.click(checkbox);});
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).not.toHaveBeenCalled();
   });

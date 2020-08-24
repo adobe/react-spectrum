@@ -10,16 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup} from '@testing-library/react';
 import React from 'react';
-import {renderHook} from 'react-hooks-testing-library';
+import {renderHook} from '@testing-library/react-hooks';
 import {useSideNavItem} from '../';
 
 describe('useSideNavItem', function () {
-  afterEach(cleanup);
-
   let mockState = {
-    selectionManager: {}
+    selectionManager: {
+      isSelected(key) {
+        return key === 'selected';
+      }
+    },
+    disabledKeys: new Set()
   };
 
   let renderSideNavItemHook = (menuProps, itemProps = {}) => {
@@ -43,7 +45,7 @@ describe('useSideNavItem', function () {
   });
 
   it('returns aria for selected item', function () {
-    let {listItemProps, listItemLinkProps} = renderSideNavItemHook({}, {isSelected: true});
+    let {listItemProps, listItemLinkProps} = renderSideNavItemHook({}, {key: 'selected'});
     expect(listItemProps).toBeDefined();
     expect(listItemProps.role).toBe('listitem');
     expect(listItemLinkProps).toBeDefined();

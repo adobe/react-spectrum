@@ -11,30 +11,66 @@
  */
 
 import {Key} from 'react';
-import {SelectionMode} from '@react-types/shared';
+import {Selection, SelectionMode} from '@react-types/shared';
 
 export interface FocusState {
-  isFocused: boolean,
+  /** Whether the collection is currently focused. */
+  readonly isFocused: boolean,
+  /** Sets whether the collection is focused. */
   setFocused(isFocused: boolean): void,
-  focusedKey: Key,
-  setFocusedKey(key: Key): void,
+  /** The current focused key in the collection. */
+  readonly focusedKey: Key,
+  /** Sets the focused key. */
+  setFocusedKey(key: Key): void
 }
 
 export interface SingleSelectionState extends FocusState {
-  selectedKey: Key,
+  /** Whether the collection allows empty selection. */
+  readonly disallowEmptySelection?: boolean,
+  /** The currently selected key in the collection. */
+  readonly selectedKey: Key,
+  /** Sets the selected key in the collection. */
   setSelectedKey(key: Key): void
 }
 
 export interface MultipleSelectionState extends FocusState {
-  selectionMode: SelectionMode,
-  selectedKeys: Set<Key>,
-  setSelectedKeys(keys: Set<Key> | ((v: Set<Key>) => Set<Key>)): void
+  /** The type of selection that is allowed in the collection. */
+  readonly selectionMode: SelectionMode,
+  /** Whether the collection allows empty selection. */
+  readonly disallowEmptySelection: boolean,
+  /** The currently selected keys in the collection. */
+  readonly selectedKeys: Selection,
+  /** Sets the selected keys in the collection. */
+  setSelectedKeys(keys: Selection | ((v: Selection) => Selection)): void
 }
 
-export interface MultipleSelectionManager extends MultipleSelectionState {
+export interface MultipleSelectionManager extends FocusState {
+  /** The type of selection that is allowed in the collection. */
+  readonly selectionMode: SelectionMode,
+  /** Whether the collection allows empty selection. */
+  readonly disallowEmptySelection?: boolean,
+  /** The currently selected keys in the collection. */
+  readonly selectedKeys: Set<Key>,
+  /** Whether the selection is empty. */
+  readonly isEmpty: boolean,
+  /** Whether all items in the collection are selected. */
+  readonly isSelectAll: boolean,
+  /** The first selected key in the collection. */
+  readonly firstSelectedKey: Key | null,
+  /** The last selected key in the collection. */
+  readonly lastSelectedKey: Key | null,
+  /** Returns whether a key is selected. */
+  isSelected(key: Key): boolean,
+  /** Extends the selection to the given key. */
   extendSelection(toKey: Key): void,
+  /** Toggles whether the given key is selected. */
   toggleSelection(key: Key): void,
+  /** Replaces the selection with only the given key. */
   replaceSelection(key: Key): void,
+  /** Selects all items in the collection. */
   selectAll(): void,
-  clearSelection(): void
+  /** Removes all keys from the selection. */
+  clearSelection(): void,
+  /** Toggles between select all and an empty selection. */
+  toggleSelectAll(): void
 }

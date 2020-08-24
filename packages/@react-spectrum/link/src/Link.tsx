@@ -10,11 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, getWrappedElement, useStyleProps} from '@react-spectrum/utils';
+import {classNames, getWrappedElement, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
 import {SpectrumLinkProps} from '@react-types/link';
 import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
+import {useHover} from '@react-aria/interactions';
 import {useLink} from '@react-aria/link';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -28,28 +30,37 @@ export function Link(props: SpectrumLinkProps) {
     variant = 'primary',
     isQuiet,
     children,
-    ...otherProps
+    // @ts-ignore
+    href
   } = props;
   let {styleProps} = useStyleProps(props);
+  let {hoverProps, isHovered} = useHover({});
+
+  if (href) {
+    console.warn('href is deprecated, please use an anchor element as children');
+  }
 
   let ref = useRef();
-  let {linkProps} = useLink({...props, ref});
+  let {linkProps} = useLink({
+    ...props,
+    elementType: typeof children === 'string' ? 'span' : 'a'
+  }, ref);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       {React.cloneElement(
         getWrappedElement(children),
         {
-          ...filterDOMProps(otherProps),
           ...styleProps,
-          ...linkProps,
+          ...mergeProps(linkProps, hoverProps),
           ref,
           className: classNames(
             styles,
             'spectrum-Link',
             {
               'spectrum-Link--quiet': isQuiet,
-              [`spectrum-Link--${variant}`]: variant
+              [`spectrum-Link--${variant}`]: variant,
+              'is-hovered': isHovered
             },
             styleProps.className
           )

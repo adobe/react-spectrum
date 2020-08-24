@@ -10,14 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup} from '@testing-library/react';
 import React from 'react';
-import {renderHook} from 'react-hooks-testing-library';
+import {renderHook} from '@testing-library/react-hooks';
 import {useProgressBar} from '../';
 
 describe('useProgressBar', function () {
-  afterEach(cleanup);
-
   let renderProgressBarHook = (props) => {
     let {result} = renderHook(() => useProgressBar(props));
     return result.current;
@@ -57,7 +54,7 @@ describe('useProgressBar', function () {
   });
 
   it('with custom text value', () => {
-    let props = {value: 25, textValue: '¥25'};
+    let props = {value: 25, valueLabel: '¥25'};
     let {progressBarProps} = renderProgressBarHook(props);
     expect(progressBarProps['aria-valuenow']).toBe(25);
     expect(progressBarProps['aria-valuetext']).toBe('¥25');

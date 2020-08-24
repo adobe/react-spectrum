@@ -11,64 +11,83 @@
  */
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, SlotProvider} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
-import {ListState} from '@react-stately/list';
-import {Node} from '@react-stately/collections';
-import React from 'react';
+import {ListBoxContext} from './ListBoxContext';
+import {mergeProps} from '@react-aria/utils';
+import {Node} from '@react-types/shared';
+import React, {useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {Text} from '@react-spectrum/typography';
+import {Text} from '@react-spectrum/text';
+import {useHover} from '@react-aria/interactions';
 import {useOption} from '@react-aria/listbox';
 import {useRef} from 'react';
 
 interface OptionProps<T> {
   item: Node<T>,
-  state: ListState<T>,
-  selectOnPressUp?: boolean,
-  focusOnHover?: boolean
+  shouldSelectOnPressUp?: boolean,
+  shouldFocusOnHover?: boolean,
+  shouldUseVirtualFocus?: boolean
 }
 
+/** @private */
 export function ListBoxOption<T>(props: OptionProps<T>) {
   let {
     item,
-    state,
-    selectOnPressUp,
-    focusOnHover
+    shouldSelectOnPressUp,
+    shouldFocusOnHover,
+    shouldUseVirtualFocus
   } = props;
 
   let {
     rendered,
-    isSelected,
-    isDisabled,
     key
   } = item;
 
+  let state = useContext(ListBoxContext);
+  let isSelected = state.selectionManager.isSelected(key);
+  let isDisabled = state.disabledKeys.has(key);
+  let isFocused = state.selectionManager.focusedKey === key;
+
   let ref = useRef<HTMLDivElement>();
-  let {optionProps} = useOption(
+  let {optionProps, labelProps, descriptionProps} = useOption(
     {
       isSelected,
       isDisabled,
+      'aria-label': item['aria-label'],
       key,
-      ref,
-      selectOnPressUp,
-      focusOnHover: focusOnHover,
-      isVirtualized: true
+      shouldSelectOnPressUp,
+      shouldFocusOnHover,
+      isVirtualized: true,
+      shouldUseVirtualFocus
     },
-    state
+    state,
+    ref
   );
+  let {hoverProps, isHovered} = useHover({
+    ...props,
+    isDisabled
+  });
+
+  let contents = typeof rendered === 'string'
+    ? <Text>{rendered}</Text>
+    : rendered;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
-        {...optionProps}
+        {...mergeProps(optionProps, shouldFocusOnHover ? {} : hoverProps)}
         ref={ref}
         className={classNames(
           styles,
           'spectrum-Menu-item',
           {
+            'is-focused': shouldUseVirtualFocus && isFocused,
             'is-disabled': isDisabled,
-            'is-selected': isSelected
+            'is-selected': isSelected,
+            'is-selectable': state.selectionManager.selectionMode !== 'none',
+            'is-hovered': isHovered
           }
         )}>
         <Grid
@@ -77,29 +96,26 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
               styles,
               'spectrum-Menu-itemGrid'
             )
-          }
-          slots={{
-            text: {UNSAFE_className: styles['spectrum-Menu-itemLabel']},
-            icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
-            description: {UNSAFE_className: styles['spectrum-Menu-description']}
-          }}>
-          {!Array.isArray(rendered) && (
-            <Text>
-              {rendered}
-            </Text>
-          )}
-          {Array.isArray(rendered) && rendered}
-          {isSelected && 
-            <CheckmarkMedium
-              slot="checkmark"
-              UNSAFE_className={
-                classNames(
-                  styles, 
-                  'spectrum-Menu-checkmark'
-                )
-              } />
-          }
-        </Grid>  
+          }>
+          <SlotProvider
+            slots={{
+              text: {UNSAFE_className: styles['spectrum-Menu-itemLabel'], ...labelProps},
+              icon: {UNSAFE_className: styles['spectrum-Menu-icon']},
+              description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps}
+            }}>
+            {contents}
+            {isSelected &&
+              <CheckmarkMedium
+                slot="checkmark"
+                UNSAFE_className={
+                      classNames(
+                        styles,
+                        'spectrum-Menu-checkmark'
+                      )
+                    } />
+                }
+          </SlotProvider>
+        </Grid>
       </div>
     </FocusRing>
   );

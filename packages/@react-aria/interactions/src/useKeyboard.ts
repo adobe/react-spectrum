@@ -15,13 +15,18 @@ import {HTMLAttributes} from 'react';
 import {KeyboardEvents} from '@react-types/shared';
 
 export interface KeyboardProps extends KeyboardEvents {
+  /** Whether the keyboard events should be disabled. */
   isDisabled?: boolean
 }
 
 interface KeyboardResult {
+  /** Props to spread onto the target element. */
   keyboardProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Handles keyboard interactions for a focusable element.
+ */
 export function useKeyboard(props: KeyboardProps): KeyboardResult {
   return {
     keyboardProps: props.isDisabled ? {} : {

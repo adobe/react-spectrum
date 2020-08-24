@@ -10,43 +10,37 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
+import {classNames, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
 
 type Scale = 'M' | 'L'
 
-interface IconProps extends DOMProps, StyleProps {
+interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
-   * Alternate text for assistive technologies
+   * A screen reader only label for the Icon.
    */
-  alt?: string,
+  'aria-label'?: string,
   /**
-   * The content to display. Should be an SVG
+   * The content to display. Should be an SVG.
    */
   children: ReactElement,
   /**
-   * Size of Icon (changes based on scale)
+   * Size of Icon (changes based on scale).
    */
   size?: 'XXS' | 'XS' | 'S' | 'M' | 'L' |'XL' | 'XXL',
   /**
-   * TODO
-   */
-  scale?: Scale,
-  /**
-   * TODO
-   */
-  color?: string,
-  /**
-   * TODO
+   * A slot to place the icon in.
+   * @default 'icon'
    */
   slot?: string,
   /**
-   * @default 'img'
+   * Indicates whether the element is exposed to an accessibility API.
    */
-  role?: string
+  'aria-hidden'?: boolean
 }
 
 /**
@@ -56,31 +50,19 @@ export function Icon(props: IconProps) {
   props = useSlotProps(props, 'icon');
   let {
     children,
-    alt,
-    scale,
-    color,
     size,
     'aria-label': ariaLabel,
     'aria-hidden': ariaHidden,
-    role = 'img',
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
 
   let provider = useProvider();
-  let pscale = 'M';
-  let pcolor = 'LIGHT';
+  let scale = 'M';
   if (provider !== null) {
-    pscale = provider.scale === 'large' ? 'L' : 'M';
-    pcolor = provider.colorScheme === 'dark' ? 'DARK' : 'LIGHT';
+    scale = provider.scale === 'large' ? 'L' : 'M';
   }
-  if (scale === undefined) {
-    scale = pscale as Scale;
-  }
-  if (color === undefined) {
-    color = pcolor;
-  }
-  if (!ariaHidden || ariaHidden === 'false') {
+  if (!ariaHidden) {
     ariaHidden = undefined;
   }
 
@@ -90,12 +72,10 @@ export function Icon(props: IconProps) {
   return React.cloneElement(children, {
     ...filterDOMProps(otherProps),
     ...styleProps,
-    scale: 'M',
-    color,
     focusable: 'false',
-    'aria-label': ariaLabel || alt,
-    'aria-hidden': (ariaLabel || alt ? ariaHidden : true),
-    role,
+    'aria-label': ariaLabel,
+    'aria-hidden': (ariaLabel ? (ariaHidden || undefined) : true),
+    role: 'img',
     className: classNames(
       styles,
       children.props.className,

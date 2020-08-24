@@ -10,16 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from 'react-hooks-testing-library';
-import {cleanup, render} from '@testing-library/react';
+import {act, renderHook} from '@testing-library/react-hooks';
 import React, {useEffect, useState} from 'react';
+import {render} from '@testing-library/react';
 import {useControlledState} from '../src';
 import userEvent from '@testing-library/user-event';
 
 describe('useControlledState tests', function () {
-
-  afterEach(() => cleanup());
-
   it('can handle default setValue behavior, wont invoke onChange for the same value twice in a row', () => {
     let onChangeSpy = jest.fn();
     let {result} = renderHook(() => useControlledState(undefined, 'defaultValue', onChangeSpy));
@@ -131,6 +128,36 @@ describe('useControlledState tests', function () {
     }));
     [value, setValue] = result.current;
     expect(value).toBe('controlledValue');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+
+  it('can handle controlled callback setValue behavior after prop change', () => {
+    let onChangeSpy = jest.fn();
+    let propValue = 'controlledValue';
+    let {result, rerender} = renderHook(() => useControlledState(propValue, 'defaultValue', onChangeSpy));
+    let [value, setValue] = result.current;
+    expect(value).toBe('controlledValue');
+    expect(onChangeSpy).not.toHaveBeenCalled();
+
+    propValue = 'updated';
+    rerender();
+
+    act(() => setValue((prevValue) => {
+      expect(prevValue).toBe('updated');
+      return 'newValue';
+    }));
+    [value, setValue] = result.current;
+    expect(value).toBe('updated');
+    expect(onChangeSpy).toHaveBeenLastCalledWith('newValue');
+
+    onChangeSpy.mockClear();
+
+    act(() => setValue((prevValue) => {
+      expect(prevValue).toBe('updated');
+      return 'updated';
+    }));
+    [value, setValue] = result.current;
+    expect(value).toBe('updated');
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
 

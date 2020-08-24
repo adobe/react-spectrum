@@ -12,20 +12,53 @@
 
 import {RadioGroupProps} from '@react-types/radio';
 import {useControlledState} from '@react-stately/utils';
+import {useMemo, useState} from 'react';
 
 export interface RadioGroupState {
-  selectedRadio: string | undefined,
-  setSelectedRadio: (value: string) => void
+  /**
+   * The name for the group, used for native form submission.
+   * @deprecated
+   * @private
+   */
+  readonly name: string,
+
+  /** The currently selected value. */
+  readonly selectedValue: string | null,
+
+  /** Sets the selected value. */
+  setSelectedValue(value: string): void,
+
+  /** The value of the last focused radio. */
+  readonly lastFocusedValue: string | null,
+
+  /** Sets the last focused value. */
+  setLastFocusedValue(value: string): void
 }
 
-export function useRadioGroupState(props: RadioGroupProps):RadioGroupState  {
-  let [selectedRadio, setSelected] = useControlledState(props.value, props.defaultValue, props.onChange);
+let instance = Math.round(Math.random() * 10000000000);
+let i = 0;
 
-  let setSelectedRadio = (value) => {
+/**
+ * Provides state management for a radio group component. Provides a name for the group,
+ * and manages selection and focus state.
+ */
+export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
+  // Preserved here for backward compatibility. React Aria now generates the name instead of stately.
+  let name = useMemo(() => props.name || `radio-group-${instance}-${++i}`, [props.name]);
+  let [selectedValue, setSelected] = useControlledState(props.value, props.defaultValue, props.onChange);
+  let [lastFocusedValue, setLastFocusedValue] = useState(null);
+
+  let setSelectedValue = (value) => {
     if (!props.isReadOnly) {
       setSelected(value);
     }
   };
 
-  return {selectedRadio, setSelectedRadio};
+  return {
+    name,
+    selectedValue,
+    setSelectedValue,
+    lastFocusedValue,
+    setLastFocusedValue
+  };
 }

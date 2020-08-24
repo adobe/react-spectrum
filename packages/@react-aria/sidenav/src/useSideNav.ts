@@ -10,41 +10,47 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes} from 'react';
-import {ListLayout} from '@react-stately/collections';
-import {SideNavProps} from '@react-types/sidenav';
+import {AriaSideNavProps} from '@react-types/sidenav';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {HTMLAttributes, RefObject} from 'react';
+import {KeyboardDelegate} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
-import {useId} from '@react-aria/utils';
 import {useSelectableCollection} from '@react-aria/selection';
 
-interface SideNavAria {
-  navProps: AllHTMLAttributes<HTMLDivElement>,
-  listProps: AllHTMLAttributes<HTMLUListElement>
+interface SideNavAriaOptions<T> extends AriaSideNavProps<T> {
+  layout?: KeyboardDelegate
 }
 
-export function useSideNav<T>(props: SideNavProps<T>, state: TreeState<T>, layout: ListLayout<T>): SideNavAria {
+interface SideNavAria {
+  navProps: HTMLAttributes<HTMLDivElement>,
+  listProps: HTMLAttributes<HTMLUListElement>
+}
+
+export function useSideNav<T>(props: SideNavAriaOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): SideNavAria {
   let {
     id,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabeldBy,
-    wrapAround
+    shouldFocusWrap,
+    layout
   } = props;
 
   id = useId(id);
 
   let {collectionProps} = useSelectableCollection({
+    ref,
     selectionManager: state.selectionManager,
     keyboardDelegate: layout,
-    wrapAround
+    shouldFocusWrap
   });
 
+  let domProps = filterDOMProps(props, {labelable: true});
+
   return {
-    navProps: {
-      'aria-label': ariaLabel,
-      'aria-labelledby': ariaLabeldBy,
+    navProps: mergeProps(domProps, {
       role: 'navigation',
       id
-    },
+    }),
     listProps: {
       'aria-labelledby': ariaLabeldBy || (ariaLabel ? id : null),
       role: 'list',

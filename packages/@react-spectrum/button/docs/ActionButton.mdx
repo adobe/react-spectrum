@@ -12,12 +12,16 @@ export default Layout;
 
 import docs from 'docs:@react-spectrum/button';
 import {HeaderInfo, PropTable} from '@react-spectrum/docs';
-import packageData from '../package.json';
+import packageData from '@react-spectrum/button/package.json';
 
 ```jsx import
 import {ActionButton} from '@react-spectrum/button';
-import Edit from '@spectrum-icons/workflow/Edit';
 ```
+
+---
+category: Buttons
+keywords: [action button]
+---
 
 # ActionButton
 
@@ -33,18 +37,22 @@ import Edit from '@spectrum-icons/workflow/Edit';
 ## Example
 
 ```tsx example
-<ActionButton icon={<Edit />}>Edit</ActionButton>
+<ActionButton>Edit</ActionButton>
 ```
 
 ## Content
 
-ActionButtons can have a label, and icon, or both. An icon is provided by passing an icon component to the `icon` prop.
-A visible label can be provided by passing children.
+ActionButtons can have a label, an icon, or both. An icon is provided by passing an icon component as a child to the ActionButton.
+A visible label can be provided by passing a string or a Text component as a child, depending on whether the ActionButton has an accompanying icon.
 
 ```tsx example
-<ActionButton>Label only</ActionButton>
-<ActionButton icon={<Edit />}>Icon + Label</ActionButton>
-<ActionButton icon={<Edit />} aria-label="Icon only" />
+import {Text} from '@react-spectrum/text';
+import Edit from '@spectrum-icons/workflow/Edit';
+
+<ActionButton>
+  <Edit />
+  <Text>Icon + Label</Text>
+</ActionButton>
 ```
 
 ### Accessibility
@@ -52,6 +60,12 @@ A visible label can be provided by passing children.
 If no visible label is provided (e.g. an icon only button),
 an alternative text label must be provided to identify the control for accessibility. This should be added using
 the `aria-label` prop.
+
+```tsx example
+<ActionButton aria-label="Icon only">
+  <Edit />
+</ActionButton>
+```
 
 ### Internationalization
 
@@ -69,7 +83,7 @@ function Example() {
   let [count, setCount] = React.useState(0);
 
   return (
-    <ActionButton icon={<Edit />} onPress={() => setCount(c => c + 1)}>{count} Edits</ActionButton>
+   <ActionButton onPress={() => setCount(c => c + 1)}>{count} Edits</ActionButton>
   );
 }
 ```
@@ -78,36 +92,13 @@ function Example() {
 
 <PropTable component={docs.exports.ActionButton} links={docs.links} />
 
-## Visual Options
+## Visual options
 
 ### Quiet
 [View guidelines](https://spectrum.adobe.com/page/action-button/#Quiet)
 
 ```tsx example
 <ActionButton isQuiet>Action!</ActionButton>
-```
-
-### Selected
-[View guidelines](https://spectrum.adobe.com/page/action-button/#Selected)
-
-```tsx example
-<ActionButton isSelected>Action!</ActionButton>
-```
-
-### Emphasis
-[View guidelines](https://spectrum.adobe.com/page/action-button/#Emphasis)
-
-Note that the styling provided by the `isEmphasized` prop is only applied when the `isSelected` prop is true.
-
-```tsx example
-<ActionButton isEmphasized isSelected>Action!</ActionButton>
-```
-
-### Hold Affordance
-[View guidelines](https://spectrum.adobe.com/page/action-button/#Hold-icon)
-
-```tsx example
-<ActionButton holdAffordance icon={<Edit />} aria-label="Edit" />
 ```
 
 ### Disabled

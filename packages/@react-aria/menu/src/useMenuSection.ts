@@ -10,32 +10,51 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes} from 'react';
+import {HTMLAttributes, ReactNode} from 'react';
 import {useId} from '@react-aria/utils';
 
+interface AriaMenuSectionProps {
+  /** The heading for the section. */
+  heading?: ReactNode,
+  /** An accessibility label for the section. Required if `heading` is not present. */
+  'aria-label'?: string
+}
+
 interface MenuSectionAria {
+  /** Props for the wrapper list item. */
   itemProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the heading element, if any. */
   headingProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the heading element, if any. */
   groupProps: HTMLAttributes<HTMLElement>
 }
 
-export function useMenuSection(): MenuSectionAria {
+/**
+ * Provides the behavior and accessibility implementation for a section in a menu.
+ * See `useMenu` for more details about menus.
+ * @param props - Props for the section.
+ */
+export function useMenuSection(props: AriaMenuSectionProps): MenuSectionAria {
+  let {heading, 'aria-label': ariaLabel} = props;
   let headingId = useId();
 
   return {
     itemProps: {
       role: 'presentation'
     },
-    headingProps: {
+    headingProps: heading ? {
       // Techincally, menus cannot contain headings according to ARIA.
       // We hide the heading from assistive technology, and only use it
       // as a label for the nested group.
       id: headingId,
       'aria-hidden': true
-    },
+    } : {},
     groupProps: {
       role: 'group',
-      'aria-labelledby': headingId
+      'aria-label': ariaLabel,
+      'aria-labelledby': heading ? headingId : undefined
     }
   };
 }

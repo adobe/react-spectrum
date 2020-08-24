@@ -14,8 +14,7 @@ governing permissions and limitations under the License.
 
 :root {
   /* Hardcoded for wrapping study.
-  Will be a DNA token in https://jira.corp.adobe.com/browse/SDS-4466
-  */
+  Will be a DNA token in https://jira.corp.adobe.com/browse/SDS-4466 */
   --spectrum-checkbox-label-margin-top: var(--spectrum-global-dimension-size-65);
 
   /* Fix for inconsistent line-height between browsers that would push the label 1px below the intended baseline */
@@ -36,6 +35,8 @@ governing permissions and limitations under the License.
   padding-inline-end: calc(var(--spectrum-checkbox-cursor-hit-x) * 2);
 
   vertical-align: top;
+
+  isolation: isolate;
 }
 
 .spectrum-Checkbox-input {
@@ -66,26 +67,26 @@ governing permissions and limitations under the License.
   opacity: .0001;
   z-index: 1;
 
-  cursor: pointer;
+  cursor: default;
 
   &:disabled {
     cursor: default;
   }
 
-  &:checked + .spectrum-Checkbox-box {
-    border-width: calc(var(--spectrum-checkbox-box-size) / 2);
-
-    .spectrum-Checkbox-checkmark {
-      transform: scale(1);
-      opacity: 1;
+  &:focus-ring {
+    + .spectrum-Checkbox-box {
+      &:after {
+        margin: calc(var(--spectrum-alias-focus-ring-gap) * -1);
+      }
     }
   }
 }
 
 .spectrum-Checkbox.is-indeterminate {
-  .spectrum-Checkbox-box,
-  .spectrum-Checkbox-input:checked + .spectrum-Checkbox-box {
-    border-width: calc(var(--spectrum-checkbox-box-size) / 2);
+  .spectrum-Checkbox-box {
+    &:before {
+      border-width: calc(var(--spectrum-checkbox-box-size) / 2);
+    }
 
     .spectrum-Checkbox-checkmark {
       display: none;
@@ -100,6 +101,20 @@ governing permissions and limitations under the License.
   }
 }
 
+.spectrum-Checkbox.is-checked {
+  .spectrum-Checkbox-box {
+    &:before {
+      border-width: calc(var(--spectrum-checkbox-box-size) / 2);
+    }
+
+
+    .spectrum-Checkbox-checkmark {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+
 .spectrum-Checkbox-label {
   text-align: start;
   margin-inline-start: var(--spectrum-checkbox-text-gap);
@@ -107,7 +122,6 @@ governing permissions and limitations under the License.
   font-size: var(--spectrum-checkbox-text-size);
   font-weight: var(--spectrum-checkbox-text-font-weight);
   line-height: var(--spectrum-checkbox-label-line-height);
-  transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
 }
 
 .spectrum-Checkbox-box {
@@ -122,11 +136,39 @@ governing permissions and limitations under the License.
   flex-grow: 0;
   flex-shrink: 0;
 
-  border-radius: var(--spectrum-checkbox-box-border-radius);
-  border-width: var(--spectrum-checkbox-box-border-size);
-  border-style: solid;
+  /* :before is used to draw the box fill */
+  &:before {
+    display: block;
+    z-index: 0;
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
 
-  transition: border var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+    width: var(--spectrum-checkbox-box-size);
+    height: var(--spectrum-checkbox-box-size);
+
+    border-radius: var(--spectrum-checkbox-box-border-radius);
+    border-width: var(--spectrum-checkbox-box-border-size);
+    border-style: solid;
+
+    transition: border var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+  }
+
+  &:after {
+    border-radius: calc(var(--spectrum-checkbox-box-border-radius) + var(--spectrum-alias-focus-ring-gap));
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    margin: var(--spectrum-alias-focus-ring-gap);
+    transform: translateX(0); /* Forces FF to render on the pixel grid */
+
+    transition: opacity var(--spectrum-global-animation-duration-100) ease-out,
+                margin var(--spectrum-global-animation-duration-100) ease-out;
+  }
 }
 
 .spectrum-Checkbox-checkmark,

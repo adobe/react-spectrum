@@ -13,23 +13,21 @@
 import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {AlertDialog, Dialog, DialogTrigger} from '../';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
-import {Content, Footer, Header} from '@react-spectrum/view';
+import {Content, Header} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
-import {Heading, Text} from '@react-spectrum/typography';
-import isChromatic from 'storybook-chromatic/isChromatic';
+import {Heading, Text} from '@react-spectrum/text';
+import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 
 storiesOf('DialogTrigger', module)
-  // DialogTrigger isn't affected by color scheme, so only visual test light, and ensure animations work properly.
-  .addParameters({chromaticProvider: {colorSchemes: ['light']}, chromatic: {pauseAnimationAtEnd: true}})
   .addParameters({providerSwitcher: {status: 'notice'}})
   .add(
     'default',
     () => render({}),
-    {chromaticProvider: {scales: ['medium'], height: 1000}} // modals overlap if multiple are open at the same time
   )
   .add(
     'type: popover',
@@ -37,13 +35,11 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'type: modal',
-    () => render({type: 'modal'}),
-    {chromaticProvider: {scales: ['medium'], height: 1000}}
+    () => render({type: 'modal'})
   )
   .add(
     'type: modal isDismissable',
-    () => render({type: 'modal', isDismissable: true}),
-    {chromaticProvider: {scales: ['medium'], height: 1000}}
+    () => render({type: 'modal', isDismissable: true})
   )
   .add(
     'type: fullscreen',
@@ -55,8 +51,7 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'type: tray',
-    () => renderPopover({type: 'tray'}),
-    {chromaticProvider: {scales: ['medium'], height: 1000}}
+    () => renderPopover({type: 'tray'})
   )
   .add(
     'mobileType: fullscreen',
@@ -68,13 +63,11 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'popover with mobileType: modal',
-    () => renderPopover({type: 'popover', mobileType: 'modal'}),
-    {chromaticProvider: {scales: ['medium'], height: 1000}, chromatic: {viewports: [350]}}
+    () => renderPopover({type: 'popover', mobileType: 'modal'})
   )
   .add(
     'popover with mobileType: tray',
-    () => renderPopover({type: 'popover', mobileType: 'tray'}),
-    {chromaticProvider: {scales: ['medium'], height: 1000}, chromatic: {viewports: [350]}}
+    () => renderPopover({type: 'popover', mobileType: 'tray'})
   )
   .add(
     'nested modals',
@@ -82,13 +75,13 @@ storiesOf('DialogTrigger', module)
       <div style={{paddingTop: 100}}>
         <input />
         <Provider colorScheme="dark" UNSAFE_style={{padding: 40, marginTop: 10}}>
-          <DialogTrigger>
+          <DialogTrigger isDismissable>
             <ActionButton>Trigger</ActionButton>
             <Dialog>
               <Content>
                 <input />
                 <input />
-                <DialogTrigger>
+                <DialogTrigger isDismissable>
                   <ActionButton>Trigger</ActionButton>
                   <Dialog>
                     <Content>
@@ -102,8 +95,58 @@ storiesOf('DialogTrigger', module)
           </DialogTrigger>
         </Provider>
       </div>
-    ),
-    {chromatic: {disable: true}}
+    )
+  )
+  .add(
+    'nested modals, fullscreentakeover',
+    () => (
+      <DialogTrigger type="fullscreenTakeover">
+        <ActionButton>Trigger</ActionButton>
+        {(close) => (
+          <Dialog>
+            <Heading>The Heading</Heading>
+            <Header>The Header</Header>
+            <Divider />
+            <Content>
+              <DialogTrigger isDismissable>
+                <ActionButton>Trigger</ActionButton>
+                <Dialog>
+                  <Content>
+                    <input />
+                    <input />
+                  </Content>
+                </Dialog>
+              </DialogTrigger>
+            </Content>
+            <ButtonGroup>
+              <Button variant="secondary" onPress={chain(close, action('cancel'))}>Cancel</Button>
+              <Button variant="cta" onPress={chain(close, action('confirm'))}>Confirm</Button>
+            </ButtonGroup>
+          </Dialog>
+        )}
+      </DialogTrigger>
+    )
+  )
+  .add(
+    'with menu trigger',
+    () => (
+      <DialogTrigger type="popover">
+        <ActionButton>Trigger</ActionButton>
+        <Dialog>
+          <Heading>The Heading</Heading>
+          <Content>
+            <MenuTrigger>
+              <ActionButton>Test</ActionButton>
+              <Menu autoFocus="first">
+                <Item>Item 1</Item>
+                <Item>Item 2</Item>
+                <Item>Item 3</Item>
+              </Menu>
+            </MenuTrigger>
+          </Content>
+        </Dialog>
+      </DialogTrigger>
+    )
   )
   .add(
     'nested popovers',
@@ -123,8 +166,7 @@ storiesOf('DialogTrigger', module)
           </Dialog>
         </DialogTrigger>
       </div>
-    ),
-    {chromatic: {disable: true}}
+    )
   )
   .add(
     'popover inside scroll view',
@@ -149,8 +191,7 @@ storiesOf('DialogTrigger', module)
           </div>
         </div>
       </div>
-    ),
-    {chromatic: {disable: true}}
+    )
   )
   .add(
     'placement="left"',
@@ -217,8 +258,28 @@ storiesOf('DialogTrigger', module)
     () => renderPopover({type: 'popover', placement: 'left', shouldFlip: false, width: 'calc(100vh - 100px)'})
   )
   .add(
+    'shouldFlip: true with offset',
+    () => renderPopover({type: 'popover', placement: 'left', shouldFlip: true, offset: 50, width: 'calc(100vh - 100px)'})
+  )
+  .add(
+    'keyboard dismiss disabled: modal',
+    () => render({type: 'modal', isKeyboardDismissDisabled: true})
+  )
+  .add(
+    'keyboard dismiss disabled: popover',
+    () => renderPopover({type: 'popover', placement: 'bottom', isKeyboardDismissDisabled: true})
+  )
+  .add(
+    'keyboard dismiss disabled: tray',
+    () => renderPopover({type: 'tray', isKeyboardDismissDisabled: true})
+  )
+  .add(
     'containerPadding',
     () => renderPopover({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 20})
+  )
+  .add(
+    'targetRef',
+    () => (<TriggerWithRef type="popover" />)
   )
   .add(
     'alert dialog',
@@ -228,18 +289,19 @@ storiesOf('DialogTrigger', module)
 function render({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger {...props} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
+      <DialogTrigger {...props} onOpenChange={action('open change')}>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
           <Dialog>
-            <Header><Heading>The Heading</Heading></Header>
+            <Heading>The Heading</Heading>
+            <Header>The Header</Header>
             <Divider />
             <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
             {!props.isDismissable &&
-              <Footer>
+              <ButtonGroup>
                 <Button variant="secondary" onPress={chain(close, action('cancel'))}>Cancel</Button>
                 <Button variant="cta" onPress={chain(close, action('confirm'))}>Confirm</Button>
-              </Footer>}
+              </ButtonGroup>}
           </Dialog>
         )}
       </DialogTrigger>
@@ -250,10 +312,11 @@ function render({width = 'auto', ...props}) {
 function renderPopover({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger {...props} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
+      <DialogTrigger {...props} onOpenChange={action('open change')}>
         <ActionButton>Trigger</ActionButton>
         <Dialog>
-          <Header><Heading>The Heading</Heading></Header>
+          <Heading>The Heading</Heading>
+          <Header>The Header</Header>
           <Divider />
           <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
         </Dialog>
@@ -262,13 +325,32 @@ function renderPopover({width = 'auto', ...props}) {
   );
 }
 
+let TriggerWithRef = (props) => {
+  let ref = React.useRef();
+  return (
+    <div style={{display: 'flex'}}>
+      <DialogTrigger {...props} targetRef={ref} onOpenChange={action('open change')}>
+        <ActionButton>Trigger</ActionButton>
+        <Dialog>
+          <Heading>The Heading</Heading>
+          <Header>The Header</Header>
+          <Divider />
+          <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
+        </Dialog>
+      </DialogTrigger>
+      <span ref={ref} style={{marginInlineStart: '200px'}}>Popover appears over here</span>
+    </div>
+  );
+};
+
+
 function renderAlert({width = 'auto', ...props}) {
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
-      <DialogTrigger {...props} onOpenChange={action('open change')} defaultOpen={isChromatic()}>
+      <DialogTrigger {...props} onOpenChange={action('open change')}>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
-          <AlertDialog title="Alert! Danger!" variant="error" primaryLabel="Accept" secondaryLabel="Whoa" cancelLabel="Cancel" onCancel={chain(close, action('cancel'))} onConfirm={chain(close, action('confirm'))}>
+          <AlertDialog title="Alert! Danger!" variant="error" primaryActionLabel="Accept" secondaryActionLabel="Whoa" cancelLabel="Cancel" onCancel={chain(close, action('cancel'))} onPrimaryAction={chain(close, action('primary'))} onSecondaryAction={chain(close, action('secondary'))}>
             <Text>Fine! No, absolutely fine. It's not like I don't have, you know, ten thousand other test subjects begging me to help them escape. You know, it's not like this place is about to EXPLODE.</Text>
           </AlertDialog>
         )}

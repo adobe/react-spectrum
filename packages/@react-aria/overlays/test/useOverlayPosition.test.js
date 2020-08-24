@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 import React, {useRef} from 'react';
 import {useOverlayPosition} from '../';
 
@@ -43,7 +43,10 @@ HTMLElement.prototype.getBoundingClientRect = function () {
 };
 
 describe('useOverlayPosition', function () {
-  afterEach(cleanup);
+  beforeEach(() => {
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {configurable: true, value: 768});
+    Object.defineProperty(HTMLElement.prototype, 'clientWidth', {configurable: true, value: 500});
+  });
 
   it('should position the overlay relative to the trigger', function () {
     let res = render(<Example />);
@@ -53,14 +56,14 @@ describe('useOverlayPosition', function () {
     expect(overlay).toHaveStyle(`
       position: absolute;
       z-index: 100000;
-      left: 8px;
+      left: 12px;
       top: 350px;
-      max-height: 410px;
+      max-height: 406px;
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
     expect(arrow).toHaveStyle(`
-      left: 52px;
+      left: 48px;
     `);
   });
 
@@ -69,25 +72,23 @@ describe('useOverlayPosition', function () {
     let overlay = res.getByTestId('overlay');
 
     expect(overlay).toHaveStyle(`
-      left: 8px;
-      top: 100px;
-      max-height: 660px;
-    `);
-
-    expect(overlay).toHaveTextContent('placement: top');
-
-    let innerHeight = window.innerHeight;
-    window.innerHeight = 1000;
-    fireEvent(window, new Event('resize'));
-
-    expect(overlay).toHaveStyle(`
-      left: 8px;
+      left: 12px;
       top: 500px;
-      max-height: 492px;
+      max-height: 256px;
     `);
 
     expect(overlay).toHaveTextContent('placement: bottom');
-    window.innerHeight = innerHeight;
+
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', {configurable: true, value: 1000});
+    fireEvent(window, new Event('resize'));
+
+    expect(overlay).toHaveStyle(`
+      left: 12px;
+      top: 500px;
+      max-height: 488px;
+    `);
+
+    expect(overlay).toHaveTextContent('placement: bottom');
   });
 
   it('should update the position on props change', function () {
@@ -95,17 +96,17 @@ describe('useOverlayPosition', function () {
     let overlay = res.getByTestId('overlay');
 
     expect(overlay).toHaveStyle(`
-      left: 8px;
+      left: 12px;
       top: 350px;
-      max-height: 410px;
+      max-height: 406px;
     `);
 
     res.rerender(<Example offset={20} />);
 
     expect(overlay).toHaveStyle(`
-      left: 8px;
+      left: 12px;
       top: 370px;
-      max-height: 390px;
+      max-height: 386px;
     `);
   });
 });

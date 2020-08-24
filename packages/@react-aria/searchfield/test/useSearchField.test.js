@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {renderHook} from 'react-hooks-testing-library';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {renderHook} from '@testing-library/react-hooks';
+import {theme} from '@react-spectrum/theme-default';
 import {useSearchField} from '../';
 
 describe('useSearchField hook', () => {
@@ -26,7 +26,7 @@ describe('useSearchField hook', () => {
   let onClear = jest.fn();
 
   let renderSearchHook = (props, wrapper) => {
-    let {result} = renderHook(() => useSearchField(props, state, ref), {wrapper});
+    let {result} = renderHook(() => useSearchField({...props, 'aria-label': 'testLabel'}, state, ref), {wrapper});
     return result.current;
   };
 
@@ -42,20 +42,22 @@ describe('useSearchField hook', () => {
     onClear.mockClear();
   });
 
-  describe('should return searchFieldProps', () => {
+  describe('should return inputProps', () => {
     it('with base props and value equal to state.value', () => {
-      let {searchFieldProps} = renderSearchHook({});
-      expect(searchFieldProps.type).toBe('search');
-      expect(searchFieldProps.value).toBe(state.value);
-      expect(typeof searchFieldProps.onKeyDown).toBe('function');
+      let {inputProps} = renderSearchHook({});
+      expect(inputProps.type).toBe('search');
+      expect(inputProps.value).toBe(state.value);
+      expect(typeof inputProps.onKeyDown).toBe('function');
     });
 
     describe('with specific onKeyDown behavior', () => {
       let preventDefault = jest.fn();
+      let stopPropagation = jest.fn();
       let onSubmit = jest.fn();
       let event = (key) => ({
         key,
-        preventDefault
+        preventDefault,
+        stopPropagation
       });
 
       afterEach(() => {
@@ -64,38 +66,31 @@ describe('useSearchField hook', () => {
       });
 
       it('preventDefault is called for Enter and Escape', () => {
-        let {searchFieldProps} = renderSearchHook({});
-        searchFieldProps.onKeyDown(event('Enter'));
+        let {inputProps} = renderSearchHook({});
+        inputProps.onKeyDown(event('Enter'));
         expect(preventDefault).toHaveBeenCalledTimes(1);
-        searchFieldProps.onKeyDown(event('Escape'));
+        inputProps.onKeyDown(event('Escape'));
         expect(preventDefault).toHaveBeenCalledTimes(2);
       });
 
       it('onSubmit is called if Enter is pressed', () => {
-        let {searchFieldProps} = renderSearchHook({onSubmit});
-        searchFieldProps.onKeyDown(event('Enter'));
+        let {inputProps} = renderSearchHook({onSubmit});
+        inputProps.onKeyDown(event('Enter'));
         expect(onSubmit).toHaveBeenCalledTimes(1);
         expect(onSubmit).toHaveBeenCalledWith(state.value);
       });
 
       it('pressing the Escape key sets the state value to "" and calls onClear if provided', () => {
-        let {searchFieldProps} = renderSearchHook({onClear});
-        searchFieldProps.onKeyDown(event('Escape'));
+        let {inputProps} = renderSearchHook({onClear});
+        inputProps.onKeyDown(event('Escape'));
         expect(state.setValue).toHaveBeenCalledTimes(1);
         expect(state.setValue).toHaveBeenCalledWith('');
         expect(onClear).toHaveBeenCalledTimes(1);
       });
 
-      it('onSubmit and onClear aren\'t called if isDisabled is true', () => {
-        let {searchFieldProps} = renderSearchHook({isDisabled: true, onClear, onSubmit});
-        searchFieldProps.onKeyDown(event('Enter'));
-        expect(preventDefault).toHaveBeenCalledTimes(1);
-        expect(onSubmit).toHaveBeenCalledTimes(0);
-        expect(onClear).toHaveBeenCalledTimes(0);
-        searchFieldProps.onKeyDown(event('Escape'));
-        expect(onSubmit).toHaveBeenCalledTimes(0);
-        expect(onClear).toHaveBeenCalledTimes(0);
-        expect(preventDefault).toHaveBeenCalledTimes(2);
+      it('does not return an onKeyDown prop if isDisabled is true', () => {
+        let {inputProps} = renderSearchHook({isDisabled: true, onClear, onSubmit});
+        expect(inputProps.onKeyDown).not.toBeDefined();
       });
     });
   });
@@ -103,26 +98,22 @@ describe('useSearchField hook', () => {
   describe('should return clearButtonProps', () => {
     it('with a localized aria-label', () => {
       let locale = 'de-DE';
-      let theme = {
-        light: themeLight,
-        medium: scaleMedium
-      };
-
       let wrapper = ({children}) => <Provider locale={locale} theme={theme}>{children}</Provider>;
       let expectedIntl = intlMessages[locale]['Clear search'];
       let {clearButtonProps} = renderSearchHook({}, wrapper);
       expect(clearButtonProps['aria-label']).toBe(expectedIntl);
     });
 
-    it('clear button should not be focusable', () => {
+    it('clear button should not be tabbable', () => {
       let {clearButtonProps} = renderSearchHook({});
-      expect(clearButtonProps.tabIndex).toBe(-1);
+      expect(clearButtonProps.excludeFromTabOrder).toBe(true);
     });
 
     describe('with specific onPress behavior', () => {
       let mockEvent = {blah: 1};
       it('sets the state to "" and focuses the search field', () => {
         let {clearButtonProps} = renderSearchHook({});
+        clearButtonProps.onPressStart(mockEvent);
         clearButtonProps.onPress(mockEvent);
         expect(state.setValue).toHaveBeenCalledTimes(1);
         expect(state.setValue).toHaveBeenCalledWith('');
@@ -131,6 +122,7 @@ describe('useSearchField hook', () => {
 
       it('calls the user provided onClear if provided', () => {
         let {clearButtonProps} = renderSearchHook({onClear});
+        clearButtonProps.onPressStart(mockEvent);
         clearButtonProps.onPress(mockEvent);
         // Verify that onClearButtonClick stuff still triggers
         expect(state.setValue).toHaveBeenCalledTimes(1);
@@ -138,6 +130,7 @@ describe('useSearchField hook', () => {
         expect(ref.current.focus).toHaveBeenCalledTimes(1);
         // Verify that props.onClear is triggered as well with the same event
         expect(onClear).toHaveBeenCalledTimes(1);
+        expect(onClear).toHaveBeenCalledWith();
       });
     });
   });

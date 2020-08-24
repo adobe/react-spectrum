@@ -1,0 +1,37 @@
+{
+  "name": "@react-aria/slider",
+  "version": "3.0.0-alpha.0",
+  "description": "Slider",
+  "license": "Apache-2.0",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adobe/react-spectrum"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.6.2",
+    "@react-aria/focus": "^3.2.0",
+    "@react-aria/i18n": "^3.0.2",
+    "@react-aria/interactions": "^3.2.0",
+    "@react-aria/label": "^3.0.2",
+    "@react-aria/utils": "^3.2.0",
+    "@react-stately/radio": "^3.0.2",
+    "@react-stately/slider": "3.0.0-alpha.0",
+    "@react-types/radio": "^3.0.2",
+    "@react-types/slider": "3.0.0-alpha.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

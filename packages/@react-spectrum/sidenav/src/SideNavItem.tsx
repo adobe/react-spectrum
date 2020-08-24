@@ -12,18 +12,23 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
-import React, {useRef} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React, {useContext, useRef} from 'react';
+import {SideNavContext} from './SideNavContext';
 import {SpectrumSideNavItemProps} from '@react-types/sidenav';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
+import {useHover} from '@react-aria/interactions';
 import {useSideNavItem} from '@react-aria/sidenav';
 
 export function SideNavItem<T>(props: SpectrumSideNavItemProps<T>) {
   let ref = useRef<HTMLAnchorElement>();
   let {
-    isSelected,
-    isDisabled,
+    key,
     rendered
   } = props.item;
+  let state = useContext(SideNavContext);
+  let isSelected = state.selectionManager.isSelected(key);
+  let isDisabled = state.disabledKeys.has(key);
 
   let className = classNames(
     styles,
@@ -34,7 +39,8 @@ export function SideNavItem<T>(props: SpectrumSideNavItemProps<T>) {
     }
   );
 
-  let {listItemProps, listItemLinkProps} = useSideNavItem(props, props.state, ref);
+  let {listItemProps, listItemLinkProps} = useSideNavItem(props, state, ref);
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   return (
     <div
@@ -42,9 +48,11 @@ export function SideNavItem<T>(props: SpectrumSideNavItemProps<T>) {
       className={className} >
       <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
         <a
-          {...listItemLinkProps}
+          {...mergeProps(listItemLinkProps, hoverProps)}
           ref={ref}
-          className={classNames(styles, 'spectrum-SideNav-itemLink')} >
+          className={classNames(styles, 'spectrum-SideNav-itemLink', {
+            'is-hovered': isHovered
+          })} >
           {rendered}
         </a>
       </FocusRing>

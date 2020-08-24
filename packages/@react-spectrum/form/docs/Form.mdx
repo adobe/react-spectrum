@@ -1,0 +1,258 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/form';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/form/package.json';
+
+```jsx import
+ import {Checkbox} from '@react-spectrum/checkbox';
+ import {Form} from '@react-spectrum/form';
+ import {Radio, RadioGroup} from '@react-spectrum/radio';
+ import {TextField} from '@react-spectrum/textfield';
+ ```
+
+---
+category: Forms
+---
+
+# Form
+
+<p>{docs.exports.Form.description}</p>
+
+<HeaderInfo
+ packageData={packageData}
+ componentNames={['Form']} />
+
+## Example
+
+```tsx example
+<Form maxWidth="size-3600">
+  <TextField label="Email" placeholder="abc@adobe.com" />
+  <TextField label="Password" placeholder="1234" />
+  <Checkbox>Remember me</Checkbox>
+</Form>
+```
+
+## Content
+
+Form accepts one or more children to render as its form elements. Label alignment, positioning, and other [properties](#visual-options)
+are set on the Form itself and propagated to its children to generate a cohesive design. To override these top level Form props on individual children,
+set them directly on the child instead.
+
+```tsx example
+<Form maxWidth="size-3600" isRequired necessityIndicator="label">
+  <TextField label="Name" placeholder="Jane Smith" />
+  <TextField label="Email" placeholder="abc@adobe.com" />
+  <TextField label="Address" placeholder="123 Any Street" isRequired={false} />
+</Form>
+```
+
+## Labeling
+
+### Accessibility
+
+A label should be provided to the Form by adding either the `aria-label` or `aria-labelledby` prop, so that the element will be identified to assistive
+technology as a form landmark region to which assistive technology can navigate.
+
+```tsx example
+<h3 id="label-3">Personal Information</h3>
+<Form maxWidth="size-3600" aria-labelledby="label-3">
+  <TextField label="First Name" placeholder="John" />
+  <TextField label="Last Name" placeholder="Smith" />
+  <RadioGroup label="Favorite pet">
+    <Radio value="dogs">Dogs</Radio>
+    <Radio value="cats">Cats</Radio>
+    <Radio value="dragons">Dragons</Radio>
+  </RadioGroup>
+</Form>
+```
+
+
+## Props
+
+<PropTable component={docs.exports.Form} links={docs.links} />
+
+## Visual options
+
+### Label position and alignment
+Top label position, start label alignment
+```tsx example
+<Form
+  labelPosition="top"
+  labelAlign="start"
+  aria-label="Top position, start alignment example"
+  maxWidth="size-3600">
+  <TextField label="Name" placeholder="John Smith" />
+  <RadioGroup label="Favorite pet">
+    <Radio value="dogs">Dogs</Radio>
+    <Radio value="cats">Cats</Radio>
+  </RadioGroup>
+</Form>
+```
+Side label position, start label alignment
+```tsx example
+<Form
+  labelPosition="side"
+  labelAlign="start"
+  aria-label="Side position, start alignment example"
+  maxWidth="size-3600">
+  <TextField label="Name" placeholder="John Smith" />
+  <RadioGroup label="Favorite pet">
+    <Radio value="dogs">Dogs</Radio>
+    <Radio value="cats">Cats</Radio>
+  </RadioGroup>
+</Form>
+```
+Side label position, end label alignment
+```tsx example
+<Form
+  labelPosition="side"
+  labelAlign="end"
+  aria-label="Side position, end alignment example"
+  maxWidth="size-3600">
+  <TextField label="Name" placeholder="John Smith" />
+  <RadioGroup label="Favorite pet">
+    <Radio value="dogs">Dogs</Radio>
+    <Radio value="cats">Cats</Radio>
+  </RadioGroup>
+</Form>
+```
+
+### Quiet
+
+```tsx example
+<Form
+  isQuiet
+  aria-label="Quiet example"
+  maxWidth="size-3600">
+  <TextField label="Name" placeholder="John Smith" />
+  <TextField label="Address" placeholder="123 Any Street" />
+</Form>
+```
+
+### Emphasized
+
+```tsx example
+<Form
+  isEmphasized
+  aria-label="Emphasized example"
+  maxWidth="size-3600">
+  <TextField label="Name" placeholder="John Smith" />
+  <RadioGroup label="Favorite pet" defaultValue="dogs">
+    <Radio value="dogs">Dogs</Radio>
+    <Radio value="cats">Cats</Radio>
+  </RadioGroup>
+</Form>
+```
+
+### Disabled
+
+```tsx example
+<Form
+  isDisabled
+  aria-label="Disabled example"
+  maxWidth="size-3600">
+  <TextField label="Name" placeholder="John Smith" />
+  <RadioGroup label="Favorite pet">
+    <Radio value="dogs">Dogs</Radio>
+    <Radio value="cats">Cats</Radio>
+  </RadioGroup>
+</Form>
+```
+
+### Required and necessity indicator
+
+Optional label
+```tsx example
+<Form
+  necessityIndicator="label"
+  aria-label="Optional with label example"
+  maxWidth="size-3600">
+  <TextField label="Name" placeholder="John Smith" />
+  <RadioGroup label="Favorite pet">
+    <Radio value="dogs">Dogs</Radio>
+    <Radio value="cats">Cats</Radio>
+  </RadioGroup>
+</Form>
+```
+Required label
+```tsx example
+<Form
+  isRequired
+  necessityIndicator="label"
+  aria-label="Required with label example"
+  maxWidth="size-3600">
+  <TextField label="Name" placeholder="John Smith" />
+  <RadioGroup label="Favorite pet">
+    <Radio value="dogs">Dogs</Radio>
+    <Radio value="cats">Cats</Radio>
+  </RadioGroup>
+</Form>
+```
+Required with asterisk
+```tsx example
+<Form
+  isRequired
+  necessityIndicator="icon"
+  aria-label="Required with asterisk example"
+  maxWidth="size-3600">
+  <TextField label="Name" placeholder="John Smith" />
+  <RadioGroup label="Favorite pet">
+    <Radio value="dogs">Dogs</Radio>
+    <Radio value="cats">Cats</Radio>
+  </RadioGroup>
+</Form>
+```
+
+### Read only
+
+```tsx example
+<Form
+  isReadOnly
+  aria-label="isReadOnly example"
+  maxWidth="size-3600">
+  <TextField label="Name" value="John Smith" />
+  <RadioGroup label="Favorite pet">
+    <Radio value="dogs">Dogs</Radio>
+    <Radio value="cats">Cats</Radio>
+  </RadioGroup>
+</Form>
+```
+
+### Validation state
+
+```tsx example
+<Form
+  validationState="invalid"
+  aria-label="Invalid validationState example"
+  maxWidth="size-3600"
+  marginBottom="size-300">
+  <TextField label="Name" placeholder="John Smith" />
+  <RadioGroup label="Favorite pet">
+    <Radio value="dogs">Dogs</Radio>
+    <Radio value="cats">Cats</Radio>
+  </RadioGroup>
+</Form>
+```
+```tsx example
+<Form
+  validationState="valid"
+  aria-label="Valid validationState example"
+  maxWidth="size-3600">
+  <TextField label="Name" placeholder="John Smith" />
+  <RadioGroup label="Favorite pet">
+    <Radio value="dogs">Dogs</Radio>
+    <Radio value="cats">Cats</Radio>
+  </RadioGroup>
+</Form>
+```

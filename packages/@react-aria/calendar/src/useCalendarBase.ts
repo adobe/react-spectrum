@@ -15,12 +15,12 @@ import {CalendarAria} from './types';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarStateBase} from '@react-stately/calendar';
 import {DOMProps} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useId, useLabels, useUpdateEffect} from '@react-aria/utils';
 import {format} from 'date-fns';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {KeyboardEvent, useCallback, useEffect, useRef} from 'react';
 import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
-import {useId, useLabels, useUpdateEffect} from '@react-aria/utils';
 
 // Returns the id for a specific cell date
 export function getCellId(date: Date, calendarId: string): string {
@@ -39,6 +39,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     isDisabled = false
   } = props;
 
+  let domProps = filterDOMProps(props, {labelable: true});
   let formatMessage = useMessageFormatter(intlMessages);
   let monthFormatter = useDateFormatter({month: 'long', year: 'numeric'});
   let calendarBody = useRef(null); // TODO: should this be in RSP?
@@ -160,11 +161,11 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
   });
 
   return {
-    calendarProps: {
+    calendarProps: mergeProps(domProps, {
       ...labelProps,
       id: calendarId,
       role: 'group'
-    },
+    }),
     calendarTitleProps: {
       id: calendarTitleId
     },

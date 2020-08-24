@@ -16,6 +16,7 @@ import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useCalendarCell} from '@react-aria/calendar';
 import {useDateFormatter} from '@react-aria/i18n';
+import {useHover} from '@react-aria/interactions';
 
 interface CalendarCellProps extends CalendarCellOptions {
   state: CalendarState | RangeCalendarState
@@ -23,6 +24,7 @@ interface CalendarCellProps extends CalendarCellOptions {
 
 export function CalendarCell({state, ...props}: CalendarCellProps) {
   let {cellProps, cellDateProps} = useCalendarCell(props, state);
+  let {hoverProps, isHovered} = useHover(props);
   let dateFormatter = useDateFormatter({day: 'numeric'});
 
   return (
@@ -31,6 +33,7 @@ export function CalendarCell({state, ...props}: CalendarCellProps) {
       className={classNames(styles, 'spectrum-Calendar-tableCell')}>
       <span
         {...cellDateProps}
+        {...hoverProps}
         className={classNames(styles, 'spectrum-Calendar-date', {
           'is-today': props.isToday,
           'is-selected': props.isSelected,
@@ -41,7 +44,8 @@ export function CalendarCell({state, ...props}: CalendarCellProps) {
           'is-range-end': props.isRangeEnd,
           'is-range-selection': props.isRangeSelection,
           'is-selection-start': props.isSelectionStart,
-          'is-selection-end': props.isSelectionEnd
+          'is-selection-end': props.isSelectionEnd,
+          'is-hovered': isHovered
         })}>
         {dateFormatter.format(props.cellDate)}
       </span>

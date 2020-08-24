@@ -10,23 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render, within} from '@testing-library/react';
+import Bell from '@spectrum-icons/workflow/Bell';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {fireEvent, render, within} from '@testing-library/react';
 import {Item, Menu, Section} from '../';
+import {Keyboard, Text} from '@react-spectrum/text';
 import {MenuContext} from '../src/context';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {Menu as V2Menu, MenuDivider as V2MenuDivider, MenuHeading as V2MenuHeading, MenuItem as V2MenuItem} from '@react/react-spectrum/Menu';
 
 let menuId = 'menu-id';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 let withSection = [
   {name: 'Heading 1', children: [
@@ -40,30 +36,31 @@ let withSection = [
   ]}
 ];
 
-function renderComponent(Component, contextProps = {}, props) {
+function renderComponent(Component, contextProps = {}, props = {}) {
   if (Component === V2Menu) {
+    let role = props.onSelect ? 'menuitemradio' : 'menuitem';
     return render(
       <V2Menu id={menuId} {...props}>
         <V2MenuHeading>
           Heading 1
         </V2MenuHeading>
-        <V2MenuItem role="menuitemradio" value="foo">
+        <V2MenuItem role={role} value="foo">
           Foo
         </V2MenuItem>
-        <V2MenuItem role="menuitemradio" value="bar">
+        <V2MenuItem role={role} value="bar">
           Bar
         </V2MenuItem>
-        <V2MenuItem role="menuitemradio" value="baz" disabled>
+        <V2MenuItem role={role} value="baz" disabled>
           Baz
         </V2MenuItem>
         <V2MenuDivider />
         <V2MenuHeading>
           Heading 2
         </V2MenuHeading>
-        <V2MenuItem role="menuitemradio" value="blah">
+        <V2MenuItem role={role} value="blah">
           Blah
         </V2MenuItem>
-        <V2MenuItem role="menuitemradio" value="bleh">
+        <V2MenuItem role={role} value="bleh">
           Bleh
         </V2MenuItem>
       </V2Menu>
@@ -71,11 +68,12 @@ function renderComponent(Component, contextProps = {}, props) {
   } else {
     return render(
       <Provider theme={theme}>
+        <span id="label">Label</span>
         <MenuContext.Provider value={contextProps}>
-          <Menu id={menuId} items={withSection} itemKey="name" {...props}>
+          <Menu id={menuId} items={withSection} aria-labelledby="label" {...props}>
             {item => (
-              <Section items={item.children} title={item.name}>
-                {item => <Item childItems={item.children}>{item.name}</Item>}
+              <Section key={item.name} items={item.children} title={item.name}>
+                {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
               </Section>
             )}
           </Menu>
@@ -100,14 +98,13 @@ describe('Menu', function () {
 
   afterEach(() => {
     onSelectionChange.mockClear();
-    cleanup();
   });
 
   afterAll(function () {
     offsetWidth.mockReset();
     offsetHeight.mockReset();
   });
-  
+
   it.each`
     Name        | Component | props
     ${'Menu'}   | ${Menu}   | ${{}}
@@ -117,6 +114,8 @@ describe('Menu', function () {
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
     if (Component === Menu) {
+      expect(menu).toHaveAttribute('aria-labelledby', 'label');
+
       let sections = within(menu).getAllByRole('group');
       expect(sections.length).toBe(2);
 
@@ -131,12 +130,11 @@ describe('Menu', function () {
     let dividers = within(menu).getAllByRole('separator');
     expect(dividers.length).toBe(1);
 
-    let items = within(menu).getAllByRole('menuitemradio');
+    let items = within(menu).getAllByRole('menuitem');
     expect(items.length).toBe(5);
     for (let item of items) {
       if (Component === Menu) {
         expect(item).toHaveAttribute('tabindex');
-        expect(item).toHaveAttribute('aria-checked');
         expect(item).toHaveAttribute('aria-disabled');
       }
     }
@@ -156,12 +154,12 @@ describe('Menu', function () {
 
   it.each`
     Name        | Component | props
-    ${'Menu'}   | ${Menu}   | ${{autoFocus: true}}
+    ${'Menu'}   | ${Menu}   | ${{autoFocus: 'first'}}
     ${'V2Menu'} | ${V2Menu} | ${{}}
   `('$Name allows user to change menu item focus via up/down arrow keys', function ({Component, props}) {
     let tree = renderComponent(Component, {}, props);
     let menu = tree.getByRole('menu');
-    let menuItems = within(menu).getAllByRole('menuitemradio');
+    let menuItems = within(menu).getAllByRole('menuitem');
     let selectedItem = menuItems[0];
     expect(selectedItem).toBe(document.activeElement);
     fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
@@ -174,11 +172,11 @@ describe('Menu', function () {
   // V3 only behavior
   it.each`
     Name        | Component | props
-    ${'Menu'}   | ${Menu}   | ${{autoFocus: true, wrapAround: true}}
-  `('$Name wraps focus from first to last/last to first item if up/down arrow is pressed if wrapAround is true', function ({Component, props}) {
+    ${'Menu'}   | ${Menu}   | ${{autoFocus: 'first', shouldFocusWrap: true}}
+  `('$Name wraps focus from first to last/last to first item if up/down arrow is pressed if shouldFocusWrap is true', function ({Component, props}) {
     let tree = renderComponent(Component, {}, props);
     let menu = tree.getByRole('menu');
-    let menuItems = within(menu).getAllByRole('menuitemradio');
+    let menuItems = within(menu).getAllByRole('menuitem');
     let firstItem = menuItems[0];
     expect(firstItem).toBe(document.activeElement);
     fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 38, charCode: 38});
@@ -187,11 +185,11 @@ describe('Menu', function () {
     fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 40, charCode: 40});
     expect(firstItem).toBe(document.activeElement);
   });
-  
+
   describe('supports single selection', function () {
     it.each`
       Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{onSelectionChange, defaultSelectedKeys: ['Blah'], autoFocus: true}}
+      ${'Menu'}   | ${Menu}   | ${{selectionMode: 'single', onSelectionChange, defaultSelectedKeys: ['Blah'], autoFocus: 'first'}}
     `('$Name supports defaultSelectedKeys (uncontrolled)', function ({Component, props}) {
       // Check that correct menu item is selected by default
       let tree = renderComponent(Component, {}, props);
@@ -203,9 +201,9 @@ describe('Menu', function () {
       expect(selectedItem).toHaveAttribute('tabindex', '0');
       let itemText = within(selectedItem).getByText('Blah');
       expect(itemText).toBeTruthy();
-      let checkmark = within(selectedItem).getByRole('img');
+      let checkmark = within(selectedItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-    
+
       // Select a different menu item via enter
       let nextSelectedItem = menuItems[4];
       fireEvent.keyDown(nextSelectedItem, {key: 'Enter', code: 13, charCode: 13});
@@ -213,11 +211,11 @@ describe('Menu', function () {
       expect(nextSelectedItem).toHaveAttribute('aria-checked', 'true');
       itemText = within(nextSelectedItem).getByText('Bleh');
       expect(itemText).toBeTruthy();
-      checkmark = within(nextSelectedItem).getByRole('img');
+      checkmark = within(nextSelectedItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
 
       // Make sure there is only a single checkmark in the entire menu
-      let checkmarks = tree.getAllByRole('img');
+      let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(1);
 
       expect(onSelectionChange).toBeCalledTimes(1);
@@ -226,7 +224,7 @@ describe('Menu', function () {
 
     it.each`
     Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectedKeys: ['Blah'], autoFocus: true}}
+      ${'Menu'}   | ${Menu}   | ${{selectionMode: 'single', onSelectionChange, selectedKeys: ['Blah'], autoFocus: 'first'}}
     `('$Name supports selectedKeys (controlled)', function ({Component, props}) {
       // Check that correct menu item is selected by default
       let tree = renderComponent(Component, {}, props);
@@ -238,20 +236,20 @@ describe('Menu', function () {
       expect(selectedItem).toHaveAttribute('tabindex', '0');
       let itemText = within(selectedItem).getByText('Blah');
       expect(itemText).toBeTruthy();
-      let checkmark = within(selectedItem).getByRole('img');
+      let checkmark = within(selectedItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-    
+
       // Select a different menu item via enter
       let nextSelectedItem = menuItems[4];
       fireEvent.keyDown(nextSelectedItem, {key: 'Enter', code: 13, charCode: 13});
       fireEvent.keyUp(nextSelectedItem, {key: 'Enter', code: 13, charCode: 13});
       expect(nextSelectedItem).toHaveAttribute('aria-checked', 'false');
       expect(selectedItem).toHaveAttribute('aria-checked', 'true');
-      checkmark = within(selectedItem).getByRole('img');
+      checkmark = within(selectedItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
 
       // Make sure there is only a single checkmark in the entire menu
-      let checkmarks = tree.getAllByRole('img');
+      let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(1);
 
       expect(onSelectionChange).toBeCalledTimes(1);
@@ -260,24 +258,24 @@ describe('Menu', function () {
 
     it.each`
       Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{onSelectionChange}}
+      ${'Menu'}   | ${Menu}   | ${{selectionMode: 'single', onSelectionChange}}
       ${'V2Menu'} | ${V2Menu} | ${{onSelect}}
     `('$Name supports using space key to change item selection', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
-    
+
       // Trigger a menu item via space
       let item = menuItems[4];
       fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32});
       fireEvent.keyUp(item, {key: ' ', code: 32, charCode: 32});
       if (Component === Menu) {
         expect(item).toHaveAttribute('aria-checked', 'true');
-        let checkmark = within(item).getByRole('img');
+        let checkmark = within(item).getByRole('img', {hidden: true});
         expect(checkmark).toBeTruthy();
-  
+
         // Make sure there is only a single checkmark in the entire menu
-        let checkmarks = tree.getAllByRole('img');
+        let checkmarks = tree.getAllByRole('img', {hidden: true});
         expect(checkmarks.length).toBe(1);
       }
 
@@ -293,23 +291,23 @@ describe('Menu', function () {
 
     it.each`
       Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{onSelectionChange}}
+      ${'Menu'}   | ${Menu}   | ${{selectionMode: 'single', onSelectionChange}}
       ${'V2Menu'} | ${V2Menu} | ${{onSelect}}
     `('$Name supports using click to change item selection', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
-    
+
       // Trigger a menu item via press
       let item = menuItems[4];
       triggerPress(item);
       if (Component === Menu) {
         expect(item).toHaveAttribute('aria-checked', 'true');
-        let checkmark = within(item).getByRole('img');
+        let checkmark = within(item).getByRole('img', {hidden: true});
         expect(checkmark).toBeTruthy();
-  
+
         // Make sure there is only a single checkmark in the entire menu
-        let checkmarks = tree.getAllByRole('img');
+        let checkmarks = tree.getAllByRole('img', {hidden: true});
         expect(checkmarks.length).toBe(1);
       }
 
@@ -322,16 +320,16 @@ describe('Menu', function () {
         expect(onSelect.mock.calls[0][0]).toBe('bleh');
       }
     });
-    
+
     it.each`
       Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{onSelectionChange, disabledKeys: ['Baz']}}
+      ${'Menu'}   | ${Menu}   | ${{selectionMode: 'single', onSelectionChange, disabledKeys: ['Baz']}}
       ${'V2Menu'} | ${V2Menu} | ${{onSelect}}
     `('$Name supports disabled items', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
-    
+
       // Attempt to trigger the disabled item
       let disabledItem = menuItems[2];
       triggerPress(disabledItem);
@@ -339,7 +337,7 @@ describe('Menu', function () {
       expect(disabledItem).toHaveAttribute('aria-disabled', 'true');
 
       // Make sure there are no checkmarks
-      let checkmarks = tree.queryAllByRole('img');
+      let checkmarks = tree.queryAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(0);
 
       // Verify onSelectionChange is not called
@@ -358,27 +356,27 @@ describe('Menu', function () {
     `('$Name supports selecting multiple items', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      
+
       // Make sure nothing is checked by default
-      let checkmarks = tree.queryAllByRole('img');
+      let checkmarks = tree.queryAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(0);
 
       let menuItems = within(menu).getAllByRole('menuitemcheckbox');
       let firstItem = menuItems[3];
       triggerPress(firstItem);
       expect(firstItem).toHaveAttribute('aria-checked', 'true');
-      let checkmark = within(firstItem).getByRole('img');
+      let checkmark = within(firstItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-    
+
       // Select a different menu item
       let secondItem = menuItems[1];
       triggerPress(secondItem);
       expect(secondItem).toHaveAttribute('aria-checked', 'true');
-      checkmark = within(secondItem).getByRole('img');
+      checkmark = within(secondItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
 
       // Make sure there are multiple checkmark in the entire menu
-      checkmarks = tree.getAllByRole('img');
+      checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
       expect(onSelectionChange).toBeCalledTimes(2);
@@ -392,35 +390,35 @@ describe('Menu', function () {
     `('$Name supports multiple defaultSelectedKeys (uncontrolled)', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      
+
       // Make sure two items are checked by default
-      let checkmarks = tree.getAllByRole('img');
+      let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
       let menuItems = within(menu).getAllByRole('menuitemcheckbox');
       let firstItem = menuItems[0];
       let secondItem = menuItems[1];
-      
+
       expect(firstItem).toHaveAttribute('aria-checked', 'true');
       expect(secondItem).toHaveAttribute('aria-checked', 'true');
       let itemText = within(firstItem).getByText('Foo');
       expect(itemText).toBeTruthy();
       itemText = within(secondItem).getByText('Bar');
       expect(itemText).toBeTruthy();
-      let checkmark = within(firstItem).getByRole('img');
+      let checkmark = within(firstItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-      checkmark = within(secondItem).getByRole('img');
+      checkmark = within(secondItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-         
+
       // Select a different menu item
       let thirdItem = menuItems[4];
       triggerPress(thirdItem);
       expect(thirdItem).toHaveAttribute('aria-checked', 'true');
-      checkmark = within(thirdItem).getByRole('img');
+      checkmark = within(thirdItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
 
       // Make sure there are now three checkmarks
-      checkmarks = tree.getAllByRole('img');
+      checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(3);
 
       expect(onSelectionChange).toBeCalledTimes(1);
@@ -435,35 +433,35 @@ describe('Menu', function () {
     `('$Name supports multiple selectedKeys (controlled)', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      
+
       // Make sure two items are checked by default
-      let checkmarks = tree.getAllByRole('img');
+      let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
       let menuItems = within(menu).getAllByRole('menuitemcheckbox');
       let firstItem = menuItems[0];
       let secondItem = menuItems[1];
-      
+
       expect(firstItem).toHaveAttribute('aria-checked', 'true');
       expect(secondItem).toHaveAttribute('aria-checked', 'true');
       let itemText = within(firstItem).getByText('Foo');
       expect(itemText).toBeTruthy();
       itemText = within(secondItem).getByText('Bar');
       expect(itemText).toBeTruthy();
-      let checkmark = within(firstItem).getByRole('img');
+      let checkmark = within(firstItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-      checkmark = within(secondItem).getByRole('img');
+      checkmark = within(secondItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-        
+
       // Select a different menu item
       let thirdItem = menuItems[4];
       triggerPress(thirdItem);
       expect(thirdItem).toHaveAttribute('aria-checked', 'false');
-      checkmark = within(thirdItem).queryByRole('img');
+      checkmark = within(thirdItem).queryByRole('img', {hidden: true});
       expect(checkmark).toBeNull();
 
       // Make sure there are still two checkmarks
-      checkmarks = tree.getAllByRole('img');
+      checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
       expect(onSelectionChange).toBeCalledTimes(1);
@@ -476,34 +474,34 @@ describe('Menu', function () {
     `('$Name supports deselection', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      
+
       // Make sure two items are checked by default
-      let checkmarks = tree.getAllByRole('img');
+      let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
       let menuItems = within(menu).getAllByRole('menuitemcheckbox');
       let firstItem = menuItems[0];
       let secondItem = menuItems[1];
-      
+
       expect(firstItem).toHaveAttribute('aria-checked', 'true');
       expect(secondItem).toHaveAttribute('aria-checked', 'true');
       let itemText = within(firstItem).getByText('Foo');
       expect(itemText).toBeTruthy();
       itemText = within(secondItem).getByText('Bar');
       expect(itemText).toBeTruthy();
-      let checkmark = within(firstItem).getByRole('img');
+      let checkmark = within(firstItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-      checkmark = within(secondItem).getByRole('img');
+      checkmark = within(secondItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
-         
+
       // Deselect the first item
       triggerPress(firstItem);
       expect(firstItem).toHaveAttribute('aria-checked', 'false');
-      checkmark = within(firstItem).queryByRole('img');
+      checkmark = within(firstItem).queryByRole('img', {hidden: true});
       expect(checkmark).toBeNull();
 
       // Make sure there only a single checkmark now
-      checkmarks = tree.getAllByRole('img');
+      checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(1);
 
       expect(onSelectionChange).toBeCalledTimes(1);
@@ -521,12 +519,12 @@ describe('Menu', function () {
       let menuItems = within(menu).getAllByRole('menuitemcheckbox');
       let disabledItem = menuItems[2];
       triggerPress(disabledItem);
-      
+
       expect(disabledItem).toHaveAttribute('aria-checked', 'false');
       expect(disabledItem).toHaveAttribute('aria-disabled', 'true');
-         
+
       // Make sure that only two items are checked still
-      let checkmarks = tree.getAllByRole('img');
+      let checkmarks = tree.getAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(2);
 
       expect(onSelectionChange).toBeCalledTimes(0);
@@ -540,9 +538,9 @@ describe('Menu', function () {
     `('$Name prevents selection of any items', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      
+
       // Make sure nothing is checked by default
-      let checkmarks = tree.queryAllByRole('img');
+      let checkmarks = tree.queryAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(0);
 
       // Attempt to select a variety of items via enter, space, and click
@@ -556,9 +554,9 @@ describe('Menu', function () {
       expect(firstItem).not.toHaveAttribute('aria-checked', 'true');
       expect(secondItem).not.toHaveAttribute('aria-checked', 'true');
       expect(thirdItem).not.toHaveAttribute('aria-checked', 'true');
-      
+
       // Make sure nothing is still checked
-      checkmarks = tree.queryAllByRole('img');
+      checkmarks = tree.queryAllByRole('img', {hidden: true});
       expect(checkmarks.length).toBe(0);
       expect(onSelectionChange).toBeCalledTimes(0);
     });
@@ -567,11 +565,11 @@ describe('Menu', function () {
   describe('supports type to select', function () {
     it.each`
       Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{autoFocus: true}}
+      ${'Menu'}   | ${Menu}   | ${{autoFocus: 'first'}}
     `('$Name supports focusing items by typing letters in rapid succession', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let menuItems = within(menu).getAllByRole('menuitem');
       expect(document.activeElement).toBe(menuItems[0]);
 
       fireEvent.keyDown(menu, {key: 'B'});
@@ -586,11 +584,11 @@ describe('Menu', function () {
 
     it.each`
       Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{autoFocus: true}}
+      ${'Menu'}   | ${Menu}   | ${{autoFocus: 'first'}}
     `('$Name resets the search text after a timeout', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let menuItems = within(menu).getAllByRole('menuitem');
       expect(document.activeElement).toBe(menuItems[0]);
 
       fireEvent.keyDown(menu, {key: 'B'});
@@ -599,16 +597,16 @@ describe('Menu', function () {
       jest.runAllTimers();
 
       fireEvent.keyDown(menu, {key: 'B'});
-      expect(document.activeElement).toBe(menuItems[2]);
+      expect(document.activeElement).toBe(menuItems[1]);
     });
 
     it.each`
       Name        | Component | props
-      ${'Menu'}   | ${Menu}   | ${{autoFocus: true}}
+      ${'Menu'}   | ${Menu}   | ${{autoFocus: 'first'}}
     `('$Name wraps around when no items past the current one match', function ({Component, props}) {
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
-      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let menuItems = within(menu).getAllByRole('menuitem');
       expect(document.activeElement).toBe(menuItems[0]);
 
       fireEvent.keyDown(menu, {key: 'B'});
@@ -619,14 +617,14 @@ describe('Menu', function () {
       jest.runAllTimers();
 
       fireEvent.keyDown(menu, {key: 'B'});
-      expect(document.activeElement).toBe(menuItems[1]);
+      expect(document.activeElement).toBe(menuItems[4]);
     });
   });
 
   it('supports DialogTrigger as a wrapper around items', function () {
     let tree = render(
       <Provider theme={theme}>
-        <Menu id={menuId} selectionMode="none">
+        <Menu aria-label="menu" id={menuId} selectionMode="none">
           <Section title="Test">
             <DialogTrigger>
               <Item>Hi</Item>
@@ -645,5 +643,146 @@ describe('Menu', function () {
 
     let dialog = tree.getByRole('dialog');
     expect(dialog).toBeVisible();
+  });
+
+  describe('supports onAction', function () {
+    it('Menu with static list supports onAction', function () {
+      let onAction = jest.fn();
+      let onSelectionChange = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <Menu aria-label="menu" onSelectionChange={onSelectionChange} onAction={onAction}>
+            <Item key="One">One</Item>
+            <Item key="Two">Two</Item>
+            <Item key="Three">Three</Item>
+          </Menu>
+        </Provider>
+      );
+
+      let menu = tree.getByRole('menu');
+
+      let [item1, item2, item3] = [
+        within(menu).getByText('One'),
+        within(menu).getByText('Two'),
+        within(menu).getByText('Three')
+      ];
+
+      triggerPress(item1);
+      expect(onAction).toHaveBeenCalledWith('One');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+
+
+      triggerPress(item2);
+      expect(onAction).toHaveBeenCalledWith('Two');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+
+
+      triggerPress(item3);
+      expect(onAction).toHaveBeenCalledWith('Three');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+    });
+
+    it('Menu with generative list supports onAction', function () {
+      let onAction = jest.fn();
+      let onSelectionChange = jest.fn();
+      let flatItems = [
+        {name: 'One'},
+        {name: 'Two'},
+        {name: 'Three'}
+      ];
+      let tree = render(
+        <Provider theme={theme}>
+          <Menu aria-label="menu" onSelectionChange={onSelectionChange} items={flatItems} onAction={onAction}>
+            {item => <Item key={item.name}>{item.name}</Item>}
+          </Menu>
+        </Provider>
+      );
+
+      jest.runAllTimers();
+
+      let menu = tree.getByRole('menu');
+
+      let [item1, item2, item3] = [
+        within(menu).getByText('One'),
+        within(menu).getByText('Two'),
+        within(menu).getByText('Three')
+      ];
+
+      triggerPress(item1);
+      expect(onAction).toHaveBeenCalledWith('One');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+
+
+      triggerPress(item2);
+      expect(onAction).toHaveBeenCalledWith('Two');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+
+
+      triggerPress(item3);
+      expect(onAction).toHaveBeenCalledWith('Three');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
+    });
+  });
+
+  it('supports complex menu items with aria-labelledby and aria-describedby', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <Menu id={menuId} aria-label="menu" selectionMode="none">
+          <Item textValue="Label">
+            <Bell />
+            <Text>Label</Text>
+            <Text slot="description">Description</Text>
+            <Keyboard>⌘V</Keyboard>
+          </Item>
+        </Menu>
+      </Provider>
+    );
+
+    let menu = tree.getByRole('menu');
+    let menuItem = within(menu).getByRole('menuitem');
+    let label = within(menu).getByText('Label');
+    let description = within(menu).getByText('Description');
+    let keyboard = within(menu).getByText('⌘V');
+
+    expect(menuItem).toHaveAttribute('aria-labelledby', label.id);
+    expect(menuItem).toHaveAttribute('aria-describedby', `${description.id} ${keyboard.id}`);
+  });
+
+  it('supports aria-label on sections and items', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <Menu aria-label="menu">
+          <Section aria-label="Section">
+            <Item aria-label="Item"><Bell /></Item>
+          </Section>
+        </Menu>
+      </Provider>
+    );
+
+    let menu = tree.getByRole('menu');
+    let group = within(menu).getByRole('group');
+    expect(group).toHaveAttribute('aria-label', 'Section');
+    let menuItem = within(menu).getByRole('menuitem');
+    expect(menuItem).toHaveAttribute('aria-label', 'Item');
+    expect(menuItem).not.toHaveAttribute('aria-labelledby');
+    expect(menuItem).not.toHaveAttribute('aria-describedby');
+  });
+
+  it('supports aria-label', function () {
+    let tree = renderComponent(Menu, {}, {'aria-label': 'Test'});
+    let menu = tree.getByRole('menu');
+    expect(menu).toHaveAttribute('aria-label', 'Test');
+  });
+
+  it('warns user if no aria-label is provided', () => {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    renderComponent(Menu, {}, {'aria-labelledby': undefined});
+    expect(spyWarn).toHaveBeenCalledWith('An aria-label or aria-labelledby prop is required for accessibility.');
+  });
+
+  it('supports custom data attributes', function () {
+    let tree = renderComponent(Menu, {}, {'data-testid': 'test'});
+    let menu = tree.getByRole('menu');
+    expect(menu).toHaveAttribute('data-testid', 'test');
   });
 });

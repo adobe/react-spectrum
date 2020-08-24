@@ -11,7 +11,7 @@
  */
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
-import {classNames, filterDOMProps, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 import HelpMedium from '@spectrum-icons/ui/HelpMedium';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 import intlMessages from '../intl';
@@ -30,7 +30,6 @@ let ICONS = {
 };
 
 export function Alert(props: SpectrumAlertProps) {
-  props = useSlotProps(props);
   let {
     title,
     children,
@@ -49,7 +48,6 @@ export function Alert(props: SpectrumAlertProps) {
 
   return (
     <div
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       className={
         classNames(
@@ -60,7 +58,7 @@ export function Alert(props: SpectrumAlertProps) {
         )
       }
       role="alert">
-      <Icon UNSAFE_className={classNames(styles, 'spectrum-Alert-icon')} alt={iconAlt} />
+      <Icon UNSAFE_className={classNames(styles, 'spectrum-Alert-icon')} aria-label={iconAlt} />
       <div className={classNames(styles, 'spectrum-Alert-header')}>{title}</div>
       <div className={classNames(styles, 'spectrum-Alert-content')}>{children}</div>
     </div>

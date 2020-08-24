@@ -10,22 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup} from '@testing-library/react';
-import {ListLayout} from '@react-stately/collections';
+import {ListLayout} from '@react-stately/layout';
 import React from 'react';
-import {renderHook} from 'react-hooks-testing-library';
+import {renderHook} from '@testing-library/react-hooks';
 import {useSideNav} from '../';
 
 describe('useSideNav', function () {
-  afterEach(cleanup);
-
-  let mockState = {};
+  let mockState = {selectionManager: {}};
   let mockLayout = new ListLayout({
     rowHeight: 40
   });
 
   let renderSideNavHook = (menuProps) => {
-    let {result} = renderHook(() => useSideNav(menuProps, mockState, mockLayout));
+    let {result} = renderHook(() => useSideNav({...menuProps, layout: mockLayout}, mockState));
     return result.current;
   };
 
@@ -36,7 +33,7 @@ describe('useSideNav', function () {
     expect(navProps.role).toBe('navigation');
     expect(listProps).toBeDefined();
     expect(listProps.role).toBe('list');
-    expect(typeof listProps.onKeyDown).toBe('function');
+    expect(typeof listProps.onKeyDownCapture).toBe('function');
     expect(typeof listProps.onFocus).toBe('function');
     expect(typeof listProps.onBlur).toBe('function');
   });
@@ -58,7 +55,7 @@ describe('useSideNav', function () {
     expect(listProps).toBeDefined();
     expect(listProps.role).toBe('list');
     expect(listProps['aria-labelledby']).toBe('test-aria-labelledby');
-    expect(typeof listProps.onKeyDown).toBe('function');
+    expect(typeof listProps.onKeyDownCapture).toBe('function');
     expect(typeof listProps.onFocus).toBe('function');
     expect(typeof listProps.onBlur).toBe('function');
   });

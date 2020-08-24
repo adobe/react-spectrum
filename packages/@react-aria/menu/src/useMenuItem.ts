@@ -10,37 +10,71 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, Key, RefObject} from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {HTMLAttributes, Key, RefObject} from 'react';
+import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
+import {mergeProps, useSlotId} from '@react-aria/utils';
+import {PressEvent} from '@react-types/shared';
 import {TreeState} from '@react-stately/tree';
-import {useHover, usePress} from '@react-aria/interactions';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface MenuItemAria {
-  menuItemProps: AllHTMLAttributes<HTMLElement>
+  /** Props for the menu item element. */
+  menuItemProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the main text element inside the menu item. */
+  labelProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the description text element inside the menu item, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the keyboard shortcut text element inside the item, if any. */
+  keyboardShortcutProps: HTMLAttributes<HTMLElement>
 }
 
-interface MenuState<T> extends TreeState<T> {}
-
-interface MenuItemProps {
+interface AriaMenuItemProps {
+  /** Whether the menu item is disabled. */
   isDisabled?: boolean,
+
+  /** Whether the menu item is selected. */
   isSelected?: boolean,
+
+  /** A screen reader only label for the menu item. */
+  'aria-label'?: string,
+
+  /** The unique key for the menu item. */
   key?: Key,
-  ref?: RefObject<HTMLElement>,
+
+  /** Handler that is called when the menu should close after selecting an item. */
   onClose?: () => void,
+
+  /**
+   * Whether the menu should close when the menu item is selected.
+   * @default true
+   */
   closeOnSelect?: boolean,
-  isVirtualized?: boolean
+
+  /** Whether the menu item is contained in a virtual scrolling menu. */
+  isVirtualized?: boolean,
+
+  /** Handler that is called when the user activates the item. */
+  onAction?: (key: Key) => void
 }
 
-export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuItemAria {
+/**
+ * Provides the behavior and accessibility implementation for an item in a menu.
+ * See `useMenu` for more details about menus.
+ * @param props - Props for the item.
+ * @param state - State for the menu, as returned by `useTreeState`.
+ */
+export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuItemAria {
   let {
     isSelected,
     isDisabled,
     key,
     onClose,
-    closeOnSelect,
-    ref,
-    isVirtualized
+    closeOnSelect = true,
+    isVirtualized,
+    onAction
   } = props;
 
   let role = 'menuitem';
@@ -50,9 +84,16 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
     role = 'menuitemcheckbox';
   }
 
+  let labelId = useSlotId();
+  let descriptionId = useSlotId();
+  let keyboardId = useSlotId();
+
   let ariaProps = {
     'aria-disabled': isDisabled,
-    role
+    role,
+    'aria-label': props['aria-label'],
+    'aria-labelledby': labelId,
+    'aria-describedby': [descriptionId, keyboardId].filter(Boolean).join(' ') || undefined
   };
 
   if (state.selectionManager.selectionMode !== 'none') {
@@ -64,7 +105,13 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
     ariaProps['aria-setsize'] = state.collection.size;
   }
 
-  let onKeyDown = (e) => {
+  let onKeyDown = (e: KeyboardEvent) => {
+    // Ignore repeating events, which may have started on the menu trigger before moving
+    // focus to the menu item. We want to wait for a second complete key press sequence.
+    if (e.repeat) {
+      return;
+    }
+
     switch (e.key) {
       case ' ':
         if (!isDisabled && state.selectionManager.selectionMode === 'none' && closeOnSelect && onClose) {
@@ -72,39 +119,62 @@ export function useMenuItem<T>(props: MenuItemProps, state: MenuState<T>): MenuI
         }
         break;
       case 'Enter':
-        if (!isDisabled && onClose) {
+        if (!isDisabled && closeOnSelect && onClose) {
           onClose();
         }
         break;
     }
   };
 
-  let onPressUp = (e) => {
-    if (e.pointerType !== 'keyboard' && closeOnSelect && onClose) {
-      onClose();
+  let onPressStart = (e: PressEvent) => {
+    if (e.pointerType === 'keyboard' && onAction) {
+      onAction(key);
+    }
+  };
+
+  let onPressUp = (e: PressEvent) => {
+    if (e.pointerType !== 'keyboard') {
+      if (onAction) {
+        onAction(key);
+      }
+
+      if (closeOnSelect && onClose) {
+        onClose();
+      }
     }
   };
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: key,
-    itemRef: ref,
-    selectOnPressUp: true
+    key,
+    ref,
+    shouldSelectOnPressUp: true
   });
 
-  let {pressProps} = usePress(mergeProps({onPressUp, onKeyDown, isDisabled}, itemProps));
+  let {pressProps} = usePress(mergeProps({onPressStart, onPressUp, onKeyDown, isDisabled}, itemProps));
   let {hoverProps} = useHover({
     isDisabled,
-    onHover() {
-      state.selectionManager.setFocusedKey(key);
+    onHoverStart() {
+      if (!isFocusVisible()) {
+        state.selectionManager.setFocused(true);
+        state.selectionManager.setFocusedKey(key);
+      }
     }
   });
 
   return {
     menuItemProps: {
       ...ariaProps,
-      ...pressProps,
-      ...hoverProps
+      ...mergeProps(pressProps, hoverProps)
+    },
+    labelProps: {
+      id: labelId
+    },
+    descriptionProps: {
+      id: descriptionId
+    },
+    keyboardShortcutProps: {
+      id: keyboardId
     }
   };
 }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import React from 'react';
 import {SpectrumDividerProps} from '@react-types/divider';
@@ -45,9 +45,7 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
   });
 
   return (
-    // @ts-ignore https://github.com/Microsoft/TypeScript/issues/28892
     <Element
-      {...filterDOMProps(otherProps)}
       {...styleProps}
       className={
         classNames(
@@ -61,6 +59,7 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
           styleProps.className
         )
       }
+      // @ts-ignore https://github.com/Microsoft/TypeScript/issues/28892
       ref={domRef}
       {...separatorProps} />
   );

@@ -10,17 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render} from '@testing-library/react';
 import {Dialog} from '../';
 import {DialogContext} from '../src/context';
+import {fireEvent, render} from '@testing-library/react';
 import {Header} from '@react-spectrum/view';
-import {Heading} from '@react-spectrum/typography';
-import {ModalProvider} from '@react-aria/dialog';
+import {Heading} from '@react-spectrum/text';
+import {ModalProvider} from '@react-aria/overlays';
 import React from 'react';
 
 describe('Dialog', function () {
-  afterEach(cleanup);
-
   it('does not auto focus anything inside', function () {
     let {getByRole} = render(
       <Dialog>
@@ -81,22 +79,6 @@ describe('Dialog', function () {
     expect(document.activeElement).toBe(input1);
   });
 
-  it('should be a modal dialog depending on context', function () {
-    let {getByRole} = render(
-      <ModalProvider>
-        <DialogContext.Provider value={{type: 'modal'}}>
-          <Dialog>
-            <input data-testid="input1" />
-            <input data-testid="input2" />
-          </Dialog>
-        </DialogContext.Provider>
-      </ModalProvider>
-    );
-
-    let dialog = getByRole('dialog');
-    expect(dialog).toHaveAttribute('aria-modal', 'true');
-  });
-
   it('should be labelled by its header', function () {
     let {getByRole} = render(
       <ModalProvider>
@@ -152,5 +134,59 @@ describe('Dialog', function () {
 
     expect(dialog).not.toHaveAttribute('aria-labelledby');
     expect(dialog).toHaveAttribute('aria-label', 'robin');
+  });
+
+  it('should have a hidden dismiss button for screen readers when displayed in a popover', function () {
+    let onClose = jest.fn();
+    let {getByRole} = render(
+      <ModalProvider>
+        <DialogContext.Provider value={{type: 'popover', onClose}}>
+          <Dialog aria-label="robin">
+            <Heading><Header>The Title</Header></Heading>
+          </Dialog>
+        </DialogContext.Provider>
+      </ModalProvider>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'Dismiss');
+
+    fireEvent.click(button);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('should have a hidden dismiss button for screen readers when displayed in a tray', function () {
+    let onClose = jest.fn();
+    let {getByRole} = render(
+      <ModalProvider>
+        <DialogContext.Provider value={{type: 'tray', onClose}}>
+          <Dialog aria-label="robin">
+            <Heading><Header>The Title</Header></Heading>
+          </Dialog>
+        </DialogContext.Provider>
+      </ModalProvider>
+    );
+
+    let button = getByRole('button');
+    expect(button).toHaveAttribute('aria-label', 'Dismiss');
+
+    fireEvent.click(button);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('should support custom data attributes', function () {
+    let onClose = jest.fn();
+    let {getByRole} = render(
+      <ModalProvider>
+        <DialogContext.Provider value={{type: 'tray', onClose}}>
+          <Dialog data-testid="test">
+            <Heading><Header>The Title</Header></Heading>
+          </Dialog>
+        </DialogContext.Provider>
+      </ModalProvider>
+    );
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveAttribute('data-testid', 'test');
   });
 });

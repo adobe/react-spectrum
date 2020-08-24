@@ -5,7 +5,7 @@ let rulesDirPlugin = require('eslint-plugin-rulesdir');
 rulesDirPlugin.RULES_DIR = './bin';
 
 module.exports = {
-  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', 'import', 'monorepo'],
+  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', 'monorepo'],
   extends: ['eslint:recommended'],
   parser: 'babel-eslint',
   parserOptions: {
@@ -16,7 +16,7 @@ module.exports = {
   },
   overrides: [{
     files: ['packages/**/*.ts', 'packages/**/*.tsx'],
-    plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', '@typescript-eslint', 'import', 'monorepo'],
+    plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', '@typescript-eslint', 'monorepo', 'jsdoc'],
     parser: '@typescript-eslint/parser',
     parserOptions: {
       ecmaFeatures: {
@@ -29,13 +29,30 @@ module.exports = {
     },
     rules: {
       "no-unused-vars": OFF,
-      "@typescript-eslint/no-unused-vars": ERROR
+      "@typescript-eslint/no-unused-vars": ERROR,
+      "@typescript-eslint/member-delimiter-style": [ERROR, {
+        multiline: {
+          delimiter: 'comma',
+          requireLast: false
+        },
+        singleline: {
+          delimiter: 'comma',
+          requireLast: false
+        }
+      }],
     }
   }, {
-    files: ['**/test/**', '**/stories/**'],
+    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
     rules: {
-      'import/no-extraneous-dependencies': OFF,
-      'monorepo/no-internal-import': OFF
+      'rulesdir/imports': OFF,
+      'monorepo/no-internal-import': OFF,
+      'jsdoc/require-jsdoc': OFF
+    }
+  }, {
+    files: ['**/dev/**', '**/scripts/**'],
+    rules: {
+      'jsdoc/require-jsdoc': OFF,
+      'jsdoc/require-description': OFF
     }
   }],
   env: {
@@ -51,13 +68,19 @@ module.exports = {
     'expect': true
   },
   settings: {
-    'import/resolver': {
-      node: {
-        extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
-      }
+    jsdoc: {
+      ignorePrivate: true,
+      publicFunctionsOnly: true
     }
   },
   rules: {
+    'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc']}],
+    'jsdoc/check-alignment': ERROR,
+    'jsdoc/check-indentation': ERROR,
+    'jsdoc/check-tag-names': ERROR,
+    // enable this rule to see literally everything missing jsdocs, this rule needs some refinement but is good as a sanity check.
+    // 'jsdoc/require-jsdoc': [ERROR, {contexts:['TSInterfaceDeclaration TSPropertySignature', 'TSInterfaceDeclaration TSMethodSignature']}],
+    'jsdoc/require-description': [ERROR, {exemptedBy: ['deprecated'], checkConstructors: false}],
     'comma-dangle': ERROR,
     'indent': OFF,
     'indent-legacy': [ERROR, ERROR, {SwitchCase: 1}],
@@ -82,7 +105,7 @@ module.exports = {
     'no-unused-vars': [ERROR, {args: 'none', vars: 'all', varsIgnorePattern: '[rR]eact'}],
     'space-in-parens': [ERROR, 'never'],
     'space-unary-ops': [ERROR, {words: true, nonwords: false}],
-    'spaced-comment': [ERROR, 'always', {exceptions: ['*']}],
+    'spaced-comment': [ERROR, 'always', {exceptions: ['*'], markers: ['/']}],
     'max-depth': [WARN, 4],
     'radix': [ERROR, 'always'],
     'react/jsx-uses-react': WARN,
@@ -132,6 +155,7 @@ module.exports = {
 
     // custom rules
     'rulesdir/sort-imports': [ERROR],
+    'rulesdir/imports': [ERROR],
 
     // jsx-a11y rules
     'jsx-a11y/accessible-emoji': ERROR,
@@ -172,12 +196,6 @@ module.exports = {
     'jsx-a11y/media-has-caption': ERROR,
     'jsx-a11y/mouse-events-have-key-events': ERROR,
     'jsx-a11y/no-access-key': ERROR,
-    // 'jsx-a11y/no-autofocus': [
-    //   ERROR,
-    //   {
-    //     ignoreNonDOM: true
-    //   }
-    // ],
     'jsx-a11y/no-distracting-elements': ERROR,
     'jsx-a11y/no-interactive-element-to-noninteractive-role': ERROR,
     'jsx-a11y/no-noninteractive-element-interactions': [
@@ -227,7 +245,6 @@ module.exports = {
         roles: ['alertdialog', 'dialog', 'tabpanel']
       }
     ],
-    'jsx-a11y/no-onchange': ERROR,
     'jsx-a11y/no-redundant-roles': ERROR,
     'jsx-a11y/no-static-element-interactions': [
       ERROR,
@@ -248,7 +265,6 @@ module.exports = {
     'jsx-a11y/tabindex-no-positive': ERROR,
 
     // importing rules
-    'import/no-extraneous-dependencies': ERROR,
     'monorepo/no-internal-import': [
       ERROR,
       {

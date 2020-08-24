@@ -13,7 +13,13 @@
 import {useLocale} from './context';
 
 let cache = new Map<string, Intl.Collator>();
-export function useCollator(options?: Intl.CollatorOptions) {
+
+/**
+ * Provides localized string collation for the current locale. Automatically updates when the locale changes,
+ * and handles caching of the collator for performance.
+ * @param options - Collator options.
+ */
+export function useCollator(options?: Intl.CollatorOptions): Intl.Collator {
   let {locale} = useLocale();
 
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');

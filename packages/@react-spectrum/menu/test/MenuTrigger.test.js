@@ -10,23 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, within} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
-import {cleanup, fireEvent, render, within} from '@testing-library/react';
 import {Item, Menu, MenuTrigger, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';
 import V2Dropdown from '@react/react-spectrum/Dropdown';
 import {Menu as V2Menu, MenuItem as V2MenuItem} from '@react/react-spectrum/Menu';
 
 let triggerText = 'Menu Button';
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 let withSection = [
   {name: 'Heading 1', children: [
@@ -36,7 +31,7 @@ let withSection = [
   ]}
 ];
 
-function renderComponent(Component, triggerProps = {}, menuProps = {}) {
+function renderComponent(Component, triggerProps = {}, menuProps = {}, buttonProps = {}) {
   if (Component === V2Dropdown) {
     return render(
       <Component {...triggerProps}>
@@ -56,13 +51,13 @@ function renderComponent(Component, triggerProps = {}, menuProps = {}) {
       <Provider theme={theme}>
         <div data-testid="scrollable">
           <Component {...triggerProps}>
-            <Button>
+            <Button {...buttonProps}>
               {triggerText}
             </Button>
-            <Menu items={withSection} itemKey="name" {...menuProps}>
+            <Menu items={withSection} {...menuProps}>
               {item => (
-                <Section items={item.children} title={item.name}>
-                  {item => <Item childItems={item.children}>{item.name}</Item>}
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
                 </Section>
               )}
             </Menu>
@@ -85,7 +80,7 @@ describe('MenuTrigger', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.useFakeTimers();
   });
 
@@ -95,7 +90,6 @@ describe('MenuTrigger', function () {
     onClose.mockClear();
     onSelect.mockClear();
     onSelectionChange.mockClear();
-    cleanup();
   });
 
   afterAll(function () {
@@ -115,38 +109,39 @@ describe('MenuTrigger', function () {
     }
 
     triggerEvent(triggerButton);
+    jest.runAllTimers();
 
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
     expect(menu).toHaveAttribute('aria-labelledby', triggerButton.id);
-    
+
     let menuItem1 = within(menu).getByText('Foo');
     let menuItem2 = within(menu).getByText('Bar');
     let menuItem3 = within(menu).getByText('Baz');
     expect(menuItem1).toBeTruthy();
     expect(menuItem2).toBeTruthy();
     expect(menuItem3).toBeTruthy();
-  
+
     expect(triggerButton).toHaveAttribute('aria-expanded', 'true');
     expect(triggerButton).toHaveAttribute('aria-controls', menu.id);
-  
+
     if (Component === MenuTrigger) {
       expect(onOpenChange).toBeCalledTimes(1);
     } else {
       expect(onOpen).toBeCalledTimes(1);
       expect(onClose).toBeCalledTimes(0);
     }
-  
-    triggerEvent(triggerButton);
-    expect(menu).not.toBeInTheDocument();  
-    
+
+    triggerEvent(triggerButton, menu);
+    jest.runAllTimers();
+    expect(menu).not.toBeInTheDocument();
+
     if (Component === MenuTrigger) {
       expect(triggerButton).toHaveAttribute('aria-expanded', 'false');
       expect(onOpenChange).toBeCalledTimes(2);
     } else {
       expect(triggerButton).not.toHaveAttribute('aria-expanded');
       expect(onOpen).toBeCalledTimes(1);
-      expect(onClose).toBeCalledTimes(1);
     }
   }
 
@@ -159,7 +154,7 @@ describe('MenuTrigger', function () {
     let triggerButton = tree.getByRole('button');
     expect(triggerButton).toBeTruthy();
     expect(triggerButton).toHaveAttribute('aria-haspopup', 'true');
-    
+
     let buttonText = within(triggerButton).getByText(triggerText);
     expect(buttonText).toBeTruthy();
 
@@ -187,15 +182,26 @@ describe('MenuTrigger', function () {
     Name             | Component      | props
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
   `('$Name can toggle the menu display via ArrowUp key', function ({Component, props}) {
-    verifyMenuToggle(Component, props, {}, (button) => fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38}));
+    verifyMenuToggle(Component, props, {}, (button, menu) => {
+      if (!menu) {
+        fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
+      } else {
+        fireEvent.keyDown(menu, {key: 'Escape'});
+      }
+    });
   });
 
   it.each`
     Name             | Component      | props
     ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
-    ${'V2Dropdown'}  | ${V2Dropdown}  | ${{onOpen, onClose}}
   `('$Name can toggle the menu display via ArrowDown key', function ({Component, props}) {
-    verifyMenuToggle(Component, props, {}, (button) => fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40}));
+    verifyMenuToggle(Component, props, {}, (button, menu) => {
+      if (!menu) {
+        fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
+      } else {
+        fireEvent.keyDown(menu, {key: 'Escape'});
+      }
+    });
   });
 
   // New functionality in v3
@@ -209,13 +215,13 @@ describe('MenuTrigger', function () {
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
 
-    let triggerButton = tree.getByRole('button');
+    let triggerButton = tree.getByText('Menu Button');
     triggerPress(triggerButton);
     jest.runAllTimers();
 
     menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
-    expect(onOpenChange).toBeCalledTimes(1);
+    expect(onOpenChange).toBeCalledTimes(2); // once for press, once for blur :/
   });
 
   // New functionality in v3
@@ -229,7 +235,7 @@ describe('MenuTrigger', function () {
     let menu = tree.getByRole('menu');
     expect(menu).toBeTruthy();
 
-    let triggerButton = tree.getByRole('button');
+    let triggerButton = tree.getByText('Menu Button');
     triggerPress(triggerButton);
     jest.runAllTimers();
 
@@ -239,9 +245,9 @@ describe('MenuTrigger', function () {
 
   it.each`
     Name             | Component      | props
-    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, isDisabled: true}}
-  `('$Name can be disabled', function ({Component, props}) {
-    let tree = renderComponent(Component, props);
+    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+  `('$Name does not trigger on disabled button', function ({Component, props}) {
+    let tree = renderComponent(Component, props, {}, {isDisabled: true});
     let button = tree.getByRole('button');
     triggerPress(button);
     jest.runAllTimers();
@@ -261,7 +267,7 @@ describe('MenuTrigger', function () {
       jest.runAllTimers();
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
-      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let menuItems = within(menu).getAllByRole('menuitem');
       let selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
       triggerPress(button);
@@ -272,7 +278,7 @@ describe('MenuTrigger', function () {
       // Opening menu via down arrow still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
       menu = tree.getByRole('menu');
-      menuItems = within(menu).getAllByRole('menuitemradio');
+      menuItems = within(menu).getAllByRole('menuitem');
       selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
       triggerPress(button);
@@ -282,7 +288,7 @@ describe('MenuTrigger', function () {
       // Opening menu via up arrow still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
       menu = tree.getByRole('menu');
-      menuItems = within(menu).getAllByRole('menuitemradio');
+      menuItems = within(menu).getAllByRole('menuitem');
       selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
     });
@@ -295,7 +301,7 @@ describe('MenuTrigger', function () {
       let button = tree.getByRole('button');
       fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
       let menu = tree.getByRole('menu');
-      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let menuItems = within(menu).getAllByRole('menuitem');
       let selectedItem = menuItems[menuItems.length - 1];
       expect(selectedItem).toBe(document.activeElement);
     });
@@ -308,46 +314,54 @@ describe('MenuTrigger', function () {
       let button = tree.getByRole('button');
       fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
       let menu = tree.getByRole('menu');
-      let menuItems = within(menu).getAllByRole('menuitemradio');
+      let menuItems = within(menu).getAllByRole('menuitem');
       let selectedItem = menuItems[0];
       expect(selectedItem).toBe(document.activeElement);
     });
   });
 
   describe('menu popover closing behavior', function () {
-    function triggerMenuItem(Component, triggerProps = {}, menuProps = {}, triggerEvent) {
-      let tree = renderComponent(Component, triggerProps, menuProps);
+    let tree;
+    afterEach(() => {
+      if (tree) {
+        tree.unmount();
+      }
+      tree = null;
+    });
+
+    function openAndTriggerMenuItem(tree, isV3, role, selectionMode, triggerEvent) {
       let triggerButton = tree.getByRole('button');
-      triggerPress(triggerButton);
-      jest.runAllTimers();
+      act(() => triggerPress(triggerButton));
+      act(() => jest.runAllTimers());
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
-      
+
       let menuItemRole = 'menuitem';
-      if (Component === MenuTrigger) {
-        if (menuProps.role === 'listbox') {
+      if (isV3) {
+        if (role === 'listbox') {
           menuItemRole = 'option';
-        } else if (menuProps.selectionMode === 'single') {
+        } else if (selectionMode === 'single') {
           menuItemRole = 'menuitemradio';
-        } else if (menuProps.selectionMode === 'multiple') {
+        } else if (selectionMode === 'multiple') {
           menuItemRole = 'menuitemcheckbox';
         }
       }
-      
+
       let menuItems = within(menu).getAllByRole(menuItemRole);
       let itemToAction = menuItems[1];
-      triggerEvent(itemToAction);
-
-      return tree;
+      act(() => {
+        triggerEvent(itemToAction);
+      });
+      act(() => jest.runAllTimers());
     }
-    
+
     // New functionality in v3
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
     `('$Name closes the menu upon trigger body scroll', function ({Component, props}) {
-      let tree = renderComponent(Component, props);
+      tree = renderComponent(Component, props);
       let button = tree.getByRole('button');
       triggerPress(button);
       jest.runAllTimers();
@@ -359,6 +373,7 @@ describe('MenuTrigger', function () {
       fireEvent.scroll(scrollable);
       jest.runAllTimers();
       expect(menu).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(button);
     });
 
     // Can't figure out why this isn't working for the v2 component
@@ -366,7 +381,7 @@ describe('MenuTrigger', function () {
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
     `('$Name closes the menu upon clicking escape key', function ({Component, props}) {
-      let tree = renderComponent(Component, props);
+      tree = renderComponent(Component, props);
       let button = tree.getByRole('button');
       triggerPress(button);
       jest.runAllTimers();
@@ -376,6 +391,7 @@ describe('MenuTrigger', function () {
       fireEvent.keyDown(menu, {key: 'Escape', code: 27, charCode: 27});
       jest.runAllTimers();
       expect(menu).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(button);
     });
 
     // Can't figure out why this isn't working for the v2 component
@@ -383,7 +399,7 @@ describe('MenuTrigger', function () {
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
     `('$Name closes the menu upon clicking outside the menu', function ({Component, props}) {
-      let tree = renderComponent(Component, props);
+      tree = renderComponent(Component, props);
       let button = tree.getByRole('button');
       triggerPress(button);
       jest.runAllTimers();
@@ -394,6 +410,7 @@ describe('MenuTrigger', function () {
       fireEvent.mouseUp(document.body);
       jest.runAllTimers();
       expect(menu).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(button);
     });
 
     it.each`
@@ -401,7 +418,7 @@ describe('MenuTrigger', function () {
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
       ${'V2Dropdown'}  | ${V2Dropdown}  | ${{onOpen, onClose, onSelect, closeOnSelect: false}}
     `('$Name doesn\'t close on menu item selection if closeOnSelect=false', function ({Component, props}) {
-      let tree = renderComponent(Component, props, {onSelectionChange});
+      tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
       expect(onOpenChange).toBeCalledTimes(0);
       let button = tree.getByRole('button');
       triggerPress(button);
@@ -421,15 +438,15 @@ describe('MenuTrigger', function () {
       let menuItem1 = within(menu).getByText('Foo');
       expect(menuItem1).toBeTruthy();
       triggerPress(menuItem1);
-      
+
       if (Component === MenuTrigger) {
         expect(onSelectionChange).toBeCalledTimes(1);
       } else {
         expect(onSelect).toBeCalledTimes(1);
       }
 
-      expect(menu).toBeInTheDocument();  
-      
+      expect(menu).toBeInTheDocument();
+
       if (Component === MenuTrigger) {
         expect(button).toHaveAttribute('aria-expanded', 'true');
         expect(onOpenChange).toBeCalledTimes(1);
@@ -443,8 +460,8 @@ describe('MenuTrigger', function () {
     it.each`
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange, closeOnSelect: false}}
-    `('$Name closes menu on item selection via ENTER press even if closeOnSelect=false', function ({Component, props}) {
-      let tree = renderComponent(Component, props, {onSelectionChange});
+    `('$Name doesn\'t closes menu on item selection via ENTER press if closeOnSelect=false', function ({Component, props}) {
+      tree = renderComponent(Component, props, {selectionMode: 'single', onSelectionChange});
       expect(onOpenChange).toBeCalledTimes(0);
       let button = tree.getByRole('button');
       triggerPress(button);
@@ -462,65 +479,245 @@ describe('MenuTrigger', function () {
       fireEvent.keyUp(menuItem1, {key: 'Enter', code: 13, charCode: 13});
       jest.runAllTimers();
       expect(onSelectionChange).toBeCalledTimes(1);
-      expect(menu).not.toBeInTheDocument();  
-      expect(button).toHaveAttribute('aria-expanded', 'false');
-      expect(onOpenChange).toBeCalledTimes(2);
+      expect(menu).toBeInTheDocument();
+      expect(button).toHaveAttribute('aria-expanded', 'true');
+      expect(onOpenChange).toBeCalledTimes(1);
     });
 
     it.each`
-      Name             | Component      | props
-      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
-      ${'V2Dropdown'}  | ${V2Dropdown}  | ${{}}
-    `('$Name closes on menu item selection if toggled by mouse click', function ({Component, props}) {
-      let selectionModes = ['single', 'multiple', 'none'];
-      for (let mode of selectionModes) {
-        let tree = triggerMenuItem(Component, {}, {...props, selectionMode: mode}, (item) => triggerPress(item));
-        jest.runAllTimers();
-        let menu = tree.queryByRole('menu');
-        expect(menu).toBeNull();
-        cleanup();
-      }
+      Name                      | Component      | props | menuProps
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+      ${'V2Dropdown single'}    | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'single'}}
+      ${'V2Dropdown multiple'}  | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'V2Dropdown none'}      | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'none'}}
+    `('$Name closes on menu item selection if toggled by mouse click', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => triggerPress(item));
+
+      let menu = tree.queryByRole('menu');
+      expect(menu).toBeNull();
+      expect(document.activeElement).toBe(tree.getByRole('button'));
     });
 
     it.each`
-    Name             | Component      | props
-      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
-      ${'V2Dropdown'}  | ${V2Dropdown}  | ${{}}
-    `('$Name closes on menu item selection if toggled by ENTER key', function ({Component, props}) {
-      let selectionModes = ['single', 'multiple', 'none'];
-      for (let mode of selectionModes) {
-        let tree = triggerMenuItem(Component, {}, {...props, selectionMode: mode}, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13}));
-        jest.runAllTimers();
-        let menu = tree.queryByRole('menu');
-        expect(menu).toBeNull();
-        cleanup();
-      }
+      Name                      | Component      | props | menuProps
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+      ${'V2Dropdown single'}    | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'single'}}
+      ${'V2Dropdown multiple'}  | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'V2Dropdown none'}      | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'none'}}
+    `('$Name closes on menu item selection if toggled by ENTER key', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13}));
+
+      let menu = tree.queryByRole('menu');
+      expect(menu).toBeNull();
+      expect(document.activeElement).toBe(tree.getByRole('button'));
+    });
+
+    // V3 exclusive
+    it.each`
+      Name                      | Component      | props | menuProps
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+    `('$Name doesn\'t close on menu item selection if toggled by SPACE key (all selection modes except "none")', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, true, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
+
+      let menu = tree.queryByRole('menu');
+      expect(menu).toBeTruthy();
+    });
+
+    it.each`
+      Name                  | Component      | props | menuProps
+      ${'MenuTrigger none'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+      ${'V2Dropdown none'}  | ${V2Dropdown}  | ${{}} | ${{selectionMode: 'none'}}
+    `('$Name closes on menu item selection if toggled by SPACE key (selectionMode=none)', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
+
+      let menu = tree.queryByRole('menu');
+      expect(menu).toBeNull();
+      expect(document.activeElement).toBe(tree.getByRole('button'));
     });
 
     // V3 exclusive
     it.each`
       Name             | Component      | props
-      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
-    `('$Name doesn\'t close on menu item selection if toggled by SPACE key (all selection modes except "none")', function ({Component, props}) {
-      let selectionModes = ['single', 'multiple'];
-      for (let mode of selectionModes) {
-        let tree = triggerMenuItem(Component, {}, {...props, selectionMode: mode}, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
-        let menu = tree.queryByRole('menu');
-        expect(menu).toBeTruthy();
-        cleanup();
-      }
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+    `('$Name closes the menu when blurring the menu', function ({Component, props}) {
+      tree = renderComponent(Component, props, {});
+      expect(onOpenChange).toBeCalledTimes(0);
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      jest.runAllTimers();
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+      expect(onOpenChange).toBeCalledTimes(1);
+      expect(button).toHaveAttribute('aria-expanded', 'true');
+
+      document.activeElement.blur();
+      jest.runAllTimers();
+      expect(menu).not.toBeInTheDocument();
+      expect(button).toHaveAttribute('aria-expanded', 'false');
+      expect(onOpenChange).toBeCalledTimes(2);
     });
 
     it.each`
-      Name             | Component      | props
-      ${'MenuTrigger'} | ${MenuTrigger} | ${{selectionMode: 'none'}}
-      ${'V2Dropdown'}  | ${V2Dropdown}  | ${{}}
-    `('$Name closes on menu item selection if toggled by SPACE key (selectionMode=none)', function ({Component, props}) {
-      let tree = triggerMenuItem(Component, {}, props, (item) => fireEvent.keyDown(item, {key: ' ', code: 32, charCode: 32}));
-      jest.runAllTimers();
+      Name                      | Component      | props | menuProps
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+    `('$Name ignores repeating keyboard events', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13, repeat: true}));
+
       let menu = tree.queryByRole('menu');
-      expect(menu).toBeNull();
+      expect(menu).toBeTruthy();
     });
 
+    it('tabs to the next element after the trigger and closes the menu', function () {
+      tree = render(
+        <Provider theme={theme}>
+          <input data-testid="before-input" />
+          <MenuTrigger onOpenChange={onOpenChange}>
+            <Button>
+              {triggerText}
+            </Button>
+            <Menu items={withSection}>
+              {item => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+          <input data-testid="after-input" />
+        </Provider>
+      );
+
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      jest.runAllTimers();
+
+      let menu = tree.getByRole('menu');
+      expect(menu).toBeTruthy();
+      expect(onOpenChange).toBeCalledTimes(1);
+      expect(button).toHaveAttribute('aria-expanded', 'true');
+
+      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
+      jest.runAllTimers();
+
+      expect(document.activeElement).toBe(tree.getByTestId('after-input'));
+
+      expect(menu).not.toBeInTheDocument();
+      expect(button).toHaveAttribute('aria-expanded', 'false');
+      expect(onOpenChange).toBeCalledTimes(2);
+    });
+
+    it('should have a hidden dismiss button for screen readers', function () {
+      let {getByRole, getAllByLabelText} = render(
+        <Provider theme={theme}>
+          <MenuTrigger onOpenChange={onOpenChange}>
+            <Button>
+              {triggerText}
+            </Button>
+            <Menu items={withSection}>
+              {item => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+      );
+
+      let button = getByRole('button');
+      act(() => {
+        triggerPress(button);
+      });
+      act(() => jest.runAllTimers());
+
+      let menu = getByRole('menu');
+      expect(menu).toBeTruthy();
+      expect(onOpenChange).toBeCalledTimes(1);
+      expect(button).toHaveAttribute('aria-expanded', 'true');
+
+      let buttons = getAllByLabelText('Dismiss');
+      expect(buttons.length).toBe(2);
+
+      act(() => {
+        fireEvent.click(buttons[0]);
+      });
+      act(() => jest.runAllTimers());
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
+
+      expect(menu).not.toBeInTheDocument();
+      expect(button).toHaveAttribute('aria-expanded', 'false');
+      expect(onOpenChange).toBeCalledTimes(2);
+      expect(document.activeElement).toBe(button);
+    });
+
+    it('should forward ref to the button', function () {
+      let ref = React.createRef();
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <MenuTrigger ref={ref}>
+            <Button>
+              {triggerText}
+            </Button>
+            <Menu items={withSection}>
+              {item => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+      );
+
+      expect(ref.current.UNSAFE_getDOMNode()).toBe(getByRole('button'));
+    });
+
+    it('works with a ref on both the button and menu trigger', function () {
+      let menuTriggerRef = React.createRef();
+      let buttonRef = React.createRef();
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <MenuTrigger ref={menuTriggerRef}>
+            <Button ref={buttonRef}>
+              {triggerText}
+            </Button>
+            <Menu items={withSection}>
+              {item => (
+                <Section key={item.name} items={item.children} title={item.name}>
+                  {item => <Item key={item.name} childItems={item.children}>{item.name}</Item>}
+                </Section>
+              )}
+            </Menu>
+          </MenuTrigger>
+        </Provider>
+      );
+
+      expect(menuTriggerRef.current.UNSAFE_getDOMNode()).toBe(getByRole('button'));
+      expect(buttonRef.current.UNSAFE_getDOMNode()).toBe(getByRole('button'));
+    });
+  });
+
+  it('should not show checkmarks if selectionMode not defined', function () {
+    let {queryByRole} = render(
+      <Menu aria-label="foo" selectedKeys={['alpha']}>
+        <Item key="alpha">Alpha</Item>
+        <Item key="bravo">Bravo</Item>
+      </Menu>
+    );
+    let checkmark = queryByRole('img', {hidden: true});
+    expect(checkmark).toBeNull();
   });
 });

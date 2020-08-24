@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, filterDOMProps, useStyleProps} from '@react-spectrum/utils';
-
-import {CollectionItem, CollectionView} from '@react-aria/collections';
-import {ListLayout, Node} from '@react-stately/collections';
-import React, {ReactElement, useMemo} from 'react';
-import {ReusableView} from '@react-stately/collections';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {ListLayout} from '@react-stately/layout';
+import {Node} from '@react-types/shared';
+import React, {ReactElement, useMemo, useRef} from 'react';
+import {ReusableView} from '@react-stately/virtualizer';
+import {SideNavContext} from './SideNavContext';
 import {SideNavItem} from './SideNavItem';
 import {SideNavSection} from './SideNavSection';
 import {SpectrumSideNavProps} from '@react-types/sidenav';
@@ -23,15 +23,18 @@ import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {useCollator} from '@react-aria/i18n';
 import {useSideNav} from '@react-aria/sidenav';
 import {useTreeState} from '@react-stately/tree';
+import {Virtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 
-export function SideNav<T>(props: SpectrumSideNavProps<T>) {
-  let state = useTreeState({...props, selectionMode: 'single'});
+export function SideNav<T extends object>(props: SpectrumSideNavProps<T>) {
+  let state = useTreeState(props);
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let layout = useMemo(() => new ListLayout({rowHeight: 40, collator}), [collator]);
-  let {navProps, listProps} = useSideNav(props, state, layout);
+  let ref = useRef();
+  let {navProps, listProps} = useSideNav({...props, layout}, state, ref);
   let {styleProps} = useStyleProps(props);
 
   layout.collection = state.collection;
+  layout.disabledKeys = state.disabledKeys;
 
   // This overrides collection view's renderWrapper to support heirarchy of items in sections.
   // The header is extracted from the children so it can receive ARIA labeling properties.
@@ -49,7 +52,7 @@ export function SideNav<T>(props: SpectrumSideNavProps<T>) {
     }
 
     return (
-      <CollectionItem 
+      <VirtualizerItem
         key={reusableView.key}
         reusableView={reusableView}
         parent={parent} />
@@ -58,26 +61,26 @@ export function SideNav<T>(props: SpectrumSideNavProps<T>) {
 
   return (
     <nav
-      {...filterDOMProps(props)}
       {...navProps}
       {...styleProps}>
-      <CollectionView
-        {...listProps}
-        focusedKey={state.selectionManager.focusedKey}
-        className={classNames(styles, 'spectrum-SideNav')}
-        layout={layout}
-        collection={state.collection}
-        renderWrapper={renderWrapper}>
-        {(type, item) => {
-          if (type === 'item') {
-            return (
-              <SideNavItem
-                state={state}
-                item={item} />
-            );
-          }
-        }}
-      </CollectionView>
+      <SideNavContext.Provider value={state}>
+        <Virtualizer
+          {...listProps}
+          ref={ref}
+          focusedKey={state.selectionManager.focusedKey}
+          className={classNames(styles, 'spectrum-SideNav')}
+          layout={layout}
+          collection={state.collection}
+          renderWrapper={renderWrapper}>
+          {(type, item) => {
+            if (type === 'item') {
+              return (
+                <SideNavItem item={item} />
+              );
+            }
+          }}
+        </Virtualizer>
+      </SideNavContext.Provider>
     </nav>
   );
 }

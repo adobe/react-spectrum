@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup} from '@testing-library/react';
+// @ts-ignore
 import intlMessages from '../intl/*.json';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {renderHook} from 'react-hooks-testing-library';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
+import {renderHook} from '@testing-library/react-hooks';
+import {theme} from '@react-spectrum/theme-default';
 import {useToast} from '../';
 
 describe('useToast', () => {
@@ -27,7 +26,6 @@ describe('useToast', () => {
   afterEach(() => {
     onClose.mockClear();
     onAction.mockClear();
-    cleanup();
   });
 
   let renderToastHook = (props, state, wrapper) => {
@@ -39,29 +37,24 @@ describe('useToast', () => {
     let {actionButtonProps, closeButtonProps, iconProps, toastProps} = renderToastHook({}, {onRemove});
 
     expect(toastProps.role).toBe('alert');
-    expect(iconProps.alt).toBe(undefined);
+    expect(iconProps['aria-label']).toBe(undefined);
     expect(typeof actionButtonProps.onPress).toBe('function');
     expect(closeButtonProps['aria-label']).toBe('Close');
     expect(typeof closeButtonProps.onPress).toBe('function');
   });
 
-  it('variant sets icon alt property', function () {
+  it('variant sets icon aria-label property', function () {
     let {iconProps} = renderToastHook({variant: 'info'}, {onRemove});
 
-    expect(iconProps.alt).toBe('Info');
+    expect(iconProps['aria-label']).toBe('Info');
   });
 
   it('with a localized aria-label', () => {
     let locale = 'de-DE';
-    let theme = {
-      light: themeLight,
-      medium: scaleMedium
-    };
-
     let wrapper = ({children}) => <Provider locale={locale} theme={theme}>{children}</Provider>;
     let expectedIntl = intlMessages[locale]['info'];
     let {iconProps} = renderToastHook({variant: 'info'}, {onRemove}, wrapper);
-    expect(iconProps.alt).toBe(expectedIntl);
+    expect(iconProps['aria-label']).toBe(expectedIntl);
   });
 
   it('handles onClose', function () {

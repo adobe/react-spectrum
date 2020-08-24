@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {cleanup, fireEvent, render, waitForDomChange} from '@testing-library/react';
+import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import {Item, Section} from '@react-spectrum/tree';
 import React from 'react';
 import {SideNav} from '../src';
@@ -39,26 +39,26 @@ function renderComponent(Name, Component, ComponentSection, ComponentItem, props
   switch (Name) {
     case 'SideNav':
       return render(
-        <Component {...props} items={flatItems} itemKey="name">
-          {item => <ComponentItem>{item.name}</ComponentItem>}
+        <Component {...props} items={flatItems}>
+          {item => <ComponentItem key={item.name}>{item.name}</ComponentItem>}
         </Component>
       );
     case 'V2SideNav':
     case 'SideNavStatic':
       return render(
         <Component {...props} >
-          <ComponentItem uniqueKey="Foo">Foo</ComponentItem>
-          <ComponentItem uniqueKey="Bar">Bar</ComponentItem>
-          <ComponentItem uniqueKey="Bob">Bob</ComponentItem>
-          <ComponentItem uniqueKey="Alice">Alice</ComponentItem>
+          <ComponentItem key="Foo">Foo</ComponentItem>
+          <ComponentItem key="Bar">Bar</ComponentItem>
+          <ComponentItem key="Bob">Bob</ComponentItem>
+          <ComponentItem key="Alice">Alice</ComponentItem>
         </Component>
       );
     case 'SideNavWithSections':
       return render(
-        <Component {...props} items={withSection} itemKey="name">
+        <Component {...props} items={withSection}>
           {item => (
-            <ComponentSection items={item.children} title={item.name}>
-              {item => <ComponentItem>{item.name}</ComponentItem>}
+            <ComponentSection key={item.name} items={item.children} title={item.name}>
+              {item => <ComponentItem key={item.name}>{item.name}</ComponentItem>}
             </ComponentSection>
           )}
         </Component>
@@ -67,12 +67,12 @@ function renderComponent(Name, Component, ComponentSection, ComponentItem, props
       return render(
         <Component {...props} >
           <ComponentSection title="Section 1">
-            <ComponentItem uniqueKey="Foo">Foo</ComponentItem>
-            <ComponentItem uniqueKey="Bar">Bar</ComponentItem>
+            <ComponentItem key="Foo">Foo</ComponentItem>
+            <ComponentItem key="Bar">Bar</ComponentItem>
           </ComponentSection>
           <ComponentSection title="Section 2">
-            <ComponentItem uniqueKey="Bob">Bob</ComponentItem>
-            <ComponentItem uniqueKey="Alice">Alice</ComponentItem>
+            <ComponentItem key="Bob">Bob</ComponentItem>
+            <ComponentItem key="Alice">Alice</ComponentItem>
           </ComponentSection>
         </Component>
       );
@@ -82,16 +82,20 @@ function renderComponent(Name, Component, ComponentSection, ComponentItem, props
 }
 
 describe('SideNav', function () {
-  afterEach(cleanup);
-
   let stub1, stub2;
+  let scrollHeight;
+
   beforeAll(function () {
-    stub1 = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 200);
-    stub2 = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 400);
+    jest.useFakeTimers();
+    scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 48);
+    stub1 = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 200);
+    stub2 = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 400);
   });
   afterAll(function () {
+    jest.useRealTimers();
     stub1.mockReset();
     stub2.mockReset();
+    scrollHeight.mockReset();
   });
 
   it.each`
@@ -104,16 +108,20 @@ describe('SideNav', function () {
   `('$Name has default behavior', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let {getByRole, getAllByRole, getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem);
 
+    let sideNav = getByRole('navigation');
+    let sideNavList = getByRole('list');
     if (Component === SideNav) {
       // wait for v3 components
-      await waitForDomChange();
+      await waitFor(() => {
+        expect(sideNav).toBeVisible();
+        expect(sideNavList).toBeVisible();
+        expect(getByText('Foo')).toBeVisible();
+      });
     }
 
-    let sideNav = getByRole('navigation');
     expect(sideNav).toBeTruthy();
     expect(sideNav.getAttribute('id')).toBeDefined();
 
-    let sideNavList = getByRole('list');
     expect(sideNavList).toBeTruthy();
     expect(sideNav.getAttribute('id')).toBeDefined();
 
@@ -134,7 +142,9 @@ describe('SideNav', function () {
 
     let sideNavListItemLinks = getAllByRole('link');
     expect(sideNavListItemLinks.length).toBe(4);
-    expect(sideNavListItemLinks[0].getAttribute('target')).toBe('_self');
+    if (Name !== 'V2SideNav') {
+      expect(sideNavListItemLinks[0].getAttribute('target')).toBe('_self');
+    }
   });
 
   it.each`
@@ -144,12 +154,14 @@ describe('SideNav', function () {
   `('$Name can pass className', async function ({Name, Component, ComponentSection, ComponentItem, props}) {
     let {getByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem, props);
 
+    let sideNav = getByRole('navigation');
     if (Component === SideNav) {
       // wait for v3 components
-      await waitForDomChange();
+      await waitFor(() => {
+        expect(sideNav).toBeVisible();
+      }); // wait for animation
     }
 
-    let sideNav = getByRole('navigation');
     expect(sideNav).toHaveAttribute('class', expect.stringContaining('test-class'));
   });
 
@@ -162,9 +174,13 @@ describe('SideNav', function () {
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name can single select an item', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let spy = jest.fn();
-    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy});
+    let {getByRole, getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', onSelectionChange: spy});
 
-    await waitForDomChange();
+    let sideNav = getByRole('navigation');
+    await waitFor(() => {
+      expect(sideNav).toBeVisible();
+      expect(getByText('Foo')).toBeVisible();
+    }); // wait for animation
 
     let [foo, bar, bob, alice] = [
       getByText('Foo'),
@@ -175,7 +191,7 @@ describe('SideNav', function () {
 
     bar.focus();
     triggerPress(bar);
-  
+
     expect(foo).not.toHaveAttribute('aria-current');
     expect(foo).toHaveAttribute('tabindex', '-1');
     expect(document.activeElement).toBe(bar);
@@ -209,9 +225,15 @@ describe('SideNav', function () {
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name can render sections', async function ({Name, Component, ComponentSection, ComponentItem}) {
-    let {getByText, getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem);
+    let {getByText, getByRole, getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem);
 
-    await waitForDomChange();
+    let sideNav = getByRole('navigation');
+    let sideNavList = getByRole('list');
+    await waitFor(() => {
+      expect(sideNav).toBeVisible();
+      expect(sideNavList).toBeVisible();
+      expect(getByText('Foo')).toBeVisible();
+    }); // wait for animation
 
     let [section1, section2] = [
       getByText('Section 1'),
@@ -234,18 +256,22 @@ describe('SideNav', function () {
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name can focus up/down item', async function ({Name, Component, ComponentSection, ComponentItem}) {
-    let {getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem);
-    
-    await waitForDomChange();
+    let {getByRole, getAllByRole, getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem);
+
+    let sideNav = getByRole('navigation');
+    await waitFor(() => {
+      expect(sideNav).toBeVisible();
+      expect(getByText('Foo')).toBeVisible();
+    }); // wait for animation
 
     let items = getAllByRole('link');
     let selectedItem = items[0];
     selectedItem.focus();
     expect(selectedItem).toBe(document.activeElement);
-    fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
+    act(() => {fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});});
     let nextSelectedItem = items[1];
     expect(nextSelectedItem).toBe(document.activeElement);
-    fireEvent.keyDown(nextSelectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
+    act(() => {fireEvent.keyDown(nextSelectedItem, {key: 'ArrowUp', code: 38, charCode: 38});});
     expect(selectedItem).toBe(document.activeElement);
   });
 
@@ -256,21 +282,27 @@ describe('SideNav', function () {
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name can keep focus on first/last item', async function ({Name, Component, ComponentSection, ComponentItem}) {
-    let {getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem);
-    
-    await waitForDomChange();
+    let {getByRole, getAllByRole, getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem);
+
+    let sideNav = getByRole('navigation');
+    let sideNavList = getByRole('list');
+    await waitFor(() => {
+      expect(sideNav).toBeVisible();
+      expect(sideNavList).toBeVisible();
+      expect(getByText('Foo')).toBeVisible();
+    }); // wait for animation
 
     let items = getAllByRole('link');
     let firstItem = items[0];
     firstItem.focus();
     expect(firstItem).toBe(document.activeElement);
-    fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
+    act(() => {fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});});
     let lastItem = items[items.length - 1];
     expect(lastItem).not.toBe(document.activeElement);
 
     lastItem.focus();
     expect(lastItem).toBe(document.activeElement);
-    fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
+    act(() => {fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});});
     expect(firstItem).not.toBe(document.activeElement);
   });
 
@@ -281,21 +313,29 @@ describe('SideNav', function () {
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name can focus first to last/last to first item', async function ({Name, Component, ComponentSection, ComponentItem}) {
-    let {getAllByRole} = renderComponent(Name, Component, ComponentSection, ComponentItem, {wrapAround: true});
-    
-    await waitForDomChange();
+    let {getByRole, getAllByRole, getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {shouldFocusWrap: true});
+
+    let sideNav = getByRole('navigation');
+    await waitFor(() => {
+      expect(sideNav).toBeVisible();
+      expect(getByText('Foo')).toBeVisible();
+    }); // wait for animation
 
     let items = getAllByRole('link');
     let firstItem = items[0];
     firstItem.focus();
     expect(firstItem).toBe(document.activeElement);
-    fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
+    act(() => {
+      fireEvent.keyDown(firstItem, {key: 'ArrowUp', code: 40, charCode: 40});
+    });
     let lastItem = items[items.length - 1];
     expect(lastItem).toBe(document.activeElement);
 
     lastItem.focus();
     expect(lastItem).toBe(document.activeElement);
-    fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
+    act(() => {
+      fireEvent.keyDown(lastItem, {key: 'ArrowDown', code: 38, charCode: 38});
+    });
     expect(firstItem).toBe(document.activeElement);
   });
 
@@ -306,9 +346,15 @@ describe('SideNav', function () {
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name supports defaultSelectedKeys (uncontrolled)', async function ({Name, Component, ComponentSection, ComponentItem}) {
-    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {defaultSelectedKeys: ['Bar']});
+    let {getByRole, getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', defaultSelectedKeys: ['Bar']});
 
-    await waitForDomChange();
+    let sideNav = getByRole('navigation');
+    let sideNavList = getByRole('list');
+    await waitFor(() => {
+      expect(sideNav).toBeVisible();
+      expect(sideNavList).toBeVisible();
+      expect(getByText('Foo')).toBeVisible();
+    }); // wait for animation
 
     let [foo, bar, bob, alice] = [
       getByText('Foo'),
@@ -333,9 +379,13 @@ describe('SideNav', function () {
     ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name supports defaultSelectedKeys (controlled)', async function ({Name, Component, ComponentSection, ComponentItem}) {
-    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectedKeys: ['Bar']});
+    let {getByRole, getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', selectedKeys: ['Bar']});
 
-    await waitForDomChange();
+    let sideNav = getByRole('navigation');
+    await waitFor(() => {
+      expect(sideNav).toBeVisible();
+      expect(getByText('Foo')).toBeVisible();
+    }); // wait for animation
 
     let [foo, bar, bob, alice] = [
       getByText('Foo'),
@@ -362,9 +412,15 @@ describe('SideNav', function () {
     ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
   `('$Name supports disabledKeys', async function ({Name, Component, ComponentSection, ComponentItem}) {
     let spy = jest.fn();
-    let {getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy, disabledKeys: ['Foo', 'Bob']});
+    let {getByRole, getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {onSelectionChange: spy, disabledKeys: ['Foo', 'Bob']});
 
-    await waitForDomChange();
+    let sideNav = getByRole('navigation');
+    let sideNavList = getByRole('list');
+    await waitFor(() => {
+      expect(sideNav).toBeVisible();
+      expect(sideNavList).toBeVisible();
+      expect(getByText('Foo')).toBeVisible();
+    }); // wait for animation
 
     let [foo, bar, bob, alice] = [
       getByText('Foo'),
@@ -381,6 +437,80 @@ describe('SideNav', function () {
     expect(bar).toHaveAttribute('aria-disabled', 'false');
     expect(bob).toHaveAttribute('aria-disabled', 'true');
     expect(alice).toHaveAttribute('aria-disabled', 'false');
+  });
+
+  it.each`
+    Name                           | Component    | ComponentSection | ComponentItem
+    ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
+  `('$Name does not allow empty selection', async function ({Name, Component, ComponentSection, ComponentItem}) {
+    let spy = jest.fn();
+    let {getByRole, getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', disallowEmptySelection: true, onSelectionChange: spy});
+
+    let sideNav = getByRole('navigation');
+    await waitFor(() => {
+      expect(sideNav).toBeVisible();
+      expect(getByText('Foo')).toBeVisible();
+    }); // wait for animation
+
+    let [bar, alice] = [
+      getByText('Bar'),
+      getByText('Alice')
+    ];
+
+    expect(bar).not.toHaveAttribute('aria-current');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(1);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(2);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+
+
+    alice.focus();
+    triggerPress(alice);
+    expect(bar).not.toHaveAttribute('aria-current');
+    expect(alice).toHaveAttribute('aria-current', 'page');
+    expect(spy).toBeCalledTimes(3);
+  });
+
+  it.each`
+    Name                           | Component    | ComponentSection | ComponentItem
+    ${'SideNav'}                   | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStatic'}             | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavWithSections'}       | ${SideNav}   | ${Section}       | ${Item}
+    ${'SideNavStaticWithSections'} | ${SideNav}   | ${Section}       | ${Item}
+  `('$Name with default key does not allow empty selection', async function ({Name, Component, ComponentSection, ComponentItem}) {
+    let spy = jest.fn();
+    let {getByRole, getByText} = renderComponent(Name, Component, ComponentSection, ComponentItem, {selectionMode: 'single', disallowEmptySelection: true, onSelectionChange: spy, defaultSelectedKey: ['bar']});
+
+    let sideNav = getByRole('navigation');
+    await waitFor(() => {
+      expect(sideNav).toBeVisible();
+      expect(getByText('Foo')).toBeVisible();
+    }); // wait for animation
+
+    let [bar, alice] = [
+      getByText('Bar'),
+      getByText('Bob')
+    ];
+
+    expect(bar).not.toHaveAttribute('aria-current');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(1);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+    triggerPress(bar);
+    expect(spy).toBeCalledTimes(2);
+    expect(bar).toHaveAttribute('aria-current', 'page');
+
+
+    alice.focus();
+    triggerPress(alice);
+    expect(bar).not.toHaveAttribute('aria-current');
+    expect(alice).toHaveAttribute('aria-current', 'page');
+    expect(spy).toBeCalledTimes(3);
   });
 
 });

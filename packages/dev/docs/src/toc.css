@@ -13,7 +13,15 @@
 .toc {
   position: fixed;
   top: 80px;
-  right: 0;
+  right: 8px;
+  overflow-y: auto;
+  max-height: calc(100vh - 80px);
+}
+
+.tocContainer {
+  border-left: 1px solid var(--spectrum-global-color-gray-200);
+  padding-left: 20px;
+  width: 180px;
 }
 
 @media (max-width: 1200px) {

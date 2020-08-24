@@ -10,45 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {AllHTMLAttributes, useContext} from 'react';
-import {DOMProps} from '@react-types/shared';
-import {DOMPropsResponderContext} from '@react-aria/interactions';
-import {useId} from '@react-aria/utils';
-
-interface TooltipProps extends DOMProps {
-  role?: 'tooltip'
-  id?: string
-}
+import {AriaTooltipProps} from '@react-types/tooltip';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {HTMLAttributes} from 'react';
 
 interface TooltipAria {
-  tooltipProps: AllHTMLAttributes<HTMLElement>
+  tooltipProps: HTMLAttributes<HTMLElement>
 }
 
-export function useTooltip(props: TooltipProps): TooltipAria {
-  let contextProps = useContext(DOMPropsResponderContext);
-  let tooltipId = useId(props.id);
-
+export function useTooltip(props: AriaTooltipProps): TooltipAria {
   let {
+    id,
     role = 'tooltip'
   } = props;
 
-  let tooltipProps: TooltipAria['tooltipProps'] = {
-    role,
-    id: tooltipId
-  };
-
-  if (contextProps) {
-    if (contextProps.onPointerLeave && contextProps.onPointerEnter) {
-      tooltipProps.onPointerLeave = contextProps.onPointerLeave;
-      tooltipProps.onPointerEnter = contextProps.onPointerEnter;
-    }
-    if (contextProps.onMouseLeave && contextProps.onMouseEnter) {
-      tooltipProps.onMouseLeave = contextProps.onMouseLeave;
-      tooltipProps.onMouseEnter = contextProps.onMouseEnter;
-    }
-  }
+  let domProps = filterDOMProps(props);
 
   return {
-    tooltipProps
+    tooltipProps: mergeProps(domProps, {
+      role,
+      id: useId(id)
+    })
   };
 }

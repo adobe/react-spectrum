@@ -10,17 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {MultipleSelection} from '@react-types/shared';
+import {Key, useMemo, useRef, useState} from 'react';
+import {MultipleSelection, SelectionMode} from '@react-types/shared';
 import {MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo, useRef, useState} from 'react';
 
-export function useMultipleSelectionState(props: MultipleSelection): MultipleSelectionState  {
-  let isFocused = useRef(false);
-  let [focusedKey, setFocusedKey] = useState(null);
-  let selectedKeysProp = useMemo(() => props.selectedKeys ? new Selection(props.selectedKeys) : undefined, [props.selectedKeys]);
-  let defaultSelectedKeys = useMemo(() => props.defaultSelectedKeys ? new Selection(props.defaultSelectedKeys) : new Selection(), [props.defaultSelectedKeys]);
+/**
+ * Manages state for multiple selection and focus in a collection.
+ */
+export function useMultipleSelectionState(props: MultipleSelection): MultipleSelectionState {
+  let {
+    selectionMode = 'none' as SelectionMode,
+    disallowEmptySelection
+  } = props;
+
+  // We want synchronous updates to `isFocused` and `focusedKey` after their setters are called.
+  // But we also need to trigger a react re-render. So, we have both a ref (sync) and state (async).
+  let isFocusedRef = useRef(false);
+  let [, setFocused] = useState(false);
+  let focusedKeyRef = useRef(null);
+  let [, setFocusedKey] = useState(null);
+  let selectedKeysProp = useMemo(() => convertSelection(props.selectedKeys), [props.selectedKeys]);
+  let defaultSelectedKeys = useMemo(() => convertSelection(props.defaultSelectedKeys, new Selection()), [props.defaultSelectedKeys]);
   let [selectedKeys, setSelectedKeys] = useControlledState(
     selectedKeysProp,
     defaultSelectedKeys,
@@ -28,16 +40,33 @@ export function useMultipleSelectionState(props: MultipleSelection): MultipleSel
   );
 
   return {
-    selectionMode: props.selectionMode || 'multiple',
+    selectionMode,
+    disallowEmptySelection,
     get isFocused() {
-      return isFocused.current;
+      return isFocusedRef.current;
     },
     setFocused(f) {
-      isFocused.current = f;
+      isFocusedRef.current = f;
+      setFocused(f);
     },
-    focusedKey,
-    setFocusedKey,
+    get focusedKey() {
+      return focusedKeyRef.current;
+    },
+    setFocusedKey(k) {
+      focusedKeyRef.current = k;
+      setFocusedKey(k);
+    },
     selectedKeys,
     setSelectedKeys
   };
+}
+
+function convertSelection(selection: 'all' | Iterable<Key>, defaultValue?: Selection): 'all' | Selection {
+  if (!selection) {
+    return defaultValue;
+  }
+
+  return selection === 'all'
+    ? 'all'
+    : new Selection(selection);
 }

@@ -24,8 +24,8 @@ export const baseStyleProps: StyleHandlers = {
   margin: ['margin', dimensionValue],
   marginStart: [rtl('marginLeft', 'marginRight'), dimensionValue],
   marginEnd: [rtl('marginRight', 'marginLeft'), dimensionValue],
-  marginLeft: ['marginLeft', dimensionValue],
-  marginRight: ['marginRight', dimensionValue],
+  // marginLeft: ['marginLeft', dimensionValue],
+  // marginRight: ['marginRight', dimensionValue],
   marginTop: ['marginTop', dimensionValue],
   marginBottom: ['marginBottom', dimensionValue],
   marginX: [['marginLeft', 'marginRight'], dimensionValue],
@@ -47,9 +47,17 @@ export const baseStyleProps: StyleHandlers = {
   end: [rtl('right', 'left'), dimensionValue],
   left: ['left', dimensionValue],
   right: ['right', dimensionValue],
+  flex: ['flex', flexValue],
   flexGrow: ['flexGrow', passthroughStyle],
   flexShrink: ['flexShrink', passthroughStyle],
-  flexBasis: ['flexBasis', passthroughStyle]
+  flexBasis: ['flexBasis', passthroughStyle],
+  gridArea: ['gridArea', passthroughStyle],
+  gridColumn: ['gridColumn', passthroughStyle],
+  gridColumnEnd: ['gridColumnEnd', passthroughStyle],
+  gridColumnStart: ['gridColumnStart', passthroughStyle],
+  gridRow: ['gridRow', passthroughStyle],
+  gridRowEnd: ['gridRowEnd', passthroughStyle],
+  gridRowStart: ['gridRowStart', passthroughStyle]
 };
 
 export const viewStyleProps: StyleHandlers = {
@@ -90,7 +98,8 @@ export const viewStyleProps: StyleHandlers = {
   paddingTop: ['paddingTop', dimensionValue],
   paddingBottom: ['paddingBottom', dimensionValue],
   paddingX: [['paddingLeft', 'paddingRight'], dimensionValue],
-  paddingY: [['paddingTop', 'paddingBottom'], dimensionValue]
+  paddingY: [['paddingTop', 'paddingBottom'], dimensionValue],
+  overflow: ['overflow', passthroughStyle]
 };
 
 const borderStyleProps = {
@@ -107,12 +116,13 @@ function rtl(ltr: string, rtl: string) {
   );
 }
 
+const UNIT_RE = /(%|px|em|rem|vw|vh|auto|cm|mm|in|pt|pc|ex|ch|rem|vmin|vmax|fr)$/;
 export function dimensionValue(value: DimensionValue) {
   if (typeof value === 'number') {
     return value + 'px';
   }
 
-  if (/(%|px|em|rem)$/.test(value)) {
+  if (UNIT_RE.test(value)) {
     return value;
   }
 
@@ -152,6 +162,14 @@ function anyValue(value: any) {
   return value;
 }
 
+function flexValue(value: boolean | number | string) {
+  if (typeof value === 'boolean') {
+    return value ? '1' : undefined;
+  }
+
+  return '' + value;
+}
+
 export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers, direction: Direction) {
   let style: CSSProperties = {};
   for (let key in props) {
@@ -185,7 +203,7 @@ export function convertStyleProps(props: ViewStyleProps, handlers: StyleHandlers
   return style;
 }
 
-export function useStyleProps(props: StyleProps, handlers: StyleHandlers = baseStyleProps) {
+export function useStyleProps<T extends StyleProps>(props: T, handlers: StyleHandlers = baseStyleProps) {
   let {
     UNSAFE_className,
     UNSAFE_style,
@@ -230,39 +248,3 @@ export function useStyleProps(props: StyleProps, handlers: StyleHandlers = baseS
 export function passthroughStyle(value) {
   return value;
 }
-
-const boxAlignmentStyleProps: StyleHandlers = {
-  justifyItems: ['justify-items', passthroughStyle],
-  justifyContent: ['justify-content', passthroughStyle],
-  alignItems: ['align-items', passthroughStyle],
-  alignContent: ['align-content', passthroughStyle],
-  ...baseStyleProps
-};
-
-export const flexStyleProps: StyleHandlers = {
-  flexDirection: ['flex-direction', passthroughStyle],
-  flexWrap: ['flex-wrap', passthroughStyle],
-  flexFlow: ['flex-flow', passthroughStyle],
-  ...boxAlignmentStyleProps
-};
-
-export const gridStyleProps: StyleHandlers = {
-  grid: ['grid', passthroughStyle],
-  gridArea: ['grid-area', passthroughStyle],
-  gridAutoColumns: ['grid-auto-columns', passthroughStyle],
-  gridAutoFlow: ['grid-auto-flow', passthroughStyle],
-  gridAutoRows: ['grid-auto-rows', passthroughStyle],
-  gridColumn: ['grid-column', passthroughStyle],
-  gridColumnEnd: ['grid-column-end', passthroughStyle],
-  gridColumnStart: ['grid-column-start', passthroughStyle],
-  gridRow: ['grid-row', passthroughStyle],
-  gridRowEnd: ['grid-row-end', passthroughStyle],
-  gridRowStart: ['grid-row-start', passthroughStyle],
-  gridTemplate: ['grid-template', passthroughStyle],
-  gridTemplateAreas: ['grid-template-areas', passthroughStyle],
-  gridTemplateColumns: ['grid-template-columns', passthroughStyle],
-  gridTemplateRows: ['grid-template-rows', passthroughStyle],
-  rowGap: ['row-gap', dimensionValue],
-  columnGap: ['row-gap', dimensionValue],
-  ...boxAlignmentStyleProps
-};

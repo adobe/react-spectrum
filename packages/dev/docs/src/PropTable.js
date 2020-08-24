@@ -11,7 +11,7 @@
  */
 
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
-import {InterfaceType, Type, TypeContext} from './types';
+import {InterfaceType, TypeContext} from './types';
 import React from 'react';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
@@ -20,9 +20,8 @@ const GROUPS = {
     /^on[A-Z]/
   ],
   Layout: [
-    'flex', 'flexGrow', 'flexShrink', 'flexDirection', 'flexWrap', 'flexBasis', 'alignItems', 'alignContent', 'alignSelf', 'justifyItems', 'justifyContent', 'justifySelf', 'order', 'flexOrder',
-    'gridTemplateColumns', 'gridTemplateRows', 'gridTemplateAreas', 'gridArea', 'gridColumn', 'gridRow', 'gridGap', 'gridColumnGap', 'gridRowGap', 'gridAutoFlow', 'gridAutoColumns', 'gridAutoRows',
-    'gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd', 'slot',
+    'flex', 'flexGrow', 'flexShrink', 'flexBasis', 'alignSelf', 'justifySelf', 'order', 'flexOrder',
+    'gridArea', 'gridColumn', 'gridRow', 'gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd', 'slot',
     'overflow'
   ],
   Spacing: [
@@ -69,44 +68,28 @@ const GROUPS = {
     'color'
   ],
   Accessibility: [
-    'role', 'id', 'tabIndex', /^aria-/
+    'role', 'id', 'tabIndex', 'excludeFromTabOrder', /^aria-/
+  ],
+  Advanced: [
+    'UNSAFE_className', 'UNSAFE_style'
   ]
 };
 
 export function PropTable({component, links}) {
   let [ungrouped, groups] = groupProps(component.props.properties);
 
-  let usedLinks = {};
-  walkLinks(component.props.properties);
-
-  function walkLinks(obj) {
-    walk(obj, (t, k, recurse) => {
-      if (t && t.type === 'link') {
-        usedLinks[t.id] = links[t.id];
-        walkLinks(links[t.id]);
-      }
-
-      return recurse(t);
-    });
-  }
-
   return (
     <>
       <TypeContext.Provider value={links}>
-        <InterfaceType properties={ungrouped} showRequired showDefault />
+        <InterfaceType properties={ungrouped} showRequired showDefault isComponent />
         {Object.keys(groups).map(group => (
           <details>
             <summary className={typographyStyles['spectrum-Heading4']}>
               <ChevronRight size="S" />
               {group}
             </summary>
-            <InterfaceType properties={groups[group]} showRequired showDefault />
+            <InterfaceType properties={groups[group]} showRequired showDefault isComponent />
           </details>
-        ))}
-        {Object.values(usedLinks).map(link => (
-          <section id={link.id} data-title={link.name} hidden>
-            <Type type={link} />
-          </section>
         ))}
       </TypeContext.Provider>
     </>
@@ -144,22 +127,4 @@ function groupProps(props) {
   }
 
   return [props, groups];
-}
-
-function walk(obj, fn, k = null) {
-  let recurse = (obj) => {
-    if (Array.isArray(obj)) {
-      return obj.map((item, i) => walk(item, fn, k));
-    } else if (obj && typeof obj === 'object') {
-      let res = {};
-      for (let key in obj) {
-        res[key] = walk(obj[key], fn, key);
-      }
-      return res;
-    } else {
-      return obj;
-    }
-  };
-
-  return fn(obj, k, recurse);
 }

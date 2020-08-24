@@ -10,36 +10,41 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
+import {ModalProps} from '@react-types/overlays';
 import modalStyles from '@adobe/spectrum-css-temp/components/modal/vars.css';
 import {Overlay} from './Overlay';
 import overrideStyles from './overlays.css';
-import React, {ReactElement, useRef} from 'react';
+import React, {forwardRef, HTMLAttributes, ReactNode, RefObject} from 'react';
 import {Underlay} from './Underlay';
-import {useModal, useOverlay} from '@react-aria/overlays';
+import {useModal, useOverlay, usePreventScroll} from '@react-aria/overlays';
 
-interface ModalProps {
-  children: ReactElement,
+interface ModalWrapperProps extends HTMLAttributes<HTMLElement> {
+  children: ReactNode,
   isOpen?: boolean,
   onClose?: () => void,
   type?: 'fullscreen' | 'fullscreenTakeover',
-  isDismissable?: boolean
+  isDismissable?: boolean,
+  isKeyboardDismissDisabled?: boolean
 }
 
-interface ModalWrapperProps extends ModalProps {
-  isOpen?: boolean
-}
-
-export function Modal(props: ModalProps) {
-  let {children, onClose, type, isDismissable, ...otherProps} = props;
+function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
+  let {children, onClose, type, isDismissable, isKeyboardDismissDisabled, ...otherProps} = props;
+  let domRef = useDOMRef(ref);
+  let {styleProps} = useStyleProps(props);
 
   return (
     <Overlay {...otherProps}>
       <Underlay />
-      <ModalWrapper 
-        onClose={onClose} 
+      <ModalWrapper
+        {...styleProps}
+        onClose={onClose}
         type={type}
-        isDismissable={isDismissable}>
+        isDismissable={isDismissable}
+        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
+        ref={domRef}>
         {children}
       </ModalWrapper>
     </Overlay>
@@ -51,13 +56,14 @@ let typeMap = {
   fullscreenTakeover: 'fullscreenTakeover'
 };
 
-function ModalWrapper(props: ModalWrapperProps) {
-  let {children, onClose, isOpen, type, isDismissable = false} = props;
+let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject<HTMLDivElement>) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {children, isOpen, type, isDismissable, isKeyboardDismissDisabled, ...otherProps} = props;
   let typeVariant = typeMap[type];
-  let ref = useRef(null);
 
-  let {overlayProps} = useOverlay({ref, onClose, isOpen, isDismissable});
-  useModal();
+  let {overlayProps} = useOverlay(props, ref);
+  usePreventScroll();
+  let {modalProps} = useModal();
 
   let wrapperClassName = classNames(
     modalStyles,
@@ -80,13 +86,14 @@ function ModalWrapper(props: ModalWrapperProps) {
       'spectrum-Modal',
       'react-spectrum-Modal'
     ),
-    {[`spectrum-Modal--${typeVariant}`]: typeVariant}
+    {[`spectrum-Modal--${typeVariant}`]: typeVariant},
+    otherProps.className
   );
 
   return (
     <div className={wrapperClassName}>
       <div
-        {...overlayProps}
+        {...mergeProps(otherProps, overlayProps, modalProps)}
         ref={ref}
         className={modalClassName}
         data-testid="modal">
@@ -94,4 +101,7 @@ function ModalWrapper(props: ModalWrapperProps) {
       </div>
     </div>
   );
-}
+});
+
+let _Modal = forwardRef(Modal);
+export {_Modal as Modal};

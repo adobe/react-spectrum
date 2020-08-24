@@ -11,26 +11,32 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import {layoutInfoToStyle, useCollectionItem} from '@react-aria/collections';
+import {layoutInfoToStyle, useVirtualizerItem} from '@react-aria/virtualizer';
 import React, {Fragment, useRef} from 'react';
 import {SideNavSectionProps} from '@react-types/sidenav';
 import styles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
 import {useListBoxSection} from '@react-aria/listbox';
+import {useLocale} from '@react-aria/i18n';
 
 export function SideNavSection<T>(props: SideNavSectionProps<T>) {
   let {children, reusableView, header} = props;
   let item = reusableView.content;
-  let {headingProps, groupProps} = useListBoxSection();
+  let {headingProps, groupProps} = useListBoxSection({
+    heading: item.rendered,
+    'aria-label': item['aria-label']
+  });
 
   let headerRef = useRef();
-  useCollectionItem({
+  useVirtualizerItem({
     reusableView: header,
     ref: headerRef
   });
 
+  let {direction} = useLocale();
+
   return (
     <Fragment>
-      <div role="presentation" ref={headerRef} style={layoutInfoToStyle(header.layoutInfo)}>
+      <div role="presentation" ref={headerRef} style={layoutInfoToStyle(header.layoutInfo, direction)}>
         {item.rendered &&
           <div
             {...headingProps}
@@ -46,7 +52,7 @@ export function SideNavSection<T>(props: SideNavSectionProps<T>) {
       </div>
       <div
         {...groupProps}
-        style={layoutInfoToStyle(reusableView.layoutInfo)}>
+        style={layoutInfoToStyle(reusableView.layoutInfo, direction)}>
         {children}
       </div>
     </Fragment>

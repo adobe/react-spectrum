@@ -10,35 +10,76 @@
  * governing permissions and limitations under the License.
  */
 
+import {getItemId} from './utils';
 import {HTMLAttributes, Key, RefObject} from 'react';
+import {isFocusVisible, useHover, usePress} from '@react-aria/interactions';
 import {ListState} from '@react-stately/list';
-import {useHover, usePress} from '@react-aria/interactions';
+import {mergeProps, useSlotId} from '@react-aria/utils';
 import {useSelectableItem} from '@react-aria/selection';
 
-interface OptionProps {
-  isDisabled?: boolean,
-  isSelected?: boolean,
-  key?: Key,
-  ref?: RefObject<HTMLElement>,
-  selectOnPressUp?: boolean,
-  focusOnHover?: boolean,
-  isVirtualized?: boolean
-}
-
 interface OptionAria {
-  optionProps: HTMLAttributes<HTMLElement>
+  /** Props for the option element. */
+  optionProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the main text element inside the option. */
+  labelProps: HTMLAttributes<HTMLElement>,
+
+  /** Props for the description text element inside the option, if any. */
+  descriptionProps: HTMLAttributes<HTMLElement>
 }
 
-export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAria {
+interface AriaOptionProps {
+  /** Whether the option is disabled. */
+  isDisabled?: boolean,
+
+  /** Whether the option is selected. */
+  isSelected?: boolean,
+
+  /** A screen reader only label for the option. */
+  'aria-label'?: string,
+
+  /** The unique key for the option. */
+  key?: Key,
+
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean,
+
+  /** Whether the option should be focused when the user hovers over it. */
+  shouldFocusOnHover?: boolean,
+
+  /** Whether the option is contained in a virtual scrolling listbox. */
+  isVirtualized?: boolean,
+
+  /** Whether the option should use virtual focus instead of being focused directly. */
+  shouldUseVirtualFocus?: boolean
+}
+
+const isSafariMacOS =
+  typeof window !== 'undefined' && window.navigator != null
+    ? /^Mac/.test(window.navigator.platform) &&
+      /Safari/.test(window.navigator.userAgent) &&
+      !/Chrome/.test(window.navigator.userAgent)
+    : false;
+
+/**
+ * Provides the behavior and accessibility implementation for an option in a listbox.
+ * See `useListBox` for more details about listboxes.
+ * @param props - Props for the option.
+ * @param state - State for the listbox, as returned by `useListState`.
+ */
+export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: RefObject<HTMLElement>): OptionAria {
   let {
     isSelected,
     isDisabled,
     key,
-    ref,
-    selectOnPressUp,
-    focusOnHover,
-    isVirtualized
+    shouldSelectOnPressUp,
+    shouldFocusOnHover,
+    isVirtualized,
+    shouldUseVirtualFocus
   } = props;
+
+  let labelId = useSlotId();
+  let descriptionId = useSlotId();
 
   let optionProps = {
     role: 'option',
@@ -46,32 +87,52 @@ export function useOption<T>(props: OptionProps, state: ListState<T>): OptionAri
     'aria-selected': isSelected
   };
 
+  // Safari with VoiceOver on macOS misreads options with aria-labelledby or aria-label as simply "text".
+  // We should not map slots to the label and description on Safari and instead just have VoiceOver read the textContent.
+  // https://bugs.webkit.org/show_bug.cgi?id=209279
+  if (!isSafariMacOS) {
+    optionProps['aria-label'] = props['aria-label'];
+    optionProps['aria-labelledby'] = labelId;
+    optionProps['aria-describedby'] = descriptionId;
+  }
+
   if (isVirtualized) {
-    optionProps['aria-posinset'] = state.collection.getItem(key).index;
+    optionProps['aria-posinset'] = state.collection.getItem(key).index + 1;
     optionProps['aria-setsize'] = state.collection.size;
   }
 
   let {itemProps} = useSelectableItem({
     selectionManager: state.selectionManager,
-    itemKey: key,
-    itemRef: ref,
-    selectOnPressUp,
-    isVirtualized
+    key,
+    ref,
+    shouldSelectOnPressUp,
+    isVirtualized,
+    shouldUseVirtualFocus
   });
 
   let {pressProps} = usePress({...itemProps, isDisabled});
+
   let {hoverProps} = useHover({
-    isDisabled: isDisabled || !focusOnHover,
-    onHover() {
-      state.selectionManager.setFocusedKey(key);
+    isDisabled: isDisabled || !shouldFocusOnHover,
+    onHoverStart() {
+      if (!isFocusVisible()) {
+        state.selectionManager.setFocused(true);
+        state.selectionManager.setFocusedKey(key);
+      }
     }
   });
 
   return {
     optionProps: {
       ...optionProps,
-      ...pressProps,
-      ...hoverProps
+      ...mergeProps(pressProps, hoverProps),
+      id: getItemId(state, key)
+    },
+    labelProps: {
+      id: labelId
+    },
+    descriptionProps: {
+      id: descriptionId
     }
   };
 }
