@@ -67,16 +67,16 @@ I hear that these bugs may already be fixed in the iOS 14 betas, so hopefully we
 
 ## The useHover hook
 
-We’ve wrapped all of this behavior into the [useHover](../../react-aria/useHover.html) hook in React Aria. It provides a simple way to determine if an element is hovered, and exposes a set of events that you can handle as well. `onHoverStart` is fired when the user hovers over an element with a mouse, and `onHoverEnd` is fired when the user moves their mouse off of the element. We take care of all of the browser inconsistencies discussed above, and also include fallbacks for touch and mouse events to support older devices without pointer events.
+We’ve wrapped all of this behavior into the [useHover](../react-aria/useHover.html) hook in React Aria. It provides a simple way to determine if an element is hovered, and exposes a set of events that you can handle as well. `onHoverStart` is fired when the user hovers over an element with a mouse, and `onHoverEnd` is fired when the user moves their mouse off of the element. We take care of all of the browser inconsistencies discussed above, and also include fallbacks for touch and mouse events to support older devices without pointer events.
 
-The [Button](../../react-spectrum/Button.html) component, and all other components in React Spectrum that support hover states, use the [useHover](../../react-aria/useHover.html) hook to handle interactions, and apply a CSS class when they are hovered. This ensures that hover states are only applied when interacting with a mouse, which avoids unexpected behavior on touch devices.
+The [Button](../react-spectrum/Button.html) component, and all other components in React Spectrum that support hover states, use the [useHover](../react-aria/useHover.html) hook to handle interactions, and apply a CSS class when they are hovered. This ensures that hover states are only applied when interacting with a mouse, which avoids unexpected behavior on touch devices.
 
 <Video src={hoveriPadVideoUrl} loop autoPlay muted />
 
-Try a live example for yourself in our [Button](../../react-spectrum/Button.html) docs!
+Try a live example for yourself in our [Button](../react-spectrum/Button.html) docs!
 
 ## Conclusion
 
-As we’ve seen, cross-device interactions are difficult to handle across so many different types of devices. Even “simple” components like buttons are much more complicated than they seem at first. If you’re building your own button component, I’d recommend checking out the [useButton](../../react-aria/useButton.html) and [useHover](../../react-aria/useHover.html) hooks, which will help ensure that everything works as expected across a wide variety of devices.
+As we’ve seen, cross-device interactions are difficult to handle across so many different types of devices. Even “simple” components like buttons are much more complicated than they seem at first. If you’re building your own button component, I’d recommend checking out the [useButton](../react-aria/useButton.html) and [useHover](../react-aria/useHover.html) hooks, which will help ensure that everything works as expected across a wide variety of devices.
 
 In the next part of this series, we’ll cover how React Spectrum and React Aria handle focus behavior across devices and browsers.
