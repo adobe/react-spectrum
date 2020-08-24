@@ -158,7 +158,7 @@ describe('useCheckboxGroup', () => {
     expect(checkboxGroup).toHaveAttribute('data-testid', 'favorite-pet');
   });
 
-  it('sets aria-disabled when isDisabled is true', () => {
+  it('sets aria-disabled and makes checkboxes disabled when isDisabled is true', () => {
     let {getAllByRole, getByRole} = render(
       <CheckboxGroup
         groupProps={{label: 'Favorite Pet', isDisabled: true}}
@@ -178,7 +178,7 @@ describe('useCheckboxGroup', () => {
     expect(checkboxes[0]).toHaveAttribute('disabled');
   });
 
-  it('doesn\'t set aria-disabled by default', () => {
+  it('doesn\'t set aria-disabled or make checkboxes disabled by default', () => {
     let {getAllByRole, getByRole} = render(
       <CheckboxGroup
         groupProps={{label: 'Favorite Pet'}}
@@ -198,7 +198,7 @@ describe('useCheckboxGroup', () => {
     expect(checkboxes[0]).not.toHaveAttribute('disabled');
   });
 
-  it('doesn\'t set aria-disabled when isDisabled is false', () => {
+  it('doesn\'t set aria-disabled or make checkboxes disabled when isDisabled is false', () => {
     let {getAllByRole, getByRole} = render(
       <CheckboxGroup
         groupProps={{label: 'Favorite Pet', isDisabled: false}}

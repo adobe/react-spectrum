@@ -26,6 +26,7 @@ describe('useCheckboxGroupState', () => {
       expect(typeof state.addValue).toBe('function');
       expect(typeof state.removeValue).toBe('function');
       expect(typeof state.toggleValue).toBe('function');
+      expect(typeof state.isSelected).toBe('function');
 
       return null;
     }
@@ -70,6 +71,18 @@ describe('useCheckboxGroupState', () => {
       const state = useCheckboxGroupState({defaultValue: ['foo', 'bar']});
 
       expect(state.value).toEqual(['foo', 'bar']);
+
+      return null;
+    }
+    render(<Test />);
+  });
+
+  it('should support isSelected to determine if a value is selected', () => {
+    function Test() {
+      const state = useCheckboxGroupState({value: ['foo', 'bar']});
+
+      expect(state.isSelected('foo')).toBe(true);
+      expect(state.isSelected('baz')).toBe(false);
 
       return null;
     }
@@ -222,12 +235,14 @@ describe('useCheckboxGroupState', () => {
     let addValue: (value: string) => void;
     let removeValue: (value: string) => void;
     let toggleValue: (value: string) => void;
+    let setValue: (value: string[]) => void;
 
     function Test() {
       const state = useCheckboxGroupState({isReadOnly: true, defaultValue: ['test']});
       addValue = state.addValue;
       removeValue = state.removeValue;
       toggleValue = state.toggleValue;
+      setValue = state.setValue;
 
       return <>{state.value.join(', ')}</>;
     }
@@ -250,6 +265,57 @@ describe('useCheckboxGroupState', () => {
 
     act(() => {
       toggleValue('foo');
+    });
+
+    expect(container.textContent).toBe('test');
+
+    act(() => {
+      setValue(['foo']);
+    });
+
+    expect(container.textContent).toBe('test');
+  });
+
+  it('should not update state for disabled group', () => {
+    let addValue: (value: string) => void;
+    let removeValue: (value: string) => void;
+    let toggleValue: (value: string) => void;
+    let setValue: (value: string[]) => void;
+
+    function Test() {
+      const state = useCheckboxGroupState({isDisabled: true, defaultValue: ['test']});
+      addValue = state.addValue;
+      removeValue = state.removeValue;
+      toggleValue = state.toggleValue;
+      setValue = state.setValue;
+
+      return <>{state.value.join(', ')}</>;
+    }
+
+    const {container} = render(<Test />);
+
+    expect(container.textContent).toBe('test');
+
+    act(() => {
+      addValue('foo');
+    });
+
+    expect(container.textContent).toBe('test');
+
+    act(() => {
+      removeValue('test');
+    });
+
+    expect(container.textContent).toBe('test');
+
+    act(() => {
+      toggleValue('foo');
+    });
+
+    expect(container.textContent).toBe('test');
+
+    act(() => {
+      setValue(['foo']);
     });
 
     expect(container.textContent).toBe('test');

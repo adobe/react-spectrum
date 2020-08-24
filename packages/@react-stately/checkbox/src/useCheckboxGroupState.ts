@@ -48,7 +48,13 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
 
   const state: CheckboxGroupState = {
     value: selectedValues,
-    setValue,
+    setValue(value) {
+      if (props.isReadOnly || props.isDisabled) {
+        return;
+      }
+
+      setValue(value);
+    },
     isDisabled: props.isDisabled || false,
     isReadOnly: props.isReadOnly || false,
     isSelected(value) {
