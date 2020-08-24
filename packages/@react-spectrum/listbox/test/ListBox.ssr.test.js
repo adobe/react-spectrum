@@ -16,11 +16,16 @@ describe('ListBox SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
       import {ListBox, Item} from '../';
-      <ListBox>
-        <Item>Left</Item>
-        <Item>Middle</Item>
-        <Item>Right</Item>
-      </ListBox>
+      import {Provider} from '@react-spectrum/provider';
+      import {theme} from '@react-spectrum/theme-default';
+
+      <Provider theme={theme}>
+        <ListBox aria-label="Listbox">
+          <Item>Left</Item>
+          <Item>Middle</Item>
+          <Item>Right</Item>
+        </ListBox>
+      </Provider>
     `);
   });
 });
