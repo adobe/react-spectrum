@@ -108,5 +108,27 @@ describe('useSlider', () => {
       expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 80]);
       expect(stateRef.current.values).toEqual([40, 80]);
     });
+
+    it('should not allow you to set value if disabled', () => {
+      let onChangeSpy = jest.fn();
+      let onChangeEndSpy = jest.fn();
+      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} isDisabled />);
+
+      let track = screen.getByTestId('track');
+      fireEvent.mouseDown(track, {clientX: 20});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([10, 80]);
+
+      fireEvent.mouseMove(track, {clientX: 30});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([10, 80]);
+      
+      fireEvent.mouseUp(track, {clientX: 40});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([10, 80]);
+    });
   });
 });
