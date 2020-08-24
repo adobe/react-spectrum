@@ -102,7 +102,9 @@ export function useCalendarCell(props: CalendarCellOptions, state: CalendarState
         (event: FocusEvent) => {
           if (!props.isDisabled) {
             state.setFocusedDate(props.cellDate);
-            event.continuePropagation();
+            if (typeof event.continuePropagation === 'function') {
+              event.continuePropagation();
+            }
           }
         }
       ),
