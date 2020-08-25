@@ -13,7 +13,7 @@
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {HTMLAttributes, RefObject} from 'react';
 import {isFocusVisible, usePress} from '@react-aria/interactions';
-import {mergeProps} from '@react-aria/utils';
+import {isPreact, mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import {TableState} from '@react-stately/table';
 import {useSelectableItem} from '@react-aria/selection';
@@ -85,7 +85,7 @@ export function useTableCell<T>(props: GridCellProps, state: TableState<T>): Gri
 
   let gridCellProps: HTMLAttributes<HTMLElement> = mergeProps(pressProps, {
     role: 'gridcell',
-    onFocus
+    [isPreact ? 'onfocusin' : 'onFocus']: onFocus
   });
 
   if (isVirtualized) {

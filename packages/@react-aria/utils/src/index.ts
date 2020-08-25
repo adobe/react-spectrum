@@ -22,3 +22,4 @@ export * from './focusWithoutScrolling';
 export * from './filterDOMProps';
 export * from './runAfterTransition';
 export * from './useLayoutEffect';
+export * from './isPreact';

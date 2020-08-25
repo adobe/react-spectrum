@@ -15,8 +15,9 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {FocusEvent, HTMLAttributes} from 'react';
+import {FocusEvent as ReactFocusEvent, HTMLAttributes} from 'react';
 import {FocusEvents} from '@react-types/shared';
+import {isPreact} from '@react-aria/utils';
 
 interface FocusProps extends FocusEvents {
   /** Whether the focus events should be disabled. */
@@ -39,10 +40,17 @@ export function useFocus(props: FocusProps): FocusResult {
 
   let onFocus, onBlur;
   if (props.onFocus || props.onFocusChange) {
-    onFocus = (e: FocusEvent) => {
+    onFocus = (e: ReactFocusEvent) => {
       if (e.target === e.currentTarget) {
         if (props.onFocus) {
-          props.onFocus(e);
+          props.onFocus(new Proxy(e, {
+            get(target, prop) {
+              if (prop === 'type') {
+                return 'focus';
+              }
+              return target[prop];
+            },
+          }));
         }
 
         if (props.onFocusChange) {
@@ -53,10 +61,17 @@ export function useFocus(props: FocusProps): FocusResult {
   }
 
   if (props.onBlur || props.onFocusChange) {
-    onBlur = (e: FocusEvent) => {
+    onBlur = (e: ReactFocusEvent) => {
       if (e.target === e.currentTarget) {
         if (props.onBlur) {
-          props.onBlur(e);
+          props.onBlur(new Proxy(e, {
+            get(target, prop) {
+              if (prop === 'type') {
+                return 'blur';
+              }
+              return target[prop];
+            },
+          }));
         }
 
         if (props.onFocusChange) {
@@ -67,9 +82,13 @@ export function useFocus(props: FocusProps): FocusResult {
   }
 
   return {
-    focusProps: {
-      onFocus,
-      onBlur
-    }
+    focusProps: isPreact ?
+      {
+        onfocusin: onFocus,
+        onfocusout: onBlur
+      } : {
+        onFocus,
+        onBlur
+      }
   };
 }

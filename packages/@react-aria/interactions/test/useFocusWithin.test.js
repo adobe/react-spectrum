@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {isPreact} from '@react-aria/utils';
 import React from 'react';
 import {render} from '@testing-library/react';
 import {useFocusWithin} from '../';
@@ -120,8 +121,15 @@ describe('useFocusWithin', function () {
     let onInnerFocus = jest.fn();
     let onInnerBlur = jest.fn();
     let tree = render(
-      <div onFocus={onWrapperFocus} onBlur={onWrapperBlur}>
-        <Example
+      <div
+        {...(isPreact ?
+        {
+          onfocusin: onWrapperFocus,
+          onfocusout: onWrapperBlur
+        } : {
+          onFocus: onWrapperFocus,
+          onBlur: onWrapperBlur
+        })}>        <Example
           onFocusWithin={onInnerFocus}
           onBlurWithin={onInnerBlur}>
           <div data-testid="child" tabIndex={-1} />

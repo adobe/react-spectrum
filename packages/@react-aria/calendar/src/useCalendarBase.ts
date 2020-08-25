@@ -15,7 +15,7 @@ import {CalendarAria} from './types';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarStateBase} from '@react-stately/calendar';
 import {DOMProps} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId, useLabels, useUpdateEffect} from '@react-aria/utils';
+import {filterDOMProps, isPreact, mergeProps, useId, useLabels, useUpdateEffect} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {KeyboardEvent, useRef} from 'react';
@@ -144,8 +144,8 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
       'aria-labelledby': labelProps['aria-labelledby'],
       'aria-describedby': selectedDateDescription ? captionId : null,
       onKeyDown,
-      onFocus: () => state.setFocused(true),
-      onBlur: () => state.setFocused(false)
+      [isPreact ? 'onfocusin' : 'onFocus']: () => state.setFocused(true),
+      [isPreact ? 'onfocusout' : 'onBlur']: () => state.setFocused(false)
     },
     captionProps: {
       id: captionId,

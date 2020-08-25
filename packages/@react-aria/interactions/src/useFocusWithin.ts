@@ -15,15 +15,16 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {FocusEvent, HTMLAttributes, useRef} from 'react';
+import {FocusEvent as ReactFocusEvent, HTMLAttributes, useRef} from 'react';
+import {isPreact} from '@react-aria/utils';
 
 interface FocusWithinProps {
   /** Whether the focus within events should be disabled. */
   isDisabled?: boolean,
   /** Handler that is called when the target element or a descendant receives focus. */
-  onFocusWithin?: (e: FocusEvent) => void,
+  onFocusWithin?: (e: ReactFocusEvent) => void,
   /** Handler that is called when the target element and all descendants lose focus. */
-  onBlurWithin?: (e: FocusEvent) => void,
+  onBlurWithin?: (e: ReactFocusEvent) => void,
   /** Handler that is called when the the focus within state changes. */
   onFocusWithinChange?: (isFocusWithin: boolean) => void
 }
@@ -45,10 +46,17 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
     return {focusWithinProps: {}};
   }
 
-  let onFocus = (e: FocusEvent) => {
+  let onFocus = (e: ReactFocusEvent) => {
     if (!state.isFocusWithin) {
       if (props.onFocusWithin) {
-        props.onFocusWithin(e);
+        props.onFocusWithin(new Proxy(e, {
+          get(target, prop) {
+            if (prop === 'type') {
+              return 'focus';
+            }
+            return target[prop];
+          },
+        }));
       }
 
       if (props.onFocusWithinChange) {
@@ -59,13 +67,20 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
     }
   };
 
-  let onBlur = (e: FocusEvent) => {
+  let onBlur = (e: ReactFocusEvent) => {
     // We don't want to trigger onBlurWithin and then immediately onFocusWithin again
     // when moving focus inside the element. Only trigger if the currentTarget doesn't
     // include the relatedTarget (where focus is moving).
     if (state.isFocusWithin && !e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
       if (props.onBlurWithin) {
-        props.onBlurWithin(e);
+        props.onBlurWithin(new Proxy(e, {
+          get(target, prop) {
+            if (prop === 'type') {
+              return 'blur';
+            }
+            return target[prop];
+          },
+        }));
       }
 
       if (props.onFocusWithinChange) {
@@ -77,9 +92,13 @@ export function useFocusWithin(props: FocusWithinProps): FocusWithinResult {
   };
 
   return {
-    focusWithinProps: {
-      onFocus: onFocus,
-      onBlur: onBlur
-    }
+    focusWithinProps: isPreact ?
+      {
+        onfocusin: onFocus,
+        onfocusout: onBlur
+      } : {
+        onFocus,
+        onBlur
+      }
   };
 }

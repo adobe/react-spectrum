@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaSelectProps} from '@react-types/select';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {filterDOMProps, isPreact, mergeProps, useId} from '@react-aria/utils';
 import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
@@ -104,12 +104,12 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
         triggerProps['aria-label'] && !triggerProps['aria-labelledby'] ? triggerProps.id : null,
         valueId
       ].filter(Boolean).join(' '),
-      onFocus() {
+      [isPreact ? "onfocusin" : "onFocus"]: ()  => {
         state.setFocused(true);
       },
-      onBlur() {
+      [isPreact ? "onfocusout" : "onBlur"]: () => {
         state.setFocused(false);
-      }
+      },
     }),
     valueProps: {
       id: valueId

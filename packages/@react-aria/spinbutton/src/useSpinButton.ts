@@ -14,6 +14,7 @@ import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, useCallback, useEffect, useRef} from 'react';
 import {InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
+import {isPreact} from "@react-aria/utils";
 
 
 export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
@@ -158,8 +159,8 @@ export function useSpinButton(
       'aria-readonly': isReadOnly || null,
       'aria-required': isRequired || null,
       onKeyDown,
-      onFocus,
-      onBlur
+      [isPreact ? "onfocusin" : "onFocus"]: onFocus,
+      [isPreact ? "onfocusout" : "onBlur"]: onBlur
     },
     incrementButtonProps: {
       onPressStart: () => onIncrementPressStart(400),

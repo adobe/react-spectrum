@@ -11,7 +11,7 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {chain} from '@react-aria/utils';
+import {chain, isPreact} from '@react-aria/utils';
 import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
 import {getItemId, listIds} from '@react-aria/listbox';
@@ -160,8 +160,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     ...props,
     onChange,
     onKeyDown: chain(state.isOpen && collectionProps.onKeyDownCapture, onKeyDown),
-    onBlur,
     value: state.inputValue,
+    onBlur,
     onFocus
   }, inputRef);
 

@@ -11,7 +11,7 @@
  */
 
 import {Collection} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
+import {focusWithoutScrolling, isPreact, mergeProps} from '@react-aria/utils';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import React, {FocusEvent, HTMLAttributes, Key, ReactElement, RefObject, useCallback, useEffect, useRef} from 'react';
 import {ScrollView} from './ScrollView';
@@ -154,8 +154,8 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
   return {
     virtualizerProps: {
       tabIndex: focusedView ? -1 : 0,
-      onFocus,
-      onBlur
+      [isPreact ? "onfocusin" : "onFocus"]: onFocus,
+      [isPreact ? "onfocusout" : "onBlur"]: onBlur,
     }
   };
 }

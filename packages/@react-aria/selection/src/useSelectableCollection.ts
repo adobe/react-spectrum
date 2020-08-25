@@ -13,7 +13,7 @@
 import {FocusEvent, HTMLAttributes, KeyboardEvent, RefObject, useEffect} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, isPreact} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useTypeSelect} from './useTypeSelect';
 
@@ -350,8 +350,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     // override those of the children. For example, ArrowDown in a table should always go
     // to the cell below, and not open a menu.
     onKeyDownCapture: onKeyDown,
-    onFocus,
-    onBlur,
+    [isPreact ? "onfocusin" : "onFocus"]: onFocus,
+    [isPreact ? "onfocusout" : "onBlur"]: onBlur,
     onMouseDown(e) {
       // Prevent focus going to the collection when clicking on the scrollbar.
       e.preventDefault();

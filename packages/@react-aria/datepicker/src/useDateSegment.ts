@@ -16,7 +16,7 @@ import {DOMProps} from '@react-types/shared';
 import {HTMLAttributes, MouseEvent, useState} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useId} from '@react-aria/utils';
+import {isPreact, mergeProps, useId} from '@react-aria/utils';
 import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useFocusManager} from '@react-aria/focus';
 import {useSpinButton} from '@react-aria/spinbutton';
@@ -165,7 +165,7 @@ export function useDateSegment(props: DatePickerProps & DOMProps, segment: DateS
       'aria-labelledby': `${props['aria-labelledby']} ${id}`,
       tabIndex: props.isDisabled ? undefined : 0,
       onKeyDown,
-      onFocus,
+      [isPreact ? 'onfocusin' : 'onFocus']: onFocus,
       onMouseDown: (e: MouseEvent) => e.stopPropagation()
     })
   };

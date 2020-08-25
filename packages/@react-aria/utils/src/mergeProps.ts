@@ -34,7 +34,7 @@ export function mergeProps<T extends Props[]>(...args: T): UnionToIntersection<T
     for (let key in result) {
       // Chain events
       if (
-        /^on[A-Z]/.test(key) &&
+        /^on[a-zA-Z]/.test(key) &&
         typeof result[key] === 'function' &&
         typeof props[key] === 'function'
       ) {
