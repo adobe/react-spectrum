@@ -29,7 +29,5 @@ export interface ComboBoxProps<T> extends CollectionBase<T>, SingleSelection, In
 
 export interface SpectrumComboBoxProps<T> extends ComboBoxProps<T>, SpectrumLabelableProps, StyleProps {
   isQuiet?: boolean,
-  direction?: 'bottom' | 'top',
-  // TODO: decide what this should be, just a string or should users be able to fully customize the empty view?
-  renderEmptyView?: any
+  direction?: 'bottom' | 'top'
 }

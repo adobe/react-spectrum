@@ -11,9 +11,8 @@
  */
 
 import {AriaLabelingProps, DOMProps, FocusStrategy, Node, StyleProps} from '@react-types/shared';
-import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {Content} from '@react-spectrum/view';
-import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
+import {classNames, SlotProvider, useStyleProps} from '@react-spectrum/utils';
+import {Grid} from '@react-spectrum/layout';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxContext} from './ListBoxContext';
@@ -22,11 +21,11 @@ import {ListBoxSection} from './ListBoxSection';
 import {ListLayout} from '@react-stately/layout';
 import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
-import NotFound from '@spectrum-icons/illustrations/NotFound';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, RefObject, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import {Text} from '@react-spectrum/text';
 import {useCollator, useMessageFormatter} from '@react-aria/i18n';
 import {useListBox} from '@react-aria/listbox';
 import {useProvider} from '@react-spectrum/provider';
@@ -149,13 +148,29 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
               </div>
             );
           } else if (type === 'placeholder' && isMobile) {
-            // TODO: update with renderEmptyView when spectrum comes back with what it should look like
-            // Also should probably limit this to combobox only
             return (
-              <IllustratedMessage>
-                <Content>No Results</Content>
-                <NotFound aria-label="No Results" />
-              </IllustratedMessage>
+              <div
+                className={classNames(
+                  styles,
+                  'spectrum-Menu-item'
+                )}>
+                <Grid
+                  UNSAFE_className={
+                    classNames(
+                      styles,
+                      'spectrum-Menu-itemGrid'
+                    )
+                  }>
+                  <SlotProvider
+                    slots={{
+                      text: {UNSAFE_className: styles['spectrum-Menu-itemLabel']}
+                    }}>
+                    <Text>
+                      <i>No Results</i>
+                    </Text>
+                  </SlotProvider>
+                </Grid>
+              </div>
             );
           }
         }}

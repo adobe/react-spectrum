@@ -39,7 +39,6 @@
     "@react-aria/separator": "^3.1.0",
     "@react-aria/utils": "^3.2.0",
     "@react-aria/virtualizer": "^3.1.1",
-    "@react-spectrum/illustratedmessage": "3.1.0",
     "@react-spectrum/layout": "^3.1.1",
     "@react-spectrum/progress": "^3.1.0",
     "@react-spectrum/provider": "^3.1.1",
@@ -52,7 +51,6 @@
     "@react-stately/virtualizer": "^3.1.0",
     "@react-types/listbox": "^3.1.0",
     "@react-types/shared": "^3.2.0",
-    "@spectrum-icons/illustrations": "3.1.0",
     "@spectrum-icons/ui": "^3.1.0"
   },
   "devDependencies": {
