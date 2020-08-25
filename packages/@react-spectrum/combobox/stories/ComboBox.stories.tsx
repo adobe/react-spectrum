@@ -119,9 +119,7 @@ storiesOf('ComboBox', module)
         </ComboBox>
       </div>
     ),
-    {
-      note: 'Combobox needs focus to show dropdown.'
-    }
+    {note: 'Combobox needs focus to show dropdown.'}
   )
   .add(
     'defaultOpen',
@@ -137,9 +135,7 @@ storiesOf('ComboBox', module)
         </ComboBox>
       </div>
     ),
-    {
-      note: 'Combobox needs focus to show dropdown.'
-    }
+    {note: 'Combobox needs focus to show dropdown.'}
   )
   .add(
     'inputValue (controlled)',
