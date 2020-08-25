@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
+import {CheckboxGroupState} from '@react-stately/checkbox';
 
-export * from './Checkbox';
-export * from './CheckboxGroup';
+export const checkboxGroupNames = new WeakMap<CheckboxGroupState, string>();

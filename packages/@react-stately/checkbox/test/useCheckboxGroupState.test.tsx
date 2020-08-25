@@ -19,23 +19,36 @@ describe('useCheckboxGroupState', () => {
     function Test() {
       const state = useCheckboxGroupState();
 
-      expect(typeof state.name).toBe('string');
       expect(state.value).toEqual([]);
+      expect(state.isDisabled).toBe(false);
+      expect(state.isReadOnly).toBe(false);
       expect(typeof state.setValue).toBe('function');
       expect(typeof state.addValue).toBe('function');
       expect(typeof state.removeValue).toBe('function');
       expect(typeof state.toggleValue).toBe('function');
+      expect(typeof state.isSelected).toBe('function');
 
       return null;
     }
     render(<Test />);
   });
 
-  it('should return the same `name` that has been provided', () => {
+  it('should return the same `isDisabled` that has been provided', () => {
     function Test() {
-      const state = useCheckboxGroupState({name: 'foo'});
+      const state = useCheckboxGroupState({isDisabled: true});
 
-      expect(state.name).toBe('foo');
+      expect(state.isDisabled).toBe(true);
+
+      return null;
+    }
+    render(<Test />);
+  });
+
+  it('should return the same `isReadOnly` that has been provided', () => {
+    function Test() {
+      const state = useCheckboxGroupState({isReadOnly: true});
+
+      expect(state.isReadOnly).toBe(true);
 
       return null;
     }
@@ -58,6 +71,18 @@ describe('useCheckboxGroupState', () => {
       const state = useCheckboxGroupState({defaultValue: ['foo', 'bar']});
 
       expect(state.value).toEqual(['foo', 'bar']);
+
+      return null;
+    }
+    render(<Test />);
+  });
+
+  it('should support isSelected to determine if a value is selected', () => {
+    function Test() {
+      const state = useCheckboxGroupState({value: ['foo', 'bar']});
+
+      expect(state.isSelected('foo')).toBe(true);
+      expect(state.isSelected('baz')).toBe(false);
 
       return null;
     }
@@ -210,12 +235,14 @@ describe('useCheckboxGroupState', () => {
     let addValue: (value: string) => void;
     let removeValue: (value: string) => void;
     let toggleValue: (value: string) => void;
+    let setValue: (value: string[]) => void;
 
     function Test() {
       const state = useCheckboxGroupState({isReadOnly: true, defaultValue: ['test']});
       addValue = state.addValue;
       removeValue = state.removeValue;
       toggleValue = state.toggleValue;
+      setValue = state.setValue;
 
       return <>{state.value.join(', ')}</>;
     }
@@ -238,6 +265,57 @@ describe('useCheckboxGroupState', () => {
 
     act(() => {
       toggleValue('foo');
+    });
+
+    expect(container.textContent).toBe('test');
+
+    act(() => {
+      setValue(['foo']);
+    });
+
+    expect(container.textContent).toBe('test');
+  });
+
+  it('should not update state for disabled group', () => {
+    let addValue: (value: string) => void;
+    let removeValue: (value: string) => void;
+    let toggleValue: (value: string) => void;
+    let setValue: (value: string[]) => void;
+
+    function Test() {
+      const state = useCheckboxGroupState({isDisabled: true, defaultValue: ['test']});
+      addValue = state.addValue;
+      removeValue = state.removeValue;
+      toggleValue = state.toggleValue;
+      setValue = state.setValue;
+
+      return <>{state.value.join(', ')}</>;
+    }
+
+    const {container} = render(<Test />);
+
+    expect(container.textContent).toBe('test');
+
+    act(() => {
+      addValue('foo');
+    });
+
+    expect(container.textContent).toBe('test');
+
+    act(() => {
+      removeValue('test');
+    });
+
+    expect(container.textContent).toBe('test');
+
+    act(() => {
+      toggleValue('foo');
+    });
+
+    expect(container.textContent).toBe('test');
+
+    act(() => {
+      setValue(['foo']);
     });
 
     expect(container.textContent).toBe('test');
