@@ -65,7 +65,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     placement = 'bottom' as Placement,
     containerPadding = 12,
     shouldFlip = true,
-    boundaryElement = document.body,
+    boundaryElement = typeof document !== 'undefined' ? document.body : null,
     offset = 0,
     crossOffset = 0,
     shouldUpdatePosition = true,
@@ -95,7 +95,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   ];
 
   let updatePosition = useCallback(() => {
-    if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current) {
+    if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current || !boundaryElement) {
       return;
     }
 

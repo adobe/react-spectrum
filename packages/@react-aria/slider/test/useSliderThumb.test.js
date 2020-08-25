@@ -94,7 +94,7 @@ describe('useSliderThumb', () => {
     });
   });
 
-  describe('interactions on thumbs', () => {
+  describe('interactions on thumbs, where track does not contain thumbs', () => {
     let widthStub;
     beforeAll(() => {
       widthStub = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
@@ -127,12 +127,13 @@ describe('useSliderThumb', () => {
         inputRef: input1Ref
       }, state);
       return (
-        <div data-testid="track" ref={trackRef} {...trackProps}>
+        <div>
+          <div data-testid="track" ref={trackRef} {...trackProps} />
           <div data-testid="thumb0" {...thumb0Props}>
-            <input {...input0Props} />
+            <input ref={input0Ref} {...input0Props} />
           </div>
           <div data-testid="thumb1" {...thumb1Props}>
-            <input {...input1Props} />
+            <input ref={input1Ref} {...input1Props} />
           </div>
         </div>
       );
@@ -189,6 +190,63 @@ describe('useSliderThumb', () => {
       expect(onChangeSpy).toHaveBeenLastCalledWith([40, 40]);
       expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 40]);
       expect(stateRef.current.values).toEqual([40, 40]);
+    });
+  });
+
+  describe('interactions on thumbs, where track contains thumbs', () => {
+    let widthStub;
+    beforeAll(() => {
+      widthStub = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
+    });
+    afterAll(() => {
+      widthStub.mockReset();
+    });
+
+    let stateRef = React.createRef();
+
+    function Example(props) {
+      let trackRef = useRef(null);
+      let inputRef = useRef(null);
+      let state = useSliderState(props);
+      stateRef.current = state;
+      let {trackProps} = useSlider(props, state, trackRef);
+      let {inputProps, thumbProps} = useSliderThumb({
+        'aria-label': 'Min',
+        index: 0,
+        trackRef,
+        inputRef: inputRef
+      }, state);
+      return (
+        <div data-testid="track" ref={trackRef} {...trackProps}>
+          <div data-testid="thumb" {...thumbProps}>
+            <input ref={inputRef} {...inputProps} />
+          </div>
+        </div>
+      );
+    }
+
+    it('can be moved by dragging', () => {
+      let onChangeSpy = jest.fn();
+      let onChangeEndSpy = jest.fn();
+      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} />);
+
+      // Drag thumb
+      let thumb0 = screen.getByTestId('thumb');
+      fireEvent.mouseDown(thumb0, {clientX: 10});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([10]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([10]);
+
+      fireEvent.mouseMove(thumb0, {clientX: 20});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([20]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([20]);
+
+      fireEvent.mouseUp(thumb0, {clientX: 40});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([40]);
+      expect(onChangeEndSpy).toHaveBeenLastCalledWith([40]);
+      expect(stateRef.current.values).toEqual([40]);
+      expect(onChangeEndSpy).toBeCalledTimes(1);
     });
   });
 });

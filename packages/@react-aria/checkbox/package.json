@@ -18,7 +18,10 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@react-aria/label": "^3.1.0",
     "@react-aria/toggle": "^3.1.0",
+    "@react-aria/utils": "^3.1.0",
+    "@react-stately/checkbox": "^3.1.0",
     "@react-stately/toggle": "^3.1.0",
     "@react-types/checkbox": "^3.1.0"
   },
