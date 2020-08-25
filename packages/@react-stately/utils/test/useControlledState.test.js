@@ -11,8 +11,8 @@
  */
 
 import {act, renderHook} from '@testing-library/react-hooks';
+import {act as actDOM, render} from '@testing-library/react';
 import React, {useEffect, useState} from 'react';
-import {render} from '@testing-library/react';
 import {useControlledState} from '../src';
 import userEvent from '@testing-library/user-event';
 
@@ -68,7 +68,8 @@ describe('useControlledState tests', function () {
 
     let TestComponent = (props) => {
       let [state, setState] = useControlledState(props.value, props.defaultValue, props.onChange);
-      useEffect(() => renderSpy());
+      // TODO should this really have `, []` so that the count that is asserted is 1 ?
+      useEffect(() => renderSpy(), []);
       return <button onClick={() => setState((prev) => prev + 1)} data-testid={state} />;
     };
 
@@ -80,7 +81,9 @@ describe('useControlledState tests', function () {
     let {getByRole, getByTestId} = render(<TestComponentWrapper defaultValue={5} />);
     let button = getByRole('button');
     getByTestId('5');
-    userEvent.click(button);
+    actDOM(() =>
+      userEvent.click(button)
+    );
     getByTestId('6');
     expect(renderSpy.mock.calls.length).toBe(1);
   });
