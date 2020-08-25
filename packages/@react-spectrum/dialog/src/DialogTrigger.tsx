@@ -155,7 +155,7 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboa
       arrowProps={arrowProps}
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}
       hideArrow={hideArrow}>
-      {content}
+      {typeof content === 'function' ? content(state.close) : content}
     </Popover>
   );
 

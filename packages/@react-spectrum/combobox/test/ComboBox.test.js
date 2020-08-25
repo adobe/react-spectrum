@@ -77,11 +77,16 @@ function renderSectionComboBox(props = {}) {
 }
 
 function testComboBoxOpen(combobox, button, listbox, focusedItemIndex) {
+  let buttonId = button.id;
+  let comboboxLabelledBy = combobox.getAttribute('aria-labelledby');
+
   expect(listbox).toBeVisible();
   expect(button).toHaveAttribute('aria-expanded', 'true');
   expect(button).toHaveAttribute('aria-controls', listbox.id);
+  expect(button).toHaveAttribute('aria-label', 'Show suggestions');
+  expect(button).toHaveAttribute('aria-labelledby', `${comboboxLabelledBy} ${buttonId}`);
   expect(combobox).toHaveAttribute('aria-controls', listbox.id);
-  expect(button).toHaveAttribute('aria-expanded', 'true');
+  expect(combobox).toHaveAttribute('aria-expanded', 'true');
 
   let items = within(listbox).getAllByRole('option');
   expect(items).toHaveLength(3);
@@ -361,6 +366,7 @@ describe('ComboBox', function () {
 
         let listbox = getByRole('listbox');
         testComboBoxOpen(combobox, button, listbox, 0);
+
       });
 
       it('opens for touch', () => {

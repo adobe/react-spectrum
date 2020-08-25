@@ -1,0 +1,82 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import hoverVideoUrl from 'url:../assets/button-hover.mp4';
+import hoveriPadVideoUrl from 'url:../assets/button-hover-ipad.mp4';
+
+import {BlogPostLayout, Video} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+keywords: [react aria, react spectrum, react, interactions, button, touch, hover, web development, javascript, css]
+description: This is the second post in our three part series on building a button component. In the [first post](building-a-button-part-1.html), we covered how React Spectrum and React Aria implement adaptive press events across mouse, touch, keyboard, and screen readers. Today, we’ll cover hover interactions.
+date: 2020-08-25
+author: '[Devon Govett](https://twitter.com/devongovett)'
+image: ../assets/ReactAria_976x445_2x.png
+---
+
+# Building a Button Part 2: Hover Interactions
+
+This is the second post in our three part series on building a button component. In the [first post](building-a-button-part-1.html), we covered how React Spectrum and React Aria implement adaptive press events across mouse, touch, keyboard, and screen readers. Today, we’ll cover hover interactions.
+
+## Hover interactions
+
+Hover interactions allow a user to receive some feedback when they move their pointer over an element, without pressing it. For example, the color of a button might change to give an affordance to the user that the element is clickable, or a tooltip may appear to give the user more information about what an element represents.
+
+However, hover interactions are unique to mice. Most touch devices don’t allow the user to hover with their finger over an element without touching it. Keyboards support focusing elements, which is similar in some ways to hovering, but not quite the same. This presents some challenges when handling hover interactions on the web, given that web apps can run across so many different types of devices.
+
+In the [last post](building-a-button-part-1.html), we discussed how web browsers emulate mouse events for backward compatibility with older websites that were only designed with mice in mind. In addition to affecting how press events are dispatched, mouse event emulation also applies to hover events.
+
+## The :hover pseudo-class
+
+The first thing that may come to mind when you think about implementing a hover state for a component is the `:hover` CSS pseudo-class. It’s built right into the browser, requires no JavaScript to use, and seems like the perfect tool for the job. Unfortunately, it suffers from the same issues with emulated mouse events that we saw with the `:active` pseudo-class and mouse events in general.
+
+On touch devices, `:hover` is emulated for backward compatibility with older apps that weren’t designed with touch in mind. Depending on the browser, `:hover` might never match, might match only while the user is touching an element, or may be sticky and act more like focus. On iOS for example, tapping once on an element shows the hover style, and tapping away from the element removes it.
+
+<Video src={hoverVideoUrl} loop autoPlay muted />
+
+This is not how you’d usually expect a button to behave, but browsers need to do this kind of emulation for apps that may only show or hide content on hover (e.g. navigation menus). If they did not, then perhaps this content would not be accessible at all to touch users. Unfortunately, there is no built-in way of opting out of this behavior, so we need to find another way to apply our hover styles.
+
+## Media queries
+
+The [hover](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/hover) and [any-hover](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/any-hover) media queries offer some hope. `@media (hover: hover)` matches when the user’s primary input device supports hover interactions, and `@media (any-hover: hover)` matches when any available input device supports hovering. This seems perfect – we can wrap our `:hover` pseudo classes in a media query, and only apply them when the device supports hover.
+
+In fact, this is exactly what React Spectrum did for quite some time. But then we started testing on more types of devices, including Windows laptops with touch screens, and more recently on iPadOS 13.4, which supports trackpads and mice in addition to touch. These hybrid devices are incompatible with the hover media queries because the user can change interaction modes at any time. The `hover` media query would never match because the primary interaction mode is touch, and `any-hover` would always match because an available input device supports hover. (In reality it’s even more complicated because browsers and OS’s differ in which input device they consider primary). We want the hover state to apply only when the user is currently interacting with a mouse, but not when interacting with touch, so media queries won’t work.
+
+## JavaScript hover interactions
+
+Our only remaining option is to use JavaScript to apply our hover states instead of CSS. We’ll need to handle mouse events and apply our styles while the user is hovering over an element.
+
+However, JavaScript mouse events are also subject to emulation on touch devices. `onMouseOver` and `onMouseEnter` are fired after `onTouchEnd`. In addition, `onMouseExit` and `onMouseOut` are not fired until the user taps on another element, just like with the `:hover` pseudo class. Because of this, we need to disambiguate between real mouse events and touch emulated mouse events.
+
+As discussed in the previous post, [pointer events](https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events) are supposed to solve these issues by exposing a `pointerType` property that specifies what kind of device the user is interacting with. While `onPointerEnter` is fired even on devices that don’t support hover, we should be able to ignore these events if they have `pointerType="touch"` set.
+
+Unfortunately, on iOS there is currently a [bug](https://bugs.webkit.org/show_bug.cgi?id=214609) where even pointer events are subject to mouse event emulation. iOS fires `onPointerEnter` twice – once with `pointerType="touch"` and again with `pointerType="mouse"`. The mouse event is fired just after `onPointerUp`, and before `onFocus`. We could try setting a flag during the event with `pointerType="touch"` and ignore the following event with `pointerType="mouse"`, but since this is a bug only on iOS, this would mean that we would ignore the next mouse event on other devices, which could be long in the future when the user switches interaction modes.
+
+The solution is a bit tricky. We listen for the `onPointerUp` event globally on the document, and set  a flag if `pointerType="touch"` to ignore the following `onPointerEnter` event with `pointerType="mouse"`. After a short timeout (50ms), we reset this flag back to `false`. This means that we will ignore `onPointerEnter` events with `pointerType="mouse"` for 50ms following an `onPointerUp` event with `pointerType="touch"` – long enough to ignore the emulated mouse event on iOS, but short enough to not ignore real user events in the future.
+
+This handler must be global to the document rather than local to the element being hovered due to another iOS quirk – focus events, and the prior  `onPointerEnter` event with `pointerType="mouse"`, are dispatched even when you didn’t touch the element directly, but somewhere nearby. iOS attempts to determine the user’s intent and focuses the nearest element to their tap within some threshold. In this case, the `onPointerUp` event with `pointerType="touch"`  is not dispatched on the element since the user did not actually touch it. This means we would not be able to ignore the emulated mouse event, because our flag would never be set. Using a global event listener instead of a local one allows us to handle the `onPointerUp` event with `pointerType="touch"` and ignore the following `onPointerEnter` event with `pointerType="mouse"` even if the user touched nearby the element rather than directly on it.
+
+I hear that these bugs may already be fixed in the iOS 14 betas, so hopefully we’ll be able to remove this code sometime in the future.
+
+## The useHover hook
+
+We’ve wrapped all of this behavior into the [useHover](../react-aria/useHover.html) hook in React Aria. It provides a simple way to determine if an element is hovered, and exposes a set of events that you can handle as well. `onHoverStart` is fired when the user hovers over an element with a mouse, and `onHoverEnd` is fired when the user moves their mouse off of the element. We take care of all of the browser inconsistencies discussed above, and also include fallbacks for touch and mouse events to support older devices without pointer events.
+
+The [Button](../react-spectrum/Button.html) component, and all other components in React Spectrum that support hover states, use the [useHover](../react-aria/useHover.html) hook to handle interactions, and apply a CSS class when they are hovered. This ensures that hover states are only applied when interacting with a mouse, which avoids unexpected behavior on touch devices.
+
+<Video src={hoveriPadVideoUrl} loop autoPlay muted />
+
+Try a live example for yourself in our [Button](../react-spectrum/Button.html) docs!
+
+## Conclusion
+
+As we’ve seen, cross-device interactions are difficult to handle across so many different types of devices. Even “simple” components like buttons are much more complicated than they seem at first. If you’re building your own button component, I’d recommend checking out the [useButton](../react-aria/useButton.html) and [useHover](../react-aria/useHover.html) hooks, which will help ensure that everything works as expected across a wide variety of devices.
+
+In the next part of this series, we’ll cover how React Spectrum and React Aria handle focus behavior across devices and browsers.
