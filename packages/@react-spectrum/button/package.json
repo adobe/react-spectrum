@@ -32,30 +32,19 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
-<<<<<<< HEAD
     "@react-aria/button": "^3.2.0",
     "@react-aria/focus": "^3.2.0",
     "@react-aria/interactions": "^3.2.0",
     "@react-aria/utils": "^3.2.0",
+    "@react-aria/visually-hidden": "^3.2.0",
+    "@react-spectrum/progress": "^3.1.0",
     "@react-spectrum/text": "^3.1.0",
     "@react-spectrum/utils": "^3.2.0",
     "@react-stately/toggle": "^3.2.0",
     "@react-types/button": "^3.2.0",
+    "@react-types/progress": "^3.1.0",
     "@react-types/shared": "^3.2.0",
     "@spectrum-icons/ui": "^3.1.0"
-=======
-    "@react-aria/button": "3.0.0-rc.3",
-    "@react-aria/focus": "3.0.0-rc.3",
-    "@react-aria/utils": "3.0.0-rc.3",
-    "@react-aria/visually-hidden": "^3.0.0-rc.0",
-    "@react-spectrum/progress": "^3.0.0-rc.3",
-    "@react-spectrum/text": "3.0.0-rc.0",
-    "@react-spectrum/utils": "3.0.0-rc.3",
-    "@react-types/button": "3.0.0-rc.3",
-    "@react-types/progress": "3.0.0-rc.3",
-    "@react-types/shared": "3.0.0-rc.3",
-    "@spectrum-icons/ui": "3.0.0-rc.3"
->>>>>>> RSP-1686: Add `isPending` prop to @react-spectrum/Button
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1",

@@ -85,7 +85,7 @@ storiesOf('Button', module)
   .add(
     'element: a, rel: \'noopener noreferrer\'',
     () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
-  ),
+  )
   .add(
     'is pending',
     () => {
