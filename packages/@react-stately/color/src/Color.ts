@@ -13,7 +13,7 @@
 import {
   ColorFormat,
   ColorChannel,
-  Color as ColorType
+  Color as ColorType,
 } from '@react-types/color';
 
 export class Color implements ColorType {

@@ -10,5 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Color';
-export * from './useHexColorFieldState';
+import {AriaHexColorFieldProps} from '@react-types/color';
+import {HexColorFieldState} from '@react-stately/color';
+import {HTMLAttributes, LabelHTMLAttributes} from 'react';
+
+interface HexColorFieldAria {
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  inputFieldProps: HTMLAttributes<HTMLInputElement>
+}
+
+export function useHexColorField(props: AriaHexColorFieldProps, state: HexColorFieldState): HexColorFieldAria {
+  return {
+    labelProps: null,
+    inputFieldProps: null,
+  };
+}

@@ -10,5 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Color';
-export * from './useHexColorFieldState';
+import {Color, HexColorFieldProps} from '@react-types/color';
+import {NumberFieldState} from '@react-stately/numberfield';
+
+export interface HexColorFieldState extends NumberFieldState {
+  colorValue: Color,
+  setColorValue: (color: Color) => void
+}
+
+export function useHexColorFieldState(
+  props: HexColorFieldProps
+): HexColorFieldState {
+  return null;
+}

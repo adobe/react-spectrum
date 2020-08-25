@@ -10,5 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Color';
-export * from './useHexColorFieldState';
+describe('useHexColor', function () {
+  it('should return true', function () {
+    expect(true).toBeTruthy();
+  });
+});
