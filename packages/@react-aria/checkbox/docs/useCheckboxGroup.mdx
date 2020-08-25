@@ -1,0 +1,142 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/checkbox';
+import hiddenDocs from 'docs:@react-aria/visually-hidden';
+import focusDocs from 'docs:@react-aria/focus';
+import statelyDocs from 'docs:@react-stately/checkbox';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-aria/checkbox/package.json';
+
+```jsx import
+import {useCheckboxGroup, useCheckboxGroupItem} from '@react-aria/checkbox';
+```
+
+---
+category: Forms
+keywords: [checkbox, input, aria]
+after_version: 3.1.0
+---
+
+# useCheckboxGroup
+
+<p>{docs.exports.useCheckboxGroup.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useCheckboxGroup', 'useCheckboxGroupItem']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices/#checkbox'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useCheckboxGroup} links={docs.links} />
+<FunctionAPI function={docs.exports.useCheckboxGroupItem} links={docs.links} />
+
+## Features
+
+Checkbox groups can be built in HTML with the
+[&lt;fieldset&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/fieldset)
+and [&lt;input&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input) elements,
+however these can be difficult to style. `useCheckboxGroup` and `useCheckboxGroupItem` help achieve accessible
+checkbox groups that can be styled as needed.
+
+* Checkbox groups are exposed to assistive technology via ARIA
+* Each checkbox is built with a native HTML `<input>` element, which can be optionally visually
+  hidden to allow custom styling
+* Full support for browser features like form autofill
+* Keyboard focus management and cross browser normalization
+* Group and checkbox labeling support for assistive technology
+
+## Anatomy
+
+A checkbox group consists of a set of checkboxes, and a label. Each checkbox
+includes a label and a visual selection indicator. Zero or more checkboxes
+within the group can be selected at a time. Users may click or touch a checkbox
+to select it, or use the <kbd>Tab</kbd> key to navigate to it
+and the <kbd>Space</kbd> key to toggle it.
+
+`useCheckboxGroup` returns props for the group and its label, which you should spread
+onto the appropriate element:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useCheckboxGroup.return.id].properties} />
+</TypeContext.Provider>
+
+`useCheckboxGroupItem` returns props for an individual checkbox:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useCheckboxGroupItem.return.id].properties} />
+</TypeContext.Provider>
+
+Selection state is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useCheckboxGroupState} />
+hook in `@react-stately/checkbox`. The state object should be passed as an option to `useCheckboxGroup`
+and `useCheckboxGroupItem`.
+
+Individual checkboxes must have a visual label. If the checkbox group does not have a visible label,
+an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive
+technology.
+
+**Note:** `useCheckboxGroupItem` should only be used when it is contained within a checkbox group. For a
+standalone checkbox, use the [useCheckbox](useCheckbox.html) hook instead.
+
+## Example
+
+This example uses native input elements for the checkboxes, and React context to share state from the group
+to each checkbox. An HTML `<label>` element wraps the native input and the text to provide an implicit label
+for the radio.
+
+```tsx example
+import {useCheckboxGroupState} from '@react-stately/checkbox';
+
+let CheckboxGroupContext = React.createContext();
+
+function CheckboxGroup(props) {
+  let {children, label} = props;
+  let state = useCheckboxGroupState(props);
+  let {groupProps, labelProps} = useCheckboxGroup(props, state);
+
+  return (
+    <div {...groupProps}>
+      <span {...labelProps}>{label}</span>
+      <CheckboxGroupContext.Provider value={state}>
+        {children}
+      </CheckboxGroupContext.Provider>
+    </div>
+  );
+}
+
+function Checkbox(props) {
+  let {children} = props;
+  let state = React.useContext(CheckboxGroupContext);
+  let ref = React.useRef();
+  let {inputProps} = useCheckboxGroupItem(props, state, ref);
+
+  return (
+    <label style={{display: 'block'}}>
+      <input {...inputProps} />
+      {children}
+    </label>
+  );
+}
+
+<CheckboxGroup label="Favorite sports">
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+## Styling
+
+See the [useCheckbox](useCheckbox.html#styling) docs for details on how to customize the styling of checkbox elements.
