@@ -24,12 +24,13 @@ import {Popover, Tray} from '@react-spectrum/overlays';
 import React, {ReactElement, RefObject, useLayoutEffect, useRef, useState} from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
-import {TextField, TextFieldBase} from '@react-spectrum/textfield';
+import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
 import {useCollator} from '@react-aria/i18n';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useHover} from '@react-aria/interactions';
+import {useId} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObject<TextFieldRef>) {
@@ -52,7 +53,6 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     direction = 'bottom'
   } = props;
 
-
   let isMobile = useMediaQuery('(max-width: 700px)');
   let {hoverProps, isHovered} = useHover(props);
   let {styleProps} = useStyleProps(props);
@@ -65,7 +65,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   let state = useComboBoxState({...props, collator, isMobile});
   let layout = useListBoxLayout(state);
 
-  let {triggerProps, inputProps, listBoxProps, labelProps, trayInputProps} = useComboBox(
+  let {triggerProps, inputProps, listBoxProps, labelProps} = useComboBox(
     {
       ...props,
       completionMode,
@@ -73,7 +73,6 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       triggerRef: unwrapDOMRef(triggerRef),
       popoverRef: unwrapDOMRef(popoverRef),
       inputRef: inputRef,
-      trayInputRef: unwrapDOMRef(trayInputRef),
       menuTrigger,
       isMobile
     },
@@ -102,18 +101,20 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   } else {
     comboBoxAutoFocus = 'first';
   }
-  // TODO: Need to figure out what other props should go on the textfield, aria/labeling?
-  // TODO: Use TextField or TextFieldBase? Right now leaning towards using TextField cuz it makes autofocus easier
-  // otherwise need to call useTextField and manually focus the mobile textfield on open cuz useFocusable's useEffect
-  // doesn't seem to trigger for TextfieldBase + useTextfield (but if I change domRef to domRef.current for the dep array it works)
-  // TODO: What if user has a external label, how do we communicate that label to the tray textfield? Should we have a prop trayInputLabel?
 
   let listbox = (
     <FocusScope>
       <DismissButton onDismiss={() => state.close()} />
-      {/* temporary, will prob get replaced
-        // @ts-ignore */}
-      {isMobile && <TextField {...trayInputProps} marginTop={5} marginX={15} width={'initial'} label={label} autoFocus ref={trayInputRef} onChange={state.setInputValue} value={state.inputValue} validationState={validationState}  />}
+      {isMobile &&
+        <ComboBoxTrayInput
+          {...props}
+          layout={layout}
+          popoverRef={unwrapDOMRef(popoverRef)}
+          inputRef={trayInputRef}
+          isMobile={isMobile}
+          state={state}
+          autoFocus />
+      }
       <ListBoxBase
         ref={listboxRef}
         domProps={listBoxProps}
@@ -264,6 +265,45 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   }
 
   return textField;
+}
+
+// TODO: type this, it is a combo of SpectrumComboBoxProps and the AriaProps
+function ComboBoxTrayInput(props) {
+  let {
+    validationState,
+    isDisabled,
+    isReadOnly,
+    isRequired,
+    necessityIndicator,
+    state,
+    inputRef,
+    label
+  } = props;
+
+  let {labelProps, inputProps} = useComboBox({
+    ...props,
+    // generate a new id so we don't accidentially reuse a user generated id twice
+    id: useId(),
+    // TODO: get rid of user defined onBlur and onFocus so that they don't fire for the tray input?
+    onBlur: undefined,
+    onFocus: undefined
+  }, state);
+
+  return (
+    <TextFieldBase
+      label={label}
+      labelProps={labelProps}
+      inputProps={inputProps}
+      inputRef={inputRef}
+      marginTop={5}
+      marginX={15}
+      width={'initial'}
+      validationState={validationState}
+      isDisabled={isDisabled}
+      isReadOnly={isReadOnly}
+      isRequired={isRequired}
+      necessityIndicator={necessityIndicator} />
+  );
 }
 
 const _ComboBox = React.forwardRef(ComboBox) as <T>(props: SpectrumComboBoxProps<T> & {ref?: RefObject<TextFieldRef>}) => ReactElement;
