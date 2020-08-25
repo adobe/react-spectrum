@@ -11,7 +11,7 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {chain} from '@react-aria/utils';
+import {chain, useLabels} from '@react-aria/utils';
 import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
 import {getItemId, listIds} from '@react-aria/listbox';
@@ -202,17 +202,20 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     lastValue.current = state.inputValue;
   }, [state.selectionManager, state.inputValue, allowsCustomValue, state.focusStrategy, state.selectedKey]);
 
-  // TODO: ask what else needs to go into the aria-labelledby for the button (difference between current spec and aria 1.2)
-  let triggerLabel = props['aria-labelledby'] || labelProps.id;
+  let triggerLabelProps = useLabels({
+    id: menuTriggerProps.id,
+    'aria-label': 'Show suggestions',
+    'aria-labelledby': props['aria-labelledby'] || labelProps.id
+  });
 
   return {
     labelProps,
     triggerProps: {
       ...menuTriggerProps,
+      ...triggerLabelProps,
       excludeFromTabOrder: true,
       onPress,
-      onPressStart,
-      'aria-labelledby': triggerLabel
+      onPressStart
     },
     inputProps: {
       ...inputProps,
