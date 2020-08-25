@@ -89,8 +89,6 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     isOpen: state.isOpen
   });
 
-
-
   let comboBoxAutoFocus;
   // Focus first/last item on menu open if focusStategy is set (done by up/down arrows)
   // Otherwise if allowsCustomValue is true, only autofocus if there is a selected item
@@ -109,10 +107,13 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   // otherwise need to call useTextField and manually focus the mobile textfield on open cuz useFocusable's useEffect
   // doesn't seem to trigger for TextfieldBase + useTextfield (but if I change domRef to domRef.current for the dep array it works)
   // TODO: What if user has a external label, how do we communicate that label to the tray textfield? Should we have a prop trayInputLabel?
+
   let listbox = (
     <FocusScope>
       <DismissButton onDismiss={() => state.close()} />
-      {isMobile && <TextField marginTop={5} marginX={15} width={'initial'} label={label} autoFocus ref={trayInputRef} onChange={state.setInputValue} value={state.inputValue} validationState={validationState} {...trayInputProps} />}
+      {/* temporary, will prob get replaced
+        // @ts-ignore */}
+      {isMobile && <TextField {...trayInputProps} marginTop={5} marginX={15} width={'initial'} label={label} autoFocus ref={trayInputRef} onChange={state.setInputValue} value={state.inputValue} validationState={validationState}  />}
       <ListBoxBase
         ref={listboxRef}
         domProps={listBoxProps}

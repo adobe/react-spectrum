@@ -202,7 +202,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
   useEffect(() => {
     // if menu is currently open and is a tray, set isMobileOpen.current to true to override filteredCollection size check
     if (isOpen && isMobile) {
-      isMobileOpen.current = true
+      isMobileOpen.current = true;
     } else if (!isOpen && isMobile) {
       // otherwise if menu is currently closed and is a tray, set isMobileOpen.current to false so filteredCollection size determines whether or not to open the menu
       isMobileOpen.current = false;

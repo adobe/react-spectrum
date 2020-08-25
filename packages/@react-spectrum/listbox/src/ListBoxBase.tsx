@@ -22,7 +22,7 @@ import {ListBoxSection} from './ListBoxSection';
 import {ListLayout} from '@react-stately/layout';
 import {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
-import NotFound from '@spectrum-icons/illustrations/src/NotFound';
+import NotFound from '@spectrum-icons/illustrations/NotFound';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, RefObject, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
@@ -151,12 +151,12 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
           } else if (type === 'placeholder' && isMobile) {
             // TODO: update with renderEmptyView when spectrum comes back with what it should look like
             // Also should probably limit this to combobox only
-            return(
+            return (
               <IllustratedMessage>
                 <Content>No Results</Content>
                 <NotFound aria-label="No Results" />
               </IllustratedMessage>
-            )
+            );
           }
         }}
       </Virtualizer>

@@ -15,7 +15,7 @@ import {chain} from '@react-aria/utils';
 import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
 import {getItemId, listIds} from '@react-aria/listbox';
-import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
+import {HTMLAttributes, InputHTMLAttributes, RefObject, useEffect, useRef} from 'react';
 import {ListLayout} from '@react-stately/layout';
 import {mergeProps} from '@react-aria/utils';
 import {useMenuTrigger} from '@react-aria/menu';
@@ -34,10 +34,10 @@ interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
 
 interface ComboBoxAria {
   triggerProps: AriaButtonProps,
-  inputProps: HTMLAttributes<HTMLElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
   listBoxProps: HTMLAttributes<HTMLElement>,
   labelProps: HTMLAttributes<HTMLElement>,
-  trayInputProps: HTMLAttributes<HTMLElement>
+  trayInputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
 export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState<T>): ComboBoxAria {
