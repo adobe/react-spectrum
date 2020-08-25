@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-/** A list of supported color formats. */
-type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hsb' | 'hsba';
+import {
+  ColorFormat,
+  ColorChannel,
+  Color as ColorType
+} from '@react-types/color';
 
-/** A list of color channels. */
-type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
-
-export class Color {
+export class Color implements ColorType {
   private value: ColorValue;
 
   constructor(value: string) {
