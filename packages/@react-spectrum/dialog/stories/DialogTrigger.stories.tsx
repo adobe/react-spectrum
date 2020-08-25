@@ -278,7 +278,7 @@ storiesOf('DialogTrigger', module)
     () => renderPopover({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 20})
   )
   .add(
-    'contents of function render',
+    'Close function with button: popover',
     () => (
       <div style={{display: 'flex', margin: '100px 0'}}>
         <DialogTrigger type="popover" onOpenChange={action('open change')}>
