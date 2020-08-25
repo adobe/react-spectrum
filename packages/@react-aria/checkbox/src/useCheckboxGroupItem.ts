@@ -12,6 +12,7 @@
 
 import {AriaCheckboxGroupItemProps} from '@react-types/checkbox';
 import {CheckboxAria, useCheckbox} from './useCheckbox';
+import {checkboxGroupNames} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
 import {RefObject} from 'react';
 import {useToggleState} from '@react-stately/toggle';
@@ -25,8 +26,8 @@ import {useToggleState} from '@react-stately/toggle';
  */
 export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: CheckboxGroupState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
   const toggleState = useToggleState({
-    isReadOnly: props.isReadOnly,
-    isSelected: state.value.includes(props.value),
+    isReadOnly: props.isReadOnly || state.isReadOnly,
+    isSelected: state.isSelected(props.value),
     onChange(isSelected) {
       if (isSelected) {
         state.addValue(props.value);
@@ -39,5 +40,13 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
       }
     }
   });
-  return useCheckbox({...props, name: state.name}, toggleState, inputRef);
+
+  let {inputProps} = useCheckbox({
+    ...props,
+    isReadOnly: props.isReadOnly || state.isReadOnly,
+    isDisabled: props.isDisabled || state.isDisabled,
+    name: props.name || checkboxGroupNames.get(state)
+  }, toggleState, inputRef);
+
+  return {inputProps};
 }

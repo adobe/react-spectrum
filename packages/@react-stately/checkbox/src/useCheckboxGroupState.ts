@@ -12,14 +12,19 @@
 
 import {CheckboxGroupProps} from '@react-types/checkbox';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo} from 'react';
 
 export interface CheckboxGroupState {
-  /** The name for the group, used for native form submission. */
-  readonly name: string,
-
   /** Current selected values. */
   readonly value: readonly string[],
+
+  /** Whether the checkbox group is disabled. */
+  readonly isDisabled: boolean,
+
+  /** Whether the checkbox group is read only. */
+  readonly isReadOnly: boolean,
+
+  /** Returns whether the given value is selected. */
+  isSelected(value: string): boolean,
 
   /** Sets the selected values. */
   setValue(value: string[]): void,
@@ -34,23 +39,29 @@ export interface CheckboxGroupState {
   toggleValue(value: string): void
 }
 
-let instance = Math.round(Math.random() * 10000000000);
-let i = 0;
-
 /**
  * Provides state management for a checkbox group component. Provides a name for the group,
  * and manages selection and focus state.
  */
 export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxGroupState {
-  let name = useMemo(() => props.name || `checkbox-group-${instance}-${++i}`, [props.name]);
-  let [selectedValue, setValue] = useControlledState(props.value, props.defaultValue || [], props.onChange);
+  let [selectedValues, setValue] = useControlledState(props.value, props.defaultValue || [], props.onChange);
 
   const state: CheckboxGroupState = {
-    name,
-    value: selectedValue,
-    setValue,
+    value: selectedValues,
+    setValue(value) {
+      if (props.isReadOnly || props.isDisabled) {
+        return;
+      }
+
+      setValue(value);
+    },
+    isDisabled: props.isDisabled || false,
+    isReadOnly: props.isReadOnly || false,
+    isSelected(value) {
+      return selectedValues.includes(value);
+    },
     addValue(value) {
-      if (props.isReadOnly) {
+      if (props.isReadOnly || props.isDisabled) {
         return;
       }
       setValue(values => {
@@ -61,7 +72,7 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
       });
     },
     removeValue(value) {
-      if (props.isReadOnly) {
+      if (props.isReadOnly || props.isDisabled) {
         return;
       }
       setValue(values => {
@@ -72,7 +83,7 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
       });
     },
     toggleValue(value) {
-      if (props.isReadOnly) {
+      if (props.isReadOnly || props.isDisabled) {
         return;
       }
       setValue(values => {
