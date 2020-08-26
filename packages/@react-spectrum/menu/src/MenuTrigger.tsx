@@ -11,6 +11,7 @@
  */
 
 import {classNames, unwrapDOMRef, useDOMRef, useMediaQuery} from '@react-spectrum/utils';
+import {DialogContainer} from '@react-spectrum/dialog';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
@@ -97,14 +98,14 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   }
 
   return (
-    <Fragment>
+    <DialogContainer>
       <PressResponder {...menuTriggerProps} ref={menuTriggerRef} isPressed={state.isOpen}>
         {menuTrigger}
       </PressResponder>
       <MenuContext.Provider value={menuContext}>
         {overlay}
       </MenuContext.Provider>
-    </Fragment>
+    </DialogContainer>
   );
 }
 

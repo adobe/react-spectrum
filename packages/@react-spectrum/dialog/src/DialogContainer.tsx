@@ -15,13 +15,12 @@ import {Dialog} from './Dialog';
 export function DialogContainer(props): ReactElement {
   let {
     children,
-    content,
     type = 'modal',
     mobileType = type === 'popover' ? 'modal' : type,
     isDismissable
   } = props;
   // NOTE: content needs to be saved as function in order to save in useState (since it's a function as child)
-  let [overlayContent, setOverlayContent] = useState(() => content);
+  let [overlays, setOverlays] = useState([]);
   let [overlayProps, setOverlayProps] = useState(props);
 
   // On small devices, show a modal or tray instead of a popover.
@@ -38,49 +37,57 @@ export function DialogContainer(props): ReactElement {
 
   let state = useOverlayTriggerState(overlayProps);
 
-  // todo just pass setOverlayContent via context value
-  let addContent = content => setOverlayContent(() => content);
+  let addContent = content => {
+    let newOverlayContent = [...overlays];
+    newOverlayContent.unshift(content);
+    setOverlays(newOverlayContent);
+  };
 
+  let overlayContent = overlays.length ? overlays[0] : null;
   let context = {
     type,
     onClose: state.close,
     isDismissable
   };
-  return (
-    <DialogContainerContext.Provider value={{isDismissable, state, overlayContent, addContent, setOverlayProps, type}}>
-      {children}
-      <DialogContext.Provider value={context}>
-        <DialogContainerOverlay />
-      </DialogContext.Provider>
-    </DialogContainerContext.Provider>
-  );
-}
-
-function DialogContainerOverlay() {
-  let {isDismissable, overlayContent, state, type} = useContext(DialogContainerContext);
+  let onClose = () => {
+    let newOverlays = [...overlays];
+    newOverlays.shift();
+    setOverlays(newOverlays);
+    state.close();
+  };
 
   let renderOverlay = () => {
     switch (type) {
       case 'fullscreen':
       case 'fullscreenTakeover':
         return (
-          <Modal isOpen={state.isOpen} isDismissable={false} onClose={state.close} type={type}>
-            {typeof overlayContent === 'function' ? overlayContent(state.close) : overlayContent}
+          <Modal isOpen={state.isOpen} isDismissable={false} onClose={onClose} type={type}>
+            {typeof overlayContent === 'function' ? overlayContent(onClose) : overlayContent}
           </Modal>
         );
       case 'modal':
         return (
-          <Modal isOpen={state.isOpen} isDismissable={isDismissable} onClose={state.close}>
-            {typeof overlayContent === 'function' ? overlayContent(state.close) : overlayContent}
+          <Modal isOpen={state.isOpen} isDismissable={isDismissable} onClose={onClose}>
+            {typeof overlayContent === 'function' ? overlayContent(onClose) : overlayContent}
           </Modal>
         );
       case 'tray':
         return (
-          <Tray isOpen={state.isOpen} onClose={state.close}>
-            {typeof overlayContent === 'function' ? overlayContent(state.close) : overlayContent}
+          <Tray isOpen={state.isOpen} onClose={onClose}>
+            {typeof overlayContent === 'function' ? overlayContent(onClose) : overlayContent}
           </Tray>
         );
     }
   };
-  return renderOverlay();
+
+  return (
+    <>
+      <DialogContainerContext.Provider value={{isDismissable, state, overlayContent, addContent, setOverlayProps, type}}>
+        {children}
+      </DialogContainerContext.Provider>
+      <DialogContext.Provider value={context}>
+        {renderOverlay()}
+      </DialogContext.Provider>
+    </>
+  );
 }

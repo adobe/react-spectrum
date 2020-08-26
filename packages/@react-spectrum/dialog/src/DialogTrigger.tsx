@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {DialogContainer} from './DialogContainer';
+import {DialogContainerContext} from './DialogContainerContext';
 import {DialogContext, DialogContextValue} from './context';
 import {DOMRefValue} from '@react-types/shared';
 import {Modal, Popover, Tray} from '@react-spectrum/overlays';
@@ -19,8 +21,6 @@ import React, {Fragment, ReactElement, useContext, useEffect, useRef} from 'reac
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {unwrapDOMRef, useMediaQuery} from '@react-spectrum/utils';
 import {useOverlayPosition, useOverlayTrigger} from '@react-aria/overlays';
-import {DialogContainerContext} from './DialogContainerContext';
-import {DialogContainer} from './DialogContainer';
 
 function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let {
@@ -65,7 +65,7 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
 
   // if container exists and not being used (showing an overlay), pass trigger base, otherwise
   // create container for overlay to attach to
-  return dialogContainerContext && !dialogContainerContext.overlayContent ? triggerBase : (
+  return dialogContainerContext ? triggerBase : (
     <DialogContainer content={content} {...props}>
       {triggerBase}
     </DialogContainer>
@@ -148,7 +148,7 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, isKeyboa
           arrowProps={arrowProps}
           isKeyboardDismissDisabled={isKeyboardDismissDisabled}
           hideArrow={hideArrow}>
-          {content}
+          {typeof content === 'function' ? content(state.close) : content}
         </Popover>
       </DialogContext.Provider>
     </Fragment>
