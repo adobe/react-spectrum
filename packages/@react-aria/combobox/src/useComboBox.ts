@@ -195,12 +195,16 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   // Specifically for case where menu is closed and user copy pastes a matching value into input field then deletes a character
   let lastValue = useRef(state.inputValue);
   useEffect(() => {
-    if ((state.inputValue === '' && lastValue.current !== state.inputValue) || (allowsCustomValue && !state.selectedKey && !state.focusStrategy)) {
+    if ((state.inputValue === '' && lastValue.current !== state.inputValue && menuTrigger === 'focus') || (allowsCustomValue && !state.selectedKey && !state.focusStrategy)) {
       state.selectionManager.setFocusedKey(null);
     }
 
+    if (state.inputValue === '' && lastValue.current !== state.inputValue && menuTrigger !== 'focus') {
+      state.close();
+    }
+
     lastValue.current = state.inputValue;
-  }, [state.selectionManager, state.inputValue, allowsCustomValue, state.focusStrategy, state.selectedKey]);
+  }, [state, allowsCustomValue, menuTrigger]);
 
   let triggerLabelProps = useLabels({
     id: menuTriggerProps.id,
