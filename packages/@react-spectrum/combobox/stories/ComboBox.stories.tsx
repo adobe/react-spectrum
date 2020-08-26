@@ -262,9 +262,19 @@ storiesOf('ComboBox', module)
     () => render({direction: 'top'})
   )
   .add(
+    'shouldSelectOnBlur: false',
+    () => render({shouldSelectOnBlur: false})
+  )
+  .add(
     'allowsCustomValue: true',
     () => (
       <CustomValueComboBox allowsCustomValue selectedKey="2" />
+    )
+  )
+  .add(
+    'allowsCustomValue: true, shouldSelectOnBlur: false',
+    () => (
+      <CustomValueComboBox allowsCustomValue shouldSelectOnBlur={false} selectedKey="2" />
     )
   )
   .add(

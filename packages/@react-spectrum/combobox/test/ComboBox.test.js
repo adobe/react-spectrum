@@ -1241,6 +1241,50 @@ describe('ComboBox', function () {
       expect(document.activeElement).toBe(shiftTabButton);
     });
 
+    it('blur doesn\'t select the focused item if shouldSelectOnBlur is false', function () {
+      let {getByRole, getAllByRole} = render(
+        <Provider theme={theme}>
+          <ComboBox label="Test" shouldSelectOnBlur={false} onSelectionChange={onSelectionChange} onInputChange={onInputChange}>
+            <Item key="1">Bulbasaur</Item>
+            <Item key="2">Squirtle</Item>
+            <Item key="3">Charmander</Item>
+          </ComboBox>
+          <Button variant="secondary">Tab move</Button>
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      let comboboxButton = getAllByRole('button')[0];
+      let tabButton = getAllByRole('button')[1];
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(onInputChange).not.toHaveBeenCalled();
+      expect(combobox.value).toBe('');
+
+      act(() => {
+        combobox.focus();
+        userEvent.click(comboboxButton);
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).toBe(combobox);
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      let items = within(listbox).getAllByRole('option');
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+      expect(items[0]).toHaveTextContent('Bulbasaur');
+
+      act(() => {
+        userEvent.tab();
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('listbox')).toThrow();
+      expect(onInputChange).not.toHaveBeenCalled();
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(combobox.value).toBe('');
+      expect(document.activeElement).toBe(tabButton);
+    });
+
     it('propagates blur event outside of the component', function () {
       let {getByRole} = render(
         <Provider theme={theme}>

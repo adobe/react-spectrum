@@ -45,7 +45,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     menuTrigger = 'input',
     allowsCustomValue,
     onCustomValue,
-    isReadOnly
+    isReadOnly,
+    shouldSelectOnBlur = true
   } = props;
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
@@ -127,7 +128,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
     state.setFocused(false);
 
-    if (focusedItem) {
+    if (focusedItem && shouldSelectOnBlur) {
       state.setSelectedKey(state.selectionManager.focusedKey);
     } else if (allowsCustomValue && !state.selectedKey && onCustomValue) {
       onCustomValue(state.inputValue);
