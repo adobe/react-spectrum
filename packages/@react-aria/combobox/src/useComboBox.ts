@@ -240,7 +240,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     },
     inputProps: {
       // Only add the inputPressProps if mobile so that text highlighting via mouse click + drag works on desktop
-      ...mergeProps(inputProps, isMobile && inputPressProps),
+      ...mergeProps(inputProps, isMobile ? inputPressProps : {}),
       role: 'combobox',
       'aria-expanded': menuTriggerProps['aria-expanded'],
       'aria-controls': state.isOpen ? menuProps.id : undefined,
