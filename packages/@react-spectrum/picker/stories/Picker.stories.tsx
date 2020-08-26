@@ -475,7 +475,7 @@ storiesOf('Picker', module)
     'async loading',
     () => (
       <AsyncLoadingExample />
-	)
+    )
   );
 
 function AsyncLoadingExample() {

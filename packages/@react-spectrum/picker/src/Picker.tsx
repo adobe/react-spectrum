@@ -55,7 +55,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     isRequired,
     necessityIndicator,
     menuWidth,
-	name
+    name
   } = props;
 
   let {styleProps} = useStyleProps(props);
@@ -136,7 +136,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur >
+      <Tray isOpen={state.isOpen} onClose={state.close} shouldCloseOnBlur>
         {listbox}
       </Tray>
     );
