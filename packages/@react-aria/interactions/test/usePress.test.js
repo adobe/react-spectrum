@@ -36,11 +36,41 @@ describe('usePress', function () {
   // https://github.com/jsdom/jsdom/issues/2527
   describe('pointer events', function () {
     beforeEach(() => {
-      global.PointerEvent = {};
+      global.PointerEvent = MouseEvent;
+
+      // In a jsdom environment with `@testing-library/preact`, `onPointerDown` isn’t being called because check
+      // `if (nameLower in dom) name = nameLower;`
+      // https://github.com/preactjs/preact/blob/0f1f162c6df5737909295a1452c1848d1cd24d39/src/diff/props.js#L95-L96 doesn't apply and `addEventListener("PointerDown", ...)` is called (which doesn’t exist)
+      //
+      // JSDom doesn't officially support pointer events (https://github.com/jsdom/jsdom/pull/2666), so that most likely why the `in` check fails:
+      // ```
+      // const {JSDOM} = require("jsdom");
+      // const {document} = new JSDOM(`<!DOCTYPE html><p>Hello world</p>`).window;
+      //
+      // // false, false
+      // console.log("onpointerdown" in document.body, "onPointerDown" in document.body);
+      // // in Browser: true, false
+      // ```
+      document.defaultView.Element.prototype.onpointercancel = null;
+      document.defaultView.Element.prototype.onpointerdown = null;
+      document.defaultView.Element.prototype.onpointerenter = null;
+      document.defaultView.Element.prototype.onpointerleave = null;
+      document.defaultView.Element.prototype.onpointermove = null;
+      document.defaultView.Element.prototype.onpointerout = null;
+      document.defaultView.Element.prototype.onpointerover = null;
+      document.defaultView.Element.prototype.onpointerup = null;
     });
 
     afterEach(() => {
       delete global.PointerEvent;
+      delete document.defaultView.Element.prototype.onpointercancel;
+      delete document.defaultView.Element.prototype.onpointerdown;
+      delete document.defaultView.Element.prototype.onpointerenter;
+      delete document.defaultView.Element.prototype.onpointerleave;
+      delete document.defaultView.Element.prototype.onpointermove;
+      delete document.defaultView.Element.prototype.onpointerout;
+      delete document.defaultView.Element.prototype.onpointerover;
+      delete document.defaultView.Element.prototype.onpointerup;
     });
 
     it('should fire press events based on pointer events', function () {
