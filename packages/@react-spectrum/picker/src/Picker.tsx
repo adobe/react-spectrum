@@ -12,7 +12,7 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, dimensionValue, isMobileDevice, SlotProvider, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, dimensionValue, SlotProvider, unwrapDOMRef, useDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
@@ -101,7 +101,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let isLoadingMore = props.isLoading && state.collection.size > 0;
 
   // On small screen devices, the listbox is rendered in a tray, otherwise a popover.
-  let isMobile = isMobileDevice();
+  let isMobile = useIsMobileDevice();
   let listbox = (
     <FocusScope restoreFocus>
       <DismissButton onDismiss={() => state.close()} />

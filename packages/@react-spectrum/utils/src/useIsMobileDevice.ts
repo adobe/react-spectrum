@@ -10,8 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {useIsSSR} from '@react-aria/ssr';
+
 const MOBILE_SCREEN_WIDTH = 700;
 
-export function isMobileDevice(): boolean {
-  return window?.screen.width <= MOBILE_SCREEN_WIDTH;
+export function useIsMobileDevice(): boolean {
+  let isSSR = useIsSSR();
+  if (isSSR || typeof window === 'undefined') {
+    return false;
+  }
+
+  return window.screen.width <= MOBILE_SCREEN_WIDTH;
 }
