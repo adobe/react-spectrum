@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {RefObject, useLayoutEffect, useState} from 'react';
+import {RefObject, useState} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 
 export function useHasChild(query: string, ref: RefObject<HTMLElement>) {
   let [hasChild, setHasChild] = useState(true);

@@ -20,11 +20,11 @@ import React, {
   RefObject,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useRef,
   useState
 } from 'react';
 import {Rect, Size} from '@react-stately/virtualizer';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {

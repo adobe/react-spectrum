@@ -37,6 +37,7 @@
     "@react-aria/focus": "^3.1.0",
     "@react-aria/i18n": "^3.1.0",
     "@react-aria/overlays": "^3.1.0",
+    "@react-aria/utils": "3.2.0",
     "@react-spectrum/button": "^3.1.0",
     "@react-spectrum/label": "^3.1.0",
     "@react-spectrum/listbox": "^3.1.0",
