@@ -10,7 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
+import {useIsSSR} from '@react-aria/ssr';
 
-export * from './Checkbox';
-export * from './CheckboxGroup';
+const MOBILE_SCREEN_WIDTH = 700;
+
+export function useIsMobileDevice(): boolean {
+  let isSSR = useIsSSR();
+  if (isSSR || typeof window === 'undefined') {
+    return false;
+  }
+
+  return window.screen.width <= MOBILE_SCREEN_WIDTH;
+}

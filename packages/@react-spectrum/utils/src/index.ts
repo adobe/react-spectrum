@@ -20,4 +20,5 @@ export * from './styleProps';
 export * from './Slots';
 export * from './useHasChild';
 export * from './useResizeObserver';
+export * from './useIsMobileDevice';
 
