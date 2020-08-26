@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, unwrapDOMRef, useDOMRef, useMediaQuery} from '@react-spectrum/utils';
+import {classNames, unwrapDOMRef, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
@@ -52,7 +52,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     isOpen: state.isOpen
   });
 
-  let isMobile = useMediaQuery('(max-width: 700px)');
+  let isMobile = useIsMobileDevice();
   let menuContext = {
     ...menuProps,
     ref: menuRef,
