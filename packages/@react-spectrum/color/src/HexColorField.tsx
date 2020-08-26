@@ -10,12 +10,60 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {RefObject} from 'react';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {FocusRing} from '@react-aria/focus';
+import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
+import React, {RefObject, useRef} from 'react';
 import {SpectrumHexColorFieldProps} from '@react-types/color';
+import {TextFieldBase} from '@react-spectrum/textfield';
+import {useHexColorField} from '@react-aria/color';
+import {useHexColorFieldState} from '@react-stately/color';
+import {useProviderProps} from '@react-spectrum/provider';
 
 function HexColorField(props: SpectrumHexColorFieldProps, ref: RefObject<HTMLDivElement>) {
+  props = useProviderProps(props);
+  let {
+    isQuiet,
+    isDisabled,
+    autoFocus,
+    ...otherProps
+  } = props;
+  let {styleProps} = useStyleProps(props);
+  let state = useHexColorFieldState(otherProps);
+  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
+  let {
+    labelProps,
+    inputFieldProps,
+  } = useHexColorField(props, state);
+
+  let className = classNames(
+    inputgroupStyles,
+    'spectrum-InputGroup',
+    {
+      'spectrum-InputGroup--quiet': isQuiet,
+      'is-invalid': state.validationState === 'invalid',
+      'is-disabled': isDisabled
+    },
+    styleProps.className
+  );
+
   return (
-    <div>Hex</div>
+    <FocusRing
+      within
+      focusClass={classNames(inputgroupStyles, 'is-focused')}
+      focusRingClass={classNames(inputgroupStyles, 'focus-ring')}
+      autoFocus={autoFocus}>
+      <div
+        {...styleProps}
+        ref={ref}
+        className={className}>
+        <TextFieldBase
+          isQuiet={isQuiet}
+          inputRef={inputRef}
+          labelProps={labelProps}
+          inputProps={inputFieldProps} />
+      </div>
+    </FocusRing>
   );
 }
 
