@@ -22,9 +22,7 @@ import {Tabs} from '..';
 storiesOf('Tabs', module)
   .add(
     'Default',
-    () => render(), {
-      info: 'The page, anchored, and panel variants have been deprecated. Page is now compact, and panel/anchored tabs are just default. These variants will map properly to the new styles, but please do not specify these variants going forward.'
-    }
+    () => render()
   )
   .add(
     'defaultSelectedKey: val2',
