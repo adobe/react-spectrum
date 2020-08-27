@@ -219,4 +219,5 @@ workflows:
               only:
                 - main
     jobs:
+      - install
       - publish-nightly
