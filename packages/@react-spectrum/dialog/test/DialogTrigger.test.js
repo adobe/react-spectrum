@@ -12,6 +12,7 @@
 
 import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
 import {ActionButton, Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Dialog, DialogTrigger} from '../';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
@@ -122,6 +123,46 @@ describe('DialogTrigger', function () {
     let popover = getByTestId('popover');
     expect(popover).toBeVisible();
     expect(popover).toHaveAttribute('style');
+  });
+
+  it('popovers should be closeable', function () {
+    let {getByRole, getByText, queryByRole} = render(
+      <Provider theme={theme}>
+        <DialogTrigger type="popover">
+          <ActionButton>Trigger</ActionButton>
+          {(close) => (
+            <Dialog>
+              contents
+              <ButtonGroup>
+                <Button variant="secondary" onPress={close}>
+                  Cancel
+                </Button>
+              </ButtonGroup>
+            </Dialog>
+          )}
+        </DialogTrigger>
+      </Provider>
+    );
+
+    let triggerButton = getByRole('button');
+    triggerPress(triggerButton);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeVisible();
+
+    let cancelButton = getByText('Cancel');
+    triggerPress(cancelButton);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    dialog = queryByRole('dialog');
+    expect(dialog).toBeNull();
   });
 
   it('should trigger a modal instead of a popover on mobile', function () {

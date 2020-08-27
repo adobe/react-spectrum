@@ -13,13 +13,18 @@
 import {
   AriaLabelingProps,
   AriaValidationProps,
+  DOMProps,
   FocusableDOMProps,
   FocusableProps,
   InputBase,
+  LabelableProps,
+  Orientation,
+  SpectrumLabelableProps,
   StyleProps,
-  Validation
+  Validation,
+  ValueBase
 } from '@react-types/shared';
-import {ReactNode} from 'react';
+import {ReactElement, ReactNode} from 'react';
 
 export interface ToggleProps extends InputBase, Validation, FocusableProps {
   /**
@@ -55,6 +60,8 @@ export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLab
   'aria-controls'?: string
 }
 
+export interface CheckboxGroupProps extends ValueBase<string[]>, InputBase, LabelableProps {}
+
 export interface CheckboxProps extends ToggleProps {
   /**
    * Indeterminism is presentational only.
@@ -65,9 +72,35 @@ export interface CheckboxProps extends ToggleProps {
 
 export interface AriaCheckboxProps extends CheckboxProps, AriaToggleProps {}
 
+export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {
+  /**
+   * The name of the CheckboxGroup, used when submitting an HTML form.
+   */
+  name?: string
+}
+
+export interface AriaCheckboxGroupItemProps extends Omit<AriaCheckboxProps, 'isSelected' | 'defaultSelected'> {}
+
 export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
   /**
    * This prop sets the emphasized style which provides visual prominence.
+   */
+  isEmphasized?: boolean
+}
+
+export interface SpectrumCheckboxGroupProps extends AriaCheckboxGroupProps, SpectrumLabelableProps, Validation, StyleProps {
+  /**
+   * The Checkboxes contained within the CheckboxGroup.
+   */
+  children: ReactElement<CheckboxProps> | ReactElement<CheckboxProps>[],
+  /**
+   * The axis the checkboxes should align with.
+   * @default 'vertical'
+   */
+  orientation?: Orientation,
+  /**
+   * By default, checkboxes are not emphasized (gray).
+   * The emphasized (blue) version provides visual prominence.
    */
   isEmphasized?: boolean
 }

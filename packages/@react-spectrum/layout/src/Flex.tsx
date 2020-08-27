@@ -15,7 +15,8 @@ import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {FlexProps} from '@react-types/layout';
 import React, {forwardRef} from 'react';
-import styles from './flex.css';
+import styles from './flex-gap.css';
+import {useIsSSR} from '@react-aria/ssr';
 
 const flexStyleProps: StyleHandlers = {
   direction: ['flexDirection', passthroughStyle],
@@ -33,14 +34,15 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(otherProps);
   let {styleProps: flexStyle} = useStyleProps(otherProps, flexStyleProps);
   let domRef = useDOMRef(ref);
+  let isSSR = useIsSSR();
 
-  // If a gap property is specified, and there is no native support, use a shim.
+  // If a gap property is specified, and there is no native support or we're in SSR, use a shim.
   // Two divs are required for this: the outer one contains most style properties, and the inner
   // one is the flex container. Each item inside the flex container gets a margin around it based
   // on the gap, and the flex container has a negative margin to counteract this. The outer container
   // is necessary to allow nesting of flex containers with gaps, so that the inner CSS variable doesn't
   // override the outer one.
-  if ((props.gap || props.rowGap || props.columnGap) && !isFlexGapSupported()) {
+  if ((props.gap || props.rowGap || props.columnGap) && (isSSR || !isFlexGapSupported())) {
     let style = {
       ...flexStyle.style,
       '--column-gap': props.columnGap != null ? dimensionValue(props.columnGap) : undefined,

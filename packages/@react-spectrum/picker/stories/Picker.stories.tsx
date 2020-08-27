@@ -49,7 +49,6 @@ let withSection = [
   ]}
 ];
 
-
 storiesOf('Picker', module)
   .add(
     'default',

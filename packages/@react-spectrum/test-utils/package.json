@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@react-aria/ssr": "3.0.0-alpha.1",
     "resolve": "^1.17.0"
   },
   "peerDependencies": {
