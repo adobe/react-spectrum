@@ -167,7 +167,9 @@ jobs:
           key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
       - run:
           name: Authenticate with npm
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/react-spectrum/.npmrc
+          command: |
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+            git update-index --skip-worktree .npmrc
       - run:
           name: Publish
           command: make publish-nightly
