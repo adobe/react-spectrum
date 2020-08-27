@@ -22,6 +22,14 @@
 
 .thumb {
   position: absolute;
+  top: 4px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.thumbHandle {
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -29,14 +37,12 @@
   box-sizing: border-box;
   background-color: #f5f5f5;
   box-shadow: 0 0 0 4px #f5f5f5;
-  top: 4px;
-  transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.thumbFocusVisible {
+.thumbFocusVisible .thumbHandle {
   box-shadow: 0 0 0 2px #f5f5f5, 0 0 0 4px #2c83eb;
 }
 
@@ -80,4 +86,8 @@
 .trackContainer {
   position: relative;
   width: 100%;
+}
+
+.tip {
+  margin-top: 8px;
 }

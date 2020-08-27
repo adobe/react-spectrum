@@ -23,7 +23,7 @@
     "build:docs": "PARCEL_WORKER_BACKEND=process DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' --no-scope-hoist",
     "test": "yarn jest",
     "test:ssr": "yarn jest --config jest.ssr.config.js",
-    "ci-test": "yarn jest --maxWorkers=2",
+    "ci-test": "yarn jest --maxWorkers=2 && yarn test:ssr --maxWorkers=2",
     "lint": "yarn check-types && eslint packages --ext .js,.ts,.tsx && node scripts/lint-packages.js",
     "jest": "node scripts/jest.js",
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
