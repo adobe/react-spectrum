@@ -73,7 +73,11 @@ describe('Shared TextField behavior', () => {
     expect(input.value).toBe('');
     act(() => {userEvent.type(input, inputText);});
     expect(input.value).toBe(inputText);
-    expect(input).toHaveAttribute('type', expectedType);
+    if (Name === 'v3 TextArea') {
+      expect(input).not.toHaveAttribute('type');
+    } else {
+      expect(input).toHaveAttribute('type', expectedType);
+    }
     expect(input.tagName).toBe(expectedTagName);
   });
 

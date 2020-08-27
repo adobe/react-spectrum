@@ -15,6 +15,7 @@ const fs = require('fs-extra');
 const packageJSON = require('../package.json');
 const path = require('path');
 const glob = require('fast-glob');
+const semver = require('semver');
 const spawn = require('cross-spawn');
 
 build().catch(err => {
@@ -62,11 +63,30 @@ async function build() {
   for (let p of packages) {
     let json = JSON.parse(fs.readFileSync(path.join(packagesDir, p), 'utf8'));
     if (!json.private && json.name !== '@adobe/react-spectrum') {
-      pkg.dependencies[json.name] = 'latest';
-
       let docsDir = path.join(packagesDir, path.dirname(p), 'docs');
+      let hasDocs = false;
       if (fs.existsSync(docsDir)) {
-        fs.copySync(docsDir, path.join(dir, 'docs', json.name, 'docs'));
+        let contents = fs.readdirSync(docsDir);
+        for (let file of contents) {
+          let docFile = path.join(docsDir, file);
+          let destFile = path.join(dir, 'docs', json.name, 'docs', file);
+          if (file.endsWith('.mdx')) {
+            // Skip mdx files with an after_version key that is <= to the current package version.
+            let contents = fs.readFileSync(docFile, 'utf8');
+            let m = contents.match(/after_version:\s*(.*)/);
+            if (!m || semver.gt(json.version, m[1])) {
+              fs.copySync(docFile, destFile);
+              hasDocs = true;
+            }
+          } else {
+            fs.copySync(docFile, destFile);
+            hasDocs = true;
+          }
+        }
+      }
+
+      if (hasDocs) {
+        pkg.dependencies[json.name] = 'latest';
       }
     }
   }

@@ -17,6 +17,7 @@ import {HTMLAttributes, RefObject, useMemo} from 'react';
 import {KeyboardDelegate} from '@react-types/shared';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
+import {setInteractionModality} from '@react-aria/interactions';
 import {useCollator} from '@react-aria/i18n';
 import {useLabel} from '@react-aria/label';
 import {useMenuTrigger} from '@react-aria/menu';
@@ -90,6 +91,9 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
       onClick: () => {
         if (!props.isDisabled) {
           ref.current.focus();
+
+          // Show the focus ring so the user knows where focus went
+          setInteractionModality('keyboard');
         }
       }
     },

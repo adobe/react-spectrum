@@ -11,7 +11,8 @@
  */
 
 import {focusSafely} from './focusSafely';
-import React, {ReactNode, RefObject, useContext, useEffect, useLayoutEffect, useRef} from 'react';
+import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 
 // import {FocusScope, useFocusScope} from 'react-events/focus-scope';
 // export {FocusScope};

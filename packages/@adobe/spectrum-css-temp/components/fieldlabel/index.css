@@ -35,6 +35,8 @@ governing permissions and limitations under the License.
   -moz-osx-font-smoothing: auto;
   font-smoothing: subpixel-antialiased;
   text-align: start;
+
+  cursor: default; /* match native labels even if not using a <label> element */
 }
 
 .spectrum-FieldLabel--positionSide {
@@ -87,7 +89,7 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Form {
-  /* With labelPosition=side, we override field layout to use a CSS table 
+  /* With labelPosition=side, we override field layout to use a CSS table
    * so that all the labels and fields line up automatically. */
   &.spectrum-Form--positionSide {
     display: table;
