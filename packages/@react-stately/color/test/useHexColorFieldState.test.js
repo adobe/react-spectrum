@@ -25,7 +25,6 @@ describe('useHexColorFieldState tests', function () {
       alpha: 1
     });
     expect(result.current.inputValue).toBe('#AABBCC');
-    expect(result.current.textValue).toBe('#AABBCC');
   });
 
   it('should accept 3-length hex string', function () {
@@ -38,7 +37,6 @@ describe('useHexColorFieldState tests', function () {
       alpha: 1
     });
     expect(result.current.inputValue).toBe('#AABBCC');
-    expect(result.current.textValue).toBe('#AABBCC');
   });
 
   it('should accept Color value', function () {
@@ -51,7 +49,6 @@ describe('useHexColorFieldState tests', function () {
       alpha: 1
     });
     expect(result.current.inputValue).toBe('#AABBCC');
-    expect(result.current.textValue).toBe('#AABBCC');
   });
 
 });
