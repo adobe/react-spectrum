@@ -192,11 +192,11 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   }, [state.selectionManager, state.collection, layout, allowsCustomValue, state.inputValue]);
 
   // Clear focused key if user clears textfield to prevent accidental selection on blur
-  // Also clear focused key if allowsCustomValue is true, there isn't a selected key, and there isn't a focusStrategy set (indicative of menu being opened via arrow up/down)
+  // Also clear focused key if allowsCustomValue is true, there isn't a selected key, and the input value changed
   // Specifically for case where menu is closed and user copy pastes a matching value into input field then deletes a character
   let lastValue = useRef(state.inputValue);
   useEffect(() => {
-    if ((state.inputValue === '' && lastValue.current !== state.inputValue && menuTrigger === 'focus') || (allowsCustomValue && !state.selectedKey && !state.focusStrategy)) {
+    if (lastValue.current !== state.inputValue && ((state.inputValue === '' && menuTrigger === 'focus') || (allowsCustomValue && !state.selectedKey))) {
       state.selectionManager.setFocusedKey(null);
     }
 
