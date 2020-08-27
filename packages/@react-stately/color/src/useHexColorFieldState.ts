@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {HexColorFieldProps} from '@react-types/color';
-import {NumberFieldState} from '@react-stately/numberfield';
 import {Color} from './Color';
+import {ColorInput, HexColorFieldProps} from '@react-types/color';
+import {useControlledState} from '@react-stately/utils';
+import {NumberFieldState} from '@react-stately/numberfield';
 
 export interface HexColorFieldState extends NumberFieldState {
   colorValue: Color,
@@ -22,16 +23,33 @@ export interface HexColorFieldState extends NumberFieldState {
 export function useHexColorFieldState(
   props: HexColorFieldProps
 ): HexColorFieldState {
+  const {
+    minValue = '#000000',
+    maxValue = '#ffffff',
+    step = 1,
+    value,
+    defaultValue,
+    onChange
+  } = props;
+
+  const [colorInputValue, setColorInputValue] = useControlledState<ColorInput>(value, defaultValue || minValue, onChange);
+  const colorValue = new Color(colorInputValue === 'string'? colorInputValue : colorInputValue.toString('hex'));
+
+  const setColorValue = (color: Color) => {
+    // TO DO: put some validations here
+    setColorInputValue(color);
+  };
+
   return {
-    colorValue: new Color('#FFFFFF'),
-    setColorValue: null,
+    colorValue,
+    setColorValue,
+    value: null,
     setValue: null,
     increment: null,
     incrementToMax: null,
     decrement: null,
     decrementToMin: null,
     inputValue: null,
-    value: null,
     commitInputValue: null,
     textValue: null,
     validationState: null,

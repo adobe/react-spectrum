@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-describe('useHexColorField', function () {
+describe('useHexColorFieldState', function () {
   it('should return true', function () {
     expect(true).toBeTruthy();
   });

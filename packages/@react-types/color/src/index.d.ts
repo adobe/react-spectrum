@@ -30,6 +30,8 @@ export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hs
 /** A list of color channels. */
 export type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
 
+export type ColorInput = string | Color;
+
 export interface Color {
   /** Converts the color to a string in the given format */
   toString(format: ColorFormat): string,
@@ -45,11 +47,11 @@ export interface Color {
 }
 
 export interface HexColorFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
-  value?: string | Color,
-  defaultValue?: string | Color,
+  value?: ColorInput,
+  defaultValue?: ColorInput,
   onChange?: (color: Color) => void,
-  minValue?: string | Color,
-  maxValue?: string | Color,
+  minValue?: ColorInput,
+  maxValue?: ColorInput,
   step?: number
 }
 
