@@ -89,7 +89,8 @@ export interface PopoverProps extends StyleProps, OverlayProps {
   hideArrow?: boolean,
   isOpen?: boolean,
   onClose?: () => void,
-  shouldCloseOnBlur?: boolean
+  shouldCloseOnBlur?: boolean,
+  isModal?: boolean
 }
 
 export interface TrayProps extends StyleProps, OverlayProps {

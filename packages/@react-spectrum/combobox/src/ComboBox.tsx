@@ -154,7 +154,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         placement={placement}
         hideArrow
         shouldCloseOnBlur
-        onClose={state.close}>
+        onClose={state.close}
+        isModal={false}>
         {listbox}
       </Popover>
     );
