@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   azure-cli: circleci/azure-cli@1.1.0
 jobs:
-  build:
+  install:
     docker:
       - image: circleci/node:12.10
     resource_class: large
@@ -157,29 +157,43 @@ jobs:
               node .circleci/comment.js
             fi
 
+  publish-nightly:
+    docker:
+      - image: circleci/node:12.10
+    working_directory: ~/react-spectrum
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Authenticate with npm
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/react-spectrum/.npmrc
+      - run:
+          name: Publish
+          command: make publish-nightly
+
 workflows:
   version: 2
-  test:
+  commit:
     jobs:
-      - build
+      - install
       - test:
           requires:
-            - build
+            - install
       - lint:
           requires:
-            - build
+            - install
       - storybook:
           requires:
-            - build
+            - install
       - docs:
           requires:
-            - build
+            - install
       - docs-production:
           filters:
             branches:
               only: main
           requires:
-            - build
+            - install
       - deploy:
           requires:
             - lint
@@ -195,3 +209,15 @@ workflows:
       - comment:
           requires:
             - deploy
+
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 9 * * *" # 02:00 PDT
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - install
+      - publish-nightly

@@ -11,6 +11,7 @@
  */
 
 /// <reference types="css-module-types" />
+/// <reference path="./ResizeObserver.d.ts" />
 
 export * from './classNames';
 export * from './getWrappedElement';
