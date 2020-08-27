@@ -343,7 +343,7 @@ storiesOf('ComboBox', module)
     'in small div',
     () => (
       <Flex width="size-500">
-        <ComboBox {...actions} >
+        <ComboBox aria-label="ComboBox" {...actions} >
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
             <Copy size="S" />
