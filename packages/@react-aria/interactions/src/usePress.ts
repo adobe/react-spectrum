@@ -40,7 +40,8 @@ interface PressState {
   activePointerId: any,
   target: HTMLElement | null,
   isOverTarget: boolean,
-  userSelect?: string
+  userSelect?: string,
+  ignoreSetPressed: boolean
 }
 
 interface EventBase {
@@ -105,7 +106,8 @@ export function usePress(props: PressHookProps): PressResult {
     ignoreClickAfterPress: false,
     activePointerId: null,
     target: null,
-    isOverTarget: false
+    isOverTarget: false,
+    ignoreSetPressed: false
   });
 
   let globalListeners = useRef(new Map());
@@ -140,7 +142,9 @@ export function usePress(props: PressHookProps): PressResult {
         onPressChange(true);
       }
 
-      setPressed(true);
+      if (!ref.current.ignoreSetPressed) {
+        setPressed(true);
+      }
     };
 
     let triggerPressEnd = (originalEvent: EventBase, pointerType: PointerType, wasPressed = true) => {
@@ -165,7 +169,9 @@ export function usePress(props: PressHookProps): PressResult {
         onPressChange(false);
       }
 
-      setPressed(false);
+      if (!ref.current.ignoreSetPressed) {
+        setPressed(false);
+      }
 
       if (onPress && wasPressed) {
         onPress({
@@ -237,9 +243,13 @@ export function usePress(props: PressHookProps): PressResult {
               focusWithoutScrolling(e.currentTarget);
             }
 
+            // triggerPressStart & triggerPressEnd call `setPressed(true)` and `setPressed(false)`
+            // This noop causes a rerender with Preact, overwriting an input element's value.
+            ref.current.ignoreSetPressed = true;
             triggerPressStart(e, 'virtual');
             triggerPressUp(e, 'virtual');
             triggerPressEnd(e, 'virtual');
+            ref.current.ignoreSetPressed = false;
           }
 
           state.ignoreEmulatedMouseEvents = false;
