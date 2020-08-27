@@ -160,6 +160,7 @@ jobs:
   publish-nightly:
     docker:
       - image: circleci/node:12.10
+    resource_class: large
     working_directory: ~/react-spectrum
     steps:
       - restore_cache:
