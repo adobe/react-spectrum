@@ -43,16 +43,17 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
 
   let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, menuTriggerRef);
 
+  let isMobile = useIsMobileDevice();
   let {overlayProps: positionProps, placement} = useOverlayPosition({
     targetRef: menuTriggerRef,
     overlayRef: unwrapDOMRef(menuPopoverRef),
     scrollRef: menuRef,
     placement: `${direction} ${align}` as Placement,
     shouldFlip: shouldFlip,
-    isOpen: state.isOpen
+    isOpen: state.isOpen && !isMobile,
+    onClose: state.close
   });
 
-  let isMobile = useIsMobileDevice();
   let menuContext = {
     ...menuProps,
     ref: menuRef,
