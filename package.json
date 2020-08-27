@@ -33,7 +33,7 @@
     "plop": "plop --plopfile scripts/plopfile.js",
     "chromatic": "chromatic --project-token 'q5msektqrfg' --build-script-name 'build:chromatic'",
     "merge:css": "babel-node --presets @babel/env ./scripts/merge-spectrum-css.js",
-    "publish": "lerna publish from-package --yes",
+    "release": "lerna publish from-package --yes",
     "publish:nightly": "lerna publish -y --canary --preid nightly --dist-tag=nightly --exact --force-publish=* --no-push"
   },
   "workspaces": [
