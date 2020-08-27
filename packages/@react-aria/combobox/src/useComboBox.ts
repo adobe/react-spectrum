@@ -102,6 +102,12 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       case 'ArrowUp':
         state.open('last');
         break;
+      case 'ArrowLeft':
+        state.selectionManager.setFocusedKey(null);
+        break;
+      case 'ArrowRight':
+        state.selectionManager.setFocusedKey(null);
+        break;
     }
   };
 
@@ -183,29 +189,30 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
-  // Focus first item if filtered collection no longer contains original focused item (aka user typing to filter collection)
-  useEffect(() => {
-    // Only set a focused key if one existed previously, don't want to focus something by default if allowsCustomValue = true
-    if ((!allowsCustomValue || state.selectionManager.focusedKey) && state.inputValue !== '' && !state.collection.getItem(state.selectionManager.focusedKey)) {
-      state.selectionManager.setFocusedKey(layout.getFirstKey());
-    }
-  }, [state.selectionManager, state.collection, layout, allowsCustomValue, state.inputValue]);
 
-  // Clear focused key if user clears textfield to prevent accidental selection on blur
-  // Also clear focused key if allowsCustomValue is true, there isn't a selected key, and the input value changed
-  // Specifically for case where menu is closed and user copy pastes a matching value into input field then deletes a character
   let lastValue = useRef(state.inputValue);
   useEffect(() => {
-    if (lastValue.current !== state.inputValue && ((state.inputValue === '' && menuTrigger === 'focus') || (allowsCustomValue && !state.selectedKey))) {
-      state.selectionManager.setFocusedKey(null);
-    }
+    if (lastValue.current !== state.inputValue) {
+      // Clear focused key if user clears textfield to prevent accidental selection on blur and menuTrigger='focus' (as per design feedback)
+      // Also clear focused key if allowsCustomValue is true, there isn't a selected key, and the input value changed
+      // Specifically for case where menu is closed and user copy pastes a matching value into input field then deletes a character
+      if ((state.inputValue === '' && menuTrigger === 'focus') || (allowsCustomValue && !state.selectedKey)) {
+        state.selectionManager.setFocusedKey(null);
+      }
 
-    if (state.inputValue === '' && lastValue.current !== state.inputValue && menuTrigger !== 'focus') {
-      state.close();
+      if (state.inputValue === '' && menuTrigger !== 'focus') {
+        state.close();
+      }
+
+      // Focus first item if filtered collection no longer contains original focused item (aka user typing to filter collection)
+      // Only set a focused key if one existed previously, don't want to focus something by default if allowsCustomValue = true
+      if ((!allowsCustomValue || state.selectionManager.focusedKey) && state.inputValue !== '' && !state.collection.getItem(state.selectionManager.focusedKey)) {
+        state.selectionManager.setFocusedKey(layout.getFirstKey());
+      }
     }
 
     lastValue.current = state.inputValue;
-  }, [state, allowsCustomValue, menuTrigger]);
+  }, [state, allowsCustomValue, menuTrigger, layout]);
 
   let triggerLabelProps = useLabels({
     id: menuTriggerProps.id,
