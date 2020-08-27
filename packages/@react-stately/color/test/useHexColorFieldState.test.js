@@ -10,8 +10,48 @@
  * governing permissions and limitations under the License.
  */
 
-describe('useHexColorFieldState', function () {
-  it('should return true', function () {
-    expect(true).toBeTruthy();
+import {Color} from '../src/Color';
+import {renderHook} from '@testing-library/react-hooks';
+import {useHexColorFieldState} from '../';
+
+describe('useHexColorFieldState tests', function () {
+  it('should accept 6-length hex string', function () {
+    let props = {defaultValue: '#aabbcc'};
+    const {result} = renderHook(() => useHexColorFieldState(props));
+    expect(result.current.colorValue.value).toEqual({
+      red: 170,
+      green: 187,
+      blue: 204,
+      alpha: 1
+    });
+    expect(result.current.inputValue).toBe('#AABBCC');
+    expect(result.current.textValue).toBe('#AABBCC');
   });
+
+  it('should accept 3-length hex string', function () {
+    let props = {defaultValue: '#abc'};
+    const {result} = renderHook(() => useHexColorFieldState(props));
+    expect(result.current.colorValue.value).toEqual({
+      red: 170,
+      green: 187,
+      blue: 204,
+      alpha: 1
+    });
+    expect(result.current.inputValue).toBe('#AABBCC');
+    expect(result.current.textValue).toBe('#AABBCC');
+  });
+
+  it('should accept Color value', function () {
+    let props = {defaultValue: new Color('#aabbcc')};
+    const {result} = renderHook(() => useHexColorFieldState(props));
+    expect(result.current.colorValue.value).toEqual({
+      red: 170,
+      green: 187,
+      blue: 204,
+      alpha: 1
+    });
+    expect(result.current.inputValue).toBe('#AABBCC');
+    expect(result.current.textValue).toBe('#AABBCC');
+  });
+
 });

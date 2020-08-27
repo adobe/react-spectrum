@@ -12,8 +12,9 @@
 
 import {Color} from './Color';
 import {ColorInput, HexColorFieldProps} from '@react-types/color';
-import {useControlledState} from '@react-stately/utils';
 import {NumberFieldState} from '@react-stately/numberfield';
+import {useState} from 'react';
+import {useControlledState} from '@react-stately/utils';
 
 export interface HexColorFieldState extends NumberFieldState {
   colorValue: Color,
@@ -34,6 +35,8 @@ export function useHexColorFieldState(
 
   const [colorInputValue, setColorInputValue] = useControlledState<ColorInput>(value, defaultValue || minValue, onChange);
   const colorValue = new Color(colorInputValue === 'string'? colorInputValue : colorInputValue.toString('hex'));
+  let initialInputValue = colorValue.toString('hex');
+  const [inputValue, setInputValue] = useState(initialInputValue);
 
   const setColorValue = (color: Color) => {
     // TO DO: put some validations here
@@ -45,13 +48,13 @@ export function useHexColorFieldState(
     setColorValue,
     value: null,
     setValue: null,
+    inputValue: inputValue,
+    textValue: inputValue,
     increment: null,
     incrementToMax: null,
     decrement: null,
     decrementToMin: null,
-    inputValue: null,
     commitInputValue: null,
-    textValue: null,
     validationState: null,
   };
 }
