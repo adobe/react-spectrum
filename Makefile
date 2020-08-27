@@ -73,14 +73,10 @@ storybook:
 ci:
 	$(MAKE) publish
 
-publish:
-	@$(MAKE) build
-	@$(MAKE) build
+publish: build
 	yarn publish
 
-publish-nightly:
-	@$(MAKE) build
-	@$(MAKE) build
+publish-nightly: build
 	yarn publish:nightly
 
 build:
