@@ -21,6 +21,7 @@ import {useFocus} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
+import {useLabel} from "@react-aria/label";
 
 
 interface NumberFieldAria {
@@ -41,7 +42,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     minValue,
     maxValue,
     autoFocus,
-    validationState
+    validationState,
+    label
   } = props;
 
   let {
@@ -152,6 +154,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       focusProps,
       {
         // ...props,
+        label,
         autoFocus,
         isDisabled,
         isReadOnly,

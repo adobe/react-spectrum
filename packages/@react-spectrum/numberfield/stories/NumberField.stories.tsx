@@ -66,7 +66,7 @@ storiesOf('NumberField', module)
 
 function render(props: any = {}) {
   return (
-    <NumberField {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" />
+    <NumberField {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" label="Enter numbers" />
   );
 }
 

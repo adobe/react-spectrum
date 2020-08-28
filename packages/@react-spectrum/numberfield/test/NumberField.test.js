@@ -532,4 +532,13 @@ describe('NumberField', function () {
     let {container} = renderNumberField(props);
     expect(container).toHaveAttribute('aria-invalid', 'true');
   });
+
+  it.each`
+    Name             | props
+    ${'NumberField'} | ${{label: 'this is the stepper that never ends'}}
+  `('$Name supports labels', ({props}) => {
+    let {getByLabelText, getByRole} = render(<Provider theme={theme} locale="en-US"><NumberField {...props} /></Provider>);
+    let spinButton = getByRole('spinbutton');
+    expect(getByLabelText(props.label)).toBe(spinButton);
+  });
 });
