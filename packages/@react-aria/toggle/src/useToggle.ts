@@ -11,7 +11,7 @@
  */
 
 import {AriaToggleProps} from '@react-types/checkbox';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, isPreact, mergeProps} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
@@ -75,6 +75,10 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
       name,
       type: 'checkbox',
       ...interactions
+    }, {
+      // With Preact, `<input type="checkbox" checked={true} />` is a uncontrolled
+      // component.
+      onClick: (isPreact && props.isReadOnly) ? (e) => e.preventDefault() : undefined,
     })
   };
 }

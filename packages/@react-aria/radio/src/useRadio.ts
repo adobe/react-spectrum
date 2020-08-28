@@ -91,6 +91,10 @@ export function useRadio(props: RadioAriaProps, state: RadioGroupState, ref: Ref
       checked,
       value,
       onChange
+    }, {
+      // With Preact, `<input type="checkbox" checked={true} />` is a uncontrolled
+      // component.
+      onClick: props.isReadOnly ? (e) => e.preventDefault() : undefined,
     })
   };
 }
