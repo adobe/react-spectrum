@@ -111,7 +111,7 @@ Radio elements should always have a visible label.
 
 ### Internationalization
 
-To internationalize a RadioGroup, a localized string should be set as the child content of the Radio.
+To internationalize a RadioGroup, a localized string should be passed to the `label` prop and as the child content of the Radio elements.
 For languages that are read right-to-left (e.g. Hebrew and Arabic), the Radio is automatically placed on the right side of the text. When the necessityIndicator prop is set to "label", a localized string will be provided for "(required)" or "(optional)" automatically.
 
 ## Events
@@ -125,7 +125,7 @@ function Example() {
 
   return (
     <>
-      <RadioGroup label="Favorite avatar" onChange={setSelected}>
+      <RadioGroup label="Favorite avatar" value={selected} onChange={setSelected}>
         <Radio value="wizard">Wizard</Radio>
         <Radio value="dragon">Dragon</Radio>
       </RadioGroup>

@@ -82,7 +82,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   });
 
   let domProps = filterDOMProps(props, {labelable: true});
-  let triggerProps = mergeProps(menuTriggerProps, fieldProps, typeSelectProps);
+  let triggerProps = mergeProps(mergeProps(menuTriggerProps, fieldProps), typeSelectProps);
   let valueId = useId();
 
   return {
