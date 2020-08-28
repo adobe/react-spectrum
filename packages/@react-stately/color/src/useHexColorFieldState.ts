@@ -62,6 +62,30 @@ export function useHexColorFieldState(
     }
   }, [maxValue, setColorInputValue, setInputValue]);
 
+  const decrement = () => {
+    setColorInputValue((previousValue) => {
+      const color = typeof previousValue === 'string'? new Color(previousValue) : previousValue;
+      const colorString = color.toString('hex').substring(1);
+      const colorNumber = parseInt(colorString, 16);
+
+      const minColor = typeof minValue === 'string'? new Color(minValue) : minValue;
+      const minColorString = minColor.toString('hex').substring(1);
+      const minColorNumber = parseInt(minColorString, 16);
+
+      const newValue = `#${Math.max(colorNumber - step, minColorNumber).toString(16).toUpperCase()}`;
+      setInputValue(newValue);
+      return new Color(newValue);
+    });
+  };
+
+  const decrementToMin = useCallback(() => {
+    if (minValue != null) {
+      const minColor = typeof minValue === 'string'? new Color(minValue) : minValue;
+      setColorInputValue(minColor);
+      setInputValue(minColor.toString('hex'));
+    }
+  }, [minValue, setColorInputValue, setInputValue]);
+
   const setColorValue = (color: Color) => {
     // TO DO: put some validations here
     setColorInputValue(color);
@@ -75,8 +99,8 @@ export function useHexColorFieldState(
     inputValue,
     increment,
     incrementToMax,
-    decrement: null,
-    decrementToMin: null,
+    decrement,
+    decrementToMin,
     commitInputValue: null,
     validationState: null,
   };

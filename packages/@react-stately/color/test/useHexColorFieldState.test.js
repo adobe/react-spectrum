@@ -76,4 +76,30 @@ describe('useHexColorFieldState tests', function () {
     });
     expect(result.current.inputValue).toBe('#FFFFFF');
   });
+
+  it('should decrement', function () {
+    let props = {defaultValue: new Color('#aabbcc'), step: 4};
+    const {result} = renderHook(() => useHexColorFieldState(props));
+    act(() => result.current.decrement());
+    expect(result.current.colorValue.value).toEqual({
+      red: 170,
+      green: 187,
+      blue: 200,
+      alpha: 1
+    });
+    expect(result.current.inputValue).toBe('#AABBC8');
+  });
+
+  it('should decrement to min value', function () {
+    let props = {defaultValue: new Color('#aabbcc'), minValue: '#666'};
+    const {result} = renderHook(() => useHexColorFieldState(props));
+    act(() => result.current.decrementToMin());
+    expect(result.current.colorValue.value).toEqual({
+      red: 102,
+      green: 102,
+      blue: 102,
+      alpha: 1
+    });
+    expect(result.current.inputValue).toBe('#666666');
+  });
 });
