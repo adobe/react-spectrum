@@ -43,7 +43,16 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
   let xProperty = dir === 'rtl' ? 'right' : 'left';
   let cached = cache.get(layoutInfo);
   if (cached && cached[xProperty] != null) {
-    return cached;
+    if (!parent) {
+      return cached;
+    }
+
+    // Invalidate if the parent position changed.
+    let top = layoutInfo.rect.y - parent.rect.y;
+    let x = layoutInfo.rect.x - parent.rect.x;
+    if (cached.top === top && cached[xProperty] === x) {
+      return cached;
+    }
   }
 
   let style: CSSProperties = {
@@ -55,8 +64,8 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     WebkitTransition: 'all',
     WebkitTransitionDuration: 'inherit',
     transitionDuration: 'inherit',
-    width: layoutInfo.rect.width + 'px',
-    height: layoutInfo.rect.height + 'px',
+    width: layoutInfo.rect.width,
+    height: layoutInfo.rect.height,
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,
     transform: layoutInfo.transform,

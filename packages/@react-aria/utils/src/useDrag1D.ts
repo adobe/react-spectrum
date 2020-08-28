@@ -28,6 +28,11 @@ interface UseDrag1DProps {
   onCollapseToggle?: () => void
 }
 
+// Keep track of elements that we are currently handling dragging for via useDrag1D.
+// If there's an ancestor and a descendant both using useDrag1D(), and the user starts
+// dragging the descendant, we don't want useDrag1D events to fire for the ancestor.
+const draggingElements: HTMLElement[] = [];
+
 // created for splitview, this should be reusable for things like sliders/dials
 // It also handles keyboard events on the target allowing for increment/decrement by a given stepsize as well as minifying/maximizing and toggling between minified and previous size
 // It can also take a 'reverse' param to say if we should measure from the right/bottom instead of the top/left
@@ -36,7 +41,7 @@ interface UseDrag1DProps {
 export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
   let {containerRef, reverse, orientation, onHover, onDrag, onPositionChange, onIncrement, onDecrement, onIncrementToMax, onDecrementToMin, onCollapseToggle} = props;
   let getPosition = (e) => orientation === 'horizontal' ? e.clientX : e.clientY;
-  let getNextOffset = (e) => {
+  let getNextOffset = (e: MouseEvent) => {
     let containerOffset = getOffset(containerRef.current, reverse, orientation);
     let mouseOffset = getPosition(e);
     let nextOffset = reverse ? containerOffset - mouseOffset : mouseOffset - containerOffset;
@@ -45,7 +50,7 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
   let dragging = useRef(false);
   let prevPosition = useRef(0);
 
-  let onMouseDragged = (e) => {
+  let onMouseDragged = (e: MouseEvent) => {
     e.preventDefault();
     let nextOffset = getNextOffset(e);
     if (!dragging.current) {
@@ -66,7 +71,8 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
     }
   };
 
-  let onMouseUp = (e) => {
+  let onMouseUp = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
     dragging.current = false;
     let nextOffset = getNextOffset(e);
     if (onDrag) {
@@ -75,11 +81,20 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
     if (onPositionChange) {
       onPositionChange(nextOffset);
     }
+
+    draggingElements.splice(draggingElements.indexOf(target), 1);
     window.removeEventListener('mouseup', onMouseUp, false);
     window.removeEventListener('mousemove', onMouseDragged, false);
   };
 
-  let onMouseDown = () => {
+  let onMouseDown = (e: React.MouseEvent<HTMLElement>) => {
+    const target = e.currentTarget;
+    // If we're already handling dragging on a descendant with useDrag1D, then 
+    // we don't want to handle the drag motion on this target as well.
+    if (draggingElements.some(elt => target.contains(elt))) {
+      return;
+    }
+    draggingElements.push(target);
     window.addEventListener('mousemove', onMouseDragged, false);
     window.addEventListener('mouseup', onMouseUp, false);
   };

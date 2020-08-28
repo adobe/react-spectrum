@@ -20,16 +20,19 @@ interface FocusableOptions extends FocusableProps, FocusableDOMProps {
   isDisabled?: boolean
 }
 
-interface FocusableContextProps extends HTMLAttributes<HTMLElement> {
-  children?: ReactNode,
+interface FocusableProviderProps extends HTMLAttributes<HTMLElement> {
+  /** The child element to provide DOM props to. */
+  children?: ReactNode
+}
+
+interface FocusableContextValue extends FocusableProviderProps {
   ref?: MutableRefObject<HTMLElement>
 }
 
-export let FocusableContext = React.createContext<FocusableContextProps>(null);
+let FocusableContext = React.createContext<FocusableContextValue>(null);
 
-
-export function useFocusableContext(ref: RefObject<HTMLElement>): FocusableContextProps {
-  let context = useContext(FocusableContext) || {} as FocusableContextProps;
+function useFocusableContext(ref: RefObject<HTMLElement>): FocusableContextValue {
+  let context = useContext(FocusableContext) || {};
 
   useEffect(() => {
     if (context && context.ref) {
@@ -43,7 +46,10 @@ export function useFocusableContext(ref: RefObject<HTMLElement>): FocusableConte
   return context;
 }
 
-export let FocusableProvider = React.forwardRef((props: FocusableContextProps, ref: RefObject<HTMLElement>) => {
+/**
+ * Provides DOM props to the nearest focusable child.
+ */
+function FocusableProvider(props: FocusableProviderProps, ref: RefObject<HTMLElement>) {
   let {children, ...otherProps} = props;
   let context = {
     ...otherProps,
@@ -55,7 +61,10 @@ export let FocusableProvider = React.forwardRef((props: FocusableContextProps, r
       {children}
     </FocusableContext.Provider>
   );
-});
+}
+
+let _FocusableProvider = React.forwardRef(FocusableProvider);
+export {_FocusableProvider as FocusableProvider};
 
 /**
  * Used to make an element focusable and capable of auto focus.

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from '@react-aria/utils';
-import React, {RefObject, useCallback, useLayoutEffect, useRef} from 'react';
+import {chain, useLayoutEffect} from '@react-aria/utils';
+import React, {RefObject, useCallback, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useControlledState} from '@react-stately/utils';
@@ -51,7 +51,8 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
 
   let {labelProps, inputProps} = useTextField({
     ...props,
-    onChange: chain(onChange, setInputValue)
+    onChange: chain(onChange, setInputValue),
+    inputElementType: 'textarea'
   }, inputRef);
 
   return (

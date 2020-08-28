@@ -114,6 +114,10 @@ module.exports = new Packager({
           }
         }
 
+        if (t && t.type === 'identifier' && t.name === 'Omit' && application) {
+          return omit(application[0], application[1]);
+        }
+
         if (t && t.type === 'identifier' && params && params[t.name]) {
           return params[t.name];
         }
@@ -263,4 +267,37 @@ function merge(a, b) {
       a[key] = b[key];
     }
   }
+}
+
+function omit(obj, toOmit) {
+  if (obj.type === 'interface' || obj.type === 'object') {
+    let keys = new Set();
+    if (toOmit.type === 'string' && toOmit.value) {
+      keys.add(toOmit.value);
+    } else if (toOmit.type === 'union') {
+      for (let e of toOmit.elements) {
+        if (e.type === 'string' && e.value) {
+          keys.add(e.value);
+        }
+      }
+    }
+
+    if (keys.size === 0) {
+      return obj;
+    }
+
+    let properties = {};
+    for (let key in obj.properties) {
+      if (!keys.has(key)) {
+        properties[key] = obj.properties[key];
+      }
+    }
+
+    return {
+      ...obj,
+      properties
+    };
+  }
+
+  return obj;
 }

@@ -25,7 +25,7 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
-import {ElementType, ReactElement} from 'react';
+import {ReactElement} from 'react';
 
 export interface TextFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<string>, LabelableProps {}
 
@@ -39,16 +39,7 @@ export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, F
    */
   'aria-autocomplete'?: 'none' | 'inline' | 'list' | 'both',
   /** Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. */
-
-  'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog',
-
-  /**
-   * The HTML element used to render the input, e.g. 'input', or 'textarea'.
-   * It determines whether certain HTML attributes will be included in `inputProps`.
-   * For example, [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-type).
-   * @default 'input'
-   */
-  inputElementType?: ElementType
+  'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog'
 }
 
 export interface SpectrumTextFieldProps extends AriaTextFieldProps, SpectrumLabelableProps, StyleProps {

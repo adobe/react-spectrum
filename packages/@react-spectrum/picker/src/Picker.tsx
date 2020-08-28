@@ -12,7 +12,7 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, dimensionValue, SlotProvider, unwrapDOMRef, useDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
+import {classNames, dimensionValue, SlotProvider, unwrapDOMRef, useDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue, FocusableRefValue, LabelPosition} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
@@ -23,12 +23,12 @@ import intlMessages from '../intl/*.json';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
 import {PressResponder, useHover} from '@react-aria/interactions';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useLayoutEffect, useRef, useState} from 'react';
+import React, {ReactElement, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/text';
@@ -101,7 +101,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let isLoadingMore = props.isLoading && state.collection.size > 0;
 
   // On small screen devices, the listbox is rendered in a tray, otherwise a popover.
-  let isMobile = useMediaQuery('(max-width: 700px)');
+  let isMobile = useIsMobileDevice();
   let listbox = (
     <FocusScope restoreFocus>
       <DismissButton onDismiss={() => state.close()} />
@@ -115,6 +115,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         layout={layout}
         state={state}
         width={isMobile ? '100%' : undefined}
+        // Set max height: inherit so Tray scrolling works
+        UNSAFE_style={{maxHeight: 'inherit'}}
         isLoading={isLoadingMore}
         onLoadMore={props.onLoadMore} />
       <DismissButton onDismiss={() => state.close()} />

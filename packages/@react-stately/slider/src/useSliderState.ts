@@ -51,6 +51,10 @@ export interface SliderState {
   // Converts a percent along track (between 0 and 1) to the corresponding value
   getPercentValue: (percent: number) => number,
 
+  // editable
+  isThumbEditable: (index: number) => boolean,
+  setThumbEditable: (index: number, editable: boolean) => void,
+
   // The step amount for the slider
   readonly step: number
 }
@@ -68,7 +72,12 @@ export function useSliderState(props: SliderProps): SliderState {
     props.onChange as any
   );
   const [isDraggings, setDraggings] = useState<boolean[]>(new Array(values.length).fill(false));
+  const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
   const [focusedIndex, setFocusedIndex] = useState<number|undefined>(undefined);
+
+  // We keep some of the dragging state on refs as well, because they are read by event
+  // handlers.  In useDrag1D, the same drag event handler is used for the entire drag motion,
+  // so the state object within their closure is already stale.
   const realTimeDragging = useRef(false);
   const formatter = useNumberFormatter(formatOptions);
 
@@ -83,8 +92,16 @@ export function useSliderState(props: SliderProps): SliderState {
     return index === values.length - 1 ? maxValue : values[index + 1];
   }
 
+  function isThumbEditable(index: number) {
+    return isEditablesRef.current[index];
+  }
+
+  function setThumbEditable(index: number, editable: boolean) {
+    isEditablesRef.current[index] = editable;
+  }
+
   function updateValue(index: number, value: number) {
-    if (isReadOnly || isDisabled) {
+    if (isReadOnly || isDisabled || !isThumbEditable(index)) {
       return;
     }
     const thisMin = getThumbMinValue(index);
@@ -103,6 +120,9 @@ export function useSliderState(props: SliderProps): SliderState {
   }
 
   function updateDragging(index: number, dragging: boolean) {
+    if (isReadOnly || isDisabled || !isThumbEditable(index)) {
+      return;
+    }
     const newDraggings = replaceIndex(isDraggings, index, dragging);
     setDraggings(newDraggings);
     realTimeDragging.current = newDraggings.some(Boolean);
@@ -141,6 +161,8 @@ export function useSliderState(props: SliderProps): SliderState {
     getThumbMinValue,
     getThumbMaxValue,
     getPercentValue,
+    isThumbEditable,
+    setThumbEditable,
     step
   };
 }
