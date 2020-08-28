@@ -186,7 +186,7 @@ describe('NumberField', function () {
 
     let {textField} = renderNumberField(Component, {onChange: onChangeSpy});
 
-    act(() => {fireEvent.focus(textField);});
+    act(() => {textField.focus();});
     act(() => {fireEvent.wheel(textField, {deltaY: 10});});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
   });
@@ -198,7 +198,7 @@ describe('NumberField', function () {
   `('$Name increment value when scrolling upwards', ({Component}) => {
     let {textField} = renderNumberField(Component, {onChange: onChangeSpy});
 
-    act(() => {fireEvent.focus(textField);});
+    act(() => {textField.focus();});
     act(() => {fireEvent.wheel(textField, {deltaY: -10});});
     expect(onChangeSpy).toHaveBeenCalledWith(1);
   });
@@ -246,7 +246,7 @@ describe('NumberField', function () {
     } = renderNumberField(Component, {minValue: 3, defaultValue: 2});
 
     expect(textField).toHaveAttribute('aria-invalid', 'true');
-    act(() => {fireEvent.focus(textField);});
+    act(() => {textField.focus();});
     act(() => {fireEvent.wheel(textField, {deltaY: -10});});
     expect(textField).not.toHaveAttribute('aria-invalid');
   });
@@ -260,7 +260,7 @@ describe('NumberField', function () {
     } = renderNumberField(Component, {maxValue: 3, defaultValue: 4});
 
     expect(textField).toHaveAttribute('aria-invalid', 'true');
-    act(() => {fireEvent.focus(textField);});
+    act(() => {textField.focus();});
     act(() => {fireEvent.wheel(textField, {deltaY: 10});});
     expect(textField).not.toHaveAttribute('aria-invalid');
   });
@@ -357,7 +357,7 @@ describe('NumberField', function () {
     let {textField} = renderNumberField(Component, {showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     expect(textField).toHaveAttribute('value', '€10.00');
-    act(() => {fireEvent.focus(textField);});
+    act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', '10');
   });
 
@@ -370,9 +370,9 @@ describe('NumberField', function () {
     let {textField} = renderNumberField(NumberField, {showStepper: true, defaultValue: 10, ...props}, locale);
 
     expect(textField).toHaveAttribute('value', expected[0]);
-    fireEvent.focus(textField);
+    textField.focus();
     expect(textField).toHaveAttribute('value', expected[1]);
-    fireEvent.blur(textField);
+    textField.blur();
   });
 
   // must use js-escapes for negative currency arabic, otherwise jest won't recognize the result as being equal
@@ -403,7 +403,7 @@ describe('NumberField', function () {
   `('$Name pressing up arrow & down arrow keeps focus state formatting', ({props, locale, expected}) => {
     let {textField} = renderNumberField(NumberField, {showStepper: true, defaultValue: 10, ...props}, locale);
 
-    fireEvent.focus(textField);
+    textField.focus();
     expect(textField).toHaveAttribute('value', expected[0]);
     fireEvent.keyDown(textField, {key: 'ArrowUp'});
     fireEvent.keyUp(textField, {key: 'ArrowUp'});
@@ -413,7 +413,7 @@ describe('NumberField', function () {
     fireEvent.keyDown(textField, {key: 'ArrowDown'});
     fireEvent.keyUp(textField, {key: 'ArrowDown'});
     expect(textField).toHaveAttribute('value', expected[2]);
-    fireEvent.blur(textField);
+    textField.blur();
     // after blur, we should go to the formatted version
     expect(textField).toHaveAttribute('value', expected[3]);
   });
@@ -426,11 +426,11 @@ describe('NumberField', function () {
 
     expect(textField).toHaveAttribute('value', '10');
     act(() => {userEvent.type(textField, '-');});
-    fireEvent.blur(textField);
+    textField.blur();
     expect(textField).toHaveAttribute('value', '10');
-    fireEvent.focus(textField);
+    textField.focus();
     expect(textField).toHaveAttribute('value', '10');
-    fireEvent.blur(textField);
+    textField.blur();
   });
 
   it.each`
@@ -441,7 +441,7 @@ describe('NumberField', function () {
   `('$Name typing in locale stays consistent', ({props, locale, keystrokes, expected}) => {
     let {textField} = renderNumberField(NumberField, {showStepper: true, onChange: onChangeSpy, ...props}, locale);
 
-    fireEvent.focus(textField);
+    textField.focus();
     expect(textField).toHaveAttribute('value', '');
     act(() => {
       userEvent.type(textField, keystrokes[0]);
@@ -453,7 +453,7 @@ describe('NumberField', function () {
     });
     expect(onChangeSpy).toHaveBeenCalledWith(42);
     expect(textField).toHaveAttribute('value', expected[1]);
-    fireEvent.blur(textField);
+    textField.blur();
     // after blur, we should go to the formatted version
     expect(textField).toHaveAttribute('value', expected[2]);
   });
@@ -461,7 +461,7 @@ describe('NumberField', function () {
   it('advances automatically if the arrows are held down', () => {
     let {textField, incrementButton, decrementButton} = renderNumberField(NumberField, {showStepper: true, defaultValue: 10, onChange: onChangeSpy});
 
-    fireEvent.focus(textField);
+    textField.focus();
     fireEvent.mouseDown(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(11);
     act(() => {jest.advanceTimersByTime(399);});
@@ -504,7 +504,7 @@ describe('NumberField', function () {
   `('$Name handles input change with custom decimal step number', ({Component}) => {
     let {textField, incrementButton} = renderNumberField(Component, {onChange: onChangeSpy, step: 0.001});
 
-    fireEvent.focus(textField);
+    textField.focus();
     act(() => {userEvent.type(textField, '1');});
     triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1.001);
@@ -514,7 +514,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(1.003);
     triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1.004);
-    fireEvent.blur(textField);
+    textField.blur();
   });
 
   // not sure why this one won't work, it looked like select() was added to jsdom 5 years ago
@@ -527,10 +527,10 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '100');
     // after we focus, we should have all 0f '100' selected, we can prove this by typing something into the input
     // if it wasn't all selected, then we'd still see some of the old value, instead we want to only see the new value
-    fireEvent.focus(textField);
+    textField.focus();
     act(() => {userEvent.type(textField, '3');});
     expect(textField).toHaveAttribute('value', '3');
-    fireEvent.blur(textField);
+    textField.blur();
   });
 
   it.each`
