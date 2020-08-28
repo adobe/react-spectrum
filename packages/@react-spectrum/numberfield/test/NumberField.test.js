@@ -314,7 +314,7 @@ describe('NumberField', function () {
   `('$Name properly formats defaultValue', ({Component}) => {
     let {textField} = renderNumberField(Component, {showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
-    expect(textField).toHaveAttribute('value', '€10.00');
+    expect(textField).toHaveProperty('value', '€10.00');
   });
 
   it.each`
@@ -325,7 +325,7 @@ describe('NumberField', function () {
     let {textField} = renderNumberField(Component, {showStepper: true, formatOptions: {maximumFractionDigits: 5}});
     typeText(textField, value);
     act(() => textField.blur());
-    expect(textField).toHaveAttribute('value', result);
+    expect(textField).toHaveProperty('value', result);
   });
 
   it.each`
@@ -334,7 +334,7 @@ describe('NumberField', function () {
   `('$Name properly formats value', ({Component}) => {
     let {textField} = renderNumberField(Component, {showStepper: true, value: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
-    expect(textField).toHaveAttribute('value', '€10.00');
+    expect(textField).toHaveProperty('value', '€10.00');
   });
 
   it.each`
@@ -343,12 +343,12 @@ describe('NumberField', function () {
   `('$Name properly formats value when value changes', ({Component}) => {
     let {textField, incrementButton, decrementButton} = renderNumberField(Component, {showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
-    expect(textField).toHaveAttribute('value', '€10.00');
+    expect(textField).toHaveProperty('value', '€10.00');
     triggerPress(incrementButton);
-    expect(textField).toHaveAttribute('value', '€11.00');
+    expect(textField).toHaveProperty('value', '€11.00');
     triggerPress(decrementButton);
     triggerPress(decrementButton);
-    expect(textField).toHaveAttribute('value', '€9.00');
+    expect(textField).toHaveProperty('value', '€9.00');
   });
 
   it.each`
@@ -357,9 +357,9 @@ describe('NumberField', function () {
   `('$Name changes value to unformatted value on focus', ({Component}) => {
     let {textField} = renderNumberField(Component, {showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
-    expect(textField).toHaveAttribute('value', '€10.00');
+    expect(textField).toHaveProperty('value', '€10.00');
     act(() => {textField.focus();});
-    expect(textField).toHaveAttribute('value', '10');
+    expect(textField).toHaveProperty('value', '10');
   });
 
   it.each`
@@ -370,9 +370,9 @@ describe('NumberField', function () {
   `('$Name changes value to unformatted value on focus', ({props, locale, expected}) => {
     let {textField} = renderNumberField(NumberField, {showStepper: true, defaultValue: 10, ...props}, locale);
 
-    expect(textField).toHaveAttribute('value', expected[0]);
+    expect(textField).toHaveProperty('value', expected[0]);
     act(() => {textField.focus();});
-    expect(textField).toHaveAttribute('value', expected[1]);
+    expect(textField).toHaveProperty('value', expected[1]);
     act(() => {textField.blur();});
   });
 
@@ -388,12 +388,12 @@ describe('NumberField', function () {
   `('$Name pressing increment & decrement keeps formatting', ({props, locale, expected}) => {
     let {textField, incrementButton, decrementButton} = renderNumberField(NumberField, {showStepper: true, minValue: -15, ...props}, locale);
 
-    expect(textField).toHaveAttribute('value', expected[0]);
+    expect(textField).toHaveProperty('value', expected[0]);
     triggerPress(incrementButton);
-    expect(textField).toHaveAttribute('value', expected[1]);
+    expect(textField).toHaveProperty('value', expected[1]);
     triggerPress(decrementButton);
     triggerPress(decrementButton);
-    expect(textField).toHaveAttribute('value', expected[2]);
+    expect(textField).toHaveProperty('value', expected[2]);
   });
 
   it.each`
@@ -405,18 +405,18 @@ describe('NumberField', function () {
     let {textField} = renderNumberField(NumberField, {showStepper: true, defaultValue: 10, ...props}, locale);
 
     act(() => {textField.focus();});
-    expect(textField).toHaveAttribute('value', expected[0]);
+    expect(textField).toHaveProperty('value', expected[0]);
     fireEvent.keyDown(textField, {key: 'ArrowUp'});
     fireEvent.keyUp(textField, {key: 'ArrowUp'});
-    expect(textField).toHaveAttribute('value', expected[1]);
+    expect(textField).toHaveProperty('value', expected[1]);
     fireEvent.keyDown(textField, {key: 'ArrowDown'});
     fireEvent.keyUp(textField, {key: 'ArrowDown'});
     fireEvent.keyDown(textField, {key: 'ArrowDown'});
     fireEvent.keyUp(textField, {key: 'ArrowDown'});
-    expect(textField).toHaveAttribute('value', expected[2]);
+    expect(textField).toHaveProperty('value', expected[2]);
     act(() => {textField.blur();});
     // after blur, we should go to the formatted version
-    expect(textField).toHaveAttribute('value', expected[3]);
+    expect(textField).toHaveProperty('value', expected[3]);
   });
 
   it.each`
@@ -425,12 +425,12 @@ describe('NumberField', function () {
   `('$Name sets invalid input value to valid number value on blur', ({Component}) => {
     let {textField} = renderNumberField(Component, {showStepper: true, defaultValue: 10});
 
-    expect(textField).toHaveAttribute('value', '10');
+    expect(textField).toHaveProperty('value', '10');
     typeText(textField, '-');
     act(() => {textField.blur();});
-    expect(textField).toHaveAttribute('value', '10');
+    expect(textField).toHaveProperty('value', '10');
     act(() => {textField.focus();});
-    expect(textField).toHaveAttribute('value', '10');
+    expect(textField).toHaveProperty('value', '10');
     act(() => {textField.blur();});
   });
 
@@ -443,16 +443,16 @@ describe('NumberField', function () {
     let {textField} = renderNumberField(NumberField, {showStepper: true, onChange: onChangeSpy, ...props}, locale);
 
     act(() => {textField.focus();});
-    expect(textField).toHaveAttribute('value', '');
+    expect(textField).toHaveProperty('value', '');
     typeText(textField, keystrokes[0]);
     expect(onChangeSpy).toHaveBeenCalledWith(4);
-    expect(textField).toHaveAttribute('value', expected[0]);
+    expect(textField).toHaveProperty('value', expected[0]);
     typeText(textField, keystrokes[1]);
     expect(onChangeSpy).toHaveBeenCalledWith(42);
-    expect(textField).toHaveAttribute('value', expected[1]);
+    expect(textField).toHaveProperty('value', expected[1]);
     act(() => {textField.blur();});
     // after blur, we should go to the formatted version
-    expect(textField).toHaveAttribute('value', expected[2]);
+    expect(textField).toHaveProperty('value', expected[2]);
   });
 
   it('advances automatically if the arrows are held down', () => {
@@ -521,12 +521,12 @@ describe('NumberField', function () {
   `('$Name selects input text on focus', ({Component}) => {
     let {textField} = renderNumberField(Component, {defaultValue: 100});
     // start with 100 in the input
-    expect(textField).toHaveAttribute('value', '100');
+    expect(textField).toHaveProperty('value', '100');
     // after we focus, we should have all 0f '100' selected, we can prove this by typing something into the input
     // if it wasn't all selected, then we'd still see some of the old value, instead we want to only see the new value
     act(() => {textField.focus();});
     typeText(textField, '3');
-    expect(textField).toHaveAttribute('value', '3');
+    expect(textField).toHaveProperty('value', '3');
     act(() => {textField.blur();});
   });
 
@@ -535,7 +535,7 @@ describe('NumberField', function () {
     ${'v3 NumberField'} | ${NumberField}
   `('$Name isReadOnly cannot be stepped', ({Component}) => {
     let {textField, incrementButton, decrementButton} = renderNumberField(Component, {defaultValue: 100, isReadOnly: true});
-    expect(textField).toHaveAttribute('value', '100');
+    expect(textField).toHaveProperty('value', '100');
     expect(incrementButton).toBeDisabled();
     expect(decrementButton).toBeDisabled();
   });
@@ -575,6 +575,6 @@ describe('NumberField', function () {
     ${'NumberField controlled'}   | ${NumberField} | ${{value: 0}}
   `('$Name 0 is rendered', ({Component, props}) => {
     let {textField} = renderNumberField(Component, props);
-    expect(textField).toHaveAttribute('value', '0');
+    expect(textField).toHaveProperty('value', '0');
   });
 });
