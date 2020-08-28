@@ -27,7 +27,8 @@
       "dom",
       "es2016.array.include",
       "es2017.object",
-      "es2017.intl"
+      "es2017.intl",
+      "esnext.intl"
     ],
     "skipLibCheck": false
   },
