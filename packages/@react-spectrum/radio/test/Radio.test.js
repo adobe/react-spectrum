@@ -538,10 +538,10 @@ describe('Radios', function () {
 
       let radios = getAllByRole('radio');
       let radioGroup = getByRole('radiogroup');
-      radioGroup.focus();
+      act(() => {radioGroup.focus();});
 
       orders.forEach(({action, result}, index) => {
-        action(document.activeElement);
+        act(() => {action(document.activeElement);});
         verifyResult(radios, result(), index);
       });
     });
@@ -570,10 +570,10 @@ describe('Radios', function () {
 
       let radios = tree.getAllByRole('radio');
       let radioGroup = tree.getByRole('radiogroup');
-      radioGroup.focus();
+      act(() => {radioGroup.focus();});
 
       orders.forEach(({action, result}, index) => {
-        action(document.activeElement);
+        act(() => {action(document.activeElement);});
         verifyResult(radios, result(), index);
       });
     });
@@ -596,10 +596,10 @@ describe('Radios', function () {
 
       let radios = tree.getAllByRole('radio');
       let radioGroup = tree.getByRole('radiogroup');
-      radioGroup.focus();
+      act(() => {radioGroup.focus();});
 
       orders.forEach(({action, result}, index) => {
-        action(document.activeElement);
+        act(() => {action(document.activeElement);});
         verifyResult(radios, result(), index);
       });
     });
