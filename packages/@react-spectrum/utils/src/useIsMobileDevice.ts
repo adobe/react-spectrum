@@ -10,16 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
-/// <reference path="./ResizeObserver.d.ts" />
+import {useIsSSR} from '@react-aria/ssr';
 
-export * from './classNames';
-export * from './getWrappedElement';
-export * from './useMediaQuery';
-export * from './useDOMRef';
-export * from './styleProps';
-export * from './Slots';
-export * from './useHasChild';
-export * from './useResizeObserver';
-export * from './useIsMobileDevice';
+const MOBILE_SCREEN_WIDTH = 700;
 
+export function useIsMobileDevice(): boolean {
+  let isSSR = useIsSSR();
+  if (isSSR || typeof window === 'undefined') {
+    return false;
+  }
+
+  return window.screen.width <= MOBILE_SCREEN_WIDTH;
+}
