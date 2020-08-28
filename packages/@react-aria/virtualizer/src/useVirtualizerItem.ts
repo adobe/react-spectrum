@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {RefObject, useCallback, useLayoutEffect} from 'react';
+import {RefObject, useCallback} from 'react';
 import {ReusableView, Size} from '@react-stately/virtualizer';
+import {useLayoutEffect} from '@react-aria/utils';
 
 interface VirtualizerItemOptions<T extends object, V, W> {
   reusableView: ReusableView<T, V>,

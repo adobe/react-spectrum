@@ -28,6 +28,7 @@ type ListLayoutOptions<T> = {
 
 // A wrapper around LayoutInfo that supports heirarchy
 export interface LayoutNode {
+  node?: Node<unknown>,
   layoutInfo: LayoutInfo,
   header?: LayoutInfo,
   children?: LayoutNode[]
@@ -62,8 +63,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   protected lastCollection: Collection<Node<T>>;
   protected rootNodes: LayoutNode[];
   protected collator: Intl.Collator;
-  protected cache: WeakMap<Node<T>, LayoutNode> = new WeakMap();
-  protected newCache: WeakMap<Node<T>, LayoutNode> = new WeakMap();
+  protected invalidateEverything: boolean;
 
   /**
    * Creates a new ListLayout with options. See the list of properties below for a description
@@ -116,21 +116,12 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   validate(invalidationContext: InvalidationContext<Node<T>, unknown>) {
-    // Initialize new cache
-    this.newCache = new WeakMap();
-
     // Invalidate cache if the size of the collection changed.
     // In this case, we need to recalculate the entire layout.
-    if (invalidationContext.sizeChanged) {
-      this.cache = new WeakMap();
-    }
+    this.invalidateEverything = invalidationContext.sizeChanged;
 
     this.collection = this.virtualizer.collection;
     this.rootNodes = this.buildCollection();
-
-    // Replace old cache with new cache so nodes that are no longer in the collection aren't cached
-    // (for cases like combobox where original collection sticks around for filtering)
-    this.cache = this.newCache;
 
     this.lastWidth = this.virtualizer.visibleRect.width;
     this.lastCollection = this.collection;
@@ -158,12 +149,13 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   buildChild(node: Node<T>, x: number, y: number): LayoutNode {
-    let cached = this.cache.get(node);
-    if (cached && y === (cached.header || cached.layoutInfo).rect.y) {
+    let cached = this.layoutNodes.get(node.key);
+    if (!this.invalidateEverything && cached && cached.node === node && y === (cached.header || cached.layoutInfo).rect.y) {
       return cached;
     }
 
     let layoutNode = this.buildNode(node, x, y);
+    layoutNode.node = node;
 
     layoutNode.layoutInfo.parentKey = node.parentKey || null;
     this.layoutInfos.set(layoutNode.layoutInfo.key, layoutNode.layoutInfo);
@@ -172,8 +164,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
 
     // Remove deleted child layout nodes from key mapping.
-    let prev = this.layoutNodes.get(node.key);
-    if (prev) {
+    if (cached) {
       let childKeys = new Set();
       if (layoutNode.children) {
         for (let child of layoutNode.children) {
@@ -181,8 +172,8 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
         }
       }
 
-      if (prev.children) {
-        for (let child of prev.children) {
+      if (cached.children) {
+        for (let child of cached.children) {
           if (!childKeys.has(child.layoutInfo.key)) {
             this.removeLayoutNode(child);
           }
@@ -191,10 +182,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
 
     this.layoutNodes.set(node.key, layoutNode);
-
-    // Update new cache rather than old cache so that we can get rid of cached nodes that don't exist in collection any more
-    this.newCache.set(node, layoutNode);
-
     return layoutNode;
   }
 
@@ -318,14 +305,17 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     let layoutInfo = this.layoutInfos.get(key);
     layoutInfo.estimatedSize = false;
     if (layoutInfo.rect.height !== size.height) {
-      layoutInfo.rect.height = size.height;
+      // Copy layout info rather than mutating so that later caches are invalidated.
+      let newLayoutInfo = layoutInfo.copy();
+      newLayoutInfo.rect.height = size.height;
+      this.layoutInfos.set(key, newLayoutInfo);
 
       // Invalidate layout for this layout node and all parents
-      this.cache.delete(this.collection.getItem(key));
+      this.updateLayoutNode(key, layoutInfo, newLayoutInfo);
 
       let node = this.collection.getItem(layoutInfo.parentKey);
       while (node) {
-        this.cache.delete(this.collection.getItem(node.key));
+        this.updateLayoutNode(node.key, layoutInfo, newLayoutInfo);
         node = this.collection.getItem(node.parentKey);
       }
 
@@ -333,6 +323,21 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
     }
 
     return false;
+  }
+
+  updateLayoutNode(key: Key, oldLayoutInfo: LayoutInfo, newLayoutInfo: LayoutInfo) {
+    let n = this.layoutNodes.get(key);
+    if (n) {
+      // Invalidate by clearing node.
+      n.node = null;
+
+      // Replace layout info in LayoutNode
+      if (n.header === oldLayoutInfo) {
+        n.header = newLayoutInfo;
+      } else if (n.layoutInfo === oldLayoutInfo) {
+        n.layoutInfo = newLayoutInfo;
+      }
+    }
   }
 
   getContentSize() {
