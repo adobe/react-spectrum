@@ -48,7 +48,7 @@ export function useHexColorFieldState(
       const maxColorString = maxColor.toString('hex').substring(1);
       const maxColorNumber = parseInt(maxColorString, 16);
 
-      const newValue = `#${Math.min(colorNumber + step, maxColorNumber).toString(16)}`;
+      const newValue = `#${Math.min(colorNumber + step, maxColorNumber).toString(16).toUpperCase()}`;
       setInputValue(newValue);
       return new Color(newValue);
     });
@@ -57,9 +57,8 @@ export function useHexColorFieldState(
   const incrementToMax = useCallback(() => {
     if (maxValue != null) {
       const maxColor = typeof maxValue === 'string'? new Color(maxValue) : maxValue;
-      const maxColorString = maxColor.toString('hex').substring(1);
       setColorInputValue(maxColor);
-      setInputValue(maxColorString);
+      setInputValue(maxColor.toString('hex'));
     }
   }, [maxValue, setColorInputValue, setInputValue]);
 
