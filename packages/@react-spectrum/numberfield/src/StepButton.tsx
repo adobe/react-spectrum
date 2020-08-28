@@ -52,5 +52,5 @@ function StepButton({isQuiet, direction, ...props}: StepButtonProps) {
 /**
  * Buttons for NumberField.
  */
-let _StepButton = React.forwardRef(StepButton);
+let _StepButton = StepButton;
 export {_StepButton as StepButton};

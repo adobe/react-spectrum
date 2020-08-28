@@ -524,4 +524,12 @@ describe('NumberField', function () {
     let {textField} = renderNumberField(props);
     expect(textField).toHaveAttribute('value', '0');
   });
+
+  it.each`
+    Name             | props
+    ${'NumberField'} | ${{validationState: 'invalid'}}
+  `('$Name can be invalid', ({props}) => {
+    let {container} = renderNumberField(props);
+    expect(container).toHaveAttribute('aria-invalid', 'true');
+  });
 });
