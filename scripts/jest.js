@@ -22,7 +22,7 @@ try {
   args.push('-t', '^((?!v2).)*$');
 }
 // leaving this in to make it easy for people to target a certain suite
-args.push('packages/@react-spectrum/numberfield/test/NumberField.test.js');
+// args.push('packages/@react-spectrum/textfield/test/TextField.test.js');
 
 process.env.NODE_ICU_DATA = 'node_modules/full-icu';
 let jest = spawn('jest', args, {
