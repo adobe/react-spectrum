@@ -110,18 +110,20 @@ export function useSliderState(props: SliderProps): SliderState {
     // Round value to multiple of step, clamp value between min and max
     value = clamp(getRoundedValue(value), thisMin, thisMax);
 
-    // Do nothing if slider hasn't moved
-    if (value === values[index]) {
-      return;
-    }
+    setValues(values => {
+      // Do nothing if slider hasn't moved
+      if (value === values[index]) {
+        return values;
+      }
 
-    const newValues = replaceIndex(values, index, value);
-    setValues(newValues);
+      const newValues = replaceIndex(values, index, value);
+      if (props.onChangeEnd && !realTimeDragging.current) {
+        // If not in the middle of dragging, call onChangeEnd
+        props.onChangeEnd(newValues);
+      }
 
-    if (props.onChangeEnd && !realTimeDragging.current) {
-      // If not in the middle of dragging, call onChangeEnd
-      props.onChangeEnd(newValues);
-    }
+      return newValues;
+    });
   }
 
   function updateDragging(index: number, dragging: boolean) {
