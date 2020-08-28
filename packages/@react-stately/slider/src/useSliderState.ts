@@ -112,10 +112,6 @@ export function useSliderState(props: SliderProps): SliderState {
 
     setValues(values => {
       // Do nothing if slider hasn't moved
-      if (value === values[index]) {
-        return values;
-      }
-
       const newValues = replaceIndex(values, index, value);
       if (props.onChangeEnd && !realTimeDragging.current) {
         // If not in the middle of dragging, call onChangeEnd
@@ -175,5 +171,9 @@ export function useSliderState(props: SliderProps): SliderState {
 }
 
 function replaceIndex<T>(array: T[], index: number, value: T) {
+  if (array[index] === value) {
+    return array;
+  }
+
   return [...array.slice(0, index), value, ...array.slice(index + 1)];
 }

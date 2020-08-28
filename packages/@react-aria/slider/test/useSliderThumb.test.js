@@ -233,7 +233,7 @@ describe('useSliderThumb', () => {
       // Drag thumb
       let thumb0 = screen.getByTestId('thumb');
       fireEvent.mouseDown(thumb0, {clientX: 10});
-      expect(onChangeSpy).not.toHaveBeenLastCalledWith([10]);
+      expect(onChangeSpy).not.toHaveBeenCalled();
       expect(onChangeEndSpy).not.toHaveBeenCalled();
       expect(stateRef.current.values).toEqual([10]);
 
