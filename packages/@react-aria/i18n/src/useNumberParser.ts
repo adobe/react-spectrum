@@ -23,6 +23,9 @@ type NumberParser = {
  */
 export function useNumberParser(): NumberParser {
   let {locale: appLocale} = useLocale();
+  /* if (numeralSystem) {
+    appLocale = `${appLocale}-nu-${numeralSystem}`;
+  } */
   const numberData = useRef({group: null, decimal: null, numeral: null, index: null});
 
   useEffect(() => {

@@ -11,11 +11,10 @@
  */
 
 import {clamp} from '@react-aria/utils';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {NumberFieldProps} from '@react-types/numberfield';
+import {useCallback, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
 import {useNumberFormatter, useNumberParser} from '@react-aria/i18n';
-import {ValidationState} from '@react-types/shared';
-import {NumberFieldProps} from "@react-types/numberfield";
 
 export interface NumberFieldState {
   setValue: (val: number | string) => void,
@@ -26,41 +25,59 @@ export interface NumberFieldState {
   commitInputValue: () => void,
   value: number,
   inputValue: string,
-  validationState: ValidationState,
-  textValue?: string
+  textValue?: string,
+  currentNumeralSystem?: string
 }
+
+let numberingSystems = {
+  arab: [...('٠١٢٣٤٥٦٧٨٩')],
+  hanidec: [...('〇一二三四五六七八九')],
+  latin: [...('0123456789')]
+};
 
 export function useNumberFieldState(
   props: NumberFieldProps
 ): NumberFieldState {
-  let {minValue, maxValue, step = 1, formatOptions, value, defaultValue, onChange} = props;
+  let {minValue = -Infinity, maxValue = Infinity, step = 1, formatOptions, value, defaultValue, onChange} = props;
+  let [currentNumeralSystem, setCurrentNumeralSystem] = useState('latin');
 
-  const numberParser = useNumberParser();
-  const textValueFormatter = useNumberFormatter(formatOptions);
-  const inputValueFormatter = useNumberFormatter();
+  let numberParser = useNumberParser();
+  let inputValueFormatter = useNumberFormatter(formatOptions);
 
-  const [numberValue, setNumberValue] = useControlledState<number>(value, defaultValue || 0, onChange);
-  let initialInputValue = inputValueFormatter.format(numberValue);
-  const [inputValue, setInputValue] = useState(isNaN(value) && isNaN(defaultValue) ? '' : initialInputValue);
-  const [isValid, setIsValid] = useState(isInputValueValid(numberValue, maxValue, minValue));
-
-  const minusSign = useRef('-');
-
-  useEffect(() => {
+  let symbols = useMemo(() => {
     // Get the minus sign of the current locale to filter the input value
     // Automatically updates the minus sign when numberFormatter changes
-    minusSign.current = inputValueFormatter.formatToParts(-11).find(p => p.type === 'minusSign').value;
+    // won't work for currency accounting, what to do
+    let minusSign = inputValueFormatter.formatToParts(-11).find(p => p.type === 'minusSign').value;
+    let decimal = inputValueFormatter.formatToParts(1.1).find(p => p.type === 'decimal').value;
+    return {minusSign, decimal};
   }, [inputValueFormatter]);
+  let minusSign = symbols.minusSign;
+  let decimal = symbols.decimal;
+
+  let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
+  let tempNum = useRef<number>(NaN);
+  let initialInputValue = isNaN(numberValue) ? '' : inputValueFormatter.format(numberValue);
+  let [inputValue, setInputValue] = useState(initialInputValue);
+
+  let textValue = inputValueFormatter.format(numberValue);
 
   let increment = () => {
     setNumberValue((previousValue) => {
+      // TODO: should NaN default to zero for empty fields? what about min > 0?
+      let prev = previousValue;
+      if (isNaN(prev)) {
+        prev = 0;
+      }
+      if (!isNaN(tempNum.current)) {
+        prev = tempNum.current;
+        tempNum.current = NaN;
+      }
       const newValue = clamp(
-        handleDecimalOperation('+', previousValue, step),
+        handleDecimalOperation('+', prev, step),
         minValue,
         maxValue
       );
-
-      updateValidation(newValue);
 
       setInputValue(inputValueFormatter.format(newValue));
       return newValue;
@@ -76,13 +93,20 @@ export function useNumberFieldState(
 
   let decrement = () => {
     setNumberValue((previousValue) => {
+      let prev = previousValue;
+      if (isNaN(prev)) {
+        prev = 0;
+      }
+      if (!isNaN(tempNum.current)) {
+        prev = tempNum.current;
+        tempNum.current = NaN;
+      }
       const newValue = clamp(
-        handleDecimalOperation('-', previousValue, step),
+        handleDecimalOperation('-', prev, step),
         minValue,
         maxValue
       );
 
-      updateValidation(newValue);
       setInputValue(inputValueFormatter.format(newValue));
       return newValue;
     });
@@ -95,40 +119,67 @@ export function useNumberFieldState(
     }
   }, [inputValueFormatter, minValue, setNumberValue]);
 
-  let setValue = (value: string) => {
-    value = value.trim();
-    const newValue = numberParser.parse(value);
-
-    // If new value is not NaN then update the number value
-    if (!isNaN(newValue)) {
-      setNumberValue(newValue);
+  // if too slow, use string diffing, but i doubt these will be strings THAT large
+  // should i check more than just the first character matches?
+  let determineNumeralSystem = (value: string): string => {
+    for (let system in numberingSystems) {
+      let numerals = numberingSystems[system];
+      if ([...value].some(char => numerals.some(numeral => numeral === char))) {
+        setCurrentNumeralSystem(system);
+        return system;
+      }
     }
+    // TODO: how should we handle this?
+    // console.log('could not determine system, defaulting to latin');
+    return 'latin';
+  };
 
-    updateValidation(newValue);
+  // if minus sign or parens is typed, auto switch the sign?
+  // take some inspiration from datepicker to display parts?
+  let setValue = (value: string) => {
+    if (value === '') {
+      setNumberValue(NaN);
+      setInputValue('');
+      return;
+    }
+    let numeralSystem = determineNumeralSystem(value);
+    let strippedValue = value.replace(new RegExp(`[^${minusSign}${numberingSystems[numeralSystem].join('')}${decimal}]`), '');
+    const newValue = numberParser.parse(strippedValue);
+
+    // If new value is a number less than max and more than min then update the number value
+    if (!isNaN(newValue) && newValue < maxValue && newValue > minValue) {
+      setNumberValue(newValue);
+      tempNum.current = NaN;
+    } else if (!isNaN(newValue)) {
+      tempNum.current = newValue;
+    }
 
     // Update the input value if value:
     // 1) is not NaN or
     // 2) is equal to minus sign or
     // 3) is empty
-    if (!isNaN(newValue) || value === minusSign.current  || value.length === 0) {
+    if (!isNaN(newValue) || value === minusSign  || value.length === 0) {
       setInputValue(value);
     }
-  };
-
-
-  let updateValidation = (value) => {
-    setIsValid(isInputValueValid(value, maxValue, minValue));
   };
 
   // Mostly used in onBlur event to set the input value to
   // formatted numberValue. e.g. user types `-` then blurs.
   // instead of leaving the only minus sign we set the input value back to valid value
-  const commitInputValue = () => {
+  let commitInputValue = () => {
     // Do nothing if input value is empty
-    if (!inputValue.length) {return;}
-
-    const newValue = inputValueFormatter.format(numberValue);
-    updateValidation(newValue);
+    if (!inputValue.length) {
+      return;
+    }
+    let clampedValue;
+    if (!isNaN(tempNum.current)) {
+      clampedValue = clamp(tempNum.current, minValue, maxValue);
+      tempNum.current = NaN;
+    } else {
+      clampedValue = clamp(numberValue, minValue, maxValue);
+    }
+    let newValue = inputValueFormatter.format(clampedValue);
+    setNumberValue(clampedValue);
     setInputValue(newValue);
   };
 
@@ -141,18 +192,9 @@ export function useNumberFieldState(
     value: numberValue,
     inputValue,
     commitInputValue,
-    textValue: inputValue.length > 0 ? textValueFormatter.format(numberValue) : '',
-    validationState: !isValid ? 'invalid' : null
+    textValue: textValue === 'NaN' ? '' : textValue,
+    currentNumeralSystem
   };
-}
-
-function isInputValueValid(value:number, max, min): boolean {
-  return (
-    value !== null &&
-    !isNaN(value) &&
-    (!isNaN(max) ? value <= max : true) &&
-    (!isNaN(min) ? value >= min : true)
-  );
 }
 
 function handleDecimalOperation(operator, value1, value2) {
@@ -179,3 +221,26 @@ function handleDecimalOperation(operator, value1, value2) {
 
   return result;
 }
+
+// eslint-disable-next-line jsdoc/require-description-complete-sentence
+/**
+ * example -3500 in accounting
+ * 0: {type: "literal", value: "("}
+ * 1: {type: "currency", value: "€"}
+ * 2: {type: "integer", value: "3"}
+ * 3: {type: "group", value: ","}
+ * 4: {type: "integer", value: "500"}
+ * 5: {type: "decimal", value: "."}
+ * 6: {type: "fraction", value: "00"}
+ * 7: {type: "literal", value: ")"}
+ *
+ * example -3500 in normal
+ * 0: {type: "minusSign", value: "-"}
+ * 1: {type: "integer", value: "3"}
+ * 2: {type: "group", value: "."}
+ * 3: {type: "integer", value: "500"}
+ * 4: {type: "decimal", value: ","}
+ * 5: {type: "fraction", value: "00"}
+ * 6: {type: "literal", value: " "}
+ * 7: {type: "currency", value: "€"}
+ */

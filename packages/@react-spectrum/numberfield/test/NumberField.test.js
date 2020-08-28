@@ -12,7 +12,6 @@
 
 import {act, fireEvent, render, within} from '@testing-library/react';
 import {NumberField} from '../';
-import NumberInput from '@react/react-spectrum/NumberInput';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -39,18 +38,15 @@ describe('NumberField', function () {
     act(() => {jest.runAllTimers();});
   });
 
-  function renderNumberField(Component, props = {}, locale = 'en-US') {
-    let {container, debug} = render(<Provider theme={theme} locale={locale}><Component aria-label="labelled" {...props} /></Provider>);
+  function renderNumberField(props = {}, locale = 'en-US') {
+    let {container, debug} = render(<Provider theme={theme} locale={locale}><NumberField aria-label="labelled" {...props} /></Provider>);
 
     container = within(container).queryByRole('group');
     let textField = container.firstChild;
     let buttons = within(container).queryAllByRole('button');
     let incrementButton = buttons[0];
     let decrementButton = buttons[1];
-    // in v3 TextField is wrapped with one more div
-    if (Component === NumberField) {
-      textField = textField.firstChild;
-    }
+    textField = textField.firstChild;
     return {
       container,
       textField,
@@ -62,15 +58,15 @@ describe('NumberField', function () {
   }
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name has correct aria and props', ({Component}) => {
+    Name
+    ${'NumberField'}
+  `('$Name has correct aria and props', () => {
     let {
       container,
       textField,
       incrementButton,
       decrementButton
-    } = renderNumberField(Component);
+    } = renderNumberField();
 
     expect(container).toBeTruthy();
     expect(container).toHaveAttribute('role', 'group');
@@ -81,24 +77,26 @@ describe('NumberField', function () {
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-    ${'v2 NumberField'} | ${NumberInput}
-  `('$Name handles input change', ({Component}) => {
-    let {textField} = renderNumberField(Component, {onChange: onChangeSpy});
+    Name
+    ${'NumberField'}
+  `('$Name handles input change', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy});
 
+    fireEvent.focus(textField);
     act(() => {userEvent.type(textField, '5');});
+    fireEvent.blur(textField);
     expect(onChangeSpy).toHaveBeenCalledWith(5);
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-    ${'v2 NumberField'} | ${NumberInput}
-  `('$Name handles input change with custom step number', ({Component}) => {
-    let {textField, incrementButton} = renderNumberField(Component, {onChange: onChangeSpy, step: 5});
+    Name
+    ${'NumberField'}
+  `('$Name handles input change with custom step number', () => {
+    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, step: 5});
 
+    fireEvent.focus(textField);
     act(() => {userEvent.type(textField, '2');});
+    fireEvent.blur(textField);
     expect(onChangeSpy).toHaveBeenCalledWith(2);
     onChangeSpy.mockReset();
     triggerPress(incrementButton);
@@ -106,69 +104,75 @@ describe('NumberField', function () {
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name handles decrementing input change from valid default to invalid and adds aria-invalid', ({Component}) => {
+    Name
+    ${'NumberField'}
+  `('$Name clamps to closest min if smaller than the min', () => {
     let {
       container,
       textField
-    } = renderNumberField(Component, {onChange: onChangeSpy, minValue: 0});
+    } = renderNumberField({onChange: onChangeSpy, minValue: 0});
 
-    expect(container).toHaveAttribute('aria-invalid', 'false');
+    expect(container).not.toHaveAttribute('aria-invalid');
 
-    act(() => {textField.focus();});
+    fireEvent.focus(textField);
     act(() => {userEvent.type(textField, '-1');});
-    act(() => {textField.blur();});
-    expect(onChangeSpy).toHaveBeenCalledWith(-1);
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    fireEvent.blur(textField);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(0);
+    expect(textField).toHaveAttribute('value', '0');
 
-    expect(container).toHaveAttribute('aria-invalid', 'true');
+    expect(container).not.toHaveAttribute('aria-invalid');
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name handles incrementing input change from valid default to invalid and adds aria-invalid', ({Component}) => {
+    Name
+    ${'NumberField'}
+  `('$Name clamps to closest max if larger than the max', () => {
     let {
       container,
       textField
-    } = renderNumberField(Component, {onChange: onChangeSpy, maxValue: 0, defaultValue: 0});
+    } = renderNumberField({onChange: onChangeSpy, maxValue: 1, defaultValue: 0});
 
-    expect(container).toHaveAttribute('aria-invalid', 'false');
+    expect(container).not.toHaveAttribute('aria-invalid');
 
-    act(() => {userEvent.type(textField, '1');});
+    // TODO: should the numberfield emit any onChange until blur or arrows?
+    fireEvent.focus(textField);
+    act(() => {userEvent.type(textField, '2');});
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    fireEvent.blur(textField);
     expect(onChangeSpy).toHaveBeenCalledWith(1);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(textField).toHaveAttribute('value', '1');
 
-    expect(container).toHaveAttribute('aria-invalid', 'true');
+    expect(container).not.toHaveAttribute('aria-invalid');
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-    ${'v2 NumberField'} | ${NumberInput}
-  `('$Name increment value by one when increment button is pressed', ({Component}) => {
-    let {incrementButton} = renderNumberField(Component, {onChange: onChangeSpy});
+    Name
+    ${'NumberField'}
+  `('$Name increment value by one when increment button is pressed', () => {
+    let {incrementButton} = renderNumberField({onChange: onChangeSpy});
 
     triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1);
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-    ${'v2 NumberField'} | ${NumberInput}
-  `('$Name decrement value by one when increment button is pressed', ({Component}) => {
-    let {decrementButton} = renderNumberField(Component, {onChange: onChangeSpy});
+    Name
+    ${'NumberField'}
+  `('$Name decrement value by one when increment button is pressed', () => {
+    let {decrementButton} = renderNumberField({onChange: onChangeSpy});
 
     triggerPress(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-    ${'v2 NumberField'} | ${NumberInput}
-  `('$Name use step for increasing and decreasing value', ({Component}) => {
-    let {decrementButton, incrementButton} = renderNumberField(Component, {step: 10, onChange: onChangeSpy});
+    Name
+    ${'NumberField'}
+  `('$Name use step for increasing and decreasing value', () => {
+    let {decrementButton, incrementButton} = renderNumberField({step: 10, onChange: onChangeSpy});
 
     triggerPress(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(-10);
@@ -179,129 +183,67 @@ describe('NumberField', function () {
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-    ${'v2 NumberField'} | ${NumberInput}
-  `('$Name decrement value when scrolling downwards', ({Component}) => {
+    Name
+    ${'NumberField'}
+  `('$Name decrement value when scrolling downwards', () => {
 
-    let {textField} = renderNumberField(Component, {onChange: onChangeSpy});
+    let {textField} = renderNumberField({onChange: onChangeSpy});
 
-    act(() => {fireEvent.focus(textField);});
+    fireEvent.focus(textField);
     act(() => {fireEvent.wheel(textField, {deltaY: 10});});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-    ${'v2 NumberField'} | ${NumberInput}
-  `('$Name increment value when scrolling upwards', ({Component}) => {
-    let {textField} = renderNumberField(Component, {onChange: onChangeSpy});
+    Name
+    ${'NumberField'}
+  `('$Name increment value when scrolling upwards', () => {
+    let {textField} = renderNumberField({onChange: onChangeSpy});
 
-    act(() => {fireEvent.focus(textField);});
+    fireEvent.focus(textField);
     act(() => {fireEvent.wheel(textField, {deltaY: -10});});
     expect(onChangeSpy).toHaveBeenCalledWith(1);
   });
 
-  it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name incrementing from invalid default to valid value removes aria-invalid', ({Component}) => {
-    let {
-      container,
-      incrementButton
-    } = renderNumberField(Component, {onChange: onChangeSpy, minValue: 3, defaultValue: 2});
-
-    expect(container).toBeTruthy();
-    expect(container).toHaveAttribute('role', 'group');
-    expect(container).toHaveAttribute('aria-invalid', 'true');
-
-    triggerPress(incrementButton);
-    expect(container).toHaveAttribute('aria-invalid', 'false');
-  });
+  // TODO: what should happen when an invalid defaultValue is supplied in a min/max
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name decrementing from invalid default to valid value removes aria-invalid', ({Component}) => {
+    Name
+    ${'NumberField'}
+  `('$Name onChange is not called when controlled at minValue and decrement is pressed', () => {
     let {
       container,
       decrementButton
-    } = renderNumberField(Component, {onChange: onChangeSpy, maxValue: 3, defaultValue: 4});
+    } = renderNumberField({onChange: onChangeSpy, minValue: 3, value: 3});
 
     expect(container).toBeTruthy();
     expect(container).toHaveAttribute('role', 'group');
-    expect(container).toHaveAttribute('aria-invalid', 'true');
-
-    triggerPress(decrementButton);
-    expect(container).toHaveAttribute('aria-invalid', 'false');
-  });
-
-  it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name scrolling up from an invalid default value to a valid value removes aria-invalid', ({Component}) => {
-    let {
-      textField
-    } = renderNumberField(Component, {minValue: 3, defaultValue: 2});
-
-    expect(textField).toHaveAttribute('aria-invalid', 'true');
-    act(() => {fireEvent.focus(textField);});
-    act(() => {fireEvent.wheel(textField, {deltaY: -10});});
-    expect(textField).not.toHaveAttribute('aria-invalid');
-  });
-
-  it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name scrolling down from an invalid default value to a valid value removes aria-invalid', ({Component}) => {
-    let {
-      textField
-    } = renderNumberField(Component, {maxValue: 3, defaultValue: 4});
-
-    expect(textField).toHaveAttribute('aria-invalid', 'true');
-    act(() => {fireEvent.focus(textField);});
-    act(() => {fireEvent.wheel(textField, {deltaY: 10});});
-    expect(textField).not.toHaveAttribute('aria-invalid');
-  });
-
-  it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name onChange is not called when controlled at minValue and decrement is pressed', ({Component}) => {
-    let {
-      container,
-      decrementButton
-    } = renderNumberField(Component, {onChange: onChangeSpy, minValue: 3, value: 3});
-
-    expect(container).toBeTruthy();
-    expect(container).toHaveAttribute('role', 'group');
-    expect(container).toHaveAttribute('aria-invalid', 'false');
+    expect(container).not.toHaveAttribute('aria-invalid');
     triggerPress(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(0);
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name onChange is not called when controlled at maxValue and increment is pressed', ({Component}) => {
+    Name
+    ${'v3 NumberField'}
+  `('$Name onChange is not called when controlled at maxValue and increment is pressed', () => {
     let {
       container,
       incrementButton
-    } = renderNumberField(Component, {onChange: onChangeSpy, maxValue: 3, value: 3});
+    } = renderNumberField({onChange: onChangeSpy, maxValue: 3, value: 3});
 
     expect(container).toBeTruthy();
     expect(container).toHaveAttribute('role', 'group');
-    expect(container).toHaveAttribute('aria-invalid', 'false');
+    expect(container).not.toHaveAttribute('aria-invalid');
     triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(0);
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name can hide step buttons', ({Component}) => {
-    let {textField, incrementButton, decrementButton} = renderNumberField(Component, {showStepper: false});
+    Name
+    ${'NumberField'}
+  `('$Name can hide step buttons', () => {
+    let {textField, incrementButton, decrementButton} = renderNumberField({showStepper: false});
 
     expect(textField).toBeDefined();
     expect(incrementButton).not.toBeDefined();
@@ -309,38 +251,40 @@ describe('NumberField', function () {
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name properly formats defaultValue', ({Component}) => {
-    let {textField} = renderNumberField(Component, {showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
+    Name
+    ${'NumberField'}
+  `('$Name properly formats defaultValue', () => {
+    let {textField} = renderNumberField({showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     expect(textField).toHaveAttribute('value', '€10.00');
   });
 
   it.each`
-    Name                    | Component      | value          | result
-    ${'NumberField'}        | ${NumberField} | ${'98.543213'} | ${'98.54321'}
-    ${'NumberField rounds'} | ${NumberField} | ${'98.543216'} | ${'98.54322'}
-  `('$Name can have specified fraction digits', ({Component, value, result}) => {
-    let {textField} = renderNumberField(Component, {showStepper: true, formatOptions: {maximumFractionDigits: 5}});
+    Name                    | value          | result
+    ${'NumberField'}        | ${'98.543213'} | ${'98.54321'}
+    ${'NumberField rounds'} | ${'98.543216'} | ${'98.54322'}
+  `('$Name can have specified fraction digits', ({value, result}) => {
+    let {textField} = renderNumberField({showStepper: true, formatOptions: {maximumFractionDigits: 5}});
+    fireEvent.focus(textField);
     act(() => {userEvent.type(textField, value);});
+    fireEvent.blur(textField);
     expect(textField).toHaveAttribute('value', result);
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name properly formats value', ({Component}) => {
-    let {textField} = renderNumberField(Component, {showStepper: true, value: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
+    Name
+    ${'NumberField'}
+  `('$Name properly formats value', () => {
+    let {textField} = renderNumberField({showStepper: true, value: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     expect(textField).toHaveAttribute('value', '€10.00');
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name properly formats value when value changes', ({Component}) => {
-    let {textField, incrementButton, decrementButton} = renderNumberField(Component, {showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
+    Name
+    ${'NumberField'}
+  `('$Name properly formats value when value changes', () => {
+    let {textField, incrementButton, decrementButton} = renderNumberField({showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     expect(textField).toHaveAttribute('value', '€10.00');
     triggerPress(incrementButton);
@@ -351,23 +295,23 @@ describe('NumberField', function () {
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name changes value to unformatted value on focus', ({Component}) => {
-    let {textField} = renderNumberField(Component, {showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
+    Name
+    ${'NumberField'}
+  `('$Name keeps formatting on focus', () => {
+    let {textField} = renderNumberField({showStepper: true, defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     expect(textField).toHaveAttribute('value', '€10.00');
-    act(() => {fireEvent.focus(textField);});
-    expect(textField).toHaveAttribute('value', '10');
+    fireEvent.focus(textField);
+    expect(textField).toHaveAttribute('value', '€10.00');
   });
 
   it.each`
     Name              | props                                                    | locale     | expected
-    ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['€10.00', '10']}
-    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠٫٠٠ €', '١٠']}
-    ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10,00 €', '10']}
-  `('$Name changes value to unformatted value on focus', ({props, locale, expected}) => {
-    let {textField} = renderNumberField(NumberField, {showStepper: true, defaultValue: 10, ...props}, locale);
+    ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['€10.00', '€10.00']}
+    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠٫٠٠ €', '١٠٫٠٠ €']}
+    ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10,00 €', '10,00 €']}
+  `('$Name keeps formatted value on focus', ({props, locale, expected}) => {
+    let {textField} = renderNumberField({showStepper: true, defaultValue: 10, ...props}, locale);
 
     expect(textField).toHaveAttribute('value', expected[0]);
     fireEvent.focus(textField);
@@ -385,7 +329,7 @@ describe('NumberField', function () {
     ${'French Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['-10,00 €', '-9,00 €', '-11,00 €']}
     ${'Arabic Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['\u061C-\u0661\u0660\u066B\u0660\u0660\xA0\u20AC', '\u061C-\u0669\u066B\u0660\u0660\xA0\u20AC', '\u061C-\u0661\u0661\u066B\u0660\u0660\xA0\u20AC']}
   `('$Name pressing increment & decrement keeps formatting', ({props, locale, expected}) => {
-    let {textField, incrementButton, decrementButton} = renderNumberField(NumberField, {showStepper: true, minValue: -15, ...props}, locale);
+    let {textField, incrementButton, decrementButton} = renderNumberField({showStepper: true, minValue: -15, ...props}, locale);
 
     expect(textField).toHaveAttribute('value', expected[0]);
     triggerPress(incrementButton);
@@ -397,11 +341,11 @@ describe('NumberField', function () {
 
   it.each`
     Name              | props                                                    | locale     | expected
-    ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['10', '11', '9', '€9.00']}
-    ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10', '11', '9', '9,00 €']}
-    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠', '١١', '٩', '٩٫٠٠ €']}
+    ${'US Euros'}     | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['€10.00', '€11.00', '€9.00', '€9.00']}
+    ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['10,00 €', '11,00 €', '9,00 €', '9,00 €']}
+    ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['١٠٫٠٠ €', '١١٫٠٠ €', '٩٫٠٠ €', '٩٫٠٠ €']}
   `('$Name pressing up arrow & down arrow keeps focus state formatting', ({props, locale, expected}) => {
-    let {textField} = renderNumberField(NumberField, {showStepper: true, defaultValue: 10, ...props}, locale);
+    let {textField} = renderNumberField({showStepper: true, defaultValue: 10, ...props}, locale);
 
     fireEvent.focus(textField);
     expect(textField).toHaveAttribute('value', expected[0]);
@@ -419,10 +363,10 @@ describe('NumberField', function () {
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
+    Name
+    ${'NumberField'}
   `('$Name sets invalid input value to valid number value on blur', ({Component}) => {
-    let {textField} = renderNumberField(Component, {showStepper: true, defaultValue: 10});
+    let {textField} = renderNumberField({showStepper: true, defaultValue: 10});
 
     expect(textField).toHaveAttribute('value', '10');
     act(() => {userEvent.type(textField, '-');});
@@ -439,7 +383,7 @@ describe('NumberField', function () {
     ${'French Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['4', '2']} | ${['4', '42', '42,00 €']}
     ${'Arabic Euros'} | ${{formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['٤', '٢']} | ${['٤', '٤٢', '٤٢٫٠٠ €']}
   `('$Name typing in locale stays consistent', ({props, locale, keystrokes, expected}) => {
-    let {textField} = renderNumberField(NumberField, {showStepper: true, onChange: onChangeSpy, ...props}, locale);
+    let {textField} = renderNumberField({showStepper: true, onChange: onChangeSpy, ...props}, locale);
 
     fireEvent.focus(textField);
     expect(textField).toHaveAttribute('value', '');
@@ -459,7 +403,7 @@ describe('NumberField', function () {
   });
 
   it('advances automatically if the arrows are held down', () => {
-    let {textField, incrementButton, decrementButton} = renderNumberField(NumberField, {showStepper: true, defaultValue: 10, onChange: onChangeSpy});
+    let {textField, incrementButton, decrementButton} = renderNumberField({showStepper: true, defaultValue: 10, onChange: onChangeSpy});
 
     fireEvent.focus(textField);
     fireEvent.mouseDown(incrementButton);
@@ -499,10 +443,10 @@ describe('NumberField', function () {
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name handles input change with custom decimal step number', ({Component}) => {
-    let {textField, incrementButton} = renderNumberField(Component, {onChange: onChangeSpy, step: 0.001});
+    Name
+    ${'v3 NumberField'}
+  `('$Name handles input change with custom decimal step number', () => {
+    let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, step: 0.001});
 
     fireEvent.focus(textField);
     act(() => {userEvent.type(textField, '1');});
@@ -519,10 +463,10 @@ describe('NumberField', function () {
 
   // not sure why this one won't work, it looked like select() was added to jsdom 5 years ago
   it.skip.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name selects input text on focus', ({Component}) => {
-    let {textField} = renderNumberField(Component, {defaultValue: 100});
+    Name
+    ${'v3 NumberField'}
+  `('$Name selects input text on focus', () => {
+    let {textField} = renderNumberField({defaultValue: 100});
     // start with 100 in the input
     expect(textField).toHaveAttribute('value', '100');
     // after we focus, we should have all 0f '100' selected, we can prove this by typing something into the input
@@ -534,20 +478,20 @@ describe('NumberField', function () {
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name isReadOnly cannot be stepped', ({Component}) => {
-    let {textField, incrementButton, decrementButton} = renderNumberField(Component, {defaultValue: 100, isReadOnly: true});
+    Name
+    ${'NumberField'}
+  `('$Name isReadOnly cannot be stepped', () => {
+    let {textField, incrementButton, decrementButton} = renderNumberField({defaultValue: 100, isReadOnly: true});
     expect(textField).toHaveAttribute('value', '100');
     expect(incrementButton).toBeDisabled();
     expect(decrementButton).toBeDisabled();
   });
 
   it.each`
-    Name                | Component
-    ${'v3 NumberField'} | ${NumberField}
-  `('$Name has proper aria attributes', ({Component}) => {
-    let {textField, incrementButton, decrementButton} = renderNumberField(Component, {
+    Name
+    ${'NumberField'}
+  `('$Name has proper aria attributes', () => {
+    let {textField, incrementButton, decrementButton} = renderNumberField({
       defaultValue: 100,
       minValue: 0,
       maxValue: 100,
@@ -573,11 +517,11 @@ describe('NumberField', function () {
   });
 
   it.each`
-    Name                          | Component      | props
-    ${'NumberField uncontrolled'} | ${NumberField} | ${{defaultValue: 0}}
-    ${'NumberField controlled'}   | ${NumberField} | ${{value: 0}}
-  `('$Name 0 is rendered', ({Component, props}) => {
-    let {textField} = renderNumberField(Component, props);
+    Name                          | props
+    ${'NumberField uncontrolled'} | ${{defaultValue: 0}}
+    ${'NumberField controlled'}   | ${{value: 0}}
+  `('$Name 0 is rendered', ({props}) => {
+    let {textField} = renderNumberField(props);
     expect(textField).toHaveAttribute('value', '0');
   });
 });

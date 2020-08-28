@@ -16,19 +16,19 @@ import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/var
 import {Label} from '@react-spectrum/label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import {mergeProps} from '@react-aria/utils';
 import React, {RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
-import StepButton from './StepButton';
+import {StepButton} from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
+import {useFormProps} from '@react-spectrum/form';
 import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProviderProps} from '@react-spectrum/provider';
-import {mergeProps} from '@react-aria/utils';
-import {useFormProps} from '@react-spectrum/form';
 
-
-export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElement>) => {
+// TODO: where should ref go
+function NumberField(props: SpectrumNumberFieldProps, ref: RefObject<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
@@ -41,12 +41,19 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
     label,
     labelPosition = 'top' as LabelPosition,
     labelAlign,
+    // value/defaultValue/onChange can't be spread onto TextfieldBase
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    value,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    defaultValue,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    onChange,
     ...otherProps
   } = props;
   // either we don't pass otherProps to input... seems not ideal
   // or we figure out some way to take the styleprops out of otherProps...?
   let {styleProps} = useStyleProps(props);
-  let state = useNumberFieldState(otherProps);
+  let state = useNumberFieldState(props);
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
   let domRef = useRef<HTMLDivElement>(null);
   let {
@@ -62,7 +69,7 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
     'spectrum-InputGroup',
     {
       'spectrum-InputGroup--quiet': isQuiet,
-      'is-invalid': state.validationState === 'invalid',
+      'is-invalid': props.validationState === 'invalid',
       'is-disabled': isDisabled
     },
     classNames(
@@ -70,7 +77,7 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
       'spectrum-Stepper',
       {
         'spectrum-Stepper--quiet': isQuiet,
-        'is-invalid': state.validationState === 'invalid'
+        'is-invalid': props.validationState === 'invalid'
       },
       styleProps.className
     )
@@ -94,7 +101,7 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
           isQuiet={isQuiet}
           inputClassName={classNames(stepperStyle, 'spectrum-Stepper-input')}
           inputRef={inputRef}
-          validationState={state.validationState}
+          validationState={props.validationState}
           label={null}
           labelProps={labelProps}
           inputProps={inputFieldProps} />
@@ -144,7 +151,13 @@ export const NumberField = React.forwardRef((props: SpectrumNumberFieldProps, re
   }
 
   return React.cloneElement(numberfield, mergeProps(numberfield.props, {
-    ...styleProps,
-    ref: domRef
+    ...styleProps
   }));
-});
+}
+
+
+/**
+ * Numberfield allow entering of numbers with steppers to increment and decrement that value.
+ */
+let _NumberField = React.forwardRef(NumberField);
+export {_NumberField as NumberField};

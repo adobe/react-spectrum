@@ -11,17 +11,17 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Form} from '@react-spectrum/form';
+import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '../src';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
-import {Picker, Item} from "@react-spectrum/picker";
-import {Form} from "@react-spectrum/form";
 
 storiesOf('NumberField', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
   .add(
     'default',
-    () => render({onChange: action('onChange')})
+    () => render({})
   )
   .add(
     'number formatter',
@@ -48,6 +48,10 @@ storiesOf('NumberField', module)
     () => render({minValue: 0, defaultValue: 0})
   )
   .add(
+    'step = 5',
+    () => render({step: 5})
+  )
+  .add(
     'autoFocus',
     () => render({autoFocus: true})
   )
@@ -62,7 +66,7 @@ storiesOf('NumberField', module)
 
 function render(props: any = {}) {
   return (
-    <NumberField {...props} UNSAFE_className="custom_classname" />
+    <NumberField {...props} onChange={action('onChange')} UNSAFE_className="custom_classname" />
   );
 }
 

@@ -11,21 +11,17 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {AriaNumberFieldProps} from '@react-types/numberfield';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect, useState} from 'react';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeProps, useId} from '@react-aria/utils';
+import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFieldState} from '@react-stately/numberfield';
-import {SpinButtonProps, useSpinButton} from '@react-aria/spinbutton';
 import {useFocus} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';
+import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
 
-interface NumberFieldProps extends AriaNumberFieldProps, SpinButtonProps {
-  decrementAriaLabel?: string,
-  incrementAriaLabel?: string
-}
 
 interface NumberFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
@@ -44,7 +40,8 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     isRequired,
     minValue,
     maxValue,
-    autoFocus
+    autoFocus,
+    validationState
   } = props;
 
   let {
@@ -52,9 +49,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     incrementToMax,
     decrement,
     decrementToMin,
-    inputValue,
     value,
-    validationState,
     commitInputValue,
     textValue
   } = state;
@@ -62,17 +57,13 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
   const formatMessage = useMessageFormatter(intlMessages);
 
   const inputId = useId();
-  const [isFocused, setIsFocused] = useState(false);
   let {focusProps} = useFocus({
     onFocus: () => {
-      ref.current.value = inputValue;
       ref.current.select();
-      setIsFocused(true);
     },
     onBlur: () => {
       // Set input value to normalized valid value
       commitInputValue();
-      setIsFocused(false);
     }
   });
 
@@ -117,7 +108,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
     const handleInputScrollWheel = e => {
       // If the input isn't supposed to receive input, do nothing.
       // TODO: add focus
-      if (isDisabled || isReadOnly) {
+      if (isDisabled || isReadOnly || !ref.current) {
         return;
       }
 
@@ -129,46 +120,60 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       }
     };
 
-    document.getElementById(inputId).addEventListener(
+    ref.current.addEventListener(
       'wheel',
       handleInputScrollWheel,
       {passive: false}
     );
     return () => {
-      document.getElementById(inputId).removeEventListener(
+      ref.current.removeEventListener(
         'wheel',
         handleInputScrollWheel
       );
     };
   }, [inputId, isReadOnly, isDisabled, decrement, increment]);
 
-  let domProps = filterDOMProps(props, {labelable: true});
-  console.log('props for useTextField', props);
+  /**
+   * General outline for figuring out what to parse in on change
+   * use previous formatted text that was in the input
+   * new character is typed, match 'parts' from format to parts in previous text
+   * the first 'part' that's an integer to the last 'part' that's an integer or fraction, minus any 'groups' should be the new number we want to parse (not sure about minus sign vs parens).
+   */
+
+  /**
+   * General outline for cursor position
+   * focus, select everything from first 'part' that's an integer to last 'part' that's integer or fraction
+   * after typing a character, place cursor after that character, helps to know previous position, maybe get from keyup? Or maybe keydown, though not optimal
+   * what happens if a selection is made and a chunk is deleted or replaced out of the number? What if it includes the currency symbol or one paren out of two used in accounting representation.
+   */
+
   let {labelProps, inputProps} = useTextField(
-    mergeProps(focusProps, {
-      ...props,
-      autoFocus,
-      isDisabled,
-      isReadOnly,
-      isRequired,
-      validationState,
-      value: isFocused ? inputValue : textValue,
-      autoComplete: 'off',
-      'aria-label': props['aria-label'] || null,
-      'aria-labelledby': props['aria-labelledby'] || null,
-      id: inputId,
-      placeholder: formatMessage('Enter a number'),
-      type: 'text',
-      onChange: state.setValue
-    }), ref);
+    mergeProps(
+      focusProps,
+      {
+        // ...props,
+        autoFocus,
+        isDisabled,
+        isReadOnly,
+        isRequired,
+        validationState,
+        value: state.inputValue,
+        autoComplete: 'off',
+        'aria-label': props['aria-label'] || null,
+        'aria-labelledby': props['aria-labelledby'] || null,
+        id: inputId,
+        placeholder: formatMessage('Enter a number'),
+        type: 'text',
+        onChange: state.setValue
+      }), ref);
 
   const inputFieldProps = mergeProps(spinButtonProps, inputProps);
   return {
-    numberFieldProps: mergeProps(domProps, {
+    numberFieldProps: {
       role: 'group',
       'aria-disabled': isDisabled,
-      'aria-invalid': validationState === 'invalid'
-    }),
+      'aria-invalid': validationState === 'invalid' ? 'true' : undefined
+    },
     labelProps,
     inputFieldProps,
     incrementButtonProps,
