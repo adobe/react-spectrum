@@ -97,7 +97,6 @@
     "babel-plugin-transform-glob-import": "^1.0.1",
     "babelify": "^10.0.0",
     "chalk": "^2.4.2",
-    "chromatic": "^5.0.0",
     "clsx": "^1.1.1",
     "core-js": "^3.0.0",
     "cross-env": "^7.0.2",
@@ -119,7 +118,7 @@
     "ignore-styles": "^5.0.1",
     "jest": "^26.4.2",
     "jest-matchmedia-mock": "^1.0.0",
-    "jsdom": "^16.2.2",
+    "jsdom": "^16.4.0",
     "lerna": "^3.13.2",
     "lfcdn": "^0.4.2",
     "md5": "^2.2.1",
@@ -167,6 +166,7 @@
   "resolutions": {
     "@babel/core": "7.9.0",
     "@babel/runtime": "7.9.0",
+    "jsdom": "16.4.0",
     "postcss-calc": "6.0.2"
   }
 }
