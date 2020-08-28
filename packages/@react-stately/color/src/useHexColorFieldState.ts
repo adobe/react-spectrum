@@ -13,7 +13,7 @@
 import {Color} from './Color';
 import {ColorInput, HexColorFieldProps} from '@react-types/color';
 import {NumberFieldState} from '@react-stately/numberfield';
-import {useState} from 'react';
+import {useCallback, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 export interface HexColorFieldState extends NumberFieldState {
@@ -34,9 +34,34 @@ export function useHexColorFieldState(
   } = props;
 
   const [colorInputValue, setColorInputValue] = useControlledState<ColorInput>(value, defaultValue || minValue, onChange);
-  const colorValue = new Color(colorInputValue === 'string'? colorInputValue : colorInputValue.toString('hex'));
+  const colorValue = new Color(typeof colorInputValue === 'string'? colorInputValue : colorInputValue.toString('hex'));
   let initialInputValue = colorValue.toString('hex');
   const [inputValue, setInputValue] = useState(initialInputValue);
+
+  const increment = () => {
+    setColorInputValue((previousValue) => {
+      const color = typeof previousValue === 'string'? new Color(previousValue) : previousValue;
+      const colorString = color.toString('hex').substring(1);
+      const colorNumber = parseInt(colorString, 16);
+
+      const maxColor = typeof maxValue === 'string'? new Color(maxValue) : maxValue;
+      const maxColorString = maxColor.toString('hex').substring(1);
+      const maxColorNumber = parseInt(maxColorString, 16);
+
+      const newValue = `#${Math.min(colorNumber + step, maxColorNumber).toString(16)}`;
+      setInputValue(newValue);
+      return new Color(newValue);
+    });
+  };
+
+  const incrementToMax = useCallback(() => {
+    if (maxValue != null) {
+      const maxColor = typeof maxValue === 'string'? new Color(maxValue) : maxValue;
+      const maxColorString = maxColor.toString('hex').substring(1);
+      setColorInputValue(maxColor);
+      setInputValue(maxColorString);
+    }
+  }, [maxValue, setColorInputValue, setInputValue]);
 
   const setColorValue = (color: Color) => {
     // TO DO: put some validations here
@@ -49,8 +74,8 @@ export function useHexColorFieldState(
     value: null,
     setValue: null,
     inputValue,
-    increment: null,
-    incrementToMax: null,
+    increment,
+    incrementToMax,
     decrement: null,
     decrementToMin: null,
     commitInputValue: null,
