@@ -75,10 +75,6 @@ export function useSliderState(props: SliderProps): SliderState {
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
   const [focusedIndex, setFocusedIndex] = useState<number|undefined>(undefined);
 
-  // We keep some of the dragging state on refs as well, because they are read by event
-  // handlers.  In useDrag1D, the same drag event handler is used for the entire drag motion,
-  // so the state object within their closure is already stale.
-  const realTimeDragging = useRef(false);
   const formatter = useNumberFormatter(formatOptions);
 
   function getValuePercent(value: number) {
@@ -109,26 +105,21 @@ export function useSliderState(props: SliderProps): SliderState {
 
     // Round value to multiple of step, clamp value between min and max
     value = clamp(getRoundedValue(value), thisMin, thisMax);
-
-    setValues(values => {
-      // Do nothing if slider hasn't moved
-      const newValues = replaceIndex(values, index, value);
-      if (props.onChangeEnd && !realTimeDragging.current) {
-        // If not in the middle of dragging, call onChangeEnd
-        props.onChangeEnd(newValues);
-      }
-
-      return newValues;
-    });
+    setValues(values => replaceIndex(values, index, value));
   }
 
   function updateDragging(index: number, dragging: boolean) {
     if (isReadOnly || isDisabled || !isThumbEditable(index)) {
       return;
     }
+
     const newDraggings = replaceIndex(isDraggings, index, dragging);
     setDraggings(newDraggings);
-    realTimeDragging.current = newDraggings.some(Boolean);
+
+    // Call onChangeEnd if no handles are dragging.
+    if (props.onChangeEnd && isDraggings[index] && !newDraggings.some(Boolean)) {
+      props.onChangeEnd(values);
+    }
   }
 
   function getFormattedValue(value: number) {
