@@ -21,7 +21,6 @@ import {useFocus} from '@react-aria/interactions';
 import {useMessageFormatter} from '@react-aria/i18n';
 import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
-import {useLabel} from "@react-aria/label";
 
 
 interface NumberFieldAria {
