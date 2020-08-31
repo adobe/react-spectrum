@@ -37,6 +37,7 @@ export function useHexColorFieldState(
   const colorValue = new Color(typeof colorInputValue === 'string'? colorInputValue : colorInputValue.toString('hex'));
   let initialInputValue = colorValue.toString('hex');
   const [inputValue, setInputValue] = useState(initialInputValue);
+  const [isValid, setIsValid] = useState(isInputValueValid(colorValue, maxValue, minValue));
 
   const increment = () => {
     setColorInputValue((previousValue) => {
@@ -49,8 +50,10 @@ export function useHexColorFieldState(
       const maxColorNumber = parseInt(maxColorString, 16);
 
       const newValue = `#${Math.min(colorNumber + step, maxColorNumber).toString(16).toUpperCase()}`;
+      const newColor = new Color(newValue);
+      updateValidation(newColor);
       setInputValue(newValue);
-      return new Color(newValue);
+      return newColor;
     });
   };
 
@@ -72,9 +75,11 @@ export function useHexColorFieldState(
       const minColorString = minColor.toString('hex').substring(1);
       const minColorNumber = parseInt(minColorString, 16);
 
-      const newValue = `#${Math.max(colorNumber - step, minColorNumber).toString(16).toUpperCase()}`;
+      const newValue = `#${Math.min(colorNumber + step, minColorNumber).toString(16).toUpperCase()}`;
+      const newColor = new Color(newValue);
+      updateValidation(newColor);
       setInputValue(newValue);
-      return new Color(newValue);
+      return newColor;
     });
   };
 
@@ -87,8 +92,19 @@ export function useHexColorFieldState(
   }, [minValue, setColorInputValue, setInputValue]);
 
   const setColorValue = (color: Color) => {
-    // TO DO: put some validations here
+    updateValidation(color);
     setColorInputValue(color);
+    setInputValue(color.toString('hex'));
+  };
+
+  const updateValidation = (value: Color) => {
+    setIsValid(isInputValueValid(value, maxValue, minValue));
+  };
+
+  const commitInputValue = () => {
+    if (!inputValue.length) return;
+    updateValidation(colorValue);
+    setInputValue(colorValue.toString('hex'));
   };
 
   return {
@@ -101,7 +117,26 @@ export function useHexColorFieldState(
     incrementToMax,
     decrement,
     decrementToMin,
-    commitInputValue: null,
-    validationState: null,
+    commitInputValue,
+    validationState: !isValid ? 'invalid' : null,
   };
+}
+
+function isInputValueValid(value: Color, max: ColorInput, min: ColorInput): boolean {
+  if (value === null) return false;
+  const colorString = value.toString('hex').substring(1);
+  const colorNumber = parseInt(colorString, 16);
+
+  const minColor = typeof min === 'string'? new Color(min) : min;
+  const minColorString = minColor.toString('hex').substring(1);
+  const minColorNumber = parseInt(minColorString, 16);
+
+  const maxColor = typeof max === 'string'? new Color(max) : max;
+  const maxColorString = maxColor.toString('hex').substring(1);
+  const maxColorNumber = parseInt(maxColorString, 16);
+
+  return (
+    colorNumber <= maxColorNumber &&
+    colorNumber >= minColorNumber
+  );
 }
