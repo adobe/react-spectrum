@@ -96,6 +96,7 @@ function testComboBoxOpen(combobox, button, listbox, focusedItemIndex) {
 
   expect(document.activeElement).toBe(combobox);
   expect(combobox).toHaveAttribute('aria-activedescendant', items[focusedItemIndex].id);
+  expect(items[focusedItemIndex]).toHaveAttribute('aria-selected', 'true');
 }
 
 describe('ComboBox', function () {
@@ -1900,6 +1901,51 @@ describe('ComboBox', function () {
       expect(groups[0]).not.toHaveAttribute('aria-selected');
 
       expect(() => within(listbox).getAllByRole('img', {hidden: true})).toThrow();
+    });
+  });
+
+  describe('accessibility', function () {
+    // NVDA workaround so that letters are read out when user presses left/right arrow to navigate through what they typed
+    it('clears aria-activedescendant when user presses left/right arrow (NVDA fix)', function () {
+      let {getByRole} = renderComboBox({});
+
+      let combobox = getByRole('combobox');
+
+      act(() => {
+        combobox.focus();
+        userEvent.type(combobox, 'One');
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeVisible();
+      expect(combobox).toHaveAttribute('aria-controls', listbox.id);
+
+      let items = within(listbox).getAllByRole('option');
+      expect(items).toHaveLength(1);
+      expect(items[0]).toHaveTextContent('One');
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'ArrowLeft', code: 37, charCode: 37});
+        jest.runAllTimers();
+      });
+
+      expect(combobox).not.toHaveAttribute('aria-activedescendant');
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        jest.runAllTimers();
+      });
+
+      expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'ArrowRight', code: 39, charCode: 39});
+        jest.runAllTimers();
+      });
+
+      expect(combobox).not.toHaveAttribute('aria-activedescendant');
     });
   });
 });
