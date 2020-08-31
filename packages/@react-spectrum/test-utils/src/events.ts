@@ -11,6 +11,8 @@
  */
 
 import {act, fireEvent} from '@testing-library/react';
+import type {ITypeOpts} from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event';
 
 // Triggers a "press" event on an element.
 // TODO: move to somewhere more common
@@ -24,4 +26,20 @@ export function triggerPress(element, opts = {}) {
   act(() => {
     fireEvent.click(element, {detail: 1, ...opts});
   });
+}
+
+/**
+ * Must **not** be called inside an `act` callback!
+ *
+ * \@testing-library/user-event's `type` helper doesn't call `act` every keystroke.
+ * But we want to run all event handles after every character.
+ * @param el The input element to type into.
+ * @param value The text.
+ */
+export function typeText(el: HTMLElement, value: string, opts?: ITypeOpts) {
+  for (let char of value) {
+    act(() => {
+      userEvent.type(el, char, opts);
+    });
+  }
 }

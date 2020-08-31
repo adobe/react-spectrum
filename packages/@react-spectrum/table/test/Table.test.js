@@ -21,6 +21,7 @@ import React from 'react';
 import {Switch} from '@react-spectrum/switch';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let columns = [
@@ -2009,20 +2010,23 @@ describe('Table', function () {
       expect(dialog).toBeVisible();
 
       let firstName = tree.getByLabelText('First Name');
-      act(() => {userEvent.type(firstName, 'Devon');});
+      act(() => {fireEvent.focus(firstName);});
+      typeText(firstName, 'Devon');
+      act(() => userEvent.tab());
 
       let lastName = tree.getByLabelText('Last Name');
-      act(() => {userEvent.type(lastName, 'Govett');});
+      typeText(lastName, 'Govett');
+      act(() => userEvent.tab());
 
       let birthday = tree.getByLabelText('Birthday');
-      act(() => {userEvent.type(birthday, 'Feb 3');});
+      typeText(birthday, 'Feb 3');
+      act(() => userEvent.tab());
 
       let createButton = tree.getByText('Create');
       act(() => triggerPress(createButton));
+      act(() => {jest.runAllTimers();});
 
       expect(dialog).not.toBeInTheDocument();
-
-      act(() => jest.runAllTimers());
 
       rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(4);
@@ -2168,7 +2172,7 @@ describe('Table', function () {
       expect(dialog).toBeVisible();
 
       let firstName = tree.getByLabelText('First Name');
-      act(() => {userEvent.type(firstName, 'Jessica');});
+      typeText(firstName, 'Jessica');
 
       let saveButton = tree.getByText('Save');
       act(() => triggerPress(saveButton));

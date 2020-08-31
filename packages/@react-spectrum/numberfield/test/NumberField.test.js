@@ -17,7 +17,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
-import userEvent from '@testing-library/user-event';
+import {typeText} from '@react-spectrum/test-utils';
 
 // a note for these tests, text selection is not working in jsdom, so on focus will not select the value already
 // in the numberfield
@@ -87,7 +87,7 @@ describe('NumberField', function () {
   `('$Name handles input change', ({Component}) => {
     let {textField} = renderNumberField(Component, {onChange: onChangeSpy});
 
-    act(() => {userEvent.type(textField, '5');});
+    typeText(textField, '5');
     expect(onChangeSpy).toHaveBeenCalledWith(5);
   });
 
@@ -98,7 +98,7 @@ describe('NumberField', function () {
   `('$Name handles input change with custom step number', ({Component}) => {
     let {textField, incrementButton} = renderNumberField(Component, {onChange: onChangeSpy, step: 5});
 
-    act(() => {userEvent.type(textField, '2');});
+    typeText(textField, '2');
     expect(onChangeSpy).toHaveBeenCalledWith(2);
     onChangeSpy.mockReset();
     triggerPress(incrementButton);
@@ -117,7 +117,7 @@ describe('NumberField', function () {
     expect(container).toHaveAttribute('aria-invalid', 'false');
 
     act(() => {textField.focus();});
-    act(() => {userEvent.type(textField, '-1');});
+    typeText(textField, '-1');
     act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
 
@@ -135,7 +135,7 @@ describe('NumberField', function () {
 
     expect(container).toHaveAttribute('aria-invalid', 'false');
 
-    act(() => {userEvent.type(textField, '1');});
+    typeText(textField, '1');
     expect(onChangeSpy).toHaveBeenCalledWith(1);
 
     expect(container).toHaveAttribute('aria-invalid', 'true');
@@ -323,7 +323,8 @@ describe('NumberField', function () {
     ${'NumberField rounds'} | ${NumberField} | ${'98.543216'} | ${'98.54322'}
   `('$Name can have specified fraction digits', ({Component, value, result}) => {
     let {textField} = renderNumberField(Component, {showStepper: true, formatOptions: {maximumFractionDigits: 5}});
-    act(() => {userEvent.type(textField, value);});
+    typeText(textField, value);
+    act(() => textField.blur());
     expect(textField).toHaveAttribute('value', result);
   });
 
@@ -425,7 +426,7 @@ describe('NumberField', function () {
     let {textField} = renderNumberField(Component, {showStepper: true, defaultValue: 10});
 
     expect(textField).toHaveAttribute('value', '10');
-    act(() => {userEvent.type(textField, '-');});
+    typeText(textField, '-');
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '10');
     act(() => {textField.focus();});
@@ -443,14 +444,10 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     expect(textField).toHaveAttribute('value', '');
-    act(() => {
-      userEvent.type(textField, keystrokes[0]);
-    });
+    typeText(textField, keystrokes[0]);
     expect(onChangeSpy).toHaveBeenCalledWith(4);
     expect(textField).toHaveAttribute('value', expected[0]);
-    act(() => {
-      userEvent.type(textField, keystrokes[1]);
-    });
+    typeText(textField, keystrokes[1]);
     expect(onChangeSpy).toHaveBeenCalledWith(42);
     expect(textField).toHaveAttribute('value', expected[1]);
     act(() => {textField.blur();});
@@ -505,7 +502,7 @@ describe('NumberField', function () {
     let {textField, incrementButton} = renderNumberField(Component, {onChange: onChangeSpy, step: 0.001});
 
     act(() => {textField.focus();});
-    act(() => {userEvent.type(textField, '1');});
+    typeText(textField, '1');
     triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1.001);
     triggerPress(incrementButton);
@@ -528,7 +525,7 @@ describe('NumberField', function () {
     // after we focus, we should have all 0f '100' selected, we can prove this by typing something into the input
     // if it wasn't all selected, then we'd still see some of the old value, instead we want to only see the new value
     act(() => {textField.focus();});
-    act(() => {userEvent.type(textField, '3');});
+    typeText(textField, '3');
     expect(textField).toHaveAttribute('value', '3');
     act(() => {textField.blur();});
   });
