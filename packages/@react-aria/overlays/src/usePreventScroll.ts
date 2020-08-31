@@ -19,12 +19,17 @@ import {useEffect} from 'react';
  */
 
 interface PreventScrollOptions {
-  isOpen?: boolean
+  isOpen?: boolean;
 }
 
-export function usePreventScroll(options? : PreventScrollOptions) {
+//More default options might be needed the in the future
+const defaultOptions: PreventScrollOptions = {
+  isOpen : true
+}
 
-  const {isOpen = false} = options;
+export function usePreventScroll(options : PreventScrollOptions = defaultOptions) {
+
+  const {isOpen} = options;
 
   useEffect(() => {
     let {paddingRight, overflow} = document.body.style;
