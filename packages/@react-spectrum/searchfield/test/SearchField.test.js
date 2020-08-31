@@ -87,7 +87,7 @@ describe('Search', () => {
     expect(clearButton).toBeTruthy();
 
     let input = tree.getByTestId(testId);
-    act(() => {fireEvent.change(input, {target: {value: ''}});});
+    act(() => {userEvent.clear(input);});
     clearButton = tree.queryByLabelText('Clear search');
     expect(clearButton).toBeNull();
 
@@ -108,12 +108,8 @@ describe('Search', () => {
     expect(onSubmit).toBeCalledTimes(1);
     expect(onSubmit).toHaveBeenLastCalledWith(inputText);
 
-    act(() => {
-      fireEvent.change(input, {target: {value: ''}});
-    });
-    act(() => {
-      fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});
-    });
+    act(() => {userEvent.clear(input);});
+    act(() => {fireEvent.keyDown(input, {key: 'Enter', code: 13, charCode: 13});});
     expect(onSubmit).toBeCalledTimes(2);
     expect(onSubmit).toHaveBeenLastCalledWith('');
   });
