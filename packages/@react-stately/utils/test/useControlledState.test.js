@@ -68,8 +68,7 @@ describe('useControlledState tests', function () {
 
     let TestComponent = (props) => {
       let [state, setState] = useControlledState(props.value, props.defaultValue, props.onChange);
-      // TODO should this really have `, []` so that the count that is asserted is 1 ?
-      useEffect(() => renderSpy(), []);
+      useEffect(() => renderSpy(), [state]);
       return <button onClick={() => setState((prev) => prev + 1)} data-testid={state} />;
     };
 
@@ -81,11 +80,12 @@ describe('useControlledState tests', function () {
     let {getByRole, getByTestId} = render(<TestComponentWrapper defaultValue={5} />);
     let button = getByRole('button');
     getByTestId('5');
+    expect(renderSpy).toBeCalledTimes(1);
     actDOM(() =>
       userEvent.click(button)
     );
     getByTestId('6');
-    expect(renderSpy.mock.calls.length).toBe(1);
+    expect(renderSpy).toBeCalledTimes(2);
   });
 
   it('can handle controlled setValue behavior', () => {
