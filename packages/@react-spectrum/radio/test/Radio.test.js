@@ -449,6 +449,9 @@ describe('Radios', function () {
       let radios = getAllByRole('radio');
       let button = getByRole('button');
 
+      // 0. body/nothing is focused
+
+      // 1. tab once to focus button before radiogroup
       act(() => {
         userEvent.tab();
       });
@@ -457,6 +460,7 @@ describe('Radios', function () {
       expect(document.activeElement).not.toBe(radios[1]);
       expect(document.activeElement).not.toBe(radios[2]);
 
+      // 2. tab once again to focus radiogroup (= first radiobutton)
       act(() => {
         userEvent.tab();
       });
@@ -465,6 +469,7 @@ describe('Radios', function () {
       expect(document.activeElement).not.toBe(radios[1]);
       expect(document.activeElement).not.toBe(radios[2]);
 
+      // 3. tab once again to focus the body, and again to wrap back around to the button
       act(() => {
         userEvent.tab();
         userEvent.tab();
