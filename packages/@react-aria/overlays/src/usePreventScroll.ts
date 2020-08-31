@@ -19,13 +19,12 @@ import {useEffect} from 'react';
  */
 
 interface PreventScrollOptions {
-  isOpen?: boolean;
+  isOpen?: boolean
 }
 
-//More default options might be needed the in the future
 const defaultOptions: PreventScrollOptions = {
-  isOpen : true
-}
+  isOpen: true
+};
 
 export function usePreventScroll(options : PreventScrollOptions = defaultOptions) {
 
