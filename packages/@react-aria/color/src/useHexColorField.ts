@@ -28,6 +28,6 @@ export function useHexColorField(
 ): HexColorFieldAria {
   return {
     labelProps: null,
-    inputFieldProps: null,
+    inputFieldProps: null
   };
 }
