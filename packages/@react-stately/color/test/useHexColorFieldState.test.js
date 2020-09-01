@@ -15,6 +15,18 @@ import {Color} from '../src/Color';
 import {useHexColorFieldState} from '../';
 
 describe('useHexColorFieldState tests', function () {
+  it('should be at minimum if no value is provided', function () {
+    let props = {minValue: '#abc'};
+    const {result} = renderHook(() => useHexColorFieldState(props));
+    expect(result.current.colorValue.value).toEqual({
+      red: 170,
+      green: 187,
+      blue: 204,
+      alpha: 1
+    });
+    expect(result.current.inputValue).toBe('#AABBCC');
+  });
+
   it('should accept 6-length hex string', function () {
     let props = {defaultValue: '#aabbcc'};
     const {result} = renderHook(() => useHexColorFieldState(props));
@@ -52,6 +64,14 @@ describe('useHexColorFieldState tests', function () {
     });
     expect(result.current.inputValue).toBe('#AABBCC');
     expect(result.current.validationState).toBe(null);
+  });
+
+  it('should be in invalid state', function () {
+    let props = {defaultValue: 'invalidColor'};
+    const {result} = renderHook(() => useHexColorFieldState(props));
+    expect(result.current.colorValue).toBeUndefined();
+    expect(result.current.inputValue).toBe('');
+    expect(result.current.validationState).toBe('invalid');
   });
 
   it('should increment', function () {
@@ -132,5 +152,18 @@ describe('useHexColorFieldState tests', function () {
       alpha: 1
     });
     expect(result.current.inputValue).toBe('#666666');
+  });
+
+  it('should revert to last valid value', function () {
+    let props = {defaultValue: '#abc', minValue: '#abc'};
+    const {result} = renderHook(() => useHexColorFieldState(props));
+    act(() => result.current.decrement());
+    expect(result.current.colorValue.value).toEqual({
+      red: 170,
+      green: 187,
+      blue: 204,
+      alpha: 1
+    });
+    expect(result.current.inputValue).toBe('#AABBCC');
   });
 });

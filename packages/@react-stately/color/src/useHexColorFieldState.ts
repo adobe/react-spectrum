@@ -34,10 +34,15 @@ export function useHexColorFieldState(
   } = props;
 
   const [colorInputValue, setColorInputValue] = useControlledState<ColorInput>(value, defaultValue || minValue, onChange);
-  const colorValue = new Color(typeof colorInputValue === 'string'? colorInputValue : colorInputValue.toString('hex'));
-  let initialInputValue = colorValue.toString('hex');
-  const [inputValue, setInputValue] = useState(initialInputValue);
-  const [isValid, setIsValid] = useState(isInputValueValid(colorValue, maxValue, minValue));
+  const initialInputIsValid = isInputValueValid(colorInputValue, maxValue, minValue);
+  let colorValue;
+  let initialInputValue;
+  if (initialInputIsValid) {
+    colorValue = typeof colorInputValue === 'string'? new Color(colorInputValue) : colorInputValue;
+    initialInputValue = colorValue.toString('hex');
+  }
+  const [inputValue, setInputValue] = useState(initialInputValue || '');
+  const [isValid, setIsValid] = useState(initialInputIsValid);
 
   const increment = () => {
     setColorInputValue((previousValue) => {
@@ -122,10 +127,13 @@ export function useHexColorFieldState(
   };
 }
 
-function isInputValueValid(value: Color, max: ColorInput, min: ColorInput): boolean {
-  if (value === null) return false;
-  const colorString = value.toString('hex').substring(1);
-  const colorNumber = parseInt(colorString, 16);
+function isInputValueValid(value: ColorInput, max: ColorInput, min: ColorInput): boolean {
+  let colorNumber;
+  try {
+    const color = typeof value === 'string'? new Color(value) : value;
+    const colorString = color.toString('hex').substring(1);
+    colorNumber = parseInt(colorString, 16);
+  } catch { return false }
 
   const minColor = typeof min === 'string'? new Color(min) : min;
   const minColorString = minColor.toString('hex').substring(1);
