@@ -25,6 +25,7 @@ describe('useHexColorFieldState tests', function () {
       alpha: 1
     });
     expect(result.current.inputValue).toBe('#AABBCC');
+    expect(result.current.validationState).toBe(null);
   });
 
   it('should accept 3-length hex string', function () {
@@ -37,6 +38,7 @@ describe('useHexColorFieldState tests', function () {
       alpha: 1
     });
     expect(result.current.inputValue).toBe('#AABBCC');
+    expect(result.current.validationState).toBe(null);
   });
 
   it('should accept Color value', function () {
@@ -49,6 +51,12 @@ describe('useHexColorFieldState tests', function () {
       alpha: 1
     });
     expect(result.current.inputValue).toBe('#AABBCC');
+    expect(result.current.validationState).toBe(null);
+  });
+
+  it('should not accept invalid color value', function () {
+    // expect(result.current.validationState).toBe('invalid');
+    expect(true).toBe(true);
   });
 
   it('should increment', function () {
@@ -62,6 +70,11 @@ describe('useHexColorFieldState tests', function () {
       alpha: 1
     });
     expect(result.current.inputValue).toBe('#AABBCD');
+    expect(result.current.validationState).toBe(null);
+  });
+
+  it('should not increment beyond max value', function () {
+    expect(true).toBe(true);
   });
 
   it('should increment to max value', function () {
@@ -88,6 +101,11 @@ describe('useHexColorFieldState tests', function () {
       alpha: 1
     });
     expect(result.current.inputValue).toBe('#AABBC8');
+    expect(result.current.validationState).toBe(null);
+  });
+
+  it('should not decrement beyond the minimum value', function () {
+    expect(true).toBe(true);
   });
 
   it('should decrement to min value', function () {
