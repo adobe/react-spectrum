@@ -382,14 +382,17 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
   getKeyPageAbove(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
-    let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
-    while (layoutInfo && layoutInfo.rect.y > pageY && layoutInfo) {
-      let keyAbove = this.getKeyAbove(layoutInfo.key);
-      layoutInfo = this.getLayoutInfo(keyAbove);
-    }
 
     if (layoutInfo) {
-      return layoutInfo.key;
+      let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
+      while (layoutInfo && layoutInfo.rect.y > pageY && layoutInfo) {
+        let keyAbove = this.getKeyAbove(layoutInfo.key);
+        layoutInfo = this.getLayoutInfo(keyAbove);
+      }
+
+      if (layoutInfo) {
+        return layoutInfo.key;
+      }
     }
 
     return this.getFirstKey();
@@ -397,14 +400,17 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
 
   getKeyPageBelow(key: Key) {
     let layoutInfo = this.getLayoutInfo(key);
-    let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
-    while (layoutInfo && layoutInfo.rect.y < pageY) {
-      let keyBelow = this.getKeyBelow(layoutInfo.key);
-      layoutInfo = this.getLayoutInfo(keyBelow);
-    }
 
     if (layoutInfo) {
-      return layoutInfo.key;
+      let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
+      while (layoutInfo && layoutInfo.rect.y < pageY) {
+        let keyBelow = this.getKeyBelow(layoutInfo.key);
+        layoutInfo = this.getLayoutInfo(keyBelow);
+      }
+
+      if (layoutInfo) {
+        return layoutInfo.key;
+      }
     }
 
     return this.getLastKey();

@@ -81,6 +81,9 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
       <div
         {...mergeProps(optionProps, shouldFocusOnHover ? hoverProps : {})}
         ref={ref}
+        // aria 1.2 requires the focused combobox item to be aria-selected=true in order for Voiceover to announce it.
+        // Still has issues with combobox with sections, will need to file an issue with apple
+        aria-selected={(shouldUseVirtualFocus && isFocused) || optionProps['aria-selected']}
         className={classNames(
           styles,
           'spectrum-Menu-item',

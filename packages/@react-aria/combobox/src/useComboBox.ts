@@ -50,7 +50,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     onCustomValue,
     isReadOnly,
     isDisabled,
-    isMobile
+    isMobile,
+    shouldSelectOnBlur = true
   } = props;
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
@@ -63,6 +64,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   let onChange = (val) => {
     state.setInputValue(val);
+    state.selectionManager.setFocusedKey(null);
 
     if (menuTrigger !== 'manual') {
       state.open();
@@ -108,6 +110,12 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       case 'ArrowUp':
         state.open('last');
         break;
+      case 'ArrowLeft':
+        state.selectionManager.setFocusedKey(null);
+        break;
+      case 'ArrowRight':
+        state.selectionManager.setFocusedKey(null);
+        break;
     }
   };
 
@@ -126,7 +134,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
     state.setFocused(false);
 
-    if (focusedItem) {
+    if (focusedItem && shouldSelectOnBlur) {
       state.setSelectedKey(state.selectionManager.focusedKey);
     } else if (allowsCustomValue && !state.selectedKey && onCustomValue) {
       onCustomValue(state.inputValue);
@@ -193,25 +201,17 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
-  // Focus first item if filtered collection no longer contains original focused item (aka user typing to filter collection)
-  useEffect(() => {
-    // Only set a focused key if one existed previously, don't want to focus something by default if allowsCustomValue = true
-    if ((!allowsCustomValue || state.selectionManager.focusedKey) && state.inputValue !== '' && !state.collection.getItem(state.selectionManager.focusedKey)) {
-      state.selectionManager.setFocusedKey(layout.getFirstKey());
-    }
-  }, [state.selectionManager, state.collection, layout, allowsCustomValue, state.inputValue]);
-
-  // Clear focused key if user clears textfield to prevent accidental selection on blur
-  // Also clear focused key if allowsCustomValue is true, there isn't a selected key, and there isn't a focusStrategy set (indicative of menu being opened via arrow up/down)
-  // Specifically for case where menu is closed and user copy pastes a matching value into input field then deletes a character
   let lastValue = useRef(state.inputValue);
   useEffect(() => {
-    if ((state.inputValue === '' && lastValue.current !== state.inputValue) || (allowsCustomValue && !state.selectedKey && !state.focusStrategy)) {
-      state.selectionManager.setFocusedKey(null);
+    // Close combobox menu if user clears input text unless trigger is focus (as per design)
+    if (lastValue.current !== state.inputValue) {
+      if (state.inputValue === '' && menuTrigger !== 'focus') {
+        state.close();
+      }
     }
 
     lastValue.current = state.inputValue;
-  }, [state.selectionManager, state.inputValue, allowsCustomValue, state.focusStrategy, state.selectedKey]);
+  }, [state, allowsCustomValue, menuTrigger, layout]);
 
   // Refocus input when mobile tray closes for any reason
   let prevOpenState = useRef(state.isOpen);

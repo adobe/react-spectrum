@@ -262,9 +262,19 @@ storiesOf('ComboBox', module)
     () => render({direction: 'top'})
   )
   .add(
+    'shouldSelectOnBlur: false',
+    () => render({shouldSelectOnBlur: false})
+  )
+  .add(
     'allowsCustomValue: true',
     () => (
       <CustomValueComboBox allowsCustomValue selectedKey="2" />
+    )
+  )
+  .add(
+    'allowsCustomValue: true, shouldSelectOnBlur: false',
+    () => (
+      <CustomValueComboBox allowsCustomValue shouldSelectOnBlur={false} selectedKey="2" />
     )
   )
   .add(
@@ -333,7 +343,7 @@ storiesOf('ComboBox', module)
     'in small div',
     () => (
       <Flex width="size-500">
-        <ComboBox {...actions} >
+        <ComboBox aria-label="ComboBox" {...actions} >
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
             <Copy size="S" />
