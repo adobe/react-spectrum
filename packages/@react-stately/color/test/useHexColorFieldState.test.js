@@ -54,11 +54,6 @@ describe('useHexColorFieldState tests', function () {
     expect(result.current.validationState).toBe(null);
   });
 
-  it('should not accept invalid color value', function () {
-    // expect(result.current.validationState).toBe('invalid');
-    expect(true).toBe(true);
-  });
-
   it('should increment', function () {
     let props = {defaultValue: new Color('#aabbcc')};
     const {result} = renderHook(() => useHexColorFieldState(props));
@@ -73,8 +68,17 @@ describe('useHexColorFieldState tests', function () {
     expect(result.current.validationState).toBe(null);
   });
 
-  it('should not increment beyond max value', function () {
-    expect(true).toBe(true);
+  it('should not increment beyond the maximum value', function () {
+    let props = {defaultValue: '#abc', maxValue: '#abc'};
+    const {result} = renderHook(() => useHexColorFieldState(props));
+    act(() => result.current.increment());
+    expect(result.current.colorValue.value).toEqual({
+      red: 170,
+      green: 187,
+      blue: 204,
+      alpha: 1
+    });
+    expect(result.current.inputValue).toBe('#AABBCC');
   });
 
   it('should increment to max value', function () {
@@ -105,7 +109,16 @@ describe('useHexColorFieldState tests', function () {
   });
 
   it('should not decrement beyond the minimum value', function () {
-    expect(true).toBe(true);
+    let props = {defaultValue: '#abc', minValue: '#abc'};
+    const {result} = renderHook(() => useHexColorFieldState(props));
+    act(() => result.current.decrement());
+    expect(result.current.colorValue.value).toEqual({
+      red: 170,
+      green: 187,
+      blue: 204,
+      alpha: 1
+    });
+    expect(result.current.inputValue).toBe('#AABBCC');
   });
 
   it('should decrement to min value', function () {
