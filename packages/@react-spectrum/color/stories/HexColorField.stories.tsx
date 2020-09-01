@@ -21,32 +21,32 @@ storiesOf('HexColorField', module)
   )
   .add(
     'has default value',
-    () => render({ defaultValue: '#ffffff' })
+    () => render({defaultValue: '#ffffff'})
   )
   .add(
     'isQuiet',
-    () => render({ isQuiet: true })
+    () => render({isQuiet: true})
   )
   .add(
     'isDisabled',
-    () => render({ isDisabled: true })
+    () => render({isDisabled: true})
   )
   .add(
     'validationState valid',
-    () => render({ validationState: 'valid' })
+    () => render({validationState: 'valid'})
   )
   .add(
     'validationState invalid',
-    () => render({ validationState: 'invalid' })
+    () => render({validationState: 'invalid'})
   )
   .add(
     'with label',
-    () => render({ label: 'Hex Color' })
+    () => render({label: 'Hex Color'})
   );
 
 function render(props: any = {}) {
   return (
     <HexColorField
-      {...props}/>
+      {...props} />
   );
 }

@@ -32,6 +32,11 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.6.2",
+    "@react-aria/color": "^3.0.0-alpha.1",
+    "@react-aria/focus": "^3.1.0",
+    "@react-spectrum/textfield": "^3.1.0",
+    "@react-spectrum/utils": "^3.1.0",
+    "@react-stately/color": "^3.0.0-alpha.1",
     "@react-types/color": "^3.0.0-alpha.1"
   },
   "devDependencies": {
