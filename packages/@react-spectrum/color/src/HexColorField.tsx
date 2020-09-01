@@ -33,8 +33,8 @@ function HexColorField(props: SpectrumHexColorFieldProps, ref: RefObject<HTMLDiv
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
   let {
     labelProps,
-    inputFieldProps,
-  } = useHexColorField(props, state);
+    inputFieldProps
+  } = useHexColorField(props, state, inputRef);
 
   let className = classNames(
     inputgroupStyles,

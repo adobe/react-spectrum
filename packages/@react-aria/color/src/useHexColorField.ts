@@ -12,14 +12,20 @@
 
 import {AriaHexColorFieldProps} from '@react-types/color';
 import {HexColorFieldState} from '@react-stately/color';
-import {HTMLAttributes, LabelHTMLAttributes} from 'react';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 
 interface HexColorFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   inputFieldProps: HTMLAttributes<HTMLInputElement>
 }
 
-export function useHexColorField(props: AriaHexColorFieldProps, state: HexColorFieldState): HexColorFieldAria {
+export function useHexColorField(
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  props: AriaHexColorFieldProps,
+  state: HexColorFieldState,
+  ref: RefObject<HTMLInputElement>
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+): HexColorFieldAria {
   return {
     labelProps: null,
     inputFieldProps: null,

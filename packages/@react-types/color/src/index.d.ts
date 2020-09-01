@@ -21,7 +21,7 @@ import {
   StyleProps,
   TextInputBase,
   TextInputDOMProps,
-  Validation,
+  Validation
 } from '@react-types/shared';
 
 /** A list of supported color formats. */
@@ -33,17 +33,17 @@ export type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | '
 export type ColorInput = string | Color;
 
 export interface Color {
-  /** Converts the color to a string in the given format */
+  /** Converts the color to a string in the given format. */
   toString(format: ColorFormat): string,
 
-  /** Converts the color to the given color format, and returns a new Color object */
+  /** Converts the color to the given color format, and returns a new Color object. */
   toFormat(format: ColorFormat): Color,
 
   /** 
    * Gets the numeric value for a given channel.
    * Throws an error if the channel is unsupported in the current color format.
    */
-  getChannelValue(channel: ColorChannel): number,
+  getChannelValue(channel: ColorChannel): number
 }
 
 export interface HexColorFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {

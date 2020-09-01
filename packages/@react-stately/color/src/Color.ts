@@ -11,9 +11,9 @@
  */
 
 import {
-  Color as ColorType,
   ColorChannel,
-  ColorFormat
+  ColorFormat,
+  Color as ColorType
 } from '@react-types/color';
 
 export class Color implements ColorType {
