@@ -288,7 +288,7 @@ describe('ActionGroup', function () {
     let buttonBefore = tree.getByLabelText('ButtonBefore');
     let buttonAfter = tree.getByLabelText('ButtonAfter');
     let buttons = tree.getAllByRole('radio');
-    buttonBefore.focus();
+    act(() => {buttonBefore.focus();});
 
     act(() => userEvent.tab());
     expect(document.activeElement).toBe(buttons[0]);

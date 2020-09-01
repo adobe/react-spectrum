@@ -24,10 +24,10 @@
     "@react-types/slider": "3.0.0-alpha.0"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
+    "react": "^17.0.0-rc.1"
   },
   "devDependencies": {
-    "react": "^16.8.0"
+    "react": "^17.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"

@@ -9,7 +9,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "peerDependencies": {
-    "react": "^16.8.0"
+    "react": "^17.0.0-rc.1"
   },
   "publishConfig": {
     "access": "public"
