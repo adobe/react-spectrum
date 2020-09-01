@@ -16,7 +16,7 @@ import {Popover} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 import V2Popover from '@react/react-spectrum/Popover';
 
 function PopoverWithDialog({children}) {
@@ -67,9 +67,13 @@ describe('Popover', function () {
         jest.runAllTimers();
       });
       if (Name === 'v3') {
+        // wait for animation
         await waitFor(() => {
-          expect(dialog).toBeVisible();
-        }); // wait for animation
+          expect(getByRole('dialog')).toBeVisible();
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
       }
       expect(dialog).toHaveAttribute('tabIndex', expectedTabIndex);
     });
@@ -96,9 +100,13 @@ describe('Popover', function () {
         expect(document.activeElement).toBe(input1);
       } else {
         let dialog = getByRole('dialog');
+        // wait for animation
         await waitFor(() => {
           expect(dialog).toBeVisible();
-        }); // wait for animation
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
         expect(document.activeElement).toBe(dialog);
       }
     });
@@ -120,10 +128,15 @@ describe('Popover', function () {
       let dialog = getByRole('dialog');
 
       if (Name === 'v3') {
+        // wait for animation
         await waitFor(() => {
-          expect(dialog).toBeVisible();
-        }); // wait for animation
+          expect(getByRole('dialog')).toBeVisible();
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
       }
+
       expect(document.activeElement).toBe(dialog);
     });
 
@@ -145,9 +158,13 @@ describe('Popover', function () {
       });
 
       if (Name === 'v3') {
+        // wait for animation
         await waitFor(() => {
           expect(getByRole('dialog')).toBeVisible();
-        }); // wait for animation
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
       }
 
       let input2 = getByTestId('input2');
@@ -173,25 +190,32 @@ describe('Popover', function () {
       let dialog = getByRole('dialog');
 
       if (Name === 'v3') {
+        // wait for animation
         await waitFor(() => {
           expect(dialog).toBeVisible();
-        }); // wait for animation
+        });
+        act(() => {
+          jest.runAllTimers();
+        });
       }
 
       let input1 = getByTestId('input1');
       let input2 = getByTestId('input2');
       expect(document.activeElement).toBe(dialog);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input1);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input2);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-      fireEvent.keyUp(document.activeElement, {key: 'Tab'});
+      act(() => {
+        userEvent.tab();
+      });
       expect(document.activeElement).toBe(input1);
     });
   });
@@ -207,12 +231,20 @@ describe('Popover', function () {
       act(() => {
         jest.runAllTimers();
       });
+
       let popover = getByTestId('popover');
+      // wait for animation
       await waitFor(() => {
         expect(popover).toBeVisible();
-      }); // wait for animation
-      fireEvent.keyDown(popover, {key: 'Escape'});
-      fireEvent.keyUp(popover, {key: 'Escape'});
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      act(() => {
+        fireEvent.keyDown(popover, {key: 'Escape'});
+        fireEvent.keyUp(popover, {key: 'Escape'});
+      });
       expect(onClose).toHaveBeenCalledTimes(1);
     });
 
@@ -227,10 +259,17 @@ describe('Popover', function () {
         jest.runAllTimers();
       });
 
+      // wait for animation
       await waitFor(() => {
         expect(getByTestId('popover')).toBeVisible();
-      }); // wait for animation
-      triggerPress(document.body);
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      act(() => {
+        userEvent.click(document.body);
+      });
       expect(onClose).toHaveBeenCalledTimes(1);
     });
 
@@ -252,11 +291,17 @@ describe('Popover', function () {
       let popover = getByTestId('popover');
       expect(document.activeElement).toBe(button);
 
+      // wait for animation
       await waitFor(() => {
         expect(popover).toBeVisible();
-      }); // wait for animation
+      });
+      act(() => {
+        jest.runAllTimers();
+      });
 
-      button.blur();
+      act(() => {
+        button.blur();
+      });
       expect(onClose).toHaveBeenCalledTimes(1);
     });
   });

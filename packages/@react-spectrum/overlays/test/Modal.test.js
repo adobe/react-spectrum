@@ -10,13 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render, waitFor} from '@testing-library/react';
+import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import {Modal} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 
 describe('Modal', function () {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   it('should render nothing if isOpen is not set', function () {
     let {getByRole} = render(
       <Provider theme={theme}>
@@ -41,9 +50,13 @@ describe('Modal', function () {
       </Provider>
     );
 
+    // wait for animation
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
-    }); // wait for animation
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = getByRole('dialog');
     expect(dialog).toBeVisible();
@@ -60,12 +73,18 @@ describe('Modal', function () {
       </Provider>
     );
 
+    // wait for animation
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
-    }); // wait for animation
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = getByRole('dialog');
-    fireEvent.keyDown(dialog, {key: 'Escape'});
+    act(() => {
+      fireEvent.keyDown(dialog, {key: 'Escape'});
+    });
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
@@ -79,9 +98,13 @@ describe('Modal', function () {
       </Provider>
     );
 
+    // wait for animation
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
-    }); // wait for animation
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
 
     fireEvent.mouseUp(document.body);
     expect(onClose).toHaveBeenCalledTimes(0);
@@ -97,12 +120,17 @@ describe('Modal', function () {
       </Provider>
     );
 
+    // wait for animation
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
-    }); // wait for animation
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
 
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
+    act(() => {
+      userEvent.click(document.body);
+    });
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

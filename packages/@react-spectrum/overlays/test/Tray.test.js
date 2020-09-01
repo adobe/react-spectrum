@@ -10,14 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import {Dialog} from '@react-spectrum/dialog';
-import {fireEvent, render, waitFor} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tray} from '../';
+import userEvent from '@testing-library/user-event';
 
 describe('Tray', function () {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   it('should render nothing if isOpen is not set', function () {
     let {getByRole} = render(
       <Provider theme={theme}>
@@ -57,12 +66,18 @@ describe('Tray', function () {
       </Provider>
     );
 
+    // wait for animation
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
-    }); // wait for animation
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = await getByRole('dialog');
-    fireEvent.keyDown(dialog, {key: 'Escape'});
+    act(() => {
+      fireEvent.keyDown(dialog, {key: 'Escape'});
+    });
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
@@ -76,12 +91,17 @@ describe('Tray', function () {
       </Provider>
     );
 
+    // wait for animation
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
-    }); // wait for animation
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
 
-    fireEvent.mouseDown(document.body);
-    fireEvent.mouseUp(document.body);
+    act(() => {
+      userEvent.click(document.body);
+    });
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
@@ -95,14 +115,24 @@ describe('Tray', function () {
       </Provider>
     );
 
+    // wait for animation
     await waitFor(() => {
       expect(getByRole('dialog')).toBeVisible();
-    }); // wait for animation
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
 
     let dialog = await getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
 
-    dialog.blur();
-    expect(onClose).toHaveBeenCalledTimes(1);
+    act(() => {
+      dialog.blur();
+    });
+    act(() => {
+      jest.runAllTimers();
+    });
+    // 2 due to the Safari iOS Voiceover workaround in useDialog, which blurs & refocuses
+    expect(onClose).toHaveBeenCalledTimes(2);
   });
 });
