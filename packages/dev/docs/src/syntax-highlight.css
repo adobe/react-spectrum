@@ -145,12 +145,14 @@
 }
 
 :global(.storage.type),
+:global(.storage.modifier),
 :global(.constant.color),
 :global(.support.property-value.css) {
   color: var(--hljs-keyword-color);
 }
 
-:global(.entity.function) {
+:global(.entity.function),
+:global(.support.function) {
   color: var(--hljs-function-color);
 }
 
