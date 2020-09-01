@@ -88,16 +88,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
 
   let comboBoxAutoFocus;
   // Focus first/last item on menu open if focusStategy is set (done by up/down arrows)
-  // Otherwise if allowsCustomValue is true, only autofocus if there is a selected item
-  // If allowsCustomValue is false, autofocus first item/selectedItem
   if (state.focusStrategy) {
     comboBoxAutoFocus = state.focusStrategy;
-  } else if (props.allowsCustomValue) {
-    if (state.selectedKey) {
-      comboBoxAutoFocus = true;
-    }
-  } else {
-    comboBoxAutoFocus = 'first';
   }
 
   let listbox = (
