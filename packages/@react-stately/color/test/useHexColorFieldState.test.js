@@ -166,4 +166,17 @@ describe('useHexColorFieldState tests', function () {
     });
     expect(result.current.inputValue).toBe('#AABBCC');
   });
+
+  it('should update colorValue', function () {
+    let props = {defaultValue: '#abc', minValue: '#abc'};
+    const {result} = renderHook(() => useHexColorFieldState(props));
+    act(() => result.current.setColorValue(new Color('#cba')));
+    expect(result.current.colorValue.value).toEqual({
+      red: 204,
+      green: 187,
+      blue: 170,
+      alpha: 1
+    });
+    expect(result.current.inputValue).toBe('#CCBBAA');
+  });
 });
