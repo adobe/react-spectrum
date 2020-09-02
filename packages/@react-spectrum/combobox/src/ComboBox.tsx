@@ -11,7 +11,7 @@
  */
 
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, unwrapDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
+import {classNames, unwrapDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRefValue} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
@@ -75,7 +75,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     state
   );
 
-  let isMobile = useMediaQuery('(max-width: 700px)');
+  let isMobile = useIsMobileDevice();
   let {overlayProps, placement} = useOverlayPosition({
     targetRef: unwrapDOMRef(triggerRef),
     overlayRef: unwrapDOMRef(popoverRef),
@@ -122,7 +122,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       let inputWidth = inputRef.current.offsetWidth;
       setMenuWidth(buttonWidth + inputWidth);
     }
-  }, [scale, isMobile, triggerRef, inputRef, state.selectedKey]);
+  }, [scale, isMobile, triggerRef, inputRef]);
 
   let overlay;
   if (isMobile) {

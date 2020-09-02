@@ -201,7 +201,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
 
     lastValue.current = state.inputValue;
-  }, [state, allowsCustomValue, menuTrigger, layout]);
+  }, [state, menuTrigger]);
 
   let triggerLabelProps = useLabels({
     id: menuTriggerProps.id,
