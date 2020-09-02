@@ -55,9 +55,9 @@ export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: Tooltip
       }
     };
     if (state.isOpen) {
-      document.addEventListener('keydown', onKeyDown);
+      document.addEventListener('keydown', onKeyDown, true);
       return () => {
-        document.removeEventListener('keydown', onKeyDown);
+        document.removeEventListener('keydown', onKeyDown, true);
       };
     }
   }, [ref, state]);

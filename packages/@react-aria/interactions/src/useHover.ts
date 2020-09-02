@@ -59,9 +59,9 @@ function setupGlobalTouchEvents() {
   }
 
   if (typeof PointerEvent !== 'undefined') {
-    document.addEventListener('pointerup', handleGlobalPointerEvent);
+    document.addEventListener('pointerup', handleGlobalPointerEvent, true);
   } else {
-    document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
+    document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents, true);
   }
 
   hoverCount++;
