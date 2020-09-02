@@ -20,7 +20,7 @@ describe('useMenuTrigger', function () {
   let setFocusStrategy = jest.fn();
 
   let renderMenuTriggerHook = (menuTriggerProps, menuTriggerState, ref) => {
-    let {result} = renderHook(() => useMenuTrigger(menuTriggerProps, menuTriggerState, ref));
+    let {result} = renderHook(() => useMenuTrigger(menuTriggerProps, menuTriggerState, ref || React.createRef()));
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     return result.current;
   };
@@ -93,7 +93,7 @@ describe('useMenuTrigger', function () {
     let preventDefault = jest.fn();
     let stopPropagation = jest.fn();
 
-    let {menuTriggerProps} = renderMenuTriggerHook(props, state, {current: true});
+    let {menuTriggerProps} = renderMenuTriggerHook(props, state, {current: {}});
     expect(typeof menuTriggerProps.onKeyDown).toBe('function');
 
     // doesn't trigger event if isDefaultPrevented returns true

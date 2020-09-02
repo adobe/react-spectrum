@@ -78,7 +78,7 @@ storiesOf('Textfield', module)
     () => render({label: null, 'aria-label': 'Street address'}, false)
   )
   .add('custom width',
-    () => render({icon: <Info />, validationState: 'invalid', width: '300px'})
+    () => render({icon: <Info />, validationState: 'invalid', width: 275})
   );
 
 // allow some stories where disabled styles probably won't affect anything to turn that off, mostly to reduce clutter

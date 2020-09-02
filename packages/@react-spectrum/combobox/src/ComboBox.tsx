@@ -12,7 +12,7 @@
 
 import {AriaComboBoxProps, useComboBox} from '@react-aria/combobox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
-import {classNames, unwrapDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
+import {classNames, unwrapDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
 import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRefValue} from '@react-types/shared';
@@ -54,7 +54,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     direction = 'bottom'
   } = props;
 
-  let isMobile = useMediaQuery('(max-width: 700px)');
+  let isMobile = useIsMobileDevice();
   let {hoverProps, isHovered} = useHover(props);
   let {styleProps} = useStyleProps(props);
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>();
@@ -86,7 +86,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     scrollRef: listboxRef,
     placement: `${direction} end` as Placement,
     shouldFlip: shouldFlip,
-    isOpen: state.isOpen
+    isOpen: state.isOpen && !isMobile,
+    onClose: state.close
   });
 
   let comboBoxAutoFocus;
@@ -137,7 +138,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       let inputWidth = inputRef.current.offsetWidth;
       setMenuWidth(buttonWidth + inputWidth);
     }
-  }, [scale, isMobile, triggerRef, inputRef, state.selectedKey]);
+  }, [scale, isMobile, triggerRef, inputRef]);
 
   let overlay;
   if (isMobile) {

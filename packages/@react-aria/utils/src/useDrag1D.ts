@@ -50,16 +50,21 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
   let dragging = useRef(false);
   let prevPosition = useRef(0);
 
+  // Keep track of the current handlers in a ref so that the events can access them.
+  let handlers = useRef({onPositionChange, onDrag});
+  handlers.current.onDrag = onDrag;
+  handlers.current.onPositionChange = onPositionChange;
+
   let onMouseDragged = (e: MouseEvent) => {
     e.preventDefault();
     let nextOffset = getNextOffset(e);
     if (!dragging.current) {
       dragging.current = true;
-      if (onDrag) {
-        onDrag(true);
+      if (handlers.current.onDrag) {
+        handlers.current.onDrag(true);
       }
-      if (onPositionChange) {
-        onPositionChange(nextOffset);
+      if (handlers.current.onPositionChange) {
+        handlers.current.onPositionChange(nextOffset);
       }
     }
     if (prevPosition.current === nextOffset) {
@@ -75,11 +80,11 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
     const target = e.target as HTMLElement;
     dragging.current = false;
     let nextOffset = getNextOffset(e);
-    if (onDrag) {
-      onDrag(false);
+    if (handlers.current.onDrag) {
+      handlers.current.onDrag(false);
     }
-    if (onPositionChange) {
-      onPositionChange(nextOffset);
+    if (handlers.current.onPositionChange) {
+      handlers.current.onPositionChange(nextOffset);
     }
 
     draggingElements.splice(draggingElements.indexOf(target), 1);
@@ -89,7 +94,7 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
 
   let onMouseDown = (e: React.MouseEvent<HTMLElement>) => {
     const target = e.currentTarget;
-    // If we're already handling dragging on a descendant with useDrag1D, then 
+    // If we're already handling dragging on a descendant with useDrag1D, then
     // we don't want to handle the drag motion on this target as well.
     if (draggingElements.some(elt => target.contains(elt))) {
       return;
