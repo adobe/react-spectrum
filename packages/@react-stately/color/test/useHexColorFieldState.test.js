@@ -66,6 +66,24 @@ describe('useHexColorFieldState tests', function () {
     expect(result.current.validationState).toBe(null);
   });
 
+  it('should have a controlled value', function () {
+    const onChangeSpy = jest.fn();
+    let props = {value: new Color('#aabbcc'), onChange: onChangeSpy};
+    const {result} = renderHook(() => useHexColorFieldState(props));
+
+    const newColor = new Color('#ccbbaa');
+    act(() => result.current.setColorValue(newColor));
+    expect(onChangeSpy).toHaveBeenCalledWith(newColor);
+    expect(result.current.colorValue.value).toEqual({
+      red: 170,
+      green: 187,
+      blue: 204,
+      alpha: 1
+    });
+    expect(result.current.inputValue).toBe('#CCBBAA');
+    expect(result.current.validationState).toBe(null);
+  });
+
   it('should be in invalid state', function () {
     let props = {defaultValue: 'invalidColor'};
     const {result} = renderHook(() => useHexColorFieldState(props));
