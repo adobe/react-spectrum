@@ -58,12 +58,11 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
       isDisabled={isDisabled} />
   );
 
-  // SearchField is essentially a controlled TextField so we filter out prop.value and prop.defaultValue in favor of state.value
   return (
     <TextFieldBase
       {...otherProps}
       labelProps={labelProps}
-      inputProps={{...inputProps, defaultValue: undefined}}
+      inputProps={inputProps}
       UNSAFE_className={
         classNames(
           styles,
