@@ -1,0 +1,87 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+---
+category: Concepts
+keywords: [ssr, server side rendering, aria, next.js, gatsby]
+---
+
+# Server Side Rendering
+
+This page describes how to use React Aria with server side rendering, including frameworks like Next.js and Gatsby.
+
+## Introduction
+
+**Server side rendering**, or SSR, is the process of rendering components to HTML on the server, rather than rendering them only on the client. **Static rendering** is a similar approach, but pre-renders pages to HTML at build time rather than on each request. These techniques can help improve perceived loading performance and SEO. React Aria supports both of these approaches, either through a custom implementation or via frameworks like [Next.js](https://nextjs.org) and [Gatsby](https://www.gatsbyjs.com).
+
+## SSR Provider
+
+In React, SSR works by rendering the component to HTML on the server, and then **hydrating** the DOM tree with events and state on the client. This enables applications to both render complete HTML in advance for performance and SEO, but also support rich interactions on the client.
+
+In order to make components using React Aria work with SSR, you will need to wrap your application in an [SSRProvider](SSRProvider.html). This signals to all nested React Aria hooks that they are being rendered in an SSR context.
+
+```tsx
+import {SSRProvider} from '@react-aria/ssr';
+
+<SSRProvider>
+  <App />
+</SSRProvider>
+```
+
+Wrapping your application in an `SSRProvider` helps ensure that the HTML generated on the server matches the DOM structure hydrated on the client. Specifically, it affects React Aria’s automatic id generation, and you can also use this information to influence rendering in your own components.
+
+## Automatic ID Generation
+
+When using SSR, only a single copy of React Aria can be on the page at a time. This is in contrast to client-side rendering, where multiple copies from different parts of an app can coexist. Internally, many components rely on auto-generated ids to link related elements via ARIA attributes. These ids typically use a randomly generated seed plus an incrementing counter to ensure uniqueness even when multiple instances of React Aria are on the page. With SSR, we need to ensure that these ids are consistent between the server and client.  This means the counter resets on every request, and we use a consistent seed. Due to this, multiple copies of React Aria cannot be supported because the auto-generated ids would conflict.
+
+If you use React Aria’s [useId](useId.html) hook in your own components, `SSRProvider` will ensure the ids are consistent when server rendered. No additional changes in each component are required to enable
+SSR support.
+
+## SSR specific rendering
+
+You can also use the [useIsSSR](useIsSSR.html) hook in your own components to determine whether they are running in an SSR context. This hook returns `true` both during server rendering and hydration, but updates immediately to `false` after hydration. You can use this to delay browser-specific code like media queries and feature detection until after the client has hydrated.
+
+```tsx
+import {useIsSSR} from '@react-aria/ssr';
+
+function MyComponent() {
+  let isSSR = useIsSSR();
+  return <span>{isSSR ? 'Server' : 'Client'}</span>
+}
+```
+
+## Locale selection
+
+When using server side rendering, the application should be wrapped in an [I18nProvider](I18nProvider.html) with an explicit `locale` prop, rather than relying on automatic locale selection. This ensures that the locale of the content rendered on the server matches the locale expected by the browser. The `Accept-Language` HTTP header, which the browser sends to the server with the user’s desired language, could be used to implement this. You could also use an in-application setting for this if available, or locale specific URLs, for example. In addition to passing the `locale` prop to the `I18nProvider`, you should also ensure the `lang` and `dir` attributes are set on the `<html>` element for your page.
+
+```tsx
+import {SSRProvider} from '@react-aria/ssr';
+import {I18nProvider, useLocale} from '@react-aria/i18n';
+
+function App() {
+  let {locale, direction} = useLocale();
+
+  return (
+    <html lang={locale} dir={direction}>
+      {/* your app here */}
+    </html>
+  );
+}
+
+<SSRProvider>
+  <I18nProvider locale={locale}>
+    <App />
+  </I18nProvider>
+</SSRProvider>
+```
+
+See the [internationalization docs](internationalization.html) for more information about i18n in React Aria.
