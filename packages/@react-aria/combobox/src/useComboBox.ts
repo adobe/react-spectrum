@@ -216,11 +216,17 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     lastValue.current = state.inputValue;
   }, [state, menuTrigger, isMobile]);
 
-  // Refocus input when mobile tray closes for any reason
+
   let prevOpenState = useRef(state.isOpen);
   useEffect(() => {
-    if (!state.isOpen && prevOpenState.current !== state.isOpen && isMobile) {
-      inputRef.current.focus();
+    if (!state.isOpen && prevOpenState.current !== state.isOpen) {
+      // Clear focused key whenever combobox menu closes so opening the menu via pressing the open button doesn't autofocus the last focused key
+      state.selectionManager.setFocusedKey(null);
+
+      // Refocus input when mobile tray closes for any reason
+      if (isMobile) {
+        inputRef.current.focus();
+      }
     }
 
     prevOpenState.current = state.isOpen;
