@@ -102,6 +102,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
       {isMobile &&
         <ComboBoxTrayInput
           {...props}
+          menuId={listBoxProps.id}
           layout={layout}
           popoverRef={unwrapDOMRef(popoverRef)}
           inputRef={trayInputRef}

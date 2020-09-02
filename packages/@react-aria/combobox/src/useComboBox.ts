@@ -28,7 +28,8 @@ export interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   triggerRef: RefObject<HTMLElement>,
   inputRef: RefObject<HTMLInputElement & HTMLTextAreaElement>,
   layout: ListLayout<T>,
-  isMobile?: boolean
+  isMobile?: boolean,
+  menuId?: string
 }
 
 interface ComboBoxAria {
@@ -51,7 +52,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     isReadOnly,
     isDisabled,
     isMobile,
-    shouldSelectOnBlur = true
+    shouldSelectOnBlur = true,
+    menuId
   } = props;
 
   let {menuTriggerProps, menuProps} = useMenuTrigger(
@@ -71,9 +73,10 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
+  // TODO: perhaps I should alter useMenuTrigger/useOverlayTrigger to accept a user specified menuId
   // Had to set the list id here instead of in useListBox or ListBoxBase so that it would be properly defined
   // when getting focusedKeyId
-  listIds.set(state, menuProps.id);
+  listIds.set(state, menuId || menuProps.id);
 
   let focusedItem = state.selectionManager.focusedKey && state.isOpen ? state.collection.getItem(state.selectionManager.focusedKey) : undefined;
   let focusedKeyId = focusedItem ? getItemId(state, focusedItem.key) : undefined;
@@ -243,7 +246,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       ...mergeProps(inputProps, isMobile ? inputPressProps : {}),
       role: 'combobox',
       'aria-expanded': menuTriggerProps['aria-expanded'],
-      'aria-controls': state.isOpen ? menuProps.id : undefined,
+      'aria-controls': state.isOpen ? menuId || menuProps.id : undefined,
       'aria-autocomplete': completionMode === 'suggest' ? 'list' : 'both',
       'aria-activedescendant': focusedKeyId
     },
