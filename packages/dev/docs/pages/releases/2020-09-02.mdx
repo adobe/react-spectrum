@@ -17,7 +17,9 @@ date: 2020-09-02
 
 # September 02, 2020 Release
 
-We have some exciting changes in this release. First of all, we now have nightly builds! Thanks to @mischnic, we now release our packages whenever we merge to main under a “nightly” tag. This means you don’t have to wait for our normal release cycle to get a preview of what we are up to. In this release we also worked on adding support for SSR. This has been an ask from a number of people who are using react-spectrum with popular products/setups/projects such as Gatsby and NextJs. For more details on SSR, visit our [docs](https://react-spectrum.adobe.com/react-spectrum/ssr.html). As always, a huge thank you to all our contributors for the new features, fixes and updates.
+We have some exciting changes in this release. First of all, we now have nightly builds! Thanks to @mischnic, we now release our packages whenever we merge to main under a “nightly” tag. This means you don’t have to wait for our normal release cycle to get a preview of what we are up to.
+
+In this release we also worked on adding support for SSR. This has been an ask from a number of people who are using react-spectrum with popular frameworks such as [Gatsby](https://www.gatsbyjs.com) and [Next.js](https://nextjs.org). For more details on SSR, check out our guides for [react-spectrum](https://react-spectrum.adobe.com/react-spectrum/ssr.html) and [react-aria](https://react-spectrum.adobe.com/react-aria/ssr.html). As always, a huge thank you to all our contributors for the new features, fixes and updates.
 
 ## New components
 
@@ -31,7 +33,7 @@ We have some exciting changes in this release. First of all, we now have nightly
 
 ## New features
 
-- `DialogTrigger` close function now works with Popovers - [@cheapsteak](https://github.com/cheapsteak) - [PR](https://github.com/adobe/react-spectrum/pull/997)
+- `DialogTrigger` close function now works with `Popover` - [@cheapsteak](https://github.com/cheapsteak) - [PR](https://github.com/adobe/react-spectrum/pull/997)
 - Nightly builds - [@mischnic](https://github.com/mischnic) - [PR](https://github.com/adobe/react-spectrum/pull/735)
 
 
@@ -39,13 +41,13 @@ We have some exciting changes in this release. First of all, we now have nightly
 
 - Move rAF in `Virtualizer` to avoid calling on ssr - [@fezproof](https://github.com/fezproof) - [PR](https://github.com/adobe/react-spectrum/pull/975)
 - Update type in `useLink` - [@ronderksen](https://github.com/ronderksen) - [PR](https://github.com/adobe/react-spectrum/pull/1000)
-- Updates to `Slider` - [@chungwu](https://github.com/chungwu) - [PR](https://github.com/adobe/react-spectrum/pull/955)
+- Improve `Slider` drag handling - [@chungwu](https://github.com/chungwu) - [PR](https://github.com/adobe/react-spectrum/pull/955)
 - Basic SSR tests passing with CI integration - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/994)
-- Use screen width instead of window to determine `isMobile` - [@michayou](https://github.com/michayou) -  [PR](https://github.com/adobe/react-spectrum/pull/1001)
+- Use screen width instead of window to determine `isMobile` in `Picker` and `Menu` - [@michayou](https://github.com/michayou) - [PR](https://github.com/adobe/react-spectrum/pull/1001)
 - Add extra padding in `Tray` to help with iOS home bar - [@ronderksen](https://github.com/ronderksen) - [PR](https://github.com/adobe/react-spectrum/pull/1007)
-- Set a default for long and dir when SSR - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1026)
+- Set a default for lang and dir when SSR - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1026)
 - Stop `Tray` closing on scroll - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/1023)
-- Stop `Slider` firing when value hasn’t changed - [@xitter](https://github.com/xitter) - [PR](https://github.com/adobe/react-spectrum/pull/999)
+- `Slider` only fires when value changes - [@xitter](https://github.com/xitter) - [PR](https://github.com/adobe/react-spectrum/pull/999)
 
 ## Docs
 
