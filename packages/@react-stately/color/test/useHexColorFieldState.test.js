@@ -66,24 +66,6 @@ describe('useHexColorFieldState tests', function () {
     expect(result.current.validationState).toBe(null);
   });
 
-  it('should have a controlled value', function () {
-    const onChangeSpy = jest.fn();
-    let props = {value: new Color('#aabbcc'), onChange: onChangeSpy};
-    const {result} = renderHook(() => useHexColorFieldState(props));
-
-    const newColor = new Color('#ccbbaa');
-    act(() => result.current.setColorValue(newColor));
-    expect(onChangeSpy).toHaveBeenCalledWith(newColor);
-    expect(result.current.colorValue.value).toEqual({
-      red: 170,
-      green: 187,
-      blue: 204,
-      alpha: 1
-    });
-    expect(result.current.inputValue).toBe('#CCBBAA');
-    expect(result.current.validationState).toBe(null);
-  });
-
   it('should be in invalid state', function () {
     let props = {defaultValue: 'invalidColor'};
     const {result} = renderHook(() => useHexColorFieldState(props));
@@ -185,10 +167,21 @@ describe('useHexColorFieldState tests', function () {
     expect(result.current.inputValue).toBe('#AABBCC');
   });
 
-  it('should update colorValue', function () {
-    let props = {defaultValue: '#abc', minValue: '#abc'};
+  it('should update colorValue (uncontrolled)', function () {
+    const onChangeSpy = jest.fn();
+    let props = {defaultValue: '#abc', minValue: '#abc', onChange: onChangeSpy};
     const {result} = renderHook(() => useHexColorFieldState(props));
-    act(() => result.current.setColorValue(new Color('#cba')));
+    expect(result.current.colorValue.value).toEqual({
+      red: 170,
+      green: 187,
+      blue: 204,
+      alpha: 1
+    });
+    expect(result.current.inputValue).toBe('#AABBCC');
+
+    const newColor = new Color('#cba');
+    act(() => result.current.setColorValue(newColor));
+    expect(onChangeSpy).toHaveBeenCalledWith(newColor);
     expect(result.current.colorValue.value).toEqual({
       red: 204,
       green: 187,
@@ -196,5 +189,30 @@ describe('useHexColorFieldState tests', function () {
       alpha: 1
     });
     expect(result.current.inputValue).toBe('#CCBBAA');
+  });
+
+  it('should not update colorValue (controlled)', function () {
+    const onChangeSpy = jest.fn();
+    let props = {value: '#abc', onChange: onChangeSpy};
+    const {result} = renderHook(() => useHexColorFieldState(props));
+    expect(result.current.colorValue.value).toEqual({
+      red: 170,
+      green: 187,
+      blue: 204,
+      alpha: 1
+    });
+    expect(result.current.inputValue).toBe('#AABBCC');
+
+    const newColor = new Color('#cba');
+    act(() => result.current.setColorValue(newColor));
+    expect(onChangeSpy).toHaveBeenCalledWith(newColor);
+    expect(result.current.colorValue.value).toEqual({
+      red: 170,
+      green: 187,
+      blue: 204,
+      alpha: 1
+    });
+    // expect(result.current.inputValue).toBe('#CCBBAA');
+    expect(result.current.validationState).toBe(null);
   });
 });
