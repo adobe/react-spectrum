@@ -21,6 +21,10 @@ export interface HexColorFieldState extends NumberFieldState {
   setColorValue: (color: Color) => void
 }
 
+/**
+ * Manages state for a color object, represented in hex, 
+ * and provides methods for manipulating the color value.
+ */
 export function useHexColorFieldState(
   props: HexColorFieldProps
 ): HexColorFieldState {
