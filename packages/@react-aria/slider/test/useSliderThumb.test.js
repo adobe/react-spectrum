@@ -161,6 +161,7 @@ describe('useSliderThumb', () => {
       expect(onChangeEndSpy).not.toHaveBeenCalled();
       expect(stateRef.current.values).toEqual([30, 80]);
 
+      fireEvent.mouseMove(thumb0, {clientX: 40});
       fireEvent.mouseUp(thumb0, {clientX: 40});
       expect(onChangeSpy).toHaveBeenLastCalledWith([40, 80]);
       expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 80]);
@@ -233,7 +234,7 @@ describe('useSliderThumb', () => {
       // Drag thumb
       let thumb0 = screen.getByTestId('thumb');
       fireEvent.mouseDown(thumb0, {clientX: 10});
-      expect(onChangeSpy).not.toHaveBeenLastCalledWith([10]);
+      expect(onChangeSpy).not.toHaveBeenCalled();
       expect(onChangeEndSpy).not.toHaveBeenCalled();
       expect(stateRef.current.values).toEqual([10]);
 
@@ -242,6 +243,7 @@ describe('useSliderThumb', () => {
       expect(onChangeEndSpy).not.toHaveBeenCalled();
       expect(stateRef.current.values).toEqual([20]);
 
+      fireEvent.mouseMove(thumb0, {clientX: 40});
       fireEvent.mouseUp(thumb0, {clientX: 40});
       expect(onChangeSpy).toHaveBeenLastCalledWith([40]);
       expect(onChangeEndSpy).toHaveBeenLastCalledWith([40]);
