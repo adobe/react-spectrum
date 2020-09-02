@@ -23,10 +23,10 @@ import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection} from '@react-aria/selection';
 import {useTextField} from '@react-aria/textfield';
 
-interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
+export interface AriaComboBoxProps<T> extends ComboBoxProps<T> {
   popoverRef: RefObject<HTMLDivElement>,
   triggerRef: RefObject<HTMLElement>,
-  inputRef: RefObject<HTMLInputElement>,
+  inputRef: RefObject<HTMLInputElement & HTMLTextAreaElement>,
   layout: ListLayout<T>,
   isMobile?: boolean
 }
@@ -203,15 +203,15 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
   let lastValue = useRef(state.inputValue);
   useEffect(() => {
-    // Close combobox menu if user clears input text unless trigger is focus (as per design)
+    // Close combobox menu if user clears input text unless trigger is focus or is in mobile view (as per design)
     if (lastValue.current !== state.inputValue) {
-      if (state.inputValue === '' && menuTrigger !== 'focus') {
+      if (state.inputValue === '' && menuTrigger !== 'focus' && !isMobile) {
         state.close();
       }
     }
 
     lastValue.current = state.inputValue;
-  }, [state, allowsCustomValue, menuTrigger, layout]);
+  }, [state, menuTrigger, isMobile]);
 
   // Refocus input when mobile tray closes for any reason
   let prevOpenState = useRef(state.isOpen);

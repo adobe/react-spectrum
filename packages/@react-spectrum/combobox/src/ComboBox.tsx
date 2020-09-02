@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaComboBoxProps, useComboBox} from '@react-aria/combobox';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {classNames, unwrapDOMRef, useMediaQuery, useStyleProps} from '@react-spectrum/utils';
+import {ComboBoxState, useComboBoxState} from '@react-stately/combobox';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRefValue, FocusableRefValue} from '@react-types/shared';
 import {FieldButton} from '@react-spectrum/button';
@@ -27,8 +29,6 @@ import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
 import {useCollator} from '@react-aria/i18n';
-import {useComboBox} from '@react-aria/combobox';
-import {useComboBoxState} from '@react-stately/combobox';
 import {useHover} from '@react-aria/interactions';
 import {useId} from '@react-aria/utils';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -104,6 +104,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
           layout={layout}
           popoverRef={unwrapDOMRef(popoverRef)}
           inputRef={trayInputRef}
+          triggerRef={unwrapDOMRef(triggerRef)}
           isMobile={isMobile}
           state={state}
           autoFocus />
@@ -260,8 +261,11 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
   return textField;
 }
 
-// TODO: type this, it is a combo of SpectrumComboBoxProps and the AriaProps
-function ComboBoxTrayInput(props) {
+interface ComboBoxTrayInputProps<T> extends SpectrumComboBoxProps<T>, AriaComboBoxProps<T> {
+  state: ComboBoxState<T>
+}
+
+function ComboBoxTrayInput<T>(props: ComboBoxTrayInputProps<T>) {
   let {
     validationState,
     isDisabled,
