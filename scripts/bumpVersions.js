@@ -69,10 +69,23 @@ class VersionManager {
     let promises = [];
     for (let name in this.workspacePackages) {
       promises.push(
-        fetch(`https://registry.npmjs.com/${name}`, {method: 'HEAD'})
+        fetch(`https://registry.npmjs.com/${name}`)
           .then(res => {
             if (res.ok) {
-              this.existingPackages.add(name);
+              return res.json();
+            }
+          })
+          .then(json => {
+            if (!json) {
+              return;
+            }
+
+            let tags = json['dist-tags'];
+            for (let tag in tags) {
+              if (!tags[tag].includes('nightly')) {
+                this.existingPackages.add(name);
+                break;
+              }
             }
           })
       );
