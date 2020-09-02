@@ -134,7 +134,7 @@ function setupGlobalFocusEvents() {
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).
   window.addEventListener('focus', handleFocusEvent, true);
-  window.addEventListener('blur', handleWindowBlur, false);
+  window.addEventListener('blur', handleWindowBlur, true);
 
   if (typeof PointerEvent !== 'undefined') {
     document.addEventListener('pointerdown', handlePointerEvent, true);
