@@ -75,13 +75,15 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     keyboardDelegate: layout
   }, state, unwrapDOMRef(triggerRef));
 
+  let isMobile = useIsMobileDevice();
   let {overlayProps, placement, updatePosition} = useOverlayPosition({
     targetRef: unwrapDOMRef(triggerRef),
     overlayRef: unwrapDOMRef(popoverRef),
     scrollRef: listboxRef,
     placement: `${direction} ${align}` as Placement,
     shouldFlip: shouldFlip,
-    isOpen: state.isOpen
+    isOpen: state.isOpen && !isMobile,
+    onClose: state.close
   });
 
   let {hoverProps, isHovered} = useHover({isDisabled});
@@ -101,7 +103,6 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let isLoadingMore = props.isLoading && state.collection.size > 0;
 
   // On small screen devices, the listbox is rendered in a tray, otherwise a popover.
-  let isMobile = useIsMobileDevice();
   let listbox = (
     <FocusScope restoreFocus>
       <DismissButton onDismiss={() => state.close()} />
