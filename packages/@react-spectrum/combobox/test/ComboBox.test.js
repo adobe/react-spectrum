@@ -2083,17 +2083,19 @@ describe('ComboBox', function () {
 
       // check that tray is still visible and placeholder text exists
       expect(tray).toBeVisible();
-      expect(() => within(tray).getAllByRole('option')).toThrow();
+      let items = within(tray).getAllByRole('option');
+      expect(items.length).toBe(1);
 
-      let placeholderText = within(tray).getByText('No Results');
+      let placeholderText = within(items[0]).getByText('No Results');
       expect(placeholderText).toBeVisible();
+
 
       act(() => {
         fireEvent.change(combobox, {target: {value: ''}});
         jest.runAllTimers();
       });
 
-      let items = within(tray).getAllByRole('option');
+      items = within(tray).getAllByRole('option');
       expect(items.length).toBe(3);
       expect(() => within(tray).getByText('No Results')).toThrow();
     });
