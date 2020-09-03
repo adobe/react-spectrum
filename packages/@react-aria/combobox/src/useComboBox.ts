@@ -230,7 +230,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
 
     prevOpenState.current = state.isOpen;
-  }, [state.isOpen, inputRef, isMobile]);
+  }, [state.isOpen, inputRef, isMobile, state.selectionManager]);
 
   let triggerLabelProps = useLabels({
     id: menuTriggerProps.id,

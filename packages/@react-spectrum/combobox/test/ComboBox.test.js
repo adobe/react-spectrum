@@ -119,6 +119,7 @@ describe('ComboBox', function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.useFakeTimers();
   });
@@ -1862,18 +1863,451 @@ describe('ComboBox', function () {
   });
 
   describe('mobile combobox', function () {
-    // TODO: things to write tests for
-    // Test that opening the tray autofocuses the tray input field and that closing the field autofocuses the original combobox input
-        // For the above test opening the tray via arrow up/down, clicking the button, typing
-    // Test that the tray is a fixed height regardless of filtering that happens after the tray opens
-    // Test that keyboard operations work in the tray (up/down goes through the items via virtual focus)
-    // Test that filtering works in the tray by typing in the tray input field
-    // test that if there aren't any results from filtering, the tray remains open and there is a placeholder
-    // Test that clicking on option selects it. Test that hitting enter on the option also works
-    // Test that the value of the tray input mirrors that of the combobox input field
-    // Test that the tray won't open if the the user types something in the combobox field that yields 0 results
+    beforeEach(() => {
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 600);
+    });
 
-    // Test that the autofocusing of the combobox when the menu closes only happens in mobile view
+    afterEach(() => {
+      jest.runAllTimers();
+      jest.clearAllMocks();
+    });
+
+    function testComboBoxTrayOpen(combobox, tray, listbox, focusedItemIndex) {
+      expect(tray).toBeVisible();
+      expect(combobox).toHaveAttribute('aria-expanded', 'true');
+      expect(combobox).toHaveAttribute('aria-controls', listbox.id);
+
+      let items = within(tray).getAllByRole('option');
+      expect(items).toHaveLength(3);
+      expect(items[0]).toHaveTextContent('One');
+      expect(items[1]).toHaveTextContent('Two');
+      expect(items[2]).toHaveTextContent('Three');
+
+      expect(document.activeElement).toBe(combobox);
+
+      if (typeof focusedItemIndex === 'undefined') {
+        expect(combobox).not.toHaveAttribute('aria-activedescendant');
+        expect(items[0]).toHaveAttribute('aria-selected', 'false');
+
+        act(() => {
+          fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+          fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+          jest.runAllTimers();
+        });
+
+        expect(combobox).toHaveAttribute('aria-activedescendant', items[0].id);
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+      } else {
+        expect(combobox).toHaveAttribute('aria-activedescendant', items[focusedItemIndex].id);
+        expect(items[focusedItemIndex]).toHaveAttribute('aria-selected', 'true');
+      }
+    }
+
+    it('opening the tray autofocuses the tray input', function () {
+      let {getByRole, getByTestId} = renderComboBox();
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+
+      act(() => {
+        combobox.focus();
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let listbox = getByRole('listbox');
+
+      let trayInput = within(tray).getByRole('combobox');
+      testComboBoxTrayOpen(trayInput, tray, listbox);
+    });
+
+    it('closing the tray autofocuses the original combobox input', function () {
+      let {getByRole, getByTestId} = renderComboBox();
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+
+      act(() => {
+        combobox.focus();
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'Escape', code: 27, charCode: 27});
+        fireEvent.keyUp(combobox, {key: 'Escape', code: 27, charCode: 27});
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('tray')).toThrow();
+      expect(document.activeElement).toBe(combobox);
+    });
+
+    it('height of the tray remains fixed even if the number of items changes', function () {
+      let {getByRole, getByTestId} = renderComboBox();
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+
+      act(() => {
+        combobox.focus();
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+
+      let items = within(tray).getAllByRole('option');
+      expect(items.length).toBe(3);
+
+      let trayInput = within(tray).getByRole('combobox');
+      // Save the height style for comparison later
+      let style = tray.getAttribute('style');
+
+      act(() => {
+        userEvent.type(trayInput, 'One');
+        jest.runAllTimers();
+      });
+
+      items = within(tray).getAllByRole('option');
+      expect(items.length).toBe(1);
+      tray = getByTestId('tray');
+      expect(tray.getAttribute('style')).toBe(style);
+    });
+
+    it('up/down arrows still traverse the items in the tray', function () {
+      let {getByRole, getByTestId} = renderComboBox();
+      let combobox = getByRole('combobox');
+
+      act(() => {
+        combobox.focus();
+        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let listbox = getByRole('listbox');
+      let trayInput = within(tray).getByRole('combobox');
+
+      testComboBoxTrayOpen(trayInput, tray, listbox, 0);
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        jest.runAllTimers();
+      });
+
+      let items = within(tray).getAllByRole('option');
+
+      expect(trayInput).toHaveAttribute('aria-activedescendant', items[1].id);
+      expect(items[1]).toHaveAttribute('aria-selected', 'true');
+      expect(items[0]).toHaveAttribute('aria-selected', 'false');
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'ArrowUp', code: 38, charCode: 38});
+        fireEvent.keyUp(combobox, {key: 'ArrowUp', code: 38, charCode: 38});
+        jest.runAllTimers();
+      });
+
+      expect(trayInput).toHaveAttribute('aria-activedescendant', items[0].id);
+      expect(items[0]).toHaveAttribute('aria-selected', 'true');
+      expect(items[1]).toHaveAttribute('aria-selected', 'false');
+    });
+
+    it('user can filter the menu options by typing in the tray input', function () {
+      let {getByRole, getByTestId} = renderComboBox();
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+
+      act(() => {
+        combobox.focus();
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let listbox = getByRole('listbox');
+      let trayInput = within(tray).getByRole('combobox');
+
+      testComboBoxTrayOpen(trayInput, tray, listbox);
+
+      act(() => {
+        userEvent.type(trayInput, 'r');
+        jest.runAllTimers();
+      });
+
+      let items = within(tray).getAllByRole('option');
+      expect(items.length).toBe(1);
+      expect(items[0].textContent).toBe('Three');
+
+      act(() => {
+        fireEvent.change(combobox, {target: {value: ''}});
+        jest.runAllTimers();
+      });
+
+      items = within(tray).getAllByRole('option');
+      expect(items.length).toBe(3);
+      expect(items[0].textContent).toBe('One');
+      expect(items[1].textContent).toBe('Two');
+      expect(items[2].textContent).toBe('Three');
+    });
+
+    it('"No results" placeholder is shown if user types something that doesnt match any of the available options', function () {
+      let {getByRole, getByTestId} = renderComboBox();
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+
+      act(() => {
+        combobox.focus();
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let listbox = getByRole('listbox');
+
+      let trayInput = within(tray).getByRole('combobox');
+      testComboBoxTrayOpen(trayInput, tray, listbox);
+
+      act(() => {
+        userEvent.type(trayInput, 'blah');
+        jest.runAllTimers();
+      });
+
+      // check that tray is still visible and placeholder text exists
+      expect(tray).toBeVisible();
+      expect(() => within(tray).getAllByRole('option')).toThrow();
+
+      let placeholderText = within(tray).getByText('No Results');
+      expect(placeholderText).toBeVisible();
+
+      act(() => {
+        fireEvent.change(combobox, {target: {value: ''}});
+        jest.runAllTimers();
+      });
+
+      let items = within(tray).getAllByRole('option');
+      expect(items.length).toBe(3);
+      expect(() => within(tray).getByText('No Results')).toThrow();
+    });
+
+    it('user can select options by pressing them', function () {
+      let {getByRole, getByTestId} = renderComboBox();
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+
+      act(() => {
+        combobox.focus();
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let listbox = getByRole('listbox');
+      let trayInput = within(tray).getByRole('combobox');
+      testComboBoxTrayOpen(trayInput, tray, listbox);
+
+      let items = within(tray).getAllByRole('option');
+
+      act(() => {
+        triggerPress(items[1]);
+        jest.runAllTimers();
+      });
+
+      expect(onInputChange).toHaveBeenCalledWith('Two');
+      expect(onInputChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledWith('2');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
+      expect(() => getByTestId('tray')).toThrow();
+      expect(combobox.value).toBe('Two');
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      trayInput = within(tray).getByRole('combobox');
+      items = within(tray).getAllByRole('option');
+      expect(items.length).toBe(1);
+      expect(items[0].textContent).toBe('Two');
+      expect(trayInput).not.toHaveAttribute('aria-activedescendant');
+      expect(trayInput.value).toBe('Two');
+      expect(items[0]).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('user can select options by focusing them and hitting enter', function () {
+      let {getByRole, getByTestId} = renderComboBox();
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+
+      act(() => {
+        combobox.focus();
+        fireEvent.keyDown(combobox, {key: 'ArrowUp', code: 38, charCode: 38});
+        fireEvent.keyUp(combobox, {key: 'ArrowUp', code: 38, charCode: 38});
+        jest.runAllTimers();
+      });
+
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let listbox = getByRole('listbox');
+
+      let trayInput = within(tray).getByRole('combobox');
+      testComboBoxTrayOpen(trayInput, tray, listbox, 2);
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        jest.runAllTimers();
+      });
+
+      expect(onInputChange).toHaveBeenCalledWith('Three');
+      expect(onInputChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenCalledWith('3');
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
+      expect(() => getByTestId('tray')).toThrow();
+      expect(combobox.value).toBe('Three');
+
+      act(() => {
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      trayInput = within(tray).getByRole('combobox');
+      let items = within(tray).getAllByRole('option');
+      expect(items.length).toBe(1);
+      expect(items[0].textContent).toBe('Three');
+      expect(trayInput).not.toHaveAttribute('aria-activedescendant');
+      expect(trayInput.value).toBe('Three');
+      expect(items[0]).toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('value of the tray input mirrors that of the combobox input', function () {
+      let {getByRole, getByTestId} = renderComboBox({allowsCustomValue: true});
+      let combobox = getByRole('combobox');
+
+      act(() => {
+        combobox.focus();
+        userEvent.type(combobox, 'O');
+        jest.runAllTimers();
+      });
+
+      expect(onOpenChange).toHaveBeenCalledWith(true);
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+      expect(onInputChange).toHaveBeenCalledWith('O');
+      expect(onInputChange).toHaveBeenCalledTimes(1);
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let trayInput = within(tray).getByRole('combobox');
+      expect(trayInput.value).toBe('O');
+      expect(document.activeElement).toBe(trayInput);
+
+      act(() => {
+        userEvent.type(trayInput, 'Bleh');
+        jest.runAllTimers();
+      });
+
+      expect(trayInput.value).toBe('OBleh');
+      expect(onInputChange).toHaveBeenCalledWith('OBleh');
+      expect(onInputChange).toHaveBeenCalledTimes(5);
+
+      act(() => {
+        fireEvent.keyDown(trayInput, {key: 'Escape', code: 27, charCode: 27});
+        fireEvent.keyUp(trayInput, {key: 'Escape', code: 27, charCode: 27});
+        jest.runAllTimers();
+      });
+
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
+      expect(() => getByRole('tray')).toThrow();
+      expect(document.activeElement).toBe(combobox);
+      expect(combobox.value).toBe('OBleh');
+    });
+
+    it('tray doesn\'t open if user types in a value that doesn\'t match any of the valid combobox values', function () {
+      let {getByRole} = renderComboBox();
+      let combobox = getByRole('combobox');
+
+      act(() => {
+        combobox.focus();
+        userEvent.type(combobox, 'Blah');
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('tray')).toThrow();
+      expect(onOpenChange).not.toHaveBeenCalledWith();
+    });
+
+    it('label of the tray input should match label of combobox', function () {
+      let {getByRole, getByTestId, getByText} = renderComboBox();
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+      let label = getByText(defaultProps.label);
+
+      expect(combobox).toHaveAttribute('aria-labelledby', label.id);
+
+      act(() => {
+        combobox.focus();
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let trayInput = within(tray).getByRole('combobox');
+      let trayInputLabel = within(tray).getByText(defaultProps.label);
+      expect(trayInput).toHaveAttribute('aria-labelledby', trayInputLabel.id);
+    });
+
+    it('tray input should recieve the same aria-labelledby as the combobox input if an external label is provided', function () {
+      let {getByRole, getByTestId, getByText} = render(
+        <Provider theme={theme}>
+          <label id="test-label" htmlFor="test-id">Combobox</label>
+          <ComboBox id="test-id" aria-labelledby="test-label">
+            <Item key="one">Item One</Item>
+          </ComboBox>
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      let button = getByRole('button');
+      let label = getByText('Combobox');
+
+      expect(combobox).toHaveAttribute('aria-labelledby', label.id);
+
+      act(() => {
+        combobox.focus();
+        triggerPress(button);
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let trayInput = within(tray).getByRole('combobox');
+      expect(trayInput).toHaveAttribute('aria-labelledby', label.id);
+    });
   });
 
   describe('accessibility', function () {
