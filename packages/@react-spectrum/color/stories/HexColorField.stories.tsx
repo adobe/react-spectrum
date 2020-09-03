@@ -28,6 +28,10 @@ storiesOf('HexColorField', module)
     () => render({isQuiet: true})
   )
   .add(
+    'isReadOnly',
+    () => render({isReadOnly: true})
+  )
+  .add(
     'isDisabled',
     () => render({isDisabled: true})
   )
@@ -38,15 +42,12 @@ storiesOf('HexColorField', module)
   .add(
     'validationState invalid',
     () => render({validationState: 'invalid'})
-  )
-  .add(
-    'with label',
-    () => render({label: 'Hex Color'})
   );
 
 function render(props: any = {}) {
   return (
     <HexColorField
+      label='Primary Color'
       {...props} />
   );
 }

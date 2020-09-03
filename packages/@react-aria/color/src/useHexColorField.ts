@@ -12,10 +12,8 @@
 
 import {AriaHexColorFieldProps} from '@react-types/color';
 import {HexColorFieldState} from '@react-stately/color';
-import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect} from 'react';
-import {mergeProps, useId} from '@react-aria/utils';
-import {useFocus} from '@react-aria/interactions';
-import {useLabel} from '@react-aria/label';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {useId} from '@react-aria/utils';
 import {useTextField} from '@react-aria/textfield';
 
 interface HexColorFieldAria {
@@ -28,14 +26,29 @@ export function useHexColorField(
   state: HexColorFieldState,
   ref: RefObject<HTMLInputElement>
 ): HexColorFieldAria {
-  const inputId = useId();
-  let {labelProps, fieldProps} = useLabel(props);
+  const {
+    value,        // eslint-disable-line @typescript-eslint/no-unused-vars
+    defaultValue, // eslint-disable-line @typescript-eslint/no-unused-vars
+    onChange,     // eslint-disable-line @typescript-eslint/no-unused-vars
+    ...otherProps
+  } = props;
+  
+  const {
+    inputValue
+  } = state;
 
+  const inputId = useId();
+  let {labelProps, inputProps} = useTextField({
+    ...otherProps,
+    id: inputId,
+    value: inputValue,
+    type: 'text',
+    autoComplete: 'off',
+    onChange: (val) => console.log(val)
+  }, ref);
+  
   return {
     labelProps,
-    inputFieldProps: {
-      id: inputId,
-      ...fieldProps,
-    }
+    inputFieldProps: inputProps,
   };
 }
