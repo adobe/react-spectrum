@@ -12,9 +12,10 @@
 
 import {AriaHexColorFieldProps} from '@react-types/color';
 import {HexColorFieldState} from '@react-stately/color';
-import {HTMLAttributes, LabelHTMLAttributes, RefObject, useState} from 'react';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject, useEffect} from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
 import {useFocus} from '@react-aria/interactions';
+import {useLabel} from '@react-aria/label';
 import {useTextField} from '@react-aria/textfield';
 
 interface HexColorFieldAria {
@@ -27,59 +28,14 @@ export function useHexColorField(
   state: HexColorFieldState,
   ref: RefObject<HTMLInputElement>
 ): HexColorFieldAria {
-  let {
-    isDisabled,
-    isReadOnly,
-    isRequired,
-    autoFocus
-  } = props;
-
-  let {
-    colorValue,
-    setColorValue,
-    inputValue,
-    validationState,
-    commitInputValue,
-    increment,
-    incrementToMax,
-    decrement,
-    decrementToMin,
-  } = state;
-
   const inputId = useId();
-  let {focusProps} = useFocus({
-    onFocus: () => {
-      ref.current.value = inputValue;
-      ref.current.select();
-    },
-    onBlur: () => {
-      // Set input value to normalized valid value
-      commitInputValue();
-    }
-  });
-
-  const {
-    labelProps, 
-    inputProps: inputFieldProps
-  } = useTextField(
-    mergeProps(focusProps, {
-      autoFocus,
-      isDisabled,
-      isReadOnly,
-      isRequired,
-      validationState,
-      value: inputValue,
-      autoComplete: 'off',
-      'aria-label': props['aria-label'] || null,
-      'aria-labelledby': props['aria-labelledby'] || null,
-      id: inputId,
-      // placeholder: formatMessage('TO DO'),
-      type: 'text',
-      onChange: setColorValue
-    }), ref);
+  let {labelProps, fieldProps} = useLabel(props);
 
   return {
     labelProps,
-    inputFieldProps
+    inputFieldProps: {
+      id: inputId,
+      ...fieldProps,
+    }
   };
 }

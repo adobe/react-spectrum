@@ -10,60 +10,36 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useStyleProps} from '@react-spectrum/utils';
-import {FocusRing} from '@react-aria/focus';
-import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import React, {RefObject, useRef} from 'react';
 import {SpectrumHexColorFieldProps} from '@react-types/color';
 import {TextFieldBase} from '@react-spectrum/textfield';
+import {TextFieldRef} from '@react-types/textfield';
 import {useHexColorField} from '@react-aria/color';
 import {useHexColorFieldState} from '@react-stately/color';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function HexColorField(props: SpectrumHexColorFieldProps, ref: RefObject<HTMLDivElement>) {
+function HexColorField(props: SpectrumHexColorFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
-  let {
-    isQuiet,
-    isDisabled,
-    autoFocus,
+  const {
+    value,
+    defaultValue,
+    onChange,
     ...otherProps
   } = props;
-  let {styleProps} = useStyleProps(props);
-  let state = useHexColorFieldState(otherProps);
-  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
-  let {
+  const state = useHexColorFieldState(props);
+  const inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
+  const {
     labelProps,
     inputFieldProps
   } = useHexColorField(props, state, inputRef);
 
-  let className = classNames(
-    inputgroupStyles,
-    'spectrum-InputGroup',
-    {
-      'spectrum-InputGroup--quiet': isQuiet,
-      'is-invalid': state.validationState === 'invalid',
-      'is-disabled': isDisabled
-    },
-    styleProps.className
-  );
-
   return (
-    <FocusRing
-      within
-      focusClass={classNames(inputgroupStyles, 'is-focused')}
-      focusRingClass={classNames(inputgroupStyles, 'focus-ring')}
-      autoFocus={autoFocus}>
-      <div
-        {...styleProps}
-        ref={ref}
-        className={className}>
-        <TextFieldBase
-          isQuiet={isQuiet}
-          inputRef={inputRef}
-          labelProps={labelProps}
-          inputProps={inputFieldProps} />
-      </div>
-    </FocusRing>
+    <TextFieldBase
+      {...otherProps}
+      ref={ref}
+      inputRef={inputRef}
+      labelProps={labelProps}
+      inputProps={inputFieldProps} />
   );
 }
 
