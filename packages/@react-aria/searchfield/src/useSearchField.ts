@@ -23,7 +23,7 @@ interface SearchFieldAria {
   /** Props for the text field's visible label element (if any). */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement & HTMLTextAreaElement>,
+  inputProps: InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement>,
   /** Props for the clear button. */
   clearButtonProps: AriaButtonProps
 }
