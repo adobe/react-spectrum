@@ -12,7 +12,7 @@
 
 import {CalendarCellOptions, CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {classNames} from '@react-spectrum/utils';
-import React from 'react';
+import React, {useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useCalendarCell} from '@react-aria/calendar';
 import {useDateFormatter} from '@react-aria/i18n';
@@ -23,7 +23,8 @@ interface CalendarCellProps extends CalendarCellOptions {
 }
 
 export function CalendarCell({state, ...props}: CalendarCellProps) {
-  let {cellProps, cellDateProps} = useCalendarCell(props, state);
+  let ref = useRef<HTMLElement>();
+  let {cellProps, buttonProps} = useCalendarCell(props, state, ref);
   let {hoverProps, isHovered} = useHover(props);
   let dateFormatter = useDateFormatter({day: 'numeric'});
 
@@ -32,8 +33,9 @@ export function CalendarCell({state, ...props}: CalendarCellProps) {
       {...cellProps}
       className={classNames(styles, 'spectrum-Calendar-tableCell')}>
       <span
-        {...cellDateProps}
+        {...buttonProps}
         {...hoverProps}
+        ref={ref}
         className={classNames(styles, 'spectrum-Calendar-date', {
           'is-today': props.isToday,
           'is-selected': props.isSelected,
