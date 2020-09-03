@@ -78,7 +78,7 @@ function Flex(props: FlexProps, ref: DOMRef<HTMLDivElement>) {
   }
 
   return (
-    <div className={classNames(styles, 'flex', styleProps.className)} style={style} ref={domRef}>
+    <div {...filterDOMProps(otherProps)} className={classNames(styles, 'flex', styleProps.className)} style={style} ref={domRef}>
       {children}
     </div>
   );
