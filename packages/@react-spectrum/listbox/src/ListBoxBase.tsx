@@ -150,6 +150,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
           } else if (type === 'placeholder' && isMobile) {
             return (
               <div
+                role="option"
                 className={classNames(
                   styles,
                   'spectrum-Menu-item'
