@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {render} from '@testing-library/react';
+import {act, render} from '@testing-library/react';
 import {Toast} from '../';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {Toast as V2Toast} from '@react/react-spectrum/Toast';
@@ -125,7 +125,7 @@ describe('Toast', function () {
     let button = getAllByRole('button');
 
     // action button
-    button[0].focus();
+    act(() => {button[0].focus();});
     triggerPress(document.activeElement);
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onAction).toHaveBeenCalledTimes(1);
@@ -134,7 +134,7 @@ describe('Toast', function () {
     }
 
     // close button
-    button[1].focus();
+    act(() => {button[1].focus();});
     triggerPress(document.activeElement);
     expect(onClose).toHaveBeenCalledTimes(2);
     expect(onAction).toHaveBeenCalledTimes(1);
