@@ -216,7 +216,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     lastValue.current = state.inputValue;
   }, [state, menuTrigger, isMobile]);
 
-
   let prevOpenState = useRef(state.isOpen);
   useEffect(() => {
     if (!state.isOpen && prevOpenState.current !== state.isOpen) {
@@ -231,16 +230,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
     prevOpenState.current = state.isOpen;
   }, [state.isOpen, inputRef, isMobile, state.selectionManager]);
-
-  let prevOpenState = useRef(state.isOpen);
-  useEffect(() => {
-    if (!state.isOpen && prevOpenState.current !== state.isOpen) {
-      // Clear focused key whenever combobox menu closes so opening the menu via pressing the open button doesn't autofocus the last focused key
-      state.selectionManager.setFocusedKey(null);
-    }
-
-    prevOpenState.current = state.isOpen;
-  }, [state.isOpen, inputRef, state.selectionManager]);
 
   let triggerLabelProps = useLabels({
     id: menuTriggerProps.id,
