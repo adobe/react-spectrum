@@ -11,13 +11,12 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {chain, useLabels} from '@react-aria/utils';
+import {chain, mergeProps, useLabels} from '@react-aria/utils';
 import {ComboBoxProps} from '@react-types/combobox';
 import {ComboBoxState} from '@react-stately/combobox';
 import {getItemId, listIds} from '@react-aria/listbox';
 import {HTMLAttributes, InputHTMLAttributes, RefObject, useEffect, useRef} from 'react';
 import {ListLayout} from '@react-stately/layout';
-import {mergeProps} from '@react-aria/utils';
 import {useMenuTrigger} from '@react-aria/menu';
 import {usePress} from '@react-aria/interactions';
 import {useSelectableCollection} from '@react-aria/selection';

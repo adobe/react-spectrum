@@ -30,8 +30,7 @@ import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
 import {useCollator} from '@react-aria/i18n';
 import {useHover} from '@react-aria/interactions';
-import {useId} from '@react-aria/utils';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useId, useLayoutEffect} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObject<TextFieldRef>) {
