@@ -12,7 +12,10 @@
 
 import {AriaHexColorFieldProps} from '@react-types/color';
 import {HexColorFieldState} from '@react-stately/color';
-import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {HTMLAttributes, LabelHTMLAttributes, RefObject, useState} from 'react';
+import {mergeProps, useId} from '@react-aria/utils';
+import {useFocus} from '@react-aria/interactions';
+import {useTextField} from '@react-aria/textfield';
 
 interface HexColorFieldAria {
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
@@ -20,14 +23,63 @@ interface HexColorFieldAria {
 }
 
 export function useHexColorField(
-  /* eslint-disable @typescript-eslint/no-unused-vars */
   props: AriaHexColorFieldProps,
   state: HexColorFieldState,
   ref: RefObject<HTMLInputElement>
-  /* eslint-disable @typescript-eslint/no-unused-vars */
 ): HexColorFieldAria {
+  let {
+    isDisabled,
+    isReadOnly,
+    isRequired,
+    autoFocus
+  } = props;
+
+  let {
+    colorValue,
+    setColorValue,
+    inputValue,
+    validationState,
+    commitInputValue,
+    increment,
+    incrementToMax,
+    decrement,
+    decrementToMin,
+  } = state;
+
+  const inputId = useId();
+  let {focusProps} = useFocus({
+    onFocus: () => {
+      ref.current.value = inputValue;
+      ref.current.select();
+    },
+    onBlur: () => {
+      // Set input value to normalized valid value
+      commitInputValue();
+    }
+  });
+
+  const {
+    labelProps, 
+    inputProps: inputFieldProps
+  } = useTextField(
+    mergeProps(focusProps, {
+      autoFocus,
+      isDisabled,
+      isReadOnly,
+      isRequired,
+      validationState,
+      value: inputValue,
+      autoComplete: 'off',
+      'aria-label': props['aria-label'] || null,
+      'aria-labelledby': props['aria-labelledby'] || null,
+      id: inputId,
+      // placeholder: formatMessage('TO DO'),
+      type: 'text',
+      onChange: setColorValue
+    }), ref);
+
   return {
-    labelProps: null,
-    inputFieldProps: null
+    labelProps,
+    inputFieldProps
   };
 }
