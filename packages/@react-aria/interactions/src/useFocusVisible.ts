@@ -134,7 +134,12 @@ function setupGlobalFocusEvents() {
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).
   window.addEventListener('focus', handleFocusEvent, true);
-  window.addEventListener('blur', handleWindowBlur, true);
+  window.addEventListener('blur', handleWindowBlur, true); // reverting this fixes the Picker test that's failing
+  /**
+   * it's happening because as a capture, it's getting a window blur when it shouldn't, when the spectrum-Menu is focused
+   * I assume because of the blur on the trigger?
+   * also, this is getting fired a LOT
+   */
 
   if (typeof PointerEvent !== 'undefined') {
     document.addEventListener('pointerdown', handlePointerEvent, true);
