@@ -229,6 +229,20 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     };
 
     let onFocus = (e) => {
+      // I think this onFocus is stealing the focus away from in DialogTrigger test,
+      // the dialog is closed, at which point focus should be restored to the trigger,
+      // it would appear that
+      /**
+       * dialog is blurred (this is the only blur called that makes it to document)
+       * dialog is focused (caught from local element listener)
+       * dialog is focused (global)
+       * button is focused (global)
+       * dialog is focused (local)
+       * dialog is focused (global)
+       *
+       * it's fired on so many things so fast that i don't think onFocus actually fires on the button?
+       */
+
       // If a focus event occurs outside the active scope (e.g. user tabs from browser location bar),
       // restore focus to the previously focused node or the first tabbable element in the active scope.
       let isInAnyScope = isElementInAnyScope(e.target, scopes);
@@ -245,7 +259,6 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     };
 
     let onBlur = (e) => {
-
       let isInAnyScope = isElementInAnyScope(e.relatedTarget, scopes);
 
       if (!isInAnyScope) {
@@ -259,6 +272,9 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     };
 
     document.addEventListener('keydown', onKeyDown, false);
+    /**
+     * removing the two global listeners fixes dialog trigger, but breaks FocusScope, Dialog containment, and Popover containment
+     */
     document.addEventListener('focusin', onFocus, false);
     scope.forEach(element => element.addEventListener('focusin', onFocus, false));
     scope.forEach(element => element.addEventListener('focusout', onBlur, false));

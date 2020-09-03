@@ -225,12 +225,12 @@ describe('DialogTrigger', function () {
     expect(tray).toBeVisible();
   });
 
-  // this one fails
+  // see notes in focus scope, fails in .only mode as well
   it('should restore focus to the trigger when the dialog is closed', async function () {
     let {getByRole} = render(
       <Provider theme={theme}>
         <DialogTrigger>
-          <ActionButton onFocus={() => console.log('focused trigger')}>Trigger</ActionButton>
+          <ActionButton>Trigger</ActionButton>
           <Dialog>contents</Dialog>
         </DialogTrigger>
       </Provider>
@@ -264,11 +264,9 @@ describe('DialogTrigger', function () {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
 
-    console.log('just before fail');
     expect(document.activeElement).toBe(button);
   });
 
-  // this one fails
   it('should restore focus to the trigger when the dialog is closed from a hidden dismiss button', async function () {
     let {getByRole} = render(
       <Provider theme={theme}>
@@ -308,7 +306,6 @@ describe('DialogTrigger', function () {
     expect(document.activeElement).toBe(button);
   });
 
-  // fails
   it('should set aria-hidden on parent providers on mount and remove on unmount', async function () {
     let rootProviderRef = React.createRef();
     let {getByRole} = render(
@@ -349,7 +346,6 @@ describe('DialogTrigger', function () {
     expect(rootProviderRef.current.UNSAFE_getDOMNode()).not.toHaveAttribute('aria-hidden');
   });
 
-  // fails
   it('can be controlled', async function () {
     function Test({isOpen, onOpenChange}) {
       return (
@@ -412,7 +408,6 @@ describe('DialogTrigger', function () {
     }); // wait for animation
   });
 
-  // fails
   it('can be uncontrolled with defaultOpen', async function () {
     function Test({defaultOpen, onOpenChange}) {
       return (
@@ -451,7 +446,6 @@ describe('DialogTrigger', function () {
     }); // wait for animation
   });
 
-  // fails
   it('can be closed by buttons the user adds', async function () {
     function Test({defaultOpen, onOpenChange}) {
       return (
@@ -491,7 +485,6 @@ describe('DialogTrigger', function () {
     }); // wait for animation
   });
 
-  // fails
   it('can be closed by dismiss button in dialog', async function () {
     function Test({defaultOpen, onOpenChange}) {
       return (
@@ -531,7 +524,6 @@ describe('DialogTrigger', function () {
     }); // wait for animation
   });
 
-  // fails
   it('dismissable modals can be closed by clicking outside the dialog', async function () {
     function Test({defaultOpen, onOpenChange}) {
       return (
@@ -570,7 +562,6 @@ describe('DialogTrigger', function () {
     }); // wait for animation
   });
 
-  // fails
   it('non dismissable modals cannot be closed by clicking outside the dialog', async function () {
     function Test({defaultOpen, onOpenChange}) {
       return (
@@ -603,7 +594,6 @@ describe('DialogTrigger', function () {
     expect(onOpenChange).toHaveBeenCalledTimes(0);
   });
 
-  // fails
   it('mobile type modals should be closable by clicking outside the modal', async function () {
     matchMedia.useMediaQuery('(max-width: 700px)');
     function Test({defaultOpen, onOpenChange}) {
@@ -643,7 +633,6 @@ describe('DialogTrigger', function () {
     }); // wait for animation
   });
 
-  // fails
   it('non-modals can be closed by clicking outside the dialog regardless of isDismissable', async function () {
     function Test({defaultOpen, onOpenChange}) {
       return (
@@ -682,7 +671,6 @@ describe('DialogTrigger', function () {
     }); // wait for animation
   });
 
-  // fails
   it('disable closing dialog via escape key', async function () {
     let {getByRole} = render(
       <Provider theme={theme}>
