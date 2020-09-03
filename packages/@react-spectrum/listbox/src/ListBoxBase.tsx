@@ -149,7 +149,10 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
             );
           } else if (type === 'placeholder' && isMobile) {
             return (
+
               <div
+                // aria-selected isn't needed here since this option is not selectable.
+                // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
                 role="option"
                 className={classNames(
                   styles,
