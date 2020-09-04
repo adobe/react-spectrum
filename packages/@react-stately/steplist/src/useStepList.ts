@@ -29,8 +29,8 @@ const getKeysBefore = (collection: Collection<Node<unknown>>, key: Key) => {
 };
 
 /**
- * Provides state management for steplist componet. Provides functionality of single selection amongs
- * children Items and keep tracks of completed steps.
+ * Provides state management for steplist componet with functionality of single selection among
+ * children Items and keeps track of completed steps.
  */
 export function useStepListState<T extends object>(props: StepListProps<T>): StepListState<T> {
   const selectionState = useSingleSelectListState<T>(props);
