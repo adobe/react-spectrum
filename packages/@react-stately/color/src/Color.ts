@@ -204,12 +204,12 @@ class HSLColor implements ColorValue {
 }
 
 export function parseColor(value: ColorInput): Color {
-  if (!value) return null;
+  if (!value) { return null };
   return new Color(typeof value === 'string' ? value : value.toString('hex'));
 }
 
 export function parseColorToInt(value: ColorInput) {
-  if (!value) return null;
+  if (!value) { return null };
   const colorString = parseColor(value).toString('hex').substring(1);
   return parseInt(colorString, 16);
 }

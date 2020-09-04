@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color, parseColorToInt, parseColor} from './Color';
+import {Color, parseColor, parseColorToInt} from './Color';
 import {ColorInput, HexColorFieldProps} from '@react-types/color';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {useCallback, useState} from 'react';
@@ -35,7 +35,7 @@ export function useHexColorFieldState(
     value,
     defaultValue,
     onChange,
-    validationState,
+    validationState
   } = props;
 
   const [colorInputValue, setColorInputValue] = useControlledState<ColorInput>(value, defaultValue || minValue, onChange);
@@ -107,7 +107,7 @@ export function useHexColorFieldState(
     decrement,
     decrementToMin,
     commitInputValue,
-    validationState,
+    validationState
   };
 }
 
