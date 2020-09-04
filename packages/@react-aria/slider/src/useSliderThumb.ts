@@ -49,7 +49,7 @@ export function useSliderThumb(
   });
 
   const value = state.values[index];
-  const allowDrag = !(isDisabled || isReadOnly);
+  const isEditable = !(isDisabled || isReadOnly);
 
   const focusInput = useCallback(() => {
     if (inputRef.current) {
@@ -79,6 +79,9 @@ export function useSliderThumb(
     }
   });
 
+  // Immediately register editability with the state
+  state.setThumbEditable(index, isEditable);
+
   const {focusableProps} = useFocusable(
     mergeProps(opts, {
       onFocus: () => state.setFocusedThumb(index),
@@ -94,7 +97,7 @@ export function useSliderThumb(
   return {
     inputProps: mergeProps(focusableProps, fieldProps, {
       type: 'range',
-      tabIndex: allowDrag ? 0 : undefined,
+      tabIndex: isEditable ? 0 : undefined,
       min: state.getThumbMinValue(index),
       max: state.getThumbMaxValue(index),
       step: state.step,
@@ -110,7 +113,7 @@ export function useSliderThumb(
         state.setThumbValue(index, parseFloat(e.target.value));
       }
     }),
-    thumbProps: allowDrag ? mergeProps({
+    thumbProps: isEditable ? mergeProps({
       onMouseDown: draggableProps.onMouseDown,
       onMouseEnter: draggableProps.onMouseEnter,
       onMouseOut: draggableProps.onMouseOut

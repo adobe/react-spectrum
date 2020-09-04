@@ -94,7 +94,11 @@ export function useSearchField(
 
   return {
     labelProps,
-    inputProps,
+    inputProps: {
+      ...inputProps,
+      // already handled by useSearchFieldState
+      defaultValue: undefined
+    },
     clearButtonProps: {
       'aria-label': formatMessage('Clear search'),
       excludeFromTabOrder: true,

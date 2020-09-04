@@ -12,7 +12,7 @@
 
 export {ActionGroup} from '@react-spectrum/actiongroup';
 export {Breadcrumbs} from '@react-spectrum/breadcrumbs';
-export {ActionButton, Button, LogicButton} from '@react-spectrum/button';
+export {ActionButton, Button, LogicButton, ToggleButton} from '@react-spectrum/button';
 export {ButtonGroup} from '@react-spectrum/buttongroup';
 export {Checkbox} from '@react-spectrum/checkbox';
 export {AlertDialog, Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -43,3 +43,4 @@ export {Item, Section} from '@react-stately/collections';
 export {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 export {VisuallyHidden} from '@react-aria/visually-hidden';
 export {useCollator, useDateFormatter, useMessageFormatter, useNumberFormatter} from '@react-aria/i18n';
+export {SSRProvider} from '@react-aria/ssr';

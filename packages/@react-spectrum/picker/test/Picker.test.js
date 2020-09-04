@@ -23,7 +23,6 @@ import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
-import userEvent from '@testing-library/user-event';
 
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
@@ -33,6 +32,7 @@ describe('Picker', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.useFakeTimers();
   });
@@ -366,7 +366,7 @@ describe('Picker', function () {
       expect(() => getByRole('listbox')).toThrow();
 
       let picker = getByRole('button');
-      act(() => userEvent.click(picker));
+      act(() => triggerPress(picker));
       act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
@@ -376,7 +376,7 @@ describe('Picker', function () {
       expect(picker).toHaveAttribute('aria-expanded', 'true');
       expect(picker).toHaveAttribute('aria-controls', listbox.id);
 
-      act(() => userEvent.click(picker));
+      act(() => triggerPress(picker));
       act(() => jest.runAllTimers());
 
       expect(listbox).not.toBeInTheDocument();
@@ -915,6 +915,72 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Three');
     });
+
+    it('can select items with falsy keys', function () {
+      let {getByRole} = render(
+        <Provider theme={theme}>
+          <Picker label="Test" onSelectionChange={onSelectionChange}>
+            <Item key="">Empty</Item>
+            <Item key={0}>Zero</Item>
+            <Item key={false}>False</Item>
+          </Picker>
+        </Provider>
+      );
+      
+      let picker = getByRole('button');
+      expect(picker).toHaveTextContent('Select an option…');
+      act(() => triggerPress(picker));
+      act(() => jest.runAllTimers());
+
+      let listbox = getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      expect(items.length).toBe(3);
+      expect(items[0]).toHaveTextContent('Empty');
+      expect(items[1]).toHaveTextContent('Zero');
+      expect(items[2]).toHaveTextContent('False');
+
+      expect(document.activeElement).toBe(listbox);
+
+      act(() => triggerPress(items[0]));
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('');
+      act(() => jest.runAllTimers());
+      expect(listbox).not.toBeInTheDocument();
+
+      expect(document.activeElement).toBe(picker);
+      expect(picker).toHaveTextContent('Empty');
+
+      act(() => triggerPress(picker));
+      act(() => jest.runAllTimers());
+
+      listbox = getByRole('listbox');
+      let item1 = within(listbox).getByText('Zero');
+
+      act(() => triggerPress(item1));
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('0');
+      act(() => jest.runAllTimers());
+      expect(listbox).not.toBeInTheDocument();
+
+      expect(document.activeElement).toBe(picker);
+      expect(picker).toHaveTextContent('Zero');
+
+      act(() => triggerPress(picker));
+      act(() => jest.runAllTimers());
+
+      listbox = getByRole('listbox');
+      let item2 = within(listbox).getByText('False');
+
+      act(() => triggerPress(item2));
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('false');
+      act(() => jest.runAllTimers());
+      expect(listbox).not.toBeInTheDocument();
+
+      expect(document.activeElement).toBe(picker);
+      expect(picker).toHaveTextContent('False');
+    });
+
 
     it('can select items with the Space key', function () {
       let {getByRole} = render(

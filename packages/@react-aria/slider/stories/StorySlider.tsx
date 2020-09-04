@@ -9,7 +9,8 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 interface StorySliderProps extends BaseSliderProps, ValueBase<number> {
   origin?: number,
-  onChangeEnd?: (value: number) => void
+  onChangeEnd?: (value: number) => void,
+  showTip?: boolean
 }
 
 export function StorySlider(props: StorySliderProps) {
@@ -49,6 +50,10 @@ export function StorySlider(props: StorySliderProps) {
         <div className={styles.value}>{state.getThumbValueLabel(0)}</div>
       </div>
       <div className={styles.trackContainer}>
+        {
+          // We make rail, filledRail, and track siblings in the DOM, so that trackRef has no children.
+          // User must click on the trackRef to drag by track, and so it comes last in the DOM.
+        }
         <div className={styles.rail} />
         <div
           className={styles.filledRail}
@@ -56,14 +61,16 @@ export function StorySlider(props: StorySliderProps) {
             left: `${state.getValuePercent(Math.min(value, origin)) * 100}%`,
             width: `${(state.getValuePercent(Math.max(value, origin)) - state.getValuePercent(Math.min(value, origin))) * 100}%`
           }} />
-        <div {...trackProps} ref={trackRef} className={styles.track} />
+        <div ref={trackRef} className={styles.track} {...trackProps} />
         <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
           <div
-            {...thumbProps}
             className={styles.thumb}
             style={{
               'left': `${state.getThumbPercent(0) * 100}%`
             }}>
+            {/* We put thumbProps on thumbHandle, so that you cannot drag by the tip */}
+            <div {...thumbProps} className={styles.thumbHandle} />
+            {props.showTip && <div className={styles.tip}>{state.getThumbValueLabel(0)}</div>}
             <VisuallyHidden isFocusable><input className={styles.input} ref={inputRef} {...inputProps} /></VisuallyHidden>
           </div>
         </FocusRing>

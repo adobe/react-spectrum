@@ -10,22 +10,4 @@
  * governing permissions and limitations under the License.
  */
 
-const NodeEnvironment = require('jest-environment-node');
-const {Worker} = require('worker_threads');
-
-// Setup a single worker instance that's shared between test environments via a __SSR_WORKER__ global.
-let worker = new Worker(__dirname + '/hydrateWorker.js');
-worker.unref();
-
-class SSREnvironment extends NodeEnvironment {
-  async setup() {
-    await super.setup();
-    this.global.__SSR_WORKER__ = worker;
-  }
-
-  async teardown() {
-    await super.teardown();
-  }
-}
-
-module.exports = SSREnvironment;
+export * from './src';
