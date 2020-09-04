@@ -34,19 +34,19 @@ export function useHexColorFieldState(
     step = 1,
     value,
     defaultValue,
-    onChange
+    onChange,
+    validationState,
   } = props;
 
   const [colorInputValue, setColorInputValue] = useControlledState<ColorInput>(value, defaultValue || minValue, onChange);
-  const initialInputIsValid = isInputValueValid(colorInputValue, maxValue, minValue);
+  const initialIsValid = isInputValueValid(colorInputValue, maxValue, minValue);
   let colorValue;
   let initialInputValue;
-  if (initialInputIsValid) {
+  if (initialIsValid) {
     colorValue = parseColor(colorInputValue);
     initialInputValue = colorValue.toString('hex');
   }
   const [inputValue, setInputValue] = useState(initialInputValue || '');
-  const [isValid, setIsValid] = useState(initialInputIsValid);
 
   const increment = () => {
     setColorInputValue((previousValue) => {
@@ -54,7 +54,6 @@ export function useHexColorFieldState(
       const maxColorInt = parseColorToInt(maxValue);
       const newValue = `#${Math.min(colorInt + step, maxColorInt).toString(16).padStart(6, '0').toUpperCase()}`;
       const newColor = new Color(newValue);
-      updateValidation(newColor);
       setInputValue(newValue);
       return newColor;
     });
@@ -74,7 +73,6 @@ export function useHexColorFieldState(
       const minColorInt = parseColorToInt(minValue);
       const newValue = `#${Math.max(colorInt - step, minColorInt).toString(16).padStart(6, '0').toUpperCase()}`;
       const newColor = new Color(newValue);
-      updateValidation(newColor);
       setInputValue(newValue);
       return newColor;
     });
@@ -89,18 +87,12 @@ export function useHexColorFieldState(
   }, [minValue, setColorInputValue, setInputValue]);
 
   const setColorValue = (color: Color) => {
-    updateValidation(color);
     setColorInputValue(color);
     setInputValue(color.toString('hex'));
   };
 
-  const updateValidation = (value: Color) => {
-    setIsValid(isInputValueValid(value, maxValue, minValue));
-  };
-
   const commitInputValue = () => {
     if (!inputValue.length) { return; }
-    updateValidation(colorValue);
     setInputValue(colorValue.toString('hex'));
   };
 
@@ -115,7 +107,7 @@ export function useHexColorFieldState(
     decrement,
     decrementToMin,
     commitInputValue,
-    validationState: !isValid ? 'invalid' : null
+    validationState,
   };
 }
 
