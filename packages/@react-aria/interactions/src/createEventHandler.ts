@@ -23,23 +23,23 @@ export function createEventHandler<T extends SyntheticEvent>(handler: (e: BaseEv
 
   let shouldStopPropagation = true;
   return (e: T) => {
-    let event: BaseEvent<T> = {
-      ...e,
-      preventDefault() {
-        e.preventDefault();
-      },
-      isDefaultPrevented() {
-        return e.isDefaultPrevented();
-      },
-      stopPropagation() {
-        console.error('stopPropagation is now the default behavior for events in React Spectrum. You can use continuePropagation() to revert this behavior.');
-      },
-      continuePropagation() {
-        shouldStopPropagation = false;
-      }
+    // Do not try to spread the event here because the getters of classes (native DOM events)
+    // aren't enumerated.
+    let prevStopPropagation = e.stopPropagation;
+    e.stopPropagation = ()=> {
+      console.error('stopPropagation is now the default behavior for events in React Spectrum. You can use continuePropagation() to revert this behavior.');
     };
+    // @ts-ignore
+    e.continuePropagation = () =>{
+      shouldStopPropagation = false;
+    }
 
-    handler(event);
+    // @ts-ignore
+    handler(e);
+
+    e.stopPropagation = prevStopPropagation;
+    // @ts-ignore
+    delete e.continuePropagation;
 
     if (shouldStopPropagation) {
       e.stopPropagation();
