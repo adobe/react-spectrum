@@ -17,7 +17,6 @@ import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
-import {FocusScope} from "@react-aria/focus";
 
 storiesOf('Button', module)
   .addParameters({providerSwitcher: {status: 'positive'}})
@@ -89,17 +88,6 @@ storiesOf('Button', module)
   .add(
     'element: a, rel: \'noopener noreferrer\'',
     () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
-  )
-  .add(
-    'focus scope',
-    () => (<div>
-      <input data-testid="outside" />
-      <FocusScope contain>
-        <input data-testid="input1" />
-        <input data-testid="input2" />
-        <input data-testid="input3" />
-      </FocusScope>
-    </div>)
   );
 
 function render(props: any = {}) {

@@ -19,7 +19,7 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
-import userEvent from "@testing-library/user-event";
+import userEvent from '@testing-library/user-event';
 
 // whole thing hangs if run with rest of suite, but doesn't on its own
 describe('DialogTrigger', function () {
@@ -33,7 +33,8 @@ describe('DialogTrigger', function () {
 
   beforeEach(() => {
     matchMedia = new MatchMediaMock();
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
   });
 
   afterEach(() => {
@@ -239,7 +240,7 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     act(() => {button.focus();});
     fireEvent.focusIn(button);
-    act(() => {userEvent.click(button)});
+    act(() => {userEvent.click(button);});
 
     act(() => {
       jest.runAllTimers();
@@ -263,6 +264,10 @@ describe('DialogTrigger', function () {
     await waitFor(() => {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
+
+    act(() => {
+      jest.runAllTimers();
+    });
 
     expect(document.activeElement).toBe(button);
   });

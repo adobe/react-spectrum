@@ -22,11 +22,11 @@ let map: Map<string, (v: string) => void> = new Map();
  */
 export function useId(defaultId?: string): string {
   let [value, setValue] = useState(defaultId);
-  // do i need to keep an entire queue? i think I only need the most recent?
-  // does this actually work in the case that we're not mid render? it's a ref, so it won't
+  // Do i need to keep an entire queue? i think I only need the most recent?
+  // Does this actually work in the case that we're not mid render? It's a ref, so it won't
   // cause a re-render ever on it's own, that said, we might always be mid-render
   // we seem to only call mergeProps/Ids in the render flow, but now we'll need to document that
-  // as a limitation of those functions
+  // as a limitation of those functions.
   let setIdUpdateQueue = useRef([]);
   let pushToQueue = useCallback((val) => {
     setIdUpdateQueue.current.push(val);
@@ -43,17 +43,6 @@ export function useId(defaultId?: string): string {
   return res;
 }
 
-// TODO this causes issues
-/**
- * In updating to react 17, calling setState from another component gets more complex, however, we do this pretty easily/accidentally
- mergeProps calls on mergeIds which calls setState
- we frequently call mergeProps during the render cycle
- that setState isn’t necessarily the state of the component rendering, ergo, bad setState call
- anyone have any ideas how to resolve this?
- technically we’d need to make that setState call behind a useEffeect, but mergeId’s isn’t a hook… so no useEffect
- we could put it around mergeProps, but that seems complicated and impossible to enforce
- o, and i can’t make mergeId’s a hook either, that’d be breaking i think
- */
 /**
  * Merges two ids.
  */
