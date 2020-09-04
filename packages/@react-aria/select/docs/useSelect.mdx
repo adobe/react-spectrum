@@ -189,7 +189,7 @@ function ListBoxPopup({state, ...otherProps}) {
 
   // Get props for the listbox
   let {listBoxProps} = useListBox({
-    autoFocus: state.focusStrategy,
+    autoFocus: state.focusStrategy || true,
     disallowEmptySelection: true
   }, state, ref);
 
