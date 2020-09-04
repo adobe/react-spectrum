@@ -50,6 +50,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
         }
       };
 
+      // changing these to capture phase fixed combobox
       document.addEventListener('pointerdown', onPointerDown, true);
       document.addEventListener('pointerup', onPointerUp, true);
 
