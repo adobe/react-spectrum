@@ -42,6 +42,10 @@ storiesOf('HexColorField', module)
   .add(
     'validationState invalid',
     () => render({validationState: 'invalid'})
+  )
+  .add(
+    'step=16',
+    () => render({step: 16})
   );
 
 function render(props: any = {}) {
