@@ -11,20 +11,19 @@
  */
 
 import {CalendarCellOptions, CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {chain} from '@react-aria/utils';
-import {getCalendarId, getCellId} from './useCalendarBase';
-import {HTMLAttributes} from 'react';
+import {HTMLAttributes, RefObject, useEffect} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {PressProps, useFocus, usePress} from '@react-aria/interactions';
+import {isSameDay} from 'date-fns';
+import {PressProps, usePress} from '@react-aria/interactions';
 import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
 
 interface CalendarCellAria {
   cellProps: PressProps & HTMLAttributes<HTMLElement>,
-  cellDateProps: HTMLAttributes<HTMLElement>
+  buttonProps: HTMLAttributes<HTMLElement>
 }
 
-export function useCalendarCell(props: CalendarCellOptions, state: CalendarState | RangeCalendarState): CalendarCellAria {
+export function useCalendarCell(props: CalendarCellOptions, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement>): CalendarCellAria {
   let formatMessage = useMessageFormatter(intlMessages);
   let dateFormatter = useDateFormatter({weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
 
@@ -70,42 +69,39 @@ export function useCalendarCell(props: CalendarCellOptions, state: CalendarState
     }
   });
 
-  let {focusProps} = useFocus({});
-
   let onMouseEnter = () => {
     if ('highlightDate' in state) {
       state.highlightDate(props.cellDate);
     }
   };
 
-  let tabIndex =  null;
+  let tabIndex = null;
   if (!props.isDisabled) {
-    const focusedDate = state.focusedDate;
-    focusedDate.setHours(0, 0, 0, 0);
-    tabIndex = props.isFocused || props.cellDate.valueOf() === focusedDate.valueOf() ? 0 : -1;
+    tabIndex = isSameDay(props.cellDate, state.focusedDate) ? 0 : -1;
   }
+
+  // Focus the button in the DOM when the state updates.
+  useEffect(() => {
+    if (props.isFocused && ref.current) {
+      ref.current.focus();
+    }
+  }, [props.isFocused, ref]);
 
   return {
     cellProps: {
       onMouseEnter: props.isDisabled ? null : onMouseEnter,
       role: 'gridcell',
-      'aria-colindex': props.colIndex,
       'aria-disabled': props.isDisabled || null,
       'aria-selected': props.isSelected
     },
-    cellDateProps: {
+    buttonProps: {
       ...pressProps,
-      ...focusProps,
-      onFocus: chain(
-        focusProps.onFocus,
-        () => {
-          if (!props.isDisabled) {
-            state.setFocusedDate(props.cellDate);
-          }
+      onFocus() {
+        if (!props.isDisabled) {
+          state.setFocusedDate(props.cellDate);
         }
-      ),
+      },
       tabIndex,
-      id: getCellId(props.cellDate, getCalendarId(state)),
       role: 'button',
       'aria-disabled': props.isDisabled || null,
       'aria-label': label

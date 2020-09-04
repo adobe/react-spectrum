@@ -23,7 +23,7 @@ export function useCalendarState(props: CalendarProps): CalendarState {
   let defaultMonth = dateValue || new Date();
   let [currentMonth, setCurrentMonth] = useState(defaultMonth); // TODO: does this need to be in state at all??
   let [focusedDate, setFocusedDate] = useState(defaultMonth);
-  let [isFocused, setFocused] = useState(false);
+  let [isFocused, setFocused] = useState(props.autoFocus || false);
   let month = currentMonth.getMonth();
   let year = currentMonth.getFullYear();
   let weekStart = useWeekStart();
@@ -31,7 +31,7 @@ export function useCalendarState(props: CalendarProps): CalendarState {
   if (monthStartsAt < 0) {
     monthStartsAt += 7;
   }
-  
+
   let days = getDaysInMonth(currentMonth);
   let weeksInMonth = Math.ceil((monthStartsAt + days) / 7);
   let minDate = props.minValue ? startOfDay(props.minValue) : null;
@@ -45,8 +45,6 @@ export function useCalendarState(props: CalendarProps): CalendarState {
 
     if (!isSameMonth(date, currentMonth)) {
       setCurrentMonth(startOfMonth(date));
-      setFocusedDate(date);
-      return;
     }
 
     setFocusedDate(date);
@@ -117,8 +115,7 @@ export function useCalendarState(props: CalendarProps): CalendarState {
         isDisabled: props.isDisabled || !isCurrentMonth || isInvalid(cellDate, minDate, maxDate),
         isSelected: isSameDay(cellDate, value),
         isFocused: isFocused && focusedDate && isSameDay(cellDate, focusedDate),
-        isReadOnly: props.isReadOnly,
-        colIndex: dayIndex + 1
+        isReadOnly: props.isReadOnly
       };
     }
   };

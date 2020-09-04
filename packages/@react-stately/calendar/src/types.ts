@@ -62,6 +62,5 @@ export interface CalendarCellOptions {
   isRangeStart?: boolean,
   isRangeEnd?: boolean,
   isSelectionStart?: boolean,
-  isSelectionEnd?: boolean,
-  colIndex?: number
+  isSelectionEnd?: boolean
 }
