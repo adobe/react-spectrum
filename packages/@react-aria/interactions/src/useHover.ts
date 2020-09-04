@@ -72,9 +72,9 @@ function setupGlobalTouchEvents() {
     }
 
     if (typeof PointerEvent !== 'undefined') {
-      document.removeEventListener('pointerup', handleGlobalPointerEvent);
+      document.removeEventListener('pointerup', handleGlobalPointerEvent, true);
     } else {
-      document.removeEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
+      document.removeEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents, true);
     }
   };
 }
