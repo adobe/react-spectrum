@@ -27,13 +27,13 @@ export function useStepListState<T extends object>(props: StepListProps<T>): Ste
     () => {}
   );
 
-  const stepOrderMap =  useMemo(() => {
-    const stepOrderMap = {};
+  const stepOrder = useMemo(() => {
+    const stepOrder: Map<Key, Number> = new Map;
     let order = 1;
     for(let key of collection.getKeys()) {
-      stepOrderMap[key] = order++;
+      stepOrder.set(key, order++);
     }
-    return stepOrderMap;
+    return stepOrder;
   }, [collection]);
 
   // Update lastCompletedStep when selectedKey changes
@@ -43,13 +43,13 @@ export function useStepListState<T extends object>(props: StepListProps<T>): Ste
       return;
     }
     // Update if lastCompletedStep is null or before selectedKey
-    if(lastCompletedStep == null || stepOrderMap[selectedKey] > stepOrderMap[lastCompletedStep]) {
+    if(lastCompletedStep == null || stepOrder.get(selectedKey) > stepOrder.get(lastCompletedStep)) {
       setLastCompletedStep(collection.getKeyBefore(selectedKey));
     }
-  }, [collection, selectedKey, props.lastCompletedStep, lastCompletedStep, stepOrderMap]);
+  }, [collection, selectedKey, props.lastCompletedStep, lastCompletedStep, stepOrder]);
 
   return {
-    isCompleted: key => stepOrderMap[key] <= stepOrderMap[lastCompletedStep],
+    isCompleted: key => stepOrder.get(key) <= stepOrder.get(lastCompletedStep),
     lastCompletedStep,
     setLastCompletedStep,
     ...selectionState,
