@@ -2208,22 +2208,20 @@ describe('ComboBox', function () {
     it('value of the tray input mirrors that of the combobox input', function () {
       let {getByRole, getByTestId} = renderComboBox({allowsCustomValue: true});
       let combobox = getByRole('combobox');
+      let button = getByRole('button');
 
       act(() => {
         combobox.focus();
-        userEvent.type(combobox, 'O');
+        triggerPress(button);
         jest.runAllTimers();
       });
 
       expect(onOpenChange).toHaveBeenCalledWith(true);
       expect(onOpenChange).toHaveBeenCalledTimes(1);
-      expect(onInputChange).toHaveBeenCalledWith('O');
-      expect(onInputChange).toHaveBeenCalledTimes(1);
 
       let tray = getByTestId('tray');
       expect(tray).toBeVisible();
       let trayInput = within(tray).getByRole('combobox');
-      expect(trayInput.value).toBe('O');
       expect(document.activeElement).toBe(trayInput);
 
       act(() => {
@@ -2231,9 +2229,9 @@ describe('ComboBox', function () {
         jest.runAllTimers();
       });
 
-      expect(trayInput.value).toBe('OBleh');
-      expect(onInputChange).toHaveBeenCalledWith('OBleh');
-      expect(onInputChange).toHaveBeenCalledTimes(5);
+      expect(trayInput.value).toBe('Bleh');
+      expect(onInputChange).toHaveBeenCalledWith('Bleh');
+      expect(onInputChange).toHaveBeenCalledTimes(4);
 
       act(() => {
         fireEvent.keyDown(trayInput, {key: 'Escape', code: 27, charCode: 27});
@@ -2245,21 +2243,7 @@ describe('ComboBox', function () {
       expect(onOpenChange).toHaveBeenCalledTimes(2);
       expect(() => getByRole('tray')).toThrow();
       expect(document.activeElement).toBe(combobox);
-      expect(combobox.value).toBe('OBleh');
-    });
-
-    it('tray doesn\'t open if user types in a value that doesn\'t match any of the valid combobox values', function () {
-      let {getByRole} = renderComboBox();
-      let combobox = getByRole('combobox');
-
-      act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'Blah');
-        jest.runAllTimers();
-      });
-
-      expect(() => getByRole('tray')).toThrow();
-      expect(onOpenChange).not.toHaveBeenCalledWith();
+      expect(combobox.value).toBe('Bleh');
     });
 
     it('label of the tray input should match label of combobox', function () {
@@ -2310,12 +2294,53 @@ describe('ComboBox', function () {
       let trayInput = within(tray).getByRole('combobox');
       expect(trayInput).toHaveAttribute('aria-labelledby', label.id);
     });
+
+    it('user can open the tray even if there aren\'t any items to show', function () {
+      let {getByRole, getByTestId} = renderComboBox({inputValue: 'blah'});
+      let combobox = getByRole('combobox');
+
+      act(() => {
+        combobox.focus();
+        triggerPress(combobox);
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+
+      let items = within(tray).getAllByRole('option');
+      expect(items.length).toBe(1);
+
+      let placeholderText = within(items[0]).getByText('No Results');
+      expect(placeholderText).toBeVisible();
+    });
+
+    it('combobox input field is readonly when mobile', function () {
+      let {getByRole} = renderComboBox();
+      let combobox = getByRole('combobox');
+
+      act(() => {
+        combobox.focus();
+        userEvent.type(combobox, 'Blah');
+        jest.runAllTimers();
+      });
+
+      expect(combobox.value).toBe('');
+      expect(onInputChange).not.toHaveBeenCalled();
+    });
   });
 
   describe('accessibility', function () {
+    beforeAll(function () {
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    });
+
+    afterAll(function () {
+      jest.restoreAllMocks();
+    });
     // NVDA workaround so that letters are read out when user presses left/right arrow to navigate through what they typed
     it('clears aria-activedescendant when user presses left/right arrow (NVDA fix)', function () {
-      let {getByRole} = renderComboBox({});
+      let {getByRole} = renderComboBox();
 
       let combobox = getByRole('combobox');
 
@@ -2324,7 +2349,6 @@ describe('ComboBox', function () {
         userEvent.type(combobox, 'One');
         jest.runAllTimers();
       });
-
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
       expect(combobox).toHaveAttribute('aria-controls', listbox.id);

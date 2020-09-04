@@ -200,7 +200,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         }>
         <TextFieldBase
           labelProps={labelProps}
-          inputProps={inputProps}
+          inputProps={{...inputProps, readOnly: inputProps.readOnly || isMobile}}
           inputRef={inputRef}
           ref={ref}
           inputClassName={
@@ -211,7 +211,6 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
             )
           }
           isDisabled={isDisabled}
-          isReadOnly={isReadOnly}
           isQuiet={isQuiet}
           validationState={validationState}
           flex={1} />

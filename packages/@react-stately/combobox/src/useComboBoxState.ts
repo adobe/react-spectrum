@@ -188,26 +188,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     }
   );
 
-  // Prevent open operations from triggering if there is nothing to display
+  // Prevent open operations from triggering if there is nothing to display, exception is for mobile so that user can access tray input since textfield is read only
   let open = (focusStrategy?) => {
-    if (filteredCollection.size > 0) {
+    if (isMobile || filteredCollection.size > 0) {
       triggerState.open(focusStrategy);
     }
   };
 
-  // For mobile view comboboxes, the tray should remain open even if user changes input such that the filteredCollection doesn't contain any matching items
-  // However, we don't ever want to go from a closed to open state if the filteredCollection contains no items;
-  let isMobileOpen = useRef(triggerState.isOpen && isFocused && filteredCollection.size > 0);
-  let isOpen = triggerState.isOpen && isFocused && (isMobileOpen.current || filteredCollection.size > 0);
-  useEffect(() => {
-    // if menu is currently open and is a tray, set isMobileOpen.current to true to override filteredCollection size check
-    if (isOpen && isMobile) {
-      isMobileOpen.current = true;
-    } else if (!isOpen && isMobile) {
-      // otherwise if menu is currently closed and is a tray, set isMobileOpen.current to false so filteredCollection size determines whether or not to open the menu
-      isMobileOpen.current = false;
-    }
-  }, [isOpen, isMobile]);
+  // For mobile view comboboxes, the tray should remain open/can be opened even if user changes input such that the filteredCollection doesn't contain any matching items
+  let isOpen = triggerState.isOpen && isFocused && (isMobile || filteredCollection.size > 0);
 
   return {
     ...triggerState,
