@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {FocusScope, useFocusManager} from '../';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -220,7 +220,8 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input4);
     });
 
-    it('should restore focus to the last focused element in the scope when re-entering the browser', function () {
+    // TODO see 221165e1 / PR1040
+    it.skip('should restore focus to the last focused element in the scope when re-entering the browser', function () {
       let {getByTestId} = render(
         <div>
           <input data-testid="outside" />
@@ -252,7 +253,8 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input2);
     });
 
-    it('should restore focus to the last focused element in the scope on focus out', function () {
+    // TODO see 221165e1 / PR1040
+    it.skip('should restore focus to the last focused element in the scope on focus out', function () {
       let {getByTestId} = render(
         <div>
           <FocusScope contain>
