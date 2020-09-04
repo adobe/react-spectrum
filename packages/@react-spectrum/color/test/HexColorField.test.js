@@ -16,7 +16,7 @@ import {render} from '@testing-library/react';
 
 describe('Dialog', function () {
   it('temp test for testing', function () {
-    render(<HexColorField />);
+    render(<HexColorField label="Primary Color" />);
     expect(true).toBe(true);
   });
 });

@@ -11,7 +11,7 @@
  */
 
 import {AriaHexColorFieldProps} from '@react-types/color';
-import {Color, HexColorFieldState} from '@react-stately/color';
+import {HexColorFieldState, parseColorToInt} from '@react-stately/color';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {useSpinButton} from '@react-aria/spinbutton';
 import {useId} from '@react-aria/utils';
@@ -28,9 +28,11 @@ export function useHexColorField(
   ref: RefObject<HTMLInputElement>
 ): HexColorFieldAria {
   const {
-    value,        // eslint-disable-line @typescript-eslint/no-unused-vars
-    defaultValue, // eslint-disable-line @typescript-eslint/no-unused-vars
-    onChange,     // eslint-disable-line @typescript-eslint/no-unused-vars
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    value,        
+    defaultValue,
+    onChange,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     ...otherProps
   } = props;
 
@@ -51,29 +53,18 @@ export function useHexColorField(
     decrementToMin,
   } = state;
 
-  const minColor = typeof minValue === 'string' ? new Color(minValue) : minValue;
-  const minColorString = minColor.toString('hex').substring(1);
-  const minColorNumber = parseInt(minColorString, 16);
-
-  const maxColor = typeof maxValue === 'string' ? new Color(maxValue) : maxValue;
-  const maxColorString = maxColor.toString('hex').substring(1);
-  const maxColorNumber = parseInt(maxColorString, 16);
-
-  const colorValueString = colorValue.toString('hex').substring(1);
-  const colorValueNumber = parseInt(colorValueString, 16);
-
   const {spinButtonProps} = useSpinButton(
     {
       isDisabled,
       isReadOnly,
       isRequired,
-      maxValue: maxColorNumber,
-      minValue: minColorNumber,
+      maxValue: parseColorToInt(maxValue),
+      minValue: parseColorToInt(minValue),
       onIncrement: increment,
       onIncrementToMax: incrementToMax,
       onDecrement: decrement,
       onDecrementToMin: decrementToMin,
-      value: colorValueNumber,
+      value: parseColorToInt(colorValue),
       textValue: inputValue
     }
   );

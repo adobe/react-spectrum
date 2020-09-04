@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color} from './Color';
+import {Color, parseColorToInt, parseColor} from './Color';
 import {ColorInput, HexColorFieldProps} from '@react-types/color';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {useCallback, useState} from 'react';
@@ -42,7 +42,7 @@ export function useHexColorFieldState(
   let colorValue;
   let initialInputValue;
   if (initialInputIsValid) {
-    colorValue = typeof colorInputValue === 'string' ? new Color(colorInputValue) : colorInputValue;
+    colorValue = parseColor(colorInputValue);
     initialInputValue = colorValue.toString('hex');
   }
   const [inputValue, setInputValue] = useState(initialInputValue || '');
@@ -50,15 +50,9 @@ export function useHexColorFieldState(
 
   const increment = () => {
     setColorInputValue((previousValue) => {
-      const color = typeof previousValue === 'string' ? new Color(previousValue) : previousValue;
-      const colorString = color.toString('hex').substring(1);
-      const colorNumber = parseInt(colorString, 16);
-
-      const maxColor = typeof maxValue === 'string' ? new Color(maxValue) : maxValue;
-      const maxColorString = maxColor.toString('hex').substring(1);
-      const maxColorNumber = parseInt(maxColorString, 16);
-
-      const newValue = `#${Math.min(colorNumber + step, maxColorNumber).toString(16).padStart(6, '0').toUpperCase()}`;
+      const colorInt = parseColorToInt(previousValue);
+      const maxColorInt = parseColorToInt(maxValue);
+      const newValue = `#${Math.min(colorInt + step, maxColorInt).toString(16).padStart(6, '0').toUpperCase()}`;
       const newColor = new Color(newValue);
       updateValidation(newColor);
       setInputValue(newValue);
@@ -68,7 +62,7 @@ export function useHexColorFieldState(
 
   const incrementToMax = useCallback(() => {
     if (maxValue != null) {
-      const maxColor = typeof maxValue === 'string' ? new Color(maxValue) : maxValue;
+      const maxColor = parseColor(maxValue);
       setColorInputValue(maxColor);
       setInputValue(maxColor.toString('hex'));
     }
@@ -76,15 +70,9 @@ export function useHexColorFieldState(
 
   const decrement = () => {
     setColorInputValue((previousValue) => {
-      const color = typeof previousValue === 'string' ? new Color(previousValue) : previousValue;
-      const colorString = color.toString('hex').substring(1);
-      const colorNumber = parseInt(colorString, 16);
-
-      const minColor = typeof minValue === 'string' ? new Color(minValue) : minValue;
-      const minColorString = minColor.toString('hex').substring(1);
-      const minColorNumber = parseInt(minColorString, 16);
-
-      const newValue = `#${Math.max(colorNumber - step, minColorNumber).toString(16).padStart(6, '0').toUpperCase()}`;
+      const colorInt = parseColorToInt(previousValue);
+      const minColorInt = parseColorToInt(minValue);
+      const newValue = `#${Math.max(colorInt - step, minColorInt).toString(16).padStart(6, '0').toUpperCase()}`;
       const newColor = new Color(newValue);
       updateValidation(newColor);
       setInputValue(newValue);
@@ -94,7 +82,7 @@ export function useHexColorFieldState(
 
   const decrementToMin = useCallback(() => {
     if (minValue != null) {
-      const minColor = typeof minValue === 'string' ? new Color(minValue) : minValue;
+      const minColor = parseColor(minValue);
       setColorInputValue(minColor);
       setInputValue(minColor.toString('hex'));
     }
@@ -132,23 +120,15 @@ export function useHexColorFieldState(
 }
 
 function isInputValueValid(value: ColorInput, max: ColorInput, min: ColorInput): boolean {
-  let colorNumber;
+  let colorInt;
   try {
-    const color = typeof value === 'string' ? new Color(value) : value;
-    const colorString = color.toString('hex').substring(1);
-    colorNumber = parseInt(colorString, 16);
+    colorInt = parseColorToInt(value);
   } catch { return false; }
 
-  const minColor = typeof min === 'string' ? new Color(min) : min;
-  const minColorString = minColor.toString('hex').substring(1);
-  const minColorNumber = parseInt(minColorString, 16);
-
-  const maxColor = typeof max === 'string' ? new Color(max) : max;
-  const maxColorString = maxColor.toString('hex').substring(1);
-  const maxColorNumber = parseInt(maxColorString, 16);
-
+  const maxColorInt = parseColorToInt(max);
+  const minColorInt = parseColorToInt(min);
   return (
-    colorNumber <= maxColorNumber &&
-    colorNumber >= minColorNumber
+    colorInt <= maxColorInt &&
+    colorInt >= minColorInt
   );
 }
