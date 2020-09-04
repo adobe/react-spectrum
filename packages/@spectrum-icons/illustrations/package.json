@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@spectrum-icons/build-tools": "^3.0.0-alpha.1",
-    "react": "^17.0.0-rc.1"
+    "react": "^16.8.0 || ^17.0.0"
   },
   "publishConfig": {
     "access": "public"
