@@ -47,6 +47,11 @@ function setGlobalIgnoreEmulatedMouseEvents() {
   }, 50);
 }
 
+/** @private */
+export function clearGlobalIgnoreEmulatedMouseEvents() {
+  globalIgnoreEmulatedMouseEvents = false;
+}
+
 function handleGlobalPointerEvent(e) {
   if (e.pointerType === 'touch') {
     setGlobalIgnoreEmulatedMouseEvents();

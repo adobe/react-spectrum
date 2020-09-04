@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {clearGlobalIgnoreEmulatedMouseEvents, useHover} from '../';
 import {fireEvent, render} from '@testing-library/react';
 import React from 'react';
-import {useHover} from '../';
 
 function Example(props) {
   let {hoverProps, isHovered} = useHover(props);
@@ -33,6 +33,10 @@ function pointerEvent(type, opts) {
 describe('useHover', function () {
   beforeAll(() => {
     jest.useFakeTimers();
+  });
+
+  beforeEach(() => {
+    clearGlobalIgnoreEmulatedMouseEvents();
   });
 
   it('does not handle hover events if disabled', function () {
