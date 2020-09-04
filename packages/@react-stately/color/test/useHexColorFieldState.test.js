@@ -75,16 +75,16 @@ describe('useHexColorFieldState tests', function () {
   });
 
   it('should increment', function () {
-    let props = {defaultValue: new Color('#aabbcc')};
+    let props = {defaultValue: new Color('#012')};
     const {result} = renderHook(() => useHexColorFieldState(props));
     act(() => result.current.increment());
     expect(result.current.colorValue.value).toEqual({
-      red: 170,
-      green: 187,
-      blue: 205,
+      red: 0,
+      green: 17,
+      blue: 35,
       alpha: 1
     });
-    expect(result.current.inputValue).toBe('#AABBCD');
+    expect(result.current.inputValue).toBe('#001123');
     expect(result.current.validationState).toBe(null);
   });
 
@@ -115,16 +115,16 @@ describe('useHexColorFieldState tests', function () {
   });
 
   it('should decrement', function () {
-    let props = {defaultValue: new Color('#aabbcc'), step: 4};
+    let props = {defaultValue: new Color('#012'), step: 4};
     const {result} = renderHook(() => useHexColorFieldState(props));
     act(() => result.current.decrement());
     expect(result.current.colorValue.value).toEqual({
-      red: 170,
-      green: 187,
-      blue: 200,
+      red: 0,
+      green: 17,
+      blue: 30,
       alpha: 1
     });
-    expect(result.current.inputValue).toBe('#AABBC8');
+    expect(result.current.inputValue).toBe('#00111E');
     expect(result.current.validationState).toBe(null);
   });
 

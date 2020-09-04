@@ -58,7 +58,7 @@ export function useHexColorFieldState(
       const maxColorString = maxColor.toString('hex').substring(1);
       const maxColorNumber = parseInt(maxColorString, 16);
 
-      const newValue = `#${Math.min(colorNumber + step, maxColorNumber).toString(16).toUpperCase()}`;
+      const newValue = `#${Math.min(colorNumber + step, maxColorNumber).toString(16).padStart(6, '0').toUpperCase()}`;
       const newColor = new Color(newValue);
       updateValidation(newColor);
       setInputValue(newValue);
