@@ -81,7 +81,9 @@ describe('useSliderState', () => {
     })).result;
 
     expect(result.current.values).toEqual([0]);
+    act(() => result.current.setThumbDragging(0, true));
     act(() => result.current.setThumbValue(0, 50));
+    act(() => result.current.setThumbDragging(0, false));
     expect(onChangeSpy).toHaveBeenLastCalledWith([50]);
     expect(onChangeEndSpy).toHaveBeenLastCalledWith([50]);
 
@@ -95,8 +97,8 @@ describe('useSliderState', () => {
     act(() => result.current.setThumbValue(0, 60));
     expect(onChangeSpy).toHaveBeenLastCalledWith([60]);
     expect(onChangeEndSpy).not.toHaveBeenCalled();
-    act(() => result.current.setThumbDragging(0, false));
     act(() => result.current.setThumbValue(0, 65));
+    act(() => result.current.setThumbDragging(0, false));
     expect(onChangeSpy).toHaveBeenLastCalledWith([65]);
     expect(onChangeEndSpy).toHaveBeenLastCalledWith([65]);
   });

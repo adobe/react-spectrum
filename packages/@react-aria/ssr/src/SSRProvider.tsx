@@ -36,21 +36,21 @@ const defaultContext: SSRContextValue = {
 const SSRContext = React.createContext<SSRContextValue>(defaultContext);
 
 interface SSRProviderProps {
+  /** Your application here. */
   children: ReactNode
 }
 
 /**
  * When using SSR with React Aria, applications must be wrapped in an SSRProvider.
- * This ensures that auto generated ids are consistent between the client and server
- * by resetting the incremented value on each request.
+ * This ensures that auto generated ids are consistent between the client and server.
  */
 export function SSRProvider(props: SSRProviderProps): JSX.Element {
   let cur = useContext(SSRContext);
-  let value: SSRContextValue = {
+  let value: SSRContextValue = useMemo(() => ({
     // If this is the first SSRProvider, set to zero, otherwise increment.
-    prefix: cur === defaultContext ? 0 : cur.prefix + 1,
+    prefix: cur === defaultContext ? 0 : ++cur.prefix,
     current: 0
-  };
+  }), [cur]);
 
   return (
     <SSRContext.Provider value={value}>
@@ -78,7 +78,11 @@ export function useSSRSafeId(defaultId?: string): string {
   return useMemo(() => defaultId || `react-aria-${ctx.prefix}-${++ctx.current}`, [defaultId]);
 }
 
-/** @private */
+/**
+ * Returns whether the component is currently being server side rendered or
+ * hydrated on the client. Can be used to delay browser-specific rendering
+ * until after hydration.
+ */
 export function useIsSSR(): boolean {
   let cur = useContext(SSRContext);
   let isInSSRContext = cur !== defaultContext;
