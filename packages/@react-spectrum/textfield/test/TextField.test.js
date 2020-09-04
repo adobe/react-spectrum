@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, render} from '@testing-library/react';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
@@ -138,7 +138,7 @@ describe('Shared TextField behavior', () => {
     } else {
       input = tree.getAllByTestId(testId)[0];
     }
-    act(() => {fireEvent.change(input, {target: {value: inputText}});});
+    act(() => {userEvent.paste(input, inputText);});
     expect(onChange).toHaveBeenCalledTimes(1);
 
     if (Component === V2SearchField) {
@@ -170,10 +170,11 @@ describe('Shared TextField behavior', () => {
     } else {
       input = tree.getAllByTestId(testId)[0];
     }
-    act(() => {fireEvent.focus(input);});
+    act(() => {input.focus();});
     expect(onFocus).toHaveBeenCalledTimes(1);
     act(() => {userEvent.click(input);});
-    expect(onFocus).toHaveBeenCalledTimes(2);
+    // TODO it is already focused, why was it "2"?
+    expect(onFocus).toHaveBeenCalledTimes(1);
   });
 
   it.each`
@@ -192,7 +193,8 @@ describe('Shared TextField behavior', () => {
     } else {
       input = tree.getAllByTestId(testId)[0];
     }
-    fireEvent.blur(input);
+    act(() => {input.focus();});
+    act(() => {input.blur();});
     expect(onBlur).toHaveBeenCalledTimes(1);
   });
 
