@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render} from '@testing-library/react';
 import {DatePicker} from '../';
-import {fireEvent, render} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -275,7 +275,7 @@ describe('DatePicker', function () {
         let {getByLabelText, unmount} = render(<DatePicker value={value} onChange={onChange} formatOptions={format} />);
         let segment = getByLabelText(label);
         let textContent = segment.textContent;
-        segment.focus();
+        act(() => {segment.focus();});
 
         fireEvent.keyDown(segment, {key: options.upKey || 'ArrowUp'});
         expect(onChange).toHaveBeenCalledTimes(1);
@@ -293,7 +293,7 @@ describe('DatePicker', function () {
         ({getByLabelText, unmount} = render(<DatePicker defaultValue={value} onChange={onChange} formatOptions={format} />));
         segment = getByLabelText(label);
         textContent = segment.textContent;
-        segment.focus();
+        act(() => {segment.focus();});
 
         fireEvent.keyDown(segment, {key: options.upKey || 'ArrowUp'});
         expect(onChange).toHaveBeenCalledTimes(1);
@@ -306,7 +306,7 @@ describe('DatePicker', function () {
         ({getByLabelText, unmount} = render(<DatePicker defaultValue={value} onChange={onChange} formatOptions={format} />));
         segment = getByLabelText(label);
         textContent = segment.textContent;
-        segment.focus();
+        act(() => {segment.focus();});
 
         fireEvent.keyDown(segment, {key: options.downKey || 'ArrowDown'});
         expect(onChange).toHaveBeenCalledTimes(1);
@@ -319,7 +319,7 @@ describe('DatePicker', function () {
         ({getByLabelText, unmount} = render(<DatePicker defaultValue={value} isReadOnly onChange={onChange} formatOptions={format} />));
         segment = getByLabelText(label);
         textContent = segment.textContent;
-        segment.focus();
+        act(() => {segment.focus();});
 
         fireEvent.keyDown(segment, {key: options.upKey || 'ArrowUp'});
         expect(onChange).not.toHaveBeenCalled();
@@ -331,7 +331,7 @@ describe('DatePicker', function () {
         ({getByLabelText, unmount} = render(<DatePicker defaultValue={value} isReadOnly onChange={onChange} formatOptions={format} />));
         segment = getByLabelText(label);
         textContent = segment.textContent;
-        segment.focus();
+        act(() => {segment.focus();});
 
         fireEvent.keyDown(segment, {key: options.downKey || 'ArrowDown'});
         expect(onChange).not.toHaveBeenCalled();
@@ -488,7 +488,7 @@ describe('DatePicker', function () {
         let {getByLabelText, getAllByRole, unmount} = render(<DatePicker value={value} onChange={onChange} formatOptions={format} />);
         let segment = getByLabelText(label);
         let textContent = segment.textContent;
-        segment.focus();
+        act(() => {segment.focus();});
 
         let i = 0;
         for (let key of keys) {
@@ -518,7 +518,7 @@ describe('DatePicker', function () {
         ({getByLabelText, getAllByRole, unmount} = render(<DatePicker defaultValue={value} onChange={onChange} formatOptions={format} />));
         segment = getByLabelText(label);
         textContent = segment.textContent;
-        segment.focus();
+        act(() => {segment.focus();});
 
         i = 0;
         for (let key of keys) {
@@ -548,7 +548,7 @@ describe('DatePicker', function () {
         ({getByLabelText, getAllByRole, unmount} = render(<DatePicker defaultValue={value} isReadOnly onChange={onChange} formatOptions={format} />));
         segment = getByLabelText(label);
         textContent = segment.textContent;
-        segment.focus();
+        act(() => {segment.focus();});
 
         for (let key of keys) {
           fireEvent.keyDown(segment, {key});
@@ -641,7 +641,7 @@ describe('DatePicker', function () {
         let {getByLabelText, unmount} = render(<DatePicker value={value} onChange={onChange} formatOptions={format} />);
         let segment = getByLabelText(label);
         let textContent = segment.textContent;
-        segment.focus();
+        act(() => {segment.focus();});
 
         fireEvent.keyDown(segment, {key: 'Backspace'});
         expect(onChange).toHaveBeenCalledTimes(1);
@@ -654,7 +654,7 @@ describe('DatePicker', function () {
         ({getByLabelText, unmount} = render(<DatePicker defaultValue={value} onChange={onChange} formatOptions={format} />));
         segment = getByLabelText(label);
         textContent = segment.textContent;
-        segment.focus();
+        act(() => {segment.focus();});
 
         fireEvent.keyDown(segment, {key: 'Backspace'});
         expect(onChange).toHaveBeenCalledTimes(1);
@@ -716,7 +716,7 @@ describe('DatePicker', function () {
         );
         let segment = getByLabelText('العام');
         expect(segment).toHaveTextContent('٢٠١٩');
-        segment.focus();
+        act(() => {segment.focus();});
 
         fireEvent.keyDown(segment, {key: 'Backspace'});
         expect(onChange).toHaveBeenCalledTimes(1);
@@ -797,7 +797,7 @@ describe('DatePicker', function () {
       expect(combobox).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
 
       let segments = getAllByRole('spinbutton');
-      segments[0].focus();
+      act(() => {segments[0].focus();});
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       expect(segments[1]).toHaveFocus();
@@ -822,7 +822,7 @@ describe('DatePicker', function () {
       expect(combobox).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
 
       let segments = getAllByRole('spinbutton');
-      segments[0].focus();
+      act(() => {segments[0].focus();});
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
@@ -850,7 +850,7 @@ describe('DatePicker', function () {
       expect(combobox).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
 
       let segments = getAllByRole('spinbutton');
-      segments[0].focus();
+      act(() => {segments[0].focus();});
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
@@ -881,7 +881,7 @@ describe('DatePicker', function () {
       expect(combobox).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
 
       let segments = getAllByRole('spinbutton');
-      segments[0].focus();
+      act(() => {segments[0].focus();});
 
       fireEvent.keyDown(document.activeElement, {key: '4'});
       expect(segments[1]).toHaveFocus();
@@ -914,7 +914,7 @@ describe('DatePicker', function () {
       expect(combobox).toHaveTextContent(`1/1/${new Date().getFullYear()}`);
 
       let segments = getAllByRole('spinbutton');
-      segments[0].focus();
+      act(() => {segments[0].focus();});
 
       fireEvent.keyDown(document.activeElement, {key: '4'});
       expect(segments[1]).toHaveFocus();

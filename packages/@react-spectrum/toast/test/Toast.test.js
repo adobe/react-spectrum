@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import React from 'react';
 import {act, render} from '@testing-library/react';
+import React from 'react';
 import {Toast} from '../';
 import {triggerPress} from '@react-spectrum/test-utils';
 import {Toast as V2Toast} from '@react/react-spectrum/Toast';
