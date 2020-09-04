@@ -10,8 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
+import React from 'react';
+import {renderHook} from '@testing-library/react-hooks';
+import {useHexColorField} from '../';
+
 describe('useHexColorField', function () {
-  it('should return true', function () {
-    expect(true).toBeTruthy();
+  let state = {};
+  let ref = React.createRef();
+
+  const renderUseHexColorFieldHook = (props) => {
+    let {result} = renderHook(() => useHexColorField({...props, 'aria-label': 'testLabel'}, state, ref));
+    return result.current;
+  };
+
+  it('handles defaults', function () {
+    const {inputFieldProps} = renderUseHexColorFieldHook({});
+    expect(inputFieldProps.type).toBe('text');
+    expect(inputFieldProps.autoComplete).toBe('off');
+    expect(inputFieldProps.id).not.toBeUndefined();
   });
 });
