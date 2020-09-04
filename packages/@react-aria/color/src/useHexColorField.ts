@@ -49,6 +49,6 @@ export function useHexColorField(
   
   return {
     labelProps,
-    inputFieldProps: inputProps,
+    inputFieldProps: inputProps
   };
 }

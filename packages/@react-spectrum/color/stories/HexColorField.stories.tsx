@@ -47,7 +47,7 @@ storiesOf('HexColorField', module)
 function render(props: any = {}) {
   return (
     <HexColorField
-      label='Primary Color'
+      label={'Primary Color'}
       {...props} />
   );
 }
