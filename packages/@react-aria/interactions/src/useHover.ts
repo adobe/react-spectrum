@@ -59,9 +59,9 @@ function setupGlobalTouchEvents() {
   }
 
   if (typeof PointerEvent !== 'undefined') {
-    document.addEventListener('pointerup', handleGlobalPointerEvent, true);
+    document.addEventListener('pointerup', handleGlobalPointerEvent);
   } else {
-    document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents, true);
+    document.addEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
   }
 
   hoverCount++;
@@ -72,9 +72,9 @@ function setupGlobalTouchEvents() {
     }
 
     if (typeof PointerEvent !== 'undefined') {
-      document.removeEventListener('pointerup', handleGlobalPointerEvent, true);
+      document.removeEventListener('pointerup', handleGlobalPointerEvent);
     } else {
-      document.removeEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents, true);
+      document.removeEventListener('touchend', setGlobalIgnoreEmulatedMouseEvents);
     }
   };
 }
