@@ -95,12 +95,15 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     comboBoxAutoFocus = state.focusStrategy;
   }
 
+  let trayId = useId();
   let listbox = (
     <FocusScope>
       <DismissButton onDismiss={() => state.close()} />
       {isMobile &&
         <ComboBoxTrayInput
           {...props}
+          // generate a new id so we don't accidentially reuse a user generated id twice
+          id={trayId}
           menuId={listBoxProps.id}
           layout={layout}
           popoverRef={unwrapDOMRef(popoverRef)}
@@ -280,8 +283,6 @@ function ComboBoxTrayInput<T>(props: ComboBoxTrayInputProps<T>) {
 
   let {labelProps, inputProps} = useComboBox({
     ...props,
-    // generate a new id so we don't accidentially reuse a user generated id twice
-    id: useId(),
     // TODO: get rid of user defined onBlur and onFocus so that they don't fire for the tray input?
     onBlur: undefined,
     onFocus: undefined
