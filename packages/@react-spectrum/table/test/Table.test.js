@@ -2010,7 +2010,6 @@ describe('Table', function () {
       expect(dialog).toBeVisible();
 
       let firstName = tree.getByLabelText('First Name');
-      act(() => {fireEvent.focus(firstName);});
       typeText(firstName, 'Devon');
       act(() => userEvent.tab());
 
