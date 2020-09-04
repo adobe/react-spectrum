@@ -24,6 +24,7 @@ import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 describe('Picker', function () {
   let offsetWidth, offsetHeight;
@@ -34,7 +35,8 @@ describe('Picker', function () {
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
+    // TODO? when mocking via setTimeout, FocusScope's requestAnimationFrame doesn't run and so activeElement is often wrong
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     jest.useFakeTimers();
   });
 
@@ -42,6 +44,7 @@ describe('Picker', function () {
     jest.useRealTimers();
     offsetWidth.mockReset();
     offsetHeight.mockReset();
+    window.requestAnimationFrame.mockRestore();
   });
 
   afterEach(() => {
@@ -148,7 +151,7 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(listbox);
     });
 
-    it('can be opened on Space key down', function () {
+    it('can be opened on Space key down', async function () {
       let onOpenChange = jest.fn();
       let {getByRole} = render(
         <Provider theme={theme}>
@@ -163,8 +166,8 @@ describe('Picker', function () {
       expect(() => getByRole('listbox')).toThrow();
 
       let picker = getByRole('button');
-      act(() => {fireEvent.keyDown(picker, {key: ' '});});
-      act(() => {fireEvent.keyUp(picker, {key: ' '});});
+      act(() => {picker.focus();});
+      act(() => {userEvent.type(picker, ' ');});
       act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
@@ -1061,9 +1064,9 @@ describe('Picker', function () {
 
       act(() => {fireEvent.keyDown(document.activeElement, {key: 'Enter'});});
       act(() => {fireEvent.keyUp(document.activeElement, {key: 'Enter'});});
+      act(() => jest.runAllTimers());
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('two');
-      act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
       expect(document.activeElement).toBe(picker);
@@ -1512,17 +1515,16 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      picker.focus();
+      act(() => {picker.focus();});
       expect(picker).toHaveTextContent('Select an option…');
 
-      act(() => {fireEvent.keyDown(picker, {key: 't'});});
-      act(() => {fireEvent.keyUp(picker, {key: 't'});});
+      act(() => {userEvent.type(picker, 't');});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('two');
       expect(picker).toHaveTextContent('Two');
 
-      act(() => {fireEvent.keyDown(picker, {key: 'h'});});
-      act(() => {fireEvent.keyUp(picker, {key: 'h'});});
+      act(() => {userEvent.type(picker, 'h');});
+      act(() => {jest.runAllTimers();});
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(onSelectionChange).toHaveBeenLastCalledWith('three');
       expect(picker).toHaveTextContent('Three');
@@ -1540,19 +1542,17 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      picker.focus();
+      act(() => {picker.focus();});
       expect(picker).toHaveTextContent('Select an option…');
 
-      act(() => {fireEvent.keyDown(picker, {key: 't'});});
-      act(() => {fireEvent.keyUp(picker, {key: 't'});});
+      act(() => {userEvent.type(picker, 't');});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('two');
       expect(picker).toHaveTextContent('Two');
 
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
-      act(() => {fireEvent.keyDown(picker, {key: 'h'});});
-      act(() => {fireEvent.keyUp(picker, {key: 'h'});});
+      act(() => {userEvent.type(picker, 'h');});
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(picker).toHaveTextContent('Two');
     });
@@ -1569,7 +1569,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      picker.focus();
+      act(() => {picker.focus();});
       expect(picker).toHaveTextContent('Select an option…');
 
       act(() => {fireEvent.keyDown(picker, {key: 't'});});
@@ -1578,7 +1578,7 @@ describe('Picker', function () {
       expect(onSelectionChange).toHaveBeenLastCalledWith('two');
       expect(picker).toHaveTextContent('Two');
 
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       act(() => {fireEvent.keyDown(picker, {key: 'o'});});
       act(() => {fireEvent.keyUp(picker, {key: 'o'});});

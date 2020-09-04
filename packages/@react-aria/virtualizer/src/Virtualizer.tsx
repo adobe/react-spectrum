@@ -139,7 +139,10 @@ export function useVirtualizer<T extends object, V, W>(props: VirtualizerOptions
   }, [ref, virtualizer, focusedKey]);
 
   let onBlur = useCallback((e: FocusEvent) => {
-    isFocusWithin.current = ref.current.contains(e.relatedTarget as Element);
+    // With Preact, this is onFocusOut which does fire on unmount (in this case the ref is null).
+    if(ref.current != null){
+      isFocusWithin.current = ref.current.contains(e.relatedTarget as Element);
+    }
   }, [ref]);
 
   // When the focused item is scrolled out of view and is removed from the DOM,

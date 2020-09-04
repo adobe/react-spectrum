@@ -448,6 +448,28 @@ storiesOf('Picker', module)
     )
   )
   .add(
+    'picker closes on scroll',
+    () => (
+      <div style={{height: 100, display: 'flex'}}>
+        <div style={{paddingTop: 100, height: 100, overflow: 'auto', background: 'antiquewhite'}}>
+          <div style={{height: 200}}>
+            <div>Scrolling here will close the Picker</div>
+            <Picker label="Test" defaultSelectedKey="One" onSelectionChange={action('selectionChange')}>
+              <Item key="One">One</Item>
+              <Item key="Two">Two</Item>
+              <Item key="Three">Three</Item>
+            </Picker>
+          </div>
+        </div>
+        <div style={{paddingTop: 100, height: 100, overflow: 'auto', flex: 1, background: 'grey'}}>
+          <div style={{height: 200}}>
+            Scrolling here won't close the Picker
+          </div>
+        </div>
+      </div>
+    )
+  )
+  .add(
     'isLoading',
     () => (
       <Picker label="Test" isLoading items={[]}>
