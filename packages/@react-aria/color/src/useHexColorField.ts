@@ -11,8 +11,9 @@
  */
 
 import {AriaHexColorFieldProps} from '@react-types/color';
-import {HexColorFieldState} from '@react-stately/color';
+import {Color, HexColorFieldState} from '@react-stately/color';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {useSpinButton} from '@react-aria/spinbutton';
 import {useId} from '@react-aria/utils';
 import {useTextField} from '@react-aria/textfield';
 
@@ -32,10 +33,50 @@ export function useHexColorField(
     onChange,     // eslint-disable-line @typescript-eslint/no-unused-vars
     ...otherProps
   } = props;
+
+  const {
+    isDisabled,
+    isReadOnly,
+    isRequired,
+    minValue = '#000000',
+    maxValue = '#ffffff',
+  } = otherProps;
   
   const {
-    inputValue
+    colorValue,
+    inputValue,
+    increment,
+    decrement,
+    incrementToMax,
+    decrementToMin,
   } = state;
+
+  const minColor = typeof minValue === 'string' ? new Color(minValue) : minValue;
+  const minColorString = minColor.toString('hex').substring(1);
+  const minColorNumber = parseInt(minColorString, 16);
+
+  const maxColor = typeof maxValue === 'string' ? new Color(maxValue) : maxValue;
+  const maxColorString = maxColor.toString('hex').substring(1);
+  const maxColorNumber = parseInt(maxColorString, 16);
+
+  const colorValueString = colorValue.toString('hex').substring(1);
+  const colorValueNumber = parseInt(colorValueString, 16);
+
+  const {spinButtonProps} = useSpinButton(
+    {
+      isDisabled,
+      isReadOnly,
+      isRequired,
+      maxValue: maxColorNumber,
+      minValue: minColorNumber,
+      onIncrement: increment,
+      onIncrementToMax: incrementToMax,
+      onDecrement: decrement,
+      onDecrementToMin: decrementToMin,
+      value: colorValueNumber,
+      textValue: inputValue
+    }
+  );
 
   const inputId = useId();
   let {labelProps, inputProps} = useTextField({
@@ -49,6 +90,11 @@ export function useHexColorField(
   
   return {
     labelProps,
-    inputFieldProps: inputProps
+    inputFieldProps: {
+      ...inputProps,
+      onKeyDown: spinButtonProps.onKeyDown,
+      onFocus: spinButtonProps.onFocus,
+      onBlur: spinButtonProps.onBlur
+    }
   };
 }
