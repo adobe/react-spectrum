@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 import {useSSRSafeId} from '@react-aria/ssr';
 
@@ -33,9 +33,11 @@ export function useId(defaultId?: string): string {
       nextId.current = val;
     }
   };
+
   useLayoutEffect(() => {
     isRendering.current = false;
-  }, [updateValue])
+  }, [updateValue]);
+
   useEffect(() => {
     let newId = nextId.current;
     if (newId) {
@@ -43,6 +45,7 @@ export function useId(defaultId?: string): string {
       nextId.current = null;
     }
   }, [setValue, updateValue]);
+
   let res = useSSRSafeId(value);
   map.set(res, updateValue);
   return res;
