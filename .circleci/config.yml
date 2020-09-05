@@ -51,6 +51,19 @@ jobs:
           name: test
           command: yarn ci-test
 
+  test_17:
+    docker:
+      - image: circleci/node:12.10
+
+    working_directory: ~/react-spectrum
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: test
+          command: yarn ci-test-17
+
   lint:
     docker:
       - image: circleci/node:12.10
@@ -182,6 +195,9 @@ workflows:
       - test:
           requires:
             - install
+      - test_17:
+          requires:
+            - install
       - lint:
           requires:
             - install
@@ -201,6 +217,7 @@ workflows:
           requires:
             - lint
             - test
+            - test_17
             - storybook
             - docs
       - deploy-production:
