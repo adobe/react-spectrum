@@ -21,25 +21,30 @@ let map: Map<string, (v: string) => void> = new Map();
  * @param defaultId - Default component id.
  */
 export function useId(defaultId?: string): string {
+  let isRendering = useRef(true);
+  isRendering.current = true;
   let [value, setValue] = useState(defaultId);
-  // Do i need to keep an entire queue? i think I only need the most recent?
-  // Does this actually work in the case that we're not mid render? It's a ref, so it won't
-  // cause a re-render ever on it's own, that said, we might always be mid-render
-  // we seem to only call mergeProps/Ids in the render flow, but now we'll need to document that
-  // as a limitation of those functions.
-  let setIdUpdateQueue = useRef([]);
-  let pushToQueue = useCallback((val) => {
-    setIdUpdateQueue.current.push(val);
-  }, [setIdUpdateQueue.current]);
+  let nextId = useRef(null);
+  // don't memo this, we want it new each render so that the Effects always run
+  let updateValue = (val) => {
+    if (!isRendering.current) {
+      setValue(val);
+    } else {
+      nextId.current = val;
+    }
+  };
+  useLayoutEffect(() => {
+    isRendering.current = false;
+  }, [updateValue])
   useEffect(() => {
-    let newId = setIdUpdateQueue.current.pop();
+    let newId = nextId.current;
     if (newId) {
       setValue(newId);
+      nextId.current = null;
     }
-    setIdUpdateQueue.current = [];
-  }, [setValue, pushToQueue]);
+  }, [setValue, updateValue]);
   let res = useSSRSafeId(value);
-  map.set(res, pushToQueue);
+  map.set(res, updateValue);
   return res;
 }
 

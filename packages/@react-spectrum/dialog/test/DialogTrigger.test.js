@@ -226,7 +226,6 @@ describe('DialogTrigger', function () {
     expect(tray).toBeVisible();
   });
 
-  // see notes in focus scope, fails in .only mode as well
   it('should restore focus to the trigger when the dialog is closed', async function () {
     let {getByRole} = render(
       <Provider theme={theme}>
@@ -265,6 +264,7 @@ describe('DialogTrigger', function () {
       expect(dialog).not.toBeInTheDocument();
     }); // wait for animation
 
+    // now that it's been unmounted, run the raf callback
     act(() => {
       jest.runAllTimers();
     });
