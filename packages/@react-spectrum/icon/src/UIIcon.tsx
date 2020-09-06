@@ -26,6 +26,8 @@ interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   'aria-hidden'?: boolean
 }
 
+export type UIIconPropsWithoutChildren = Omit<IconProps, 'children'>;
+
 export function UIIcon(props: IconProps) {
   props = useSlotProps(props, 'icon');
   let {
