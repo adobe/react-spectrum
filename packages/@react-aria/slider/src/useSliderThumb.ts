@@ -1,5 +1,5 @@
-import {ChangeEvent, HTMLAttributes, useCallback, useEffect} from 'react';
 import {focusWithoutScrolling, mergeProps, useDrag1D} from '@react-aria/utils';
+import React, {ChangeEvent, HTMLAttributes, useCallback, useEffect} from 'react';
 import {sliderIds} from './utils';
 import {SliderState} from '@react-stately/slider';
 import {SliderThumbProps} from '@react-types/slider';
@@ -30,7 +30,7 @@ interface SliderThumbOptions extends SliderThumbProps {
  */
 export function useSliderThumb(
   opts: SliderThumbOptions,
-  state: SliderState,
+  state: SliderState
 ): SliderThumbAria {
   const {
     index,

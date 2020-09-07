@@ -11,8 +11,8 @@
  */
 
 import {getOffset} from './getOffset';
-import {HTMLAttributes, MutableRefObject, useRef} from 'react';
 import {Orientation} from '@react-types/shared';
+import React, {HTMLAttributes, MutableRefObject, useRef} from 'react';
 
 interface UseDrag1DProps {
   containerRef: MutableRefObject<HTMLElement>,

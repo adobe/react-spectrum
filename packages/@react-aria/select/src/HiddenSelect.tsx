@@ -15,7 +15,7 @@ import {SelectState} from '@react-stately/select';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
-interface AriaHiddenSelectProps<T> {
+interface AriaHiddenSelectProps {
   /** The text label for the select. */
   label?: ReactNode,
 
@@ -26,7 +26,7 @@ interface AriaHiddenSelectProps<T> {
   isDisabled?: boolean
 }
 
-interface HiddenSelectProps<T> extends AriaHiddenSelectProps<T> {
+interface HiddenSelectProps<T> extends AriaHiddenSelectProps {
   /** State for the select. */
   state: SelectState<T>,
 
@@ -39,7 +39,7 @@ interface HiddenSelectProps<T> extends AriaHiddenSelectProps<T> {
  * can be used in combination with `useSelect` to support browser form autofill, mobile form
  * navigation, and native HTML form submission.
  */
-function useHiddenSelect<T>(props: AriaHiddenSelectProps<T>, state: SelectState<T>, triggerRef: RefObject<HTMLElement>) {
+function useHiddenSelect<T>(props: AriaHiddenSelectProps, state: SelectState<T>, triggerRef: RefObject<HTMLElement>) {
   let {name, isDisabled} = props;
   let modality = useInteractionModality();
   let {visuallyHiddenProps} = useVisuallyHidden();
