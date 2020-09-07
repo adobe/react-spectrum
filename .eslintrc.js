@@ -10,7 +10,7 @@ module.exports = {
   parser: 'babel-eslint',
   parserOptions: {
     ecmaFeatures: {
-      "legacyDecorators": true
+      'legacyDecorators': true
     },
     sourceType: 'module'
   },
@@ -20,11 +20,11 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     parserOptions: {
       ecmaFeatures: {
-        "jsx": true,
-        "legacyDecorators": true
+        'jsx': true,
+        'legacyDecorators': true
       },
-      "useJSXTextNode": true,
-      "project": "./tsconfig.json",
+      'useJSXTextNode': true,
+      'project': './tsconfig.json',
       sourceType: 'module'
     },
     rules: {
@@ -35,9 +35,9 @@ module.exports = {
       // enable this rule to see literally everything missing jsdocs, this rule needs some refinement but is good as a sanity check.
       // 'jsdoc/require-jsdoc': [ERROR, {contexts:['TSInterfaceDeclaration TSPropertySignature', 'TSInterfaceDeclaration TSMethodSignature']}],
       'jsdoc/require-description': [ERROR, {exemptedBy: ['deprecated'], checkConstructors: false}],
-      "no-unused-vars": OFF,
-      "@typescript-eslint/no-unused-vars": ERROR,
-      "@typescript-eslint/member-delimiter-style": [ERROR, {
+      'no-unused-vars': OFF,
+      '@typescript-eslint/no-unused-vars': ERROR,
+      '@typescript-eslint/member-delimiter-style': [ERROR, {
         multiline: {
           delimiter: 'comma',
           requireLast: false
@@ -46,7 +46,7 @@ module.exports = {
           delimiter: 'comma',
           requireLast: false
         }
-      }],
+      }]
     }
   }, {
     files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
@@ -72,12 +72,16 @@ module.exports = {
   globals: {
     'importSpectrumCSS': 'readonly',
     'jest': true,
-    'expect': true
+    'expect': true,
+    'JSX': 'readonly'
   },
   settings: {
     jsdoc: {
       ignorePrivate: true,
       publicFunctionsOnly: true
+    },
+    react: {
+      version: 'detect'
     }
   },
   rules: {
@@ -234,8 +238,8 @@ module.exports = {
         ],
         li: ['menuitem', 'option', 'row', 'tab', 'treeitem'],
         table: ['grid'],
-        td: ['gridcell','columnheader','rowheader'],
-        th: ['columnheader','rowheader']
+        td: ['gridcell', 'columnheader', 'rowheader'],
+        th: ['columnheader', 'rowheader']
       }
     ],
     'jsx-a11y/no-noninteractive-tabindex': [

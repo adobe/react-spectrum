@@ -11,7 +11,7 @@
  */
 
 import {clamp, mergeProps, useGlobalListeners} from '@react-aria/utils';
-import {HTMLAttributes, useRef} from 'react';
+import React, {HTMLAttributes, useRef} from 'react';
 import {sliderIds} from './utils';
 import {SliderProps} from '@react-types/slider';
 import {SliderState} from '@react-stately/slider';

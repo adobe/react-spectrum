@@ -17,8 +17,6 @@ import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
 
-type Scale = 'M' | 'L'
-
 interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
    * A screen reader only label for the Icon.
