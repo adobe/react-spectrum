@@ -35,8 +35,16 @@ describe('usePress', function () {
   // TODO: JSDOM doesn't yet support pointer events. Once they do, convert these tests.
   // https://github.com/jsdom/jsdom/issues/2527
   describe('pointer events', function () {
-    beforeEach(() => {
-      global.PointerEvent = MouseEvent;
+    beforeAll(() => {
+      global.PointerEvent = class FakePointerEvent extends MouseEvent {
+        constructor(name, init) {
+          super(name, init);
+          this._init = init;
+        }
+        get pointerType() {
+          return this._init.pointerType;
+        }
+      };
 
       // In a jsdom environment with `@testing-library/preact`, `onPointerDown` isn’t being called because check
       // `if (nameLower in dom) name = nameLower;`
@@ -61,7 +69,7 @@ describe('usePress', function () {
       document.defaultView.Element.prototype.onpointerup = null;
     });
 
-    afterEach(() => {
+    afterAll(() => {
       delete global.PointerEvent;
       delete document.defaultView.Element.prototype.onpointercancel;
       delete document.defaultView.Element.prototype.onpointerdown;

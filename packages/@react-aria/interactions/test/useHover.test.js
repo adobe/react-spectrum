@@ -58,12 +58,36 @@ describe('useHover', function () {
   });
 
   describe('pointer events', function () {
-    beforeEach(() => {
-      global.PointerEvent = {};
+    beforeAll(() => {
+      global.PointerEvent = class FakePointerEvent extends MouseEvent {
+        constructor(name, init) {
+          super(name, init);
+          this._init = init;
+        }
+        get pointerType() {
+          return this._init.pointerType;
+        }
+      };
+      document.defaultView.Element.prototype.onpointercancel = null;
+      document.defaultView.Element.prototype.onpointerdown = null;
+      document.defaultView.Element.prototype.onpointerenter = null;
+      document.defaultView.Element.prototype.onpointerleave = null;
+      document.defaultView.Element.prototype.onpointermove = null;
+      document.defaultView.Element.prototype.onpointerout = null;
+      document.defaultView.Element.prototype.onpointerover = null;
+      document.defaultView.Element.prototype.onpointerup = null;
     });
 
-    afterEach(() => {
+    afterAll(() => {
       delete global.PointerEvent;
+      delete document.defaultView.Element.prototype.onpointercancel;
+      delete document.defaultView.Element.prototype.onpointerdown;
+      delete document.defaultView.Element.prototype.onpointerenter;
+      delete document.defaultView.Element.prototype.onpointerleave;
+      delete document.defaultView.Element.prototype.onpointermove;
+      delete document.defaultView.Element.prototype.onpointerout;
+      delete document.defaultView.Element.prototype.onpointerover;
+      delete document.defaultView.Element.prototype.onpointerup;
     });
 
     it('should fire hover events based on pointer events', function () {
@@ -77,8 +101,12 @@ describe('useHover', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
-      fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
+      // This is what userEvent.hover + unhover does, but without the mouse events
+      fireEvent.pointerOver(el, {pointerType: 'mouse'});
+      fireEvent.pointerEnter(el, {pointerType: 'mouse'});
+      fireEvent.pointerMove(el, {pointerType: 'mouse'});
+      fireEvent.pointerOut(el, {pointerType: 'mouse'});
+      fireEvent.pointerLeave(el, {pointerType: 'mouse'});
 
       expect(events).toEqual([
         {
@@ -113,8 +141,12 @@ describe('useHover', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerover', {pointerType: 'touch'}));
-      fireEvent(el, pointerEvent('pointerout', {pointerType: 'touch'}));
+      // This is what userEvent.hover + unhover does, but without the mouse events
+      fireEvent.pointerOver(el, {pointerType: 'touch'});
+      fireEvent.pointerEnter(el, {pointerType: 'touch'});
+      fireEvent.pointerMove(el, {pointerType: 'touch'});
+      fireEvent.pointerOut(el, {pointerType: 'touch'});
+      fireEvent.pointerLeave(el, {pointerType: 'touch'});
 
       expect(events).toEqual([]);
     });
@@ -130,15 +162,23 @@ describe('useHover', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerdown', {pointerType: 'touch'}));
-      fireEvent(el, pointerEvent('pointerover', {pointerType: 'touch'}));
-      fireEvent(el, pointerEvent('pointerout', {pointerType: 'touch'}));
-      fireEvent(el, pointerEvent('pointerup', {pointerType: 'touch'}));
+      fireEvent.pointerOver(el, {pointerType: 'touch'});
+      fireEvent.pointerEnter(el, {pointerType: 'touch'});
+      fireEvent.pointerDown(el, {pointerType: 'touch'});
+      fireEvent.pointerMove(el, {pointerType: 'touch'});
+      fireEvent.pointerUp(el, {pointerType: 'touch'});
+      fireEvent.pointerOut(el, {pointerType: 'touch'});
+      fireEvent.pointerLeave(el, {pointerType: 'touch'});
 
       // Safari on iOS has a bug that fires a pointer event with pointerType="mouse" on focus.
       // See https://bugs.webkit.org/show_bug.cgi?id=214609.
-      fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
-      fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
+
+      // This is what userEvent.hover + unhover does, but without the mouse events
+      fireEvent.pointerOver(el, {pointerType: 'mouse'});
+      fireEvent.pointerEnter(el, {pointerType: 'mouse'});
+      fireEvent.pointerMove(el, {pointerType: 'mouse'});
+      fireEvent.pointerOut(el, {pointerType: 'mouse'});
+      fireEvent.pointerLeave(el, {pointerType: 'mouse'});
 
       expect(events).toEqual([]);
     });
@@ -154,17 +194,25 @@ describe('useHover', function () {
       );
 
       let el = res.getByText('test');
-      fireEvent(el, pointerEvent('pointerdown', {pointerType: 'touch'}));
-      fireEvent(el, pointerEvent('pointerover', {pointerType: 'touch'}));
-      fireEvent(el, pointerEvent('pointerout', {pointerType: 'touch'}));
-      fireEvent(el, pointerEvent('pointerup', {pointerType: 'touch'}));
+      fireEvent.pointerOver(el, {pointerType: 'touch'});
+      fireEvent.pointerEnter(el, {pointerType: 'touch'});
+      fireEvent.pointerDown(el, {pointerType: 'touch'});
+      fireEvent.pointerMove(el, {pointerType: 'touch'});
+      fireEvent.pointerUp(el, {pointerType: 'touch'});
+      fireEvent.pointerOut(el, {pointerType: 'touch'});
+      fireEvent.pointerLeave(el, {pointerType: 'touch'});
 
       jest.advanceTimersByTime(100);
 
       // Safari on iOS has a bug that fires a pointer event with pointerType="mouse" on focus.
       // See https://bugs.webkit.org/show_bug.cgi?id=214609.
-      fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
-      fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
+
+      // This is what userEvent.hover + unhover does, but without the mouse events
+      fireEvent.pointerOver(el, {pointerType: 'mouse'});
+      fireEvent.pointerEnter(el, {pointerType: 'mouse'});
+      fireEvent.pointerMove(el, {pointerType: 'mouse'});
+      fireEvent.pointerOut(el, {pointerType: 'mouse'});
+      fireEvent.pointerLeave(el, {pointerType: 'mouse'});
 
       expect(events).toEqual([
         {
@@ -194,10 +242,13 @@ describe('useHover', function () {
       );
       let el = res.getByText('test');
 
-      fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
+      fireEvent.pointerOver(el, {pointerType: 'mouse'});
+      fireEvent.pointerEnter(el, {pointerType: 'mouse'});
+      fireEvent.pointerMove(el, {pointerType: 'mouse'});
       expect(el.textContent).toBe('test-hovered');
 
-      fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
+      fireEvent.pointerOut(el, {pointerType: 'mouse'});
+      fireEvent.pointerLeave(el, {pointerType: 'mouse'});
       expect(el.textContent).toBe('test');
     });
 
@@ -207,10 +258,13 @@ describe('useHover', function () {
       );
       let el = res.getByText('test');
 
-      fireEvent(el, pointerEvent('pointerover', {pointerType: 'touch'}));
+      fireEvent.pointerOver(el, {pointerType: 'touch'});
+      fireEvent.pointerEnter(el, {pointerType: 'touch'});
+      fireEvent.pointerMove(el, {pointerType: 'touch'});
       expect(el.textContent).toBe('test');
 
-      fireEvent(el, pointerEvent('pointerout', {pointerType: 'touch'}));
+      fireEvent.pointerOut(el, {pointerType: 'touch'});
+      fireEvent.pointerLeave(el, {pointerType: 'touch'});
       expect(el.textContent).toBe('test');
     });
   });

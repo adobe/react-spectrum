@@ -30,13 +30,38 @@ describe('useInteractOutside', function () {
   // TODO: JSDOM doesn't yet support pointer events. Once they do, convert these tests.
   // https://github.com/jsdom/jsdom/issues/2527
   describe('pointer events', function () {
-    beforeEach(() => {
-      global.PointerEvent = {};
+    beforeAll(() => {
+      global.PointerEvent = class FakePointerEvent extends MouseEvent {
+        constructor(name, init) {
+          super(name, init);
+          this._init = init;
+        }
+        get pointerType() {
+          return this._init.pointerType;
+        }
+      };
+      document.defaultView.Element.prototype.onpointercancel = null;
+      document.defaultView.Element.prototype.onpointerdown = null;
+      document.defaultView.Element.prototype.onpointerenter = null;
+      document.defaultView.Element.prototype.onpointerleave = null;
+      document.defaultView.Element.prototype.onpointermove = null;
+      document.defaultView.Element.prototype.onpointerout = null;
+      document.defaultView.Element.prototype.onpointerover = null;
+      document.defaultView.Element.prototype.onpointerup = null;
     });
 
-    afterEach(() => {
+    afterAll(() => {
       delete global.PointerEvent;
+      delete document.defaultView.Element.prototype.onpointercancel;
+      delete document.defaultView.Element.prototype.onpointerdown;
+      delete document.defaultView.Element.prototype.onpointerenter;
+      delete document.defaultView.Element.prototype.onpointerleave;
+      delete document.defaultView.Element.prototype.onpointermove;
+      delete document.defaultView.Element.prototype.onpointerout;
+      delete document.defaultView.Element.prototype.onpointerover;
+      delete document.defaultView.Element.prototype.onpointerup;
     });
+
 
     it('should fire interact outside events based on pointer events', function () {
       let onInteractOutside = jest.fn();
