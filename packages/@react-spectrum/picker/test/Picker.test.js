@@ -16,6 +16,7 @@ import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
+import {isPreact} from '@react-aria/utils';
 import {Item, Picker, Section} from '../src';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {Provider} from '@react-spectrum/provider';
@@ -926,10 +927,10 @@ describe('Picker', function () {
           </Picker>
         </Provider>
       );
-      
+
       let picker = getByRole('button');
       expect(picker).toHaveTextContent('Select an option…');
-      act(() => triggerPress(picker));
+      act(() => userEvent.click(picker));
       act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
@@ -941,40 +942,40 @@ describe('Picker', function () {
 
       expect(document.activeElement).toBe(listbox);
 
-      act(() => triggerPress(items[0]));
+      act(() => userEvent.click(items[0]));
+      act(() => jest.runAllTimers());
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenLastCalledWith('');
-      act(() => jest.runAllTimers());
       expect(listbox).not.toBeInTheDocument();
 
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Empty');
 
-      act(() => triggerPress(picker));
+      act(() => userEvent.click(picker));
       act(() => jest.runAllTimers());
 
       listbox = getByRole('listbox');
       let item1 = within(listbox).getByText('Zero');
 
-      act(() => triggerPress(item1));
-      expect(onSelectionChange).toHaveBeenCalledTimes(2);
-      expect(onSelectionChange).toHaveBeenLastCalledWith('0');
+      act(() => userEvent.click(item1));
       act(() => jest.runAllTimers());
+      expect(onSelectionChange).toHaveBeenCalledTimes(2);
+      expect(onSelectionChange).toHaveBeenLastCalledWith(isPreact ? 0 : '0');
       expect(listbox).not.toBeInTheDocument();
 
       expect(document.activeElement).toBe(picker);
       expect(picker).toHaveTextContent('Zero');
 
-      act(() => triggerPress(picker));
+      act(() => userEvent.click(picker));
       act(() => jest.runAllTimers());
 
       listbox = getByRole('listbox');
       let item2 = within(listbox).getByText('False');
 
-      act(() => triggerPress(item2));
-      expect(onSelectionChange).toHaveBeenCalledTimes(3);
-      expect(onSelectionChange).toHaveBeenLastCalledWith('false');
+      act(() => userEvent.click(item2));
       act(() => jest.runAllTimers());
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+      expect(onSelectionChange).toHaveBeenLastCalledWith(isPreact ? false : 'false');
       expect(listbox).not.toBeInTheDocument();
 
       expect(document.activeElement).toBe(picker);
