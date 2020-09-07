@@ -28,6 +28,13 @@ module.exports = {
       sourceType: 'module'
     },
     rules: {
+      'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc']}],
+      'jsdoc/check-alignment': ERROR,
+      'jsdoc/check-indentation': ERROR,
+      'jsdoc/check-tag-names': ERROR,
+      // enable this rule to see literally everything missing jsdocs, this rule needs some refinement but is good as a sanity check.
+      // 'jsdoc/require-jsdoc': [ERROR, {contexts:['TSInterfaceDeclaration TSPropertySignature', 'TSInterfaceDeclaration TSMethodSignature']}],
+      'jsdoc/require-description': [ERROR, {exemptedBy: ['deprecated'], checkConstructors: false}],
       "no-unused-vars": OFF,
       "@typescript-eslint/no-unused-vars": ERROR,
       "@typescript-eslint/member-delimiter-style": [ERROR, {
@@ -74,13 +81,6 @@ module.exports = {
     }
   },
   rules: {
-    'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc']}],
-    'jsdoc/check-alignment': ERROR,
-    'jsdoc/check-indentation': ERROR,
-    'jsdoc/check-tag-names': ERROR,
-    // enable this rule to see literally everything missing jsdocs, this rule needs some refinement but is good as a sanity check.
-    // 'jsdoc/require-jsdoc': [ERROR, {contexts:['TSInterfaceDeclaration TSPropertySignature', 'TSInterfaceDeclaration TSMethodSignature']}],
-    'jsdoc/require-description': [ERROR, {exemptedBy: ['deprecated'], checkConstructors: false}],
     'comma-dangle': ERROR,
     'indent': OFF,
     'indent-legacy': [ERROR, ERROR, {SwitchCase: 1}],
