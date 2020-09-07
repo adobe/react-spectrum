@@ -5,7 +5,7 @@ let rulesDirPlugin = require('eslint-plugin-rulesdir');
 rulesDirPlugin.RULES_DIR = './bin';
 
 module.exports = {
-  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', 'monorepo'],
+  plugins: ['react', 'rulesdir', 'jsx-a11y', 'react-hooks', 'jest', 'monorepo', 'eslint-plugin-test-act'],
   extends: ['eslint:recommended'],
   parser: 'babel-eslint',
   parserOptions: {
@@ -51,6 +51,7 @@ module.exports = {
   }, {
     files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
     rules: {
+      'test-act/act-events-test': ERROR,
       'rulesdir/imports': OFF,
       'monorepo/no-internal-import': OFF,
       'jsdoc/require-jsdoc': OFF
