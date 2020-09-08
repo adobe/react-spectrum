@@ -74,7 +74,10 @@ ci:
 	$(MAKE) publish
 
 publish: build
-	lerna publish from-package --yes
+	yarn publish
+
+publish-nightly: build
+	yarn publish:nightly
 
 build:
 	parcel build packages/@react-{spectrum,aria,stately}/*/ --no-minify

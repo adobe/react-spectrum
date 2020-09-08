@@ -9,19 +9,19 @@ import {StorySlider} from './StorySlider';
 storiesOf('Slider', module)
   .add(
     'single',
-    () => <StorySlider label="Size" onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} />
+    () => <StorySlider label="Size" onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} showTip />
   )
   .add(
     'single with big steps',
-    () => <StorySlider label="Size" onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} step={10} />
+    () => <StorySlider label="Size" onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} step={10} showTip />
   )
   .add(
     'single with origin',
-    () => <StorySlider label="Exposure" origin={0} minValue={-5} maxValue={5} step={0.1} onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} />
+    () => <StorySlider label="Exposure" origin={0} minValue={-5} maxValue={5} step={0.1} onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} showTip />
   )
   .add(
     'single with aria label',
-    () => <StorySlider aria-label="Size" onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} />
+    () => <StorySlider aria-label="Size" onChange={action('onChange')} onChangeEnd={action('onChangeEnd')} showTip />
   )
   .add(
     'range',
@@ -30,6 +30,7 @@ storiesOf('Slider', module)
       defaultValue={[25, 75]} 
       onChange={action('onChange')} 
       onChangeEnd={action('onChangeEnd')} 
+      showTip
       formatOptions={{
         style: 'unit',
         unit: 'celsius',
@@ -43,6 +44,7 @@ storiesOf('Slider', module)
       defaultValue={[25, 75]} 
       onChange={action('onChange')} 
       onChangeEnd={action('onChangeEnd')} 
+      showTip
       formatOptions={{
         style: 'unit',
         unit: 'celsius',

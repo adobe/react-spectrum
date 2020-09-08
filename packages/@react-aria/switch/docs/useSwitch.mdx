@@ -94,13 +94,14 @@ import {useFocusRing} from '@react-aria/focus';
 
 function Switch(props) {
   let state = useToggleState(props);
-  let {inputProps} = useSwitch(props, state);
+  let ref = React.useRef();
+  let {inputProps} = useSwitch(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
 
   return (
     <label style={{display: 'flex', alignItems: 'center'}}>
       <VisuallyHidden>
-        <input {...inputProps} {...focusProps} />
+        <input {...inputProps} {...focusProps} ref={ref} />
       </VisuallyHidden>
       <svg
         width={40}

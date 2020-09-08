@@ -1,0 +1,273 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/checkbox';
+import packageData from '@react-spectrum/checkbox/package.json';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+
+```jsx import
+ import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
+ import {Flex} from '@react-spectrum/layout';
+ ```
+
+---
+category: Forms
+keywords: [input, checkbox group, accessibility]
+after_version: 3.1.0
+---
+
+# CheckboxGroup
+
+<p>{docs.exports.CheckboxGroup.description}</p>
+
+<HeaderInfo
+ packageData={packageData}
+ componentNames={['CheckboxGroup', 'Checkbox']}
+ sourceData={[
+ {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/checkbox/'}
+ ]} />
+
+## Example
+
+```tsx example
+<CheckboxGroup label="Favorite sports">
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+## Content
+
+CheckboxGroup accepts multiple [Checkbox](Checkbox.html) elements as children.
+Each Checkbox represents an option that can be selected, labeled by its children.
+
+## Value
+
+CheckboxGroup supports selecting zero or more items. An initial, uncontrolled value can be provided to the CheckboxGroup using the `defaultValue` prop.
+Alternatively, a controlled value can be provided using the `value` prop. Both of these props accept an array of selected items, which map to the
+`value` prop on each item.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState(['soccer', 'baseball']);
+
+  return (
+    <Flex gap="size-300">
+      <CheckboxGroup label="Favorite sports (uncontrolled)" defaultValue={['soccer', 'baseball']}>
+        <Checkbox value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+
+      <CheckboxGroup label="Favorite sports (controlled)" value={selected} onChange={setSelected}>
+        <Checkbox value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+    </Flex>
+  );
+}
+```
+
+## Labeling
+A visual label should be provided for the CheckboxGroup using the `label` prop. If the CheckboxGroup requires an option to be selected by the user,
+the `isRequired` and `necessityIndicator` props can be used to show a required state.
+
+```tsx example
+<Flex gap="size-300" wrap>
+  <CheckboxGroup label="Favorite sports">
+    <Checkbox value="soccer">Soccer</Checkbox>
+    <Checkbox value="baseball">Baseball</Checkbox>
+    <Checkbox value="basketball">Basketball</Checkbox>
+  </CheckboxGroup>
+  <CheckboxGroup label="Favorite sports" isRequired necessityIndicator="icon">
+    <Checkbox value="soccer">Soccer</Checkbox>
+    <Checkbox value="baseball">Baseball</Checkbox>
+    <Checkbox value="basketball">Basketball</Checkbox>
+  </CheckboxGroup>
+  <CheckboxGroup label="Favorite sports" isRequired necessityIndicator="label">
+    <Checkbox value="soccer">Soccer</Checkbox>
+    <Checkbox value="baseball">Baseball</Checkbox>
+    <Checkbox value="basketball">Basketball</Checkbox>
+  </CheckboxGroup>
+  <CheckboxGroup label="Favorite sports" necessityIndicator="label">
+    <Checkbox value="soccer">Soccer</Checkbox>
+    <Checkbox value="baseball">Baseball</Checkbox>
+    <Checkbox value="basketball">Basketball</Checkbox>
+  </CheckboxGroup>
+</Flex>
+```
+
+### Accessibility
+
+If a visible label isn't specified for a CheckboxGroup, an `aria-label` must be provided for accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using the id of the labeling element instead.
+
+Checkbox elements within a group should always have a visible label.
+
+### Internationalization
+
+To internationalize a CheckboxGroup, a localized string should be passed to the `label` prop and as the child content of the Checkbox elements.
+For languages that are read right-to-left (e.g. Hebrew and Arabic), the Checkbox is automatically placed on the right side of the text. When the necessityIndicator prop is set to "label", a localized string will be provided for "(required)" or "(optional)" automatically.
+
+## Events
+
+CheckboxGroup accepts an `onChange` prop, which is triggered when a user adds or removes an item from the selection.
+The example below uses `onChange` to log how the user is interacting with the component.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState([]);
+
+  return (
+    <>
+      <CheckboxGroup label="Favorite sports" value={selected} onChange={setSelected}>
+        <Checkbox value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+      <div>You have selected: {selected.join(', ')}</div>
+    </>
+  );
+}
+```
+
+## Validation
+
+CheckboxGroups can display a validation state to communicate to the user if the current value is invalid.
+Implement your own validation logic in your app and pass `"invalid"` to the `validationState` prop to either
+the `CheckboxGroup` or an individual `Checkbox` to mark it as invalid.
+
+### Group validation
+
+If the group as a whole is invalid, for example if the user must choose at least one option but failed
+to do so, then pass `validationState="invalid"` to the `CheckboxGroup`.
+
+The following example shows how to require that at least one option is selected. It sets the `validationState`
+prop to `"invalid"` when no options are selected and removes it otherwise.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState([]);
+
+  return (
+    <CheckboxGroup label="Sandwich condiments" value={selected} onChange={setSelected} isRequired validationState={selected.length === 0 ? 'invalid' : null}>
+      <Checkbox value="lettuce">Lettuce</Checkbox>
+      <Checkbox value="tomato">Tomato</Checkbox>
+      <Checkbox value="onion">Onion</Checkbox>
+      <Checkbox value="sprouts">Sprouts</Checkbox>
+    </CheckboxGroup>
+  );
+}
+```
+
+### Individual Checkbox validation
+
+If an individual checkbox is invalid, for example if the user must select a particular option but failed
+to do so, then pass `validationState="invalid"` to the `Checkbox` element instead.
+
+The following example shows how to require that all items are selected. It uses the `isRequired` prop on each individual `Checkbox`
+element to indicate to assistive technology that every checkbox is required. By default, the `isRequired` prop on the `CheckboxGroup` only
+indicates that the group is required, not any individual option. In addition, `validationState="invalid"` is set on each checkbox that is not yet checked.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState([]);
+
+  return (
+    <CheckboxGroup label="Agree to the following" isRequired value={selected} onChange={setSelected}>
+      <Checkbox value="terms" isRequired validationState={!selected.includes('terms') ? 'invalid' : null}>Terms and conditions</Checkbox>
+      <Checkbox value="privacy" isRequired validationState={!selected.includes('privacy') ? 'invalid' : null}>Privacy policy</Checkbox>
+      <Checkbox value="cookies" isRequired validationState={!selected.includes('cookies') ? 'invalid' : null}>Cookie policy</Checkbox>
+    </CheckboxGroup>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.CheckboxGroup} links={docs.links} />
+
+## Visual options
+
+### Orientation
+
+CheckboxGroups are vertically oriented by default.
+The `orientation` prop can be used to change the orientation to horizontal.
+
+```tsx example
+<CheckboxGroup label="Favorite sports" orientation="horizontal">
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+### Label position and alignment
+
+By default, the label is positioned above the CheckboxGroup.
+The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can
+be used to align the label as "start" or "end".
+For left-to-right (LTR) languages, "start" refers to the left most edge of the CheckboxGroup
+and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<CheckboxGroup label="Favorite sports" labelPosition="side" labelAlign="end">
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+### Disabled
+[View guidelines](https://spectrum.adobe.com/page/checkbox/#Disabled)
+
+```tsx example
+<CheckboxGroup label="Favorite sports" isDisabled>
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+```tsx example
+<CheckboxGroup label="Favorite sports">
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball" isDisabled>Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+### Read only
+[View guidelines](https://spectrum.adobe.com/page/checkbox/#Read-only)
+
+The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the CheckboxGroup remains focusable.
+See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<CheckboxGroup label="Favorite sports" defaultValue={['baseball']} isReadOnly>
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```
+
+### Emphasized
+[View guidelines](https://spectrum.adobe.com/page/checkbox/#Emphasis)
+
+```tsx example
+<CheckboxGroup label="Favorite sports" defaultValue={['soccer', 'baseball']} isEmphasized>
+  <Checkbox value="soccer">Soccer</Checkbox>
+  <Checkbox value="baseball">Baseball</Checkbox>
+  <Checkbox value="basketball">Basketball</Checkbox>
+</CheckboxGroup>
+```

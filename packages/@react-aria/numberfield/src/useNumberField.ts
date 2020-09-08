@@ -144,7 +144,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
 
   let domProps = filterDOMProps(props, {labelable: true});
   let {labelProps, inputProps} = useTextField(
-    mergeProps(focusProps, {
+    mergeProps({
       autoFocus,
       isDisabled,
       isReadOnly,
@@ -160,7 +160,7 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       onChange: state.setValue
     }), ref);
 
-  const inputFieldProps = mergeProps(spinButtonProps, inputProps);
+  const inputFieldProps = mergeProps(focusProps, spinButtonProps, inputProps);
   return {
     numberFieldProps: mergeProps(domProps, {
       role: 'group',

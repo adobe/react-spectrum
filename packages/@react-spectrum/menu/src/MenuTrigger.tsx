@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, unwrapDOMRef, useDOMRef, useMediaQuery} from '@react-spectrum/utils';
+import {classNames, unwrapDOMRef, useDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
 import {DismissButton, useOverlayPosition} from '@react-aria/overlays';
 import {DOMRef, DOMRefValue} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
@@ -43,16 +43,17 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
 
   let {menuTriggerProps, menuProps} = useMenuTrigger({}, state, menuTriggerRef);
 
+  let isMobile = useIsMobileDevice();
   let {overlayProps: positionProps, placement} = useOverlayPosition({
     targetRef: menuTriggerRef,
     overlayRef: unwrapDOMRef(menuPopoverRef),
     scrollRef: menuRef,
     placement: `${direction} ${align}` as Placement,
     shouldFlip: shouldFlip,
-    isOpen: state.isOpen
+    isOpen: state.isOpen && !isMobile,
+    onClose: state.close
   });
 
-  let isMobile = useMediaQuery('(max-width: 700px)');
   let menuContext = {
     ...menuProps,
     ref: menuRef,
@@ -74,8 +75,6 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     </FocusScope>
   );
 
-  let shouldCloseOnInteractOutside = (element) => !menuTriggerRef.current?.contains(element);
-
   // On small screen devices, the menu is rendered in a tray, otherwise a popover.
   let overlay;
   if (isMobile) {
@@ -93,8 +92,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
         placement={placement}
         hideArrow
         onClose={state.close}
-        shouldCloseOnBlur
-        shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}>
+        shouldCloseOnBlur>
         {contents}
       </Popover>
     );

@@ -20,6 +20,7 @@
     "@react-spectrum/text": "^3.1.0",
     "@react-spectrum/theme-default": "^3.1.0",
     "@react-spectrum/view": "^3.1.0",
+    "@spectrum-icons/illustrations": "^3.1.0",
     "@spectrum-icons/ui": "^3.1.0",
     "@spectrum-icons/workflow": "^3.1.0",
     "clsx": "^1.1.1",
