@@ -71,10 +71,10 @@ function setupGlobalEvents() {
   document.body.addEventListener('transitionend', onTransitionEnd);
 }
 
-if (document.readyState !== 'loading') {
+if (document?.readyState !== 'loading') {
   setupGlobalEvents();
 } else {
-  document.addEventListener('DOMContentLoaded', setupGlobalEvents);
+  document?.addEventListener('DOMContentLoaded', setupGlobalEvents);
 }
 
 export function runAfterTransition(fn: () => void) {
