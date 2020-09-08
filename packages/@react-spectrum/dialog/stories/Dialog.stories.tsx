@@ -26,6 +26,7 @@ import React from 'react';
 import {SpectrumAlertDialogProps} from '@react-types/dialog';
 import {storiesOf} from '@storybook/react';
 import {TextField} from '@react-spectrum/textfield';
+import { Tray } from '@react-spectrum/overlays';
 
 storiesOf('Dialog', module)
   .addParameters({providerSwitcher: {status: 'notice'}})
@@ -84,6 +85,13 @@ storiesOf('Dialog', module)
   .add(
     'cleared content',
     () => renderWithDividerInContent({})
+  )
+  .add(
+    'Tray isOpen, shouldCloseOnBlur',
+    () =>
+      <Tray isOpen onClose={action('close')} shouldCloseOnBlur>
+        <Dialog>contents</Dialog>
+      </Tray>
   );
 
 storiesOf('Dialog/Alert', module)
