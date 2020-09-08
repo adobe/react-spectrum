@@ -129,19 +129,7 @@ storiesOf('ComboBox', module)
   )
   .add(
     'isOpen',
-    () => (
-      <div>
-        <div>Note: Combobox needs focus to show dropdown.</div>
-        <ComboBox label="Combobox" isOpen {...actions}>
-          <Item key="one">Item One</Item>
-          <Item key="two" textValue="Item Two">
-            <Copy size="S" />
-            <Text>Item Two</Text>
-          </Item>
-          <Item key="three">Item Three</Item>
-        </ComboBox>
-      </div>
-    )
+    () => <ControlledOpenCombobox isOpen />
   )
   .add(
     'defaultOpen',
@@ -521,6 +509,24 @@ let CustomValueComboBox = (props) => {
             {(item: any) => <Item>{item.name}</Item>}
           </Section>
         )}
+      </ComboBox>
+    </div>
+  );
+};
+
+let ControlledOpenCombobox = (props) => {
+  let [isOpen, setOpen] = React.useState(props.isOpen);
+
+  return (
+    <div>
+      <div>Note: Combobox needs focus to show dropdown.</div>
+      <ComboBox label="Combobox" isOpen={isOpen} {...actions} onOpenChange={setOpen}>
+        <Item key="one">Item One</Item>
+        <Item key="two" textValue="Item Two">
+          <Copy size="S" />
+          <Text>Item Two</Text>
+        </Item>
+        <Item key="three">Item Three</Item>
       </ComboBox>
     </div>
   );

@@ -373,7 +373,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getKeyPageAbove(key: Key) {
-    let layoutInfo = this.getLayoutInfo(key);
+    let layoutInfo = this.getLayoutInfo(key || this.getFirstKey());
 
     if (layoutInfo) {
       let pageY = Math.max(0, layoutInfo.rect.y + layoutInfo.rect.height - this.virtualizer.visibleRect.height);
@@ -391,7 +391,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate {
   }
 
   getKeyPageBelow(key: Key) {
-    let layoutInfo = this.getLayoutInfo(key);
+    let layoutInfo = this.getLayoutInfo(key || this.getFirstKey());
 
     if (layoutInfo) {
       let pageY = Math.min(this.virtualizer.contentSize.height, layoutInfo.rect.y - layoutInfo.rect.height + this.virtualizer.visibleRect.height);
