@@ -72,7 +72,11 @@ interface SelectableCollectionOptions {
    * Whether typeahead is disabled.
    * @default false
    */
-  disallowTypeAhead?: boolean
+  disallowTypeAhead?: boolean,
+  /**
+   * Whether the collection items should use virtual focus instead of being focused directly.
+   */
+  shouldUseVirtualFocus?: boolean
 }
 
 interface SelectableCollectionAria {
@@ -93,7 +97,8 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     disallowEmptySelection = false,
     disallowSelectAll = false,
     selectOnFocus = false,
-    disallowTypeAhead = false
+    disallowTypeAhead = false,
+    shouldUseVirtualFocus
   } = options;
 
   let onKeyDown = (e: KeyboardEvent) => {
@@ -372,7 +377,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       ...handlers,
       // If nothing is focused within the collection, make the collection itself tabbable.
       // This will be marshalled to either the first or last item depending on where focus came from.
-      tabIndex: manager.focusedKey == null ? 0 : -1
+      tabIndex: manager.focusedKey == null && !shouldUseVirtualFocus ? 0 : -1
     }
   };
 }

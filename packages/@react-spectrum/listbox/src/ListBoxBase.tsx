@@ -11,8 +11,7 @@
  */
 
 import {AriaLabelingProps, DOMProps, FocusStrategy, Node, StyleProps} from '@react-types/shared';
-import {classNames, SlotProvider, useStyleProps} from '@react-spectrum/utils';
-import {Grid} from '@react-spectrum/layout';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListBoxContext} from './ListBoxContext';
@@ -25,7 +24,6 @@ import {ProgressCircle} from '@react-spectrum/progress';
 import React, {HTMLAttributes, ReactElement, RefObject, useMemo} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
-import {Text} from '@react-spectrum/text';
 import {useCollator, useMessageFormatter} from '@react-aria/i18n';
 import {useListBox} from '@react-aria/listbox';
 import {useProvider} from '@react-spectrum/provider';
@@ -125,7 +123,8 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
         renderWrapper={renderWrapper}
         transitionDuration={transitionDuration}
         isLoading={props.isLoading}
-        onLoadMore={props.onLoadMore}>
+        onLoadMore={props.onLoadMore}
+        shouldUseVirtualFocus={shouldUseVirtualFocus}>
         {(type, item: Node<T>) => {
           if (type === 'item') {
             return (
