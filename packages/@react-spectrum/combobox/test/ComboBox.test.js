@@ -81,6 +81,8 @@ function testComboBoxOpen(combobox, button, listbox, focusedItemIndex) {
   let comboboxLabelledBy = combobox.getAttribute('aria-labelledby');
 
   expect(listbox).toBeVisible();
+  expect(listbox).toHaveAttribute('aria-label', 'Suggestions');
+  expect(listbox).toHaveAttribute('aria-labelledby', `${comboboxLabelledBy} ${listbox.id}`);
   expect(button).toHaveAttribute('aria-expanded', 'true');
   expect(button).toHaveAttribute('aria-controls', listbox.id);
   expect(button).toHaveAttribute('aria-label', 'Show suggestions');
@@ -2291,6 +2293,9 @@ describe('ComboBox', function () {
 
       let tray = getByTestId('tray');
       expect(tray).toBeVisible();
+      let listbox = getByRole('listbox');
+      expect(listbox).toHaveAttribute('aria-label', 'Suggestions');
+      expect(listbox).toHaveAttribute('aria-labelledby', `${label.id} ${listbox.id}`);
       let trayInput = within(tray).getByRole('combobox');
       expect(trayInput).toHaveAttribute('aria-labelledby', label.id);
     });

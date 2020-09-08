@@ -236,6 +236,12 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     'aria-labelledby': props['aria-labelledby'] || labelProps.id
   });
 
+  let listBoxProps = useLabels({
+    id: menuProps.id,
+    'aria-label': 'Suggestions',
+    'aria-labelledby': props['aria-labelledby'] || labelProps.id
+  });
+
   return {
     labelProps,
     triggerProps: {
@@ -254,8 +260,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       'aria-autocomplete': completionMode === 'suggest' ? 'list' : 'both',
       'aria-activedescendant': focusedKeyId
     },
-    listBoxProps: {
-      ...menuProps
-    }
+    listBoxProps: mergeProps(menuProps, listBoxProps)
   };
 }
