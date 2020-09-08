@@ -35,6 +35,11 @@ export class Color implements ColorType {
     return x;
   }
 
+  static parse(value: ColorInput): Color {
+    if (!value) { return null; }
+    return new Color(typeof value === 'string' ? value : value.toString('hex'));
+  }
+
   toFormat(format: ColorFormat): Color {
     switch (format) {
       case 'hex':
@@ -69,6 +74,10 @@ export class Color implements ColorType {
       default:
         throw new Error('Invalid color format: ' + format);
     }
+  }
+
+  toHexInt(): number {
+    return parseInt(this.toString('hex').substring(1), 16);
   }
 
   getChannelValue(channel: ColorChannel): number {
@@ -201,15 +210,4 @@ class HSLColor implements ColorValue {
   toHSL(): ColorValue {
     return this;
   }
-}
-
-export function parseColor(value: ColorInput): Color {
-  if (!value) { return null };
-  return new Color(typeof value === 'string' ? value : value.toString('hex'));
-}
-
-export function parseColorToInt(value: ColorInput) {
-  if (!value) { return null };
-  const colorString = parseColor(value).toString('hex').substring(1);
-  return parseInt(colorString, 16);
 }

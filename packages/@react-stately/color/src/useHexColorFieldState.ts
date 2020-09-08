@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Color, parseColor, parseColorToInt} from './Color';
+import {Color} from './Color';
 import {ColorInput, HexColorFieldProps} from '@react-types/color';
 import {NumberFieldState} from '@react-stately/numberfield';
-import {useCallback, useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 export interface HexColorFieldState extends NumberFieldState {
@@ -39,19 +39,31 @@ export function useHexColorFieldState(
   } = props;
 
   const [colorInputValue, setColorInputValue] = useControlledState<ColorInput>(value, defaultValue || minValue, onChange);
-  const initialIsValid = isInputValueValid(colorInputValue, maxValue, minValue);
-  let colorValue;
-  let initialInputValue;
-  if (initialIsValid) {
-    colorValue = parseColor(colorInputValue);
-    initialInputValue = colorValue.toString('hex');
-  }
-  const [inputValue, setInputValue] = useState(initialInputValue || '');
+
+  const minColor = Color.parse(minValue);
+  const maxColor = Color.parse(maxValue);
+  const minColorInt = minColor.toHexInt();
+  const maxColorInt = maxColor.toHexInt();
+
+  const colorValue = useMemo(() => {
+    let validColor;
+    try {
+      const color = Color.parse(colorInputValue);
+      const colorInt = color.toHexInt();
+      if (colorInt <= maxColorInt && colorInt >= minColorInt) {
+        validColor = color;
+      }
+    } catch (err) {
+      // ignore
+    }
+    return validColor;
+  }, [colorInputValue, minColorInt, maxColorInt]);
+
+  const [inputValue, setInputValue] = useState(colorValue ? colorValue.toString('hex') : '');
 
   const increment = () => {
     setColorInputValue((previousValue) => {
-      const colorInt = parseColorToInt(previousValue);
-      const maxColorInt = parseColorToInt(maxValue);
+      const colorInt = Color.parse(previousValue).toHexInt();
       const newValue = `#${Math.min(colorInt + step, maxColorInt).toString(16).padStart(6, '0').toUpperCase()}`;
       const newColor = new Color(newValue);
       setInputValue(newValue);
@@ -61,16 +73,14 @@ export function useHexColorFieldState(
 
   const incrementToMax = useCallback(() => {
     if (maxValue != null) {
-      const maxColor = parseColor(maxValue);
       setColorInputValue(maxColor);
       setInputValue(maxColor.toString('hex'));
     }
-  }, [maxValue, setColorInputValue, setInputValue]);
+  }, [maxValue, maxColor, setColorInputValue, setInputValue]);
 
   const decrement = () => {
     setColorInputValue((previousValue) => {
-      const colorInt = parseColorToInt(previousValue);
-      const minColorInt = parseColorToInt(minValue);
+      const colorInt = Color.parse(previousValue).toHexInt();
       const newValue = `#${Math.max(colorInt - step, minColorInt).toString(16).padStart(6, '0').toUpperCase()}`;
       const newColor = new Color(newValue);
       setInputValue(newValue);
@@ -80,11 +90,10 @@ export function useHexColorFieldState(
 
   const decrementToMin = useCallback(() => {
     if (minValue != null) {
-      const minColor = parseColor(minValue);
       setColorInputValue(minColor);
       setInputValue(minColor.toString('hex'));
     }
-  }, [minValue, setColorInputValue, setInputValue]);
+  }, [minValue, minColor, setColorInputValue, setInputValue]);
 
   const setColorValue = (color: Color) => {
     setColorInputValue(color);
@@ -109,18 +118,4 @@ export function useHexColorFieldState(
     commitInputValue,
     validationState
   };
-}
-
-function isInputValueValid(value: ColorInput, max: ColorInput, min: ColorInput): boolean {
-  let colorInt;
-  try {
-    colorInt = parseColorToInt(value);
-  } catch { return false; }
-
-  const maxColorInt = parseColorToInt(max);
-  const minColorInt = parseColorToInt(min);
-  return (
-    colorInt <= maxColorInt &&
-    colorInt >= minColorInt
-  );
 }

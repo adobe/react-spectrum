@@ -11,7 +11,7 @@
  */
 
 import {AriaHexColorFieldProps} from '@react-types/color';
-import {HexColorFieldState, parseColorToInt} from '@react-stately/color';
+import {Color, HexColorFieldState} from '@react-stately/color';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {useId} from '@react-aria/utils';
 import {useSpinButton} from '@react-aria/spinbutton';
@@ -58,13 +58,13 @@ export function useHexColorField(
       isDisabled,
       isReadOnly,
       isRequired,
-      maxValue: parseColorToInt(maxValue),
-      minValue: parseColorToInt(minValue),
+      maxValue: Color.parse(maxValue).toHexInt(),
+      minValue: Color.parse(minValue).toHexInt(),
       onIncrement: increment,
       onIncrementToMax: incrementToMax,
       onDecrement: decrement,
       onDecrementToMin: decrementToMin,
-      value: parseColorToInt(colorValue),
+      value: colorValue.toHexInt(),
       textValue: inputValue
     }
   );

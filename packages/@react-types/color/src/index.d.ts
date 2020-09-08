@@ -43,7 +43,9 @@ export interface Color {
    * Gets the numeric value for a given channel.
    * Throws an error if the channel is unsupported in the current color format.
    */
-  getChannelValue(channel: ColorChannel): number
+  getChannelValue(channel: ColorChannel): number,
+
+  toHexInt(): number
 }
 
 export interface HexColorFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
