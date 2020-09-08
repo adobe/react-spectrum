@@ -151,13 +151,18 @@ describe('useHexColorFieldState tests', function () {
   it('should revert to last valid value', function () {
     let props = {defaultValue: '#abc', minValue: '#abc'};
     const {result} = renderHook(() => useHexColorFieldState(props));
-    act(() => result.current.decrement());
+    expect(result.current.inputValue).toBe('#AABBCC');
     expect(result.current.colorValue.value).toEqual({
       red: 170,
       green: 187,
       blue: 204,
       alpha: 1
     });
+
+    act(() => result.current.setInputValue('invalidColor'));
+    expect(result.current.inputValue).toBe('invalidColor');
+
+    act(() => result.current.commitInputValue());
     expect(result.current.inputValue).toBe('#AABBCC');
   });
 
