@@ -98,7 +98,6 @@ export function useHexColorFieldState(
 
   const setColorValue = (color: Color) => {
     setColorInputValue(color);
-    setInputValue(color.toString('hex'));
   };
 
   const commitInputValue = () => {

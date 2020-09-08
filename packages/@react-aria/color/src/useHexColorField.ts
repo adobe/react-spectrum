@@ -72,19 +72,23 @@ export function useHexColorField(
     }
   );
 
+  const onInputChange = (value: string) => {
+    setInputValue(value);
+    value = value.trim();
+    if (!value.length) { return; }
+    if (!value.startsWith('#')) {
+      value = `#${value}`;
+    }
+    try {
+      setColorValue(Color.parse(value));
+    } catch (err) {
+      // ignore
+    }
+  }
+
   const onBlur = (e) => {
     spinButtonProps.onBlur(e);
-    let inputValue = e.target.value.trim();
-    if (!inputValue.length) { return; }
-    if (!inputValue.startsWith('#')) {
-      inputValue = `#${inputValue}`;
-    }
-
-    try {
-      setColorValue(Color.parse(inputValue));
-    } catch (err) {
-      commitInputValue();
-    }
+    commitInputValue();
   };
 
   const inputId = useId();
@@ -94,7 +98,7 @@ export function useHexColorField(
     value: inputValue,
     type: 'text',
     autoComplete: 'off',
-    onChange: setInputValue
+    onChange: onInputChange
   }, ref);
   
   return {
