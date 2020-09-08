@@ -18,7 +18,8 @@ import {useControlledState} from '@react-stately/utils';
 
 export interface HexColorFieldState extends NumberFieldState {
   colorValue: Color,
-  setColorValue: (color: Color) => void
+  setColorValue: (color: Color) => void,
+  setInputValue: (value: string) => void,
 }
 
 /**
@@ -101,21 +102,21 @@ export function useHexColorFieldState(
   };
 
   const commitInputValue = () => {
-    if (!inputValue.length) { return; }
     setInputValue(colorValue.toString('hex'));
   };
 
   return {
     colorValue,
     setColorValue,
-    value: null,
-    setValue: null,
     inputValue,
+    setInputValue,
+    commitInputValue,
     increment,
     incrementToMax,
     decrement,
     decrementToMin,
-    commitInputValue,
+    value: null,
+    setValue: null,
     validationState
   };
 }
