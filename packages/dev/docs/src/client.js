@@ -63,20 +63,87 @@ if (typeof ResizeObserver !== 'undefined') {
 }
 
 function Hamburger() {
-  let onPress = () => {
-    document.querySelector('.' + docsStyle.nav).classList.toggle(docsStyle.visible);
+  let onPress = (event) => {
+    let nav = document.querySelector('.' + docsStyle.nav);
+    let main = document.querySelector('main');
+    let themeSwitcher = event.target.nextElementSibling;
+ 
+    nav.classList.toggle(docsStyle.visible);
+
+    if (nav.classList.contains(docsStyle.visible)) {
+      main.setAttribute('aria-hidden', 'true');
+      themeSwitcher.setAttribute('aria-hidden', 'true');
+      themeSwitcher.querySelector('button').tabIndex = -1;
+      nav.querySelector('button, a[href]').focus();
+    } else {
+      main.removeAttribute('aria-hidden');
+      themeSwitcher.removeAttribute('aria-hidden');
+      themeSwitcher.querySelector('button').removeAttribute('tabindex');
+    }
   };
 
   useEffect(() => {
+    let mediaQueryList = window.matchMedia('(max-width: 1020px)');
     let nav = document.querySelector('.' + docsStyle.nav);
     let main = document.querySelector('main');
-    let onClick = () => {
+    let hamburgerButton = document.querySelector('.' + docsStyle.hamburgerButton);
+    let themeSwitcher = hamburgerButton.nextElementSibling;
+
+    /* remove visible className and aria-attributes that make nav behave as a modal */ 
+    let removeVisible = (isNotResponsive = false) => {
+      if (nav.contains(document.activeElement) && !isNotResponsive) {
+        hamburgerButton.focus();
+      }
+
       nav.classList.remove(docsStyle.visible);
+      main.removeAttribute('aria-hidden');
+      themeSwitcher.removeAttribute('aria-hidden');
+      themeSwitcher.querySelector('button').removeAttribute('tabindex');
+    };
+
+    /* collapse nav when underlying content is clicked */
+    let onClick = () => removeVisible();
+
+    /* collapse expanded nav when esc key is pressed */
+    let onKeydownEsc = (event) => {
+      if (event.keyCode === 27) {
+        removeVisible();
+      }
+    };
+
+    /* trap keyboard focus within expanded nav */
+    let onKeydownTab = (event) => {
+      if (event.keyCode === 9 && nav.classList.contains(docsStyle.visible)) {
+        let tabbables = nav.querySelectorAll('button, a[href]');
+        let first = tabbables[0];
+        let last = tabbables[tabbables.length - 1];
+
+        if (event.shiftKey && event.target === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && event.target === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    /* restore default behavior when responsive media query no longer matches */
+    let mediaQueryTest = (event) => {
+      if (!event.matches) {
+        removeVisible(true);
+      }
     };
 
     main.addEventListener('click', onClick);
+    document.addEventListener('keydown', onKeydownEsc);
+    nav.addEventListener('keydown', onKeydownTab);
+    mediaQueryList.addEventListener('change', mediaQueryTest);
     return () => {
       main.removeEventListener('click', onClick);
+      document.removeEventListener('keydown', onKeydownEsc);
+      nav.removeEventListener('keydown', onKeydownTab);
+      mediaQueryList.removeEventListener('change', mediaQueryTest);
     };
   }, []);
 
