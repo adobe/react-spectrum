@@ -54,7 +54,7 @@ describe('useComboBox', function () {
     expect(inputProps['aria-controls']).toBeFalsy();
     expect(inputProps['aria-activedescendant']).toBeFalsy();
     expect(listBoxProps.id).toBeTruthy();
-    expect(listBoxProps['aria-labelledby']).toBe(triggerProps.id);
+    expect(listBoxProps['aria-labelledby']).toBe(`${labelProps.id} ${listBoxProps.id}`);
     expect(triggerProps.id).toBeTruthy();
     expect(triggerProps.excludeFromTabOrder).toBeTruthy();
     expect(triggerProps['aria-haspopup']).toBeTruthy();

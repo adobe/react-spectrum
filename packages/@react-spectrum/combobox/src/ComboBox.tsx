@@ -293,7 +293,7 @@ function ComboBoxTrayInput<T>(props: ComboBoxTrayInputProps<T>) {
       labelProps={labelProps}
       inputProps={inputProps}
       inputRef={inputRef}
-      marginTop={5}
+      marginTop={label ? 5 : 15}
       marginX={15}
       width={'initial'}
       validationState={validationState}

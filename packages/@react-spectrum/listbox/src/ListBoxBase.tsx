@@ -149,31 +149,12 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
             );
           } else if (type === 'placeholder' && isMobile) {
             return (
-
               <div
                 // aria-selected isn't needed here since this option is not selectable.
                 // eslint-disable-next-line jsx-a11y/role-has-required-aria-props
                 role="option"
-                className={classNames(
-                  styles,
-                  'spectrum-Menu-item'
-                )}>
-                <Grid
-                  UNSAFE_className={
-                    classNames(
-                      styles,
-                      'spectrum-Menu-itemGrid'
-                    )
-                  }>
-                  <SlotProvider
-                    slots={{
-                      text: {UNSAFE_className: styles['spectrum-Menu-itemLabel']}
-                    }}>
-                    <Text>
-                      <i>No Results</i>
-                    </Text>
-                  </SlotProvider>
-                </Grid>
+                style={{paddingInlineStart: 16, paddingTop: 12}}>
+                <i>No Results</i>
               </div>
             );
           }
