@@ -763,9 +763,6 @@ h2.sectionHeader {
     z-index: 50;
     display: flex;
     width: 100%;
-    &:focus-within {
-      z-index: 101;
-    }
   }
   .hamburgerButton {
     display: inline-flex;

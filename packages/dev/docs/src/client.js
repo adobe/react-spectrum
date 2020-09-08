@@ -138,12 +138,21 @@ function Hamburger() {
     main.addEventListener('click', onClick);
     document.addEventListener('keydown', onKeydownEsc);
     nav.addEventListener('keydown', onKeydownTab);
-    mediaQueryList.addEventListener('change', mediaQueryTest);
+    try {
+      mediaQueryList.addEventListener('change', mediaQueryTest);
+    } catch (error) {
+      mediaQueryList.addListener(mediaQueryTest);
+    }
     return () => {
       main.removeEventListener('click', onClick);
       document.removeEventListener('keydown', onKeydownEsc);
       nav.removeEventListener('keydown', onKeydownTab);
       mediaQueryList.removeEventListener('change', mediaQueryTest);
+      try {
+        mediaQueryList.removeEventListener('change', mediaQueryTest);
+      } catch (error) {
+        mediaQueryList.removeListener(mediaQueryTest);
+      }
     };
   }, []);
 
