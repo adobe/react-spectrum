@@ -187,7 +187,6 @@ describe('useHexColorFieldState tests', function () {
       blue: 170,
       alpha: 1
     });
-    expect(result.current.inputValue).toBe('#CCBBAA');
   });
 
   it('should not update colorValue (controlled)', function () {
@@ -211,6 +210,5 @@ describe('useHexColorFieldState tests', function () {
       blue: 204,
       alpha: 1
     });
-    // expect(result.current.inputValue).toBe('#CCBBAA');
   });
 });

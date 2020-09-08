@@ -65,9 +65,9 @@ export function useHexColorFieldState(
   const increment = () => {
     setColorInputValue((previousValue) => {
       const colorInt = Color.parse(previousValue).toHexInt();
-      const newValue = `#${Math.min(colorInt + step, maxColorInt).toString(16).padStart(6, '0').toUpperCase()}`;
+      const newValue = `#${Math.min(colorInt + step, maxColorInt).toString(16).padStart(6, '0')}`;
       const newColor = new Color(newValue);
-      setInputValue(newValue);
+      setInputValue(newColor.toString('hex'));
       return newColor;
     });
   };
@@ -82,9 +82,9 @@ export function useHexColorFieldState(
   const decrement = () => {
     setColorInputValue((previousValue) => {
       const colorInt = Color.parse(previousValue).toHexInt();
-      const newValue = `#${Math.max(colorInt - step, minColorInt).toString(16).padStart(6, '0').toUpperCase()}`;
+      const newValue = `#${Math.max(colorInt - step, minColorInt).toString(16).padStart(6, '0')}`;
       const newColor = new Color(newValue);
-      setInputValue(newValue);
+      setInputValue(newColor.toString('hex'));
       return newColor;
     });
   };
