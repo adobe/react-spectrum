@@ -19,7 +19,7 @@ import {useControlledState} from '@react-stately/utils';
 export interface HexColorFieldState extends NumberFieldState {
   colorValue: Color,
   setColorValue: (color: Color) => void,
-  setInputValue: (value: string) => void,
+  setInputValue: (value: string) => void
 }
 
 /**

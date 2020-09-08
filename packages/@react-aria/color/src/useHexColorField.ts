@@ -85,7 +85,7 @@ export function useHexColorField(
     } catch (err) {
       commitInputValue();
     }
-  }
+  };
 
   const inputId = useId();
   let {labelProps, inputProps} = useTextField({
@@ -94,7 +94,7 @@ export function useHexColorField(
     value: inputValue,
     type: 'text',
     autoComplete: 'off',
-    onChange: setInputValue,
+    onChange: setInputValue
   }, ref);
   
   return {
@@ -103,7 +103,7 @@ export function useHexColorField(
       ...inputProps,
       onKeyDown: spinButtonProps.onKeyDown,
       onFocus: spinButtonProps.onFocus,
-      onBlur,
+      onBlur
     }
   };
 }
