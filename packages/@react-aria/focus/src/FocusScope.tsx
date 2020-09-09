@@ -86,20 +86,22 @@ export function FocusScope(props: FocusScopeProps) {
     }
 
     scopeRef.current = nodes;
+    console.log('adding a scope', nodes[0].getAttribute('id'));
     scopes.add(scopeRef);
     return () => {
+      console.log('deleting a scope', nodes[0].getAttribute('id'));
       scopes.delete(scopeRef);
     };
   }, [children]);
 
-  useFocusContainment(scopeRef, contain);
+  let cancel = useFocusContainment(scopeRef, contain);
   useRestoreFocus(scopeRef, restoreFocus, contain);
   useAutoFocus(scopeRef, autoFocus);
 
   let focusManager = createFocusManager(scopeRef);
 
   return (
-    <FocusContext.Provider value={focusManager}>
+    <FocusContext.Provider value={{...focusManager, cancel}}>
       <span hidden ref={startRef} />
       {children}
       <span hidden ref={endRef} />
@@ -181,9 +183,16 @@ function getFocusableElementsInScope(scope: HTMLElement[], opts: FocusManagerOpt
   }
   return res;
 }
-
+let index = 0;
 function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean) {
   let focusedNode = useRef<HTMLElement>();
+  // cancel any higher up focus scopes refocusing
+  let {cancel} = useContext(FocusContext) || {};
+  useEffect(() => {
+    if (cancel) {
+      cancel();
+    }
+  }, []);
 
   let raf = useRef(null);
   useEffect(() => {
@@ -239,21 +248,31 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
           focusFirstInScope(activeScope.current);
         }
       } else {
+        e.stopPropagation();
         activeScope = scopeRef;
+        // console.log('focus', activeScope.current[0]);
         focusedNode.current = e.target;
       }
     };
 
     let onBlur = (e) => {
+      e.stopPropagation();
       let isInAnyScope = isElementInAnyScope(e.relatedTarget, scopes);
 
       if (!isInAnyScope) {
+        console.log('blur not in a scope', index, ', target: ', e.target.getAttribute('id'), ' relatedTarget: ', e.relatedTarget.getAttribute('id'));
+        let indexRef = index;
+        index++;
         activeScope = scopeRef;
         focusedNode.current = e.target;
+        // console.log('onBlur focus', activeScope.current[0]);
         // Firefox doesn't shift focus back to the Dialog properly without this
         raf.current = requestAnimationFrame(() => {
+          console.log('focus raf', indexRef);
           focusedNode.current.focus();
         });
+      } else {
+        console.log('blur in a scope, target: ', e.target.getAttribute('id'), ' relatedTarget: ', e.relatedTarget.getAttribute('id'));
       }
     };
 
@@ -274,11 +293,14 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
     };
   }, [scopeRef, contain]);
 
-  // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     let rafRef = raf.current;
     return () => cancelAnimationFrame(rafRef);
   }, []);
+
+  return () => {
+    cancelAnimationFrame(raf.current);
+  };
 }
 
 function isElementInAnyScope(element: Element, scopes: Set<RefObject<HTMLElement[]>>) {
@@ -386,6 +408,7 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scope)) {
         requestAnimationFrame(() => {
           if (document.body.contains(nodeToRestore)) {
+            console.log('restoring', nodeToRestore);
             focusElement(nodeToRestore);
           }
         });

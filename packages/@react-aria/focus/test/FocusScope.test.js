@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {FocusScope, useFocusManager} from '../';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -694,6 +694,40 @@ describe('FocusScope', function () {
       let input3 = getByTestId('input3');
       input3.focus();
       fireEvent.focusIn(input3);
+      expect(document.activeElement).toBe(input3);
+    });
+
+    it.only('should only attempt to focus in the inner most scope', function () {
+      function ChildComponent(props) {
+        return ReactDOM.createPortal(props.children, document.body);
+      }
+
+      function Test({show}) {
+        return (
+          <div>
+            <input data-testid="outside" />
+            <FocusScope restoreFocus contain>
+              <input data-testid="input1" onFocus={console.log('outer focus')} />
+              {show &&
+              <ChildComponent>
+                <FocusScope restoreFocus contain autoFocus>
+                  <input data-testid="input3" onFocus={console.log('inner focus')} />
+                </FocusScope>
+              </ChildComponent>
+              }
+            </FocusScope>
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test show />);
+      // Set a focused node and make first FocusScope the active scope
+      let input1 = getByTestId('input1');
+      let outside = getByTestId('outside');
+      let input3 = getByTestId('input3');
+      expect(document.activeElement).toBe(input3);
+
+      act(() => {input3.blur();});
       expect(document.activeElement).toBe(input3);
     });
   });

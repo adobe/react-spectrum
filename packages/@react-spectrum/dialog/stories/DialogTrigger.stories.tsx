@@ -75,17 +75,17 @@ storiesOf('DialogTrigger', module)
       <div style={{paddingTop: 100}}>
         <input />
         <Provider colorScheme="dark" UNSAFE_style={{padding: 40, marginTop: 10}}>
-          <DialogTrigger isDismissable>
-            <ActionButton>Trigger</ActionButton>
-            <Dialog>
+          <DialogTrigger>
+            <ActionButton id="outer-trigger">Trigger</ActionButton>
+            <Dialog id='outer-dialog'>
               <Content>
+                <input id="outer-input" autoFocus />
                 <input />
-                <input />
-                <DialogTrigger isDismissable>
-                  <ActionButton>Trigger</ActionButton>
-                  <Dialog>
+                <DialogTrigger>
+                  <ActionButton id="inner-trigger">Trigger</ActionButton>
+                  <Dialog id='inner-dialog' width="size-400">
                     <Content>
-                      <input />
+                      <input id="inner-input" autoFocus />
                       <input />
                     </Content>
                   </Dialog>

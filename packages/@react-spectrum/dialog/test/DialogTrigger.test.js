@@ -20,6 +20,7 @@ import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
+import {Content} from "@react-spectrum/view";
 
 // whole thing hangs if run with rest of suite, but doesn't on its own
 describe('DialogTrigger', function () {
@@ -713,5 +714,67 @@ describe('DialogTrigger', function () {
     }); // wait for animation
 
     expect(document.activeElement).toBe(dialog);
+  });
+
+  it.only('should not try to restore focus to the outer dialog', async () => {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <DialogTrigger>
+          <ActionButton id="outer-trigger">Trigger</ActionButton>
+          <Dialog id='outer-dialog'>
+            <Content>
+              <input id="outer-input" type="text" autoFocus onFocus={() => console.log('outer focus')} onBlur={() => console.log('outer blur')} />
+              <DialogTrigger>
+                <ActionButton id="inner-trigger">Trigger</ActionButton>
+                <Dialog id='inner-dialog'>
+                  <Content>
+                    <input id="inner-input" type="text" autoFocus onFocus={() => console.log('inner focus')} onBlur={() => console.log('inner blur')} />
+                  </Content>
+                </Dialog>
+              </DialogTrigger>
+            </Content>
+          </Dialog>
+        </DialogTrigger>
+      </Provider>
+    );
+    let button = getByRole('button');
+    triggerPress(button);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let outerDialog = getByRole('dialog');
+
+    await waitFor(() => {
+      expect(outerDialog).toBeVisible();
+    }); // wait for animation
+    let outerButton = getByRole('button');
+    let outerInput = getByRole('textbox');
+
+    expect(document.activeElement).toBe(outerInput);
+    triggerPress(outerButton);
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    let innerDialog = getByRole('dialog');
+
+    await waitFor(() => {
+      expect(innerDialog).toBeVisible();
+    }); // wait for animation
+
+    let innerInput = getByRole('textbox');
+
+    expect(document.activeElement).toBe(innerInput);
+
+    act(() => {userEvent.click(document.body);});
+
+    act(() => {
+      jest.runAllTimers();
+    });
+
+    expect(document.activeElement).toBe(innerInput);
   });
 });
