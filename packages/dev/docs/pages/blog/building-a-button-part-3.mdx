@@ -62,7 +62,7 @@ Ensuring buttons are focused when interacting with a mouse or touch is very impo
 
 Unfortunately, Safari both on macOS and iOS reaaaally doesn’t want to do this. Native buttons on these platforms typically do not receive focus at all, unless you enable an accessibility setting (shown below). This means that tabbing through elements will only show text inputs, and not other elements like buttons, checkboxes, radios, etc. However, Safari is the only browser on macOS that respects this setting – both Chrome and Firefox always allow tabbing to all of these elements. We do not do anything to normalize this behavior for Safari because it’s likely that if you’re a keyboard user, you already have this setting enabled.
 
-<Image src={keyboardSettingsImageUrl} style={{maxWidth: 'min(100%, 780px)', display: 'block', margin: '20px auto'}} />
+<Image src={keyboardSettingsImageUrl} alt="Screenshot of macOS keyboard system preferences" style={{maxWidth: 'min(100%, 780px)', display: 'block', margin: '20px auto'}} />
 
 Even with this setting turned on, however, Safari still does not focus buttons and other native form elements on mouse down or touch start. A [bug](https://bugs.webkit.org/show_bug.cgi?id=22261) for this has been open against WebKit since 2008, and it seems unlikely to be fixed any time soon. In this case, we do need to normalize this to ensure browsers are consistent. We can handle focusing the element programmatically on mouse down ourselves.
 

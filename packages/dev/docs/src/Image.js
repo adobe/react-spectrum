@@ -48,7 +48,7 @@ export function Image({src, ...otherProps}) {
   let url = baseUrl + '/' + path.basename(src);
 
   return (
-    // eslint-disable-next-line jsx-a11y/media-has-caption
+    // eslint-disable-next-line jsx-a11y/alt-text
     <img src={url} className={docStyles.video} {...otherProps} />
   );
 }
