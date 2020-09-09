@@ -2333,6 +2333,30 @@ describe('ComboBox', function () {
       expect(combobox.value).toBe('');
       expect(onInputChange).not.toHaveBeenCalled();
     });
+
+    // Simulating browser tab switching
+    it('combobox tray remains open on blur with related target = null', function () {
+      let {getByRole, getByTestId} = renderComboBox();
+      let combobox = getByRole('combobox');
+
+      act(() => {
+        combobox.focus();
+        triggerPress(combobox);
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let trayInput = within(tray).getByRole('combobox');
+
+      act(() => {
+        fireEvent.blur(trayInput, {relatedTarget: null});
+        jest.runAllTimers();
+      });
+
+      tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+    });
   });
 
   describe('accessibility', function () {

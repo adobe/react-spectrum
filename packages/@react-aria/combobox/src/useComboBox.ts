@@ -122,9 +122,12 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   };
 
   let onBlur = (e) => {
-    // If user is clicking on the combobox button, early return so we don't change textfield focus state, update the selected key erroneously,
-    // and trigger close menu twice. Also early return if focus is moved into the popover (e.g. when focus is moved to the Tray's input field, mobile case).
-    if ((triggerRef?.current && triggerRef.current.contains(e.relatedTarget)) || (popoverRef?.current && popoverRef.current.contains(e.relatedTarget))) {
+    // Early return in the following cases so we don't change textfield focus state, update the selected key erroneously,
+    // and trigger close menu twice:
+    // If user is clicking on the combobox trigger button butto
+    // If focus is moved into the popover (e.g. when focus is moved to the Tray's input field, mobile case).
+    // If the tray input is blurred and the relatedTarget is null (e.g. switching browser tabs or tapping on the tray empty space)
+    if ((triggerRef?.current && triggerRef.current.contains(e.relatedTarget)) || (popoverRef?.current && popoverRef.current.contains(e.relatedTarget)) || (isMobile && state.isOpen && e.relatedTarget === null)) {
       return;
     }
 
@@ -189,17 +192,22 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   });
 
   // Return focus to textfield if user clicks menu trigger button
+  // Don't need to handle the state.close() when pressing the trigger button since useInteractOutside will call it for us
   let onPress = (e) => {
     if (e.pointerType === 'touch') {
       inputRef.current.focus();
-      state.open();
+      if (!state.isOpen) {
+        state.open();
+      }
     }
   };
 
   let onPressStart = (e) => {
     if (e.pointerType !== 'touch') {
       inputRef.current.focus();
-      state.open(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
+      if (!state.isOpen) {
+        state.open(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
+      }
     }
   };
 
