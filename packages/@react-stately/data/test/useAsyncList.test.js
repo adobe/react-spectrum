@@ -29,9 +29,14 @@ function getItems2() {
   });
 }
 
-describe('useAsyncList', () => {
+// TODO($8)
+describe.skip('useAsyncList', () => {
   beforeAll(() => {
     jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
   });
 
   it('should call load function on init', async () => {
