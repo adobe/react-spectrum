@@ -71,14 +71,18 @@ function Hamburger() {
     nav.classList.toggle(docsStyle.visible);
 
     if (nav.classList.contains(docsStyle.visible)) {
+      event.target.setAttribute('aria-pressed', 'true');
       main.setAttribute('aria-hidden', 'true');
       themeSwitcher.setAttribute('aria-hidden', 'true');
       themeSwitcher.querySelector('button').tabIndex = -1;
-      nav.querySelector('button, a[href]').focus();
+      nav.tabIndex = -1;
+      nav.focus();
     } else {
+      event.target.setAttribute('aria-pressed', 'false');
       main.removeAttribute('aria-hidden');
       themeSwitcher.removeAttribute('aria-hidden');
       themeSwitcher.querySelector('button').removeAttribute('tabindex');
+      nav.removeAttribute('tabindex');
     }
   };
 
@@ -91,6 +95,8 @@ function Hamburger() {
 
     /* remove visible className and aria-attributes that make nav behave as a modal */ 
     let removeVisible = (isNotResponsive = false) => {
+      hamburgerButton.setAttribute('aria-pressed', 'false');
+
       if (nav.contains(document.activeElement) && !isNotResponsive) {
         hamburgerButton.focus();
       }
@@ -99,6 +105,7 @@ function Hamburger() {
       main.removeAttribute('aria-hidden');
       themeSwitcher.removeAttribute('aria-hidden');
       themeSwitcher.querySelector('button').removeAttribute('tabindex');
+      nav.removeAttribute('tabindex');
     };
 
     /* collapse nav when underlying content is clicked */
@@ -135,22 +142,27 @@ function Hamburger() {
       }
     };
 
+    hamburgerButton.setAttribute('aria-pressed', 'false');
+    
     main.addEventListener('click', onClick);
     document.addEventListener('keydown', onKeydownEsc);
     nav.addEventListener('keydown', onKeydownTab);
-    try {
+
+    let useEventListener = typeof mediaQueryList.addEventListener === 'function';
+    if (useEventListener) {
       mediaQueryList.addEventListener('change', mediaQueryTest);
-    } catch (error) {
+    } else {
       mediaQueryList.addListener(mediaQueryTest);
     }
+
     return () => {
       main.removeEventListener('click', onClick);
       document.removeEventListener('keydown', onKeydownEsc);
       nav.removeEventListener('keydown', onKeydownTab);
-      mediaQueryList.removeEventListener('change', mediaQueryTest);
-      try {
+
+      if (useEventListener) {
         mediaQueryList.removeEventListener('change', mediaQueryTest);
-      } catch (error) {
+      } else {
         mediaQueryList.removeListener(mediaQueryTest);
       }
     };
