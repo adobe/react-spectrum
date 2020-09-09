@@ -139,10 +139,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     lastSelectedKeyProp.current = props.selectedKey;
   }, [props.selectedKey, setSelectedKey]);
 
-  let lowercaseValue = inputValue.toLowerCase().replace(' ', '');
+  let lowercaseValue = inputValue.toLowerCase().replace(/ /g, '');
   let defaultFilterFn = useMemo(() => (node: Node<T>) => {
     let scan = 0;
-    let lowercaseNode = node.textValue.toLowerCase().replace(' ', '');
+
+    let lowercaseNode = node.textValue.toLowerCase().replace(/ /g, '');
     let sliceLen = lowercaseValue.length;
     let match = false;
 
