@@ -310,7 +310,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
     }
   };
 
-  let onBlur = (e) => {
+  let onBlur = (e: FocusEvent) => {
+    // TODO($5) When selecting a Table Cell and scrolling to move it out of focus, relatedTarget
+    // is null with Preact, while it's the selected cell with React
     // Don't set blurred and then focused again if moving focus within the collection.
     if (!e.currentTarget.contains(e.relatedTarget as HTMLElement)) {
       manager.setFocused(false);
