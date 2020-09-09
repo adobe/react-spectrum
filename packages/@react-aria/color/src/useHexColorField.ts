@@ -56,18 +56,21 @@ export function useHexColorField(
     decrementToMin
   } = state;
 
+  const minColorInt = Color.parse(minValue).toHexInt();
+  const maxColorInt = Color.parse(maxValue).toHexInt();
+
   const {spinButtonProps} = useSpinButton(
     {
       isDisabled,
       isReadOnly,
       isRequired,
-      maxValue: Color.parse(maxValue).toHexInt(),
-      minValue: Color.parse(minValue).toHexInt(),
+      maxValue: minColorInt,
+      minValue: maxColorInt,
       onIncrement: increment,
       onIncrementToMax: incrementToMax,
       onDecrement: decrement,
       onDecrementToMin: decrementToMin,
-      value: colorValue.toHexInt(),
+      value: colorValue ? colorValue.toHexInt() : minColorInt,
       textValue: inputValue
     }
   );
@@ -84,7 +87,7 @@ export function useHexColorField(
     } catch (err) {
       // ignore
     }
-  }
+  };
 
   const onBlur = (e) => {
     spinButtonProps.onBlur(e);
