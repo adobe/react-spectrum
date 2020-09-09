@@ -16,11 +16,16 @@ describe('Picker SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
       import {Picker, Item} from '../';
-      <Picker>
-        <Item>One</Item>
-        <Item>Two</Item>
-        <Item>Three</Item>
-      </Picker>
+      import {Provider} from '@react-spectrum/provider';
+      import {theme} from '@react-spectrum/theme-default';
+
+      <Provider theme={theme}>
+        <Picker label="Picker">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </Picker>
+      </Provider>
     `);
   });
 });

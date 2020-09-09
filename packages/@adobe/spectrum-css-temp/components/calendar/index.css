@@ -151,6 +151,10 @@ governing permissions and limitations under the License.
   transition: background var(--spectrum-global-animation-duration-100) ease-in-out,
       color var(--spectrum-global-animation-duration-100) ease-in-out,
       border-color var(--spectrum-global-animation-duration-100) ease-in-out;
+  
+  &:focus {
+    outline: 0;
+  }
 
   &:lang(ja), &:lang(zh), &:lang(ko) {
     font-size: var(--spectrum-calendar-day-text-size-han);

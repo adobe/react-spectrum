@@ -31,9 +31,13 @@ export function StoryMultiSlider(props: StoryMultiSliderProps) {
         {props.label && <label {...labelProps} className={styles.label}>{props.label}</label>}
         <div className={styles.value}>{JSON.stringify(state.values)}</div>
       </div>
-      <div className={styles.trackContainer}>
+      {
+        // We make rail and all thumbs children of the trackRef.  That means dragging on the thumb
+        // will also trigger the dragging handlers on the track, so we need to make sure we don't
+        // double-handle these events.
+      }
+      <div ref={trackRef} className={styles.track} {...trackProps}>
         <div className={styles.rail} />
-        <div {...trackProps} ref={trackRef} className={styles.track} />
         {React.Children.map(children, ((child, index) =>
           React.cloneElement(child as React.ReactElement, {
             __context: {
@@ -81,7 +85,7 @@ export function StoryThumb(props: StoryThumbProps) {
     <FocusRing within focusRingClass={styles.thumbFocusVisible} focusClass={styles.thumbFocused}>
       <div
         {...thumbProps}
-        className={classNames(styles, 'thumb', {thumbDisabled: isDisabled})}
+        className={classNames(styles, 'thumb', 'thumbHandle', {thumbDisabled: isDisabled})}
         style={{
           'left': `${state.getThumbPercent(index) * 100}%`
         }}>

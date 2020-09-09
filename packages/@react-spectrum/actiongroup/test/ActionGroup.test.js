@@ -220,8 +220,6 @@ describe('ActionGroup', function () {
     );
 
     let buttons = tree.getAllByRole('button');
-    let buttonGroup = tree.getByRole('toolbar');
-    buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
       action(document.activeElement);
@@ -252,8 +250,6 @@ describe('ActionGroup', function () {
     );
 
     let buttons = tree.getAllByRole('button');
-    let buttonGroup = tree.getByRole('toolbar');
-    buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
       action(document.activeElement);
@@ -278,8 +274,6 @@ describe('ActionGroup', function () {
     );
 
     let buttons = tree.getAllByRole('button');
-    let buttonGroup = tree.getByRole('toolbar');
-    buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
       action(document.activeElement);

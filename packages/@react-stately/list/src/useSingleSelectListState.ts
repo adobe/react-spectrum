@@ -56,7 +56,7 @@ export function useSingleSelectListState<T extends object>(props: SingleSelectLi
     }
   });
 
-  let selectedItem = selectedKey
+  let selectedItem = selectedKey != null
     ? collection.getItem(selectedKey)
     : null;
 

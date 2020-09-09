@@ -109,4 +109,39 @@ describe('useOverlayPosition', function () {
       max-height: 386px;
     `);
   });
+
+  it('should close the overlay when the trigger scrolls', function () {
+    let onClose = jest.fn();
+    let res = render(
+      <div data-testid="scrollable">
+        <Example isOpen onClose={onClose} />
+      </div>
+    );
+
+    let scrollable = res.getByTestId('scrollable');
+    fireEvent.scroll(scrollable);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not close the overlay when an adjacent scrollable region scrolls', function () {
+    let onClose = jest.fn();
+    let res = render(
+      <div>
+        <Example isOpen onClose={onClose} />
+        <div data-testid="scrollable">test</div>
+      </div>
+    );
+
+    let scrollable = res.getByTestId('scrollable');
+    fireEvent.scroll(scrollable);
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('should close the overlay when the body scrolls', function () {
+    let onClose = jest.fn();
+    render(<Example isOpen onClose={onClose} />);
+
+    fireEvent.scroll(document.body);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
 });

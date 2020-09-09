@@ -19,22 +19,22 @@ describe('useSliderState', () => {
     expect(result.current.getThumbPercent(0)).toBe(40 / 190);
     expect(result.current.getValuePercent(50)).toBe(40 / 190);
     expect(result.current.getThumbValueLabel(0)).toBe('$50.00');
-    
+
     act(() => result.current.setThumbValue(0, 100));
     expect(result.current.getThumbValue(0)).toBe(100);
     expect(result.current.getThumbPercent(0)).toBe(90 / 190);
     expect(result.current.getThumbValueLabel(0)).toBe('$100.00');
-    
+
     act(() => result.current.setThumbValue(0, 500));
     expect(result.current.getThumbValue(0)).toBe(200);
     expect(result.current.getThumbPercent(0)).toBe(1);
     expect(result.current.getThumbValueLabel(0)).toBe('$200.00');
-    
+
     act(() => result.current.setThumbValue(0, 0));
     expect(result.current.getThumbValue(0)).toBe(10);
     expect(result.current.getThumbPercent(0)).toBe(0);
     expect(result.current.getThumbValueLabel(0)).toBe('$10.00');
-    
+
     act(() => result.current.setThumbValue(0, 7));
     expect(result.current.getThumbValue(0)).toBe(10);
     expect(result.current.getThumbPercent(0)).toBe(0);
@@ -66,7 +66,7 @@ describe('useSliderState', () => {
     act(() => result.current.setThumbValue(1, 80));
     expect(result.current.values).toEqual([50, 80, 90]);
     expect(result.current.getThumbMinValue(2)).toBe(80);
-    
+
     act(() => result.current.setThumbValue(1, 100));
     expect(result.current.values).toEqual([50, 90, 90]);
     expect(result.current.getThumbMinValue(2)).toBe(90);
@@ -81,12 +81,14 @@ describe('useSliderState', () => {
     })).result;
 
     expect(result.current.values).toEqual([0]);
+    act(() => result.current.setThumbDragging(0, true));
     act(() => result.current.setThumbValue(0, 50));
+    act(() => result.current.setThumbDragging(0, false));
     expect(onChangeSpy).toHaveBeenLastCalledWith([50]);
     expect(onChangeEndSpy).toHaveBeenLastCalledWith([50]);
-    
+
     onChangeEndSpy.mockClear();
-    
+
     act(() => result.current.setThumbDragging(0, true));
     expect(result.current.isThumbDragging(0)).toBe(true);
     act(() => result.current.setThumbValue(0, 55));
@@ -95,9 +97,23 @@ describe('useSliderState', () => {
     act(() => result.current.setThumbValue(0, 60));
     expect(onChangeSpy).toHaveBeenLastCalledWith([60]);
     expect(onChangeEndSpy).not.toHaveBeenCalled();
-    act(() => result.current.setThumbDragging(0, false));
     act(() => result.current.setThumbValue(0, 65));
+    act(() => result.current.setThumbDragging(0, false));
     expect(onChangeSpy).toHaveBeenLastCalledWith([65]);
     expect(onChangeEndSpy).toHaveBeenLastCalledWith([65]);
+  });
+
+  it('should not call onChange and onChangeEnd if not being moved', () => {
+    let onChangeEndSpy = jest.fn();
+    let onChangeSpy = jest.fn();
+    let result = renderHook(() => useSliderState({
+      onChangeEnd: onChangeEndSpy,
+      onChange: onChangeSpy
+    })).result;
+
+    expect(result.current.values).toEqual([0]);
+    act(() => result.current.setThumbValue(0, 0));
+    expect(onChangeSpy).not.toHaveBeenCalled();
+    expect(onChangeEndSpy).not.toHaveBeenCalled();
   });
 });

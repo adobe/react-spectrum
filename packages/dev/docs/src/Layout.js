@@ -225,6 +225,7 @@ const CATEGORY_ORDER = [
   '...',
   'Content',
   'Internationalization',
+  'Server Side Rendering',
   'Utilities'
 ];
 
@@ -353,7 +354,7 @@ function Nav({currentPageName, pages}) {
             <li className={sideNavStyles['spectrum-SideNav-item']}>
               <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
               <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
-                {pageMap[key].sort((a, b) => a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
+                {pageMap[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} />)}
               </ul>
             </li>
           );

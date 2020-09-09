@@ -29,8 +29,8 @@ interface OverlayProps {
   /** Whether the overlay should close when focus is lost or moves outside it. */
   shouldCloseOnBlur?: boolean,
 
-  /**
-   * Whether pressing the escape key to close the overlay should be disabled.
+  /** 
+   * Whether pressing the escape key to close the overlay should be disabled. 
    * @default false
    */
   isKeyboardDismissDisabled?: boolean,
@@ -38,7 +38,7 @@ interface OverlayProps {
   /**
    * When user interacts with the argument element outside of the overlay ref,
    * return true if onClose should be called.  This gives you a chance to filter
-   * out interaction with elements that should not dismiss the overlay.
+   * out interaction with elements that should not dismiss the overlay.  
    * By default, onClose will always be called on interaction outside the overlay ref.
    */
   shouldCloseOnInteractOutside?: (element: HTMLElement) => boolean
@@ -95,7 +95,7 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: isDismissable && isOpen ? onInteractOutside : undefined});
+  useInteractOutside({ref, onInteractOutside: isDismissable ? onInteractOutside : null});
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,
