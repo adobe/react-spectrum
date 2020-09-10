@@ -32,7 +32,7 @@ export function watchModals(selector:string = 'body'): void {
   let observer = new MutationObserver((mutationRecord) => {
     for (let mutation of mutationRecord) {
       if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-        let addNode = Array.from(mutation.addedNodes).find((node: Element) => node.querySelector('[aria-modal="true"], [data-ismodal]')) as HTMLElement;
+        let addNode: Element = (Array.from(mutation.addedNodes).find((node: any) => node.querySelector?.('[aria-modal="true"], [data-ismodal]')) as HTMLElement);
         if (addNode) {
           modalContainers.push(addNode);
           let modal = addNode.querySelector('[aria-modal="true"], [data-ismodal]') as HTMLElement;

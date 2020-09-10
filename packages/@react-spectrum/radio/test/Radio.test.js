@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, createEvent, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import {Button} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../';
@@ -449,40 +449,30 @@ describe('Radios', function () {
       let radios = getAllByRole('radio');
       let button = getByRole('button');
 
-      let preventDefault = jest.fn();
+      // 0. body/nothing is focused
+
+      // 1. tab once to focus button before radiogroup
       act(() => {
-        let tabEvent = createEvent.keyDown(button, {key: 'Tab'});
-        fireEvent(button, tabEvent);
-        if (!tabEvent.defaultPrevented) {
-          userEvent.tab();
-        }
-        fireEvent.keyUp(button, {key: 'Tab', preventDefault});
+        userEvent.tab();
       });
       expect(document.activeElement).toBe(button);
       expect(document.activeElement).not.toBe(radios[0]);
       expect(document.activeElement).not.toBe(radios[1]);
       expect(document.activeElement).not.toBe(radios[2]);
 
+      // 2. tab once again to focus radiogroup (= first radiobutton)
       act(() => {
-        let tabEvent = createEvent.keyDown(button, {key: 'Tab'});
-        fireEvent(document.activeElement, tabEvent);
-        if (!tabEvent.defaultPrevented) {
-          userEvent.tab();
-        }
-        fireEvent.keyUp(document.activeElement, {key: 'Tab', preventDefault});
+        userEvent.tab();
       });
       expect(document.activeElement).not.toBe(button);
       expect(document.activeElement).toBe(radios[0]);
       expect(document.activeElement).not.toBe(radios[1]);
       expect(document.activeElement).not.toBe(radios[2]);
 
+      // 3. tab once again to focus the body, and again to wrap back around to the button
       act(() => {
-        let tabEvent = createEvent.keyDown(button, {key: 'Tab'});
-        fireEvent(document.activeElement, tabEvent);
-        if (!tabEvent.defaultPrevented) {
-          userEvent.tab();
-        }
-        fireEvent.keyUp(document.activeElement, {key: 'Tab', preventDefault});
+        userEvent.tab();
+        userEvent.tab();
       });
       expect(document.activeElement).toBe(button);
       expect(document.activeElement).not.toBe(radios[0]);
@@ -538,10 +528,10 @@ describe('Radios', function () {
 
       let radios = getAllByRole('radio');
       let radioGroup = getByRole('radiogroup');
-      radioGroup.focus();
+      act(() => {radioGroup.focus();});
 
       orders.forEach(({action, result}, index) => {
-        action(document.activeElement);
+        act(() => {action(document.activeElement);});
         verifyResult(radios, result(), index);
       });
     });
@@ -570,10 +560,10 @@ describe('Radios', function () {
 
       let radios = tree.getAllByRole('radio');
       let radioGroup = tree.getByRole('radiogroup');
-      radioGroup.focus();
+      act(() => {radioGroup.focus();});
 
       orders.forEach(({action, result}, index) => {
-        action(document.activeElement);
+        act(() => {action(document.activeElement);});
         verifyResult(radios, result(), index);
       });
     });
@@ -596,10 +586,10 @@ describe('Radios', function () {
 
       let radios = tree.getAllByRole('radio');
       let radioGroup = tree.getByRole('radiogroup');
-      radioGroup.focus();
+      act(() => {radioGroup.focus();});
 
       orders.forEach(({action, result}, index) => {
-        action(document.activeElement);
+        act(() => {action(document.activeElement);});
         verifyResult(radios, result(), index);
       });
     });

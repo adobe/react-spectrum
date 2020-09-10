@@ -11,18 +11,19 @@
  */
 
 import {CalendarCellOptions, CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {getCalendarId, getCellId} from './useCalendarBase';
-import {HTMLAttributes} from 'react';
+import {HTMLAttributes, RefObject, useEffect} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {isSameDay} from 'date-fns';
 import {PressProps, usePress} from '@react-aria/interactions';
 import {useDateFormatter, useMessageFormatter} from '@react-aria/i18n';
 
 interface CalendarCellAria {
-  cellProps: PressProps & HTMLAttributes<HTMLElement>
+  cellProps: PressProps & HTMLAttributes<HTMLElement>,
+  buttonProps: HTMLAttributes<HTMLElement>
 }
 
-export function useCalendarCell(props: CalendarCellOptions, state: CalendarState | RangeCalendarState): CalendarCellAria {
+export function useCalendarCell(props: CalendarCellOptions, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement>): CalendarCellAria {
   let formatMessage = useMessageFormatter(intlMessages);
   let dateFormatter = useDateFormatter({weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
 
@@ -74,14 +75,35 @@ export function useCalendarCell(props: CalendarCellOptions, state: CalendarState
     }
   };
 
+  let tabIndex = null;
+  if (!props.isDisabled) {
+    tabIndex = isSameDay(props.cellDate, state.focusedDate) ? 0 : -1;
+  }
+
+  // Focus the button in the DOM when the state updates.
+  useEffect(() => {
+    if (props.isFocused && ref.current) {
+      ref.current.focus();
+    }
+  }, [props.isFocused, ref]);
+
   return {
     cellProps: {
-      ...pressProps,
       onMouseEnter: props.isDisabled ? null : onMouseEnter,
-      id: getCellId(props.cellDate, getCalendarId(state)),
       role: 'gridcell',
       'aria-disabled': props.isDisabled || null,
-      'aria-selected': props.isSelected || null,
+      'aria-selected': props.isSelected
+    },
+    buttonProps: {
+      ...pressProps,
+      onFocus() {
+        if (!props.isDisabled) {
+          state.setFocusedDate(props.cellDate);
+        }
+      },
+      tabIndex,
+      role: 'button',
+      'aria-disabled': props.isDisabled || null,
       'aria-label': label
     }
   };
