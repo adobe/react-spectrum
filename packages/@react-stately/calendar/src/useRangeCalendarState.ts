@@ -11,7 +11,7 @@
  */
 
 import {DateValue} from '@react-types/datepicker';
-import {endOfDay, getDaysInMonth, isSameDay, startOfDay} from 'date-fns';
+import {endOfDay, isSameDay, startOfDay} from 'date-fns';
 import {RangeCalendarProps} from '@react-types/calendar';
 import {RangeCalendarState} from './types';
 import {RangeValue} from '@react-types/shared';
@@ -64,18 +64,8 @@ export function useRangeCalendarState(props: RangeCalendarProps): RangeCalendarS
         calendar.setFocusedDate(date);
       }
     },
-    getCellOptions(weekIndex, dayIndex) {
-      let opts = calendar.getCellOptions(weekIndex, dayIndex);
-      let isSelected = highlightedRange && opts.cellDate >= highlightedRange.start && opts.cellDate <= highlightedRange.end;
-      return {
-        ...opts,
-        isRangeSelection: isSelected,
-        isSelected,
-        isRangeStart: isSelected && (dayIndex === 0 || opts.cellDate.getDate() === 1),
-        isRangeEnd: isSelected && (dayIndex === 6 || opts.cellDate.getDate() === getDaysInMonth(calendar.currentMonth)),
-        isSelectionStart: highlightedRange && isSameDay(opts.cellDate, highlightedRange.start),
-        isSelectionEnd: highlightedRange && isSameDay(opts.cellDate, highlightedRange.end)
-      };
+    isSelected(date) {
+      return  highlightedRange && date >= highlightedRange.start && date <= highlightedRange.end;
     }
   };
 }
