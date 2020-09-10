@@ -12,7 +12,5 @@
 
 /// <reference types="css-module-types" />
 
-export * from './triggerPress';
-export * from './triggerLongPress';
 export * from './events';
 export * from './testSSR';
