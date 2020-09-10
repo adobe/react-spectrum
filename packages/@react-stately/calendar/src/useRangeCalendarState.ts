@@ -11,7 +11,7 @@
  */
 
 import {DateValue} from '@react-types/datepicker';
-import {endOfDay, isSameDay, startOfDay} from 'date-fns';
+import {endOfDay, startOfDay} from 'date-fns';
 import {RangeCalendarProps} from '@react-types/calendar';
 import {RangeCalendarState} from './types';
 import {RangeValue} from '@react-types/shared';
