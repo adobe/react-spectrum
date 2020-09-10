@@ -71,7 +71,13 @@ function setupGlobalEvents() {
   document.body.addEventListener('transitionend', onTransitionEnd);
 }
 
-setupGlobalEvents();
+if (typeof document !== 'undefined') {
+  if (document.readyState !== 'loading') {
+    setupGlobalEvents();
+  } else {
+    document.addEventListener('DOMContentLoaded', setupGlobalEvents);
+  }
+}
 
 export function runAfterTransition(fn: () => void) {
   // Wait one frame to see if an animation starts, e.g. a transition on mount.
