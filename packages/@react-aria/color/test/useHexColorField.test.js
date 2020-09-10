@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {Color} from '@react-stately/color';
 import React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useHexColorField} from '../';
@@ -46,6 +47,10 @@ describe('useHexColorField', function () {
     expect(inputFieldProps.id).toBeTruthy();
     expect(inputFieldProps['aria-labelledby']).toBe(labelProps.id);
     expect(inputFieldProps['aria-label']).toBeUndefined(); // because label prop is provided instead of aria-label
+    expect(typeof inputFieldProps.onChange).toBe('function');
+    expect(typeof inputFieldProps.onBlur).toBe('function');
+    expect(typeof inputFieldProps.onFocus).toBe('function');
+    expect(typeof inputFieldProps.onKeyDown).toBe('function');
   });
 
   it('should return prop for invalid', function () {
@@ -69,13 +74,52 @@ describe('useHexColorField', function () {
   });
 
   describe('onChange', function () {
-    it('should return undefined for an empty input', function () {
-  
+    const setColorValue = jest.fn();
+    const setInputValue = jest.fn();
+    let mockEvent = {target: {value: ''}};
+    
+    afterEach(() => {
+      setColorValue.mockClear();
+      setInputValue.mockClear();
+      mockEvent.target.value = '';
+    });
+
+    it('should not set new color value for an empty input', function () {
+      mockEvent.target.value = ' ';
+      const {inputFieldProps} = renderHexColorFieldHook({}, {setColorValue, setInputValue});
+      inputFieldProps.onChange(mockEvent);
+
+      expect(setInputValue).toHaveBeenCalledWith(' ');
+      expect(setColorValue).not.toHaveBeenCalled();
     });
   
-    it('should return undefined for an invalid hex color string', function () {
-  
+    it('should not set new color for an invalid hex color string', function () {
+      mockEvent.target.value = 'invalidColor';
+      const {inputFieldProps} = renderHexColorFieldHook({}, {setColorValue, setInputValue});
+      inputFieldProps.onChange(mockEvent);
+
+      expect(setInputValue).toHaveBeenCalledWith('invalidColor');
+      expect(setColorValue).not.toHaveBeenCalled();
+    });
+
+    it('should set the color value for a valid input', function () {
+      const color = new Color('#abc');
+      const parseSpy = jest.fn().mockReturnValue(color);
+      Color.parse = parseSpy;
+      mockEvent.target.value = ' abc';
+      const {inputFieldProps} = renderHexColorFieldHook({}, {setColorValue, setInputValue});
+      inputFieldProps.onChange(mockEvent);
+
+      expect(setInputValue).toHaveBeenCalledWith(' abc');
+      expect(parseSpy).toHaveBeenCalledWith('#abc');
+      expect(setColorValue).toHaveBeenCalledWith(color);
     });
   });
 
+  it('should update input value on blur', function () {
+    const commitInputValue = jest.fn();
+    const {inputFieldProps} = renderHexColorFieldHook({}, {commitInputValue});
+    inputFieldProps.onBlur();
+    expect(commitInputValue).toHaveBeenCalledTimes(1);
+  });
 });
