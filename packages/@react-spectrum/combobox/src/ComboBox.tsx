@@ -21,7 +21,7 @@ import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import React, {ReactElement, RefObject, useLayoutEffect, useRef, useState} from 'react';
+import React, {ReactElement, RefObject, useRef, useState} from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
@@ -29,6 +29,7 @@ import {TextFieldRef} from '@react-types/textfield';
 import {useCollator} from '@react-aria/i18n';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObject<TextFieldRef>) {
@@ -73,16 +74,16 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
     state
   );
 
+  let isMobile = useMediaQuery('(max-width: 700px)');
   let {overlayProps, placement} = useOverlayPosition({
     targetRef: unwrapDOMRef(triggerRef),
     overlayRef: unwrapDOMRef(popoverRef),
     scrollRef: listboxRef,
     placement: `${direction} end` as Placement,
     shouldFlip: shouldFlip,
-    isOpen: state.isOpen
+    isOpen: state.isOpen && !isMobile,
+    onClose: state.close
   });
-
-  let isMobile = useMediaQuery('(max-width: 700px)');
 
   let comboBoxAutoFocus;
   // Focus first/last item on menu open if focusStategy is set (done by up/down arrows)
@@ -111,6 +112,8 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         layout={layout}
         state={state}
         width={isMobile ? '100%' : undefined}
+        // Set max height: inherit so Tray scrolling works
+        UNSAFE_style={{maxHeight: 'inherit'}}
         shouldUseVirtualFocus />
       <DismissButton onDismiss={() => state.close()} />
     </FocusScope>

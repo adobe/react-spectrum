@@ -1,5 +1,4 @@
 import {RefObject, useEffect} from 'react';
-import './ResizeObserver.d.ts';
 
 function hasResizeObserver() {
   return typeof window.ResizeObserver !== 'undefined';

@@ -13,14 +13,15 @@
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import React, {useEffect, useRef, useState} from 'react';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import tabsStyles from './tabs.css';
 import {useHover} from '@react-aria/interactions';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useLocale} from '@react-aria/i18n';
+import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useTab, useTabs} from '@react-aria/tabs';
 
 export function Tabs<T extends object>(props: SpectrumTabsProps<T>) {
@@ -89,9 +90,10 @@ interface TabProps<T> extends DOMProps, StyleProps {
 }
 
 export function Tab<T>(props: TabProps<T>) {
-  let {item, state, isDisabled, ...otherProps} = props;
+  let {item, state, isDisabled: propsDisabled, ...otherProps} = props;
   let {styleProps} = useStyleProps(otherProps);
   let {key, rendered} = item;
+  let isDisabled = propsDisabled || state.disabledKeys.has(key);
 
   let ref = useRef<HTMLDivElement>();
   let {tabProps} = useTab({item, isDisabled}, state, ref);
@@ -131,20 +133,28 @@ export function Tab<T>(props: TabProps<T>) {
 
 function TabLine({orientation, selectedTab}) {
   let verticalSelectionIndicatorOffset = 12;
+  let {direction} = useLocale();
+  let {scale} = useProvider();
 
-  let style = {
-    transform: orientation === 'vertical'
-        ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
-        : `translateX(${selectedTab.offsetLeft}px) `,
+  let [style, setStyle] = useState({
     width: undefined,
-    height: undefined
-  };
+    height: undefined,
+    transform: undefined
+  });
 
-  if (orientation === 'horizontal') {
-    style.width = `${selectedTab.offsetWidth}px`;
-  } else {
-    style.height = `${selectedTab.offsetHeight - verticalSelectionIndicatorOffset}px`;
-  }
+  useLayoutEffect(() => {
+    let styleObj = {transform: undefined, width: undefined, height: undefined};
+    styleObj.transform = orientation === 'vertical'
+      ? `translateY(${selectedTab.offsetTop + verticalSelectionIndicatorOffset / 2}px)`
+      : `translateX(${selectedTab.offsetLeft}px) `;
+
+    if (orientation === 'horizontal') {
+      styleObj.width = `${selectedTab.offsetWidth}px`;
+    } else {
+      styleObj.height = `${selectedTab.offsetHeight - verticalSelectionIndicatorOffset}px`;
+    }
+    setStyle(styleObj);
+  }, [direction, setStyle, selectedTab, orientation, scale]);
 
   return <div className={classNames(styles, 'spectrum-Tabs-selectionIndicator')} role="presentation" style={style} />;
 }

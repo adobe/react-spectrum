@@ -36,8 +36,9 @@ describe('useComboBox', function () {
   it('should return default props for all the button group elements', function () {
     let props = {
       label: 'test label',
-      buttonRef: {current: true},
-      textFieldRef: {current: true},
+      popoverRef: React.createRef(),
+      triggerRef: React.createRef(),
+      textFieldRef: React.createRef(),
       layout: mockLayout
     };
 

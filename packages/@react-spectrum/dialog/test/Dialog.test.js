@@ -79,22 +79,6 @@ describe('Dialog', function () {
     expect(document.activeElement).toBe(input1);
   });
 
-  it('should be a modal dialog depending on context', function () {
-    let {getByRole} = render(
-      <ModalProvider>
-        <DialogContext.Provider value={{type: 'modal'}}>
-          <Dialog>
-            <input data-testid="input1" />
-            <input data-testid="input2" />
-          </Dialog>
-        </DialogContext.Provider>
-      </ModalProvider>
-    );
-
-    let dialog = getByRole('dialog');
-    expect(dialog).toHaveAttribute('aria-modal', 'true');
-  });
-
   it('should be labelled by its header', function () {
     let {getByRole} = render(
       <ModalProvider>

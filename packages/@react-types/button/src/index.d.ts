@@ -20,6 +20,15 @@ interface ButtonProps extends PressEvents, FocusableProps {
   children?: ReactNode
 }
 
+interface ToggleButtonProps extends ButtonProps {
+  /** Whether the element should be selected (controlled). */
+  isSelected?: boolean,
+  /** Whether the element should be selected (uncontrolled). */
+  defaultSelected?: boolean,
+  /** Handler that is called when the element's selection state changes. */
+  onChange?: (isSelected: boolean) => void
+}
+
 export interface LinkButtonProps {
   /**
    * The HTML element or React element used to render the button, e.g. 'div', 'a', or `RouterLink`.
@@ -51,6 +60,7 @@ interface AriaBaseButtonProps extends FocusableDOMProps, AriaLabelingProps {
 }
 
 export interface AriaButtonProps extends ButtonProps, LinkButtonProps, AriaBaseButtonProps {}
+export interface AriaToggleButtonProps extends ToggleButtonProps, AriaBaseButtonProps {}
 
 export interface SpectrumButtonProps extends AriaBaseButtonProps, ButtonProps, LinkButtonProps, StyleProps {
   /** The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button. */
@@ -60,11 +70,16 @@ export interface SpectrumButtonProps extends AriaBaseButtonProps, ButtonProps, L
 }
 
 export interface SpectrumActionButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
-  /** Whether the ActionButton should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
+  /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
   isQuiet?: boolean
 }
 
 export interface SpectrumLogicButtonProps extends AriaBaseButtonProps, ButtonProps, StyleProps {
   /** The type of boolean sequence to be represented by the LogicButton. */
   variant: 'and' | 'or'
+}
+
+export interface SpectrumToggleButtonProps extends ToggleButtonProps, SpectrumActionButtonProps {
+  /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
+  isEmphasized?: boolean
 }

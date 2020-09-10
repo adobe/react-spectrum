@@ -13,6 +13,7 @@
 import {calculatePosition, PositionResult} from './calculatePosition';
 import {HTMLAttributes, RefObject, useCallback, useEffect, useState} from 'react';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
+import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLocale} from '@react-aria/i18n';
 
 interface AriaPositionProps extends PositionProps {
@@ -38,7 +39,9 @@ interface AriaPositionProps extends PositionProps {
    * Whether the overlay should update its position automatically.
    * @default true
    */
-  shouldUpdatePosition?: boolean
+  shouldUpdatePosition?: boolean,
+  /** Handler that is called when the overlay should close. */
+  onClose?: () => void
 }
 
 interface PositionAria {
@@ -65,11 +68,12 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     placement = 'bottom' as Placement,
     containerPadding = 12,
     shouldFlip = true,
-    boundaryElement = document.body,
+    boundaryElement = typeof document !== 'undefined' ? document.body : null,
     offset = 0,
     crossOffset = 0,
     shouldUpdatePosition = true,
-    isOpen = true
+    isOpen = true,
+    onClose
   } = props;
   let [position, setPosition] = useState<PositionResult>({
     position: {},
@@ -95,7 +99,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   ];
 
   let updatePosition = useCallback(() => {
-    if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current) {
+    if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current || !boundaryElement) {
       return;
     }
 
@@ -119,6 +123,14 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
 
   // Update position on window resize
   useResize(updatePosition);
+
+  // When scrolling a parent scrollable region of the trigger (other than the body),
+  // we hide the popover. Otherwise, its position would be incorrect.
+  useCloseOnScroll({
+    triggerRef: targetRef,
+    isOpen,
+    onClose
+  });
 
   return {
     overlayProps: {

@@ -24,35 +24,35 @@ storiesOf('TooltipTrigger', module)
   )
   .add(
     'placement: left',
-    () => render({placement: 'left', delay: 0})
+    () => render({placement: 'left'})
   )
   .add(
     'placement: start',
-    () => render({placement: 'start', delay: 0})
+    () => render({placement: 'start'})
   )
   .add(
     'placement: top',
-    () => render({placement: 'top', delay: 0})
+    () => render({placement: 'top'})
   )
   .add(
     'placement: bottom',
-    () => render({placement: 'bottom', delay: 0})
+    () => render({placement: 'bottom'})
   )
   .add(
     'isDisabled',
-    () => render({placement: 'start', isDisabled: true, delay: 0})
+    () => render({placement: 'start', isDisabled: true})
   )
   .add(
-    'delay',
-    () => render({})
+    'zero delay',
+    () => render({delay: 0})
   )
   .add(
     'multiple tooltips',
-    () => renderMultipleTriggers({placement: 'start', delay: 0})
+    () => renderMultipleTriggers({placement: 'start'})
   )
   .add(
-    'delay multiple tooltips',
-    () => renderMultipleTriggers({})
+    'zero delay multiple tooltips',
+    () => renderMultipleTriggers({delay: 0})
   )
   .add(
     'controlled',

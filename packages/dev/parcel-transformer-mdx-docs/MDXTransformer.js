@@ -123,7 +123,9 @@ module.exports = new Transformer({
     let keywords = [];
     let description = '';
     let date = '';
+    let author = '';
     let image = '';
+    let order;
     const extractToc = (options) => {
       const settings = options || {};
       const depth = settings.maxDepth || 6;
@@ -175,6 +177,8 @@ module.exports = new Transformer({
           keywords = yamlData.keywords || [];
           description = yamlData.description || '';
           date = yamlData.date || '';
+          author = yamlData.author || '';
+          order = yamlData.order;
           if (yamlData.image) {
             image = asset.addDependency({
               moduleSpecifier: yamlData.image,
@@ -241,7 +245,9 @@ module.exports = new Transformer({
     asset.meta.description = description;
     asset.meta.keywords = keywords;
     asset.meta.date = date;
+    asset.meta.author = author;
     asset.meta.image = image;
+    asset.meta.order = order;
     asset.meta.isMDX = true;
     asset.isSplittable = false;
 

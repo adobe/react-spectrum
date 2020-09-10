@@ -80,6 +80,7 @@ describe('MenuTrigger', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.useFakeTimers();
   });
@@ -565,6 +566,19 @@ describe('MenuTrigger', function () {
       expect(menu).not.toBeInTheDocument();
       expect(button).toHaveAttribute('aria-expanded', 'false');
       expect(onOpenChange).toBeCalledTimes(2);
+    });
+
+    it.each`
+      Name                      | Component      | props | menuProps
+      ${'MenuTrigger single'}   | ${MenuTrigger} | ${{}} | ${{selectionMode: 'single'}}
+      ${'MenuTrigger multiple'} | ${MenuTrigger} | ${{}} | ${{selectionMode: 'multiple'}}
+      ${'MenuTrigger none'}     | ${MenuTrigger} | ${{}} | ${{selectionMode: 'none'}}
+    `('$Name ignores repeating keyboard events', function ({Component, props, menuProps}) {
+      tree = renderComponent(Component, props, menuProps);
+      openAndTriggerMenuItem(tree, Component === MenuTrigger, props.role, menuProps.selectionMode, (item) => fireEvent.keyDown(item, {key: 'Enter', code: 13, charCode: 13, repeat: true}));
+
+      let menu = tree.queryByRole('menu');
+      expect(menu).toBeTruthy();
     });
 
     it('tabs to the next element after the trigger and closes the menu', function () {

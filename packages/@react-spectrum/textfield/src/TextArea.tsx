@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from '@react-aria/utils';
-import React, {RefObject, useCallback, useEffect, useRef} from 'react';
+import {chain, useLayoutEffect} from '@react-aria/utils';
+import React, {RefObject, useCallback, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
+import {useControlledState} from '@react-stately/utils';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
@@ -28,6 +29,9 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     ...otherProps
   } = props;
 
+  // not in stately because this is so we know when to re-measure, which is a spectrum design
+  let [inputValue, setInputValue] = useControlledState(props.value, props.defaultValue, () => {});
+
   let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
 
   let onHeightChange = useCallback(() => {
@@ -38,21 +42,17 @@ function TextArea(props: SpectrumTextFieldProps, ref: RefObject<TextFieldRef>) {
     }
   }, [isQuiet, inputRef]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (inputRef.current) {
-      // if no value or defaultValue is passed
-      // no need to call onHeightChange
-      if (!inputRef.current.value) {
-        return;
-      }
       onHeightChange();
     }
-  }, [onHeightChange]);
+  }, [onHeightChange, inputValue, inputRef]);
 
 
   let {labelProps, inputProps} = useTextField({
     ...props,
-    onChange: chain(onChange, onHeightChange)
+    onChange: chain(onChange, setInputValue),
+    inputElementType: 'textarea'
   }, inputRef);
 
   return (

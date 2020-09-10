@@ -11,9 +11,8 @@
  */
 
 import {FocusEvent, HTMLAttributes, KeyboardEvent, RefObject, useEffect} from 'react';
+import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {FocusStrategy, KeyboardDelegate} from '@react-types/shared';
-import {focusWithoutScrolling} from '@react-aria/utils';
-import {getFocusableTreeWalker} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {useTypeSelect} from './useTypeSelect';
@@ -65,12 +64,12 @@ interface SelectableCollectionOptions {
    */
   disallowSelectAll?: boolean,
   /**
-   * Whether key selection should be replaced on focus.
+   * Whether selection should occur automatically on focus.
    * @default false
    */
   selectOnFocus?: boolean,
   /**
-   * Whether the collection allows typeahead.
+   * Whether typeahead is disabled.
    * @default false
    */
   disallowTypeAhead?: boolean
@@ -304,9 +303,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
       // and either focus the first or last item accordingly.
       let relatedTarget = e.relatedTarget as Element;
       if (relatedTarget && (e.currentTarget.compareDocumentPosition(relatedTarget) & Node.DOCUMENT_POSITION_FOLLOWING)) {
-        manager.setFocusedKey(delegate.getLastKey());
+        manager.setFocusedKey(manager.lastSelectedKey ?? delegate.getLastKey());
       } else {
-        manager.setFocusedKey(delegate.getFirstKey());
+        manager.setFocusedKey(manager.firstSelectedKey ?? delegate.getFirstKey());
       }
     }
   };
@@ -340,7 +339,7 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
 
       // If no default focus key is selected, focus the collection itself.
       if (focusedKey == null) {
-        focusWithoutScrolling(ref.current);
+        focusSafely(ref.current);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -371,7 +370,9 @@ export function useSelectableCollection(options: SelectableCollectionOptions): S
   return {
     collectionProps: {
       ...handlers,
-      tabIndex: -1
+      // If nothing is focused within the collection, make the collection itself tabbable.
+      // This will be marshalled to either the first or last item depending on where focus came from.
+      tabIndex: manager.focusedKey == null ? 0 : -1
     }
   };
 }

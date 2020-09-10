@@ -15,6 +15,7 @@ import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {TextArea, TextField} from '../';
+import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 import V2SearchField from '@react/react-spectrum/Search';
 import V2TextArea from '@react/react-spectrum/Textarea';
@@ -71,9 +72,13 @@ describe('Shared TextField behavior', () => {
       input = tree.getAllByTestId(testId)[0];
     }
     expect(input.value).toBe('');
-    act(() => {userEvent.type(input, inputText);});
+    typeText(input, inputText);
     expect(input.value).toBe(inputText);
-    expect(input).toHaveAttribute('type', expectedType);
+    if (Name === 'v3 TextArea') {
+      expect(input).not.toHaveAttribute('type');
+    } else {
+      expect(input).toHaveAttribute('type', expectedType);
+    }
     expect(input.tagName).toBe(expectedTagName);
   });
 
