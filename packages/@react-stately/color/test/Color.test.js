@@ -40,4 +40,24 @@ describe('Color', function () {
       expect(() => new Color('#ggg')).toThrow('Invalid color value: #ggg');
     });
   });
+
+  describe('utils', function () {
+    it('should parse a color string into a Color object', function () {
+      const color = Color.parse('#abcdef');
+      expect(color).toBeInstanceOf(Color);
+      expect(color.getChannelValue('red')).toBe(171);
+      expect(color.getChannelValue('green')).toBe(205);
+      expect(color.getChannelValue('blue')).toBe(239);
+      expect(color.getChannelValue('alpha')).toBe(1);
+      expect(color.toString('hex')).toBe('#ABCDEF');
+      expect(color.toString('rgb')).toBe('rgb(171, 205, 239)');
+      expect(color.toString('rgba')).toBe('rgba(171, 205, 239, 1)');
+    });
+
+    it('should convert a color to its equivalent hex value in decimal format', function () {
+      const color = Color.parse('#abcdef');
+      expect(color.toHexInt()).toBe(11259375);
+    });
+  });
+
 });
