@@ -10,27 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent} from '@testing-library/react';
+import {useIsSSR} from '@react-aria/ssr';
 
-// Triggers a "press" event on an element.
-// TODO: move to somewhere more common
-export function triggerPress(element, opts = {}) {
-  act(() => {
-    fireEvent.mouseDown(element, {detail: 1, ...opts});
-  });
-  act(() => {
-    fireEvent.mouseUp(element, {detail: 1, ...opts});
-  });
-  act(() => {
-    fireEvent.click(element, {detail: 1, ...opts});
-  });
-}
+const MOBILE_SCREEN_WIDTH = 700;
 
-export function triggerTouchPress(element, opts = {}) {
-  act(() => {
-    fireEvent.touchStart(element, {targetTouches: [{}]});
-  });
-  act(() => {
-    fireEvent.touchEnd(element, {targetTouches: [{}]});
-  });
+export function useIsMobileDevice(): boolean {
+  let isSSR = useIsSSR();
+  if (isSSR || typeof window === 'undefined') {
+    return false;
+  }
+
+  return window.screen.width <= MOBILE_SCREEN_WIDTH;
 }

@@ -12,6 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {HTMLAttributes, RefObject, useEffect} from 'react';
+import {onCloseMap} from './useCloseOnScroll';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {useId} from '@react-aria/utils';
 
@@ -36,28 +37,13 @@ export function useOverlayTrigger(props: OverlayTriggerProps, state: OverlayTrig
   let {type} = props;
   let {isOpen} = state;
 
-  // When scrolling a parent scrollable region of the trigger (other than the body),
-  // we hide the popover. Otherwise, its position would be incorrect.
+  // Backward compatibility. Share state close function with useOverlayPosition so it can close on scroll
+  // without forcing users to pass onClose.
   useEffect(() => {
-    if (!isOpen) {
-      return;
+    if (ref.current) {
+      onCloseMap.set(ref.current, state.close);
     }
-
-    let onScroll = (e: MouseEvent) => {
-      // Ignore if scrolling an scrollable region outside the trigger's tree.
-      let target = e.target as HTMLElement;
-      if (!ref.current || !target.contains(ref.current)) {
-        return;
-      }
-
-      state.close();
-    };
-
-    window.addEventListener('scroll', onScroll, true);
-    return () => {
-      window.removeEventListener('scroll', onScroll, true);
-    };
-  }, [isOpen, ref]);
+  });
 
   // Aria 1.1 supports multiple values for aria-haspopup other than just menus.
   // https://www.w3.org/TR/wai-aria-1.1/#aria-haspopup

@@ -64,12 +64,12 @@ interface SelectableCollectionOptions {
    */
   disallowSelectAll?: boolean,
   /**
-   * Whether key selection should be replaced on focus.
+   * Whether selection should occur automatically on focus.
    * @default false
    */
   selectOnFocus?: boolean,
   /**
-   * Whether the collection allows typeahead.
+   * Whether typeahead is disabled.
    * @default false
    */
   disallowTypeAhead?: boolean

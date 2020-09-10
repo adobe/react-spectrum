@@ -36,7 +36,8 @@ keywords: [focus, keyboard focus, focus management, aria]
 `FocusRing` is a utility component that can be used to apply a CSS class when an element has keyboard focus.
 This helps keyboard users determine which element on a page or in an application has keyboard focus as they
 navigate around. Focus rings are only visible when interacting with a keyboard so as not to distract mouse
-and touch screen users.
+and touch screen users. When we are unable to detect if the user is using a mouse or touch screen, such as
+switching in from a different tab, we show the focus ring.
 
 If CSS classes are not being used for styling, see [useFocusRing](useFocusRing.html) for a hooks version.
 

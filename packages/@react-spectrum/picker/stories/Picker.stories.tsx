@@ -49,12 +49,11 @@ let withSection = [
   ]}
 ];
 
-
 storiesOf('Picker', module)
   .add(
     'default',
     () => (
-      <Picker label="Test" onOpenChange={action('openchange')} onSelectionChange={action('selectionChange')}>
+      <Picker label="Test" onSelectionChange={action('selectionChange')}>
         <Item key="One">One</Item>
         <Item key="Two">Two</Item>
         <Item key="Three">Three</Item>
