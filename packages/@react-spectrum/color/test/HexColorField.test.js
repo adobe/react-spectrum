@@ -14,7 +14,7 @@ import {HexColorField} from '../';
 import React from 'react';
 import {render} from '@testing-library/react';
 
-describe('Dialog', function () {
+describe('HexColorField', function () {
   it('temp test for testing', function () {
     render(<HexColorField label="Primary Color" />);
     expect(true).toBe(true);
