@@ -93,7 +93,7 @@ describe('watchModals', () => {
       jest.runAllTimers();
     });
     let dialog = getByRole('dialog');
-    verify(dialog, getByRole);
+    await verify(dialog, getByRole);
   });
 
   it('should handle nested modals', async () => {
@@ -216,7 +216,7 @@ describe('watchModals', () => {
       jest.runAllTimers();
     });
     let menu = getByRole('menu');
-    verify(menu, getByRole);
+    await verify(menu, getByRole);
   });
 
   it('should hide around Tray', async () => {
@@ -255,7 +255,7 @@ describe('watchModals', () => {
       jest.runAllTimers();
     });
     let menu = getByRole('menu');
-    verify(menu, getByRole);
+    await verify(menu, getByRole);
   });
 
   it('should hide around Popover', async () => {
@@ -279,6 +279,6 @@ describe('watchModals', () => {
       jest.runAllTimers();
     });
     let dialog = getByRole('dialog');
-    verify(dialog, getByRole);
+    await verify(dialog, getByRole);
   });
 });

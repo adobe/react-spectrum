@@ -18,6 +18,7 @@ import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 import V2Button from '@react/react-spectrum/Button';
@@ -220,8 +221,6 @@ describe('ActionGroup', function () {
     );
 
     let buttons = tree.getAllByRole('button');
-    let buttonGroup = tree.getByRole('toolbar');
-    buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
       action(document.activeElement);
@@ -252,8 +251,6 @@ describe('ActionGroup', function () {
     );
 
     let buttons = tree.getAllByRole('button');
-    let buttonGroup = tree.getByRole('toolbar');
-    buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
       action(document.activeElement);
@@ -278,8 +275,6 @@ describe('ActionGroup', function () {
     );
 
     let buttons = tree.getAllByRole('button');
-    let buttonGroup = tree.getByRole('toolbar');
-    buttonGroup.focus();
 
     orders.forEach(({action, result}, index) => {
       action(document.activeElement);
@@ -609,5 +604,29 @@ describe('ActionGroup', function () {
 
     let dialog = tree.getByRole('dialog');
     expect(dialog).toBeVisible();
+  });
+
+  it('supports TooltipTrigger as a wrapper around items', function () {
+    let tree = render(
+      <Provider theme={theme}>
+        <ActionGroup>
+          <TooltipTrigger>
+            <Item>Hi</Item>
+            <Tooltip>
+              I'm a tooltip
+            </Tooltip>
+          </TooltipTrigger>
+        </ActionGroup>
+      </Provider>
+    );
+
+    let button = tree.getByRole('button');
+    fireEvent.keyDown(document.body, {key: 'Tab'});
+    fireEvent.keyUp(document.body, {key: 'Tab'});
+    act(() => button.focus());
+
+    let tooltip = tree.getByRole('tooltip');
+    expect(tooltip).toBeVisible();
+    expect(button).toHaveAttribute('aria-describedby', tooltip.id);
   });
 });
