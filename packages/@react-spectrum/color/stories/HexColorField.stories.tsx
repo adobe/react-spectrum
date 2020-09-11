@@ -10,9 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from '@react-spectrum/button';
+import {Color} from '@react-stately/color';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {HexColorField} from '../';
-import React from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
+import {View} from '@react-spectrum/view';
 
 storiesOf('HexColorField', module)
   .add(
@@ -54,6 +58,36 @@ storiesOf('HexColorField', module)
   .add(
     'min = #AAAAAA, max = #CCCCCC',
     () => render({minValue: '#AAA', maxValue: '#CCC'})
+  )
+  .add(
+    'as a popover',
+    () => {
+      const initialColor = new Color('#ff0000');
+      const [color, setColor] = useState(initialColor);
+      return (
+        <DialogTrigger type="popover">
+          <ActionButton
+            width="size-500"
+            height="size-500"
+            UNSAFE_style={{
+              background: color.toString('hex')
+            }}
+          ></ActionButton>
+          <Dialog 
+            width='size-3600'
+            height='size-1600'
+          >
+            <View padding='size-300'>
+              {render({
+                label: 'Choose a color',
+                value: color,
+                onChange: (newColor) => setColor(newColor.toString('hex'))
+              })}
+            </View>
+          </Dialog>
+        </DialogTrigger>
+      );
+    }
   );
 
 function render(props: any = {}) {
