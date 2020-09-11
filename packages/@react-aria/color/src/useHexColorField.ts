@@ -13,9 +13,9 @@
 import {AriaHexColorFieldProps} from '@react-types/color';
 import {
   Color,
-  HexColorFieldState,
   defaultMaxValue,
-  defaultMinValue
+  defaultMinValue,
+  HexColorFieldState,
 } from '@react-stately/color';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
