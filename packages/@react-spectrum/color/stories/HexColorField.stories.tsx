@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Color} from '@react-stately/color';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -61,39 +62,65 @@ storiesOf('HexColorField', module)
   )
   .add(
     'as a popover',
-    () => {
-      const initialColor = new Color('#ff0000');
-      const [color, setColor] = useState(initialColor);
-      return (
-        <DialogTrigger type="popover">
-          <ActionButton
-            width="size-500"
-            height="size-500"
-            UNSAFE_style={{
-              background: color.toString('hex')
-            }}
-          ></ActionButton>
-          <Dialog 
-            width='size-3600'
-            height='size-1600'
-          >
-            <View padding='size-300'>
-              {render({
-                label: 'Choose a color',
-                value: color,
-                onChange: (newColor) => setColor(newColor.toString('hex'))
-              })}
-            </View>
-          </Dialog>
-        </DialogTrigger>
-      );
-    }
+    () => <HexColorFieldPopover
+      label='Choose a color'
+      value='#ff0000'
+      step={255}
+      onChange={action('change')}
+    />
+  )
+  .add(
+    'as a popover, with custom min/max',
+    () => <HexColorFieldPopover
+      label='Choose a color'
+      minValue='#aaaaaa'
+      maxValue='#cccccc'
+      value='#bbbbbb'
+      step={255}
+      onChange={action('change')}
+    />
+  )
+  .add(
+    'as a popover, defaults only',
+    () => <HexColorFieldPopover onChange={action('change')}/>
   );
+
+function HexColorFieldPopover(props: any = {}) {
+  const initialColor = Color.parse(props.value);
+  const [selectedColor, setSelectedColor] = useState(props.value ? initialColor.toString('hex') : '');
+  return (
+    <DialogTrigger type="popover">
+      <ActionButton
+        width="size-1600"
+        height="size-1600"
+        UNSAFE_style={{
+          background: selectedColor
+        }}
+      >{selectedColor}</ActionButton>
+      <Dialog 
+        width='size-3600'
+        height='size-1600'
+      >
+        <View padding='size-300'>
+          {render({
+            ...props,
+            value: selectedColor,
+            onChange: (newColor: Color) => {
+              setSelectedColor(newColor.toString('hex'));
+              if (props.onChange) { props.onChange(newColor); }
+            },
+          })}
+        </View>
+      </Dialog>
+    </DialogTrigger>
+  );
+}
 
 function render(props: any = {}) {
   return (
     <HexColorField
       label={'Primary Color'}
+      onChange={action('change')}
       {...props} />
   );
 }

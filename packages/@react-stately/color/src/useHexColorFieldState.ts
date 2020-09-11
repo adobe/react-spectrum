@@ -13,7 +13,7 @@
 import {Color} from './Color';
 import {ColorInput, HexColorFieldProps} from '@react-types/color';
 import {NumberFieldState} from '@react-stately/numberfield';
-import {useCallback, useMemo, useState} from 'react';
+import {useCallback, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 export interface HexColorFieldState extends NumberFieldState {
@@ -45,9 +45,9 @@ export function useHexColorFieldState(
   const minColorInt = minColor.toHexInt();
   const maxColorInt = maxColor.toHexInt();
 
-  const colorValue = useMemo((): Color => {
+  const clampColorValue = useCallback((value: ColorInput) => {
     try {
-      const color = Color.parse(colorInputValue);
+      const color = Color.parse(value);
       const colorInt = color.toHexInt();
       if (colorInt < minColorInt) { return minColor; }
       if (colorInt > maxColorInt) { return maxColor; }
@@ -55,8 +55,9 @@ export function useHexColorFieldState(
     } catch (err) {
       return minColor;
     }
-  }, [colorInputValue, minColorInt, maxColorInt]);
+  }, [minColorInt, maxColorInt]);
 
+  const colorValue = clampColorValue(colorInputValue);
   const initialInputValue = (value || defaultValue) && colorValue ? colorValue.toString('hex') : '';
   const [inputValue, setInputValue] = useState(initialInputValue);
 
@@ -95,10 +96,11 @@ export function useHexColorFieldState(
   }, [minValue, minColor, setColorInputValue, setInputValue]);
 
   const setColorValue = (color: Color) => {
-    setColorInputValue(color);
+    setColorInputValue(clampColorValue(color));
   };
 
   const commitInputValue = () => {
+    if (!colorValue) { return; }
     setInputValue(colorValue.toString('hex'));
   };
 
