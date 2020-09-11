@@ -100,7 +100,7 @@ export function useHexColorFieldState(
   };
 
   const commitInputValue = () => {
-    if (!colorValue) { return; }
+    if (!inputValue.length) { return; }
     setInputValue(colorValue.toString('hex'));
   };
 

@@ -122,6 +122,7 @@ export function useHexColorField(
       }
     };
 
+    if (!ref.current) { return; }
     ref.current.addEventListener(
       'wheel',
       handleInputScrollWheel,
