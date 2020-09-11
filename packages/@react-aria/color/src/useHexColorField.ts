@@ -11,7 +11,12 @@
  */
 
 import {AriaHexColorFieldProps} from '@react-types/color';
-import {Color, HexColorFieldState} from '@react-stately/color';
+import {
+  Color,
+  HexColorFieldState,
+  defaultMaxValue,
+  defaultMinValue
+} from '@react-stately/color';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
 import {useSpinButton} from '@react-aria/spinbutton';
@@ -40,8 +45,8 @@ export function useHexColorField(
     isDisabled,
     isReadOnly,
     isRequired,
-    minValue = '#000000',
-    maxValue = '#ffffff'
+    minValue = defaultMinValue,
+    maxValue = defaultMaxValue,
   } = otherProps;
   
   const {
