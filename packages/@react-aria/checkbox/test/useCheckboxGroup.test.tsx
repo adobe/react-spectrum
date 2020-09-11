@@ -16,7 +16,6 @@ import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/checkbox
 import React, {useRef} from 'react';
 import {useCheckboxGroup, useCheckboxGroupItem} from '../';
 import userEvent from '@testing-library/user-event';
-import {group} from "@actions/core";
 
 function Checkbox({checkboxGroupState, ...props}: AriaCheckboxProps & { checkboxGroupState: CheckboxGroupState }) {
   const ref = useRef<HTMLInputElement>();
