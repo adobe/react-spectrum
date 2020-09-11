@@ -27,6 +27,10 @@ storiesOf('TooltipTrigger', module)
     () => render({placement: 'left'})
   )
   .add(
+    'placement: right',
+    () => render({placement: 'right'})
+  )
+  .add(
     'placement: start',
     () => render({placement: 'start'})
   )
@@ -61,6 +65,19 @@ storiesOf('TooltipTrigger', module)
   .add(
     'trigger disabled',
     () => renderDisabledTrigger()
+  )
+  .add(
+    'arrow positioning at edge',
+    () => (
+      <div style={{width: '100%'}}>
+        <TooltipTrigger onOpenChange={action('openChange')}>
+          <ActionButton>Trigger Tooltip</ActionButton>
+          <Tooltip>
+            Long tooltip message that just goes on and on.
+          </Tooltip>
+        </TooltipTrigger>
+      </div>
+    )
   );
 
 function render(props = {}) {

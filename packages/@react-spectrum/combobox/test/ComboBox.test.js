@@ -18,6 +18,7 @@ import React from 'react';
 import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
 import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
 import {triggerPress} from '@react-spectrum/test-utils';
+import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let theme = {
@@ -222,9 +223,8 @@ describe('ComboBox', function () {
     expect(combobox).not.toHaveAttribute('aria-activedescendant');
     expect(combobox).toHaveAttribute('aria-autocomplete', 'list');
 
+    typeText(combobox, 'On');
     act(() => {
-      combobox.focus();
-      userEvent.type(combobox, 'On');
       jest.runAllTimers();
     });
 
@@ -459,8 +459,8 @@ describe('ComboBox', function () {
         combobox.focus();
         expect(() => getByRole('listbox')).toThrow();
 
+        typeText(combobox, 'Two');
         act(() => {
-          userEvent.type(combobox, 'Two');
           jest.runAllTimers();
         });
 
@@ -484,12 +484,7 @@ describe('ComboBox', function () {
 
         let button = getByRole('button');
         let combobox = getByRole('combobox');
-        act(() => {
-          combobox.focus();
-        });
-        act(() => {
-          userEvent.type(combobox, 'One');
-        });
+        typeText(combobox, 'One');
         act(() => jest.runAllTimers());
 
         let listbox = getByRole('listbox');
@@ -497,9 +492,7 @@ describe('ComboBox', function () {
         expect(items).toHaveLength(1);
 
 
-        act(() => {
-          userEvent.type(combobox, 'z');
-        });
+        typeText(combobox, 'z');
         act(() => jest.runAllTimers());
         expect(() => getByRole('listbox')).toThrow();
         expect(button).toHaveAttribute('aria-expanded', 'false');
@@ -558,9 +551,8 @@ describe('ComboBox', function () {
 
       let button = getByRole('button');
       let combobox = getByRole('combobox');
+      typeText(combobox, 'Two');
       act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'Two');
         jest.runAllTimers();
       });
 
@@ -667,9 +659,8 @@ describe('ComboBox', function () {
       let {getByRole} = renderComboBox();
 
       let combobox = getByRole('combobox');
+      typeText(combobox, 'O');
       act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'O');
         jest.runAllTimers();
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
         fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
@@ -683,8 +674,8 @@ describe('ComboBox', function () {
       expect(combobox).toHaveAttribute('aria-activedescendant', items[1].id);
       expect(items[1].textContent).toBe('Two');
 
+      typeText(combobox, 'n');
       act(() => {
-        userEvent.type(combobox, 'n');
         jest.runAllTimers();
       });
 
@@ -829,9 +820,8 @@ describe('ComboBox', function () {
       );
 
       let combobox = getByRole('combobox');
+      typeText(combobox, 'second');
       act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'second');
         jest.runAllTimers();
       });
 
@@ -844,9 +834,8 @@ describe('ComboBox', function () {
       let {getByRole} = renderComboBox({menuTrigger: 'focus'});
 
       let combobox = getByRole('combobox');
+      typeText(combobox, 'o');
       act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'o');
         jest.runAllTimers();
       });
 
@@ -857,7 +846,7 @@ describe('ComboBox', function () {
       expect(combobox).not.toHaveAttribute('aria-activedescendant');
 
       act(() => {
-        fireEvent.change(combobox, {target: {value: ''}});
+        userEvent.clear(combobox);
         jest.runAllTimers();
       });
 
@@ -972,7 +961,9 @@ describe('ComboBox', function () {
       act(() => {
         userEvent.click(combobox);
         jest.runAllTimers();
-        userEvent.type(combobox, 'Bulba');
+      });
+      typeText(combobox, 'Bulba');
+      act(() => {
         jest.runAllTimers();
         userEvent.tab();
         jest.runAllTimers();
@@ -1048,9 +1039,8 @@ describe('ComboBox', function () {
       let secondaryButton = getAllByRole('button')[1];
 
       expect(onCustomValue).not.toHaveBeenCalled();
+      typeText(combobox, 'Charm');
       act(() => {
-        userEvent.click(combobox);
-        userEvent.type(combobox, 'Charm');
         jest.runAllTimers();
       });
 
