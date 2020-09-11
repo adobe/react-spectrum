@@ -29,11 +29,11 @@ storiesOf('HexColorField', module)
   )
   .add(
     'isReadOnly',
-    () => render({isReadOnly: true})
+    () => render({isReadOnly: true, defaultValue: '#abcdef'})
   )
   .add(
     'isDisabled',
-    () => render({isDisabled: true})
+    () => render({isDisabled: true, defaultValue: '#abcdef'})
   )
   .add(
     'validationState valid',
@@ -48,8 +48,12 @@ storiesOf('HexColorField', module)
     () => render({placeholder: 'Enter a hex color'})
   )
   .add(
-    'step=16',
+    'step = 16',
     () => render({step: 16})
+  )
+  .add(
+    'min = #AAAAAA, max = #CCCCCC',
+    () => render({minValue: '#AAA', maxValue: '#CCC'})
   );
 
 function render(props: any = {}) {
