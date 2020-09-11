@@ -24,6 +24,10 @@ storiesOf('Tooltip', module)
     () => render('This is a tooltip.', {placement: 'left'})
   )
   .add(
+    'placement: right',
+    () => render('This is a tooltip.', {placement: 'right'})
+  )
+  .add(
     'placement: top',
     () => render('This is a tooltip.', {placement: 'top'})
   )

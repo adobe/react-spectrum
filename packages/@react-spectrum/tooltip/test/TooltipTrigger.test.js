@@ -16,7 +16,10 @@ import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '../';
-import {TOOLTIP_COOLDOWN, TOOLTIP_DELAY} from '@react-stately/tooltip';
+
+// Sync with useTooltipTriggerState.ts
+const TOOLTIP_DELAY = 1500;
+const TOOLTIP_COOLDOWN = 500;
 
 let CLOSE_TIME = 350;
 
@@ -567,6 +570,26 @@ describe('TooltipTrigger', function () {
       expect(() => getByText(helpfulText)).toThrow();
       fireEvent.mouseLeave(badButton);
     });
+  });
+
+  it('supports a ref on the Tooltip', () => {
+    let ref = React.createRef();
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <TooltipTrigger>
+          <ActionButton>Trigger</ActionButton>
+          <Tooltip ref={ref}>Helpful information.</Tooltip>
+        </TooltipTrigger>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+    act(() => {
+      button.focus();
+    });
+
+    let tooltip = getByRole('tooltip');
+    expect(ref.current.UNSAFE_getDOMNode()).toBe(tooltip);
   });
 
   describe('overlay properties', () => {
