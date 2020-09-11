@@ -250,4 +250,18 @@ describe('Checkbox', function () {
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
+
+  it.each`
+    Name                       | Component      | props
+    ${'Checkbox'}              | ${Checkbox}    | ${{onChange: onChangeSpy, isReadOnly: true}}
+  `('$Name supports uncontrolled readOnly', function ({Component, props}) {
+    let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
+
+    let checkbox = getByLabelText('Click Me');
+    expect(checkbox.checked).toBeFalsy();
+
+    act(() => {userEvent.click(checkbox);});
+    expect(checkbox.checked).toBeFalsy();
+    expect(onChangeSpy).not.toHaveBeenCalled();
+  });
 });

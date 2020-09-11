@@ -245,6 +245,7 @@ describe('useCheckboxGroup', () => {
     expect(checkboxes[0]).toHaveAttribute('readonly');
     expect(checkboxes[1]).toHaveAttribute('readonly');
     expect(checkboxes[2]).toHaveAttribute('readonly');
+    expect(checkboxes[2].checked).toBeFalsy();
     let dragons = getByLabelText('Dragons');
 
     act(() => {userEvent.click(dragons);});
