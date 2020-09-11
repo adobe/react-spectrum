@@ -84,12 +84,12 @@ storiesOf('Button', module)
   .add(
     'element: a, href: \'//example.com\', target: \'_self\'',
     () => render({elementType: 'a', href: '//example.com', target: '_self', variant: 'primary'}),
-    {note: 'Known browser behavior where keyboard focus in Safari doesn\'t work.'}
+    {note: 'Known browser behavior where button won\'t get keyboard focus in Safari.'}
   )
   .add(
     'element: a, rel: \'noopener noreferrer\'',
     () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'}),
-    {note: 'Known browser behavior where keyboard focus in Safari doesn\'t work.'}
+    {note: 'Known browser behavior where button won\'t get keyboard focus in Safari.'}
   );
 
 function render(props: any = {}) {
