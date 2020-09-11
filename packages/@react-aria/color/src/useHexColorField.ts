@@ -112,6 +112,7 @@ export function useHexColorField(
   return {
     labelProps,
     inputFieldProps: mergeProps(inputProps, {
+      role: spinButtonProps.role,
       onKeyDown: spinButtonProps.onKeyDown,
       onFocus: spinButtonProps.onFocus,
       onBlur

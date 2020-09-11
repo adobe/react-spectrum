@@ -31,6 +31,7 @@ describe('useHexColorField', function () {
     expect(inputFieldProps.type).toBe('text');
     expect(inputFieldProps.autoComplete).toBe('off');
     expect(inputFieldProps.id).toBeTruthy();
+    expect(inputFieldProps.role).toBe('spinbutton');
     expect(inputFieldProps['aria-required']).toBeUndefined();
     expect(inputFieldProps['aria-invalid']).toBeUndefined();
     expect(inputFieldProps.disabled).toBe(false);
