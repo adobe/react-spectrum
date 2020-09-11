@@ -15,7 +15,7 @@ import {
   Color,
   defaultMaxValue,
   defaultMinValue,
-  HexColorFieldState,
+  HexColorFieldState
 } from '@react-stately/color';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
@@ -46,7 +46,7 @@ export function useHexColorField(
     isReadOnly,
     isRequired,
     minValue = defaultMinValue,
-    maxValue = defaultMaxValue,
+    maxValue = defaultMaxValue
   } = otherProps;
   
   const {

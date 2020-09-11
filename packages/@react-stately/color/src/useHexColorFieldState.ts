@@ -57,7 +57,8 @@ export function useHexColorFieldState(
     }
   }, [colorInputValue, minColorInt, maxColorInt]);
 
-  const [inputValue, setInputValue] = useState(colorValue ? colorValue.toString('hex') : '');
+  const initialInputValue = (value || defaultValue) && colorValue ? colorValue.toString('hex') : '';
+  const [inputValue, setInputValue] = useState(initialInputValue);
 
   const increment = () => {
     setColorInputValue((previousValue) => {

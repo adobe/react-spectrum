@@ -24,7 +24,7 @@ describe('useHexColorFieldState tests', function () {
       blue: 204,
       alpha: 1
     });
-    expect(result.current.inputValue).toBe('#AABBCC');
+    expect(result.current.inputValue).toBe('');
   });
 
   it('should be at minimum if invalid value is provided', function () {
