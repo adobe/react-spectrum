@@ -25,6 +25,7 @@ import React from 'react';
 import SettingsIcon from '@spectrum-icons/workflow/Settings';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import ViewCardIcon from '@spectrum-icons/workflow/ViewCard';
 import ViewGridIcon from '@spectrum-icons/workflow/ViewGrid';
 import ViewListIcon from '@spectrum-icons/workflow/ViewList';
@@ -203,6 +204,10 @@ storiesOf('ActionGroup', module)
         {item => <Item key={item.name} textValue={item.name}>{item.children}</Item>}
       </ActionGroup>
     )
+  )
+  .add(
+    'with tooltips',
+    () => renderTooltips({})
   );
 
 
@@ -256,6 +261,26 @@ function renderIcons(props, items: any = docItems) {
             <Item key={itemProps.name} textValue={itemProps.name} aria-label={itemProps.children}>
               <IconElement />
             </Item>
+          );
+        })
+      }
+    </ActionGroup>
+  );
+}
+
+function renderTooltips(props, items: any = docItems) {
+  return (
+    <ActionGroup selectionMode="single" onSelectionChange={s => onSelectionChange([...s])} {...props}>
+      {
+        items.map((itemProps) => {
+          let IconElement = iconMap[itemProps.children];
+          return (
+            <TooltipTrigger>
+              <Item key={itemProps.name} textValue={itemProps.children} aria-label={itemProps.children}>
+                <IconElement />
+              </Item>
+              <Tooltip>{itemProps.children}</Tooltip>
+            </TooltipTrigger>
           );
         })
       }
