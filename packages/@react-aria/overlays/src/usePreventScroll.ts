@@ -12,38 +12,30 @@
 
 import {useEffect} from 'react';
 
+interface PreventScrollOptions {
+  /** Whether the scroll lock is disabled. */
+  isDisabled?: boolean
+}
+
 /**
  * Prevents scrolling on the document body on mount, and
  * restores it on unmount. Also ensures that content does not
  * shift due to the scrollbars disappearing.
  */
-
-interface PreventScrollOptions {
-  isOpen?: boolean
-}
-
-const defaultOptions: PreventScrollOptions = {
-  isOpen: true
-};
-
-export function usePreventScroll(options : PreventScrollOptions = defaultOptions) {
-
-  const {isOpen} = options;
+export function usePreventScroll(options: PreventScrollOptions = {}) {
+  let {isDisabled} = options;
 
   useEffect(() => {
     let {paddingRight, overflow} = document.body.style;
 
-    if (isOpen === true) {
+    if (!isDisabled) {
       document.body.style.paddingRight = `${window.innerWidth - document.documentElement.clientWidth}px`;
       document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = overflow;
-      document.body.style.paddingRight = paddingRight;
     }
 
     return () => {
       document.body.style.overflow = overflow;
       document.body.style.paddingRight = paddingRight;
     };
-  }, [isOpen]);
+  }, [isDisabled]);
 }
