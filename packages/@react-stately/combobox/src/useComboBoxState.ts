@@ -72,13 +72,13 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   // Need this collection here so that an initial inputValue can be found via collection.getItem
   // This is really just a replacement for using CollectionBuilder
-  let {collection} = useSingleSelectListState({
+  let {collection, disabledKeys} = useSingleSelectListState({
     ...props,
     // default to null if props.selectedKey isn't set to avoid useControlledState's uncontrolled to controlled warning
     selectedKey: props.selectedKey || null
   });
 
-  if (props.selectedKey && props.inputValue) {
+  if (props.selectedKey && props.inputValue && !disabledKeys.has(props.selectedKey)) {
     let selectedItem = collection.getItem(props.selectedKey);
     let itemText = selectedItem ? selectedItem.textValue : '';
     if (itemText !== props.inputValue) {
@@ -93,7 +93,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
     let newSelectedKey = computeKeyFromValue(value, collection);
     if (newSelectedKey !== selectedKey) {
-      if (onSelectionChange) {
+      if (onSelectionChange && !disabledKeys.has(newSelectedKey)) {
         onSelectionChange(newSelectedKey);
       }
     }
@@ -105,27 +105,34 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
 
   // If user passes props.selectedKey=null or '', we want to honor that as the new key (e.g. Controlled key combobox, user want to programatically clear the selected key regardless of current input value)
   let selectedKey = typeof props.selectedKey !== 'undefined' ? props.selectedKey : computeKeyFromValue(inputValue, collection);
+
+  // Wipe selectedKey if is in the disabled key list since it is an invalid selection
+  if (disabledKeys.has(selectedKey)) {
+    selectedKey = undefined;
+  }
+
   let triggerState = useMenuTriggerState(props);
 
   // Fires on selection change (when user hits Enter, clicks list item, props.selectedKey is changed)
   let setSelectedKey = useCallback((key) => {
-    let item = collection.getItem(key);
-    let itemText = item ? item.textValue : '';
+    if (!disabledKeys.has(key)) {
+      let item = collection.getItem(key);
+      let itemText = item ? item.textValue : '';
 
-    // Update input value except in the case where itemText is empty and the user is in the input field (indicative of a controlled key case and the user hit backspace on a currently valid item)
-    if (itemText || !isFocused) {
-      setInputValue(itemText);
-    }
+      // Update input value except in the case where itemText is empty and the user is in the input field (indicative of a controlled key case and the user hit backspace on a currently valid item)
+      if (itemText || !isFocused) {
+        setInputValue(itemText);
+      }
 
-    // If itemText happens to be the same as the current input text but the keys don't match
-    // setInputValue won't call onSelectionChange for us so we call it here manually
-    if (itemText === inputValue && selectedKey !== key) {
-      if (onSelectionChange) {
-        onSelectionChange(key);
+      // If itemText happens to be the same as the current input text but the keys don't match
+      // setInputValue won't call onSelectionChange for us so we call it here manually
+      if (itemText === inputValue && selectedKey !== key) {
+        if (onSelectionChange) {
+          onSelectionChange(key);
+        }
       }
     }
-
-  }, [collection, setInputValue, inputValue, onSelectionChange, selectedKey, isFocused]);
+  }, [collection, setInputValue, inputValue, onSelectionChange, selectedKey, isFocused, disabledKeys]);
 
   // Update the selectedKey and inputValue when props.selectedKey updates
   let lastSelectedKeyProp = useRef(props.selectedKey);
@@ -174,7 +181,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     return (nodes) => filter(nodes, defaultFilterFn);
   }, [itemsControlled, inputValue, defaultFilterFn]);
 
-  let {collection: filteredCollection, disabledKeys, selectionManager, selectedItem} = useSingleSelectListState(
+  let {collection: filteredCollection, selectionManager, selectedItem} = useSingleSelectListState(
     {
       ...props,
       // Fall back to null as the selectedKey to avoid useControlledState error of uncontrolled to controlled and viceversa

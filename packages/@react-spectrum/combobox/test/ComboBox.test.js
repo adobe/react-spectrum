@@ -150,9 +150,8 @@ describe('ComboBox', function () {
     let {getByRole} = renderComboBox({isDisabled: true});
 
     let combobox = getByRole('combobox');
+    typeText(combobox, 'One');
     act(() => {
-      combobox.focus();
-      userEvent.type(combobox, 'One');
       jest.runAllTimers();
     });
 
@@ -184,9 +183,8 @@ describe('ComboBox', function () {
     let {getByRole} = renderComboBox({isReadOnly: true, defaultInputValue: 'Blargh'});
 
     let combobox = getByRole('combobox');
+    typeText(combobox, 'One');
     act(() => {
-      combobox.focus();
-      userEvent.type(combobox, 'One');
       jest.runAllTimers();
     });
 
@@ -477,6 +475,29 @@ describe('ComboBox', function () {
 
         expect(document.activeElement).toBe(combobox);
         expect(combobox).not.toHaveAttribute('aria-activedescendant');
+        expect(onSelectionChange).toHaveBeenCalledWith('2');
+      });
+
+      it('doesn\'t select an item on matching input if it is a disabled key', function () {
+        let {getByRole} = renderComboBox({disabledKeys: ['2']});
+        let combobox = getByRole('combobox');
+        combobox.focus();
+        typeText(combobox, 'Two');
+
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        expect(listbox).toBeVisible();
+
+        let items = within(listbox).getAllByRole('option');
+        expect(items).toHaveLength(1);
+        expect(items[0]).toHaveTextContent('Two');
+
+        expect(document.activeElement).toBe(combobox);
+        expect(combobox).not.toHaveAttribute('aria-activedescendant');
+        expect(onSelectionChange).not.toHaveBeenCalled();
       });
 
       it('closes the menu if there are no matching items', function () {
@@ -505,11 +526,8 @@ describe('ComboBox', function () {
         let {getByRole} = renderComboBox({menuTrigger: 'manual'});
 
         let combobox = getByRole('combobox');
+        typeText(combobox, 'One');
         act(() => {
-          combobox.focus();
-        });
-        act(() => {
-          userEvent.type(combobox, 'One');
           jest.runAllTimers();
         });
 
@@ -701,13 +719,7 @@ describe('ComboBox', function () {
       );
 
       let combobox = getByRole('combobox');
-      act(() => {
-        combobox.focus();
-      });
-
-      act(() => {
-        userEvent.type(combobox, 'Bul');
-      });
+      typeText(combobox, 'Bul');
 
       expect(onOpenChange).toHaveBeenCalled();
     });
@@ -741,10 +753,9 @@ describe('ComboBox', function () {
       );
 
       let combobox = getByRole('combobox');
+      typeText(combobox, 'Che');
 
       act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'Che');
         jest.runAllTimers();
       });
 
@@ -914,7 +925,7 @@ describe('ComboBox', function () {
 
   describe('blur', function () {
     it('closes', function () {
-      let {queryByRole, getAllByRole} = render(
+      let {queryByRole, getAllByRole, getByRole} = render(
         <Provider theme={theme}>
           <ComboBox label="Test" onOpenChange={onOpenChange} onInputChange={onInputChange} onSelectionChange={onSelectionChange}>
             <Item key="1">Bulbasaur</Item>
@@ -927,9 +938,16 @@ describe('ComboBox', function () {
 
       let button = getAllByRole('button')[0];
       let secondaryButton = getAllByRole('button')[1];
+      let combobox = getByRole('combobox');
       act(() => {
         userEvent.click(button);
         jest.runAllTimers();
+      });
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+      });
+      act(() => {
         userEvent.tab();
         jest.runAllTimers();
       });
@@ -993,10 +1011,8 @@ describe('ComboBox', function () {
       let secondaryButton = getAllByRole('button')[1];
 
       expect(onCustomValue).not.toHaveBeenCalled();
+      typeText(combobox, 'Char');
       act(() => {
-        userEvent.click(combobox);
-        jest.runAllTimers();
-        userEvent.type(combobox, 'Charm');
         jest.runAllTimers();
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
         fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
@@ -1046,6 +1062,42 @@ describe('ComboBox', function () {
 
       expect(() => getByRole('listbox')).toThrow();
       expect(combobox.value).toBe('Charm');
+
+      act(() => {
+        userEvent.tab();
+        jest.runAllTimers();
+      });
+
+      expect(document.activeElement).toBe(secondaryButton);
+      expect(onCustomValue).not.toHaveBeenCalled();
+      expect(onSelectionChange).not.toHaveBeenCalled();
+      expect(onInputChange).toHaveBeenCalledWith('');
+      expect(combobox.value).toBe('');
+    });
+
+    it('clears the input field if value matches a disabled combobox option', function () {
+      let {getByRole, getAllByRole} = render(
+        <Provider theme={theme}>
+          <ComboBox label="Test" disabledKeys={['3']} onOpenChange={onOpenChange} onSelectionChange={onSelectionChange} onCustomValue={onCustomValue} onInputChange={onInputChange}>
+            <Item key="1">Bulbasaur</Item>
+            <Item key="2">Squirtle</Item>
+            <Item key="3">Charmander</Item>
+          </ComboBox>
+          <Button variant="secondary">Focus move</Button>
+        </Provider>
+      );
+
+      let combobox = getByRole('combobox');
+      let secondaryButton = getAllByRole('button')[1];
+
+      expect(onCustomValue).not.toHaveBeenCalled();
+      typeText(combobox, 'Charmander');
+
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(combobox.value).toBe('Charmander');
 
       act(() => {
         userEvent.tab();
@@ -1212,6 +1264,8 @@ describe('ComboBox', function () {
         combobox.focus();
         userEvent.click(comboboxButton);
         jest.runAllTimers();
+        fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
+        fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
       });
 
       expect(document.activeElement).toBe(combobox);
@@ -1857,10 +1911,8 @@ describe('ComboBox', function () {
       let {getByRole} = renderComboBox({});
 
       let combobox = getByRole('combobox');
-
+      typeText(combobox, 'One');
       act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'One');
         jest.runAllTimers();
       });
 

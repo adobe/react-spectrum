@@ -148,45 +148,57 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'disabled keys',
+    () => (
+      <ComboBox items={withSection} label="Combobox" disabledKeys={['Snake', 'Ross']} {...actions}>
+        {(item) => (
+          <Section key={item.name} items={item.children} title={item.name}>
+            {(item) => <Item key={item.name}>{item.name}</Item>}
+          </Section>
+        )}
+      </ComboBox>
+    )
+  )
+  .add(
     'inputValue (controlled)',
     () => (
-      <ControlledValueComboBox inputValue="Test" />
+      <ControlledValueComboBox inputValue="Snake" disabledKeys={['3', '6']} />
     )
   )
   .add(
     'defaultInputValue (uncontrolled)',
-    () => render({defaultInputValue: 'Item'})
+    () => render({defaultInputValue: 'Item Three', disabledKeys: ['three']})
   )
   .add(
     'selectedKey (controlled)',
     () => (
-      <ControlledKeyComboBox selectedKey="4" />
+      <ControlledKeyComboBox selectedKey="4" disabledKeys={['2', '6']} />
     )
   )
   .add(
     'defaultSelectedKey (uncontrolled)',
-    () => render({defaultSelectedKey: 'two'})
+    () => render({defaultSelectedKey: 'two', disabledKeys: ['two']})
   )
   .add(
     'inputValue and selectedKey (controlled)',
     () => (
-      <AllControlledComboBox selectedKey="2" inputValue="Kangaroo" />
+      <AllControlledComboBox selectedKey="2" inputValue="Kangaroo" disabledKeys={['2', '6']} />
     )
   )
   .add(
     'defaultInputValue and defaultSelectedKey (uncontrolled)',
-    () => render({defaultInputValue: 'Item Two', defaultSelectedKey: 'two'})
+    () => render({defaultInputValue: 'Item Two', defaultSelectedKey: 'two', disabledKeys: ['two']})
   )
   .add(
     'inputValue and defaultSelectedKey (controlled by inputvalue)',
     () => (
-      <ControlledValueComboBox inputValue="K" defaultSelectedKey="2" />
+      <ControlledValueComboBox inputValue="K" defaultSelectedKey="2" disabledKeys={['2', '6']} />
     )
   )
   .add(
     'defaultInputValue and selectedKey (controlled by selectedKey)',
     () => (
-      <ControlledKeyComboBox defaultInputValue="Blah" selectedKey="2" />
+      <ControlledKeyComboBox defaultInputValue="Blah" selectedKey="2" disabledKeys={['2', '6']} />
     )
   )
   .add(
@@ -256,13 +268,13 @@ storiesOf('ComboBox', module)
   .add(
     'allowsCustomValue: true',
     () => (
-      <CustomValueComboBox allowsCustomValue selectedKey="2" />
+      <CustomValueComboBox allowsCustomValue selectedKey="2" disabledKeys={['3', '6']} />
     )
   )
   .add(
     'allowsCustomValue: true, shouldSelectOnBlur: false',
     () => (
-      <CustomValueComboBox allowsCustomValue shouldSelectOnBlur={false} selectedKey="2" />
+      <CustomValueComboBox allowsCustomValue shouldSelectOnBlur={false} selectedKey="2" disabledKeys={['3', '6']} />
     )
   )
   .add(
@@ -386,15 +398,19 @@ let AllControlledComboBox = (props) => {
   };
 
   let setSnake = () => {
-    setFieldState({inputValue: 'Snake', selectedKey: '3'});
+    if (!props.disabledKeys.includes('3')) {
+      setFieldState({inputValue: 'Snake', selectedKey: '3'});
+    }
   };
 
   let setRoss = () => {
-    setFieldState({inputValue: 'Ross', selectedKey: '6'});
+    if (!props.disabledKeys.includes('6')) {
+      setFieldState({inputValue: 'Ross', selectedKey: '6'});
+    }
   };
 
   let clearAll = () => {
-    setFieldState({inputValue: '', selectedKey: ''});
+    setFieldState({inputValue: '', selectedKey: null});
   };
 
   return (
@@ -430,17 +446,29 @@ let ControlledKeyComboBox = (props) => {
     setSelectedKey(key);
   };
 
+  let setSnake = () => {
+    if (!props.disabledKeys.includes('3')) {
+      setSelectedKey('3');
+    }
+  };
+
+  let setRoss = () => {
+    if (!props.disabledKeys.includes('6')) {
+      setSelectedKey('6');
+    }
+  };
+
   return (
     <div>
       <div>Current selectedKey: {selectedKey}</div>
       <ButtonGroup marginEnd="30px">
-        <Button variant="secondary" onPress={() => setSelectedKey('3')}>
+        <Button variant="secondary" onPress={setSnake}>
           <Text>Snake</Text>
         </Button>
-        <Button variant="secondary" onPress={() => setSelectedKey('6')}>
+        <Button variant="secondary" onPress={setRoss}>
           <Text>Ross</Text>
         </Button>
-        <Button variant="secondary" onPress={() => setSelectedKey('')}>
+        <Button variant="secondary" onPress={() => setSelectedKey(null)}>
           <Text>Clear key</Text>
         </Button>
       </ButtonGroup>
