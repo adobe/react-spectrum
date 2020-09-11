@@ -37,11 +37,11 @@ interface AriaTextFieldOptions extends AriaTextFieldProps {
 /**
  * Provides the behavior and accessibility implementation for a text field.
  * @param props - Props for the text field.
- * @param ref - Ref to the HTML input element.
+ * @param ref - Ref to the HTML input or textarea element.
  */
 export function useTextField(
   props: AriaTextFieldOptions,
-  ref: RefObject<HTMLInputElement>
+  ref: RefObject<HTMLInputElement | HTMLTextAreaElement>
 ): TextFieldAria {
   let {
     inputElementType = 'input',

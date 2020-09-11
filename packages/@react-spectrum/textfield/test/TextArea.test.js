@@ -13,7 +13,7 @@
 import React from 'react';
 import {render} from '@testing-library/react';
 import {TextArea} from '../';
-import userEvent from '@testing-library/user-event';
+import {typeText} from '@react-spectrum/test-utils';
 
 let testId = 'test-id';
 let mockScrollHeight = 500;
@@ -62,7 +62,7 @@ describe('TextArea', () => {
     expect(input.style.height).toBe(`${mockScrollHeight}px`);
     // this will be cleaned up in the afterEach
     Object.defineProperty(HTMLElement.prototype, 'scrollHeight', {configurable: true, value: newScrollHeight});
-    userEvent.type(input, '15');
+    typeText(input, '15');
     expect(input.style.height).toBe(`${newScrollHeight}px`);
   });
 
@@ -70,7 +70,7 @@ describe('TextArea', () => {
     let tree = renderComponent(TextArea, {});
     let input = tree.getByTestId(testId);
     expect(input.style.height).toBe('');
-    userEvent.type(input, '15');
+    typeText(input, '15');
     expect(input.style.height).toBe('');
   });
 });

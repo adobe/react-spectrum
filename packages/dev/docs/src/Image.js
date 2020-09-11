@@ -42,6 +42,17 @@ export function Hero({wide, narrow, wide2x, narrow2x, wideWebp, narrowWebp, wide
   );
 }
 
+export function Image({src, ...otherProps}) {
+  let publicUrl = React.useContext(ImageContext);
+  let baseUrl = publicUrl.replace(/\/$/, '');
+  let url = baseUrl + '/' + path.basename(src);
+
+  return (
+    // eslint-disable-next-line jsx-a11y/alt-text
+    <img src={url} className={docStyles.video} {...otherProps} />
+  );
+}
+
 export function Video({src, ...otherProps}) {
   let publicUrl = React.useContext(ImageContext);
   let baseUrl = publicUrl.replace(/\/$/, '');
