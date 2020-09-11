@@ -13,7 +13,7 @@
 import {AriaHexColorFieldProps} from '@react-types/color';
 import {Color, HexColorFieldState} from '@react-stately/color';
 import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
-import {useId} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria/utils';
 import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
 
@@ -95,22 +95,21 @@ export function useHexColorField(
   };
 
   const inputId = useId();
-  let {labelProps, inputProps} = useTextField({
-    ...otherProps,
-    id: inputId,
-    value: inputValue,
-    type: 'text',
-    autoComplete: 'off',
-    onChange: onInputChange
-  }, ref);
-  
+  let {labelProps, inputProps} = useTextField(
+    mergeProps(otherProps, {
+      id: inputId,
+      value: inputValue,
+      type: 'text',
+      autoComplete: 'off',
+      onChange: onInputChange
+    }), ref);
+
   return {
     labelProps,
-    inputFieldProps: {
-      ...inputProps,
+    inputFieldProps: mergeProps(inputProps, {
       onKeyDown: spinButtonProps.onKeyDown,
       onFocus: spinButtonProps.onFocus,
       onBlur
-    }
+    })
   };
 }
