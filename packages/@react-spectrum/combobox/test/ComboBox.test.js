@@ -732,11 +732,7 @@ describe('ComboBox', function () {
 
       let combobox = getByRole('combobox');
       expect(combobox.value).toBe('blah');
-
-      act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'a');
-      });
+      typeText(combobox, 'a');
 
       expect(combobox.value).toBe('blah');
       expect(onInputChange).toBeCalledTimes(1);
@@ -778,9 +774,9 @@ describe('ComboBox', function () {
       let {getByRole} = renderComboBox();
 
       let combobox = getByRole('combobox');
+      typeText(combobox, 'o');
+
       act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'o');
         jest.runAllTimers();
       });
 
@@ -798,9 +794,9 @@ describe('ComboBox', function () {
       let {getByRole} = renderComboBox();
 
       let combobox = getByRole('combobox');
+      typeText(combobox, ' ');
+
       act(() => {
-        combobox.focus();
-        userEvent.type(combobox, ' ');
         jest.runAllTimers();
       });
 
@@ -875,9 +871,9 @@ describe('ComboBox', function () {
       let {getByRole} = renderComboBox();
 
       let combobox = getByRole('combobox');
+      typeText(combobox, 'o');
+
       act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'o');
         jest.runAllTimers();
       });
 
@@ -1325,9 +1321,9 @@ describe('ComboBox', function () {
 
       let combobox = getByRole('combobox');
       let button = getByRole('button');
+      typeText(combobox, 'o');
+
       act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'o');
         jest.runAllTimers();
         fireEvent.keyDown(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
         fireEvent.keyUp(combobox, {key: 'ArrowDown', code: 40, charCode: 40});
@@ -1417,10 +1413,9 @@ describe('ComboBox', function () {
       let combobox = getByRole('combobox');
 
       expect(combobox.value).toBe('Two');
+      typeText(combobox, 'A');
 
       act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'A');
         jest.runAllTimers();
       });
 
@@ -1448,10 +1443,9 @@ describe('ComboBox', function () {
       let button = getByRole('button');
 
       expect(combobox.value).toBe('Two');
+      typeText(combobox, 'A');
 
       act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'A');
         jest.runAllTimers();
       });
 
@@ -1515,10 +1509,9 @@ describe('ComboBox', function () {
       let combobox = getByRole('combobox');
 
       expect(combobox.value).toBe('Two');
+      typeText(combobox, 'A');
 
       act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'A');
         jest.runAllTimers();
       });
 
@@ -1645,9 +1638,9 @@ describe('ComboBox', function () {
       expect(items).toHaveLength(1);
       expect(items[0]).toHaveTextContent('Two');
       expect(items[0]).toHaveAttribute('aria-selected', 'true');
+      typeText(combobox, 'A');
 
       act(() => {
-        userEvent.type(combobox, 'A');
         jest.runAllTimers();
       });
 
@@ -2012,9 +2005,9 @@ describe('ComboBox', function () {
       let trayInput = within(tray).getByRole('combobox');
       // Save the height style for comparison later
       let style = tray.getAttribute('style');
+      typeText(trayInput, 'One');
 
       act(() => {
-        userEvent.type(trayInput, 'One');
         jest.runAllTimers();
       });
 
@@ -2082,9 +2075,9 @@ describe('ComboBox', function () {
       let trayInput = within(tray).getByRole('combobox');
 
       testComboBoxTrayOpen(trayInput, tray, listbox);
+      typeText(trayInput, 'r');
 
       act(() => {
-        userEvent.type(trayInput, 'r');
         jest.runAllTimers();
       });
 
@@ -2121,9 +2114,9 @@ describe('ComboBox', function () {
 
       let trayInput = within(tray).getByRole('combobox');
       testComboBoxTrayOpen(trayInput, tray, listbox);
+      typeText(trayInput, 'blah');
 
       act(() => {
-        userEvent.type(trayInput, 'blah');
         jest.runAllTimers();
       });
 
@@ -2270,8 +2263,8 @@ describe('ComboBox', function () {
       let trayInput = within(tray).getByRole('combobox');
       expect(document.activeElement).toBe(trayInput);
 
+      typeText(trayInput, 'Bleh');
       act(() => {
-        userEvent.type(trayInput, 'Bleh');
         jest.runAllTimers();
       });
 
@@ -2368,9 +2361,8 @@ describe('ComboBox', function () {
       let {getByRole} = renderComboBox();
       let combobox = getByRole('combobox');
 
+      typeText(combobox, 'Blah');
       act(() => {
-        combobox.focus();
-        userEvent.type(combobox, 'Blah');
         jest.runAllTimers();
       });
 
