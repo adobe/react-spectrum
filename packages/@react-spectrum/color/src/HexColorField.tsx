@@ -21,9 +21,11 @@ import {useProviderProps} from '@react-spectrum/provider';
 function HexColorField(props: SpectrumHexColorFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
   const {
-    value,        // eslint-disable-line @typescript-eslint/no-unused-vars
-    defaultValue, // eslint-disable-line @typescript-eslint/no-unused-vars
-    onChange,     // eslint-disable-line @typescript-eslint/no-unused-vars
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    value,
+    defaultValue,
+    onChange,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     ...otherProps
   } = props;
   const state = useHexColorFieldState(props);
@@ -43,8 +45,5 @@ function HexColorField(props: SpectrumHexColorFieldProps, ref: RefObject<TextFie
   );
 }
 
-/**
- * An input for color. Displays color value in hex format.
- */
 const _HexColorField = React.forwardRef(HexColorField);
 export {_HexColorField as HexColorField};

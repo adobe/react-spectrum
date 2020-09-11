@@ -25,10 +25,6 @@ export interface HexColorFieldState extends NumberFieldState {
 export const defaultMinValue = '#000000';
 export const defaultMaxValue = '#FFFFFF';
 
-/**
- * Manages state for a color object, represented in hex, 
- * and provides methods for manipulating the color value.
- */
 export function useHexColorFieldState(
   props: HexColorFieldProps
 ): HexColorFieldState {
