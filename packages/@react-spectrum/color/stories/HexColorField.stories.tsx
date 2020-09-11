@@ -44,6 +44,10 @@ storiesOf('HexColorField', module)
     () => render({validationState: 'invalid'})
   )
   .add(
+    'with placeholder',
+    () => render({placeholder: 'Enter a hex color'})
+  )
+  .add(
     'step=16',
     () => render({step: 16})
   );
