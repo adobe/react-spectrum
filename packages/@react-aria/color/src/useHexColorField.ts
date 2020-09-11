@@ -17,7 +17,12 @@ import {
   defaultMinValue,
   HexColorFieldState
 } from '@react-stately/color';
-import {HTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
+import {
+  HTMLAttributes,
+  LabelHTMLAttributes,
+  RefObject,
+  useEffect
+} from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
 import {useSpinButton} from '@react-aria/spinbutton';
 import {useTextField} from '@react-aria/textfield';
@@ -61,6 +66,7 @@ export function useHexColorField(
     decrementToMin
   } = state;
 
+  const inputId = useId();
   const minColorInt = Color.parse(minValue).toHexInt();
   const maxColorInt = Color.parse(maxValue).toHexInt();
 
@@ -99,7 +105,36 @@ export function useHexColorField(
     commitInputValue();
   };
 
-  const inputId = useId();
+  // Taken from https://github.com/adobe/react-spectrum/pull/1029/
+  useEffect(() => {
+    const handleInputScrollWheel = e => {
+      // If the input isn't supposed to receive input, do nothing.
+      // TODO: add focus
+      if (isDisabled || isReadOnly || !ref.current) {
+        return;
+      }
+
+      e.preventDefault();
+      if (e.deltaY < 0) {
+        increment();
+      } else {
+        decrement();
+      }
+    };
+
+    ref.current.addEventListener(
+      'wheel',
+      handleInputScrollWheel,
+      {passive: false}
+    );
+    return () => {
+      ref.current.removeEventListener(
+        'wheel',
+        handleInputScrollWheel
+      );
+    };
+  }, [inputId, isReadOnly, isDisabled, decrement, increment]);
+
   let {labelProps, inputProps} = useTextField(
     mergeProps(otherProps, {
       id: inputId,
