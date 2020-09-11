@@ -230,7 +230,7 @@ export function usePress(props: PressHookProps): PressResult {
       },
       onClick(e) {
         if (e && e.button === 0) {
-          if (!allowClickDefault) {
+          if (!allowClickDefault || isDisabled) {
             e.preventDefault();
           }
           e.stopPropagation();

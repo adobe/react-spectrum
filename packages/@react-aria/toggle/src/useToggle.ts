@@ -55,7 +55,9 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
 
   // This handles focusing the input on pointer down, which Safari does not do by default.
   let {pressProps} = usePress({
-    isDisabled
+    isDisabled,
+    // something seems off in the useCheckboxGroup test, this worked everywhere else without needing allowClickDefault
+    allowClickDefault: true
   });
 
   let {focusableProps} = useFocusable(props, ref);
