@@ -49,18 +49,16 @@ export function useHexColorFieldState(
   const minColorInt = minColor.toHexInt();
   const maxColorInt = maxColor.toHexInt();
 
-  const colorValue = useMemo(() => {
-    let validColor;
+  const colorValue = useMemo((): Color => {
     try {
       const color = Color.parse(colorInputValue);
       const colorInt = color.toHexInt();
-      if (colorInt <= maxColorInt && colorInt >= minColorInt) {
-        validColor = color;
-      }
+      if (colorInt < minColorInt) { return minColor; }
+      if (colorInt > maxColorInt) { return maxColor; }
+      return color;
     } catch (err) {
-      // ignore
+      return minColor;
     }
-    return validColor;
   }, [colorInputValue, minColorInt, maxColorInt]);
 
   const [inputValue, setInputValue] = useState(colorValue ? colorValue.toString('hex') : '');

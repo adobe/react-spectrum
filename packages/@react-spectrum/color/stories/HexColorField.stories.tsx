@@ -21,7 +21,7 @@ storiesOf('HexColorField', module)
   )
   .add(
     'has default value',
-    () => render({defaultValue: '#ffffff'})
+    () => render({defaultValue: '#abcdef'})
   )
   .add(
     'isQuiet',
