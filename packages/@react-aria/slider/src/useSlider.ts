@@ -56,7 +56,7 @@ export function useSlider(
   // It is set onMouseDown; see trackProps below.
   const realTimeTrackDraggingIndex = useRef<number | undefined>(undefined);
   const isTrackDragging = useRef(false);
-  const {onMouseDown, onMouseEnter, onMouseOut} = useDrag1D({
+  const draggableProps = useDrag1D({
     containerRef: trackRef as any,
     reverse: false,
     orientation: 'horizontal',
@@ -82,6 +82,7 @@ export function useSlider(
     }
   });
 
+  let downHandlerName = draggableProps.onMouseDown ? 'onMouseDown' : 'onPointerDown';
   return {
     labelProps,
 
@@ -93,7 +94,7 @@ export function useSlider(
       ...fieldProps
     },
     trackProps: mergeProps({
-      onMouseDown: (e: React.MouseEvent<HTMLElement>) => {
+      [ downHandlerName ]: (e: { clientX: number, clientY: number, preventDefault: () => void }) => {
         // We only trigger track-dragging if the user clicks on the track itself.
         if (trackRef.current && isSliderEditable) {
           // Find the closest thumb
@@ -118,7 +119,7 @@ export function useSlider(
             // is updated while you're still holding the mouse button down.  And we
             // set dragging on now, so that onChangeEnd() won't fire yet when we set
             // the value.  Dragging state will be reset to false in onDrag above, even
-            // if no dragging actually occurs.
+            // if no dragging actually occurs.  
             state.setThumbDragging(realTimeTrackDraggingIndex.current, true);
             state.setThumbValue(index, value);
           } else {
@@ -127,7 +128,7 @@ export function useSlider(
         }
       }
     }, {
-      onMouseDown, onMouseEnter, onMouseOut
+      ...draggableProps
     })
   };
 }

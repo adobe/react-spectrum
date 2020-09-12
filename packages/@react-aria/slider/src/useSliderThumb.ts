@@ -113,11 +113,7 @@ export function useSliderThumb(
         state.setThumbValue(index, parseFloat(e.target.value));
       }
     }),
-    thumbProps: isEditable ? mergeProps({
-      onMouseDown: draggableProps.onMouseDown,
-      onMouseEnter: draggableProps.onMouseEnter,
-      onMouseOut: draggableProps.onMouseOut
-    }, {
+    thumbProps: isEditable ? mergeProps(draggableProps, {
       onMouseDown: focusInput
     }) : {},
     labelProps

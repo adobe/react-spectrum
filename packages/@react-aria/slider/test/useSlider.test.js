@@ -1,4 +1,5 @@
 import {fireEvent, render, screen} from '@testing-library/react';
+import PointerEventFake from './PointerEventFake.js';
 import * as React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useRef} from 'react';
@@ -131,4 +132,104 @@ describe('useSlider', () => {
       expect(stateRef.current.values).toEqual([10, 80]);
     });
   });
+
+  describe('interactions on track using pointerEvents', () => {
+    let widthStub;
+    let origPointerEvent;
+    beforeAll(() => {
+      origPointerEvent = window.PointerEvent;
+      window.PointerEvent = PointerEventFake;
+      widthStub = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 100);
+    });
+    afterAll(() => {
+      delete window.PointerEvent;
+      if (origPointerEvent) {
+        window.PointerEvent = origPointerEvent;
+      }
+      widthStub.mockReset();
+    });
+
+    let stateRef = React.createRef();
+
+    function Example(props) {
+      let trackRef = useRef(null);
+      let state = useSliderState(props);
+      stateRef.current = state;
+      let {trackProps} = useSlider(props, state, trackRef);
+      return <div data-testid="track" ref={trackRef} {...trackProps} />;
+    }
+
+    it('should allow you to set value of closest thumb by clicking on track', () => {
+      let onChangeSpy = jest.fn();
+      let onChangeEndSpy = jest.fn();
+      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
+
+      let track = screen.getByTestId('track');
+      fireEvent.pointerDown(track, {clientX: 20});
+      fireEvent.pointerUp(track, {clientX: 20});
+
+      expect(onChangeSpy).toHaveBeenLastCalledWith([20, 80]);
+      expect(onChangeEndSpy).toHaveBeenLastCalledWith([20, 80]);
+      expect(stateRef.current.values).toEqual([20, 80]);
+
+      track = screen.getByTestId('track');
+      fireEvent.pointerDown(track, {clientX: 90});
+      fireEvent.pointerUp(track, {clientX: 90});
+
+      expect(onChangeSpy).toHaveBeenLastCalledWith([20, 90]);
+      expect(onChangeEndSpy).toHaveBeenLastCalledWith([20, 90]);
+      expect(stateRef.current.values).toEqual([20, 90]);
+    });
+
+    it('should allow you to set value of closest thumb by dragging on track', () => {
+      let onChangeSpy = jest.fn();
+      let onChangeEndSpy = jest.fn();
+     
+      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
+
+      let track = screen.getByTestId('track');
+      fireEvent.pointerDown(track, {clientX: 20});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([20, 80]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([20, 80]);
+
+      fireEvent.pointerMove(track, {clientX: 30});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([30, 80]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([30, 80]);
+
+      fireEvent.pointerMove(track, {clientX: 40});
+      expect(onChangeSpy).toHaveBeenLastCalledWith([40, 80]);
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([40, 80]);
+
+      fireEvent.pointerUp(track, {clientX: 40});
+      expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 80]);
+      expect(stateRef.current.values).toEqual([40, 80]);
+    });
+
+    it('should not allow you to set value if disabled', () => {
+      let onChangeSpy = jest.fn();
+      let onChangeEndSpy = jest.fn();
+      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} isDisabled />);
+
+      let track = screen.getByTestId('track');
+      fireEvent.pointerDown(track, {clientX: 20});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([10, 80]);
+
+      fireEvent.pointerMove(track, {clientX: 30});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([10, 80]);
+      
+      fireEvent.pointerUp(track, {clientX: 40});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      expect(onChangeEndSpy).not.toHaveBeenCalled();
+      expect(stateRef.current.values).toEqual([10, 80]);
+    });
+  });
+
 });
+

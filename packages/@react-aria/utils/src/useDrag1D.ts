@@ -40,8 +40,8 @@ const draggingElements: HTMLElement[] = [];
 
 export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
   let {containerRef, reverse, orientation, onHover, onDrag, onPositionChange, onIncrement, onDecrement, onIncrementToMax, onDecrementToMin, onCollapseToggle} = props;
-  let getPosition = (e) => orientation === 'horizontal' ? e.clientX : e.clientY;
-  let getNextOffset = (e: MouseEvent) => {
+  let getPosition = (e: { clientX: number, clientY: number }) => orientation === 'horizontal' ? e.clientX : e.clientY;
+  let getNextOffset = (e: { clientX: number, clientY: number }) => {
     let containerOffset = getOffset(containerRef.current, reverse, orientation);
     let mouseOffset = getPosition(e);
     let nextOffset = reverse ? containerOffset - mouseOffset : mouseOffset - containerOffset;
@@ -183,5 +183,65 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
     }
   };
 
+  let onPointerEnter = () => {
+    if (onHover) {
+      onHover(true);
+    }
+  };
+
+  let onPointerOut = () => {
+    if (onHover) {
+      onHover(false);
+    }
+  };
+  
+  let onPointerMove = (e: React.PointerEvent) => {
+    e.preventDefault();
+    if (!dragging.current) {
+      return;
+    }
+    let nextOffset = getNextOffset(e);
+    
+    if (prevPosition.current === nextOffset) {
+      return;
+    }
+    prevPosition.current = nextOffset;
+    if (onPositionChange) {
+      onPositionChange(nextOffset);
+    }
+  };
+
+  let onPointerUp = (e: React.PointerEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (!dragging.current) {
+      return;
+    }
+
+    dragging.current = false;
+    let nextOffset = getNextOffset(e);
+    if (onDrag) {
+      onDrag(false);
+    }
+    if (onPositionChange) {
+      onPositionChange(nextOffset);
+    }
+  };
+
+  let onPointerDown = (e: React.PointerEvent) => {
+    dragging.current = true;
+    // @ts-ignore
+    if (e.nativeEvent?.target?.setPointerCapture) {
+      // @ts-ignore
+      e.nativeEvent.target.setPointerCapture(e.pointerId);
+    }
+    if (onDrag) {
+      onDrag(true);
+    }  
+  };
+
+  if ('PointerEvent' in window) {
+    return {onKeyDown, onPointerDown, onPointerUp, onPointerMove, onPointerEnter, onPointerOut};
+  }
   return {onMouseDown, onMouseEnter, onMouseOut, onKeyDown};
 }

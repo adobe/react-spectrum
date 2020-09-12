@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain} from '@react-aria/utils';
 import {HTMLAttributes, useEffect, useRef} from 'react';
+import {mergeProps, useDrag1D} from '@react-aria/utils';
 import {SplitViewAriaProps, SplitViewState} from '@react-types/shared';
-import {useDrag1D} from '@react-aria/utils';
 import {useId} from '@react-aria/utils';
 
 interface AriaSplitViewProps {
@@ -80,11 +79,12 @@ export function useSplitView(props: SplitViewAriaProps, state: SplitViewState): 
   let ariaValueMax = 100;
   let ariaValueNow = (handleState.offset - containerState.minPos) / (containerState.maxPos - containerState.minPos) * 100 | 0;
 
-  let onMouseDown = allowsResizing ? chain(draggableProps.onMouseDown, propsOnMouseDown) : undefined;
-  let onMouseEnter = allowsResizing ? draggableProps.onMouseEnter : undefined;
-  let onMouseOut = allowsResizing ? draggableProps.onMouseOut : undefined;
-  let onKeyDown = allowsResizing ? draggableProps.onKeyDown : undefined;
   let tabIndex = allowsResizing ? 0 : undefined;
+  let mergedDraggableProps = {};
+  if (allowsResizing) {
+    const downHandlerName = draggableProps.onMouseDown ? 'onMouseDown' : 'onPointerDown';
+    mergedDraggableProps = mergeProps(draggableProps, {[downHandlerName]: propsOnMouseDown});
+  }
 
   return {
     containerProps: {
@@ -99,10 +99,7 @@ export function useSplitView(props: SplitViewAriaProps, state: SplitViewState): 
       'aria-labelledby': props['aria-labelledby'],
       role: 'separator',
       'aria-controls': id,
-      onMouseDown,
-      onMouseEnter,
-      onMouseOut,
-      onKeyDown
+      ...mergedDraggableProps
     },
     primaryPaneProps: {
       id

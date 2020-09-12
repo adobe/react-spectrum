@@ -43,6 +43,7 @@ governing permissions and limitations under the License.
   width: var(--spectrum-rail-gripper-width);
   height: var(--spectrum-rail-gripper-height);
   border-width: var(--spectrum-rail-gripper-border-width-vertical) var(--spectrum-rail-gripper-border-width-horizontal);
+  touch-action: none;
 }
 
 .spectrum-SplitView-splitter {
@@ -51,6 +52,7 @@ governing permissions and limitations under the License.
 
   /* Prevent text selection while dragging */
   user-select: none;
+  touch-action: none;
 
   width: var(--spectrum-rail-handle-width);
   height: 100%;
