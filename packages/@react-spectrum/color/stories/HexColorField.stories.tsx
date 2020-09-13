@@ -62,27 +62,29 @@ storiesOf('HexColorField', module)
   )
   .add(
     'as a popover',
-    () => <HexColorFieldPopover
-      label='Choose a color'
-      value='#ff0000'
-      step={255}
-      onChange={action('change')}
-    />
+    () => (
+      <HexColorFieldPopover
+        label="Choose a color"
+        value="#ff0000"
+        step={255}
+        onChange={action('change')} />
+    )
   )
   .add(
     'as a popover, with custom min/max',
-    () => <HexColorFieldPopover
-      label='Choose a color'
-      minValue='#aaaaaa'
-      maxValue='#cccccc'
-      value='#bbbbbb'
-      step={255}
-      onChange={action('change')}
-    />
+    () => (
+      <HexColorFieldPopover
+        label="Choose a color"
+        minValue="#aaaaaa"
+        maxValue="#cccccc"
+        value="#bbbbbb"
+        step={255}
+        onChange={action('change')} />
+    )
   )
   .add(
     'as a popover, defaults only',
-    () => <HexColorFieldPopover onChange={action('change')}/>
+    () => <HexColorFieldPopover onChange={action('change')} />
   );
 
 function HexColorFieldPopover(props: any = {}) {
@@ -95,20 +97,18 @@ function HexColorFieldPopover(props: any = {}) {
         height="size-1600"
         UNSAFE_style={{
           background: selectedColor
-        }}
-      >{selectedColor}</ActionButton>
+        }} >{selectedColor}</ActionButton>
       <Dialog 
-        width='size-3600'
-        height='size-1600'
-      >
-        <View padding='size-300'>
+        width="size-3600"
+        height="size-1600" >
+        <View padding="size-300">
           {render({
             ...props,
             value: selectedColor,
             onChange: (newColor: Color) => {
               setSelectedColor(newColor.toString('hex'));
               if (props.onChange) { props.onChange(newColor); }
-            },
+            }
           })}
         </View>
       </Dialog>
@@ -119,7 +119,7 @@ function HexColorFieldPopover(props: any = {}) {
 function render(props: any = {}) {
   return (
     <HexColorField
-      label={'Primary Color'}
+      label="Primary Color"
       onChange={action('change')}
       {...props} />
   );
