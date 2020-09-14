@@ -72,7 +72,7 @@ export function useHexColorFieldState(
   };
 
   const incrementToMax = useCallback(() => {
-    if (maxValue != null) {
+    if (maxValue) {
       setColorValue(maxColor);
       setInputValue(maxColor.toString('hex'));
     }
@@ -90,7 +90,7 @@ export function useHexColorFieldState(
   };
 
   const decrementToMin = useCallback(() => {
-    if (minValue != null) {
+    if (minValue) {
       setColorValue(minColor);
       setInputValue(minColor.toString('hex'));
     }
