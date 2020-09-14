@@ -21,6 +21,7 @@ import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 import {Content} from "@react-spectrum/view";
+import {TextField} from "@react-spectrum/textfield";
 
 // whole thing hangs if run with rest of suite, but doesn't on its own
 describe('DialogTrigger', function () {
@@ -716,19 +717,20 @@ describe('DialogTrigger', function () {
     expect(document.activeElement).toBe(dialog);
   });
 
-  it.only('should not try to restore focus to the outer dialog', async () => {
+  it.only('should not try to restore focus to the outer dialog when the inner dialog opens', async () => {
     let {getByRole} = render(
       <Provider theme={theme}>
+        <TextField id="document-input" aria-label="document input" />
         <DialogTrigger>
           <ActionButton id="outer-trigger">Trigger</ActionButton>
           <Dialog id='outer-dialog'>
             <Content>
-              <input id="outer-input" type="text" autoFocus onFocus={() => console.log('outer focus')} onBlur={() => console.log('outer blur')} />
+              <TextField id="outer-input" aria-label="outer input" autoFocus />
               <DialogTrigger>
                 <ActionButton id="inner-trigger">Trigger</ActionButton>
                 <Dialog id='inner-dialog'>
                   <Content>
-                    <input id="inner-input" type="text" autoFocus onFocus={() => console.log('inner focus')} onBlur={() => console.log('inner blur')} />
+                    <TextField id="inner-input" aria-label="outer input" autoFocus />
                   </Content>
                 </Dialog>
               </DialogTrigger>
@@ -776,5 +778,15 @@ describe('DialogTrigger', function () {
     });
 
     expect(document.activeElement).toBe(innerInput);
+
+    let outsideInput = document.getElementById('document-input');
+    console.log('outsideInput.focus()');
+    act(() => {outsideInput.focus();});
+    console.log('outsideInput.focus() DONE');
+    act(() => {
+      jest.runAllTimers();
+    });
+    expect(document.activeElement).toBe(innerInput);
+    console.log('end of test');
   });
 });

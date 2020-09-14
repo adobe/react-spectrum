@@ -95,13 +95,13 @@ export function FocusScope(props: FocusScopeProps) {
   }, [children]);
 
   let cancel = useFocusContainment(scopeRef, contain);
-  useRestoreFocus(scopeRef, restoreFocus, contain);
+  let restoreCancel = useRestoreFocus(scopeRef, restoreFocus, contain);
   useAutoFocus(scopeRef, autoFocus);
 
   let focusManager = createFocusManager(scopeRef);
 
   return (
-    <FocusContext.Provider value={{...focusManager, cancel}}>
+    <FocusContext.Provider value={{...focusManager, cancel, restoreCancel}}>
       <span hidden ref={startRef} />
       {children}
       <span hidden ref={endRef} />
@@ -187,12 +187,15 @@ let index = 0;
 function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolean) {
   let focusedNode = useRef<HTMLElement>();
   // cancel any higher up focus scopes refocusing
-  let {cancel} = useContext(FocusContext) || {};
-  useEffect(() => {
+  let {cancel, restoreCancel} = useContext(FocusContext) || {};
+  /*useLayoutEffect(() => {
     if (cancel) {
       cancel();
     }
-  }, []);
+    if (restoreCancel) {
+      restoreCancel();
+    }
+  }, []);*/
 
   let raf = useRef(null);
   useEffect(() => {
@@ -349,6 +352,7 @@ function useAutoFocus(scopeRef: RefObject<HTMLElement[]>, autoFocus: boolean) {
 }
 
 function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boolean, contain: boolean) {
+  let raf = useRef(null);
   // useLayoutEffect instead of useEffect so the active element is saved synchronously instead of asynchronously.
   useLayoutEffect(() => {
     let scope = scopeRef.current;
@@ -406,7 +410,7 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       }
 
       if (restoreFocus && nodeToRestore && isElementInScope(document.activeElement, scope)) {
-        requestAnimationFrame(() => {
+        raf.current = requestAnimationFrame(() => {
           if (document.body.contains(nodeToRestore)) {
             console.log('restoring', nodeToRestore);
             focusElement(nodeToRestore);
@@ -415,6 +419,9 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       }
     };
   }, [scopeRef, restoreFocus, contain]);
+  return () => {
+    cancelAnimationFrame(raf.current);
+  }
 }
 
 /**

@@ -697,7 +697,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input3);
     });
 
-    it.only('should only attempt to focus in the inner most scope', function () {
+    it('should only attempt to focus in the inner most scope', function () {
       function ChildComponent(props) {
         return ReactDOM.createPortal(props.children, document.body);
       }
