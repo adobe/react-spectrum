@@ -17,6 +17,7 @@
     "check-types": "tsc",
     "start": "cross-env NODE_ENV=storybook start-storybook -p 9003 --ci -c '.storybook'",
     "build:storybook": "build-storybook -c .storybook -o dist/$(git rev-parse HEAD)/storybook",
+    "build:storybook-17": "yarn add -W react@17.0.0-rc.1 react-dom@17.0.0-rc.1 && NODE_ENV=production build-storybook -c .storybook -o dist/$(git rev-parse HEAD)/storybook-17",
     "start:chromatic": "NODE_ENV=storybook start-storybook -p 9004 --ci -c '.chromatic'",
     "build:chromatic": "build-storybook -c .chromatic -o dist/$(git rev-parse HEAD)/chromatic",
     "start:docs": "PARCEL_WORKER_BACKEND=process DOCS_ENV=dev parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",

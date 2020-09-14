@@ -95,6 +95,26 @@ jobs:
           root: dist
           paths:
             - '*/storybook/'
+
+  storybook-17:
+    docker:
+      - image: circleci/node:12.10
+    resource_class: large
+
+    working_directory: ~/react-spectrum
+    steps:
+      - restore_cache:
+          key: react-spectrum-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: build storybook-17
+          command: make storybook-17
+
+      - persist_to_workspace:
+          root: dist
+          paths:
+            - '*/storybook-17/'
+
   docs:
     docker:
       - image: circleci/node:12.10
@@ -204,6 +224,9 @@ workflows:
       - storybook:
           requires:
             - install
+      - storybook-17:
+          requires:
+            - install
       - docs:
           requires:
             - install
@@ -219,6 +242,7 @@ workflows:
             - test
             - test_17
             - storybook
+            - storybook-17
             - docs
       - deploy-production:
           filters:
