@@ -56,7 +56,6 @@ export function useHexColorField(
   
   const {
     colorValue,
-    setColorValue,
     inputValue,
     setInputValue,
     commitInputValue,
@@ -85,20 +84,6 @@ export function useHexColorField(
       textValue: inputValue
     }
   );
-
-  const onInputChange = (value: string) => {
-    setInputValue(value);
-    value = value.trim();
-    if (!value.length) { return; }
-    if (!value.startsWith('#')) {
-      value = `#${value}`;
-    }
-    try {
-      setColorValue(Color.parse(value));
-    } catch (err) {
-      // ignore
-    }
-  };
 
   const onBlur = (e) => {
     spinButtonProps.onBlur(e);
@@ -142,7 +127,7 @@ export function useHexColorField(
       value: inputValue,
       type: 'text',
       autoComplete: 'off',
-      onChange: onInputChange
+      onChange: setInputValue
     }), ref);
 
   return {

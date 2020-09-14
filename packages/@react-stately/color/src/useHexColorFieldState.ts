@@ -18,7 +18,6 @@ import {useControlledState} from '@react-stately/utils';
 
 export interface HexColorFieldState extends NumberFieldState {
   colorValue: Color,
-  setColorValue: (color: Color) => void,
   setInputValue: (value: string) => void
 }
 
@@ -38,14 +37,12 @@ export function useHexColorFieldState(
     validationState
   } = props;
 
-  const [colorInputValue, setColorInputValue] = useControlledState<ColorInput>(value, defaultValue || minValue, onChange);
-
   const minColor = Color.parse(minValue);
   const maxColor = Color.parse(maxValue);
   const minColorInt = minColor.toHexInt();
   const maxColorInt = maxColor.toHexInt();
 
-  const clampColorValue = useCallback((value: ColorInput) => {
+  const clampColor = useCallback((value: ColorInput) => {
     try {
       const color = Color.parse(value);
       const colorInt = color.toHexInt();
@@ -53,17 +50,20 @@ export function useHexColorFieldState(
       if (colorInt > maxColorInt) { return maxColor; }
       return color;
     } catch (err) {
-      return minColor;
+      return undefined;
     }
   }, [minColorInt, maxColorInt]);
 
-  const colorValue = clampColorValue(colorInputValue);
+  const initialValue = clampColor(value);
+  const initialDefaultValue = clampColor(defaultValue);
+  const [colorValue, setColorValue] = useControlledState<Color>(initialValue, initialDefaultValue, onChange);
+
   const initialInputValue = (value || defaultValue) && colorValue ? colorValue.toString('hex') : '';
   const [inputValue, setInputValue] = useState(initialInputValue);
 
   const increment = () => {
-    setColorInputValue((previousValue) => {
-      const colorInt = Color.parse(previousValue).toHexInt();
+    setColorValue((previousValue: Color) => {
+      const colorInt = previousValue ? previousValue.toHexInt() : minColorInt;
       const newValue = `#${Math.min(colorInt + step, maxColorInt).toString(16).padStart(6, '0')}`;
       const newColor = new Color(newValue);
       setInputValue(newColor.toString('hex'));
@@ -73,14 +73,15 @@ export function useHexColorFieldState(
 
   const incrementToMax = useCallback(() => {
     if (maxValue != null) {
-      setColorInputValue(maxColor);
+      setColorValue(maxColor);
       setInputValue(maxColor.toString('hex'));
     }
-  }, [maxValue, maxColor, setColorInputValue, setInputValue]);
+  }, [maxValue, maxColor, setColorValue, setInputValue]);
 
   const decrement = () => {
-    setColorInputValue((previousValue) => {
-      const colorInt = Color.parse(previousValue).toHexInt();
+    setColorValue((previousValue: Color) => {
+      if (!previousValue) { return minColor; }
+      const colorInt = previousValue.toHexInt();
       const newValue = `#${Math.max(colorInt - step, minColorInt).toString(16).padStart(6, '0')}`;
       const newColor = new Color(newValue);
       setInputValue(newColor.toString('hex'));
@@ -90,25 +91,36 @@ export function useHexColorFieldState(
 
   const decrementToMin = useCallback(() => {
     if (minValue != null) {
-      setColorInputValue(minColor);
+      setColorValue(minColor);
       setInputValue(minColor.toString('hex'));
     }
-  }, [minValue, minColor, setColorInputValue, setInputValue]);
+  }, [minValue, minColor, setColorValue, setInputValue]);
 
-  const setColorValue = (color: Color) => {
-    setColorInputValue(clampColorValue(color));
+  const setFieldInputValue = (value: string) => {
+    setInputValue(value);
+    value = value.trim();
+    if (!value.length) { return; }
+    if (!value.startsWith('#')) {
+      value = `#${value}`;
+    }
+    try {
+      const color = clampColor(value);
+      if (color) {
+        setColorValue(color);
+      }
+    } catch (err) {
+      // ignore
+    }
   };
 
   const commitInputValue = () => {
-    if (!inputValue.length) { return; }
-    setInputValue(colorValue.toString('hex'));
+    setFieldInputValue(colorValue ? colorValue.toString('hex') : '');
   };
 
   return {
     colorValue,
-    setColorValue,
     inputValue,
-    setInputValue,
+    setInputValue: setFieldInputValue,
     commitInputValue,
     increment,
     incrementToMax,
