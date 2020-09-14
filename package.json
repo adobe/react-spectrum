@@ -15,8 +15,8 @@
   ],
   "scripts": {
     "check-types": "tsc",
-    "start": "cross-env NODE_ENV=storybook start-storybook -p 9003 --ci -c '.storybook-react'",
-    "start:preact": "cross-env NODE_ENV=storybook start-storybook -p 9004 --ci -c '.storybook-preact'",
+    "start": "cross-env NODE_ENV=storybook start-storybook -p 9003 --ci -c '.storybook-react' --no-version-updates",
+    "start:preact": "cross-env NODE_ENV=storybook start-storybook -p 9004 --ci -c '.storybook-preact' --no-version-updates",
     "build:storybook": "build-storybook -c .storybook -o dist/$(git rev-parse HEAD)/storybook",
     "start:chromatic": "NODE_ENV=storybook start-storybook -p 9004 --ci -c '.chromatic'",
     "build:chromatic": "build-storybook -c .chromatic -o dist/$(git rev-parse HEAD)/chromatic",
