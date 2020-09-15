@@ -14,7 +14,7 @@ import {Color} from '@react-stately/color';
 import {HexColorField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render, screen} from '@testing-library/react';
 import {theme} from '@react-spectrum/theme-default';
 
 function renderComponent(props) {
@@ -30,42 +30,69 @@ function renderComponent(props) {
 describe('HexColorField', function () {
   it('should handle defaults', function () {
     renderComponent({});
-    expect(true).toBe(true);
+    const hexColorField = screen.getByLabelText('Primary Color');
+    expect(hexColorField).toBeInTheDocument();
+    expect(hexColorField).toHaveAttribute('role', 'spinbutton');
+    expect(hexColorField).toHaveAttribute('type', 'text');
+    expect(hexColorField).toHaveAttribute('autocomplete', 'off');
+    expect(hexColorField).not.toHaveAttribute('readonly');
+    expect(hexColorField).not.toBeInvalid();
+    expect(hexColorField).not.toBeDisabled();
+    expect(hexColorField).not.toBeRequired();
   });
 
-  it('should handle labels', function () {
-    renderComponent({});
-    expect(true).toBe(true);
+  it('should handle label prop', function () {
+    renderComponent({label: 'Custom label'});
+    const hexColorField = screen.getByLabelText('Custom label');
+    const label = screen.getByText('Custom label');
+    expect(label).toHaveAttribute('for', hexColorField.id);
+    expect(hexColorField).toHaveAttribute('aria-labelledby', label.id);
+  });
+
+  it('should handle aria-label prop', function () {
+    renderComponent({
+      'aria-label': 'Custom label',
+      label: undefined
+    });
+    const hexColorField = screen.getByLabelText('Custom label');
+    expect(hexColorField).toBeInTheDocument();
+    expect(hexColorField).not.toHaveAttribute('aria-labelledby');
   });
 
   it('should handle placeholder', function () {
-    renderComponent({});
-    expect(true).toBe(true);
+    renderComponent({placeholder: 'Enter a color'});
+    expect(screen.getByPlaceholderText('Enter a color')).toBeInTheDocument();
   });
 
   it('should handle valid validation state', function () {
-    renderComponent({});
-    expect(true).toBe(true);
+    renderComponent({validationState: 'valid'});
+    const hexColorField = screen.getByLabelText('Primary Color');
+    expect(hexColorField).not.toBeInvalid();
   });
 
   it('should handle invalid validation state', function () {
-    renderComponent({});
-    expect(true).toBe(true);
+    renderComponent({validationState: 'invalid'});
+    const hexColorField = screen.getByLabelText('Primary Color');
+    expect(hexColorField).toBeInvalid();
   });
 
   it('should handle disabled', function () {
-    renderComponent({});
-    expect(true).toBe(true);
+    renderComponent({isDisabled: true});
+    const hexColorField = screen.getByLabelText('Primary Color');
+    expect(hexColorField).toBeDisabled();
   });
 
   it('should handle readonly', function () {
-    renderComponent({});
-    expect(true).toBe(true);
+    renderComponent({isReadOnly: true});
+    const hexColorField = screen.getByLabelText('Primary Color');
+    console.log(hexColorField);
+    expect(hexColorField).toHaveAttribute('readonly');
   });
 
   it('should handle required', function () {
-    renderComponent({});
-    expect(true).toBe(true);
+    renderComponent({isRequired: true});
+    const hexColorField = screen.getByLabelText(/Primary Color/);
+    expect(hexColorField).toBeRequired();
   });
 
   it('should be empty when invalid value is provided', function () {
