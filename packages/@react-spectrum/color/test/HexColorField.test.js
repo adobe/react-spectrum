@@ -10,13 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {
-  act,
-  fireEvent,
-  render,
-  screen
-} from '@testing-library/react';
 import {Color} from '@react-stately/color';
+import {fireEvent, render, screen} from '@testing-library/react';
 import {HexColorField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -90,7 +85,6 @@ describe('HexColorField', function () {
   it('should handle readonly', function () {
     renderComponent({isReadOnly: true});
     const hexColorField = screen.getByLabelText('Primary Color');
-    console.log(hexColorField);
     expect(hexColorField).toHaveAttribute('readonly');
   });
 
@@ -137,9 +131,7 @@ describe('HexColorField', function () {
     expect(hexColorField.value).toBe('#AABBCC');
 
     hexColorField.focus();
-    act(() => {
-      fireEvent.change(hexColorField, {target: {value: 'xyz'}});
-    });
+    fireEvent.change(hexColorField, {target: {value: 'xyz'}});
     expect(hexColorField.value).toBe('xyz');
 
     hexColorField.blur();
@@ -158,48 +150,53 @@ describe('HexColorField', function () {
 
   it.each`
     Name                                | expected      | action
-    ${'increment with arrow up key'}    | ${'#AAAAAE'}  | ${() => console.log('arrow up')}
-    ${'increment with page up key'}     | ${'#AAAAAE'}  | ${() => console.log('page up')}
-    ${'increment with mouse wheel'}     | ${'#AAAAAE'}  | ${() => console.log('mouse wheel')}
-    ${'decrement with arrow down key'}  | ${'#AAAAA6'}  | ${() => console.log('arrow down')}
-    ${'decrement with page down key'}   | ${'#AAAAA6'}  | ${() => console.log('arrow down')}
-    ${'decrement with mouse wheel'}     | ${'#AAAAA6'}  | ${() => console.log('mouse wheel')}
+    ${'increment with arrow up key'}    | ${'#AAAAAE'}  | ${(el) => fireEvent.keyDown(el, {key: 'ArrowUp'})}
+    ${'increment with page up key'}     | ${'#AAAAAE'}  | ${(el) => fireEvent.keyDown(el, {key: 'PageUp'})}
+    ${'increment with mouse wheel'}     | ${'#AAAAAE'}  | ${(el) => fireEvent.wheel(el, {deltaY: -10})}
+    ${'decrement with arrow down key'}  | ${'#AAAAA6'}  | ${(el) => fireEvent.keyDown(el, {key: 'ArrowDown'})}
+    ${'decrement with page down key'}   | ${'#AAAAA6'}  | ${(el) => fireEvent.keyDown(el, {key: 'PageDown'})}
+    ${'decrement with mouse wheel'}     | ${'#AAAAA6'}  | ${(el) => fireEvent.wheel(el, {deltaY: 10})}
   `('should handle $Name event', function ({expected, action}) {
     renderComponent({
       defaultValue: '#aaa',
       step: 4
     });
-    // action();
-    expect(true).toBe(true);
+    const hexColorField = screen.getByLabelText('Primary Color');
+    expect(hexColorField.value).toBe('#AAAAAA');
+
+    action(hexColorField);
+    expect(hexColorField.value).toBe(expected);
   });
 
   it.each`
-    Name                             | props                                        | action
-    ${'increment beyond max value'}  | ${{defaultValue: '#aaa', maxValue: '#aaa'}}  | ${() => console.log('arrow up')}
-    ${'decrement beyond min value'}  | ${{defaultValue: '#aaa', minValue: '#aaa'}}  | ${() => console.log('arrow down')}
-  `('should not $Name', function ({props, action}) {
+    Name                                 | props                                                    | initExpected  | action
+    ${'not increment beyond max value'}  | ${{defaultValue: '#bbbbba', maxValue: '#bbb', step: 4}}  | ${'#BBBBBA'}  | ${(el) => fireEvent.keyDown(el, {key: 'ArrowUp'})}
+    ${'not decrement beyond min value'}  | ${{defaultValue: '#bbbbbc', minValue: '#bbb', step: 4}}  | ${'#BBBBBC'}  | ${(el) => fireEvent.keyDown(el, {key: 'ArrowDown'})}
+    ${'increment to max value'}          | ${{defaultValue: '#aaa', maxValue: '#bbb'}}              | ${'#AAAAAA'}  | ${(el) => fireEvent.keyDown(el, {key: 'End'})}
+    ${'decrement to min value'}          | ${{defaultValue: '#ccc', minValue: '#bbb'}}              | ${'#CCCCCC'}  | ${(el) => fireEvent.keyDown(el, {key: 'Home'})}
+  `('should $Name', function ({props, initExpected, action}) {
     renderComponent(props);
-    // action();
-    expect(true).toBe(true);
+    const hexColorField = screen.getByLabelText('Primary Color');
+    expect(hexColorField.value).toBe(initExpected);
+
+    action(hexColorField);
+    expect(hexColorField.value).toBe('#BBBBBB');
   });
 
   it.each`
-    Name                         | props                                        | action
-    ${'increment to max value'}  | ${{defaultValue: '#aaa', maxValue: '#bbb'}}  | ${() => console.log('home key')}
-    ${'decrement to min value'}  | ${{defaultValue: '#ccc', minValue: '#bbb'}}  | ${() => console.log('end key')}
-  `('should handle $Name', function ({props, action}) {
+    Name            | props                                        | initExpected  | newValue  | action
+    ${'max value'}  | ${{defaultValue: '#aaa', maxValue: '#bbb'}}  | ${'#AAAAAA'}  | ${'fff'}  | ${(el) => fireEvent.change(el, {target: {value: 'fff'}})}
+    ${'min value'}  | ${{defaultValue: '#ccc', minValue: '#bbb'}}  | ${'#CCCCCC'}  | ${'000'}  | ${(el) => fireEvent.change(el, {target: {value: '000'}})}
+  `('should clamp value to $Name on change', function ({props, initExpected, newValue, action}) {
     renderComponent(props);
-    // action();
-    expect(true).toBe(true);
-  });
+    const hexColorField = screen.getByLabelText('Primary Color');
+    expect(hexColorField.value).toBe(initExpected);
 
-  it.each`
-    Name            | props                                        | action
-    ${'max value'}  | ${{defaultValue: '#aaa', maxValue: '#bbb'}}  | ${() => console.log('change input to #ccc')}
-    ${'min value'}  | ${{defaultValue: '#ccc', minValue: '#bbb'}}  | ${() => console.log('change input to #aaa')}
-  `('should clamp value to $Name on change', function ({props, action}) {
-    renderComponent(props);
-    // action();
-    expect(true).toBe(true);
+    hexColorField.focus();
+    action(hexColorField);
+    expect(hexColorField.value).toBe(newValue);
+
+    hexColorField.blur();
+    expect(hexColorField.value).toBe('#BBBBBB');
   });
 });
