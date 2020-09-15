@@ -10,11 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {
+  act,
+  fireEvent,
+  render,
+  screen
+} from '@testing-library/react';
 import {Color} from '@react-stately/color';
 import {HexColorField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render, screen} from '@testing-library/react';
 import {theme} from '@react-spectrum/theme-default';
 
 function renderComponent(props) {
@@ -96,8 +101,13 @@ describe('HexColorField', function () {
   });
 
   it('should be empty when invalid value is provided', function () {
-    renderComponent({});
-    expect(true).toBe(true);
+    renderComponent({defaultValue: true});
+    const hexColorField = screen.getByLabelText('Primary Color');
+    expect(hexColorField.value).toBe('');
+
+    hexColorField.focus();
+    hexColorField.blur();
+    expect(hexColorField.value).toBe('');
   });
 
   it.each`
@@ -107,7 +117,8 @@ describe('HexColorField', function () {
     ${'Color object'}         | ${{defaultValue: new Color('#abc')}}
   `('should accept $Name as value', function ({props}) {
     renderComponent(props);
-    expect(true).toBe(true);
+    const hexColorField = screen.getByLabelText('Primary Color');
+    expect(hexColorField.value).toBe('#AABBCC');
   });
 
   it.each`
@@ -116,7 +127,23 @@ describe('HexColorField', function () {
     ${'custom max value'}  | ${{defaultValue: '#ccc', maxValue: '#bbb'}}
   `('should clamp initial value provided to $Name', function ({props}) {
     renderComponent(props);
-    expect(true).toBe(true);
+    const hexColorField = screen.getByLabelText('Primary Color');
+    expect(hexColorField.value).toBe('#BBBBBB');
+  });
+
+  it('should revert back to last valid value', function () {
+    renderComponent({defaultValue: '#abc'});
+    const hexColorField = screen.getByLabelText('Primary Color');
+    expect(hexColorField.value).toBe('#AABBCC');
+
+    hexColorField.focus();
+    act(() => {
+      fireEvent.change(hexColorField, {target: {value: 'xyz'}});
+    });
+    expect(hexColorField.value).toBe('xyz');
+
+    hexColorField.blur();
+    expect(hexColorField.value).toBe('#AABBCC');
   });
 
   it('should handle uncontrolled state', function () {
@@ -142,7 +169,7 @@ describe('HexColorField', function () {
       defaultValue: '#aaa',
       step: 4
     });
-    action();
+    // action();
     expect(true).toBe(true);
   });
 
@@ -152,7 +179,7 @@ describe('HexColorField', function () {
     ${'decrement beyond min value'}  | ${{defaultValue: '#aaa', minValue: '#aaa'}}  | ${() => console.log('arrow down')}
   `('should not $Name', function ({props, action}) {
     renderComponent(props);
-    action();
+    // action();
     expect(true).toBe(true);
   });
 
@@ -162,12 +189,7 @@ describe('HexColorField', function () {
     ${'decrement to min value'}  | ${{defaultValue: '#ccc', minValue: '#bbb'}}  | ${() => console.log('end key')}
   `('should handle $Name', function ({props, action}) {
     renderComponent(props);
-    action();
-    expect(true).toBe(true);
-  });
-
-  it('should revert back to last valid value', function () {
-    renderComponent({});
+    // action();
     expect(true).toBe(true);
   });
 
@@ -177,7 +199,7 @@ describe('HexColorField', function () {
     ${'min value'}  | ${{defaultValue: '#ccc', minValue: '#bbb'}}  | ${() => console.log('change input to #aaa')}
   `('should clamp value to $Name on change', function ({props, action}) {
     renderComponent(props);
-    action();
+    // action();
     expect(true).toBe(true);
   });
 });
