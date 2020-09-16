@@ -200,7 +200,7 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
         }>
         <TextFieldBase
           labelProps={labelProps}
-          inputProps={{...inputProps, readOnly: inputProps.readOnly || isMobile}}
+          inputProps={inputProps}
           inputRef={inputRef}
           ref={ref}
           inputClassName={

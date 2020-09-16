@@ -163,7 +163,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       return;
     }
 
-    if (menuTrigger === 'focus') {
+    // For Android accessibility (Talkback). Talkback doesn't fire a click event on inputs when double tapping so we use focus event instead
+    if (menuTrigger === 'focus' || isMobile) {
       state.open();
     }
 
@@ -187,9 +188,12 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   let {pressProps: inputPressProps} = usePress({
     onPress: () => {
       if (isMobile && !isReadOnly) {
+        inputRef.current.focus();
         state.open();
       }
     },
+    // Prevent focus on press so that press + hold on iPhone still opens the tray instead of requiring another set of taps
+    preventFocusOnPress: true,
     isDisabled,
     ref: inputRef
   });
@@ -209,7 +213,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     if (e.pointerType !== 'touch') {
       inputRef.current.focus();
       if (!state.isOpen) {
-        state.open(e.pointerType === 'keyboard' || e.pointerType === 'virtual' ? 'first' : null);
+        state.open((e.pointerType === 'keyboard' || e.pointerType === 'virtual') && !isMobile ? 'first' : null);
       }
     }
   };

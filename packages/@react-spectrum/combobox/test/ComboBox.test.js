@@ -2383,19 +2383,6 @@ describe('ComboBox', function () {
       expect(placeholderText).toBeVisible();
     });
 
-    it('combobox input field is readonly when mobile', function () {
-      let {getByRole} = renderComboBox();
-      let combobox = getByRole('combobox');
-
-      typeText(combobox, 'Blah');
-      act(() => {
-        jest.runAllTimers();
-      });
-
-      expect(combobox.value).toBe('');
-      expect(onInputChange).not.toHaveBeenCalled();
-    });
-
     // Simulating browser tab switching
     it('combobox tray remains open on blur with related target = null', function () {
       let {getByRole, getByTestId} = renderComboBox();
@@ -2417,6 +2404,20 @@ describe('ComboBox', function () {
       });
 
       tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+    });
+
+    it('tray opens if user types in a value that doesn\'t match any of the valid combobox values', function () {
+      let {getByRole, getByTestId} = renderComboBox();
+      let combobox = getByRole('combobox');
+
+      act(() => {
+        combobox.focus();
+        userEvent.type(combobox, 'Blah');
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
       expect(tray).toBeVisible();
     });
   });
