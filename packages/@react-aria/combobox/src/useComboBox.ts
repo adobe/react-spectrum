@@ -99,7 +99,11 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
           // I think I need this .close so that the menu closes even
           // when the user hits Enter on the already selectedKey
           state.close();
+        } else if (allowsCustomValue) {
+          onCustomValue(state.inputValue);
+          state.close();
         }
+
         break;
       case 'Escape':
         if (state.isOpen) {

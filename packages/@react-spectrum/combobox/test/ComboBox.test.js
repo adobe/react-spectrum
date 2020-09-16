@@ -676,6 +676,32 @@ describe('ComboBox', function () {
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
     });
 
+    it('calls onCustomValue and closes menu if allowsCustomValue=true and no item is focused', function () {
+      let {getByRole} = renderComboBox({allowsCustomValue: true});
+
+      let combobox = getByRole('combobox');
+      typeText(combobox, 'On');
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeTruthy;
+
+      expect(document.activeElement).toBe(combobox);
+      expect(combobox).not.toHaveAttribute('aria-activedescendant');
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('listbox')).toThrow();
+      expect(onCustomValue).toHaveBeenCalledTimes(1);
+      expect(onCustomValue).toHaveBeenCalledWith('On');
+    });
+
     it('doesn\'t focuses the first key if the previously focused key is filtered out of the list', function () {
       let {getByRole} = renderComboBox();
 
