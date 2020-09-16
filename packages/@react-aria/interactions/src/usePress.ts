@@ -32,9 +32,7 @@ export interface PressProps extends PressEvents {
 
 export interface PressHookProps extends PressProps {
   /** A ref to the target element. */
-  ref?: RefObject<HTMLElement>,
-  /** Whether the target should use virtual focus instead of being focused directly. */
-  shouldUseVirtualFocus?: boolean
+  ref?: RefObject<HTMLElement>
 }
 
 interface PressState {
@@ -100,7 +98,6 @@ export function usePress(props: PressHookProps): PressResult {
     preventFocusOnPress,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb,
-    shouldUseVirtualFocus,
     ...domProps
   } = usePressResponderContext(props);
 
@@ -313,7 +310,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.activePointerId = e.pointerId;
           state.target = e.currentTarget;
 
-          if (!isDisabled && !preventFocusOnPress && !shouldUseVirtualFocus) {
+          if (!isDisabled && !preventFocusOnPress) {
             focusWithoutScrolling(e.currentTarget);
           }
 
@@ -416,7 +413,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.isOverTarget = true;
         state.target = e.currentTarget;
 
-        if (!isDisabled && !preventFocusOnPress && !shouldUseVirtualFocus) {
+        if (!isDisabled && !preventFocusOnPress) {
           focusWithoutScrolling(e.currentTarget);
         }
 
@@ -485,7 +482,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent default
         // on the emulated mouse event and handle focusing the pressable element ourselves.
-        if (!isDisabled && !preventFocusOnPress && !shouldUseVirtualFocus) {
+        if (!isDisabled && !preventFocusOnPress) {
           focusWithoutScrolling(e.currentTarget);
         }
 
@@ -567,7 +564,7 @@ export function usePress(props: PressHookProps): PressResult {
     }
 
     return pressProps;
-  }, [onPress, onPressStart, onPressEnd, onPressChange, onPressUp, isDisabled, shouldUseVirtualFocus]);
+  }, [onPress, onPressStart, onPressEnd, onPressChange, onPressUp, isDisabled, preventFocusOnPress]);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
