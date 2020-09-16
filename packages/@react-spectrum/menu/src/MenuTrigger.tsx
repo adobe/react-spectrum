@@ -60,9 +60,10 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     onClose: state.close,
     closeOnSelect,
     autoFocus: state.focusStrategy || true,
-    UNSAFE_style: {
-      width: isMobile ? '100%' : undefined
-    },
+    UNSAFE_style: isMobile ? {
+      width: '100%',
+      maxHeight: 'inherit'
+    } : undefined,
     UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile})
   };
 
