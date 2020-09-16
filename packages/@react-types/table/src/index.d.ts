@@ -40,7 +40,8 @@ export interface ColumnProps<T> {
   width?: number | string,
   minWidth?: number | string,
   maxWidth?: number | string,
-  defaultWidth?: number | string
+  defaultWidth?: number | string,
+  noHeader?: boolean;
 }
 
 // TODO: how to support these in CollectionBuilder...

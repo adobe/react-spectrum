@@ -17,6 +17,7 @@ import {Node} from '@react-types/shared';
 import {TableState} from '@react-stately/table';
 import {usePress} from '@react-aria/interactions';
 import {useTableCell} from './useTableCell';
+import { useFocusable } from '@react-aria/focus';
 
 interface ColumnHeaderProps {
   node: Node<unknown>,
@@ -30,7 +31,7 @@ interface ColumnHeaderAria {
 }
 
 export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableState<T>): ColumnHeaderAria {
-  let {node, colspan} = props;
+  let {node, colspan, ref} = props;
   let {gridCellProps} = useTableCell(props, state);
 
   let {pressProps} = usePress({
@@ -40,6 +41,7 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
     }
   });
 
+  let { focusableProps } = useFocusable({}, ref);
   let ariaSort: HTMLAttributes<HTMLElement>['aria-sort'] = null;
   if (node.props.allowsSorting) {
     ariaSort = state.sortDescriptor?.column === node.key ? state.sortDescriptor.direction : 'none';
@@ -47,7 +49,7 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
 
   return {
     columnHeaderProps: {
-      ...mergeProps(gridCellProps, pressProps),
+      ...mergeProps(gridCellProps, pressProps, focusableProps),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),
       'aria-colspan': colspan && colspan > 1 ? colspan : null,
