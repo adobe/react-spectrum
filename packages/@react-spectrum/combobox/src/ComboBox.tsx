@@ -23,13 +23,13 @@ import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
+import {PressResponder, useHover} from '@react-aria/interactions';
 import React, {ReactElement, RefObject, useRef, useState} from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
 import {useCollator} from '@react-aria/i18n';
-import {useHover} from '@react-aria/interactions';
 import {useId, useLayoutEffect} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
@@ -214,20 +214,22 @@ function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObj
           isQuiet={isQuiet}
           validationState={validationState}
           flex={1} />
-        <FieldButton
-          {...triggerProps}
-          ref={triggerRef}
-          UNSAFE_className={
-            classNames(
-              styles,
-              'spectrum-FieldButton'
-            )
-          }
-          isDisabled={isDisabled || isReadOnly}
-          isQuiet={isQuiet}
-          validationState={validationState}>
-          <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
-        </FieldButton>
+        <PressResponder preventFocusOnPress>
+          <FieldButton
+            {...triggerProps}
+            ref={triggerRef}
+            UNSAFE_className={
+              classNames(
+                styles,
+                'spectrum-FieldButton'
+              )
+            }
+            isDisabled={isDisabled || isReadOnly}
+            isQuiet={isQuiet}
+            validationState={validationState}>
+            <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
+          </FieldButton>
+        </PressResponder>
         {overlay}
       </div>
     </FocusRing>
