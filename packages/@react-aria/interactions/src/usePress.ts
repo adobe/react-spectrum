@@ -25,7 +25,9 @@ export interface PressProps extends PressEvents {
   /** Whether the target is in a controlled press state (e.g. an overlay it triggers is open). */
   isPressed?: boolean,
   /** Whether the press events should be disabled. */
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  /** Whether the target should not receive focus on press. */
+  preventFocusOnPress?: boolean
 }
 
 export interface PressHookProps extends PressProps {
@@ -93,6 +95,7 @@ export function usePress(props: PressHookProps): PressResult {
     onPressUp,
     isDisabled,
     isPressed: isPressedProp,
+    preventFocusOnPress,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref: _, // Removing `ref` from `domProps` because TypeScript is dumb
     ...domProps
@@ -307,7 +310,7 @@ export function usePress(props: PressHookProps): PressResult {
           state.activePointerId = e.pointerId;
           state.target = e.currentTarget;
 
-          if (!isDisabled) {
+          if (!isDisabled && !preventFocusOnPress) {
             focusWithoutScrolling(e.currentTarget);
           }
 
@@ -410,7 +413,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.isOverTarget = true;
         state.target = e.currentTarget;
 
-        if (!isDisabled) {
+        if (!isDisabled && !preventFocusOnPress) {
           focusWithoutScrolling(e.currentTarget);
         }
 
@@ -479,7 +482,7 @@ export function usePress(props: PressHookProps): PressResult {
 
         // Due to browser inconsistencies, especially on mobile browsers, we prevent default
         // on the emulated mouse event and handle focusing the pressable element ourselves.
-        if (!isDisabled) {
+        if (!isDisabled && !preventFocusOnPress) {
           focusWithoutScrolling(e.currentTarget);
         }
 

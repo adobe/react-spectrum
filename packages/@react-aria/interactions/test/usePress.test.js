@@ -17,7 +17,7 @@ import {usePress} from '../';
 function Example(props) {
   let {elementType: ElementType = 'div', ...otherProps} = props;
   let {pressProps} = usePress(otherProps);
-  return <ElementType {...pressProps}>test</ElementType>;
+  return <ElementType {...pressProps} tabIndex="0">test</ElementType>;
 }
 
 function pointerEvent(type, opts) {
@@ -347,6 +347,28 @@ describe('usePress', function () {
       fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', button: 1, clientX: 0, clientY: 0}));
       expect(events).toEqual([]);
     });
+
+    it('should not focus the target on click if preventFocusOnPress is true', function () {
+      let res = render(
+        <Example preventFocusOnPress />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      expect(document.activeElement).not.toBe(el);
+    });
+
+    it('should focus the target on click by default', function () {
+      let res = render(
+        <Example />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      expect(document.activeElement).toBe(el);
+    });
   });
 
   describe('mouse events', function () {
@@ -610,6 +632,32 @@ describe('usePress', function () {
       fireEvent.click(el, {detail: 1, button: 1});
 
       expect(events).toEqual([]);
+    });
+
+    it('should not focus the element on click if preventFocusOnPress is true', function () {
+      let res = render(
+        <Example preventFocusOnPress />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.mouseDown(el);
+      fireEvent.mouseUp(el);
+      fireEvent.click(el);
+
+      expect(document.activeElement).not.toBe(el);
+    });
+
+    it('should focus the element on click by default', function () {
+      let res = render(
+        <Example />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.mouseDown(el);
+      fireEvent.mouseUp(el);
+      fireEvent.click(el);
+
+      expect(document.activeElement).toBe(el);
     });
   });
 
@@ -1038,6 +1086,30 @@ describe('usePress', function () {
           shiftKey: false
         }
       ]);
+    });
+
+    it('should not focus the target if preventFocusOnPress is true', function () {
+      let res = render(
+        <Example preventFocusOnPress />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+
+      expect(document.activeElement).not.toBe(el);
+    });
+
+    it('should focus the target on touch by default', function () {
+      let res = render(
+        <Example />
+      );
+
+      let el = res.getByText('test');
+      fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
+      fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 0, clientY: 0}]});
+
+      expect(document.activeElement).toBe(el);
     });
   });
 
@@ -1556,5 +1628,16 @@ describe('usePress', function () {
         }
       ]);
     });
+  });
+
+  it('should focus the target even if preventFocusOnPress is true', function () {
+    let {getByText} = render(
+      <Example preventFocusOnPress />
+    );
+
+    let el = getByText('test');
+    fireEvent.click(el);
+
+    expect(document.activeElement).toBe(el);
   });
 });
