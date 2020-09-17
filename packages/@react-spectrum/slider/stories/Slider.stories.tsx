@@ -10,95 +10,95 @@
  * governing permissions and limitations under the License.
  */
 
-import { action } from '@storybook/addon-actions';
-import { Slider } from '../';
-import React, { useState } from 'react';
-import { storiesOf } from '@storybook/react';
-import { SpectrumSliderProps } from '@react-types/slider';
+import {action} from '@storybook/addon-actions';
+import React, {useState} from 'react';
+import {Slider} from '../';
+import {SpectrumSliderProps} from '@react-types/slider';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('Slider', module)
   .add(
     'Default',
-    () => render({ "aria-label": "Label" })
+    () => render({'aria-label': 'Label'})
   )
   .add(
     'label',
-    () => render({ label: "Label" })
+    () => render({label: 'Label'})
   )
   .add(
     'disabled',
-    () => render({ label: "Label", defaultValue: 50, isDisabled: true })
+    () => render({label: 'Label', defaultValue: 50, isDisabled: true})
   )
   .add(
     'label overflow',
-    () => render({ label: "This is a rather long label for this narrow slider element.", maxValue: 1000 }, "100px")
+    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000}, '100px')
   )
   .add(
     'showValueLabel: false',
-    () => render({ label: "Label", showValueLabel: false })
+    () => render({label: 'Label', showValueLabel: false})
   )
   .add(
     'formatOptions percent',
-    () => render({ label: "Label", minValue: 0, maxValue: 1, step: 0.01, formatOptions: { style: "percent" } })
+    () => render({label: 'Label', minValue: 0, maxValue: 1, step: 0.01, formatOptions: {style: 'percent'}})
   )
   .add(
     'formatOptions centimeter',
     // @ts-ignore TODO why is "unit" even missing? How well is it supported?
-    () => render({ label: "Label", maxValue: 1000, formatOptions: { style: "unit", unit: "centimeter" } })
+    () => render({label: 'Label', maxValue: 1000, formatOptions: {style: 'unit', unit: 'centimeter'}})
   )
   .add(
     'custom valueLabel',
     () => {
       let [state, setState] = useState(0);
-      return render({ label: "Label", value: state, onChange: setState, valueLabel: `A ${state} B` });
+      return render({label: 'Label', value: state, onChange: setState, valueLabel: `A ${state} B`});
     }
   )
   .add(
     'labelPosition: side',
-    () => render({ label: "Label", labelPosition: "side" })
+    () => render({label: 'Label', labelPosition: 'side'})
   )
   .add(
     'min/max',
-    () => render({ label: "Label", minValue: 30, maxValue: 70 })
+    () => render({label: 'Label', minValue: 30, maxValue: 70})
   )
   .add(
     'isFilled: true',
-    () => render({ label: "Label", isFilled: true })
+    () => render({label: 'Label', isFilled: true})
   )
   .add(
     'fillOffset',
-    () => render({ label: "Exposure", isFilled: true, fillOffset: 0, defaultValue: 0, minValue: -7, maxValue: 5 })
+    () => render({label: 'Exposure', isFilled: true, fillOffset: 0, defaultValue: 0, minValue: -7, maxValue: 5})
   )
   .add(
     'ticks',
-    () => render({ label: "Label", tickCount: 4 })
+    () => render({label: 'Label', tickCount: 4})
   )
   .add(
     'showTickLabels: true',
-    () => render({ label: "Label", tickCount: 4, showTickLabels: true })
+    () => render({label: 'Label', tickCount: 4, showTickLabels: true})
   )
   .add(
     'tickLabels',
-    () => render({ label: "Label", tickCount: 3, showTickLabels: true, tickLabels: ["A", "B", "C"] })
+    () => render({label: 'Label', tickCount: 3, showTickLabels: true, tickLabels: ['A', 'B', 'C']})
   )
   .add(
     'trackBackground',
-    () => render({ label: "Label", trackBackground: "linear-gradient(to right, blue, red)" })
+    () => render({label: 'Label', trackBackground: 'linear-gradient(to right, blue, red)'})
   )
   .add(
     'trackBackground with fillOffset',
-    () => render({ label: "Label", trackBackground: "linear-gradient(to right, blue, red)", isFilled: true, fillOffset: 50 })
+    () => render({label: 'Label', trackBackground: 'linear-gradient(to right, blue, red)', isFilled: true, fillOffset: 50})
   )
   .add(
     '* orientation: vertical',
-    () => render({ label: "Label", orientation: "vertical" })
+    () => render({label: 'Label', orientation: 'vertical'})
   );
 
-function render(props: SpectrumSliderProps = {}, width = "200px") {
+function render(props: SpectrumSliderProps = {}, width = '200px') {
   if (props.onChange == null) {
     props.onChange = action('change');
   }
-  return <div style={{ width }}>
+  return (<div style={{width}}>
     <Slider {...props} />
-  </div>;
+  </div>);
 }

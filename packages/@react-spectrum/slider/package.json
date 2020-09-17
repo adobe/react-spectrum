@@ -8,16 +8,23 @@
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
-  "files": ["dist"],
+  "files": [
+    "dist",
+    "src"
+  ],
   "sideEffects": [
     "*.css"
   ],
   "targets": {
     "main": {
-      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
     },
     "module": {
-      "includeNodeModules": ["@adobe/spectrum-css-temp"]
+      "includeNodeModules": [
+        "@adobe/spectrum-css-temp"
+      ]
     }
   },
   "repository": {
@@ -25,11 +32,17 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@adobe/react-spectrum": "3.3.0",
     "@babel/runtime": "^7.6.2",
+    "@react-aria/focus": "3.2.1",
+    "@react-aria/i18n": "3.1.1",
+    "@react-aria/interactions": "3.2.0",
     "@react-aria/slider": "^3.0.0-alpha.1",
     "@react-aria/utils": "^3.0.0-alpha.1",
     "@react-spectrum/utils": "^3.0.0-alpha.1",
-    "@react-stately/slider": "^3.0.0-alpha.1"
+    "@react-stately/slider": "^3.0.0-alpha.1",
+    "@react-types/shared": "3.2.0",
+    "@react-types/slider": "3.0.0-alpha.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "^3.0.0-alpha.1"

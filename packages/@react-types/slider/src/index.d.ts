@@ -1,5 +1,5 @@
-import { AriaLabelingProps, AriaValidationProps, FocusableDOMProps, FocusableProps, LabelableProps, LabelPosition, Orientation, RangeInputBase, RangeValue, Validation, ValueBase } from '@react-types/shared';
-import { ReactNode } from 'react';
+import {AriaLabelingProps, AriaValidationProps, FocusableDOMProps, FocusableProps, LabelableProps, LabelPosition, Orientation, RangeInputBase, RangeValue, Validation, ValueBase} from '@react-types/shared';
+import {ReactNode} from 'react';
 
 export interface BaseSliderProps extends RangeInputBase<number>, LabelableProps, AriaLabelingProps {
   isReadOnly?: boolean,
@@ -40,11 +40,11 @@ export interface SpectrumSliderTicksBase {
 }
 
 export interface SpectrumSliderProps extends SpectrumBarSliderBase<number>, SpectrumSliderTicksBase {
-  /** Whether a fill color is shown between the start of the slider and the current value. See https://spectrum.adobe.com/page/slider/#Fill */
+  /** Whether a fill color is shown between the start of the slider and the current value. See https://spectrum.adobe.com/page/slider/#Fill. */
   isFilled?: boolean,
-  /** The offset from which to start the fill. See https://spectrum.adobe.com/page/slider/#Fill-start */
+  /** The offset from which to start the fill. See https://spectrum.adobe.com/page/slider/#Fill-start. */
   fillOffset?: number,
-  /** The background of the track, e.g. a CSS linear-gradient(). See https://spectrum.adobe.com/page/slider/#Gradient */
+  /** The background of the track, e.g. a CSS linear-gradient(). See https://spectrum.adobe.com/page/slider/#Gradient. */
   trackBackground?: string
 }
 

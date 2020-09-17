@@ -10,20 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import { Slider } from '../';
 import React from 'react';
-import { storiesOf } from '@storybook/react';
-import { SpectrumSliderProps } from '@react-types/slider';
+import {Slider} from '../';
+import {SpectrumSliderProps} from '@react-types/slider';
+import {storiesOf} from '@storybook/react';
 
 storiesOf('Slider', module)
   .add(
     'name me',
-    () => render({label: "Label"})
+    () => render({label: 'Label'})
   );
 
 function render(props: SpectrumSliderProps = {}) {
   return (
-    <Slider {...props}>
-    </Slider>
+    <Slider {...props} />
   );
 }
