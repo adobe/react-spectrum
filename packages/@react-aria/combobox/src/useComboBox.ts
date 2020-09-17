@@ -226,7 +226,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
 
       // Refocus input when mobile tray closes for any reason
       if (isMobile) {
-        inputRef.current?.focus();
+        inputRef.current?.focus({preventScroll: true});
       }
     }
 
