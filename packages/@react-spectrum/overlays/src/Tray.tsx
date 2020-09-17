@@ -71,17 +71,33 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   // does not work properly because there is nothing to base the percentage on.
   // We cannot use vh units because mobile browsers adjust the window height dynamically
   // when the address bar/bottom toolbars show and hide on scroll and vh units are fixed.
-  let [maxHeight, setMaxHeight] = useState(window.visualViewport.height);
+  // VisualViewport isn't in the window type so ignore for now
+  // @ts-ignore
+  let [maxHeight, setMaxHeight] = useState(window.visualViewport?.height || window.innerHeight);
 
   useEffect(() => {
     // Use visualViewport api to track available height even on iOS virtual keyboard opening
     let onResize = () => {
-      setMaxHeight(window.visualViewport.height);
+      // @ts-ignore
+      setMaxHeight(window.visualViewport?.height || window.innerHeight);
     };
 
-    window.visualViewport.addEventListener('resize', onResize);
+    // @ts-ignore
+    if (!window.visualViewport) {
+      window.addEventListener('resize', onResize);
+    } else {
+      // @ts-ignore
+      window.visualViewport.addEventListener('resize', onResize);
+    }
+
     return () => {
-      window.visualViewport.removeEventListener('resize', onResize);
+      // @ts-ignore
+      if (!window.visualViewport) {
+        window.removeEventListener('resize', onResize);
+      } else {
+        // @ts-ignore
+        window.visualViewport.removeEventListener('resize', onResize);
+      }
     };
   }, [ref]);
 
@@ -98,7 +114,7 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   let style = {
     ...domProps.style,
     ...lockHeightStyles,
-    maxHeight: `calc(${maxHeight}px - var(--spectrum-tray-margin-top))`,
+    maxHeight: `calc(${maxHeight}px - var(--spectrum-tray-margin-top))`
   };
 
   let wrapperClassName = classNames(

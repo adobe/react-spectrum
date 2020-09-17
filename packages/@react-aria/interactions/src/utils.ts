@@ -27,17 +27,20 @@ export function isVirtualClick(event: MouseEvent | PointerEvent): boolean {
     return true;
   }
 
-  let target = event.target as HTMLElement
-  let rect = target.getBoundingClientRect();
+  // Pointer events with have event.detail === 0
+  if (event.detail === 0) {
+    // If click happens in the exact middle of the element, it may be a screenreader click. Bit iffy, but the best we can do for now
+    let rect = (event.target as HTMLElement).getBoundingClientRect();
 
-  let middleOfRect = {
-    x: Math.round(rect.left + .5 * rect.width),
-    y: Math.round(rect.top + .5 * rect.height)
-  };
+    let middleOfRect = {
+      x: Math.round(rect.left + .5 * rect.width),
+      y: Math.round(rect.top + .5 * rect.height)
+    };
 
-  if (event.clientX === middleOfRect.x && event.clientY === middleOfRect.y) {
-    return true;
+    if (event.clientX === middleOfRect.x && event.clientY === middleOfRect.y) {
+      return true;
+    }
+
+    return !(event as PointerEvent).pointerType;
   }
-
-  return event.detail === 0 && !(event as PointerEvent).pointerType;
 }
