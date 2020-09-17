@@ -215,18 +215,6 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     }
   };
 
-  let lastValue = useRef(state.inputValue);
-  useEffect(() => {
-    // Close combobox menu if user clears input text unless trigger is focus or is in mobile view (as per design)
-    if (lastValue.current !== state.inputValue) {
-      if (state.inputValue === '' && menuTrigger !== 'focus' && !isMobile) {
-        state.close();
-      }
-    }
-
-    lastValue.current = state.inputValue;
-  }, [state, menuTrigger, isMobile]);
-
   let prevOpenState = useRef(state.isOpen);
   useEffect(() => {
     if (!state.isOpen && prevOpenState.current !== state.isOpen) {
