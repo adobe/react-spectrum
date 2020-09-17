@@ -21,6 +21,8 @@ governing permissions and limitations under the License.
 .spectrum-Slider-track {
   &::before {
     background: var(--spectrum-slider-track-color);
+    background-size: var(--spectrum-track-background-size);
+    background-position: var(--spectrum-track-background-position);
   }
 }
 

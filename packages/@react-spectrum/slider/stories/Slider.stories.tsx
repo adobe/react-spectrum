@@ -78,11 +78,11 @@ storiesOf('Slider', module)
     () => render({ label: "Label", tickCount: 3, showTickLabels: true, tickLabels: ["A", "B", "C"] })
   )
   .add(
-    '* trackBackground',
+    'trackBackground',
     () => render({ label: "Label", trackBackground: "linear-gradient(to right, blue, red)" })
   )
   .add(
-    '* trackBackground with fillOffset',
+    'trackBackground with fillOffset',
     () => render({ label: "Label", trackBackground: "linear-gradient(to right, blue, red)", isFilled: true, fillOffset: 50 })
   )
   .add(

@@ -74,8 +74,22 @@ function Slider(props: SpectrumSliderProps, ref: DOMRef) {
   let labelNode = <label className={classNames(styles, "spectrum-Slider-label")} {...labelProps}>{props.label}</label>;
   let valueNode = <div className={classNames(styles, "spectrum-Slider-value")} role="textbox" aria-readonly="true" aria-labelledby={labelProps.id}>{displayValue}</div>
 
-  let leftTrack = <div className={classNames(styles, "spectrum-Slider-track")} style={{ width: `${state.getThumbPercent(0) * 100}%` }} />;
-  let rightTrack = <div className={classNames(styles, "spectrum-Slider-track")} style={{ width: `${(1 - state.getThumbPercent(0)) * 100}%` }} />;
+  let leftTrack = <div className={classNames(styles, "spectrum-Slider-track")} style={{
+    width: `${state.getThumbPercent(0) * 100}%`,
+    // TODO not sure if it has advantages, but this could also be implemented as CSS calc():
+    // .track::before {
+    //    background-size: calc((1/ (var(--width)/100)) * 100%);
+    //    width: calc(var(--width) * 1%)M
+    // }
+    // @ts-ignore
+    '--spectrum-track-background-size': `${(1 / state.getThumbPercent(0)) * 100}%`
+  }} />;
+  let rightTrack = <div className={classNames(styles, "spectrum-Slider-track")} style={{
+    width: `${(1 - state.getThumbPercent(0)) * 100}%`,
+    // @ts-ignore
+    '--spectrum-track-background-size': `${(1 / (1 - state.getThumbPercent(0))) * 100}%`,
+    '--spectrum-track-background-position': `100%`,
+  }} />;
 
   let filledTrack = null;
   if (isFilled && fillOffset != null) {
