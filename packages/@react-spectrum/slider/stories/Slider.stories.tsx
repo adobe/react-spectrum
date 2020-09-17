@@ -54,7 +54,7 @@ storiesOf('Slider', module)
     }
   )
   .add(
-    '* labelPosition: side',
+    'labelPosition: side',
     () => render({ label: "Label", labelPosition: "side" })
   )
   .add(

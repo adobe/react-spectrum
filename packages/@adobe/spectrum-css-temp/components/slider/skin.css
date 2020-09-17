@@ -304,3 +304,18 @@ governing permissions and limitations under the License.
     }
   }
 }
+
+.spectrum-Slider--label-side {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+
+  & > * {
+    display: inline-block;
+  }
+
+  & .spectrum-Slider-labelContainer {
+    padding-top: 0;
+    flex-shrink: 0;
+  }
+}

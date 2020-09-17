@@ -139,6 +139,7 @@ function Slider(props: SpectrumSliderProps, ref: DOMRef) {
       "spectrum-Slider",
       {
         'spectrum-Slider--filled': isFilled && fillOffset == null,
+        'spectrum-Slider--label-side': labelPosition === "side",
         'is-disabled': props.isDisabled
       })}
       style={
@@ -147,14 +148,13 @@ function Slider(props: SpectrumSliderProps, ref: DOMRef) {
       }
       {...containerProps}
     >
-      {labelPosition === "top" && (props.label || showValueLabel) &&
+      {(props.label) &&
         <div className={classNames(styles, "spectrum-Slider-labelContainer")}>
           {props.label && labelNode}
-          {showValueLabel && valueNode}
+          {labelPosition === "top" && showValueLabel && valueNode}
         </div>
       }
       <div className={classNames(styles, "spectrum-Slider-controls")} ref={trackRef} {...mergeProps(trackProps, hoverProps)}>
-        {labelPosition === "side" && props.label && labelNode}
         {leftTrack}
         {ticks}
         <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
@@ -166,8 +166,12 @@ function Slider(props: SpectrumSliderProps, ref: DOMRef) {
         </FocusRing>
         {rightTrack}
         {filledTrack}
-        {labelPosition === "side" && showValueLabel && valueNode}
       </div>
+      {labelPosition === "side" &&
+        <div className={classNames(styles, "spectrum-Slider-labelContainer")}>
+          {showValueLabel && valueNode}
+        </div>
+      }
     </div>);
 }
 
