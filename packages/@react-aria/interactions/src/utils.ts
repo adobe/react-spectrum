@@ -27,5 +27,17 @@ export function isVirtualClick(event: MouseEvent | PointerEvent): boolean {
     return true;
   }
 
+  let target = event.target as HTMLElement
+  let rect = target.getBoundingClientRect();
+
+  let middleOfRect = {
+    x: Math.round(rect.left + .5 * rect.width),
+    y: Math.round(rect.top + .5 * rect.height)
+  };
+
+  if (event.clientX === middleOfRect.x && event.clientY === middleOfRect.y) {
+    return true;
+  }
+
   return event.detail === 0 && !(event as PointerEvent).pointerType;
 }

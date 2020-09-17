@@ -21,16 +21,16 @@ import {FocusRing, FocusScope} from '@react-aria/focus';
 import {Label} from '@react-spectrum/label';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
+import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import {PressResponder, useHover} from '@react-aria/interactions';
+import {PressResponder, useHover, usePress} from '@react-aria/interactions';
 import React, {ReactElement, RefObject, useRef, useState} from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
 import {useCollator} from '@react-aria/i18n';
-import {useId, useLayoutEffect} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: RefObject<TextFieldRef>) {
@@ -289,11 +289,19 @@ function ComboBoxTrayInput<T>(props: ComboBoxTrayInputProps<T>) {
     onFocus: undefined
   }, state);
 
+  let {pressProps} = usePress({
+    onPress: (e) => {
+      if (e.pointerType === 'virtual') {
+        state.close();
+      }
+    }
+  });
+
   return (
     <TextFieldBase
       label={label}
       labelProps={labelProps}
-      inputProps={inputProps}
+      inputProps={mergeProps(inputProps, pressProps)}
       inputRef={inputRef}
       marginTop={label ? 5 : 15}
       marginX={15}
