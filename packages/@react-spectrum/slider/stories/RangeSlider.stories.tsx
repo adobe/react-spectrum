@@ -11,11 +11,11 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Provider} from '@adobe/react-spectrum';
 import {RangeSlider} from '../';
 import React, {useState} from 'react';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
 import {storiesOf} from '@storybook/react';
-import {Provider} from '@adobe/react-spectrum';
 
 storiesOf('RangeSlider', module)
   .add(
@@ -81,7 +81,9 @@ storiesOf('RangeSlider', module)
 
 function render(props: SpectrumRangeSliderProps = {}, width = '200px') {
   if (props.onChange == null) {
-    props.onChange = action('change');
+    props.onChange = (v) => {
+      action('change')(v.start, v.end);
+    };
   }
   return (<div style={{width}}>
     <RangeSlider {...props} />

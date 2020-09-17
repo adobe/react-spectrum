@@ -10,57 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useDOMRef} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {classNames} from '@react-spectrum/utils';
+import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE} from '@react-stately/slider';
 import {FocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
-import React, {useRef} from 'react';
+import React from 'react';
+import {SliderBase, useSliderBase} from './SliderBase';
 import {SliderProps, SpectrumRangeSliderProps} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
-import {useHover} from '@react-aria/interactions';
-import {useProviderProps} from '@react-spectrum/provider';
-import {useSlider, useSliderThumb} from '@react-aria/slider';
-import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE, useSliderState} from '@react-stately/slider';
 import {VisuallyHidden} from '@adobe/react-spectrum';
 
-function RangeSlider(props: SpectrumRangeSliderProps, ref: DOMRef) {
-  // needed?
-  useDOMRef(ref);
-  props = useProviderProps(props);
-
-  let {
-    labelPosition = 'top', formatOptions, valueLabel, showValueLabel = !!props.label,
-    onChange, value, defaultValue,
-    tickCount, showTickLabels, tickLabels,
-    ...otherProps} = props;
-
-  let {hoverProps, isHovered} = useHover({/* isDisabled */ });
-
-  let inputMinRef = useRef();
-  let inputMaxRef = useRef();
-  let trackRef = useRef();
-
-  // Assumes that DEFAULT_MIN_VALUE and DEFAULT_MAX_VALUE are both positive, this value needs to be passed to useSliderState, so
-  // getThumbMinValue/getThumbMaxValue cannot be used here.
-  // `Math.abs(Math.sign(a) - Math.sign(b)) === 2` is true if the values have a different sign and neither is null.
-  let alwaysDisplaySign = props.minValue != null && props.maxValue != null && Math.abs(Math.sign(props.minValue) - Math.sign(props.maxValue)) === 2;
-
-  if (alwaysDisplaySign) {
-    if (formatOptions != null) {
-      if (!('signDisplay' in formatOptions)) {
-        // @ts-ignore
-        formatOptions.signDisplay = 'exceptZero';
-      }
-    } else {
-      // @ts-ignore
-      formatOptions = {signDisplay: 'exceptZero'};
-    }
-  }
+function RangeSlider(props: SpectrumRangeSliderProps) {
+  let {onChange, value, defaultValue, ...otherProps} = props;
 
   let ariaProps: SliderProps = {
     ...otherProps,
-    // @ts-ignore
-    formatOptions: formatOptions,
     // Normalize `value: number[]` to `value: number`
     value: value != null ? [value.start, value.end] : undefined,
     defaultValue: defaultValue != null ? [defaultValue.start, defaultValue.end] :
@@ -71,31 +34,12 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: DOMRef) {
     }
   };
 
-  let state = useSliderState(ariaProps);
-  let {
-    containerProps,
-    trackProps,
-    labelProps
-  } = useSlider(ariaProps, state, trackRef);
-  let {thumbProps: minThumbProps, inputProps: minInputProps} = useSliderThumb({
-    index: 0,
-    isReadOnly: props.isReadOnly,
-    isDisabled: props.isDisabled,
-    trackRef,
-    inputRef: inputMinRef
-  }, state);
-  let {thumbProps: maxThumbProps, inputProps: maxInputProps} = useSliderThumb({
-    index: 1,
-    isReadOnly: props.isReadOnly,
-    isDisabled: props.isDisabled,
-    trackRef,
-    inputRef: inputMaxRef
-  }, state);
+  let {inputRefs,
+    thumbProps,
+    inputProps, ticks,
+    isHovered, ...containerProps} = useSliderBase(2, ariaProps);
 
-  // TODO intl/rtl for ranges?
-  let displayValue = valueLabel ?? `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`;
-  let labelNode = <label className={classNames(styles, 'spectrum-Slider-label')} {...labelProps}>{props.label}</label>;
-  let valueNode = <div className={classNames(styles, 'spectrum-Slider-value')} role="textbox" aria-readonly="true" aria-labelledby={labelProps.id}>{displayValue}</div>;
+  let {state} = containerProps;
 
   let leftTrack = (<div
     className={classNames(styles, 'spectrum-Slider-track')}
@@ -107,76 +51,36 @@ function RangeSlider(props: SpectrumRangeSliderProps, ref: DOMRef) {
     className={classNames(styles, 'spectrum-Slider-track')}
     style={{width: `${(1 - state.getThumbPercent(1)) * 100}%`}} />);
 
-  let ticks = null;
-  if (tickCount > 0) {
-    let tickList = [];
-    for (let i = 0; i < tickCount; i++) {
-      let tickLabel = tickLabels ? tickLabels[i] : state.getFormattedValue(state.getPercentValue(i / (tickCount - 1)));
-      tickList.push(
-        <div className={classNames(styles, 'spectrum-Slider-tick')} key={i}>
-          {showTickLabels &&
-            <div className={classNames(styles, 'spectrum-Slider-tickLabel')}>
-              {tickLabel}
-            </div>
-          }
-        </div>
-      );
-    }
-    ticks = (<div className={classNames(styles, 'spectrum-Slider-ticks')}>
-      {tickList}
-    </div>);
-  }
-
-
   return (
-    <div
-      className={classNames(styles,
-        'spectrum-Slider',
-        'spectrum-Slider--range',
-        {
-          'spectrum-Slider--label-side': labelPosition === 'side',
-          'is-disabled': props.isDisabled
-        })}
-      {...containerProps}>
-      {(props.label) &&
-        <div className={classNames(styles, 'spectrum-Slider-labelContainer')}>
-          {props.label && labelNode}
-          {labelPosition === 'top' && showValueLabel && valueNode}
+    <SliderBase {...containerProps} classes={'spectrum-Slider--range'}>
+      {leftTrack}
+      {ticks}
+      <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
+        <div
+          className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered})}
+          style={{left: `${state.getThumbPercent(0) * 100}%`}}
+          {...thumbProps[0]}
+          role="presentation">
+          <VisuallyHidden isFocusable>
+            <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRefs[0]} {...inputProps[0]} />
+          </VisuallyHidden>
         </div>
-      }
-      <div className={classNames(styles, 'spectrum-Slider-controls')} ref={trackRef} {...mergeProps(trackProps, hoverProps)}>
-        {leftTrack}
-        {ticks}
-        <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
-          <div
-            className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered})}
-            style={{left: `${state.getThumbPercent(0) * 100}%`}}
-            {...minThumbProps}>
-            <VisuallyHidden isFocusable>
-              <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputMinRef} {...minInputProps} />
-            </VisuallyHidden>
-          </div>
-        </FocusRing>
-        {middleTrack}
-        <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
-          <div
-            className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered})}
-            style={{left: `${state.getThumbPercent(1) * 100}%`}}
-            {...maxThumbProps}>
-            <VisuallyHidden isFocusable>
-              <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputMaxRef} {...maxInputProps} />
-            </VisuallyHidden>
-          </div>
-        </FocusRing>
-        {rightTrack}
-      </div>
-      {labelPosition === 'side' &&
-        <div className={classNames(styles, 'spectrum-Slider-labelContainer')}>
-          {showValueLabel && valueNode}
+      </FocusRing>
+      {middleTrack}
+      <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
+        <div
+          className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered})}
+          style={{left: `${state.getThumbPercent(1) * 100}%`}}
+          {...thumbProps[1]}
+          role="presentation">
+          <VisuallyHidden isFocusable>
+            <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRefs[1]} {...inputProps[1]} />
+          </VisuallyHidden>
         </div>
-      }
-    </div>);
+      </FocusRing>
+      {rightTrack}
+    </SliderBase>);
 }
 
-const _RangeSlider = React.forwardRef(RangeSlider);
-export {_RangeSlider as RangeSlider};
+// TODO forwardRef?
+export {RangeSlider};
