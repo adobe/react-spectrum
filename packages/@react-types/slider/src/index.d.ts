@@ -48,4 +48,4 @@ export interface SpectrumSliderProps extends SpectrumBarSliderBase<number>, Spec
   trackBackground?: string
 }
 
-export interface SpectrumRangeSlider extends SpectrumBarSliderBase<RangeValue<number>>, SpectrumSliderTicksBase { }
+export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeValue<number>>, SpectrumSliderTicksBase { }

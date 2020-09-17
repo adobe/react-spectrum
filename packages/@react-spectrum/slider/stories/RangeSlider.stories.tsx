@@ -11,13 +11,13 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Provider} from '@adobe/react-spectrum';
+import {RangeSlider} from '../';
 import React, {useState} from 'react';
-import {Slider} from '../';
-import {SpectrumSliderProps} from '@react-types/slider';
+import {SpectrumRangeSliderProps} from '@react-types/slider';
 import {storiesOf} from '@storybook/react';
+import {Provider} from '@adobe/react-spectrum';
 
-storiesOf('Slider', module)
+storiesOf('RangeSlider', module)
   .add(
     'Default',
     () => render({'aria-label': 'Label'})
@@ -32,7 +32,7 @@ storiesOf('Slider', module)
   )
   .add(
     'disabled',
-    () => render({label: 'Label', defaultValue: 50, isDisabled: true})
+    () => render({label: 'Label', defaultValue: {start: 30, end: 50}, isDisabled: true})
   )
   .add(
     'label overflow',
@@ -54,8 +54,8 @@ storiesOf('Slider', module)
   .add(
     'custom valueLabel',
     () => {
-      let [state, setState] = useState(0);
-      return render({label: 'Label', value: state, onChange: setState, valueLabel: `A ${state} B`});
+      let [state, setState] = useState({start: 20, end: 50});
+      return render({label: 'Label', value: state, onChange: setState, valueLabel: `${state.start} <-> ${state.end}`});
     }
   )
   .add(
@@ -65,14 +65,6 @@ storiesOf('Slider', module)
   .add(
     'min/max',
     () => render({label: 'Label', minValue: 30, maxValue: 70})
-  )
-  .add(
-    'isFilled: true',
-    () => render({label: 'Label', isFilled: true})
-  )
-  .add(
-    'fillOffset',
-    () => render({label: 'Exposure', isFilled: true, fillOffset: 0, defaultValue: 0, minValue: -7, maxValue: 5})
   )
   .add(
     'ticks',
@@ -85,29 +77,13 @@ storiesOf('Slider', module)
   .add(
     'tickLabels',
     () => render({label: 'Label', tickCount: 3, showTickLabels: true, tickLabels: ['A', 'B', 'C']})
-  )
-  .add(
-    'rtl trackBackground',
-    () => <Provider locale="ar-AE">{render({label: 'فهو يتحدّث بلغة ', trackBackground: 'linear-gradient(to right, blue, red)'})}</Provider>
-  )
-  .add(
-    'trackBackground',
-    () => render({label: 'Label', trackBackground: 'linear-gradient(to right, blue, red)'})
-  )
-  .add(
-    'trackBackground with fillOffset',
-    () => render({label: 'Label', trackBackground: 'linear-gradient(to right, blue, red)', isFilled: true, fillOffset: 50})
-  )
-  .add(
-    '* orientation: vertical',
-    () => render({label: 'Label', orientation: 'vertical'})
   );
 
-function render(props: SpectrumSliderProps = {}, width = '200px') {
+function render(props: SpectrumRangeSliderProps = {}, width = '200px') {
   if (props.onChange == null) {
     props.onChange = action('change');
   }
   return (<div style={{width}}>
-    <Slider {...props} />
+    <RangeSlider {...props} />
   </div>);
 }
