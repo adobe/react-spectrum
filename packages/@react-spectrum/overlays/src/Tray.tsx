@@ -71,24 +71,34 @@ let TrayWrapper = forwardRef(function (props: TrayWrapperProps, ref: RefObject<H
   // does not work properly because there is nothing to base the percentage on.
   // We cannot use vh units because mobile browsers adjust the window height dynamically
   // when the address bar/bottom toolbars show and hide on scroll and vh units are fixed.
-  let [maxHeight, setMaxHeight] = useState(window.innerHeight);
+  let [maxHeight, setMaxHeight] = useState(window.visualViewport.height);
 
   useEffect(() => {
+    // Use visualViewport api to track available height even on iOS virtual keyboard opening
     let onResize = () => {
-      setMaxHeight(window.innerHeight);
+      setMaxHeight(window.visualViewport.height);
     };
 
-    window.addEventListener('resize', onResize);
+    window.visualViewport.addEventListener('resize', onResize);
     return () => {
-      window.removeEventListener('resize', onResize);
+      window.visualViewport.removeEventListener('resize', onResize);
     };
   }, [ref]);
 
   let domProps = mergeProps(otherProps, overlayProps);
+  let lockHeightStyles;
+  if (lockHeightToMax) {
+    lockHeightStyles = {
+      height: `calc(${maxHeight}px - var(--spectrum-tray-margin-top))`,
+      position: 'relative',
+      top: 'var(--spectrum-tray-margin-top)'
+    };
+  }
+
   let style = {
     ...domProps.style,
+    ...lockHeightStyles,
     maxHeight: `calc(${maxHeight}px - var(--spectrum-tray-margin-top))`,
-    height: lockHeightToMax && `${window.innerHeight}px`
   };
 
   let wrapperClassName = classNames(
