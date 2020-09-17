@@ -41,7 +41,8 @@ function Slider(props: SpectrumSliderProps, ref: DOMRef) {
 
   // Assumes that DEFAULT_MIN_VALUE and DEFAULT_MAX_VALUE are both positive, this value needs to be passed to useSliderState, so
   // getThumbMinValue/getThumbMaxValue cannot be used here.
-  let alwaysDisplaySign = props.minValue != null && props.maxValue != null && Math.sign(props.minValue) !== Math.sign(props.maxValue);
+  // `Math.abs(Math.sign(a) - Math.sign(b)) === 2` is true if the values have a different sign and neither is null.
+  let alwaysDisplaySign = props.minValue != null && props.maxValue != null && Math.abs(Math.sign(props.minValue) - Math.sign(props.maxValue)) === 2;
 
   if (alwaysDisplaySign) {
     if (formatOptions != null) {
