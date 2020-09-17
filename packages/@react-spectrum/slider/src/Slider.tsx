@@ -43,10 +43,22 @@ function Slider(props: SpectrumSliderProps, ref: DOMRef) {
   // getThumbMinValue/getThumbMaxValue cannot be used here.
   let alwaysDisplaySign = props.minValue != null && props.maxValue != null && Math.sign(props.minValue) !== Math.sign(props.maxValue);
 
+  if (alwaysDisplaySign) {
+    if (formatOptions != null) {
+      if (!("signDisplay" in formatOptions)) {
+        // @ts-ignore
+        formatOptions.signDisplay = "exceptZero";
+      }
+    } else {
+      // @ts-ignore
+      formatOptions = { signDisplay: "exceptZero" };
+    }
+  }
+
   let ariaProps: SliderProps = {
     ...otherProps,
     // @ts-ignore
-    formatOptions: formatOptions ?? { signDisplay: alwaysDisplaySign ? "exceptZero" : "auto" },
+    formatOptions: formatOptions,
     // Normalize `value: number[]` to `value: number`
     value: value != null ? [value] : undefined,
     defaultValue: defaultValue != null ? [defaultValue] : undefined,
