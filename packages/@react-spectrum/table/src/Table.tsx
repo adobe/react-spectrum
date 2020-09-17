@@ -404,6 +404,7 @@ function TableSelectAllCell({column}) {
   }, state);
 
   let {checkboxProps} = useTableSelectAllCheckbox(state);
+  let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {hoverProps, isHovered} = useHover({});
 
   return (
@@ -420,9 +421,11 @@ function TableSelectAllCell({column}) {
           }
         )
       }>
-      <Checkbox
+      {!isSingleSelectionMode && <Checkbox
         {...checkboxProps}
-        UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
+        isEmphasized
+        UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')}/>
+      }
     </div>
   );
 }
@@ -526,6 +529,7 @@ function TableCheckboxCell({cell}) {
         {state.selectionManager.selectionMode !== 'none' &&
           <Checkbox
             {...checkboxProps}
+            isEmphasized
             UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
         }
       </div>

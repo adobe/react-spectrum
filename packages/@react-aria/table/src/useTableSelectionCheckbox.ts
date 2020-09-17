@@ -32,12 +32,15 @@ export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, stat
   let checkboxId = useId();
   let isSelected = state.selectionManager.isSelected(key);
 
+  let isOneSelected = state.selectionManager.selectedKeys.size > 0;
+
   return {
     checkboxProps: {
       id: checkboxId,
       'aria-label': 'Select',
       'aria-labelledby': `${checkboxId} ${getRowLabelledBy(state, key)}`,
       isSelected,
+      isDisabled: state.selectionManager.selectionMode === 'single' && isOneSelected && !isSelected,
       onChange: () => state.selectionManager.toggleSelection(key)
     }
   };
