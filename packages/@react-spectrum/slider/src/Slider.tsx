@@ -61,7 +61,6 @@ function Slider(props: SpectrumSliderProps, ref: DOMRef) {
     trackProps,
     labelProps
   } = useSlider(ariaProps, state, trackRef);
-
   let { thumbProps, inputProps } = useSliderThumb({
     index: 0,
     isReadOnly: props.isReadOnly,
@@ -69,6 +68,8 @@ function Slider(props: SpectrumSliderProps, ref: DOMRef) {
     trackRef,
     inputRef
   }, state);
+
+  fillOffset = fillOffset != null ? Math.max(state.getThumbMinValue(0), Math.min(fillOffset, state.getThumbMaxValue(0))) : fillOffset;
 
   let displayValue = valueLabel ?? state.getThumbValueLabel(0);
   let labelNode = <label className={classNames(styles, "spectrum-Slider-label")} {...labelProps}>{props.label}</label>;
@@ -120,11 +121,20 @@ function Slider(props: SpectrumSliderProps, ref: DOMRef) {
     </div>
   }
 
+
   return (
-    <div className={classNames(styles, "spectrum-Slider", { 'spectrum-Slider--filled': isFilled && fillOffset == null })} {...containerProps} style={
-      // @ts-ignore
-      { '--spectrum-slider-track-color': trackBackground }
-    }>
+    <div className={classNames(styles,
+      "spectrum-Slider",
+      {
+        'spectrum-Slider--filled': isFilled && fillOffset == null,
+        'is-disabled': props.isDisabled
+      })}
+      style={
+        // @ts-ignore
+        { '--spectrum-slider-track-color': trackBackground }
+      }
+      {...containerProps}
+    >
       {labelPosition === "top" && (props.label || showValueLabel) &&
         <div className={classNames(styles, "spectrum-Slider-labelContainer")}>
           {props.label && labelNode}

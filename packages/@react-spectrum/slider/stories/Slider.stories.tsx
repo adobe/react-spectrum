@@ -26,6 +26,10 @@ storiesOf('Slider', module)
     () => render({ label: "Label" })
   )
   .add(
+    'disabled',
+    () => render({ label: "Label", defaultValue: 50, isDisabled: true })
+  )
+  .add(
     'label overflow',
     () => render({ label: "This is a rather long label for this narrow slider element.", maxValue: 1000 }, "100px")
   )
