@@ -10,17 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-// import React from 'react';
-// import {render} from '@testing-library/react';
-import Slider from '../';
+import React from 'react';
+import {render} from '@testing-library/react';
+import {Slider} from '../';
 
 describe('Slider', function () {
-  it.each`
-    Name          | Component   | props
-    ${'Slider'}   | ${Slider}   | ${{}}
-  `('$Name handles defaults', function ({Component, props}) {
-  //   let {getByRole, getByText} = render(<Component {...props}></Component>);
+  it('supports aria-label', function () {
+    let {getByRole} = render(<Slider aria-label="The Label" />);
 
-  //   expect(true).toBeTruthy();
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('aria-label', 'The Label');
+  });
+
+  it('supports label', function () {
+    let {getByRole} = render(<Slider label="The Label" />);
+
+    let group = getByRole('group');
+    let label = document.getElementById(group.getAttribute('aria-labelledby'));
+    expect(label).toHaveTextContent(/^The Label$/);
   });
 });
