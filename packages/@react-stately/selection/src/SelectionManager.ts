@@ -94,6 +94,7 @@ export class SelectionManager implements MultipleSelectionManager {
       return false;
     }
 
+    key = this.getKey(key);
     return this.state.selectedKeys === 'all' || this.state.selectedKeys.has(key);
   }
 

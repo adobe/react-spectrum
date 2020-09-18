@@ -68,6 +68,10 @@ describe('Table', function () {
     offsetHeight.mockReset();
   });
 
+  afterEach(() => {
+    act(() => {jest.runAllTimers();});
+  });
+
   let render = (children, scale = 'medium') => renderComponent(
     <Provider theme={theme} scale={scale}>
       {children}
@@ -1989,6 +1993,180 @@ describe('Table', function () {
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         checkRowSelection(rows.slice(2), true);
         checkSelectAll(tree, 'indeterminate');
+      });
+    });
+  });
+
+  describe('single selection', function () {
+    let renderJSX = (onSelectionChange, items = manyItems) => (
+      <Table aria-label="Table" onSelectionChange={onSelectionChange} selectionMode="single">
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    );
+
+    let renderTable = (onSelectionChange, items = manyItems) => render(renderJSX(onSelectionChange, items));
+
+    let checkSelection = (onSelectionChange, selectedKeys) => {
+      expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(selectedKeys));
+    };
+
+    let checkRowSelection = (rows, selected) => {
+      for (let row of rows) {
+        expect(row).toHaveAttribute('aria-selected', '' + selected);
+      }
+    };
+
+    let pressWithKeyboard = (element, key = ' ') => {
+      act(() => {
+        fireEvent.keyDown(element, {key});
+        element.focus();
+        fireEvent.keyUp(element, {key});
+      });
+    };
+
+    describe('row selection', function () {
+      it('should select a row from checkbox', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable(onSelectionChange);
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => userEvent.click(within(row).getByRole('checkbox')));
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should select a row by pressing on a cell', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable(onSelectionChange);
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => triggerPress(getCell(tree, 'Baz 1')));
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should select a row by pressing the Space key on a row', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable(onSelectionChange);
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => {fireEvent.keyDown(row, {key: ' '});});
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should select a row by pressing the Enter key on a row', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable(onSelectionChange);
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => {fireEvent.keyDown(row, {key: 'Enter'});});
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should select a row by pressing the Space key on a cell', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable(onSelectionChange);
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => {fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: ' '});});
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('should select a row by pressing the Enter key on a cell', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable(onSelectionChange);
+
+        let row = tree.getAllByRole('row')[1];
+        expect(row).toHaveAttribute('aria-selected', 'false');
+        act(() => {fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'Enter'});});
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(row).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('will only select one if pointer is used to click on multiple', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable(onSelectionChange);
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(1), false);
+        act(() => triggerPress(getCell(tree, 'Baz 1')));
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        checkRowSelection(rows.slice(2), false);
+
+        onSelectionChange.mockReset();
+        act(() => triggerPress(getCell(tree, 'Baz 2')));
+
+        checkSelection(onSelectionChange, ['Foo 2']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+        checkRowSelection(rows.slice(3), false);
+
+        // Deselect
+        onSelectionChange.mockReset();
+        act(() => triggerPress(getCell(tree, 'Baz 2')));
+
+        checkSelection(onSelectionChange, []);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        checkRowSelection(rows.slice(2), false);
+      });
+
+      it('should support selecting multiple with the Space key', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable(onSelectionChange);
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(1), false);
+        pressWithKeyboard(getCell(tree, 'Baz 1'));
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        checkRowSelection(rows.slice(2), false);
+
+        onSelectionChange.mockReset();
+        pressWithKeyboard(getCell(tree, 'Baz 2'));
+
+        checkSelection(onSelectionChange, ['Foo 2']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+        checkRowSelection(rows.slice(3), false);
+
+        // Deselect
+        onSelectionChange.mockReset();
+        pressWithKeyboard(getCell(tree, 'Baz 2'));
+
+        checkSelection(onSelectionChange, []);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        checkRowSelection(rows.slice(2), false);
       });
     });
   });
