@@ -444,11 +444,13 @@ function TableRow({item, children, ...otherProps}) {
   let ref = useRef();
   let state = useTableContext();
   let isSelected = state.selectionManager.isSelected(item.key);
+  let isDisabled = state.disabledKeys.has(item.key);
   let {rowProps} = useTableRow({
     node: item,
     isSelected,
     ref,
-    isVirtualized: true
+    isVirtualized: true,
+    isDisabled
   }, state);
 
   // The row should show the focus background style when any cell inside it is focused.
@@ -479,7 +481,8 @@ function TableRow({item, children, ...otherProps}) {
             'is-selected': isSelected,
             'is-focused': isFocusVisibleWithin,
             'focus-ring': isFocusVisible,
-            'is-hovered': isHovered
+            'is-hovered': isHovered,
+            'is-disabled': isDisabled
           }
         )
       }>
@@ -500,6 +503,7 @@ function TableHeaderRow({item, children, ...otherProps}) {
 function TableCheckboxCell({cell}) {
   let ref = useRef();
   let state = useTableContext();
+  let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
     ref,
@@ -530,6 +534,7 @@ function TableCheckboxCell({cell}) {
           <Checkbox
             {...checkboxProps}
             isEmphasized
+            isDisabled={isDisabled}
             UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
         }
       </div>
@@ -540,10 +545,12 @@ function TableCheckboxCell({cell}) {
 function TableCell({cell}) {
   let ref = useRef();
   let state = useTableContext();
+  let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {gridCellProps} = useTableCell({
     node: cell,
     ref,
-    isVirtualized: true
+    isVirtualized: true,
+    isDisabled
   }, state);
 
   return (
