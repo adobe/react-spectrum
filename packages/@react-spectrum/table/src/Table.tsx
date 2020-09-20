@@ -424,7 +424,7 @@ function TableSelectAllCell({column}) {
       {!isSingleSelectionMode && <Checkbox
         {...checkboxProps}
         isEmphasized
-        UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')}/>
+        UNSAFE_className={classNames(styles, 'spectrum-Table-checkbox')} />
       }
     </div>
   );
