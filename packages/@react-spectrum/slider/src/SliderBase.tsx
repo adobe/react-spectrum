@@ -59,8 +59,6 @@ export function useSliderBase(count: number, props: UseSliderBaseInputProps): Us
   let thumbProps = [];
   let inputProps = [];
 
-  let state = useSliderState(props);
-
   let {hoverProps, isHovered} = useHover({/* isDisabled */ });
 
   // Assumes that DEFAULT_MIN_VALUE and DEFAULT_MAX_VALUE are both positive, this value needs to be passed to useSliderState, so
@@ -80,16 +78,16 @@ export function useSliderBase(count: number, props: UseSliderBaseInputProps): Us
     }
   }
 
+  let state = useSliderState(props);
+
   let {direction} = useLocale();
 
   let trackRef = useRef();
-
   let {
     containerProps,
     trackProps,
     labelProps
   } = useSlider({...props, direction}, state, trackRef);
-
 
   for (let i = 0; i < count; i++) {
     // eslint-disable-next-line react-hooks/rules-of-hooks

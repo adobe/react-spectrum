@@ -12,7 +12,7 @@
 
 import {act, fireEvent, render} from '@testing-library/react';
 import {Provider} from '@adobe/react-spectrum';
-import React from 'react';
+import React, {useState} from 'react';
 import {Slider} from '../';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
@@ -76,14 +76,104 @@ describe('Slider', function () {
     expect(slider).toBeDisabled();
   });
 
-  describe('interactions', () => {
+  it('supports defaultValue', function () {
+    let {getByRole} = render(<Slider label="The Label" defaultValue={20} />);
+
+    let slider = getByRole('slider');
+
+    expect(slider).toHaveProperty('value', '20');
+    fireEvent.change(slider, {target: {value: '40'}});
+    expect(slider).toHaveProperty('value', '40');
+  });
+
+  it('can be controlled', function () {
+    let renders = [];
+
+    function Test() {
+      let [value, setValue] = useState(50);
+      renders.push(value);
+
+      return (<Slider label="The Label" value={value} onChange={setValue} />);
+    }
+
+    let {getByRole} = render(<Test />);
+
+    let slider = getByRole('slider');
+
+    expect(slider).toHaveProperty('value', '50');
+    fireEvent.change(slider, {target: {value: '55'}});
+    expect(slider).toHaveProperty('value', '55');
+
+    expect(renders).toStrictEqual([50, 55]);
+  });
+
+  it('supports a custom valueLabel', function () {
+    function Test() {
+      let [value, setValue] = useState(50);
+      return (<Slider label="The Label" value={value} onChange={setValue} valueLabel={`A${value}B`} />);
+    }
+
+    let {getByRole} = render(<Test />);
+
+    let group = getByRole('group');
+    let slider = getByRole('slider');
+
+    expect(group.textContent).toBe('The LabelA50B');
+    fireEvent.change(slider, {target: {value: '55'}});
+    expect(group.textContent).toBe('The LabelA55B');
+  });
+
+  describe('formatOptions', () => {
+    it('prefixes the value with a plus sign if needed', function () {
+      let {getByRole} = render(
+        <Slider
+          label="The Label"
+          minValue={-50}
+          maxValue={50}
+          defaultValue={10} />
+      );
+
+      let group = getByRole('group');
+      let slider = getByRole('slider');
+
+      expect(group.textContent).toBe('The Label+10');
+      fireEvent.change(slider, {target: {value: '0'}});
+      expect(group.textContent).toBe('The Label0');
+    });
+
+    it('supports setting custom formatOptions', function () {
+      let {getByRole} = render(
+        <Slider
+          label="The Label"
+          minValue={0}
+          maxValue={1}
+          step={0.01}
+          defaultValue={0.2}
+          formatOptions={{style: 'percent'}} />
+      );
+
+      let group = getByRole('group');
+      let slider = getByRole('slider');
+
+      expect(group.textContent).toBe('The Label20%');
+      fireEvent.change(slider, {target: {value: 0.5}});
+      expect(group.textContent).toBe('The Label50%');
+    });
+  });
+
+  // formatOptions
+  // min max
+
+  // TODO: assert DOM structure for isFilled/fillOffset, ticks, trackBackground?
+
+  describe('keyboard interactions', () => {
     // See comment on onKeyDown in useDrag1D
+    // ${'(up/down arrows, rtl)'}    | ${{locale: 'ar-AE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowUp(slider);    expect(slider).toHaveProperty('value', String(v - 1)); pressArrowDown(slider); expect(slider).toHaveProperty('value', String(v));}}
+    // ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowRight(slider); expect(slider).toHaveProperty('value', String(v - 1)); pressArrowLeft(slider); expect(slider).toHaveProperty('value', String(v));}}
     it.skip.each`
-    Name                            | props                 | run
+      Name                          | props                 | run
       ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowRight(slider); expect(slider).toHaveProperty('value', String(v + 1)); pressArrowLeft(slider); expect(slider).toHaveProperty('value', String(v));}}
-      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowRight(slider); expect(slider).toHaveProperty('value', String(v - 1)); pressArrowLeft(slider); expect(slider).toHaveProperty('value', String(v));}}
       ${'(up/down arrows, ltr)'}    | ${{locale: 'de-DE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowUp(slider);    expect(slider).toHaveProperty('value', String(v + 1)); pressArrowDown(slider); expect(slider).toHaveProperty('value', String(v));}}
-      ${'(up/down arrows, rtl)'}    | ${{locale: 'ar-AE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowUp(slider);    expect(slider).toHaveProperty('value', String(v - 1)); pressArrowDown(slider); expect(slider).toHaveProperty('value', String(v));}}
     `('$Name shifts button focus in the correct direction on key press', function ({Name, props, run}) {
       let tree = render(
         <Provider theme={theme} locale={props.locale}>
@@ -98,5 +188,12 @@ describe('Slider', function () {
 
       run(slider);
     });
+
+    // TODO verify that it's clamped by min/max
+
+    // TODO step
   });
+
+  // TODO
+  // describe('mouse interactions', () => {  });
 });
