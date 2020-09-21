@@ -38,6 +38,22 @@ export interface SpectrumDialogTriggerProps extends OverlayTriggerProps, Positio
   isKeyboardDismissDisabled?: boolean
 }
 
+interface SpectrumDialogContainerProps {
+  /** The Dialog to display, if any. */
+  children: ReactNode,
+  /** Handler that is called when the 'x' button of a dismissable Dialog is clicked. */
+  onDismiss: () => void,
+  /**
+   * The type of Dialog that should be rendered. See the DialogTrigger [types section](#dialog-types) for an explanation on each.
+   * @default 'modal'
+   */
+  type?: 'modal' | 'fullscreen' | 'fullscreenTakeover',
+  /** Whether the Dialog is dismissable. See the [examples](#examples) for more details. */
+  isDismissable?: boolean,
+  /** Whether pressing the escape key to close the dialog should be disabled. */
+  isKeyboardDismissDisabled?: boolean
+}
+
 export interface AriaDialogProps extends DOMProps, AriaLabelingProps {
   /**
    * The accessibility role for the dialog.
