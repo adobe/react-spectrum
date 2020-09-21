@@ -10,20 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaTooltipProps} from '@react-types/tooltip';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes} from 'react';
+import {PlacementAxis} from '@react-types/overlays';
+import React, {HTMLAttributes, RefObject} from 'react';
+import {StyleProps} from '@react-types/shared';
 
-interface TooltipAria {
-  tooltipProps: HTMLAttributes<HTMLElement>
+interface TooltipContextProps extends StyleProps {
+  ref?: RefObject<HTMLDivElement>,
+  placement?: PlacementAxis,
+  arrowProps?: HTMLAttributes<HTMLElement>
 }
 
-export function useTooltip(props: AriaTooltipProps): TooltipAria {
-  let domProps = filterDOMProps(props, {labelable: true});
-
-  return {
-    tooltipProps: mergeProps(domProps, {
-      role: 'tooltip'
-    })
-  };
-}
+export const TooltipContext = React.createContext<TooltipContextProps>({});

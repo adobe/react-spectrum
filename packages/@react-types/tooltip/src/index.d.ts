@@ -11,20 +11,33 @@
  */
 
 import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
-import {HTMLAttributes, ReactElement, ReactNode} from 'react';
-import {PositionProps} from '@react-types/overlays';
+import {OverlayTriggerProps, PositionProps} from '@react-types/overlays';
+import {ReactElement, ReactNode} from 'react';
 
-export interface TooltipTriggerProps extends PositionProps {
-  children: ReactElement[],
+export interface TooltipTriggerProps extends OverlayTriggerProps {
   isDisabled?: boolean,
-  onOpenChange?: (isOpen: boolean) => void,
-  delay?: number
+  delay?: number,
+  /**
+   * The additional offset applied along the main axis between the element and its
+   * anchor element.
+   * @default 7
+   */
+  offset?: number,
+  /**
+   * The additional offset applied along the cross axis between the element and its
+   * anchor element.
+   * @default 0
+   */
+  crossOffset?: number
 }
 
-export interface TooltipProps extends DOMProps {
+export interface SpectrumTooltipTriggerProps extends TooltipTriggerProps, PositionProps {
+  children: [ReactElement, ReactElement]
+}
+
+export interface TooltipProps {
   children: ReactNode,
-  isOpen?: boolean,
-  role?: 'tooltip'
+  isOpen?: boolean
 }
 
 export interface AriaTooltipProps extends TooltipProps, DOMProps, AriaLabelingProps {}
@@ -33,10 +46,4 @@ export interface SpectrumTooltipProps extends AriaTooltipProps, StyleProps {
   variant?: 'neutral' | 'positive' | 'negative' | 'info',
   placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom',
   showIcon?: boolean
-}
-
-export interface TriggerProps extends DOMProps, HTMLAttributes<HTMLElement> {}
-
-export interface TooltipTriggerAriaProps {
-  isDisabled: boolean
 }
