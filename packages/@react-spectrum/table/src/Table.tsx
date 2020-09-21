@@ -529,6 +529,9 @@ function TableCheckboxCell({cell}) {
             styles,
             'spectrum-Table-cell',
             'spectrum-Table-checkboxCell',
+            {
+              'is-disabled': isDisabled
+            },
             classNames(
               stylesOverrides,
               'react-spectrum-Table-cell'
@@ -585,7 +588,9 @@ function TableRowHeader({cell}) {
 }
 
 function TableCellBase({cell, cellRef, ...otherProps}) {
+  let state = useTableContext();
   let columnProps = cell.column.props as SpectrumColumnProps<unknown>;
+  let isDisabled = state.disabledKeys.has(cell.parentKey);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
@@ -597,7 +602,8 @@ function TableCellBase({cell, cellRef, ...otherProps}) {
             styles,
             'spectrum-Table-cell',
             {
-              'spectrum-Table-cell--divider': columnProps.showDivider
+              'spectrum-Table-cell--divider': columnProps.showDivider,
+              'is-disabled': isDisabled
             },
             classNames(
               stylesOverrides,
