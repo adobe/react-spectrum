@@ -174,7 +174,7 @@ function SliderBase(props: SliderBaseProps, ref: DOMRef) {
   let {
     state, children, classes, style,
     trackRef, hoverProps, isDisabled,
-    labelProps, direction, containerProps, trackProps,
+    labelProps, containerProps, trackProps,
     labelPosition = 'top', valueLabel, showValueLabel = !!props.label
   } = props;
 
@@ -186,11 +186,7 @@ function SliderBase(props: SliderBaseProps, ref: DOMRef) {
         break;
       case 2:
         // This should really use the NumberFormat#formatRange proposal
-        if (direction === 'ltr') {
-          displayValue = `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`;
-        } else {
-          displayValue = `${state.getThumbValueLabel(1)} - ${state.getThumbValueLabel(0)}`;
-        }
+        displayValue = `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`;
         break;
       default:
         throw new Error('Only sliders with 1 or 2 handles are supported!');

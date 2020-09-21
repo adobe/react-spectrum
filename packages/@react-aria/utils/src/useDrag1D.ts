@@ -39,7 +39,7 @@ const draggingElements: HTMLElement[] = [];
 // It can also handle either a vertical or horizontal movement, but not both at the same time
 
 export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
-  let {containerRef, reverse, orientation, onHover, onDrag, onPositionChange/* , onIncrement, onDecrement, onIncrementToMax, onDecrementToMin, onCollapseToggle */} = props;
+  let {containerRef, reverse, orientation, onHover, onDrag, onPositionChange, onIncrement, onDecrement, onIncrementToMax, onDecrementToMin, onCollapseToggle} = props;
   let getPosition = (e) => orientation === 'horizontal' ? e.clientX : e.clientY;
   let getNextOffset = (e: MouseEvent) => {
     let containerOffset = getOffset(containerRef.current, reverse, orientation);
@@ -116,66 +116,71 @@ export function useDrag1D(props: UseDrag1DProps): HTMLAttributes<HTMLElement> {
     }
   };
 
-  let onKeyDown = (/* e */) => {
-    // TODO page up/down (= +- 10%).
-    // Do we actually want to override the native behaviour? (RTL?)
-    // Seems to be needed for tests at least.
-    // switch (e.key) {
-    //   case 'Left':
-    //   case 'ArrowLeft':
-    //     e.preventDefault();
-    //     if (onDecrement && !reverse) {
-    //       onDecrement();
-    //     } else if (onIncrement && reverse) {
-    //       onIncrement();
-    //     }
-    //     break;
-    //   case 'Up':
-    //   case 'ArrowUp':
-    //     e.preventDefault();
-    //     if (onDecrement && reverse) {
-    //       onDecrement();
-    //     } else if (onIncrement && !reverse) {
-    //       onIncrement();
-    //     }
-    //     break;
-    //   case 'Right':
-    //   case 'ArrowRight':
-    //     e.preventDefault();
-    //     if (onIncrement && !reverse) {
-    //       onIncrement();
-    //     } else if (onDecrement && reverse) {
-    //       onDecrement();
-    //     }
-    //     break;
-    //   case 'Down':
-    //   case 'ArrowDown':
-    //     e.preventDefault();
-    //     if (onIncrement && reverse) {
-    //       onIncrement();
-    //     } else if (onDecrement && !reverse) {
-    //       onDecrement();
-    //     }
-    //     break;
-    //   case 'Home':
-    //     e.preventDefault();
-    //     if (onDecrementToMin) {
-    //       onDecrementToMin();
-    //     }
-    //     break;
-    //   case 'End':
-    //     e.preventDefault();
-    //     if (onIncrementToMax) {
-    //       onIncrementToMax();
-    //     }
-    //     break;
-    //   case 'Enter':
-    //     e.preventDefault();
-    //     if (onCollapseToggle) {
-    //       onCollapseToggle();
-    //     }
-    //     break;
-    // }
+  let onKeyDown = (e) => {
+    switch (e.key) {
+      case 'Left':
+      case 'ArrowLeft':
+        if (orientation === 'horizontal') {
+          e.preventDefault();
+          if (onDecrement && !reverse) {
+            onDecrement();
+          } else if (onIncrement && reverse) {
+            onIncrement();
+          }
+        }
+        break;
+      case 'Up':
+      case 'ArrowUp':
+        if (orientation === 'vertical') {
+          e.preventDefault();
+          if (onDecrement && !reverse) {
+            onDecrement();
+          } else if (onIncrement && reverse) {
+            onIncrement();
+          }
+        }
+        break;
+      case 'Right':
+      case 'ArrowRight':
+        if (orientation === 'horizontal') {
+          e.preventDefault();
+          if (onIncrement && !reverse) {
+            onIncrement();
+          } else if (onDecrement && reverse) {
+            onDecrement();
+          }
+        }
+        break;
+      case 'Down':
+      case 'ArrowDown':
+        if (orientation === 'vertical') {
+          e.preventDefault();
+          if (onIncrement && !reverse) {
+            onIncrement();
+          } else if (onDecrement && reverse) {
+            onDecrement();
+          }
+        }
+        break;
+      case 'Home':
+        e.preventDefault();
+        if (onDecrementToMin) {
+          onDecrementToMin();
+        }
+        break;
+      case 'End':
+        e.preventDefault();
+        if (onIncrementToMax) {
+          onIncrementToMax();
+        }
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (onCollapseToggle) {
+          onCollapseToggle();
+        }
+        break;
+    }
   };
 
   return {onMouseDown, onMouseEnter, onMouseOut, onKeyDown};

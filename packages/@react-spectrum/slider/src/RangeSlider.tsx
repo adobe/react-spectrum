@@ -60,11 +60,11 @@ function RangeSlider(props: SpectrumRangeSliderProps) {
       <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
         <div
           className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered})}
-          style={{left: toPercent(state.getThumbPercent(leftSliderIndex), direction)}}
-          {...thumbProps[leftSliderIndex]}
+          style={{left: toPercent(state.getThumbPercent(0), direction)}}
+          {...thumbProps[0]}
           role="presentation">
           <VisuallyHidden isFocusable>
-            <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRefs[leftSliderIndex]} {...inputProps[leftSliderIndex]} />
+            <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRefs[0]} {...inputProps[0]} />
           </VisuallyHidden>
         </div>
       </FocusRing>
@@ -72,11 +72,11 @@ function RangeSlider(props: SpectrumRangeSliderProps) {
       <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
         <div
           className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered})}
-          style={{left: toPercent(state.getThumbPercent(rightSliderIndex), direction)}}
-          {...thumbProps[rightSliderIndex]}
+          style={{left: toPercent(state.getThumbPercent(1), direction)}}
+          {...thumbProps[1]}
           role="presentation">
           <VisuallyHidden isFocusable>
-            <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRefs[rightSliderIndex]} {...inputProps[rightSliderIndex]} />
+            <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRefs[1]} {...inputProps[1]} />
           </VisuallyHidden>
         </div>
       </FocusRing>
