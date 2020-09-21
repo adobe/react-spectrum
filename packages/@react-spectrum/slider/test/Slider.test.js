@@ -76,6 +76,27 @@ describe('Slider', function () {
     expect(slider).toBeDisabled();
   });
 
+  it('can be focused', function () {
+    let {getByRole, getAllByRole} = render(<div>
+      <button>A</button>
+      <Slider label="The Label" defaultValue={20} />
+      <button>B</button>
+    </div>);
+
+    let slider = getByRole('slider');
+    let [buttonA, buttonB] = getAllByRole('button');
+    act(() => {
+      slider.focus();
+    });
+
+    expect(document.activeElement).toBe(slider);
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttonB);
+    userEvent.tab({shift: true});
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(buttonA);
+  });
+
   it('supports defaultValue', function () {
     let {getByRole} = render(<Slider label="The Label" defaultValue={20} />);
 
@@ -161,9 +182,6 @@ describe('Slider', function () {
     });
   });
 
-  // formatOptions
-  // min max
-
   // TODO: assert DOM structure for isFilled/fillOffset, ticks, trackBackground?
 
   describe('keyboard interactions', () => {
@@ -194,6 +212,6 @@ describe('Slider', function () {
     // TODO step
   });
 
-  // TODO
+  // TODO ???
   // describe('mouse interactions', () => {  });
 });

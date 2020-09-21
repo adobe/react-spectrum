@@ -87,6 +87,11 @@ storiesOf('Slider', module)
     () => render({label: 'Label', tickCount: 4, showTickLabels: true})
   )
   .add(
+    'showTickLabels, custom formatOptions',
+    // @ts-ignore TODO why is "unit" even missing? How well is it supported?
+    () => render({label: 'Label', tickCount: 5, showTickLabels: true, minValue: -10, maxValue: 10, formatOptions: {style: 'unit', unit: 'centimeter'}})
+  )
+  .add(
     'tickLabels',
     () => render({label: 'Label', tickCount: 3, showTickLabels: true, tickLabels: ['A', 'B', 'C']})
   )

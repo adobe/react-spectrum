@@ -14,7 +14,7 @@ import {classNames} from '@react-spectrum/utils';
 import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE} from '@react-stately/slider';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
-import {SliderBase, useSliderBase, UseSliderBaseInputProps} from './SliderBase';
+import {SliderBase, toPercent, useSliderBase, UseSliderBaseInputProps} from './SliderBase';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {VisuallyHidden} from '@adobe/react-spectrum';
@@ -39,31 +39,32 @@ function RangeSlider(props: SpectrumRangeSliderProps) {
     inputProps, ticks,
     isHovered, ...containerProps} = useSliderBase(2, ariaProps);
 
-  let {state/* , direction */} = containerProps;
-  // let isRTL = direction === 'rtl';
+  let {state, direction} = containerProps;
 
-  let lowerTrack = (<div
+  let [leftSliderIndex, rightSliderIndex] = direction === 'ltr' ? [0, 1] : [1, 0];
+
+  let leftTrack = (<div
     className={classNames(styles, 'spectrum-Slider-track')}
-    style={{width: `${state.getThumbPercent(0) * 100}%`}} />);
+    style={{width: toPercent(state.getThumbPercent(leftSliderIndex), direction)}} />);
   let middleTrack = (<div
     className={classNames(styles, 'spectrum-Slider-track')}
-    style={{left: `${state.getThumbPercent(0) * 100}%`, width: `${(state.getThumbPercent(1) - state.getThumbPercent(0)) * 100}%`}} />);
-  let higherTrack = (<div
+    style={{left: toPercent(state.getThumbPercent(leftSliderIndex), direction), width: toPercent(Math.abs(state.getThumbPercent(0) - state.getThumbPercent(1)))}} />);
+  let rightTrack = (<div
     className={classNames(styles, 'spectrum-Slider-track')}
-    style={{width: `${(1 - state.getThumbPercent(1)) * 100}%`}} />);
+    style={{left: toPercent(state.getThumbPercent(rightSliderIndex), direction), width: toPercent(1 - state.getThumbPercent(rightSliderIndex), direction)}} />);
 
   return (
     <SliderBase {...containerProps} classes={'spectrum-Slider--range'}>
-      {lowerTrack}
+      {leftTrack}
       {ticks}
       <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
         <div
           className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered})}
-          style={{left: `${state.getThumbPercent(0) * 100}%`}}
-          {...thumbProps[0]}
+          style={{left: toPercent(state.getThumbPercent(leftSliderIndex), direction)}}
+          {...thumbProps[leftSliderIndex]}
           role="presentation">
           <VisuallyHidden isFocusable>
-            <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRefs[0]} {...inputProps[0]} />
+            <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRefs[leftSliderIndex]} {...inputProps[leftSliderIndex]} />
           </VisuallyHidden>
         </div>
       </FocusRing>
@@ -71,15 +72,15 @@ function RangeSlider(props: SpectrumRangeSliderProps) {
       <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
         <div
           className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered})}
-          style={{left: `${state.getThumbPercent(1) * 100}%`}}
-          {...thumbProps[1]}
+          style={{left: toPercent(state.getThumbPercent(rightSliderIndex), direction)}}
+          {...thumbProps[rightSliderIndex]}
           role="presentation">
           <VisuallyHidden isFocusable>
-            <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRefs[1]} {...inputProps[1]} />
+            <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRefs[rightSliderIndex]} {...inputProps[rightSliderIndex]} />
           </VisuallyHidden>
         </div>
       </FocusRing>
-      {higherTrack}
+      {rightTrack}
     </SliderBase>);
 }
 

@@ -10,14 +10,36 @@
  * governing permissions and limitations under the License.
  */
 
-// import {act, fireEvent, render} from '@testing-library/react';
-// import {Provider} from '@adobe/react-spectrum';
-// import React from 'react';
-// import {Slider} from '../';
-// import {theme} from '@react-spectrum/theme-default';
-// import userEvent from '@testing-library/user-event';
+import {RangeSlider} from '../';
+import React from 'react';
+import {render} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 
 describe('Slider', function () {
-  it('tabbing works correctls', function () {});
+  it('can be focused', function () {
+    let {getAllByRole} = render(<div>
+      <button>A</button>
+      <RangeSlider label="The Label" defaultValue={20} />
+      <button>B</button>
+    </div>);
+
+    let [sliderLeft, sliderRight] = getAllByRole('slider');
+    let [buttonA, buttonB] = getAllByRole('button');
+
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttonA);
+    userEvent.tab();
+    expect(document.activeElement).toBe(sliderLeft);
+    userEvent.tab();
+    expect(document.activeElement).toBe(sliderRight);
+    userEvent.tab();
+    expect(document.activeElement).toBe(buttonB);
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(sliderRight);
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(sliderLeft);
+    userEvent.tab({shift: true});
+    expect(document.activeElement).toBe(buttonA);
+  });
 });

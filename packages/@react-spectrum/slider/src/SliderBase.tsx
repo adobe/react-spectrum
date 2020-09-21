@@ -22,6 +22,16 @@ import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 
+/**
+ * Convert a number 0-1 into a CSS percentage value, mirroring it for rtl.
+ */
+export function toPercent(value: number, direction: Direction = 'ltr'): string {
+  if (direction === 'rtl') {
+    value = 1 - value;
+  }
+  return `${value * 100}%`;
+}
+
 export interface UseSliderBaseContainerProps extends AriaLabelingProps, LabelableProps {
   state: SliderState,
   trackRef: MutableRefObject<undefined>,
@@ -59,6 +69,7 @@ export function useSliderBase(count: number, props: UseSliderBaseInputProps): Us
   let thumbProps = [];
   let inputProps = [];
 
+  // TODO the two handles on the range slider should have individual hover effects
   let {hoverProps, isHovered} = useHover({/* isDisabled */ });
 
   // Assumes that DEFAULT_MIN_VALUE and DEFAULT_MAX_VALUE are both positive, this value needs to be passed to useSliderState, so
@@ -94,7 +105,7 @@ export function useSliderBase(count: number, props: UseSliderBaseInputProps): Us
     inputRefs[i] = useRef();
     // eslint-disable-next-line react-hooks/rules-of-hooks
     let v = useSliderThumb({
-      index: 0,
+      index: i,
       isReadOnly: props.isReadOnly,
       isDisabled: props.isDisabled,
       trackRef,
@@ -185,6 +196,7 @@ function SliderBase(props: SliderBaseProps, ref: DOMRef) {
         throw new Error('Only sliders with 1 or 2 handles are supported!');
     }
   }
+
   let labelNode = <label className={classNames(styles, 'spectrum-Slider-label')} {...labelProps}>{props.label}</label>;
   let valueNode = <div className={classNames(styles, 'spectrum-Slider-value')} role="textbox" aria-readonly="true" aria-labelledby={labelProps.id}>{displayValue}</div>;
 
