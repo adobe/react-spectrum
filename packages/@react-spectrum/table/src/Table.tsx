@@ -443,8 +443,8 @@ function TableRowGroup({children, ...otherProps}) {
 function TableRow({item, children, ...otherProps}) {
   let ref = useRef();
   let state = useTableContext();
-  let isSelected = state.selectionManager.isSelected(item.key);
   let isDisabled = state.disabledKeys.has(item.key);
+  let isSelected = state.selectionManager.isSelected(item.key) && !isDisabled;
   let {rowProps} = useTableRow({
     node: item,
     isSelected,
@@ -460,7 +460,7 @@ function TableRow({item, children, ...otherProps}) {
     focusProps: focusWithinProps
   } = useFocusRing({within: true});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
+  let {hoverProps, isHovered} = useHover({isDisabled});
   let props = mergeProps(
     rowProps,
     otherProps,
@@ -507,11 +507,15 @@ function TableCheckboxCell({cell}) {
   let {gridCellProps} = useTableCell({
     node: cell,
     ref,
-    isVirtualized: true
+    isVirtualized: true,
+    isDisabled
   }, state);
 
   let {checkboxProps} = useTableSelectionCheckbox(
-    {key: cell.parentKey},
+    {
+      key: cell.parentKey,
+      isDisabled
+    },
     state
   );
 
@@ -564,10 +568,12 @@ function TableCell({cell}) {
 function TableRowHeader({cell}) {
   let ref = useRef();
   let state = useTableContext();
+  let isDisabled = state.disabledKeys.has(cell.parentKey);
   let {rowHeaderProps} = useTableRowHeader({
     node: cell,
     ref,
-    isVirtualized: true
+    isVirtualized: true,
+    isDisabled
   }, state);
 
   return (

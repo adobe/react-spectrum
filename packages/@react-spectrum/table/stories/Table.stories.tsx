@@ -185,7 +185,24 @@ storiesOf('Table', module)
     )
   )
   .add(
-    'dynamic with disabled',
+    'dynamic with disabled, single selection',
+    () => (
+      <Table disabledKeys={['Foo 1', 'Foo 3']} aria-label="Table with dynamic contents" selectionMode="single" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </Table>
+    )
+  )
+  .add(
+    'dynamic with disabled, multiple selection',
     () => (
       <Table disabledKeys={['Foo 1', 'Foo 3']} aria-label="Table with dynamic contents" selectionMode="multiple" width={300} height={200} onSelectionChange={s => onSelectionChange([...s])}>
         <TableHeader columns={columns}>

@@ -58,7 +58,7 @@ export function useTableCell<T>(props: GridCellProps, state: TableState<T>): Gri
   });
 
   // TODO: move into useSelectableItem?
-  console.log('tableCell', node.parentKey, isDisabled);
+  // console.log('tableCell', node.parentKey, isDisabled);
   let {pressProps} = usePress({...itemProps, isDisabled});
 
   // Grid cells can have focusable elements inside them. In this case, focus should
