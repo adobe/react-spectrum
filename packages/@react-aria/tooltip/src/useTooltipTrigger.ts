@@ -14,7 +14,7 @@ import {FocusEvents} from '@react-types/shared';
 import {HoverProps, isFocusVisible, PressProps, usePress} from '@react-aria/interactions';
 import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
-import {TooltipTriggerAriaProps} from '@react-types/tooltip';
+import {TooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
 import {useFocusable} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
@@ -24,7 +24,7 @@ interface TooltipTriggerAria {
   tooltipProps: HTMLAttributes<HTMLElement>
 }
 
-export function useTooltipTrigger(props: TooltipTriggerAriaProps, state: TooltipTriggerState, ref: RefObject<HTMLElement>) : TooltipTriggerAria {
+export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<HTMLElement>) : TooltipTriggerAria {
   let {
     isDisabled
   } = props;
