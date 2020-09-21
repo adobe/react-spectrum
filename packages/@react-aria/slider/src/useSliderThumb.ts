@@ -39,7 +39,8 @@ export function useSliderThumb(
     isReadOnly,
     validationState,
     trackRef,
-    inputRef
+    inputRef,
+    direction = 'ltr'
   } = opts;
 
   let labelId = sliderIds.get(state);
@@ -67,7 +68,7 @@ export function useSliderThumb(
 
   const draggableProps = useDrag1D({
     containerRef: trackRef as any,
-    reverse: false,
+    reverse: direction === 'rtl',
     orientation: 'horizontal',
     onDrag: (dragging) => {
       state.setThumbDragging(index, dragging);

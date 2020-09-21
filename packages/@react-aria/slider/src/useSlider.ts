@@ -50,15 +50,17 @@ export function useSlider(
   // Attach id of the label to the state so it can be accessed by useSliderThumb.
   sliderIds.set(state, labelProps.id ?? fieldProps.id);
 
+  let {direction = 'ltr'} = props;
+
   // When the user clicks or drags the track, we want the motion to set and drag the
   // closest thumb.  Hence we also need to install useDrag1D() on the track element.
   // Here, we keep track of which index is the "closest" to the drag start point.
   // It is set onMouseDown; see trackProps below.
   const realTimeTrackDraggingIndex = useRef<number | undefined>(undefined);
   const isTrackDragging = useRef(false);
-  const {onMouseDown, onMouseEnter, onMouseOut} = useDrag1D({
+  const {onMouseDown, onMouseEnter, onMouseOut, onKeyDown} = useDrag1D({
     containerRef: trackRef as any,
-    reverse: false,
+    reverse: direction === 'rtl',
     orientation: 'horizontal',
     onDrag: (dragging) => {
       if (realTimeTrackDraggingIndex.current !== undefined) {
@@ -79,6 +81,18 @@ export function useSlider(
           realTimeTrackDraggingIndex.current = undefined;
         }
       }
+    },
+    onIncrement() {
+      state.setThumbValue(state.focusedThumb, state.getThumbValue(state.focusedThumb) + state.step);
+    },
+    onDecrement() {
+      state.setThumbValue(state.focusedThumb, state.getThumbValue(state.focusedThumb) - state.step);
+    },
+    onIncrementToMax() {
+      state.setThumbValue(state.focusedThumb, state.getThumbMaxValue(state.focusedThumb));
+    },
+    onDecrementToMin() {
+      state.setThumbValue(state.focusedThumb, state.getThumbMinValue(state.focusedThumb));
     }
   });
 
@@ -127,7 +141,7 @@ export function useSlider(
         }
       }
     }, {
-      onMouseDown, onMouseEnter, onMouseOut
+      onMouseDown, onMouseEnter, onMouseOut, onKeyDown
     })
   };
 }

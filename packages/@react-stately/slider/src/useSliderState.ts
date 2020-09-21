@@ -63,7 +63,7 @@ export const DEFAULT_MIN_VALUE = 0;
 export const DEFAULT_MAX_VALUE = 100;
 export const DEFAULT_STEP_VALUE = 1;
 
-export function useSliderState(props: SliderProps): SliderState {
+export function useSliderState(props: Omit<SliderProps, 'direction'>): SliderState {
   let {isReadOnly, isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, formatOptions, step = DEFAULT_STEP_VALUE} = props;
 
   const [values, setValues] = useControlledState<number[]>(

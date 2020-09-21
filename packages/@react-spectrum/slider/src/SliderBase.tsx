@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMRef, LabelableProps, LabelPosition, Orientation} from '@react-types/shared';
+import {AriaLabelingProps, Direction, DOMRef, LabelableProps, LabelPosition, Orientation} from '@react-types/shared';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
 import {mergeProps} from '@react-aria/utils';
 import React, {CSSProperties, HTMLAttributes, MutableRefObject, ReactNode, ReactNodeArray, useRef} from 'react';
@@ -24,19 +24,20 @@ import {useSlider, useSliderThumb} from '@react-aria/slider';
 
 export interface UseSliderBaseContainerProps extends AriaLabelingProps, LabelableProps {
   state: SliderState,
-  containerProps: HTMLAttributes<HTMLElement>,
-  labelProps: HTMLAttributes<HTMLElement>,
   trackRef: MutableRefObject<undefined>,
-  trackProps: HTMLAttributes<HTMLElement>,
   hoverProps: HTMLAttributes<HTMLElement>,
   isDisabled?: boolean,
   orientation?: Orientation,
   labelPosition?: LabelPosition,
   showValueLabel?: boolean,
-  valueLabel?: ReactNode
+  valueLabel?: ReactNode,
+  containerProps: HTMLAttributes<HTMLElement>,
+  trackProps: HTMLAttributes<HTMLElement>,
+  labelProps: HTMLAttributes<HTMLElement>,
+  direction: Direction
 }
 
-export interface UseSliderBaseInputProps extends SliderProps, SpectrumSliderTicksBase {
+export interface UseSliderBaseInputProps extends Omit<SliderProps, 'direction'>, SpectrumSliderTicksBase {
   orientation?: Orientation,
   labelPosition?: LabelPosition,
   showValueLabel?: boolean,
@@ -47,12 +48,11 @@ export interface UseSliderBaseOutputProps extends UseSliderBaseContainerProps {
   inputRefs: MutableRefObject<undefined>[],
   thumbProps: HTMLAttributes<HTMLElement>[],
   inputProps: HTMLAttributes<HTMLElement>[],
-  labelProps: HTMLAttributes<HTMLElement>,
   isHovered: boolean,
   ticks: ReactNode
 }
 
-/** Count musn't change across the livetime! */
+/** Count mustn't change during the lifetime! */
 export function useSliderBase(count: number, props: UseSliderBaseInputProps): UseSliderBaseOutputProps {
   props = useProviderProps(props);
   let inputRefs = [];
@@ -80,8 +80,17 @@ export function useSliderBase(count: number, props: UseSliderBaseInputProps): Us
     }
   }
 
-  // @ts-ignore
+  let {direction} = useLocale();
+
   let trackRef = useRef();
+
+  let {
+    containerProps,
+    trackProps,
+    labelProps
+  } = useSlider({...props, direction}, state, trackRef);
+
+
   for (let i = 0; i < count; i++) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     inputRefs[i] = useRef();
@@ -91,19 +100,14 @@ export function useSliderBase(count: number, props: UseSliderBaseInputProps): Us
       isReadOnly: props.isReadOnly,
       isDisabled: props.isDisabled,
       trackRef,
-      inputRef: inputRefs[i]
+      inputRef: inputRefs[i],
+      direction
     }, state);
 
     inputProps[i] = v.inputProps;
     thumbProps[i] = v.thumbProps;
     // TODO do we want to use the thumb's labelProps?
   }
-
-  let {
-    containerProps,
-    trackProps,
-    labelProps
-  } = useSlider(props, state, trackRef);
 
   let {tickCount, showTickLabels, tickLabels, isDisabled} = props;
 
@@ -129,8 +133,9 @@ export function useSliderBase(count: number, props: UseSliderBaseInputProps): Us
 
   return {
     ticks,
-    inputRefs, thumbProps, inputProps, trackRef, state, containerProps,
-    trackProps, labelProps, hoverProps, isHovered, isDisabled,
+    inputRefs, thumbProps, inputProps, trackRef, state,
+    containerProps, trackProps, labelProps, direction,
+    hoverProps, isHovered, isDisabled,
     label: props.label,
     showValueLabel: props.showValueLabel,
     labelPosition: props.labelPosition,
@@ -157,11 +162,10 @@ function SliderBase(props: SliderBaseProps, ref: DOMRef) {
   // needed?
   useDOMRef(ref);
 
-  let {direction} = useLocale();
-
   let {
     state, children, classes, style,
-    labelProps, containerProps, trackRef, trackProps, hoverProps, isDisabled,
+    trackRef, hoverProps, isDisabled,
+    labelProps, direction, containerProps, trackProps,
     labelPosition = 'top', valueLabel, showValueLabel = !!props.label
   } = props;
 

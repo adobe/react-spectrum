@@ -10,18 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
+import {clamp} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
-import {SliderBase, useSliderBase} from './SliderBase';
-import {SliderProps, SpectrumSliderProps} from '@react-types/slider';
+import {SliderBase, useSliderBase, UseSliderBaseInputProps} from './SliderBase';
+import {SpectrumSliderProps} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {VisuallyHidden} from '@adobe/react-spectrum';
 
 function Slider(props: SpectrumSliderProps) {
   let {onChange, value, defaultValue, isFilled, fillOffset, trackBackground, ...otherProps} = props;
 
-  let ariaProps: SliderProps = {
+  let ariaProps: UseSliderBaseInputProps = {
     ...otherProps,
     // Normalize `value: number[]` to `value: number`
     value: value != null ? [value] : undefined,
@@ -32,14 +33,15 @@ function Slider(props: SpectrumSliderProps) {
   };
 
   let {inputRefs: [inputRef], thumbProps: [thumbProps], inputProps: [inputProps], ticks, isHovered, ...containerProps} = useSliderBase(1, ariaProps);
-  let {state} = containerProps;
+  let {state, direction} = containerProps;
+  let isRTL = direction === 'rtl';
 
-  fillOffset = fillOffset != null ? Math.max(state.getThumbMinValue(0), Math.min(fillOffset, state.getThumbMaxValue(0))) : fillOffset;
+  fillOffset = fillOffset != null ? clamp(fillOffset, state.getThumbMinValue(0), state.getThumbMaxValue(0)) : fillOffset;
 
   let leftTrack = (<div
     className={classNames(styles, 'spectrum-Slider-track')}
     style={{
-      width: `${state.getThumbPercent(0) * 100}%`,
+      width: `${(isRTL ? (1 - state.getThumbPercent(0)) : state.getThumbPercent(0)) * 100}%`,
       // TODO not sure if it has advantages, but this could also be implemented as CSS calc():
       // .track::before {
       //    background-size: calc((1/ (var(--width)/100)) * 100%);
@@ -48,10 +50,19 @@ function Slider(props: SpectrumSliderProps) {
       // @ts-ignore
       '--spectrum-track-background-size': `${(1 / state.getThumbPercent(0)) * 100}%`
     }} />);
+  let handle = (<div
+    className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered})}
+    style={{left: `${(isRTL ? (1 - state.getThumbPercent(0)) : state.getThumbPercent(0)) * 100}%`}}
+    {...thumbProps}
+    role="presentation">
+    <VisuallyHidden isFocusable>
+      <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRef} {...inputProps} />
+    </VisuallyHidden>
+  </div>);
   let rightTrack = (<div
     className={classNames(styles, 'spectrum-Slider-track')}
     style={{
-      width: `${(1 - state.getThumbPercent(0)) * 100}%`,
+      width: `${(isRTL ? state.getThumbPercent(0) : (1 - state.getThumbPercent(0))) * 100}%`,
       // @ts-ignore
       '--spectrum-track-background-size': `${(1 / (1 - state.getThumbPercent(0))) * 100}%`,
       '--spectrum-track-background-position': '100%'
@@ -84,15 +95,7 @@ function Slider(props: SpectrumSliderProps) {
       {leftTrack}
       {ticks}
       <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
-        <div
-          className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered})}
-          style={{left: `${state.getThumbPercent(0) * 100}%`}}
-          {...thumbProps}
-          role="presentation">
-          <VisuallyHidden isFocusable>
-            <input className={classNames(styles, 'spectrum-Slider-input')} ref={inputRef} {...inputProps} />
-          </VisuallyHidden>
-        </div>
+        {handle}
       </FocusRing>
       {rightTrack}
       {filledTrack}

@@ -14,15 +14,15 @@ import {classNames} from '@react-spectrum/utils';
 import {DEFAULT_MAX_VALUE, DEFAULT_MIN_VALUE} from '@react-stately/slider';
 import {FocusRing} from '@react-aria/focus';
 import React from 'react';
-import {SliderBase, useSliderBase} from './SliderBase';
-import {SliderProps, SpectrumRangeSliderProps} from '@react-types/slider';
+import {SliderBase, useSliderBase, UseSliderBaseInputProps} from './SliderBase';
+import {SpectrumRangeSliderProps} from '@react-types/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {VisuallyHidden} from '@adobe/react-spectrum';
 
 function RangeSlider(props: SpectrumRangeSliderProps) {
   let {onChange, value, defaultValue, ...otherProps} = props;
 
-  let ariaProps: SliderProps = {
+  let ariaProps: UseSliderBaseInputProps = {
     ...otherProps,
     // Normalize `value: number[]` to `value: number`
     value: value != null ? [value.start, value.end] : undefined,
@@ -39,21 +39,22 @@ function RangeSlider(props: SpectrumRangeSliderProps) {
     inputProps, ticks,
     isHovered, ...containerProps} = useSliderBase(2, ariaProps);
 
-  let {state} = containerProps;
+  let {state/* , direction */} = containerProps;
+  // let isRTL = direction === 'rtl';
 
-  let leftTrack = (<div
+  let lowerTrack = (<div
     className={classNames(styles, 'spectrum-Slider-track')}
     style={{width: `${state.getThumbPercent(0) * 100}%`}} />);
   let middleTrack = (<div
     className={classNames(styles, 'spectrum-Slider-track')}
     style={{left: `${state.getThumbPercent(0) * 100}%`, width: `${(state.getThumbPercent(1) - state.getThumbPercent(0)) * 100}%`}} />);
-  let rightTrack = (<div
+  let higherTrack = (<div
     className={classNames(styles, 'spectrum-Slider-track')}
     style={{width: `${(1 - state.getThumbPercent(1)) * 100}%`}} />);
 
   return (
     <SliderBase {...containerProps} classes={'spectrum-Slider--range'}>
-      {leftTrack}
+      {lowerTrack}
       {ticks}
       <FocusRing within focusRingClass={classNames(styles, 'is-focused')}>
         <div
@@ -78,7 +79,7 @@ function RangeSlider(props: SpectrumRangeSliderProps) {
           </VisuallyHidden>
         </div>
       </FocusRing>
-      {rightTrack}
+      {higherTrack}
     </SliderBase>);
 }
 
