@@ -15,24 +15,23 @@ import {Checkbox} from '@react-spectrum/checkbox';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {FocusRing, useFocusRing} from '@react-aria/focus';
-import {ActionButton} from '@react-spectrum/button';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, VirtualizerItem} from '@react-aria/virtualizer';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import {TooltipTrigger, Tooltip} from '@react-spectrum/tooltip';
 import React, {ReactElement, useCallback, useContext, useMemo, useRef} from 'react';
 import {Rect, ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {SpectrumColumnProps, SpectrumTableProps, TableNode} from '@react-types/table';
+import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
+import stylesOverrides from './table.css';
 import {TableLayout} from '@react-stately/layout';
 import {TableState, useTableState} from '@react-stately/table';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useMessageFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useTable, useTableCell, useTableColumnHeader, useTableRow, useTableRowGroup, useTableRowHeader, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
-import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import stylesOverrides from './table.css';
 
 const DEFAULT_HEADER_HEIGHT = {
   medium: 34,
@@ -88,7 +87,7 @@ function Table<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLD
     estimatedHeadingHeight: props.overflowMode === 'wrap'
       ? DEFAULT_HEADER_HEIGHT[scale]
       : null,
-    defaultNoheaderCellWidth: DEFAULT_NO_HEADER_CELL_WIDTH[scale] || null,
+    defaultNoheaderCellWidth: DEFAULT_NO_HEADER_CELL_WIDTH[scale] || null
   }), [props.overflowMode, scale, density]);
   let {direction} = useLocale();
   layout.collection = state.collection;
@@ -397,7 +396,7 @@ function TableColumnHeader({column}) {
               {
                 'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center' || column.colspan > 1,
                 'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end',
-                'react-spectrum-Table-cell--noHeader': columnProps.noHeader,
+                'react-spectrum-Table-cell--noHeader': columnProps.noHeader
               }
             )
           )

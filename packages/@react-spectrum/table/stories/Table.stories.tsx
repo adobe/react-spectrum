@@ -12,9 +12,11 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
+import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from './CRUDExample';
+import Delete from '@spectrum-icons/workflow/Delete';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {HidingColumns} from './HidingColumns';
@@ -24,8 +26,6 @@ import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {Switch} from '@react-spectrum/switch';
 import {useAsyncList} from '@react-stately/data';
-import Add from '@spectrum-icons/workflow/Add';
-import Delete from '@spectrum-icons/workflow/Delete';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -555,8 +555,7 @@ storiesOf('Table', module)
       <Table
         aria-label="Table with static contents"
         width={300}
-        height={200}
-      >
+        height={200}>
         <TableHeader>
           <Column key="foo" allowsSorting>
             Foo
@@ -574,12 +573,12 @@ storiesOf('Table', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet={true}>
+              <ActionButton isQuiet>
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet={true}>
+              <ActionButton isQuiet>
                 <Delete />
               </ActionButton>
             </Cell>
@@ -589,12 +588,12 @@ storiesOf('Table', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet={true}>
+              <ActionButton isQuiet>
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet={true}>
+              <ActionButton isQuiet>
                 <Delete />
               </ActionButton>
             </Cell>
@@ -604,12 +603,12 @@ storiesOf('Table', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet={true}>
+              <ActionButton isQuiet>
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet={true}>
+              <ActionButton isQuiet>
                 <Delete />
               </ActionButton>
             </Cell>
@@ -619,12 +618,12 @@ storiesOf('Table', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet={true}>
+              <ActionButton isQuiet>
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet={true}>
+              <ActionButton isQuiet>
                 <Delete />
               </ActionButton>
             </Cell>
@@ -634,12 +633,12 @@ storiesOf('Table', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet={true}>
+              <ActionButton isQuiet>
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet={true}>
+              <ActionButton isQuiet>
                 <Delete />
               </ActionButton>
             </Cell>
@@ -649,12 +648,12 @@ storiesOf('Table', module)
           <Row>
             <Cell>One</Cell>
             <Cell>
-              <ActionButton isQuiet={true}>
+              <ActionButton isQuiet>
                 <Add />
               </ActionButton>
             </Cell>
             <Cell>
-              <ActionButton isQuiet={true}>
+              <ActionButton isQuiet>
                 <Delete />
               </ActionButton>
             </Cell>

@@ -15,9 +15,10 @@ import {HTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import {TableState} from '@react-stately/table';
+import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 import {useTableCell} from './useTableCell';
-import { useFocusable } from '@react-aria/focus';
+
 
 interface ColumnHeaderProps {
   node: Node<unknown>,
@@ -41,7 +42,7 @@ export function useTableColumnHeader<T>(props: ColumnHeaderProps, state: TableSt
     }
   });
 
-  let { focusableProps } = useFocusable({}, ref);
+  let {focusableProps} = useFocusable({}, ref);
   let ariaSort: HTMLAttributes<HTMLElement>['aria-sort'] = null;
   if (node.props.allowsSorting) {
     ariaSort = state.sortDescriptor?.column === node.key ? state.sortDescriptor.direction : 'none';
