@@ -82,14 +82,14 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
     }
 
     // If focus was on a column, then focus the first child column if any,
-    // or find the corresponding cell in the first row.
+    // or find the corresponding cell in the first enabled row.
     if (startItem.type === 'column') {
       let child = [...startItem.childNodes][0];
       if (child) {
         return child.key;
       }
 
-      let firstItem = this.collection.getItem(this.collection.getFirstKey());
+      let firstItem = this.collection.getItem(this.getFirstKey());
       return [...firstItem.childNodes][startItem.index].key;
     }
 
