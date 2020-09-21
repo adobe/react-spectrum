@@ -27,6 +27,10 @@ storiesOf('TooltipTrigger', module)
     () => render({placement: 'left'})
   )
   .add(
+    'placement: right',
+    () => render({placement: 'right'})
+  )
+  .add(
     'placement: start',
     () => render({placement: 'start'})
   )
@@ -37,6 +41,14 @@ storiesOf('TooltipTrigger', module)
   .add(
     'placement: bottom',
     () => render({placement: 'bottom'})
+  )
+  .add(
+    'placement: top with offset',
+    () => render({placement: 'top', offset: 50})
+  )
+  .add(
+    'placement: bottom with crossOffset',
+    () => render({placement: 'bottom', crossOffset: 50})
   )
   .add(
     'isDisabled',
@@ -61,6 +73,19 @@ storiesOf('TooltipTrigger', module)
   .add(
     'trigger disabled',
     () => renderDisabledTrigger()
+  )
+  .add(
+    'arrow positioning at edge',
+    () => (
+      <div style={{width: '100%'}}>
+        <TooltipTrigger onOpenChange={action('openChange')}>
+          <ActionButton>Trigger Tooltip</ActionButton>
+          <Tooltip>
+            Long tooltip message that just goes on and on.
+          </Tooltip>
+        </TooltipTrigger>
+      </div>
+    )
   );
 
 function render(props = {}) {
