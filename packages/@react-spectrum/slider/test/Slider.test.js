@@ -43,6 +43,9 @@ describe('Slider', function () {
 
     let group = getByRole('group');
     expect(group).toHaveAttribute('aria-label', 'The Label');
+
+    // No label/value
+    expect(group.textContent).toBeFalsy();
   });
 
   it('supports label', function () {
@@ -54,29 +57,46 @@ describe('Slider', function () {
     expect(slider.getAttribute('aria-labelledby')).toBe(labelId);
 
     expect(document.getElementById(labelId)).toHaveTextContent(/^The Label$/);
+
+    // Shows value as well
+    expect(group.textContent).toBe('The Label0');
   });
 
-  // todo: aria-labeledby
+  it('supports showValueLabel: false', function () {
+    let {getByRole} = render(<Slider label="The Label" showValueLabel={false} />);
+    let group = getByRole('group');
 
-  // See comment on onKeyDown in useDrag1D
-  it.skip.each`
-  Name                            | props                 | run
-    ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowRight(slider); expect(slider).toHaveProperty('value', String(v + 1)); pressArrowLeft(slider); expect(slider).toHaveProperty('value', String(v));}}
-    ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowRight(slider); expect(slider).toHaveProperty('value', String(v - 1)); pressArrowLeft(slider); expect(slider).toHaveProperty('value', String(v));}}
-    ${'(up/down arrows, ltr)'}    | ${{locale: 'de-DE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowUp(slider);    expect(slider).toHaveProperty('value', String(v + 1)); pressArrowDown(slider); expect(slider).toHaveProperty('value', String(v));}}
-    ${'(up/down arrows, rtl)'}    | ${{locale: 'ar-AE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowUp(slider);    expect(slider).toHaveProperty('value', String(v - 1)); pressArrowDown(slider); expect(slider).toHaveProperty('value', String(v));}}
-  `('$Name shifts button focus in the correct direction on key press', function ({Name, props, run}) {
-    let tree = render(
-      <Provider theme={theme} locale={props.locale}>
-        <Slider label="Label" defaultValue={50} />
-      </Provider>
-    );
+    expect(group.textContent).toBe('The Label');
+  });
 
-    let slider = tree.getByRole('slider');
+  it('supports disabled', function () {
+    let {getByRole} = render(<Slider label="The Label" isDisabled />);
 
-    userEvent.tab();
-    expect(document.activeElement).toBe(slider);
+    let slider = getByRole('slider');
+    expect(slider).toBeDisabled();
+  });
 
-    run(slider);
+  describe('interactions', () => {
+    // See comment on onKeyDown in useDrag1D
+    it.skip.each`
+    Name                            | props                 | run
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowRight(slider); expect(slider).toHaveProperty('value', String(v + 1)); pressArrowLeft(slider); expect(slider).toHaveProperty('value', String(v));}}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowRight(slider); expect(slider).toHaveProperty('value', String(v - 1)); pressArrowLeft(slider); expect(slider).toHaveProperty('value', String(v));}}
+      ${'(up/down arrows, ltr)'}    | ${{locale: 'de-DE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowUp(slider);    expect(slider).toHaveProperty('value', String(v + 1)); pressArrowDown(slider); expect(slider).toHaveProperty('value', String(v));}}
+      ${'(up/down arrows, rtl)'}    | ${{locale: 'ar-AE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowUp(slider);    expect(slider).toHaveProperty('value', String(v - 1)); pressArrowDown(slider); expect(slider).toHaveProperty('value', String(v));}}
+    `('$Name shifts button focus in the correct direction on key press', function ({Name, props, run}) {
+      let tree = render(
+        <Provider theme={theme} locale={props.locale}>
+          <Slider label="Label" defaultValue={50} />
+        </Provider>
+      );
+
+      let slider = tree.getByRole('slider');
+
+      userEvent.tab();
+      expect(document.activeElement).toBe(slider);
+
+      run(slider);
+    });
   });
 });

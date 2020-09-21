@@ -28,7 +28,7 @@ storiesOf('Slider', module)
   )
   .add(
     'rtl',
-    () => <Provider locale="ar-AE">{render({label: 'فهو يتحدّث بلغة '})}</Provider>
+    () => <Provider locale="ar-AE">{render({label: 'فهو يتحدّث بلغة'})}</Provider>
   )
   .add(
     'disabled',
@@ -61,6 +61,10 @@ storiesOf('Slider', module)
   .add(
     'labelPosition: side',
     () => render({label: 'Label', labelPosition: 'side'})
+  )
+  .add(
+    'rtl labelPosition: side',
+    () => <Provider locale="ar-AE">{render({label: 'فهو يتحدّث بلغة', labelPosition: 'side'})}</Provider>
   )
   .add(
     'min/max',
