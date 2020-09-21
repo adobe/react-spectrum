@@ -20,22 +20,12 @@ import userEvent from '@testing-library/user-event';
 function pressKeyOnButton(key, button) {
   act(() => {fireEvent.keyDown(button, {key});});
 }
-
-function pressArrowRight(button) {
-  return pressKeyOnButton('ArrowRight', button);
-}
-
-function pressArrowLeft(button) {
-  return pressKeyOnButton('ArrowLeft', button);
-}
-
-function pressArrowUp(button) {
-  return pressKeyOnButton('ArrowUp', button);
-}
-
-function pressArrowDown(button) {
-  return pressKeyOnButton('ArrowDown', button);
-}
+const press = {
+  ArrowRight: (button) => pressKeyOnButton('ArrowRight', button),
+  ArrowLeft: (button) => pressKeyOnButton('ArrowLeft', button),
+  Home: (button) => pressKeyOnButton('Home', button),
+  End: (button) => pressKeyOnButton('End', button)
+};
 
 describe('Slider', function () {
   it('supports aria-label', function () {
@@ -182,36 +172,89 @@ describe('Slider', function () {
     });
   });
 
-  // TODO: assert DOM structure for isFilled/fillOffset, ticks, trackBackground?
-
   describe('keyboard interactions', () => {
-    // See comment on onKeyDown in useDrag1D
-    // ${'(up/down arrows, rtl)'}    | ${{locale: 'ar-AE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowUp(slider);    expect(slider).toHaveProperty('value', String(v - 1)); pressArrowDown(slider); expect(slider).toHaveProperty('value', String(v));}}
-    // ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowRight(slider); expect(slider).toHaveProperty('value', String(v - 1)); pressArrowLeft(slider); expect(slider).toHaveProperty('value', String(v));}}
-    it.skip.each`
+    // Can't test arrow/page up/down arrows because they are handled by the browser and JSDOM doesn't feel like it.
+
+    it.each`
       Name                          | props                 | run
-      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowRight(slider); expect(slider).toHaveProperty('value', String(v + 1)); pressArrowLeft(slider); expect(slider).toHaveProperty('value', String(v));}}
-      ${'(up/down arrows, ltr)'}    | ${{locale: 'de-DE'}}  | ${(slider) => {let v = Number(slider.value); pressArrowUp(slider);    expect(slider).toHaveProperty('value', String(v + 1)); pressArrowDown(slider); expect(slider).toHaveProperty('value', String(v));}}
-    `('$Name shifts button focus in the correct direction on key press', function ({Name, props, run}) {
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${(slider) => {let v = Number(slider.value); press.ArrowRight(slider); expect(slider).toHaveProperty('value', String(v + 1)); press.ArrowLeft(slider); expect(slider).toHaveProperty('value', String(v));}}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${(slider) => {let v = Number(slider.value); press.ArrowRight(slider); expect(slider).toHaveProperty('value', String(v - 1)); press.ArrowLeft(slider); expect(slider).toHaveProperty('value', String(v));}}
+      ${'(home/end, ltr)'}          | ${{locale: 'de-DE'}}  | ${(slider) => {press.Home(slider); expect(slider).toHaveProperty('value', '0'); press.End(slider); expect(slider).toHaveProperty('value', '100');}}
+      ${'(home/end, rtl)'}          | ${{locale: 'ar-AE'}}  | ${(slider) => {press.Home(slider); expect(slider).toHaveProperty('value', '0'); press.End(slider); expect(slider).toHaveProperty('value', '100');}}
+    `('$Name moves the slider in the correct direction', function ({Name, props, run}) {
       let tree = render(
         <Provider theme={theme} locale={props.locale}>
-          <Slider label="Label" defaultValue={50} />
+          <Slider label="Label" defaultValue={50} minValue={0} maxValue={100} />
         </Provider>
       );
-
       let slider = tree.getByRole('slider');
-
       userEvent.tab();
       expect(document.activeElement).toBe(slider);
-
       run(slider);
     });
 
-    // TODO verify that it's clamped by min/max
+    it.each`
+      Name                          | props                 | run
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${(slider) => {let v = Number(slider.value); press.ArrowRight(slider); expect(slider).toHaveProperty('value', String(v + 10)); press.ArrowLeft(slider); expect(slider).toHaveProperty('value', String(v));}}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${(slider) => {let v = Number(slider.value); press.ArrowRight(slider); expect(slider).toHaveProperty('value', String(v - 10)); press.ArrowLeft(slider); expect(slider).toHaveProperty('value', String(v));}}
+    `('$Name respects the step size', function ({Name, props, run}) {
+      let tree = render(
+        <Provider theme={theme} locale={props.locale}>
+          <Slider label="Label" step={10} defaultValue={50} />
+        </Provider>
+      );
+      let slider = tree.getByRole('slider');
+      userEvent.tab();
+      expect(document.activeElement).toBe(slider);
+      run(slider);
+    });
 
-    // TODO step
+    it.each`
+      Name                          | props                 | run
+      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${(slider) => {
+        let v = Number(slider.value);
+        press.ArrowRight(slider);
+        expect(slider).toHaveProperty('value', String(v + 1));
+        press.ArrowRight(slider);
+        expect(slider).toHaveProperty('value', String(v + 1));
+        press.ArrowLeft(slider);
+        press.ArrowLeft(slider);
+        expect(slider).toHaveProperty('value', String(v - 1));
+        press.ArrowLeft(slider);
+        expect(slider).toHaveProperty('value', String(v - 1));
+      }}
+      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${(slider) => {
+        let v = Number(slider.value);
+        press.ArrowRight(slider);
+        expect(slider).toHaveProperty('value', String(v - 1));
+        press.ArrowRight(slider);
+        expect(slider).toHaveProperty('value', String(v - 1));
+        press.ArrowLeft(slider);
+        press.ArrowLeft(slider);
+        expect(slider).toHaveProperty('value', String(v + 1));
+        press.ArrowLeft(slider);
+        expect(slider).toHaveProperty('value', String(v + 1));
+      }}
+    `('$Name is clamped by min/max', function ({Name, props, run}) {
+      let tree = render(
+        <Provider theme={theme} locale={props.locale}>
+          <Slider label="Label" minValue={-1} defaultValue={0} maxValue={1} />
+        </Provider>
+      );
+      let slider = tree.getByRole('slider');
+      userEvent.tab();
+      expect(document.activeElement).toBe(slider);
+      run(slider);
+    });
   });
 
-  // TODO ???
-  // describe('mouse interactions', () => {  });
+  describe('mouse interactions', () => {
+    it.skip('can click and drag handle', () => {
+
+    });
+
+    it.skip('can click on track to move handle', () => {
+
+    });
+  });
 });
