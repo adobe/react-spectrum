@@ -59,8 +59,8 @@ describe('HexColorField', function () {
   });
 
   it('should allow placeholder', function () {
-    const {getByPlaceholderText} = renderComponent({placeholder: 'Enter a color'});
-    expect(getByPlaceholderText('Enter a color')).toBeInTheDocument();
+    const {getByPlaceholderText, getByRole} = renderComponent({placeholder: 'Enter a color'});
+    expect(getByRole('spinbutton')).toBe(getByPlaceholderText('Enter a color'));
   });
 
   it('should show valid validation state', function () {
