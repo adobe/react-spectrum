@@ -186,8 +186,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
   }, inputRef);
 
   let {pressProps: inputPressProps} = usePress({
-    onPress: () => {
-      if (isMobile && !isReadOnly) {
+    onPress: (e) => {
+      if ((e.pointerType === 'touch' || e.pointerType === 'virtual') && !isReadOnly) {
         inputRef.current.focus();
         state.open();
       }
