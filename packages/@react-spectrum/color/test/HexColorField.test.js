@@ -175,64 +175,82 @@ describe('HexColorField', function () {
   });
 
   it.each`
-    Name                                | expected      | key
-    ${'increment with arrow up key'}    | ${'#AAAAAE'}  | ${'ArrowUp'}
-    ${'increment with page up key'}     | ${'#AAAAAE'}  | ${'PageUp'}
-    ${'decrement with arrow down key'}  | ${'#AAAAA6'}  | ${'ArrowDown'}
-    ${'decrement with page down key'}   | ${'#AAAAA6'}  | ${'PageDown'}
+    Name                                | expected                 | key
+    ${'increment with arrow up key'}    | ${new Color('#AAAAAE')}  | ${'ArrowUp'}
+    ${'increment with page up key'}     | ${new Color('#AAAAAE')}  | ${'PageUp'}
+    ${'decrement with arrow down key'}  | ${new Color('#AAAAA6')}  | ${'ArrowDown'}
+    ${'decrement with page down key'}   | ${new Color('#AAAAA6')}  | ${'PageDown'}
   `('should handle $Name event', function ({expected, key}) {
-    const {getByLabelText} = renderComponent({defaultValue: '#aaa', step: 4});
+    const onChangeSpy = jest.fn();
+    const {getByLabelText} = renderComponent({
+      value: '#aaa',
+      onChange: onChangeSpy,
+      step: 4
+    });
     const hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#AAAAAA');
 
     fireEvent.keyDown(hexColorField, {key});
     fireEvent.keyUp(hexColorField, {key});
-    expect(hexColorField.value).toBe(expected);
+    expect(onChangeSpy).toHaveBeenCalledWith(expected);
+    expect(hexColorField.value).toBe(expected.toString('hex'));
   });
 
   it.each`
-    Name                                | expected      | deltaY
-    ${'increment with mouse wheel'}     | ${'#AAAAAE'}  | ${-10}
-    ${'decrement with mouse wheel'}     | ${'#AAAAA6'}  | ${10}
-  `('should handle $Name event', function ({expected, action, deltaY}) {
-    const {getByLabelText} = renderComponent({defaultValue: '#aaa', step: 4});
+    Name                                | expected                 | deltaY
+    ${'increment with mouse wheel'}     | ${new Color('#AAAAAE')}  | ${-10}
+    ${'decrement with mouse wheel'}     | ${new Color('#AAAAA6')}  | ${10}
+  `('should handle $Name event', function ({expected, deltaY}) {
+    const onChangeSpy = jest.fn();
+    const {getByLabelText} = renderComponent({
+      value: '#aaa',
+      onChange: onChangeSpy,
+      step: 4
+    });
     const hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#AAAAAA');
 
     fireEvent.wheel(hexColorField, {deltaY});
-    expect(hexColorField.value).toBe(expected);
+    expect(onChangeSpy).toHaveBeenCalledWith(expected);
+    expect(hexColorField.value).toBe(expected.toString('hex'));
   });
 
   it.each`
-    Name                                 | props                                                    | initExpected  | key
-    ${'not increment beyond max value'}  | ${{defaultValue: '#bbbbba', maxValue: '#bbb', step: 4}}  | ${'#BBBBBA'}  | ${'ArrowUp'}
-    ${'not decrement beyond min value'}  | ${{defaultValue: '#bbbbbc', minValue: '#bbb', step: 4}}  | ${'#BBBBBC'}  | ${'ArrowDown'}
-    ${'increment to max value'}          | ${{defaultValue: '#aaa', maxValue: '#bbb'}}              | ${'#AAAAAA'}  | ${'End'}
-    ${'decrement to min value'}          | ${{defaultValue: '#ccc', minValue: '#bbb'}}              | ${'#CCCCCC'}  | ${'Home'}
+    Name                                 | props                                             | initExpected  | key
+    ${'not increment beyond max value'}  | ${{value: '#bbbbba', maxValue: '#bbb', step: 4}}  | ${'#BBBBBA'}  | ${'ArrowUp'}
+    ${'not decrement beyond min value'}  | ${{value: '#bbbbbc', minValue: '#bbb', step: 4}}  | ${'#BBBBBC'}  | ${'ArrowDown'}
+    ${'increment to max value'}          | ${{value: '#aaa', maxValue: '#bbb'}}              | ${'#AAAAAA'}  | ${'End'}
+    ${'decrement to min value'}          | ${{value: '#ccc', minValue: '#bbb'}}              | ${'#CCCCCC'}  | ${'Home'}
   `('should $Name', function ({props, initExpected, key}) {
-    const {getByLabelText} = renderComponent(props);
+    const onChangeSpy = jest.fn();
+    const {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
     const hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe(initExpected);
 
+    const newColor = new Color('#BBBBBB');
     fireEvent.keyDown(hexColorField, {key});
     fireEvent.keyUp(hexColorField, {key});
-    expect(hexColorField.value).toBe('#BBBBBB');
+    expect(onChangeSpy).toHaveBeenCalledWith(newColor);
+    expect(hexColorField.value).toBe(newColor.toString('hex'));
   });
 
   it.each`
-    Name            | props                                        | initExpected  | newValue  | action
-    ${'max value'}  | ${{defaultValue: '#aaa', maxValue: '#bbb'}}  | ${'#AAAAAA'}  | ${'fff'}  | ${(el) => fireEvent.change(el, {target: {value: 'fff'}})}
-    ${'min value'}  | ${{defaultValue: '#ccc', minValue: '#bbb'}}  | ${'#CCCCCC'}  | ${'000'}  | ${(el) => fireEvent.change(el, {target: {value: '000'}})}
-  `('should clamp value to $Name on change', function ({props, initExpected, newValue, action}) {
-    const {getByLabelText} = renderComponent(props);
+    Name            | props                                        | initExpected  | newValue
+    ${'max value'}  | ${{defaultValue: '#aaa', maxValue: '#bbb'}}  | ${'#AAAAAA'}  | ${'fff'}
+    ${'min value'}  | ${{defaultValue: '#ccc', minValue: '#bbb'}}  | ${'#CCCCCC'}  | ${'000'}
+  `('should clamp value to $Name on change', function ({props, initExpected, newValue}) {
+    const onChangeSpy = jest.fn();
+    const {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
     const hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe(initExpected);
 
+    const newColor = new Color('#BBBBBB');
     act(() => {hexColorField.focus();});
-    action(hexColorField);
+    fireEvent.change(hexColorField, {target: {value: newValue}});
+    expect(onChangeSpy).toHaveBeenCalledWith(newColor);
     expect(hexColorField.value).toBe(newValue);
 
     act(() => {hexColorField.blur();});
-    expect(hexColorField.value).toBe('#BBBBBB');
+    expect(hexColorField.value).toBe(newColor.toString('hex'));
   });
 });
