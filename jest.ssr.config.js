@@ -33,6 +33,8 @@ module.exports = {
     'packages/'
   ],
 
+  testTimeout: 30000,
+
   globalSetup: require.resolve('@react-spectrum/test-utils/src/ssrSetup'),
   globalTeardown: require.resolve('@react-spectrum/test-utils/src/ssrTeardown'),
 
