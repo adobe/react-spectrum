@@ -170,7 +170,9 @@ export class SelectionManager implements MultipleSelectionManager {
       }
 
       for (let key of this.getKeyRange(toKey, anchorKey)) {
-        keys.add(key);
+        if (!this.state.disabledKeys.has(key)) {
+          keys.add(key);
+        }
       }
 
       return keys;
@@ -276,13 +278,16 @@ export class SelectionManager implements MultipleSelectionManager {
     let addKeys = (key: Key) => {
       while (key) {
         let item = this.collection.getItem(key);
-        if (item.type === 'item') {
-          keys.push(key);
-        }
 
-        // Add child keys. If cell selection is allowed, then include item children too.
-        if (item.hasChildNodes && (this.allowsCellSelection || item.type !== 'item')) {
-          addKeys([...item.childNodes][0].key);
+        if (!this.state.disabledKeys.has(key)) {
+          if (item.type === 'item') {
+            keys.push(key);
+          }
+
+          // Add child keys. If cell selection is allowed, then include item children too.
+          if (item.hasChildNodes && (this.allowsCellSelection || item.type !== 'item')) {
+            addKeys([...item.childNodes][0].key);
+          }
         }
 
         key = this.collection.getKeyAfter(key);

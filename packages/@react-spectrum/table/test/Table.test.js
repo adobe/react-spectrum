@@ -1866,8 +1866,7 @@ describe('Table', function () {
         checkRowSelection(rows.slice(11), false);
       });
 
-      // TODO: need to fix selectionmanager so that this test passes, right now disabled keys are included in selection change events
-      it.skip('should not include disabled rows within a range selection', function () {
+      it('should not include disabled rows within a range selection', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, disabledKeys: ['Foo 3', 'Foo 16']});
         checkSelectAll(tree, 'unchecked');
