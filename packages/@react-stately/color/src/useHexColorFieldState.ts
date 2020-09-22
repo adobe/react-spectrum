@@ -52,7 +52,7 @@ export function useHexColorFieldState(
     } catch (err) {
       return undefined;
     }
-  }, [minColorInt, maxColorInt]);
+  }, [minColor, maxColor, minColorInt, maxColorInt]);
 
   const initialValue = clampColor(value);
   const initialDefaultValue = clampColor(defaultValue);

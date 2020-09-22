@@ -119,7 +119,7 @@ export function useHexColorField(
         handleInputScrollWheel
       );
     };
-  }, [inputId, isReadOnly, isDisabled, decrement, increment]);
+  }, [inputId, isReadOnly, isDisabled, decrement, increment, ref]);
 
   let {labelProps, inputProps} = useTextField(
     mergeProps(otherProps, {
