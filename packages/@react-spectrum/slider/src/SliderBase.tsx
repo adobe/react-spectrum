@@ -12,12 +12,10 @@
 
 import {AriaLabelingProps, Direction, DOMRef, LabelableProps, LabelPosition, Orientation} from '@react-types/shared';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
-import {mergeProps} from '@react-aria/utils';
 import React, {CSSProperties, HTMLAttributes, MutableRefObject, ReactNode, ReactNodeArray, useRef} from 'react';
 import {SliderProps, SpectrumSliderTicksBase} from '@react-types/slider';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
-import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
@@ -35,7 +33,6 @@ export function toPercent(value: number, direction: Direction = 'ltr'): string {
 export interface UseSliderBaseContainerProps extends AriaLabelingProps, LabelableProps {
   state: SliderState,
   trackRef: MutableRefObject<undefined>,
-  hoverProps: HTMLAttributes<HTMLElement>,
   isDisabled?: boolean,
   orientation?: Orientation,
   labelPosition?: LabelPosition,
@@ -58,7 +55,6 @@ export interface UseSliderBaseOutputProps extends UseSliderBaseContainerProps {
   inputRefs: MutableRefObject<undefined>[],
   thumbProps: HTMLAttributes<HTMLElement>[],
   inputProps: HTMLAttributes<HTMLElement>[],
-  isHovered: boolean,
   ticks: ReactNode
 }
 
@@ -68,9 +64,6 @@ export function useSliderBase(count: number, props: UseSliderBaseInputProps): Us
   let inputRefs = [];
   let thumbProps = [];
   let inputProps = [];
-
-  // TODO the two handles on the range slider should have individual hover effects
-  let {hoverProps, isHovered} = useHover({/* isDisabled */ });
 
   // Assumes that DEFAULT_MIN_VALUE and DEFAULT_MAX_VALUE are both positive, this value needs to be passed to useSliderState, so
   // getThumbMinValue/getThumbMaxValue cannot be used here.
@@ -144,7 +137,7 @@ export function useSliderBase(count: number, props: UseSliderBaseInputProps): Us
     ticks,
     inputRefs, thumbProps, inputProps, trackRef, state,
     containerProps, trackProps, labelProps, direction,
-    hoverProps, isHovered, isDisabled,
+    isDisabled,
     label: props.label,
     showValueLabel: props.showValueLabel,
     labelPosition: props.labelPosition,
@@ -173,7 +166,7 @@ function SliderBase(props: SliderBaseProps, ref: DOMRef) {
 
   let {
     state, children, classes, style,
-    trackRef, hoverProps, isDisabled,
+    trackRef, isDisabled,
     labelProps, containerProps, trackProps,
     labelPosition = 'top', valueLabel, showValueLabel = !!props.label
   } = props;
@@ -213,7 +206,7 @@ function SliderBase(props: SliderBaseProps, ref: DOMRef) {
           {labelPosition === 'top' && showValueLabel && valueNode}
         </div>
       }
-      <div className={classNames(styles, 'spectrum-Slider-controls')} ref={trackRef} {...mergeProps(trackProps, hoverProps)} role="presentation">
+      <div className={classNames(styles, 'spectrum-Slider-controls')} ref={trackRef} {...trackProps} role="presentation">
         {children}
       </div>
       {labelPosition === 'side' &&
