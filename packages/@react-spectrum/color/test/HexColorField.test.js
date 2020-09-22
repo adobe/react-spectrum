@@ -29,22 +29,21 @@ function renderComponent(props) {
 
 describe('HexColorField', function () {
   it('should handle defaults', function () {
-    const {getByLabelText} = renderComponent({});
+    const {
+      getByLabelText, 
+      getByRole,
+      getByText
+    } = renderComponent({});
     const hexColorField = getByLabelText('Primary Color');
+    const label = getByText('Primary Color');
     expect(hexColorField).toBeInTheDocument();
-    expect(hexColorField).toHaveAttribute('role', 'spinbutton');
+    expect(getByRole('spinbutton')).toBe(hexColorField);
     expect(hexColorField).toHaveAttribute('type', 'text');
     expect(hexColorField).toHaveAttribute('autocomplete', 'off');
     expect(hexColorField).not.toHaveAttribute('readonly');
     expect(hexColorField).not.toBeInvalid();
     expect(hexColorField).not.toBeDisabled();
     expect(hexColorField).not.toBeRequired();
-  });
-
-  it('should handle label prop', function () {
-    const {getByLabelText, getByText} = renderComponent({label: 'Custom label'});
-    const hexColorField = getByLabelText('Custom label');
-    const label = getByText('Custom label');
     expect(label).toHaveAttribute('for', hexColorField.id);
     expect(hexColorField).toHaveAttribute('aria-labelledby', label.id);
   });
