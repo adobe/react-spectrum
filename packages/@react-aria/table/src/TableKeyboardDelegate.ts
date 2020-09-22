@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Direction, KeyboardDelegate, Node} from '@react-types/shared';
+import {Direction, KeyboardDelegate, Node, SelectionMode} from '@react-types/shared';
 import {Key, RefObject} from 'react';
 import {Layout, Rect} from '@react-stately/virtualizer';
 import {TableCollection} from '@react-types/table';
@@ -21,7 +21,8 @@ interface TableKeyboardDelegateOptions<T> {
   ref?: RefObject<HTMLElement>,
   direction: Direction,
   collator?: Intl.Collator,
-  layout?: Layout<Node<T>>
+  layout?: Layout<Node<T>>,
+  selectionMode?: SelectionMode
 }
 
 export class TableKeyboardDelegate<T> implements KeyboardDelegate {
@@ -31,6 +32,7 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
   private direction: Direction;
   private collator: Intl.Collator;
   private layout: Layout<Node<T>>;
+  private selectionMode: SelectionMode;
 
   constructor(options: TableKeyboardDelegateOptions<T>) {
     this.collection = options.collection;
@@ -39,6 +41,7 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
     this.direction = options.direction;
     this.collator = options.collator;
     this.layout = options.layout;
+    this.selectionMode = options.selectionMode;
   }
 
   private isCell(node: Node<T>) {
@@ -149,42 +152,45 @@ export class TableKeyboardDelegate<T> implements KeyboardDelegate {
     // If no item was found, and focus was on a cell, then focus the
     // corresponding column header.
     if (this.isCell(startItem)) {
-      return this.collection.columns[startItem.index].key;
+      // If current selectionMode is 'single', focus should not be moved to the missing "select all" checkbox column, instead move focus to the 2nd column
+      let index = startItem.index === 0 && this.selectionMode === 'single' ? startItem.index + 1 : startItem.index;
+
+      return this.collection.columns[index].key;
     }
 
-    // If focus was on a row, then focus the first column header.
-    return this.collection.columns[0].key;
+    // If focus was on a row, then focus the first column header. If selectionMode is 'single', move to the second column instead.
+    return this.selectionMode === 'single' ? this.collection.columns[1].key : this.collection.columns[0].key;
   }
 
   private findNextColumnKey(column: Node<T>) {
-    // Search following columns
-    let key = this.findNextKey(item => item.type === 'column', column.key);
+    // Search following columns, ignoring the first column if selectionMode is 'single' since it doesn't have the "select all" checkbox
+    let key = this.findNextKey(item => item.type === 'column' && !(this.selectionMode === 'single' && typeof item.prevKey === 'undefined'), column.key);
     if (key != null) {
       return key;
     }
 
-    // Wrap around to the first column
+    // Wrap around to the first column. If selectionMode is 'single', skip it since it doesn't have the "select all" checkbox
     let row = this.collection.headerRows[column.level];
     for (let item of row.childNodes) {
-      if (item.type === 'column') {
+      if (item.type === 'column' && !(this.selectionMode === 'single' && typeof item.prevKey === 'undefined')) {
         return item.key;
       }
     }
   }
 
   private findPreviousColumnKey(column: Node<T>) {
-    // Search previous columns
-    let key = this.findPreviousKey(item => item.type === 'column', column.key);
+    // Search previous columns, ignoring the column if selectionMode is 'single' since it doesn't have the "select all" checkbox
+    let key = this.findPreviousKey(item => item.type === 'column' && !(this.selectionMode === 'single' && typeof item.prevKey === 'undefined'), column.key);
     if (key != null) {
       return key;
     }
 
-    // Wrap around to the last column
+    // Wrap around to the last column. If selectionMode is 'single', skip the current column since it doesn't have the "select all" checkbox
     let row = this.collection.headerRows[column.level];
     let childNodes = [...row.childNodes];
     for (let i = childNodes.length - 1; i >= 0; i--) {
       let item = childNodes[i];
-      if (item.type === 'column') {
+      if (item.type === 'column' && !(this.selectionMode === 'single' && typeof item.prevKey === 'undefined')) {
         return item.key;
       }
     }

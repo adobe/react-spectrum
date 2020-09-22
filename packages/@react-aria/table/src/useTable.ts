@@ -53,7 +53,8 @@ export function useTable<T>(props: GridProps<T>, state: TableState<T>): GridAria
     ref,
     direction,
     collator,
-    layout
+    layout,
+    selectionMode: state.selectionManager.selectionMode
   }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, layout]);
   let {collectionProps} = useSelectableCollection({
     ref,
