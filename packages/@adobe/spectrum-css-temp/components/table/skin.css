@@ -153,13 +153,6 @@ tbody.spectrum-Table-body {
     }
   }
 
-  &.is-disabled {
-    .spectrum-Table-cell {
-      background-color: var(--spectrum-selectlist-option-background-color-disabled);
-      color: var(--spectrum-selectlist-option-text-color-disabled);
-    }
-  }
-
   &.is-drop-target {
     &::before {
       box-shadow: inset 0 0 0 2px var(--spectrum-alias-border-color-focus);
