@@ -16,7 +16,7 @@ import {NumberFieldState} from '@react-stately/numberfield';
 import {useCallback, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
-export interface HexColorFieldState extends NumberFieldState {
+export interface HexColorFieldState extends Omit<NumberFieldState, 'value' | 'setValue'> {
   colorValue: Color,
   setInputValue: (value: string) => void
 }
@@ -126,8 +126,6 @@ export function useHexColorFieldState(
     incrementToMax,
     decrement,
     decrementToMin,
-    value: null,
-    setValue: null,
     validationState
   };
 }
