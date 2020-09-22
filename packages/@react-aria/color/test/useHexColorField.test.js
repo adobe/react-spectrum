@@ -15,7 +15,11 @@ import {renderHook} from '@testing-library/react-hooks';
 import {useHexColorField} from '../';
 
 describe('useHexColorField', function () {
-  let ref = React.createRef();
+  let ref;
+
+  beforeEach(() => {
+    ref = React.createRef();
+  });
 
   const renderHexColorFieldHook = (props, state = {}) => {
     let {result} = renderHook(() => useHexColorField({
