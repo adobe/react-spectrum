@@ -15,6 +15,11 @@ import {Modal} from '@react-spectrum/overlays';
 import React, {ReactElement, useRef} from 'react';
 import {SpectrumDialogContainerProps} from '@react-types/dialog';
 
+/**
+ * A DialogContainer accepts a single Dialog as a child, and manages showing and hiding
+ * it in a modal. Useful in cases where there is no trigger element
+ * or when the trigger unmounts while the dialog is open.
+ */
 export function DialogContainer(props: SpectrumDialogContainerProps) {
   let {
     children,
