@@ -104,10 +104,13 @@ describe('HexColorField', function () {
   });
 
   it.each`
-    Name                      | props
-    ${'3-length hex string'}  | ${{defaultValue: '#abc'}}
-    ${'6-length hex string'}  | ${{defaultValue: '#aabbcc'}}
-    ${'Color object'}         | ${{defaultValue: new Color('#abc')}}
+    Name                                 | props
+    ${'3-length hex string'}             | ${{defaultValue: '#abc'}}
+    ${'6-length hex string'}             | ${{defaultValue: '#aabbcc'}}
+    ${'Color object'}                    | ${{defaultValue: new Color('#abc')}}
+    ${'3-length hex string controlled'}  | ${{value: '#abc'}}
+    ${'6-length hex string controlled'}  | ${{value: '#aabbcc'}}
+    ${'Color object controlled'}         | ${{value: new Color('#abc')}}
   `('should accept $Name as value', function ({props}) {
     const {getByLabelText} = renderComponent(props);
     const hexColorField = getByLabelText('Primary Color');
