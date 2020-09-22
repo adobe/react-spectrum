@@ -396,15 +396,17 @@ function TableColumnHeader({column}) {
 function TableSelectAllCell({column}) {
   let ref = useRef();
   let state = useTableContext();
+  let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {columnHeaderProps} = useTableColumnHeader({
     node: column,
     ref,
     colspan: column.colspan,
-    isVirtualized: true
+    isVirtualized: true,
+    // Disable click from focusing the div for selectionMode = "single" since there won't be a "Select All" checkbox available
+    isDisabled: isSingleSelectionMode
   }, state);
 
   let {checkboxProps} = useTableSelectAllCheckbox(state);
-  let isSingleSelectionMode = state.selectionManager.selectionMode === 'single';
   let {hoverProps, isHovered} = useHover({});
 
   return (
