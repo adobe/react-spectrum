@@ -82,5 +82,5 @@ function RangeSlider(props: SpectrumRangeSliderProps) {
     </SliderBase>);
 }
 
-// TODO forwardRef?
+// TODO forwardref?
 export {RangeSlider};

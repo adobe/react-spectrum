@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, Direction, DOMRef, LabelableProps, LabelPosition, Orientation} from '@react-types/shared';
-import {classNames, useDOMRef} from '@react-spectrum/utils';
+import {AriaLabelingProps, Direction, LabelableProps, LabelPosition, Orientation} from '@react-types/shared';
+import {classNames} from '@react-spectrum/utils';
 import React, {CSSProperties, HTMLAttributes, MutableRefObject, ReactNode, ReactNodeArray, useRef} from 'react';
 import {SliderProps, SpectrumSliderTicksBase} from '@react-types/slider';
 import {SliderState, useSliderState} from '@react-stately/slider';
@@ -108,7 +108,6 @@ export function useSliderBase(count: number, props: UseSliderBaseInputProps): Us
 
     inputProps[i] = v.inputProps;
     thumbProps[i] = v.thumbProps;
-    // TODO do we want to use the thumb's labelProps?
   }
 
   let {tickCount, showTickLabels, tickLabels, isDisabled} = props;
@@ -160,10 +159,7 @@ export interface SliderBaseProps extends UseSliderBaseContainerProps, LabelableP
   style?: CSSProperties
 }
 
-function SliderBase(props: SliderBaseProps, ref: DOMRef) {
-  // needed?
-  useDOMRef(ref);
-
+function SliderBase(props: SliderBaseProps) {
   let {
     state, children, classes, style,
     trackRef, isDisabled,
@@ -178,7 +174,9 @@ function SliderBase(props: SliderBaseProps, ref: DOMRef) {
         displayValue = state.getThumbValueLabel(0);
         break;
       case 2:
-        // This should really use the NumberFormat#formatRange proposal
+        // This should really use the NumberFormat#formatRange proposal...
+        // https://github.com/tc39/ecma402/issues/393
+        // https://github.com/tc39/proposal-intl-numberformat-v3#formatrange-ecma-402-393
         displayValue = `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`;
         break;
       default:
@@ -214,8 +212,9 @@ function SliderBase(props: SliderBaseProps, ref: DOMRef) {
           {showValueLabel && valueNode}
         </div>
       }
-    </div>);
+    </div>
+  );
 }
 
-const _SliderBase = React.forwardRef(SliderBase);
-export {_SliderBase as SliderBase};
+// TODO forwardref?
+export {SliderBase};

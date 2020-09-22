@@ -106,5 +106,5 @@ function Slider(props: SpectrumSliderProps) {
   );
 }
 
-// TODO forwardRef?
+// TODO forwardref?
 export {Slider};
