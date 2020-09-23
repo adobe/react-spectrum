@@ -318,4 +318,8 @@ governing permissions and limitations under the License.
     padding-top: 0;
     flex-shrink: 0;
   }
+
+  & .spectrum-Slider-label {
+    margin-inline-end: var(--spectrum-slider-label-gap-x);
+  }
 }

@@ -315,6 +315,8 @@ governing permissions and limitations under the License.
   flex-grow: 0;
   padding-inline-end: 0;
   cursor: default;
+  font-feature-settings: "tnum";
+  text-align: end;
 }
 
 .spectrum-Slider-value {

@@ -16,7 +16,7 @@ import React, {CSSProperties, HTMLAttributes, MutableRefObject, ReactNode, React
 import {SliderProps, SpectrumSliderTicksBase} from '@react-types/slider';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
-import {useLocale} from '@react-aria/i18n';
+import {useLocale, useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 
@@ -31,7 +31,8 @@ export interface UseSliderBaseContainerProps extends AriaLabelingProps, Labelabl
   containerProps: HTMLAttributes<HTMLElement>,
   trackProps: HTMLAttributes<HTMLElement>,
   labelProps: HTMLAttributes<HTMLElement>,
-  direction: Direction
+  direction: Direction,
+  formatOptions?: Intl.NumberFormatOptions
 }
 
 export interface UseSliderBaseInputProps extends Omit<SliderProps, 'direction'>, SpectrumSliderTicksBase {
@@ -128,6 +129,7 @@ export function useSliderBase(count: number, props: UseSliderBaseInputProps): Us
     containerProps, trackProps, labelProps, direction,
     isDisabled,
     label: props.label,
+    formatOptions: props.formatOptions,
     showValueLabel: props.showValueLabel,
     labelPosition: props.labelPosition,
     orientation: props.orientation,
@@ -154,11 +156,16 @@ function SliderBase(props: SliderBaseProps) {
     state, children, classes, style,
     trackRef, isDisabled,
     labelProps, containerProps, trackProps,
-    labelPosition = 'top', valueLabel, showValueLabel = !!props.label
+    labelPosition = 'top', valueLabel, showValueLabel = !!props.label,
+    formatOptions
   } = props;
 
+  let formatter = useNumberFormatter(formatOptions);
+
   let displayValue = valueLabel;
+  let maxLabelLength = undefined;
   if (!displayValue) {
+    maxLabelLength = Math.max([...formatter.format(state.getThumbMinValue(0))].length, [...formatter.format(state.getThumbMaxValue(0))].length);
     switch (state.values.length) {
       case 1:
         displayValue = state.getThumbValueLabel(0);
@@ -168,6 +175,9 @@ function SliderBase(props: SliderBaseProps) {
         // https://github.com/tc39/ecma402/issues/393
         // https://github.com/tc39/proposal-intl-numberformat-v3#formatrange-ecma-402-393
         displayValue = `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`;
+
+        // The `${start} ${separator} ${end}` label can be wrapped into multiple lines.
+        maxLabelLength = Math.max(maxLabelLength, [...formatter.format(state.getThumbMinValue(1))].length, [...formatter.format(state.getThumbMaxValue(1))].length);
         break;
       default:
         throw new Error('Only sliders with 1 or 2 handles are supported!');
@@ -175,7 +185,15 @@ function SliderBase(props: SliderBaseProps) {
   }
 
   let labelNode = <label className={classNames(styles, 'spectrum-Slider-label')} {...labelProps}>{props.label}</label>;
-  let valueNode = <div className={classNames(styles, 'spectrum-Slider-value')} role="textbox" aria-readonly="true" aria-labelledby={labelProps.id}>{displayValue}</div>;
+  let valueNode = (<div
+    className={classNames(styles, 'spectrum-Slider-value')}
+    // TODO really?
+    role="textbox"
+    aria-readonly="true"
+    aria-labelledby={labelProps.id}
+    style={{minWidth: maxLabelLength && `${maxLabelLength}ch`}}>
+    {displayValue}
+  </div>);
 
   return (
     <div
