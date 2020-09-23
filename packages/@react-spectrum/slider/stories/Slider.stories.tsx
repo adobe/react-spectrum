@@ -11,7 +11,6 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Provider} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
 import {Slider} from '../';
 import {SpectrumSliderProps} from '@react-types/slider';
@@ -25,10 +24,6 @@ storiesOf('Slider', module)
   .add(
     'label',
     () => render({label: 'Label'})
-  )
-  .add(
-    'rtl',
-    () => <Provider locale="ar-AE">{render({label: 'فهو يتحدّث بلغة'})}</Provider>
   )
   .add(
     'disabled',
@@ -63,10 +58,6 @@ storiesOf('Slider', module)
     () => render({label: 'Label', labelPosition: 'side'})
   )
   .add(
-    'rtl labelPosition: side',
-    () => <Provider locale="ar-AE">{render({label: 'فهو يتحدّث بلغة', labelPosition: 'side'})}</Provider>
-  )
-  .add(
     'min/max',
     () => render({label: 'Label', minValue: 30, maxValue: 70})
   )
@@ -94,10 +85,6 @@ storiesOf('Slider', module)
   .add(
     'tickLabels',
     () => render({label: 'Label', tickCount: 3, showTickLabels: true, tickLabels: ['A', 'B', 'C']})
-  )
-  .add(
-    'rtl trackBackground',
-    () => <Provider locale="ar-AE">{render({label: 'فهو يتحدّث بلغة ', trackBackground: 'linear-gradient(to right, blue, red)'})}</Provider>
   )
   .add(
     'trackBackground',

@@ -11,7 +11,6 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Provider} from '@adobe/react-spectrum';
 import {RangeSlider} from '../';
 import React, {useState} from 'react';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
@@ -25,10 +24,6 @@ storiesOf('RangeSlider', module)
   .add(
     'label',
     () => render({label: 'Label'})
-  )
-  .add(
-    'rtl',
-    () => <Provider locale="ar-AE">{render({label: 'فهو يتحدّث بلغة '})}</Provider>
   )
   .add(
     'disabled',
