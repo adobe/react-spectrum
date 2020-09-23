@@ -16,6 +16,8 @@ import {HexColorField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import {typeText} from '@react-spectrum/test-utils'
+import userEvent from '@testing-library/user-event';
 
 function renderComponent(props) {
   return render(
@@ -135,12 +137,19 @@ describe('HexColorField', function () {
     expect(hexColorField.value).toBe('#AABBCC');
 
     act(() => {hexColorField.focus();});
-    fireEvent.change(hexColorField, {target: {value: 'cba'}});
+    userEvent.clear(hexColorField);
+    typeText(hexColorField, 'cba');
     expect(hexColorField.value).toBe('cba');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(new Color('#cba'));
 
+    typeText(hexColorField, 'cba');
+    expect(hexColorField.value).toBe('cbacba');
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onChangeSpy).toHaveBeenCalledWith(new Color('#cbacba'));
+
     act(() => {hexColorField.blur();});
-    expect(hexColorField.value).toBe('#CCBBAA');
+    expect(hexColorField.value).toBe('#CBACBA');
   });
 
   it('should handle controlled state', function () {
@@ -151,8 +160,10 @@ describe('HexColorField', function () {
     expect(hexColorField.value).toBe('#AABBCC');
 
     act(() => {hexColorField.focus();});
-    fireEvent.change(hexColorField, {target: {value: 'cba'}});
+    userEvent.clear(hexColorField);
+    typeText(hexColorField, 'cba');
     expect(hexColorField.value).toBe('cba');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(new Color('#cba'));
 
     act(() => {hexColorField.blur();});
@@ -166,7 +177,8 @@ describe('HexColorField', function () {
     expect(hexColorField.value).toBe('#AABBCC');
 
     act(() => {hexColorField.focus();});
-    fireEvent.change(hexColorField, {target: {value: 'xyz'}});
+    userEvent.clear(hexColorField);
+    typeText(hexColorField, 'xyz');
     expect(hexColorField.value).toBe('xyz');
     expect(onChangeSpy).not.toHaveBeenCalled();
 
@@ -246,7 +258,9 @@ describe('HexColorField', function () {
 
     const newColor = new Color('#BBBBBB');
     act(() => {hexColorField.focus();});
-    fireEvent.change(hexColorField, {target: {value: newValue}});
+    userEvent.clear(hexColorField);
+    typeText(hexColorField, newValue);
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(newColor);
     expect(hexColorField.value).toBe(newValue);
 
