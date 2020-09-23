@@ -220,8 +220,6 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input4);
     });
 
-    // I don't think this test is working, I've used the render to create a story in storybook, Chrome allows me to initially tab
-    // into 'outside' before being contained. FF works more like this describes. FocusScope might need a fix as well?
     it('should restore focus to the last focused element in the scope when re-entering the browser', function () {
       let {getByTestId} = render(
         <div>
@@ -254,8 +252,6 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input2);
     });
 
-    // not sure how this ever worked, relatedTarget in FocusScope onBlur is document.body, which is not in any scope
-    // as a result, the focus is given back to the input that blur was called on
     it('should restore focus to the last focused element in the scope on focus out', function () {
       let {getByTestId} = render(
         <div>
