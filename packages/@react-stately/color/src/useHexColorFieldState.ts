@@ -27,7 +27,7 @@ export const defaultMaxValue = '#FFFFFF';
 export function useHexColorFieldState(
   props: HexColorFieldProps
 ): HexColorFieldState {
-  const {
+  let {
     minValue = defaultMinValue,
     maxValue = defaultMaxValue,
     step = 1,
@@ -37,15 +37,15 @@ export function useHexColorFieldState(
     validationState
   } = props;
 
-  const minColor = Color.parse(minValue);
-  const maxColor = Color.parse(maxValue);
-  const minColorInt = minColor.toHexInt();
-  const maxColorInt = maxColor.toHexInt();
+  let minColor = Color.parse(minValue);
+  let maxColor = Color.parse(maxValue);
+  let minColorInt = minColor.toHexInt();
+  let maxColorInt = maxColor.toHexInt();
 
-  const clampColor = useCallback((value: ColorInput) => {
+  let clampColor = useCallback((value: ColorInput) => {
     try {
-      const color = Color.parse(value);
-      const colorInt = color.toHexInt();
+      let color = Color.parse(value);
+      let colorInt = color.toHexInt();
       if (colorInt < minColorInt) { return minColor; }
       if (colorInt > maxColorInt) { return maxColor; }
       return color;
@@ -54,49 +54,49 @@ export function useHexColorFieldState(
     }
   }, [minColor, maxColor, minColorInt, maxColorInt]);
 
-  const initialValue = clampColor(value);
-  const initialDefaultValue = clampColor(defaultValue);
-  const [colorValue, setColorValue] = useControlledState<Color>(initialValue, initialDefaultValue, onChange);
+  let initialValue = clampColor(value);
+  let initialDefaultValue = clampColor(defaultValue);
+  let [colorValue, setColorValue] = useControlledState<Color>(initialValue, initialDefaultValue, onChange);
 
-  const initialInputValue = (value || defaultValue) && colorValue ? colorValue.toString('hex') : '';
-  const [inputValue, setInputValue] = useState(initialInputValue);
+  let initialInputValue = (value || defaultValue) && colorValue ? colorValue.toString('hex') : '';
+  let [inputValue, setInputValue] = useState(initialInputValue);
 
-  const increment = () => {
+  let increment = () => {
     setColorValue((previousValue: Color) => {
-      const colorInt = previousValue ? previousValue.toHexInt() : minColorInt;
-      const newValue = `#${Math.min(colorInt + step, maxColorInt).toString(16).padStart(6, '0')}`;
-      const newColor = new Color(newValue);
+      let colorInt = previousValue ? previousValue.toHexInt() : minColorInt;
+      let newValue = `#${Math.min(colorInt + step, maxColorInt).toString(16).padStart(6, '0')}`;
+      let newColor = new Color(newValue);
       setInputValue(newColor.toString('hex'));
       return newColor;
     });
   };
 
-  const incrementToMax = useCallback(() => {
+  let incrementToMax = useCallback(() => {
     if (maxValue) {
       setColorValue(maxColor);
       setInputValue(maxColor.toString('hex'));
     }
   }, [maxValue, maxColor, setColorValue, setInputValue]);
 
-  const decrement = () => {
+  let decrement = () => {
     setColorValue((previousValue: Color) => {
       if (!previousValue) { return minColor; }
-      const colorInt = previousValue.toHexInt();
-      const newValue = `#${Math.max(colorInt - step, minColorInt).toString(16).padStart(6, '0')}`;
-      const newColor = new Color(newValue);
+      let colorInt = previousValue.toHexInt();
+      let newValue = `#${Math.max(colorInt - step, minColorInt).toString(16).padStart(6, '0')}`;
+      let newColor = new Color(newValue);
       setInputValue(newColor.toString('hex'));
       return newColor;
     });
   };
 
-  const decrementToMin = useCallback(() => {
+  let decrementToMin = useCallback(() => {
     if (minValue) {
       setColorValue(minColor);
       setInputValue(minColor.toString('hex'));
     }
   }, [minValue, minColor, setColorValue, setInputValue]);
 
-  const setFieldInputValue = (value: string) => {
+  let setFieldInputValue = (value: string) => {
     setInputValue(value);
     value = value.trim();
     if (!value.length) { return; }
@@ -104,7 +104,7 @@ export function useHexColorFieldState(
       value = `#${value}`;
     }
     try {
-      const color = clampColor(value);
+      let color = clampColor(value);
       if (color) {
         setColorValue(color);
       }
@@ -113,7 +113,7 @@ export function useHexColorFieldState(
     }
   };
 
-  const commitInputValue = () => {
+  let commitInputValue = () => {
     setFieldInputValue(colorValue ? colorValue.toString('hex') : '');
   };
 

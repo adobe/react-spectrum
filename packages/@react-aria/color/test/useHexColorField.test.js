@@ -21,7 +21,7 @@ describe('useHexColorField', function () {
     ref = React.createRef();
   });
 
-  const renderHexColorFieldHook = (props, state = {}) => {
+  let renderHexColorFieldHook = (props, state = {}) => {
     let {result} = renderHook(() => useHexColorField({
       'aria-label': 'Primary Color',
       ...props
@@ -30,7 +30,7 @@ describe('useHexColorField', function () {
   };
 
   it('handles defaults', function () {
-    const {inputFieldProps} = renderHexColorFieldHook({});
+    let {inputFieldProps} = renderHexColorFieldHook({});
     expect(inputFieldProps.type).toBe('text');
     expect(inputFieldProps.autoComplete).toBe('off');
     expect(inputFieldProps.id).toBeTruthy();
@@ -42,7 +42,7 @@ describe('useHexColorField', function () {
   });
 
   it('should return props for label', function () {
-    const {labelProps, inputFieldProps} = renderHexColorFieldHook({
+    let {labelProps, inputFieldProps} = renderHexColorFieldHook({
       'aria-label': undefined,
       label: 'Secondary Color'
     });
@@ -58,22 +58,22 @@ describe('useHexColorField', function () {
   });
 
   it('should return prop for invalid', function () {
-    const {inputFieldProps} = renderHexColorFieldHook({validationState: 'invalid'});
+    let {inputFieldProps} = renderHexColorFieldHook({validationState: 'invalid'});
     expect(inputFieldProps['aria-invalid']).toBe(true);
   });
   
   it('should return prop for required', function () {
-    const {inputFieldProps} = renderHexColorFieldHook({isRequired: true});
+    let {inputFieldProps} = renderHexColorFieldHook({isRequired: true});
     expect(inputFieldProps['aria-required']).toBe(true);
   });
   
   it('should return prop for readonly', function () {
-    const {inputFieldProps} = renderHexColorFieldHook({isReadOnly: true});
+    let {inputFieldProps} = renderHexColorFieldHook({isReadOnly: true});
     expect(inputFieldProps.readOnly).toBe(true);
   });
 
   it('should return prop for disabled', function () {
-    const {inputFieldProps} = renderHexColorFieldHook({isDisabled: true});
+    let {inputFieldProps} = renderHexColorFieldHook({isDisabled: true});
     expect(inputFieldProps.disabled).toBe(true);
   });
 });

@@ -31,13 +31,13 @@ function renderComponent(props) {
 
 describe('HexColorField', function () {
   it('should handle defaults', function () {
-    const {
+    let {
       getByLabelText, 
       getByRole,
       getByText
     } = renderComponent({});
-    const hexColorField = getByLabelText('Primary Color');
-    const label = getByText('Primary Color');
+    let hexColorField = getByLabelText('Primary Color');
+    let label = getByText('Primary Color');
     expect(hexColorField).toBeInTheDocument();
     expect(getByRole('spinbutton')).toBe(hexColorField);
     expect(hexColorField).toHaveAttribute('type', 'text');
@@ -51,53 +51,53 @@ describe('HexColorField', function () {
   });
 
   it('should handle aria-label prop', function () {
-    const {getByLabelText} = renderComponent({
+    let {getByLabelText} = renderComponent({
       'aria-label': 'Custom label',
       label: undefined
     });
-    const hexColorField = getByLabelText('Custom label');
+    let hexColorField = getByLabelText('Custom label');
     expect(hexColorField).toBeInTheDocument();
     expect(hexColorField).not.toHaveAttribute('aria-labelledby');
   });
 
   it('should allow placeholder', function () {
-    const {getByPlaceholderText, getByRole} = renderComponent({placeholder: 'Enter a color'});
+    let {getByPlaceholderText, getByRole} = renderComponent({placeholder: 'Enter a color'});
     expect(getByRole('spinbutton')).toBe(getByPlaceholderText('Enter a color'));
   });
 
   it('should show valid validation state', function () {
-    const {getByLabelText} = renderComponent({validationState: 'valid'});
-    const hexColorField = getByLabelText('Primary Color');
+    let {getByLabelText} = renderComponent({validationState: 'valid'});
+    let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField).not.toBeInvalid();
   });
 
   it('should show invalid validation state', function () {
-    const {getByLabelText} = renderComponent({validationState: 'invalid'});
-    const hexColorField = getByLabelText('Primary Color');
+    let {getByLabelText} = renderComponent({validationState: 'invalid'});
+    let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField).toBeInvalid();
   });
 
   it('should be disabled', function () {
-    const {getByLabelText} = renderComponent({isDisabled: true});
-    const hexColorField = getByLabelText('Primary Color');
+    let {getByLabelText} = renderComponent({isDisabled: true});
+    let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField).toBeDisabled();
   });
 
   it('should be readonly', function () {
-    const {getByLabelText} = renderComponent({isReadOnly: true});
-    const hexColorField = getByLabelText('Primary Color');
+    let {getByLabelText} = renderComponent({isReadOnly: true});
+    let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField).toHaveAttribute('readonly');
   });
 
   it('should be required', function () {
-    const {getByLabelText} = renderComponent({isRequired: true});
-    const hexColorField = getByLabelText(/Primary Color/);
+    let {getByLabelText} = renderComponent({isRequired: true});
+    let hexColorField = getByLabelText(/Primary Color/);
     expect(hexColorField).toBeRequired();
   });
 
   it('should be empty when invalid value is provided', function () {
-    const {getByLabelText} = renderComponent({defaultValue: true});
-    const hexColorField = getByLabelText('Primary Color');
+    let {getByLabelText} = renderComponent({defaultValue: true});
+    let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('');
 
     act(() => {hexColorField.focus();});
@@ -114,8 +114,8 @@ describe('HexColorField', function () {
     ${'6-length hex string controlled'}  | ${{value: '#aabbcc'}}
     ${'Color object controlled'}         | ${{value: new Color('#abc')}}
   `('should accept $Name as value', function ({props}) {
-    const {getByLabelText} = renderComponent(props);
-    const hexColorField = getByLabelText('Primary Color');
+    let {getByLabelText} = renderComponent(props);
+    let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#AABBCC');
   });
 
@@ -124,16 +124,16 @@ describe('HexColorField', function () {
     ${'custom min value'}  | ${{defaultValue: '#aaa', minValue: '#bbb'}}
     ${'custom max value'}  | ${{defaultValue: '#ccc', maxValue: '#bbb'}}
   `('should clamp initial value provided to $Name', function ({props}) {
-    const {getByLabelText} = renderComponent(props);
-    const hexColorField = getByLabelText('Primary Color');
+    let {getByLabelText} = renderComponent(props);
+    let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#BBBBBB');
   });
 
   it('should handle uncontrolled state', function () {
-    const onChangeSpy = jest.fn();
-    const {getByLabelText} = renderComponent({defaultValue: '#abc', onChange: onChangeSpy});
+    let onChangeSpy = jest.fn();
+    let {getByLabelText} = renderComponent({defaultValue: '#abc', onChange: onChangeSpy});
 
-    const hexColorField = getByLabelText('Primary Color');
+    let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#AABBCC');
 
     act(() => {hexColorField.focus();});
@@ -153,10 +153,10 @@ describe('HexColorField', function () {
   });
 
   it('should handle controlled state', function () {
-    const onChangeSpy = jest.fn();
-    const {getByLabelText} = renderComponent({value: '#abc', onChange: onChangeSpy});
+    let onChangeSpy = jest.fn();
+    let {getByLabelText} = renderComponent({value: '#abc', onChange: onChangeSpy});
 
-    const hexColorField = getByLabelText('Primary Color');
+    let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#AABBCC');
 
     act(() => {hexColorField.focus();});
@@ -171,9 +171,9 @@ describe('HexColorField', function () {
   });
 
   it('should revert back to last valid value', function () {
-    const onChangeSpy = jest.fn();
-    const {getByLabelText} = renderComponent({defaultValue: '#abc', onChange: onChangeSpy});
-    const hexColorField = getByLabelText('Primary Color');
+    let onChangeSpy = jest.fn();
+    let {getByLabelText} = renderComponent({defaultValue: '#abc', onChange: onChangeSpy});
+    let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#AABBCC');
 
     act(() => {hexColorField.focus();});
@@ -193,13 +193,13 @@ describe('HexColorField', function () {
     ${'decrement with arrow down key'}  | ${new Color('#AAAAA6')}  | ${'ArrowDown'}
     ${'decrement with page down key'}   | ${new Color('#AAAAA6')}  | ${'PageDown'}
   `('should handle $Name event', function ({expected, key}) {
-    const onChangeSpy = jest.fn();
-    const {getByLabelText} = renderComponent({
+    let onChangeSpy = jest.fn();
+    let {getByLabelText} = renderComponent({
       value: '#aaa',
       onChange: onChangeSpy,
       step: 4
     });
-    const hexColorField = getByLabelText('Primary Color');
+    let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#AAAAAA');
 
     fireEvent.keyDown(hexColorField, {key});
@@ -213,13 +213,13 @@ describe('HexColorField', function () {
     ${'increment with mouse wheel'}     | ${new Color('#AAAAAE')}  | ${-10}
     ${'decrement with mouse wheel'}     | ${new Color('#AAAAA6')}  | ${10}
   `('should handle $Name event', function ({expected, deltaY}) {
-    const onChangeSpy = jest.fn();
-    const {getByLabelText} = renderComponent({
+    let onChangeSpy = jest.fn();
+    let {getByLabelText} = renderComponent({
       value: '#aaa',
       onChange: onChangeSpy,
       step: 4
     });
-    const hexColorField = getByLabelText('Primary Color');
+    let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe('#AAAAAA');
 
     fireEvent.wheel(hexColorField, {deltaY});
@@ -234,12 +234,12 @@ describe('HexColorField', function () {
     ${'increment to max value'}          | ${{value: '#aaa', maxValue: '#bbb'}}              | ${'#AAAAAA'}  | ${'End'}
     ${'decrement to min value'}          | ${{value: '#ccc', minValue: '#bbb'}}              | ${'#CCCCCC'}  | ${'Home'}
   `('should $Name', function ({props, initExpected, key}) {
-    const onChangeSpy = jest.fn();
-    const {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
-    const hexColorField = getByLabelText('Primary Color');
+    let onChangeSpy = jest.fn();
+    let {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
+    let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe(initExpected);
 
-    const newColor = new Color('#BBBBBB');
+    let newColor = new Color('#BBBBBB');
     fireEvent.keyDown(hexColorField, {key});
     fireEvent.keyUp(hexColorField, {key});
     expect(onChangeSpy).toHaveBeenCalledWith(newColor);
@@ -251,12 +251,12 @@ describe('HexColorField', function () {
     ${'max value'}  | ${{defaultValue: '#aaa', maxValue: '#bbb'}}  | ${'#AAAAAA'}  | ${'fff'}
     ${'min value'}  | ${{defaultValue: '#ccc', minValue: '#bbb'}}  | ${'#CCCCCC'}  | ${'000'}
   `('should clamp value to $Name on change', function ({props, initExpected, newValue}) {
-    const onChangeSpy = jest.fn();
-    const {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
-    const hexColorField = getByLabelText('Primary Color');
+    let onChangeSpy = jest.fn();
+    let {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
+    let hexColorField = getByLabelText('Primary Color');
     expect(hexColorField.value).toBe(initExpected);
 
-    const newColor = new Color('#BBBBBB');
+    let newColor = new Color('#BBBBBB');
     act(() => {hexColorField.focus();});
     userEvent.clear(hexColorField);
     typeText(hexColorField, newValue);

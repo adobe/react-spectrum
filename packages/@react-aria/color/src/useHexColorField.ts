@@ -37,7 +37,7 @@ export function useHexColorField(
   state: HexColorFieldState,
   ref: RefObject<HTMLInputElement>
 ): HexColorFieldAria {
-  const {
+  let {
     isDisabled,
     isReadOnly,
     isRequired,
@@ -45,7 +45,7 @@ export function useHexColorField(
     maxValue = defaultMaxValue
   } = props;
   
-  const {
+  let {
     colorValue,
     inputValue,
     setInputValue,
@@ -56,11 +56,11 @@ export function useHexColorField(
     decrementToMin
   } = state;
 
-  const inputId = useId();
-  const minColorInt = Color.parse(minValue).toHexInt();
-  const maxColorInt = Color.parse(maxValue).toHexInt();
+  let inputId = useId();
+  let minColorInt = Color.parse(minValue).toHexInt();
+  let maxColorInt = Color.parse(maxValue).toHexInt();
 
-  const {spinButtonProps} = useSpinButton(
+  let {spinButtonProps} = useSpinButton(
     {
       isDisabled,
       isReadOnly,
@@ -76,15 +76,15 @@ export function useHexColorField(
     }
   );
 
-  const onBlur = (e) => {
+  let onBlur = (e) => {
     spinButtonProps.onBlur(e);
     commitInputValue();
   };
 
   // Taken from https://github.com/adobe/react-spectrum/pull/1029/
   useEffect(() => {
-    const currentRef = ref.current;
-    const handleInputScrollWheel = e => {
+    let currentRef = ref.current;
+    let handleInputScrollWheel = e => {
       // If the input isn't supposed to receive input, do nothing.
       // TODO: add focus
       if (isDisabled || isReadOnly || !currentRef) {

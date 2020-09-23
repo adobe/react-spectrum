@@ -16,21 +16,21 @@ import {useHexColorFieldState} from '../';
 
 describe('useHexColorFieldState tests', function () {
   it('should have empty color value state if no initial value is provided', function () {
-    const {result} = renderHook(() => useHexColorFieldState({}));
+    let {result} = renderHook(() => useHexColorFieldState({}));
     expect(result.current.colorValue).toBeUndefined();
     expect(result.current.inputValue).toBe('');
   });
 
   it('should have empty color value if invalid initial value is provided', function () {
     let props = {defaultValue: 'invalidColor', minValue: '#abc'};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.colorValue).toBeUndefined();
     expect(result.current.inputValue).toBe('');
   });
 
   it('should accept 6-length hex string', function () {
     let props = {defaultValue: '#aabbcc'};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
     expect(result.current.colorValue.getChannelValue('green')).toBe(187);
     expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
@@ -40,7 +40,7 @@ describe('useHexColorFieldState tests', function () {
 
   it('should accept 3-length hex string', function () {
     let props = {defaultValue: '#abc'};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
     expect(result.current.colorValue.getChannelValue('green')).toBe(187);
     expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
@@ -50,7 +50,7 @@ describe('useHexColorFieldState tests', function () {
 
   it('should accept Color object as value', function () {
     let props = {defaultValue: new Color('#aabbcc')};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
     expect(result.current.colorValue.getChannelValue('green')).toBe(187);
     expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
@@ -60,7 +60,7 @@ describe('useHexColorFieldState tests', function () {
 
   it('should clamp if value provided is more than maxValue', function () {
     let props = {defaultValue: new Color('#999'), maxValue: new Color('#666')};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.colorValue.getChannelValue('red')).toBe(102);
     expect(result.current.colorValue.getChannelValue('green')).toBe(102);
     expect(result.current.colorValue.getChannelValue('blue')).toBe(102);
@@ -70,7 +70,7 @@ describe('useHexColorFieldState tests', function () {
 
   it('should clamp if value provided is less than minValue', function () {
     let props = {defaultValue: new Color('#333'), minValue: new Color('#666')};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.colorValue.getChannelValue('red')).toBe(102);
     expect(result.current.colorValue.getChannelValue('green')).toBe(102);
     expect(result.current.colorValue.getChannelValue('blue')).toBe(102);
@@ -80,7 +80,7 @@ describe('useHexColorFieldState tests', function () {
 
   it('should increment', function () {
     let props = {defaultValue: new Color('#012')};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     act(() => result.current.increment());
     expect(result.current.colorValue.getChannelValue('red')).toBe(0);
     expect(result.current.colorValue.getChannelValue('green')).toBe(17);
@@ -91,7 +91,7 @@ describe('useHexColorFieldState tests', function () {
 
   it('should not increment beyond the maximum value', function () {
     let props = {defaultValue: '#abc', maxValue: '#abc'};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     act(() => result.current.increment());
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
     expect(result.current.colorValue.getChannelValue('green')).toBe(187);
@@ -102,7 +102,7 @@ describe('useHexColorFieldState tests', function () {
 
   it('should increment to max value', function () {
     let props = {defaultValue: new Color('#aabbcc')};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     act(() => result.current.incrementToMax());
     expect(result.current.colorValue.getChannelValue('red')).toBe(255);
     expect(result.current.colorValue.getChannelValue('green')).toBe(255);
@@ -113,7 +113,7 @@ describe('useHexColorFieldState tests', function () {
 
   it('should decrement', function () {
     let props = {defaultValue: new Color('#012'), step: 4};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     act(() => result.current.decrement());
     expect(result.current.colorValue.getChannelValue('red')).toBe(0);
     expect(result.current.colorValue.getChannelValue('green')).toBe(17);
@@ -124,7 +124,7 @@ describe('useHexColorFieldState tests', function () {
 
   it('should not decrement beyond the minimum value', function () {
     let props = {defaultValue: '#abc', minValue: '#abc'};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     act(() => result.current.decrement());
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
     expect(result.current.colorValue.getChannelValue('green')).toBe(187);
@@ -135,7 +135,7 @@ describe('useHexColorFieldState tests', function () {
 
   it('should decrement to min value', function () {
     let props = {defaultValue: new Color('#aabbcc'), minValue: '#666'};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     act(() => result.current.decrementToMin());
     expect(result.current.colorValue.getChannelValue('red')).toBe(102);
     expect(result.current.colorValue.getChannelValue('green')).toBe(102);
@@ -146,7 +146,7 @@ describe('useHexColorFieldState tests', function () {
 
   it('should revert to last valid input value', function () {
     let props = {defaultValue: '#abc', minValue: '#abc'};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.inputValue).toBe('#AABBCC');
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
     expect(result.current.colorValue.getChannelValue('green')).toBe(187);
@@ -161,16 +161,16 @@ describe('useHexColorFieldState tests', function () {
   });
 
   it('should update colorValue (uncontrolled)', function () {
-    const onChangeSpy = jest.fn();
+    let onChangeSpy = jest.fn();
     let props = {defaultValue: '#abc', minValue: '#abc', onChange: onChangeSpy};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
     expect(result.current.colorValue.getChannelValue('green')).toBe(187);
     expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
     expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
     expect(result.current.inputValue).toBe('#AABBCC');
 
-    const newColor = new Color('#cba');
+    let newColor = new Color('#cba');
     act(() => result.current.setInputValue('#cba'));
     expect(onChangeSpy).toHaveBeenCalledWith(newColor);
     expect(result.current.colorValue.getChannelValue('red')).toBe(204);
@@ -181,16 +181,16 @@ describe('useHexColorFieldState tests', function () {
   });
 
   it('should not update colorValue (controlled)', function () {
-    const onChangeSpy = jest.fn();
+    let onChangeSpy = jest.fn();
     let props = {value: '#abc', onChange: onChangeSpy};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
     expect(result.current.colorValue.getChannelValue('green')).toBe(187);
     expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
     expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
     expect(result.current.inputValue).toBe('#AABBCC');
 
-    const newColor = new Color('#cba');
+    let newColor = new Color('#cba');
     act(() => result.current.setInputValue('#cba'));
     expect(onChangeSpy).toHaveBeenCalledWith(newColor);
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
@@ -201,9 +201,9 @@ describe('useHexColorFieldState tests', function () {
   });
 
   it('should not update colorValue for empty input', function () {
-    const onChangeSpy = jest.fn();
+    let onChangeSpy = jest.fn();
     let props = {defaultValue: '#abc', onChange: onChangeSpy};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
     expect(result.current.colorValue.getChannelValue('green')).toBe(187);
     expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
@@ -220,9 +220,9 @@ describe('useHexColorFieldState tests', function () {
   });
 
   it('should not update colorValue for invalid input', function () {
-    const onChangeSpy = jest.fn();
+    let onChangeSpy = jest.fn();
     let props = {defaultValue: '#abc', onChange: onChangeSpy};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
     expect(result.current.colorValue.getChannelValue('green')).toBe(187);
     expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
@@ -239,16 +239,16 @@ describe('useHexColorFieldState tests', function () {
   });
 
   it('should clamp to minimum value', function () {
-    const onChangeSpy = jest.fn();
+    let onChangeSpy = jest.fn();
     let props = {defaultValue: '#CCC', minValue: '#BBB', onChange: onChangeSpy};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.colorValue.getChannelValue('red')).toBe(204);
     expect(result.current.colorValue.getChannelValue('green')).toBe(204);
     expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
     expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
     expect(result.current.inputValue).toBe('#CCCCCC');
 
-    const newColor = new Color('#BBB');
+    let newColor = new Color('#BBB');
     act(() => result.current.setInputValue('#AAA'));
     expect(onChangeSpy).toHaveBeenCalledWith(newColor);
     expect(result.current.colorValue.getChannelValue('red')).toBe(187);
@@ -259,16 +259,16 @@ describe('useHexColorFieldState tests', function () {
   });
 
   it('should clamp to maximum value', function () {
-    const onChangeSpy = jest.fn();
+    let onChangeSpy = jest.fn();
     let props = {defaultValue: '#AAA', maxValue: '#BBB', onChange: onChangeSpy};
-    const {result} = renderHook(() => useHexColorFieldState(props));
+    let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
     expect(result.current.colorValue.getChannelValue('green')).toBe(170);
     expect(result.current.colorValue.getChannelValue('blue')).toBe(170);
     expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
     expect(result.current.inputValue).toBe('#AAAAAA');
 
-    const newColor = new Color('#BBB');
+    let newColor = new Color('#BBB');
     act(() => result.current.setInputValue('#CCC'));
     expect(onChangeSpy).toHaveBeenCalledWith(newColor);
     expect(result.current.colorValue.getChannelValue('red')).toBe(187);
