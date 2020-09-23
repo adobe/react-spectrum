@@ -18,6 +18,14 @@ import {theme} from '@react-spectrum/theme-default';
 import {triggerPress} from '@react-spectrum/test-utils';
 
 describe('DatePicker', function () {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+  afterEach(() => {
+    act(() => {
+      jest.runAllTimers();
+    });
+  });
   describe('basics', function () {
     it('should render a datepicker with a specified date', function () {
       let {getByRole, getAllByRole} = render(<DatePicker value={new Date(2019, 1, 3)} />);

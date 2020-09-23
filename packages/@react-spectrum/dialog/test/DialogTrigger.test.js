@@ -723,12 +723,12 @@ describe('DialogTrigger', function () {
         <TextField id="document-input" aria-label="document input" />
         <DialogTrigger>
           <ActionButton id="outer-trigger">Trigger</ActionButton>
-          <Dialog id='outer-dialog'>
+          <Dialog id="outer-dialog">
             <Content>
               <TextField id="outer-input" aria-label="outer input" autoFocus />
               <DialogTrigger>
                 <ActionButton id="inner-trigger">Trigger</ActionButton>
-                <Dialog id='inner-dialog'>
+                <Dialog id="inner-dialog">
                   <Content>
                     <TextField id="inner-input" aria-label="outer input" autoFocus />
                   </Content>
