@@ -87,7 +87,7 @@ export function useHexColorField(
     const handleInputScrollWheel = e => {
       // If the input isn't supposed to receive input, do nothing.
       // TODO: add focus
-      if (isDisabled || isReadOnly || currentRef) {
+      if (isDisabled || isReadOnly || !currentRef) {
         return;
       }
 
