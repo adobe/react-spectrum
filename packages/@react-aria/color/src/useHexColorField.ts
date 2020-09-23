@@ -33,26 +33,17 @@ interface HexColorFieldAria {
 }
 
 export function useHexColorField(
-  props: AriaHexColorFieldProps,
+  props: Omit<AriaHexColorFieldProps, 'value' | 'defaultValue' | 'onChange'>,
   state: HexColorFieldState,
   ref: RefObject<HTMLInputElement>
 ): HexColorFieldAria {
-  const {
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    value,        
-    defaultValue,
-    onChange,
-    /* eslint-disable @typescript-eslint/no-unused-vars */
-    ...otherProps
-  } = props;
-
   const {
     isDisabled,
     isReadOnly,
     isRequired,
     minValue = defaultMinValue,
     maxValue = defaultMaxValue
-  } = otherProps;
+  } = props;
   
   const {
     colorValue,
@@ -122,7 +113,7 @@ export function useHexColorField(
   }, [inputId, isReadOnly, isDisabled, decrement, increment, ref]);
 
   let {labelProps, inputProps} = useTextField(
-    mergeProps(otherProps, {
+    mergeProps(props, {
       id: inputId,
       value: inputValue,
       type: 'text',
