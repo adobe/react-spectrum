@@ -63,7 +63,11 @@ storiesOf('HexColorField', module)
   )
   .add(
     'controlled value',
-    () => <ControlledHexColorField />
+    () => (
+      <ControlledHexColorField
+        value={new Color('#FF00AA')}
+        onChange={action('change')} />
+    )
   )
   .add(
     'as a popover',
@@ -93,8 +97,8 @@ storiesOf('HexColorField', module)
   );
 
 function HexColorFieldPopover(props: any = {}) {
-  const initialColor = Color.parse(props.value);
-  const [selectedColor, setSelectedColor] = useState(props.value ? initialColor.toString('hex') : '');
+  let initialColor = Color.parse(props.value);
+  let [selectedColor, setSelectedColor] = useState(props.value ? initialColor.toString('hex') : '');
   return (
     <DialogTrigger type="popover">
       <ActionButton
@@ -122,12 +126,16 @@ function HexColorFieldPopover(props: any = {}) {
 }
 
 function ControlledHexColorField(props: any = {}) {
-  let [color, setColor] = useState(new Color('#FF00AA'));
+  let [color, setColor] = useState(props.value);
+  let onChange = (color: Color) => {
+    setColor(color);
+    if (props.onChange) { props.onChange(color) }
+  }
   return (
     <Flex direction="row" gap="size-100" alignItems="end">
       <HexColorField
         label="Primary Color"
-        onChange={(color: Color) => setColor(color)}
+        onChange={onChange}
         value={color} />
       <View width="size-400" height="size-400" UNSAFE_style={{backgroundColor: color.toString('rgb')}} />
     </Flex>

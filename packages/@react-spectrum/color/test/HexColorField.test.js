@@ -16,7 +16,7 @@ import {HexColorField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import {typeText} from '@react-spectrum/test-utils'
+import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 function renderComponent(props) {
