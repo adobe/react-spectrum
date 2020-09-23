@@ -257,11 +257,6 @@ function useFocusContainment(scopeRef: RefObject<HTMLElement[]>, contain: boolea
       }
     };
 
-    /**
-     * Need to add back in the stop propagation in some form.
-     * Need a test to make sure that the outer scope doesn't restore focus when there's an inner scope already.
-     */
-
     document.addEventListener('keydown', onKeyDown, false);
     document.addEventListener('focusin', onFocus, false);
     scope.forEach(element => element.addEventListener('focusin', onFocus, false));
