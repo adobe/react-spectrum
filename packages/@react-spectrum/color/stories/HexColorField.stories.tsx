@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
 import {Color} from '@react-stately/color';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Flex} from '@react-spectrum/layout';
 import {HexColorField} from '../';
 import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
@@ -59,6 +60,10 @@ storiesOf('HexColorField', module)
   .add(
     'min = #AAAAAA, max = #CCCCCC',
     () => render({minValue: '#AAA', maxValue: '#CCC'})
+  )
+  .add(
+    'controlled value',
+    () => <ControlledHexColorField />
   )
   .add(
     'as a popover',
@@ -113,6 +118,19 @@ function HexColorFieldPopover(props: any = {}) {
         </View>
       </Dialog>
     </DialogTrigger>
+  );
+}
+
+function ControlledHexColorField(props: any = {}) {
+  let [color, setColor] = useState(new Color('#FF00AA'));
+  return (
+    <Flex direction="row" gap="size-100" alignItems="end">
+      <HexColorField
+        label="Primary Color"
+        onChange={(color: Color) => setColor(color)}
+        value={color} />
+      <View width="size-400" height="size-400" UNSAFE_style={{backgroundColor: color.toString('rgb')}} />
+    </Flex>
   );
 }
 
