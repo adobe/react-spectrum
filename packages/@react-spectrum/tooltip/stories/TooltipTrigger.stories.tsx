@@ -43,6 +43,14 @@ storiesOf('TooltipTrigger', module)
     () => render({placement: 'bottom'})
   )
   .add(
+    'placement: top with offset',
+    () => render({placement: 'top', offset: 50})
+  )
+  .add(
+    'placement: bottom with crossOffset',
+    () => render({placement: 'bottom', crossOffset: 50})
+  )
+  .add(
     'isDisabled',
     () => render({placement: 'start', isDisabled: true})
   )
