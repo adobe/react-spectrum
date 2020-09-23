@@ -225,15 +225,19 @@ governing permissions and limitations under the License.
   transition: border-width var(--spectrum-slider-animation-duration) ease-in-out;
 
   outline: none;
-  cursor: pointer;
-  cursor: grab;
+  /* cursor: pointer; */
+  /* cursor: grab; */
 
   &:active,
-  &.is-focused,
   &.is-dragged {
-    /*border-width: var(--spectrum-slider-handle-border-size-down);*/
-    cursor: ns-resize;
-    cursor: grabbing;
+    border-width: var(--spectrum-slider-handle-border-size-down);
+    /* cursor: ns-resize; */
+    /* cursor: grabbing; */
+  }
+
+  &:active,
+  $.is-dragged {
+
   }
 
   &:active,
