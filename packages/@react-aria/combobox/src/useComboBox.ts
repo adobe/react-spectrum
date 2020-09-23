@@ -134,7 +134,9 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       return;
     }
 
-    state.close();
+    if (isMobile) {
+      state.close();
+    }
 
     if (props.onBlur) {
       props.onBlur(e);
