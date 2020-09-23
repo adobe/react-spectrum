@@ -2195,7 +2195,7 @@ describe('Table', function () {
         expect(row).toHaveAttribute('aria-selected', 'true');
       });
 
-      it('will only select one if pointer is used to click on multiple', function () {
+      it('will only select one if pointer is used to click on multiple rows', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
@@ -2226,7 +2226,38 @@ describe('Table', function () {
         checkRowSelection(rows.slice(2), false);
       });
 
-      it('should support selecting multiple with the Space key', function () {
+      it('will only select one if pointer is used to click on multiple checkboxes', function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange});
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(1), false);
+        act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
+
+        checkSelection(onSelectionChange, ['Foo 1']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        checkRowSelection(rows.slice(2), false);
+
+        onSelectionChange.mockReset();
+        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+
+        checkSelection(onSelectionChange, ['Foo 2']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+        checkRowSelection(rows.slice(3), false);
+
+        // Deselect
+        onSelectionChange.mockReset();
+        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+
+        checkSelection(onSelectionChange, []);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'false');
+        checkRowSelection(rows.slice(2), false);
+      });
+
+      it('should support selecting single row only with the Space key', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 

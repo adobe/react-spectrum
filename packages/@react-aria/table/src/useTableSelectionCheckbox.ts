@@ -31,10 +31,21 @@ export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, stat
     isDisabled
   } = props;
 
+  let manager = state.selectionManager;
   let checkboxId = useId();
   let isSelected = state.selectionManager.isSelected(key) && !isDisabled;
 
-  let isOneSelected = state.selectionManager.selectedKeys.size > 0;
+  let onChange = () => {
+    if (manager.selectionMode === 'single') {
+      if (manager.isSelected(key) && !manager.disallowEmptySelection) {
+        manager.toggleSelection(key);
+      } else {
+        manager.replaceSelection(key);
+      }
+    } else if (manager) {
+      manager.toggleSelection(key);
+    }
+  };
 
   return {
     checkboxProps: {
@@ -42,8 +53,7 @@ export function useTableSelectionCheckbox<T>(props: SelectionCheckboxProps, stat
       'aria-label': 'Select',
       'aria-labelledby': `${checkboxId} ${getRowLabelledBy(state, key)}`,
       isSelected,
-      isDisabled: state.selectionManager.selectionMode === 'single' && isOneSelected && !isSelected,
-      onChange: () => state.selectionManager.toggleSelection(key)
+      onChange
     }
   };
 }
