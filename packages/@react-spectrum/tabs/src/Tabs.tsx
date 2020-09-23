@@ -13,8 +13,8 @@
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, Node, Orientation, StyleProps} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
-import {mergeProps} from '@react-aria/utils';
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
+import React, {useEffect, useRef, useState} from 'react';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';

@@ -11,7 +11,8 @@
  */
 
 import {focusSafely} from './focusSafely';
-import React, {ReactNode, RefObject, useContext, useEffect, useLayoutEffect, useRef} from 'react';
+import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 
 // import {FocusScope, useFocusScope} from 'react-events/focus-scope';
 // export {FocusScope};
@@ -352,7 +353,11 @@ function useRestoreFocus(scopeRef: RefObject<HTMLElement[]>, restoreFocus: boole
       // next element after the node to restore to instead.
       if ((!nextElement || !isElementInScope(nextElement, scope)) && nodeToRestore) {
         walker.currentNode = nodeToRestore;
-        nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
+
+        // Skip over elements within the scope, in case the scope immediately follows the node to restore.
+        do {
+          nextElement = (e.shiftKey ? walker.previousNode() : walker.nextNode()) as HTMLElement;
+        } while (isElementInScope(nextElement, scope));
 
         e.preventDefault();
         e.stopPropagation();

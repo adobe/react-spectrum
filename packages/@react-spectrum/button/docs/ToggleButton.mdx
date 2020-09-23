@@ -1,0 +1,131 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/button';
+import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/button/package.json';
+
+```jsx import
+import {Flex} from '@react-spectrum/layout';
+import {ToggleButton} from '@react-spectrum/button';
+```
+
+---
+category: Buttons
+keywords: [toggle button]
+---
+
+# ToggleButton
+
+<p>{docs.exports.ToggleButton.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ToggleButton']}
+  sourceData={[
+    {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/action-button/'}
+  ]} />
+
+## Example
+
+```tsx example
+<ToggleButton>Pin</ToggleButton>
+```
+
+## Content
+
+ToggleButtons can have a label, an icon, or both. An icon is provided by passing an icon component as a child to the ToggleButton.
+A visible label can be provided by passing a string or a Text component as a child, depending on whether the ToggleButton has an accompanying icon.
+
+```tsx example
+import {Text} from '@react-spectrum/text';
+import Pin from '@spectrum-icons/workflow/PinOff';
+
+<ToggleButton>
+  <Pin />
+  <Text>Icon + Label</Text>
+</ToggleButton>
+```
+
+### Accessibility
+
+If no visible label is provided (e.g. an icon only button),
+an alternative text label must be provided to identify the control for accessibility. This should be added using
+the `aria-label` prop.
+
+```tsx example
+<ToggleButton aria-label="Icon only">
+  <Pin />
+</ToggleButton>
+```
+
+**Note:** `ToggleButton` should not be used when the content of the button changes between selection states, for example,
+mute/unmute or play/pause. In these cases, use an [ActionButton](ActionButton.html) instead.
+
+### Internationalization
+
+In order to internationalize an ToggleButton, a localized string should be passed to the `children` or `aria-label` prop.
+
+## Value
+
+ToggleButtons are not selected by default. The `defaultSelected` prop can be used to set the default state (uncontrolled).
+Alternatively, the `isSelected` prop can be used to make the selected state controlled. See React's documentation on
+[uncontrolled components](https://reactjs.org/docs/uncontrolled-components.html) for more info, and [Events](#Events), below,
+for an example of controlled behavior.
+
+## Events
+
+ToggleButtons support user interactions via mouse, keyboard, and touch. When pressing the button, the selection
+state is toggled, and the `onChange` event is fired. The following example uses an `onChange` handler to update React state.
+
+```tsx example
+function Example() {
+  let [isSelected, setSelected] = React.useState(false);
+
+  return (
+    <ToggleButton
+      isEmphasized
+      isSelected={isSelected}
+      onChange={setSelected}
+      aria-label="Pin">
+      <Pin />
+    </ToggleButton>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.ToggleButton} links={docs.links} />
+
+## Visual options
+
+### Quiet
+[View guidelines](https://spectrum.adobe.com/page/action-button/#Quiet)
+
+```tsx example
+<ToggleButton isQuiet>Pin</ToggleButton>
+```
+
+### Disabled
+[View guidelines](https://spectrum.adobe.com/page/action-button/#Disabled)
+
+```tsx example
+<ToggleButton isDisabled>Pin</ToggleButton>
+```
+
+### Emphasized
+[View guidelines](https://spectrum.adobe.com/page/action-button/#Emphasis)
+
+```tsx example
+<ToggleButton isEmphasized defaultSelected>Pin</ToggleButton>
+```

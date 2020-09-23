@@ -251,15 +251,15 @@ storiesOf('DialogTrigger', module)
   )
   .add(
     'shouldFlip: true',
-    () => renderPopover({type: 'popover', placement: 'left', shouldFlip: true, width: 'calc(100vh - 100px)'})
+    () => renderPopover({type: 'popover', placement: 'start', shouldFlip: true, width: 'calc(100vh - 100px)'})
   )
   .add(
     'shouldFlip: false',
-    () => renderPopover({type: 'popover', placement: 'left', shouldFlip: false, width: 'calc(100vh - 100px)'})
+    () => renderPopover({type: 'popover', placement: 'start', shouldFlip: false, width: 'calc(100vh - 100px)'})
   )
   .add(
     'shouldFlip: true with offset',
-    () => renderPopover({type: 'popover', placement: 'left', shouldFlip: true, offset: 50, width: 'calc(100vh - 100px)'})
+    () => renderPopover({type: 'popover', placement: 'start', shouldFlip: true, offset: 50, width: 'calc(100vh - 100px)'})
   )
   .add(
     'keyboard dismiss disabled: modal',
@@ -276,6 +276,27 @@ storiesOf('DialogTrigger', module)
   .add(
     'containerPadding',
     () => renderPopover({type: 'popover', placement: 'bottom', width: 'calc(100vh - 100px)', containerPadding: 20})
+  )
+  .add(
+    'Close function with button: popover',
+    () => (
+      <div style={{display: 'flex', margin: '100px 0'}}>
+        <DialogTrigger type="popover" onOpenChange={action('open change')}>
+          <ActionButton>Trigger</ActionButton>
+          {(close) => (
+            <Dialog>
+              <Heading>The Heading</Heading>
+              <Header>The Header</Header>
+              <Divider />
+              <Content><Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet tristique risus. In sit amet suscipit lorem. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In condimentum imperdiet metus non condimentum. Duis eu velit et quam accumsan tempus at id velit. Duis elementum elementum purus, id tempus mauris posuere a. Nunc vestibulum sapien pellentesque lectus commodo ornare.</Text></Content>
+              <ButtonGroup>
+                <Button variant="secondary" onPress={chain(close, action('cancel'))}>Cancel</Button>
+              </ButtonGroup>
+            </Dialog>
+          )}
+        </DialogTrigger>
+      </div>
+    )
   )
   .add(
     'targetRef',

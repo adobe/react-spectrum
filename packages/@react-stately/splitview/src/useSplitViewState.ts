@@ -39,7 +39,7 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
     }
   };
   let callOnResizeEnd = (value) => {
-    if (onResizeEnd && value !== offset) {
+    if (onResizeEnd) {
       onResizeEnd(value);
     }
   };
@@ -76,30 +76,38 @@ export function useSplitViewState(props: SplitViewStatelyProps): SplitViewState 
 
   let increment = () => setOffset(prevHandleOffset => {
     let nextOffset = boundOffset(prevHandleOffset + 10);
-    callOnResize(nextOffset);
-    callOnResizeEnd(nextOffset);
+    if (nextOffset !== offset) {
+      callOnResize(nextOffset);
+      callOnResizeEnd(nextOffset);
+    }
     return nextOffset;
   });
 
   let decrement = () => setOffset(prevHandleOffset => {
     let nextOffset = boundOffset(prevHandleOffset - 10);
-    callOnResize(nextOffset);
-    callOnResizeEnd(nextOffset);
+    if (nextOffset !== offset) {
+      callOnResize(nextOffset);
+      callOnResizeEnd(nextOffset);
+    }
     return nextOffset;
   });
 
   let decrementToMin = () => {
     let nextOffset = allowsCollapsing ? 0 : minPos;
-    callOnResize(nextOffset);
-    callOnResizeEnd(nextOffset);
-    setOffset(nextOffset);
+    if (nextOffset !== offset) {
+      callOnResize(nextOffset);
+      callOnResizeEnd(nextOffset);
+      setOffset(nextOffset);
+    }
   };
 
   let incrementToMax = () => {
     let nextOffset = maxPos;
-    callOnResize(nextOffset);
-    callOnResizeEnd(nextOffset);
-    setOffset(nextOffset);
+    if (nextOffset !== offset) {
+      callOnResize(nextOffset);
+      callOnResizeEnd(nextOffset);
+      setOffset(nextOffset);
+    }
   };
 
   let collapseToggle = () => setOffset(prevHandleOffset => {
