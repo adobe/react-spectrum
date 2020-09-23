@@ -20,16 +20,6 @@ import {useLocale} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 
-/**
- * Convert a number 0-1 into a CSS percentage value, mirroring it for rtl.
- */
-export function toPercent(value: number, direction: Direction = 'ltr'): string {
-  if (direction === 'rtl') {
-    value = 1 - value;
-  }
-  return `${value * 100}%`;
-}
-
 export interface UseSliderBaseContainerProps extends AriaLabelingProps, LabelableProps {
   state: SliderState,
   trackRef: MutableRefObject<undefined>,
