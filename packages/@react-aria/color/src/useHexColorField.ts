@@ -83,10 +83,11 @@ export function useHexColorField(
 
   // Taken from https://github.com/adobe/react-spectrum/pull/1029/
   useEffect(() => {
+    const currentRef = ref.current;
     const handleInputScrollWheel = e => {
       // If the input isn't supposed to receive input, do nothing.
       // TODO: add focus
-      if (isDisabled || isReadOnly || !ref.current) {
+      if (isDisabled || isReadOnly || currentRef) {
         return;
       }
 
@@ -98,14 +99,14 @@ export function useHexColorField(
       }
     };
 
-    if (!ref.current) { return; }
-    ref.current.addEventListener(
+    if (!currentRef) { return; }
+    currentRef.addEventListener(
       'wheel',
       handleInputScrollWheel,
       {passive: false}
     );
     return () => {
-      ref.current.removeEventListener(
+      currentRef.removeEventListener(
         'wheel',
         handleInputScrollWheel
       );
