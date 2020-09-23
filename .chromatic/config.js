@@ -22,7 +22,7 @@ addParameters({
 addDecorator(withA11y);
 
 addDecorator(story => (
-  <VerticalCenter style={{textAlign: 'left', alignItems: 'center', minHeight: null, boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
+  <VerticalCenter style={{alignItems: 'center', minHeight: null, boxSizing: 'border-box', display: 'flex', justifyContent: 'center'}}>
     {story()}
   </VerticalCenter>
 ));
