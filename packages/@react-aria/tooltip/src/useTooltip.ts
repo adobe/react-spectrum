@@ -18,6 +18,9 @@ interface TooltipAria {
   tooltipProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Handles accessibility for a Tooltip.
+ */
 export function useTooltip(props: AriaTooltipProps): TooltipAria {
   let domProps = filterDOMProps(props, {labelable: true});
 

@@ -66,6 +66,9 @@ hook in `@react-stately/tooltip`. The state object should be passed as an option
 
 ## Example
 
+This example uses a Tooltip that renders in an absolute position next to its target. We need to supply it with the correct
+aria attributes, which we can get from the <TypeLink links={docs.links} type={docs.exports.useTooltip} /> hook also in `@react-aria/tooltip`.
+
 ```tsx example
 import {useTooltipTriggerState} from '@react-stately/tooltip';
 import {
