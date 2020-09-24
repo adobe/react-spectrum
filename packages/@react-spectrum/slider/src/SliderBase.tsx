@@ -87,7 +87,6 @@ function SliderBase(props: SliderBaseProps) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     let v = useSliderThumb({
       index: i,
-      isReadOnly: props.isReadOnly,
       isDisabled: props.isDisabled,
       trackRef,
       inputRef: inputRefs[i],

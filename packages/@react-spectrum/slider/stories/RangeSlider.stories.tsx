@@ -30,12 +30,8 @@ storiesOf('RangeSlider', module)
     () => render({label: 'Label', defaultValue: {start: 30, end: 70}, isDisabled: true})
   )
   .add(
-    'isReadOnly',
-    () => render({label: 'Label', defaultValue: {start: 30, end: 70}, isReadOnly: true})
-  )
-  .add(
     'custom width',
-    () => render({label: 'Label', maxValue: 1000, width: '200px'})
+    () => render({label: 'Label', width: '200px'})
   )
   .add(
     'label overflow',

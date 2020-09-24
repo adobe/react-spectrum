@@ -19,7 +19,7 @@ export interface SliderThumbProps extends AriaLabelingProps, FocusableDOMProps, 
   direction?: Direction
 }
 
-export interface SpectrumBarSliderBase<T> extends BaseSliderProps, ValueBase<T>, StyleProps {
+export interface SpectrumBarSliderBase<T> extends Omit<BaseSliderProps, 'isReadOnly'>, ValueBase<T>, StyleProps {
   orientation?: Orientation,
   labelPosition?: LabelPosition,
   /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */

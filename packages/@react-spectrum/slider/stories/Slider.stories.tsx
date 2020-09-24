@@ -30,10 +30,6 @@ storiesOf('Slider', module)
     () => render({label: 'Label', defaultValue: 50, isDisabled: true})
   )
   .add(
-    'isReadOnly',
-    () => render({label: 'Label', defaultValue: 50, isReadOnly: true})
-  )
-  .add(
     'custom width',
     () => render({label: 'Label', width: '200px'})
   )
