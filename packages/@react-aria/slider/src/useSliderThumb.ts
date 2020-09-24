@@ -114,13 +114,13 @@ export function useSliderThumb(
         state.setThumbValue(index, parseFloat(e.target.value));
       }
     }),
-    thumbProps: isEditable ? mergeProps({
+    thumbProps: mergeProps(isEditable ? {
       onMouseDown: draggableProps.onMouseDown,
       onMouseEnter: draggableProps.onMouseEnter,
       onMouseOut: draggableProps.onMouseOut
-    }, {
+    } : {}, isDisabled ? {} : {
       onMouseDown: focusInput
-    }) : {},
+    }),
     labelProps
   };
 }

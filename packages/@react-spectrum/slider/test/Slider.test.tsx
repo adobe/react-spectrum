@@ -194,13 +194,15 @@ describe('Slider', function () {
     // Can't test arrow/page up/down arrows because they are handled by the browser and JSDOM doesn't feel like it.
 
     it.each`
-      Name                               | props                                 | commands
-      ${'(left/right arrows, ltr)'}      | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}]}
-      ${'(left/right arrows, rtl)'}      | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}]}
-      ${'(home/end, ltr)'}               | ${{locale: 'de-DE'}}                  | ${[{left: press.End, result: '100'}, {left: press.Home, result: '0'}]}
-      ${'(home/end, rtl)'}               | ${{locale: 'ar-AE'}}                  | ${[{left: press.End, result: '100'}, {left: press.Home, result: '0'}]}
-      ${'(left/right arrows, disabled)'} | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}]}
-      ${'(home/end, disabled)'}          | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.End, result: 0}, {left: press.Home, result: 0}]}
+      Name                                 | props                                 | commands
+      ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}]}
+      ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}]}
+      ${'(home/end, ltr)'}                 | ${{locale: 'de-DE'}}                  | ${[{left: press.End, result: '100'}, {left: press.Home, result: '0'}]}
+      ${'(home/end, rtl)'}                 | ${{locale: 'ar-AE'}}                  | ${[{left: press.End, result: '100'}, {left: press.Home, result: '0'}]}
+      ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}]}
+      ${'(home/end, isDisabled)'}          | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.End, result: 0}, {left: press.Home, result: 0}]}
+      ${'(left/right arrows, isReadOnly)'} | ${{locale: 'de-DE', isReadOnly: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}]}
+      ${'(home/end, isReadOnly)'}          | ${{locale: 'de-DE', isReadOnly: true}}| ${[{left: press.End, result: 0}, {left: press.Home, result: 0}]}
     `('$Name moves the slider in the correct direction', function ({props, commands}) {
       let tree = render(
         <Provider theme={theme} {...props}>
@@ -293,9 +295,31 @@ describe('Slider', function () {
       expect(onChangeSpy).not.toHaveBeenCalled();
       expect(document.activeElement).not.toBe(slider);
       fireEvent.mouseMove(thumb, {clientX: 10});
-      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+      expect(onChangeSpy).not.toHaveBeenCalled();
       fireEvent.mouseUp(thumb, {clientX: 10});
-      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+    });
+
+    it('cannot click and drag handle when read only', () => {
+      let onChangeSpy = jest.fn();
+      let {getByRole} = render(
+        <Slider
+          label="The Label"
+          onChange={onChangeSpy}
+          defaultValue={50}
+          isReadOnly />
+      );
+
+      let slider = getByRole('slider');
+      let thumb = slider.parentElement;
+      fireEvent.mouseDown(thumb, {clientX: 50});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      // TODO what should happen here?
+      // expect(document.activeElement).toBe(slider);
+      fireEvent.mouseMove(thumb, {clientX: 10});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumb, {clientX: 10});
+      expect(onChangeSpy).not.toHaveBeenCalled();
     });
 
     it('can click on track to move handle', () => {
@@ -348,17 +372,50 @@ describe('Slider', function () {
       // left track
       fireEvent.mouseDown(leftTrack, {clientX: 20});
       expect(document.activeElement).not.toBe(slider);
-      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+      expect(onChangeSpy).not.toHaveBeenCalled();
       fireEvent.mouseUp(thumb, {clientX: 20});
-      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+      expect(onChangeSpy).not.toHaveBeenCalled();
 
       // right track
       onChangeSpy.mockClear();
       fireEvent.mouseDown(rightTrack, {clientX: 70});
       expect(document.activeElement).not.toBe(slider);
-      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+      expect(onChangeSpy).not.toHaveBeenCalled();
       fireEvent.mouseUp(thumb, {clientX: 70});
-      expect(onChangeSpy).toHaveBeenCalledTimes(0);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+    });
+
+    it('cannot click on track to move handle when read only', () => {
+      let onChangeSpy = jest.fn();
+      let {getByRole} = render(
+        <Slider
+          label="The Label"
+          onChange={onChangeSpy}
+          defaultValue={50}
+          isReadOnly />
+      );
+
+      let slider = getByRole('slider');
+      let thumb = slider.parentElement.parentElement;
+      // @ts-ignore
+      let [leftTrack, rightTrack] = [...thumb.parentElement.children].filter(c => c !== thumb);
+
+      // left track
+      fireEvent.mouseDown(leftTrack, {clientX: 20});
+      // TODO what should happen here?
+      // expect(document.activeElement).not.toBe(slider);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumb, {clientX: 20});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+
+      // right track
+      onChangeSpy.mockClear();
+      fireEvent.mouseDown(rightTrack, {clientX: 70});
+      // TODO what should happen here?
+      // expect(document.activeElement).not.toBe(slider);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumb, {clientX: 70});
+      expect(onChangeSpy).not.toHaveBeenCalled();
     });
   });
 });

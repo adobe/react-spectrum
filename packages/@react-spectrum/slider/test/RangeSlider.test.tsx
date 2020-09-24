@@ -213,14 +213,18 @@ describe('Slider', function () {
     // Can't test arrow/page up/down arrows because they are handled by the browser and JSDOM doesn't feel like it.
 
     it.each`
-      Name                          | props                 | commands
-      ${'(left/right arrows, ltr)'} | ${{locale: 'de-DE'}}  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}, {right: press.ArrowRight, result: +1}, {right: press.ArrowLeft, result: -1}]}
-      ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}, {right: press.ArrowRight, result: -1}, {right: press.ArrowLeft, result: +1}]}
-      ${'(home/end, ltr)'}          | ${{locale: 'de-DE'}}  | ${[{left: press.End, result: '50'}, {left: press.Home, result: '0'}, {left: press.ArrowRight, result: '1'}, {right: press.Home, result: '1'}, {right: press.End, result: '100'}]}
-      ${'(home/end, rtl)'}          | ${{locale: 'ar-AE'}}  | ${[{left: press.End, result: '50'}, {left: press.Home, result: '0'}, {left: press.ArrowLeft,  result: '1'}, {right: press.Home, result: '1'}, {right: press.End, result: '100'}]}
+      Name                                 | props                                 | commands
+      ${'(left/right arrows, ltr)'}        | ${{locale: 'de-DE'}}                  | ${[{left: press.ArrowRight, result: +1}, {left: press.ArrowLeft, result: -1}, {right: press.ArrowRight, result: +1}, {right: press.ArrowLeft, result: -1}]}
+      ${'(left/right arrows, rtl)'}        | ${{locale: 'ar-AE'}}                  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowLeft, result: +1}, {right: press.ArrowRight, result: -1}, {right: press.ArrowLeft, result: +1}]}
+      ${'(home/end, ltr)'}                 | ${{locale: 'de-DE'}}                  | ${[{left: press.End, result: '50'}, {left: press.Home, result: '0'}, {left: press.ArrowRight, result: '1'}, {right: press.Home, result: '1'}, {right: press.End, result: '100'}]}
+      ${'(home/end, rtl)'}                 | ${{locale: 'ar-AE'}}                  | ${[{left: press.End, result: '50'}, {left: press.Home, result: '0'}, {left: press.ArrowLeft,  result: '1'}, {right: press.Home, result: '1'}, {right: press.End, result: '100'}]}
+      ${'(left/right arrows, isDisabled)'} | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}, {right: press.ArrowRight, result: 0}, {right: press.ArrowLeft, result: 0}]}
+      ${'(home/end, isDisabled)'}          | ${{locale: 'de-DE', isDisabled: true}}| ${[{left: press.End, result: 0}, {left: press.Home, result: 0}, {right: press.End, result: 0}, {right: press.Home, result: 0}]}
+      ${'(left/right arrows, isReadOnly)'} | ${{locale: 'de-DE', isReadOnly: true}}| ${[{left: press.ArrowRight, result: 0}, {left: press.ArrowLeft, result: 0}, {right: press.ArrowRight, result: 0}, {right: press.ArrowLeft, result: 0}]}
+      ${'(home/end, isReadOnly)'}          | ${{locale: 'de-DE', isReadOnly: true}}| ${[{left: press.End, result: 0}, {left: press.Home, result: 0}, {right: press.End, result: 0}, {right: press.Home, result: 0}]}
     `('$Name moves the slider in the correct direction', function ({props, commands}) {
       let tree = render(
-        <Provider theme={theme} locale={props.locale}>
+        <Provider theme={theme} {...props}>
           <RangeSlider label="Label" defaultValue={{start: 20, end: 50}} minValue={0} maxValue={100} />
         </Provider>
       );
@@ -234,7 +238,7 @@ describe('Slider', function () {
       ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -10}, {left: press.ArrowLeft, result: +10}, {right: press.ArrowRight, result: -10}, {right: press.ArrowLeft, result: +10}]}
     `('$Name respects the step size', function ({props, commands}) {
       let tree = render(
-        <Provider theme={theme} locale={props.locale}>
+        <Provider theme={theme} {...props}>
           <RangeSlider label="Label" step={10} defaultValue={{start: 20, end: 50}} />
         </Provider>
       );
@@ -248,7 +252,7 @@ describe('Slider', function () {
       ${'(left/right arrows, rtl)'} | ${{locale: 'ar-AE'}}  | ${[{left: press.ArrowRight, result: -1}, {left: press.ArrowRight, result: 0}, {right: press.ArrowLeft, result: +1}, {right: press.ArrowLeft, result: 0}]}
     `('$Name is clamped by min/max', function ({props, commands}) {
       let tree = render(
-        <Provider theme={theme} locale={props.locale}>
+        <Provider theme={theme} {...props}>
           <RangeSlider label="Label" minValue={-5} defaultValue={{start: -4, end: 4}} maxValue={5} />
         </Provider>
       );
@@ -311,6 +315,86 @@ describe('Slider', function () {
       expect(onChangeSpy).toHaveBeenCalledTimes(3);
     });
 
+    it('cannot click and drag handle when disabled', () => {
+      let onChangeSpy = jest.fn();
+      let {getAllByRole} = render(
+        <RangeSlider
+          label="The Label"
+          onChange={onChangeSpy}
+          defaultValue={{start: 20, end: 50}}
+          isDisabled />
+      );
+
+      let [sliderLeft, sliderRight] = getAllByRole('slider');
+      let [thumbLeft, thumbRight] = [sliderLeft.parentElement.parentElement, sliderRight.parentElement.parentElement];
+
+      fireEvent.mouseDown(thumbLeft, {clientX: 20});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      expect(document.activeElement).not.toBe(sliderLeft);
+      fireEvent.mouseMove(thumbLeft, {clientX: 10});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseMove(thumbLeft, {clientX: -10});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseMove(thumbLeft, {clientX: 120});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumbLeft, {clientX: 120});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+
+      onChangeSpy.mockClear();
+
+      fireEvent.mouseDown(thumbRight, {clientX: 50});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      expect(document.activeElement).not.toBe(sliderRight);
+      fireEvent.mouseMove(thumbRight, {clientX: 60});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseMove(thumbRight, {clientX: -10});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseMove(thumbRight, {clientX: 120});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumbRight, {clientX: 120});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+    });
+
+    it('cannot click and drag handle when read only', () => {
+      let onChangeSpy = jest.fn();
+      let {getAllByRole} = render(
+        <RangeSlider
+          label="The Label"
+          onChange={onChangeSpy}
+          defaultValue={{start: 20, end: 50}}
+          isReadOnly />
+      );
+
+      let [sliderLeft, sliderRight] = getAllByRole('slider');
+      let [thumbLeft, thumbRight] = [sliderLeft.parentElement.parentElement, sliderRight.parentElement.parentElement];
+
+      fireEvent.mouseDown(thumbLeft, {clientX: 20});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      expect(document.activeElement).toBe(sliderLeft);
+      fireEvent.mouseMove(thumbLeft, {clientX: 10});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseMove(thumbLeft, {clientX: -10});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseMove(thumbLeft, {clientX: 120});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumbLeft, {clientX: 120});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+
+      onChangeSpy.mockClear();
+
+      fireEvent.mouseDown(thumbRight, {clientX: 50});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      expect(document.activeElement).toBe(sliderRight);
+      fireEvent.mouseMove(thumbRight, {clientX: 60});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseMove(thumbRight, {clientX: -10});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseMove(thumbRight, {clientX: 120});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumbRight, {clientX: 120});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+    });
+
     it('can click on track to move nearest handle', () => {
       let onChangeSpy = jest.fn();
       let {getAllByRole} = render(
@@ -360,6 +444,106 @@ describe('Slider', function () {
       expect(onChangeSpy).toHaveBeenLastCalledWith({start: 40, end: 90});
       fireEvent.mouseUp(thumbRight, {clientX: 90});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('cannot click on track to move nearest handle when disabled', () => {
+      let onChangeSpy = jest.fn();
+      let {getAllByRole} = render(
+        <RangeSlider
+          label="The Label"
+          onChange={onChangeSpy}
+          defaultValue={{start: 40, end: 70}}
+          isDisabled />
+      );
+
+      let [sliderLeft, sliderRight] = getAllByRole('slider');
+      let [thumbLeft, thumbRight] = [sliderLeft.parentElement.parentElement, sliderRight.parentElement.parentElement];
+
+      // @ts-ignore
+      let [leftTrack, middleTrack, rightTrack] = [...thumbLeft.parentElement.children].filter(c => c !== thumbLeft && c !== thumbRight);
+
+      // left track
+      fireEvent.mouseDown(leftTrack, {clientX: 20});
+      expect(document.activeElement).not.toBe(sliderLeft);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumbLeft, {clientX: 20});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+
+      // middle track, near left slider
+      onChangeSpy.mockClear();
+      fireEvent.mouseDown(middleTrack, {clientX: 40});
+      expect(document.activeElement).not.toBe(sliderLeft);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumbLeft, {clientX: 40});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+
+      // middle track, near right slider
+      onChangeSpy.mockClear();
+      fireEvent.mouseDown(middleTrack, {clientX: 60});
+      expect(document.activeElement).not.toBe(sliderRight);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumbRight, {clientX: 60});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+
+      // right track
+      onChangeSpy.mockClear();
+      fireEvent.mouseDown(rightTrack, {clientX: 90});
+      expect(document.activeElement).not.toBe(sliderRight);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumbRight, {clientX: 90});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+    });
+
+    it.only('cannot click on track to move nearest handle when read only', () => {
+      let onChangeSpy = jest.fn();
+      let {getAllByRole} = render(
+        <RangeSlider
+          label="The Label"
+          onChange={onChangeSpy}
+          defaultValue={{start: 40, end: 70}}
+          isDisabled />
+      );
+
+      let [sliderLeft, sliderRight] = getAllByRole('slider');
+      let [thumbLeft, thumbRight] = [sliderLeft.parentElement.parentElement, sliderRight.parentElement.parentElement];
+
+      // @ts-ignore
+      let [leftTrack, middleTrack, rightTrack] = [...thumbLeft.parentElement.children].filter(c => c !== thumbLeft && c !== thumbRight);
+
+      // left track
+      fireEvent.mouseDown(leftTrack, {clientX: 20});
+      // TODO what should happen here?
+      // expect(document.activeElement).not.toBe(sliderLeft);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumbLeft, {clientX: 20});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+
+      // middle track, near left slider
+      onChangeSpy.mockClear();
+      fireEvent.mouseDown(middleTrack, {clientX: 40});
+      // TODO what should happen here?
+      // expect(document.activeElement).not.toBe(sliderLeft);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumbLeft, {clientX: 40});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+
+      // middle track, near right slider
+      onChangeSpy.mockClear();
+      fireEvent.mouseDown(middleTrack, {clientX: 60});
+      // TODO what should happen here?
+      // expect(document.activeElement).not.toBe(sliderRight);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumbRight, {clientX: 60});
+      expect(onChangeSpy).not.toHaveBeenCalled();
+
+      // right track
+      onChangeSpy.mockClear();
+      fireEvent.mouseDown(rightTrack, {clientX: 90});
+      // TODO what should happen here?
+      // expect(document.activeElement).not.toBe(sliderRight);
+      expect(onChangeSpy).not.toHaveBeenCalled();
+      fireEvent.mouseUp(thumbRight, {clientX: 90});
+      expect(onChangeSpy).not.toHaveBeenCalled();
     });
   });
 });
