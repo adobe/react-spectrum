@@ -228,11 +228,11 @@ describe('HexColorField', function () {
   });
 
   it.each`
-    Name                                 | props                                             | initExpected  | key
-    ${'not increment beyond max value'}  | ${{value: '#bbbbba', maxValue: '#bbb', step: 4}}  | ${'#BBBBBA'}  | ${'ArrowUp'}
-    ${'not decrement beyond min value'}  | ${{value: '#bbbbbc', minValue: '#bbb', step: 4}}  | ${'#BBBBBC'}  | ${'ArrowDown'}
-    ${'increment to max value'}          | ${{value: '#aaa', maxValue: '#bbb'}}              | ${'#AAAAAA'}  | ${'End'}
-    ${'decrement to min value'}          | ${{value: '#ccc', minValue: '#bbb'}}              | ${'#CCCCCC'}  | ${'Home'}
+    Name                                 | props                                                    | initExpected  | key
+    ${'not increment beyond max value'}  | ${{defaultValue: '#bbbbba', maxValue: '#bbb', step: 4}}  | ${'#BBBBBA'}  | ${'ArrowUp'}
+    ${'not decrement beyond min value'}  | ${{defaultValue: '#bbbbbc', minValue: '#bbb', step: 4}}  | ${'#BBBBBC'}  | ${'ArrowDown'}
+    ${'increment to max value'}          | ${{defaultValue: '#aaa', maxValue: '#bbb'}}              | ${'#AAAAAA'}  | ${'End'}
+    ${'decrement to min value'}          | ${{defaultValue: '#ccc', minValue: '#bbb'}}              | ${'#CCCCCC'}  | ${'Home'}
   `('should $Name', function ({props, initExpected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
@@ -244,6 +244,11 @@ describe('HexColorField', function () {
     fireEvent.keyUp(hexColorField, {key});
     expect(onChangeSpy).toHaveBeenCalledWith(newColor);
     expect(hexColorField.value).toBe(newColor.toString('hex'));
+
+    // repeat action to make sure onChange is not called when already at min/max
+    fireEvent.keyDown(hexColorField, {key});
+    fireEvent.keyUp(hexColorField, {key});
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
   it.each`
