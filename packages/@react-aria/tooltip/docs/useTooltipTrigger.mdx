@@ -17,6 +17,7 @@ import packageData from '@react-aria/switch/package.json';
 
 ```jsx import
 import {useTooltipTrigger} from '@react-aria/tooltip';
+import {useTooltip} from '@react-aria/tooltip';
 ```
 
 ---
@@ -73,32 +74,47 @@ import {
 } from '@react-aria/overlays';
 import {mergeProps} from '@react-aria/utils';
 
+function Tooltip(props) {
+  let {tooltipProps} = useTooltip(props);
+
+  return (
+    <span
+      style={{
+        position: 'absolute',
+        right: '-10px',
+        top: '0',
+        transform: 'translateX(100%)',
+        backgroundColor: 'white',
+        color: 'black',
+        padding: '5px'
+      }}
+      {...mergeProps(props, tooltipProps)} >
+      {props.children}
+    </span>
+  );
+}
+
 function TooltipedButton(props) {
   let state = useTooltipTriggerState(props);
   let ref = React.useRef();
+  // Handle interacting outside the dialog and pressing
+  // the Escape key to close the modal.
   let {overlayProps} = useOverlay(
     props,
     ref
   );
+
+  // Get props for the trigger and its tooltip
   let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
 
   return (
     <span style={{position: 'relative'}}>
         <button ref={ref} {...triggerProps}>I have a tooltip</button>
-        {state.isOpen && <span
-            style={{
-              position: 'absolute',
-              right: '-10px',
-              top: '0',
-              transform: 'translateX(100%)',
-              backgroundColor: 'white',
-              color: 'black',
-              padding: '5px'
-            }}
-            {...mergeProps(tooltipProps, overlayProps)} >
+        {state.isOpen && (
+          <Tooltip {...mergeProps(tooltipProps, overlayProps)} >
             And the tooltip tells you more information.
-          </span>
-        }
+          </Tooltip>
+        )}
     </span>
   );
 }
