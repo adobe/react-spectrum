@@ -58,7 +58,7 @@ function RangeSlider(props: SpectrumRangeSliderProps) {
     style={{[cssDirection]: `${state.getThumbPercent(1) * 100}%`, width: `${(1 - state.getThumbPercent(1)) * 100}%`}} />);
 
   let handles = [0, 1].map(i => (<div
-    className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': hovers[i].isHovered})}
+    className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': hovers[i].isHovered, 'is-dragged': state.isThumbDragging(i)})}
     style={{[cssDirection]: `${state.getThumbPercent(i) * 100}%`}}
     {...mergeProps(thumbProps[i], hovers[i].hoverProps)}
     role="presentation">

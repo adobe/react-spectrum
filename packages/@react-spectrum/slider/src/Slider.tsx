@@ -64,7 +64,7 @@ function Slider(props: SpectrumSliderProps) {
     }} />);
 
   let handle = (<div
-    className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered})}
+    className={classNames(styles, 'spectrum-Slider-handle', {'is-hovered': isHovered, 'is-dragged': state.isThumbDragging(0)})}
     style={{
       [cssDirection]: `${state.getThumbPercent(0) * 100}%`
     }}
