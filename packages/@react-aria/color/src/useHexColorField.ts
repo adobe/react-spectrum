@@ -65,21 +65,16 @@ export function useHexColorField(
       isDisabled,
       isReadOnly,
       isRequired,
-      maxValue: minColorInt,
-      minValue: maxColorInt,
+      maxValue: maxColorInt,
+      minValue: minColorInt,
       onIncrement: increment,
       onIncrementToMax: incrementToMax,
       onDecrement: decrement,
       onDecrementToMin: decrementToMin,
-      value: colorValue ? colorValue.toHexInt() : minColorInt,
-      textValue: inputValue
+      value: colorValue ? colorValue.toHexInt() : undefined,
+      textValue: colorValue ? colorValue.toString('hex') : '',
     }
   );
-
-  let onBlur = (e) => {
-    spinButtonProps.onBlur(e);
-    commitInputValue();
-  };
 
   // Taken from https://github.com/adobe/react-spectrum/pull/1029/
   useEffect(() => {
@@ -124,11 +119,6 @@ export function useHexColorField(
 
   return {
     labelProps,
-    inputFieldProps: mergeProps(inputProps, {
-      role: spinButtonProps.role,
-      onKeyDown: spinButtonProps.onKeyDown,
-      onFocus: spinButtonProps.onFocus,
-      onBlur
-    })
+    inputFieldProps: mergeProps(inputProps, spinButtonProps, {onBlur: commitInputValue})
   };
 }
