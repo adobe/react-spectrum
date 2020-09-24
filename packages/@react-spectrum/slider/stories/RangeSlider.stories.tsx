@@ -26,12 +26,20 @@ storiesOf('RangeSlider', module)
     () => render({label: 'Label'})
   )
   .add(
-    'disabled',
-    () => render({label: 'Label', defaultValue: {start: 30, end: 50}, isDisabled: true})
+    'isDisabled',
+    () => render({label: 'Label', defaultValue: {start: 30, end: 70}, isDisabled: true})
+  )
+  .add(
+    'isReadOnly',
+    () => render({label: 'Label', defaultValue: {start: 30, end: 70}, isReadOnly: true})
+  )
+  .add(
+    'custom width',
+    () => render({label: 'Label', maxValue: 1000, width: '200px'})
   )
   .add(
     'label overflow',
-    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000}, '100px')
+    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '100px'})
   )
   .add(
     'showValueLabel: false',
@@ -74,13 +82,11 @@ storiesOf('RangeSlider', module)
     () => render({label: 'Label', tickCount: 3, showTickLabels: true, tickLabels: ['A', 'B', 'C']})
   );
 
-function render(props: SpectrumRangeSliderProps = {}, width = '200px') {
+function render(props: SpectrumRangeSliderProps = {}) {
   if (props.onChange == null) {
     props.onChange = (v) => {
       action('change')(v.start, v.end);
     };
   }
-  return (<div style={{width}}>
-    <RangeSlider {...props} />
-  </div>);
+  return  <RangeSlider {...props} />;
 }

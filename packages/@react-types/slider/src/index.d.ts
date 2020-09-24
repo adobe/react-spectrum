@@ -1,4 +1,4 @@
-import {AriaLabelingProps, AriaValidationProps, Direction, FocusableDOMProps, FocusableProps, LabelableProps, LabelPosition, Orientation, RangeInputBase, RangeValue, Validation, ValueBase} from '@react-types/shared';
+import {AriaLabelingProps, AriaValidationProps, Direction, FocusableDOMProps, FocusableProps, LabelableProps, LabelPosition, Orientation, RangeInputBase, RangeValue, StyleProps, Validation, ValueBase} from '@react-types/shared';
 import {ReactNode} from 'react';
 
 export interface BaseSliderProps extends RangeInputBase<number>, LabelableProps, AriaLabelingProps {
@@ -19,7 +19,7 @@ export interface SliderThumbProps extends AriaLabelingProps, FocusableDOMProps, 
   direction?: Direction
 }
 
-export interface SpectrumBarSliderBase<T> extends BaseSliderProps, ValueBase<T> {
+export interface SpectrumBarSliderBase<T> extends BaseSliderProps, ValueBase<T>, StyleProps {
   orientation?: Orientation,
   labelPosition?: LabelPosition,
   /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */

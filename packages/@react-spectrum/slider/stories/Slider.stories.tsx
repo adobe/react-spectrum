@@ -26,12 +26,20 @@ storiesOf('Slider', module)
     () => render({label: 'Label'})
   )
   .add(
-    'disabled',
+    'isDisabled',
     () => render({label: 'Label', defaultValue: 50, isDisabled: true})
   )
   .add(
+    'isReadOnly',
+    () => render({label: 'Label', defaultValue: 50, isReadOnly: true})
+  )
+  .add(
+    'custom width',
+    () => render({label: 'Label', width: '200px'})
+  )
+  .add(
     'label overflow',
-    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000}, '100px')
+    () => render({label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '100px'})
   )
   .add(
     'showValueLabel: false',
@@ -79,8 +87,8 @@ storiesOf('Slider', module)
   )
   .add(
     'showTickLabels, custom formatOptions',
-    // @ts-ignore TODO why is "unit" even missing? How well is it supported?
-    () => render({label: 'Label', tickCount: 5, showTickLabels: true, minValue: -10, maxValue: 10, formatOptions: {style: 'unit', unit: 'centimeter'}})
+    // @ts-ignore
+    () => render({label: 'Label', tickCount: 5, showTickLabels: true, minValue: -10, maxValue: 10, width: '200px', formatOptions: {style: 'unit', unit: 'centimeter'}})
   )
   .add(
     'tickLabels',
@@ -99,11 +107,9 @@ storiesOf('Slider', module)
     () => render({label: 'Label', orientation: 'vertical'})
   );
 
-function render(props: SpectrumSliderProps = {}, width = '200px') {
+function render(props: SpectrumSliderProps = {}) {
   if (props.onChange == null) {
     props.onChange = action('change');
   }
-  return (<div style={{width}}>
-    <Slider {...props} />
-  </div>);
+  return <Slider {...props} />;
 }

@@ -10,73 +10,67 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, Direction, LabelableProps, LabelPosition, Orientation} from '@react-types/shared';
-import {classNames} from '@react-spectrum/utils';
-import React, {CSSProperties, HTMLAttributes, MutableRefObject, ReactNode, ReactNodeArray, useRef} from 'react';
-import {SliderProps, SpectrumSliderTicksBase} from '@react-types/slider';
+import {BaseSliderProps, SpectrumSliderTicksBase} from '@react-types/slider';
+import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {LabelPosition, Orientation, StyleProps, ValueBase} from '@react-types/shared';
+import React, {CSSProperties, HTMLAttributes, MutableRefObject, ReactNode, useRef} from 'react';
 import {SliderState, useSliderState} from '@react-stately/slider';
 import styles from '@adobe/spectrum-css-temp/components/slider/vars.css';
 import {useLocale, useNumberFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
 
-export interface UseSliderBaseContainerProps extends AriaLabelingProps, LabelableProps {
-  state: SliderState,
-  trackRef: MutableRefObject<undefined>,
-  isDisabled?: boolean,
-  orientation?: Orientation,
-  labelPosition?: LabelPosition,
-  showValueLabel?: boolean,
-  valueLabel?: ReactNode,
-  containerProps: HTMLAttributes<HTMLElement>,
-  trackProps: HTMLAttributes<HTMLElement>,
-  labelProps: HTMLAttributes<HTMLElement>,
-  direction: Direction,
-  formatOptions?: Intl.NumberFormatOptions
-}
-
-export interface UseSliderBaseInputProps extends Omit<SliderProps, 'direction'>, SpectrumSliderTicksBase {
-  orientation?: Orientation,
-  labelPosition?: LabelPosition,
-  showValueLabel?: boolean,
-  valueLabel?: ReactNode
-}
-
-export interface UseSliderBaseOutputProps extends UseSliderBaseContainerProps {
+export interface SliderBaseChildArguments {
   inputRefs: MutableRefObject<undefined>[],
   thumbProps: HTMLAttributes<HTMLElement>[],
   inputProps: HTMLAttributes<HTMLElement>[],
-  ticks: ReactNode
+  ticks: ReactNode,
+  state: SliderState
 }
 
-/** Count mustn't change during the lifetime! */
-export function useSliderBase(count: number, props: UseSliderBaseInputProps): UseSliderBaseOutputProps {
+export interface SliderBaseProps extends BaseSliderProps, ValueBase<number[]>, SpectrumSliderTicksBase, StyleProps {
+  children: (SliderBaseChildArguments) => ReactNode,
+  formatOptions?: Intl.NumberFormatOptions,
+  classes?: string[] | Object,
+  style?: CSSProperties,
+  count: 1 | 2,
+  // SpectrumBarSliderBase:
+  orientation?: Orientation,
+  labelPosition?: LabelPosition,
+  valueLabel?: ReactNode,
+  showValueLabel?: boolean
+}
+
+function SliderBase(props: SliderBaseProps) {
   props = useProviderProps(props);
-  let inputRefs = [];
-  let thumbProps = [];
-  let inputProps = [];
+  let {
+    tickCount, showTickLabels, tickLabels, isDisabled, count,
+    children, classes, style,
+    labelPosition = 'top', valueLabel, showValueLabel = !!props.label,
+    formatOptions,
+    ...otherProps
+  } = props;
+
+  let {styleProps} = useStyleProps(otherProps);
+  let {direction} = useLocale();
 
   // Assumes that DEFAULT_MIN_VALUE and DEFAULT_MAX_VALUE are both positive, this value needs to be passed to useSliderState, so
   // getThumbMinValue/getThumbMaxValue cannot be used here.
   // `Math.abs(Math.sign(a) - Math.sign(b)) === 2` is true if the values have a different sign and neither is null.
   let alwaysDisplaySign = props.minValue != null && props.maxValue != null && Math.abs(Math.sign(props.minValue) - Math.sign(props.maxValue)) === 2;
-
   if (alwaysDisplaySign) {
-    if (props.formatOptions != null) {
-      if (!('signDisplay' in props.formatOptions)) {
+    if (formatOptions != null) {
+      if (!('signDisplay' in formatOptions)) {
         // @ts-ignore
-        props.formatOptions.signDisplay = 'exceptZero';
+        formatOptions.signDisplay = 'exceptZero';
       }
     } else {
       // @ts-ignore
-      props.formatOptions = {signDisplay: 'exceptZero'};
+      formatOptions = {signDisplay: 'exceptZero'};
     }
   }
 
-  let state = useSliderState(props);
-
-  let {direction} = useLocale();
-
+  let state = useSliderState({...props, formatOptions});
   let trackRef = useRef();
   let {
     containerProps,
@@ -84,6 +78,9 @@ export function useSliderBase(count: number, props: UseSliderBaseInputProps): Us
     labelProps
   } = useSlider({...props, direction}, state, trackRef);
 
+  let inputRefs = [];
+  let thumbProps = [];
+  let inputProps = [];
   for (let i = 0; i < count; i++) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     inputRefs[i] = useRef();
@@ -100,8 +97,6 @@ export function useSliderBase(count: number, props: UseSliderBaseInputProps): Us
     inputProps[i] = v.inputProps;
     thumbProps[i] = v.thumbProps;
   }
-
-  let {tickCount, showTickLabels, tickLabels, isDisabled} = props;
 
   let ticks = null;
   if (tickCount > 0) {
@@ -123,43 +118,6 @@ export function useSliderBase(count: number, props: UseSliderBaseInputProps): Us
     </div>);
   }
 
-  return {
-    ticks,
-    inputRefs, thumbProps, inputProps, trackRef, state,
-    containerProps, trackProps, labelProps, direction,
-    isDisabled,
-    label: props.label,
-    formatOptions: props.formatOptions,
-    showValueLabel: props.showValueLabel,
-    labelPosition: props.labelPosition,
-    orientation: props.orientation,
-    valueLabel: props.valueLabel,
-    'aria-label': props['aria-label'],
-    'aria-labelledby': props['aria-labelledby'],
-    'aria-describedby': props['aria-describedby'],
-    'aria-details': props['aria-details']
-  };
-}
-
-export interface SliderBaseProps extends UseSliderBaseContainerProps, LabelableProps, AriaLabelingProps {
-  children: ReactNodeArray,
-  orientation?: Orientation,
-  labelPosition?: LabelPosition,
-  valueLabel?: ReactNode,
-  formatOptions?: Intl.NumberFormatOptions,
-  classes?: string[] | Object,
-  style?: CSSProperties
-}
-
-function SliderBase(props: SliderBaseProps) {
-  let {
-    state, children, classes, style,
-    trackRef, isDisabled,
-    labelProps, containerProps, trackProps,
-    labelPosition = 'top', valueLabel, showValueLabel = !!props.label,
-    formatOptions
-  } = props;
-
   let formatter = useNumberFormatter(formatOptions);
 
   let displayValue = valueLabel;
@@ -176,7 +134,7 @@ function SliderBase(props: SliderBaseProps) {
         // https://github.com/tc39/proposal-intl-numberformat-v3#formatrange-ecma-402-393
         displayValue = `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`;
 
-        // The `${start} ${separator} ${end}` label can be wrapped into multiple lines.
+        // The `${start} ${separator} ${end}` label can be wrapped into multiple lines, no need to make it twice as wide.
         maxLabelLength = Math.max(maxLabelLength, [...formatter.format(state.getThumbMinValue(1))].length, [...formatter.format(state.getThumbMaxValue(1))].length);
         break;
       default:
@@ -203,8 +161,12 @@ function SliderBase(props: SliderBaseProps) {
           'spectrum-Slider--label-side': labelPosition === 'side',
           'is-disabled': isDisabled
         },
-        classes)}
-      style={style}
+        classes,
+        styleProps.className)}
+      style={{
+        ...style,
+        ...styleProps.style
+      }}
       {...containerProps}>
       {(props.label) &&
         <div className={classNames(styles, 'spectrum-Slider-labelContainer')} role="presentation">
@@ -213,7 +175,13 @@ function SliderBase(props: SliderBaseProps) {
         </div>
       }
       <div className={classNames(styles, 'spectrum-Slider-controls')} ref={trackRef} {...trackProps} role="presentation">
-        {children}
+        {children({
+          inputRefs,
+          thumbProps,
+          inputProps,
+          ticks,
+          state
+        })}
       </div>
       {labelPosition === 'side' &&
         <div className={classNames(styles, 'spectrum-Slider-labelContainer')} role="presentation">
