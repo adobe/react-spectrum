@@ -100,7 +100,12 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
           // when the user hits Enter on the already selectedKey
           state.close();
         } else if (allowsCustomValue) {
-          onCustomValue(state.inputValue);
+          // Only fire onCustomValue when hitting enter if it differs from the currently selected key's text (if any)
+          let currentKeyText = state.collection.getItem(state.selectedKey)?.textValue;
+          if (currentKeyText !== state.inputValue) {
+            onCustomValue(state.inputValue);
+          }
+
           state.close();
         }
 
