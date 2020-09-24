@@ -18,7 +18,7 @@ import {
 } from '@react-types/color';
 
 export class Color implements ColorType {
-  private value: ColorValue;
+  private value?: ColorValue;
 
   constructor(value: string) {
     let parsed: ColorValue | void = RGBColor.parse(value);
@@ -37,7 +37,7 @@ export class Color implements ColorType {
 
   static parse(value: ColorInput): Color {
     if (!value) { return null; }
-    return new Color(typeof value === 'string' ? value : value.toString('hex'));
+    return typeof value === 'string' ? new Color(value) : value;
   }
 
   toFormat(format: ColorFormat): Color {

@@ -14,7 +14,7 @@ import {Color} from './Color';
 import {ColorInput} from '@react-types/color';
 import {useMemo} from 'react';
 
-export function useColor (value: ColorInput) {
+export function useColor(value: ColorInput) {
   let color = useMemo(() => {
     if (typeof value === 'string') {
       return new Color(value);

@@ -14,6 +14,7 @@ import {Color} from './Color';
 import {ColorInput, HexColorFieldProps} from '@react-types/color';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {useCallback, useState} from 'react';
+import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
 
 export interface HexColorFieldState extends Omit<NumberFieldState, 'value' | 'setValue'> {
@@ -37,10 +38,8 @@ export function useHexColorFieldState(
     validationState
   } = props;
 
-  let minColor = Color.parse(minValue);
-  let maxColor = Color.parse(maxValue);
-  let minColorInt = minColor.toHexInt();
-  let maxColorInt = maxColor.toHexInt();
+  let {color: minColor, colorInt: minColorInt} = useColor(minValue);
+  let {color: maxColor, colorInt: maxColorInt} = useColor(maxValue);
 
   let clampColor = useCallback((value: ColorInput) => {
     try {
