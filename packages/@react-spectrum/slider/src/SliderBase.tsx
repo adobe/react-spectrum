@@ -134,8 +134,10 @@ function SliderBase(props: SliderBaseProps) {
         // https://github.com/tc39/proposal-intl-numberformat-v3#formatrange-ecma-402-393
         displayValue = `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`;
 
-        // The `${start} ${separator} ${end}` label can be wrapped into multiple lines, no need to make it twice as wide.
-        maxLabelLength = Math.max(maxLabelLength, [...formatter.format(state.getThumbMinValue(1))].length, [...formatter.format(state.getThumbMaxValue(1))].length);
+        maxLabelLength = 2 + 2 * Math.max(
+          maxLabelLength,
+          [...formatter.format(state.getThumbMinValue(1))].length, [...formatter.format(state.getThumbMaxValue(1))].length
+        );
         break;
       default:
         throw new Error('Only sliders with 1 or 2 handles are supported!');
@@ -149,7 +151,7 @@ function SliderBase(props: SliderBaseProps) {
     role="textbox"
     aria-readonly="true"
     aria-labelledby={labelProps.id}
-    style={{minWidth: maxLabelLength && `${maxLabelLength}ch`}}>
+    style={{width: maxLabelLength && `${maxLabelLength}ch`}}>
     {displayValue}
   </div>);
 

@@ -53,8 +53,6 @@ governing permissions and limitations under the License.
   /* Don't let z-index'd child elements float above other things on the page */
   z-index: 1;
   display: block;
-  min-block-size: var(--spectrum-slider-height);
-  min-inline-size: var(--spectrum-slider-min-width);
 
   user-select: none;
 }
@@ -65,6 +63,9 @@ governing permissions and limitations under the License.
 
   position: relative;
   z-index: auto;
+
+  min-block-size: var(--spectrum-slider-height);
+  min-inline-size: var(--spectrum-slider-min-width);
 
   /* These calculations prevent the track from spilling outside of the control */
   inline-size: calc(100% - calc(var(--spectrum-slider-controls-margin) * 2));
