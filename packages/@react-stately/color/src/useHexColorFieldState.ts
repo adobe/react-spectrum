@@ -63,8 +63,11 @@ export function useHexColorFieldState(
   let increment = () => {
     setColorValue((previousValue: Color) => {
       let colorInt = previousValue ? previousValue.toHexInt() : minColorInt;
-      let newValue = `#${Math.min(colorInt + step, maxColorInt).toString(16).padStart(6, '0')}`;
-      let newColor = new Color(newValue);
+      let newColor = previousValue;
+      if (colorInt < maxColorInt) {
+        let newValue = `#${Math.min(colorInt + step, maxColorInt).toString(16).padStart(6, '0')}`;
+        newColor = new Color(newValue);
+      }
       setInputValue(newColor.toString('hex'));
       return newColor;
     });
@@ -81,8 +84,11 @@ export function useHexColorFieldState(
     setColorValue((previousValue: Color) => {
       if (!previousValue) { return minColor; }
       let colorInt = previousValue.toHexInt();
-      let newValue = `#${Math.max(colorInt - step, minColorInt).toString(16).padStart(6, '0')}`;
-      let newColor = new Color(newValue);
+      let newColor = previousValue;
+      if (colorInt > minColorInt) {
+        let newValue = `#${Math.max(colorInt - step, minColorInt).toString(16).padStart(6, '0')}`;
+        newColor = new Color(newValue);
+      }
       setInputValue(newColor.toString('hex'));
       return newColor;
     });
