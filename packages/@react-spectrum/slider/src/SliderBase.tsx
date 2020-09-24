@@ -150,7 +150,7 @@ function SliderBase(props: SliderBaseProps) {
     role="textbox"
     aria-readonly="true"
     aria-labelledby={labelProps.id}
-    style={{width: maxLabelLength && `${maxLabelLength}ch`}}>
+    style={maxLabelLength && {width: `${maxLabelLength}ch`, minWidth: `${maxLabelLength}ch`}}>
     {displayValue}
   </div>);
 
