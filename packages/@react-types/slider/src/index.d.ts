@@ -42,12 +42,23 @@ export interface SpectrumSliderTicksBase {
 }
 
 export interface SpectrumSliderProps extends SpectrumBarSliderBase<number>, SpectrumSliderTicksBase {
-  /** Whether a fill color is shown between the start of the slider and the current value. See https://spectrum.adobe.com/page/slider/#Fill. */
+  /**
+   * Whether a fill color is shown between the start of the slider and the current value.
+   * @see https://spectrum.adobe.com/page/slider/#Fill.
+   */
   isFilled?: boolean,
-  /** The offset from which to start the fill. See https://spectrum.adobe.com/page/slider/#Fill-start. */
+  /**
+   * The offset from which to start the fill.
+   * @see https://spectrum.adobe.com/page/slider/#Fill-start.
+   */
   fillOffset?: number,
-  /** The background of the track, e.g. a CSS linear-gradient(). See https://spectrum.adobe.com/page/slider/#Gradient. */
-  trackBackground?: string
+  /**
+   * The background of the track, specified as the stops for a CSS background: `linear-gradient(to right/left, ...trackGradient)`.
+   * @example trackGradient={['red', 'green']}
+   * @example trackGradient={['red 20%', 'green 40%']}
+   * @see https://spectrum.adobe.com/page/slider/#Gradient.
+   */
+  trackGradient?: string[]
 }
 
 export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeValue<number>>, SpectrumSliderTicksBase { }

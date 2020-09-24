@@ -87,12 +87,12 @@ storiesOf('Slider', module)
     () => render({label: 'Label', tickCount: 3, showTickLabels: true, tickLabels: ['A', 'B', 'C']})
   )
   .add(
-    'trackBackground',
-    () => render({label: 'Label', trackBackground: 'linear-gradient(to right, blue, red)'})
+    'trackGradient',
+    () => render({label: 'Label', trackGradient: ['blue', 'red']})
   )
   .add(
-    'trackBackground with fillOffset',
-    () => render({label: 'Label', trackBackground: 'linear-gradient(to right, blue, red)', isFilled: true, fillOffset: 50})
+    'trackGradient with fillOffset',
+    () => render({label: 'Label', trackGradient: ['blue', 'red'], isFilled: true, fillOffset: 50})
   )
   .add(
     '* orientation: vertical',

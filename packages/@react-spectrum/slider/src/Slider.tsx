@@ -21,7 +21,7 @@ import {useHover} from '@react-aria/interactions';
 import {VisuallyHidden} from '@adobe/react-spectrum';
 
 function Slider(props: SpectrumSliderProps) {
-  let {onChange, value, defaultValue, isFilled, fillOffset, trackBackground, ...otherProps} = props;
+  let {onChange, value, defaultValue, isFilled, fillOffset, trackGradient, ...otherProps} = props;
 
   let ariaProps: UseSliderBaseInputProps = {
     ...otherProps,
@@ -52,7 +52,8 @@ function Slider(props: SpectrumSliderProps) {
       //    width: calc(var(--width) * 1%)M
       // }
       // @ts-ignore
-      '--spectrum-track-background-size': `${(1 / state.getThumbPercent(0)) * 100}%`
+      '--spectrum-track-background-size': `${(1 / state.getThumbPercent(0)) * 100}%`,
+      '--spectrum-track-background-position': direction === 'ltr' ? '0' : '100%'
     }} />);
   let upperTrack = (<div
     className={classNames(styles, 'spectrum-Slider-track')}
@@ -60,7 +61,7 @@ function Slider(props: SpectrumSliderProps) {
       width: `${(1 - state.getThumbPercent(0)) * 100}%`,
       // @ts-ignore
       '--spectrum-track-background-size': `${(1 / (1 - state.getThumbPercent(0))) * 100}%`,
-      '--spectrum-track-background-position': '100%'
+      '--spectrum-track-background-position': direction === 'ltr' ? '100%' : '0'
     }} />);
 
   let handle = (<div
@@ -89,6 +90,7 @@ function Slider(props: SpectrumSliderProps) {
         }} />);
   }
 
+
   return (
     <SliderBase
       {...containerProps}
@@ -97,7 +99,7 @@ function Slider(props: SpectrumSliderProps) {
       }}
       style={
         // @ts-ignore
-        {'--spectrum-slider-track-color': trackBackground}
+        {'--spectrum-slider-track-color': trackGradient && `linear-gradient(to ${direction === 'ltr' ? 'right' : 'left'}, ${trackGradient.join(', ')})`}
       }>
       {lowerTrack}
       {ticks}
