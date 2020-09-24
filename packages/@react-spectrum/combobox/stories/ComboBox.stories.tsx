@@ -163,11 +163,21 @@ storiesOf('ComboBox', module)
   .add(
     'inputValue (controlled)',
     () => (
+      <ControlledValueComboBox inputValue="Snake" disabledKeys={['2', '6']} />
+    )
+  )
+  .add(
+    'inputValue is in disabledKeys',
+    () => (
       <ControlledValueComboBox inputValue="Snake" disabledKeys={['3', '6']} />
     )
   )
   .add(
     'defaultInputValue (uncontrolled)',
+    () => render({defaultInputValue: 'Item Three', disabledKeys: ['two']})
+  )
+  .add(
+    'defaultInputValue is in disabledKeys',
     () => render({defaultInputValue: 'Item Three', disabledKeys: ['three']})
   )
   .add(
@@ -177,7 +187,7 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
-    'selectedKey is disabled',
+    'selectedKey is in disabledKeys',
     () => (
       <ControlledKeyComboBox selectedKey="4" disabledKeys={['4', '6']} />
     )
@@ -187,7 +197,7 @@ storiesOf('ComboBox', module)
     () => render({defaultSelectedKey: 'two', disabledKeys: ['one']})
   )
   .add(
-    'defaultSelectedKey is disabled',
+    'defaultSelectedKey is in disabledKeys',
     () => render({defaultSelectedKey: 'two', disabledKeys: ['two']})
   )
   .add(

@@ -101,9 +101,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateProps<T>)
     }
   };
 
+  let initialText = disabledKeys.has(computeKeyFromValue(toString(props.inputValue), collection)) ? '' : toString(props.inputValue);
+  let initialDefaultText = disabledKeys.has(computeKeyFromValue(toString(props.defaultInputValue), collection)) ? '' : toString(props.defaultInputValue);
   let initialSelectedKeyText = disabledKeys.has(props.selectedKey) ? '' : collection.getItem(props.selectedKey)?.textValue;
   let initialDefaultSelectedKeyText = disabledKeys.has(props.defaultSelectedKey) ? '' : collection.getItem(props.defaultSelectedKey)?.textValue;
-  let [inputValue, setInputValue] = useControlledState(toString(props.inputValue), initialSelectedKeyText || toString(props.defaultInputValue) || initialDefaultSelectedKeyText || '', onInputChange);
+  let [inputValue, setInputValue] = useControlledState(initialText, initialSelectedKeyText || initialDefaultText || initialDefaultSelectedKeyText || '', onInputChange);
 
   // If user passes props.selectedKey=null or '', we want to honor that as the new key (e.g. Controlled key combobox, user want to programatically clear the selected key regardless of current input value)
   let selectedKey = typeof props.selectedKey !== 'undefined' ? props.selectedKey : computeKeyFromValue(inputValue, collection);
