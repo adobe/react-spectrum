@@ -1,0 +1,113 @@
+<!-- Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. -->
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/tooltip';
+import statelyDocs from 'docs:@react-stately/tooltip';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-aria/switch/package.json';
+
+```jsx import
+import {useTooltipTrigger} from '@react-aria/tooltip';
+```
+
+---
+category: Overlays
+keywords: [tooltip, aria]
+---
+
+# useTooltipTrigger
+
+<p>{docs.exports.useTooltipTrigger.description}</p>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['useTooltipTrigger']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#tooltip'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.useTooltipTrigger} links={docs.links} />
+
+## Features
+
+There is no native HTML element for tooltips. There are many guides out there for
+tooltips, however, they are not easy to make accessible, especially the CSS only ones.
+
+* Keyboard focus management and cross browser normalization
+* Hover management and cross browser normalization
+* Labeling support for screen readers (aria-describedby)
+* Exposed as a tooltip to assistive technology via ARIA
+
+## Anatomy
+
+A tooltip consists of two parts, the target trigger and the tooltip itself.
+Users may reveal the tooltip by hovering or focusing the target trigger.
+
+`useTooltipTrigger` returns props to be spread onto its target trigger and the tooltip:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useTooltipTrigger.return.id].properties} />
+</TypeContext.Provider>
+
+Tooltip state is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTooltipTriggerState} />
+hook in `@react-stately/tooltip`. The state object should be passed as an option to `useTooltipTrigger`.
+
+## Example
+
+```tsx example
+import {useTooltipTriggerState} from '@react-stately/tooltip';
+import {
+  useOverlay,
+  useOverlayPosition,
+} from '@react-aria/overlays';
+import {mergeProps} from '@react-aria/utils';
+
+function TooltipedButton(props) {
+  let state = useTooltipTriggerState(props);
+  let ref = React.useRef();
+  let {overlayProps} = useOverlay(
+    props,
+    ref
+  );
+  let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
+
+  return (
+    <span style={{position: 'relative'}}>
+        <button ref={ref} {...triggerProps}>I have a tooltip</button>
+        {state.isOpen && <span
+            style={{
+              position: 'absolute',
+              right: '-10px',
+              top: '0',
+              transform: 'translateX(100%)',
+              backgroundColor: 'white',
+              color: 'black',
+              padding: '5px'
+            }}
+            {...mergeProps(tooltipProps, overlayProps)} >
+            And the tooltip tells you more information.
+          </span>
+        }
+    </span>
+  );
+}
+
+<TooltipedButton />
+```
+
+## Internationalization
+
+### RTL
+
+In right-to-left languages, tooltips should be mirrored across trigger. Ensure that your CSS and overlay positioning (if any) accounts for this.

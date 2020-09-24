@@ -163,3 +163,13 @@ function Example() {
   <Tooltip variant="negative" showIcon>Dangerous action.</Tooltip>
 </TooltipTrigger>
 ```
+
+## Options
+A tooltip can be disabled without disabling the trigger it displays on.
+**isDisabled**
+```tsx example
+<TooltipTrigger isDisabled>
+  <ActionButton aria-label="Danger Will Robinson" onPress={() => alert('pressed trigger')}><Delete /></ActionButton>
+  <Tooltip variant="negative" showIcon>Dangerous action.</Tooltip>
+</TooltipTrigger>
+```

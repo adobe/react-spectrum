@@ -29,6 +29,11 @@ let globalWarmedUp = false;
 let globalWarmUpTimeout = null;
 let globalCooldownTimeout = null;
 
+/**
+ * Manages state for an tooltip trigger. Tracks whether the tooltip is open, and provides
+ * methods to toggle this state. Ensures only one tooltip is open at a time and controls
+ * the delay for showing a tooltip.
+ */
 export function useTooltipTriggerState(props: TooltipTriggerProps): TooltipTriggerState {
   let {delay = TOOLTIP_DELAY} = props;
   let {isOpen, open, close} = useOverlayTriggerState(props);

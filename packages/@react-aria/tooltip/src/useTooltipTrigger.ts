@@ -24,6 +24,10 @@ interface TooltipTriggerAria {
   tooltipProps: HTMLAttributes<HTMLElement>
 }
 
+/**
+ * Handles the behavior and accessibility for a tooltip trigger, e.g. a button
+ * that needs more description that's visually hidden unless focused or hovered.
+ */
 export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<HTMLElement>) : TooltipTriggerAria {
   let {
     isDisabled
