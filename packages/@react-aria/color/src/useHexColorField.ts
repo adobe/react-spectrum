@@ -72,7 +72,7 @@ export function useHexColorField(
       onDecrement: decrement,
       onDecrementToMin: decrementToMin,
       value: colorValue ? colorValue.toHexInt() : undefined,
-      textValue: colorValue ? colorValue.toString('hex') : '',
+      textValue: colorValue ? colorValue.toString('hex') : undefined
     }
   );
 
