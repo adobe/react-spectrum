@@ -10,6 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './Color';
-export * from './useColor';
-export * from './useHexColorFieldState';
+import {Color} from './Color';
+import {ColorInput} from '@react-types/color';
+import {useMemo} from 'react';
+
+export function useColor (value: ColorInput) {
+  let color = useMemo(() => {
+    if (typeof value === 'string') {
+      return new Color(value);
+    }
+    return value;
+  }, [value]);
+  let colorInt = useMemo(() => color.toHexInt(), [color]);
+  return {color, colorInt};
+}
