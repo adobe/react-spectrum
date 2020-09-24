@@ -60,14 +60,6 @@ let actions = {
 
 storiesOf('ComboBox', module)
   .add(
-    'no items',
-    () => (
-      <ComboBox items={[]} label="Combobox" {...actions}>
-        {(item: any) => <Item>{item.name}</Item>}
-      </ComboBox>
-    )
-  )
-  .add(
     'static items',
     () => render({})
   )
@@ -76,6 +68,14 @@ storiesOf('ComboBox', module)
     () => (
       <ComboBox items={items} label="Combobox" {...actions}>
         {(item) => <Item>{item.name}</Item>}
+      </ComboBox>
+    )
+  )
+  .add(
+    'no items',
+    () => (
+      <ComboBox items={[]} label="Combobox" {...actions}>
+        {(item: any) => <Item>{item.name}</Item>}
       </ComboBox>
     )
   )
@@ -177,7 +177,17 @@ storiesOf('ComboBox', module)
     )
   )
   .add(
+    'selectedKey is disabled',
+    () => (
+      <ControlledKeyComboBox selectedKey="4" disabledKeys={['4', '6']} />
+    )
+  )
+  .add(
     'defaultSelectedKey (uncontrolled)',
+    () => render({defaultSelectedKey: 'two', disabledKeys: ['one']})
+  )
+  .add(
+    'defaultSelectedKey is disabled',
     () => render({defaultSelectedKey: 'two', disabledKeys: ['two']})
   )
   .add(
