@@ -12,7 +12,7 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionButton} from '@react-spectrum/button';
-import {Color} from '@react-stately/color';
+import {Color, useColor} from '@react-stately/color';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Flex} from '@react-spectrum/layout';
 import {HexColorField} from '../';
@@ -97,25 +97,26 @@ storiesOf('HexColorField', module)
   );
 
 function HexColorFieldPopover(props: any = {}) {
-  let initialColor = Color.parse(props.value);
-  let [selectedColor, setSelectedColor] = useState(props.value ? initialColor.toString('hex') : '');
+  let {color: initColor} = useColor(props.value);
+  let [color, setColor] = useState(initColor);
+  let colorString = color.toString('hex');
   return (
     <DialogTrigger type="popover">
       <ActionButton
         width="size-1600"
         height="size-1600"
         UNSAFE_style={{
-          background: selectedColor
-        }} >{selectedColor}</ActionButton>
+          background: colorString
+        }} >{colorString}</ActionButton>
       <Dialog 
         width="size-3600"
         height="size-1600" >
         <View padding="size-300">
           {render({
             ...props,
-            value: selectedColor,
+            value: color,
             onChange: (newColor: Color) => {
-              setSelectedColor(newColor.toString('hex'));
+              setColor(newColor);
               if (props.onChange) { props.onChange(newColor); }
             }
           })}
