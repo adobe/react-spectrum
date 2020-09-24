@@ -129,8 +129,8 @@ function ControlledHexColorField(props: any = {}) {
   let [color, setColor] = useState(props.value);
   let onChange = (color: Color) => {
     setColor(color);
-    if (props.onChange) { props.onChange(color) }
-  }
+    if (props.onChange) { props.onChange(color); }
+  };
   return (
     <Flex direction="row" gap="size-100" alignItems="end">
       <HexColorField
