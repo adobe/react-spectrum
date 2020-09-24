@@ -20,6 +20,8 @@ import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Flex} from '@react-spectrum/layout';
 import Question from '@spectrum-icons/workflow/Question';
+import Resize from '@spectrum-icons/workflow/Resize';
+import Save from '@spectrum-icons/workflow/SaveTo';
 import {Text} from '@react-spectrum/text';
 import ThumbUp from '@spectrum-icons/workflow/ThumbUp';
 import { Tooltip, TooltipTrigger } from '@react-spectrum/tooltip';
@@ -54,8 +56,8 @@ Try hovering or focusing the button. On hover, it'll appear after a short delay.
 The above mentioned delay after hover can be adjusted. Focus will always appear instantly. Setting it to 0 will cause hover to be instant as well.
 ```tsx example
 <TooltipTrigger delay={0}>
-  <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
-  <Tooltip>Change Name</Tooltip>
+  <ActionButton aria-label="Save"><Save /></ActionButton>
+  <Tooltip>Saving applies your new settings right away.</Tooltip>
 </TooltipTrigger>
 ```
 
@@ -65,7 +67,7 @@ Tooltips can have a label provided as a child. This can be an internationalized 
 
 ### Accessibility
 
-Tooltips will use their content to describe their trigger, they should not be complex. Tooltip triggers must be focusable and pressable in order to ensure that all users can activate them.
+Tooltips will use their content to describe their trigger, they should not be complex. Tooltip triggers must be focusable and hoverable in order to ensure that all users can activate them.
 
 ## Tooltip placement
 
@@ -85,22 +87,22 @@ prop. See the props table [below](#tooltiptrigger-props) for a full list of avai
 
 ### Offset and cross offset
 
-The Tooltips's offset with respect to its trigger can be adjusted using the `offset` and
+The Tooltip's offset with respect to its trigger can be adjusted using the `offset` and
 `crossOffset` props. The `offset` prop controls the spacing applied along the main axis between the element and its
 trigger whereas the `crossOffset` prop handles the spacing applied along the cross axis.
 
-Below is a popover offset by an additional 50px above the trigger.
+Below is a tooltip offset by an additional 50px above the trigger.
 ```tsx example
 <TooltipTrigger offset={50}>
-  <ActionButton aria-label="Offset from trigger">Trigger</ActionButton>
-  <Tooltip>Something</Tooltip>
+  <ActionButton aria-label="Offset from trigger">Offset</ActionButton>
+  <Tooltip>This will shift up.</Tooltip>
 </TooltipTrigger>
 ```
-Below is a popover cross offset by an additional 100px to the right of the trigger.
+Below is a tooltip cross offset by an additional 100px to the right of the trigger.
 ```tsx example
-<TooltipTrigger crossOffset={100}>
-  <ActionButton aria-label="Cross Offset from trigger">Trigger</ActionButton>
-  <Tooltip>Something</Tooltip>
+<TooltipTrigger crossOffset={100} placement="bottom">
+  <ActionButton aria-label="Cross Offset from trigger">Cross Offset</ActionButton>
+  <Tooltip>This will shift over to the right.</Tooltip>
 </TooltipTrigger>
 ```
 
@@ -118,8 +120,8 @@ function Example() {
   return (
     <Flex alignItems="center" gap="size-100">
       <TooltipTrigger onOpenChange={(isOpen) => setState(isOpen)}>
-        <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
-        <Tooltip>Change Name</Tooltip>
+        <ActionButton aria-label="Resize"><Resize /></ActionButton>
+        <Tooltip>Text auto-resized in symbol instance.</Tooltip>
       </TooltipTrigger>
       <Text>Current open state: {state.toString()}</Text>
     </Flex>
@@ -161,6 +163,3 @@ function Example() {
   <Tooltip variant="negative" showIcon>Dangerous action.</Tooltip>
 </TooltipTrigger>
 ```
-
-### Sample Option
-[View guidelines](https://spectrum.adobe.com/page/text-field/#Width)
