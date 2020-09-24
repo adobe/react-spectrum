@@ -2344,7 +2344,7 @@ describe('ComboBox', function () {
 
       act(() => {
         combobox.focus();
-        triggerPress(combobox);
+        triggerPress(combobox, {detail: 0});
         jest.runAllTimers();
       });
 
@@ -2365,7 +2365,7 @@ describe('ComboBox', function () {
 
       act(() => {
         combobox.focus();
-        triggerPress(combobox);
+        triggerPress(combobox, {detail: 0});
         jest.runAllTimers();
       });
 

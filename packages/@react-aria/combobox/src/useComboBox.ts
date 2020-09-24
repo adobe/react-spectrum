@@ -139,7 +139,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       return;
     }
 
-    if (isMobile) {
+    if (!isMobile) {
       state.close();
     }
 

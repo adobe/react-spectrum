@@ -300,7 +300,8 @@ function ComboBoxTrayInput<T>(props: ComboBoxTrayInputProps<T>) {
   return (
     <TextFieldBase
       label={label}
-      labelProps={labelProps}
+      // Prevent default on tray input label so it doesn't close tray on click
+      labelProps={{...labelProps, onClick: (e) => e.preventDefault()}}
       inputProps={mergeProps(inputProps, pressProps)}
       inputRef={inputRef}
       marginTop={label ? 5 : 15}
