@@ -282,17 +282,24 @@ function ComboBoxTrayInput<T>(props: ComboBoxTrayInputProps<T>) {
     label
   } = props;
 
+  // Create a ref tracker that tracks if the tray input field was blurred. If tray input field was blurred,
+  // we'll want to stop the first virtual click from closing the tray in the usePress below so the user can properly
+  // restore focus and type in the textfield
+  let deferClose = useRef(false);
   let {labelProps, inputProps} = useComboBox({
     ...props,
-    // TODO: get rid of user defined onBlur and onFocus so that they don't fire for the tray input?
-    onBlur: undefined,
+    onBlur: () => deferClose.current = true,
     onFocus: undefined
   }, state);
 
   let {pressProps} = usePress({
     onPress: (e) => {
-      if (e.pointerType === 'virtual') {
-        state.close();
+      if (e.pointerType === 'virtual' ) {
+        if (!deferClose.current) {
+          state.close();
+        } else {
+          deferClose.current = false;
+        }
       }
     }
   });
