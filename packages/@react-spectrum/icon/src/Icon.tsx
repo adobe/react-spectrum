@@ -40,8 +40,10 @@ interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Indicates whether the element is exposed to an accessibility API.
    */
-  'aria-hidden'?: boolean
+  'aria-hidden'?: boolean | 'false' | 'true'
 }
+
+export type IconPropsWithoutChildren = Omit<IconProps, 'children'>;
 
 /**
  * Spectrum icons are clear, minimal, and consistent across platforms. They follow the focused and rational principles of the design system in both metaphor and style.
