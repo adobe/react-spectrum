@@ -135,7 +135,7 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     // and trigger close menu twice:
     // If focus is moved into the popover (e.g. when focus is moved to the Tray's input field, mobile case).
     // If the tray input is blurred and the relatedTarget is null (e.g. switching browser tabs or tapping on the tray empty space)
-    if ((popoverRef?.current && popoverRef.current.contains(e.relatedTarget)) || (isMobile && state.isOpen && e.relatedTarget === null)) {
+    if ((popoverRef?.current && popoverRef.current.contains(e.relatedTarget))) {
       return;
     }
 

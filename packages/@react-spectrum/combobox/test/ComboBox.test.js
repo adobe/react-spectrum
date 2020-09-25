@@ -149,6 +149,13 @@ describe('ComboBox', function () {
     expect(label).toBeVisible();
   });
 
+  it('has inputMode=none so iOS keyboards don\t reopen on tray closure', function () {
+    let {getByRole} = renderComboBox();
+
+    let combobox = getByRole('combobox');
+    expect(combobox).toHaveAttribute('inputmode', 'none');
+  });
+
   it('can be disabled', function () {
     let {getByRole} = renderComboBox({isDisabled: true});
 
@@ -676,7 +683,7 @@ describe('ComboBox', function () {
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
     });
 
-    it('calls onCustomValue and closes menu if allowsCustomValue=true and no item is focused', function () {
+    it('calls onCustomValue on Enter press and closes menu if allowsCustomValue=true and no item is focused', function () {
       let {getByRole} = renderComboBox({allowsCustomValue: true});
 
       let combobox = getByRole('combobox');
@@ -700,6 +707,31 @@ describe('ComboBox', function () {
       expect(() => getByRole('listbox')).toThrow();
       expect(onCustomValue).toHaveBeenCalledTimes(1);
       expect(onCustomValue).toHaveBeenCalledWith('On');
+    });
+
+    it('doesn\'t call onCustomValue on Enter press if the current value matches a existing combobox value', function () {
+      let {getByRole} = renderComboBox({allowsCustomValue: true});
+
+      let combobox = getByRole('combobox');
+      typeText(combobox, 'One');
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeTruthy;
+
+      expect(document.activeElement).toBe(combobox);
+      expect(combobox).not.toHaveAttribute('aria-activedescendant');
+
+      act(() => {
+        fireEvent.keyDown(combobox, {key: 'Enter', code: 13, charCode: 13});
+        fireEvent.keyUp(combobox, {key: 'Enter', code: 13, charCode: 13});
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('listbox')).toThrow();
+      expect(onCustomValue).not.toHaveBeenCalled();
     });
 
     it('doesn\'t focuses the first key if the previously focused key is filtered out of the list', function () {
@@ -1623,6 +1655,18 @@ describe('ComboBox', function () {
       expect(onInputChange).toHaveBeenLastCalledWith('');
     });
 
+    it('doesn\'t render a input value if provided selectedKey is in the disabledKey set', function () {
+      let {getByRole} = renderComboBox({selectedKey: '2', disabledKeys: '2'});
+      let combobox = getByRole('combobox');
+      expect(combobox.value).toBe('');
+    });
+
+    it('doesn\'t render a input value if provided inputValue matches a key in the disabledKey set', function () {
+      let {getByRole} = renderComboBox({inputValue: 'Two', disabledKeys: '2'});
+      let combobox = getByRole('combobox');
+      expect(combobox.value).toBe('');
+    });
+
     // Add tests for programtically changing the selectedKey/inputValue props?
   });
 
@@ -1791,6 +1835,18 @@ describe('ComboBox', function () {
       expect(items).toHaveLength(3);
       expect(items[1]).toHaveTextContent('Two');
       expect(items[1]).not.toHaveAttribute('aria-selected', 'true');
+    });
+
+    it('doesn\'t render a input value if provided defaultSelectedKey is in the disabledKey set', function () {
+      let {getByRole} = renderComboBox({defaultSelectedKey: '2', disabledKeys: '2'});
+      let combobox = getByRole('combobox');
+      expect(combobox.value).toBe('');
+    });
+
+    it('doesn\'t render a input value if provided defaultInputValue matches a key in the disabledKey set', function () {
+      let {getByRole} = renderComboBox({defaultInputValue: 'Two', disabledKeys: '2'});
+      let combobox = getByRole('combobox');
+      expect(combobox.value).toBe('');
     });
   });
 
@@ -2394,6 +2450,64 @@ describe('ComboBox', function () {
 
       let tray = getByTestId('tray');
       expect(tray).toBeVisible();
+    });
+
+    it('combobox tray closes when tray input is virtually clicked', function () {
+      let {getByRole, getByTestId} = renderComboBox();
+      let combobox = getByRole('combobox');
+
+      act(() => {
+        combobox.focus();
+        triggerPress(combobox, {detail: 0});
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let trayInput = within(tray).getByRole('combobox');
+
+      act(() => {
+        triggerPress(trayInput, {detail: 0});
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('tray')).toThrow();
+    });
+
+    // Tests that voiceover virtual click doesn't close the tray if the user had blurred the input previous via closing the virtual keyboard
+    // This allows user to bring the virtual keyboard back
+    it('combobox tray doesn\'t closes when tray input is virtually clicked and the input was blurred before', function () {
+      let {getByRole, getByTestId} = renderComboBox();
+      let combobox = getByRole('combobox');
+
+      act(() => {
+        combobox.focus();
+        triggerPress(combobox, {detail: 0});
+        jest.runAllTimers();
+      });
+
+      let tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+      let trayInput = within(tray).getByRole('combobox');
+
+      act(() => {
+        fireEvent.blur(trayInput, {relatedTarget: null});
+      });
+
+      act(() => {
+        triggerPress(trayInput, {detail: 0});
+        jest.runAllTimers();
+      });
+
+      tray = getByTestId('tray');
+      expect(tray).toBeVisible();
+
+      act(() => {
+        triggerPress(trayInput, {detail: 0});
+        jest.runAllTimers();
+      });
+
+      expect(() => getByRole('tray')).toThrow();
     });
   });
 
