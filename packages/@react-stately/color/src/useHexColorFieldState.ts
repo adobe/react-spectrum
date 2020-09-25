@@ -88,12 +88,13 @@ export function useHexColorFieldState(
 
   let decrement = () => {
     setColorValue((prevColor: Color) => {
-      if (!prevColor) { return minColor; }
-      let prevColorInt = prevColor.toHexInt();
-      let newColor = prevColor;
-      if (prevColorInt > minColorInt) {
-        let newValue = `#${Math.max(prevColorInt - step, minColorInt).toString(16).padStart(6, '0')}`;
-        newColor = new Color(newValue);
+      let newColor = prevColor ? prevColor : minColor;
+      if (prevColor) {
+        let prevColorInt = prevColor.toHexInt();
+        if (prevColorInt > minColorInt) {
+          let newValue = `#${Math.max(prevColorInt - step, minColorInt).toString(16).padStart(6, '0')}`;
+          newColor = new Color(newValue);
+        }
       }
       setInputValue(newColor.toString('hex'));
       return newColor;
