@@ -42,18 +42,20 @@ keywords: [tooltip, aria]
 
 ## Features
 
-There is no native HTML element for tooltips. There are many guides out there for
-tooltips, however, they are not easy to make accessible, especially the CSS only ones.
+The HTML `title` attribute can be used to create a tooltip, but it cannot be styled. Custom styled
+tooltips can be hard to build in an accessible way. `useTooltipTrigger` and `useTooltip` help build
+fully accessible tooltips that can be styled as needed.
 
 * Keyboard focus management and cross browser normalization
 * Hover management and cross browser normalization
 * Labeling support for screen readers (aria-describedby)
 * Exposed as a tooltip to assistive technology via ARIA
+* Warmup/Cooldown global times
 
 ## Anatomy
 
-A tooltip consists of two parts, the target trigger and the tooltip itself.
-Users may reveal the tooltip by hovering or focusing the target trigger.
+A tooltip consists of two parts, the trigger element and the tooltip itself.
+Users may reveal the tooltip by hovering or focusing the trigger.
 
 `useTooltipTrigger` returns props to be spread onto its target trigger and the tooltip:
 
@@ -61,20 +63,21 @@ Users may reveal the tooltip by hovering or focusing the target trigger.
   <InterfaceType properties={docs.links[docs.exports.useTooltipTrigger.return.id].properties} />
 </TypeContext.Provider>
 
+`useTooltip` returns props to be spread onto the tooltip:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.useTooltip.return.id].properties} />
+</TypeContext.Provider>
+
 Tooltip state is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useTooltipTriggerState} />
 hook in `@react-stately/tooltip`. The state object should be passed as an option to `useTooltipTrigger`.
 
 ## Example
 
-This example uses a Tooltip that renders in an absolute position next to its target. We need to supply it with the correct
-aria attributes, which we can get from the <TypeLink links={docs.links} type={docs.exports.useTooltip} /> hook also in `@react-aria/tooltip`.
+This example implements a Tooltip that renders in an absolute position next to its target. The <TypeLink links={docs.links} type={docs.exports.useTooltip} /> hook applies the correct ARIA attributes to the tooltip, and `useTooltipTrigger` associates it to the trigger element.
 
 ```tsx example
 import {useTooltipTriggerState} from '@react-stately/tooltip';
-import {
-  useOverlay,
-  useOverlayPosition,
-} from '@react-aria/overlays';
 import {mergeProps} from '@react-aria/utils';
 
 function Tooltip(props) {
@@ -97,32 +100,26 @@ function Tooltip(props) {
   );
 }
 
-function TooltipedButton(props) {
+function Example(props) {
   let state = useTooltipTriggerState(props);
   let ref = React.useRef();
-  // Handle interacting outside the dialog and pressing
-  // the Escape key to close the modal.
-  let {overlayProps} = useOverlay(
-    props,
-    ref
-  );
 
   // Get props for the trigger and its tooltip
   let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
 
   return (
     <span style={{position: 'relative'}}>
-        <button ref={ref} {...triggerProps}>I have a tooltip</button>
-        {state.isOpen && (
-          <Tooltip {...mergeProps(tooltipProps, overlayProps)} >
-            And the tooltip tells you more information.
-          </Tooltip>
-        )}
+      <button ref={ref} {...triggerProps}>I have a tooltip</button>
+      {state.isOpen && (
+        <Tooltip {...tooltipProps} >
+          And the tooltip tells you more information.
+        </Tooltip>
+      )}
     </span>
   );
 }
 
-<TooltipedButton />
+<Example />
 ```
 
 ## Internationalization

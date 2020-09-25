@@ -44,20 +44,10 @@ keywords: [tooltip]
   ]} />
 
 ## Examples
-Try hovering or focusing the button. On hover, it'll appear after a short delay. On focus it'll appear instantly. Clicking or hitting Escape will dismiss it.
 ```tsx example
 <TooltipTrigger>
   <ActionButton aria-label="Edit Name"><Edit /></ActionButton>
   <Tooltip>Change Name</Tooltip>
-</TooltipTrigger>
-```
-
-### Delay
-The default delay time for a Tooltip can be adjusted. Setting `delay` to `0` will show the Tooltip instantly on hover. However when focusing, the Tooltip will always be shown instantly.
-```tsx example
-<TooltipTrigger delay={0}>
-  <ActionButton aria-label="Save"><Save /></ActionButton>
-  <Tooltip>Saving applies your new settings right away.</Tooltip>
 </TooltipTrigger>
 ```
 
@@ -67,11 +57,40 @@ Tooltips accept content as children. All content should be internationalized.
 
 ### Accessibility
 
-Tooltips will use their content to describe their trigger, they should not be complex. Tooltip triggers must be focusable and hoverable in order to ensure that all users can activate them.
+Tooltip triggers must be focusable and hoverable in order to ensure that all users can activate them. When displayed, TooltipTrigger automatically associates the tooltip with the trigger element so that it is described by the tooltip content.
+
+## Tooltip Delay
+
+Tooltips should appear after a short delay when hovering the trigger, or instantly when using keyboard focus. This delay can be adjusted for hover.
+[documentation](https://spectrum.corp.adobe.com/page/tooltip/#Immediate-or-delayed-appearance)
+
+```tsx example
+<TooltipTrigger delay={0}>
+  <ActionButton aria-label="Save"><Save /></ActionButton>
+  <Tooltip>Saving applies your new settings right away.</Tooltip>
+</TooltipTrigger>
+```
+
+### WarmUp / Cooldown
+
+Tooltips have a warm up and cool down period, [see documentation](https://spectrum.corp.adobe.com/page/tooltip/#Warmup-and-cooldown).
+Only one tooltip can be open at a time.
+```tsx example
+<Flex gap="size-200">
+  <TooltipTrigger>
+    <ActionButton>Hover me</ActionButton>
+    <Tooltip>I come up after a delay.</Tooltip>
+  </TooltipTrigger>
+  <TooltipTrigger>
+    <ActionButton>Then hover me</ActionButton>
+    <Tooltip>If you did it quickly, I appear immediately.</Tooltip>
+  </TooltipTrigger>
+</Flex>
+```
 
 ## Tooltip placement
 
-Tooltips support a variety of placement options since they do not take over the user interface.
+Tooltips support a variety of placement options.
 
 ### Placement
 
@@ -165,7 +184,7 @@ function Example() {
 ```
 
 ## Options
-A tooltip can be disabled without disabling the trigger it displays on.
+A TooltipTrigger can be disabled without disabling the trigger it displays on.
 
 **isDisabled**
 ```tsx example

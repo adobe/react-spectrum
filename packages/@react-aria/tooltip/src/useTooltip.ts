@@ -19,7 +19,7 @@ interface TooltipAria {
 }
 
 /**
- * Handles accessibility for a Tooltip.
+ * Provides the accessibility implementation for a Tooltip component.
  */
 export function useTooltip(props: AriaTooltipProps): TooltipAria {
   let domProps = filterDOMProps(props, {labelable: true});

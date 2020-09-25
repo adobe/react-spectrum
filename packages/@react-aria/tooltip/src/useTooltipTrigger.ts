@@ -25,8 +25,8 @@ interface TooltipTriggerAria {
 }
 
 /**
- * Handles the behavior and accessibility for a tooltip trigger, e.g. a button
- * that needs more description that's visually hidden unless focused or hovered.
+ * Provides the behavior and accessibility implementation for a tooltip trigger, e.g. a button
+ * that shows a description when focused or hovered.
  */
 export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<HTMLElement>) : TooltipTriggerAria {
   let {
