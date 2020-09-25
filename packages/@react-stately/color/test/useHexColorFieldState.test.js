@@ -145,7 +145,8 @@ describe('useHexColorFieldState tests', function () {
   });
 
   it('should revert to last valid input value', function () {
-    let props = {defaultValue: '#abc', minValue: '#abc'};
+    let onChangeSpy = jest.fn();
+    let props = {defaultValue: '#abc', minValue: '#abc', onChange: onChangeSpy};
     let {result} = renderHook(() => useHexColorFieldState(props));
     expect(result.current.inputValue).toBe('#AABBCC');
     expect(result.current.colorValue.getChannelValue('red')).toBe(170);
@@ -158,6 +159,7 @@ describe('useHexColorFieldState tests', function () {
 
     act(() => result.current.commitInputValue());
     expect(result.current.inputValue).toBe('#AABBCC');
+    expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
   it('should update colorValue (uncontrolled)', function () {

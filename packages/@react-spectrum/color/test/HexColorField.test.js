@@ -150,6 +150,7 @@ describe('HexColorField', function () {
 
     act(() => {hexColorField.blur();});
     expect(hexColorField.value).toBe('#CBACBA');
+    expect(onChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should handle controlled state', function () {
@@ -168,6 +169,7 @@ describe('HexColorField', function () {
 
     act(() => {hexColorField.blur();});
     expect(hexColorField.value).toBe('#AABBCC');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should revert back to last valid value', function () {
@@ -184,6 +186,7 @@ describe('HexColorField', function () {
 
     act(() => {hexColorField.blur();});
     expect(hexColorField.value).toBe('#AABBCC');
+    expect(onChangeSpy).not.toHaveBeenCalled();
   });
 
   it('should not trigger onChange when input changes to text of same color value', function () {
@@ -281,11 +284,12 @@ describe('HexColorField', function () {
     act(() => {hexColorField.focus();});
     userEvent.clear(hexColorField);
     typeText(hexColorField, newValue);
+    expect(hexColorField.value).toBe(newValue);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(newColor);
-    expect(hexColorField.value).toBe(newValue);
 
     act(() => {hexColorField.blur();});
     expect(hexColorField.value).toBe(newColor.toString('hex'));
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 });
