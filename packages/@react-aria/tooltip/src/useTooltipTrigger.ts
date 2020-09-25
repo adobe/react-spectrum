@@ -65,6 +65,10 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   }, [ref, state]);
 
   let onHoverStart = () => {
+    // In chrome, if you hover a trigger, then another element obscures it, due to keyboard
+    // interactions for example, hover will end. When hover is restored after that element disappears,
+    // focus moves on for example, then the tooltip will reopen. We check the modality to know if the hover
+    // is the result of moving the mouse.
     if (getInteractionModality() === 'pointer') {
       isHovered.current = true;
     } else {
