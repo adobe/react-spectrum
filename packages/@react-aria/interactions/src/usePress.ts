@@ -369,7 +369,7 @@ export function usePress(props: PressHookProps): PressResult {
       let onPointerUp = (e: PointerEvent) => {
         if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0) {
           if (isOverTarget(e, state.target)) {
-            triggerPressEnd(createEvent(state.target, e), isVirtualClick(e) ? 'virtual' : e.pointerType as PointerType);
+            triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType);
           } else if (state.isOverTarget) {
             triggerPressEnd(createEvent(state.target, e), e.pointerType as PointerType, false);
           }

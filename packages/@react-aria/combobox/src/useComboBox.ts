@@ -254,6 +254,21 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     'aria-labelledby': props['aria-labelledby'] || labelProps.id
   });
 
+  // If click happens on direct center of combobox input, might be virtual click from iPad so open combobox menu
+  let onClick = (e) => {
+    let rect = (e.target as HTMLElement).getBoundingClientRect();
+
+    let middleOfRect = {
+      x: Math.round(rect.left + .5 * rect.width),
+      y: Math.round(rect.top + .5 * rect.height)
+    };
+
+    if (e.clientX === middleOfRect.x && e.clientY === middleOfRect.y) {
+      inputRef.current.focus();
+      state.open();
+    }
+  };
+
   return {
     labelProps,
     triggerProps: {
@@ -265,7 +280,8 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
     },
     inputProps: {
       // Only add the inputPressProps if mobile so that text highlighting via mouse click + drag works on desktop
-      ...mergeProps(inputProps, isMobile ? inputPressProps : {}),
+      // Substitute onClick for non-mobile cases so iPad voiceover virtual click on input opens the combobox menu
+      ...mergeProps(inputProps, isMobile ? inputPressProps : {onClick}),
       role: 'combobox',
       'aria-expanded': menuTriggerProps['aria-expanded'],
       'aria-controls': state.isOpen ? menuId || menuProps.id : undefined,

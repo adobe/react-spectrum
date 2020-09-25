@@ -24,7 +24,7 @@ import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
 import {Placement} from '@react-types/overlays';
 import {Popover, Tray} from '@react-spectrum/overlays';
-import {PressResponder, useHover, usePress} from '@react-aria/interactions';
+import {PressResponder, useHover} from '@react-aria/interactions';
 import React, {ReactElement, RefObject, useRef, useState} from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 import styles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
@@ -292,27 +292,33 @@ function ComboBoxTrayInput<T>(props: ComboBoxTrayInputProps<T>) {
     onFocus: undefined
   }, state);
 
-  let {pressProps} = usePress({
-    onPress: (e) => {
-      if (e.pointerType === 'virtual') {
-        if (!deferClose.current) {
-          state.close();
-        } else {
-          deferClose.current = false;
-        }
+  // If click happens on direct center of tray input, might be virtual click from VoiceOver so close the tray
+  let onClick = (e) => {
+    let rect = (e.target as HTMLElement).getBoundingClientRect();
+
+    let middleOfRect = {
+      x: Math.round(rect.left + .5 * rect.width),
+      y: Math.round(rect.top + .5 * rect.height)
+    };
+
+    if (e.clientX === middleOfRect.x && e.clientY === middleOfRect.y) {
+      if (!deferClose.current) {
+        state.close();
+      } else {
+        deferClose.current = false;
       }
     }
-  });
+  };
 
   // Add a separate onBlur to attach to the tray input because useComboBox doesn't call props.onBlur if e.relatedTarget is null (e.g. closing virtual keyboard when tray is open)
-  let  onBlur = () => deferClose.current = true;
+  let onBlur = () => deferClose.current = true;
 
   return (
     <TextFieldBase
       label={label}
       // Prevent default on tray input label so it doesn't close tray on click
       labelProps={{...labelProps, onClick: (e) => e.preventDefault()}}
-      inputProps={mergeProps(inputProps, pressProps, {onBlur})}
+      inputProps={mergeProps(inputProps, {onClick, onBlur})}
       inputRef={inputRef}
       marginTop={label ? 5 : 15}
       marginX={15}

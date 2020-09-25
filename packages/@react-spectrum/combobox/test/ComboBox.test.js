@@ -536,7 +536,9 @@ describe('ComboBox', function () {
         let {getByRole} = renderComboBox({menuTrigger: 'manual'});
 
         let combobox = getByRole('combobox');
-        typeText(combobox, 'One');
+        // Need to focus and skip click so combobox doesn't open for virtual click
+        combobox.focus();
+        typeText(combobox, 'One', {skipClick: true});
         act(() => {
           jest.runAllTimers();
         });
@@ -1113,7 +1115,9 @@ describe('ComboBox', function () {
       let secondaryButton = getAllByRole('button')[1];
 
       expect(onCustomValue).not.toHaveBeenCalled();
-      typeText(combobox, 'Charm');
+      // Need to focus and skip click so combobox doesn't open for virtual click
+      combobox.focus();
+      typeText(combobox, 'Charm', {skipClick: true});
       act(() => {
         jest.runAllTimers();
       });
@@ -2320,7 +2324,8 @@ describe('ComboBox', function () {
       let trayInput = within(tray).getByRole('combobox');
       expect(document.activeElement).toBe(trayInput);
 
-      typeText(trayInput, 'Bleh');
+      trayInput.focus();
+      typeText(trayInput, 'Bleh', {skipClick: true});
       act(() => {
         jest.runAllTimers();
       });
