@@ -1630,9 +1630,20 @@ describe('usePress', function () {
     });
   });
 
-  it('should focus the target even if preventFocusOnPress is true', function () {
+  it('should not focus the target if preventFocusOnPress is true', function () {
     let {getByText} = render(
       <Example preventFocusOnPress />
+    );
+
+    let el = getByText('test');
+    fireEvent.click(el);
+
+    expect(document.activeElement).not.toBe(el);
+  });
+
+  it('should focus the target on virtual click by default', function () {
+    let {getByText} = render(
+      <Example />
     );
 
     let el = getByText('test');
