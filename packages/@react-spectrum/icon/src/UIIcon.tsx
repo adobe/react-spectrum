@@ -23,7 +23,7 @@ interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   /**
    * Indicates whether the element is exposed to an accessibility API.
    */
-  'aria-hidden'?: boolean
+  'aria-hidden'?: boolean | 'false' | 'true'
 }
 
 export type UIIconPropsWithoutChildren = Omit<IconProps, 'children'>;
