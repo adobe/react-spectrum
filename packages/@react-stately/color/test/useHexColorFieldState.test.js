@@ -154,12 +154,36 @@ describe('useHexColorFieldState tests', function () {
     expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
     expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
 
-    act(() => result.current.setInputValue('invalidColor'));
-    expect(result.current.inputValue).toBe('invalidColor');
+    act(() => result.current.setInputValue('ab'));
+    expect(result.current.inputValue).toBe('ab');
 
     act(() => result.current.commitInputValue());
     expect(result.current.inputValue).toBe('#AABBCC');
     expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+
+  it('should not accept invalid characters', function () {
+    let onChangeSpy = jest.fn();
+    let props = {defaultValue: '#abc', minValue: '#abc', onChange: onChangeSpy};
+    let {result} = renderHook(() => useHexColorFieldState(props));
+    expect(result.current.inputValue).toBe('#AABBCC');
+    expect(result.current.colorValue.getChannelValue('red')).toBe(170);
+    expect(result.current.colorValue.getChannelValue('green')).toBe(187);
+    expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
+    expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
+
+    act(() => result.current.setInputValue('invalidColor'));
+    expect(result.current.inputValue).toBe('adC');
+
+    let newColor = new Color('#adc');
+    expect(onChangeSpy).toHaveBeenCalledWith(newColor);
+    expect(result.current.colorValue.getChannelValue('red')).toBe(170);
+    expect(result.current.colorValue.getChannelValue('green')).toBe(221);
+    expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
+    expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
+
+    act(() => result.current.commitInputValue());
+    expect(result.current.inputValue).toBe('#AADDCC');
   });
 
   it('should update colorValue (uncontrolled)', function () {
@@ -219,25 +243,6 @@ describe('useHexColorFieldState tests', function () {
     expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
     expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
     expect(result.current.inputValue).toBe('');
-  });
-
-  it('should not update colorValue for invalid input', function () {
-    let onChangeSpy = jest.fn();
-    let props = {defaultValue: '#abc', onChange: onChangeSpy};
-    let {result} = renderHook(() => useHexColorFieldState(props));
-    expect(result.current.colorValue.getChannelValue('red')).toBe(170);
-    expect(result.current.colorValue.getChannelValue('green')).toBe(187);
-    expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
-    expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
-    expect(result.current.inputValue).toBe('#AABBCC');
-
-    act(() => result.current.setInputValue('invalidColor'));
-    expect(onChangeSpy).not.toHaveBeenCalled();
-    expect(result.current.colorValue.getChannelValue('red')).toBe(170);
-    expect(result.current.colorValue.getChannelValue('green')).toBe(187);
-    expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
-    expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
-    expect(result.current.inputValue).toBe('invalidColor');
   });
 
   it('should clamp to minimum value', function () {

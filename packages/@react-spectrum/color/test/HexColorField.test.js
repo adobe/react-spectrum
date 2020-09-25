@@ -172,7 +172,7 @@ describe('HexColorField', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('should revert back to last valid value', function () {
+  it('should disallow invalid characters revert back to last valid value', function () {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({defaultValue: '#abc', onChange: onChangeSpy});
     let hexColorField = getByLabelText('Primary Color');
@@ -180,8 +180,8 @@ describe('HexColorField', function () {
 
     act(() => {hexColorField.focus();});
     userEvent.clear(hexColorField);
-    typeText(hexColorField, 'xyz');
-    expect(hexColorField.value).toBe('xyz');
+    typeText(hexColorField, 'xyz#8b');
+    expect(hexColorField.value).toBe('#8b');
     expect(onChangeSpy).not.toHaveBeenCalled();
 
     act(() => {hexColorField.blur();});
