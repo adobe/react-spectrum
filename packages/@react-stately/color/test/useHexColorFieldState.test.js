@@ -280,6 +280,28 @@ describe('useHexColorFieldState tests', function () {
     expect(result.current.inputValue).toBe('#CCC');
   });
 
+  it('should clamp minValue to #FFFFFE', function () {
+    let props = {defaultValue: '#FFFFFF', minValue: '#FFFFFF'};
+    let {result} = renderHook(() => useHexColorFieldState(props));
+    act(() => result.current.decrementToMin());
+    expect(result.current.colorValue.getChannelValue('red')).toBe(255);
+    expect(result.current.colorValue.getChannelValue('green')).toBe(255);
+    expect(result.current.colorValue.getChannelValue('blue')).toBe(254);
+    expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
+    expect(result.current.inputValue).toBe('#FFFFFE');
+  });
+
+  it('should clamp maxValue to #000001', function () {
+    let props = {defaultValue: '#000000', maxValue: '#000000'};
+    let {result} = renderHook(() => useHexColorFieldState(props));
+    act(() => result.current.incrementToMax());
+    expect(result.current.colorValue.getChannelValue('red')).toBe(0);
+    expect(result.current.colorValue.getChannelValue('green')).toBe(0);
+    expect(result.current.colorValue.getChannelValue('blue')).toBe(1);
+    expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
+    expect(result.current.inputValue).toBe('#000001');
+  });
+
   it('should not call onChange on increment when value is already at max', function () {
     let onChangeSpy = jest.fn();
     let props = {defaultValue: '#BBB', maxValue: '#BBB', onChange: onChangeSpy};
