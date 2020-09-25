@@ -22,8 +22,10 @@ export interface HexColorFieldState extends Omit<NumberFieldState, 'value' | 'se
   setInputValue: (value: string) => void
 }
 
-export const defaultMinValue = '#000000';
-export const defaultMaxValue = '#FFFFFF';
+export const defaultMinValue = new Color('#000000');
+export const defaultMaxValue = new Color('#FFFFFF');
+const minValueRange = [new Color('#000000'), new Color('#FFFFFE')];
+const maxValueRange = [new Color('#000001'), new Color('#FFFFFF')];
 
 export function useHexColorFieldState(
   props: HexColorFieldProps
@@ -38,9 +40,6 @@ export function useHexColorFieldState(
     validationState
   } = props;
 
-  let {color: minColor, colorInt: minColorInt} = useColor(minValue);
-  let {color: maxColor, colorInt: maxColorInt} = useColor(maxValue);
-
   let clampColor = (value: ColorInput, min: Color, max: Color) => {
     try {
       let color = typeof value === 'string' ? new Color(value) : value;
@@ -52,6 +51,9 @@ export function useHexColorFieldState(
       return undefined;
     }
   };
+
+  let {color: minColor, colorInt: minColorInt} = useColor(clampColor(minValue, minValueRange[0], minValueRange[1]));
+  let {color: maxColor, colorInt: maxColorInt} = useColor(clampColor(maxValue, maxValueRange[0], maxValueRange[1]));
 
   let initialValue = clampColor(value, minColor, maxColor);
   let initialDefaultValue = clampColor(defaultValue, minColor, maxColor);
