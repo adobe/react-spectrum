@@ -45,8 +45,8 @@ export function useHexColorFieldState(
     try {
       let color = typeof value === 'string' ? new Color(value) : value;
       let colorInt = color.toHexInt();
-      if (colorInt < min.toHexInt()) { return minColor; }
-      if (colorInt > max.toHexInt()) { return maxColor; }
+      if (colorInt < min.toHexInt()) { return min; }
+      if (colorInt > max.toHexInt()) { return max; }
       return color;
     } catch (err) {
       return undefined;
