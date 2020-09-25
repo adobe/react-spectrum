@@ -35,11 +35,6 @@ export class Color implements ColorType {
     return x;
   }
 
-  static parse(value: ColorInput): Color {
-    if (!value) { return null; }
-    return typeof value === 'string' ? new Color(value) : value;
-  }
-
   toFormat(format: ColorFormat): Color {
     switch (format) {
       case 'hex':

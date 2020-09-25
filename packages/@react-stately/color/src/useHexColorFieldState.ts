@@ -41,20 +41,20 @@ export function useHexColorFieldState(
   let {color: minColor, colorInt: minColorInt} = useColor(minValue);
   let {color: maxColor, colorInt: maxColorInt} = useColor(maxValue);
 
-  let clampColor = useCallback((value: ColorInput) => {
+  let clampColor = (value: ColorInput, min: Color, max: Color) => {
     try {
-      let color = Color.parse(value);
+      let color = typeof value === 'string' ? new Color(value) : value;
       let colorInt = color.toHexInt();
-      if (colorInt < minColorInt) { return minColor; }
-      if (colorInt > maxColorInt) { return maxColor; }
+      if (colorInt < min.toHexInt()) { return minColor; }
+      if (colorInt > max.toHexInt()) { return maxColor; }
       return color;
     } catch (err) {
       return undefined;
     }
-  }, [minColor, maxColor, minColorInt, maxColorInt]);
+  };
 
-  let initialValue = clampColor(value);
-  let initialDefaultValue = clampColor(defaultValue);
+  let initialValue = clampColor(value, minColor, maxColor);
+  let initialDefaultValue = clampColor(defaultValue, minColor, maxColor);
   let [colorValue, setColorValue] = useControlledState<Color>(initialValue, initialDefaultValue, onChange);
 
   let initialInputValue = (value || defaultValue) && colorValue ? colorValue.toString('hex') : '';
@@ -119,7 +119,7 @@ export function useHexColorFieldState(
       value = `#${value}`;
     }
     try {
-      let newColor = clampColor(value);
+      let newColor = clampColor(value, minColor, maxColor);
       if (newColor) {
         setColorValue((prevColor: Color) => {
           let prevColorInt = prevColor ? prevColor.toHexInt() : minColorInt;
