@@ -25,7 +25,7 @@
     "test": "yarn jest",
     "test:ssr": "yarn jest --config jest.ssr.config.js",
     "ci-test": "yarn jest --maxWorkers=2 && yarn test:ssr --runInBand",
-    "ci-test-17": "yarn add -W react@17.0.0-rc.1 react-dom@17.0.0-rc.1 && yarn jest --maxWorkers=2 && yarn test:ssr --runInBand
+    "ci-test-17": "yarn add -W react@17.0.0-rc.1 react-dom@17.0.0-rc.1 && yarn jest --maxWorkers=2 && yarn test:ssr --runInBand",
     "lint": "yarn check-types && eslint packages --ext .js,.ts,.tsx && node scripts/lint-packages.js",
     "jest": "node scripts/jest.js",
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
