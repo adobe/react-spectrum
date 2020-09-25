@@ -288,7 +288,7 @@ function ComboBoxTrayInput<T>(props: ComboBoxTrayInputProps<T>) {
   let deferClose = useRef(false);
   let {labelProps, inputProps} = useComboBox({
     ...props,
-    onBlur: () => deferClose.current = true,
+    onBlur: undefined,
     onFocus: undefined
   }, state);
 
@@ -304,12 +304,15 @@ function ComboBoxTrayInput<T>(props: ComboBoxTrayInputProps<T>) {
     }
   });
 
+  // Add a separate onBlur to attach to the tray input because useComboBox doesn't call props.onBlur if e.relatedTarget is null (e.g. closing virtual keyboard when tray is open)
+  let  onBlur = () => deferClose.current = true;
+
   return (
     <TextFieldBase
       label={label}
       // Prevent default on tray input label so it doesn't close tray on click
       labelProps={{...labelProps, onClick: (e) => e.preventDefault()}}
-      inputProps={mergeProps(inputProps, pressProps)}
+      inputProps={mergeProps(inputProps, pressProps, {onBlur})}
       inputRef={inputRef}
       marginTop={label ? 5 : 15}
       marginX={15}
