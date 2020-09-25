@@ -53,7 +53,7 @@ Try hovering or focusing the button. On hover, it'll appear after a short delay.
 ```
 
 ### Delay
-The above mentioned delay after hover can be adjusted. Focus will always appear instantly. Setting it to 0 will cause hover to be instant as well.
+The default delay time for a Tooltip can be adjusted. Setting `delay` to `0` will show the Tooltip instantly on hover. However when focusing, the Tooltip will always be shown instantly.
 ```tsx example
 <TooltipTrigger delay={0}>
   <ActionButton aria-label="Save"><Save /></ActionButton>
@@ -63,7 +63,7 @@ The above mentioned delay after hover can be adjusted. Focus will always appear 
 
 ## Content
 
-Tooltips can have a label provided as a child. This can be an internationalized string.
+Tooltips accept content as children. All content should be internationalized.
 
 ### Accessibility
 
@@ -75,13 +75,13 @@ Tooltips support a variety of placement options since they do not take over the 
 
 ### Placement
 
-The popover's placement with respect to its anchor element can be adjusted using the `placement`
+The Tooltip's placement with respect to its trigger element can be adjusted using the `placement`
 prop. See the props table [below](#tooltiptrigger-props) for a full list of available placement combinations.
 
 ```tsx example
 <TooltipTrigger placement="end">
-  <ActionButton aria-label="Foo">Trigger</ActionButton>
-  <Tooltip>Something</Tooltip>
+  <ActionButton aria-label="Foo">Placement</ActionButton>
+  <Tooltip>In left-to-right, this is on the right. In right-to-left, this is on the left.</Tooltip>
 </TooltipTrigger>
 ```
 
@@ -121,7 +121,7 @@ function Example() {
     <Flex alignItems="center" gap="size-100">
       <TooltipTrigger onOpenChange={(isOpen) => setState(isOpen)}>
         <ActionButton aria-label="Resize"><Resize /></ActionButton>
-        <Tooltip>Text auto-resized in symbol instance.</Tooltip>
+        <Tooltip>Resize text.</Tooltip>
       </TooltipTrigger>
       <Text>Current open state: {state.toString()}</Text>
     </Flex>
@@ -166,6 +166,7 @@ function Example() {
 
 ## Options
 A tooltip can be disabled without disabling the trigger it displays on.
+
 **isDisabled**
 ```tsx example
 <TooltipTrigger isDisabled>

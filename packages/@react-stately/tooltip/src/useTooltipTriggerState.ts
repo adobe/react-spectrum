@@ -30,7 +30,7 @@ let globalWarmUpTimeout = null;
 let globalCooldownTimeout = null;
 
 /**
- * Manages state for an tooltip trigger. Tracks whether the tooltip is open, and provides
+ * Manages state for a tooltip trigger. Tracks whether the tooltip is open, and provides
  * methods to toggle this state. Ensures only one tooltip is open at a time and controls
  * the delay for showing a tooltip.
  */
