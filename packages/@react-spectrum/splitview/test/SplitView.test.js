@@ -11,6 +11,7 @@
  */
 
 import {fireEvent, render} from '@testing-library/react';
+import {installMouseEvent} from '@react-spectrum/test-utils';
 import React from 'react';
 import {SplitView} from '../';
 import V2SplitView from '@react/react-spectrum/SplitView';
@@ -31,6 +32,8 @@ describe('SplitView tests', function () {
   afterEach(function () {
     document.body.style.cursor = null;
   });
+
+  installMouseEvent();
 
   it.each`
     Name             | Component      | props
@@ -61,44 +64,44 @@ describe('SplitView tests', function () {
     expect(onResizeSpy).not.toHaveBeenCalled();
     expect(onResizeEndSpy).not.toHaveBeenCalled();
 
-    let clientY = 20; // arbitrary
+    let pageY = 20; // arbitrary
     // move mouse over to 310 and verify that the size changed to 310
-    fireEvent.mouseEnter(splitSeparator, {clientX: 304, clientY});
-    fireEvent.mouseMove(splitSeparator, {clientX: 304, clientY});
+    fireEvent.mouseEnter(splitSeparator, {pageX: 304, pageY});
+    fireEvent.mouseMove(splitSeparator, {pageX: 304, pageY});
     expect(document.body.style.cursor).toBe('e-resize');
-    fireEvent.mouseDown(splitSeparator, {clientX: 304, clientY, button: 0});
-    fireEvent.mouseMove(splitSeparator, {clientX: 307, clientY}); // extra move so cursor change flushes
+    fireEvent.mouseDown(splitSeparator, {pageX: 304, pageY, button: 0});
+    fireEvent.mouseMove(splitSeparator, {pageX: 307, pageY}); // extra move so cursor change flushes
     expect(onResizeSpy).toHaveBeenLastCalledWith(307);
-    fireEvent.mouseMove(splitSeparator, {clientX: 310, clientY});
+    fireEvent.mouseMove(splitSeparator, {pageX: 310, pageY});
     expect(onResizeSpy).toHaveBeenLastCalledWith(310);
     expect(document.body.style.cursor).toBe('ew-resize');
-    fireEvent.mouseUp(splitSeparator, {clientX: 310, clientY, button: 0});
+    fireEvent.mouseUp(splitSeparator, {pageX: 310, pageY, button: 0});
     expect(onResizeEndSpy).toHaveBeenLastCalledWith(310);
     expect(primaryPane).toHaveAttribute('style', 'width: 310px;');
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '1');
 
     // move mouse to the far end so that it maxes out 1000px - secondaryMin(304px) = 696px
     // visual state: primary is maxed out, secondary is at minimum, mouse is beyond the container width
-    fireEvent.mouseEnter(splitSeparator, {clientX: 310, clientY});
-    fireEvent.mouseMove(splitSeparator, {clientX: 310, clientY});
+    fireEvent.mouseEnter(splitSeparator, {pageX: 310, pageY});
+    fireEvent.mouseMove(splitSeparator, {pageX: 310, pageY});
     expect(document.body.style.cursor).toBe('ew-resize');
-    fireEvent.mouseDown(splitSeparator, {clientX: 310, clientY, button: 0});
-    fireEvent.mouseMove(splitSeparator, {clientX: 1001, clientY});
+    fireEvent.mouseDown(splitSeparator, {pageX: 310, pageY, button: 0});
+    fireEvent.mouseMove(splitSeparator, {pageX: 1001, pageY});
     expect(onResizeSpy).toHaveBeenLastCalledWith(696);
-    fireEvent.mouseUp(splitSeparator, {clientX: 1001, clientY, button: 0});
+    fireEvent.mouseUp(splitSeparator, {pageX: 1001, pageY, button: 0});
     expect(onResizeEndSpy).toHaveBeenLastCalledWith(696);
     expect(primaryPane).toHaveAttribute('style', 'width: 696px;');
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '100');
 
     // move mouse so we shrink to the far left for minimum, non-collapisble = 304px;
     // visual state: primary is at minimum size, secondary is maxed out, mouse is to the left of the split by a lot
-    fireEvent.mouseEnter(splitSeparator, {clientX: 696, clientY});
-    fireEvent.mouseMove(splitSeparator, {clientX: 696, clientY});
+    fireEvent.mouseEnter(splitSeparator, {pageX: 696, pageY});
+    fireEvent.mouseMove(splitSeparator, {pageX: 696, pageY});
     expect(document.body.style.cursor).toBe('w-resize');
-    fireEvent.mouseDown(splitSeparator, {clientX: 696, clientY, button: 0});
-    fireEvent.mouseMove(splitSeparator, {clientX: 0, clientY});
+    fireEvent.mouseDown(splitSeparator, {pageX: 696, pageY, button: 0});
+    fireEvent.mouseMove(splitSeparator, {pageX: 0, pageY});
     expect(onResizeSpy).toHaveBeenLastCalledWith(304);
-    fireEvent.mouseUp(splitSeparator, {clientX: 0, clientY, button: 0});
+    fireEvent.mouseUp(splitSeparator, {pageX: 0, pageY, button: 0});
     expect(onResizeEndSpy).toHaveBeenLastCalledWith(304);
     expect(primaryPane).toHaveAttribute('style', 'width: 304px;');
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
@@ -200,23 +203,23 @@ describe('SplitView tests', function () {
 
     // primary as second means mouse needs to go to 696px to get the handle
     // move mouse over to 670 and verify that the size changed to 1000px - 670px = 330px
-    fireEvent.mouseEnter(splitSeparator, {clientX: 696, clientY: 20});
-    fireEvent.mouseMove(splitSeparator, {clientX: 696, clientY: 20});
+    fireEvent.mouseEnter(splitSeparator, {pageX: 696, pageY: 20});
+    fireEvent.mouseMove(splitSeparator, {pageX: 696, pageY: 20});
     expect(document.body.style.cursor).toBe('w-resize');
-    fireEvent.mouseDown(splitSeparator, {clientX: 696, clientY: 20, button: 0});
-    fireEvent.mouseMove(splitSeparator, {clientX: 680, clientY: 20});
-    fireEvent.mouseMove(splitSeparator, {clientX: 670, clientY: 20});
-    fireEvent.mouseUp(splitSeparator, {clientX: 670, clientY: 20, button: 0});
+    fireEvent.mouseDown(splitSeparator, {pageX: 696, pageY: 20, button: 0});
+    fireEvent.mouseMove(splitSeparator, {pageX: 680, pageY: 20});
+    fireEvent.mouseMove(splitSeparator, {pageX: 670, pageY: 20});
+    fireEvent.mouseUp(splitSeparator, {pageX: 670, pageY: 20, button: 0});
     expect(primaryPane).toHaveAttribute('style', 'width: 330px;');
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '6');
 
     // move mouse to the far end so that it maxes out 1000px - secondaryMin(304px) = 696px
-    fireEvent.mouseEnter(splitSeparator, {clientX: 670, clientY: 20});
-    fireEvent.mouseMove(splitSeparator, {clientX: 670, clientY: 20});
+    fireEvent.mouseEnter(splitSeparator, {pageX: 670, pageY: 20});
+    fireEvent.mouseMove(splitSeparator, {pageX: 670, pageY: 20});
     expect(document.body.style.cursor).toBe('ew-resize');
-    fireEvent.mouseDown(splitSeparator, {clientX: 670, clientY: 20, button: 0});
-    fireEvent.mouseMove(splitSeparator, {clientX: 0, clientY: 20});
-    fireEvent.mouseUp(splitSeparator, {clientX: 0, clientY: 20, button: 0});
+    fireEvent.mouseDown(splitSeparator, {pageX: 670, pageY: 20, button: 0});
+    fireEvent.mouseMove(splitSeparator, {pageX: 0, pageY: 20});
+    fireEvent.mouseUp(splitSeparator, {pageX: 0, pageY: 20, button: 0});
     expect(primaryPane).toHaveAttribute('style', 'width: 696px;');
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '100');
 
@@ -284,42 +287,42 @@ describe('SplitView tests', function () {
     expect(document.body.style.cursor).toBe('');
 
     // move mouse over to 310 and verify that the size changed
-    fireEvent.mouseEnter(splitSeparator, {clientX: 304, clientY: 20});
-    fireEvent.mouseMove(splitSeparator, {clientX: 304, clientY: 20});
+    fireEvent.mouseEnter(splitSeparator, {pageX: 304, pageY: 20});
+    fireEvent.mouseMove(splitSeparator, {pageX: 304, pageY: 20});
     expect(document.body.style.cursor).toBe('e-resize');
-    fireEvent.mouseDown(splitSeparator, {clientX: 304, clientY: 20, button: 0});
-    fireEvent.mouseMove(splitSeparator, {clientX: 310, clientY: 20});
-    fireEvent.mouseUp(splitSeparator, {clientX: 310, clientY: 20, button: 0});
+    fireEvent.mouseDown(splitSeparator, {pageX: 304, pageY: 20, button: 0});
+    fireEvent.mouseMove(splitSeparator, {pageX: 310, pageY: 20});
+    fireEvent.mouseUp(splitSeparator, {pageX: 310, pageY: 20, button: 0});
     expect(primaryPane).toHaveAttribute('style', 'width: 310px;');
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '1');
 
     // move mouse to the far end so that it maxes out 1000px - secondaryMin(304px) = 696px
-    fireEvent.mouseEnter(splitSeparator, {clientX: 310, clientY: 20});
-    fireEvent.mouseMove(splitSeparator, {clientX: 310, clientY: 20});
+    fireEvent.mouseEnter(splitSeparator, {pageX: 310, pageY: 20});
+    fireEvent.mouseMove(splitSeparator, {pageX: 310, pageY: 20});
     expect(document.body.style.cursor).toBe('ew-resize');
-    fireEvent.mouseDown(splitSeparator, {clientX: 310, clientY: 20, button: 0});
-    fireEvent.mouseMove(splitSeparator, {clientX: 1001, clientY: 20});
-    fireEvent.mouseUp(splitSeparator, {clientX: 1001, clientY: 20, button: 0});
+    fireEvent.mouseDown(splitSeparator, {pageX: 310, pageY: 20, button: 0});
+    fireEvent.mouseMove(splitSeparator, {pageX: 1001, pageY: 20});
+    fireEvent.mouseUp(splitSeparator, {pageX: 1001, pageY: 20, button: 0});
     expect(primaryPane).toHaveAttribute('style', 'width: 696px;');
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '100');
 
     // move mouse so we shrink to the collapse point 304px - 50px threshold - 1px = 253px
-    fireEvent.mouseEnter(splitSeparator, {clientX: 696, clientY: 20});
-    fireEvent.mouseMove(splitSeparator, {clientX: 696, clientY: 20});
+    fireEvent.mouseEnter(splitSeparator, {pageX: 696, pageY: 20});
+    fireEvent.mouseMove(splitSeparator, {pageX: 696, pageY: 20});
     expect(document.body.style.cursor).toBe('w-resize');
-    fireEvent.mouseDown(splitSeparator, {clientX: 696, clientY: 20, button: 0});
-    fireEvent.mouseMove(splitSeparator, {clientX: 253, clientY: 20});
-    fireEvent.mouseUp(splitSeparator, {clientX: 253, clientY: 20, button: 0});
+    fireEvent.mouseDown(splitSeparator, {pageX: 696, pageY: 20, button: 0});
+    fireEvent.mouseMove(splitSeparator, {pageX: 253, pageY: 20});
+    fireEvent.mouseUp(splitSeparator, {pageX: 253, pageY: 20, button: 0});
     expect(primaryPane).toHaveAttribute('style', 'width: 0px;');
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '-77');
 
     // move mouse so we recover from the collapsing
-    fireEvent.mouseEnter(splitSeparator, {clientX: 0, clientY: 20});
-    fireEvent.mouseMove(splitSeparator, {clientX: 0, clientY: 20});
+    fireEvent.mouseEnter(splitSeparator, {pageX: 0, pageY: 20});
+    fireEvent.mouseMove(splitSeparator, {pageX: 0, pageY: 20});
     expect(document.body.style.cursor).toBe('e-resize');
-    fireEvent.mouseDown(splitSeparator, {clientX: 0, clientY: 20, button: 0});
-    fireEvent.mouseMove(splitSeparator, {clientX: 254, clientY: 20});
-    fireEvent.mouseUp(splitSeparator, {clientX: 254, clientY: 20, button: 0});
+    fireEvent.mouseDown(splitSeparator, {pageX: 0, pageY: 20, button: 0});
+    fireEvent.mouseMove(splitSeparator, {pageX: 254, pageY: 20});
+    fireEvent.mouseUp(splitSeparator, {pageX: 254, pageY: 20, button: 0});
     expect(primaryPane).toHaveAttribute('style', 'width: 304px;');
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
 
@@ -415,34 +418,34 @@ describe('SplitView tests', function () {
     expect(splitSeparator).toHaveAttribute('aria-valuemax', '100');
 
     // move mouse over to 310 and verify that the size changed
-    fireEvent.mouseEnter(splitSeparator, {clientX: 20, clientY: 304});
-    fireEvent.mouseMove(splitSeparator, {clientX: 20, clientY: 304});
+    fireEvent.mouseEnter(splitSeparator, {pageX: 20, pageY: 304});
+    fireEvent.mouseMove(splitSeparator, {pageX: 20, pageY: 304});
     expect(document.body.style.cursor).toBe('s-resize');
-    fireEvent.mouseDown(splitSeparator, {clientX: 20, clientY: 304, button: 0});
-    fireEvent.mouseMove(splitSeparator, {clientX: 20, clientY: 307}); // extra move so cursor change flushes
-    fireEvent.mouseMove(splitSeparator, {clientX: 20, clientY: 310});
+    fireEvent.mouseDown(splitSeparator, {pageX: 20, pageY: 304, button: 0});
+    fireEvent.mouseMove(splitSeparator, {pageX: 20, pageY: 307}); // extra move so cursor change flushes
+    fireEvent.mouseMove(splitSeparator, {pageX: 20, pageY: 310});
     expect(document.body.style.cursor).toBe('ns-resize');
-    fireEvent.mouseUp(splitSeparator, {clientX: 20, clientY: 310, button: 0});
+    fireEvent.mouseUp(splitSeparator, {pageX: 20, pageY: 310, button: 0});
     expect(primaryPane).toHaveAttribute('style', 'height: 310px;');
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '1');
 
     // move mouse to the far end so that it maxes out 1000px - secondaryMin(304px) = 696px
-    fireEvent.mouseEnter(splitSeparator, {clientX: 20, clientY: 310});
-    fireEvent.mouseMove(splitSeparator, {clientX: 20, clientY: 310});
+    fireEvent.mouseEnter(splitSeparator, {pageX: 20, pageY: 310});
+    fireEvent.mouseMove(splitSeparator, {pageX: 20, pageY: 310});
     expect(document.body.style.cursor).toBe('ns-resize');
-    fireEvent.mouseDown(splitSeparator, {clientX: 20, clientY: 310, button: 0});
-    fireEvent.mouseMove(splitSeparator, {clientX: 20, clientY: 1001});
-    fireEvent.mouseUp(splitSeparator, {clientX: 20, clientY: 1001, button: 0});
+    fireEvent.mouseDown(splitSeparator, {pageX: 20, pageY: 310, button: 0});
+    fireEvent.mouseMove(splitSeparator, {pageX: 20, pageY: 1001});
+    fireEvent.mouseUp(splitSeparator, {pageX: 20, pageY: 1001, button: 0});
     expect(primaryPane).toHaveAttribute('style', 'height: 696px;');
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '100');
 
     // move mouse so we shrink to the far left for minimum, non-collapisble = 304px;
-    fireEvent.mouseEnter(splitSeparator, {clientX: 20, clientY: 696});
-    fireEvent.mouseMove(splitSeparator, {clientX: 20, clientY: 696});
+    fireEvent.mouseEnter(splitSeparator, {pageX: 20, pageY: 696});
+    fireEvent.mouseMove(splitSeparator, {pageX: 20, pageY: 696});
     expect(document.body.style.cursor).toBe('n-resize');
-    fireEvent.mouseDown(splitSeparator, {clientX: 20, clientY: 696, button: 0});
-    fireEvent.mouseMove(splitSeparator, {clientX: 20, clientY: 0});
-    fireEvent.mouseUp(splitSeparator, {clientX: 20, clientY: 0, button: 0});
+    fireEvent.mouseDown(splitSeparator, {pageX: 20, pageY: 696, button: 0});
+    fireEvent.mouseMove(splitSeparator, {pageX: 20, pageY: 0});
+    fireEvent.mouseUp(splitSeparator, {pageX: 20, pageY: 0, button: 0});
     expect(primaryPane).toHaveAttribute('style', 'height: 304px;');
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
   });
@@ -473,13 +476,13 @@ describe('SplitView tests', function () {
     expect(splitSeparator).toHaveAttribute('aria-valuemax', '100');
 
     // move mouse over to 310 and verify that the size changed
-    fireEvent.mouseEnter(splitSeparator, {clientX: 304, clientY: 20});
-    fireEvent.mouseMove(splitSeparator, {clientX: 304, clientY: 20});
+    fireEvent.mouseEnter(splitSeparator, {pageX: 304, pageY: 20});
+    fireEvent.mouseMove(splitSeparator, {pageX: 304, pageY: 20});
     expect(document.body.style.cursor).toBe('');
-    fireEvent.mouseDown(splitSeparator, {clientX: 304, clientY: 20, button: 0});
-    fireEvent.mouseMove(splitSeparator, {clientX: 307, clientY: 20}); // extra move so cursor change flushes
-    fireEvent.mouseMove(splitSeparator, {clientX: 310, clientY: 20});
-    fireEvent.mouseUp(splitSeparator, {clientX: 310, clientY: 20, button: 0});
+    fireEvent.mouseDown(splitSeparator, {pageX: 304, pageY: 20, button: 0});
+    fireEvent.mouseMove(splitSeparator, {pageX: 307, pageY: 20}); // extra move so cursor change flushes
+    fireEvent.mouseMove(splitSeparator, {pageX: 310, pageY: 20});
+    fireEvent.mouseUp(splitSeparator, {pageX: 310, pageY: 20, button: 0});
     expect(primaryPane).toHaveAttribute('style', 'width: 304px;');
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '0');
   });
@@ -510,12 +513,12 @@ describe('SplitView tests', function () {
     expect(splitSeparator).toHaveAttribute('aria-valuemax', '100');
 
     // move mouse over to 505 and verify that the size didn't change
-    fireEvent.mouseEnter(splitSeparator, {clientX: props.primarySize, clientY: 20});
-    fireEvent.mouseMove(splitSeparator, {clientX: props.primarySize, clientY: 20});
+    fireEvent.mouseEnter(splitSeparator, {pageX: props.primarySize, pageY: 20});
+    fireEvent.mouseMove(splitSeparator, {pageX: props.primarySize, pageY: 20});
     expect(document.body.style.cursor).toBe('ew-resize');
-    fireEvent.mouseDown(splitSeparator, {clientX: props.primarySize, clientY: 20, button: 0});
-    fireEvent.mouseMove(splitSeparator, {clientX: props.primarySize + 5, clientY: 20});
-    fireEvent.mouseUp(splitSeparator, {clientX: props.primarySize + 5, clientY: 20, button: 0});
+    fireEvent.mouseDown(splitSeparator, {pageX: props.primarySize, pageY: 20, button: 0});
+    fireEvent.mouseMove(splitSeparator, {pageX: props.primarySize + 5, pageY: 20});
+    fireEvent.mouseUp(splitSeparator, {pageX: props.primarySize + 5, pageY: 20, button: 0});
     expect(primaryPane).toHaveAttribute('style', `width: ${props.primarySize}px;`);
     expect(onResizeSpy).toHaveBeenCalledWith(props.primarySize + 5);
     expect(splitSeparator).toHaveAttribute('aria-valuenow', '50');

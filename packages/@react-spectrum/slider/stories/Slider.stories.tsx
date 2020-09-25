@@ -66,6 +66,10 @@ storiesOf('Slider', module)
     () => render({label: 'Label', minValue: 30, maxValue: 70})
   )
   .add(
+    'step',
+    () => render({label: 'Label', minValue: 0, maxValue: 100, step: 10})
+  )
+  .add(
     'isFilled: true',
     () => render({label: 'Label', isFilled: true})
   )
