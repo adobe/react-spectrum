@@ -83,7 +83,7 @@ export function useHexColorFieldState(
       setInputValue(newColor.toString('hex'));
       return newColor;
     });
-  }, [maxColor, maxColorInt, setColorValue, setInputValue]);
+  }, [maxColor, maxColorInt, minColorInt, setColorValue, setInputValue]);
 
   let decrement = () => {
     setColorValue((prevColor: Color) => {
