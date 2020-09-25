@@ -333,4 +333,18 @@ describe('useHexColorFieldState tests', function () {
     act(() => result.current.decrementToMin());
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
+
+  it('should not call onChange when new value has the same color value', function () {
+    let onChangeSpy = jest.fn();
+    let props = {defaultValue: '#BBB', minValue: '#BBB', onChange: onChangeSpy};
+    let {result} = renderHook(() => useHexColorFieldState(props));
+    expect(result.current.colorValue.getChannelValue('red')).toBe(187);
+    expect(result.current.colorValue.getChannelValue('green')).toBe(187);
+    expect(result.current.colorValue.getChannelValue('blue')).toBe(187);
+    expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
+    expect(result.current.inputValue).toBe('#BBBBBB');
+
+    act(() => result.current.setInputValue('#BBBBBB'));
+    expect(onChangeSpy).not.toHaveBeenCalled();
+  });
 });

@@ -186,6 +186,22 @@ describe('HexColorField', function () {
     expect(hexColorField.value).toBe('#AABBCC');
   });
 
+  it('should not trigger onChange when input changes to text of same color value', function () {
+    let onChangeSpy = jest.fn();
+    let {getByLabelText} = renderComponent({onChange: onChangeSpy});
+    let hexColorField = getByLabelText('Primary Color');
+    expect(hexColorField.value).toBe('');
+
+    typeText(hexColorField, 'fff');
+    expect(hexColorField.value).toBe('fff');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+    expect(onChangeSpy).toHaveBeenCalledWith(new Color('#fff'));
+
+    typeText(hexColorField, 'fff');
+    expect(hexColorField.value).toBe('ffffff');
+    expect(onChangeSpy).toHaveBeenCalledTimes(1);
+  });
+
   it.each`
     Name                                | expected                 | key
     ${'increment with arrow up key'}    | ${new Color('#AAAAAE')}  | ${'ArrowUp'}
