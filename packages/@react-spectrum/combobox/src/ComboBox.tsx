@@ -294,7 +294,7 @@ function ComboBoxTrayInput<T>(props: ComboBoxTrayInputProps<T>) {
 
   let {pressProps} = usePress({
     onPress: (e) => {
-      if (e.pointerType === 'virtual' ) {
+      if (e.pointerType === 'virtual') {
         if (!deferClose.current) {
           state.close();
         } else {
