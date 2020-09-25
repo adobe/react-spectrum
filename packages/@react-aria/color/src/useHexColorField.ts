@@ -15,7 +15,7 @@ import {
   defaultMaxValue,
   defaultMinValue,
   HexColorFieldState,
-  useColor,
+  useColor
 } from '@react-stately/color';
 import {
   HTMLAttributes,
