@@ -13,7 +13,6 @@
 import {
   ColorChannel,
   ColorFormat,
-  ColorInput,
   Color as ColorType
 } from '@react-types/color';
 
