@@ -114,11 +114,11 @@ export function useSlider(
           const trackPosition = trackRef.current.getBoundingClientRect().left;
           const clickPosition = e.clientX;
           const offset = clickPosition - trackPosition;
-          const percent = offset / trackRef.current.offsetWidth;
-          let value = state.getPercentValue(percent);
+          let percent = offset / trackRef.current.offsetWidth;
           if (direction === 'rtl') {
-            value = 100 - value;
+            percent = 1 - percent;
           }
+          const value = state.getPercentValue(percent);
 
           // Only compute the diff for thumbs that are editable, as only they can be dragged
           const minDiff = Math.min(...state.values.map((v, index) => state.isThumbEditable(index) ? Math.abs(v - value) : Number.POSITIVE_INFINITY));
