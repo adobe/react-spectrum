@@ -104,6 +104,7 @@ governing permissions and limitations under the License.
 
     transition: background var(--spectrum-global-animation-duration-100) ease-out,
                 fill var(--spectrum-global-animation-duration-100) ease-out;
+    box-sizing: initial;
   }
 
 }

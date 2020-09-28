@@ -109,7 +109,6 @@ storiesOf('ComboBox', module)
     'isOpen',
     () => (
       <div>
-        <div>Note: Combobox needs focus to show dropdown.</div>
         <ComboBox label="Combobox" isOpen {...actions}>
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
@@ -119,13 +118,13 @@ storiesOf('ComboBox', module)
           <Item key="three">Item Three</Item>
         </ComboBox>
       </div>
-    )
+    ),
+    {note: 'Combobox needs focus to show dropdown.'}
   )
   .add(
     'defaultOpen',
     () => (
       <div>
-        <div>Note: Combobox needs focus to show dropdown.</div>
         <ComboBox label="Combobox" defaultOpen {...actions}>
           <Item key="one">Item One</Item>
           <Item key="two" textValue="Item Two">
@@ -135,7 +134,8 @@ storiesOf('ComboBox', module)
           <Item key="three">Item Three</Item>
         </ComboBox>
       </div>
-    )
+    ),
+    {note: 'Combobox needs focus to show dropdown.'}
   )
   .add(
     'inputValue (controlled)',
