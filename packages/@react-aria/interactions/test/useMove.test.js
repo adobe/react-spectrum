@@ -11,6 +11,7 @@
  */
 
 import {fireEvent, render} from '@testing-library/react';
+import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useMove} from '../';
 
@@ -25,25 +26,7 @@ describe('useMove', function () {
   // TODO test: end event has different target than start
 
   describe('mouse events', function () {
-    beforeAll(() => {
-      let oldMouseEvent = MouseEvent;
-      global.MouseEvent = class FakeMouseEvent extends MouseEvent {
-        constructor(name, init) {
-          super(name, init);
-          this._init = init;
-        }
-        get pageX() {
-          return this._init.pageX;
-        }
-        get pageY() {
-          return this._init.pageY;
-        }
-      };
-      global.MouseEvent.oldMouseEvent = oldMouseEvent;
-    });
-    afterAll(() => {
-      global.MouseEvent = global.MouseEvent.oldMouseEvent;
-    });
+    installMouseEvent();
 
     it('responds to mouse events', function () {
       let events = [];
@@ -217,26 +200,7 @@ describe('useMove', function () {
   });
 
   describe('pointer events', function () {
-    beforeAll(() => {
-      global.PointerEvent = class FakePointerEvent extends MouseEvent {
-        constructor(name, init) {
-          super(name, init);
-          this._init = init;
-        }
-        get pointerType() {
-          return this._init.pointerType;
-        }
-        get pageX() {
-          return this._init.pageX;
-        }
-        get pageY() {
-          return this._init.pageY;
-        }
-      };
-    });
-    afterAll(() => {
-      delete global.PointerEvent;
-    });
+    installPointerEvent();
 
     it('responds to pointer events', function () {
       let events = [];

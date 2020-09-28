@@ -1,4 +1,5 @@
 import {fireEvent, render, screen} from '@testing-library/react';
+import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import * as React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useRef} from 'react';
@@ -50,6 +51,8 @@ describe('useSlider', () => {
     afterAll(() => {
       widthStub.mockReset();
     });
+
+    installMouseEvent();
 
     let stateRef = React.createRef();
 

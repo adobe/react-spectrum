@@ -11,6 +11,7 @@
  */
 
 import {act, fireEvent, render} from '@testing-library/react';
+import {installMouseEvent} from '@react-spectrum/test-utils';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
 import React, {useState} from 'react';
@@ -246,29 +247,7 @@ describe('Slider', function () {
       window.HTMLElement.prototype.offsetWidth.mockReset();
     });
 
-    beforeAll(() => {
-      let oldMouseEvent = MouseEvent;
-      // @ts-ignore
-      global.MouseEvent = class FakeMouseEvent extends MouseEvent {
-        _init: {pageX: number, pageY: number};
-        constructor(name, init) {
-          super(name, init);
-          this._init = init;
-        }
-        get pageX() {
-          return this._init.pageX;
-        }
-        get pageY() {
-          return this._init.pageY;
-        }
-      };
-      // @ts-ignore
-      global.MouseEvent.oldMouseEvent = oldMouseEvent;
-    });
-    afterAll(() => {
-      // @ts-ignore
-      global.MouseEvent = global.MouseEvent.oldMouseEvent;
-    });
+    installMouseEvent();
 
     it('can click and drag handle', () => {
       let onChangeSpy = jest.fn();
