@@ -149,13 +149,6 @@ describe('ComboBox', function () {
     expect(label).toBeVisible();
   });
 
-  it('has inputMode=none so iOS keyboards don\t reopen on tray closure', function () {
-    let {getByRole} = renderComboBox();
-
-    let combobox = getByRole('combobox');
-    expect(combobox).toHaveAttribute('inputmode', 'none');
-  });
-
   it('can be disabled', function () {
     let {getByRole} = renderComboBox({isDisabled: true});
 

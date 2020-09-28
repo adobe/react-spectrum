@@ -234,8 +234,11 @@ export function useComboBox<T>(props: AriaComboBoxProps<T>, state: ComboBoxState
       state.selectionManager.setFocusedKey(null);
 
       // Refocus input when mobile tray closes for any reason
+      // Readonly state is quickly swapped to suppress virtual keyboard from opening again on tray close
       if (isMobile) {
+        inputRef.current.readOnly = true;
         inputRef.current?.focus({preventScroll: true});
+        inputRef.current.readOnly = false;
       }
     }
 
