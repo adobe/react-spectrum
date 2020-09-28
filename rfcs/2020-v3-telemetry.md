@@ -7,9 +7,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. -->
 
-- Start Date: 2020-03-24
+- Start Date: 2020-09-28
 - RFC PR: (leave this empty, to be filled in later)
-- Authors: Ross Pfahler
+- Authors: Ross Pfahler, Jorge Parga
 
 # React Spectrum v3 Component Telemetry
 
@@ -31,109 +31,68 @@ So, this system isn't about user tracking -- nor does it intend to go that direc
 
 In order to compile usage data of components, two new APIs will need to be introduced:
 1. a `useTelemetry` hook
-2. a `telemetry` configuration object in the [Provider Component](/packages/%40react-spectrum/provider/src/Provider.tsx).
-
-#### useTelemetry
-
-Components simply import the `useTelemetry` hook and initialize it with a component name:
-
-```jsx
-import {useTelemetry} from '@react-spectrum/telemetry';
-
-function Component({text}) {
-  useTelemetry(Component.displayName);
-
-  return <div>{text}</div>;
-}
-```
-
-As the initial version of the spec is quite limited, the implementation can be quite simple:
+2. a `TelemetryProvider` component
 
 ```tsx
-import {useEffect}, React from 'react';
-import {useProvider} from '@react-spectrum/provider';
+interface ArbitraryData {
+  [key: string]: any;
+}
 
-function useTelemetry(name: string): void {
-  useEffect(() => {
-    let provider = useProvider();
-    if (provider.telemetry) {
-        provider.telemetry.track(name);
-    } else if ('rspComponentTelemetry' in global) {
-        global.rspComponentTelemetry.track(name);
-    }
-  }, []);
+interface useTelemetryApi extends ArbitraryData {
+  track(event: string): void;
+}
+
+type useTelementry(metadata?: ArbitraryData): useTelemetryApi;
+
+interface TelemetryProvider {
+  track(event: string, metadata: ArbitraryData, context: ArbitraryData): void;
 }
 ```
 
-From an implementation standpoint, the `useTelemetry` hook would internally rely on context being set from the Provider. It would fallback to a global property so that outside systems (ie those not in the React tree) can be set up to track events. This is quite common and can be in the case with 3rd party metrics/analytics/telemetry systems.
-
-#### Provider Update
-
-The [Provider Component](/packages/%40react-spectrum/provider/src/Provider.tsx) would need to be updated to accept a new object:
-
-```tsx
-interface Telemetry {
-  track(name: string, ...args any): void;
-}
-```
+- `metadata` is set at track calltime -- it is used for specific information related to context of the event. Examples include `componentName` and other locally (local to the component) identifying information.
+- `context` is data set at the provider level that is included with each track call. Examples include items like `userId`, `orgId` and other globally identifying information.
 
 This telemetry object only has one method at the moment. A user would do the following to get the components on the page:
 
 ```jsx
-import {Provider} from '@react-spectrum/provider`;
+import {TelemetryProvider} from '@adobe/react-spectrum`;
 import {myInternalTelemetry} from './telemetry';
 
-let telemetry = {
-  track: (name, ...args) {
-    myInternalTelemetry.track({name, source: 'react-spectrum'}, args);
-  }
+let myTelemetry = {
+  track: (event, {componentName}, {userId, orgId}) {
+    myInternalTelemetry.track({event, source: 'react-spectrum'}, componentName, userId, orgId);
+  },
+  contextSetters: ['userId', 'orgId']
 }
 
-function App() {
-  
+function MyApp() {
   return (
-    <Provider telemetry={telemetry}>
+    <TelemetryProvider {...myTelemetry}>
       <div>
        ...
       </div>
-    </Provider>
+    </TelemetryProvider>
   );
 }
-
 ```
 
-Alternatively, a separate and new provider component (following a similar pattern) could be used. However this has the problem that since it would not be required to be on the page, it is unlikely that users would use it.
-
-### Future Designs
-
-It is imagined that the `useTelemetry` hook could be expanded in the future (but this is outside the scope of this particular RFC).
+import {useTelemetry} from '@adobe/react-spectrum`;
 
 ```jsx
-function Component(props) {
-  let {event, timer} = useTelemetry(Component.displayName);
-
-  if (props.myDeprecatedProp) {
-    event.create('warn', 'myDeprecatedProp is used and is deprecated...');
-  }
-  
-  useEffect(async () => {
-    let t = timer.create('log if slow');
-    await props.getData();
-    t.end();
-
-    if (t.timeElapsed > 900) {
-      event.create('warn', 'slow `getData` call');
-    }
-  }, [props.propA]);
+function MyComponent(props) {
+  const metadata = {componentName: Component.displayName};
+  let {orgId, userId, track} = useTelemetry(metadata)();
+  userId = 'user123';
+  orgId = 'orgABC';
+  track(event1);
   ...
-}
+  track(event2);
+  ...
 ```
 
 ## Documentation
 
-The `Provider` documentation will need to be updated, as well as any supplementary code that can help build systems to optimize the code.
-
-For the initial version, the internal API should *not* be exposed. As more is learned about limitations and what API should work here, it is expected that breaking changes will be made.
+The new APIs will need documentation.
 
 ## Drawbacks
 
