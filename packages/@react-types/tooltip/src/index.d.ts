@@ -16,7 +16,19 @@ import {ReactElement, ReactNode} from 'react';
 
 export interface TooltipTriggerProps extends OverlayTriggerProps {
   isDisabled?: boolean,
-  delay?: number
+  delay?: number,
+  /**
+   * The additional offset applied along the main axis between the element and its
+   * anchor element.
+   * @default 7
+   */
+  offset?: number,
+  /**
+   * The additional offset applied along the cross axis between the element and its
+   * anchor element.
+   * @default 0
+   */
+  crossOffset?: number
 }
 
 export interface SpectrumTooltipTriggerProps extends TooltipTriggerProps, PositionProps {
