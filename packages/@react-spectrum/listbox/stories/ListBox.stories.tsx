@@ -98,7 +98,7 @@ storiesOf('ListBox', module)
   .add(
     'Default ListBox',
     () => (
-      <ListBox aria-labelledby="label" items={flatOptions}>
+      <ListBox flexGrow={1} aria-labelledby="label" items={flatOptions}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </ListBox>
     )
@@ -106,7 +106,7 @@ storiesOf('ListBox', module)
   .add(
     'ListBox w/ sections',
     () => (
-      <ListBox aria-labelledby="label" items={withSection}>
+      <ListBox flexGrow={1} aria-labelledby="label" items={withSection}>
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {item => <Item key={item.name}>{item.name}</Item>}
@@ -118,7 +118,7 @@ storiesOf('ListBox', module)
   .add(
     'ListBox w/ many sections and selection',
     () => (
-      <ListBox aria-labelledby="label" selectionMode="multiple" items={lotsOfSections} onSelectionChange={action('onSelectionChange')}>
+      <ListBox flexGrow={1} aria-labelledby="label" selectionMode="multiple" items={lotsOfSections} onSelectionChange={action('onSelectionChange')}>
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {(item: any) => <Item key={item.name}>{item.name}</Item>}
@@ -130,7 +130,7 @@ storiesOf('ListBox', module)
   .add(
     'ListBox w/ sections and no title',
     () => (
-      <ListBox aria-labelledby="label" items={withSection}>
+      <ListBox flexGrow={1} aria-labelledby="label" items={withSection}>
         {item => (
           <Section key={item.name} items={item.children} aria-label={item.name}>
             {item => <Item key={item.name}>{item.name}</Item>}
@@ -142,7 +142,7 @@ storiesOf('ListBox', module)
   .add(
     'Static',
     () => (
-      <ListBox aria-labelledby="label">
+      <ListBox flexGrow={1} aria-labelledby="label">
         <Item>One</Item>
         <Item>Two</Item>
         <Item>Three</Item>
@@ -152,7 +152,7 @@ storiesOf('ListBox', module)
   .add(
     'Static with sections and selection',
     () => (
-      <ListBox aria-labelledby="label" selectionMode="multiple">
+      <ListBox flexGrow={1} aria-labelledby="label" selectionMode="multiple">
         <Section title="Section 1">
           <Item>One</Item>
           <Item>Two</Item>
@@ -169,7 +169,7 @@ storiesOf('ListBox', module)
   .add(
     'Static with sections and no title',
     () => (
-      <ListBox aria-labelledby="label">
+      <ListBox flexGrow={1} aria-labelledby="label">
         <Section aria-label="Section 1">
           <Item>One</Item>
           <Item>Two</Item>
@@ -186,7 +186,7 @@ storiesOf('ListBox', module)
   .add(
     'with default selected option',
     () => (
-      <ListBox aria-labelledby="label" selectionMode="multiple" onSelectionChange={action('onSelectionChange')} items={withSection} defaultSelectedKeys={['Kangaroo']}>
+      <ListBox flexGrow={1} aria-labelledby="label" selectionMode="multiple" onSelectionChange={action('onSelectionChange')} items={withSection} defaultSelectedKeys={['Kangaroo']}>
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {item => <Item key={item.name}>{item.name}</Item>}
@@ -198,7 +198,7 @@ storiesOf('ListBox', module)
   .add(
     'single selection with default selected option',
     () => (
-      <ListBox selectionMode="single" onSelectionChange={action('onSelectionChange')} aria-labelledby="label" items={flatOptions} defaultSelectedKeys={['Kangaroo']}>
+      <ListBox flexGrow={1} selectionMode="single" onSelectionChange={action('onSelectionChange')} aria-labelledby="label" items={flatOptions} defaultSelectedKeys={['Kangaroo']}>
         {item => <Item key={item.name}>{item.name}</Item>}
       </ListBox>
     )
@@ -206,7 +206,7 @@ storiesOf('ListBox', module)
   .add(
     'static with default selected options',
     () => (
-      <ListBox aria-labelledby="label" selectionMode="multiple" onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2', '3']}>
+      <ListBox flexGrow={1} aria-labelledby="label" selectionMode="multiple" onSelectionChange={action('onSelectionChange')} defaultSelectedKeys={['2', '3']}>
         <Section title="Section 1">
           <Item key="1">
             One
@@ -238,7 +238,7 @@ storiesOf('ListBox', module)
   .add(
     'with selected options (controlled)',
     () => (
-      <ListBox aria-labelledby="label" selectionMode="multiple" onSelectionChange={action('onSelectionChange')} items={withSection} selectedKeys={['Kangaroo']}>
+      <ListBox flexGrow={1} aria-labelledby="label" selectionMode="multiple" onSelectionChange={action('onSelectionChange')} items={withSection} selectedKeys={['Kangaroo']}>
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {item => <Item key={item.name}>{item.name}</Item>}
@@ -250,7 +250,7 @@ storiesOf('ListBox', module)
   .add(
     'static with selected options (controlled)',
     () => (
-      <ListBox aria-labelledby="label" selectionMode="multiple" onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
+      <ListBox flexGrow={1} aria-labelledby="label" selectionMode="multiple" onSelectionChange={action('onSelectionChange')} selectedKeys={['2']}>
         <Section title="Section 1">
           <Item key="1">
             One
@@ -282,7 +282,7 @@ storiesOf('ListBox', module)
   .add(
     'with disabled options',
     () => (
-      <ListBox aria-labelledby="label" items={withSection} disabledKeys={['Kangaroo', 'Ross']}>
+      <ListBox flexGrow={1} aria-labelledby="label" items={withSection} disabledKeys={['Kangaroo', 'Ross']}>
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {item => <Item key={item.name}>{item.name}</Item>}
@@ -294,7 +294,7 @@ storiesOf('ListBox', module)
   .add(
     'static with disabled options',
     () => (
-      <ListBox aria-labelledby="label" disabledKeys={['3', '5']}>
+      <ListBox flexGrow={1} aria-labelledby="label" disabledKeys={['3', '5']}>
         <Section title="Section 1">
           <Item key="1">
             One
@@ -326,7 +326,7 @@ storiesOf('ListBox', module)
   .add(
     'Multiple selection',
     () => (
-      <ListBox aria-labelledby="label" items={withSection} onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
+      <ListBox flexGrow={1} aria-labelledby="label" items={withSection} onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['Aardvark', 'Snake']} disabledKeys={['Kangaroo', 'Ross']}>
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {item => <Item key={item.name}>{item.name}</Item>}
@@ -338,7 +338,7 @@ storiesOf('ListBox', module)
   .add(
     'Multiple selection, static',
     () => (
-      <ListBox aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
+      <ListBox flexGrow={1} aria-labelledby="label" onSelectionChange={action('onSelectionChange')} selectionMode="multiple" defaultSelectedKeys={['2', '5']} disabledKeys={['1', '3']}>
         <Section title="Section 1">
           <Item key="1">
             One
@@ -367,7 +367,7 @@ storiesOf('ListBox', module)
   .add(
     'No selection allowed',
     () => (
-      <ListBox aria-labelledby="label" items={withSection}>
+      <ListBox flexGrow={1} aria-labelledby="label" items={withSection}>
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {item => <Item key={item.name}>{item.name}</Item>}
@@ -379,7 +379,7 @@ storiesOf('ListBox', module)
   .add(
     'No selection allowed, static',
     () => (
-      <ListBox aria-labelledby="label">
+      <ListBox flexGrow={1} aria-labelledby="label">
         <Section title="Section 1">
           <Item>One</Item>
           <Item>Two</Item>
@@ -396,7 +396,7 @@ storiesOf('ListBox', module)
   .add(
     'ListBox with autoFocus=true',
     () => (
-      <ListBox aria-labelledby="label" items={withSection} autoFocus>
+      <ListBox flexGrow={1} aria-labelledby="label" items={withSection} autoFocus>
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {item => <Item key={item.name}>{item.name}</Item>}
@@ -408,7 +408,7 @@ storiesOf('ListBox', module)
   .add(
     'ListBox with autoFocus=true, selectionMode=single, default selected key (uncontrolled)',
     () => (
-      <ListBox aria-labelledby="label" items={withSection} autoFocus defaultSelectedKeys={['Snake']} selectionMode="single">
+      <ListBox flexGrow={1} aria-labelledby="label" items={withSection} autoFocus defaultSelectedKeys={['Snake']} selectionMode="single">
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {item => <Item key={item.name}>{item.name}</Item>}
@@ -420,7 +420,7 @@ storiesOf('ListBox', module)
   .add(
     'ListBox with autoFocus="first"',
     () => (
-      <ListBox aria-labelledby="label" items={withSection} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} autoFocus="first">
+      <ListBox flexGrow={1} aria-labelledby="label" items={withSection} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} autoFocus="first">
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {item => <Item key={item.name}>{item.name}</Item>}
@@ -432,7 +432,7 @@ storiesOf('ListBox', module)
   .add(
     'ListBox with autoFocus="last"',
     () => (
-      <ListBox aria-labelledby="label" items={withSection} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} autoFocus="last">
+      <ListBox flexGrow={1} aria-labelledby="label" items={withSection} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} autoFocus="last">
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {item => <Item key={item.name}>{item.name}</Item>}
@@ -444,7 +444,7 @@ storiesOf('ListBox', module)
   .add(
     'ListBox with keyboard selection wrapping',
     () => (
-      <ListBox aria-labelledby="label" items={withSection} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} shouldFocusWrap>
+      <ListBox flexGrow={1} aria-labelledby="label" items={withSection} selectionMode="multiple" onSelectionChange={action('onSelectionChange')} shouldFocusWrap>
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {item => <Item key={item.name}>{item.name}</Item>}
@@ -456,7 +456,7 @@ storiesOf('ListBox', module)
   .add(
     'with semantic elements (static)',
     () => (
-      <ListBox aria-labelledby="label" selectionMode="multiple" onSelectionChange={action('onSelectionChange')}>
+      <ListBox flexGrow={1} aria-labelledby="label" selectionMode="multiple" onSelectionChange={action('onSelectionChange')}>
         <Section title="Section 1">
           <Item textValue="Copy">
             <Copy size="S" />
@@ -495,7 +495,7 @@ storiesOf('ListBox', module)
   .add(
     'with semantic elements (generative), multiple selection',
     () => (
-      <ListBox aria-labelledby="label" items={hardModeProgrammatic} onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
+      <ListBox flexGrow={1} aria-labelledby="label" items={hardModeProgrammatic} onSelectionChange={action('onSelectionChange')} selectionMode="multiple">
         {item => (
           <Section key={item.name} items={item.children} title={item.name}>
             {item => customOption(item)}
@@ -507,7 +507,7 @@ storiesOf('ListBox', module)
   .add(
     'isLoading',
     () => (
-      <ListBox aria-labelledby="label" items={[]} isLoading>
+      <ListBox flexGrow={1} aria-labelledby="label" items={[]} isLoading>
         {item => <Item>{item.name}</Item>}
       </ListBox>
     )
@@ -515,7 +515,7 @@ storiesOf('ListBox', module)
   .add(
     'isLoading more',
     () => (
-      <ListBox aria-labelledby="label" items={flatOptions} isLoading>
+      <ListBox flexGrow={1} aria-labelledby="label" items={flatOptions} isLoading>
         {item => <Item key={item.name}>{item.name}</Item>}
       </ListBox>
     )
@@ -539,8 +539,9 @@ storiesOf('ListBox', module)
   .add(
     'async loading, resizable',
     () => (
-      <div style={{height: '200px', width: '100%', minWidth: '200px', resize: 'both', overflow: 'auto'}}>
-        <AsyncLoadingExampleWithoutHeight />
+      // need display flex or set a height on the listbox so it doesn't keep getting more elements
+      <div style={{display: 'flex', height: '200px', flexGrow: 1, minWidth: '200px', padding: '10px', resize: 'both', overflow: 'auto'}}>
+        <AsyncLoadingExample />
       </div>
     )
   );
@@ -581,31 +582,7 @@ function AsyncLoadingExample() {
   });
 
   return (
-    <ListBox aria-labelledby="label" items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
-      {item => <Item key={item.name}>{item.name}</Item>}
-    </ListBox>
-  );
-}
-
-function AsyncLoadingExampleWithoutHeight() {
-  interface Pokemon {
-    name: string,
-    url: string
-  }
-
-  let list = useAsyncList<Pokemon>({
-    async load({signal, cursor}) {
-      let res = await fetch(cursor || 'https://pokeapi.co/api/v2/pokemon', {signal});
-      let json = await res.json();
-      return {
-        items: json.results,
-        cursor: json.next
-      };
-    }
-  });
-
-  return (
-    <ListBox aria-labelledby="label" items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
+    <ListBox flexGrow={1} aria-labelledby="label" items={list.items} isLoading={list.isLoading} onLoadMore={list.loadMore}>
       {item => <Item key={item.name}>{item.name}</Item>}
     </ListBox>
   );
