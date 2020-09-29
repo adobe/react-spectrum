@@ -65,15 +65,15 @@ let flatOptions = [
 
 let withSection = [
   {name: 'Animals', children: [
-      {name: 'Aardvark'},
-      {name: 'Kangaroo'},
-      {name: 'Snake'}
-    ]},
+    {name: 'Aardvark'},
+    {name: 'Kangaroo'},
+    {name: 'Snake'}
+  ]},
   {name: 'People', children: [
-      {name: 'Danni'},
-      {name: 'Devon'},
-      {name: 'Ross'}
-    ]}
+    {name: 'Danni'},
+    {name: 'Devon'},
+    {name: 'Ross'}
+  ]}
 ];
 
 let lotsOfSections: any[] = [];
