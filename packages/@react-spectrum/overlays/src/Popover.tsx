@@ -54,8 +54,16 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
 
   return (
-    <Overlay {...otherProps} isOpen={state.isOpen}>
-      <PopoverWrapper ref={domRef} {...props}>
+    <Overlay {...otherProps} nodeRef={domRef}>
+      <PopoverWrapper
+        {...styleProps}
+        ref={domRef}
+        placement={placement}
+        arrowProps={arrowProps}
+        onClose={onClose}
+        shouldCloseOnBlur={shouldCloseOnBlur}
+        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
+        hideArrow={hideArrow}>
         {children}
       </PopoverWrapper>
     </Overlay>

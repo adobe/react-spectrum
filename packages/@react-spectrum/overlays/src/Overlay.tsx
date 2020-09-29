@@ -18,7 +18,7 @@ import React, {useCallback, useState} from 'react';
 import {Overlay as ReactAriaOverlay} from '@react-aria/overlays';
 
 function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, isOpen, container, onEnter, onEntering, onEntered, onExit, onExiting, onExited} = props;
+  let {children, isOpen, container, onEnter, onEntering, onEntered, onExit, onExiting, onExited, nodeRef} = props;
   let [exited, setExited] = useState(!isOpen);
 
   let handleEntered = useCallback(() => {

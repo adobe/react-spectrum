@@ -24,3 +24,6 @@ export function Underlay({isOpen, isTransparent}: UnderlayProps) {
     <div className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen, 'spectrum-Underlay--transparent': isTransparent})} />
   );
 }
+
+const _Underlay = React.forwardRef(Underlay);
+export {_Underlay as Underlay};

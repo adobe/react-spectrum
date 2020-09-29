@@ -36,9 +36,18 @@ function Tray(props: TrayProps, ref: DOMRef<HTMLDivElement>) {
   let {children, state, ...otherProps} = props;
   let domRef = useDOMRef(ref);
 
+  let underlayRef = useRef(null);
+
   return (
-    <Overlay {...otherProps} isOpen={state.isOpen}>
-      <TrayWrapper {...props} ref={domRef}>
+    <Overlay {...otherProps} nodeRef={underlayRef}>
+      <Underlay ref={underlayRef} />
+      <TrayWrapper
+        {...styleProps}
+        onClose={onClose}
+        shouldCloseOnBlur={shouldCloseOnBlur}
+        isKeyboardDismissDisabled={isKeyboardDismissDisabled}
+        ref={domRef}
+        isFixedHeight={isFixedHeight}>
         {children}
       </TrayWrapper>
     </Overlay>
