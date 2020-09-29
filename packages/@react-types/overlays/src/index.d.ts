@@ -71,10 +71,11 @@ export interface OverlayProps {
   onEntered?: () => void,
   onExit?: () => void,
   onExiting?: () => void,
-  onExited?: () => void
+  onExited?: () => void,
+  nodeRef: React.MutableRefObject<HTMLElement>
 }
 
-export interface ModalProps extends StyleProps, OverlayProps {
+export interface ModalProps extends StyleProps, Omit<OverlayProps, 'nodeRef'> {
   children: ReactElement,
   isOpen?: boolean,
   onClose?: () => void,
@@ -82,7 +83,7 @@ export interface ModalProps extends StyleProps, OverlayProps {
   isDismissable?: boolean
 }
 
-export interface PopoverProps extends StyleProps, OverlayProps {
+export interface PopoverProps extends StyleProps, Omit<OverlayProps, 'nodeRef'>  {
   children: ReactNode,
   placement?: PlacementAxis,
   arrowProps?: HTMLAttributes<HTMLElement>,
@@ -92,7 +93,7 @@ export interface PopoverProps extends StyleProps, OverlayProps {
   shouldCloseOnBlur?: boolean
 }
 
-export interface TrayProps extends StyleProps, OverlayProps {
+export interface TrayProps extends StyleProps, Omit<OverlayProps, 'nodeRef'>  {
   children: ReactElement,
   isOpen?: boolean,
   onClose?: () => void,

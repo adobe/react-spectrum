@@ -18,8 +18,11 @@ interface UnderlayProps {
   isOpen?: boolean
 }
 
-export function Underlay({isOpen}: UnderlayProps) {
+function Underlay({isOpen}: UnderlayProps, ref: React.Ref<HTMLDivElement>) {
   return (
-    <div className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen})} />
+    <div ref={ref} className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen})} />
   );
 }
+
+const _Underlay = React.forwardRef(Underlay);
+export {_Underlay as Underlay};
