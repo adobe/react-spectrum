@@ -15,6 +15,7 @@ import {Overlay} from '@react-spectrum/overlays';
 import React, {ReactElement, useRef} from 'react';
 import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipContext} from './context';
+import {unwrapDOMRef} from '@react-spectrum/utils';
 import {useOverlayPosition} from '@react-aria/overlays';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
@@ -30,7 +31,18 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     offset = DEFAULT_OFFSET
   } = props;
 
+  let tooltipRef = useRef();
   let [trigger, tooltip] = React.Children.toArray(children);
+
+  // @ts-ignore
+  let tooltipWithRef = React.cloneElement(tooltip, {ref: node => {
+    tooltipRef.current = node;
+    // @ts-ignore
+    if (tooltip.ref) {
+      // @ts-ignore
+      tooltip.ref.current = node;
+    }
+  }});
 
   let state = useTooltipTriggerState(props);
 
@@ -63,8 +75,9 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
           arrowProps,
           ...tooltipProps
         }}>
-        <Overlay isOpen={state.isOpen}>
-          {tooltip}
+        {/* @ts-ignore */}
+        <Overlay isOpen={state.isOpen} nodeRef={unwrapDOMRef(tooltipRef)}>
+          {tooltipWithRef}
         </Overlay>
       </TooltipContext.Provider>
     </FocusableProvider>
