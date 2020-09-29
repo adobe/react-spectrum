@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@react-spectrum/test-utils/src/testingLibrary';
 import {Calendar, RangeCalendar} from '../';
 import {getDaysInMonth} from 'date-fns';
 import {Provider} from '@react-spectrum/provider';

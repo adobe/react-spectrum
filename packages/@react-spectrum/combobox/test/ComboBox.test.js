@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@react-spectrum/test-utils/src/testingLibrary';
 import {Button} from '@react-spectrum/button';
 import {ComboBox, Item, Section} from '../';
 import {Provider} from '@react-spectrum/provider';

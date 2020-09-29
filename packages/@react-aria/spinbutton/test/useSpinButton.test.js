@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@react-spectrum/test-utils/src/testingLibrary';
 import {announce} from '@react-aria/live-announcer';
 import React from 'react';
 import {useSpinButton} from '../';

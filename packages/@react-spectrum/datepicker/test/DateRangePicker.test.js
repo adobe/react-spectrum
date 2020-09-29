@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render} from '@testing-library/react';
+import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render} from '@react-spectrum/test-utils/src/testingLibrary';
 import {DateRangePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

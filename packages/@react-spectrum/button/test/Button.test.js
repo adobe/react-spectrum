@@ -11,7 +11,7 @@
  */
 
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
-import {fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@react-spectrum/test-utils/src/testingLibrary';
 import React from 'react';
 import {triggerPress} from '@react-spectrum/test-utils';
 import V2Button from '@react/react-spectrum/Button';

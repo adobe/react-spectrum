@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@testing-library/react';
+import {act, render} from '@react-spectrum/test-utils/src/testingLibrary';
 import React from 'react';
 import {Switch} from '../';
 import userEvent from '@testing-library/user-event';

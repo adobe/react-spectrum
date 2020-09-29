@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, within} from '@testing-library/react';
+import {act, render, within} from '@react-spectrum/test-utils/src/testingLibrary';
 import {Checkbox, CheckboxGroup} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

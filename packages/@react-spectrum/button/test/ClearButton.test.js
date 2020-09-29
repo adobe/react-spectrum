@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@testing-library/react';
+import {act, render} from '@react-spectrum/test-utils/src/testingLibrary';
 import {ClearButton} from '../';
 import React from 'react';
 import {triggerPress} from '@react-spectrum/test-utils';

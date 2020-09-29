@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, within} from '@react-spectrum/test-utils/src/testingLibrary';
 import {DialogContainerExample, MenuExample} from '../stories/DialogContainerExamples';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

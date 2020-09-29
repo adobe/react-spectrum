@@ -11,7 +11,7 @@
  */
 
 import React, {useRef} from 'react';
-import {render} from '@testing-library/react';
+import {render} from '@react-spectrum/test-utils/src/testingLibrary';
 import {useDialog} from '../';
 
 function Example(props) {

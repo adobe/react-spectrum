@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent} from '@testing-library/react';
+import {fireEvent} from '@react-spectrum/test-utils/src/testingLibrary';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render} from '@react-spectrum/test-utils/src/testingLibrary';
 import {Tag} from '../';
 import {Tag as V2Tag} from '@react/react-spectrum/TagList';
 

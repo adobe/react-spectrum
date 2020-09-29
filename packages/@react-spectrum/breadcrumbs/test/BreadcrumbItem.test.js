@@ -12,7 +12,7 @@
 
 import {BreadcrumbItem} from '../src/BreadcrumbItem';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render} from '@react-spectrum/test-utils/src/testingLibrary';
 import {triggerPress} from '@react-spectrum/test-utils';
 
 // v3 component

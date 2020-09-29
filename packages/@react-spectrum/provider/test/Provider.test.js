@@ -13,7 +13,7 @@
 // needs to be imported first
 import MatchMediaMock from 'jest-matchmedia-mock';
 // eslint-disable-next-line rulesdir/sort-imports
-import {act, render} from '@testing-library/react';
+import {act, render} from '@react-spectrum/test-utils/src/testingLibrary';
 import {Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Provider} from '../';
@@ -193,7 +193,7 @@ describe('Provider', () => {
     act(() => {
       matchMedia.useMediaQuery(mediaQueryDark);
     });
-    
+
     expect(provider1.classList.contains('spectrum--dark')).toBeTruthy();
     expect(provider2.classList.contains('spectrum--dark')).toBeTruthy();
   });

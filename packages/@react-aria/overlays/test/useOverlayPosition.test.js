@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@react-spectrum/test-utils/src/testingLibrary';
 import React, {useRef} from 'react';
 import {useOverlayPosition} from '../';
 

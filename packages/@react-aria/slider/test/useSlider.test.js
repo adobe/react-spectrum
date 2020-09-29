@@ -1,4 +1,4 @@
-import {fireEvent, render, screen} from '@testing-library/react';
+import {fireEvent, render, screen} from '@react-spectrum/test-utils/src/testingLibrary';
 import * as React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useRef} from 'react';
@@ -124,7 +124,7 @@ describe('useSlider', () => {
       expect(onChangeSpy).not.toHaveBeenCalled();
       expect(onChangeEndSpy).not.toHaveBeenCalled();
       expect(stateRef.current.values).toEqual([10, 80]);
-      
+
       fireEvent.mouseUp(track, {clientX: 40});
       expect(onChangeSpy).not.toHaveBeenCalled();
       expect(onChangeEndSpy).not.toHaveBeenCalled();

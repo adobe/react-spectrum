@@ -12,7 +12,7 @@
 
 jest.mock('@react-aria/live-announcer');
 import {announce} from '@react-aria/live-announcer';
-import {fireEvent, render} from '@testing-library/react';
+import {fireEvent, render} from '@react-spectrum/test-utils/src/testingLibrary';
 import {RangeCalendar} from '../';
 import React from 'react';
 import {startOfDay} from 'date-fns';
