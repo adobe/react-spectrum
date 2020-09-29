@@ -81,9 +81,8 @@ describe('useControlledState tests', function () {
     let button = getByRole('button');
     getByTestId('5');
     expect(renderSpy).toBeCalledTimes(1);
-    actDOM(() =>
-      userEvent.click(button)
-    );
+    // eslint-disable-next-line test-act/act-events-test
+    actDOM(() => {userEvent.click(button);});
     getByTestId('6');
     expect(renderSpy).toBeCalledTimes(2);
   });

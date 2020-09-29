@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, render} from '@testing-library/react';
 import React from 'react';
 import {usePress} from '../';
 
@@ -1712,7 +1712,7 @@ describe('usePress', function () {
       fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
 
-      jest.advanceTimersByTime(300);
+      act(() => {jest.advanceTimersByTime(300);});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
 
       // Checkbox doesn't remove `user-select: none;` style from HTML Element issue
@@ -1721,9 +1721,9 @@ describe('usePress', function () {
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
       fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
       fireEvent.touchMove(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
-      jest.advanceTimersByTime(300);
+      act(() => {jest.advanceTimersByTime(300);});
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
-      jest.advanceTimersByTime(300);
+      act(() => {jest.advanceTimersByTime(300);});
 
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
@@ -1755,12 +1755,12 @@ describe('usePress', function () {
 
       fireEvent.touchStart(els[1], {targetTouches: [{identifier: 1}]});
 
-      jest.advanceTimersByTime(300);
+      act(() => {jest.advanceTimersByTime(300);});
       expect(document.documentElement.style.webkitUserSelect).toBe('none');
 
       fireEvent.touchEnd(els[1], {changedTouches: [{identifier: 1}]});
 
-      jest.advanceTimersByTime(300);
+      act(() => {jest.advanceTimersByTime(300);});
       expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
   });

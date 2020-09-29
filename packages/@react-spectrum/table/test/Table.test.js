@@ -757,14 +757,14 @@ describe('Table', function () {
 
       it('should move focus from the row to the first cell with ArrowRight', function () {
         let tree = renderTable();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
       });
 
       it('should move focus from the row to the last cell with ArrowRight in RTL', function () {
         let tree = renderTable('ar-AE');
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('ArrowRight');
         expect(document.activeElement).toBe(getCell(tree, 'Baz 1'));
       });
@@ -843,14 +843,14 @@ describe('Table', function () {
 
       it('should move focus from the row to the last cell with ArrowLeft', function () {
         let tree = renderTable();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(getCell(tree, 'Baz 1'));
       });
 
       it('should move focus from the row to the first cell with ArrowLeft in RTL', function () {
         let tree = renderTable('ar-AE');
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('ArrowLeft');
         expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
       });
@@ -908,7 +908,7 @@ describe('Table', function () {
 
       it('should move focus to the row above with ArrowUp', function () {
         let tree = renderTable();
-        tree.getAllByRole('row')[2].focus();
+        act(() => {tree.getAllByRole('row')[2].focus();});
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
       });
@@ -922,7 +922,7 @@ describe('Table', function () {
 
       it('should move focus to the column header above the first row with ArrowUp', function () {
         let tree = renderTable();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(getCell(tree, 'Foo'));
       });
@@ -950,7 +950,7 @@ describe('Table', function () {
 
       it('should move focus to the row below with ArrowDown', function () {
         let tree = renderTable();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
       });
@@ -989,7 +989,7 @@ describe('Table', function () {
 
       it('should focus the first row with Home', function () {
         let tree = renderTable();
-        tree.getAllByRole('row')[2].focus();
+        act(() => {tree.getAllByRole('row')[2].focus();});
         moveFocus('Home');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
       });
@@ -1012,7 +1012,7 @@ describe('Table', function () {
 
       it('should focus the last row with End', function () {
         let tree = renderTable();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('End');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
       });
@@ -1030,7 +1030,7 @@ describe('Table', function () {
 
       it('should focus the row a page below', function () {
         let tree = renderMany();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
         moveFocus('PageDown');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[25]);
       });
@@ -1046,7 +1046,7 @@ describe('Table', function () {
 
       it('should focus the row a page below', function () {
         let tree = renderMany();
-        tree.getAllByRole('row')[25].focus();
+        act(() => {tree.getAllByRole('row')[25].focus();});
         moveFocus('PageUp');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[1]);
       });
@@ -1112,7 +1112,7 @@ describe('Table', function () {
 
       it('focuses row by typing letters in rapid succession', function () {
         let tree = renderTypeSelect();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
 
         moveFocus('J');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[2]);
@@ -1126,7 +1126,7 @@ describe('Table', function () {
 
       it('matches row against all row header cells', function () {
         let tree = renderTypeSelect();
-        tree.getAllByRole('row')[1].focus();
+        act(() => {tree.getAllByRole('row')[1].focus();});
 
         moveFocus('D');
         expect(document.activeElement).toBe(tree.getAllByRole('row')[3]);
@@ -1139,7 +1139,7 @@ describe('Table', function () {
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
 
-        jest.runAllTimers();
+        act(() => {jest.runAllTimers();});
 
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
@@ -1158,7 +1158,7 @@ describe('Table', function () {
         moveFocus('h');
         expect(document.activeElement).toBe(getCell(tree, 'John'));
 
-        jest.runAllTimers();
+        act(() => {jest.runAllTimers();});
 
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'John'));
@@ -1174,7 +1174,7 @@ describe('Table', function () {
         moveFocus('J');
         expect(document.activeElement).toBe(getCell(tree, 'Julia'));
 
-        jest.runAllTimers();
+        act(() => {jest.runAllTimers();});
 
         moveFocus('S');
         expect(document.activeElement).toBe(getCell(tree, 'Sam'));

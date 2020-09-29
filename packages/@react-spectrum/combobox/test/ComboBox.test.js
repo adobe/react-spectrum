@@ -316,7 +316,7 @@ describe('ComboBox', function () {
 
         let button = getByRole('button');
         let combobox = getByRole('combobox');
-        combobox.focus();
+        act(() => {combobox.focus();});
         expect(() => getByRole('listbox')).toThrow();
 
         act(() => {
@@ -333,7 +333,7 @@ describe('ComboBox', function () {
 
         let button = getByRole('button');
         let combobox = getByRole('combobox');
-        combobox.focus();
+        act(() => {combobox.focus();});
         expect(() => getByRole('listbox')).toThrow();
 
         act(() => {
@@ -350,7 +350,7 @@ describe('ComboBox', function () {
 
         let button = getByRole('button');
         let combobox = getByRole('combobox');
-        combobox.focus();
+        act(() => {combobox.focus();});
         expect(() => getByRole('listbox')).toThrow();
 
         typeText(combobox, 'Two');

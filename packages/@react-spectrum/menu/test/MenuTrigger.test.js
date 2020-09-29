@@ -641,7 +641,7 @@ describe('MenuTrigger', function () {
 
       let button = tree.getByRole('button');
       triggerPress(button);
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
@@ -649,7 +649,7 @@ describe('MenuTrigger', function () {
       expect(button).toHaveAttribute('aria-expanded', 'true');
 
       fireEvent.keyDown(document.activeElement, {key: 'Tab'});
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       expect(document.activeElement).toBe(tree.getByTestId('after-input'));
 

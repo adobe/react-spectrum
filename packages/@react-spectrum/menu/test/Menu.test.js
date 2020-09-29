@@ -710,7 +710,7 @@ describe('Menu', function () {
         </Provider>
       );
 
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
 

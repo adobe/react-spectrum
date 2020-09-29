@@ -1092,7 +1092,7 @@ describe('Picker', function () {
 
       let picker = getByRole('button');
       expect(picker).toHaveTextContent('Select an option…');
-      picker.focus();
+      act(() => {picker.focus();});
 
       act(() => {fireEvent.keyDown(picker, {key: 'ArrowUp'});});
       act(() => {fireEvent.keyUp(picker, {key: 'ArrowUp'});});
@@ -1486,7 +1486,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      picker.focus();
+      act(() => {picker.focus();});
       expect(picker).toHaveTextContent('Select an option…');
       act(() => {fireEvent.keyDown(picker, {key: 'ArrowDown'});});
       act(() => jest.runAllTimers());
@@ -1564,7 +1564,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      picker.focus();
+      act(() => {picker.focus();});
       expect(picker).toHaveTextContent('Select an option…');
 
       act(() => {fireEvent.keyDown(picker, {key: 't'});});
@@ -1592,7 +1592,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      picker.focus();
+      act(() => {picker.focus();});
       expect(picker).toHaveTextContent('Select an option…');
 
       act(() => {fireEvent.keyDown(picker, {key: 't'});});
@@ -1601,7 +1601,7 @@ describe('Picker', function () {
       expect(onSelectionChange).toHaveBeenLastCalledWith('two');
       expect(picker).toHaveTextContent('Two');
 
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       act(() => {fireEvent.keyDown(picker, {key: 'h'});});
       act(() => {fireEvent.keyUp(picker, {key: 'h'});});
@@ -1621,7 +1621,7 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      picker.focus();
+      act(() => {picker.focus();});
       expect(picker).toHaveTextContent('Select an option…');
 
       act(() => {fireEvent.keyDown(picker, {key: 't'});});
@@ -1630,7 +1630,7 @@ describe('Picker', function () {
       expect(onSelectionChange).toHaveBeenLastCalledWith('two');
       expect(picker).toHaveTextContent('Two');
 
-      jest.runAllTimers();
+      act(() => {jest.runAllTimers();});
 
       act(() => {fireEvent.keyDown(picker, {key: 'o'});});
       act(() => {fireEvent.keyUp(picker, {key: 'o'});});

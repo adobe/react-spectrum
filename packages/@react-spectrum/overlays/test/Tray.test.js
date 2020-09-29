@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, render, waitFor} from '@testing-library/react';
 import {Dialog} from '@react-spectrum/dialog';
-import {fireEvent, render, waitFor} from '@testing-library/react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -102,7 +102,7 @@ describe('Tray', function () {
     let dialog = await getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
 
-    dialog.blur();
+    act(() => {dialog.blur();});
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 });
