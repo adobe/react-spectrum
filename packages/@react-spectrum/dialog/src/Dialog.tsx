@@ -103,7 +103,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
               isQuiet
               aria-label={formatMessage('dismiss')}
               onPress={onDismiss}>
-              <CrossLarge size="L" />
+              <CrossLarge />
             </ActionButton>
           }
         </Grid>
