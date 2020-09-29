@@ -29,6 +29,12 @@ addDecorator(story => (
 
 addDecorator(withProviderSwitcher);
 
+addDecorator(story => (
+  <React.StrictMode>
+    {story()}
+  </React.StrictMode>
+))
+
 
 function loadStories() {
   let storiesContext = require.context('../packages', true, /^(.*\/stories\/.*?\.(js|jsx|ts|tsx))$/);
