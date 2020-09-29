@@ -84,16 +84,6 @@ let withSection = [
 
 storiesOf('MenuTrigger', module)
   .add(
-    'with falsy key',
-    () => render(
-      <Menu onAction={action('onAction')}>
-        <Item key="1">One</Item>
-        <Item key="">Two</Item>
-        <Item key="3">Three</Item>
-      </Menu>
-    )
-  )
-  .add(
     'default menu (static)',
     () => render(
       <Menu onAction={action('onAction')}>
@@ -486,6 +476,16 @@ storiesOf('MenuTrigger', module)
           <input placeholder="Tab here" />
         </div>
       </>
+    )
+  )
+  .add(
+    'with falsy key',
+    () => render(
+      <Menu onAction={action('onAction')}>
+        <Item key="1">One</Item>
+        <Item key="">Two</Item>
+        <Item key="3">Three</Item>
+      </Menu>
     )
   );
 
