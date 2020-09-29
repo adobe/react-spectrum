@@ -17,6 +17,7 @@
     "check-types": "tsc",
     "start": "cross-env NODE_ENV=storybook start-storybook -p 9003 --ci -c '.storybook'",
     "build:storybook": "build-storybook -c .storybook -o dist/$(git rev-parse HEAD)/storybook",
+    "build:storybook-17": "yarn add -W react@17.0.0-rc.1 react-dom@17.0.0-rc.1 && NODE_ENV=production build-storybook -c .storybook -o dist/$(git rev-parse HEAD)/storybook-17",
     "start:chromatic": "NODE_ENV=storybook start-storybook -p 9004 --ci -c '.chromatic'",
     "build:chromatic": "build-storybook -c .chromatic -o dist/$(git rev-parse HEAD)/chromatic",
     "start:docs": "PARCEL_WORKER_BACKEND=process DOCS_ENV=dev parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
@@ -24,6 +25,7 @@
     "test": "yarn jest",
     "test:ssr": "yarn jest --config jest.ssr.config.js",
     "ci-test": "yarn jest --maxWorkers=2 && yarn test:ssr --runInBand",
+    "ci-test-17": "yarn add -W react@17.0.0-rc.1 react-dom@17.0.0-rc.1 && yarn jest --maxWorkers=2 && yarn test:ssr --runInBand",
     "lint": "yarn check-types && eslint packages --ext .js,.ts,.tsx && node scripts/lint-packages.js",
     "jest": "node scripts/jest.js",
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
@@ -114,7 +116,7 @@
     "ignore-styles": "^5.0.1",
     "jest": "^26.4.2",
     "jest-matchmedia-mock": "^1.0.0",
-    "jsdom": "^16.2.2",
+    "jsdom": "^16.3.0",
     "lerna": "^3.13.2",
     "lfcdn": "^0.4.2",
     "md5": "^2.2.1",
@@ -137,9 +139,9 @@
     "postcss-svg": "^3.0.0",
     "prop-types": "^15.6.0",
     "raf": "^3.4.0",
-    "react": "^0.14 || ^15 || ^16",
+    "react": "^16.8.0 || ^17.0.0-rc.1",
     "react-axe": "^3.0.2",
-    "react-dom": "^0.14 || ^15 || ^16",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1",
     "react-overlays": "0.8.3",
     "react-test-renderer": "^16.9.0",
     "recursive-readdir": "^2.2.2",
@@ -161,6 +163,8 @@
   "resolutions": {
     "@babel/core": "7.9.0",
     "@babel/runtime": "7.9.0",
-    "postcss-calc": "6.0.2"
+    "postcss-calc": "6.0.2",
+    "jest-environment-jsdom": "26.3.0",
+    "jsdom": "16.3.0"
   }
 }

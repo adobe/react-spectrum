@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 import {useSSRSafeId} from '@react-aria/ssr';
-import {useState} from 'react';
 
 let map: Map<string, (v: string) => void> = new Map();
 
@@ -21,9 +21,33 @@ let map: Map<string, (v: string) => void> = new Map();
  * @param defaultId - Default component id.
  */
 export function useId(defaultId?: string): string {
+  let isRendering = useRef(true);
+  isRendering.current = true;
   let [value, setValue] = useState(defaultId);
+  let nextId = useRef(null);
+  // don't memo this, we want it new each render so that the Effects always run
+  let updateValue = (val) => {
+    if (!isRendering.current) {
+      setValue(val);
+    } else {
+      nextId.current = val;
+    }
+  };
+
+  useLayoutEffect(() => {
+    isRendering.current = false;
+  }, [updateValue]);
+
+  useEffect(() => {
+    let newId = nextId.current;
+    if (newId) {
+      setValue(newId);
+      nextId.current = null;
+    }
+  }, [setValue, updateValue]);
+
   let res = useSSRSafeId(value);
-  map.set(res, setValue);
+  map.set(res, updateValue);
   return res;
 }
 
