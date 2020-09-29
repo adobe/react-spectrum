@@ -129,13 +129,14 @@ export function useNumberField(props: NumberFieldProps, state: NumberFieldState,
       }
     };
 
-    document.getElementById(inputId).addEventListener(
+    let inputRef = ref.current;
+    inputRef.addEventListener(
       'wheel',
       handleInputScrollWheel,
       {passive: false}
     );
     return () => {
-      document.getElementById(inputId).removeEventListener(
+      inputRef.removeEventListener(
         'wheel',
         handleInputScrollWheel
       );
