@@ -21,12 +21,11 @@ import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, ListBox, Section} from '../';
 import {Label} from '@react-spectrum/label';
 import Paste from '@spectrum-icons/workflow/Paste';
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
-import {Provider} from "@react-spectrum/provider";
-import {Button, defaultTheme, Flex} from "@adobe/react-spectrum";
+import {Button, Flex} from "@adobe/react-spectrum";
 
 let iconMap = {
   AlignCenter,
