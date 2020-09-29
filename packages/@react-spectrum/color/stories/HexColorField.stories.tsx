@@ -84,9 +84,9 @@ storiesOf('HexColorField', module)
     () => (
       <HexColorFieldPopover
         label="Choose a color"
-        minValue="#aaaaaa"
-        maxValue="#cccccc"
-        value="#bbbbbb"
+        minValue="#aaa"
+        maxValue="#ccc"
+        value={new Color('#bbb')}
         step={255}
         onChange={action('change')} />
     )
@@ -97,9 +97,8 @@ storiesOf('HexColorField', module)
   );
 
 function HexColorFieldPopover(props: any = {}) {
-  let {color: initColor} = useColor(props.value);
-  let [color, setColor] = useState(initColor);
-  let colorString = color.toString('hex');
+  let [color, setColor] = useState(props.value);
+  let colorString = color ? color.toString('hex') : '';
   return (
     <DialogTrigger type="popover">
       <ActionButton
