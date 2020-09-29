@@ -39,7 +39,7 @@ describe('useHexColorField', function () {
     expect(inputFieldProps['aria-valuenow']).toBeNull();
     expect(inputFieldProps['aria-valuetext']).toBeNull();
     expect(inputFieldProps['aria-valuemin']).toBe(0);
-    expect(inputFieldProps['aria-valuemax']).toBe(16777215);
+    expect(inputFieldProps['aria-valuemax']).toBe(0xFFFFFF);
     expect(inputFieldProps['aria-required']).toBeNull();
     expect(inputFieldProps['aria-disabled']).toBeNull();
     expect(inputFieldProps['aria-readonly']).toBeNull();
