@@ -21,6 +21,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 function HexColorField(props: SpectrumHexColorFieldProps, ref: RefObject<TextFieldRef>) {
   props = useProviderProps(props);
   let {
+    // These disabled props are handled by the state hook
     value,          // eslint-disable-line @typescript-eslint/no-unused-vars
     defaultValue,   // eslint-disable-line @typescript-eslint/no-unused-vars
     onChange,       // eslint-disable-line @typescript-eslint/no-unused-vars
