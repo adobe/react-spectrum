@@ -1,5 +1,5 @@
 
-import {act, renderHook} from '@testing-library/react-hooks';
+import {act, renderHook} from '@react-spectrum/test-utils/src/testingLibraryHooks';
 import {useSliderState} from '../';
 
 describe('useSliderState', () => {

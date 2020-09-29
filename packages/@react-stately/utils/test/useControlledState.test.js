@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from '@testing-library/react-hooks';
+import {act, renderHook} from '@react-spectrum/test-utils/src/testingLibraryHooks';
 import {act as actDOM, render} from '@react-spectrum/test-utils/src/testingLibrary';
 import React, {useEffect, useState} from 'react';
 import {useControlledState} from '../src';

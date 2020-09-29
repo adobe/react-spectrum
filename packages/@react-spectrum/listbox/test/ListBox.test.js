@@ -670,7 +670,7 @@ describe('ListBox', function () {
   });
 
   describe('async loading', function () {
-    it('should display a spinner while loading', function () {
+    it.only('should display a spinner while loading', function () {
       let {getByRole, rerender} = render(
         <Provider theme={theme}>
           <ListBox aria-label="listbox" items={[]} isLoading>

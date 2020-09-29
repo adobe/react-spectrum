@@ -13,7 +13,7 @@
 import {Item} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
 import React from 'react';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@react-spectrum/test-utils/src/testingLibraryHooks';
 import {useComboBox} from '../';
 import {useSingleSelectListState} from '@react-stately/list';
 

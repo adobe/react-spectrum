@@ -14,7 +14,7 @@
 import intlMessages from '../intl/*.json';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@react-spectrum/test-utils/src/testingLibraryHooks';
 import {theme} from '@react-spectrum/theme-default';
 import {useToast} from '../';
 

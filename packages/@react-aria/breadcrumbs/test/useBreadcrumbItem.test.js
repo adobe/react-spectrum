@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@react-spectrum/test-utils/src/testingLibraryHooks';
 import {useBreadcrumbItem} from '../';
 
 describe('useBreadcrumbItem', function () {
