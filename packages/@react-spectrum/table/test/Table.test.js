@@ -11,6 +11,8 @@
  */
 
 import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
+import {ActionButton} from '@react-spectrum/button';
+import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, Table, TableBody, TableHeader} from '../';
 import {CRUDExample} from '../stories/CRUDExample';
 import {getFocusableTreeWalker} from '@react-aria/focus';
@@ -3120,5 +3122,97 @@ describe('Table', function () {
         expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
       }
     });
+  });
+
+  describe('headerless columns', function () {
+
+    let renderTable = (props, scale) => render(
+      <Table aria-label="Table" data-testid="test" {...props}>
+        <TableHeader>
+          <Column key="foo">Foo</Column>
+          <Column key="addAction" noHeader>
+              Add Item
+          </Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Foo 1</Cell>
+            <Cell>
+              <ActionButton isQuiet>
+                <Add />
+              </ActionButton>
+            </Cell>
+          </Row>
+        </TableBody>
+      </Table>
+      , scale);
+
+    it('renders  table with headerless column with default scale', function () {
+      let {getByRole} = renderTable();
+      let grid = getByRole('grid');
+      expect(grid).toBeVisible();
+      expect(grid).toHaveAttribute('aria-label', 'Table');
+      expect(grid).toHaveAttribute('data-testid', 'test');
+
+      expect(grid).toHaveAttribute('aria-rowcount', '2');
+      expect(grid).toHaveAttribute('aria-colcount', '2');
+      let rowgroups = within(grid).getAllByRole('rowgroup');
+      expect(rowgroups).toHaveLength(2);
+
+      let headerRows = within(rowgroups[0]).getAllByRole('row');
+      expect(headerRows).toHaveLength(1);
+      expect(headerRows[0]).toHaveAttribute('aria-rowindex', '1');
+
+      let headers = within(grid).getAllByRole('columnheader');
+      expect(headers).toHaveLength(2);
+      let className = headers[1].className;
+      expect(className.includes('react-spectrum-Table-cell--noHeader')).toBeTruthy();
+      expect(headers[0]).toHaveTextContent('Foo');
+      expect(headers[1]).toBeEmptyDOMElement();
+
+
+      let rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      // The width of headerless column
+      expect(rows[0].childNodes[1].style.width).toBe('39px');
+      let rowheader = within(rows[0]).getByRole('rowheader');
+      expect(rowheader).toHaveTextContent('Foo 1');
+      let actionCell = within(rows[0]).getAllByRole('gridcell');
+      expect(actionCell).toHaveLength(1);
+      let buttons = within(actionCell[0]).getAllByRole('button');
+      expect(buttons).toHaveLength(1);
+      className = actionCell[0].className;
+      expect(className.includes('react-spectrum-Table-cell--noHeader')).toBeTruthy();
+    });
+
+    it('renders table with headerless column with large scale', function () {
+      let {getByRole} = renderTable({}, 'large');
+      let grid = getByRole('grid');
+      expect(grid).toBeVisible();
+      expect(grid).toHaveAttribute('aria-label', 'Table');
+      expect(grid).toHaveAttribute('data-testid', 'test');
+      let rowgroups = within(grid).getAllByRole('rowgroup');
+      let rows = within(rowgroups[1]).getAllByRole('row');
+      expect(rows).toHaveLength(1);
+      // The width of headerless column
+      expect(rows[0].childNodes[1].style.width).toBe('45px');
+    });
+
+    it('renders table with headerless column with tooltip', function () {
+      let {getByRole} = renderTable({}, 'large');
+      let grid = getByRole('grid');
+      expect(grid).toBeVisible();
+      expect(grid).toHaveAttribute('aria-label', 'Table');
+      expect(grid).toHaveAttribute('data-testid', 'test');
+      let headers = within(grid).getAllByRole('columnheader');
+      let headerlessColumn = headers[1];
+      act(() => {
+        headerlessColumn.focus();
+      });
+      let tooltip = getByRole('tooltip');
+      expect(tooltip).toBeVisible();
+
+    });
+
   });
 });
