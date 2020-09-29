@@ -20,7 +20,14 @@ import {useFocusable} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
 
 interface TooltipTriggerAria {
+  /**
+   * Props for the trigger element.
+   */
   triggerProps: HTMLAttributes<HTMLElement> & PressProps & HoverProps & FocusEvents,
+
+  /**
+   * Props for the overlay container element.
+   */
   tooltipProps: HTMLAttributes<HTMLElement>
 }
 

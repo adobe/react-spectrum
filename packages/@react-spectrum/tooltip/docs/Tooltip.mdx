@@ -62,7 +62,7 @@ Tooltip triggers must be focusable and hoverable in order to ensure that all use
 ## Tooltip Delay
 
 Tooltips should appear after a short delay when hovering the trigger, or instantly when using keyboard focus. This delay can be adjusted for hover.
-[documentation](https://spectrum.corp.adobe.com/page/tooltip/#Immediate-or-delayed-appearance)
+[View guidelines](https://spectrum.corp.adobe.com/page/tooltip/#Immediate-or-delayed-appearance)
 
 ```tsx example
 <TooltipTrigger delay={0}>
@@ -71,9 +71,9 @@ Tooltips should appear after a short delay when hovering the trigger, or instant
 </TooltipTrigger>
 ```
 
-### WarmUp / Cooldown
+### Warmup / Cooldown
 
-Tooltips have a warm up and cool down period, [see documentation](https://spectrum.corp.adobe.com/page/tooltip/#Warmup-and-cooldown).
+Tooltips have a warm up and cool down period, [see guidelines](https://spectrum.corp.adobe.com/page/tooltip/#Warmup-and-cooldown).
 Only one tooltip can be open at a time.
 ```tsx example
 <Flex gap="size-200">
@@ -127,7 +127,7 @@ Below is a tooltip cross offset by an additional 100px to the right of the trigg
 
 ## Events
 
-TooltipTriggers accepts an `onOpenChange` handler which is triggered whenever the Tooltip is shown or hidden.
+TooltipTrigger accepts an `onOpenChange` handler which is triggered whenever the Tooltip is shown or hidden.
 
 The example below uses `onOpenChange` to update a separate element with the current open state of the
 Dialog.

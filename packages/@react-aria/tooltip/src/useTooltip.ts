@@ -15,6 +15,9 @@ import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes} from 'react';
 
 interface TooltipAria {
+  /**
+   * Props for the tooltip element.
+   */
   tooltipProps: HTMLAttributes<HTMLElement>
 }
 
