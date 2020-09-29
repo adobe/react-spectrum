@@ -1,0 +1,9 @@
+{
+  "actions" : {
+    "run" : {
+      "enabled" : true,
+      "script" : "\/Users\/govett\/.nvm\/versions\/node\/v12.16.2\/bin\/yarn start"
+    }
+  },
+  "identifier" : "D550B34E-D41C-4532-9BC9-33DFCF1866EE"
+}

@@ -32,6 +32,20 @@ function pointerEvent(type, opts) {
 }
 
 describe('usePress', function () {
+  beforeAll(() => {
+    jest.useFakeTimers();
+    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+    window.requestAnimationFrame.mockRestore();
+  });
+
+  afterEach(() => {
+    jest.runAllTimers();
+  });
+
   // TODO: JSDOM doesn't yet support pointer events. Once they do, convert these tests.
   // https://github.com/jsdom/jsdom/issues/2527
   describe('pointer events', function () {
@@ -1657,15 +1671,10 @@ describe('usePress', function () {
     let mockUserSelect = 'contain';
     let oldUserSelect = document.documentElement.style.webkitUserSelect;
 
-    beforeAll(() => {
-      jest.useFakeTimers();
-      jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-    });
     afterAll(() => {
-      jest.useRealTimers();
-      window.requestAnimationFrame.mockRestore();
       handler.mockClear();
     });
+
     beforeEach(() => {
       document.documentElement.style.webkitUserSelect = mockUserSelect;
     });
@@ -1673,35 +1682,29 @@ describe('usePress', function () {
       document.documentElement.style.webkitUserSelect = oldUserSelect;
     });
 
-    it('should add user-select:none to html element when press start', function () {
-      let {getByText, baseElement} = render(
+    it('should add user-select: none to html element when press start', function () {
+      let {getByText} = render(
         <Example
           onPressStart={handler}
           onPressEnd={handler}
           onPressChange={handler}
           onPress={handler}
-          onPressUp={handler} />,
-        {
-          baseElement: document.documentElement
-        }
+          onPressUp={handler} />
       );
 
       let el = getByText('test');
       fireEvent.touchStart(el, {targetTouches: [{identifier: 1}]});
-      expect(baseElement.style.webkitUserSelect).toBe('none');
+      expect(document.documentElement.style.webkitUserSelect).toBe('none');
     });
 
-    it('should remove user-select:none to html element when press end', function () {
-      let {getByText, baseElement} = render(
+    it('should remove user-select: none to html element when press end', function () {
+      let {getByText} = render(
         <Example
           onPressStart={handler}
           onPressEnd={handler}
           onPressChange={handler}
           onPress={handler}
-          onPressUp={handler} />,
-        {
-          baseElement: document.documentElement
-        }
+          onPressUp={handler} />
       );
 
       let el = getByText('test');
@@ -1710,7 +1713,7 @@ describe('usePress', function () {
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1}]});
 
       jest.advanceTimersByTime(300);
-      expect(baseElement.style.webkitUserSelect).toBe(mockUserSelect);
+      expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
 
       // Checkbox doesn't remove `user-select: none;` style from HTML Element issue
       // see https://github.com/adobe/react-spectrum/issues/862
@@ -1722,7 +1725,7 @@ describe('usePress', function () {
       fireEvent.touchEnd(el, {changedTouches: [{identifier: 1, clientX: 100, clientY: 100}]});
       jest.advanceTimersByTime(300);
 
-      expect(baseElement.style.webkitUserSelect).toBe(mockUserSelect);
+      expect(document.documentElement.style.webkitUserSelect).toBe(mockUserSelect);
     });
   });
 });
