@@ -49,7 +49,7 @@ interface AriaListBoxOptions<T> extends AriaListBoxProps<T> {
  * @param props - Props for the listbox.
  * @param state - State for the listbox, as returned by `useListState`.
  */
-export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): ListBoxAria {
+export function useListBox<T>(props: Omit<AriaListBoxOptions<T>, 'children'>, state: ListState<T>, ref: RefObject<HTMLElement>): ListBoxAria {
   let domProps = filterDOMProps(props, {labelable: true});
   let {listProps} = useSelectableList({
     ...props,
@@ -72,9 +72,10 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
 
   return {
     labelProps,
-    listBoxProps: mergeProps(domProps, {
+    listBoxProps: mergeProps(domProps, state.selectionManager.selectionMode === 'multiple' ? {
+      'aria-multiselectable': 'true'
+    } : {}, {
       role: 'listbox',
-      'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
       ...mergeProps(fieldProps, listProps)
     })
   };
