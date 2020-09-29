@@ -631,77 +631,70 @@ function App() {
           <Text>Max-Height: 300px</Text>
           <ListBox width="150px" items={itemsForDemo}>
             { item => (
-                <Item textValue={String(item.index)} key={item.index}>
-                  <Text>IDX: {item.index}</Text>
-                </Item>
-              )
-            }
+              <Item textValue={String(item.index)} key={item.index}>
+                <Text>IDX: {item.index}</Text>
+              </Item>
+            )}
           </ListBox>
         </Flex>
         <Flex>
           <Text>None</Text>
           <ListBox width="150px" items={itemsForDemo}>
             { item => (
-                <Item textValue={String(item.index)} key={item.index}>
-                  <Text>IDX: {item.index}</Text>
-                </Item>
-              )
-            }
+              <Item textValue={String(item.index)} key={item.index}>
+                <Text>IDX: {item.index}</Text>
+              </Item>
+            )}
           </ListBox>
         </Flex>
         <Flex maxHeight="700px">
           <Text>Max-Height: 700px</Text>
           <ListBox width="150px" items={itemsForDemo}>
             { item => (
-                <Item textValue={String(item.index)} key={item.index}>
-                  <Text>IDX: {item.index}</Text>
-                </Item>
-              )
-            }
+              <Item textValue={String(item.index)} key={item.index}>
+                <Text>IDX: {item.index}</Text>
+              </Item>
+            )}
           </ListBox>
         </Flex>
         <Flex maxHeight="100%">
           <Text>MaxHeight: 100%</Text>
           <ListBox width="150px" items={itemsForDemo}>
             { item => (
-                <Item textValue={String(item.index)} key={item.index}>
-                  <Text>IDX: {item.index}</Text>
-                </Item>
-              )
-            }
+              <Item textValue={String(item.index)} key={item.index}>
+                <Text>IDX: {item.index}</Text>
+              </Item>
+            )}
           </ListBox>
         </Flex>
         <Flex maxHeight="50%">
           <Text>MaxHeight: 50%</Text>
           <ListBox width="150px" items={itemsForDemo}>
             { item => (
-                <Item textValue={String(item.index)} key={item.index}>
-                  <Text>IDX: {item.index}</Text>
-                </Item>
-              )
-            }
+              <Item textValue={String(item.index)} key={item.index}>
+                <Text>IDX: {item.index}</Text>
+              </Item>
+            )}
           </ListBox>
         </Flex>
         <Flex height="700px">
           <Text>Height: 700px</Text>
           <ListBox width="150px" items={itemsForDemo}>
             { item => (
-                <Item textValue={String(item.index)} key={item.index}>
-                  <Text>IDX: {item.index}</Text>
-                </Item>
-              )
-            }
+              <Item textValue={String(item.index)} key={item.index}>
+                <Text>IDX: {item.index}</Text>
+              </Item>
+            )}
           </ListBox>
         </Flex>
         <Flex height="100%">
           <Text>Height: 100%</Text>
           <ListBox width="150px" items={itemsForDemo}>
             { item => (
-                <Item textValue={String(item.index)} key={item.index}>
-                  <Text>IDX: {item.index}</Text>
-                </Item>
-              )
-            }
+              <Item textValue={String(item.index)} key={item.index}>
+                <Text>IDX: {item.index}</Text>
+              </Item>
+            )}
           </ListBox>
         </Flex>
       </div>
