@@ -14,6 +14,7 @@ import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Dialog, DialogTrigger} from '../';
+import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -35,7 +36,16 @@ describe('DialogTrigger', function () {
   });
 
   afterEach(() => {
-    jest.runAllTimers();
+    // Ensure we close any dialogs before unmounting to avoid warning.
+    let dialog = document.querySelector('[role="dialog"]');
+    if (dialog) {
+      act(() => {
+        fireEvent.keyDown(dialog, {key: 'Escape'});
+        fireEvent.keyUp(dialog, {key: 'Escape'});
+        jest.runAllTimers();
+      });
+    }
+
     matchMedia.clear();
     window.requestAnimationFrame.mockRestore();
   });
@@ -671,7 +681,7 @@ describe('DialogTrigger', function () {
       <Provider theme={theme}>
         <DialogTrigger isKeyboardDismissDisabled>
           <ActionButton>Trigger</ActionButton>
-          <Dialog>Content body</Dialog>
+          {close => <Dialog><ActionButton onPress={close}>Close</ActionButton></Dialog>}
         </DialogTrigger>
       </Provider>
     );
@@ -703,5 +713,53 @@ describe('DialogTrigger', function () {
     }); // wait for animation
 
     expect(document.activeElement).toBe(dialog);
+
+    // Close the dialog by clicking the button inside
+    button = within(dialog).getByRole('button');
+    act(() => {
+      triggerPress(button);
+      jest.runAllTimers();
+    });
+
+    expect(() => getByRole('dialog')).toThrow();
+  });
+
+  it('should warn when unmounting a dialog trigger while a modal is open', function () {
+    let warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <MenuTrigger>
+          <ActionButton>Trigger</ActionButton>
+          <Menu>
+            <DialogTrigger isKeyboardDismissDisabled>
+              <Item>Open menu</Item>
+              <Dialog>Content body</Dialog>
+            </DialogTrigger>
+          </Menu>
+        </MenuTrigger>
+      </Provider>
+    );
+
+    let button = getByRole('button');
+
+    act(() => {
+      triggerPress(button);
+      jest.runAllTimers();
+    });
+
+    let menu = getByRole('menu');
+    let menuitem = within(menu).getByRole('menuitem');
+
+    act(() => {
+      triggerPress(menuitem);
+      jest.runAllTimers();
+    });
+
+    expect(() => getByRole('menu')).toThrow();
+    expect(() => getByRole('menuitem')).toThrow();
+    expect(() => getByRole('dialog')).toThrow();
+
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn).toHaveBeenCalledWith('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');
   });
 });
