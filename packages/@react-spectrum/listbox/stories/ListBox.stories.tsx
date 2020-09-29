@@ -16,6 +16,7 @@ import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
 import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
+import {Button, Flex} from '@adobe/react-spectrum';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, ListBox, Section} from '../';
@@ -25,7 +26,6 @@ import React, {useState} from 'react';
 import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
 import {useAsyncList} from '@react-stately/data';
-import {Button, Flex} from "@adobe/react-spectrum";
 
 let iconMap = {
   AlignCenter,
@@ -621,94 +621,87 @@ function App() {
     } else {
       setSize('700px');
     }
-  }
+  };
 
   return (
     <>
       <Button variant="primary" onPress={toggleSize}> Toggle Size</Button>
-      <div style={{ display: "flex", height: size, overflow: "hidden"}}>
+      <div style={{display: 'flex', height: size, overflow: 'hidden'}}>
         <Flex maxHeight="300px">
           <Text>Max-Height: 300px</Text>
           <ListBox width="150px" items={itemsForDemo}>
-            { item => {
-              return (
+            { item => (
                 <Item textValue={String(item.index)} key={item.index}>
                   <Text>IDX: {item.index}</Text>
                 </Item>
-              );
-            }}
+              )
+            }
           </ListBox>
         </Flex>
         <Flex>
           <Text>None</Text>
           <ListBox width="150px" items={itemsForDemo}>
-            { item => {
-              return (
+            { item => (
                 <Item textValue={String(item.index)} key={item.index}>
                   <Text>IDX: {item.index}</Text>
                 </Item>
-              );
-            }}
+              )
+            }
           </ListBox>
         </Flex>
         <Flex maxHeight="700px">
           <Text>Max-Height: 700px</Text>
           <ListBox width="150px" items={itemsForDemo}>
-            { item => {
-              return (
+            { item => (
                 <Item textValue={String(item.index)} key={item.index}>
                   <Text>IDX: {item.index}</Text>
                 </Item>
-              );
-            }}
+              )
+            }
           </ListBox>
         </Flex>
         <Flex maxHeight="100%">
           <Text>MaxHeight: 100%</Text>
           <ListBox width="150px" items={itemsForDemo}>
-            { item => {
-              return (
+            { item => (
                 <Item textValue={String(item.index)} key={item.index}>
                   <Text>IDX: {item.index}</Text>
                 </Item>
-              );
-            }}
+              )
+            }
           </ListBox>
         </Flex>
         <Flex maxHeight="50%">
           <Text>MaxHeight: 50%</Text>
           <ListBox width="150px" items={itemsForDemo}>
-            { item => {
-              return (
+            { item => (
                 <Item textValue={String(item.index)} key={item.index}>
                   <Text>IDX: {item.index}</Text>
                 </Item>
-              );
-            }}
+              )
+            }
           </ListBox>
         </Flex>
         <Flex height="700px">
           <Text>Height: 700px</Text>
           <ListBox width="150px" items={itemsForDemo}>
-            { item => {
-              return (
+            { item => (
                 <Item textValue={String(item.index)} key={item.index}>
                   <Text>IDX: {item.index}</Text>
                 </Item>
-              );
-            }}
+              )
+            }
           </ListBox>
         </Flex>
         <Flex height="100%">
           <Text>Height: 100%</Text>
           <ListBox width="150px" items={itemsForDemo}>
-            { item => {
-              return (
+            { item => (
                 <Item textValue={String(item.index)} key={item.index}>
                   <Text>IDX: {item.index}</Text>
                 </Item>
-              );
-            }}
+              )
+            }
           </ListBox>
         </Flex>
       </div>
