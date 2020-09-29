@@ -319,6 +319,44 @@ describe('MenuTrigger', function () {
       let selectedItem = menuItems[0];
       expect(selectedItem).toBe(document.activeElement);
     });
+
+    it.each`
+      Name             | Component      | props
+      ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
+    `('$Name moves focus via ArrowDown and ArrowUp', function ({Component, props}) {
+      let tree = render(
+        <Provider theme={theme}>
+          <div data-testid="scrollable">
+            <MenuTrigger>
+              <Button>
+                {triggerText}
+              </Button>
+              <Menu>
+                <Item key="1">One</Item>
+                <Item key="">Two</Item>
+                <Item key="3">Three</Item>
+              </Menu>
+            </MenuTrigger>
+          </div>
+        </Provider>
+      );
+
+      let button = tree.getByRole('button');
+      fireEvent.keyDown(button, {key: 'ArrowDown', code: 40, charCode: 40});
+      let menu = tree.getByRole('menu');
+      let menuItems = within(menu).getAllByRole('menuitem');
+      let selectedItem = menuItems[0];
+      expect(selectedItem).toBe(document.activeElement);
+
+      fireEvent.keyDown(menu, {key: 'ArrowDown', code: 40, charCode: 40});
+      expect(menuItems[1]).toBe(document.activeElement);
+
+      fireEvent.keyDown(menu, {key: 'ArrowDown', code: 40, charCode: 40});
+      expect(menuItems[2]).toBe(document.activeElement);
+
+      fireEvent.keyDown(menu, {key: 'ArrowUp', code: 38, charCode: 38});
+      expect(menuItems[1]).toBe(document.activeElement);
+    });
   });
 
   describe('menu popover closing behavior', function () {
