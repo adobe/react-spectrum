@@ -33,8 +33,6 @@ export function useSplitView(props: SplitViewAriaProps, state: SplitViewState): 
     secondaryMaxSize = Infinity,
     orientation = 'horizontal' as 'horizontal',
     allowsResizing = true
-    // TODO this really needs to be renamed!
-    // onMouseDown: propsOnMouseDown
   } = props;
   let {containerState, handleState} = state;
   let id = useId(providedId);
