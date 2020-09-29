@@ -292,9 +292,9 @@ describe('Picker', function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onOpenChange={onOpenChange}>
-            <Item key='1'>One</Item>
-            <Item key=''>Two</Item>
-            <Item key='3'>Three</Item>
+            <Item key="1">One</Item>
+            <Item key="">Two</Item>
+            <Item key="3">Three</Item>
           </Picker>
         </Provider>
       );
@@ -322,7 +322,7 @@ describe('Picker', function () {
       expect(document.activeElement).toBe(items[0]);
 
       act(() => {fireEvent.keyDown(listbox, {key: 'ArrowDown'});});
-      act(() => {fireEvent.keyUp(listbo, {key: 'ArrowDown'});});
+      act(() => {fireEvent.keyUp(listbox, {key: 'ArrowDown'});});
       act(() => jest.runAllTimers());
 
       expect(document.activeElement).toBe(items[1]);
