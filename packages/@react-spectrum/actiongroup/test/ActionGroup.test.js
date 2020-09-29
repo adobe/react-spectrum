@@ -130,6 +130,10 @@ function renderComponentWithExtraInputs(props) {
 }
 
 describe('ActionGroup', function () {
+  beforeAll(function () {
+    jest.useFakeTimers();
+  });
+
   afterEach(() => {
     btnBehavior.reset();
   });
@@ -600,10 +604,22 @@ describe('ActionGroup', function () {
     );
 
     let button = tree.getByRole('button');
-    triggerPress(button);
+
+    act(() => {
+      triggerPress(button);
+      jest.runAllTimers();
+    });
 
     let dialog = tree.getByRole('dialog');
     expect(dialog).toBeVisible();
+
+    act(() => {
+      fireEvent.keyDown(dialog, {key: 'Escape'});
+      fireEvent.keyUp(dialog, {key: 'Escape'});
+      jest.runAllTimers();
+    });
+
+    expect(() => tree.getByRole('dialog')).toThrow();
   });
 
   it('supports TooltipTrigger as a wrapper around items', function () {

@@ -10,10 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
+import {DialogContext} from './context';
+import {useContext} from 'react';
 
-export * from './AlertDialog';
-export * from './Dialog';
-export * from './DialogTrigger';
-export * from './DialogContainer';
-export * from './useDialogContainer';
+interface DialogContainer {
+  type: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  dismiss(): void
+}
+
+export function useDialogContainer(): DialogContainer {
+  let context = useContext(DialogContext);
+  if (!context) {
+    throw new Error('Cannot call useDialogContext outside a <DialogTrigger> or <DialogContainer>.');
+  }
+
+  return {
+    type: context.type,
+    dismiss() {
+      context.onClose();
+    }
+  };
+}

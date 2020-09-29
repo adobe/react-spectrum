@@ -37,7 +37,7 @@ const Context = React.createContext<ModalContext | null>(null);
 export function ModalProvider(props: ModalProviderProps) {
   let {children} = props;
   let parent = useContext(Context);
-  let [modalCount, setModalCount] = useState(parent ? parent.modalCount : 0);
+  let [modalCount, setModalCount] = useState(0);
   let context = useMemo(() => ({
     parent,
     modalCount,
