@@ -1,5 +1,5 @@
 import {fireEvent, render, screen} from '@testing-library/react';
-import {installMouseEvent} from '@react-spectrum/test-utils';
+import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import * as React from 'react';
 import {renderHook} from '@testing-library/react-hooks';
 import {useRef} from 'react';
@@ -142,59 +142,119 @@ describe('useSliderThumb', () => {
       );
     }
 
-    it('can be moved by dragging', () => {
-      let onChangeSpy = jest.fn();
-      let onChangeEndSpy = jest.fn();
-      render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
+    describe('using PointerEvents', () => {
+      installPointerEvent();
 
-      // Drag thumb0
-      let thumb0 = screen.getByTestId('thumb0');
-      fireEvent.mouseDown(thumb0, {clientX: 10, pageX: 10});
-      expect(onChangeSpy).not.toHaveBeenCalled();
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([10, 80]);
+      it('can be moved by dragging', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
 
-      fireEvent.mouseMove(thumb0, {clientX: 20, pageX: 20});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([20, 80]);
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([20, 80]);
+        // Drag thumb0
+        let thumb0 = screen.getByTestId('thumb0');
+        fireEvent.pointerDown(thumb0, {clientX: 10, pageX: 10});
+        expect(onChangeSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([10, 80]);
 
-      fireEvent.mouseMove(thumb0, {clientX: 30, pageX: 30});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([30, 80]);
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([30, 80]);
+        fireEvent.pointerMove(thumb0, {clientX: 20, pageX: 20});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([20, 80]);
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([20, 80]);
 
-      fireEvent.mouseMove(thumb0, {clientX: 40, pageX: 40});
-      fireEvent.mouseUp(thumb0, {clientX: 40, pageX: 40});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([40, 80]);
-      expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 80]);
-      expect(stateRef.current.values).toEqual([40, 80]);
+        fireEvent.pointerMove(thumb0, {clientX: 30, pageX: 30});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([30, 80]);
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([30, 80]);
 
-      onChangeSpy.mockClear();
-      onChangeEndSpy.mockClear();
+        fireEvent.pointerMove(thumb0, {clientX: 40, pageX: 40});
+        fireEvent.pointerUp(thumb0, {clientX: 40, pageX: 40});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([40, 80]);
+        expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 80]);
+        expect(stateRef.current.values).toEqual([40, 80]);
 
-      // Drag thumb1 past thumb0
-      let thumb1 = screen.getByTestId('thumb1');
-      fireEvent.mouseDown(thumb1, {clientX: 80, pageX: 80});
-      expect(onChangeSpy).not.toHaveBeenCalled();
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([40, 80]);
+        onChangeSpy.mockClear();
+        onChangeEndSpy.mockClear();
 
-      fireEvent.mouseMove(thumb1, {clientX: 60, pageX: 60});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([40, 60]);
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([40, 60]);
+        // Drag thumb1 past thumb0
+        let thumb1 = screen.getByTestId('thumb1');
+        fireEvent.pointerDown(thumb1, {clientX: 80, pageX: 80});
+        expect(onChangeSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([40, 80]);
 
-      fireEvent.mouseMove(thumb1, {clientX: 30, pageX: 30});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([40, 40]);
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([40, 40]);
+        fireEvent.pointerMove(thumb1, {clientX: 60, pageX: 60});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([40, 60]);
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([40, 60]);
 
-      fireEvent.mouseUp(thumb1, {clientX: 30, pageX: 30});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([40, 40]);
-      expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 40]);
-      expect(stateRef.current.values).toEqual([40, 40]);
+        fireEvent.pointerMove(thumb1, {clientX: 30, pageX: 30});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([40, 40]);
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([40, 40]);
+
+        fireEvent.pointerUp(thumb1, {clientX: 30, pageX: 30});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([40, 40]);
+        expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 40]);
+        expect(stateRef.current.values).toEqual([40, 40]);
+      });
     });
+    describe('using MouseEvents', () => {
+      it('can be moved by dragging', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<RangeExample onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10, 80]} />);
+
+        // Drag thumb0
+        let thumb0 = screen.getByTestId('thumb0');
+        fireEvent.mouseDown(thumb0, {clientX: 10, pageX: 10});
+        expect(onChangeSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([10, 80]);
+
+        fireEvent.mouseMove(thumb0, {clientX: 20, pageX: 20});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([20, 80]);
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([20, 80]);
+
+        fireEvent.mouseMove(thumb0, {clientX: 30, pageX: 30});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([30, 80]);
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([30, 80]);
+
+        fireEvent.mouseMove(thumb0, {clientX: 40, pageX: 40});
+        fireEvent.mouseUp(thumb0, {clientX: 40, pageX: 40});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([40, 80]);
+        expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 80]);
+        expect(stateRef.current.values).toEqual([40, 80]);
+
+        onChangeSpy.mockClear();
+        onChangeEndSpy.mockClear();
+
+        // Drag thumb1 past thumb0
+        let thumb1 = screen.getByTestId('thumb1');
+        fireEvent.mouseDown(thumb1, {clientX: 80, pageX: 80});
+        expect(onChangeSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([40, 80]);
+
+        fireEvent.mouseMove(thumb1, {clientX: 60, pageX: 60});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([40, 60]);
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([40, 60]);
+
+        fireEvent.mouseMove(thumb1, {clientX: 30, pageX: 30});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([40, 40]);
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([40, 40]);
+
+        fireEvent.mouseUp(thumb1, {clientX: 30, pageX: 30});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([40, 40]);
+        expect(onChangeEndSpy).toHaveBeenLastCalledWith([40, 40]);
+        expect(stateRef.current.values).toEqual([40, 40]);
+      });
+    });
+
   });
 
   describe('interactions on thumbs, where track contains thumbs', () => {
@@ -230,44 +290,77 @@ describe('useSliderThumb', () => {
       );
     }
 
-    it('can be moved by dragging', () => {
-      let onChangeSpy = jest.fn();
-      let onChangeEndSpy = jest.fn();
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} />);
+    describe('using PointerEvents', () => {
+      installPointerEvent();
 
-      // Drag thumb
-      let thumb0 = screen.getByTestId('thumb');
-      fireEvent.mouseDown(thumb0, {clientX: 10, pageX: 10});
-      expect(onChangeSpy).not.toHaveBeenCalled();
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([10]);
+      it('can be moved by dragging', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} />);
 
-      fireEvent.mouseMove(thumb0, {clientX: 20, pageX: 20});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([20]);
-      expect(onChangeEndSpy).not.toHaveBeenCalled();
-      expect(stateRef.current.values).toEqual([20]);
+        // Drag thumb
+        let thumb0 = screen.getByTestId('thumb');
+        fireEvent.pointerDown(thumb0, {clientX: 10, pageX: 10});
+        expect(onChangeSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([10]);
 
-      fireEvent.mouseMove(thumb0, {clientX: 40, pageX: 40});
-      fireEvent.mouseUp(thumb0, {clientX: 40, pageX: 40});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([40]);
-      expect(onChangeEndSpy).toHaveBeenLastCalledWith([40]);
-      expect(stateRef.current.values).toEqual([40]);
-      expect(onChangeEndSpy).toBeCalledTimes(1);
+        fireEvent.pointerMove(thumb0, {clientX: 20, pageX: 20});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([20]);
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([20]);
+
+        fireEvent.pointerMove(thumb0, {clientX: 40, pageX: 40});
+        fireEvent.pointerUp(thumb0, {clientX: 40, pageX: 40});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([40]);
+        expect(onChangeEndSpy).toHaveBeenLastCalledWith([40]);
+        expect(stateRef.current.values).toEqual([40]);
+        expect(onChangeEndSpy).toBeCalledTimes(1);
+      });
     });
 
-    it('can be moved with keys', () => {
-      let onChangeSpy = jest.fn();
-      let onChangeEndSpy = jest.fn();
-      render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} />);
+    describe('using MouseEvents', () => {
+      it('can be moved by dragging', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} />);
 
-      // Drag thumb
-      let thumb0 = screen.getByTestId('thumb').firstChild;
-      fireEvent.keyDown(thumb0, {key: 'ArrowRight'});
-      expect(onChangeSpy).toHaveBeenLastCalledWith([11]);
-      expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeEndSpy).toHaveBeenLastCalledWith([11]);
-      expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
-      expect(stateRef.current.values).toEqual([11]);
+        // Drag thumb
+        let thumb0 = screen.getByTestId('thumb');
+        fireEvent.mouseDown(thumb0, {clientX: 10, pageX: 10});
+        expect(onChangeSpy).not.toHaveBeenCalled();
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([10]);
+
+        fireEvent.mouseMove(thumb0, {clientX: 20, pageX: 20});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([20]);
+        expect(onChangeEndSpy).not.toHaveBeenCalled();
+        expect(stateRef.current.values).toEqual([20]);
+
+        fireEvent.mouseMove(thumb0, {clientX: 40, pageX: 40});
+        fireEvent.mouseUp(thumb0, {clientX: 40, pageX: 40});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([40]);
+        expect(onChangeEndSpy).toHaveBeenLastCalledWith([40]);
+        expect(stateRef.current.values).toEqual([40]);
+        expect(onChangeEndSpy).toBeCalledTimes(1);
+      });
+    });
+
+    describe('using KeyEvents', () => {
+      it('can be moved with keys', () => {
+        let onChangeSpy = jest.fn();
+        let onChangeEndSpy = jest.fn();
+        render(<Example onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} aria-label="Slider" defaultValue={[10]} />);
+
+        // Drag thumb
+        let thumb0 = screen.getByTestId('thumb').firstChild;
+        fireEvent.keyDown(thumb0, {key: 'ArrowRight'});
+        expect(onChangeSpy).toHaveBeenLastCalledWith([11]);
+        expect(onChangeSpy).toHaveBeenCalledTimes(1);
+        expect(onChangeEndSpy).toHaveBeenLastCalledWith([11]);
+        expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+        expect(stateRef.current.values).toEqual([11]);
+      });
     });
   });
 });
