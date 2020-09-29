@@ -41,15 +41,15 @@ let iconMap = {
 
 let hardModeProgrammatic = [
   {name: 'Section 1', children: [
-      {name: 'Copy', icon: 'Copy'},
-      {name: 'Cut', icon: 'Cut'},
-      {name: 'Paste', icon: 'Paste'}
-    ]},
+    {name: 'Copy', icon: 'Copy'},
+    {name: 'Cut', icon: 'Cut'},
+    {name: 'Paste', icon: 'Paste'}
+  ]},
   {name: 'Section 2', children: [
-      {name: 'Puppy', icon: 'AlignLeft'},
-      {name: 'Doggo', icon: 'AlignCenter'},
-      {name: 'Floof', icon: 'AlignRight'}
-    ]}
+    {name: 'Puppy', icon: 'AlignLeft'},
+    {name: 'Doggo', icon: 'AlignCenter'},
+    {name: 'Floof', icon: 'AlignRight'}
+  ]}
 ];
 
 let flatOptions = [
